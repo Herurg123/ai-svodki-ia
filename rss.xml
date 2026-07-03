@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0"
+  xmlns:atom="http://www.w3.org/2005/Atom"
   xmlns:content="http://purl.org/rss/1.0/modules/content/"
-  xmlns:media="http://search.yahoo.com/mrss/">
+  xmlns:media="http://search.yahoo.com/mrss/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>ИИ-сводки</title>
     <link>https://herurg123.github.io/ai-svodki-ia/</link>
@@ -9,12 +11,17 @@
     <language>ru</language>
     <lastBuildDate>Fri, 03 Jul 2026 07:00:00 +0300</lastBuildDate>
 
+    <atom:link
+      href="https://herurg123.github.io/ai-svodki-ia/rss.xml"
+      rel="self"
+      type="application/rss+xml" />
+
     <item>
       <title>Тестовая ИИ-сводка</title>
       <link>https://herurg123.github.io/ai-svodki-ia/posts/test/</link>
       <guid isPermaLink="true">https://herurg123.github.io/ai-svodki-ia/posts/test/</guid>
       <pubDate>Fri, 03 Jul 2026 07:00:00 +0300</pubDate>
-      <author>ИИ-сводки</author>
+      <dc:creator>ИИ-сводки</dc:creator>
       <category>Технологии</category>
 
       <enclosure
