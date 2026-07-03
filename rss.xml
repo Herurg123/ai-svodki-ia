@@ -5,8 +5,9 @@
   <channel>
     <title>ИИ-сводки</title>
     <link>https://herurg123.github.io/ai-svodki-ia/</link>
-    <description>Тестовая RSS-лента для проверки импорта в Дзен</description>
+    <description>Тестовая RSS-лента для проверки импорта публикаций в Дзен</description>
     <language>ru</language>
+    <lastBuildDate>Fri, 03 Jul 2026 07:00:00 +0300</lastBuildDate>
 
     <item>
       <title>Тестовая ИИ-сводка</title>
@@ -15,16 +16,40 @@
       <pubDate>Fri, 03 Jul 2026 07:00:00 +0300</pubDate>
       <author>ИИ-сводки</author>
       <category>Технологии</category>
+
+      <enclosure
+        url="https://herurg123.github.io/ai-svodki-ia/assets/images/test-cover.jpg"
+        type="image/jpeg"
+        length="0" />
+
+      <media:content
+        url="https://herurg123.github.io/ai-svodki-ia/assets/images/test-cover.jpg"
+        medium="image"
+        type="image/jpeg" />
+
+      <media:thumbnail
+        url="https://herurg123.github.io/ai-svodki-ia/assets/images/test-cover.jpg" />
+
       <media:rating scheme="urn:simple">nonadult</media:rating>
 
       <description><![CDATA[
-        Тестовая публикация для проверки RSS-импорта в Дзен.
+Тестовая публикация для проверки RSS-импорта в Дзен.
       ]]></description>
 
       <content:encoded><![CDATA[
-        <h2>Тестовая ИИ-сводка</h2>
-        <p>Это тестовая публикация для проверки RSS-импорта в Дзен.</p>
-        <p>Если этот материал импортировался, значит GitHub Pages как источник RSS работает.</p>
+<h2>Тестовая ИИ-сводка</h2>
+
+<p>Это тестовая публикация для проверки RSS-импорта в Дзен.</p>
+
+<p>Если этот материал импортировался, значит GitHub Pages можно использовать как технический источник RSS для автоматической публикации.</p>
+
+<p><img src="https://herurg123.github.io/ai-svodki-ia/assets/images/test-cover.jpg" alt="Тестовая обложка"></p>
+
+<h3>Проверочный блок</h3>
+
+<p>Этот текст нужен, чтобы проверить, как Дзен обрабатывает HTML внутри RSS: заголовки, абзацы, картинку и ссылку на исходную страницу.</p>
+
+<p>Исходная тестовая страница: <a href="https://herurg123.github.io/ai-svodki-ia/posts/test/">https://herurg123.github.io/ai-svodki-ia/posts/test/</a></p>
       ]]></content:encoded>
     </item>
   </channel>
