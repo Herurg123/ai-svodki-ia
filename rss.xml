@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>ИИ-сводки</title>
+    <link>https://herurg123.github.io/ai-svodki-ia/</link>
+    <description>Тестовая RSS-лента для проверки импорта в Дзен</description>
+    <language>ru</language>
+
+    <item>
+      <title>Тестовая ИИ-сводка</title>
+      <link>https://herurg123.github.io/ai-svodki-ia/posts/test/</link>
+      <guid isPermaLink="true">https://herurg123.github.io/ai-svodki-ia/posts/test/</guid>
+      <pubDate>Fri, 03 Jul 2026 07:00:00 +0300</pubDate>
+      <author>ИИ-сводки</author>
+      <category>Технологии</category>
+      <media:rating scheme="urn:simple">nonadult</media:rating>
+
+      <description><![CDATA[
+        Тестовая публикация для проверки RSS-импорта в Дзен.
+      ]]></description>
+
+      <content:encoded><![CDATA[
+        <h2>Тестовая ИИ-сводка</h2>
+        <p>Это тестовая публикация для проверки RSS-импорта в Дзен.</p>
+        <p>Если этот материал импортировался, значит GitHub Pages как источник RSS работает.</p>
+      ]]></content:encoded>
+    </item>
+  </channel>
+</rss>
