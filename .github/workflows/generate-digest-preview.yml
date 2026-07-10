@@ -1,0 +1,124 @@
+name: Generate digest preview
+run-name: Digest preview ${{ inputs.publication_date }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      publication_date:
+        description: "Дата выпуска в формате YYYY-MM-DD"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: digest-preview-${{ github.ref }}-${{ inputs.publication_date }}
+  cancel-in-progress: false
+
+jobs:
+  generate-preview:
+    name: Generate safe digest preview
+    if: github.ref == 'refs/heads/automation-prep'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      - name: Check out automation-prep
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Validate safe execution context
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${GITHUB_REF}" != "refs/heads/automation-prep" ]]; then
+            echo "Этот workflow разрешён только для ветки automation-prep." >&2
+            exit 1
+          fi
+
+          if [[ -z "${OPENAI_API_KEY:-}" ]]; then
+            echo "Не найден Repository Secret OPENAI_API_KEY." >&2
+            exit 1
+          fi
+
+          python - <<'PY'
+          from datetime import date
+          import os
+
+          value = os.environ["PUBLICATION_DATE"]
+          parsed = date.fromisoformat(value)
+          if parsed.isoformat() != value:
+              raise SystemExit("publication_date должна иметь строгий формат YYYY-MM-DD")
+          print(f"Дата preview: {value}")
+          PY
+        env:
+          PUBLICATION_DATE: ${{ inputs.publication_date }}
+
+      - name: Install OpenAI SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "openai==2.45.0"
+
+      - name: Check Python syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            automation/scripts/bootstrap_archive.py \
+            automation/scripts/validate_archive.py \
+            automation/scripts/generate_digest_preview.py
+
+      - name: Build archive context from current RSS
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/bootstrap_archive.py
+
+      - name: Validate archive context
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_archive.py
+
+      - name: Generate digest preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/generate_digest_preview.py \
+            --publication-date "${PUBLICATION_DATE}"
+        env:
+          PUBLICATION_DATE: ${{ inputs.publication_date }}
+
+      - name: Verify that posts were not changed
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -n "$(git status --porcelain -- posts/)" ]]; then
+            echo "Защитная проверка: workflow изменил posts/. Выполнение остановлено." >&2
+            git status --short -- posts/
+            exit 1
+          fi
+
+      - name: Upload digest preview artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: digest-preview-${{ inputs.publication_date }}
+          path: automation/preview/${{ inputs.publication_date }}/
+          if-no-files-found: warn
+          retention-days: 7
