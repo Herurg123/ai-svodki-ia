@@ -1,0 +1,16 @@
+{
+  "site_title": "ИИ-сводки",
+  "site_base_url": "https://rybalka.one/posts",
+  "feed_url": "https://rybalka.one/posts/rss.xml",
+  "author": "ИИ-сводки",
+  "language": "ru",
+  "timezone": "Europe/Moscow",
+  "publication_hour": 7,
+  "archive_days_for_deduplication": 14,
+  "live_posts_directory": "posts",
+  "preview_posts_directory": "automation/preview/posts",
+  "content_directory": "automation/content",
+  "archive_file": "automation/archive/index.json",
+  "image_width_minimum": 700,
+  "image_filename_template": "ai-svodka-{date}.png"
+}
