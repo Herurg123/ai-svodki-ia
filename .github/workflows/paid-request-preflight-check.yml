@@ -1,0 +1,61 @@
+name: Paid request preflight check
+run-name: Paid request preflight check ${{ github.sha }}
+
+on:
+  push:
+    branches:
+      - automation-prep
+    paths:
+      - "automation/scripts/validate_paid_request_preflight.py"
+      - "automation/tests/test_paid_request_preflight.py"
+      - ".github/workflows/paid-request-preflight-check.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: paid-request-preflight-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-preflight:
+    name: Test paid request preflight offline
+    if: github.ref == 'refs/heads/automation-prep'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out automation-prep
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Compile preflight validator
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            automation/scripts/validate_paid_request_preflight.py \
+            automation/tests/test_paid_request_preflight.py
+
+      - name: Run offline preflight tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest -v automation.tests.test_paid_request_preflight
+
+      - name: Verify protected files stayed untouched
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "$(git status --porcelain -- posts/ automation/requests/digest-preview.json)" ]]; then
+            echo "Offline tests modified protected files." >&2
+            git status --short -- posts/ automation/requests/digest-preview.json
+            exit 1
+          fi
