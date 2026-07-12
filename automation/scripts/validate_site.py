@@ -13,8 +13,15 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
+from editorial_policy import (
+    read_policy,
+    validate_article_policy,
+    validate_stories,
+)
+
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = ROOT / "automation" / "config" / "site.json"
+EDITORIAL_CONFIG_PATH = ROOT / "automation" / "config" / "editorial.json"
 
 CONTENT_NS = "http://purl.org/rss/1.0/modules/content/"
 DC_NS = "http://purl.org/dc/elements/1.1/"
@@ -144,6 +151,48 @@ def validate() -> tuple[list[str], list[str], dict[str, Any]]:
     if not isinstance(digest, dict):
         raise RuntimeError("digest.json должен содержать JSON-объект.")
     source_article = (source_dir / "article.html").read_text(encoding="utf-8").strip()
+
+    policy = read_policy(EDITORIAL_CONFIG_PATH)
+    stories = read_json(source_dir / "stories.json")
+    if not isinstance(stories, list) or not stories:
+        errors.append("stories.json должен содержать непустой массив.")
+        stories = []
+
+    selected_candidates: list[dict[str, Any]] = []
+    for story in stories:
+        if not isinstance(story, dict):
+            continue
+        sources = story.get("sources")
+        primary_source = sources[0] if isinstance(sources, list) and sources else {}
+        selected_candidates.append(
+            {
+                "id": str(story.get("candidate_id", "")),
+                "archive_status": (
+                    "update" if story.get("status") == "update" else "none"
+                ),
+                "geography": str(story.get("geography", "world")),
+                "organization": str(story.get("organization", "")),
+                "primary_source": primary_source,
+            }
+        )
+
+    errors.extend(validate_stories(stories, selected_candidates))
+    policy_errors, policy_warnings, policy_analysis = validate_article_policy(
+        source_article,
+        selected_candidates,
+        bool(digest.get("short_digest")),
+        policy,
+    )
+    errors.extend(policy_errors)
+    warnings.extend(policy_warnings)
+
+    meta = read_json(source_dir / "meta.json")
+    if not isinstance(meta, dict):
+        errors.append("meta.json должен содержать JSON-объект.")
+        meta = {}
+    for key in ("short_digest", "editorial_notes"):
+        if meta.get(key) != digest.get(key):
+            errors.append(f"meta.json не совпадает с digest.json по полю {key}.")
 
     index_path = site_dir / "index.html"
     rss_path = site_dir / "rss.xml"
@@ -383,6 +432,9 @@ def validate() -> tuple[list[str], list[str], dict[str, Any]]:
         "rss_items": len(items),
         "new_item_link": expected_new_link,
         "new_image": str(new_image_path.relative_to(ROOT)),
+        "stories": len(stories),
+        "short_digest": bool(digest.get("short_digest")),
+        "policy_analysis": policy_analysis,
     }
     return errors, warnings, context
 

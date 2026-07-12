@@ -12,6 +12,8 @@ from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
 
+from editorial_policy import read_policy, validate_article_policy, validate_stories
+
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_FIXTURE = (
     ROOT
@@ -22,6 +24,7 @@ DEFAULT_FIXTURE = (
     / "digest.json"
 )
 PREVIEW_ROOT = ROOT / "automation" / "preview"
+EDITORIAL_CONFIG_PATH = ROOT / "automation" / "config" / "editorial.json"
 
 
 class LinkCollector(HTMLParser):
@@ -91,7 +94,7 @@ def assert_safe_output(path: Path) -> None:
         raise RuntimeError("Рабочий каталог posts/ запрещён для fixture.")
 
 
-def validate_digest(digest: dict[str, Any]) -> None:
+def validate_digest(digest: dict[str, Any], stories: list[dict[str, Any]]) -> None:
     required = {
         "status",
         "error_message",
@@ -106,6 +109,8 @@ def validate_digest(digest: dict[str, Any]) -> None:
         "image_prompt",
         "topics",
         "sources",
+        "short_digest",
+        "editorial_notes",
     }
     missing = sorted(required.difference(digest))
     if missing:
@@ -147,11 +152,42 @@ def validate_digest(digest: dict[str, Any]) -> None:
     collector = LinkCollector()
     collector.feed(article_html)
     article_urls = set(collector.links)
+    dzen_url = str(read_policy(EDITORIAL_CONFIG_PATH)["dzen"]["url"])
+    article_urls.discard(dzen_url)
     if source_urls != article_urls:
         raise RuntimeError(
             "Ссылки article_html не совпадают с sources: "
             f"article={sorted(article_urls)}, sources={sorted(source_urls)}"
         )
+
+
+    policy = read_policy(EDITORIAL_CONFIG_PATH)
+    selected_candidates = [
+        {
+            "id": str(story.get("candidate_id", "")),
+            "archive_status": (
+                "update" if story.get("status") == "update" else "none"
+            ),
+            "geography": str(story.get("geography", "world")),
+            "organization": str(story.get("organization", "")),
+            "primary_source": (
+                story.get("sources", [{}])[0]
+                if isinstance(story.get("sources"), list) and story.get("sources")
+                else {}
+            ),
+        }
+        for story in stories
+    ]
+    story_errors = validate_stories(stories, selected_candidates)
+    policy_errors, _warnings, _analysis = validate_article_policy(
+        article_html,
+        selected_candidates,
+        bool(digest["short_digest"]),
+        policy,
+    )
+    combined = story_errors + policy_errors
+    if combined:
+        raise RuntimeError("Fixture нарушает editorial policy:\n- " + "\n- ".join(combined))
 
 
 def png_chunk(chunk_type: bytes, data: bytes) -> bytes:
@@ -198,7 +234,11 @@ def main() -> int:
         digest = read_json(fixture_path)
         if not isinstance(digest, dict):
             raise RuntimeError("Корень fixture должен быть JSON-объектом.")
-        validate_digest(digest)
+        stories_path = fixture_path.with_name("stories.json")
+        stories = read_json(stories_path)
+        if not isinstance(stories, list) or not stories:
+            raise RuntimeError("Fixture stories.json должен содержать непустой массив.")
+        validate_digest(digest, stories)
 
         output_dir = args.output_dir
         if output_dir is None:
@@ -225,6 +265,8 @@ def main() -> int:
                 "author",
                 "cover_filename",
                 "topics",
+                "short_digest",
+                "editorial_notes",
             )
         }
         digest_text = pretty_json(digest)
@@ -252,6 +294,7 @@ def main() -> int:
             str(digest["image_prompt"]).strip() + "\n",
         )
         atomic_write(output_dir / "sources.json", pretty_json(digest["sources"]))
+        atomic_write(output_dir / "stories.json", pretty_json(stories))
         atomic_write(output_dir / "run-info.json", pretty_json(run_info))
         (output_dir / "cover.png").write_bytes(build_placeholder_png())
 

@@ -14,8 +14,15 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
+from editorial_policy import (
+    read_policy,
+    validate_article_policy,
+    validate_stories,
+)
+
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = ROOT / "automation" / "config" / "site.json"
+EDITORIAL_CONFIG_PATH = ROOT / "automation" / "config" / "editorial.json"
 
 CONTENT_NS = "http://purl.org/rss/1.0/modules/content/"
 DC_NS = "http://purl.org/dc/elements/1.1/"
@@ -159,11 +166,31 @@ def image_filename_from_url(url: str) -> str:
     return filename
 
 
-def load_source(source_dir: Path) -> dict[str, Any]:
+def candidates_from_stories(stories: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    candidates: list[dict[str, Any]] = []
+    for story in stories:
+        sources = story.get("sources")
+        primary_source = sources[0] if isinstance(sources, list) and sources else {}
+        candidates.append(
+            {
+                "id": str(story.get("candidate_id", "")),
+                "archive_status": (
+                    "update" if story.get("status") == "update" else "none"
+                ),
+                "geography": str(story.get("geography", "world")),
+                "organization": str(story.get("organization", "")),
+                "primary_source": primary_source,
+            }
+        )
+    return candidates
+
+
+def load_source(source_dir: Path, policy: dict[str, Any]) -> dict[str, Any]:
     digest_path = source_dir / "digest.json"
     article_path = source_dir / "article.html"
     meta_path = source_dir / "meta.json"
     sources_path = source_dir / "sources.json"
+    stories_path = source_dir / "stories.json"
     cover_path = source_dir / "cover.png"
 
     digest = read_json(digest_path)
@@ -183,10 +210,17 @@ def load_source(source_dir: Path) -> dict[str, Any]:
         "article_html",
         "topics",
         "sources",
+        "short_digest",
+        "editorial_notes",
     }
     missing = sorted(required.difference(digest))
     if missing:
         raise RuntimeError("В digest.json отсутствуют поля: " + ", ".join(missing))
+
+    if not isinstance(digest.get("short_digest"), bool):
+        raise RuntimeError("short_digest должен быть boolean.")
+    if not isinstance(digest.get("editorial_notes"), list):
+        raise RuntimeError("editorial_notes должен быть массивом.")
 
     article_html = article_path.read_text(encoding="utf-8").strip()
     if article_html != str(digest["article_html"]).strip():
@@ -196,6 +230,8 @@ def load_source(source_dir: Path) -> dict[str, Any]:
     if not isinstance(meta, dict):
         raise RuntimeError("meta.json должен содержать JSON-объект.")
     for key in (
+        "status",
+        "error_message",
         "date",
         "slug",
         "title",
@@ -203,6 +239,9 @@ def load_source(source_dir: Path) -> dict[str, Any]:
         "published_at",
         "author",
         "cover_filename",
+        "topics",
+        "short_digest",
+        "editorial_notes",
     ):
         if meta.get(key) != digest.get(key):
             raise RuntimeError(f"meta.json не совпадает с digest.json по полю {key}.")
@@ -210,6 +249,23 @@ def load_source(source_dir: Path) -> dict[str, Any]:
     sources = read_json(sources_path)
     if sources != digest["sources"]:
         raise RuntimeError("sources.json не совпадает с sources из digest.json.")
+
+    stories = read_json(stories_path)
+    if not isinstance(stories, list) or not stories:
+        raise RuntimeError("stories.json должен содержать непустой массив.")
+    selected_candidates = candidates_from_stories(stories)
+    story_errors = validate_stories(stories, selected_candidates)
+    if story_errors:
+        raise RuntimeError("Проверка stories.json завершилась ошибками:\n- " + "\n- ".join(story_errors))
+
+    policy_errors, policy_warnings, policy_analysis = validate_article_policy(
+        article_html,
+        selected_candidates,
+        bool(digest["short_digest"]),
+        policy,
+    )
+    if policy_errors:
+        raise RuntimeError("Редакционная проверка article.html завершилась ошибками:\n- " + "\n- ".join(policy_errors))
 
     if not cover_path.is_file():
         raise RuntimeError(f"Не найдено изображение preview: {cover_path}")
@@ -237,6 +293,9 @@ def load_source(source_dir: Path) -> dict[str, Any]:
         "publication_date": publication_date,
         "published_datetime": parse_iso_datetime(str(digest["published_at"])),
         "cover_path": cover_path,
+        "stories": stories,
+        "policy_warnings": policy_warnings,
+        "policy_analysis": policy_analysis,
     }
 
 
@@ -484,7 +543,8 @@ def main() -> int:
             raise RuntimeError(f"Рабочий каталог posts не найден: {live_posts}")
 
         live_digest_before = tree_digest(live_posts)
-        source = load_source(source_dir)
+        policy = read_policy(EDITORIAL_CONFIG_PATH)
+        source = load_source(source_dir, policy)
 
         temporary = output_dir.parent / f".{output_dir.name}.tmp-{os.getpid()}"
         assert_inside(temporary, ROOT / "automation" / "preview", "temporary")
@@ -552,6 +612,9 @@ def main() -> int:
             "output_dir": str(output_dir.relative_to(ROOT)),
             "publication_date": source["date"],
             "items": len(items),
+            "stories": len(source["stories"]),
+            "short_digest": bool(source["short_digest"]),
+            "policy_warnings": source["policy_warnings"],
             "live_posts_sha256_before": live_digest_before,
             "live_posts_sha256_after": live_digest_after,
             "started_at": started_at.isoformat(timespec="seconds"),

@@ -20,9 +20,21 @@ from zoneinfo import ZoneInfo
 
 from openai import OpenAI
 
+from editorial_policy import (
+    build_editorial_notes,
+    build_stories,
+    normalize_article_html,
+    order_candidates_by_article_links,
+    read_policy,
+    validate_article_policy,
+    validate_diversity_overrides,
+    validate_stories,
+)
+
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = REPOSITORY_ROOT / "automation/config/site.json"
+EDITORIAL_CONFIG_PATH = REPOSITORY_ROOT / "automation/config/editorial.json"
 RESEARCH_PROMPT_PATH = REPOSITORY_ROOT / "automation/prompts/research_candidates.md"
 EDITORIAL_PROMPT_PATH = REPOSITORY_ROOT / "automation/prompts/daily_digest.md"
 ARCHIVE_PATH = REPOSITORY_ROOT / "automation/archive/index.json"
@@ -114,6 +126,19 @@ CANDIDATE_SCHEMA: dict[str, Any] = {
             "type": "string",
             "pattern": r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
         },
+        "published_at": {"type": ["string", "null"]},
+        "time_precision": {
+            "type": "string",
+            "enum": ["datetime", "date"],
+        },
+        "topic": {"type": "string", "minLength": 1},
+        "event_type": {"type": "string", "minLength": 1},
+        "keywords": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 12,
+            "items": {"type": "string", "minLength": 1},
+        },
         "geography": {
             "type": "string",
             "enum": ["world", "russia"],
@@ -173,6 +198,11 @@ CANDIDATE_SCHEMA: dict[str, Any] = {
         "title",
         "organization",
         "published_date",
+        "published_at",
+        "time_precision",
+        "topic",
+        "event_type",
+        "keywords",
         "geography",
         "category",
         "source_type",
@@ -203,6 +233,9 @@ RESEARCH_SCHEMA: dict[str, Any] = {
             "type": "object",
             "additionalProperties": False,
             "properties": {
+                "start_at": {"type": "string", "minLength": 1},
+                "end_at": {"type": "string", "minLength": 1},
+                "latest_archive_at": {"type": ["string", "null"]},
                 "start_date": {
                     "type": "string",
                     "pattern": r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
@@ -216,7 +249,14 @@ RESEARCH_SCHEMA: dict[str, Any] = {
                     "pattern": r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
                 },
             },
-            "required": ["start_date", "end_date", "latest_archive_date"],
+            "required": [
+                "start_at",
+                "end_at",
+                "latest_archive_at",
+                "start_date",
+                "end_date",
+                "latest_archive_date",
+            ],
         },
         "coverage": {
             "type": "array",
@@ -311,6 +351,21 @@ DIGEST_SCHEMA: dict[str, Any] = {
             "minItems": 0,
             "items": SOURCE_SCHEMA,
         },
+        "short_digest": {"type": "boolean"},
+        "editorial_notes": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "type": {"type": "string", "minLength": 1},
+                    "area": {"type": "string", "minLength": 1},
+                    "message": {"type": "string", "minLength": 1},
+                },
+                "required": ["type", "area", "message"],
+            },
+        },
     },
     "required": [
         "status",
@@ -326,6 +381,8 @@ DIGEST_SCHEMA: dict[str, Any] = {
         "image_prompt",
         "topics",
         "sources",
+        "short_digest",
+        "editorial_notes",
     ],
 }
 
@@ -352,6 +409,23 @@ EDITORIAL_SCHEMA: dict[str, Any] = {
             },
         },
         "selection_summary": {"type": "string", "minLength": 1},
+        "diversity_overrides": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["publisher", "organization"],
+                    },
+                    "value": {"type": "string", "minLength": 1},
+                    "reason": {"type": "string", "minLength": 1},
+                },
+                "required": ["type", "value", "reason"],
+            },
+        },
         "digest": DIGEST_SCHEMA,
     },
     "required": [
@@ -360,6 +434,7 @@ EDITORIAL_SCHEMA: dict[str, Any] = {
         "selected_candidate_ids",
         "excluded_candidate_ids",
         "selection_summary",
+        "diversity_overrides",
         "digest",
     ],
 }
@@ -668,23 +743,66 @@ def build_prompt(template: str, replacements: dict[str, str]) -> str:
     return prompt
 
 
-def expected_published_at(
+def planned_published_datetime(
     publication_date: date,
     config: dict[str, Any],
-) -> str:
+) -> datetime:
     timezone_name = str(config["timezone"])
     publication_hour = int(config["publication_hour"])
 
     if not 0 <= publication_hour <= 23:
         raise RuntimeError("publication_hour должен быть в диапазоне 0..23.")
 
-    local_datetime = datetime.combine(
+    return datetime.combine(
         publication_date,
         time(hour=publication_hour),
         tzinfo=ZoneInfo(timezone_name),
     )
 
-    return local_datetime.isoformat(timespec="seconds")
+
+def expected_published_at(
+    publication_date: date,
+    config: dict[str, Any],
+) -> str:
+    return planned_published_datetime(publication_date, config).isoformat(
+        timespec="seconds"
+    )
+
+
+def parse_aware_datetime(value: str, label: str) -> datetime:
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise RuntimeError(f"{label} имеет некорректный ISO timestamp: {value!r}.") from exc
+    if parsed.tzinfo is None:
+        raise RuntimeError(f"{label} должен содержать часовой пояс.")
+    return parsed
+
+
+def latest_archive_published_at(
+    archive: dict[str, Any],
+    config: dict[str, Any],
+) -> datetime | None:
+    values: list[datetime] = []
+    for item in archive.get("items", []):
+        if not isinstance(item, dict):
+            continue
+        published_at = item.get("published_at")
+        if isinstance(published_at, str) and published_at.strip():
+            try:
+                values.append(parse_aware_datetime(published_at, "archive.published_at"))
+                continue
+            except RuntimeError:
+                pass
+        raw_date = item.get("date")
+        if isinstance(raw_date, str):
+            try:
+                values.append(
+                    planned_published_datetime(date.fromisoformat(raw_date), config)
+                )
+            except ValueError:
+                continue
+    return max(values) if values else None
 
 
 def sdk_version() -> str:
@@ -814,14 +932,13 @@ def candidate_sources(candidate: dict[str, Any]) -> list[dict[str, Any]]:
 def expected_search_window(
     publication_date: date,
     archive: dict[str, Any],
-) -> tuple[date, date]:
-    latest = latest_archive_date(archive)
-    if latest is None:
-        return publication_date - timedelta(days=1), publication_date
-
-    latest_date = date.fromisoformat(latest)
-    return min(latest_date, publication_date), publication_date
-
+    config: dict[str, Any],
+) -> tuple[datetime, datetime]:
+    end_at = planned_published_datetime(publication_date, config)
+    latest_at = latest_archive_published_at(archive, config)
+    if latest_at is None:
+        return end_at - timedelta(days=1), end_at
+    return min(latest_at, end_at), end_at
 
 def resolve_research_input(value: str | None) -> Path | None:
     if value is None or not value.strip():
@@ -866,6 +983,7 @@ def sanitize_research_candidates(
     research: dict[str, Any],
     publication_date: date,
     archive: dict[str, Any],
+    config: dict[str, Any],
 ) -> tuple[dict[str, Any], list[dict[str, Any]], list[str]]:
     sanitized = copy.deepcopy(research)
     candidates = sanitized.get("candidates")
@@ -873,18 +991,43 @@ def sanitize_research_candidates(
     if not isinstance(candidates, list):
         return sanitized, [], []
 
-    start_date, end_date = expected_search_window(publication_date, archive)
+    start_at, end_at = expected_search_window(publication_date, archive, config)
+    local_zone = ZoneInfo(str(config["timezone"]))
+    start_date = start_at.astimezone(local_zone).date()
+    end_date = end_at.astimezone(local_zone).date()
     kept: list[dict[str, Any]] = []
     filtered: list[dict[str, Any]] = []
     warnings: list[str] = []
 
-    for candidate in candidates:
-        if not isinstance(candidate, dict):
-            kept.append(candidate)
+    for raw_candidate in candidates:
+        if not isinstance(raw_candidate, dict):
+            kept.append(raw_candidate)
             continue
 
+        candidate = copy.deepcopy(raw_candidate)
         candidate_id = str(candidate.get("id", "unknown"))
         raw_date = str(candidate.get("published_date", ""))
+
+        candidate.setdefault("published_at", None)
+        candidate.setdefault("time_precision", "date")
+        candidate.setdefault(
+            "topic", str(candidate.get("category") or "other")
+        )
+        candidate.setdefault(
+            "event_type", str(candidate.get("category") or "other")
+        )
+        candidate.setdefault(
+            "keywords",
+            [
+                value
+                for value in (
+                    str(candidate.get("organization", "")).strip(),
+                    str(candidate.get("category", "")).strip(),
+                )
+                if value
+            ]
+            or ["ИИ"],
+        )
 
         try:
             candidate_date = date.fromisoformat(raw_date)
@@ -892,15 +1035,41 @@ def sanitize_research_candidates(
             kept.append(candidate)
             continue
 
-        if not start_date <= candidate_date <= end_date:
+        is_in_window = False
+        if (
+            candidate.get("time_precision") == "datetime"
+            and isinstance(candidate.get("published_at"), str)
+            and str(candidate["published_at"]).strip()
+        ):
+            try:
+                candidate_at = parse_aware_datetime(
+                    str(candidate["published_at"]),
+                    f"{candidate_id}.published_at",
+                )
+                is_in_window = start_at <= candidate_at <= end_at
+                candidate["published_at"] = candidate_at.isoformat(
+                    timespec="seconds"
+                )
+            except RuntimeError:
+                is_in_window = False
+        else:
+            candidate["published_at"] = None
+            candidate["time_precision"] = "date"
+            is_in_window = start_date <= candidate_date <= end_date
+            warnings.append(
+                f"{candidate_id}: источник показывает дату без точного времени."
+            )
+
+        if not is_in_window:
             filtered.append(
                 {
                     "id": candidate_id,
                     "title": candidate.get("title"),
                     "published_date": raw_date,
+                    "published_at": candidate.get("published_at"),
                     "reason": (
-                        "Дата вне редакционного окна "
-                        f"{start_date.isoformat()}..{end_date.isoformat()}."
+                        "Публикация вне редакционного окна "
+                        f"{start_at.isoformat()}..{end_at.isoformat()}."
                     ),
                 }
             )
@@ -915,7 +1084,13 @@ def sanitize_research_candidates(
             f"Отфильтровано кандидатов вне временного окна: {len(filtered)}."
         )
 
+    latest_at = latest_archive_published_at(archive, config)
     sanitized["search_window"] = {
+        "start_at": start_at.isoformat(timespec="seconds"),
+        "end_at": end_at.isoformat(timespec="seconds"),
+        "latest_archive_at": (
+            latest_at.isoformat(timespec="seconds") if latest_at else None
+        ),
         "start_date": start_date.isoformat(),
         "end_date": end_date.isoformat(),
         "latest_archive_date": latest_archive_date(archive),
@@ -923,15 +1098,15 @@ def sanitize_research_candidates(
 
     return sanitized, filtered, warnings
 
-
 def validate_research(
     research: dict[str, Any],
     publication_date: date,
     archive: dict[str, Any],
+    config: dict[str, Any],
     target_candidates: int,
     target_russian_candidates: int,
     maximum_candidates: int,
-    minimum_selected_stories: int,
+    target_selected_stories: int,
 ) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -954,27 +1129,35 @@ def validate_research(
     expected_start, expected_end = expected_search_window(
         publication_date,
         archive,
+        config,
     )
+    local_zone = ZoneInfo(str(config["timezone"]))
+    expected_start_date = expected_start.astimezone(local_zone).date().isoformat()
+    expected_end_date = expected_end.astimezone(local_zone).date().isoformat()
+    expected_latest_at = latest_archive_published_at(archive, config)
     search_window = research.get("search_window")
 
     if not isinstance(search_window, dict):
         errors.append("search_window должен быть объектом.")
     else:
-        if search_window.get("start_date") != expected_start.isoformat():
-            errors.append(
-                "search_window.start_date не совпадает с редакционным окном: "
-                f"ожидалось {expected_start.isoformat()!r}."
-            )
-
-        if search_window.get("end_date") != expected_end.isoformat():
-            errors.append("search_window.end_date не совпадает с датой выпуска.")
-
-        expected_latest = latest_archive_date(archive)
-        if search_window.get("latest_archive_date") != expected_latest:
-            errors.append(
-                "search_window.latest_archive_date не совпадает с архивом: "
-                f"ожидалось {expected_latest!r}."
-            )
+        expected_values = {
+            "start_at": expected_start.isoformat(timespec="seconds"),
+            "end_at": expected_end.isoformat(timespec="seconds"),
+            "latest_archive_at": (
+                expected_latest_at.isoformat(timespec="seconds")
+                if expected_latest_at
+                else None
+            ),
+            "start_date": expected_start_date,
+            "end_date": expected_end_date,
+            "latest_archive_date": latest_archive_date(archive),
+        }
+        for key, expected_value in expected_values.items():
+            if search_window.get(key) != expected_value:
+                errors.append(
+                    f"search_window.{key} не совпадает: ожидалось "
+                    f"{expected_value!r}."
+                )
 
     coverage = research.get("coverage")
     if not isinstance(coverage, list) or len(coverage) < 9:
@@ -996,15 +1179,17 @@ def validate_research(
             f"Найдено {len(candidates)} кандидатов; максимум {maximum_candidates}."
         )
 
-    if len(candidates) < minimum_selected_stories:
-        errors.append(
-            f"После проверки свежести осталось {len(candidates)} кандидатов; "
-            f"для редакционного этапа требуется минимум {minimum_selected_stories}."
-        )
+    if len(candidates) == 0:
+        errors.append("После проверки свежести не осталось ни одного достойного кандидата.")
     elif len(candidates) < target_candidates:
         warnings.append(
             f"Целевой пул — {target_candidates} кандидатов, "
             f"но после проверки свежести осталось {len(candidates)}."
+        )
+    if 0 < len(candidates) < target_selected_stories:
+        warnings.append(
+            f"Кандидатов меньше обычной цели выпуска ({target_selected_stories}); "
+            "разрешён короткий выпуск."
         )
 
     candidate_ids: list[str] = []
@@ -1048,7 +1233,6 @@ def validate_research(
             publisher = str(primary.get("publisher", "")).strip().casefold()
             if publisher:
                 publisher_counter[publisher] += 1
-
             try:
                 primary_normalized = normalize_url(str(primary.get("url", "")))
             except RuntimeError as exc:
@@ -1056,13 +1240,50 @@ def validate_research(
 
         try:
             candidate_date = date.fromisoformat(str(candidate.get("published_date")))
-            if not expected_start <= candidate_date <= expected_end:
-                errors.append(
-                    f"{candidate_id}: published_date находится вне редакционного "
-                    f"окна {expected_start.isoformat()}..{expected_end.isoformat()}."
-                )
         except ValueError:
             errors.append(f"{candidate_id}: некорректный published_date.")
+            candidate_date = None
+
+        time_precision = candidate.get("time_precision")
+        published_at = candidate.get("published_at")
+        if time_precision == "datetime":
+            if not isinstance(published_at, str) or not published_at.strip():
+                errors.append(
+                    f"{candidate_id}: time_precision=datetime требует published_at."
+                )
+            else:
+                try:
+                    candidate_at = parse_aware_datetime(
+                        published_at,
+                        f"{candidate_id}.published_at",
+                    )
+                    if not expected_start <= candidate_at <= expected_end:
+                        errors.append(
+                            f"{candidate_id}: published_at вне окна "
+                            f"{expected_start.isoformat()}..{expected_end.isoformat()}."
+                        )
+                except RuntimeError as exc:
+                    errors.append(str(exc))
+        elif time_precision == "date":
+            if published_at is not None:
+                errors.append(
+                    f"{candidate_id}: при time_precision=date published_at должен быть null."
+                )
+            if candidate_date is not None and not (
+                date.fromisoformat(expected_start_date)
+                <= candidate_date
+                <= date.fromisoformat(expected_end_date)
+            ):
+                errors.append(f"{candidate_id}: published_date вне календарного окна.")
+        else:
+            errors.append(f"{candidate_id}: некорректный time_precision.")
+
+        for field in ("topic", "event_type"):
+            if not isinstance(candidate.get(field), str) or not candidate[field].strip():
+                errors.append(f"{candidate_id}: поле {field} должно быть непустым.")
+        keywords = candidate.get("keywords")
+        if not isinstance(keywords, list) or not keywords:
+            errors.append(f"{candidate_id}: keywords должен быть непустым массивом.")
 
         for source in candidate_sources(candidate):
             source_url = str(source.get("url", "")).strip()
@@ -1105,32 +1326,37 @@ def validate_research(
             )
 
     overloaded_publishers = [
-        name for name, count in publisher_counter.items() if count > 3
+        f"{name} ({count})"
+        for name, count in publisher_counter.items()
+        if count > 3
     ]
     if overloaded_publishers:
-        errors.append(
-            "Более трёх кандидатов от одного издателя: "
+        warnings.append(
+            "Исследовательский пул перегружен одним издателем: "
             + ", ".join(sorted(overloaded_publishers))
         )
 
     overloaded_organizations = [
-        name for name, count in organization_counter.items() if count > 2
+        f"{name} ({count})"
+        for name, count in organization_counter.items()
+        if count > 2
     ]
     if overloaded_organizations:
-        errors.append(
-            "Более двух кандидатов от одной организации: "
+        warnings.append(
+            "Исследовательский пул перегружен одной организацией: "
             + ", ".join(sorted(overloaded_organizations))
         )
 
     return errors, warnings
-
 
 def validate_digest(
     digest: dict[str, Any],
     publication_date: date,
     config: dict[str, Any],
     archive: dict[str, Any],
+    policy: dict[str, Any],
     allowed_sources: dict[str, dict[str, Any]],
+    allowed_archive_reuse: set[str],
 ) -> tuple[list[str], ArticleHTMLValidator]:
     errors: list[str] = []
     publication_date_text = publication_date.isoformat()
@@ -1219,11 +1445,21 @@ def validate_digest(
         )
 
     normalized_article_links: set[str] = set()
+    try:
+        dzen_url = normalize_url(str(policy["dzen"]["url"]))
+    except RuntimeError as exc:
+        errors.append(f"Некорректный URL Дзена в editorial.json: {exc}")
+        dzen_url = ""
+
     for href in html_validator.hrefs:
         try:
-            normalized_article_links.add(normalize_url(href))
+            normalized = normalize_url(href)
         except RuntimeError as exc:
             errors.append(f"Некорректная ссылка в article_html: {exc}")
+            continue
+        if normalized == dzen_url:
+            continue
+        normalized_article_links.add(normalized)
 
     sources = digest.get("sources")
     normalized_sources: set[str] = set()
@@ -1280,10 +1516,12 @@ def validate_digest(
             + ", ".join(sorted(unlisted_article_links))
         )
 
-    duplicates_from_archive = normalized_sources & archive_source_urls(archive)
+    duplicates_from_archive = (
+        normalized_sources & archive_source_urls(archive)
+    ) - allowed_archive_reuse
     if duplicates_from_archive:
         errors.append(
-            "Обнаружены URL, уже присутствующие в архиве: "
+            "Обнаружены URL, уже присутствующие в архиве без статуса update: "
             + ", ".join(sorted(duplicates_from_archive))
         )
 
@@ -1370,17 +1608,19 @@ def validate_editorial(
     publication_date: date,
     config: dict[str, Any],
     archive: dict[str, Any],
-    minimum_selected_stories: int,
+    policy: dict[str, Any],
+    target_selected_stories: int,
     maximum_selected_stories: int,
-) -> list[str]:
+) -> tuple[list[str], list[str], list[dict[str, Any]]]:
     errors: list[str] = []
+    warnings: list[str] = []
 
     if editorial.get("status") != "ok":
         errors.append(
             "Редакторский этап вернул status=error: "
             + str(editorial.get("error_message") or "причина не указана")
         )
-        return errors
+        return errors, warnings, []
 
     if editorial.get("error_message") is not None:
         errors.append("При editorial status=ok error_message должен быть null.")
@@ -1394,14 +1634,19 @@ def validate_editorial(
 
     selected = editorial.get("selected_candidate_ids")
     excluded = editorial.get("excluded_candidate_ids")
+    overrides = editorial.get("diversity_overrides")
 
     if not isinstance(selected, list):
         errors.append("selected_candidate_ids должен быть массивом.")
-        return errors
+        return errors, warnings, []
 
     if not isinstance(excluded, list):
         errors.append("excluded_candidate_ids должен быть массивом.")
         excluded = []
+
+    if not isinstance(overrides, list):
+        errors.append("diversity_overrides должен быть массивом.")
+        overrides = []
 
     if len(set(selected)) != len(selected):
         errors.append("selected_candidate_ids содержит дубли.")
@@ -1431,13 +1676,40 @@ def validate_editorial(
             + ", ".join(missing)
         )
 
-    if not minimum_selected_stories <= len(selected) <= maximum_selected_stories:
+    if len(selected) == 0:
+        errors.append("Редактор не выбрал ни одного достойного сюжета.")
+    elif len(selected) > maximum_selected_stories:
         errors.append(
-            f"Выбрано {len(selected)} сюжетов; требуется от "
-            f"{minimum_selected_stories} до {maximum_selected_stories}."
+            f"Выбрано {len(selected)} сюжетов; максимум {maximum_selected_stories}."
+        )
+    elif len(selected) < target_selected_stories:
+        warnings.append(
+            f"Выбрано {len(selected)} сюжетов при обычной цели "
+            f"{target_selected_stories}; формируется короткий выпуск."
         )
 
-    selected_candidates = [candidate_map[item] for item in selected if item in candidate_map]
+    selected_candidates = [
+        candidate_map[item] for item in selected if item in candidate_map
+    ]
+
+    digest_for_order = editorial.get("digest")
+    article_for_order = (
+        str(digest_for_order.get("article_html", ""))
+        if isinstance(digest_for_order, dict)
+        else ""
+    )
+    ordered_candidates, order_errors = order_candidates_by_article_links(
+        article_for_order,
+        selected_candidates,
+    )
+    errors.extend(order_errors)
+    if not order_errors:
+        ordered_ids = [str(item.get("id", "")) for item in ordered_candidates]
+        if ordered_ids != [str(item) for item in selected]:
+            errors.append(
+                "Порядок selected_candidate_ids не совпадает с порядком сюжетов "
+                "в article_html."
+            )
 
     for candidate in selected_candidates:
         if candidate.get("recommendation") == "exclude":
@@ -1445,40 +1717,26 @@ def validate_editorial(
                 f"Выбран кандидат {candidate.get('id')} с recommendation exclude."
             )
 
-    publisher_counter: Counter[str] = Counter()
-    organization_counter: Counter[str] = Counter()
-    selected_russian = 0
+    errors.extend(
+        validate_diversity_overrides(selected_candidates, overrides, policy)
+    )
 
-    for candidate in selected_candidates:
-        primary = candidate.get("primary_source")
-        if isinstance(primary, dict):
-            publisher = str(primary.get("publisher", "")).strip().casefold()
-            if publisher:
-                publisher_counter[publisher] += 1
-
-        organization = str(candidate.get("organization", "")).strip().casefold()
-        if organization:
-            organization_counter[organization] += 1
-
-        if candidate.get("geography") == "russia":
-            selected_russian += 1
-
-    overloaded_publishers = [
-        name for name, count in publisher_counter.items() if count > 2
-    ]
-    if overloaded_publishers:
-        errors.append(
-            "В выпуск выбрано более двух сюжетов одного издателя: "
-            + ", ".join(sorted(overloaded_publishers))
+    selected_world = sum(
+        1 for item in selected_candidates if item.get("geography") == "world"
+    )
+    selected_russian = sum(
+        1 for item in selected_candidates if item.get("geography") == "russia"
+    )
+    counts = policy["story_counts"]
+    if selected_world < int(counts["world_target_minimum"]):
+        warnings.append(
+            f"Мировых сюжетов {selected_world}, редакционная цель — "
+            f"{counts['world_target_minimum']}–{counts['world_target_maximum']}."
         )
-
-    overloaded_organizations = [
-        name for name, count in organization_counter.items() if count > 2
-    ]
-    if overloaded_organizations:
-        errors.append(
-            "В выпуск выбрано более двух сюжетов одной организации: "
-            + ", ".join(sorted(overloaded_organizations))
+    if selected_russian < int(counts["russian_target_minimum"]):
+        warnings.append(
+            f"Российских сюжетов {selected_russian}, редакционная цель — "
+            f"{counts['russian_target_minimum']}–{counts['russian_target_maximum']}."
         )
 
     worthy_russian = [
@@ -1496,6 +1754,7 @@ def validate_editorial(
         )
 
     allowed_sources: dict[str, dict[str, Any]] = {}
+    allowed_archive_reuse: set[str] = set()
     for candidate in selected_candidates:
         for source in candidate_sources(candidate):
             try:
@@ -1503,20 +1762,33 @@ def validate_editorial(
             except RuntimeError:
                 continue
             allowed_sources[normalized] = source
+            if candidate.get("archive_status") == "update":
+                allowed_archive_reuse.add(normalized)
 
     digest = editorial.get("digest")
     if not isinstance(digest, dict):
         errors.append("editorial.digest должен быть объектом.")
-        return errors
+        return errors, warnings, []
 
     digest_errors, html_validator = validate_digest(
         digest,
         publication_date,
         config,
         archive,
+        policy,
         allowed_sources,
+        allowed_archive_reuse,
     )
     errors.extend(digest_errors)
+
+    policy_errors, policy_warnings, _analysis = validate_article_policy(
+        str(digest.get("article_html", "")),
+        selected_candidates,
+        bool(digest.get("short_digest")),
+        policy,
+    )
+    errors.extend(policy_errors)
+    warnings.extend(policy_warnings)
 
     if len(html_validator.h3_texts) != len(selected):
         errors.append(
@@ -1530,8 +1802,12 @@ def validate_editorial(
             "«Российские лидеры ИИ»."
         )
 
-    return errors
-
+    stories = build_stories(
+        selected_candidates,
+        str(digest.get("article_html", "")),
+    )
+    errors.extend(validate_stories(stories, selected_candidates))
+    return errors, warnings, stories
 
 def build_candidate_source_map(research: dict[str, Any]) -> dict[str, dict[str, Any]]:
     result: dict[str, dict[str, Any]] = {}
@@ -1552,6 +1828,7 @@ def build_candidate_source_map(research: dict[str, Any]) -> dict[str, dict[str, 
 def write_digest_files(
     output_dir: Path,
     editorial: dict[str, Any],
+    stories: list[dict[str, Any]],
     run_info: dict[str, Any],
 ) -> None:
     digest = editorial["digest"]
@@ -1569,6 +1846,8 @@ def write_digest_files(
             "author",
             "cover_filename",
             "topics",
+            "short_digest",
+            "editorial_notes",
         )
     }
 
@@ -1578,6 +1857,7 @@ def write_digest_files(
         "selected_candidate_ids": editorial["selected_candidate_ids"],
         "excluded_candidate_ids": editorial["excluded_candidate_ids"],
         "selection_summary": editorial["selection_summary"],
+        "diversity_overrides": editorial["diversity_overrides"],
     }
 
     atomic_write(output_dir / "digest.json", pretty_json(digest))
@@ -1589,6 +1869,7 @@ def write_digest_files(
         digest["image_prompt"].strip() + "\n",
     )
     atomic_write(output_dir / "sources.json", pretty_json(digest["sources"]))
+    atomic_write(output_dir / "stories.json", pretty_json(stories))
     atomic_write(output_dir / "run-info.json", pretty_json(run_info))
 
 
@@ -1668,6 +1949,7 @@ def main() -> int:
             "editorial_sha256": None,
             "digest_sha256": None,
             "metadata_normalization": None,
+            "policy_normalization": None,
             "settings": {
                 "max_retries": 0,
                 "reasoning_effort": "medium",
@@ -1690,6 +1972,7 @@ def main() -> int:
             raise RuntimeError("OPENAI_TEXT_MODEL не должен быть пустым.")
 
         config = read_json(CONFIG_PATH)
+        policy = read_policy(EDITORIAL_CONFIG_PATH)
         archive = read_json(ARCHIVE_PATH)
         research_template = read_text(RESEARCH_PROMPT_PATH)
         editorial_template = read_text(EDITORIAL_PROMPT_PATH)
@@ -1701,6 +1984,10 @@ def main() -> int:
 
         run_info["archive_items"] = len(archive["items"])
         archive_context = pretty_json(archive).strip()
+        policy_context = pretty_json(policy).strip()
+        search_start_at, search_end_at = expected_search_window(
+            publication_date, archive, config
+        )
 
         research_prompt = build_prompt(
             research_template,
@@ -1715,6 +2002,13 @@ def main() -> int:
                 "MINIMUM_SELECTED_STORIES": str(
                     args.minimum_selected_stories
                 ),
+                "SEARCH_WINDOW_START_AT": search_start_at.isoformat(
+                    timespec="seconds"
+                ),
+                "SEARCH_WINDOW_END_AT": search_end_at.isoformat(
+                    timespec="seconds"
+                ),
+                "EDITORIAL_POLICY_CONTEXT": policy_context,
             },
         )
 
@@ -1815,6 +2109,7 @@ def main() -> int:
                 research_raw,
                 publication_date,
                 archive,
+                config,
             )
         )
 
@@ -1828,6 +2123,7 @@ def main() -> int:
             research,
             publication_date,
             archive,
+            config,
             args.minimum_candidates,
             args.minimum_russian_candidates,
             args.maximum_candidates,
@@ -1860,6 +2156,7 @@ def main() -> int:
                 "CANDIDATES_CONTEXT": candidates_serialized.strip(),
                 "MINIMUM_SELECTED_STORIES": str(args.minimum_selected_stories),
                 "MAXIMUM_SELECTED_STORIES": str(args.maximum_selected_stories),
+                "EDITORIAL_POLICY_CONTEXT": policy_context,
             },
         )
 
@@ -1898,32 +2195,114 @@ def main() -> int:
             publication_date,
             config,
         )
+
+        editorial.setdefault("diversity_overrides", [])
+        digest = editorial.get("digest")
+        if not isinstance(digest, dict):
+            raise RuntimeError("editorial.digest должен быть объектом.")
+
+        candidate_map = {
+            str(candidate.get("id")): candidate
+            for candidate in research.get("candidates", [])
+            if isinstance(candidate, dict)
+        }
+        selected_candidates = [
+            candidate_map[candidate_id]
+            for candidate_id in editorial.get("selected_candidate_ids", [])
+            if candidate_id in candidate_map
+        ]
+
+        ordered_candidates, order_errors = order_candidates_by_article_links(
+            str(digest.get("article_html", "")),
+            selected_candidates,
+        )
+        if order_errors:
+            raise RuntimeError(
+                "Не удалось сопоставить сюжеты статьи с кандидатами:\n- "
+                + "\n- ".join(order_errors)
+            )
+
+        original_selected_ids = [
+            str(item) for item in editorial.get("selected_candidate_ids", [])
+        ]
+        ordered_selected_ids = [
+            str(item.get("id", "")) for item in ordered_candidates
+        ]
+        selected_candidates = ordered_candidates
+        editorial["selected_candidate_ids"] = ordered_selected_ids
+
+        normalized_html, short_digest, policy_changes = normalize_article_html(
+            str(digest.get("article_html", "")),
+            selected_candidates,
+            policy,
+        )
+        if original_selected_ids != ordered_selected_ids:
+            policy_changes.insert(
+                0,
+                {
+                    "field": "selected_candidate_ids",
+                    "model_value": original_selected_ids,
+                    "normalized_value": ordered_selected_ids,
+                },
+            )
+        digest["article_html"] = normalized_html
+        digest["short_digest"] = short_digest
+        digest["editorial_notes"] = build_editorial_notes(
+            research,
+            selected_candidates,
+            policy,
+        )
+
+        for override in editorial.get("diversity_overrides", []):
+            if not isinstance(override, dict):
+                continue
+            digest["editorial_notes"].append(
+                {
+                    "type": "diversity_override",
+                    "area": str(override.get("type", "diversity")),
+                    "message": (
+                        f"{override.get('value')}: {override.get('reason')}"
+                    ),
+                }
+            )
+
         run_info["editorial"]["metadata_normalization"] = {
             "status": "applied",
             "changed_fields": metadata_changes,
             "changed_count": len(metadata_changes),
         }
+        run_info["editorial"]["policy_normalization"] = {
+            "status": "applied",
+            "changed_fields": policy_changes,
+            "changed_count": len(policy_changes),
+            "short_digest": short_digest,
+            "editorial_notes": digest["editorial_notes"],
+        }
 
         atomic_write(
             output_dir / "metadata-normalization.json",
-            pretty_json(
-                run_info["editorial"]["metadata_normalization"]
-            ),
+            pretty_json(run_info["editorial"]["metadata_normalization"]),
+        )
+        atomic_write(
+            output_dir / "policy-normalization.json",
+            pretty_json(run_info["editorial"]["policy_normalization"]),
         )
         atomic_write(
             output_dir / "editorial-output.json",
             pretty_json(editorial),
         )
 
-        editorial_errors = validate_editorial(
+        editorial_errors, editorial_warnings, stories = validate_editorial(
             editorial,
             research,
             publication_date,
             config,
             archive,
+            policy,
             args.minimum_selected_stories,
             args.maximum_selected_stories,
         )
+        run_info["warnings"].extend(editorial_warnings)
         if editorial_errors:
             raise RuntimeError(
                 "Проверка editorial завершилась ошибками:\n- "
@@ -1962,7 +2341,7 @@ def main() -> int:
             timespec="seconds"
         )
 
-        write_digest_files(output_dir, editorial, run_info)
+        write_digest_files(output_dir, editorial, stories, run_info)
 
         print(f"Preview создан: {output_dir.relative_to(REPOSITORY_ROOT)}")
         print(f"Кандидатов: {len(research['candidates'])}")

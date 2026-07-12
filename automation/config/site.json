@@ -11,6 +11,8 @@
   "preview_posts_directory": "automation/preview/posts",
   "content_directory": "automation/content",
   "archive_file": "automation/archive/index.json",
+  "editorial_config_file": "automation/config/editorial.json",
+  "stories_filename": "stories.json",
   "image_width_minimum": 700,
   "image_filename_template": "ai-svodka-{date}.png"
 }

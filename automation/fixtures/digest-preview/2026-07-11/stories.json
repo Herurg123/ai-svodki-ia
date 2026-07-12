@@ -1,0 +1,54 @@
+[
+  {
+    "candidate_id": "fixture-world-001",
+    "section": "world",
+    "headline": "Тестовый мировой сюжет проходит через сборщик",
+    "organization": "Example World",
+    "topic": "site_build",
+    "event_type": "fixture",
+    "status": "new",
+    "summary": "Техническая проверка мирового раздела.",
+    "published_at": "2026-07-10T12:00:00+03:00",
+    "published_date": "2026-07-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Тестовый мировой источник",
+        "publisher": "Example World",
+        "url": "https://example.com/ai-world-fixture"
+      }
+    ],
+    "keywords": [
+      "fixture",
+      "world"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "fixture-russia-001",
+    "section": "russia",
+    "headline": "Тестовый российский сюжет проверяет второй раздел",
+    "organization": "Example Russia",
+    "topic": "site_validation",
+    "event_type": "fixture",
+    "status": "new",
+    "summary": "Техническая проверка российского раздела.",
+    "published_at": "2026-07-10T13:00:00+03:00",
+    "published_date": "2026-07-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Тестовый российский источник",
+        "publisher": "Example Russia",
+        "url": "https://example.org/ai-russia-fixture"
+      }
+    ],
+    "keywords": [
+      "fixture",
+      "russia"
+    ],
+    "geography": "russia",
+    "category": "other"
+  }
+]
