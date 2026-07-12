@@ -1,0 +1,114 @@
+name: Image preview infrastructure check
+run-name: Image preview infrastructure ${{ github.sha }}
+
+on:
+  push:
+    branches:
+      - automation-prep
+    paths:
+      - "automation/fixtures/editorial/**"
+      - "automation/scripts/generate_image_preview.py"
+      - "automation/scripts/validate_image_request_preflight.py"
+      - "automation/tests/test_image_preview.py"
+      - "automation/specs/image-api-preview.md"
+      - ".github/workflows/image-preview-infrastructure-check.yml"
+      - ".github/workflows/generate-image-preview.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: image-preview-infrastructure-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate Image API infrastructure offline
+    if: github.ref == 'refs/heads/automation-prep'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out automation-prep
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Compile image preview code
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            automation/scripts/generate_image_preview.py \
+            automation/scripts/validate_image_request_preflight.py \
+            automation/tests/test_image_preview.py
+
+      - name: Run image preview unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest -v automation.tests.test_image_preview
+
+      - name: Validate saved editorial image source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p automation/preview/image-infrastructure
+          python automation/scripts/validate_image_request_preflight.py \
+            --source-only automation/fixtures/editorial/2026-07-11 \
+            --report automation/preview/image-infrastructure/source-preflight.json
+
+      - name: Revalidate complete editorial artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_digest_artifact.py \
+            --artifact-dir automation/fixtures/editorial/2026-07-11 \
+            --report automation/preview/image-infrastructure/editorial-artifact-validation.json
+
+      - name: Verify protected paths stayed unchanged
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          protected=(
+            posts/
+            automation/requests/digest-preview.json
+            automation/requests/image-preview.json
+          )
+          if [[ -n "$(git status --porcelain -- "${protected[@]}")" ]]; then
+            echo "Offline image infrastructure modified a protected path." >&2
+            git status --short -- "${protected[@]}"
+            exit 1
+          fi
+          echo "Production and paid request paths are unchanged."
+
+      - name: Write job summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Image preview infrastructure"
+            echo
+            echo "- OpenAI API: not used"
+            echo "- Image request file: not included"
+            echo "- Editorial source: editorial-resume-004"
+            echo "- Source hashes: checked"
+            echo "- Automatic retries in paid script: zero"
+            echo "- Production paths changed: no"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload infrastructure validation artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: image-preview-infrastructure-${{ github.sha }}
+          path: automation/preview/image-infrastructure/
+          if-no-files-found: warn
+          retention-days: 7
