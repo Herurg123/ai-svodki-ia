@@ -1,24 +1,24 @@
-name: Generate digest preview
-run-name: Digest preview ${{ inputs.publication_date }}
+name: Generate real digest preview
+
+run-name: Real digest preview ${{ github.sha }}
 
 on:
-  workflow_dispatch:
-    inputs:
-      publication_date:
-        description: "Дата выпуска в формате YYYY-MM-DD"
-        required: true
-        type: string
+  push:
+    branches:
+      - automation-prep
+    paths:
+      - "automation/requests/digest-preview.json"
 
 permissions:
   contents: read
 
 concurrency:
-  group: digest-preview-${{ github.ref }}-${{ inputs.publication_date }}
+  group: real-digest-preview-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   generate-preview:
-    name: Generate safe digest preview
+    name: Generate isolated digest with web search
     if: github.ref == 'refs/heads/automation-prep'
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -33,13 +33,15 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
+          fetch-depth: 2
 
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
-      - name: Validate safe execution context
+      - name: Validate request and safe execution context
+        id: request
         shell: bash
         run: |
           set -euo pipefail
@@ -54,24 +56,82 @@ jobs:
             exit 1
           fi
 
+          if [[ -z "${OPENAI_TEXT_MODEL:-}" ]]; then
+            echo "Repository Variable OPENAI_TEXT_MODEL не должна быть пустой." >&2
+            exit 1
+          fi
+
           python - <<'PY'
-          from datetime import date
+          from __future__ import annotations
+
+          import json
           import os
+          import re
+          from datetime import date
+          from pathlib import Path
 
-          value = os.environ["PUBLICATION_DATE"]
-          parsed = date.fromisoformat(value)
-          if parsed.isoformat() != value:
-              raise SystemExit("publication_date должна иметь строгий формат YYYY-MM-DD")
-          print(f"Дата preview: {value}")
+          request_path = Path("automation/requests/digest-preview.json")
+          request = json.loads(request_path.read_text(encoding="utf-8"))
+
+          expected_keys = {"enabled", "publication_date", "request_id"}
+          actual_keys = set(request)
+
+          if actual_keys != expected_keys:
+              missing = sorted(expected_keys - actual_keys)
+              extra = sorted(actual_keys - expected_keys)
+              raise SystemExit(
+                  "digest-preview.json имеет неверный набор полей. "
+                  f"Отсутствуют: {missing}; лишние: {extra}"
+              )
+
+          if request["enabled"] is not True:
+              raise SystemExit("digest-preview.json: enabled должен быть true")
+
+          publication_date = str(request["publication_date"])
+          parsed = date.fromisoformat(publication_date)
+          if parsed.isoformat() != publication_date:
+              raise SystemExit(
+                  "publication_date должна иметь строгий формат YYYY-MM-DD"
+              )
+
+          request_id = str(request["request_id"])
+          if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,79}", request_id):
+              raise SystemExit(
+                  "request_id должен содержать только латинские буквы, "
+                  "цифры, точку, дефис или подчёркивание"
+              )
+
+          output = Path(os.environ["GITHUB_OUTPUT"])
+          with output.open("a", encoding="utf-8") as stream:
+              stream.write(f"publication_date={publication_date}\n")
+              stream.write(f"request_id={request_id}\n")
+
+          print(f"Дата выпуска: {publication_date}")
+          print(f"Request ID: {request_id}")
           PY
-        env:
-          PUBLICATION_DATE: ${{ inputs.publication_date }}
 
-      - name: Install OpenAI SDK
+      - name: Verify triggering commit did not change live posts
+        shell: bash
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+
+          changed_files="$(git diff --name-only "${BEFORE_SHA}" "${GITHUB_SHA}")"
+          printf '%s\n' "${changed_files}"
+
+          if grep -q '^posts/' <<<"${changed_files}"; then
+            echo "Запускающий commit изменяет posts/. Выполнение остановлено." >&2
+            exit 1
+          fi
+
+      - name: Install pinned OpenAI SDK
         shell: bash
         run: |
           set -euo pipefail
-          python -m pip install --disable-pip-version-check "openai==2.45.0"
+          python -m pip install \
+            --disable-pip-version-check \
+            "openai==2.45.0"
 
       - name: Check Python syntax
         shell: bash
@@ -94,31 +154,82 @@ jobs:
           set -euo pipefail
           python automation/scripts/validate_archive.py
 
-      - name: Generate digest preview
+      - name: Generate one real digest preview
         shell: bash
+        env:
+          PUBLICATION_DATE: ${{ steps.request.outputs.publication_date }}
+          DIGEST_REQUEST_ID: ${{ steps.request.outputs.request_id }}
         run: |
           set -euo pipefail
           python automation/scripts/generate_digest_preview.py \
             --publication-date "${PUBLICATION_DATE}"
-        env:
-          PUBLICATION_DATE: ${{ inputs.publication_date }}
 
-      - name: Verify that posts were not changed
+      - name: Write run summary
+        if: always()
+        shell: bash
+        env:
+          PUBLICATION_DATE: ${{ steps.request.outputs.publication_date }}
+        run: |
+          set -euo pipefail
+
+          python - <<'PY'
+          from __future__ import annotations
+
+          import json
+          import os
+          from pathlib import Path
+
+          date_value = os.environ.get("PUBLICATION_DATE", "")
+          run_info_path = Path("automation/preview") / date_value / "run-info.json"
+          summary_path = Path(os.environ["GITHUB_STEP_SUMMARY"])
+
+          lines = ["# Результат текстового preview", ""]
+
+          if not run_info_path.exists():
+              lines.append("`run-info.json` не создан.")
+          else:
+              data = json.loads(run_info_path.read_text(encoding="utf-8"))
+              lines.extend(
+                  [
+                      f"- Статус: `{data.get('status')}`",
+                      f"- Request ID: `{data.get('request_id')}`",
+                      f"- Модель: `{data.get('model_returned') or data.get('model_requested')}`",
+                      f"- Вызовов web search: `{data.get('web_search_calls')}`",
+                      f"- Ошибка: `{data.get('error')}`",
+                  ]
+              )
+
+              usage = data.get("usage")
+              if usage is not None:
+                  lines.extend(["", "## Usage", "", "```json"])
+                  lines.append(json.dumps(usage, ensure_ascii=False, indent=2))
+                  lines.append("```")
+
+          summary_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+          PY
+
+      - name: Verify that live posts were not changed
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
 
           if [[ -n "$(git status --porcelain -- posts/)" ]]; then
-            echo "Защитная проверка: workflow изменил posts/. Выполнение остановлено." >&2
+            echo "Защитная проверка: workflow изменил posts/." >&2
             git status --short -- posts/
             exit 1
           fi
+
+          echo "Рабочий каталог posts/ не изменён."
 
       - name: Upload digest preview artifact
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: digest-preview-${{ inputs.publication_date }}
-          path: automation/preview/${{ inputs.publication_date }}/
+          name: digest-preview-${{ steps.request.outputs.publication_date }}-${{ steps.request.outputs.request_id }}-${{ github.sha }}
+          path: |
+            automation/requests/digest-preview.json
+            automation/archive/index.json
+            automation/preview/${{ steps.request.outputs.publication_date }}/
           if-no-files-found: warn
           retention-days: 7
