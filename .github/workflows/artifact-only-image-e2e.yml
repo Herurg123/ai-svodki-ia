@@ -1,0 +1,156 @@
+name: Artifact-only image end-to-end
+run-name: Artifact-only image E2E ${{ github.sha }}
+
+on:
+  push:
+    branches:
+      - automation-prep
+    paths:
+      - "automation/config/image.json"
+      - "automation/config/site.json"
+      - "automation/config/editorial.json"
+      - "automation/fixtures/digest-preview/**"
+      - "automation/scripts/editorial_policy.py"
+      - "automation/scripts/materialize_fixture_preview.py"
+      - "automation/scripts/materialize_cover_fixture.py"
+      - "automation/scripts/validate_cover_contract.py"
+      - "automation/scripts/build_site.py"
+      - "automation/scripts/validate_site.py"
+      - "automation/scripts/validate_dzen_feed.py"
+      - "posts/**"
+      - ".github/workflows/artifact-only-image-e2e.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: artifact-only-image-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: Digest fixture to cover, site and RSS
+    if: github.ref == 'refs/heads/automation-prep'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out automation-prep
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Validate safe execution context
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "${GITHUB_REF}" == "refs/heads/automation-prep" ]]
+          if [[ -n "$(git status --porcelain -- posts/ automation/requests/digest-preview.json)" ]]; then
+            echo "Защищённые пути уже изменены до начала E2E." >&2
+            git status --short -- posts/ automation/requests/digest-preview.json
+            exit 1
+          fi
+
+      - name: Check Python syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            automation/scripts/editorial_policy.py \
+            automation/scripts/materialize_fixture_preview.py \
+            automation/scripts/materialize_cover_fixture.py \
+            automation/scripts/validate_cover_contract.py \
+            automation/scripts/build_site.py \
+            automation/scripts/validate_site.py \
+            automation/scripts/validate_dzen_feed.py
+
+      - name: Materialize editorial fixture artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/materialize_fixture_preview.py \
+            --fixture automation/fixtures/digest-preview/2026-07-11/digest.json \
+            --output-dir automation/preview/artifact-e2e/2026-07-11
+
+      - name: Materialize offline image stage
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/materialize_cover_fixture.py \
+            --artifact-dir automation/preview/artifact-e2e/2026-07-11
+
+      - name: Validate image stage
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_cover_contract.py \
+            --artifact-dir automation/preview/artifact-e2e/2026-07-11
+
+      - name: Build isolated site and RSS
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/build_site.py \
+            --source-dir automation/preview/artifact-e2e/2026-07-11 \
+            --output-dir automation/preview/artifact-e2e/posts \
+            --build-info automation/preview/artifact-e2e/build-info.json
+
+      - name: Validate built site
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_site.py \
+            --source-dir automation/preview/artifact-e2e/2026-07-11 \
+            --site-dir automation/preview/artifact-e2e/posts \
+            --report automation/preview/artifact-e2e/site-validation.json
+
+      - name: Validate built RSS against Dzen contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_dzen_feed.py \
+            --rss automation/preview/artifact-e2e/posts/rss.xml \
+            --report automation/preview/artifact-e2e/dzen-feed-validation.json
+
+      - name: Verify protected paths stayed unchanged
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "$(git status --porcelain -- posts/ automation/requests/digest-preview.json)" ]]; then
+            echo "Защитная проверка: E2E изменил production или paid request." >&2
+            git status --short -- posts/ automation/requests/digest-preview.json
+            exit 1
+          fi
+          echo "posts/ и paid request не изменены."
+
+      - name: Write job summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Artifact-only image E2E"
+            echo
+            echo "- Editorial source: checked fixture"
+            echo "- Image source: deterministic offline fixture"
+            echo "- OpenAI API: not used"
+            echo "- FTP: not used"
+            echo "- Output: artifact only"
+            echo "- Visual semantics validated: false"
+            echo "- Production paths changed: no"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload complete artifact-only E2E
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: artifact-only-image-e2e-${{ github.sha }}
+          path: automation/preview/artifact-e2e/
+          if-no-files-found: warn
+          retention-days: 7
