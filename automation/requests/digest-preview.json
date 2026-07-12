@@ -1,5 +1,10 @@
 {
   "enabled": true,
-  "publication_date": "2026-07-12",
-  "request_id": "digest-preview-001"
+  "publication_date": "2026-07-11",
+  "request_id": "two-stage-preview-001",
+  "minimum_candidates": 12,
+  "minimum_russian_candidates": 2,
+  "maximum_candidates": 20,
+  "minimum_selected_stories": 6,
+  "maximum_selected_stories": 12
 }
