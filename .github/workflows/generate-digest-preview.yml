@@ -1,6 +1,6 @@
-name: Generate real digest preview
+name: Generate two-stage digest preview
 
-run-name: Real digest preview ${{ github.sha }}
+run-name: Two-stage digest preview ${{ github.sha }}
 
 on:
   push:
@@ -13,15 +13,15 @@ permissions:
   contents: read
 
 concurrency:
-  group: real-digest-preview-${{ github.ref }}
+  group: two-stage-digest-preview-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   generate-preview:
-    name: Generate isolated digest with web search
+    name: Research candidates and build editorial digest
     if: github.ref == 'refs/heads/automation-prep'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -73,7 +73,16 @@ jobs:
           request_path = Path("automation/requests/digest-preview.json")
           request = json.loads(request_path.read_text(encoding="utf-8"))
 
-          expected_keys = {"enabled", "publication_date", "request_id"}
+          expected_keys = {
+              "enabled",
+              "publication_date",
+              "request_id",
+              "minimum_candidates",
+              "minimum_russian_candidates",
+              "maximum_candidates",
+              "minimum_selected_stories",
+              "maximum_selected_stories",
+          }
           actual_keys = set(request)
 
           if actual_keys != expected_keys:
@@ -101,13 +110,62 @@ jobs:
                   "цифры, точку, дефис или подчёркивание"
               )
 
+          numeric_fields = {
+              key: request[key]
+              for key in (
+                  "minimum_candidates",
+                  "minimum_russian_candidates",
+                  "maximum_candidates",
+                  "minimum_selected_stories",
+                  "maximum_selected_stories",
+              )
+          }
+
+          for key, value in numeric_fields.items():
+              if isinstance(value, bool) or not isinstance(value, int):
+                  raise SystemExit(f"{key} должен быть целым числом")
+
+          if not (
+              1
+              <= request["minimum_candidates"]
+              <= request["maximum_candidates"]
+              <= 24
+          ):
+              raise SystemExit(
+                  "Требуется 1 <= minimum_candidates "
+                  "<= maximum_candidates <= 24"
+              )
+
+          if not (
+              0
+              <= request["minimum_russian_candidates"]
+              <= request["maximum_candidates"]
+          ):
+              raise SystemExit(
+                  "minimum_russian_candidates имеет недопустимое значение"
+              )
+
+          if not (
+              1
+              <= request["minimum_selected_stories"]
+              <= request["maximum_selected_stories"]
+              <= 15
+          ):
+              raise SystemExit(
+                  "Требуется 1 <= minimum_selected_stories "
+                  "<= maximum_selected_stories <= 15"
+              )
+
           output = Path(os.environ["GITHUB_OUTPUT"])
           with output.open("a", encoding="utf-8") as stream:
               stream.write(f"publication_date={publication_date}\n")
               stream.write(f"request_id={request_id}\n")
+              for key, value in numeric_fields.items():
+                  stream.write(f"{key}={value}\n")
 
           print(f"Дата выпуска: {publication_date}")
           print(f"Request ID: {request_id}")
+          print(json.dumps(numeric_fields, ensure_ascii=False, indent=2))
           PY
 
       - name: Verify triggering commit did not change live posts
@@ -154,15 +212,25 @@ jobs:
           set -euo pipefail
           python automation/scripts/validate_archive.py
 
-      - name: Generate one real digest preview
+      - name: Run research and editorial stages
         shell: bash
         env:
           PUBLICATION_DATE: ${{ steps.request.outputs.publication_date }}
           DIGEST_REQUEST_ID: ${{ steps.request.outputs.request_id }}
+          MINIMUM_CANDIDATES: ${{ steps.request.outputs.minimum_candidates }}
+          MINIMUM_RUSSIAN_CANDIDATES: ${{ steps.request.outputs.minimum_russian_candidates }}
+          MAXIMUM_CANDIDATES: ${{ steps.request.outputs.maximum_candidates }}
+          MINIMUM_SELECTED_STORIES: ${{ steps.request.outputs.minimum_selected_stories }}
+          MAXIMUM_SELECTED_STORIES: ${{ steps.request.outputs.maximum_selected_stories }}
         run: |
           set -euo pipefail
           python automation/scripts/generate_digest_preview.py \
-            --publication-date "${PUBLICATION_DATE}"
+            --publication-date "${PUBLICATION_DATE}" \
+            --minimum-candidates "${MINIMUM_CANDIDATES}" \
+            --minimum-russian-candidates "${MINIMUM_RUSSIAN_CANDIDATES}" \
+            --maximum-candidates "${MAXIMUM_CANDIDATES}" \
+            --minimum-selected-stories "${MINIMUM_SELECTED_STORIES}" \
+            --maximum-selected-stories "${MAXIMUM_SELECTED_STORIES}"
 
       - name: Write run summary
         if: always()
@@ -180,10 +248,13 @@ jobs:
           from pathlib import Path
 
           date_value = os.environ.get("PUBLICATION_DATE", "")
-          run_info_path = Path("automation/preview") / date_value / "run-info.json"
+          preview_dir = Path("automation/preview") / date_value
+          run_info_path = preview_dir / "run-info.json"
+          candidates_path = preview_dir / "candidates.json"
+          selection_path = preview_dir / "selection.json"
           summary_path = Path(os.environ["GITHUB_STEP_SUMMARY"])
 
-          lines = ["# Результат текстового preview", ""]
+          lines = ["# Результат двухэтапного preview", ""]
 
           if not run_info_path.exists():
               lines.append("`run-info.json` не создан.")
@@ -192,18 +263,83 @@ jobs:
               lines.extend(
                   [
                       f"- Статус: `{data.get('status')}`",
+                      f"- Pipeline: `{data.get('pipeline')}`",
                       f"- Request ID: `{data.get('request_id')}`",
-                      f"- Модель: `{data.get('model_returned') or data.get('model_requested')}`",
-                      f"- Вызовов web search: `{data.get('web_search_calls')}`",
+                      f"- Модель: `{data.get('model_requested')}`",
                       f"- Ошибка: `{data.get('error')}`",
                   ]
               )
 
-              usage = data.get("usage")
-              if usage is not None:
-                  lines.extend(["", "## Usage", "", "```json"])
-                  lines.append(json.dumps(usage, ensure_ascii=False, indent=2))
-                  lines.append("```")
+              research = data.get("research") or {}
+              editorial = data.get("editorial") or {}
+              research_response = research.get("response") or {}
+              editorial_response = editorial.get("response") or {}
+
+              lines.extend(
+                  [
+                      "",
+                      "## Этапы",
+                      "",
+                      f"- Research: `{research.get('status')}`",
+                      f"- Web search calls: `{research_response.get('web_search_calls')}`",
+                      f"- Editorial: `{editorial.get('status')}`",
+                  ]
+              )
+
+              if candidates_path.exists():
+                  candidates = json.loads(
+                      candidates_path.read_text(encoding="utf-8")
+                  ).get("candidates", [])
+                  russian = sum(
+                      1
+                      for item in candidates
+                      if item.get("geography") == "russia"
+                  )
+                  lines.extend(
+                      [
+                          f"- Кандидатов: `{len(candidates)}`",
+                          f"- Российских кандидатов: `{russian}`",
+                      ]
+                  )
+
+              if selection_path.exists():
+                  selection = json.loads(
+                      selection_path.read_text(encoding="utf-8")
+                  )
+                  lines.append(
+                      "- Выбрано сюжетов: "
+                      f"`{len(selection.get('selected_candidate_ids', []))}`"
+                  )
+
+              lines.extend(["", "## Total usage", "", "```json"])
+              lines.append(
+                  json.dumps(
+                      data.get("total_usage"),
+                      ensure_ascii=False,
+                      indent=2,
+                  )
+              )
+              lines.append("```")
+
+              lines.extend(["", "## Research usage", "", "```json"])
+              lines.append(
+                  json.dumps(
+                      research_response.get("usage"),
+                      ensure_ascii=False,
+                      indent=2,
+                  )
+              )
+              lines.append("```")
+
+              lines.extend(["", "## Editorial usage", "", "```json"])
+              lines.append(
+                  json.dumps(
+                      editorial_response.get("usage"),
+                      ensure_ascii=False,
+                      indent=2,
+                  )
+              )
+              lines.append("```")
 
           summary_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
           PY
@@ -222,11 +358,11 @@ jobs:
 
           echo "Рабочий каталог posts/ не изменён."
 
-      - name: Upload digest preview artifact
+      - name: Upload two-stage preview artifact
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: digest-preview-${{ steps.request.outputs.publication_date }}-${{ steps.request.outputs.request_id }}-${{ github.sha }}
+          name: two-stage-digest-${{ steps.request.outputs.publication_date }}-${{ steps.request.outputs.request_id }}-${{ github.sha }}
           path: |
             automation/requests/digest-preview.json
             automation/archive/index.json
