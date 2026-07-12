@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -9,7 +10,7 @@ import shutil
 import sys
 from collections import Counter
 from collections.abc import Iterable
-from datetime import date, datetime, time, timezone
+from datetime import date, datetime, time, timedelta, timezone
 from html.parser import HTMLParser
 from importlib.metadata import PackageNotFoundError, version as package_version
 from pathlib import Path
@@ -486,6 +487,15 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=DEFAULT_MAXIMUM_SELECTED_STORIES,
     )
+    parser.add_argument(
+        "--research-input",
+        default=None,
+        help=(
+            "Необязательный путь к сохранённому candidates.json. "
+            "Если задан, web search пропускается и выполняется только "
+            "редакторский этап."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -800,15 +810,131 @@ def candidate_sources(candidate: dict[str, Any]) -> list[dict[str, Any]]:
     return result
 
 
+
+def expected_search_window(
+    publication_date: date,
+    archive: dict[str, Any],
+) -> tuple[date, date]:
+    latest = latest_archive_date(archive)
+    if latest is None:
+        return publication_date - timedelta(days=1), publication_date
+
+    latest_date = date.fromisoformat(latest)
+    return min(latest_date, publication_date), publication_date
+
+
+def resolve_research_input(value: str | None) -> Path | None:
+    if value is None or not value.strip():
+        return None
+
+    candidate = (REPOSITORY_ROOT / value).resolve()
+    allowed_root = (REPOSITORY_ROOT / "automation/fixtures/research").resolve()
+
+    try:
+        candidate.relative_to(allowed_root)
+    except ValueError as exc:
+        raise RuntimeError(
+            "research_input должен находиться внутри automation/fixtures/research/."
+        ) from exc
+
+    if not candidate.is_file():
+        raise RuntimeError(
+            f"Не найден research_input: {candidate.relative_to(REPOSITORY_ROOT)}"
+        )
+
+    return candidate
+
+
+def russian_gap_documented(research: dict[str, Any]) -> bool:
+    coverage = research.get("coverage")
+    if not isinstance(coverage, list):
+        return False
+
+    for item in coverage:
+        if not isinstance(item, dict):
+            continue
+        area = str(item.get("area", "")).casefold()
+        status = str(item.get("status", "")).casefold()
+        notes = str(item.get("notes", "")).strip()
+        if "россий" in area and status == "gap" and notes:
+            return True
+
+    return False
+
+
+def sanitize_research_candidates(
+    research: dict[str, Any],
+    publication_date: date,
+    archive: dict[str, Any],
+) -> tuple[dict[str, Any], list[dict[str, Any]], list[str]]:
+    sanitized = copy.deepcopy(research)
+    candidates = sanitized.get("candidates")
+
+    if not isinstance(candidates, list):
+        return sanitized, [], []
+
+    start_date, end_date = expected_search_window(publication_date, archive)
+    kept: list[dict[str, Any]] = []
+    filtered: list[dict[str, Any]] = []
+    warnings: list[str] = []
+
+    for candidate in candidates:
+        if not isinstance(candidate, dict):
+            kept.append(candidate)
+            continue
+
+        candidate_id = str(candidate.get("id", "unknown"))
+        raw_date = str(candidate.get("published_date", ""))
+
+        try:
+            candidate_date = date.fromisoformat(raw_date)
+        except ValueError:
+            kept.append(candidate)
+            continue
+
+        if not start_date <= candidate_date <= end_date:
+            filtered.append(
+                {
+                    "id": candidate_id,
+                    "title": candidate.get("title"),
+                    "published_date": raw_date,
+                    "reason": (
+                        "Дата вне редакционного окна "
+                        f"{start_date.isoformat()}..{end_date.isoformat()}."
+                    ),
+                }
+            )
+            continue
+
+        kept.append(candidate)
+
+    sanitized["candidates"] = kept
+
+    if filtered:
+        warnings.append(
+            f"Отфильтровано кандидатов вне временного окна: {len(filtered)}."
+        )
+
+    sanitized["search_window"] = {
+        "start_date": start_date.isoformat(),
+        "end_date": end_date.isoformat(),
+        "latest_archive_date": latest_archive_date(archive),
+    }
+
+    return sanitized, filtered, warnings
+
+
 def validate_research(
     research: dict[str, Any],
     publication_date: date,
     archive: dict[str, Any],
-    minimum_candidates: int,
-    minimum_russian_candidates: int,
+    target_candidates: int,
+    target_russian_candidates: int,
     maximum_candidates: int,
-) -> list[str]:
+    minimum_selected_stories: int,
+) -> tuple[list[str], list[str]]:
     errors: list[str] = []
+    warnings: list[str] = []
     publication_date_text = publication_date.isoformat()
 
     if research.get("status") != "ok":
@@ -817,7 +943,7 @@ def validate_research(
             "Исследовательский этап вернул status=error: "
             + (error_message or "причина не указана")
         )
-        return errors
+        return errors, warnings
 
     if research.get("error_message") is not None:
         errors.append("При research status=ok поле error_message должно быть null.")
@@ -825,11 +951,22 @@ def validate_research(
     if research.get("publication_date") != publication_date_text:
         errors.append("Research publication_date не совпадает с датой запуска.")
 
+    expected_start, expected_end = expected_search_window(
+        publication_date,
+        archive,
+    )
     search_window = research.get("search_window")
+
     if not isinstance(search_window, dict):
         errors.append("search_window должен быть объектом.")
     else:
-        if search_window.get("end_date") != publication_date_text:
+        if search_window.get("start_date") != expected_start.isoformat():
+            errors.append(
+                "search_window.start_date не совпадает с редакционным окном: "
+                f"ожидалось {expected_start.isoformat()!r}."
+            )
+
+        if search_window.get("end_date") != expected_end.isoformat():
             errors.append("search_window.end_date не совпадает с датой выпуска.")
 
         expected_latest = latest_archive_date(archive)
@@ -852,12 +989,22 @@ def validate_research(
     candidates = research.get("candidates")
     if not isinstance(candidates, list):
         errors.append("candidates должен быть массивом.")
-        return errors
+        return errors, warnings
 
-    if not minimum_candidates <= len(candidates) <= maximum_candidates:
+    if len(candidates) > maximum_candidates:
         errors.append(
-            f"Найдено {len(candidates)} кандидатов; требуется от "
-            f"{minimum_candidates} до {maximum_candidates}."
+            f"Найдено {len(candidates)} кандидатов; максимум {maximum_candidates}."
+        )
+
+    if len(candidates) < minimum_selected_stories:
+        errors.append(
+            f"После проверки свежести осталось {len(candidates)} кандидатов; "
+            f"для редакционного этапа требуется минимум {minimum_selected_stories}."
+        )
+    elif len(candidates) < target_candidates:
+        warnings.append(
+            f"Целевой пул — {target_candidates} кандидатов, "
+            f"но после проверки свежести осталось {len(candidates)}."
         )
 
     candidate_ids: list[str] = []
@@ -896,16 +1043,23 @@ def validate_research(
             organization_counter[organization] += 1
 
         primary = candidate.get("primary_source")
+        primary_normalized: str | None = None
         if isinstance(primary, dict):
             publisher = str(primary.get("publisher", "")).strip().casefold()
             if publisher:
                 publisher_counter[publisher] += 1
 
+            try:
+                primary_normalized = normalize_url(str(primary.get("url", "")))
+            except RuntimeError as exc:
+                errors.append(f"{candidate_id}: {exc}")
+
         try:
             candidate_date = date.fromisoformat(str(candidate.get("published_date")))
-            if candidate_date > publication_date:
+            if not expected_start <= candidate_date <= expected_end:
                 errors.append(
-                    f"{candidate_id}: published_date находится после даты выпуска."
+                    f"{candidate_id}: published_date находится вне редакционного "
+                    f"окна {expected_start.isoformat()}..{expected_end.isoformat()}."
                 )
         except ValueError:
             errors.append(f"{candidate_id}: некорректный published_date.")
@@ -924,19 +1078,31 @@ def validate_research(
                 )
             normalized_urls.add(normalized)
 
-            if normalized in archive_urls:
-                errors.append(
-                    f"{candidate_id}: URL уже присутствует в архиве: {source_url}"
-                )
+        if (
+            primary_normalized is not None
+            and primary_normalized in archive_urls
+            and candidate.get("archive_status") != "update"
+        ):
+            errors.append(
+                f"{candidate_id}: основной URL уже присутствует в архиве, "
+                "но кандидат не помечен как update."
+            )
 
     if len(set(candidate_ids)) != len(candidate_ids):
         errors.append("Кандидаты содержат повторяющиеся id.")
 
-    if russian_count < minimum_russian_candidates:
-        errors.append(
-            f"Найдено {russian_count} российских кандидатов; "
-            f"для этого теста требуется минимум {minimum_russian_candidates}."
-        )
+    if russian_count < target_russian_candidates:
+        if russian_gap_documented(research):
+            warnings.append(
+                f"Цель — {target_russian_candidates} российских кандидатов, "
+                f"найдено {russian_count}; пробел явно зафиксирован в coverage."
+            )
+        else:
+            errors.append(
+                f"Найдено {russian_count} российских кандидатов при цели "
+                f"{target_russian_candidates}, но российский пробел не "
+                "зафиксирован в coverage."
+            )
 
     overloaded_publishers = [
         name for name, count in publisher_counter.items() if count > 3
@@ -956,7 +1122,7 @@ def validate_research(
             + ", ".join(sorted(overloaded_organizations))
         )
 
-    return errors
+    return errors, warnings
 
 
 def validate_digest(
@@ -1404,8 +1570,14 @@ def main() -> int:
 
     run_info: dict[str, Any] = {
         "status": "running",
-        "pipeline": "research_then_editorial",
+        "pipeline": (
+            "editorial_from_saved_research"
+            if args.research_input
+            else "research_then_editorial"
+        ),
         "request_id": request_id,
+        "research_input": args.research_input,
+        "warnings": [],
         "publication_date": publication_date_text,
         "started_at": started_at.isoformat(timespec="seconds"),
         "finished_at": None,
@@ -1424,6 +1596,11 @@ def main() -> int:
             "prompt_sha256": None,
             "candidates_sha256": None,
             "settings": {
+                "source": (
+                    "saved_fixture"
+                    if args.research_input
+                    else "responses_api_web_search"
+                ),
                 "max_retries": 0,
                 "reasoning_effort": "medium",
                 "search_context_size": "high",
@@ -1483,6 +1660,9 @@ def main() -> int:
                     args.minimum_russian_candidates
                 ),
                 "MAXIMUM_CANDIDATES": str(args.maximum_candidates),
+                "MINIMUM_SELECTED_STORIES": str(
+                    args.minimum_selected_stories
+                ),
             },
         )
 
@@ -1498,59 +1678,112 @@ def main() -> int:
             max_retries=0,
         )
 
-        research_response = client.responses.create(
-            model=model,
-            input=research_prompt,
-            tools=[
-                {
-                    "type": "web_search",
-                    "search_context_size": "high",
-                    "return_token_budget": "default",
-                }
-            ],
-            tool_choice="required",
-            include=["web_search_call.action.sources"],
-            reasoning={"effort": "medium"},
-            max_output_tokens=16000,
-            text={
-                "format": {
-                    "type": "json_schema",
-                    "name": "daily_ai_research_candidates",
-                    "strict": True,
-                    "schema": RESEARCH_SCHEMA,
-                }
-            },
-            store=False,
-        )
+        research_input_path = resolve_research_input(args.research_input)
+        research_calls = 0
 
-        research_calls = count_web_search_calls(research_response)
-        run_info["research"]["response"] = stage_info(
-            research_response,
-            web_search_calls=research_calls,
-        )
-
-        if research_calls < 1:
-            raise RuntimeError(
-                "Исследовательский ответ не содержит web_search_call."
+        if research_input_path is None:
+            research_response = client.responses.create(
+                model=model,
+                input=research_prompt,
+                tools=[
+                    {
+                        "type": "web_search",
+                        "search_context_size": "high",
+                        "return_token_budget": "default",
+                    }
+                ],
+                tool_choice="required",
+                include=["web_search_call.action.sources"],
+                reasoning={"effort": "medium"},
+                max_output_tokens=16000,
+                text={
+                    "format": {
+                        "type": "json_schema",
+                        "name": "daily_ai_research_candidates",
+                        "strict": True,
+                        "schema": RESEARCH_SCHEMA,
+                    }
+                },
+                store=False,
             )
 
-        consulted_sources = extract_consulted_sources(research_response)
+            research_calls = count_web_search_calls(research_response)
+            run_info["research"]["response"] = stage_info(
+                research_response,
+                web_search_calls=research_calls,
+            )
+
+            if research_calls < 1:
+                raise RuntimeError(
+                    "Исследовательский ответ не содержит web_search_call."
+                )
+
+            consulted_sources = extract_consulted_sources(research_response)
+            atomic_write(
+                output_dir / "research-consulted-sources.json",
+                pretty_json(consulted_sources),
+            )
+
+            research_raw = parse_json_response(research_response, "research")
+        else:
+            research_raw = read_json(research_input_path)
+            if not isinstance(research_raw, dict):
+                raise RuntimeError("research_input должен содержать JSON-объект.")
+
+            run_info["research"]["response"] = {
+                "response_id": None,
+                "response_status": "reused",
+                "model_returned": None,
+                "web_search_calls": 0,
+                "usage": None,
+            }
+
+            atomic_write(
+                output_dir / "research-input-info.json",
+                pretty_json(
+                    {
+                        "mode": "editorial_only",
+                        "source_file": str(
+                            research_input_path.relative_to(REPOSITORY_ROOT)
+                        ),
+                        "source_sha256": sha256_text(
+                            pretty_json(research_raw)
+                        ),
+                    }
+                ),
+            )
+
         atomic_write(
-            output_dir / "research-consulted-sources.json",
-            pretty_json(consulted_sources),
+            output_dir / "research-output-raw.json",
+            pretty_json(research_raw),
         )
 
-        research = parse_json_response(research_response, "research")
-        atomic_write(output_dir / "candidates.json", pretty_json(research))
+        research, filtered_candidates, sanitation_warnings = (
+            sanitize_research_candidates(
+                research_raw,
+                publication_date,
+                archive,
+            )
+        )
 
-        research_errors = validate_research(
+        atomic_write(output_dir / "candidates.json", pretty_json(research))
+        atomic_write(
+            output_dir / "research-filtered-out.json",
+            pretty_json(filtered_candidates),
+        )
+
+        research_errors, research_warnings = validate_research(
             research,
             publication_date,
             archive,
             args.minimum_candidates,
             args.minimum_russian_candidates,
             args.maximum_candidates,
+            args.minimum_selected_stories,
         )
+        run_info["warnings"].extend(sanitation_warnings)
+        run_info["warnings"].extend(research_warnings)
+
         if research_errors:
             raise RuntimeError(
                 "Проверка research завершилась ошибками:\n- "
@@ -1630,8 +1863,10 @@ def main() -> int:
         )
         run_info["editorial"]["digest_sha256"] = sha256_text(digest_serialized)
 
-        research_usage = run_info["research"]["response"].get("usage") or {}
-        editorial_usage = run_info["editorial"]["response"].get("usage") or {}
+        research_response_info = run_info["research"]["response"] or {}
+        editorial_response_info = run_info["editorial"]["response"] or {}
+        research_usage = research_response_info.get("usage") or {}
+        editorial_usage = editorial_response_info.get("usage") or {}
 
         def token_value(usage: dict[str, Any], key: str) -> int:
             value = usage.get(key, 0)
@@ -1671,6 +1906,10 @@ def main() -> int:
             + str(len(editorial["selected_candidate_ids"]))
         )
         print(f"Вызовов web_search: {research_calls}")
+        if run_info["warnings"]:
+            print("Предупреждения:")
+            for warning in run_info["warnings"]:
+                print(f"- {warning}")
 
         return 0
 
