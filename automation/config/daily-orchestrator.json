@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "enabled": true,
+  "mode": "recorded_fixture_replay",
+  "publication_date": "2026-07-11",
+  "preview_branch": "automation-prep",
+  "output_root": "automation/preview/daily-orchestrator",
+  "replay_source": "automation/fixtures/daily-orchestrator/2026-07-11/replay-source.json",
+  "research_fixture": "automation/fixtures/research/2026-07-11/candidates.json",
+  "editorial_fixture": "automation/fixtures/editorial/2026-07-11",
+  "release_fixture": "automation/fixtures/release/2026-07-11",
+  "expected": {
+    "editorial_request_id": "editorial-resume-004",
+    "image_request_id": "image-preview-2026-07-11-002",
+    "image_model": "gpt-image-2",
+    "research_candidates": 6,
+    "selected_stories": 6,
+    "cover_sha256": "a9d944ff7cba1d13083649e1954c339f142a00ff9f684d9163498c182aa4861b"
+  },
+  "safety": {
+    "allow_network": false,
+    "allow_openai": false,
+    "allow_ftp": false,
+    "allow_repository_write": false,
+    "allow_schedule": false,
+    "allow_production_posts": false,
+    "allow_request_file_changes": false
+  }
+}
