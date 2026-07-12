@@ -16,5 +16,9 @@
   "allow_ftp": false,
   "allow_external_network": false,
   "live_posts_directory": "posts",
-  "preview_root": "automation/preview/production-orchestrator"
+  "preview_root": "automation/preview/production-orchestrator",
+  "allowed_preview_roots": [
+    "automation/preview/production-orchestrator",
+    "automation/preview/rollback-drill"
+  ]
 }

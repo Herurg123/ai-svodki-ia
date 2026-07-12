@@ -5,7 +5,7 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from release_common import file_manifest, sha256_file, tree_digest
+from release_common import assert_inside, file_manifest, sha256_file, tree_digest
 
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
@@ -23,6 +23,52 @@ def validate_manifest(files: dict[str, str]) -> None:
         validate_relative_path(str(relative))
         if not SHA256_RE.fullmatch(str(digest)):
             raise RuntimeError(f"Некорректный SHA-256 для {relative!r}: {digest!r}")
+
+
+def allowed_preview_roots(
+    config: dict[str, Any],
+    repository_root: Path,
+) -> list[Path]:
+    raw_roots = config.get("allowed_preview_roots")
+    if raw_roots is None:
+        raw_roots = [
+            config.get(
+                "preview_root",
+                "automation/preview/production-orchestrator",
+            )
+        ]
+    if not isinstance(raw_roots, list) or not raw_roots:
+        raise RuntimeError("allowed_preview_roots должен быть непустым JSON-массивом.")
+
+    preview_parent = repository_root / "automation" / "preview"
+    result: list[Path] = []
+    for value in raw_roots:
+        relative = str(value)
+        validate_relative_path(relative)
+        root = repository_root / relative
+        assert_inside(root, preview_parent, "allowed-preview-root")
+        result.append(root)
+    return result
+
+
+def assert_inside_allowed_preview_roots(
+    path: Path,
+    config: dict[str, Any],
+    repository_root: Path,
+    label: str,
+) -> None:
+    roots = allowed_preview_roots(config, repository_root)
+    for root in roots:
+        try:
+            assert_inside(path, root, label)
+            return
+        except RuntimeError:
+            continue
+    rendered = ", ".join(str(root.resolve()) for root in roots)
+    raise RuntimeError(
+        f"{label} должен находиться внутри одного из разрешённых preview-корней: "
+        f"{rendered}."
+    )
 
 
 def diff_manifests(before: dict[str, str], after: dict[str, str]) -> list[dict[str, Any]]:

@@ -5,7 +5,13 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from orchestrator_common import describe_tree, diff_manifests, operation_summary, validate_manifest
+from orchestrator_common import (
+    assert_inside_allowed_preview_roots,
+    describe_tree,
+    diff_manifests,
+    operation_summary,
+    validate_manifest,
+)
 from release_common import ROOT, assert_inside, current_iso, read_json, relative_to_root, resolve_from_root, write_json
 
 
@@ -29,7 +35,7 @@ def create_plan(
         config.get("preview_root", "automation/preview/production-orchestrator")
     )
     assert_inside(post_release_dir, ROOT / "automation" / "preview", "post-release-dir")
-    assert_inside(output, preview_root, "output")
+    assert_inside_allowed_preview_roots(output, config, ROOT, "output")
     if snapshot_manifest.get("status") != "ok":
         raise RuntimeError("Snapshot manifest должен иметь status=ok.")
     snapshot_files = snapshot_manifest.get("files")

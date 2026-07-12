@@ -9,6 +9,14 @@ Machine-readable configuration:
 
 `automation/config/orchestrator.json`
 
+Plan and rollback report files may be written only under the explicitly
+allowlisted preview roots:
+
+- `automation/preview/production-orchestrator`
+- `automation/preview/rollback-drill`
+
+Any other preview root, absolute path, or path containing `..` must be rejected.
+
 The following values must remain false while production is frozen:
 
 - `publication_enabled`

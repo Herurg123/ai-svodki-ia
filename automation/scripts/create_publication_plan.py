@@ -6,7 +6,12 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from orchestrator_common import describe_tree, diff_manifests, operation_summary
+from orchestrator_common import (
+    assert_inside_allowed_preview_roots,
+    describe_tree,
+    diff_manifests,
+    operation_summary,
+)
 from release_common import (
     ROOT,
     assert_inside,
@@ -46,7 +51,7 @@ def create_plan(
     if live_dir.resolve() != live_root.resolve():
         raise RuntimeError(f"live-dir должен быть ровно {live_root.resolve()}.")
     assert_inside(candidate_dir, ROOT / "automation" / "preview", "candidate-dir")
-    assert_inside(output, preview_root, "output")
+    assert_inside_allowed_preview_roots(output, config, ROOT, "output")
     if not live_dir.is_dir() or not candidate_dir.is_dir():
         raise RuntimeError("Live и candidate каталоги должны существовать.")
     if release_manifest.get("status") != "ok":

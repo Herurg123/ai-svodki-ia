@@ -62,6 +62,10 @@ class OrchestratorFixture(unittest.TestCase):
             "allow_schedule": False,
             "live_posts_directory": "posts",
             "preview_root": "automation/preview/production-orchestrator",
+            "allowed_preview_roots": [
+                "automation/preview/production-orchestrator",
+                "automation/preview/rollback-drill",
+            ],
         }
         self.release_manifest = {
             "status": "ok",
@@ -164,6 +168,63 @@ class PublicationPlanTests(OrchestratorFixture):
         self.assertEqual(rollback_plan["status"], "blocked")
         self.assertFalse(rollback_plan["execution_allowed"])
         self.assertGreater(rollback_plan["summary"]["total"], 0)
+
+
+class PreviewRootTests(OrchestratorFixture):
+    def test_rollback_drill_root_is_allowed_for_both_plans(self) -> None:
+        drill_root = self.root / "automation/preview/rollback-drill/test"
+        publication_path = drill_root / "publication-plan.json"
+        publication_plan = publication.create_plan(
+            self.config,
+            self.release_manifest,
+            self.gate_report,
+            self.live,
+            self.candidate,
+            publication_path,
+        )
+        snapshot_dir = drill_root / "rollback-snapshot"
+        snapshot_path = drill_root / "rollback-snapshot.json"
+        snapshot = snapshotter.create_snapshot(
+            self.live,
+            snapshot_dir,
+            snapshot_path,
+        )
+        rollback_path = drill_root / "rollback-plan.json"
+        rollback_plan = rollback.create_plan(
+            self.config,
+            snapshot,
+            self.candidate,
+            rollback_path,
+        )
+        self.assertEqual(publication_plan["status"], "blocked")
+        self.assertEqual(rollback_plan["status"], "blocked")
+        self.assertTrue(publication_path.is_file())
+        self.assertTrue(rollback_path.is_file())
+
+    def test_unlisted_preview_root_is_rejected(self) -> None:
+        outside = self.root / "automation/preview/unlisted/plan.json"
+        with self.assertRaises(RuntimeError):
+            publication.create_plan(
+                self.config,
+                self.release_manifest,
+                self.gate_report,
+                self.live,
+                self.candidate,
+                outside,
+            )
+
+    def test_parent_traversal_in_allowed_root_is_rejected(self) -> None:
+        config = dict(self.config)
+        config["allowed_preview_roots"] = ["automation/preview/../outside"]
+        with self.assertRaises(RuntimeError):
+            publication.create_plan(
+                config,
+                self.release_manifest,
+                self.gate_report,
+                self.live,
+                self.candidate,
+                self.output / "publication-plan.json",
+            )
 
 
 class SimulationTests(OrchestratorFixture):

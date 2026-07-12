@@ -7,6 +7,11 @@ Only an artifact-only rollback drill exists. It copies the current repository
 and restores that temporary directory from the snapshot. The live `posts/`
 tree is read-only throughout the drill.
 
+The standalone drill writes plans and reports only under
+`automation/preview/rollback-drill`. The shared plan builders accept that path
+through the explicit `allowed_preview_roots` configuration; they must continue
+to reject every unlisted preview path.
+
 ## Required data for a future production rollback
 
 - release ID and production commit SHA;
