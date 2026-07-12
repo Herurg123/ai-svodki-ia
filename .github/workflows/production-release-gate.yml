@@ -80,7 +80,7 @@ jobs:
           found = [value for value in forbidden if value in text]
           if found:
               raise SystemExit(f"Publishing capability detected: {found}")
-          print("No FTP secrets, write permission, deploy action or git push found.")
+          print("No FTP secrets, write permission, deploy action or repository push command found.")
           PY
 
       - name: Write job summary
