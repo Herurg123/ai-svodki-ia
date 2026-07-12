@@ -15,11 +15,29 @@ permissions:
 
 jobs:
   deploy:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Validate production branch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
+            echo "FTP deployment is allowed only from main." >&2
+            exit 1
+          fi
+
+          if [[ ! -d "posts" ]]; then
+            echo "Local posts/ directory is missing." >&2
+            exit 1
+          fi
 
       - name: Deploy posts through FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
