@@ -1,0 +1,31 @@
+{
+  "target_model": "gpt-image-2",
+  "artifact_filename": "cover.png",
+  "output_format": "png",
+  "quality": "high",
+  "width": 1536,
+  "height": 864,
+  "aspect_ratio": "16:9",
+  "minimum_bytes": 1024,
+  "maximum_bytes": 25000000,
+  "bit_depth": 8,
+  "allowed_color_types": [2, 6],
+  "forbid_text_chunks": true,
+  "required_prompt_blocks": [
+    "Изображение 16:9:",
+    "Главные визуальные темы:",
+    "Композиция:",
+    "Стиль:"
+  ],
+  "required_prompt_constraints": [
+    "без логотипов",
+    "без дополнительного текста",
+    "без водяных знаков",
+    "без узнаваемых лиц"
+  ],
+  "recommended_prompt_constraints": [
+    "без мелких интерфейсных надписей",
+    "без пустой половины кадра",
+    "без стокового корпоративного клипарта"
+  ]
+}
