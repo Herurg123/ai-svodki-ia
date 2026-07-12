@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "status": "ok",
+  "role": "golden_test_fixture",
+  "production_eligible": false,
+  "publication_date": "2026-07-11",
+  "published_at": "2026-07-11T07:00:00+03:00",
+  "title": "ИИ-Сводка на 11 июля 2026",
+  "editorial_source": "automation/fixtures/editorial/2026-07-11",
+  "editorial_request_id": "editorial-resume-004",
+  "editorial_commit": "d44baf5de044b02e577df94a19ea9be40b4bb09c",
+  "image_request_id": "image-preview-2026-07-11-002",
+  "image_commit": "721f68b79b8eed6ca74c39eca6838b96c3450fae",
+  "image_model": "gpt-image-2",
+  "accepted_artifact_sha256": "f8ce877398f1899e6d85ec234f021c26fef5f024c51f71612af4b9ec14940207",
+  "cover_sha256": "a9d944ff7cba1d13083649e1954c339f142a00ff9f684d9163498c182aa4861b",
+  "editorial_files": {
+    "article.html": "fc4fcf950b844d8800dccc80747eaaa6a194158d912a84f0640742f6549060a8",
+    "candidates.json": "20ef50a1b916c9bbb008bd6820f1dc5f809627bad20884dd5dc1ac1a33e618eb",
+    "digest.json": "d0cec198db17531de7b9b3c426c9d9894f70561c71f8672803606ac31903678e",
+    "editorial-output-raw.json": "272c3cc6b70959702e970b754b40bf7d2eeaa8f9d75fa4ff555752fbb9b3e50e",
+    "editorial-output.json": "ea7e95501b23e41ee982758cd0eb11eeeebf68b78ba3156d21455adab28453c1",
+    "editorial-prompt-input.txt": "3aa469133f4b93e779cc857ffab0e0a2024824abcae02c97fc95a721784efcb6",
+    "image-prompt.txt": "38448b732cbc25eb29d473a2e50a6a7fb417d66b87a9a31266a49a556916a531",
+    "meta.json": "e16d5101fa1e4f2fb78eb9b65643f9317a1fd2a4fe8736cd2e566883047b49de",
+    "metadata-normalization.json": "50579ae5c693881d507781c70c8635d49ee471863b133e7ddf802c8a35d227d9",
+    "policy-normalization.json": "7ca048b7f16e134989560e1f57e485d8d84b54131de4326a1d3b377b72235719",
+    "research-filtered-out.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "research-input-info.json": "b6fd2dbbcd6cbe55460a88c2d82e5c55e2ff571fb9f450b27cc849926e892eb3",
+    "research-output-raw.json": "6c3ceedf942919e6651f5668a5588f16052dc6b72cb059f5508a20c1a736dd77",
+    "research-prompt-input.txt": "4b11ecb07b578e9a9c4ef02c4eb743d32cbb91cef4e578c624d29a690a69ad1c",
+    "run-info.json": "8cae9e120cd607b2ba11825a36e1472b799ca8dfce84c94e8594b86239fef487",
+    "selection.json": "ad3750e0c93a097307bd330861af55577810cdd4a7bf17d4dd3837e21833a0af",
+    "sources.json": "d8c7bc74fab87d0212fd828407c0c1944c58917a7ac831a2c6292c4d94e6ea98",
+    "stories.json": "d9053797ac403985978c6d8872e7595e55038dbebf374614be3656849229536c"
+  },
+  "image_files": {
+    "cover.png": "a9d944ff7cba1d13083649e1954c339f142a00ff9f684d9163498c182aa4861b",
+    "cover-validation.json": "083857f7fd8a05aeae54a19ab912eb946a544bfafd998320ded379090c6ed300",
+    "image-api-response.json": "c1061b7712df575e19337f0182ab016fa5996dd1526152c1bb220861c43e54d8",
+    "image-manifest.json": "7bc023f3114a949b9609ac14240f96b73abda269fdf5d070571ff8025d47a633",
+    "image-request.json": "a1e15a87f1a60bf09f8d3c32cdaa3cd7550816d8a94d94e3d109d94650f8b7bd",
+    "visual-review.json": "26325538ef6e3a46c527cdd3fd4984984b5cdbd04d15d82c9c4483bbf3c0f63d"
+  },
+  "safety": {
+    "responses_api_reused": true,
+    "web_search_calls": 0,
+    "image_api_calls": 1,
+    "image_api_retries": 0,
+    "ftp_used": false,
+    "production_paths_changed": false
+  }
+}

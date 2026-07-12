@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "production_enabled": false,
+  "production_branch": "main",
+  "preview_branch": "automation-prep",
+  "production_environment": "production",
+  "publication_timezone": "Europe/Moscow",
+  "publication_hour": 7,
+  "max_candidate_age_hours": 36,
+  "require_manual_approval": true,
+  "allow_golden_fixture_in_production": false,
+  "release_fixture_root": "automation/fixtures/release",
+  "release_preview_root": "automation/preview/release-candidate",
+  "live_posts_directory": "posts"
+}

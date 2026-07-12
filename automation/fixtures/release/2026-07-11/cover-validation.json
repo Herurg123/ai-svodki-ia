@@ -1,0 +1,34 @@
+{
+  "validator": "cover-contract",
+  "status": "ok",
+  "checked_at": "2026-07-12T20:26:00+00:00",
+  "artifact_dir": "/home/runner/work/ai-svodki-ia/ai-svodki-ia/automation/preview/image-api/2026-07-11",
+  "errors": [],
+  "warnings": [
+    {
+      "code": "prompt_recommendation",
+      "message": "Отсутствует рекомендуемое ограничение «без пустой половины кадра»."
+    }
+  ],
+  "technical_contract_validated": true,
+  "visual_semantics_validated": false,
+  "rendered_title_validated": false,
+  "png": {
+    "bytes": 2292590,
+    "sha256": "a9d944ff7cba1d13083649e1954c339f142a00ff9f684d9163498c182aa4861b",
+    "width": 1536,
+    "height": 864,
+    "bit_depth": 8,
+    "color_type": 2,
+    "chunks": [
+      "IHDR",
+      "caBX",
+      "IDAT",
+      "IEND"
+    ],
+    "text_chunks": []
+  },
+  "cover": "/home/runner/work/ai-svodki-ia/ai-svodki-ia/automation/preview/image-api/2026-07-11/cover.png",
+  "cover_sha256": "a9d944ff7cba1d13083649e1954c339f142a00ff9f684d9163498c182aa4861b",
+  "prompt_sha256": "d38e1d8b4ee78210ce9bdb154f2ad5186392c4e40dda49429f8d55eea2807c04"
+}

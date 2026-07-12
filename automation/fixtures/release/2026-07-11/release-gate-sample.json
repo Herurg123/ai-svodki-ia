@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "status": "ok",
+  "release_id": "golden-2026-07-11-image-preview-2026-07-11-002",
+  "release_kind": "golden_fixture",
+  "production_eligible": false,
+  "publication_date": "2026-07-11",
+  "published_at": "2026-07-11T07:00:00+03:00",
+  "validations": {
+    "editorial_artifact": "ok",
+    "cover_contract": "ok",
+    "visual_review": "accepted",
+    "site": "ok",
+    "dzen_feed": "ok"
+  },
+  "safety": {
+    "live_posts_unchanged": true,
+    "ftp_used": false,
+    "openai_used": false,
+    "request_files_changed": false
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "status": "accepted",
+  "reviewed_at": "2026-07-12",
+  "review_method": "manual_visual_review",
+  "cover_sha256": "a9d944ff7cba1d13083649e1954c339f142a00ff9f684d9163498c182aa4861b",
+  "checks": {
+    "exact_title_visible": true,
+    "title_text": "ИИ-Сводка на 11 июля 2026",
+    "title_readable": true,
+    "extra_readable_text_absent": true,
+    "company_logos_absent": true,
+    "watermarks_absent": true,
+    "recognizable_real_faces_absent": true,
+    "empty_half_frame_absent": true,
+    "visual_topics_match_prompt": true,
+    "aspect_ratio_16_9": true
+  },
+  "notes": [
+    "Автоматические флаги visual_semantics_validated и rendered_title_validated оставались false до ручной проверки.",
+    "Повторная генерация изображения не требуется."
+  ]
+}

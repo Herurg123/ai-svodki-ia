@@ -1,0 +1,23 @@
+{
+  "status": "ok",
+  "mode": "image_api_preview",
+  "request_id": "image-preview-2026-07-11-002",
+  "target_model": "gpt-image-2",
+  "requested_size": "1536x864",
+  "quality": "high",
+  "output_format": "png",
+  "background": "opaque",
+  "publication_date": "2026-07-11",
+  "title": "ИИ-Сводка на 11 июля 2026",
+  "prompt_sha256": "d38e1d8b4ee78210ce9bdb154f2ad5186392c4e40dda49429f8d55eea2807c04",
+  "artifact_filename": "cover.png",
+  "publish_filename": "ai-svodka-2026-07-11.png",
+  "source": "automation/fixtures/editorial/2026-07-11",
+  "source_manifest_sha256": "8e19c873ad0acd32f5a5fc528d023b8428dd981e785b677eb4640880cbe119cd",
+  "editorial_request_id": "editorial-resume-004",
+  "network_used": true,
+  "openai_used": true,
+  "retry_count": 0,
+  "started_at": "2026-07-12T20:24:21+00:00",
+  "finished_at": "2026-07-12T20:26:00+00:00"
+}
