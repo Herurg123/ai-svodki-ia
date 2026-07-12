@@ -233,9 +233,17 @@ jobs:
         run: |
           set -euo pipefail
           python -m py_compile \
+            automation/scripts/editorial_policy.py \
+            automation/scripts/validate_editorial_contract.py \
             automation/scripts/bootstrap_archive.py \
             automation/scripts/validate_archive.py \
             automation/scripts/generate_digest_preview.py
+
+      - name: Validate editorial contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_editorial_contract.py
 
       - name: Build archive context from current RSS
         shell: bash
