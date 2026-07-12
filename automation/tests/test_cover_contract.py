@@ -169,6 +169,29 @@ class CoverContractTests(unittest.TestCase):
         report = self._report()
         self.assertIn("manifest_sha256", self._codes(report))
 
+    def test_repository_digest_fixture_prompt_matches_contract(self) -> None:
+        fixture_path = (
+            ROOT
+            / "automation"
+            / "fixtures"
+            / "digest-preview"
+            / "2026-07-11"
+            / "digest.json"
+        )
+        fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+        self.title = str(fixture["title"])
+        self.prompt = str(fixture["image_prompt"])
+        self.digest = {
+            "date": str(fixture["date"]),
+            "title": self.title,
+            "cover_filename": str(fixture["cover_filename"]),
+            "image_prompt": self.prompt,
+        }
+        self._write_json("digest.json", self.digest)
+        self._write_valid_image_files()
+        report = self._report()
+        self.assertEqual(report["status"], "ok", report["errors"])
+
     def test_offline_fixture_cannot_claim_api_usage(self) -> None:
         request = json.loads((self.artifact / "image-request.json").read_text())
         manifest = json.loads((self.artifact / "image-manifest.json").read_text())
