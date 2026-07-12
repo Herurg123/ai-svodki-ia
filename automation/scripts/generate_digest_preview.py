@@ -1313,6 +1313,57 @@ def validate_digest(
     return errors, html_validator
 
 
+
+def normalize_digest_metadata(
+    editorial: dict[str, Any],
+    publication_date: date,
+    config: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """
+    Replace deterministic publication metadata with values from site.json.
+
+    The model is responsible for editorial content. It is not allowed to decide
+    the canonical author, timestamp, slug, title, or output filename.
+    """
+    digest = editorial.get("digest")
+    if not isinstance(digest, dict):
+        return []
+
+    publication_date_text = publication_date.isoformat()
+    expected_title = (
+        f"ИИ-Сводка на {publication_date.day} "
+        f"{RUSSIAN_MONTHS[publication_date.month]} {publication_date.year}"
+    )
+
+    expected_values: dict[str, Any] = {
+        "date": publication_date_text,
+        "slug": publication_date_text,
+        "title": expected_title,
+        "published_at": expected_published_at(publication_date, config),
+        "author": str(config["author"]),
+        "cover_filename": str(config["image_filename_template"]).format(
+            date=publication_date_text
+        ),
+    }
+
+    changes: list[dict[str, Any]] = []
+
+    for field, expected_value in expected_values.items():
+        previous_value = digest.get(field)
+
+        if previous_value != expected_value:
+            changes.append(
+                {
+                    "field": field,
+                    "model_value": previous_value,
+                    "normalized_value": expected_value,
+                }
+            )
+
+        digest[field] = expected_value
+
+    return changes
+
 def validate_editorial(
     editorial: dict[str, Any],
     research: dict[str, Any],
@@ -1616,6 +1667,7 @@ def main() -> int:
             "prompt_sha256": None,
             "editorial_sha256": None,
             "digest_sha256": None,
+            "metadata_normalization": None,
             "settings": {
                 "max_retries": 0,
                 "reasoning_effort": "medium",
@@ -1835,6 +1887,29 @@ def main() -> int:
 
         run_info["editorial"]["response"] = stage_info(editorial_response)
         editorial = parse_json_response(editorial_response, "editorial")
+
+        atomic_write(
+            output_dir / "editorial-output-raw.json",
+            pretty_json(editorial),
+        )
+
+        metadata_changes = normalize_digest_metadata(
+            editorial,
+            publication_date,
+            config,
+        )
+        run_info["editorial"]["metadata_normalization"] = {
+            "status": "applied",
+            "changed_fields": metadata_changes,
+            "changed_count": len(metadata_changes),
+        }
+
+        atomic_write(
+            output_dir / "metadata-normalization.json",
+            pretty_json(
+                run_info["editorial"]["metadata_normalization"]
+            ),
+        )
         atomic_write(
             output_dir / "editorial-output.json",
             pretty_json(editorial),
