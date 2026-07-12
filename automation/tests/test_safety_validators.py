@@ -270,6 +270,34 @@ class ArtifactValidatorTests(unittest.TestCase):
             self.assertIn("story_order", codes)
             self.assertIn("meta_star_service_field", codes)
 
+    def test_allows_sk_hynix_url_slug(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            write_artifact(root)
+            sk_hynix_url = (
+                "https://www.marketscreener.com/news/"
+                "sk-hynix-s-marquee-us-debut-to-test-ai-appetite-ce7f5eded18af62c"
+            )
+            for path in root.iterdir():
+                if not path.is_file():
+                    continue
+                text = path.read_text(encoding="utf-8")
+                path.write_text(text.replace(SOURCE_URL, sk_hynix_url), encoding="utf-8")
+            report = validate_artifact(root, root / "artifact-validation.json")
+            self.assertEqual(report["status"], "ok", report["errors"])
+
+    def test_rejects_unlabelled_openai_key_shape(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            write_artifact(root)
+            (root / "leak.txt").write_text(
+                "sk-proj-abcdefghijklmnopqrstuvwxyz0123456789",
+                encoding="utf-8",
+            )
+            report = validate_artifact(root, root / "artifact-validation.json")
+            codes = {row["code"] for row in report["errors"]}
+            self.assertIn("secret_detected", codes)
+
     def test_rejects_web_search_in_editorial_only(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

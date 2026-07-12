@@ -45,7 +45,7 @@ IMAGE_PROMPT_CONSTRAINTS = (
     "без узнаваемых лиц",
 )
 SECRET_PATTERNS = (
-    re.compile(r"\bsk-[A-Za-z0-9_-]{16,}\b"),
+    re.compile(r"(?<![A-Za-z0-9_./-])(?:sk-[A-Za-z0-9]{20,}|sk-(?:proj|svcacct)-[A-Za-z0-9_-]{20,})\b"),
     re.compile(r"(?i)(?:api[_-]?key|password|secret|token)\s*[:=]\s*['\"]?[A-Za-z0-9_./+-]{16,}"),
 )
 URL_RE = re.compile(r"https://[^\s\"'<>]+")
