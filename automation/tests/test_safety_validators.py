@@ -49,6 +49,17 @@ def article_html_with_meta(*, repeated_star: bool = False) -> str:
         "<p><em>*Meta и ее сервисы - в России запрещены</em></p>"
     )
 
+
+
+def with_rss_cover(html: str, *, src: str = "https://rybalka.one/posts/images/cover.png") -> str:
+    return (
+        '<figure>'
+        f'<img src="{src}" alt="{TITLE}" width="1280" height="720">'
+        '<figcaption>Главные новости искусственного интеллекта за 11 июля 2026 года</figcaption>'
+        '</figure>'
+        + html
+    )
+
 def image_prompt() -> str:
     return (
         f"Изображение 16:9: точный заголовок «{TITLE}».\n"
@@ -152,6 +163,53 @@ class DzenFeedValidatorTests(unittest.TestCase):
                 strict_editorial=True,
             )
             self.assertEqual(report["status"], "ok", report["errors"])
+
+
+    def test_accepts_build_site_cover_wrapper(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            rss_path = Path(temp) / "rss.xml"
+            write_rss(rss_path, with_rss_cover(article_html()))
+            report = validate_feed(
+                rss_path,
+                site_base_url="https://rybalka.one/posts",
+                latest_only=True,
+                strict_editorial=True,
+            )
+            self.assertEqual(report["status"], "ok", report["errors"])
+
+    def test_rejects_image_inside_article_body(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            rss_path = Path(temp) / "rss.xml"
+            body = article_html().replace(
+                "<h2>Что это значит</h2>",
+                '<img src="https://example.com/inline.png" alt="inline">'
+                "<h2>Что это значит</h2>",
+            )
+            write_rss(rss_path, with_rss_cover(body))
+            report = validate_feed(
+                rss_path,
+                site_base_url="https://rybalka.one/posts",
+                latest_only=True,
+                strict_editorial=True,
+            )
+            codes = {row["code"] for row in report["errors"]}
+            self.assertIn("forbidden_html_tag", codes)
+
+    def test_rejects_non_https_cover(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            rss_path = Path(temp) / "rss.xml"
+            write_rss(
+                rss_path,
+                with_rss_cover(article_html(), src="http://rybalka.one/posts/images/cover.png"),
+            )
+            report = validate_feed(
+                rss_path,
+                site_base_url="https://rybalka.one/posts",
+                latest_only=True,
+                strict_editorial=True,
+            )
+            codes = {row["code"] for row in report["errors"]}
+            self.assertIn("rss_cover_src", codes)
 
     def test_rejects_changed_dzen_block_and_too_many_conclusions(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

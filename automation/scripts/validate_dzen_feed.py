@@ -30,6 +30,61 @@ FORBIDDEN_TAGS = {"html", "head", "body", "script", "style", "iframe", "h1", "im
 INTERNAL_MARKERS = ("editorial_notes", "stories.json", "sources.json", "metadata-normalization")
 
 
+RSS_COVER_PATTERN = re.compile(
+    r"^\s*<figure>\s*"
+    r"(?P<img><img\b[^>]*>)\s*"
+    r"<figcaption>.*?</figcaption>\s*"
+    r"</figure>\s*",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def strip_and_validate_rss_cover(
+    html: str,
+    *,
+    report: dict[str, Any],
+    item_label: str,
+) -> str:
+    """Remove the single RSS cover wrapper before validating article_html.
+
+    build_site.py deliberately prepends a cover <figure><img><figcaption> to
+    content:encoded. The editorial contract still forbids <img> inside the
+    model-produced article_html, so only this exact leading wrapper is allowed.
+    """
+    match = RSS_COVER_PATTERN.match(html)
+    if match is None:
+        return html
+
+    img_tag = match.group("img")
+    attrs_match = re.findall(
+        r"([A-Za-z_:][-A-Za-z0-9_:.]*)\s*=\s*(['\"])(.*?)\2",
+        img_tag,
+        re.DOTALL,
+    )
+    attrs = {name.lower(): value.strip() for name, _quote, value in attrs_match}
+
+    src = attrs.get("src", "")
+    alt = attrs.get("alt", "")
+    if not is_absolute_https(src):
+        add_issue(
+            report,
+            "errors",
+            "rss_cover_src",
+            "Обложка RSS должна использовать абсолютный HTTPS URL.",
+            item_label,
+        )
+    if not alt:
+        add_issue(
+            report,
+            "errors",
+            "rss_cover_alt",
+            "У обложки RSS должен быть непустой alt.",
+            item_label,
+        )
+
+    return html[match.end():]
+
+
 @dataclass
 class StoryBlock:
     headline: str
@@ -132,6 +187,11 @@ def validate_article_html(
     item_label: str,
     strict_editorial: bool,
 ) -> None:
+    html = strip_and_validate_rss_cover(
+        html,
+        report=report,
+        item_label=item_label,
+    )
     inspector = ArticleInspector()
     try:
         inspector.feed(html)
