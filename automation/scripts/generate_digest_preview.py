@@ -547,6 +547,7 @@ def main() -> int:
 
     run_info: dict[str, Any] = {
         "status": "running",
+        "request_id": os.getenv("DIGEST_REQUEST_ID"),
         "publication_date": publication_date_text,
         "started_at": started_at.isoformat(timespec="seconds"),
         "finished_at": None,
@@ -559,6 +560,13 @@ def main() -> int:
         "archive_items": 0,
         "prompt_sha256": None,
         "digest_sha256": None,
+        "request_settings": {
+            "max_retries": 0,
+            "reasoning_effort": "medium",
+            "search_context_size": "high",
+            "max_output_tokens": 20000,
+            "store": False,
+        },
         "usage": None,
         "github": github_context(),
         "error": None,
@@ -582,8 +590,9 @@ def main() -> int:
         prompt = build_prompt(prompt_template, publication_date_text, archive)
         run_info["archive_items"] = len(archive["items"])
         run_info["prompt_sha256"] = sha256_text(prompt)
+        atomic_write(output_dir / "prompt-input.txt", prompt.rstrip() + "\n")
 
-        client = OpenAI(api_key=api_key, timeout=900.0, max_retries=2)
+        client = OpenAI(api_key=api_key, timeout=900.0, max_retries=0)
         response = client.responses.create(
             model=model,
             input=prompt,
