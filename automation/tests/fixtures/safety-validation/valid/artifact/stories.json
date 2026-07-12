@@ -1,0 +1,12 @@
+{
+  "stories": [
+    {
+      "candidate_id": "candidate-1",
+      "headline": "Тестовый сюжет",
+      "organization": "Example",
+      "sources": [
+        "https://example.com/news/one"
+      ]
+    }
+  ]
+}

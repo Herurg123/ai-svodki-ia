@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>ИИ-сводки</title>
+    <link>https://rybalka.one/posts</link>
+    <description>Ежедневная сводка</description>
+    <item>
+      <title>ИИ-Сводка на 11 июля 2026</title>
+      <link>https://rybalka.one/posts/2026-07-11/</link>
+      <guid>https://rybalka.one/posts/2026-07-11/</guid>
+      <pubDate>Sat, 11 Jul 2026 07:00:00 +0300</pubDate>
+      <description>Тестовый выпуск</description>
+      <content:encoded><![CDATA[<p>День на новости выдался слабым - поэтому коротко</p><h2>Мировые лидеры ИИ</h2><h3>Тестовый сюжет</h3><p>Подтверждён факт со <a href="https://example.com/news/one">ссылкой на источник</a>.</p><p>Это важно для рынка и разработки, но выводы пока ограничены доступными данными.</p><h2>Что это значит</h2><ol><li>Вывод 1</li><li>Вывод 2</li><li>Вывод 3</li><li>Вывод 4</li></ol><h2>Все ИИ-Сводки</h2><p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>]]></content:encoded>
+    </item>
+  </channel>
+</rss>
