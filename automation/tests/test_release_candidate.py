@@ -145,5 +145,43 @@ class HashTests(unittest.TestCase):
                 release_common.file_manifest(root)
 
 
+class ReleaseFixtureRegressionTests(unittest.TestCase):
+    def test_release_source_covers_every_editorial_fixture_file(self) -> None:
+        editorial_dir = ROOT / "automation" / "fixtures" / "editorial" / "2026-07-11"
+        release_source_path = (
+            ROOT
+            / "automation"
+            / "fixtures"
+            / "release"
+            / "2026-07-11"
+            / "release-source.json"
+        )
+        release_source = json.loads(release_source_path.read_text(encoding="utf-8"))
+        actual = release_common.file_manifest(editorial_dir)
+        expected = {
+            str(name): str(digest)
+            for name, digest in release_source["editorial_files"].items()
+        }
+        self.assertEqual(actual, expected)
+
+    def test_disabled_gate_workflow_does_not_match_its_own_forbidden_patterns(self) -> None:
+        workflow = (
+            ROOT
+            / ".github"
+            / "workflows"
+            / "production-release-gate.yml"
+        ).read_text(encoding="utf-8")
+        forbidden = [
+            "FTP_" + "SERVER",
+            "FTP_" + "USERNAME",
+            "FTP_" + "PASSWORD",
+            "contents:" + " write",
+            "git " + "push",
+            "FTP-Deploy-" + "Action",
+        ]
+        found = [value for value in forbidden if value in workflow]
+        self.assertEqual(found, [])
+
+
 if __name__ == "__main__":
     unittest.main()
