@@ -13,6 +13,7 @@ on:
       - "automation/scripts/build_site.py"
       - "automation/scripts/materialize_fixture_preview.py"
       - "automation/scripts/validate_site.py"
+      - "automation/scripts/validate_dzen_feed.py"
       - "posts/**"
       - ".github/workflows/site-dry-run.yml"
 
@@ -65,7 +66,8 @@ jobs:
             automation/scripts/editorial_policy.py \
             automation/scripts/materialize_fixture_preview.py \
             automation/scripts/build_site.py \
-            automation/scripts/validate_site.py
+            automation/scripts/validate_site.py \
+            automation/scripts/validate_dzen_feed.py
 
       - name: Materialize fixture preview
         shell: bash
@@ -87,6 +89,14 @@ jobs:
           set -euo pipefail
           python automation/scripts/validate_site.py \
             --source-dir automation/preview/2026-07-11
+
+      - name: Validate isolated RSS against Dzen contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_dzen_feed.py \
+            --rss automation/preview/posts/rss.xml \
+            --report automation/preview/dzen-feed-validation.json
 
       - name: Verify that live posts were not changed
         if: always()
@@ -112,5 +122,6 @@ jobs:
             automation/preview/posts/
             automation/preview/build-info.json
             automation/preview/site-validation.json
+            automation/preview/dzen-feed-validation.json
           if-no-files-found: warn
           retention-days: 7
