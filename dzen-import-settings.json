@@ -1,0 +1,10 @@
+{
+  "feed_url": "https://rybalka.one/posts/dzen-test/rss.xml",
+  "publication_type": "article",
+  "publish_mode": "immediate",
+  "search_indexing": "allowed",
+  "all_content_host": "rybalka.one",
+  "content_root": "/posts/dzen-test/",
+  "items": 10,
+  "external_dependencies": false
+}
