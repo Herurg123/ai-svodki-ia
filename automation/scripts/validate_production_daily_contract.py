@@ -40,7 +40,6 @@ def main() -> int:
         ("cron", 'cron: "7 3 * * *"'),
         ("main branch guard", "refs/heads/main"),
         ("contents write", "contents: write"),
-        ("actions write", "actions: write"),
         ("full digest", "PIPELINE_MODE: full"),
         ("image API", "generate_image_preview.py"),
         ("legacy image staging", "stage_legacy_images.py"),
@@ -51,7 +50,6 @@ def main() -> int:
         ("posts sitemap validation", "validate_posts_sitemap.py"),
         ("site promotion", "promote_production_site.py"),
         ("git push", "git push origin HEAD:main"),
-        ("deploy dispatch", "gh workflow run deploy-posts.yml --ref main"),
         ("artifact upload", "upload-artifact"),
     ]
     for label, needle in checks:
@@ -64,6 +62,12 @@ def main() -> int:
     for forbidden in ("FTP_SERVER", "FTP_USERNAME", "FTP_PASSWORD"):
         if forbidden in workflow:
             errors.append(f"production workflow must not access {forbidden}")
+
+    if "gh workflow run deploy-posts.yml" in workflow:
+        errors.append(
+            "production workflow must not dispatch deploy-posts.yml explicitly; "
+            "the posts/** push to main already starts deployment"
+        )
 
     if rss["self_url"] != config["feed_url"]:
         errors.append("current RSS self URL is not the accepted root URL")
