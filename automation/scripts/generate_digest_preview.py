@@ -929,6 +929,130 @@ def candidate_sources(candidate: dict[str, Any]) -> list[dict[str, Any]]:
     return result
 
 
+def normalize_candidate_sources(candidates: list[Any]) -> dict[str, Any]:
+    """Normalize repeated source URLs without discarding valid candidates.
+
+    The research model can cite one article for several related candidates, or
+    repeat a primary source in ``supporting_sources``. Reusing one URL across
+    candidates is not itself a research error. This function removes only
+    duplicates inside a single candidate and makes metadata for the same
+    normalized URL deterministic across the complete pool.
+    """
+    canonical_by_url: dict[str, dict[str, Any]] = {}
+    removed_supporting: list[dict[str, str]] = []
+    canonicalized: list[dict[str, str]] = []
+    owners_by_url: dict[str, list[str]] = {}
+
+    # Prefer metadata from a primary source when the same URL also appears as
+    # a supporting source elsewhere. The first primary occurrence wins.
+    for candidate in candidates:
+        if not isinstance(candidate, dict):
+            continue
+        primary = candidate.get("primary_source")
+        if not isinstance(primary, dict):
+            continue
+        try:
+            normalized = normalize_url(str(primary.get("url", "")))
+        except RuntimeError:
+            continue
+        canonical_by_url.setdefault(normalized, copy.deepcopy(primary))
+
+    for position, candidate in enumerate(candidates, start=1):
+        if not isinstance(candidate, dict):
+            continue
+
+        candidate_id = str(candidate.get("id", "")) or f"candidate-{position}"
+        local_urls: set[str] = set()
+
+        primary = candidate.get("primary_source")
+        if isinstance(primary, dict):
+            try:
+                normalized = normalize_url(str(primary.get("url", "")))
+            except RuntimeError:
+                normalized = None
+            if normalized is not None:
+                canonical = canonical_by_url.setdefault(
+                    normalized, copy.deepcopy(primary)
+                )
+                if primary != canonical:
+                    candidate["primary_source"] = copy.deepcopy(canonical)
+                    canonicalized.append(
+                        {
+                            "candidate_id": candidate_id,
+                            "role": "primary",
+                            "url": normalized,
+                        }
+                    )
+                local_urls.add(normalized)
+
+        supporting = candidate.get("supporting_sources")
+        if not isinstance(supporting, list):
+            continue
+
+        clean_supporting: list[Any] = []
+        for source in supporting:
+            if not isinstance(source, dict):
+                clean_supporting.append(source)
+                continue
+
+            try:
+                normalized = normalize_url(str(source.get("url", "")))
+            except RuntimeError:
+                clean_supporting.append(source)
+                continue
+
+            if normalized in local_urls:
+                removed_supporting.append(
+                    {
+                        "candidate_id": candidate_id,
+                        "url": normalized,
+                    }
+                )
+                continue
+
+            local_urls.add(normalized)
+            canonical = canonical_by_url.setdefault(
+                normalized, copy.deepcopy(source)
+            )
+            if source != canonical:
+                canonicalized.append(
+                    {
+                        "candidate_id": candidate_id,
+                        "role": "supporting",
+                        "url": normalized,
+                    }
+                )
+            clean_supporting.append(copy.deepcopy(canonical))
+
+        candidate["supporting_sources"] = clean_supporting
+
+    for position, candidate in enumerate(candidates, start=1):
+        if not isinstance(candidate, dict):
+            continue
+        candidate_id = str(candidate.get("id", "")) or f"candidate-{position}"
+        seen_for_candidate: set[str] = set()
+        for source in candidate_sources(candidate):
+            try:
+                normalized = normalize_url(str(source.get("url", "")))
+            except RuntimeError:
+                continue
+            if normalized in seen_for_candidate:
+                continue
+            seen_for_candidate.add(normalized)
+            owners_by_url.setdefault(normalized, []).append(candidate_id)
+
+    reused_urls = [
+        {"url": url, "candidate_ids": list(dict.fromkeys(candidate_ids))}
+        for url, candidate_ids in sorted(owners_by_url.items())
+        if len(set(candidate_ids)) > 1
+    ]
+
+    return {
+        "removed_supporting_duplicates": removed_supporting,
+        "canonicalized_sources": canonicalized,
+        "reused_urls": reused_urls,
+    }
+
 
 def expected_search_window(
     publication_date: date,
@@ -1079,6 +1203,7 @@ def sanitize_research_candidates(
         kept.append(candidate)
 
     id_changes = normalize_candidate_ids(kept)
+    source_changes = normalize_candidate_sources(kept)
     sanitized["candidates"] = kept
 
     if id_changes:
@@ -1089,6 +1214,29 @@ def sanitize_research_candidates(
                 for item in id_changes
             )
             + "."
+        )
+
+    removed_source_duplicates = source_changes[
+        "removed_supporting_duplicates"
+    ]
+    canonicalized_sources = source_changes["canonicalized_sources"]
+    reused_urls = source_changes["reused_urls"]
+
+    if removed_source_duplicates:
+        warnings.append(
+            "Удалены повторные supporting_sources внутри кандидатов: "
+            f"{len(removed_source_duplicates)}."
+        )
+    if canonicalized_sources:
+        warnings.append(
+            "Унифицированы метаданные одинаковых URL источников: "
+            f"{len(canonicalized_sources)}."
+        )
+    if reused_urls:
+        warnings.append(
+            "Одинаковые источники используются несколькими кандидатами: "
+            f"{len(reused_urls)}; это допустимо и будет проверено "
+            "на редакторском этапе."
         )
 
     if filtered:
@@ -1205,7 +1353,7 @@ def validate_research(
         )
 
     candidate_ids: list[str] = []
-    normalized_urls: set[str] = set()
+    source_owners: dict[str, list[str]] = {}
     publisher_counter: Counter[str] = Counter()
     organization_counter: Counter[str] = Counter()
     russian_count = 0
@@ -1305,11 +1453,9 @@ def validate_research(
                 errors.append(f"{candidate_id}: {exc}")
                 continue
 
-            if normalized in normalized_urls:
-                errors.append(
-                    f"URL повторяется между кандидатами или источниками: {source_url}"
-                )
-            normalized_urls.add(normalized)
+            owners = source_owners.setdefault(normalized, [])
+            if candidate_id not in owners:
+                owners.append(candidate_id)
 
         if (
             primary_normalized is not None
@@ -1320,6 +1466,23 @@ def validate_research(
                 f"{candidate_id}: основной URL уже присутствует в архиве, "
                 "но кандидат не помечен как update."
             )
+
+    reused_source_urls = [
+        (url, owners)
+        for url, owners in sorted(source_owners.items())
+        if len(owners) > 1
+    ]
+    if reused_source_urls:
+        preview = "; ".join(
+            f"{url} ({', '.join(owners)})"
+            for url, owners in reused_source_urls[:5]
+        )
+        suffix = "" if len(reused_source_urls) <= 5 else "; …"
+        warnings.append(
+            "URL используется в нескольких кандидатах: "
+            + preview
+            + suffix
+        )
 
     if len(set(candidate_ids)) != len(candidate_ids):
         errors.append("Кандидаты содержат повторяющиеся id.")
