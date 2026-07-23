@@ -1,0 +1,273 @@
+[
+  {
+    "candidate_id": "blogger-2026-07-16-01",
+    "section": "world",
+    "headline": "OpenAI представила GPT-Red для автоматизированной проверки безопасности моделей",
+    "organization": "OpenAI",
+    "topic": "безопасность моделей и red teaming",
+    "event_type": "исследовательский анонс",
+    "status": "new",
+    "summary": "OpenAI представила систему автоматизированного red teaming, которая обучается через самоигру и ищет способы обхода защиты моделей.",
+    "published_at": null,
+    "published_date": "2026-07-16",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "OpenAI представила GPT-Red для автоматизированной проверки безопасности моделей",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/unlocking-self-improvement-gpt-red/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "GPT-Red",
+      "red teaming",
+      "безопасность ИИ",
+      "prompt injection",
+      "самоигра"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "blogger-2026-07-16-02",
+    "section": "world",
+    "headline": "Thinking Machines выпустила open-weight-модель Inkling для агентских задач",
+    "organization": "Thinking Machines",
+    "topic": "open-weight-модели и агенты ИИ",
+    "event_type": "выпуск модели",
+    "status": "new",
+    "summary": "Thinking Machines представила модель Inkling с открытыми весами и конкурентными результатами в агентских задачах.",
+    "published_at": null,
+    "published_date": "2026-07-16",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Thinking Machines выпустила open-weight-модель Inkling для агентских задач",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/business/ai-startup-thinking-machines-launches-an-open-weight-ai-model-2026-07-15/"
+      }
+    ],
+    "keywords": [
+      "Thinking Machines",
+      "Inkling",
+      "open-weight",
+      "агенты ИИ",
+      "Мира Мурати",
+      "LLM"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "blogger-2026-07-16-03",
+    "section": "world",
+    "headline": "Обновление: DeepSeek готовит раунд до 50 млрд юаней при оценке около 500 млрд юаней",
+    "organization": "DeepSeek",
+    "topic": "финансирование и инфраструктура ИИ",
+    "event_type": "переговоры о финансировании",
+    "status": "update",
+    "summary": "DeepSeek обсуждает привлечение до 50 млрд юаней при оценке около 500 млрд юаней и готовится к возможному IPO на STAR Market.",
+    "published_at": null,
+    "published_date": "2026-07-16",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Обновление: DeepSeek готовит раунд до 50 млрд юаней при оценке около 500 млрд юаней",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/legal/transactional/chinas-deepseek-raise-fresh-capital-74-billion-valuation-ahead-onshore-ipo-2026-07-15/"
+      }
+    ],
+    "keywords": [
+      "DeepSeek",
+      "Китай",
+      "финансирование",
+      "IPO",
+      "STAR Market",
+      "ускорители",
+      "open-weight"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "blogger-2026-07-16-04",
+    "section": "world",
+    "headline": "OpenAI запустила программу внешних исследований безопасности ИИ",
+    "organization": "OpenAI",
+    "topic": "исследования безопасности ИИ",
+    "event_type": "образовательная и исследовательская программа",
+    "status": "new",
+    "summary": "OpenAI открыла приём заявок в программу Safety Fellowship для внешних специалистов по безопасности и согласованию поведения моделей.",
+    "published_at": null,
+    "published_date": "2026-07-16",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "OpenAI запустила программу внешних исследований безопасности ИИ",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/introducing-openai-safety-fellowship/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Safety Fellowship",
+      "alignment",
+      "безопасность моделей",
+      "исследователи"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "blogger-2026-07-16-05",
+    "section": "world",
+    "headline": "OpenAI предложила согласовывать правила ИИ между штатами и федеральными властями США",
+    "organization": "OpenAI; власти штатов США; федеральные власти США",
+    "topic": "регулирование ИИ",
+    "event_type": "публичная позиция",
+    "status": "new",
+    "summary": "OpenAI поддержала модель согласованных региональных мер безопасности как основу будущего федерального и международного стандарта.",
+    "published_at": null,
+    "published_date": "2026-07-16",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "OpenAI предложила согласовывать правила ИИ между штатами и федеральными властями США",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/advancing-ai-safety-through-state-and-federal-action/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "регулирование ИИ",
+      "США",
+      "штаты",
+      "федеральный стандарт",
+      "безопасность"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "blogger-2026-07-16-06",
+    "section": "world",
+    "headline": "Anthropic делает ставку на более жёсткие законы об ИИ на уровне отдельных штатов",
+    "organization": "Anthropic; власти штатов США",
+    "topic": "регулирование frontier-моделей",
+    "event_type": "лоббистская и регуляторная стратегия",
+    "status": "new",
+    "summary": "Anthropic поддерживает независимые оценки рисков и более строгие региональные требования для передовых моделей ИИ.",
+    "published_at": null,
+    "published_date": "2026-07-16",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Anthropic делает ставку на более жёсткие законы об ИИ на уровне отдельных штатов",
+        "publisher": "Business Insider",
+        "url": "https://www.businessinsider.com/anthropic-openai-ai-safety-laws-state-lobbying-2026-7"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "регулирование",
+      "frontier-модели",
+      "США",
+      "безопасность ИИ",
+      "независимая оценка"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "blogger-2026-07-16-07",
+    "section": "russia",
+    "headline": "Positive Technologies показала, что LLM могут модифицировать Android-приложения за несколько центов",
+    "organization": "Positive Technologies",
+    "topic": "LLM и безопасность мобильных приложений",
+    "event_type": "исследование безопасности",
+    "status": "new",
+    "summary": "В эксперименте LLM самостоятельно декомпилировали, изменяли и пересобирали Android-приложения; успешная модификация стоила от нескольких центов.",
+    "published_at": null,
+    "published_date": "2026-07-16",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Positive Technologies показала, что LLM могут модифицировать Android-приложения за несколько центов",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/content/246403/2026-07-15/2026-w29/1008/android-prilozheniya-mozhno-vzlomat-za-50-centov"
+      }
+    ],
+    "keywords": [
+      "Positive Technologies",
+      "Android",
+      "LLM",
+      "мобильная безопасность",
+      "APK",
+      "Qwen",
+      "GPT"
+    ],
+    "geography": "russia",
+    "category": "security"
+  },
+  {
+    "candidate_id": "blogger-2026-07-16-08",
+    "section": "russia",
+    "headline": "Исследование SpaceWeb зафиксировало массовое применение ИИ при создании веб-проектов",
+    "organization": "SpaceWeb; российские пользователи веб-хостинга",
+    "topic": "ИИ-кодинг и веб-разработка",
+    "event_type": "исследование аудитории",
+    "status": "new",
+    "summary": "Около половины опрошенных пользователей SpaceWeb регулярно применяют ИИ для генерации кода, доработки сайтов и создания веб-проектов.",
+    "published_at": null,
+    "published_date": "2026-07-16",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Исследование SpaceWeb зафиксировало массовое применение ИИ при создании веб-проектов",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/content/246415/2026-07-15/2026-w29/1010/kazhdyy-vtoroy-polzovatel-sozdaet-veb-proekty-pomoschyu-iskusstvennogo-intellekta"
+      }
+    ],
+    "keywords": [
+      "SpaceWeb",
+      "вайбкодинг",
+      "ИИ-кодинг",
+      "веб-разработка",
+      "малый бизнес",
+      "хостинг"
+    ],
+    "geography": "russia",
+    "category": "developer_tools"
+  },
+  {
+    "candidate_id": "blogger-2026-07-16-09",
+    "section": "russia",
+    "headline": "Cometal внедрил помощников ИИ для работы с данными и контрагентами",
+    "organization": "Cometal",
+    "topic": "корпоративные помощники ИИ",
+    "event_type": "корпоративное внедрение",
+    "status": "new",
+    "summary": "Cometal внедрил помощников ИИ для обработки внутренних данных и подготовки информации о контрагентах.",
+    "published_at": null,
+    "published_date": "2026-07-16",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Cometal внедрил помощников ИИ для работы с данными и контрагентами",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/digital-economy/content/246410/2026-07-15/2026-w29/1012/cometal-vnedril-ii-pomoschnikov-dlya-raboty-dannymi-i-kontragentami"
+      }
+    ],
+    "keywords": [
+      "Cometal",
+      "корпоративный ИИ",
+      "помощники ИИ",
+      "данные",
+      "контрагенты",
+      "автоматизация"
+    ],
+    "geography": "russia",
+    "category": "agents"
+  }
+]

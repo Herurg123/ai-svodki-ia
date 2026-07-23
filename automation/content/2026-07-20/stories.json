@@ -1,0 +1,197 @@
+[
+  {
+    "candidate_id": "blogger-2026-07-20-01",
+    "section": "world",
+    "headline": "GitHub Code Quality перешёл в общую доступность",
+    "organization": "GitHub; Microsoft",
+    "topic": "качество и проверка кода",
+    "event_type": "коммерческий запуск",
+    "status": "new",
+    "summary": "GitHub переводит Code Quality в общую доступность с лицензированием за активных разработчиков и отдельной оплатой функций на базе ИИ.",
+    "published_at": null,
+    "published_date": "2026-07-20",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "GitHub Code Quality перешёл в общую доступность",
+        "publisher": "GitHub",
+        "url": "https://github.blog/changelog/2026-06-16-github-code-quality-generally-available-july-20-2026/"
+      }
+    ],
+    "keywords": [
+      "GitHub",
+      "Code Quality",
+      "Copilot",
+      "CodeQL",
+      "ревью кода",
+      "ИИ-кодинг",
+      "тестирование"
+    ],
+    "geography": "world",
+    "category": "developer_tools"
+  },
+  {
+    "candidate_id": "blogger-2026-07-20-02",
+    "section": "world",
+    "headline": "Huawei впервые показала действующий Atlas 950 SuperPoD",
+    "organization": "Huawei",
+    "topic": "ускорители и вычислительная инфраструктура",
+    "event_type": "публичная демонстрация оборудования",
+    "status": "new",
+    "summary": "Huawei впервые показала физический кластер Atlas 950 SuperPoD на 1024 ускорителях Ascend для обучения и инференса крупных моделей.",
+    "published_at": null,
+    "published_date": "2026-07-20",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Huawei впервые показала действующий Atlas 950 SuperPoD",
+        "publisher": "Huawei",
+        "url": "https://www.huawei.com/cn/news/2026/7/atlas-950-superpod"
+      }
+    ],
+    "keywords": [
+      "Huawei",
+      "Atlas 950 SuperPoD",
+      "Ascend",
+      "ускорители",
+      "Китай",
+      "дата-центры",
+      "MoE"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "blogger-2026-07-20-03",
+    "section": "world",
+    "headline": "Обновление: Kimi K3 вышла в лидеры теста интерфейсного ИИ-кодинга",
+    "organization": "Moonshot AI; Kimi",
+    "topic": "open-weight-модели и ИИ-кодинг",
+    "event_type": "независимая оценка",
+    "status": "update",
+    "summary": "Kimi K3 заняла первое место в рейтинге Arena по возможностям фронтенд-кодинга; публикация полных весов ожидается 27 июля.",
+    "published_at": null,
+    "published_date": "2026-07-20",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Обновление: Kimi K3 вышла в лидеры теста интерфейсного ИИ-кодинга",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/kimi-k3-china-ai-0d8a5e268deb11a673f4d444fc597cc5"
+      }
+    ],
+    "keywords": [
+      "Kimi K3",
+      "Moonshot AI",
+      "ИИ-кодинг",
+      "open-weight",
+      "Arena",
+      "Claude",
+      "ChatGPT"
+    ],
+    "geography": "world",
+    "category": "developer_tools"
+  },
+  {
+    "candidate_id": "blogger-2026-07-20-04",
+    "section": "world",
+    "headline": "Китайские модели сократили отставание в задачах кибербезопасности",
+    "organization": "UK AI Security Institute; Moonshot AI; Z.ai",
+    "topic": "кибербезопасность моделей",
+    "event_type": "исследование",
+    "status": "new",
+    "summary": "Исследование показало сокращение разрыва между китайскими и американскими моделями в киберзадачах примерно до четырёх месяцев.",
+    "published_at": null,
+    "published_date": "2026-07-20",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Китайские модели сократили отставание в задачах кибербезопасности",
+        "publisher": "Financial Times",
+        "url": "https://www.ft.com/content/21c10336-61bc-4743-82e3-acabfc7d540d"
+      }
+    ],
+    "keywords": [
+      "кибербезопасность",
+      "Kimi K3",
+      "GLM-5.2",
+      "Китай",
+      "open-weight",
+      "уязвимости",
+      "агенты ИИ"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "blogger-2026-07-20-05",
+    "section": "world",
+    "headline": "Обновление: Китай объединяет открытые модели, собственные ускорители и международные правила",
+    "organization": "Китай; Moonshot AI; Huawei; World AI Cooperation Organization",
+    "topic": "национальная экосистема ИИ",
+    "event_type": "стратегическое обновление",
+    "status": "update",
+    "summary": "Конференция в Шанхае показала объединение open-weight-моделей, отечественной вычислительной инфраструктуры и международного управления ИИ.",
+    "published_at": null,
+    "published_date": "2026-07-20",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Обновление: Китай объединяет открытые модели, собственные ускорители и международные правила",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/kimi-k3-china-ai-0d8a5e268deb11a673f4d444fc597cc5"
+      },
+      {
+        "title": "Обновление: Китай объединяет открытые модели, собственные ускорители и международные правила",
+        "publisher": "Huawei",
+        "url": "https://www.huawei.com/cn/news/2026/7/atlas-950-superpod"
+      },
+      {
+        "title": "Обновление: Китай объединяет открытые модели, собственные ускорители и международные правила",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/world/china/twenty-nine-countries-sign-agreement-establish-global-ai-cooperation-body-2026-07-16/"
+      }
+    ],
+    "keywords": [
+      "Китай",
+      "WAIC",
+      "Kimi K3",
+      "Huawei",
+      "Atlas 950",
+      "open-weight",
+      "управление ИИ"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "blogger-2026-07-20-06",
+    "section": "russia",
+    "headline": "В России подготовят программу разработки медицинских изделий с ИИ",
+    "organization": "Правительство РФ; российские медицинские и исследовательские организации",
+    "topic": "ИИ в медицине",
+    "event_type": "государственная программа",
+    "status": "new",
+    "summary": "До 2030 года в России планируется организовать разработку медицинских изделий с технологиями ИИ; первый доклад ожидается к концу 2027 года.",
+    "published_at": null,
+    "published_date": "2026-07-20",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: В России подготовят программу разработки медицинских изделий с ИИ",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/20-2026.html"
+      }
+    ],
+    "keywords": [
+      "Россия",
+      "медицина",
+      "медицинские изделия",
+      "диагностика",
+      "клинические данные",
+      "регулирование ИИ"
+    ],
+    "geography": "russia",
+    "category": "science"
+  }
+]

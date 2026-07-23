@@ -1,0 +1,281 @@
+[
+  {
+    "candidate_id": "blogger-2026-07-17-01",
+    "section": "world",
+    "headline": "Moonshot AI выпустила Kimi K3 с 2,8 трлн параметров",
+    "organization": "Moonshot AI",
+    "topic": "open-weight-модели и ИИ-кодинг",
+    "event_type": "выпуск модели",
+    "status": "new",
+    "summary": "Moonshot AI представила Kimi K3 с 2,8 трлн параметров, контекстом 1 млн токенов и ориентацией на сложные агентские и кодинговые задачи.",
+    "published_at": null,
+    "published_date": "2026-07-17",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Moonshot AI выпустила Kimi K3 с 2,8 трлн параметров",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/world/china/chinas-moonshot-unveils-worlds-largest-open-ai-model-closing-us-rivals-2026-07-17/"
+      },
+      {
+        "title": "Moonshot AI выпустила Kimi K3 с 2,8 трлн параметров",
+        "publisher": "Financial Times",
+        "url": "https://www.ft.com/content/c6ecd8ce-c441-4d7c-aea6-fae3e28fb6ff"
+      }
+    ],
+    "keywords": [
+      "Moonshot AI",
+      "Kimi K3",
+      "Китай",
+      "open-weight",
+      "LLM",
+      "ИИ-кодинг",
+      "агенты ИИ"
+    ],
+    "geography": "world",
+    "category": "developer_tools"
+  },
+  {
+    "candidate_id": "blogger-2026-07-17-02",
+    "section": "world",
+    "headline": "Евросоюз обязал Google открыть Android для конкурирующих помощников ИИ",
+    "organization": "Google; Европейская комиссия; OpenAI",
+    "topic": "регулирование платформ и конкуренция",
+    "event_type": "регуляторное решение",
+    "status": "new",
+    "summary": "Google должна открыть конкурентам 11 функций Android и предоставлять квалифицированным поисковым сервисам обезличенные данные.",
+    "published_at": null,
+    "published_date": "2026-07-17",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Евросоюз обязал Google открыть Android для конкурирующих помощников ИИ",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/world/google-required-open-up-ai-search-engine-rivals-under-eu-mandated-changes-2026-07-16/"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Android",
+      "Gemini",
+      "Евросоюз",
+      "DMA",
+      "OpenAI",
+      "регулирование",
+      "конкуренция"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "blogger-2026-07-17-03",
+    "section": "world",
+    "headline": "Запуск Gemini 3.5 Pro задержался на несколько месяцев",
+    "organization": "Google; Google DeepMind; Alphabet",
+    "topic": "frontier-модели и продуктовые релизы",
+    "event_type": "задержка выпуска модели",
+    "status": "new",
+    "summary": "Google задержала выпуск Gemini 3.5 Pro на несколько месяцев, продолжая работу над улучшением качества модели.",
+    "published_at": null,
+    "published_date": "2026-07-17",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Запуск Gemini 3.5 Pro задержался на несколько месяцев",
+        "publisher": "MarketWatch",
+        "url": "https://www.marketwatch.com/story/alphabets-stock-falls-as-gemini-delays-suggest-google-is-struggling-to-keep-up-in-the-ai-race-4d821205"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Gemini 3.5 Pro",
+      "Google DeepMind",
+      "задержка",
+      "frontier-модель",
+      "Alphabet"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "blogger-2026-07-17-04",
+    "section": "world",
+    "headline": "Китай продвигает собственную систему международного управления ИИ",
+    "organization": "Китай; World AI Cooperation Organization",
+    "topic": "международное регулирование ИИ",
+    "event_type": "международная инициатива",
+    "status": "new",
+    "summary": "Китай развивает международную организацию в Шанхае для сотрудничества, распространения технологий и формирования стандартов ИИ.",
+    "published_at": null,
+    "published_date": "2026-07-17",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Китай продвигает собственную систему международного управления ИИ",
+        "publisher": "Financial Times",
+        "url": "https://www.ft.com/content/ddb316b4-c6ae-4b9b-9d4a-63d63201d4fc"
+      }
+    ],
+    "keywords": [
+      "Китай",
+      "WAICO",
+      "регулирование ИИ",
+      "стандарты",
+      "Глобальный Юг",
+      "технологическая дипломатия"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "blogger-2026-07-17-05",
+    "section": "world",
+    "headline": "OpenAI показала крупное внедрение агентов ИИ в автомобильном маркетплейсе Cars24",
+    "organization": "OpenAI; Cars24",
+    "topic": "корпоративные агенты ИИ",
+    "event_type": "продуктовый кейс",
+    "status": "new",
+    "summary": "Cars24 использует решения OpenAI для клиентских разговоров, возврата потерянных обращений и внутренних процессов разработки.",
+    "published_at": null,
+    "published_date": "2026-07-17",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "OpenAI показала крупное внедрение агентов ИИ в автомобильном маркетплейсе Cars24",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/cars24/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Cars24",
+      "агенты ИИ",
+      "продажи",
+      "клиентский сервис",
+      "Codex",
+      "автоматизация"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "blogger-2026-07-17-06",
+    "section": "world",
+    "headline": "OpenAI раскрыла подход к безопасному доступу подростков к ИИ",
+    "organization": "OpenAI",
+    "topic": "безопасность подростков и возрастной доступ",
+    "event_type": "публичная политика",
+    "status": "new",
+    "summary": "OpenAI описала встроенные ограничения, возрастные настройки и взаимодействие с экспертами при предоставлении подросткам доступа к ChatGPT.",
+    "published_at": null,
+    "published_date": "2026-07-17",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "OpenAI раскрыла подход к безопасному доступу подростков к ИИ",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/why-teens-deserve-access-safe-ai/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ChatGPT",
+      "подростки",
+      "безопасность ИИ",
+      "возрастной доступ",
+      "образование"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "blogger-2026-07-17-07",
+    "section": "russia",
+    "headline": "Правительство России масштабирует ИИ-сервисы на весь аппарат",
+    "organization": "Правительство РФ",
+    "topic": "государственные ИИ-сервисы и документооборот",
+    "event_type": "масштабирование пилота",
+    "status": "new",
+    "summary": "После пилота с участием более 130 сотрудников правительство решило распространить ИИ-сервисы на все подразделения аппарата.",
+    "published_at": null,
+    "published_date": "2026-07-17",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Правительство России масштабирует ИИ-сервисы на весь аппарат",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/content/246419/2026-07-16/2026-w29/1007/pravitelstvo-rf-obnovilo-strategiyu-cifrovizacii"
+      }
+    ],
+    "keywords": [
+      "Правительство РФ",
+      "ИИ-сервисы",
+      "документооборот",
+      "государственное управление",
+      "автоматизация"
+    ],
+    "geography": "russia",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "blogger-2026-07-17-08",
+    "section": "russia",
+    "headline": "BSS добавила автоматизированную оценку качества RAG-систем",
+    "organization": "BSS",
+    "topic": "тестирование генеративного ИИ и RAG",
+    "event_type": "выпуск программного продукта",
+    "status": "new",
+    "summary": "NLU-Suite 3.8 использует LLM для автоматизированной оценки корректности, релевантности и соответствия ответов RAG-систем исходным документам.",
+    "published_at": null,
+    "published_date": "2026-07-17",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "BSS добавила автоматизированную оценку качества RAG-систем",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/content/246436/2026-07-16/2026-w29/1018/bss-avtomatizirovala-audit-generativnogo-ii-nlu-suite-38-poyavilas-llm-ocenka-kachestva-rag-sistem"
+      }
+    ],
+    "keywords": [
+      "BSS",
+      "NLU-Suite",
+      "RAG",
+      "LLM",
+      "тестирование ИИ",
+      "галлюцинации",
+      "клиентский сервис"
+    ],
+    "geography": "russia",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "blogger-2026-07-17-09",
+    "section": "russia",
+    "headline": "«ЛокоТех» внедряет генеративный ИИ в работу кадровой службы",
+    "organization": "ЛокоТех",
+    "topic": "генеративный ИИ в управлении персоналом",
+    "event_type": "корпоративное внедрение",
+    "status": "new",
+    "summary": "ЛокоТех обучает кадровых специалистов применению генеративного ИИ для подготовки материалов, анализа информации и автоматизации рутины.",
+    "published_at": null,
+    "published_date": "2026-07-17",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "«ЛокоТех» внедряет генеративный ИИ в работу кадровой службы",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/digital-economy/content/246440/2026-07-16/2026-w29/1012/lokotekh-povysit-effektivnost-raboty-sluzhby-upravleniya-personalom-pomoschyu-ii"
+      }
+    ],
+    "keywords": [
+      "ЛокоТех",
+      "генеративный ИИ",
+      "HR",
+      "кадры",
+      "обучение сотрудников",
+      "автоматизация"
+    ],
+    "geography": "russia",
+    "category": "other"
+  }
+]

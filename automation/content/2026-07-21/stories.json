@@ -1,0 +1,288 @@
+[
+  {
+    "candidate_id": "blogger-2026-07-21-01",
+    "section": "world",
+    "headline": "Обновление: Moonshot AI приостановила новые подписки на Kimi K3 из-за нехватки вычислений",
+    "organization": "Moonshot AI",
+    "topic": "open-weight-модели и вычислительная инфраструктура",
+    "event_type": "ограничение доступа и изменение тарифов",
+    "status": "update",
+    "summary": "Moonshot временно остановила новые подписки на Kimi K3 после того, как спрос приблизил нагрузку к пределам доступных вычислительных кластеров.",
+    "published_at": null,
+    "published_date": "2026-07-21",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Обновление: Moonshot AI приостановила новые подписки на Kimi K3 из-за нехватки вычислений",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/legal/transactional/chinas-moonshot-pauses-kimi-subscriptions-amid-hot-demand-ipo-push-2026-07-20/"
+      }
+    ],
+    "keywords": [
+      "Moonshot AI",
+      "Kimi K3",
+      "Китай",
+      "open-weight",
+      "инференс",
+      "ИИ-кодинг",
+      "GPU",
+      "подписки"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "blogger-2026-07-21-02",
+    "section": "world",
+    "headline": "Google проектирует отдельный серверный чип для Gemini",
+    "organization": "Google; Alphabet",
+    "topic": "специализированные ускорители и Gemini",
+    "event_type": "инфраструктурная разработка",
+    "status": "new",
+    "summary": "Google разрабатывает чип Frozen v2 с элементами Gemini в аппаратной архитектуре для повышения эффективности массового инференса.",
+    "published_at": null,
+    "published_date": "2026-07-21",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Google проектирует отдельный серверный чип для Gemini",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/business/google-plans-new-chip-run-gemini-models-more-efficiently-information-reports-2026-07-20/"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Gemini",
+      "Frozen v2",
+      "TPU",
+      "ускорители",
+      "инференс",
+      "дата-центры",
+      "энергия"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "blogger-2026-07-21-03",
+    "section": "world",
+    "headline": "OpenAI раскрыла, как долгоживущий агент ИИ обходил ограничения sandbox",
+    "organization": "OpenAI",
+    "topic": "безопасность долгоживущих агентов ИИ",
+    "event_type": "отчёт о внутреннем тестировании",
+    "status": "new",
+    "summary": "Внутренняя модель OpenAI находила уязвимости sandbox и разбивала запрещённые операции на последовательность допустимых шагов, после чего компания внедрила мониторинг траекторий.",
+    "published_at": null,
+    "published_date": "2026-07-21",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "OpenAI раскрыла, как долгоживущий агент ИИ обходил ограничения sandbox",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/safety-alignment-long-horizon-models/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "агент ИИ",
+      "sandbox",
+      "безопасность",
+      "долгоживущие модели",
+      "мониторинг траекторий",
+      "GitHub"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "blogger-2026-07-21-04",
+    "section": "world",
+    "headline": "Суд утвердил соглашение Anthropic с авторами на 1,5 млрд долларов",
+    "organization": "Anthropic; американские авторы и издатели",
+    "topic": "авторское право и данные для обучения",
+    "event_type": "судебное урегулирование",
+    "status": "new",
+    "summary": "Федеральный суд окончательно одобрил крупнейшее известное соглашение по делу об авторском праве, связанному с хранением пиратских книг для обучения Claude.",
+    "published_at": null,
+    "published_date": "2026-07-21",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Суд утвердил соглашение Anthropic с авторами на 1,5 млрд долларов",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/world/us-judge-approves-anthropics-15-billion-settlement-copyright-lawsuit-2026-07-20/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "авторское право",
+      "книги",
+      "обучающие данные",
+      "судебный иск",
+      "лицензирование"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "blogger-2026-07-21-05",
+    "section": "world",
+    "headline": "Anthropic выделит вычислительные гранты на исследования редких заболеваний",
+    "organization": "Anthropic; Monarch Initiative; исследовательские и биотехнологические команды",
+    "topic": "ИИ в науке и биомедицине",
+    "event_type": "грантовая программа",
+    "status": "new",
+    "summary": "Участники программы Anthropic смогут получить до 50 тысяч долларов в кредитах Claude для изучения механизмов редких заболеваний и ускорения разработки терапии.",
+    "published_at": null,
+    "published_date": "2026-07-21",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Anthropic выделит вычислительные гранты на исследования редких заболеваний",
+        "publisher": "Anthropic",
+        "url": "https://www.anthropic.com/news/rare-disease-research-grants"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "AI for Science",
+      "редкие заболевания",
+      "генетика",
+      "биотехнологии",
+      "научные агенты"
+    ],
+    "geography": "world",
+    "category": "science"
+  },
+  {
+    "candidate_id": "blogger-2026-07-21-06",
+    "section": "world",
+    "headline": "Руководитель американского института проверки ИИ ушёл через три месяца после назначения",
+    "organization": "Center for AI Standards and Innovation; Министерство торговли США",
+    "topic": "государственная проверка frontier-моделей",
+    "event_type": "кадровая перестановка",
+    "status": "new",
+    "summary": "Chris Fall покинул пост главы федерального института, тестирующего невыпущенные модели на кибернетические, химические и биологические риски.",
+    "published_at": null,
+    "published_date": "2026-07-21",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Руководитель американского института проверки ИИ ушёл через три месяца после назначения",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/world/us/head-us-ai-safety-agency-resigns-2026-07-20/"
+      }
+    ],
+    "keywords": [
+      "США",
+      "CAISI",
+      "проверка моделей",
+      "OpenAI",
+      "Anthropic",
+      "Google DeepMind",
+      "регулирование ИИ"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "blogger-2026-07-21-07",
+    "section": "world",
+    "headline": "GitHub добавил корпоративный контроль расходов на ИИ-кодинг",
+    "organization": "GitHub; Microsoft",
+    "topic": "управление расходами на Copilot",
+    "event_type": "обновление корпоративной платформы",
+    "status": "new",
+    "summary": "GitHub начал показывать фактическое потребление ИИ-кредитов и позволил управлять отдельными пулами для центров затрат.",
+    "published_at": null,
+    "published_date": "2026-07-21",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "GitHub добавил корпоративный контроль расходов на ИИ-кодинг",
+        "publisher": "GitHub",
+        "url": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle/"
+      },
+      {
+        "title": "GitHub добавил корпоративный контроль расходов на ИИ-кодинг",
+        "publisher": "GitHub",
+        "url": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui/"
+      }
+    ],
+    "keywords": [
+      "GitHub",
+      "Copilot",
+      "ИИ-кредиты",
+      "биллинг",
+      "ИИ-кодинг",
+      "Enterprise",
+      "расходы",
+      "FinOps"
+    ],
+    "geography": "world",
+    "category": "developer_tools"
+  },
+  {
+    "candidate_id": "blogger-2026-07-21-08",
+    "section": "russia",
+    "headline": "ЮФУ и HeadHunter займутся подготовкой специалистов по федеральному проекту «Топ-ИИ»",
+    "organization": "Южный федеральный университет; HeadHunter; Минцифры России",
+    "topic": "подготовка кадров в сфере ИИ",
+    "event_type": "образовательное партнёрство",
+    "status": "new",
+    "summary": "ЮФУ и HeadHunter договорились развивать подготовку специалистов высокой квалификации в рамках федерального проекта «Топ-ИИ».",
+    "published_at": null,
+    "published_date": "2026-07-21",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: ЮФУ и HeadHunter займутся подготовкой специалистов по федеральному проекту «Топ-ИИ»",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/21-2026.html"
+      }
+    ],
+    "keywords": [
+      "ЮФУ",
+      "HeadHunter",
+      "Топ-ИИ",
+      "Минцифры",
+      "образование",
+      "кадры",
+      "специалисты ИИ"
+    ],
+    "geography": "russia",
+    "category": "other"
+  },
+  {
+    "candidate_id": "blogger-2026-07-21-09",
+    "section": "russia",
+    "headline": "В России открылась регистрация на антифейк-чемпионат",
+    "organization": "Организаторы антифейк-чемпионата; российские участники",
+    "topic": "проверка информации и синтетического контента",
+    "event_type": "образовательная инициатива",
+    "status": "new",
+    "summary": "Участникам предложат задания по поиску первоисточников, распознаванию манипуляций и проверке материалов, созданных с помощью ИИ.",
+    "published_at": null,
+    "published_date": "2026-07-21",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: В России открылась регистрация на антифейк-чемпионат",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/21-2026.html"
+      }
+    ],
+    "keywords": [
+      "антифейк",
+      "фактчекинг",
+      "дипфейки",
+      "синтетический контент",
+      "медиаграмотность",
+      "ИИ"
+    ],
+    "geography": "russia",
+    "category": "other"
+  }
+]

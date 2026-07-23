@@ -1,0 +1,188 @@
+[
+  {
+    "candidate_id": "blogger-2026-07-13-01",
+    "section": "world",
+    "headline": "Samsung ускоряет запуск фабрики памяти для ИИ в Yongin",
+    "organization": "Samsung Electronics; правительство Южной Кореи",
+    "topic": "память и ИИ-инфраструктура",
+    "event_type": "ускорение инфраструктурного проекта",
+    "status": "new",
+    "summary": "Samsung перенесла планируемое начало работы первой фабрики в Yongin на 2029 год из-за роста спроса на память для ИИ-инфраструктуры.",
+    "published_at": null,
+    "published_date": "2026-07-13",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Samsung ускоряет запуск фабрики памяти для ИИ в Yongin",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/world/asia-pacific/samsung-electronics-move-up-start-chip-factory-yongin-2029-source-says-2026-07-13/"
+      }
+    ],
+    "keywords": [
+      "Samsung",
+      "Yongin",
+      "HBM",
+      "память",
+      "ИИ-инфраструктура",
+      "Южная Корея"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "blogger-2026-07-13-02",
+    "section": "world",
+    "headline": "TCS сформирует до 8900 инженеров для внедрения ИИ у заказчиков",
+    "organization": "Tata Consultancy Services",
+    "topic": "корпоративное внедрение ИИ",
+    "event_type": "кадровая и инвестиционная стратегия",
+    "status": "new",
+    "summary": "TCS создаёт команду forward-deployed engineers и рассматривает приобретения в сферах ИИ, защиты данных и кибербезопасности.",
+    "published_at": null,
+    "published_date": "2026-07-13",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "TCS сформирует до 8900 инженеров для внедрения ИИ у заказчиков",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/world/india/indias-tata-consultancy-services-plans-up-8900-ai-deployment-engineers-seeks-ai-2026-07-12/"
+      }
+    ],
+    "keywords": [
+      "TCS",
+      "Индия",
+      "внедрение ИИ",
+      "forward-deployed engineers",
+      "аутсорсинг",
+      "интеграция"
+    ],
+    "geography": "world",
+    "category": "business"
+  },
+  {
+    "candidate_id": "blogger-2026-07-13-03",
+    "section": "world",
+    "headline": "LS Electric и Infineon разработают энергосистемы для ИИ-дата-центров",
+    "organization": "LS Electric; Infineon",
+    "topic": "энергетическая инфраструктура ИИ",
+    "event_type": "технологическое партнёрство",
+    "status": "new",
+    "summary": "Компании договорились разрабатывать решения постоянного тока, силовую электронику и системы хранения энергии для ИИ-дата-центров.",
+    "published_at": null,
+    "published_date": "2026-07-13",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "LS Electric и Infineon разработают энергосистемы для ИИ-дата-центров",
+        "publisher": "Seoul Economic Daily",
+        "url": "https://en.sedaily.com/finance/2026/07/13/ls-electric-germanys-infineon-team-up-on-ai-data-center"
+      }
+    ],
+    "keywords": [
+      "LS Electric",
+      "Infineon",
+      "ИИ-дата-центры",
+      "DC power",
+      "силовые полупроводники",
+      "ESS"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "blogger-2026-07-13-04",
+    "section": "world",
+    "headline": "Пусан построит отраслевой ИИ-центр для судостроения и промышленности",
+    "organization": "Правительство Пусана; Elice Group; Busan Techno Park",
+    "topic": "edge-вычисления и промышленный ИИ",
+    "event_type": "инфраструктурный проект",
+    "status": "new",
+    "summary": "В промышленном комплексе Myeongji-Noksan создадут ИИ-центр с 32 GPU класса H200 и 168 корейскими NPU для судостроения и производства.",
+    "published_at": null,
+    "published_date": "2026-07-13",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Пусан построит отраслевой ИИ-центр для судостроения и промышленности",
+        "publisher": "Seoul Economic Daily",
+        "url": "https://en.sedaily.com/society/2026/07/13/busan-to-build-shipbuilding-ai-hub-at-myeongji-noksan"
+      }
+    ],
+    "keywords": [
+      "Пусан",
+      "судостроение",
+      "edge AI",
+      "H200",
+      "NPU",
+      "цифровые двойники",
+      "промышленный ИИ"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "blogger-2026-07-13-05",
+    "section": "world",
+    "headline": "Спрос на ИИ-компоненты поддерживает экспорт Китая",
+    "organization": "Китайские производители; полупроводниковая отрасль",
+    "topic": "ИИ и глобальные цепочки поставок",
+    "event_type": "макроэкономическая аналитика",
+    "status": "new",
+    "summary": "Мировой спрос на полупроводники и компоненты для ИИ поддерживает рост китайского экспорта и импорта технологического оборудования.",
+    "published_at": null,
+    "published_date": "2026-07-13",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Спрос на ИИ-компоненты поддерживает экспорт Китая",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/world/china/china-june-exports-growth-set-cool-ai-demand-underpins-overall-strength-2026-07-13/"
+      }
+    ],
+    "keywords": [
+      "Китай",
+      "экспорт",
+      "полупроводники",
+      "ИИ-инфраструктура",
+      "компоненты",
+      "цепочки поставок"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "blogger-2026-07-13-06",
+    "section": "russia",
+    "headline": "Исследование выявило риски утечки данных через ИИ-инструменты в российских компаниях",
+    "organization": "УЦСБ; ГК Солар",
+    "topic": "безопасность корпоративного ИИ",
+    "event_type": "исследование рынка",
+    "status": "new",
+    "summary": "50,5% из 102 опрошенных организаций подозревают или фиксировали утечки через ИИ-инструменты; 63,6% сообщили о нехватке обучения и внутренних политик.",
+    "published_at": null,
+    "published_date": "2026-07-13",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Исследование выявило риски утечки данных через ИИ-инструменты в российских компаниях",
+        "publisher": "CNews",
+        "url": "https://safe.cnews.ru/news/line/2026-07-09_utssb_i_gk_solar_505_rossijskih"
+      },
+      {
+        "title": "Исследование выявило риски утечки данных через ИИ-инструменты в российских компаниях",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/content/246323/2026-07-10/2026-w28/1008/utechki-konfidencialnykh-dannykh-okhvatili-kazhduyu-vtoruyu-rossiyskuyu-kompaniyu"
+      }
+    ],
+    "keywords": [
+      "УЦСБ",
+      "Солар",
+      "утечки данных",
+      "публичные LLM",
+      "AI Security",
+      "корпоративный ИИ"
+    ],
+    "geography": "russia",
+    "category": "security"
+  }
+]

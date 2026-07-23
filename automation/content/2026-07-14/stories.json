@@ -1,0 +1,274 @@
+[
+  {
+    "candidate_id": "blogger-2026-07-14-01",
+    "section": "world",
+    "headline": "OpenAI возвращает ChatGPT в WhatsApp в Европейской экономической зоне",
+    "organization": "OpenAI; WhatsApp",
+    "topic": "дистрибуция ИИ и мессенджеры",
+    "event_type": "возобновление интеграции",
+    "status": "new",
+    "summary": "ChatGPT снова становится доступен через WhatsApp пользователям Европейской экономической зоны.",
+    "published_at": null,
+    "published_date": "2026-07-14",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "OpenAI возвращает ChatGPT в WhatsApp в Европейской экономической зоне",
+        "publisher": "OpenAI",
+        "url": "https://help.openai.com/en/articles/6825453-chatgpt-release-notes"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ChatGPT",
+      "WhatsApp",
+      "ЕЭЗ",
+      "мессенджеры",
+      "ассистент ИИ"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "blogger-2026-07-14-02",
+    "section": "world",
+    "headline": "Международные компании переходят на китайские модели ради снижения расходов",
+    "organization": "Moonshot AI; DeepSeek; Z.ai; международные компании",
+    "topic": "китайские модели и корпоративное внедрение",
+    "event_type": "рыночная аналитика",
+    "status": "new",
+    "summary": "Международные компании изучают и применяют Kimi, DeepSeek и GLM из-за низкой стоимости, open-weight-лицензий и возможности самостоятельного размещения.",
+    "published_at": null,
+    "published_date": "2026-07-14",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Международные компании переходят на китайские модели ради снижения расходов",
+        "publisher": "Financial Times",
+        "url": "https://www.ft.com/content/9c8ff45b-7c20-4c2e-93c9-c52339ffdcee"
+      }
+    ],
+    "keywords": [
+      "Китай",
+      "Kimi",
+      "DeepSeek",
+      "GLM",
+      "Z.ai",
+      "open-weight",
+      "стоимость инференса"
+    ],
+    "geography": "world",
+    "category": "business"
+  },
+  {
+    "candidate_id": "blogger-2026-07-14-03",
+    "section": "world",
+    "headline": "Более 200 экспертов потребовали заранее готовиться к экономическим последствиям ИИ",
+    "organization": "Экономисты; исследователи; OpenAI; Anthropic; Google",
+    "topic": "ИИ и рынок труда",
+    "event_type": "публичное заявление",
+    "status": "new",
+    "summary": "Экономисты и исследователи призвали ускорить изучение влияния ИИ на занятость, доходы и распределение экономических преимуществ.",
+    "published_at": null,
+    "published_date": "2026-07-14",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Более 200 экспертов потребовали заранее готовиться к экономическим последствиям ИИ",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/business/over-200-experts-call-urgent-action-tackle-ais-economic-impact-2026-07-13/"
+      }
+    ],
+    "keywords": [
+      "рынок труда",
+      "автоматизация",
+      "экономическая политика",
+      "OpenAI",
+      "Anthropic",
+      "Google"
+    ],
+    "geography": "world",
+    "category": "business"
+  },
+  {
+    "candidate_id": "blogger-2026-07-14-04",
+    "section": "world",
+    "headline": "Google начнёт раскрывать применение ИИ при создании рекламы",
+    "organization": "Google",
+    "topic": "генеративный ИИ в рекламе",
+    "event_type": "изменение рекламной платформы",
+    "status": "new",
+    "summary": "Google добавит сведения об использовании генеративного ИИ при создании и редактировании рекламы в Поиске, Discover и YouTube.",
+    "published_at": null,
+    "published_date": "2026-07-14",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Google начнёт раскрывать применение ИИ при создании рекламы",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/content/246363/2026-07-13/2026-w29/1008/google-vvel-markirovku-reklamy-sozdannoy-pomoschyu-iskusstvennogo-intellekta"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "реклама",
+      "генеративный ИИ",
+      "маркировка",
+      "YouTube",
+      "прозрачность контента"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "blogger-2026-07-14-05",
+    "section": "world",
+    "headline": "GitHub готовит платную модель Code Quality для команд разработчиков",
+    "organization": "GitHub; Microsoft",
+    "topic": "ИИ-кодинг и анализ качества кода",
+    "event_type": "коммерциализация продукта",
+    "status": "new",
+    "summary": "GitHub Code Quality после выхода в общую доступность будет стоить 10 долларов в месяц за активного участника разработки.",
+    "published_at": null,
+    "published_date": "2026-07-14",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "GitHub готовит платную модель Code Quality для команд разработчиков",
+        "publisher": "GitHub",
+        "url": "https://github.blog/changelog/2026-07-13-github-code-quality-license-estimate-in-public-preview/"
+      }
+    ],
+    "keywords": [
+      "GitHub",
+      "Code Quality",
+      "ИИ-кодинг",
+      "ревью кода",
+      "статический анализ",
+      "разработчики"
+    ],
+    "geography": "world",
+    "category": "developer_tools"
+  },
+  {
+    "candidate_id": "blogger-2026-07-14-06",
+    "section": "world",
+    "headline": "Gemini увеличивает аудиторию на фоне замедления веб-трафика ChatGPT",
+    "organization": "Google; OpenAI",
+    "topic": "рынок пользовательских ИИ-ассистентов",
+    "event_type": "аналитика аудитории",
+    "status": "new",
+    "summary": "Данные BofA указывают на быстрый рост веб- и мобильной аудитории Gemini при относительно стабильном трафике веб-версии ChatGPT.",
+    "published_at": null,
+    "published_date": "2026-07-14",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Gemini увеличивает аудиторию на фоне замедления веб-трафика ChatGPT",
+        "publisher": "Barron’s",
+        "url": "https://www.barrons.com/articles/google-traffic-grows-even-as-ai-rivals-explode-e146d551"
+      }
+    ],
+    "keywords": [
+      "Gemini",
+      "ChatGPT",
+      "Google",
+      "OpenAI",
+      "аудитория",
+      "веб-трафик",
+      "мобильные приложения"
+    ],
+    "geography": "world",
+    "category": "business"
+  },
+  {
+    "candidate_id": "blogger-2026-07-14-07",
+    "section": "russia",
+    "headline": "Сбер разработал метод раннего обнаружения аварий и аномалий",
+    "organization": "Сбер; Центр практического искусственного интеллекта",
+    "topic": "промышленный ИИ и предиктивная аналитика",
+    "event_type": "научная разработка",
+    "status": "new",
+    "summary": "Метод Сбера предназначен для раннего обнаружения аномалий и предотвращения нештатных ситуаций в производственных и цифровых системах.",
+    "published_at": null,
+    "published_date": "2026-07-14",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Сбер разработал метод раннего обнаружения аварий и аномалий",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/content/246389/2026-07-13/2026-w29/1009/rossii-sozdan-ii-metod-dlya-predotvrascheniya-avariy-proizvodstvakh-i-cifrovykh-sistemakh"
+      }
+    ],
+    "keywords": [
+      "Сбер",
+      "промышленный ИИ",
+      "аномалии",
+      "аварии",
+      "предиктивная аналитика",
+      "IEEE"
+    ],
+    "geography": "russia",
+    "category": "other"
+  },
+  {
+    "candidate_id": "blogger-2026-07-14-08",
+    "section": "russia",
+    "headline": "Росатом представил платформу Когнитрон для корпоративных агентов ИИ",
+    "organization": "Росатом; атомная отрасль",
+    "topic": "корпоративные агенты ИИ",
+    "event_type": "продуктовый анонс",
+    "status": "new",
+    "summary": "Когнитрон позволяет обучать и развёртывать модели, создавать мультимодальных помощников и адаптировать LLM с использованием корпоративных знаний.",
+    "published_at": null,
+    "published_date": "2026-07-14",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Росатом представил платформу Когнитрон для корпоративных агентов ИИ",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/content/246381/2026-07-13/2026-w29/1009/rosatome-razrabotali-reshenie-dlya-sozdaniya-ii-agentov"
+      }
+    ],
+    "keywords": [
+      "Росатом",
+      "Когнитрон",
+      "агенты ИИ",
+      "LLM",
+      "закрытый контур",
+      "российское ПО"
+    ],
+    "geography": "russia",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "blogger-2026-07-14-09",
+    "section": "russia",
+    "headline": "Обновление: участники рынка предупредили о рисках поспешного закона об ИИ",
+    "organization": "Государственная Дума; российские участники рынка",
+    "topic": "регулирование ИИ в России",
+    "event_type": "обсуждение последствий закона",
+    "status": "update",
+    "summary": "После принятия закона участники рынка указали на риски широких формулировок и неопределённость критериев национальных и суверенных моделей.",
+    "published_at": null,
+    "published_date": "2026-07-14",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Обновление: участники рынка предупредили о рисках поспешного закона об ИИ",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/content/246332/2026-07-13/2026-w29/1030/k-chemu-privedet-pospeshnoe-prinyatie-gosdumoy-zakonoproekta-ob-ii"
+      }
+    ],
+    "keywords": [
+      "закон об ИИ",
+      "Госдума",
+      "регулирование",
+      "национальные модели",
+      "суверенные модели",
+      "локализация"
+    ],
+    "geography": "russia",
+    "category": "regulation"
+  }
+]

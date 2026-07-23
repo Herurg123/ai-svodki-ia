@@ -1,0 +1,269 @@
+[
+  {
+    "candidate_id": "blogger-2026-07-15-01",
+    "section": "world",
+    "headline": "США создадут группу координации ИИ и кибербезопасности",
+    "organization": "Правительство США; OpenAI; Anthropic; Nvidia",
+    "topic": "ИИ и кибербезопасность",
+    "event_type": "государственная инициатива",
+    "status": "new",
+    "summary": "США объединят разработчиков моделей и операторов критической инфраструктуры для обмена данными об уязвимостях и координации реагирования.",
+    "published_at": null,
+    "published_date": "2026-07-15",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: США создадут группу координации ИИ и кибербезопасности",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+      }
+    ],
+    "keywords": [
+      "США",
+      "кибербезопасность",
+      "OpenAI",
+      "Anthropic",
+      "Nvidia",
+      "критическая инфраструктура"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "blogger-2026-07-15-02",
+    "section": "world",
+    "headline": "Google DeepMind предложила создать международный надзор за frontier-моделями",
+    "organization": "Google DeepMind; Демис Хассабис",
+    "topic": "безопасность и регулирование frontier-моделей",
+    "event_type": "регуляторное предложение",
+    "status": "new",
+    "summary": "Демис Хассабис предложил создать финансируемую отраслью международную структуру для проверки наиболее мощных моделей перед выпуском.",
+    "published_at": null,
+    "published_date": "2026-07-15",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: Google DeepMind предложила создать международный надзор за frontier-моделями",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+      }
+    ],
+    "keywords": [
+      "Google DeepMind",
+      "Демис Хассабис",
+      "frontier-модели",
+      "безопасность ИИ",
+      "регулирование"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "blogger-2026-07-15-03",
+    "section": "world",
+    "headline": "GitHub Copilot получил встроенную проверку безопасности изменений",
+    "organization": "GitHub; Microsoft",
+    "topic": "ИИ-кодинг и безопасность кода",
+    "event_type": "обновление продукта",
+    "status": "new",
+    "summary": "GitHub добавил команду security-review в Copilot и начал показывать созданные с помощью ИИ предупреждения непосредственно в pull request.",
+    "published_at": null,
+    "published_date": "2026-07-15",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: GitHub Copilot получил встроенную проверку безопасности изменений",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+      }
+    ],
+    "keywords": [
+      "GitHub Copilot",
+      "security review",
+      "pull request",
+      "уязвимости",
+      "ИИ-кодинг",
+      "CodeQL"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "blogger-2026-07-15-04",
+    "section": "world",
+    "headline": "Reflection заключила с Nebius контракт на вычисления стоимостью более миллиарда долларов",
+    "organization": "Reflection; Nebius; Nvidia",
+    "topic": "вычислительная инфраструктура ИИ",
+    "event_type": "инфраструктурный контракт",
+    "status": "new",
+    "summary": "Reflection получила доступ к вычислительной инфраструктуре Nebius на базе новых ускорителей Nvidia для обучения open-weight frontier-моделей.",
+    "published_at": null,
+    "published_date": "2026-07-15",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: Reflection заключила с Nebius контракт на вычисления стоимостью более миллиарда долларов",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+      }
+    ],
+    "keywords": [
+      "Reflection",
+      "Nebius",
+      "Nvidia",
+      "open-weight",
+      "вычислительные мощности",
+      "frontier-модели"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "blogger-2026-07-15-05",
+    "section": "world",
+    "headline": "Nvidia начала ограниченные поставки ускорителей H200 в Китай",
+    "organization": "Nvidia; правительство США; китайские покупатели",
+    "topic": "чипы и экспортный контроль",
+    "event_type": "начало поставок",
+    "status": "new",
+    "summary": "США подтвердили начало минимальных поставок ускорителей Nvidia H200 в Китай в рамках экспортных разрешений.",
+    "published_at": null,
+    "published_date": "2026-07-15",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: Nvidia начала ограниченные поставки ускорителей H200 в Китай",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+      }
+    ],
+    "keywords": [
+      "Nvidia",
+      "H200",
+      "Китай",
+      "ускорители",
+      "экспортный контроль",
+      "инфраструктура ИИ"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "blogger-2026-07-15-06",
+    "section": "world",
+    "headline": "DeepSeek рассматривает новый раунд финансирования и подготовку к IPO",
+    "organization": "DeepSeek",
+    "topic": "финансирование китайских разработчиков ИИ",
+    "event_type": "переговоры о финансировании",
+    "status": "new",
+    "summary": "DeepSeek рассматривает новый инвестиционный раунд при предварительной оценке около 71 млрд долларов и начала подготовку к возможному IPO.",
+    "published_at": null,
+    "published_date": "2026-07-15",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: DeepSeek рассматривает новый раунд финансирования и подготовку к IPO",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+      }
+    ],
+    "keywords": [
+      "DeepSeek",
+      "Китай",
+      "финансирование",
+      "IPO",
+      "модели ИИ",
+      "инвестиции"
+    ],
+    "geography": "world",
+    "category": "developer_tools"
+  },
+  {
+    "candidate_id": "blogger-2026-07-15-07",
+    "section": "world",
+    "headline": "Австралия создаст единый государственный офис по ИИ",
+    "organization": "Правительство Австралии",
+    "topic": "государственное управление ИИ",
+    "event_type": "создание регулирующего органа",
+    "status": "new",
+    "summary": "Австралия создаст Office of AI для координации регулирования и применения ИИ в государственном секторе.",
+    "published_at": null,
+    "published_date": "2026-07-15",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: Австралия создаст единый государственный офис по ИИ",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+      }
+    ],
+    "keywords": [
+      "Австралия",
+      "Office of AI",
+      "регулирование",
+      "государственная политика",
+      "безопасность ИИ"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "blogger-2026-07-15-08",
+    "section": "russia",
+    "headline": "Яндекс открыл бизнесу создание собственных агентов-исследователей",
+    "organization": "Яндекс; Yandex B2B Tech",
+    "topic": "корпоративные агенты ИИ",
+    "event_type": "запуск продукта",
+    "status": "new",
+    "summary": "Корпоративные клиенты получили возможность создавать специализированных агентов для поиска, анализа и подготовки исследовательских материалов.",
+    "published_at": null,
+    "published_date": "2026-07-15",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: Яндекс открыл бизнесу создание собственных агентов-исследователей",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+      }
+    ],
+    "keywords": [
+      "Яндекс",
+      "Yandex B2B Tech",
+      "агенты ИИ",
+      "исследования",
+      "корпоративный ИИ",
+      "поиск"
+    ],
+    "geography": "russia",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "blogger-2026-07-15-09",
+    "section": "russia",
+    "headline": "Президент поручил подготовить стратегию развития автономных систем",
+    "organization": "Президент России; Правительство России",
+    "topic": "автономные системы и государственная политика",
+    "event_type": "государственное поручение",
+    "status": "new",
+    "summary": "Правительству поручено разработать национальные стратегии развития автономных систем и цифровых платформ.",
+    "published_at": null,
+    "published_date": "2026-07-15",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: Президент поручил подготовить стратегию развития автономных систем",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+      }
+    ],
+    "keywords": [
+      "автономные системы",
+      "беспилотный транспорт",
+      "робототехника",
+      "государственная стратегия",
+      "цифровые платформы"
+    ],
+    "geography": "russia",
+    "category": "regulation"
+  }
+]

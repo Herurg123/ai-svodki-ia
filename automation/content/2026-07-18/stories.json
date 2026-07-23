@@ -1,0 +1,274 @@
+[
+  {
+    "candidate_id": "blogger-2026-07-18-01",
+    "section": "world",
+    "headline": "Meta и Anthropic обсуждают аренду вычислительных мощностей на сумму до 10 млрд долларов",
+    "organization": "Meta; Anthropic",
+    "topic": "вычислительная инфраструктура ИИ",
+    "event_type": "переговоры о сделке",
+    "status": "new",
+    "summary": "Meta и Anthropic обсуждают двухлетнюю аренду вычислительных мощностей стоимостью до 10 млрд долларов.",
+    "published_at": null,
+    "published_date": "2026-07-18",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Meta и Anthropic обсуждают аренду вычислительных мощностей на сумму до 10 млрд долларов",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/technology/meta-talks-10-billion-anthropic-compute-deal-nyt-reports-2026-07-17/"
+      }
+    ],
+    "keywords": [
+      "Meta",
+      "Anthropic",
+      "Claude",
+      "Claude Code",
+      "вычисления",
+      "дата-центры",
+      "облако",
+      "инфраструктура"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "blogger-2026-07-18-02",
+    "section": "world",
+    "headline": "Обновление: Китай представил открытую модель международного управления ИИ",
+    "organization": "Китай; World AI Cooperation Organisation",
+    "topic": "международное управление ИИ",
+    "event_type": "политическая инициатива",
+    "status": "update",
+    "summary": "Китай связал распространение open-source-моделей, помощь развивающимся странам и формирование международных стандартов в единую стратегию.",
+    "published_at": null,
+    "published_date": "2026-07-18",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Обновление: Китай представил открытую модель международного управления ИИ",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/world/asia-pacific/chinas-xi-promotes-chinas-commitment-ai-access-speech-shanghai-conference-2026-07-17/"
+      }
+    ],
+    "keywords": [
+      "Китай",
+      "WAICO",
+      "open-source",
+      "регулирование ИИ",
+      "БРИКС",
+      "АСЕАН",
+      "Глобальный Юг"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "blogger-2026-07-18-03",
+    "section": "world",
+    "headline": "Индонезия готовит авторские отчисления за использование контента при обучении ИИ",
+    "organization": "Индонезия; Google; технологические платформы",
+    "topic": "авторское право и обучение моделей",
+    "event_type": "законопроект",
+    "status": "new",
+    "summary": "Проект закона предусматривает компенсации за материалы для обучения ИИ, раскрытие применения ИИ и защиту только работ с существенным человеческим вкладом.",
+    "published_at": null,
+    "published_date": "2026-07-18",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Индонезия готовит авторские отчисления за использование контента при обучении ИИ",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/legal/litigation/indonesias-copyright-rewrite-puts-google-ai-platforms-notice-2026-07-17/"
+      }
+    ],
+    "keywords": [
+      "Индонезия",
+      "авторское право",
+      "обучение моделей",
+      "данные",
+      "генеративный ИИ",
+      "лицензирование"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "blogger-2026-07-18-04",
+    "section": "world",
+    "headline": "Apple обошла Nvidia по рыночной капитализации на фоне переоценки ИИ-гонки",
+    "organization": "Apple; Nvidia",
+    "topic": "экономика рынка ИИ",
+    "event_type": "изменение рыночной капитализации",
+    "status": "new",
+    "summary": "Apple достигла капитализации около 4,88 трлн долларов и обошла Nvidia, чьи акции снизились на фоне коррекции технологического сектора.",
+    "published_at": null,
+    "published_date": "2026-07-18",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Apple обошла Nvidia по рыночной капитализации на фоне переоценки ИИ-гонки",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/business/apple-closes-nvidia-race-worlds-most-valuable-company-2026-07-17/"
+      }
+    ],
+    "keywords": [
+      "Apple",
+      "Nvidia",
+      "капитализация",
+      "ИИ-рынок",
+      "GPU",
+      "Siri",
+      "инвестиции"
+    ],
+    "geography": "world",
+    "category": "business"
+  },
+  {
+    "candidate_id": "blogger-2026-07-18-05",
+    "section": "world",
+    "headline": "Bank of America создал руководящие роли для внедрения ИИ в глобальные рынки",
+    "organization": "Bank of America",
+    "topic": "корпоративное внедрение ИИ",
+    "event_type": "организационная трансформация",
+    "status": "new",
+    "summary": "Bank of America назначил руководителей для централизованного внедрения ИИ, автоматизации, аналитики и платформенных решений.",
+    "published_at": null,
+    "published_date": "2026-07-18",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Bank of America создал руководящие роли для внедрения ИИ в глобальные рынки",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/legal/transactional/bofa-names-senior-executives-drive-ai-adoption-global-markets-memo-2026-07-17/"
+      }
+    ],
+    "keywords": [
+      "Bank of America",
+      "финансы",
+      "корпоративный ИИ",
+      "автоматизация",
+      "аналитика",
+      "управление"
+    ],
+    "geography": "world",
+    "category": "business"
+  },
+  {
+    "candidate_id": "blogger-2026-07-18-06",
+    "section": "world",
+    "headline": "OpenAI предложила измерять ИИ по стоимости успешно выполненной работы",
+    "organization": "OpenAI",
+    "topic": "экономика корпоративного ИИ",
+    "event_type": "методические рекомендации",
+    "status": "new",
+    "summary": "OpenAI предложила оценивать ИИ по полезной работе, стоимости успешной задачи, надёжности и эффективности при масштабировании.",
+    "published_at": null,
+    "published_date": "2026-07-18",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "OpenAI предложила измерять ИИ по стоимости успешно выполненной работы",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/a-scorecard-for-the-ai-age/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "окупаемость ИИ",
+      "стоимость задачи",
+      "надёжность",
+      "токены",
+      "корпоративный ИИ"
+    ],
+    "geography": "world",
+    "category": "business"
+  },
+  {
+    "candidate_id": "blogger-2026-07-18-07",
+    "section": "russia",
+    "headline": "Совет Федерации одобрил базовый закон о поддержке развития ИИ",
+    "organization": "Совет Федерации; Правительство РФ",
+    "topic": "регулирование и поддержка ИИ",
+    "event_type": "принятие закона",
+    "status": "new",
+    "summary": "Совет Федерации одобрил базовый закон, определяющий принципы и меры государственной поддержки разработки и внедрения ИИ.",
+    "published_at": null,
+    "published_date": "2026-07-18",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: Совет Федерации одобрил базовый закон о поддержке развития ИИ",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/18-2026.html"
+      }
+    ],
+    "keywords": [
+      "Россия",
+      "Совет Федерации",
+      "закон об ИИ",
+      "государственная поддержка",
+      "регулирование"
+    ],
+    "geography": "russia",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "blogger-2026-07-18-08",
+    "section": "russia",
+    "headline": "Интернет-платформы должны будут предоставить маркировку ИИ-контента",
+    "organization": "Совет Федерации; интернет-платформы",
+    "topic": "маркировка синтетического контента",
+    "event_type": "регуляторное требование",
+    "status": "new",
+    "summary": "Интернет-ресурсы должны предоставить пользователям техническую возможность маркировать материалы, созданные или изменённые с помощью ИИ.",
+    "published_at": null,
+    "published_date": "2026-07-18",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: Интернет-платформы должны будут предоставить маркировку ИИ-контента",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/18-2026.html"
+      }
+    ],
+    "keywords": [
+      "Россия",
+      "маркировка ИИ",
+      "синтетический контент",
+      "платформы",
+      "регулирование",
+      "прозрачность"
+    ],
+    "geography": "russia",
+    "category": "other"
+  },
+  {
+    "candidate_id": "blogger-2026-07-18-09",
+    "section": "russia",
+    "headline": "Россия заявила о внедрении отечественных ИИ-решений в десятках стран",
+    "organization": "Российские разработчики; Администрация президента РФ",
+    "topic": "экспорт российских ИИ-решений",
+    "event_type": "публичное заявление",
+    "status": "new",
+    "summary": "Российская делегация заявила, что отечественные решения на основе ИИ используются в десятках государств.",
+    "published_at": null,
+    "published_date": "2026-07-18",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: Россия заявила о внедрении отечественных ИИ-решений в десятках стран",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/18-2026.html"
+      }
+    ],
+    "keywords": [
+      "Россия",
+      "экспорт ИИ",
+      "международное сотрудничество",
+      "Шанхай",
+      "российские технологии"
+    ],
+    "geography": "russia",
+    "category": "other"
+  }
+]

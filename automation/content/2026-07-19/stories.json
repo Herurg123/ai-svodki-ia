@@ -1,0 +1,275 @@
+[
+  {
+    "candidate_id": "blogger-2026-07-19-01",
+    "section": "world",
+    "headline": "Противники дата-центров провели 142 акции в 42 штатах США",
+    "organization": "HumansFirst; операторы дата-центров; технологические компании США",
+    "topic": "общественное сопротивление ИИ-инфраструктуре",
+    "event_type": "общественные протесты",
+    "status": "new",
+    "summary": "В США прошли 142 акции против быстрого строительства дата-центров с требованиями прозрачности, защиты ресурсов и ответственности операторов.",
+    "published_at": null,
+    "published_date": "2026-07-19",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Противники дата-центров провели 142 акции в 42 штатах США",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/business/retail-consumer/us-data-center-protests-go-national-backlash-grows-2026-07-18/"
+      }
+    ],
+    "keywords": [
+      "дата-центры",
+      "протесты",
+      "США",
+      "вода",
+      "электроэнергия",
+      "инфраструктура ИИ",
+      "гиперскейлеры"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "blogger-2026-07-19-02",
+    "section": "world",
+    "headline": "SpaceX обсуждает предоставление вычислительных мощностей Пентагону",
+    "organization": "SpaceX; Министерство обороны США",
+    "topic": "военная вычислительная инфраструктура",
+    "event_type": "переговоры о контракте",
+    "status": "new",
+    "summary": "SpaceX ведёт переговоры о возможном предоставлении вычислительных ресурсов Министерству обороны США.",
+    "published_at": null,
+    "published_date": "2026-07-19",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "SpaceX обсуждает предоставление вычислительных мощностей Пентагону",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/business/media-telecom/musks-spacex-talks-provide-computing-power-pentagon-wsj-reports-2026-07-17/"
+      }
+    ],
+    "keywords": [
+      "SpaceX",
+      "Пентагон",
+      "вычисления",
+      "оборона",
+      "дата-центры",
+      "спутниковая инфраструктура",
+      "ИИ"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "blogger-2026-07-19-03",
+    "section": "world",
+    "headline": "Databricks получила оценку в 188 млрд долларов",
+    "organization": "Databricks; Coatue Management",
+    "topic": "корпоративные данные и инфраструктура ИИ",
+    "event_type": "раунд финансирования",
+    "status": "new",
+    "summary": "Databricks привлекла инвестиции при оценке 188 млрд долларов, укрепив позиции платформы корпоративных данных и машинного обучения.",
+    "published_at": null,
+    "published_date": "2026-07-19",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Databricks получила оценку в 188 млрд долларов",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/legal/transactional/databricks-valued-188-billion-after-coatue-led-investment-wsj-reports-2026-07-17/"
+      }
+    ],
+    "keywords": [
+      "Databricks",
+      "финансирование",
+      "корпоративный ИИ",
+      "данные",
+      "агенты ИИ",
+      "машинное обучение",
+      "облако"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "blogger-2026-07-19-04",
+    "section": "world",
+    "headline": "Инвесторы готовятся к замедлению роста расходов облачных гигантов",
+    "organization": "Amazon; Microsoft; Alphabet; Meta",
+    "topic": "капитальные расходы на ИИ",
+    "event_type": "рыночный анализ",
+    "status": "new",
+    "summary": "Часть инвесторов ожидает замедления роста капитальных расходов гиперскейлеров и требует подтверждения окупаемости ИИ-инфраструктуры.",
+    "published_at": null,
+    "published_date": "2026-07-19",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Инвесторы готовятся к замедлению роста расходов облачных гигантов",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/business/retail-consumer/among-ai-crowd-some-investors-position-slower-hyperscaler-spending-growth-2026-07-17/"
+      }
+    ],
+    "keywords": [
+      "гиперскейлеры",
+      "капитальные расходы",
+      "дата-центры",
+      "GPU",
+      "окупаемость ИИ",
+      "облака"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "blogger-2026-07-19-05",
+    "section": "world",
+    "headline": "Южнокорейская и американская команды представили роботизированный костюм, который сам закрепляется на пользователе",
+    "organization": "Исследовательские команды Южной Кореи и США",
+    "topic": "физический ИИ и робототехника",
+    "event_type": "исследовательская демонстрация",
+    "status": "new",
+    "summary": "Исследователи показали носимую роботизированную систему, способную самостоятельно закрепляться на теле пользователя.",
+    "published_at": null,
+    "published_date": "2026-07-19",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Южнокорейская и американская команды представили роботизированный костюм, который сам закрепляется на пользователе",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/world/asia-pacific/south-korea-us-team-unveils-robotic-technology-that-dresses-wearer-2026-07-17/"
+      }
+    ],
+    "keywords": [
+      "робототехника",
+      "экзоскелет",
+      "физический ИИ",
+      "реабилитация",
+      "Южная Корея",
+      "США"
+    ],
+    "geography": "world",
+    "category": "robotics"
+  },
+  {
+    "candidate_id": "blogger-2026-07-19-06",
+    "section": "world",
+    "headline": "Samsung Electronics America сокращает 739 сотрудников в Нью-Джерси",
+    "organization": "Samsung Electronics America",
+    "topic": "реструктуризация технологического бизнеса",
+    "event_type": "сокращение персонала",
+    "status": "new",
+    "summary": "Samsung Electronics America уведомила о сокращении 739 рабочих мест в подразделении продаж и маркетинга в Нью-Джерси.",
+    "published_at": null,
+    "published_date": "2026-07-19",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Samsung Electronics America сокращает 739 сотрудников в Нью-Джерси",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/business/samsung-electronics-america-reduce-workforce-by-739-new-jersey-us-warn-notice-2026-07-18/"
+      }
+    ],
+    "keywords": [
+      "Samsung",
+      "сокращения",
+      "рынок труда",
+      "технологии",
+      "реструктуризация",
+      "полупроводники"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "blogger-2026-07-19-07",
+    "section": "russia",
+    "headline": "Россия вошла в число учредителей Всемирной организации по сотрудничеству в сфере ИИ",
+    "organization": "Россия; Всемирная организация по сотрудничеству в сфере ИИ",
+    "topic": "международное сотрудничество и open-source",
+    "event_type": "создание международной организации",
+    "status": "new",
+    "summary": "Россия вошла в число учредителей организации, ориентированной на совместимость ИИ-решений, открытое ПО и гражданское сотрудничество.",
+    "published_at": null,
+    "published_date": "2026-07-19",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Россия вошла в число учредителей Всемирной организации по сотрудничеству в сфере ИИ",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/content/246457/2026-07-17/2026-w29/1010/rossiya-voshla-chislo-uchrediteley-vsemirnoy-organizacii-sotrudnichestvu-sfere-iskusstvennogo-intellekta"
+      }
+    ],
+    "keywords": [
+      "Россия",
+      "международное сотрудничество",
+      "open-source",
+      "стандарты ИИ",
+      "совместимость",
+      "Шанхай"
+    ],
+    "geography": "russia",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "blogger-2026-07-19-08",
+    "section": "russia",
+    "headline": "Россия и Китай заявили о близких подходах к международному сотрудничеству в сфере ИИ",
+    "organization": "Россия; Китай",
+    "topic": "международное управление ИИ",
+    "event_type": "публичная позиция",
+    "status": "new",
+    "summary": "Россия и Китай заявили о близости подходов к доступности ИИ, международным правилам и сотрудничеству со странами Глобального Юга.",
+    "published_at": null,
+    "published_date": "2026-07-19",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: Россия и Китай заявили о близких подходах к международному сотрудничеству в сфере ИИ",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/19-2026.html"
+      }
+    ],
+    "keywords": [
+      "Россия",
+      "Китай",
+      "управление ИИ",
+      "Глобальный Юг",
+      "стандарты",
+      "международное сотрудничество"
+    ],
+    "geography": "russia",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "blogger-2026-07-19-09",
+    "section": "russia",
+    "headline": "ИИ и цифровая экономика войдут в повестку саммита Россия — Африка",
+    "organization": "Россия; страны Африки",
+    "topic": "экспорт ИИ и цифровое сотрудничество",
+    "event_type": "международная повестка",
+    "status": "new",
+    "summary": "ИИ, цифровая экономика и платёжные системы заявлены среди тем третьего саммита Россия — Африка.",
+    "published_at": null,
+    "published_date": "2026-07-19",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Архив выпуска: ИИ и цифровая экономика войдут в повестку саммита Россия — Африка",
+        "publisher": "Blogger archive",
+        "url": "https://rybv.blogspot.com/2026/07/19-2026.html"
+      }
+    ],
+    "keywords": [
+      "Россия",
+      "Африка",
+      "ИИ",
+      "цифровая экономика",
+      "экспорт технологий",
+      "международное сотрудничество"
+    ],
+    "geography": "russia",
+    "category": "other"
+  }
+]

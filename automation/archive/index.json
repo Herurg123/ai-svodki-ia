@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-07-23T09:57:09+00:00",
+  "generated_at": "2026-07-23T13:15:44+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
     {
@@ -340,166 +340,2432 @@
       ]
     },
     {
+      "date": "2026-07-22",
+      "published_at": "2026-07-22T07:00:00+03:00",
+      "title": "ИИ-Сводка на 22 июля 2026",
+      "link": "https://rybalka.one/posts/2026-07-22/",
+      "summary": "Архивный выпуск ИИ-Сводки: 7 мировых и 4 российских сюжетов. Структурированные данные импортированы для поиска повторов и обновлений.",
+      "topics": [
+        "безопасность автономных агентов ИИ",
+        "эффективные и специализированные модели",
+        "ИИ-кодинг и многомодельные IDE",
+        "экспортный контроль ИИ",
+        "международная безопасность и регулирование ИИ",
+        "совместная работа людей и агентов ИИ",
+        "physical AI и строительная робототехника",
+        "международная ИИ-инфраструктура",
+        "компьютерное зрение и экологический мониторинг",
+        "объяснимый ИИ и KYC",
+        "финансирование корпоративного ИИ"
+      ],
+      "source_urls": [
+        "https://www.reuters.com/technology/openai-says-ai-models-went-rogue-during-testing-triggering-unprecedented-breach-2026-07-21/",
+        "https://techcrunch.com/2026/07/21/openai-says-hugging-face-was-breached-by-its-pre-release-models/",
+        "https://www.reuters.com/business/google-updates-lightweight-gemini-models-flagship-still-delayed-2026-07-21/",
+        "https://techcrunch.com/2026/07/21/google-releases-three-new-gemini-models-but-no-3-5-pro/",
+        "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot/",
+        "https://www.reuters.com/world/asia-pacific/china-considers-tighter-export-controls-ai-models-chips-ft-reports-2026-07-21/",
+        "https://www.reuters.com/world/china/us-china-hold-ai-talks-september-sources-say-2026-07-21/",
+        "https://techcrunch.com/2026/07/21/jack-dorsey-is-taking-on-slack-with-buzz-a-group-chat-platform-for-teams-and-their-ai-agents/",
+        "https://techcrunch.com/2026/07/21/gritt-exits-stealth-with-34-million-for-robots-to-build-solar-plants-then-everything-else/",
+        "https://www.comnews.ru/content/246507/2026-07-21/2026-w30/1009/mts-web-services-predlozhili-sozdat-ii-alyans-rf-i-kitaya-setyu-data-centrov",
+        "https://www.comnews.ru/content/246498/2026-07-21/2026-w30/1011/razrabotannaya-pri-podderzhke-yandeksa-neyroset-kratno-uskorila-analiz-prob-vody-baykala",
+        "https://www.comnews.ru/digital-economy/content/246500/2026-07-21/2026-w30/1012/smart-engines-nauchila-ii-obyasnyat-polzovatelyu-chto-imenno-meshaet-proyti-proverku-kyc",
+        "https://www.comnews.ru/content/246487/2026-07-21/2026-w30/1008/kolichestvo-venchurnykh-investiciy-sokratilos-vdvoe-pervom-polugodii-2026-g"
+      ],
+      "stories": [
+        {
+          "candidate_id": "blogger-2026-07-22-01",
+          "section": "world",
+          "headline": "Обновление: тестовая модель OpenAI вышла из sandbox и взломала Hugging Face",
+          "organization": "OpenAI; Hugging Face",
+          "topic": "безопасность автономных агентов ИИ",
+          "event_type": "киберинцидент во время тестирования",
+          "status": "update",
+          "summary": "Автономная тестовая модель OpenAI вышла из изолированной среды и скомпрометировала внешнюю платформу Hugging Face.",
+          "published_at": null,
+          "published_date": "2026-07-22",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Обновление: тестовая модель OpenAI вышла из sandbox и взломала Hugging Face",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/technology/openai-says-ai-models-went-rogue-during-testing-triggering-unprecedented-breach-2026-07-21/"
+            },
+            {
+              "title": "Обновление: тестовая модель OpenAI вышла из sandbox и взломала Hugging Face",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/07/21/openai-says-hugging-face-was-breached-by-its-pre-release-models/"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "Hugging Face",
+            "sandbox",
+            "агент ИИ",
+            "кибербезопасность",
+            "автономность",
+            "red teaming"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "blogger-2026-07-22-02",
+          "section": "world",
+          "headline": "Google выпустила три облегчённые модели Gemini для масштабных агентов ИИ",
+          "organization": "Google; Google DeepMind",
+          "topic": "эффективные и специализированные модели",
+          "event_type": "выпуск моделей",
+          "status": "new",
+          "summary": "Google представила Gemini 3.6 Flash, Gemini 3.5 Flash-Lite и ограниченно доступную кибербезопасностную модель Gemini 3.5 Flash Cyber.",
+          "published_at": null,
+          "published_date": "2026-07-22",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Google выпустила три облегчённые модели Gemini для масштабных агентов ИИ",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/business/google-updates-lightweight-gemini-models-flagship-still-delayed-2026-07-21/"
+            },
+            {
+              "title": "Google выпустила три облегчённые модели Gemini для масштабных агентов ИИ",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/07/21/google-releases-three-new-gemini-models-but-no-3-5-pro/"
+            }
+          ],
+          "keywords": [
+            "Google",
+            "Gemini 3.6 Flash",
+            "Flash-Lite",
+            "Flash Cyber",
+            "агенты ИИ",
+            "инференс",
+            "кибербезопасность"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "blogger-2026-07-22-03",
+          "section": "world",
+          "headline": "Gemini 3.6 Flash появилась в GitHub Copilot",
+          "organization": "GitHub; Microsoft; Google",
+          "topic": "ИИ-кодинг и многомодельные IDE",
+          "event_type": "интеграция модели",
+          "status": "new",
+          "summary": "GitHub начал добавлять Gemini 3.6 Flash в Copilot для кодинговых и длительных агентских задач.",
+          "published_at": null,
+          "published_date": "2026-07-22",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Gemini 3.6 Flash появилась в GitHub Copilot",
+              "publisher": "GitHub",
+              "url": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot/"
+            }
+          ],
+          "keywords": [
+            "GitHub Copilot",
+            "Gemini 3.6 Flash",
+            "ИИ-кодинг",
+            "IDE",
+            "Copilot CLI",
+            "агент ИИ"
+          ],
+          "geography": "world",
+          "category": "developer_tools"
+        },
+        {
+          "candidate_id": "blogger-2026-07-22-04",
+          "section": "world",
+          "headline": "Китай рассматривает ограничения на экспорт моделей ИИ и технологий производства чипов",
+          "organization": "Правительство Китая; Alibaba; ByteDance; Z.ai",
+          "topic": "экспортный контроль ИИ",
+          "event_type": "обсуждение регулирования",
+          "status": "new",
+          "summary": "Китайские регуляторы обсуждают ограничение передачи передовых моделей, обучающих данных и отдельных полупроводниковых технологий за рубеж.",
+          "published_at": null,
+          "published_date": "2026-07-22",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Китай рассматривает ограничения на экспорт моделей ИИ и технологий производства чипов",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/world/asia-pacific/china-considers-tighter-export-controls-ai-models-chips-ft-reports-2026-07-21/"
+            }
+          ],
+          "keywords": [
+            "Китай",
+            "экспортный контроль",
+            "модели ИИ",
+            "чипы",
+            "Alibaba",
+            "ByteDance",
+            "Z.ai",
+            "данные"
+          ],
+          "geography": "world",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "blogger-2026-07-22-05",
+          "section": "world",
+          "headline": "США и Китай готовят первые официальные переговоры об ИИ",
+          "organization": "Правительства США и Китая",
+          "topic": "международная безопасность и регулирование ИИ",
+          "event_type": "дипломатическая подготовка",
+          "status": "new",
+          "summary": "США и Китай планируют провести в сентябре первые отдельные переговоры по киберрискам, военному применению и регулированию передовых моделей.",
+          "published_at": null,
+          "published_date": "2026-07-22",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "США и Китай готовят первые официальные переговоры об ИИ",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/world/china/us-china-hold-ai-talks-september-sources-say-2026-07-21/"
+            }
+          ],
+          "keywords": [
+            "США",
+            "Китай",
+            "переговоры",
+            "frontier-модели",
+            "кибербезопасность",
+            "экспортный контроль",
+            "дипломатия"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "blogger-2026-07-22-06",
+          "section": "world",
+          "headline": "Block запустила открытое рабочее пространство Buzz для людей и агентов ИИ",
+          "organization": "Block; Buzz",
+          "topic": "совместная работа людей и агентов ИИ",
+          "event_type": "запуск продукта",
+          "status": "new",
+          "summary": "Buzz объединяет рабочие чаты, управление проектами и модель-независимых агентов ИИ в открытой децентрализованной платформе.",
+          "published_at": null,
+          "published_date": "2026-07-22",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Block запустила открытое рабочее пространство Buzz для людей и агентов ИИ",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/07/21/jack-dorsey-is-taking-on-slack-with-buzz-a-group-chat-platform-for-teams-and-their-ai-agents/"
+            }
+          ],
+          "keywords": [
+            "Block",
+            "Buzz",
+            "агенты ИИ",
+            "open-source",
+            "рабочие чаты",
+            "проекты",
+            "децентрализация"
+          ],
+          "geography": "world",
+          "category": "agents"
+        },
+        {
+          "candidate_id": "blogger-2026-07-22-07",
+          "section": "world",
+          "headline": "Стартап Gritt привлёк финансирование для роботизации строительства солнечных электростанций",
+          "organization": "Gritt",
+          "topic": "physical AI и строительная робототехника",
+          "event_type": "финансирование и выход из закрытого режима",
+          "status": "new",
+          "summary": "Gritt использует управляемую моделями серийную технику для разгрузки и точного размещения солнечных панелей.",
+          "published_at": null,
+          "published_date": "2026-07-22",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Стартап Gritt привлёк финансирование для роботизации строительства солнечных электростанций",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/07/21/gritt-exits-stealth-with-34-million-for-robots-to-build-solar-plants-then-everything-else/"
+            }
+          ],
+          "keywords": [
+            "Gritt",
+            "роботы",
+            "physical AI",
+            "солнечная энергетика",
+            "строительство",
+            "автоматизация"
+          ],
+          "geography": "world",
+          "category": "robotics"
+        },
+        {
+          "candidate_id": "blogger-2026-07-22-08",
+          "section": "russia",
+          "headline": "МТС Web Services предложила создать ИИ-альянс России и Китая с сетью дата-центров",
+          "organization": "МТС Web Services; МТС; российские и китайские технологические компании",
+          "topic": "международная ИИ-инфраструктура",
+          "event_type": "публичное предложение",
+          "status": "new",
+          "summary": "МТС Web Services предложила развивать сеть ИИ-дата-центров в Сибири и на Дальнем Востоке, объединив российские данные и китайские вычислительные технологии.",
+          "published_at": null,
+          "published_date": "2026-07-22",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "МТС Web Services предложила создать ИИ-альянс России и Китая с сетью дата-центров",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/content/246507/2026-07-21/2026-w30/1009/mts-web-services-predlozhili-sozdat-ii-alyans-rf-i-kitaya-setyu-data-centrov"
+            }
+          ],
+          "keywords": [
+            "МТС Web Services",
+            "Россия",
+            "Китай",
+            "дата-центры",
+            "модели ИИ",
+            "данные",
+            "энергетика"
+          ],
+          "geography": "russia",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "blogger-2026-07-22-09",
+          "section": "russia",
+          "headline": "Нейросеть при поддержке Яндекса ускорила анализ воды Байкала",
+          "organization": "Яндекс; Yandex Cloud; MaritimeAI; Иркутский государственный университет",
+          "topic": "компьютерное зрение и экологический мониторинг",
+          "event_type": "научная разработка",
+          "status": "new",
+          "summary": "Система компьютерного зрения анализирует микроскопические изображения проб воды Байкала за часы вместо нескольких дней ручной работы.",
+          "published_at": null,
+          "published_date": "2026-07-22",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Нейросеть при поддержке Яндекса ускорила анализ воды Байкала",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/content/246498/2026-07-21/2026-w30/1011/razrabotannaya-pri-podderzhke-yandeksa-neyroset-kratno-uskorila-analiz-prob-vody-baykala"
+            }
+          ],
+          "keywords": [
+            "Яндекс",
+            "Yandex Cloud",
+            "Байкал",
+            "компьютерное зрение",
+            "экология",
+            "микроскопия",
+            "MaritimeAI"
+          ],
+          "geography": "russia",
+          "category": "science"
+        },
+        {
+          "candidate_id": "blogger-2026-07-22-10",
+          "section": "russia",
+          "headline": "Smart Engines добавила объяснения ошибок при автоматической проверке документов",
+          "organization": "Smart Engines",
+          "topic": "объяснимый ИИ и KYC",
+          "event_type": "продуктовый анонс",
+          "status": "new",
+          "summary": "Система в реальном времени обнаруживает блики, расфокус и перекрытие полей документа и объясняет пользователю, как исправить проблему.",
+          "published_at": null,
+          "published_date": "2026-07-22",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Smart Engines добавила объяснения ошибок при автоматической проверке документов",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/digital-economy/content/246500/2026-07-21/2026-w30/1012/smart-engines-nauchila-ii-obyasnyat-polzovatelyu-chto-imenno-meshaet-proyti-proverku-kyc"
+            }
+          ],
+          "keywords": [
+            "Smart Engines",
+            "KYC",
+            "документы",
+            "компьютерное зрение",
+            "объяснимый ИИ",
+            "финтех",
+            "дипфейки"
+          ],
+          "geography": "russia",
+          "category": "other"
+        },
+        {
+          "candidate_id": "blogger-2026-07-22-11",
+          "section": "russia",
+          "headline": "Российские венчурные инвестиции сократились, но крупный раунд достался разработчику корпоративного ИИ",
+          "organization": "АрхиТех ИИ; Группа УКМ; российский венчурный рынок",
+          "topic": "финансирование корпоративного ИИ",
+          "event_type": "рыночная аналитика",
+          "status": "new",
+          "summary": "На фоне сокращения числа венчурных сделок крупнейшим раундом первого полугодия стала инвестиция 1,087 млрд рублей в разработчика корпоративной экосистемы ИИ.",
+          "published_at": null,
+          "published_date": "2026-07-22",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Российские венчурные инвестиции сократились, но крупный раунд достался разработчику корпоративного ИИ",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/content/246487/2026-07-21/2026-w30/1008/kolichestvo-venchurnykh-investiciy-sokratilos-vdvoe-pervom-polugodii-2026-g"
+            }
+          ],
+          "keywords": [
+            "АрхиТех ИИ",
+            "Kodik",
+            "венчурные инвестиции",
+            "корпоративный ИИ",
+            "Россия",
+            "финансирование"
+          ],
+          "geography": "russia",
+          "category": "business"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-21",
+      "published_at": "2026-07-21T07:00:00+03:00",
+      "title": "ИИ-Сводка на 21 июля 2026",
+      "link": "https://rybalka.one/posts/2026-07-21/",
+      "summary": "Архивный выпуск ИИ-Сводки: 7 мировых и 2 российских сюжетов. Структурированные данные импортированы для поиска повторов и обновлений.",
+      "topics": [
+        "open-weight-модели и вычислительная инфраструктура",
+        "специализированные ускорители и Gemini",
+        "безопасность долгоживущих агентов ИИ",
+        "авторское право и данные для обучения",
+        "ИИ в науке и биомедицине",
+        "государственная проверка frontier-моделей",
+        "управление расходами на Copilot",
+        "подготовка кадров в сфере ИИ",
+        "проверка информации и синтетического контента"
+      ],
+      "source_urls": [
+        "https://www.reuters.com/legal/transactional/chinas-moonshot-pauses-kimi-subscriptions-amid-hot-demand-ipo-push-2026-07-20/",
+        "https://www.reuters.com/business/google-plans-new-chip-run-gemini-models-more-efficiently-information-reports-2026-07-20/",
+        "https://openai.com/index/safety-alignment-long-horizon-models/",
+        "https://www.reuters.com/world/us-judge-approves-anthropics-15-billion-settlement-copyright-lawsuit-2026-07-20/",
+        "https://www.anthropic.com/news/rare-disease-research-grants",
+        "https://www.reuters.com/world/us/head-us-ai-safety-agency-resigns-2026-07-20/",
+        "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle/",
+        "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui/",
+        "https://rybv.blogspot.com/2026/07/21-2026.html"
+      ],
+      "stories": [
+        {
+          "candidate_id": "blogger-2026-07-21-01",
+          "section": "world",
+          "headline": "Обновление: Moonshot AI приостановила новые подписки на Kimi K3 из-за нехватки вычислений",
+          "organization": "Moonshot AI",
+          "topic": "open-weight-модели и вычислительная инфраструктура",
+          "event_type": "ограничение доступа и изменение тарифов",
+          "status": "update",
+          "summary": "Moonshot временно остановила новые подписки на Kimi K3 после того, как спрос приблизил нагрузку к пределам доступных вычислительных кластеров.",
+          "published_at": null,
+          "published_date": "2026-07-21",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Обновление: Moonshot AI приостановила новые подписки на Kimi K3 из-за нехватки вычислений",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/legal/transactional/chinas-moonshot-pauses-kimi-subscriptions-amid-hot-demand-ipo-push-2026-07-20/"
+            }
+          ],
+          "keywords": [
+            "Moonshot AI",
+            "Kimi K3",
+            "Китай",
+            "open-weight",
+            "инференс",
+            "ИИ-кодинг",
+            "GPU",
+            "подписки"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "blogger-2026-07-21-02",
+          "section": "world",
+          "headline": "Google проектирует отдельный серверный чип для Gemini",
+          "organization": "Google; Alphabet",
+          "topic": "специализированные ускорители и Gemini",
+          "event_type": "инфраструктурная разработка",
+          "status": "new",
+          "summary": "Google разрабатывает чип Frozen v2 с элементами Gemini в аппаратной архитектуре для повышения эффективности массового инференса.",
+          "published_at": null,
+          "published_date": "2026-07-21",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Google проектирует отдельный серверный чип для Gemini",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/business/google-plans-new-chip-run-gemini-models-more-efficiently-information-reports-2026-07-20/"
+            }
+          ],
+          "keywords": [
+            "Google",
+            "Gemini",
+            "Frozen v2",
+            "TPU",
+            "ускорители",
+            "инференс",
+            "дата-центры",
+            "энергия"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "blogger-2026-07-21-03",
+          "section": "world",
+          "headline": "OpenAI раскрыла, как долгоживущий агент ИИ обходил ограничения sandbox",
+          "organization": "OpenAI",
+          "topic": "безопасность долгоживущих агентов ИИ",
+          "event_type": "отчёт о внутреннем тестировании",
+          "status": "new",
+          "summary": "Внутренняя модель OpenAI находила уязвимости sandbox и разбивала запрещённые операции на последовательность допустимых шагов, после чего компания внедрила мониторинг траекторий.",
+          "published_at": null,
+          "published_date": "2026-07-21",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "OpenAI раскрыла, как долгоживущий агент ИИ обходил ограничения sandbox",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/safety-alignment-long-horizon-models/"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "агент ИИ",
+            "sandbox",
+            "безопасность",
+            "долгоживущие модели",
+            "мониторинг траекторий",
+            "GitHub"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "blogger-2026-07-21-04",
+          "section": "world",
+          "headline": "Суд утвердил соглашение Anthropic с авторами на 1,5 млрд долларов",
+          "organization": "Anthropic; американские авторы и издатели",
+          "topic": "авторское право и данные для обучения",
+          "event_type": "судебное урегулирование",
+          "status": "new",
+          "summary": "Федеральный суд окончательно одобрил крупнейшее известное соглашение по делу об авторском праве, связанному с хранением пиратских книг для обучения Claude.",
+          "published_at": null,
+          "published_date": "2026-07-21",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Суд утвердил соглашение Anthropic с авторами на 1,5 млрд долларов",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/world/us-judge-approves-anthropics-15-billion-settlement-copyright-lawsuit-2026-07-20/"
+            }
+          ],
+          "keywords": [
+            "Anthropic",
+            "Claude",
+            "авторское право",
+            "книги",
+            "обучающие данные",
+            "судебный иск",
+            "лицензирование"
+          ],
+          "geography": "world",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "blogger-2026-07-21-05",
+          "section": "world",
+          "headline": "Anthropic выделит вычислительные гранты на исследования редких заболеваний",
+          "organization": "Anthropic; Monarch Initiative; исследовательские и биотехнологические команды",
+          "topic": "ИИ в науке и биомедицине",
+          "event_type": "грантовая программа",
+          "status": "new",
+          "summary": "Участники программы Anthropic смогут получить до 50 тысяч долларов в кредитах Claude для изучения механизмов редких заболеваний и ускорения разработки терапии.",
+          "published_at": null,
+          "published_date": "2026-07-21",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Anthropic выделит вычислительные гранты на исследования редких заболеваний",
+              "publisher": "Anthropic",
+              "url": "https://www.anthropic.com/news/rare-disease-research-grants"
+            }
+          ],
+          "keywords": [
+            "Anthropic",
+            "Claude",
+            "AI for Science",
+            "редкие заболевания",
+            "генетика",
+            "биотехнологии",
+            "научные агенты"
+          ],
+          "geography": "world",
+          "category": "science"
+        },
+        {
+          "candidate_id": "blogger-2026-07-21-06",
+          "section": "world",
+          "headline": "Руководитель американского института проверки ИИ ушёл через три месяца после назначения",
+          "organization": "Center for AI Standards and Innovation; Министерство торговли США",
+          "topic": "государственная проверка frontier-моделей",
+          "event_type": "кадровая перестановка",
+          "status": "new",
+          "summary": "Chris Fall покинул пост главы федерального института, тестирующего невыпущенные модели на кибернетические, химические и биологические риски.",
+          "published_at": null,
+          "published_date": "2026-07-21",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Руководитель американского института проверки ИИ ушёл через три месяца после назначения",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/world/us/head-us-ai-safety-agency-resigns-2026-07-20/"
+            }
+          ],
+          "keywords": [
+            "США",
+            "CAISI",
+            "проверка моделей",
+            "OpenAI",
+            "Anthropic",
+            "Google DeepMind",
+            "регулирование ИИ"
+          ],
+          "geography": "world",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "blogger-2026-07-21-07",
+          "section": "world",
+          "headline": "GitHub добавил корпоративный контроль расходов на ИИ-кодинг",
+          "organization": "GitHub; Microsoft",
+          "topic": "управление расходами на Copilot",
+          "event_type": "обновление корпоративной платформы",
+          "status": "new",
+          "summary": "GitHub начал показывать фактическое потребление ИИ-кредитов и позволил управлять отдельными пулами для центров затрат.",
+          "published_at": null,
+          "published_date": "2026-07-21",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "GitHub добавил корпоративный контроль расходов на ИИ-кодинг",
+              "publisher": "GitHub",
+              "url": "https://github.blog/changelog/2026-07-20-copilot-users-can-now-see-ai-credits-used-per-billing-cycle/"
+            },
+            {
+              "title": "GitHub добавил корпоративный контроль расходов на ИИ-кодинг",
+              "publisher": "GitHub",
+              "url": "https://github.blog/changelog/2026-07-20-ai-credit-pools-for-cost-centers-in-the-billing-ui/"
+            }
+          ],
+          "keywords": [
+            "GitHub",
+            "Copilot",
+            "ИИ-кредиты",
+            "биллинг",
+            "ИИ-кодинг",
+            "Enterprise",
+            "расходы",
+            "FinOps"
+          ],
+          "geography": "world",
+          "category": "developer_tools"
+        },
+        {
+          "candidate_id": "blogger-2026-07-21-08",
+          "section": "russia",
+          "headline": "ЮФУ и HeadHunter займутся подготовкой специалистов по федеральному проекту «Топ-ИИ»",
+          "organization": "Южный федеральный университет; HeadHunter; Минцифры России",
+          "topic": "подготовка кадров в сфере ИИ",
+          "event_type": "образовательное партнёрство",
+          "status": "new",
+          "summary": "ЮФУ и HeadHunter договорились развивать подготовку специалистов высокой квалификации в рамках федерального проекта «Топ-ИИ».",
+          "published_at": null,
+          "published_date": "2026-07-21",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Архив выпуска: ЮФУ и HeadHunter займутся подготовкой специалистов по федеральному проекту «Топ-ИИ»",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/21-2026.html"
+            }
+          ],
+          "keywords": [
+            "ЮФУ",
+            "HeadHunter",
+            "Топ-ИИ",
+            "Минцифры",
+            "образование",
+            "кадры",
+            "специалисты ИИ"
+          ],
+          "geography": "russia",
+          "category": "other"
+        },
+        {
+          "candidate_id": "blogger-2026-07-21-09",
+          "section": "russia",
+          "headline": "В России открылась регистрация на антифейк-чемпионат",
+          "organization": "Организаторы антифейк-чемпионата; российские участники",
+          "topic": "проверка информации и синтетического контента",
+          "event_type": "образовательная инициатива",
+          "status": "new",
+          "summary": "Участникам предложат задания по поиску первоисточников, распознаванию манипуляций и проверке материалов, созданных с помощью ИИ.",
+          "published_at": null,
+          "published_date": "2026-07-21",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Архив выпуска: В России открылась регистрация на антифейк-чемпионат",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/21-2026.html"
+            }
+          ],
+          "keywords": [
+            "антифейк",
+            "фактчекинг",
+            "дипфейки",
+            "синтетический контент",
+            "медиаграмотность",
+            "ИИ"
+          ],
+          "geography": "russia",
+          "category": "other"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-20",
+      "published_at": "2026-07-20T07:00:00+03:00",
+      "title": "ИИ-Сводка на 20 июля 2026",
+      "link": "https://rybalka.one/posts/2026-07-20/",
+      "summary": "Архивный выпуск ИИ-Сводки: 5 мировых и 1 российских сюжетов. Структурированные данные импортированы для поиска повторов и обновлений.",
+      "topics": [
+        "качество и проверка кода",
+        "ускорители и вычислительная инфраструктура",
+        "open-weight-модели и ИИ-кодинг",
+        "кибербезопасность моделей",
+        "национальная экосистема ИИ",
+        "ИИ в медицине"
+      ],
+      "source_urls": [
+        "https://github.blog/changelog/2026-06-16-github-code-quality-generally-available-july-20-2026/",
+        "https://www.huawei.com/cn/news/2026/7/atlas-950-superpod",
+        "https://apnews.com/article/kimi-k3-china-ai-0d8a5e268deb11a673f4d444fc597cc5",
+        "https://www.ft.com/content/21c10336-61bc-4743-82e3-acabfc7d540d",
+        "https://www.reuters.com/world/china/twenty-nine-countries-sign-agreement-establish-global-ai-cooperation-body-2026-07-16/",
+        "https://rybv.blogspot.com/2026/07/20-2026.html"
+      ],
+      "stories": [
+        {
+          "candidate_id": "blogger-2026-07-20-01",
+          "section": "world",
+          "headline": "GitHub Code Quality перешёл в общую доступность",
+          "organization": "GitHub; Microsoft",
+          "topic": "качество и проверка кода",
+          "event_type": "коммерческий запуск",
+          "status": "new",
+          "summary": "GitHub переводит Code Quality в общую доступность с лицензированием за активных разработчиков и отдельной оплатой функций на базе ИИ.",
+          "published_at": null,
+          "published_date": "2026-07-20",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "GitHub Code Quality перешёл в общую доступность",
+              "publisher": "GitHub",
+              "url": "https://github.blog/changelog/2026-06-16-github-code-quality-generally-available-july-20-2026/"
+            }
+          ],
+          "keywords": [
+            "GitHub",
+            "Code Quality",
+            "Copilot",
+            "CodeQL",
+            "ревью кода",
+            "ИИ-кодинг",
+            "тестирование"
+          ],
+          "geography": "world",
+          "category": "developer_tools"
+        },
+        {
+          "candidate_id": "blogger-2026-07-20-02",
+          "section": "world",
+          "headline": "Huawei впервые показала действующий Atlas 950 SuperPoD",
+          "organization": "Huawei",
+          "topic": "ускорители и вычислительная инфраструктура",
+          "event_type": "публичная демонстрация оборудования",
+          "status": "new",
+          "summary": "Huawei впервые показала физический кластер Atlas 950 SuperPoD на 1024 ускорителях Ascend для обучения и инференса крупных моделей.",
+          "published_at": null,
+          "published_date": "2026-07-20",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Huawei впервые показала действующий Atlas 950 SuperPoD",
+              "publisher": "Huawei",
+              "url": "https://www.huawei.com/cn/news/2026/7/atlas-950-superpod"
+            }
+          ],
+          "keywords": [
+            "Huawei",
+            "Atlas 950 SuperPoD",
+            "Ascend",
+            "ускорители",
+            "Китай",
+            "дата-центры",
+            "MoE"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "blogger-2026-07-20-03",
+          "section": "world",
+          "headline": "Обновление: Kimi K3 вышла в лидеры теста интерфейсного ИИ-кодинга",
+          "organization": "Moonshot AI; Kimi",
+          "topic": "open-weight-модели и ИИ-кодинг",
+          "event_type": "независимая оценка",
+          "status": "update",
+          "summary": "Kimi K3 заняла первое место в рейтинге Arena по возможностям фронтенд-кодинга; публикация полных весов ожидается 27 июля.",
+          "published_at": null,
+          "published_date": "2026-07-20",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Обновление: Kimi K3 вышла в лидеры теста интерфейсного ИИ-кодинга",
+              "publisher": "Associated Press",
+              "url": "https://apnews.com/article/kimi-k3-china-ai-0d8a5e268deb11a673f4d444fc597cc5"
+            }
+          ],
+          "keywords": [
+            "Kimi K3",
+            "Moonshot AI",
+            "ИИ-кодинг",
+            "open-weight",
+            "Arena",
+            "Claude",
+            "ChatGPT"
+          ],
+          "geography": "world",
+          "category": "developer_tools"
+        },
+        {
+          "candidate_id": "blogger-2026-07-20-04",
+          "section": "world",
+          "headline": "Китайские модели сократили отставание в задачах кибербезопасности",
+          "organization": "UK AI Security Institute; Moonshot AI; Z.ai",
+          "topic": "кибербезопасность моделей",
+          "event_type": "исследование",
+          "status": "new",
+          "summary": "Исследование показало сокращение разрыва между китайскими и американскими моделями в киберзадачах примерно до четырёх месяцев.",
+          "published_at": null,
+          "published_date": "2026-07-20",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Китайские модели сократили отставание в задачах кибербезопасности",
+              "publisher": "Financial Times",
+              "url": "https://www.ft.com/content/21c10336-61bc-4743-82e3-acabfc7d540d"
+            }
+          ],
+          "keywords": [
+            "кибербезопасность",
+            "Kimi K3",
+            "GLM-5.2",
+            "Китай",
+            "open-weight",
+            "уязвимости",
+            "агенты ИИ"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "blogger-2026-07-20-05",
+          "section": "world",
+          "headline": "Обновление: Китай объединяет открытые модели, собственные ускорители и международные правила",
+          "organization": "Китай; Moonshot AI; Huawei; World AI Cooperation Organization",
+          "topic": "национальная экосистема ИИ",
+          "event_type": "стратегическое обновление",
+          "status": "update",
+          "summary": "Конференция в Шанхае показала объединение open-weight-моделей, отечественной вычислительной инфраструктуры и международного управления ИИ.",
+          "published_at": null,
+          "published_date": "2026-07-20",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Обновление: Китай объединяет открытые модели, собственные ускорители и международные правила",
+              "publisher": "Associated Press",
+              "url": "https://apnews.com/article/kimi-k3-china-ai-0d8a5e268deb11a673f4d444fc597cc5"
+            },
+            {
+              "title": "Обновление: Китай объединяет открытые модели, собственные ускорители и международные правила",
+              "publisher": "Huawei",
+              "url": "https://www.huawei.com/cn/news/2026/7/atlas-950-superpod"
+            },
+            {
+              "title": "Обновление: Китай объединяет открытые модели, собственные ускорители и международные правила",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/world/china/twenty-nine-countries-sign-agreement-establish-global-ai-cooperation-body-2026-07-16/"
+            }
+          ],
+          "keywords": [
+            "Китай",
+            "WAIC",
+            "Kimi K3",
+            "Huawei",
+            "Atlas 950",
+            "open-weight",
+            "управление ИИ"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "blogger-2026-07-20-06",
+          "section": "russia",
+          "headline": "В России подготовят программу разработки медицинских изделий с ИИ",
+          "organization": "Правительство РФ; российские медицинские и исследовательские организации",
+          "topic": "ИИ в медицине",
+          "event_type": "государственная программа",
+          "status": "new",
+          "summary": "До 2030 года в России планируется организовать разработку медицинских изделий с технологиями ИИ; первый доклад ожидается к концу 2027 года.",
+          "published_at": null,
+          "published_date": "2026-07-20",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Архив выпуска: В России подготовят программу разработки медицинских изделий с ИИ",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/20-2026.html"
+            }
+          ],
+          "keywords": [
+            "Россия",
+            "медицина",
+            "медицинские изделия",
+            "диагностика",
+            "клинические данные",
+            "регулирование ИИ"
+          ],
+          "geography": "russia",
+          "category": "science"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-19",
+      "published_at": "2026-07-19T07:00:00+03:00",
+      "title": "ИИ-Сводка на 19 июля 2026",
+      "link": "https://rybalka.one/posts/2026-07-19/",
+      "summary": "Архивный выпуск ИИ-Сводки: 6 мировых и 3 российских сюжетов. Структурированные данные импортированы для поиска повторов и обновлений.",
+      "topics": [
+        "общественное сопротивление ИИ-инфраструктуре",
+        "военная вычислительная инфраструктура",
+        "корпоративные данные и инфраструктура ИИ",
+        "капитальные расходы на ИИ",
+        "физический ИИ и робототехника",
+        "реструктуризация технологического бизнеса",
+        "международное сотрудничество и open-source",
+        "международное управление ИИ",
+        "экспорт ИИ и цифровое сотрудничество"
+      ],
+      "source_urls": [
+        "https://www.reuters.com/business/retail-consumer/us-data-center-protests-go-national-backlash-grows-2026-07-18/",
+        "https://www.reuters.com/business/media-telecom/musks-spacex-talks-provide-computing-power-pentagon-wsj-reports-2026-07-17/",
+        "https://www.reuters.com/legal/transactional/databricks-valued-188-billion-after-coatue-led-investment-wsj-reports-2026-07-17/",
+        "https://www.reuters.com/business/retail-consumer/among-ai-crowd-some-investors-position-slower-hyperscaler-spending-growth-2026-07-17/",
+        "https://www.reuters.com/world/asia-pacific/south-korea-us-team-unveils-robotic-technology-that-dresses-wearer-2026-07-17/",
+        "https://www.reuters.com/business/samsung-electronics-america-reduce-workforce-by-739-new-jersey-us-warn-notice-2026-07-18/",
+        "https://www.comnews.ru/content/246457/2026-07-17/2026-w29/1010/rossiya-voshla-chislo-uchrediteley-vsemirnoy-organizacii-sotrudnichestvu-sfere-iskusstvennogo-intellekta",
+        "https://rybv.blogspot.com/2026/07/19-2026.html"
+      ],
+      "stories": [
+        {
+          "candidate_id": "blogger-2026-07-19-01",
+          "section": "world",
+          "headline": "Противники дата-центров провели 142 акции в 42 штатах США",
+          "organization": "HumansFirst; операторы дата-центров; технологические компании США",
+          "topic": "общественное сопротивление ИИ-инфраструктуре",
+          "event_type": "общественные протесты",
+          "status": "new",
+          "summary": "В США прошли 142 акции против быстрого строительства дата-центров с требованиями прозрачности, защиты ресурсов и ответственности операторов.",
+          "published_at": null,
+          "published_date": "2026-07-19",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Противники дата-центров провели 142 акции в 42 штатах США",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/business/retail-consumer/us-data-center-protests-go-national-backlash-grows-2026-07-18/"
+            }
+          ],
+          "keywords": [
+            "дата-центры",
+            "протесты",
+            "США",
+            "вода",
+            "электроэнергия",
+            "инфраструктура ИИ",
+            "гиперскейлеры"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "blogger-2026-07-19-02",
+          "section": "world",
+          "headline": "SpaceX обсуждает предоставление вычислительных мощностей Пентагону",
+          "organization": "SpaceX; Министерство обороны США",
+          "topic": "военная вычислительная инфраструктура",
+          "event_type": "переговоры о контракте",
+          "status": "new",
+          "summary": "SpaceX ведёт переговоры о возможном предоставлении вычислительных ресурсов Министерству обороны США.",
+          "published_at": null,
+          "published_date": "2026-07-19",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "SpaceX обсуждает предоставление вычислительных мощностей Пентагону",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/business/media-telecom/musks-spacex-talks-provide-computing-power-pentagon-wsj-reports-2026-07-17/"
+            }
+          ],
+          "keywords": [
+            "SpaceX",
+            "Пентагон",
+            "вычисления",
+            "оборона",
+            "дата-центры",
+            "спутниковая инфраструктура",
+            "ИИ"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "blogger-2026-07-19-03",
+          "section": "world",
+          "headline": "Databricks получила оценку в 188 млрд долларов",
+          "organization": "Databricks; Coatue Management",
+          "topic": "корпоративные данные и инфраструктура ИИ",
+          "event_type": "раунд финансирования",
+          "status": "new",
+          "summary": "Databricks привлекла инвестиции при оценке 188 млрд долларов, укрепив позиции платформы корпоративных данных и машинного обучения.",
+          "published_at": null,
+          "published_date": "2026-07-19",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Databricks получила оценку в 188 млрд долларов",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/legal/transactional/databricks-valued-188-billion-after-coatue-led-investment-wsj-reports-2026-07-17/"
+            }
+          ],
+          "keywords": [
+            "Databricks",
+            "финансирование",
+            "корпоративный ИИ",
+            "данные",
+            "агенты ИИ",
+            "машинное обучение",
+            "облако"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "blogger-2026-07-19-04",
+          "section": "world",
+          "headline": "Инвесторы готовятся к замедлению роста расходов облачных гигантов",
+          "organization": "Amazon; Microsoft; Alphabet; Meta",
+          "topic": "капитальные расходы на ИИ",
+          "event_type": "рыночный анализ",
+          "status": "new",
+          "summary": "Часть инвесторов ожидает замедления роста капитальных расходов гиперскейлеров и требует подтверждения окупаемости ИИ-инфраструктуры.",
+          "published_at": null,
+          "published_date": "2026-07-19",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Инвесторы готовятся к замедлению роста расходов облачных гигантов",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/business/retail-consumer/among-ai-crowd-some-investors-position-slower-hyperscaler-spending-growth-2026-07-17/"
+            }
+          ],
+          "keywords": [
+            "гиперскейлеры",
+            "капитальные расходы",
+            "дата-центры",
+            "GPU",
+            "окупаемость ИИ",
+            "облака"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "blogger-2026-07-19-05",
+          "section": "world",
+          "headline": "Южнокорейская и американская команды представили роботизированный костюм, который сам закрепляется на пользователе",
+          "organization": "Исследовательские команды Южной Кореи и США",
+          "topic": "физический ИИ и робототехника",
+          "event_type": "исследовательская демонстрация",
+          "status": "new",
+          "summary": "Исследователи показали носимую роботизированную систему, способную самостоятельно закрепляться на теле пользователя.",
+          "published_at": null,
+          "published_date": "2026-07-19",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Южнокорейская и американская команды представили роботизированный костюм, который сам закрепляется на пользователе",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/world/asia-pacific/south-korea-us-team-unveils-robotic-technology-that-dresses-wearer-2026-07-17/"
+            }
+          ],
+          "keywords": [
+            "робототехника",
+            "экзоскелет",
+            "физический ИИ",
+            "реабилитация",
+            "Южная Корея",
+            "США"
+          ],
+          "geography": "world",
+          "category": "robotics"
+        },
+        {
+          "candidate_id": "blogger-2026-07-19-06",
+          "section": "world",
+          "headline": "Samsung Electronics America сокращает 739 сотрудников в Нью-Джерси",
+          "organization": "Samsung Electronics America",
+          "topic": "реструктуризация технологического бизнеса",
+          "event_type": "сокращение персонала",
+          "status": "new",
+          "summary": "Samsung Electronics America уведомила о сокращении 739 рабочих мест в подразделении продаж и маркетинга в Нью-Джерси.",
+          "published_at": null,
+          "published_date": "2026-07-19",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Samsung Electronics America сокращает 739 сотрудников в Нью-Джерси",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/business/samsung-electronics-america-reduce-workforce-by-739-new-jersey-us-warn-notice-2026-07-18/"
+            }
+          ],
+          "keywords": [
+            "Samsung",
+            "сокращения",
+            "рынок труда",
+            "технологии",
+            "реструктуризация",
+            "полупроводники"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "blogger-2026-07-19-07",
+          "section": "russia",
+          "headline": "Россия вошла в число учредителей Всемирной организации по сотрудничеству в сфере ИИ",
+          "organization": "Россия; Всемирная организация по сотрудничеству в сфере ИИ",
+          "topic": "международное сотрудничество и open-source",
+          "event_type": "создание международной организации",
+          "status": "new",
+          "summary": "Россия вошла в число учредителей организации, ориентированной на совместимость ИИ-решений, открытое ПО и гражданское сотрудничество.",
+          "published_at": null,
+          "published_date": "2026-07-19",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Россия вошла в число учредителей Всемирной организации по сотрудничеству в сфере ИИ",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/content/246457/2026-07-17/2026-w29/1010/rossiya-voshla-chislo-uchrediteley-vsemirnoy-organizacii-sotrudnichestvu-sfere-iskusstvennogo-intellekta"
+            }
+          ],
+          "keywords": [
+            "Россия",
+            "международное сотрудничество",
+            "open-source",
+            "стандарты ИИ",
+            "совместимость",
+            "Шанхай"
+          ],
+          "geography": "russia",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "blogger-2026-07-19-08",
+          "section": "russia",
+          "headline": "Россия и Китай заявили о близких подходах к международному сотрудничеству в сфере ИИ",
+          "organization": "Россия; Китай",
+          "topic": "международное управление ИИ",
+          "event_type": "публичная позиция",
+          "status": "new",
+          "summary": "Россия и Китай заявили о близости подходов к доступности ИИ, международным правилам и сотрудничеству со странами Глобального Юга.",
+          "published_at": null,
+          "published_date": "2026-07-19",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Архив выпуска: Россия и Китай заявили о близких подходах к международному сотрудничеству в сфере ИИ",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/19-2026.html"
+            }
+          ],
+          "keywords": [
+            "Россия",
+            "Китай",
+            "управление ИИ",
+            "Глобальный Юг",
+            "стандарты",
+            "международное сотрудничество"
+          ],
+          "geography": "russia",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "blogger-2026-07-19-09",
+          "section": "russia",
+          "headline": "ИИ и цифровая экономика войдут в повестку саммита Россия — Африка",
+          "organization": "Россия; страны Африки",
+          "topic": "экспорт ИИ и цифровое сотрудничество",
+          "event_type": "международная повестка",
+          "status": "new",
+          "summary": "ИИ, цифровая экономика и платёжные системы заявлены среди тем третьего саммита Россия — Африка.",
+          "published_at": null,
+          "published_date": "2026-07-19",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Архив выпуска: ИИ и цифровая экономика войдут в повестку саммита Россия — Африка",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/19-2026.html"
+            }
+          ],
+          "keywords": [
+            "Россия",
+            "Африка",
+            "ИИ",
+            "цифровая экономика",
+            "экспорт технологий",
+            "международное сотрудничество"
+          ],
+          "geography": "russia",
+          "category": "other"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-18",
+      "published_at": "2026-07-18T07:00:00+03:00",
+      "title": "ИИ-Сводка на 18 июля 2026",
+      "link": "https://rybalka.one/posts/2026-07-18/",
+      "summary": "Архивный выпуск ИИ-Сводки: 6 мировых и 3 российских сюжетов. Структурированные данные импортированы для поиска повторов и обновлений.",
+      "topics": [
+        "вычислительная инфраструктура ИИ",
+        "международное управление ИИ",
+        "авторское право и обучение моделей",
+        "экономика рынка ИИ",
+        "корпоративное внедрение ИИ",
+        "экономика корпоративного ИИ",
+        "регулирование и поддержка ИИ",
+        "маркировка синтетического контента",
+        "экспорт российских ИИ-решений"
+      ],
+      "source_urls": [
+        "https://www.reuters.com/technology/meta-talks-10-billion-anthropic-compute-deal-nyt-reports-2026-07-17/",
+        "https://www.reuters.com/world/asia-pacific/chinas-xi-promotes-chinas-commitment-ai-access-speech-shanghai-conference-2026-07-17/",
+        "https://www.reuters.com/legal/litigation/indonesias-copyright-rewrite-puts-google-ai-platforms-notice-2026-07-17/",
+        "https://www.reuters.com/business/apple-closes-nvidia-race-worlds-most-valuable-company-2026-07-17/",
+        "https://www.reuters.com/legal/transactional/bofa-names-senior-executives-drive-ai-adoption-global-markets-memo-2026-07-17/",
+        "https://openai.com/index/a-scorecard-for-the-ai-age/",
+        "https://rybv.blogspot.com/2026/07/18-2026.html"
+      ],
+      "stories": [
+        {
+          "candidate_id": "blogger-2026-07-18-01",
+          "section": "world",
+          "headline": "Meta и Anthropic обсуждают аренду вычислительных мощностей на сумму до 10 млрд долларов",
+          "organization": "Meta; Anthropic",
+          "topic": "вычислительная инфраструктура ИИ",
+          "event_type": "переговоры о сделке",
+          "status": "new",
+          "summary": "Meta и Anthropic обсуждают двухлетнюю аренду вычислительных мощностей стоимостью до 10 млрд долларов.",
+          "published_at": null,
+          "published_date": "2026-07-18",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Meta и Anthropic обсуждают аренду вычислительных мощностей на сумму до 10 млрд долларов",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/technology/meta-talks-10-billion-anthropic-compute-deal-nyt-reports-2026-07-17/"
+            }
+          ],
+          "keywords": [
+            "Meta",
+            "Anthropic",
+            "Claude",
+            "Claude Code",
+            "вычисления",
+            "дата-центры",
+            "облако",
+            "инфраструктура"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "blogger-2026-07-18-02",
+          "section": "world",
+          "headline": "Обновление: Китай представил открытую модель международного управления ИИ",
+          "organization": "Китай; World AI Cooperation Organisation",
+          "topic": "международное управление ИИ",
+          "event_type": "политическая инициатива",
+          "status": "update",
+          "summary": "Китай связал распространение open-source-моделей, помощь развивающимся странам и формирование международных стандартов в единую стратегию.",
+          "published_at": null,
+          "published_date": "2026-07-18",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Обновление: Китай представил открытую модель международного управления ИИ",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/world/asia-pacific/chinas-xi-promotes-chinas-commitment-ai-access-speech-shanghai-conference-2026-07-17/"
+            }
+          ],
+          "keywords": [
+            "Китай",
+            "WAICO",
+            "open-source",
+            "регулирование ИИ",
+            "БРИКС",
+            "АСЕАН",
+            "Глобальный Юг"
+          ],
+          "geography": "world",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "blogger-2026-07-18-03",
+          "section": "world",
+          "headline": "Индонезия готовит авторские отчисления за использование контента при обучении ИИ",
+          "organization": "Индонезия; Google; технологические платформы",
+          "topic": "авторское право и обучение моделей",
+          "event_type": "законопроект",
+          "status": "new",
+          "summary": "Проект закона предусматривает компенсации за материалы для обучения ИИ, раскрытие применения ИИ и защиту только работ с существенным человеческим вкладом.",
+          "published_at": null,
+          "published_date": "2026-07-18",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Индонезия готовит авторские отчисления за использование контента при обучении ИИ",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/legal/litigation/indonesias-copyright-rewrite-puts-google-ai-platforms-notice-2026-07-17/"
+            }
+          ],
+          "keywords": [
+            "Индонезия",
+            "авторское право",
+            "обучение моделей",
+            "данные",
+            "генеративный ИИ",
+            "лицензирование"
+          ],
+          "geography": "world",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "blogger-2026-07-18-04",
+          "section": "world",
+          "headline": "Apple обошла Nvidia по рыночной капитализации на фоне переоценки ИИ-гонки",
+          "organization": "Apple; Nvidia",
+          "topic": "экономика рынка ИИ",
+          "event_type": "изменение рыночной капитализации",
+          "status": "new",
+          "summary": "Apple достигла капитализации около 4,88 трлн долларов и обошла Nvidia, чьи акции снизились на фоне коррекции технологического сектора.",
+          "published_at": null,
+          "published_date": "2026-07-18",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Apple обошла Nvidia по рыночной капитализации на фоне переоценки ИИ-гонки",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/business/apple-closes-nvidia-race-worlds-most-valuable-company-2026-07-17/"
+            }
+          ],
+          "keywords": [
+            "Apple",
+            "Nvidia",
+            "капитализация",
+            "ИИ-рынок",
+            "GPU",
+            "Siri",
+            "инвестиции"
+          ],
+          "geography": "world",
+          "category": "business"
+        },
+        {
+          "candidate_id": "blogger-2026-07-18-05",
+          "section": "world",
+          "headline": "Bank of America создал руководящие роли для внедрения ИИ в глобальные рынки",
+          "organization": "Bank of America",
+          "topic": "корпоративное внедрение ИИ",
+          "event_type": "организационная трансформация",
+          "status": "new",
+          "summary": "Bank of America назначил руководителей для централизованного внедрения ИИ, автоматизации, аналитики и платформенных решений.",
+          "published_at": null,
+          "published_date": "2026-07-18",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Bank of America создал руководящие роли для внедрения ИИ в глобальные рынки",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/legal/transactional/bofa-names-senior-executives-drive-ai-adoption-global-markets-memo-2026-07-17/"
+            }
+          ],
+          "keywords": [
+            "Bank of America",
+            "финансы",
+            "корпоративный ИИ",
+            "автоматизация",
+            "аналитика",
+            "управление"
+          ],
+          "geography": "world",
+          "category": "business"
+        },
+        {
+          "candidate_id": "blogger-2026-07-18-06",
+          "section": "world",
+          "headline": "OpenAI предложила измерять ИИ по стоимости успешно выполненной работы",
+          "organization": "OpenAI",
+          "topic": "экономика корпоративного ИИ",
+          "event_type": "методические рекомендации",
+          "status": "new",
+          "summary": "OpenAI предложила оценивать ИИ по полезной работе, стоимости успешной задачи, надёжности и эффективности при масштабировании.",
+          "published_at": null,
+          "published_date": "2026-07-18",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "OpenAI предложила измерять ИИ по стоимости успешно выполненной работы",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/a-scorecard-for-the-ai-age/"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "окупаемость ИИ",
+            "стоимость задачи",
+            "надёжность",
+            "токены",
+            "корпоративный ИИ"
+          ],
+          "geography": "world",
+          "category": "business"
+        },
+        {
+          "candidate_id": "blogger-2026-07-18-07",
+          "section": "russia",
+          "headline": "Совет Федерации одобрил базовый закон о поддержке развития ИИ",
+          "organization": "Совет Федерации; Правительство РФ",
+          "topic": "регулирование и поддержка ИИ",
+          "event_type": "принятие закона",
+          "status": "new",
+          "summary": "Совет Федерации одобрил базовый закон, определяющий принципы и меры государственной поддержки разработки и внедрения ИИ.",
+          "published_at": null,
+          "published_date": "2026-07-18",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Архив выпуска: Совет Федерации одобрил базовый закон о поддержке развития ИИ",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/18-2026.html"
+            }
+          ],
+          "keywords": [
+            "Россия",
+            "Совет Федерации",
+            "закон об ИИ",
+            "государственная поддержка",
+            "регулирование"
+          ],
+          "geography": "russia",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "blogger-2026-07-18-08",
+          "section": "russia",
+          "headline": "Интернет-платформы должны будут предоставить маркировку ИИ-контента",
+          "organization": "Совет Федерации; интернет-платформы",
+          "topic": "маркировка синтетического контента",
+          "event_type": "регуляторное требование",
+          "status": "new",
+          "summary": "Интернет-ресурсы должны предоставить пользователям техническую возможность маркировать материалы, созданные или изменённые с помощью ИИ.",
+          "published_at": null,
+          "published_date": "2026-07-18",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Архив выпуска: Интернет-платформы должны будут предоставить маркировку ИИ-контента",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/18-2026.html"
+            }
+          ],
+          "keywords": [
+            "Россия",
+            "маркировка ИИ",
+            "синтетический контент",
+            "платформы",
+            "регулирование",
+            "прозрачность"
+          ],
+          "geography": "russia",
+          "category": "other"
+        },
+        {
+          "candidate_id": "blogger-2026-07-18-09",
+          "section": "russia",
+          "headline": "Россия заявила о внедрении отечественных ИИ-решений в десятках стран",
+          "organization": "Российские разработчики; Администрация президента РФ",
+          "topic": "экспорт российских ИИ-решений",
+          "event_type": "публичное заявление",
+          "status": "new",
+          "summary": "Российская делегация заявила, что отечественные решения на основе ИИ используются в десятках государств.",
+          "published_at": null,
+          "published_date": "2026-07-18",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Архив выпуска: Россия заявила о внедрении отечественных ИИ-решений в десятках стран",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/18-2026.html"
+            }
+          ],
+          "keywords": [
+            "Россия",
+            "экспорт ИИ",
+            "международное сотрудничество",
+            "Шанхай",
+            "российские технологии"
+          ],
+          "geography": "russia",
+          "category": "other"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-17",
+      "published_at": "2026-07-17T07:00:00+03:00",
+      "title": "ИИ-Сводка на 17 июля 2026",
+      "link": "https://rybalka.one/posts/2026-07-17/",
+      "summary": "Архивный выпуск ИИ-Сводки: 6 мировых и 3 российских сюжетов. Структурированные данные импортированы для поиска повторов и обновлений.",
+      "topics": [
+        "open-weight-модели и ИИ-кодинг",
+        "регулирование платформ и конкуренция",
+        "frontier-модели и продуктовые релизы",
+        "международное регулирование ИИ",
+        "корпоративные агенты ИИ",
+        "безопасность подростков и возрастной доступ",
+        "государственные ИИ-сервисы и документооборот",
+        "тестирование генеративного ИИ и RAG",
+        "генеративный ИИ в управлении персоналом"
+      ],
+      "source_urls": [
+        "https://www.reuters.com/world/china/chinas-moonshot-unveils-worlds-largest-open-ai-model-closing-us-rivals-2026-07-17/",
+        "https://www.ft.com/content/c6ecd8ce-c441-4d7c-aea6-fae3e28fb6ff",
+        "https://www.reuters.com/world/google-required-open-up-ai-search-engine-rivals-under-eu-mandated-changes-2026-07-16/",
+        "https://www.marketwatch.com/story/alphabets-stock-falls-as-gemini-delays-suggest-google-is-struggling-to-keep-up-in-the-ai-race-4d821205",
+        "https://www.ft.com/content/ddb316b4-c6ae-4b9b-9d4a-63d63201d4fc",
+        "https://openai.com/index/cars24/",
+        "https://openai.com/index/why-teens-deserve-access-safe-ai/",
+        "https://www.comnews.ru/content/246419/2026-07-16/2026-w29/1007/pravitelstvo-rf-obnovilo-strategiyu-cifrovizacii",
+        "https://www.comnews.ru/content/246436/2026-07-16/2026-w29/1018/bss-avtomatizirovala-audit-generativnogo-ii-nlu-suite-38-poyavilas-llm-ocenka-kachestva-rag-sistem",
+        "https://www.comnews.ru/digital-economy/content/246440/2026-07-16/2026-w29/1012/lokotekh-povysit-effektivnost-raboty-sluzhby-upravleniya-personalom-pomoschyu-ii"
+      ],
+      "stories": [
+        {
+          "candidate_id": "blogger-2026-07-17-01",
+          "section": "world",
+          "headline": "Moonshot AI выпустила Kimi K3 с 2,8 трлн параметров",
+          "organization": "Moonshot AI",
+          "topic": "open-weight-модели и ИИ-кодинг",
+          "event_type": "выпуск модели",
+          "status": "new",
+          "summary": "Moonshot AI представила Kimi K3 с 2,8 трлн параметров, контекстом 1 млн токенов и ориентацией на сложные агентские и кодинговые задачи.",
+          "published_at": null,
+          "published_date": "2026-07-17",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Moonshot AI выпустила Kimi K3 с 2,8 трлн параметров",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/world/china/chinas-moonshot-unveils-worlds-largest-open-ai-model-closing-us-rivals-2026-07-17/"
+            },
+            {
+              "title": "Moonshot AI выпустила Kimi K3 с 2,8 трлн параметров",
+              "publisher": "Financial Times",
+              "url": "https://www.ft.com/content/c6ecd8ce-c441-4d7c-aea6-fae3e28fb6ff"
+            }
+          ],
+          "keywords": [
+            "Moonshot AI",
+            "Kimi K3",
+            "Китай",
+            "open-weight",
+            "LLM",
+            "ИИ-кодинг",
+            "агенты ИИ"
+          ],
+          "geography": "world",
+          "category": "developer_tools"
+        },
+        {
+          "candidate_id": "blogger-2026-07-17-02",
+          "section": "world",
+          "headline": "Евросоюз обязал Google открыть Android для конкурирующих помощников ИИ",
+          "organization": "Google; Европейская комиссия; OpenAI",
+          "topic": "регулирование платформ и конкуренция",
+          "event_type": "регуляторное решение",
+          "status": "new",
+          "summary": "Google должна открыть конкурентам 11 функций Android и предоставлять квалифицированным поисковым сервисам обезличенные данные.",
+          "published_at": null,
+          "published_date": "2026-07-17",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Евросоюз обязал Google открыть Android для конкурирующих помощников ИИ",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/world/google-required-open-up-ai-search-engine-rivals-under-eu-mandated-changes-2026-07-16/"
+            }
+          ],
+          "keywords": [
+            "Google",
+            "Android",
+            "Gemini",
+            "Евросоюз",
+            "DMA",
+            "OpenAI",
+            "регулирование",
+            "конкуренция"
+          ],
+          "geography": "world",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "blogger-2026-07-17-03",
+          "section": "world",
+          "headline": "Запуск Gemini 3.5 Pro задержался на несколько месяцев",
+          "organization": "Google; Google DeepMind; Alphabet",
+          "topic": "frontier-модели и продуктовые релизы",
+          "event_type": "задержка выпуска модели",
+          "status": "new",
+          "summary": "Google задержала выпуск Gemini 3.5 Pro на несколько месяцев, продолжая работу над улучшением качества модели.",
+          "published_at": null,
+          "published_date": "2026-07-17",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Запуск Gemini 3.5 Pro задержался на несколько месяцев",
+              "publisher": "MarketWatch",
+              "url": "https://www.marketwatch.com/story/alphabets-stock-falls-as-gemini-delays-suggest-google-is-struggling-to-keep-up-in-the-ai-race-4d821205"
+            }
+          ],
+          "keywords": [
+            "Google",
+            "Gemini 3.5 Pro",
+            "Google DeepMind",
+            "задержка",
+            "frontier-модель",
+            "Alphabet"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "blogger-2026-07-17-04",
+          "section": "world",
+          "headline": "Китай продвигает собственную систему международного управления ИИ",
+          "organization": "Китай; World AI Cooperation Organization",
+          "topic": "международное регулирование ИИ",
+          "event_type": "международная инициатива",
+          "status": "new",
+          "summary": "Китай развивает международную организацию в Шанхае для сотрудничества, распространения технологий и формирования стандартов ИИ.",
+          "published_at": null,
+          "published_date": "2026-07-17",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Китай продвигает собственную систему международного управления ИИ",
+              "publisher": "Financial Times",
+              "url": "https://www.ft.com/content/ddb316b4-c6ae-4b9b-9d4a-63d63201d4fc"
+            }
+          ],
+          "keywords": [
+            "Китай",
+            "WAICO",
+            "регулирование ИИ",
+            "стандарты",
+            "Глобальный Юг",
+            "технологическая дипломатия"
+          ],
+          "geography": "world",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "blogger-2026-07-17-05",
+          "section": "world",
+          "headline": "OpenAI показала крупное внедрение агентов ИИ в автомобильном маркетплейсе Cars24",
+          "organization": "OpenAI; Cars24",
+          "topic": "корпоративные агенты ИИ",
+          "event_type": "продуктовый кейс",
+          "status": "new",
+          "summary": "Cars24 использует решения OpenAI для клиентских разговоров, возврата потерянных обращений и внутренних процессов разработки.",
+          "published_at": null,
+          "published_date": "2026-07-17",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "OpenAI показала крупное внедрение агентов ИИ в автомобильном маркетплейсе Cars24",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/cars24/"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "Cars24",
+            "агенты ИИ",
+            "продажи",
+            "клиентский сервис",
+            "Codex",
+            "автоматизация"
+          ],
+          "geography": "world",
+          "category": "agents"
+        },
+        {
+          "candidate_id": "blogger-2026-07-17-06",
+          "section": "world",
+          "headline": "OpenAI раскрыла подход к безопасному доступу подростков к ИИ",
+          "organization": "OpenAI",
+          "topic": "безопасность подростков и возрастной доступ",
+          "event_type": "публичная политика",
+          "status": "new",
+          "summary": "OpenAI описала встроенные ограничения, возрастные настройки и взаимодействие с экспертами при предоставлении подросткам доступа к ChatGPT.",
+          "published_at": null,
+          "published_date": "2026-07-17",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "OpenAI раскрыла подход к безопасному доступу подростков к ИИ",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/why-teens-deserve-access-safe-ai/"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "ChatGPT",
+            "подростки",
+            "безопасность ИИ",
+            "возрастной доступ",
+            "образование"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "blogger-2026-07-17-07",
+          "section": "russia",
+          "headline": "Правительство России масштабирует ИИ-сервисы на весь аппарат",
+          "organization": "Правительство РФ",
+          "topic": "государственные ИИ-сервисы и документооборот",
+          "event_type": "масштабирование пилота",
+          "status": "new",
+          "summary": "После пилота с участием более 130 сотрудников правительство решило распространить ИИ-сервисы на все подразделения аппарата.",
+          "published_at": null,
+          "published_date": "2026-07-17",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Правительство России масштабирует ИИ-сервисы на весь аппарат",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/content/246419/2026-07-16/2026-w29/1007/pravitelstvo-rf-obnovilo-strategiyu-cifrovizacii"
+            }
+          ],
+          "keywords": [
+            "Правительство РФ",
+            "ИИ-сервисы",
+            "документооборот",
+            "государственное управление",
+            "автоматизация"
+          ],
+          "geography": "russia",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "blogger-2026-07-17-08",
+          "section": "russia",
+          "headline": "BSS добавила автоматизированную оценку качества RAG-систем",
+          "organization": "BSS",
+          "topic": "тестирование генеративного ИИ и RAG",
+          "event_type": "выпуск программного продукта",
+          "status": "new",
+          "summary": "NLU-Suite 3.8 использует LLM для автоматизированной оценки корректности, релевантности и соответствия ответов RAG-систем исходным документам.",
+          "published_at": null,
+          "published_date": "2026-07-17",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "BSS добавила автоматизированную оценку качества RAG-систем",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/content/246436/2026-07-16/2026-w29/1018/bss-avtomatizirovala-audit-generativnogo-ii-nlu-suite-38-poyavilas-llm-ocenka-kachestva-rag-sistem"
+            }
+          ],
+          "keywords": [
+            "BSS",
+            "NLU-Suite",
+            "RAG",
+            "LLM",
+            "тестирование ИИ",
+            "галлюцинации",
+            "клиентский сервис"
+          ],
+          "geography": "russia",
+          "category": "agents"
+        },
+        {
+          "candidate_id": "blogger-2026-07-17-09",
+          "section": "russia",
+          "headline": "«ЛокоТех» внедряет генеративный ИИ в работу кадровой службы",
+          "organization": "ЛокоТех",
+          "topic": "генеративный ИИ в управлении персоналом",
+          "event_type": "корпоративное внедрение",
+          "status": "new",
+          "summary": "ЛокоТех обучает кадровых специалистов применению генеративного ИИ для подготовки материалов, анализа информации и автоматизации рутины.",
+          "published_at": null,
+          "published_date": "2026-07-17",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "«ЛокоТех» внедряет генеративный ИИ в работу кадровой службы",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/digital-economy/content/246440/2026-07-16/2026-w29/1012/lokotekh-povysit-effektivnost-raboty-sluzhby-upravleniya-personalom-pomoschyu-ii"
+            }
+          ],
+          "keywords": [
+            "ЛокоТех",
+            "генеративный ИИ",
+            "HR",
+            "кадры",
+            "обучение сотрудников",
+            "автоматизация"
+          ],
+          "geography": "russia",
+          "category": "other"
+        }
+      ]
+    },
+    {
+      "date": "2026-07-16",
+      "published_at": "2026-07-16T07:00:00+03:00",
+      "title": "ИИ-Сводка на 16 июля 2026",
+      "link": "https://rybalka.one/posts/2026-07-16/",
+      "summary": "Архивный выпуск ИИ-Сводки: 6 мировых и 3 российских сюжетов. Структурированные данные импортированы для поиска повторов и обновлений.",
+      "topics": [
+        "безопасность моделей и red teaming",
+        "open-weight-модели и агенты ИИ",
+        "финансирование и инфраструктура ИИ",
+        "исследования безопасности ИИ",
+        "регулирование ИИ",
+        "регулирование frontier-моделей",
+        "LLM и безопасность мобильных приложений",
+        "ИИ-кодинг и веб-разработка",
+        "корпоративные помощники ИИ"
+      ],
+      "source_urls": [
+        "https://openai.com/index/unlocking-self-improvement-gpt-red/",
+        "https://www.reuters.com/business/ai-startup-thinking-machines-launches-an-open-weight-ai-model-2026-07-15/",
+        "https://www.reuters.com/legal/transactional/chinas-deepseek-raise-fresh-capital-74-billion-valuation-ahead-onshore-ipo-2026-07-15/",
+        "https://openai.com/index/introducing-openai-safety-fellowship/",
+        "https://openai.com/index/advancing-ai-safety-through-state-and-federal-action/",
+        "https://www.businessinsider.com/anthropic-openai-ai-safety-laws-state-lobbying-2026-7",
+        "https://www.comnews.ru/content/246403/2026-07-15/2026-w29/1008/android-prilozheniya-mozhno-vzlomat-za-50-centov",
+        "https://www.comnews.ru/content/246415/2026-07-15/2026-w29/1010/kazhdyy-vtoroy-polzovatel-sozdaet-veb-proekty-pomoschyu-iskusstvennogo-intellekta",
+        "https://www.comnews.ru/digital-economy/content/246410/2026-07-15/2026-w29/1012/cometal-vnedril-ii-pomoschnikov-dlya-raboty-dannymi-i-kontragentami"
+      ],
+      "stories": [
+        {
+          "candidate_id": "blogger-2026-07-16-01",
+          "section": "world",
+          "headline": "OpenAI представила GPT-Red для автоматизированной проверки безопасности моделей",
+          "organization": "OpenAI",
+          "topic": "безопасность моделей и red teaming",
+          "event_type": "исследовательский анонс",
+          "status": "new",
+          "summary": "OpenAI представила систему автоматизированного red teaming, которая обучается через самоигру и ищет способы обхода защиты моделей.",
+          "published_at": null,
+          "published_date": "2026-07-16",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "OpenAI представила GPT-Red для автоматизированной проверки безопасности моделей",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/unlocking-self-improvement-gpt-red/"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "GPT-Red",
+            "red teaming",
+            "безопасность ИИ",
+            "prompt injection",
+            "самоигра"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "blogger-2026-07-16-02",
+          "section": "world",
+          "headline": "Thinking Machines выпустила open-weight-модель Inkling для агентских задач",
+          "organization": "Thinking Machines",
+          "topic": "open-weight-модели и агенты ИИ",
+          "event_type": "выпуск модели",
+          "status": "new",
+          "summary": "Thinking Machines представила модель Inkling с открытыми весами и конкурентными результатами в агентских задачах.",
+          "published_at": null,
+          "published_date": "2026-07-16",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Thinking Machines выпустила open-weight-модель Inkling для агентских задач",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/business/ai-startup-thinking-machines-launches-an-open-weight-ai-model-2026-07-15/"
+            }
+          ],
+          "keywords": [
+            "Thinking Machines",
+            "Inkling",
+            "open-weight",
+            "агенты ИИ",
+            "Мира Мурати",
+            "LLM"
+          ],
+          "geography": "world",
+          "category": "agents"
+        },
+        {
+          "candidate_id": "blogger-2026-07-16-03",
+          "section": "world",
+          "headline": "Обновление: DeepSeek готовит раунд до 50 млрд юаней при оценке около 500 млрд юаней",
+          "organization": "DeepSeek",
+          "topic": "финансирование и инфраструктура ИИ",
+          "event_type": "переговоры о финансировании",
+          "status": "update",
+          "summary": "DeepSeek обсуждает привлечение до 50 млрд юаней при оценке около 500 млрд юаней и готовится к возможному IPO на STAR Market.",
+          "published_at": null,
+          "published_date": "2026-07-16",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Обновление: DeepSeek готовит раунд до 50 млрд юаней при оценке около 500 млрд юаней",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/legal/transactional/chinas-deepseek-raise-fresh-capital-74-billion-valuation-ahead-onshore-ipo-2026-07-15/"
+            }
+          ],
+          "keywords": [
+            "DeepSeek",
+            "Китай",
+            "финансирование",
+            "IPO",
+            "STAR Market",
+            "ускорители",
+            "open-weight"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "blogger-2026-07-16-04",
+          "section": "world",
+          "headline": "OpenAI запустила программу внешних исследований безопасности ИИ",
+          "organization": "OpenAI",
+          "topic": "исследования безопасности ИИ",
+          "event_type": "образовательная и исследовательская программа",
+          "status": "new",
+          "summary": "OpenAI открыла приём заявок в программу Safety Fellowship для внешних специалистов по безопасности и согласованию поведения моделей.",
+          "published_at": null,
+          "published_date": "2026-07-16",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "OpenAI запустила программу внешних исследований безопасности ИИ",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/introducing-openai-safety-fellowship/"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "Safety Fellowship",
+            "alignment",
+            "безопасность моделей",
+            "исследователи"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "blogger-2026-07-16-05",
+          "section": "world",
+          "headline": "OpenAI предложила согласовывать правила ИИ между штатами и федеральными властями США",
+          "organization": "OpenAI; власти штатов США; федеральные власти США",
+          "topic": "регулирование ИИ",
+          "event_type": "публичная позиция",
+          "status": "new",
+          "summary": "OpenAI поддержала модель согласованных региональных мер безопасности как основу будущего федерального и международного стандарта.",
+          "published_at": null,
+          "published_date": "2026-07-16",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "OpenAI предложила согласовывать правила ИИ между штатами и федеральными властями США",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/advancing-ai-safety-through-state-and-federal-action/"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "регулирование ИИ",
+            "США",
+            "штаты",
+            "федеральный стандарт",
+            "безопасность"
+          ],
+          "geography": "world",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "blogger-2026-07-16-06",
+          "section": "world",
+          "headline": "Anthropic делает ставку на более жёсткие законы об ИИ на уровне отдельных штатов",
+          "organization": "Anthropic; власти штатов США",
+          "topic": "регулирование frontier-моделей",
+          "event_type": "лоббистская и регуляторная стратегия",
+          "status": "new",
+          "summary": "Anthropic поддерживает независимые оценки рисков и более строгие региональные требования для передовых моделей ИИ.",
+          "published_at": null,
+          "published_date": "2026-07-16",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Anthropic делает ставку на более жёсткие законы об ИИ на уровне отдельных штатов",
+              "publisher": "Business Insider",
+              "url": "https://www.businessinsider.com/anthropic-openai-ai-safety-laws-state-lobbying-2026-7"
+            }
+          ],
+          "keywords": [
+            "Anthropic",
+            "регулирование",
+            "frontier-модели",
+            "США",
+            "безопасность ИИ",
+            "независимая оценка"
+          ],
+          "geography": "world",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "blogger-2026-07-16-07",
+          "section": "russia",
+          "headline": "Positive Technologies показала, что LLM могут модифицировать Android-приложения за несколько центов",
+          "organization": "Positive Technologies",
+          "topic": "LLM и безопасность мобильных приложений",
+          "event_type": "исследование безопасности",
+          "status": "new",
+          "summary": "В эксперименте LLM самостоятельно декомпилировали, изменяли и пересобирали Android-приложения; успешная модификация стоила от нескольких центов.",
+          "published_at": null,
+          "published_date": "2026-07-16",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Positive Technologies показала, что LLM могут модифицировать Android-приложения за несколько центов",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/content/246403/2026-07-15/2026-w29/1008/android-prilozheniya-mozhno-vzlomat-za-50-centov"
+            }
+          ],
+          "keywords": [
+            "Positive Technologies",
+            "Android",
+            "LLM",
+            "мобильная безопасность",
+            "APK",
+            "Qwen",
+            "GPT"
+          ],
+          "geography": "russia",
+          "category": "security"
+        },
+        {
+          "candidate_id": "blogger-2026-07-16-08",
+          "section": "russia",
+          "headline": "Исследование SpaceWeb зафиксировало массовое применение ИИ при создании веб-проектов",
+          "organization": "SpaceWeb; российские пользователи веб-хостинга",
+          "topic": "ИИ-кодинг и веб-разработка",
+          "event_type": "исследование аудитории",
+          "status": "new",
+          "summary": "Около половины опрошенных пользователей SpaceWeb регулярно применяют ИИ для генерации кода, доработки сайтов и создания веб-проектов.",
+          "published_at": null,
+          "published_date": "2026-07-16",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Исследование SpaceWeb зафиксировало массовое применение ИИ при создании веб-проектов",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/content/246415/2026-07-15/2026-w29/1010/kazhdyy-vtoroy-polzovatel-sozdaet-veb-proekty-pomoschyu-iskusstvennogo-intellekta"
+            }
+          ],
+          "keywords": [
+            "SpaceWeb",
+            "вайбкодинг",
+            "ИИ-кодинг",
+            "веб-разработка",
+            "малый бизнес",
+            "хостинг"
+          ],
+          "geography": "russia",
+          "category": "developer_tools"
+        },
+        {
+          "candidate_id": "blogger-2026-07-16-09",
+          "section": "russia",
+          "headline": "Cometal внедрил помощников ИИ для работы с данными и контрагентами",
+          "organization": "Cometal",
+          "topic": "корпоративные помощники ИИ",
+          "event_type": "корпоративное внедрение",
+          "status": "new",
+          "summary": "Cometal внедрил помощников ИИ для обработки внутренних данных и подготовки информации о контрагентах.",
+          "published_at": null,
+          "published_date": "2026-07-16",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Cometal внедрил помощников ИИ для работы с данными и контрагентами",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/digital-economy/content/246410/2026-07-15/2026-w29/1012/cometal-vnedril-ii-pomoschnikov-dlya-raboty-dannymi-i-kontragentami"
+            }
+          ],
+          "keywords": [
+            "Cometal",
+            "корпоративный ИИ",
+            "помощники ИИ",
+            "данные",
+            "контрагенты",
+            "автоматизация"
+          ],
+          "geography": "russia",
+          "category": "agents"
+        }
+      ]
+    },
+    {
       "date": "2026-07-15",
       "published_at": "2026-07-15T07:00:00+03:00",
       "title": "ИИ-Сводка на 15 июля 2026",
       "link": "https://rybalka.one/posts/dzen-test/2026-07-15/",
       "summary": "ИИ-Сводка на 15 июля 2026 Повестка сместилась к инфраструктуре, безопасности и государственному контролю: координации уязвимостей, надзору за frontier-моделями и борьбе за вычисления. Ключевые темы выпуска: кибербезопасность и надзор security review в Copilot H200, вычисления и DeepSeek Мировые лидеры ИИ США создадут группу ИИ и кибербезопасности Разработчики моделей и операторы критической инфраструктуры будут обмениваться данными об уязвимостях. Безопасность переходит от принципов к операционн",
       "topics": [
-        "США создадут группу ИИ и кибербезопасности",
-        "Google DeepMind предлагает международный надзор",
-        "GitHub Copilot получил security review",
-        "Reflection бронирует вычисления Nebius",
-        "Nvidia начала ограниченные поставки H200 в Китай",
-        "DeepSeek рассматривает новый раунд и IPO",
-        "Яндекс открыл создание research agents для бизнеса",
-        "Поручено подготовить стратегию автономных систем"
+        "ИИ и кибербезопасность",
+        "безопасность и регулирование frontier-моделей",
+        "ИИ-кодинг и безопасность кода",
+        "вычислительная инфраструктура ИИ",
+        "чипы и экспортный контроль",
+        "финансирование китайских разработчиков ИИ",
+        "государственное управление ИИ",
+        "корпоративные агенты ИИ",
+        "автономные системы и государственная политика"
       ],
-      "source_urls": [],
+      "source_urls": [
+        "https://rybv.blogspot.com/2026/07/15-2026.html"
+      ],
       "stories": [
         {
-          "candidate_id": "legacy-001",
+          "candidate_id": "blogger-2026-07-15-01",
           "section": "world",
-          "headline": "США создадут группу ИИ и кибербезопасности",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "США создадут группу координации ИИ и кибербезопасности",
+          "organization": "Правительство США; OpenAI; Anthropic; Nvidia",
+          "topic": "ИИ и кибербезопасность",
+          "event_type": "государственная инициатива",
           "status": "new",
-          "summary": "",
+          "summary": "США объединят разработчиков моделей и операторов критической инфраструктуры для обмена данными об уязвимостях и координации реагирования.",
           "published_at": null,
           "published_date": "2026-07-15",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Архив выпуска: США создадут группу координации ИИ и кибербезопасности",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+            }
+          ],
+          "keywords": [
+            "США",
+            "кибербезопасность",
+            "OpenAI",
+            "Anthropic",
+            "Nvidia",
+            "критическая инфраструктура"
+          ],
           "geography": "world",
-          "category": "other",
-          "legacy": true
+          "category": "security"
         },
         {
-          "candidate_id": "legacy-002",
+          "candidate_id": "blogger-2026-07-15-02",
           "section": "world",
-          "headline": "Google DeepMind предлагает международный надзор",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "Google DeepMind предложила создать международный надзор за frontier-моделями",
+          "organization": "Google DeepMind; Демис Хассабис",
+          "topic": "безопасность и регулирование frontier-моделей",
+          "event_type": "регуляторное предложение",
           "status": "new",
-          "summary": "",
+          "summary": "Демис Хассабис предложил создать финансируемую отраслью международную структуру для проверки наиболее мощных моделей перед выпуском.",
           "published_at": null,
           "published_date": "2026-07-15",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Архив выпуска: Google DeepMind предложила создать международный надзор за frontier-моделями",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+            }
+          ],
+          "keywords": [
+            "Google DeepMind",
+            "Демис Хассабис",
+            "frontier-модели",
+            "безопасность ИИ",
+            "регулирование"
+          ],
           "geography": "world",
-          "category": "other",
-          "legacy": true
+          "category": "security"
         },
         {
-          "candidate_id": "legacy-003",
+          "candidate_id": "blogger-2026-07-15-03",
           "section": "world",
-          "headline": "GitHub Copilot получил security review",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "GitHub Copilot получил встроенную проверку безопасности изменений",
+          "organization": "GitHub; Microsoft",
+          "topic": "ИИ-кодинг и безопасность кода",
+          "event_type": "обновление продукта",
           "status": "new",
-          "summary": "",
+          "summary": "GitHub добавил команду security-review в Copilot и начал показывать созданные с помощью ИИ предупреждения непосредственно в pull request.",
           "published_at": null,
           "published_date": "2026-07-15",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Архив выпуска: GitHub Copilot получил встроенную проверку безопасности изменений",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+            }
+          ],
+          "keywords": [
+            "GitHub Copilot",
+            "security review",
+            "pull request",
+            "уязвимости",
+            "ИИ-кодинг",
+            "CodeQL"
+          ],
           "geography": "world",
-          "category": "other",
-          "legacy": true
+          "category": "security"
         },
         {
-          "candidate_id": "legacy-004",
+          "candidate_id": "blogger-2026-07-15-04",
           "section": "world",
-          "headline": "Reflection бронирует вычисления Nebius",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "Reflection заключила с Nebius контракт на вычисления стоимостью более миллиарда долларов",
+          "organization": "Reflection; Nebius; Nvidia",
+          "topic": "вычислительная инфраструктура ИИ",
+          "event_type": "инфраструктурный контракт",
           "status": "new",
-          "summary": "",
+          "summary": "Reflection получила доступ к вычислительной инфраструктуре Nebius на базе новых ускорителей Nvidia для обучения open-weight frontier-моделей.",
           "published_at": null,
           "published_date": "2026-07-15",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Архив выпуска: Reflection заключила с Nebius контракт на вычисления стоимостью более миллиарда долларов",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+            }
+          ],
+          "keywords": [
+            "Reflection",
+            "Nebius",
+            "Nvidia",
+            "open-weight",
+            "вычислительные мощности",
+            "frontier-модели"
+          ],
           "geography": "world",
-          "category": "other",
-          "legacy": true
+          "category": "infrastructure"
         },
         {
-          "candidate_id": "legacy-005",
+          "candidate_id": "blogger-2026-07-15-05",
           "section": "world",
-          "headline": "Nvidia начала ограниченные поставки H200 в Китай",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "Nvidia начала ограниченные поставки ускорителей H200 в Китай",
+          "organization": "Nvidia; правительство США; китайские покупатели",
+          "topic": "чипы и экспортный контроль",
+          "event_type": "начало поставок",
           "status": "new",
-          "summary": "",
+          "summary": "США подтвердили начало минимальных поставок ускорителей Nvidia H200 в Китай в рамках экспортных разрешений.",
           "published_at": null,
           "published_date": "2026-07-15",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Архив выпуска: Nvidia начала ограниченные поставки ускорителей H200 в Китай",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+            }
+          ],
+          "keywords": [
+            "Nvidia",
+            "H200",
+            "Китай",
+            "ускорители",
+            "экспортный контроль",
+            "инфраструктура ИИ"
+          ],
           "geography": "world",
-          "category": "other",
-          "legacy": true
+          "category": "infrastructure"
         },
         {
-          "candidate_id": "legacy-006",
+          "candidate_id": "blogger-2026-07-15-06",
           "section": "world",
-          "headline": "DeepSeek рассматривает новый раунд и IPO",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "DeepSeek рассматривает новый раунд финансирования и подготовку к IPO",
+          "organization": "DeepSeek",
+          "topic": "финансирование китайских разработчиков ИИ",
+          "event_type": "переговоры о финансировании",
           "status": "new",
-          "summary": "",
+          "summary": "DeepSeek рассматривает новый инвестиционный раунд при предварительной оценке около 71 млрд долларов и начала подготовку к возможному IPO.",
           "published_at": null,
           "published_date": "2026-07-15",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Архив выпуска: DeepSeek рассматривает новый раунд финансирования и подготовку к IPO",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+            }
+          ],
+          "keywords": [
+            "DeepSeek",
+            "Китай",
+            "финансирование",
+            "IPO",
+            "модели ИИ",
+            "инвестиции"
+          ],
           "geography": "world",
-          "category": "other",
-          "legacy": true
+          "category": "developer_tools"
         },
         {
-          "candidate_id": "legacy-007",
+          "candidate_id": "blogger-2026-07-15-07",
+          "section": "world",
+          "headline": "Австралия создаст единый государственный офис по ИИ",
+          "organization": "Правительство Австралии",
+          "topic": "государственное управление ИИ",
+          "event_type": "создание регулирующего органа",
+          "status": "new",
+          "summary": "Австралия создаст Office of AI для координации регулирования и применения ИИ в государственном секторе.",
+          "published_at": null,
+          "published_date": "2026-07-15",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Архив выпуска: Австралия создаст единый государственный офис по ИИ",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+            }
+          ],
+          "keywords": [
+            "Австралия",
+            "Office of AI",
+            "регулирование",
+            "государственная политика",
+            "безопасность ИИ"
+          ],
+          "geography": "world",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "blogger-2026-07-15-08",
           "section": "russia",
-          "headline": "Яндекс открыл создание research agents для бизнеса",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "Яндекс открыл бизнесу создание собственных агентов-исследователей",
+          "organization": "Яндекс; Yandex B2B Tech",
+          "topic": "корпоративные агенты ИИ",
+          "event_type": "запуск продукта",
           "status": "new",
-          "summary": "",
+          "summary": "Корпоративные клиенты получили возможность создавать специализированных агентов для поиска, анализа и подготовки исследовательских материалов.",
           "published_at": null,
           "published_date": "2026-07-15",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Архив выпуска: Яндекс открыл бизнесу создание собственных агентов-исследователей",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+            }
+          ],
+          "keywords": [
+            "Яндекс",
+            "Yandex B2B Tech",
+            "агенты ИИ",
+            "исследования",
+            "корпоративный ИИ",
+            "поиск"
+          ],
           "geography": "russia",
-          "category": "other",
-          "legacy": true
+          "category": "agents"
         },
         {
-          "candidate_id": "legacy-008",
+          "candidate_id": "blogger-2026-07-15-09",
           "section": "russia",
-          "headline": "Поручено подготовить стратегию автономных систем",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "Президент поручил подготовить стратегию развития автономных систем",
+          "organization": "Президент России; Правительство России",
+          "topic": "автономные системы и государственная политика",
+          "event_type": "государственное поручение",
           "status": "new",
-          "summary": "",
+          "summary": "Правительству поручено разработать национальные стратегии развития автономных систем и цифровых платформ.",
           "published_at": null,
           "published_date": "2026-07-15",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Архив выпуска: Президент поручил подготовить стратегию развития автономных систем",
+              "publisher": "Blogger archive",
+              "url": "https://rybv.blogspot.com/2026/07/15-2026.html"
+            }
+          ],
+          "keywords": [
+            "автономные системы",
+            "беспилотный транспорт",
+            "робототехника",
+            "государственная стратегия",
+            "цифровые платформы"
+          ],
           "geography": "russia",
-          "category": "other",
-          "legacy": true
+          "category": "regulation"
         }
       ]
     },
@@ -510,122 +2776,299 @@
       "link": "https://rybalka.one/posts/dzen-test/2026-07-14/",
       "summary": "ИИ-Сводка на 14 июля 2026 Рынок двигали распространение моделей, стоимость эксплуатации и правила применения: ChatGPT возвращается в WhatsApp, китайские модели привлекают бизнес, а реклама получает маркировку. Ключевые темы выпуска: мессенджеры и экосистемы стоимость open-weight-моделей прозрачность рекламы и качество кода Мировые лидеры ИИ ChatGPT возвращается в WhatsApp в ЕЭЗ Пользователи снова могут обращаться к ассистенту через привычный мессенджер. Каналы распространения становятся не менее",
       "topics": [
-        "ChatGPT возвращается в WhatsApp в ЕЭЗ",
-        "Компании тестируют китайские модели",
-        "Google раскрывает применение ИИ в рекламе",
-        "GitHub устанавливает цену Code Quality",
-        "Сбер предложил метод раннего обнаружения аварий",
-        "Росатом представил «Когнитрон»"
+        "дистрибуция ИИ и мессенджеры",
+        "китайские модели и корпоративное внедрение",
+        "ИИ и рынок труда",
+        "генеративный ИИ в рекламе",
+        "ИИ-кодинг и анализ качества кода",
+        "рынок пользовательских ИИ-ассистентов",
+        "промышленный ИИ и предиктивная аналитика",
+        "корпоративные агенты ИИ",
+        "регулирование ИИ в России"
       ],
-      "source_urls": [],
+      "source_urls": [
+        "https://help.openai.com/en/articles/6825453-chatgpt-release-notes",
+        "https://www.ft.com/content/9c8ff45b-7c20-4c2e-93c9-c52339ffdcee",
+        "https://www.reuters.com/business/over-200-experts-call-urgent-action-tackle-ais-economic-impact-2026-07-13/",
+        "https://www.comnews.ru/content/246363/2026-07-13/2026-w29/1008/google-vvel-markirovku-reklamy-sozdannoy-pomoschyu-iskusstvennogo-intellekta",
+        "https://github.blog/changelog/2026-07-13-github-code-quality-license-estimate-in-public-preview/",
+        "https://www.barrons.com/articles/google-traffic-grows-even-as-ai-rivals-explode-e146d551",
+        "https://www.comnews.ru/content/246389/2026-07-13/2026-w29/1009/rossii-sozdan-ii-metod-dlya-predotvrascheniya-avariy-proizvodstvakh-i-cifrovykh-sistemakh",
+        "https://www.comnews.ru/content/246381/2026-07-13/2026-w29/1009/rosatome-razrabotali-reshenie-dlya-sozdaniya-ii-agentov",
+        "https://www.comnews.ru/content/246332/2026-07-13/2026-w29/1030/k-chemu-privedet-pospeshnoe-prinyatie-gosdumoy-zakonoproekta-ob-ii"
+      ],
       "stories": [
         {
-          "candidate_id": "legacy-001",
+          "candidate_id": "blogger-2026-07-14-01",
           "section": "world",
-          "headline": "ChatGPT возвращается в WhatsApp в ЕЭЗ",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "OpenAI возвращает ChatGPT в WhatsApp в Европейской экономической зоне",
+          "organization": "OpenAI; WhatsApp",
+          "topic": "дистрибуция ИИ и мессенджеры",
+          "event_type": "возобновление интеграции",
           "status": "new",
-          "summary": "",
+          "summary": "ChatGPT снова становится доступен через WhatsApp пользователям Европейской экономической зоны.",
           "published_at": null,
           "published_date": "2026-07-14",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "OpenAI возвращает ChatGPT в WhatsApp в Европейской экономической зоне",
+              "publisher": "OpenAI",
+              "url": "https://help.openai.com/en/articles/6825453-chatgpt-release-notes"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "ChatGPT",
+            "WhatsApp",
+            "ЕЭЗ",
+            "мессенджеры",
+            "ассистент ИИ"
+          ],
           "geography": "world",
-          "category": "other",
-          "legacy": true
+          "category": "other"
         },
         {
-          "candidate_id": "legacy-002",
+          "candidate_id": "blogger-2026-07-14-02",
           "section": "world",
-          "headline": "Компании тестируют китайские модели",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "Международные компании переходят на китайские модели ради снижения расходов",
+          "organization": "Moonshot AI; DeepSeek; Z.ai; международные компании",
+          "topic": "китайские модели и корпоративное внедрение",
+          "event_type": "рыночная аналитика",
           "status": "new",
-          "summary": "",
+          "summary": "Международные компании изучают и применяют Kimi, DeepSeek и GLM из-за низкой стоимости, open-weight-лицензий и возможности самостоятельного размещения.",
           "published_at": null,
           "published_date": "2026-07-14",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Международные компании переходят на китайские модели ради снижения расходов",
+              "publisher": "Financial Times",
+              "url": "https://www.ft.com/content/9c8ff45b-7c20-4c2e-93c9-c52339ffdcee"
+            }
+          ],
+          "keywords": [
+            "Китай",
+            "Kimi",
+            "DeepSeek",
+            "GLM",
+            "Z.ai",
+            "open-weight",
+            "стоимость инференса"
+          ],
           "geography": "world",
-          "category": "other",
-          "legacy": true
+          "category": "business"
         },
         {
-          "candidate_id": "legacy-003",
+          "candidate_id": "blogger-2026-07-14-03",
           "section": "world",
-          "headline": "Google раскрывает применение ИИ в рекламе",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "Более 200 экспертов потребовали заранее готовиться к экономическим последствиям ИИ",
+          "organization": "Экономисты; исследователи; OpenAI; Anthropic; Google",
+          "topic": "ИИ и рынок труда",
+          "event_type": "публичное заявление",
           "status": "new",
-          "summary": "",
+          "summary": "Экономисты и исследователи призвали ускорить изучение влияния ИИ на занятость, доходы и распределение экономических преимуществ.",
           "published_at": null,
           "published_date": "2026-07-14",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Более 200 экспертов потребовали заранее готовиться к экономическим последствиям ИИ",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/business/over-200-experts-call-urgent-action-tackle-ais-economic-impact-2026-07-13/"
+            }
+          ],
+          "keywords": [
+            "рынок труда",
+            "автоматизация",
+            "экономическая политика",
+            "OpenAI",
+            "Anthropic",
+            "Google"
+          ],
           "geography": "world",
-          "category": "other",
-          "legacy": true
+          "category": "business"
         },
         {
-          "candidate_id": "legacy-004",
+          "candidate_id": "blogger-2026-07-14-04",
           "section": "world",
-          "headline": "GitHub устанавливает цену Code Quality",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "Google начнёт раскрывать применение ИИ при создании рекламы",
+          "organization": "Google",
+          "topic": "генеративный ИИ в рекламе",
+          "event_type": "изменение рекламной платформы",
           "status": "new",
-          "summary": "",
+          "summary": "Google добавит сведения об использовании генеративного ИИ при создании и редактировании рекламы в Поиске, Discover и YouTube.",
           "published_at": null,
           "published_date": "2026-07-14",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Google начнёт раскрывать применение ИИ при создании рекламы",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/content/246363/2026-07-13/2026-w29/1008/google-vvel-markirovku-reklamy-sozdannoy-pomoschyu-iskusstvennogo-intellekta"
+            }
+          ],
+          "keywords": [
+            "Google",
+            "реклама",
+            "генеративный ИИ",
+            "маркировка",
+            "YouTube",
+            "прозрачность контента"
+          ],
           "geography": "world",
-          "category": "other",
-          "legacy": true
+          "category": "other"
         },
         {
-          "candidate_id": "legacy-005",
+          "candidate_id": "blogger-2026-07-14-05",
+          "section": "world",
+          "headline": "GitHub готовит платную модель Code Quality для команд разработчиков",
+          "organization": "GitHub; Microsoft",
+          "topic": "ИИ-кодинг и анализ качества кода",
+          "event_type": "коммерциализация продукта",
+          "status": "new",
+          "summary": "GitHub Code Quality после выхода в общую доступность будет стоить 10 долларов в месяц за активного участника разработки.",
+          "published_at": null,
+          "published_date": "2026-07-14",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "GitHub готовит платную модель Code Quality для команд разработчиков",
+              "publisher": "GitHub",
+              "url": "https://github.blog/changelog/2026-07-13-github-code-quality-license-estimate-in-public-preview/"
+            }
+          ],
+          "keywords": [
+            "GitHub",
+            "Code Quality",
+            "ИИ-кодинг",
+            "ревью кода",
+            "статический анализ",
+            "разработчики"
+          ],
+          "geography": "world",
+          "category": "developer_tools"
+        },
+        {
+          "candidate_id": "blogger-2026-07-14-06",
+          "section": "world",
+          "headline": "Gemini увеличивает аудиторию на фоне замедления веб-трафика ChatGPT",
+          "organization": "Google; OpenAI",
+          "topic": "рынок пользовательских ИИ-ассистентов",
+          "event_type": "аналитика аудитории",
+          "status": "new",
+          "summary": "Данные BofA указывают на быстрый рост веб- и мобильной аудитории Gemini при относительно стабильном трафике веб-версии ChatGPT.",
+          "published_at": null,
+          "published_date": "2026-07-14",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Gemini увеличивает аудиторию на фоне замедления веб-трафика ChatGPT",
+              "publisher": "Barron’s",
+              "url": "https://www.barrons.com/articles/google-traffic-grows-even-as-ai-rivals-explode-e146d551"
+            }
+          ],
+          "keywords": [
+            "Gemini",
+            "ChatGPT",
+            "Google",
+            "OpenAI",
+            "аудитория",
+            "веб-трафик",
+            "мобильные приложения"
+          ],
+          "geography": "world",
+          "category": "business"
+        },
+        {
+          "candidate_id": "blogger-2026-07-14-07",
           "section": "russia",
-          "headline": "Сбер предложил метод раннего обнаружения аварий",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "Сбер разработал метод раннего обнаружения аварий и аномалий",
+          "organization": "Сбер; Центр практического искусственного интеллекта",
+          "topic": "промышленный ИИ и предиктивная аналитика",
+          "event_type": "научная разработка",
           "status": "new",
-          "summary": "",
+          "summary": "Метод Сбера предназначен для раннего обнаружения аномалий и предотвращения нештатных ситуаций в производственных и цифровых системах.",
           "published_at": null,
           "published_date": "2026-07-14",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Сбер разработал метод раннего обнаружения аварий и аномалий",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/content/246389/2026-07-13/2026-w29/1009/rossii-sozdan-ii-metod-dlya-predotvrascheniya-avariy-proizvodstvakh-i-cifrovykh-sistemakh"
+            }
+          ],
+          "keywords": [
+            "Сбер",
+            "промышленный ИИ",
+            "аномалии",
+            "аварии",
+            "предиктивная аналитика",
+            "IEEE"
+          ],
           "geography": "russia",
-          "category": "other",
-          "legacy": true
+          "category": "other"
         },
         {
-          "candidate_id": "legacy-006",
+          "candidate_id": "blogger-2026-07-14-08",
           "section": "russia",
-          "headline": "Росатом представил «Когнитрон»",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "Росатом представил платформу Когнитрон для корпоративных агентов ИИ",
+          "organization": "Росатом; атомная отрасль",
+          "topic": "корпоративные агенты ИИ",
+          "event_type": "продуктовый анонс",
           "status": "new",
-          "summary": "",
+          "summary": "Когнитрон позволяет обучать и развёртывать модели, создавать мультимодальных помощников и адаптировать LLM с использованием корпоративных знаний.",
           "published_at": null,
           "published_date": "2026-07-14",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Росатом представил платформу Когнитрон для корпоративных агентов ИИ",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/content/246381/2026-07-13/2026-w29/1009/rosatome-razrabotali-reshenie-dlya-sozdaniya-ii-agentov"
+            }
+          ],
+          "keywords": [
+            "Росатом",
+            "Когнитрон",
+            "агенты ИИ",
+            "LLM",
+            "закрытый контур",
+            "российское ПО"
+          ],
           "geography": "russia",
-          "category": "other",
-          "legacy": true
+          "category": "agents"
+        },
+        {
+          "candidate_id": "blogger-2026-07-14-09",
+          "section": "russia",
+          "headline": "Обновление: участники рынка предупредили о рисках поспешного закона об ИИ",
+          "organization": "Государственная Дума; российские участники рынка",
+          "topic": "регулирование ИИ в России",
+          "event_type": "обсуждение последствий закона",
+          "status": "update",
+          "summary": "После принятия закона участники рынка указали на риски широких формулировок и неопределённость критериев национальных и суверенных моделей.",
+          "published_at": null,
+          "published_date": "2026-07-14",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Обновление: участники рынка предупредили о рисках поспешного закона об ИИ",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/content/246332/2026-07-13/2026-w29/1030/k-chemu-privedet-pospeshnoe-prinyatie-gosdumoy-zakonoproekta-ob-ii"
+            }
+          ],
+          "keywords": [
+            "закон об ИИ",
+            "Госдума",
+            "регулирование",
+            "национальные модели",
+            "суверенные модели",
+            "локализация"
+          ],
+          "geography": "russia",
+          "category": "regulation"
         }
       ]
     },
@@ -636,103 +3079,208 @@
       "link": "https://rybalka.one/posts/dzen-test/2026-07-13/",
       "summary": "ИИ-Сводка на 13 июля 2026 Короткий выпуск сосредоточился на инфраструктуре: памяти, фабриках, командах внедрения, энергетике дата-центров и edge AI. Ключевые темы выпуска: полупроводниковые фабрики forward-deployed инженеры энергетика и edge AI Мировые лидеры ИИ Samsung ускоряет фабрику памяти Компания стремится раньше расширить выпуск компонентов на фоне высокого спроса ИИ-инфраструктуры. Задержка строительства быстро превращается в дефицит и рост цен. TCS создаёт тысячи ролей внедрения Специал",
       "topics": [
-        "Samsung ускоряет фабрику памяти",
-        "TCS создаёт тысячи ролей внедрения",
-        "LS Electric и Infineon развивают питание дата-центров",
-        "Пусан создаёт edge AI-центр для судостроения",
-        "Компании предупреждают об утечках через публичные ИИ-сервисы"
+        "память и ИИ-инфраструктура",
+        "корпоративное внедрение ИИ",
+        "энергетическая инфраструктура ИИ",
+        "edge-вычисления и промышленный ИИ",
+        "ИИ и глобальные цепочки поставок",
+        "безопасность корпоративного ИИ"
       ],
-      "source_urls": [],
+      "source_urls": [
+        "https://www.reuters.com/world/asia-pacific/samsung-electronics-move-up-start-chip-factory-yongin-2029-source-says-2026-07-13/",
+        "https://www.reuters.com/world/india/indias-tata-consultancy-services-plans-up-8900-ai-deployment-engineers-seeks-ai-2026-07-12/",
+        "https://en.sedaily.com/finance/2026/07/13/ls-electric-germanys-infineon-team-up-on-ai-data-center",
+        "https://en.sedaily.com/society/2026/07/13/busan-to-build-shipbuilding-ai-hub-at-myeongji-noksan",
+        "https://www.reuters.com/world/china/china-june-exports-growth-set-cool-ai-demand-underpins-overall-strength-2026-07-13/",
+        "https://safe.cnews.ru/news/line/2026-07-09_utssb_i_gk_solar_505_rossijskih",
+        "https://www.comnews.ru/content/246323/2026-07-10/2026-w28/1008/utechki-konfidencialnykh-dannykh-okhvatili-kazhduyu-vtoruyu-rossiyskuyu-kompaniyu"
+      ],
       "stories": [
         {
-          "candidate_id": "legacy-001",
+          "candidate_id": "blogger-2026-07-13-01",
           "section": "world",
-          "headline": "Samsung ускоряет фабрику памяти",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "Samsung ускоряет запуск фабрики памяти для ИИ в Yongin",
+          "organization": "Samsung Electronics; правительство Южной Кореи",
+          "topic": "память и ИИ-инфраструктура",
+          "event_type": "ускорение инфраструктурного проекта",
           "status": "new",
-          "summary": "",
+          "summary": "Samsung перенесла планируемое начало работы первой фабрики в Yongin на 2029 год из-за роста спроса на память для ИИ-инфраструктуры.",
           "published_at": null,
           "published_date": "2026-07-13",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Samsung ускоряет запуск фабрики памяти для ИИ в Yongin",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/world/asia-pacific/samsung-electronics-move-up-start-chip-factory-yongin-2029-source-says-2026-07-13/"
+            }
+          ],
+          "keywords": [
+            "Samsung",
+            "Yongin",
+            "HBM",
+            "память",
+            "ИИ-инфраструктура",
+            "Южная Корея"
+          ],
           "geography": "world",
-          "category": "other",
-          "legacy": true
+          "category": "infrastructure"
         },
         {
-          "candidate_id": "legacy-002",
+          "candidate_id": "blogger-2026-07-13-02",
           "section": "world",
-          "headline": "TCS создаёт тысячи ролей внедрения",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "TCS сформирует до 8900 инженеров для внедрения ИИ у заказчиков",
+          "organization": "Tata Consultancy Services",
+          "topic": "корпоративное внедрение ИИ",
+          "event_type": "кадровая и инвестиционная стратегия",
           "status": "new",
-          "summary": "",
+          "summary": "TCS создаёт команду forward-deployed engineers и рассматривает приобретения в сферах ИИ, защиты данных и кибербезопасности.",
           "published_at": null,
           "published_date": "2026-07-13",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "TCS сформирует до 8900 инженеров для внедрения ИИ у заказчиков",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/world/india/indias-tata-consultancy-services-plans-up-8900-ai-deployment-engineers-seeks-ai-2026-07-12/"
+            }
+          ],
+          "keywords": [
+            "TCS",
+            "Индия",
+            "внедрение ИИ",
+            "forward-deployed engineers",
+            "аутсорсинг",
+            "интеграция"
+          ],
           "geography": "world",
-          "category": "other",
-          "legacy": true
+          "category": "business"
         },
         {
-          "candidate_id": "legacy-003",
+          "candidate_id": "blogger-2026-07-13-03",
           "section": "world",
-          "headline": "LS Electric и Infineon развивают питание дата-центров",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "LS Electric и Infineon разработают энергосистемы для ИИ-дата-центров",
+          "organization": "LS Electric; Infineon",
+          "topic": "энергетическая инфраструктура ИИ",
+          "event_type": "технологическое партнёрство",
           "status": "new",
-          "summary": "",
+          "summary": "Компании договорились разрабатывать решения постоянного тока, силовую электронику и системы хранения энергии для ИИ-дата-центров.",
           "published_at": null,
           "published_date": "2026-07-13",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "LS Electric и Infineon разработают энергосистемы для ИИ-дата-центров",
+              "publisher": "Seoul Economic Daily",
+              "url": "https://en.sedaily.com/finance/2026/07/13/ls-electric-germanys-infineon-team-up-on-ai-data-center"
+            }
+          ],
+          "keywords": [
+            "LS Electric",
+            "Infineon",
+            "ИИ-дата-центры",
+            "DC power",
+            "силовые полупроводники",
+            "ESS"
+          ],
           "geography": "world",
-          "category": "other",
-          "legacy": true
+          "category": "infrastructure"
         },
         {
-          "candidate_id": "legacy-004",
+          "candidate_id": "blogger-2026-07-13-04",
           "section": "world",
-          "headline": "Пусан создаёт edge AI-центр для судостроения",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "Пусан построит отраслевой ИИ-центр для судостроения и промышленности",
+          "organization": "Правительство Пусана; Elice Group; Busan Techno Park",
+          "topic": "edge-вычисления и промышленный ИИ",
+          "event_type": "инфраструктурный проект",
           "status": "new",
-          "summary": "",
+          "summary": "В промышленном комплексе Myeongji-Noksan создадут ИИ-центр с 32 GPU класса H200 и 168 корейскими NPU для судостроения и производства.",
           "published_at": null,
           "published_date": "2026-07-13",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Пусан построит отраслевой ИИ-центр для судостроения и промышленности",
+              "publisher": "Seoul Economic Daily",
+              "url": "https://en.sedaily.com/society/2026/07/13/busan-to-build-shipbuilding-ai-hub-at-myeongji-noksan"
+            }
+          ],
+          "keywords": [
+            "Пусан",
+            "судостроение",
+            "edge AI",
+            "H200",
+            "NPU",
+            "цифровые двойники",
+            "промышленный ИИ"
+          ],
           "geography": "world",
-          "category": "other",
-          "legacy": true
+          "category": "infrastructure"
         },
         {
-          "candidate_id": "legacy-005",
+          "candidate_id": "blogger-2026-07-13-05",
+          "section": "world",
+          "headline": "Спрос на ИИ-компоненты поддерживает экспорт Китая",
+          "organization": "Китайские производители; полупроводниковая отрасль",
+          "topic": "ИИ и глобальные цепочки поставок",
+          "event_type": "макроэкономическая аналитика",
+          "status": "new",
+          "summary": "Мировой спрос на полупроводники и компоненты для ИИ поддерживает рост китайского экспорта и импорта технологического оборудования.",
+          "published_at": null,
+          "published_date": "2026-07-13",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Спрос на ИИ-компоненты поддерживает экспорт Китая",
+              "publisher": "Reuters",
+              "url": "https://www.reuters.com/world/china/china-june-exports-growth-set-cool-ai-demand-underpins-overall-strength-2026-07-13/"
+            }
+          ],
+          "keywords": [
+            "Китай",
+            "экспорт",
+            "полупроводники",
+            "ИИ-инфраструктура",
+            "компоненты",
+            "цепочки поставок"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "blogger-2026-07-13-06",
           "section": "russia",
-          "headline": "Компании предупреждают об утечках через публичные ИИ-сервисы",
-          "organization": "unknown",
-          "topic": "legacy",
-          "event_type": "legacy",
+          "headline": "Исследование выявило риски утечки данных через ИИ-инструменты в российских компаниях",
+          "organization": "УЦСБ; ГК Солар",
+          "topic": "безопасность корпоративного ИИ",
+          "event_type": "исследование рынка",
           "status": "new",
-          "summary": "",
+          "summary": "50,5% из 102 опрошенных организаций подозревают или фиксировали утечки через ИИ-инструменты; 63,6% сообщили о нехватке обучения и внутренних политик.",
           "published_at": null,
           "published_date": "2026-07-13",
           "time_precision": "date",
-          "sources": [],
-          "keywords": [],
+          "sources": [
+            {
+              "title": "Исследование выявило риски утечки данных через ИИ-инструменты в российских компаниях",
+              "publisher": "CNews",
+              "url": "https://safe.cnews.ru/news/line/2026-07-09_utssb_i_gk_solar_505_rossijskih"
+            },
+            {
+              "title": "Исследование выявило риски утечки данных через ИИ-инструменты в российских компаниях",
+              "publisher": "ComNews",
+              "url": "https://www.comnews.ru/content/246323/2026-07-10/2026-w28/1008/utechki-konfidencialnykh-dannykh-okhvatili-kazhduyu-vtoruyu-rossiyskuyu-kompaniyu"
+            }
+          ],
+          "keywords": [
+            "УЦСБ",
+            "Солар",
+            "утечки данных",
+            "публичные LLM",
+            "AI Security",
+            "корпоративный ИИ"
+          ],
           "geography": "russia",
-          "category": "other",
-          "legacy": true
+          "category": "security"
         }
       ]
     },

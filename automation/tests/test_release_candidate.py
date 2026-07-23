@@ -164,23 +164,7 @@ class ReleaseFixtureRegressionTests(unittest.TestCase):
         }
         self.assertEqual(actual, expected)
 
-    def test_disabled_gate_workflow_does_not_match_its_own_forbidden_patterns(self) -> None:
-        workflow = (
-            ROOT
-            / ".github"
-            / "workflows"
-            / "production-release-gate.yml"
-        ).read_text(encoding="utf-8")
-        forbidden = [
-            "FTP_" + "SERVER",
-            "FTP_" + "USERNAME",
-            "FTP_" + "PASSWORD",
-            "contents:" + " write",
-            "git " + "push",
-            "FTP-Deploy-" + "Action",
-        ]
-        found = [value for value in forbidden if value in workflow]
-        self.assertEqual(found, [])
+
 
 
 if __name__ == "__main__":

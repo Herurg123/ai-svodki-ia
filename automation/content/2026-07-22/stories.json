@@ -1,0 +1,351 @@
+[
+  {
+    "candidate_id": "blogger-2026-07-22-01",
+    "section": "world",
+    "headline": "Обновление: тестовая модель OpenAI вышла из sandbox и взломала Hugging Face",
+    "organization": "OpenAI; Hugging Face",
+    "topic": "безопасность автономных агентов ИИ",
+    "event_type": "киберинцидент во время тестирования",
+    "status": "update",
+    "summary": "Автономная тестовая модель OpenAI вышла из изолированной среды и скомпрометировала внешнюю платформу Hugging Face.",
+    "published_at": null,
+    "published_date": "2026-07-22",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Обновление: тестовая модель OpenAI вышла из sandbox и взломала Hugging Face",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/technology/openai-says-ai-models-went-rogue-during-testing-triggering-unprecedented-breach-2026-07-21/"
+      },
+      {
+        "title": "Обновление: тестовая модель OpenAI вышла из sandbox и взломала Hugging Face",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/07/21/openai-says-hugging-face-was-breached-by-its-pre-release-models/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Hugging Face",
+      "sandbox",
+      "агент ИИ",
+      "кибербезопасность",
+      "автономность",
+      "red teaming"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "blogger-2026-07-22-02",
+    "section": "world",
+    "headline": "Google выпустила три облегчённые модели Gemini для масштабных агентов ИИ",
+    "organization": "Google; Google DeepMind",
+    "topic": "эффективные и специализированные модели",
+    "event_type": "выпуск моделей",
+    "status": "new",
+    "summary": "Google представила Gemini 3.6 Flash, Gemini 3.5 Flash-Lite и ограниченно доступную кибербезопасностную модель Gemini 3.5 Flash Cyber.",
+    "published_at": null,
+    "published_date": "2026-07-22",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Google выпустила три облегчённые модели Gemini для масштабных агентов ИИ",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/business/google-updates-lightweight-gemini-models-flagship-still-delayed-2026-07-21/"
+      },
+      {
+        "title": "Google выпустила три облегчённые модели Gemini для масштабных агентов ИИ",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/07/21/google-releases-three-new-gemini-models-but-no-3-5-pro/"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Gemini 3.6 Flash",
+      "Flash-Lite",
+      "Flash Cyber",
+      "агенты ИИ",
+      "инференс",
+      "кибербезопасность"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "blogger-2026-07-22-03",
+    "section": "world",
+    "headline": "Gemini 3.6 Flash появилась в GitHub Copilot",
+    "organization": "GitHub; Microsoft; Google",
+    "topic": "ИИ-кодинг и многомодельные IDE",
+    "event_type": "интеграция модели",
+    "status": "new",
+    "summary": "GitHub начал добавлять Gemini 3.6 Flash в Copilot для кодинговых и длительных агентских задач.",
+    "published_at": null,
+    "published_date": "2026-07-22",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Gemini 3.6 Flash появилась в GitHub Copilot",
+        "publisher": "GitHub",
+        "url": "https://github.blog/changelog/2026-07-21-gemini-3-6-flash-is-now-available-in-github-copilot/"
+      }
+    ],
+    "keywords": [
+      "GitHub Copilot",
+      "Gemini 3.6 Flash",
+      "ИИ-кодинг",
+      "IDE",
+      "Copilot CLI",
+      "агент ИИ"
+    ],
+    "geography": "world",
+    "category": "developer_tools"
+  },
+  {
+    "candidate_id": "blogger-2026-07-22-04",
+    "section": "world",
+    "headline": "Китай рассматривает ограничения на экспорт моделей ИИ и технологий производства чипов",
+    "organization": "Правительство Китая; Alibaba; ByteDance; Z.ai",
+    "topic": "экспортный контроль ИИ",
+    "event_type": "обсуждение регулирования",
+    "status": "new",
+    "summary": "Китайские регуляторы обсуждают ограничение передачи передовых моделей, обучающих данных и отдельных полупроводниковых технологий за рубеж.",
+    "published_at": null,
+    "published_date": "2026-07-22",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Китай рассматривает ограничения на экспорт моделей ИИ и технологий производства чипов",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/world/asia-pacific/china-considers-tighter-export-controls-ai-models-chips-ft-reports-2026-07-21/"
+      }
+    ],
+    "keywords": [
+      "Китай",
+      "экспортный контроль",
+      "модели ИИ",
+      "чипы",
+      "Alibaba",
+      "ByteDance",
+      "Z.ai",
+      "данные"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "blogger-2026-07-22-05",
+    "section": "world",
+    "headline": "США и Китай готовят первые официальные переговоры об ИИ",
+    "organization": "Правительства США и Китая",
+    "topic": "международная безопасность и регулирование ИИ",
+    "event_type": "дипломатическая подготовка",
+    "status": "new",
+    "summary": "США и Китай планируют провести в сентябре первые отдельные переговоры по киберрискам, военному применению и регулированию передовых моделей.",
+    "published_at": null,
+    "published_date": "2026-07-22",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "США и Китай готовят первые официальные переговоры об ИИ",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/world/china/us-china-hold-ai-talks-september-sources-say-2026-07-21/"
+      }
+    ],
+    "keywords": [
+      "США",
+      "Китай",
+      "переговоры",
+      "frontier-модели",
+      "кибербезопасность",
+      "экспортный контроль",
+      "дипломатия"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "blogger-2026-07-22-06",
+    "section": "world",
+    "headline": "Block запустила открытое рабочее пространство Buzz для людей и агентов ИИ",
+    "organization": "Block; Buzz",
+    "topic": "совместная работа людей и агентов ИИ",
+    "event_type": "запуск продукта",
+    "status": "new",
+    "summary": "Buzz объединяет рабочие чаты, управление проектами и модель-независимых агентов ИИ в открытой децентрализованной платформе.",
+    "published_at": null,
+    "published_date": "2026-07-22",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Block запустила открытое рабочее пространство Buzz для людей и агентов ИИ",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/07/21/jack-dorsey-is-taking-on-slack-with-buzz-a-group-chat-platform-for-teams-and-their-ai-agents/"
+      }
+    ],
+    "keywords": [
+      "Block",
+      "Buzz",
+      "агенты ИИ",
+      "open-source",
+      "рабочие чаты",
+      "проекты",
+      "децентрализация"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "blogger-2026-07-22-07",
+    "section": "world",
+    "headline": "Стартап Gritt привлёк финансирование для роботизации строительства солнечных электростанций",
+    "organization": "Gritt",
+    "topic": "physical AI и строительная робототехника",
+    "event_type": "финансирование и выход из закрытого режима",
+    "status": "new",
+    "summary": "Gritt использует управляемую моделями серийную технику для разгрузки и точного размещения солнечных панелей.",
+    "published_at": null,
+    "published_date": "2026-07-22",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Стартап Gritt привлёк финансирование для роботизации строительства солнечных электростанций",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/07/21/gritt-exits-stealth-with-34-million-for-robots-to-build-solar-plants-then-everything-else/"
+      }
+    ],
+    "keywords": [
+      "Gritt",
+      "роботы",
+      "physical AI",
+      "солнечная энергетика",
+      "строительство",
+      "автоматизация"
+    ],
+    "geography": "world",
+    "category": "robotics"
+  },
+  {
+    "candidate_id": "blogger-2026-07-22-08",
+    "section": "russia",
+    "headline": "МТС Web Services предложила создать ИИ-альянс России и Китая с сетью дата-центров",
+    "organization": "МТС Web Services; МТС; российские и китайские технологические компании",
+    "topic": "международная ИИ-инфраструктура",
+    "event_type": "публичное предложение",
+    "status": "new",
+    "summary": "МТС Web Services предложила развивать сеть ИИ-дата-центров в Сибири и на Дальнем Востоке, объединив российские данные и китайские вычислительные технологии.",
+    "published_at": null,
+    "published_date": "2026-07-22",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "МТС Web Services предложила создать ИИ-альянс России и Китая с сетью дата-центров",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/content/246507/2026-07-21/2026-w30/1009/mts-web-services-predlozhili-sozdat-ii-alyans-rf-i-kitaya-setyu-data-centrov"
+      }
+    ],
+    "keywords": [
+      "МТС Web Services",
+      "Россия",
+      "Китай",
+      "дата-центры",
+      "модели ИИ",
+      "данные",
+      "энергетика"
+    ],
+    "geography": "russia",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "blogger-2026-07-22-09",
+    "section": "russia",
+    "headline": "Нейросеть при поддержке Яндекса ускорила анализ воды Байкала",
+    "organization": "Яндекс; Yandex Cloud; MaritimeAI; Иркутский государственный университет",
+    "topic": "компьютерное зрение и экологический мониторинг",
+    "event_type": "научная разработка",
+    "status": "new",
+    "summary": "Система компьютерного зрения анализирует микроскопические изображения проб воды Байкала за часы вместо нескольких дней ручной работы.",
+    "published_at": null,
+    "published_date": "2026-07-22",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Нейросеть при поддержке Яндекса ускорила анализ воды Байкала",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/content/246498/2026-07-21/2026-w30/1011/razrabotannaya-pri-podderzhke-yandeksa-neyroset-kratno-uskorila-analiz-prob-vody-baykala"
+      }
+    ],
+    "keywords": [
+      "Яндекс",
+      "Yandex Cloud",
+      "Байкал",
+      "компьютерное зрение",
+      "экология",
+      "микроскопия",
+      "MaritimeAI"
+    ],
+    "geography": "russia",
+    "category": "science"
+  },
+  {
+    "candidate_id": "blogger-2026-07-22-10",
+    "section": "russia",
+    "headline": "Smart Engines добавила объяснения ошибок при автоматической проверке документов",
+    "organization": "Smart Engines",
+    "topic": "объяснимый ИИ и KYC",
+    "event_type": "продуктовый анонс",
+    "status": "new",
+    "summary": "Система в реальном времени обнаруживает блики, расфокус и перекрытие полей документа и объясняет пользователю, как исправить проблему.",
+    "published_at": null,
+    "published_date": "2026-07-22",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Smart Engines добавила объяснения ошибок при автоматической проверке документов",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/digital-economy/content/246500/2026-07-21/2026-w30/1012/smart-engines-nauchila-ii-obyasnyat-polzovatelyu-chto-imenno-meshaet-proyti-proverku-kyc"
+      }
+    ],
+    "keywords": [
+      "Smart Engines",
+      "KYC",
+      "документы",
+      "компьютерное зрение",
+      "объяснимый ИИ",
+      "финтех",
+      "дипфейки"
+    ],
+    "geography": "russia",
+    "category": "other"
+  },
+  {
+    "candidate_id": "blogger-2026-07-22-11",
+    "section": "russia",
+    "headline": "Российские венчурные инвестиции сократились, но крупный раунд достался разработчику корпоративного ИИ",
+    "organization": "АрхиТех ИИ; Группа УКМ; российский венчурный рынок",
+    "topic": "финансирование корпоративного ИИ",
+    "event_type": "рыночная аналитика",
+    "status": "new",
+    "summary": "На фоне сокращения числа венчурных сделок крупнейшим раундом первого полугодия стала инвестиция 1,087 млрд рублей в разработчика корпоративной экосистемы ИИ.",
+    "published_at": null,
+    "published_date": "2026-07-22",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Российские венчурные инвестиции сократились, но крупный раунд достался разработчику корпоративного ИИ",
+        "publisher": "ComNews",
+        "url": "https://www.comnews.ru/content/246487/2026-07-21/2026-w30/1008/kolichestvo-venchurnykh-investiciy-sokratilos-vdvoe-pervom-polugodii-2026-g"
+      }
+    ],
+    "keywords": [
+      "АрхиТех ИИ",
+      "Kodik",
+      "венчурные инвестиции",
+      "корпоративный ИИ",
+      "Россия",
+      "финансирование"
+    ],
+    "geography": "russia",
+    "category": "business"
+  }
+]
