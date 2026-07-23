@@ -19,7 +19,6 @@ on:
       - main
     paths:
       - "posts/**"
-      - ".github/workflows/deploy-posts.yml"
 
 permissions:
   contents: read
@@ -63,3 +62,8 @@ jobs:
           port: 21
           local-dir: ./posts/
           server-dir: ./
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            dzen-test/**
