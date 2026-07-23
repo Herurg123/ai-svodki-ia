@@ -1,0 +1,206 @@
+name: Recover digest downstream dry run
+run-name: Recover digest ${{ inputs.publication_date }} downstream dry run
+
+on:
+  workflow_dispatch:
+    inputs:
+      publication_date:
+        description: "YYYY-MM-DD recovery artifact date"
+        required: true
+        default: "2026-07-24"
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: recover-digest-${{ inputs.publication_date }}
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      PYTHONUNBUFFERED: "1"
+      PIPELINE_MODE: full
+
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Validate recovery source and editorial artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          date="${{ inputs.publication_date }}"
+          source_dir="automation/recovery/${date}"
+          mkdir -p automation/preview/production-daily/recovery
+          python automation/scripts/validate_recovered_editorial.py \
+            --source-dir "${source_dir}" \
+            --publication-date "${date}" \
+            --report automation/preview/production-daily/recovery/source-validation.json
+          python automation/scripts/validate_digest_artifact.py \
+            --artifact-dir "${source_dir}" \
+            --report automation/preview/production-daily/recovery/artifact-validation.json
+
+      - name: Validate Image API configuration
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_IMAGE_MODEL: ${{ vars.OPENAI_IMAGE_MODEL || 'gpt-image-2' }}
+        run: |
+          set -euo pipefail
+          [[ -n "${OPENAI_API_KEY}" ]] || { echo "OPENAI_API_KEY missing" >&2; exit 1; }
+          [[ "${OPENAI_IMAGE_MODEL}" == "gpt-image-2" ]] || { echo "Unexpected image model" >&2; exit 1; }
+
+      - name: Patch runtime publication hour to 06:00 Moscow
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp automation/config/site.json automation/preview/production-daily/recovery/site.json.original
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path("automation/config/site.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+          data["publication_hour"] = 6
+          path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Build runtime Image API request
+        shell: bash
+        run: |
+          set -euo pipefail
+          date="${{ inputs.publication_date }}"
+          python automation/scripts/create_production_image_request.py \
+            --source-dir "automation/recovery/${date}" \
+            --publication-date "${date}" \
+            --request-id "recovery-image-${date}-${GITHUB_RUN_ID}" \
+            --output automation/preview/production-daily/image-request.json
+
+      - name: Generate one recovery cover
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_IMAGE_MODEL: ${{ vars.OPENAI_IMAGE_MODEL || 'gpt-image-2' }}
+        run: |
+          set -euo pipefail
+          date="${{ inputs.publication_date }}"
+          image_dir="automation/preview/production-daily/image/${date}"
+          python automation/scripts/generate_image_preview.py \
+            --source-dir "automation/recovery/${date}" \
+            --output-dir "${image_dir}" \
+            --request automation/preview/production-daily/image-request.json \
+            --model "${OPENAI_IMAGE_MODEL}"
+          python automation/scripts/validate_cover_contract.py \
+            --artifact-dir "${image_dir}" \
+            --report "${image_dir}/cover-validation.json"
+
+      - name: Stage accepted legacy images
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/stage_legacy_images.py \
+            --source posts/dzen-test/images \
+            --target posts/images \
+            --report automation/preview/production-daily/legacy-images.json
+
+      - name: Build and validate recovered candidate site
+        shell: bash
+        run: |
+          set -euo pipefail
+          date="${{ inputs.publication_date }}"
+          source_dir="automation/preview/production-daily/image/${date}"
+          candidate_root="automation/preview/production-daily/candidate"
+          python automation/scripts/build_site.py \
+            --source-dir "${source_dir}" \
+            --output-dir "${candidate_root}/posts" \
+            --build-info "${candidate_root}/build-info.json"
+          python automation/scripts/normalize_production_rss.py \
+            --rss "${candidate_root}/posts/rss.xml" \
+            --feed-url "https://rybalka.one/posts/rss.xml" \
+            --site-link "https://rybalka.one/posts" \
+            --report "${candidate_root}/rss-normalization.json"
+          python automation/scripts/inject_blogposting_schema.py \
+            --config automation/config/structured-data.json \
+            --source-dir "${source_dir}" \
+            --posts-root "${candidate_root}/posts" \
+            --report "${candidate_root}/structured-data-injection.json"
+          python automation/scripts/validate_structured_data.py \
+            --source-dir "${source_dir}" \
+            --posts-root "${candidate_root}/posts" \
+            --report "${candidate_root}/structured-data-validation.json"
+          python automation/scripts/build_posts_sitemap.py \
+            --rss "${candidate_root}/posts/rss.xml" \
+            --posts-root "${candidate_root}/posts" \
+            --output "${candidate_root}/posts/sitemap.xml" \
+            --report "${candidate_root}/posts-sitemap-build.json"
+          python automation/scripts/validate_posts_sitemap.py \
+            --sitemap "${candidate_root}/posts/sitemap.xml" \
+            --rss "${candidate_root}/posts/rss.xml" \
+            --report "${candidate_root}/posts-sitemap-validation.json"
+          python automation/scripts/validate_site.py \
+            --source-dir "${source_dir}" \
+            --site-dir "${candidate_root}/posts" \
+            --report "${candidate_root}/site-validation.json"
+          python automation/scripts/validate_dzen_feed.py \
+            --rss "${candidate_root}/posts/rss.xml" \
+            --report "${candidate_root}/dzen-feed-validation.json"
+
+      - name: Verify dry-run promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          date="${{ inputs.publication_date }}"
+          python automation/scripts/promote_production_site.py \
+            --config automation/config/production-daily.json \
+            --candidate-posts automation/preview/production-daily/candidate/posts \
+            --live-posts posts \
+            --source-dir "automation/preview/production-daily/image/${date}" \
+            --content-root automation/content \
+            --publication-date "${date}" \
+            --report automation/preview/production-daily/promotion.json \
+            --dry-run
+
+      - name: Restore repository site config
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f automation/preview/production-daily/recovery/site.json.original ]]; then
+            cp automation/preview/production-daily/recovery/site.json.original automation/config/site.json
+          fi
+
+      - name: Job summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Recovered digest downstream dry run"
+            echo
+            echo "- Publication date: ${{ inputs.publication_date }}"
+            echo "- Research API calls in this run: 0"
+            echo "- Editorial API calls in this run: 0"
+            echo "- Image API calls in this run: at most 1"
+            echo "- Publish: false"
+            echo "- Git commit: none"
+            echo "- FTP: not triggered"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload recovered dry-run artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: recovered-daily-production-${{ inputs.publication_date }}
+          path: |
+            automation/preview/production-daily/
+            automation/recovery/${{ inputs.publication_date }}/
+          if-no-files-found: error
+          retention-days: 14
