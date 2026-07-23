@@ -1,0 +1,63 @@
+name: Structured data and sitemap contract
+run-name: Validate BlogPosting and sitemap ${{ github.sha }}
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - automation-prep
+    paths:
+      - "automation/config/structured-data.json"
+      - "automation/scripts/inject_blogposting_schema.py"
+      - "automation/scripts/validate_structured_data.py"
+      - "automation/scripts/build_posts_sitemap.py"
+      - "automation/scripts/validate_posts_sitemap.py"
+      - "automation/tests/test_structured_data.py"
+      - "automation/tests/test_posts_sitemap.py"
+      - "automation/specs/structured-data.md"
+      - ".github/workflows/structured-data-check.yml"
+      - ".github/workflows/daily-production.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Compile structured-data tools
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            automation/scripts/inject_blogposting_schema.py \
+            automation/scripts/validate_structured_data.py \
+            automation/scripts/build_posts_sitemap.py \
+            automation/scripts/validate_posts_sitemap.py \
+            automation/tests/test_structured_data.py \
+            automation/tests/test_posts_sitemap.py
+      - name: Run structured-data and sitemap tests
+        run: |
+          set -euo pipefail
+          python -m unittest -v \
+            automation.tests.test_structured_data \
+            automation.tests.test_posts_sitemap
+      - name: Check production workflow integration
+        run: |
+          set -euo pipefail
+          grep -F "inject_blogposting_schema.py" .github/workflows/daily-production.yml
+          grep -F "validate_structured_data.py" .github/workflows/daily-production.yml
+          grep -F "build_posts_sitemap.py" .github/workflows/daily-production.yml
+          grep -F "validate_posts_sitemap.py" .github/workflows/daily-production.yml
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: structured-data-contract-${{ github.sha }}
+          path: automation/specs/structured-data.md
+          retention-days: 14
