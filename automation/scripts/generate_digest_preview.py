@@ -36,6 +36,7 @@ from editorial_policy import (
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = REPOSITORY_ROOT / "automation/config/site.json"
 EDITORIAL_CONFIG_PATH = REPOSITORY_ROOT / "automation/config/editorial.json"
+IMAGE_CONFIG_PATH = REPOSITORY_ROOT / "automation/config/image.json"
 RESEARCH_PROMPT_PATH = REPOSITORY_ROOT / "automation/prompts/research_candidates.md"
 EDITORIAL_PROMPT_PATH = REPOSITORY_ROOT / "automation/prompts/daily_digest.md"
 ARCHIVE_PATH = REPOSITORY_ROOT / "automation/archive/index.json"
@@ -1777,6 +1778,72 @@ def normalize_digest_metadata(
 
     return changes
 
+
+CANONICAL_IMAGE_PROMPT_CONSTRAINTS = {
+    "без логотипов": "без логотипов компаний",
+    "без дополнительного текста": (
+        "без дополнительного текста, кроме точного заголовка"
+    ),
+    "без водяных знаков": "без водяных знаков",
+    "без узнаваемых лиц": "без узнаваемых лиц реальных людей",
+    "без мелких интерфейсных надписей": "без мелких интерфейсных надписей",
+    "без пустой половины кадра": "без пустой половины кадра",
+    "без стокового корпоративного клипарта": (
+        "без стокового корпоративного клипарта"
+    ),
+}
+
+
+def normalize_image_prompt_constraints(
+    digest: dict[str, Any],
+    image_config: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Append deterministic image restrictions omitted by the editorial model.
+
+    The model remains responsible for the visual concept. Safety and rendering
+    restrictions are configuration, not editorial judgment, so missing exact
+    phrases are normalized before artifact validation and image generation.
+    """
+    prompt = str(digest.get("image_prompt", "")).strip()
+    if not prompt:
+        return []
+
+    configured_constraints: list[str] = []
+    for key in ("required_prompt_constraints", "recommended_prompt_constraints"):
+        values = image_config.get(key, [])
+        if isinstance(values, list):
+            configured_constraints.extend(
+                str(value).strip() for value in values if str(value).strip()
+            )
+
+    lowered = prompt.casefold()
+    missing = [
+        constraint
+        for constraint in configured_constraints
+        if constraint.casefold() not in lowered
+    ]
+    if not missing:
+        return []
+
+    additions = [
+        CANONICAL_IMAGE_PROMPT_CONSTRAINTS.get(constraint.casefold(), constraint)
+        for constraint in missing
+    ]
+    normalized = prompt.rstrip()
+    if normalized[-1:] not in ".!?":
+        normalized += "."
+    normalized += " Обязательные ограничения: " + "; ".join(additions) + "."
+    digest["image_prompt"] = normalized
+
+    return [
+        {
+            "field": "image_prompt",
+            "model_value": prompt,
+            "normalized_value": normalized,
+        }
+    ]
+
+
 def validate_editorial(
     editorial: dict[str, Any],
     research: dict[str, Any],
@@ -2148,12 +2215,15 @@ def main() -> int:
 
         config = read_json(CONFIG_PATH)
         policy = read_policy(EDITORIAL_CONFIG_PATH)
+        image_config = read_json(IMAGE_CONFIG_PATH)
         archive = read_json(ARCHIVE_PATH)
         research_template = read_text(RESEARCH_PROMPT_PATH)
         editorial_template = read_text(EDITORIAL_PROMPT_PATH)
 
         if not isinstance(config, dict):
             raise RuntimeError("automation/config/site.json должен содержать объект.")
+        if not isinstance(image_config, dict):
+            raise RuntimeError("automation/config/image.json должен содержать объект.")
         if not isinstance(archive, dict) or not isinstance(archive.get("items"), list):
             raise RuntimeError("automation/archive/index.json имеет неожиданную структуру.")
 
@@ -2440,6 +2510,10 @@ def main() -> int:
                     ),
                 }
             )
+
+        policy_changes.extend(
+            normalize_image_prompt_constraints(digest, image_config)
+        )
 
         run_info["editorial"]["metadata_normalization"] = {
             "status": "applied",
