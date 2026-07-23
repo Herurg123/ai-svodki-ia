@@ -18,7 +18,6 @@ on:
 
 permissions:
   contents: write
-  actions: write
 
 concurrency:
   group: daily-production-main
@@ -306,15 +305,6 @@ jobs:
           git commit -m "Publish AI digest for ${date}"
           git push origin HEAD:main
 
-      - name: Dispatch FTP deployment for the new main commit
-        if: steps.mode.outputs.publish == 'true'
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          gh workflow run deploy-posts.yml --ref main
-
       - name: Job summary
         if: always()
         shell: bash
@@ -327,7 +317,7 @@ jobs:
             echo "- Publish: ${{ steps.mode.outputs.publish }}"
             echo "- RSS: https://rybalka.one/posts/rss.xml"
             echo "- Legacy dzen-test items: preserved"
-            echo "- FTP: workflow_dispatch sent to Deploy posts to rybalka.one after commit"
+            echo "- FTP: Deploy posts to rybalka.one starts automatically after the posts/** push to main"
           } >> "${GITHUB_STEP_SUMMARY}"
 
       - uses: actions/upload-artifact@v7
