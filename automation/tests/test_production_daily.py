@@ -126,6 +126,18 @@ class ProductionDailyTests(unittest.TestCase):
             self.assertEqual(len(report["would_copy"]), 9)
             self.assertEqual((target / different).read_bytes(), b"canonical-production-image")
 
+    def test_scheduled_publish_uses_reusable_deployment(self):
+        daily = (ROOT / ".github" / "workflows" / "daily-production.yml").read_text(encoding="utf-8")
+        deploy = (ROOT / ".github" / "workflows" / "deploy-posts.yml").read_text(encoding="utf-8")
+
+        self.assertIn("uses: ./.github/workflows/deploy-posts.yml", daily)
+        self.assertIn("needs.production.outputs.commit_sha", daily)
+        self.assertIn("secrets: inherit", daily)
+        self.assertNotIn("starts automatically after the posts/** push", daily)
+        self.assertNotIn("gh workflow run deploy-posts.yml", daily)
+        self.assertIn("workflow_call:", deploy)
+        self.assertIn("inputs.ref || github.sha", deploy)
+
     def test_tree_digest_is_stable(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

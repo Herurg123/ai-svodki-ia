@@ -1,7 +1,8 @@
 from __future__ import annotations
-import argparse, json, re
+import argparse, json
 from pathlib import Path
 from production_daily_common import parse_rss, read_json, write_json
+
 
 def main() -> int:
     p = argparse.ArgumentParser()
@@ -15,6 +16,12 @@ def main() -> int:
     config = read_json(args.config)
     site = read_json(args.site_config)
     workflow = args.workflow.read_text(encoding="utf-8")
+    deploy_workflow_path = args.workflow.with_name("deploy-posts.yml")
+    deploy_workflow = (
+        deploy_workflow_path.read_text(encoding="utf-8")
+        if deploy_workflow_path.exists()
+        else ""
+    )
     rss = parse_rss(args.rss)
     errors = []
 
@@ -50,6 +57,11 @@ def main() -> int:
         ("posts sitemap validation", "validate_posts_sitemap.py"),
         ("site promotion", "promote_production_site.py"),
         ("git push", "git push origin HEAD:main"),
+        ("commit SHA output", 'echo "commit_sha=${commit_sha}"'),
+        ("reusable deployment", "uses: ./.github/workflows/deploy-posts.yml"),
+        ("deployment dependency", "needs: production"),
+        ("deployment ref", "needs.production.outputs.commit_sha"),
+        ("deployment secrets", "secrets: inherit"),
         ("artifact upload", "upload-artifact"),
     ]
     for label, needle in checks:
@@ -65,9 +77,28 @@ def main() -> int:
 
     if "gh workflow run deploy-posts.yml" in workflow:
         errors.append(
-            "production workflow must not dispatch deploy-posts.yml explicitly; "
-            "the posts/** push to main already starts deployment"
+            "production workflow must call deploy-posts.yml as a reusable workflow, "
+            "not dispatch it asynchronously"
         )
+    if "starts automatically after the posts/** push" in workflow:
+        errors.append(
+            "workflow incorrectly assumes a GITHUB_TOKEN push starts another workflow"
+        )
+
+    if not deploy_workflow_path.exists():
+        errors.append(f"deployment workflow missing: {deploy_workflow_path}")
+    else:
+        deploy_checks = [
+            ("workflow_call", "workflow_call:"),
+            ("exact ref input", "ref:"),
+            ("checkout requested ref", "inputs.ref || github.sha"),
+            ("FTP action", "SamKirkland/FTP-Deploy-Action@v4.4.0"),
+            ("canonical local directory", "local-dir: ./posts/"),
+            ("isolated FTP root", "server-dir: ./"),
+        ]
+        for label, needle in deploy_checks:
+            if needle not in deploy_workflow:
+                errors.append(f"deployment workflow missing {label}: {needle}")
 
     if rss["self_url"] != config["feed_url"]:
         errors.append("current RSS self URL is not the accepted root URL")
@@ -86,10 +117,12 @@ def main() -> int:
         "schedule_local": "06:07 Europe/Moscow",
         "schedule_utc": config["schedule_cron_utc"],
         "first_publication_date": config["first_publication_date"],
+        "deployment_mode": "reusable_workflow_call",
     }
     write_json(args.report, report)
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0 if not errors else 1
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
