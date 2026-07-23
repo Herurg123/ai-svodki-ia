@@ -27,6 +27,9 @@ jobs:
   production:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    outputs:
+      publish: ${{ steps.mode.outputs.publish }}
+      commit_sha: ${{ steps.commit.outputs.commit_sha }}
     timeout-minutes: 90
     env:
       PYTHONUNBUFFERED: "1"
@@ -264,6 +267,7 @@ jobs:
           fi
 
       - name: Commit production release
+        id: commit
         if: steps.mode.outputs.publish == 'true'
         shell: bash
         run: |
@@ -303,7 +307,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add posts automation/content/"${date}" automation/archive/index.json
           git commit -m "Publish AI digest for ${date}"
+          commit_sha="$(git rev-parse HEAD)"
           git push origin HEAD:main
+          echo "commit_sha=${commit_sha}" >> "${GITHUB_OUTPUT}"
 
       - name: Job summary
         if: always()
@@ -317,7 +323,7 @@ jobs:
             echo "- Publish: ${{ steps.mode.outputs.publish }}"
             echo "- RSS: https://rybalka.one/posts/rss.xml"
             echo "- Legacy dzen-test items: preserved"
-            echo "- FTP: Deploy posts to rybalka.one starts automatically after the posts/** push to main"
+            echo "- FTP: the reusable deployment job runs after a successful production commit"
           } >> "${GITHUB_STEP_SUMMARY}"
 
       - uses: actions/upload-artifact@v7
@@ -329,3 +335,13 @@ jobs:
             automation/preview/${{ steps.runtime.outputs.publication_date }}/
           if-no-files-found: warn
           retention-days: 14
+
+  deploy:
+    name: Deploy published posts
+    needs: production
+    if: needs.production.outputs.publish == 'true'
+    uses: ./.github/workflows/deploy-posts.yml
+    with:
+      ref: ${{ needs.production.outputs.commit_sha }}
+    secrets: inherit
+
