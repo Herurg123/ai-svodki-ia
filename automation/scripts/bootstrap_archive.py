@@ -17,6 +17,10 @@ OUTPUT_PATH = ROOT / "automation" / "archive" / "index.json"
 CONTENT_NS = "http://purl.org/rss/1.0/modules/content/"
 
 
+def normalize_meta_marker(value: str) -> str:
+    return re.sub(r"(?<!\w)Meta\*+(?!\w)", "Meta", value)
+
+
 class ArticleParser(HTMLParser):
     """Extract story headings, links and readable text from article HTML."""
 
@@ -49,7 +53,7 @@ class ArticleParser(HTMLParser):
                 r"\s+", " ", " ".join(self.heading_buffer)
             ).strip()
             if heading:
-                self.headings.append((tag, heading.replace("Meta*", "Meta")))
+                self.headings.append((tag, normalize_meta_marker(heading)))
             self.current_heading = None
             self.heading_buffer = []
 
@@ -57,7 +61,7 @@ class ArticleParser(HTMLParser):
         cleaned = re.sub(r"\s+", " ", data).strip()
         if not cleaned:
             return
-        self.text_parts.append(cleaned.replace("Meta*", "Meta"))
+        self.text_parts.append(normalize_meta_marker(cleaned))
         if self.current_heading:
             self.heading_buffer.append(cleaned)
 

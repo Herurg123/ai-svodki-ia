@@ -166,6 +166,27 @@ def image_filename_from_url(url: str) -> str:
     return filename
 
 
+def relative_post_link(link: str, site_base_url: str) -> str:
+    base = normalise_base_url(site_base_url) + "/"
+    if not link.startswith(base):
+        raise RuntimeError(f"Ссылка RSS находится вне раздела posts: {link}")
+    relative = link[len(base):]
+    if not relative:
+        return "./"
+    return "./" + relative
+
+
+def local_image_path(output_dir: Path, image_url: str, site_base_url: str) -> Path:
+    image_path = urlsplit(image_url).path
+    base_path = urlsplit(normalise_base_url(site_base_url)).path.rstrip("/") + "/"
+    if not image_path.startswith(base_path):
+        raise RuntimeError(f"Изображение RSS находится вне раздела posts: {image_url}")
+    relative = image_path[len(base_path):]
+    if not relative:
+        raise RuntimeError(f"Невозможно определить локальный путь изображения: {image_url}")
+    return output_dir / relative
+
+
 def candidates_from_stories(stories: list[dict[str, Any]]) -> list[dict[str, Any]]:
     candidates: list[dict[str, Any]] = []
     for story in stories:
@@ -384,12 +405,15 @@ def render_index(config: dict[str, Any], items: list[dict[str, Any]]) -> str:
         config.get("page_title_prefix", "Виталий Рыбалка | Vitaly Rybalka")
     ).strip()
     site_title = str(config["site_title"])
+    site_base_url = str(config["site_base_url"])
     entries = []
     for item in items:
-        slug = item["published_datetime"].date().isoformat()
+        href = relative_post_link(str(item["link"]), site_base_url)
+        publication_date = item["published_datetime"].date().isoformat()
         entries.append(
             "<article>\n"
-            f"  <h2><a href=\"./{slug}/\">{xml_text(item['title'])}</a></h2>\n"
+            f"  <h2><a href=\"{xml_attr(href)}\">{xml_text(item['title'])}</a></h2>\n"
+            f"  <p><time datetime=\"{publication_date}\">{publication_date}</time></p>\n"
             "</article>"
         )
     entries_html = "\n\n".join(entries)
@@ -425,7 +449,7 @@ def render_rss(
 ) -> str:
     site_base_url = normalise_base_url(str(config["site_base_url"]))
     feed_url = str(config["feed_url"])
-    site_title = str(config["site_title"])
+    site_title = channel_data.get("title") or str(config["site_title"])
     language = str(config["language"])
     author_default = str(config["author"])
     description = channel_data.get("description") or (
@@ -438,11 +462,15 @@ def render_rss(
 
     for item in items:
         image_filename = str(item["image_filename"])
-        image_path = output_dir / "images" / image_filename
+        if item.get("is_new"):
+            image_url = f"{site_base_url}/images/{image_filename}"
+            image_path = output_dir / "images" / image_filename
+        else:
+            image_url = str(item["image_url"])
+            image_path = local_image_path(output_dir, image_url, site_base_url)
         if not image_path.is_file():
             raise RuntimeError(f"Для RSS отсутствует изображение: {image_path}")
         image_size = image_path.stat().st_size
-        image_url = f"{site_base_url}/images/{image_filename}"
         title = str(item["title"])
         link = str(item["link"])
         author = str(item.get("author") or author_default)
@@ -472,9 +500,14 @@ def render_rss(
                     f"{content_html}"
                 )
 
-        categories = ["native-yes", "Технологии", "Искусственный интеллект"]
+        categories = list(item.get("categories") or [])
+        if not categories:
+            categories = ["Статья", "ИИ", "Технологии", "native-yes"]
+        if "native-yes" not in categories:
+            categories.append("native-yes")
         category_xml = "\n".join(
-            f"    <category>{xml_text(category)}</category>" for category in categories
+            f"    <category>{xml_text(str(category))}</category>"
+            for category in categories
         )
 
         block = f"""  <item>
@@ -579,7 +612,7 @@ def main() -> int:
             "article_html": source["article_html"],
             "image_url": f"{site_base_url}/images/{source['cover_filename']}",
             "image_filename": source["cover_filename"],
-            "categories": ["native-yes", "Технологии", "Искусственный интеллект"],
+            "categories": ["Статья", "ИИ", "Технологии", "native-yes"],
             "is_new": True,
         }
         items.append(new_item)

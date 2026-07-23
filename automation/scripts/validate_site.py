@@ -111,14 +111,32 @@ def png_dimensions(path: Path) -> tuple[int, int]:
     return struct.unpack(">II", header[16:24])
 
 
-def slug_from_link(link: str, site_base_url: str) -> str | None:
+def relative_page_from_link(link: str, site_base_url: str) -> str | None:
     base = site_base_url.rstrip("/") + "/"
     if not link.startswith(base):
         return None
-    remainder = link[len(base) :].strip("/")
-    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", remainder):
+    remainder = link[len(base):].strip("/")
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", remainder):
+        return remainder
+    if re.fullmatch(r"dzen-test/\d{4}-\d{2}-\d{2}", remainder):
+        return remainder
+    return None
+
+
+def local_image_from_url(site_dir: Path, image_url: str, site_base_url: str) -> Path | None:
+    base_path = urlsplit(site_base_url.rstrip("/") + "/").path
+    image_path = urlsplit(image_url).path
+    if not image_path.startswith(base_path):
         return None
-    return remainder
+    relative = image_path[len(base_path):].lstrip("/")
+    if not relative:
+        return None
+    return site_dir / relative
+
+
+def relative_index_link(link: str, site_base_url: str) -> str | None:
+    page = relative_page_from_link(link, site_base_url)
+    return f"./{page}/" if page else None
 
 
 def normalise_html(value: str) -> str:
@@ -291,18 +309,18 @@ def validate() -> tuple[list[str], list[str], dict[str, Any]]:
         if "<figure" not in content.lower() or "<img" not in content.lower():
             errors.append(f"Item {position}: content:encoded не содержит figure/img.")
 
-        slug = slug_from_link(link, str(config["site_base_url"]))
-        if slug is None:
+        relative_page = relative_page_from_link(link, str(config["site_base_url"]))
+        if relative_page is None:
             errors.append(f"Item {position}: неожиданный link {link!r}.")
         else:
-            page_path = site_dir / slug / "index.html"
+            page_path = site_dir / relative_page / "index.html"
             if not page_path.is_file():
                 errors.append(
                     f"Item {position}: отсутствует страница {page_path.relative_to(ROOT)}."
                 )
-            if slug in seen_dates:
-                errors.append(f"Повторная дата выпуска: {slug}.")
-            seen_dates.add(slug)
+            if relative_page in seen_dates:
+                errors.append(f"Повторный путь выпуска: {relative_page}.")
+            seen_dates.add(relative_page)
 
         if guid != link:
             errors.append(f"Item {position}: guid должен совпадать с link.")
@@ -339,9 +357,10 @@ def validate() -> tuple[list[str], list[str], dict[str, Any]]:
             continue
 
         image_url = (enclosure.get("url") or "").strip()
-        image_filename = Path(urlsplit(image_url).path).name
-        image_path = site_dir / "images" / image_filename
-        if not image_filename or not image_path.is_file():
+        image_path = local_image_from_url(
+            site_dir, image_url, str(config["site_base_url"])
+        )
+        if image_path is None or not image_path.is_file():
             errors.append(f"Item {position}: изображение не найдено: {image_url}")
             continue
 
@@ -407,7 +426,11 @@ def validate() -> tuple[list[str], list[str], dict[str, Any]]:
     index_parser = IndexLinkParser()
     index_parser.feed(index_html)
     expected_index_links = [
-        f"./{parsed.date().isoformat()}/" for parsed in parsed_dates
+        relative_index_link(
+            (item.findtext("link") or "").strip(),
+            str(config["site_base_url"]),
+        )
+        for item in items
     ]
     if index_parser.links != expected_index_links:
         errors.append(
