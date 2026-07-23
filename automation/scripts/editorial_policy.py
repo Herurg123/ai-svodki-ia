@@ -115,6 +115,31 @@ class PolicyHTMLParser(HTMLParser):
         return re.sub(r"\s+", " ", " ".join(self.visible_parts)).strip()
 
 
+def normalize_candidate_ids(candidates: list[Any]) -> list[dict[str, str]]:
+    """Assign stable sequential IDs to candidate objects.
+
+    Candidate IDs are internal references used only between the research and
+    editorial stages. Structured output can still repeat a schema-valid ID,
+    so normalize them deterministically after freshness filtering.
+    """
+    changes: list[dict[str, str]] = []
+    next_number = 1
+
+    for candidate in candidates:
+        if not isinstance(candidate, dict):
+            continue
+
+        old_id = str(candidate.get("id", ""))
+        new_id = f"cand-{next_number:03d}"
+        next_number += 1
+
+        candidate["id"] = new_id
+        if old_id != new_id:
+            changes.append({"old_id": old_id, "new_id": new_id})
+
+    return changes
+
+
 def read_policy(path: Path) -> dict[str, Any]:
     try:
         value = json.loads(path.read_text(encoding="utf-8"))

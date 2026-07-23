@@ -24,6 +24,7 @@ from editorial_policy import (
     build_editorial_notes,
     build_stories,
     normalize_article_html,
+    normalize_candidate_ids,
     order_candidates_by_article_links,
     read_policy,
     validate_article_policy,
@@ -1077,7 +1078,18 @@ def sanitize_research_candidates(
 
         kept.append(candidate)
 
+    id_changes = normalize_candidate_ids(kept)
     sanitized["candidates"] = kept
+
+    if id_changes:
+        warnings.append(
+            "Нормализованы внутренние id кандидатов: "
+            + ", ".join(
+                f"{item['old_id'] or '<empty>'}->{item['new_id']}"
+                for item in id_changes
+            )
+            + "."
+        )
 
     if filtered:
         warnings.append(

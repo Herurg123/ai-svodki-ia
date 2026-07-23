@@ -10,6 +10,7 @@ sys.path.insert(0, str(ROOT / "automation" / "scripts"))
 
 from editorial_policy import (  # noqa: E402
     normalize_article_html,
+    normalize_candidate_ids,
     order_candidates_by_article_links,
     read_policy,
     validate_article_policy,
@@ -44,6 +45,27 @@ def base_article(headlines: list[str], paragraphs: int = 2) -> str:
 
 
 class EditorialPolicyTests(unittest.TestCase):
+    def test_candidate_ids_are_normalized_after_research(self) -> None:
+        candidates = [
+            {"id": "cand-001", "title": "Первый"},
+            {"id": "cand-001", "title": "Второй"},
+            {"id": "cand-009", "title": "Третий"},
+        ]
+
+        changes = normalize_candidate_ids(candidates)
+
+        self.assertEqual(
+            [item["id"] for item in candidates],
+            ["cand-001", "cand-002", "cand-003"],
+        )
+        self.assertEqual(
+            changes,
+            [
+                {"old_id": "cand-001", "new_id": "cand-002"},
+                {"old_id": "cand-009", "new_id": "cand-003"},
+            ],
+        )
+
     def test_short_digest_notice_and_dzen_are_normalized(self) -> None:
         candidates = [candidate("one"), candidate("two")]
         html, short_digest, _changes = normalize_article_html(
