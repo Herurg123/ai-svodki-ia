@@ -1,0 +1,127 @@
+name: Site dry run
+run-name: Static site dry run ${{ github.sha }}
+
+on:
+  push:
+    branches:
+      - automation-prep
+    paths:
+      - "automation/config/site.json"
+      - "automation/config/editorial.json"
+      - "automation/fixtures/**"
+      - "automation/scripts/editorial_policy.py"
+      - "automation/scripts/build_site.py"
+      - "automation/scripts/materialize_fixture_preview.py"
+      - "automation/scripts/validate_site.py"
+      - "automation/scripts/validate_dzen_feed.py"
+      - "posts/**"
+      - ".github/workflows/site-dry-run.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-dry-run-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-validate:
+    name: Build and validate isolated preview
+    if: github.ref == 'refs/heads/automation-prep'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out automation-prep
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Validate safe execution context
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${GITHUB_REF}" != "refs/heads/automation-prep" ]]; then
+            echo "Этот workflow разрешён только для automation-prep." >&2
+            exit 1
+          fi
+
+          if [[ "$(git status --porcelain -- posts/)" != "" ]]; then
+            echo "posts/ уже изменён до начала dry run." >&2
+            git status --short -- posts/
+            exit 1
+          fi
+
+      - name: Check Python syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            automation/scripts/editorial_policy.py \
+            automation/scripts/materialize_fixture_preview.py \
+            automation/scripts/build_site.py \
+            automation/scripts/validate_site.py \
+            automation/scripts/validate_dzen_feed.py
+
+      - name: Materialize fixture preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/materialize_fixture_preview.py \
+            --fixture automation/fixtures/digest-preview/2026-07-11/digest.json
+
+      - name: Build isolated static site
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/build_site.py \
+            --source-dir automation/preview/2026-07-11
+
+      - name: Validate HTML, RSS and images
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_site.py \
+            --source-dir automation/preview/2026-07-11
+
+      - name: Validate isolated RSS against Dzen contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_dzen_feed.py \
+            --rss automation/preview/posts/rss.xml \
+            --report automation/preview/dzen-feed-validation.json
+
+      - name: Verify that live posts were not changed
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -n "$(git status --porcelain -- posts/)" ]]; then
+            echo "Защитная проверка: dry run изменил posts/." >&2
+            git status --short -- posts/
+            exit 1
+          fi
+
+          echo "Рабочий каталог posts/ не изменён."
+
+      - name: Upload dry-run artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: site-dry-run-${{ github.sha }}
+          path: |
+            automation/preview/2026-07-11/
+            automation/preview/posts/
+            automation/preview/build-info.json
+            automation/preview/site-validation.json
+            automation/preview/dzen-feed-validation.json
+          if-no-files-found: warn
+          retention-days: 7

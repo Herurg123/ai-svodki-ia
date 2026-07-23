@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "dry_run_enabled": true,
+  "publication_enabled": false,
+  "rollback_execution_enabled": false,
+  "simulation_only": true,
+  "preview_branch": "automation-prep",
+  "production_branch": "main",
+  "require_manual_approval": true,
+  "require_ready_production_gate": true,
+  "require_rollback_drill": true,
+  "allow_golden_fixture_simulation": true,
+  "allow_golden_fixture_publication": false,
+  "allow_schedule": false,
+  "allow_repository_write": false,
+  "allow_ftp": false,
+  "allow_external_network": false,
+  "live_posts_directory": "posts",
+  "preview_root": "automation/preview/production-orchestrator",
+  "allowed_preview_roots": [
+    "automation/preview/production-orchestrator",
+    "automation/preview/rollback-drill"
+  ]
+}

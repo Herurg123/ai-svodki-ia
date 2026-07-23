@@ -1,0 +1,331 @@
+name: Daily production digest
+run-name: Daily production digest ${{ github.run_id }}
+
+on:
+  schedule:
+    - cron: "7 3 * * *"
+  workflow_dispatch:
+    inputs:
+      publication_date:
+        description: "Optional YYYY-MM-DD override"
+        required: false
+        type: string
+      publish:
+        description: "Commit and push to main"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-production-main
+  cancel-in-progress: false
+
+jobs:
+  production:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      PYTHONUNBUFFERED: "1"
+      PIPELINE_MODE: full
+
+    steps:
+      - name: Check out main with full history
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Determine publish mode
+        id: mode
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          MANUAL_PUBLISH: ${{ inputs.publish || 'false' }}
+        run: |
+          set -euo pipefail
+          if [[ "${EVENT_NAME}" == "schedule" ]]; then
+            echo "publish=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "publish=${MANUAL_PUBLISH}" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Validate production contract before API
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p automation/preview/production-daily/preflight
+          python automation/scripts/validate_production_daily_contract.py \
+            --config automation/config/production-daily.json \
+            --site-config automation/config/site.json \
+            --workflow .github/workflows/daily-production.yml \
+            --rss posts/rss.xml \
+            --report automation/preview/production-daily/preflight/contract.json
+
+      - name: Prepare runtime and verify archive freshness
+        id: runtime
+        shell: bash
+        env:
+          DATE_OVERRIDE: ${{ inputs.publication_date || '' }}
+        run: |
+          set -euo pipefail
+          args=()
+          if [[ -n "${DATE_OVERRIDE}" ]]; then
+            args+=(--publication-date "${DATE_OVERRIDE}")
+          fi
+          python automation/scripts/prepare_production_daily.py \
+            --config automation/config/production-daily.json \
+            --rss posts/rss.xml \
+            --output automation/preview/production-daily/preflight/runtime.json \
+            --github-output "${GITHUB_OUTPUT}" \
+            "${args[@]}"
+
+      - name: Install pinned OpenAI SDK
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check "openai==2.45.0"
+
+      - name: Validate API configuration
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
+          OPENAI_IMAGE_MODEL: ${{ vars.OPENAI_IMAGE_MODEL || 'gpt-image-2' }}
+        run: |
+          set -euo pipefail
+          [[ -n "${OPENAI_API_KEY}" ]] || { echo "OPENAI_API_KEY missing" >&2; exit 1; }
+          [[ "${OPENAI_TEXT_MODEL}" == "gpt-5.6-terra" ]] || { echo "Unexpected text model" >&2; exit 1; }
+          [[ "${OPENAI_IMAGE_MODEL}" == "gpt-image-2" ]] || { echo "Unexpected image model" >&2; exit 1; }
+
+      - name: Patch runtime publication hour to 06:00 Moscow
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp automation/config/site.json automation/preview/production-daily/preflight/site.json.original
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path("automation/config/site.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+          data["publication_hour"] = 6
+          path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Validate editorial code and bootstrap archive
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_editorial_contract.py
+          python automation/scripts/bootstrap_archive.py
+          python automation/scripts/validate_archive.py
+
+      - name: Run full research and editorial
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
+          PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
+          DIGEST_REQUEST_ID: ${{ steps.runtime.outputs.digest_request_id }}
+          MINIMUM_CANDIDATES: "12"
+          MINIMUM_RUSSIAN_CANDIDATES: "2"
+          MAXIMUM_CANDIDATES: "20"
+          MINIMUM_SELECTED_STORIES: "6"
+          MAXIMUM_SELECTED_STORIES: "12"
+        run: |
+          set -euo pipefail
+          python automation/scripts/generate_digest_preview.py \
+            --publication-date "${PUBLICATION_DATE}" \
+            --minimum-candidates "${MINIMUM_CANDIDATES}" \
+            --minimum-russian-candidates "${MINIMUM_RUSSIAN_CANDIDATES}" \
+            --maximum-candidates "${MAXIMUM_CANDIDATES}" \
+            --minimum-selected-stories "${MINIMUM_SELECTED_STORIES}" \
+            --maximum-selected-stories "${MAXIMUM_SELECTED_STORIES}"
+          python automation/scripts/validate_digest_artifact.py \
+            --artifact-dir "automation/preview/${PUBLICATION_DATE}" \
+            --report "automation/preview/${PUBLICATION_DATE}/artifact-validation.json"
+
+      - name: Build runtime Image API request
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/create_production_image_request.py \
+            --source-dir "automation/preview/${{ steps.runtime.outputs.publication_date }}" \
+            --publication-date "${{ steps.runtime.outputs.publication_date }}" \
+            --request-id "${{ steps.runtime.outputs.image_request_id }}" \
+            --output automation/preview/production-daily/image-request.json
+
+      - name: Generate one production cover
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_IMAGE_MODEL: ${{ vars.OPENAI_IMAGE_MODEL || 'gpt-image-2' }}
+        run: |
+          set -euo pipefail
+          image_dir="automation/preview/production-daily/image/${{ steps.runtime.outputs.publication_date }}"
+          python automation/scripts/generate_image_preview.py \
+            --source-dir "automation/preview/${{ steps.runtime.outputs.publication_date }}" \
+            --output-dir "${image_dir}" \
+            --request automation/preview/production-daily/image-request.json \
+            --model "${OPENAI_IMAGE_MODEL}"
+          python automation/scripts/validate_cover_contract.py \
+            --artifact-dir "${image_dir}" \
+            --report "${image_dir}/cover-validation.json"
+
+      - name: Stage accepted legacy images under canonical posts/images
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/stage_legacy_images.py \
+            --source posts/dzen-test/images \
+            --target posts/images \
+            --report automation/preview/production-daily/legacy-images.json
+
+      - name: Build and validate candidate site
+        shell: bash
+        run: |
+          set -euo pipefail
+          date="${{ steps.runtime.outputs.publication_date }}"
+          source_dir="automation/preview/production-daily/image/${date}"
+          candidate_root="automation/preview/production-daily/candidate"
+          python automation/scripts/build_site.py \
+            --source-dir "${source_dir}" \
+            --output-dir "${candidate_root}/posts" \
+            --build-info "${candidate_root}/build-info.json"
+          python automation/scripts/normalize_production_rss.py \
+            --rss "${candidate_root}/posts/rss.xml" \
+            --feed-url "https://rybalka.one/posts/rss.xml" \
+            --site-link "https://rybalka.one/posts" \
+            --report "${candidate_root}/rss-normalization.json"
+          python automation/scripts/inject_blogposting_schema.py \
+            --config automation/config/structured-data.json \
+            --source-dir "${source_dir}" \
+            --posts-root "${candidate_root}/posts" \
+            --report "${candidate_root}/structured-data-injection.json"
+          python automation/scripts/validate_structured_data.py \
+            --source-dir "${source_dir}" \
+            --posts-root "${candidate_root}/posts" \
+            --report "${candidate_root}/structured-data-validation.json"
+          python automation/scripts/build_posts_sitemap.py \
+            --rss "${candidate_root}/posts/rss.xml" \
+            --posts-root "${candidate_root}/posts" \
+            --output "${candidate_root}/posts/sitemap.xml" \
+            --report "${candidate_root}/posts-sitemap-build.json"
+          python automation/scripts/validate_posts_sitemap.py \
+            --sitemap "${candidate_root}/posts/sitemap.xml" \
+            --rss "${candidate_root}/posts/rss.xml" \
+            --report "${candidate_root}/posts-sitemap-validation.json"
+          python automation/scripts/validate_site.py \
+            --source-dir "${source_dir}" \
+            --site-dir "${candidate_root}/posts" \
+            --report "${candidate_root}/site-validation.json"
+          python automation/scripts/validate_dzen_feed.py \
+            --rss "${candidate_root}/posts/rss.xml" \
+            --report "${candidate_root}/dzen-feed-validation.json"
+
+      - name: Dry-run or promote candidate
+        shell: bash
+        env:
+          PUBLISH: ${{ steps.mode.outputs.publish }}
+        run: |
+          set -euo pipefail
+          args=()
+          if [[ "${PUBLISH}" != "true" ]]; then
+            args+=(--dry-run)
+          fi
+          python automation/scripts/promote_production_site.py \
+            --config automation/config/production-daily.json \
+            --candidate-posts automation/preview/production-daily/candidate/posts \
+            --live-posts posts \
+            --source-dir "automation/preview/production-daily/image/${{ steps.runtime.outputs.publication_date }}" \
+            --content-root automation/content \
+            --publication-date "${{ steps.runtime.outputs.publication_date }}" \
+            --report automation/preview/production-daily/promotion.json \
+            "${args[@]}"
+
+      - name: Refresh archive after promotion
+        if: steps.mode.outputs.publish == 'true'
+        run: |
+          set -euo pipefail
+          python automation/scripts/bootstrap_archive.py
+          python automation/scripts/validate_archive.py
+
+      - name: Restore repository site config
+        if: always()
+        run: |
+          set -euo pipefail
+          if [[ -f automation/preview/production-daily/preflight/site.json.original ]]; then
+            cp automation/preview/production-daily/preflight/site.json.original automation/config/site.json
+          fi
+
+      - name: Commit production release
+        if: steps.mode.outputs.publish == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          date="${{ steps.runtime.outputs.publication_date }}"
+          git fetch origin main
+          [[ "$(git rev-parse HEAD)" == "$(git rev-parse origin/main)" ]] || {
+            echo "main changed while generation was running; refusing to push" >&2
+            exit 1
+          }
+
+          changed="$(git status --porcelain)"
+          [[ -n "${changed}" ]] || { echo "No production changes found" >&2; exit 1; }
+
+          python - <<'PY'
+          import subprocess
+          allowed_prefixes = (
+              "posts/",
+              "automation/content/",
+              "automation/archive/index.json",
+          )
+          lines = subprocess.check_output(
+              ["git", "status", "--porcelain"], text=True
+          ).splitlines()
+          bad = []
+          for line in lines:
+              path = line[3:]
+              if " -> " in path:
+                  path = path.split(" -> ", 1)[1]
+              if not path.startswith(allowed_prefixes):
+                  bad.append(path)
+          if bad:
+              raise SystemExit(f"Unexpected changed paths: {bad}")
+          PY
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add posts automation/content/"${date}" automation/archive/index.json
+          git commit -m "Publish AI digest for ${date}"
+          git push origin HEAD:main
+
+      - name: Job summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Daily production digest"
+            echo
+            echo "- Publication date: ${{ steps.runtime.outputs.publication_date }}"
+            echo "- Scheduled time: 06:07 Europe/Moscow"
+            echo "- Publish: ${{ steps.mode.outputs.publish }}"
+            echo "- RSS: https://rybalka.one/posts/rss.xml"
+            echo "- Legacy dzen-test items: preserved"
+            echo "- FTP: Deploy posts to rybalka.one starts automatically after the posts/** push to main"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: daily-production-${{ steps.runtime.outputs.publication_date || github.run_id }}
+          path: |
+            automation/preview/production-daily/
+            automation/preview/${{ steps.runtime.outputs.publication_date }}/
+          if-no-files-found: warn
+          retention-days: 14

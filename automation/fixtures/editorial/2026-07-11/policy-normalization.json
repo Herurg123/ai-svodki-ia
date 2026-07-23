@@ -1,0 +1,29 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "article_html.meta_marking",
+      "model_value": "inconsistent",
+      "normalized_value": "first Meta*, subsequent Meta"
+    }
+  ],
+  "changed_count": 1,
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "regional_gap",
+      "area": "russian_ai",
+      "message": "Выбрано 1 российских сюжетов при редакционной цели 3; слабые материалы не добавлялись."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-011, cand-022, cand-044, cand-111, cand-077, cand-033."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: ИИ-агенты, coding agents, безопасность агентов, sandbox, supply chain и open-source, Новые исследования, arXiv, оценки моделей, безопасность, интерпретируемость и надёжность, Российские компании, государственные органы, исследовательские организации, КИИ, промышленность, телеком, банки и отраслевые проекты."
+    }
+  ]
+}

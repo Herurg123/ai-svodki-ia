@@ -1,0 +1,115 @@
+name: Safety validators check
+run-name: Offline safety validators ${{ github.sha }}
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - automation-prep
+    paths:
+      - "automation/scripts/validate_dzen_feed.py"
+      - "automation/scripts/validate_digest_artifact.py"
+      - "automation/tests/test_safety_validators.py"
+      - "automation/tests/fixtures/safety-validation/**"
+      - ".github/workflows/safety-validators-check.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: safety-validators-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate RSS and artifact contracts offline
+    if: github.ref == 'refs/heads/automation-prep'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out automation-prep
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Validate safe execution context
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${GITHUB_REF}" != "refs/heads/automation-prep" ]]; then
+            echo "This workflow is allowed only on automation-prep." >&2
+            exit 1
+          fi
+
+          if [[ -n "$(git status --porcelain -- posts/ automation/requests/digest-preview.json)" ]]; then
+            echo "Production posts or paid request file were already modified." >&2
+            git status --short -- posts/ automation/requests/digest-preview.json
+            exit 1
+          fi
+
+      - name: Check Python syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            automation/scripts/validate_dzen_feed.py \
+            automation/scripts/validate_digest_artifact.py \
+            automation/tests/test_safety_validators.py
+
+      - name: Run validator unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover \
+            -s automation/tests \
+            -p 'test_safety_validators.py' \
+            -v
+
+      - name: Validate RSS contract fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p automation/preview/safety-validation
+          python automation/scripts/validate_dzen_feed.py \
+            --rss automation/tests/fixtures/safety-validation/valid/rss.xml \
+            --site-base-url https://rybalka.one/posts \
+            --report automation/preview/safety-validation/dzen-feed-validation.json
+
+      - name: Validate digest artifact fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_digest_artifact.py \
+            --artifact-dir automation/tests/fixtures/safety-validation/valid/artifact \
+            --report automation/preview/safety-validation/artifact-validation.json
+
+      - name: Verify production and paid request are untouched
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -n "$(git status --porcelain -- posts/ automation/requests/digest-preview.json)" ]]; then
+            echo "Offline validation changed protected paths." >&2
+            git status --short -- posts/ automation/requests/digest-preview.json
+            exit 1
+          fi
+
+          echo "posts/ and automation/requests/digest-preview.json were not changed."
+
+      - name: Upload validation reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: safety-validation-${{ github.sha }}
+          path: automation/preview/safety-validation/
+          if-no-files-found: error
+          retention-days: 14

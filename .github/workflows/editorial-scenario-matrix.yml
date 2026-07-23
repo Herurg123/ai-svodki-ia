@@ -1,0 +1,98 @@
+name: Editorial scenario matrix
+
+on:
+  push:
+    branches:
+      - automation-prep
+    paths:
+      - "automation/config/editorial.json"
+      - "automation/scripts/editorial_policy.py"
+      - "automation/scripts/generate_digest_preview.py"
+      - "automation/scripts/validate_editorial_scenarios.py"
+      - "automation/tests/test_editorial_scenarios.py"
+      - "automation/fixtures/editorial-scenarios/**"
+      - "automation/specs/editorial-scenario-matrix.md"
+      - ".github/workflows/editorial-scenario-matrix.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate scenario manifest
+        run: python -m json.tool automation/fixtures/editorial-scenarios/manifest.json >/dev/null
+
+      - name: Compile scenario code
+        run: |
+          python -m py_compile \
+            automation/scripts/validate_editorial_scenarios.py \
+            automation/tests/test_editorial_scenarios.py
+
+      - name: Run scenario matrix
+        run: |
+          python automation/scripts/validate_editorial_scenarios.py \
+            --output automation/preview/editorial-scenario-matrix.json
+
+      - name: Run scenario unit test
+        run: python -m unittest automation.tests.test_editorial_scenarios -v
+
+      - name: Confirm protected paths stayed untouched
+        run: |
+          changed="$(git status --porcelain -- posts/ automation/requests/digest-preview.json)"
+          if [[ -n "${changed}" ]]; then
+            echo "Scenario matrix changed protected paths:" >&2
+            echo "${changed}" >&2
+            exit 1
+          fi
+
+      - name: Write Job Summary
+        if: always()
+        run: |
+          {
+            echo "## Editorial scenario matrix"
+            echo
+            if [[ -f automation/preview/editorial-scenario-matrix.json ]]; then
+              python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(
+              Path("automation/preview/editorial-scenario-matrix.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          print(f"- Status: `{report['status']}`")
+          print(f"- Scenarios: `{report['scenario_count']}`")
+          print(f"- Passed: `{report['passed']}`")
+          print(f"- Failed: `{report['failed']}`")
+          print(f"- Network used: `{report['network_used']}`")
+          print(f"- OpenAI used: `{report['openai_used']}`")
+          PY
+            else
+              echo "- Report was not created."
+            fi
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload scenario report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: editorial-scenario-matrix-${{ github.sha }}
+          path: automation/preview/editorial-scenario-matrix.json
+          if-no-files-found: warn
+          retention-days: 14

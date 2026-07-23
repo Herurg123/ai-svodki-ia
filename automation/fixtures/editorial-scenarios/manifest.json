@@ -1,0 +1,129 @@
+{
+  "version": "2026-07-12",
+  "description": "Бесплатная регрессионная матрица канонической редакционной политики.",
+  "scenarios": [
+    {
+      "id": "normal-digest-6",
+      "expected": "pass",
+      "requirements": [
+        "6 сюжетов",
+        "short_digest=false",
+        "4–6 выводов"
+      ]
+    },
+    {
+      "id": "short-digest-3",
+      "expected": "pass",
+      "requirements": [
+        "1–5 сюжетов публикуются",
+        "точная вводная",
+        "low_news_volume"
+      ]
+    },
+    {
+      "id": "zero-stories-error",
+      "expected": "blocked",
+      "requirements": [
+        "0 сюжетов",
+        "status=error",
+        "публикация не создаётся"
+      ]
+    },
+    {
+      "id": "meta-marking",
+      "expected": "pass",
+      "requirements": [
+        "первая Meta*",
+        "последующие Meta",
+        "одна сноска",
+        "служебные поля без Meta*"
+      ]
+    },
+    {
+      "id": "update-prefix",
+      "expected": "pass",
+      "requirements": [
+        "update получает Обновление:",
+        "new не получает префикс"
+      ]
+    },
+    {
+      "id": "russian-section",
+      "expected": "pass",
+      "requirements": [
+        "раздел можно пропустить",
+        "пустой раздел запрещён",
+        "раздел обязателен при российском сюжете"
+      ]
+    },
+    {
+      "id": "editorial-notes",
+      "expected": "pass",
+      "requirements": [
+        "low_news_volume",
+        "regional_gap",
+        "time_precision",
+        "source_gap"
+      ]
+    },
+    {
+      "id": "diversity-override",
+      "expected": "pass",
+      "requirements": [
+        "превышение блокируется без причины",
+        "publisher override",
+        "organization override"
+      ]
+    },
+    {
+      "id": "candidate-order",
+      "expected": "pass",
+      "requirements": [
+        "порядок по процитированным URL",
+        "неоднозначность блокирует выпуск",
+        "stories.json следует порядку"
+      ]
+    },
+    {
+      "id": "archive-dedup-guard",
+      "expected": "pass",
+      "requirements": [
+        "rejected_as_duplicates сохраняется",
+        "URL нормализуются",
+        "archive reuse разрешён только update"
+      ]
+    },
+    {
+      "id": "cited-sources-only",
+      "expected": "pass",
+      "requirements": [
+        "stories.json хранит только процитированные источники",
+        "непроцитированные URL исключаются"
+      ]
+    },
+    {
+      "id": "what-it-means-bounds",
+      "expected": "pass",
+      "requirements": [
+        "4–6 выводов разрешены",
+        "3 и 7 блокируются"
+      ]
+    },
+    {
+      "id": "paragraph-bounds",
+      "expected": "pass",
+      "requirements": [
+        "2–3 абзаца разрешены",
+        "1 и 4 блокируются"
+      ]
+    },
+    {
+      "id": "terminology",
+      "expected": "pass",
+      "requirements": [
+        "AI agent блокируется",
+        "агент ИИ разрешён"
+      ]
+    }
+  ]
+}

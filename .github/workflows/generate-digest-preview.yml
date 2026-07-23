@@ -1,0 +1,294 @@
+name: Generate two-stage digest preview
+run-name: Two-stage digest preview ${{ github.sha }}
+
+on:
+  push:
+    branches:
+      - automation-prep
+    paths:
+      - "automation/requests/digest-preview.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: two-stage-digest-preview-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  generate-preview:
+    name: Research candidates and build editorial digest
+    if: github.ref == 'refs/heads/automation-prep'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      - name: Check out automation-prep with full history
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Validate paid request before any API access
+        id: request
+        shell: bash
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_paid_request_preflight.py \
+            --repo-root . \
+            --request automation/requests/digest-preview.json \
+            --before-sha "${BEFORE_SHA}" \
+            --current-sha "${GITHUB_SHA}" \
+            --actual-ref "${GITHUB_REF}" \
+            --expected-ref refs/heads/automation-prep \
+            --report automation/preview/preflight/request-preflight.json \
+            --github-output "${GITHUB_OUTPUT}"
+
+      - name: Validate OpenAI configuration
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${OPENAI_API_KEY:-}" ]]; then
+            echo "Не найден Repository Secret OPENAI_API_KEY." >&2
+            exit 1
+          fi
+          if [[ -z "${OPENAI_TEXT_MODEL:-}" ]]; then
+            echo "Repository Variable OPENAI_TEXT_MODEL не должна быть пустой." >&2
+            exit 1
+          fi
+          echo "OpenAI configuration is present. Secret value is not printed."
+
+      - name: Install pinned OpenAI SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install \
+            --disable-pip-version-check \
+            "openai==2.45.0"
+
+      - name: Check Python syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile \
+            automation/scripts/editorial_policy.py \
+            automation/scripts/validate_editorial_contract.py \
+            automation/scripts/bootstrap_archive.py \
+            automation/scripts/validate_archive.py \
+            automation/scripts/generate_digest_preview.py \
+            automation/scripts/validate_paid_request_preflight.py \
+            automation/scripts/validate_dzen_feed.py \
+            automation/scripts/validate_digest_artifact.py
+
+      - name: Validate editorial contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_editorial_contract.py
+
+      - name: Build archive context from current RSS
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/bootstrap_archive.py
+
+      - name: Validate archive context
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_archive.py
+
+      - name: Run requested digest stages
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
+          PIPELINE_MODE: ${{ steps.request.outputs.mode }}
+          RESEARCH_INPUT: ${{ steps.request.outputs.research_input }}
+          PUBLICATION_DATE: ${{ steps.request.outputs.publication_date }}
+          DIGEST_REQUEST_ID: ${{ steps.request.outputs.request_id }}
+          MINIMUM_CANDIDATES: ${{ steps.request.outputs.minimum_candidates }}
+          MINIMUM_RUSSIAN_CANDIDATES: ${{ steps.request.outputs.minimum_russian_candidates }}
+          MAXIMUM_CANDIDATES: ${{ steps.request.outputs.maximum_candidates }}
+          MINIMUM_SELECTED_STORIES: ${{ steps.request.outputs.minimum_selected_stories }}
+          MAXIMUM_SELECTED_STORIES: ${{ steps.request.outputs.maximum_selected_stories }}
+        run: |
+          set -euo pipefail
+          args=(
+            --publication-date "${PUBLICATION_DATE}"
+            --minimum-candidates "${MINIMUM_CANDIDATES}"
+            --minimum-russian-candidates "${MINIMUM_RUSSIAN_CANDIDATES}"
+            --maximum-candidates "${MAXIMUM_CANDIDATES}"
+            --minimum-selected-stories "${MINIMUM_SELECTED_STORIES}"
+            --maximum-selected-stories "${MAXIMUM_SELECTED_STORIES}"
+          )
+          if [[ "${PIPELINE_MODE}" == "editorial_only" ]]; then
+            args+=(--research-input "${RESEARCH_INPUT}")
+          fi
+          python automation/scripts/generate_digest_preview.py "${args[@]}"
+
+      - name: Validate complete generated digest artifact
+        shell: bash
+        env:
+          PUBLICATION_DATE: ${{ steps.request.outputs.publication_date }}
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_digest_artifact.py \
+            --artifact-dir "automation/preview/${PUBLICATION_DATE}" \
+            --report "automation/preview/${PUBLICATION_DATE}/artifact-validation.json"
+
+      - name: Write run summary
+        if: always()
+        shell: bash
+        env:
+          PUBLICATION_DATE: ${{ steps.request.outputs.publication_date }}
+          REQUEST_ID: ${{ steps.request.outputs.request_id }}
+          FIXTURE_SHA256: ${{ steps.request.outputs.fixture_sha256 }}
+          FIXTURE_CANDIDATES: ${{ steps.request.outputs.fixture_candidates }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+
+          import json
+          import os
+          from pathlib import Path
+
+          date_value = os.environ.get("PUBLICATION_DATE", "")
+          request_id = os.environ.get("REQUEST_ID", "")
+          preview_dir = Path("automation/preview") / date_value if date_value else None
+          preflight_path = Path("automation/preview/preflight/request-preflight.json")
+          run_info_path = preview_dir / "run-info.json" if preview_dir else None
+          candidates_path = preview_dir / "candidates.json" if preview_dir else None
+          selection_path = preview_dir / "selection.json" if preview_dir else None
+          validation_path = preview_dir / "artifact-validation.json" if preview_dir else None
+          summary_path = Path(os.environ["GITHUB_STEP_SUMMARY"])
+
+          lines = ["# Результат двухэтапного preview", ""]
+
+          if preflight_path.exists():
+              preflight = json.loads(preflight_path.read_text(encoding="utf-8"))
+              lines.extend(
+                  [
+                      "## Preflight",
+                      "",
+                      f"- Статус: `{preflight.get('status')}`",
+                      f"- Изменённые файлы: `{preflight.get('changed_files')}`",
+                      f"- Предыдущий request ID: `{preflight.get('previous_request_id')}`",
+                      f"- Research fixture SHA-256: `{os.environ.get('FIXTURE_SHA256') or None}`",
+                      f"- Кандидатов в fixture: `{os.environ.get('FIXTURE_CANDIDATES') or None}`",
+                      "",
+                  ]
+              )
+          else:
+              lines.extend(["## Preflight", "", "`request-preflight.json` не создан.", ""])
+
+          if not run_info_path or not run_info_path.exists():
+              lines.append("`run-info.json` не создан.")
+          else:
+              data = json.loads(run_info_path.read_text(encoding="utf-8"))
+              lines.extend(
+                  [
+                      f"- Статус: `{data.get('status')}`",
+                      f"- Pipeline: `{data.get('pipeline')}`",
+                      f"- Request ID: `{data.get('request_id') or request_id}`",
+                      f"- Модель: `{data.get('model_requested')}`",
+                      f"- Ошибка: `{data.get('error')}`",
+                  ]
+              )
+              research = data.get("research") or {}
+              editorial = data.get("editorial") or {}
+              research_response = research.get("response") or {}
+              editorial_response = editorial.get("response") or {}
+              lines.extend(
+                  [
+                      "",
+                      "## Этапы",
+                      "",
+                      f"- Research: `{research.get('status')}`",
+                      f"- Web search calls: `{research_response.get('web_search_calls')}`",
+                      f"- Editorial: `{editorial.get('status')}`",
+                  ]
+              )
+              if candidates_path and candidates_path.exists():
+                  candidates = json.loads(candidates_path.read_text(encoding="utf-8")).get("candidates", [])
+                  russian = sum(1 for item in candidates if item.get("geography") == "russia")
+                  lines.extend(
+                      [
+                          f"- Кандидатов: `{len(candidates)}`",
+                          f"- Российских кандидатов: `{russian}`",
+                      ]
+                  )
+              if selection_path and selection_path.exists():
+                  selection = json.loads(selection_path.read_text(encoding="utf-8"))
+                  lines.append(
+                      "- Выбрано сюжетов: "
+                      f"`{len(selection.get('selected_candidate_ids', []))}`"
+                  )
+              warnings = data.get("warnings") or []
+              if warnings:
+                  lines.extend(["", "## Предупреждения", ""])
+                  lines.extend(f"- {item}" for item in warnings)
+              lines.extend(["", "## Total usage", "", "```json"])
+              lines.append(json.dumps(data.get("total_usage"), ensure_ascii=False, indent=2))
+              lines.append("```")
+              lines.extend(["", "## Research usage", "", "```json"])
+              lines.append(json.dumps(research_response.get("usage"), ensure_ascii=False, indent=2))
+              lines.append("```")
+              lines.extend(["", "## Editorial usage", "", "```json"])
+              lines.append(json.dumps(editorial_response.get("usage"), ensure_ascii=False, indent=2))
+              lines.append("```")
+
+          lines.extend(["", "## Artifact validation", ""])
+          if validation_path and validation_path.exists():
+              validation = json.loads(validation_path.read_text(encoding="utf-8"))
+              lines.extend(
+                  [
+                      f"- Статус: `{validation.get('status')}`",
+                      f"- Ошибок: `{len(validation.get('errors') or [])}`",
+                      f"- Предупреждений: `{len(validation.get('warnings') or [])}`",
+                  ]
+              )
+          else:
+              lines.append("`artifact-validation.json` не создан.")
+
+          summary_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+          PY
+
+      - name: Verify that live posts and request stayed untouched
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "$(git status --porcelain -- posts/ automation/requests/digest-preview.json)" ]]; then
+            echo "Защитная проверка: workflow изменил production posts или request." >&2
+            git status --short -- posts/ automation/requests/digest-preview.json
+            exit 1
+          fi
+          echo "Рабочие каталоги posts/ и request-файл не изменены."
+
+      - name: Upload two-stage preview artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: two-stage-digest-${{ steps.request.outputs.publication_date || 'unknown-date' }}-${{ steps.request.outputs.request_id || 'preflight-failed' }}-${{ github.sha }}
+          path: |
+            automation/requests/digest-preview.json
+            automation/archive/index.json
+            automation/fixtures/research/
+            automation/preview/preflight/
+            automation/preview/${{ steps.request.outputs.publication_date }}/
+          if-no-files-found: warn
+          retention-days: 7

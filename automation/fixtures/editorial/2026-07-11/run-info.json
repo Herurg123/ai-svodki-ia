@@ -1,0 +1,145 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "editorial-resume-004",
+  "research_input": "automation/fixtures/research/2026-07-11/candidates.json",
+  "warnings": [
+    "cand-011: источник показывает дату без точного времени.",
+    "cand-022: источник показывает дату без точного времени.",
+    "cand-033: источник показывает дату без точного времени.",
+    "cand-044: источник показывает дату без точного времени.",
+    "cand-077: источник показывает дату без точного времени.",
+    "cand-111: источник показывает дату без точного времени.",
+    "Целевой пул — 12 кандидатов, но после проверки свежести осталось 6.",
+    "Цель — 2 российских кандидатов, найдено 1; пробел явно зафиксирован в coverage.",
+    "Российских сюжетов 1, редакционная цель — 3–5.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-07-11",
+  "started_at": "2026-07-12T19:51:16+00:00",
+  "finished_at": "2026-07-12T19:51:44+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 3,
+  "limits": {
+    "minimum_candidates": 12,
+    "minimum_russian_candidates": 2,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 6,
+    "maximum_selected_stories": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "4b11ecb07b578e9a9c4ef02c4eb743d32cbb91cef4e578c624d29a690a69ad1c",
+    "candidates_sha256": "20ef50a1b916c9bbb008bd6820f1dc5f809627bad20884dd5dc1ac1a33e618eb",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 0,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "3aa469133f4b93e779cc857ffab0e0a2024824abcae02c97fc95a721784efcb6",
+    "editorial_sha256": "ea7e95501b23e41ee982758cd0eb11eeeebf68b78ba3156d21455adab28453c1",
+    "digest_sha256": "d0cec198db17531de7b9b3c426c9d9894f70561c71f8672803606ac31903678e",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-07-11.png",
+          "normalized_value": "ai-svodka-2026-07-11.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.meta_marking",
+          "model_value": "inconsistent",
+          "normalized_value": "first Meta*, subsequent Meta"
+        }
+      ],
+      "changed_count": 1,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "regional_gap",
+          "area": "russian_ai",
+          "message": "Выбрано 1 российских сюжетов при редакционной цели 3; слабые материалы не добавлялись."
+        },
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-011, cand-022, cand-044, cand-111, cand-077, cand-033."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: ИИ-агенты, coding agents, безопасность агентов, sandbox, supply chain и open-source, Новые исследования, arXiv, оценки моделей, безопасность, интерпретируемость и надёжность, Российские компании, государственные органы, исследовательские организации, КИИ, промышленность, телеком, банки и отраслевые проекты."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 0,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0aef2978b9aae001016a53f03577008199badc2b84d4f24e83",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 16615,
+        "input_tokens_details": {
+          "cache_write_tokens": 16612,
+          "cached_tokens": 0
+        },
+        "output_tokens": 3475,
+        "output_tokens_details": {
+          "reasoning_tokens": 414
+        },
+        "total_tokens": 20090
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 16615,
+    "output_tokens": 3475,
+    "total_tokens": 20090,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/automation-prep",
+    "sha": "d44baf5de044b02e577df94a19ea9be40b4bb09c",
+    "run_id": "29206585968",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null
+}

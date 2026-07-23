@@ -1,0 +1,158 @@
+[
+  {
+    "candidate_id": "cand-011",
+    "section": "world",
+    "headline": "Apple подала иск к OpenAI о предполагаемом присвоении торговых секретов для ИИ-устройств",
+    "organization": "Apple / OpenAI",
+    "topic": "regulation",
+    "event_type": "regulation",
+    "status": "new",
+    "summary": "Apple подала в федеральный суд Калифорнии иск к OpenAI, двум бывшим сотрудникам Apple и io Products, утверждая, что при создании аппаратного направления OpenAI использовала неправомерно полученные конфиденциальные данные Apple.",
+    "published_at": null,
+    "published_date": "2026-07-10",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Apple files lawsuit accusing ChatGPT maker OpenAI of stealing trade secrets",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/apple-openai-lawsuit-trade-secrets-theft-6fff8833f5889d86406b89a02dd8fb16"
+      }
+    ],
+    "keywords": [
+      "Apple / OpenAI",
+      "regulation"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "cand-022",
+    "section": "world",
+    "headline": "Обновление: Meta отключила функцию Muse Image с референсами публичных Instagram-аккаунтов",
+    "organization": "Meta",
+    "topic": "multimodal",
+    "event_type": "multimodal",
+    "status": "update",
+    "summary": "Meta отключила недавно запущенную возможность Muse Image, которая делала фотографии всех публичных Instagram-аккаунтов доступными как референсы для генерации новых изображений, после волны претензий к приватности.",
+    "published_at": null,
+    "published_date": "2026-07-11",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Meta reins in new AI tool after criticism",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/meta-artificial-intelligence-instagram-images-privacy-4df3bdb3fec6e046c6562accc2d270a5"
+      }
+    ],
+    "keywords": [
+      "Meta",
+      "multimodal"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  },
+  {
+    "candidate_id": "cand-044",
+    "section": "world",
+    "headline": "SK hynix привлекла $26,5 млрд при дебюте ADR на Nasdaq на фоне спроса на ИИ-память",
+    "organization": "SK hynix",
+    "topic": "chips",
+    "event_type": "chips",
+    "status": "new",
+    "summary": "Американские депозитарные расписки SK hynix выросли на 14% в первый день торгов на Nasdaq после размещения на $26,5 млрд, ставшего ставкой инвесторов на дефицит высокоскоростной памяти для ИИ-ускорителей.",
+    "published_at": null,
+    "published_date": "2026-07-10",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "SK Hynix shares jump in marquee US debut as AI euphoria persists",
+        "publisher": "Reuters",
+        "url": "https://www.marketscreener.com/news/sk-hynix-s-marquee-us-debut-to-test-ai-appetite-ce7f5eded18af62c"
+      }
+    ],
+    "keywords": [
+      "SK hynix",
+      "chips"
+    ],
+    "geography": "world",
+    "category": "chips"
+  },
+  {
+    "candidate_id": "cand-111",
+    "section": "world",
+    "headline": "ФРС США назвала инвестиционный бум в ИИ одним из факторов экономического роста и инфляционного давления",
+    "organization": "Federal Reserve System",
+    "topic": "investment",
+    "event_type": "investment",
+    "status": "new",
+    "summary": "В докладе Конгрессу Федеральная резервная система США указала, что масштабное строительство ИИ-инфраструктуры одновременно поддерживает экономический рост и усиливает инфляционное давление через спрос на ресурсы и инвестиции.",
+    "published_at": null,
+    "published_date": "2026-07-10",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Fed report cites 'stepped-up' inflation due to tariffs, Iran war, AI buildout",
+        "publisher": "Reuters",
+        "url": "https://ca.marketscreener.com/news/fed-report-cites-stepped-up-inflation-due-to-tariffs-iran-war-ai-buildout-ce7f5edfd88ef42c"
+      }
+    ],
+    "keywords": [
+      "Federal Reserve System",
+      "investment"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-077",
+    "section": "world",
+    "headline": "Сенатор Эд Марки представил AI Accountability Agenda с инициативами по дата-центрам, труду и защите детей",
+    "organization": "Офис сенатора Эда Марки, Сенат США",
+    "topic": "regulation",
+    "event_type": "regulation",
+    "status": "new",
+    "summary": "Сенатор Эд Марки опубликовал программную повестку AI Accountability Agenda и сообщил о подготовке законодательных инициатив, в том числе требования к дата-центрам обеспечивать свои мощности чистой энергией и накопителями.",
+    "published_at": null,
+    "published_date": "2026-07-10",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Senator Markey Releases “The AI Accountability Agenda: Taking Power Back from Big Tech”",
+        "publisher": "U.S. Senator Edward J. Markey",
+        "url": "https://www.markey.senate.gov/news/press-releases/senator-markey-releases-the-ai-accountability-agenda-taking-power-back-from-big-tech"
+      }
+    ],
+    "keywords": [
+      "Офис сенатора Эда Марки, Сенат США",
+      "regulation"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "cand-033",
+    "section": "russia",
+    "headline": "Яндекс запустил тестовый маршрут роботакси между офисами в Москве",
+    "organization": "Яндекс",
+    "topic": "robotics",
+    "event_type": "robotics",
+    "status": "new",
+    "summary": "Яндекс начал перевозить сотрудников роботакси между офисами в квартале «Красная Роза» и Москва-Сити, используя маршрут как дополнительный этап подготовки к коммерческому запуску в столице.",
+    "published_at": null,
+    "published_date": "2026-07-10",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Яндекс запустил роботакси между своими офисами в Москве",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?id=10-07-2026-01&year=2026"
+      }
+    ],
+    "keywords": [
+      "Яндекс",
+      "robotics"
+    ],
+    "geography": "russia",
+    "category": "robotics"
+  }
+]

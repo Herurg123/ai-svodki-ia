@@ -1,0 +1,191 @@
+name: Rollback drill
+
+run-name: Artifact-only rollback drill ${{ github.sha }}
+
+on:
+  push:
+    branches:
+      - automation-prep
+    paths:
+      - "automation/config/orchestrator.json"
+      - "automation/scripts/orchestrator_common.py"
+      - "automation/scripts/create_publication_plan.py"
+      - "automation/scripts/create_rollback_snapshot.py"
+      - "automation/scripts/create_rollback_plan.py"
+      - "automation/scripts/simulate_release_and_rollback.py"
+      - "automation/scripts/validate_orchestrator_contract.py"
+      - "automation/scripts/validate_workflow_safety.py"
+      - "automation/tests/test_production_orchestrator.py"
+      - "automation/specs/rollback-runbook.md"
+      - "automation/fixtures/release/**"
+      - "automation/fixtures/editorial/2026-07-11/**"
+      - ".github/workflows/production-orchestrator-dry-run.yml"
+      - ".github/workflows/rollback-drill.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rollback-drill-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  drill:
+    name: Restore a temporary tree from snapshot
+    if: github.ref == 'refs/heads/automation-prep'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository read-only
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Run orchestrator unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest -v automation.tests.test_production_orchestrator
+
+      - name: Build isolated candidate for the drill
+        shell: bash
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          root="automation/preview/rollback-drill/2026-07-11"
+          rm -rf "${root}"
+          mkdir -p "${root}"
+          python automation/scripts/materialize_release_candidate.py \
+            --release-fixture automation/fixtures/release/2026-07-11 \
+            --editorial-source automation/fixtures/editorial/2026-07-11 \
+            --output-dir "${root}/source" \
+            --report "${root}/materialization.json"
+          python automation/scripts/validate_digest_artifact.py \
+            --artifact-dir "${root}/source" \
+            --report "${root}/editorial-artifact-validation.json"
+          python automation/scripts/validate_cover_contract.py \
+            --artifact-dir "${root}/source" \
+            --report "${root}/cover-validation.json"
+          python automation/scripts/build_site.py \
+            --source-dir "${root}/source" \
+            --output-dir "${root}/site/posts" \
+            --build-info "${root}/build-info.json"
+          python automation/scripts/validate_site.py \
+            --source-dir "${root}/source" \
+            --site-dir "${root}/site/posts" \
+            --report "${root}/site-validation.json"
+          python automation/scripts/validate_dzen_feed.py \
+            --rss "${root}/site/posts/rss.xml" \
+            --report "${root}/dzen-feed-validation.json"
+          python automation/scripts/create_release_manifest.py \
+            --source-dir "${root}/source" \
+            --site-dir "${root}/site/posts" \
+            --reports-dir "${root}" \
+            --output "${root}/release-manifest.json"
+
+      - name: Create blocked plans and rollback snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="automation/preview/rollback-drill/2026-07-11"
+          python automation/scripts/validate_production_gate.py \
+            --config automation/config/release.json \
+            --manifest "${root}/release-manifest.json" \
+            --actual-ref "${GITHUB_REF}" \
+            --event-name "${GITHUB_EVENT_NAME}" \
+            --manual-approval false \
+            --expect-blocked \
+            --report "${root}/gate-report.json"
+          python automation/scripts/create_publication_plan.py \
+            --config automation/config/orchestrator.json \
+            --release-manifest "${root}/release-manifest.json" \
+            --gate-report "${root}/gate-report.json" \
+            --live-dir posts \
+            --candidate-dir "${root}/site/posts" \
+            --output "${root}/publication-plan.json" \
+            --expect-blocked
+          python automation/scripts/create_rollback_snapshot.py \
+            --live-dir posts \
+            --output-dir "${root}/rollback-snapshot" \
+            --manifest "${root}/rollback-snapshot.json"
+          python automation/scripts/create_rollback_plan.py \
+            --config automation/config/orchestrator.json \
+            --snapshot-manifest "${root}/rollback-snapshot.json" \
+            --post-release-dir "${root}/site/posts" \
+            --output "${root}/rollback-plan.json" \
+            --expect-blocked
+
+      - name: Execute temporary promotion and rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="automation/preview/rollback-drill/2026-07-11"
+          python automation/scripts/simulate_release_and_rollback.py \
+            --live-dir posts \
+            --candidate-dir "${root}/site/posts" \
+            --snapshot-dir "${root}/rollback-snapshot/posts" \
+            --snapshot-manifest "${root}/rollback-snapshot.json" \
+            --publication-plan "${root}/publication-plan.json" \
+            --rollback-plan "${root}/rollback-plan.json" \
+            --output-dir "${root}/simulation" \
+            --report "${root}/rollback-drill.json"
+
+      - name: Validate workflow safety
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="automation/preview/rollback-drill/2026-07-11"
+          python automation/scripts/validate_workflow_safety.py \
+            --workflow .github/workflows/production-orchestrator-dry-run.yml \
+            --workflow .github/workflows/rollback-drill.yml \
+            --report "${root}/workflow-safety.json"
+
+      - name: Verify protected paths stayed unchanged
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          protected=(
+            posts/
+            automation/requests/digest-preview.json
+            automation/requests/image-preview.json
+          )
+          if [[ -n "$(git status --porcelain -- "${protected[@]}")" ]]; then
+            echo "Rollback drill modified protected paths." >&2
+            git status --short -- "${protected[@]}"
+            exit 1
+          fi
+          echo "Protected paths are unchanged."
+
+      - name: Write job summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Rollback drill"
+            echo
+            echo "- Snapshot: artifact only"
+            echo "- Promotion target: temporary directory"
+            echo "- Rollback target: temporary directory"
+            echo "- Exact original tree restoration: required"
+            echo "- Live posts: unchanged"
+            echo "- Production action: absent"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload rollback drill artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rollback-drill-${{ github.sha }}
+          path: automation/preview/rollback-drill/2026-07-11/
+          if-no-files-found: warn
+          retention-days: 14

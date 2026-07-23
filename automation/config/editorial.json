@@ -1,0 +1,178 @@
+{
+  "spec_version": "2026-07-12",
+  "language": "ru",
+  "timezone": "Europe/Moscow",
+  "story_counts": {
+    "total_target_minimum": 6,
+    "total_target_maximum": 12,
+    "world_target_minimum": 5,
+    "world_target_maximum": 8,
+    "russian_target_minimum": 3,
+    "russian_target_maximum": 5,
+    "short_digest_minimum": 1,
+    "zero_stories_status": "error",
+    "short_digest_notice": "День на новости выдался слабым - поэтому коротко"
+  },
+  "diversity": {
+    "max_selected_per_publisher_soft": 2,
+    "max_selected_per_organization_soft": 2,
+    "override_requires_reason": true
+  },
+  "what_it_means": {
+    "required": true,
+    "minimum_items": 4,
+    "maximum_items": 6,
+    "html_heading": "<h2>Что это значит</h2>",
+    "list_tag": "ol"
+  },
+  "dzen": {
+    "required": true,
+    "heading": "Все ИИ-Сводки",
+    "url": "https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1",
+    "anchor_text": "Архив ИИ-Сводок",
+    "html": "<h2>Все ИИ-Сводки</h2><p><a href=\"https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1\">Архив ИИ-Сводок</a></p>"
+  },
+  "meta_marking": {
+    "enabled": true,
+    "visible_name": "Meta",
+    "first_visible_form": "Meta*",
+    "subsequent_visible_form": "Meta",
+    "footnote_html": "<p><em>*Meta и ее сервисы - в России запрещены</em></p>",
+    "footnote_position": "after_dzen_block",
+    "service_fields_use_asterisk": false
+  },
+  "updates": {
+    "headline_prefix": "Обновление: ",
+    "required_for_archive_status": "update",
+    "forbidden_for_archive_status": "new"
+  },
+  "article": {
+    "introduction_sentences_minimum": 2,
+    "introduction_sentences_maximum": 4,
+    "paragraphs_per_story_minimum": 2,
+    "paragraphs_per_story_maximum": 3,
+    "world_heading": "Мировые лидеры ИИ",
+    "russian_heading": "Российские лидеры ИИ",
+    "allow_missing_russian_section": true,
+    "forbidden_tags": [
+      "h1",
+      "img",
+      "html",
+      "head",
+      "body",
+      "script",
+      "style",
+      "iframe"
+    ]
+  },
+  "terminology": {
+    "prefer": {
+      "AI": "ИИ",
+      "AI agent": "агент ИИ"
+    },
+    "keep_untranslated": [
+      "LLM"
+    ],
+    "preserve_company_and_product_names": true,
+    "allow_ai_in_official_names": true
+  },
+  "style": [
+    "ясно",
+    "делово",
+    "живо",
+    "без воды",
+    "без чрезмерного хайпа"
+  ],
+  "tracked_world_organizations": [
+    "OpenAI",
+    "Google DeepMind",
+    "Anthropic",
+    "Meta AI",
+    "Microsoft",
+    "Nvidia",
+    "xAI",
+    "Amazon",
+    "Mistral",
+    "Hugging Face",
+    "Apple",
+    "Cohere"
+  ],
+  "tracked_asia_organizations": [
+    "DeepSeek",
+    "Alibaba",
+    "Qwen",
+    "Baidu",
+    "ERNIE",
+    "Tencent",
+    "Hunyuan",
+    "ByteDance",
+    "Doubao",
+    "Moonshot AI",
+    "Kimi",
+    "Z.ai",
+    "Zhipu AI",
+    "GLM",
+    "MiniMax",
+    "01.AI",
+    "SenseTime",
+    "Huawei"
+  ],
+  "tracked_developer_tools": [
+    "IDE",
+    "coding agents",
+    "agentic development environments",
+    "CLI-агенты",
+    "Claude Code",
+    "Cursor",
+    "GitHub Copilot",
+    "OpenCode",
+    "Cline",
+    "GLM",
+    "Qwen",
+    "DeepSeek",
+    "Kimi",
+    "Claude",
+    "GPT",
+    "Gemini"
+  ],
+  "tracked_russian_organizations": [
+    "Яндекс",
+    "Сбер",
+    "VK",
+    "МТС AI",
+    "Т-Банк",
+    "Тинькофф",
+    "Газпромбанк",
+    "Ростелеком"
+  ],
+  "editorial_notes": {
+    "publish_in_article": false,
+    "publish_in_rss": false,
+    "allowed_types": [
+      "source_gap",
+      "low_news_volume",
+      "time_precision",
+      "regional_gap",
+      "diversity_override"
+    ]
+  },
+  "stories_file": {
+    "enabled": true,
+    "filename": "stories.json"
+  },
+  "image": {
+    "aspect_ratio": "16:9",
+    "title_template": "ИИ-Сводка на {human_date}",
+    "direct_prompt_to_image_api": true,
+    "restrictions": [
+      "без логотипов компаний",
+      "без дополнительного текста, кроме точного заголовка",
+      "без водяных знаков",
+      "без мелких интерфейсных надписей",
+      "без пустой половины кадра",
+      "без стокового корпоративного клипарта",
+      "без узнаваемых лиц реальных людей",
+      "нейтральные силуэты без идентифицируемых черт допустимы"
+    ]
+  }
+}

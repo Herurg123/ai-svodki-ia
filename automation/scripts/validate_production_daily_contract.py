@@ -1,0 +1,95 @@
+from __future__ import annotations
+import argparse, json, re
+from pathlib import Path
+from production_daily_common import parse_rss, read_json, write_json
+
+def main() -> int:
+    p = argparse.ArgumentParser()
+    p.add_argument("--config", type=Path, required=True)
+    p.add_argument("--site-config", type=Path, required=True)
+    p.add_argument("--workflow", type=Path, required=True)
+    p.add_argument("--rss", type=Path, required=True)
+    p.add_argument("--report", type=Path, required=True)
+    args = p.parse_args()
+
+    config = read_json(args.config)
+    site = read_json(args.site_config)
+    workflow = args.workflow.read_text(encoding="utf-8")
+    rss = parse_rss(args.rss)
+    errors = []
+
+    required = {
+        "enabled": True,
+        "timezone": "Europe/Moscow",
+        "publication_hour_local": 6,
+        "schedule_cron_utc": "7 3 * * *",
+        "production_branch": "main",
+        "feed_url": "https://rybalka.one/posts/rss.xml",
+        "first_publication_date": "2026-07-24",
+    }
+    for key, expected in required.items():
+        if config.get(key) != expected:
+            errors.append(f"config {key}: expected {expected!r}, got {config.get(key)!r}")
+
+    if site.get("feed_url") != config.get("feed_url"):
+        errors.append("site feed_url differs from production feed_url")
+    if site.get("timezone") != config.get("timezone"):
+        errors.append("site timezone differs from production timezone")
+
+    checks = [
+        ("cron", 'cron: "7 3 * * *"'),
+        ("main branch guard", "refs/heads/main"),
+        ("contents write", "contents: write"),
+        ("full digest", "PIPELINE_MODE: full"),
+        ("image API", "generate_image_preview.py"),
+        ("legacy image staging", "stage_legacy_images.py"),
+        ("RSS normalization", "normalize_production_rss.py"),
+        ("structured data", "inject_blogposting_schema.py"),
+        ("structured data validation", "validate_structured_data.py"),
+        ("posts sitemap", "build_posts_sitemap.py"),
+        ("posts sitemap validation", "validate_posts_sitemap.py"),
+        ("site promotion", "promote_production_site.py"),
+        ("git push", "git push origin HEAD:main"),
+        ("artifact upload", "upload-artifact"),
+    ]
+    for label, needle in checks:
+        if needle not in workflow:
+            errors.append(f"workflow missing {label}: {needle}")
+
+    if workflow.count('cron: "7 3 * * *"') != 1:
+        errors.append("workflow must contain exactly one production cron")
+
+    for forbidden in ("FTP_SERVER", "FTP_USERNAME", "FTP_PASSWORD"):
+        if forbidden in workflow:
+            errors.append(f"production workflow must not access {forbidden}")
+
+    if "gh workflow run deploy-posts.yml" in workflow:
+        errors.append(
+            "production workflow must not dispatch deploy-posts.yml explicitly; "
+            "the posts/** push to main already starts deployment"
+        )
+
+    if rss["self_url"] != config["feed_url"]:
+        errors.append("current RSS self URL is not the accepted root URL")
+    legacy_count = sum(
+        1 for row in rss["items"]
+        if row["link"].startswith(str(config["legacy_prefix"]))
+    )
+    if legacy_count < int(config["minimum_legacy_items"]):
+        errors.append("current RSS does not contain required legacy dzen-test items")
+
+    report = {
+        "status": "ok" if not errors else "error",
+        "errors": errors,
+        "rss_latest_date": rss["latest_date"],
+        "legacy_items": legacy_count,
+        "schedule_local": "06:07 Europe/Moscow",
+        "schedule_utc": config["schedule_cron_utc"],
+        "first_publication_date": config["first_publication_date"],
+    }
+    write_json(args.report, report)
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    return 0 if not errors else 1
+
+if __name__ == "__main__":
+    raise SystemExit(main())
