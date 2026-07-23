@@ -1,0 +1,66 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Hugging Face добавила Nunchaku Lite в Diffusers для 4-битного инференса диффузионных моделей",
+    "organization": "Hugging Face; Nunchaku",
+    "topic": "квантизация диффузионных моделей",
+    "event_type": "product_update",
+    "status": "new",
+    "summary": "Hugging Face сообщила о нативной поддержке Nunchaku Lite в библиотеке Diffusers: предквантованные диффузионные пайплайны можно загружать через стандартный интерфейс библиотеки без отдельной локальной компиляции CUDA.",
+    "published_at": null,
+    "published_date": "2026-07-23",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Bringing Nunchaku 4-bit Diffusion Inference to Diffusers",
+        "publisher": "Hugging Face",
+        "url": "https://huggingface.co/blog/nunchaku-diffusers"
+      }
+    ],
+    "keywords": [
+      "Hugging Face",
+      "Diffusers",
+      "Nunchaku Lite",
+      "SVDQuant",
+      "4-битный инференс",
+      "диффузионные модели",
+      "квантизация",
+      "NVIDIA Blackwell"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Jensen Huang призвал не строить регулирование ИИ на сценариях «научной фантастики»",
+    "organization": "Nvidia",
+    "topic": "регулирование frontier- и open-weight-моделей",
+    "event_type": "policy_statement",
+    "status": "new",
+    "summary": "Axios опубликовал интервью с CEO Nvidia Jensen Huang, в котором он выступил против регулирования ИИ, основанного на сценариях экзистенциальной угрозы, и призвал американские власти учитывать больше позиций при выработке политики в отношении передовых и открытых моделей.",
+    "published_at": "2026-07-23T09:30:04+00:00",
+    "published_date": "2026-07-23",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Nvidia CEO to Washington: Don't fall for \"science fiction\" AI fear",
+        "publisher": "Axios",
+        "url": "https://www.axios.com/2026/07/23/nvidia-ceo-kimi-ai-fears-trump-washington"
+      }
+    ],
+    "keywords": [
+      "Nvidia",
+      "Jensen Huang",
+      "регулирование ИИ",
+      "open-weight модели",
+      "Китай",
+      "экспортный контроль",
+      "безопасность ИИ",
+      "Вашингтон"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  }
+]

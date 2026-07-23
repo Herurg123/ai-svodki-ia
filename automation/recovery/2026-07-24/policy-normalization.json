@@ -1,0 +1,34 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "article_html.short_digest_notice",
+      "model_value": null,
+      "normalized_value": "<p>День на новости выдался слабым - поэтому коротко</p>"
+    }
+  ],
+  "changed_count": 1,
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После проверки свежести и значимости выбрано 2 сюжетов."
+    },
+    {
+      "type": "regional_gap",
+      "area": "russian_ai",
+      "message": "Выбрано 0 российских сюжетов при редакционной цели 3; слабые материалы не добавлялись."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-001."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: Китай и Азия, Инструменты разработчиков и ИИ-кодинг, Исследования и безопасность, Робототехника и автономные системы, Бизнес, внедрения и инвестиции, Российский сектор."
+    }
+  ]
+}
