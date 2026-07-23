@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT / "automation" / "scripts"))
 
 from production_daily_common import parse_rss, runtime_context, tree_digest
 import promote_production_site as promote
+from stage_legacy_images import stage_images
 
 ATOM = "http://www.w3.org/2005/Atom"
 
@@ -100,6 +101,30 @@ class ProductionDailyTests(unittest.TestCase):
                     rss=parse_rss(rss_path),
                     publication_date_override="2026-07-24",
                 )
+
+    def test_legacy_staging_keeps_different_production_images(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            source = root / "legacy"
+            target = root / "production"
+            source.mkdir()
+            target.mkdir()
+            for day in range(6, 16):
+                name = f"ai-svodka-2026-07-{day:02d}.png"
+                (source / name).write_bytes(f"legacy-{day}".encode())
+            different = "ai-svodka-2026-07-08.png"
+            (target / different).write_bytes(b"canonical-production-image")
+
+            report = stage_images(source, target, dry_run=True)
+
+            self.assertEqual(report["status"], "ok")
+            self.assertIn(different, report["already_present"])
+            self.assertEqual(
+                [row["name"] for row in report["different_existing"]],
+                [different],
+            )
+            self.assertEqual(len(report["would_copy"]), 9)
+            self.assertEqual((target / different).read_bytes(), b"canonical-production-image")
 
     def test_tree_digest_is_stable(self):
         with tempfile.TemporaryDirectory() as temp:
