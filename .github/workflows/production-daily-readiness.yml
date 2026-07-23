@@ -12,6 +12,9 @@ on:
       - "automation/scripts/prepare_production_daily.py"
       - "automation/scripts/create_production_image_request.py"
       - "automation/scripts/normalize_production_rss.py"
+      - "automation/scripts/build_site.py"
+      - "automation/scripts/validate_site.py"
+      - "automation/scripts/bootstrap_archive.py"
       - "automation/scripts/stage_legacy_images.py"
       - "automation/scripts/promote_production_site.py"
       - "automation/scripts/validate_production_daily_contract.py"
@@ -23,6 +26,8 @@ on:
       - "automation/tests/test_structured_data.py"
       - "automation/tests/test_posts_sitemap.py"
       - "automation/tests/test_production_daily.py"
+      - "automation/tests/test_build_site_legacy.py"
+      - "automation/tests/test_bootstrap_archive.py"
       - "automation/specs/production-daily.md"
       - ".github/workflows/production-daily-readiness.yml"
       - ".github/workflows/daily-production.yml"
@@ -51,6 +56,9 @@ jobs:
             automation/scripts/prepare_production_daily.py \
             automation/scripts/create_production_image_request.py \
             automation/scripts/normalize_production_rss.py \
+            automation/scripts/build_site.py \
+            automation/scripts/validate_site.py \
+            automation/scripts/bootstrap_archive.py \
             automation/scripts/stage_legacy_images.py \
             automation/scripts/promote_production_site.py \
             automation/scripts/validate_production_daily_contract.py \
@@ -59,6 +67,8 @@ jobs:
             automation/scripts/build_posts_sitemap.py \
             automation/scripts/validate_posts_sitemap.py \
             automation/tests/test_production_daily.py \
+            automation/tests/test_build_site_legacy.py \
+            automation/tests/test_bootstrap_archive.py \
             automation/tests/test_structured_data.py \
             automation/tests/test_posts_sitemap.py
 
@@ -67,6 +77,8 @@ jobs:
           set -euo pipefail
           python -m unittest -v \
             automation.tests.test_production_daily \
+            automation.tests.test_build_site_legacy \
+            automation.tests.test_bootstrap_archive \
             automation.tests.test_structured_data \
             automation.tests.test_posts_sitemap
 
