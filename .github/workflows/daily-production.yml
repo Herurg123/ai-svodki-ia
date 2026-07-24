@@ -279,7 +279,7 @@ jobs:
           MINIMUM_CANDIDATES: "12"
           MINIMUM_RUSSIAN_CANDIDATES: "2"
           MAXIMUM_CANDIDATES: "20"
-          MINIMUM_SELECTED_STORIES: "6"
+          MINIMUM_SELECTED_STORIES: "7"
           MAXIMUM_SELECTED_STORIES: "12"
         run: |
           set -euo pipefail
@@ -290,6 +290,28 @@ jobs:
             --maximum-candidates "${MAXIMUM_CANDIDATES}" \
             --minimum-selected-stories "${MINIMUM_SELECTED_STORIES}" \
             --maximum-selected-stories "${MAXIMUM_SELECTED_STORIES}"
+
+      - name: Enforce 5 world plus 2 Russian stories
+        if: inputs.recovery_run_id == ''
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
+          PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
+        run: |
+          set -euo pipefail
+          python automation/scripts/ensure_story_coverage.py \
+            --artifact-dir "automation/preview/${PUBLICATION_DATE}" \
+            --archive automation/archive/index.json \
+            --publication-date "${PUBLICATION_DATE}" \
+            --model "${OPENAI_TEXT_MODEL}" \
+            --minimum-total 7 \
+            --minimum-world 5 \
+            --minimum-russia 2 \
+            --maximum-audit-web-search-calls 5 \
+            --maximum-candidates 20 \
+            --maximum-selected-stories 12 \
+            --report automation/preview/production-daily/coverage-audit.json
 
       - name: Normalize and validate digest artifact
         shell: bash
@@ -304,6 +326,19 @@ jobs:
           python automation/scripts/validate_digest_artifact.py \
             --artifact-dir "${artifact_dir}" \
             --report "${artifact_dir}/artifact-validation.json"
+
+      - name: Validate final story coverage
+        shell: bash
+        env:
+          PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_story_coverage.py \
+            --artifact-dir "automation/preview/${PUBLICATION_DATE}" \
+            --minimum-total 7 \
+            --minimum-world 5 \
+            --minimum-russia 2 \
+            --report automation/preview/production-daily/story-coverage-validation.json
 
       - name: Build runtime Image API request
         shell: bash
