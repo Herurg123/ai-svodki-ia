@@ -323,7 +323,7 @@ class ConfigurationContractTests(unittest.TestCase):
         editorial = json.loads(
             (ROOT / "automation/config/editorial.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(editorial["story_counts"]["total_target_minimum"], 7)
+        self.assertEqual(editorial["story_counts"]["total_target_minimum"], 6)
         self.assertEqual(editorial["story_counts"]["world_target_minimum"], 5)
         self.assertEqual(editorial["story_counts"]["russian_target_minimum"], 2)
 

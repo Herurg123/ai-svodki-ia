@@ -3,7 +3,7 @@
   "language": "ru",
   "timezone": "Europe/Moscow",
   "story_counts": {
-    "total_target_minimum": 7,
+    "total_target_minimum": 6,
     "total_target_maximum": 12,
     "world_target_minimum": 5,
     "world_target_maximum": 8,
