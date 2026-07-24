@@ -211,7 +211,7 @@ jobs:
           run-id: ${{ inputs.recovery_run_id }}
           github-token: ${{ github.token }}
 
-      - name: Restore and validate saved editorial artifact
+      - name: Restore saved editorial artifact
         if: inputs.recovery_run_id != ''
         shell: bash
         env:
@@ -219,27 +219,11 @@ jobs:
           RECOVERY_RUN_ID: ${{ inputs.recovery_run_id }}
         run: |
           set -euo pipefail
-          recovery_root="automation/recovery/${RECOVERY_RUN_ID}"
-          digest_path="$(find "${recovery_root}" -type f -path "*/${PUBLICATION_DATE}/digest.json" -print -quit)"
-          [[ -n "${digest_path}" ]] || {
-            echo "Saved artifact does not contain ${PUBLICATION_DATE}/digest.json" >&2
-            find "${recovery_root}" -maxdepth 4 -type f -print >&2 || true
-            exit 1
-          }
-          source_dir="$(dirname "${digest_path}")"
-          target_dir="automation/preview/${PUBLICATION_DATE}"
-          rm -rf "${target_dir}"
-          mkdir -p "${target_dir}"
-          cp -a "${source_dir}/." "${target_dir}/"
-          rm -f "${target_dir}/cover.png" \
-            "${target_dir}/image-request.json" \
-            "${target_dir}/image-manifest.json" \
-            "${target_dir}/image-api-response.json" \
-            "${target_dir}/image-api-error.json" \
-            "${target_dir}/cover-validation.json"
-          python automation/scripts/validate_digest_artifact.py \
-            --artifact-dir "${target_dir}" \
-            --report "${target_dir}/artifact-validation.json"
+          python automation/scripts/recover_digest_artifact.py \
+            --recovery-root "automation/recovery/${RECOVERY_RUN_ID}" \
+            --target-dir "automation/preview/${PUBLICATION_DATE}" \
+            --publication-date "${PUBLICATION_DATE}" \
+            --report automation/preview/production-daily/recovery.json
           echo "Recovered paid research/editorial from run ${RECOVERY_RUN_ID}."
 
       - name: Install pinned OpenAI SDK
@@ -253,11 +237,14 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
           OPENAI_IMAGE_MODEL: ${{ vars.OPENAI_IMAGE_MODEL || 'gpt-image-2' }}
+          RECOVERY_RUN_ID: ${{ inputs.recovery_run_id || '' }}
         run: |
           set -euo pipefail
           [[ -n "${OPENAI_API_KEY}" ]] || { echo "OPENAI_API_KEY missing" >&2; exit 1; }
-          [[ "${OPENAI_TEXT_MODEL}" == "gpt-5.6-terra" ]] || { echo "Unexpected text model" >&2; exit 1; }
           [[ "${OPENAI_IMAGE_MODEL}" == "gpt-image-2" ]] || { echo "Unexpected image model" >&2; exit 1; }
+          if [[ -z "${RECOVERY_RUN_ID}" ]]; then
+            [[ "${OPENAI_TEXT_MODEL}" == "gpt-5.6-terra" ]] || { echo "Unexpected text model" >&2; exit 1; }
+          fi
 
       - name: Patch runtime publication hour to 06:00 Moscow
         shell: bash
@@ -302,9 +289,20 @@ jobs:
             --maximum-candidates "${MAXIMUM_CANDIDATES}" \
             --minimum-selected-stories "${MINIMUM_SELECTED_STORIES}" \
             --maximum-selected-stories "${MAXIMUM_SELECTED_STORIES}"
+
+      - name: Normalize and validate digest artifact
+        shell: bash
+        env:
+          PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
+        run: |
+          set -euo pipefail
+          artifact_dir="automation/preview/${PUBLICATION_DATE}"
+          python automation/scripts/normalize_digest_artifact.py \
+            --artifact-dir "${artifact_dir}" \
+            --report "${artifact_dir}/artifact-normalization.json"
           python automation/scripts/validate_digest_artifact.py \
-            --artifact-dir "automation/preview/${PUBLICATION_DATE}" \
-            --report "automation/preview/${PUBLICATION_DATE}/artifact-validation.json"
+            --artifact-dir "${artifact_dir}" \
+            --report "${artifact_dir}/artifact-validation.json"
 
       - name: Build runtime Image API request
         shell: bash
