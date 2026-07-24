@@ -34,6 +34,10 @@ recovery = load_module(
     "production_reliability_digest_recovery",
     SCRIPTS / "recover_digest_artifact.py",
 )
+publish_changes = load_module(
+    "production_reliability_publish_changes",
+    SCRIPTS / "validate_publish_changes.py",
+)
 
 
 class ProductionImageHandoffTests(unittest.TestCase):
@@ -269,6 +273,13 @@ class DigestArtifactRecoveryTests(unittest.TestCase):
         directory.mkdir(parents=True, exist_ok=True)
         for name in recovery.REQUIRED_FILES:
             payload = {"status": "ok"}
+            if name == "run-info.json":
+                payload.update(
+                    {
+                        "finished_at": f"{publication_date}T03:30:00+00:00",
+                        "request_id": f"production-digest-{publication_date}",
+                    }
+                )
             if name == "digest.json":
                 payload.update(
                     {
@@ -312,6 +323,108 @@ class DigestArtifactRecoveryTests(unittest.TestCase):
             self.assertFalse((target / "artifact-validation.json").exists())
 
 
+    def test_previous_day_recovery_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "download" / "2026-07-24"
+            self._write_complete_artifact(source, "2026-07-24")
+            run_info_path = source / "run-info.json"
+            run_info = json.loads(run_info_path.read_text(encoding="utf-8"))
+            run_info["finished_at"] = "2026-07-23T11:53:53+00:00"
+            run_info_path.write_text(
+                json.dumps(run_info) + "\n", encoding="utf-8"
+            )
+            with self.assertRaisesRegex(recovery.RecoveryError, "устарел"):
+                recovery.recover(
+                    root / "download",
+                    root / "target",
+                    "2026-07-24",
+                    root / "report.json",
+                )
+
+
+class PublishChangeValidationTests(unittest.TestCase):
+    def _git(self, root: Path, *args: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            ["git", *args],
+            cwd=root,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+
+    def _make_repo(self, root: Path) -> None:
+        self._git(root, "init")
+        self._git(root, "config", "user.name", "Test")
+        self._git(root, "config", "user.email", "test@example.com")
+        (root / "posts").mkdir()
+        (root / "posts" / "rss.xml").write_text("before\n", encoding="utf-8")
+        (root / "automation" / "archive").mkdir(parents=True)
+        (root / "automation" / "archive" / "index.json").write_text(
+            "{}\n", encoding="utf-8"
+        )
+        (root / ".gitignore").write_text("__pycache__/\n", encoding="utf-8")
+        self._git(root, "add", ".")
+        self._git(root, "commit", "-m", "base")
+
+    def test_runtime_outputs_do_not_block_publish_commit(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self._make_repo(root)
+            (root / "posts" / "rss.xml").write_text("after\n", encoding="utf-8")
+            content = root / "automation" / "content" / "2026-07-24"
+            content.mkdir(parents=True)
+            (content / "digest.json").write_text("{}\n", encoding="utf-8")
+            (root / "automation" / "archive" / "index.json").write_text(
+                '{"items": []}\n', encoding="utf-8"
+            )
+            preview = root / "automation" / "preview" / "production-daily"
+            preview.mkdir(parents=True)
+            (preview / "runtime.json").write_text("{}\n", encoding="utf-8")
+            recovery_dir = root / "automation" / "recovery" / "123"
+            recovery_dir.mkdir(parents=True)
+            (recovery_dir / "digest.json").write_text("{}\n", encoding="utf-8")
+
+            old_cwd = Path.cwd()
+            try:
+                import os
+                os.chdir(root)
+                report = publish_changes.validate_and_stage(
+                    "2026-07-24", root / "report.json"
+                )
+            finally:
+                os.chdir(old_cwd)
+            self.assertEqual(report["status"], "ok")
+            self.assertEqual(len(report["transient_paths_ignored"]), 2)
+            staged = self._git(root, "diff", "--cached", "--name-only").stdout.splitlines()
+            self.assertEqual(
+                set(staged),
+                {
+                    "posts/rss.xml",
+                    "automation/content/2026-07-24/digest.json",
+                    "automation/archive/index.json",
+                },
+            )
+
+    def test_unexpected_change_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self._make_repo(root)
+            (root / "README.md").write_text("surprise\n", encoding="utf-8")
+            old_cwd = Path.cwd()
+            try:
+                import os
+                os.chdir(root)
+                with self.assertRaisesRegex(
+                    publish_changes.PublishChangesError, "Unexpected changed paths"
+                ):
+                    publish_changes.validate_and_stage("2026-07-24")
+            finally:
+                os.chdir(old_cwd)
+
+
+
 class ProductionWorkflowReliabilityTests(unittest.TestCase):
     def test_three_crons_gate_and_recovery_are_present(self) -> None:
         workflow = (ROOT / ".github" / "workflows" / "daily-production.yml").read_text(
@@ -336,6 +449,8 @@ class ProductionWorkflowReliabilityTests(unittest.TestCase):
         )
         self.assertIn("if: inputs.recovery_run_id == ''", workflow)
         self.assertIn("rm -rf \"${image_dir}\"", workflow)
+        self.assertIn("validate_publish_changes.py", workflow)
+        self.assertIn("--timezone Europe/Moscow", workflow)
 
 
 if __name__ == "__main__":

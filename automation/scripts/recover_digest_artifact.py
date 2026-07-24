@@ -10,8 +10,10 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
+from datetime import datetime
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 REQUIRED_FILES = (
     "run-info.json",
@@ -111,15 +113,56 @@ def choose_source(recovery_root: Path, publication_date: str) -> tuple[Path, lis
     return sorted(complete, key=candidate_score)[0], diagnostics
 
 
+
+
+def validate_recovery_freshness(
+    source_dir: Path, publication_date: str, timezone_name: str
+) -> dict[str, str]:
+    run_info = read_json(source_dir / "run-info.json")
+    if not isinstance(run_info, dict):
+        raise RecoveryError("run-info.json должен содержать JSON-объект")
+    finished_at = run_info.get("finished_at")
+    if not isinstance(finished_at, str) or not finished_at.strip():
+        raise RecoveryError("run-info.json не содержит finished_at для проверки свежести")
+    try:
+        finished = datetime.fromisoformat(finished_at.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise RecoveryError(f"Некорректный finished_at: {finished_at}") from exc
+    if finished.tzinfo is None:
+        raise RecoveryError("finished_at должен содержать часовой пояс")
+    try:
+        timezone = ZoneInfo(timezone_name)
+    except Exception as exc:
+        raise RecoveryError(f"Некорректный timezone: {timezone_name}") from exc
+    local_finished = finished.astimezone(timezone)
+    local_date = local_finished.date().isoformat()
+    if local_date != publication_date:
+        raise RecoveryError(
+            "Recovery artifact устарел: research/editorial завершён "
+            f"{local_finished.isoformat(timespec='seconds')}, "
+            f"а выпуск имеет дату {publication_date}"
+        )
+    return {
+        "finished_at": finished.isoformat(timespec="seconds"),
+        "finished_at_local": local_finished.isoformat(timespec="seconds"),
+        "timezone": timezone_name,
+        "local_date": local_date,
+    }
+
+
 def recover(
     recovery_root: Path,
     target_dir: Path,
     publication_date: str,
     report_path: Path,
+    timezone_name: str = "Europe/Moscow",
 ) -> dict[str, Any]:
     if not recovery_root.is_dir():
         raise RecoveryError(f"Recovery artifact не найден: {recovery_root}")
     source_dir, diagnostics = choose_source(recovery_root, publication_date)
+    freshness = validate_recovery_freshness(
+        source_dir, publication_date, timezone_name
+    )
 
     if target_dir.exists():
         shutil.rmtree(target_dir)
@@ -139,6 +182,7 @@ def recover(
         "selected_source": str(source_dir),
         "target_dir": str(target_dir),
         "removed_image_stage_files": removed,
+        "freshness": freshness,
         "candidates": diagnostics,
     }
     write_json(report_path, report)
@@ -151,6 +195,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--target-dir", type=Path, required=True)
     parser.add_argument("--publication-date", required=True)
     parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument("--timezone", default="Europe/Moscow")
     return parser.parse_args()
 
 
@@ -162,6 +207,7 @@ def main() -> int:
             args.target_dir,
             args.publication_date,
             args.report,
+            args.timezone,
         )
     except RecoveryError as exc:
         write_json(

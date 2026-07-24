@@ -73,6 +73,7 @@ def main() -> int:
         ("recovery input", "recovery_run_id"),
         ("recovery artifact download", "actions/download-artifact@v8"),
         ("deterministic recovery", "recover_digest_artifact.py"),
+        ("recovery freshness", "--timezone Europe/Moscow"),
         ("shared digest normalization", "normalize_digest_artifact.py"),
         ("shared digest validation", "Normalize and validate digest artifact"),
         ("recovery skips research", "if: inputs.recovery_run_id == ''"),
@@ -83,6 +84,8 @@ def main() -> int:
         ("posts sitemap", "build_posts_sitemap.py"),
         ("posts sitemap validation", "validate_posts_sitemap.py"),
         ("site promotion", "promote_production_site.py"),
+        ("publish change validation", "validate_publish_changes.py"),
+        ("publish change report", "publish-changes.json"),
         ("git push", "git push origin HEAD:main"),
         ("commit SHA output", 'echo "commit_sha=${commit_sha}"'),
         ("reusable deployment", "uses: ./.github/workflows/deploy-posts.yml"),
@@ -160,7 +163,8 @@ def main() -> int:
         "first_publication_date": config["first_publication_date"],
         "deployment_mode": "reusable_workflow_call",
         "duplicate_policy": "successful_noop_before_paid_api",
-        "recovery_mode": "deterministic_restore_normalize_validate",
+        "recovery_mode": "deterministic_restore_freshness_normalize_validate",
+        "commit_guard": "stage_publish_paths_ignore_runtime_outputs",
     }
     write_json(args.report, report)
     print(json.dumps(report, ensure_ascii=False, indent=2))
