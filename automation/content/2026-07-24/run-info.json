@@ -1,0 +1,162 @@
+{
+  "status": "ok",
+  "pipeline": "research_then_editorial",
+  "request_id": "production-digest-2026-07-24",
+  "research_input": null,
+  "warnings": [
+    "cand-202: источник показывает дату без точного времени.",
+    "cand-203: источник показывает дату без точного времени.",
+    "cand-205: источник показывает дату без точного времени.",
+    "cand-206: источник показывает дату без точного времени.",
+    "cand-207: источник показывает дату без точного времени.",
+    "cand-208: источник показывает дату без точного времени.",
+    "Нормализованы внутренние id кандидатов: cand-202->cand-001, cand-203->cand-002, cand-204->cand-003, cand-205->cand-004, cand-206->cand-005, cand-207->cand-006, cand-208->cand-007.",
+    "Целевой пул — 12 кандидатов, но после проверки свежести осталось 7.",
+    "Цель — 2 российских кандидатов, найдено 1; пробел явно зафиксирован в coverage.",
+    "Российских сюжетов 1, редакционная цель — 3–5.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-07-24",
+  "started_at": "2026-07-24T04:51:41+00:00",
+  "finished_at": "2026-07-24T04:53:30+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 18,
+  "limits": {
+    "minimum_candidates": 12,
+    "minimum_russian_candidates": 2,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 6,
+    "maximum_selected_stories": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "d5221eb562c4c0d86123631df585c950927f4c54353f02fa59fbbb8c0ff0b105",
+    "candidates_sha256": "7821e6520de3ed9226675fc63080741bc04c03500b75b2186c6a74272b27d93a",
+    "settings": {
+      "source": "responses_api_web_search",
+      "max_retries": 0,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0afc102963d7a4c7016a62ef5f05588196aec076171925ef86",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 7,
+      "usage": {
+        "input_tokens": 116248,
+        "input_tokens_details": {
+          "cache_write_tokens": 52274,
+          "cached_tokens": 0
+        },
+        "output_tokens": 6580,
+        "output_tokens_details": {
+          "reasoning_tokens": 1509
+        },
+        "total_tokens": 122828
+      }
+    },
+    "error": null
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "329184987a6bece88444434cb2aed4d19a7c66ba98dc443a95ab483f77c7d536",
+    "editorial_sha256": "848ff9020aa11c122a47d370f961db80a580dac8346dac25509805fe46b19735",
+    "digest_sha256": "166f7c9711a5edd1fd0b2a76984c9077294107ecd9da7fb970a8042494b4efb4",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "published_at",
+          "model_value": "2026-07-24T07:00:00+03:00",
+          "normalized_value": "2026-07-24T06:00:00+03:00"
+        },
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-07-24.png",
+          "normalized_value": "ai-svodka-2026-07-24.png"
+        }
+      ],
+      "changed_count": 3
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.h3[2]",
+          "model_value": "Белый дом обвинил Moonshot AI в масштабной дистилляции американских моделей",
+          "normalized_value": "Обновление: Белый дом обвинил Moonshot AI в масштабной дистилляции американских моделей"
+        }
+      ],
+      "changed_count": 1,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "regional_gap",
+          "area": "russian_ai",
+          "message": "Выбрано 1 российских сюжетов при редакционной цели 3; слабые материалы не добавлялись."
+        },
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-001, cand-002, cand-004, cand-005, cand-006, cand-007."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: Мультимодальность и генеративные медиа, Инфраструктура, Российский сектор."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 0,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0f426b5f5ee02086016a62efb054948193b524929c01aeb770",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 53836,
+        "input_tokens_details": {
+          "cache_write_tokens": 53833,
+          "cached_tokens": 0
+        },
+        "output_tokens": 3458,
+        "output_tokens_details": {
+          "reasoning_tokens": 197
+        },
+        "total_tokens": 57294
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 170084,
+    "output_tokens": 10038,
+    "total_tokens": 180122,
+    "web_search_calls": 7
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "7a1d33958df83f40ef7a6be5a2982e25a03ba5c0",
+    "run_id": "30067861789",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null
+}

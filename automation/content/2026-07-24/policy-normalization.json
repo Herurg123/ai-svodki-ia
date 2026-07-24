@@ -1,0 +1,29 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "article_html.h3[2]",
+      "model_value": "Белый дом обвинил Moonshot AI в масштабной дистилляции американских моделей",
+      "normalized_value": "Обновление: Белый дом обвинил Moonshot AI в масштабной дистилляции американских моделей"
+    }
+  ],
+  "changed_count": 1,
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "regional_gap",
+      "area": "russian_ai",
+      "message": "Выбрано 1 российских сюжетов при редакционной цели 3; слабые материалы не добавлялись."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-001, cand-002, cand-004, cand-005, cand-006, cand-007."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: Мультимодальность и генеративные медиа, Инфраструктура, Российский сектор."
+    }
+  ]
+}

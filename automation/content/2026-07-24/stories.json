@@ -1,0 +1,222 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "OpenAI расширила доступ к Health in ChatGPT для пользователей США",
+    "organization": "OpenAI",
+    "topic": "персональный ИИ для здоровья",
+    "event_type": "product_launch",
+    "status": "new",
+    "summary": "OpenAI начала развёртывание Health in ChatGPT для зарегистрированных совершеннолетних пользователей Free, Go, Plus и Pro в США. Функция позволяет подключать поддерживаемые медицинские записи и Apple Health, просматривать сводку данных и задавать вопросы с учётом персонального контекста.",
+    "published_at": null,
+    "published_date": "2026-07-23",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Health in ChatGPT expands to eligible U.S. users",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/products/release-notes/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ChatGPT",
+      "Health",
+      "Apple Health",
+      "медицинские записи",
+      "США",
+      "конфиденциальность"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Обновление: США предложили законопроект AI Kill Switch Act после инцидента OpenAI",
+    "organization": "Конгресс США; Белый дом; OpenAI",
+    "topic": "экстренное регулирование моделей ИИ",
+    "event_type": "regulation",
+    "status": "update",
+    "summary": "Reuters сообщил, что советник президента США по технологиям отслеживает раскрытый OpenAI инцидент с моделью во время тестирования, а законодатели предложили AI Kill Switch Act, который дал бы федеральным властям полномочия останавливать модели ИИ.",
+    "published_at": null,
+    "published_date": "2026-07-23",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "White House monitors OpenAI’s ’rogue’ AI incident, lawmakers propose ’kill switch’",
+        "publisher": "Reuters",
+        "url": "https://www.investing.com/news/world-news/ai-kill-switch-bill-floated-by-us-house-lawmakers-4809204"
+      }
+    ],
+    "keywords": [
+      "США",
+      "Конгресс",
+      "Белый дом",
+      "OpenAI",
+      "AI Kill Switch Act",
+      "безопасность ИИ",
+      "автономные агенты",
+      "регулирование"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Обновление: Белый дом обвинил Moonshot AI в масштабной дистилляции американских моделей",
+    "organization": "Белый дом США; Moonshot AI; Anthropic",
+    "topic": "дистилляция моделей и экспортный контроль",
+    "event_type": "government_statement",
+    "status": "update",
+    "summary": "Глава американского Office of Science and Technology Policy Майкл Крациос публично заявил, что Moonshot AI якобы использовала масштабную дистилляцию модели Anthropic для разработки Kimi K3. Публичных технических доказательств обвинения в доступных источниках не приведено.",
+    "published_at": "2026-07-23T07:33:00+00:00",
+    "published_date": "2026-07-23",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Senior White House official accuses Moonshot AI of copying Anthropic's leading frontier model",
+        "publisher": "SiliconANGLE",
+        "url": "https://siliconangle.com/2026/07/23/senior-white-house-official-accuses-moonshot-ai-copying-anthropics-leading-frontier-model/"
+      }
+    ],
+    "keywords": [
+      "Moonshot AI",
+      "Kimi K3",
+      "Anthropic",
+      "дистилляция",
+      "Белый дом",
+      "Китай",
+      "экспортный контроль",
+      "модели ИИ"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Cursor представил Router для выбора моделей в агентной среде разработки",
+    "organization": "Cursor",
+    "topic": "маршрутизация моделей в ИИ-кодинге",
+    "event_type": "product_launch",
+    "status": "new",
+    "summary": "Cursor объявил Cursor Router — новый режим маршрутизации моделей в своей среде разработки с агентами ИИ. Анонс размечен как release discussion и связан с Auto mode и Teams/Enterprise.",
+    "published_at": null,
+    "published_date": "2026-07-23",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Introducing Cursor Router",
+        "publisher": "Cursor",
+        "url": "https://forum.cursor.com/t/introducing-cursor-router/166386"
+      }
+    ],
+    "keywords": [
+      "Cursor",
+      "Cursor Router",
+      "ИИ-кодинг",
+      "coding agents",
+      "маршрутизация моделей",
+      "Auto mode",
+      "enterprise"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Cursor выпустил мобильное приложение для iOS с доступом к cloud agents",
+    "organization": "Cursor",
+    "topic": "мобильное управление агентами ИИ",
+    "event_type": "product_launch",
+    "status": "new",
+    "summary": "Cursor объявил мобильное приложение для iOS. В официальном анонсе релиз отмечен как связанный с cloud agents и удалённым управлением, то есть переносит часть агентного процесса разработки на мобильное устройство.",
+    "published_at": null,
+    "published_date": "2026-07-23",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Cursor Mobile App for iOS",
+        "publisher": "Cursor",
+        "url": "https://forum.cursor.com/t/cursor-mobile-app-for-ios/163417"
+      }
+    ],
+    "keywords": [
+      "Cursor",
+      "iOS",
+      "cloud agents",
+      "remote control",
+      "ИИ-кодинг",
+      "мобильное приложение",
+      "агенты ИИ"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "TARS представила embodied-модель AWE 3.5 и промышленные демонстрации на WAIC",
+    "organization": "TARS",
+    "topic": "embodied AI и промышленная робототехника",
+    "event_type": "product_launch",
+    "status": "new",
+    "summary": "TARS сообщила о презентации embodied-native foundation model AWE 3.5 на WAIC 2026, а также показала роботов в задачах упаковки, сортировки и сборки гибких автомобильных жгутов. Компания заявляет о более чем миллионе часов данных, использованных в разработке.",
+    "published_at": null,
+    "published_date": "2026-07-23",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "TARS Debuts at WAIC 2026 as Its AWE Embodied Foundation Model Wins Prestigious SAIL Award",
+        "publisher": "TARS / PRNewswire",
+        "url": "https://www.eqs-news.com/news/corporate/tars-debuts-at-waic-2026-as-its-awe-embodied-foundation-model-wins-prestigious-sail-award/346c8370-348f-4a16-9697-558571fccdc3_en"
+      }
+    ],
+    "keywords": [
+      "TARS",
+      "AWE 3.5",
+      "embodied AI",
+      "physical AI",
+      "WAIC",
+      "робототехника",
+      "промышленность",
+      "DexHand"
+    ],
+    "geography": "world",
+    "category": "robotics"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "russia",
+    "headline": "МТС отменила плату за сервис AI-речевой аналитики MTS Optimus для абонентов МТС Супер",
+    "organization": "МТС",
+    "topic": "ИИ-речевая аналитика для малого бизнеса",
+    "event_type": "product_update",
+    "status": "new",
+    "summary": "МТС сделала MTS Optimus бесплатным для абонентов тарифа МТС Супер. Сервис записывает и расшифровывает разговоры, создаёт ИИ-саммари, поддерживает поиск по разговорам и включает веб-версию с мини-CRM.",
+    "published_at": null,
+    "published_date": "2026-07-23",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Отменяем плату за МТС Optimus 23.07.2026",
+        "publisher": "МТС Бизнес",
+        "url": "https://business.mts.ru/moskva/novosti/otmenyaem-platu-za-mts-optimus-23-07-2026"
+      }
+    ],
+    "keywords": [
+      "МТС",
+      "MTS Optimus",
+      "речевая аналитика",
+      "ИИ-саммари",
+      "расшифровка звонков",
+      "мини-CRM",
+      "малый бизнес"
+    ],
+    "geography": "russia",
+    "category": "enterprise"
+  }
+]

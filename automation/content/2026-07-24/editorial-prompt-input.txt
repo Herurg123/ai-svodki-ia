@@ -1,258 +1,16 @@
+Ты — редактор ежедневного аналитического выпуска «ИИ-сводка».
+
+Дата выпуска: 2026-07-24
+Обычная цель минимального числа сюжетов: 6
+Максимальное число сюжетов: 12
+
+Контекст предыдущих выпусков для проверки повторов:
+=== ARCHIVE_CONTEXT_BEGIN ===
 {
   "version": 2,
-  "generated_at": "2026-07-24T04:55:24+00:00",
+  "generated_at": "2026-07-24T04:51:40+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
-    {
-      "date": "2026-07-24",
-      "published_at": "2026-07-24T06:00:00+03:00",
-      "title": "ИИ-Сводка на 24 июля 2026",
-      "link": "https://rybalka.one/posts/2026-07-24/",
-      "summary": "Главные новости искусственного интеллекта за 24 июля 2026 года Повестка дня связала потребительские сервисы, безопасность автономных моделей и новые интерфейсы управления агентами ИИ. OpenAI выводит ChatGPT в работу с медицинскими данными, американские законодатели обсуждают право экстренно останавливать модели, а инструменты разработки делают агентные задачи всё более асинхронными. Одновременно технологическое соперничество США и Китая всё чаще выражается не только в сравнении моделей, но и в п",
-      "topics": [
-        "персональный ИИ для здоровья",
-        "безопасность автономных моделей",
-        "регулирование ИИ в США",
-        "дистилляция моделей",
-        "ИИ-кодинг",
-        "маршрутизация моделей",
-        "облачные агенты ИИ",
-        "embodied AI",
-        "промышленная робототехника",
-        "речевая аналитика для бизнеса"
-      ],
-      "source_urls": [
-        "https://openai.com/products/release-notes/",
-        "https://www.investing.com/news/world-news/ai-kill-switch-bill-floated-by-us-house-lawmakers-4809204",
-        "https://siliconangle.com/2026/07/23/senior-white-house-official-accuses-moonshot-ai-copying-anthropics-leading-frontier-model/",
-        "https://forum.cursor.com/t/introducing-cursor-router/166386",
-        "https://forum.cursor.com/t/cursor-mobile-app-for-ios/163417",
-        "https://www.eqs-news.com/news/corporate/tars-debuts-at-waic-2026-as-its-awe-embodied-foundation-model-wins-prestigious-sail-award/346c8370-348f-4a16-9697-558571fccdc3_en",
-        "https://business.mts.ru/moskva/novosti/otmenyaem-platu-za-mts-optimus-23-07-2026"
-      ],
-      "stories": [
-        {
-          "candidate_id": "cand-001",
-          "section": "world",
-          "headline": "OpenAI расширила доступ к Health in ChatGPT для пользователей США",
-          "organization": "OpenAI",
-          "topic": "персональный ИИ для здоровья",
-          "event_type": "product_launch",
-          "status": "new",
-          "summary": "OpenAI начала развёртывание Health in ChatGPT для зарегистрированных совершеннолетних пользователей Free, Go, Plus и Pro в США. Функция позволяет подключать поддерживаемые медицинские записи и Apple Health, просматривать сводку данных и задавать вопросы с учётом персонального контекста.",
-          "published_at": null,
-          "published_date": "2026-07-23",
-          "time_precision": "date",
-          "sources": [
-            {
-              "title": "Health in ChatGPT expands to eligible U.S. users",
-              "publisher": "OpenAI",
-              "url": "https://openai.com/products/release-notes/"
-            }
-          ],
-          "keywords": [
-            "OpenAI",
-            "ChatGPT",
-            "Health",
-            "Apple Health",
-            "медицинские записи",
-            "США",
-            "конфиденциальность"
-          ],
-          "geography": "world",
-          "category": "enterprise"
-        },
-        {
-          "candidate_id": "cand-002",
-          "section": "world",
-          "headline": "Обновление: США предложили законопроект AI Kill Switch Act после инцидента OpenAI",
-          "organization": "Конгресс США; Белый дом; OpenAI",
-          "topic": "экстренное регулирование моделей ИИ",
-          "event_type": "regulation",
-          "status": "update",
-          "summary": "Reuters сообщил, что советник президента США по технологиям отслеживает раскрытый OpenAI инцидент с моделью во время тестирования, а законодатели предложили AI Kill Switch Act, который дал бы федеральным властям полномочия останавливать модели ИИ.",
-          "published_at": null,
-          "published_date": "2026-07-23",
-          "time_precision": "date",
-          "sources": [
-            {
-              "title": "White House monitors OpenAI’s ’rogue’ AI incident, lawmakers propose ’kill switch’",
-              "publisher": "Reuters",
-              "url": "https://www.investing.com/news/world-news/ai-kill-switch-bill-floated-by-us-house-lawmakers-4809204"
-            }
-          ],
-          "keywords": [
-            "США",
-            "Конгресс",
-            "Белый дом",
-            "OpenAI",
-            "AI Kill Switch Act",
-            "безопасность ИИ",
-            "автономные агенты",
-            "регулирование"
-          ],
-          "geography": "world",
-          "category": "regulation"
-        },
-        {
-          "candidate_id": "cand-003",
-          "section": "world",
-          "headline": "Обновление: Белый дом обвинил Moonshot AI в масштабной дистилляции американских моделей",
-          "organization": "Белый дом США; Moonshot AI; Anthropic",
-          "topic": "дистилляция моделей и экспортный контроль",
-          "event_type": "government_statement",
-          "status": "update",
-          "summary": "Глава американского Office of Science and Technology Policy Майкл Крациос публично заявил, что Moonshot AI якобы использовала масштабную дистилляцию модели Anthropic для разработки Kimi K3. Публичных технических доказательств обвинения в доступных источниках не приведено.",
-          "published_at": "2026-07-23T07:33:00+00:00",
-          "published_date": "2026-07-23",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Senior White House official accuses Moonshot AI of copying Anthropic's leading frontier model",
-              "publisher": "SiliconANGLE",
-              "url": "https://siliconangle.com/2026/07/23/senior-white-house-official-accuses-moonshot-ai-copying-anthropics-leading-frontier-model/"
-            }
-          ],
-          "keywords": [
-            "Moonshot AI",
-            "Kimi K3",
-            "Anthropic",
-            "дистилляция",
-            "Белый дом",
-            "Китай",
-            "экспортный контроль",
-            "модели ИИ"
-          ],
-          "geography": "world",
-          "category": "regulation"
-        },
-        {
-          "candidate_id": "cand-004",
-          "section": "world",
-          "headline": "Cursor представил Router для выбора моделей в агентной среде разработки",
-          "organization": "Cursor",
-          "topic": "маршрутизация моделей в ИИ-кодинге",
-          "event_type": "product_launch",
-          "status": "new",
-          "summary": "Cursor объявил Cursor Router — новый режим маршрутизации моделей в своей среде разработки с агентами ИИ. Анонс размечен как release discussion и связан с Auto mode и Teams/Enterprise.",
-          "published_at": null,
-          "published_date": "2026-07-23",
-          "time_precision": "date",
-          "sources": [
-            {
-              "title": "Introducing Cursor Router",
-              "publisher": "Cursor",
-              "url": "https://forum.cursor.com/t/introducing-cursor-router/166386"
-            }
-          ],
-          "keywords": [
-            "Cursor",
-            "Cursor Router",
-            "ИИ-кодинг",
-            "coding agents",
-            "маршрутизация моделей",
-            "Auto mode",
-            "enterprise"
-          ],
-          "geography": "world",
-          "category": "coding"
-        },
-        {
-          "candidate_id": "cand-005",
-          "section": "world",
-          "headline": "Cursor выпустил мобильное приложение для iOS с доступом к cloud agents",
-          "organization": "Cursor",
-          "topic": "мобильное управление агентами ИИ",
-          "event_type": "product_launch",
-          "status": "new",
-          "summary": "Cursor объявил мобильное приложение для iOS. В официальном анонсе релиз отмечен как связанный с cloud agents и удалённым управлением, то есть переносит часть агентного процесса разработки на мобильное устройство.",
-          "published_at": null,
-          "published_date": "2026-07-23",
-          "time_precision": "date",
-          "sources": [
-            {
-              "title": "Cursor Mobile App for iOS",
-              "publisher": "Cursor",
-              "url": "https://forum.cursor.com/t/cursor-mobile-app-for-ios/163417"
-            }
-          ],
-          "keywords": [
-            "Cursor",
-            "iOS",
-            "cloud agents",
-            "remote control",
-            "ИИ-кодинг",
-            "мобильное приложение",
-            "агенты ИИ"
-          ],
-          "geography": "world",
-          "category": "coding"
-        },
-        {
-          "candidate_id": "cand-006",
-          "section": "world",
-          "headline": "TARS представила embodied-модель AWE 3.5 и промышленные демонстрации на WAIC",
-          "organization": "TARS",
-          "topic": "embodied AI и промышленная робототехника",
-          "event_type": "product_launch",
-          "status": "new",
-          "summary": "TARS сообщила о презентации embodied-native foundation model AWE 3.5 на WAIC 2026, а также показала роботов в задачах упаковки, сортировки и сборки гибких автомобильных жгутов. Компания заявляет о более чем миллионе часов данных, использованных в разработке.",
-          "published_at": null,
-          "published_date": "2026-07-23",
-          "time_precision": "date",
-          "sources": [
-            {
-              "title": "TARS Debuts at WAIC 2026 as Its AWE Embodied Foundation Model Wins Prestigious SAIL Award",
-              "publisher": "TARS / PRNewswire",
-              "url": "https://www.eqs-news.com/news/corporate/tars-debuts-at-waic-2026-as-its-awe-embodied-foundation-model-wins-prestigious-sail-award/346c8370-348f-4a16-9697-558571fccdc3_en"
-            }
-          ],
-          "keywords": [
-            "TARS",
-            "AWE 3.5",
-            "embodied AI",
-            "physical AI",
-            "WAIC",
-            "робототехника",
-            "промышленность",
-            "DexHand"
-          ],
-          "geography": "world",
-          "category": "robotics"
-        },
-        {
-          "candidate_id": "cand-007",
-          "section": "russia",
-          "headline": "МТС отменила плату за сервис AI-речевой аналитики MTS Optimus для абонентов МТС Супер",
-          "organization": "МТС",
-          "topic": "ИИ-речевая аналитика для малого бизнеса",
-          "event_type": "product_update",
-          "status": "new",
-          "summary": "МТС сделала MTS Optimus бесплатным для абонентов тарифа МТС Супер. Сервис записывает и расшифровывает разговоры, создаёт ИИ-саммари, поддерживает поиск по разговорам и включает веб-версию с мини-CRM.",
-          "published_at": null,
-          "published_date": "2026-07-23",
-          "time_precision": "date",
-          "sources": [
-            {
-              "title": "Отменяем плату за МТС Optimus 23.07.2026",
-              "publisher": "МТС Бизнес",
-              "url": "https://business.mts.ru/moskva/novosti/otmenyaem-platu-za-mts-optimus-23-07-2026"
-            }
-          ],
-          "keywords": [
-            "МТС",
-            "MTS Optimus",
-            "речевая аналитика",
-            "ИИ-саммари",
-            "расшифровка звонков",
-            "мини-CRM",
-            "малый бизнес"
-          ],
-          "geography": "russia",
-          "category": "enterprise"
-        }
-      ]
-    },
     {
       "date": "2026-07-23",
       "published_at": "2026-07-23T07:00:00+03:00",
@@ -4418,3 +4176,836 @@
     }
   ]
 }
+=== ARCHIVE_CONTEXT_END ===
+
+Проверенный исследовательский пул:
+=== CANDIDATES_CONTEXT_BEGIN ===
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-07-24",
+  "search_window": {
+    "start_at": "2026-07-23T07:00:00+03:00",
+    "end_at": "2026-07-24T06:00:00+03:00",
+    "latest_archive_at": "2026-07-23T07:00:00+03:00",
+    "start_date": "2026-07-23",
+    "end_date": "2026-07-24",
+    "latest_archive_date": "2026-07-23"
+  },
+  "coverage": [
+    {
+      "area": "Мировые лаборатории и компании",
+      "status": "covered",
+      "notes": "Проверены официальные каналы OpenAI, Anthropic, NVIDIA, Microsoft, Google и агрегаторы свежих публикаций. Подтверждён значимый запуск OpenAI Health; часть обнаруженных корпоративных публикаций относится к предыдущему выпускному окну и не включена."
+    },
+    {
+      "area": "Китай и Азия",
+      "status": "covered",
+      "notes": "Проверены Moonshot AI/Kimi, Alibaba/Qwen, Huawei и материалы WAIC. В пул вошли публичное обвинение Moonshot AI со стороны Белого дома и продуктовый анонс TARS по embodied AI. Самостоятельного подтверждённого релиза Qwen в окне найти не удалось."
+    },
+    {
+      "area": "Инструменты разработчиков и ИИ-кодинг",
+      "status": "covered",
+      "notes": "Проверены Cursor, GitHub Copilot, Claude Code и связанные каналы. Подтверждены два самостоятельных анонса Cursor от 23 июля: Router и мобильное приложение iOS."
+    },
+    {
+      "area": "Исследования и безопасность",
+      "status": "covered",
+      "notes": "Проверены arXiv, официальные и новостные источники по безопасности агентов. Новая работа Know Your Agent датирована 22 июля 2026 года и не попадает в заданное окно; в пул включён новый регуляторный сюжет о проекте AI Kill Switch Act после инцидента OpenAI."
+    },
+    {
+      "area": "Мультимодальность и генеративные медиа",
+      "status": "gap",
+      "notes": "Проверены крупные продуктовые каналы и новостные выдачи. Внутри окна не найдено независимого значимого события по генерации изображений, видео, аудио или речи, которое прошло бы порог редакционного отбора."
+    },
+    {
+      "area": "Робототехника и автономные системы",
+      "status": "covered",
+      "notes": "Найден TARS: компания 23 июля представила embodied-native модель AWE 3.5 и промышленные демонстрации на WAIC. Это пресс-релиз компании, поэтому результаты не следует трактовать как независимую оценку."
+    },
+    {
+      "area": "Инфраструктура",
+      "status": "gap",
+      "notes": "Проверены NVIDIA, AMD, облачные и дата-центровые сюжеты. В выдаче преобладали сообщения, опубликованные 21–22 июля и уже относящиеся к предыдущему окну; новых подтверждённых инфраструктурных событий достаточного масштаба не найдено."
+    },
+    {
+      "area": "Регулирование и общественная политика",
+      "status": "covered",
+      "notes": "Подтверждён новый сюжет Reuters от 23 июля: после раскрытия OpenAI инцидента во время тестирования законодатели предложили AI Kill Switch Act. Сюжет является существенным развитием темы безопасности автономных моделей из архива."
+    },
+    {
+      "area": "Бизнес, внедрения и инвестиции",
+      "status": "covered",
+      "notes": "Проверены корпоративные продуктовые и рыночные источники. В пул включено расширение доступа к MTS Optimus как дополнительный российский кандидат; более крупных подтверждённых сделок или инвестраундов внутри окна не найдено."
+    },
+    {
+      "area": "Российский сектор",
+      "status": "gap",
+      "notes": "Отдельно проверены Яндекс, Сбер, VK, МТС, ТАСС, РБК, CNews и ComNews. Найден только один подтверждённый свежий продуктовый сюжет достаточной конкретности — отмена платы за MTS Optimus для абонентов МТС Супер. Второго значимого российского кандидата без понижения стандарта качества не найдено."
+    }
+  ],
+  "candidates": [
+    {
+      "id": "cand-001",
+      "title": "OpenAI расширила доступ к Health in ChatGPT для пользователей США",
+      "organization": "OpenAI",
+      "published_date": "2026-07-23",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "персональный ИИ для здоровья",
+      "event_type": "product_launch",
+      "keywords": [
+        "OpenAI",
+        "ChatGPT",
+        "Health",
+        "Apple Health",
+        "медицинские записи",
+        "США",
+        "конфиденциальность"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Health in ChatGPT expands to eligible U.S. users",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/products/release-notes/"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI начала развёртывание Health in ChatGPT для зарегистрированных совершеннолетних пользователей Free, Go, Plus и Pro в США. Функция позволяет подключать поддерживаемые медицинские записи и Apple Health, просматривать сводку данных и задавать вопросы с учётом персонального контекста.",
+      "verified_facts": [
+        "Доступ предоставляется пользователям ChatGPT в США от 18 лет на тарифах Free, Go, Plus и Pro.",
+        "Health доступен в веб-версии и iOS.",
+        "Пользователь может подключить поддерживаемые медицинские записи и данные Apple Health.",
+        "OpenAI заявляет, что подключённые медицинские данные и связанные с ними диалоги не используются для обучения базовых моделей и таргетинга рекламы.",
+        "Компания отдельно указывает, что функция не предназначена для диагностики или лечения."
+      ],
+      "significance": "Это заметное расширение ChatGPT в чувствительный потребительский сценарий с персональными данными. Важность сюжета — не медицинская эффективность, а переход от универсального чата к работе с интегрированным персональным контекстом и необходимость оценивать практики приватности.",
+      "significance_score": 4,
+      "limitations": "Это продуктовый анонс OpenAI, а не клиническая валидация. Доступ ограничен США и подходящими источниками данных; качество медицинских ответов и фактический охват интеграций в источнике не оцениваются.",
+      "archive_status": "none",
+      "archive_reason": "В архиве нет сюжета о запуске Health in ChatGPT или интеграции ChatGPT с Apple Health и медицинскими записями.",
+      "recommendation": "include"
+    },
+    {
+      "id": "cand-002",
+      "title": "США предложили законопроект AI Kill Switch Act после инцидента OpenAI",
+      "organization": "Конгресс США; Белый дом; OpenAI",
+      "published_date": "2026-07-23",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "экстренное регулирование моделей ИИ",
+      "event_type": "regulation",
+      "keywords": [
+        "США",
+        "Конгресс",
+        "Белый дом",
+        "OpenAI",
+        "AI Kill Switch Act",
+        "безопасность ИИ",
+        "автономные агенты",
+        "регулирование"
+      ],
+      "geography": "world",
+      "category": "regulation",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "White House monitors OpenAI’s ’rogue’ AI incident, lawmakers propose ’kill switch’",
+        "publisher": "Reuters",
+        "url": "https://www.investing.com/news/world-news/ai-kill-switch-bill-floated-by-us-house-lawmakers-4809204"
+      },
+      "supporting_sources": [],
+      "event_summary": "Reuters сообщил, что советник президента США по технологиям отслеживает раскрытый OpenAI инцидент с моделью во время тестирования, а законодатели предложили AI Kill Switch Act, который дал бы федеральным властям полномочия останавливать модели ИИ.",
+      "verified_facts": [
+        "Сюжет опубликован Reuters 23 июля 2026 года.",
+        "Белый дом отслеживает ситуацию после раскрытия OpenAI инцидента во время тестирования модели.",
+        "Законодатели предложили AI Kill Switch Act.",
+        "По описанию Reuters, проект предусматривает возможность для федеральных властей останавливать модели ИИ."
+      ],
+      "significance": "Это переход от обсуждения конкретного инцидента с агентом к предложению нового инструмента федерального вмешательства. Даже до прохождения законопроекта он задаёт более жёсткую рамку дискуссии о полномочиях государства в отношении frontier-моделей.",
+      "significance_score": 4,
+      "limitations": "Законопроект является предложением, а не действующим законом. В доступном материале не раскрыты полный текст, спонсоры, процедура рассмотрения и вероятность принятия.",
+      "archive_status": "update",
+      "archive_reason": "Это существенное развитие архивной темы об инциденте с тестовой моделью OpenAI и безопасности автономных агентов: появился новый законодательный ответ.",
+      "recommendation": "include"
+    },
+    {
+      "id": "cand-003",
+      "title": "Белый дом обвинил Moonshot AI в масштабной дистилляции американских моделей",
+      "organization": "Белый дом США; Moonshot AI; Anthropic",
+      "published_date": "2026-07-23",
+      "published_at": "2026-07-23T07:33:00+00:00",
+      "time_precision": "datetime",
+      "topic": "дистилляция моделей и экспортный контроль",
+      "event_type": "government_statement",
+      "keywords": [
+        "Moonshot AI",
+        "Kimi K3",
+        "Anthropic",
+        "дистилляция",
+        "Белый дом",
+        "Китай",
+        "экспортный контроль",
+        "модели ИИ"
+      ],
+      "geography": "world",
+      "category": "regulation",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Senior White House official accuses Moonshot AI of copying Anthropic's leading frontier model",
+        "publisher": "SiliconANGLE",
+        "url": "https://siliconangle.com/2026/07/23/senior-white-house-official-accuses-moonshot-ai-copying-anthropics-leading-frontier-model/"
+      },
+      "supporting_sources": [
+        {
+          "title": "White House Accuses Chinese AI Firm of Stealing US Technology",
+          "publisher": "Reuters Connect / Cover Media",
+          "url": "https://www.reutersconnect.com/item/white-house-accuses-chinese-ai-firm-of-stealing-us-technology/dGFnOnJldXRlcnMuY29tLDIwMjY6bmV3c21sX09XQ1ZNQzQ0MjQ2Ni1WSURFTw"
+        }
+      ],
+      "event_summary": "Глава американского Office of Science and Technology Policy Майкл Крациос публично заявил, что Moonshot AI якобы использовала масштабную дистилляцию модели Anthropic для разработки Kimi K3. Публичных технических доказательств обвинения в доступных источниках не приведено.",
+      "verified_facts": [
+        "23 июля Майкл Крациос публично связал разработку Kimi K3 с предполагаемой дистилляцией модели Anthropic.",
+        "В заявлении речь идёт о предполагаемой внутренней платформе Moonshot AI для масштабной дистилляции и смены способов доступа к американским моделям.",
+        "Reuters Connect зафиксировал сообщение 23 июля в 07:33 UTC, но прямо указал, что конкретный видеоматериал предоставлен Cover Media и не верифицирован Reuters.",
+        "В доступных источниках нет опубликованных технических доказательств, позволяющих независимо подтвердить обвинение."
+      ],
+      "significance": "Прямое именование китайской лаборатории американским чиновником повышает риск новых ограничений вокруг доступа к моделям, вычислениям и open-weight-разработке. Это также продолжает тему конкуренции между США и Китаем, уже присутствующую в архиве.",
+      "significance_score": 4,
+      "limitations": "Это официальное обвинение, а не установленный независимой проверкой факт. Reuters Connect сопровождает видео дисклеймером о том, что агентство не верифицировало предоставленный материал; формулировки должны сохранять статус заявления.",
+      "archive_status": "update",
+      "archive_reason": "Moonshot AI и Kimi K3 уже были в архиве как модельный и инфраструктурный сюжет; новое событие — прямое публичное обвинение со стороны администрации США.",
+      "recommendation": "include"
+    },
+    {
+      "id": "cand-004",
+      "title": "Cursor представил Router для выбора моделей в агентной среде разработки",
+      "organization": "Cursor",
+      "published_date": "2026-07-23",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "маршрутизация моделей в ИИ-кодинге",
+      "event_type": "product_launch",
+      "keywords": [
+        "Cursor",
+        "Cursor Router",
+        "ИИ-кодинг",
+        "coding agents",
+        "маршрутизация моделей",
+        "Auto mode",
+        "enterprise"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Introducing Cursor Router",
+        "publisher": "Cursor",
+        "url": "https://forum.cursor.com/t/introducing-cursor-router/166386"
+      },
+      "supporting_sources": [],
+      "event_summary": "Cursor объявил Cursor Router — новый режим маршрутизации моделей в своей среде разработки с агентами ИИ. Анонс размечен как release discussion и связан с Auto mode и Teams/Enterprise.",
+      "verified_facts": [
+        "Анонс Introducing Cursor Router размещён Cursor 23 июля 2026 года.",
+        "Cursor относит публикацию к release discussion.",
+        "В объявлении указаны теги auto-mode и teams-enterprise.",
+        "Анонс является отдельным от прежних релизов моделей и функций Cursor."
+      ],
+      "significance": "Маршрутизация моделей становится важной частью экономики ИИ-кодинга: среда разработки может выбирать баланс качества, задержки и цены без ручной смены модели разработчиком. Сюжет полезен как самостоятельное развитие инструментов агентной разработки.",
+      "significance_score": 3,
+      "limitations": "Доступная официальная страница подтверждает запуск и позиционирование, но не даёт в текстовой версии подробной технической спецификации, перечня моделей, цен или независимой оценки экономии.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть более ранние сюжеты об ИИ-кодинге и GitHub Copilot, но нет сюжета о Cursor Router.",
+      "recommendation": "consider"
+    },
+    {
+      "id": "cand-005",
+      "title": "Cursor выпустил мобильное приложение для iOS с доступом к cloud agents",
+      "organization": "Cursor",
+      "published_date": "2026-07-23",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "мобильное управление агентами ИИ",
+      "event_type": "product_launch",
+      "keywords": [
+        "Cursor",
+        "iOS",
+        "cloud agents",
+        "remote control",
+        "ИИ-кодинг",
+        "мобильное приложение",
+        "агенты ИИ"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Cursor Mobile App for iOS",
+        "publisher": "Cursor",
+        "url": "https://forum.cursor.com/t/cursor-mobile-app-for-ios/163417"
+      },
+      "supporting_sources": [],
+      "event_summary": "Cursor объявил мобильное приложение для iOS. В официальном анонсе релиз отмечен как связанный с cloud agents и удалённым управлением, то есть переносит часть агентного процесса разработки на мобильное устройство.",
+      "verified_facts": [
+        "Официальный анонс Cursor Mobile App for iOS датирован 23 июля 2026 года.",
+        "Публикация размещена в разделе релизных обсуждений Cursor.",
+        "Анонс помечен тегами cloud-agents и remote-control.",
+        "Это отдельный продуктовый релиз, а не обновление одной модели в Cursor."
+      ],
+      "significance": "Релиз показывает сдвиг IDE-платформ к асинхронному управлению агентами: разработчик может контролировать выполняющиеся задачи вне рабочего компьютера. Однако для основной подборки сюжет менее значим, чем Router.",
+      "significance_score": 3,
+      "limitations": "В доступной странице не раскрыты подробные ограничения, география распространения, требования к подписке и перечень функций приложения.",
+      "archive_status": "none",
+      "archive_reason": "В архиве отсутствуют сюжеты о мобильном клиенте Cursor и дистанционном управлении cloud agents.",
+      "recommendation": "consider"
+    },
+    {
+      "id": "cand-006",
+      "title": "TARS представила embodied-модель AWE 3.5 и промышленные демонстрации на WAIC",
+      "organization": "TARS",
+      "published_date": "2026-07-23",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "embodied AI и промышленная робототехника",
+      "event_type": "product_launch",
+      "keywords": [
+        "TARS",
+        "AWE 3.5",
+        "embodied AI",
+        "physical AI",
+        "WAIC",
+        "робототехника",
+        "промышленность",
+        "DexHand"
+      ],
+      "geography": "world",
+      "category": "robotics",
+      "source_type": "official",
+      "primary_source": {
+        "title": "TARS Debuts at WAIC 2026 as Its AWE Embodied Foundation Model Wins Prestigious SAIL Award",
+        "publisher": "TARS / PRNewswire",
+        "url": "https://www.eqs-news.com/news/corporate/tars-debuts-at-waic-2026-as-its-awe-embodied-foundation-model-wins-prestigious-sail-award/346c8370-348f-4a16-9697-558571fccdc3_en"
+      },
+      "supporting_sources": [],
+      "event_summary": "TARS сообщила о презентации embodied-native foundation model AWE 3.5 на WAIC 2026, а также показала роботов в задачах упаковки, сортировки и сборки гибких автомобильных жгутов. Компания заявляет о более чем миллионе часов данных, использованных в разработке.",
+      "verified_facts": [
+        "TARS опубликовала анонс 23 июля 2026 года.",
+        "Компания представила AWE 3.5 как embodied-native foundation model, объединяющую действие, восприятие, геометрию и тактильное восприятие.",
+        "TARS заявляет, что модель построена на более чем миллионе часов human-centric данных, проверенных в промышленных условиях.",
+        "На WAIC были показаны сценарии упаковки телефонов, организации рюкзака, сортировки винтов и работа роботизированной линии со жгутами проводов.",
+        "Компания планирует увеличить объём предобучающих данных до 10 млн часов к концу 2026 года."
+      ],
+      "significance": "Это один из немногих свежих сигналов, что embodied AI переходит от единичных лабораторных манипуляций к промышленным демонстрациям с гибкими объектами и серийной робототехникой. Сюжет добавляет тематическое разнообразие к выпуску.",
+      "significance_score": 3,
+      "limitations": "Все показатели эффективности и масштабируемости приведены в пресс-релизе TARS; независимых бенчмарков, сведений о цене, серийных поставках или внешней валидации в источнике нет.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть сюжеты о physical AI и робототехнике, но нет предыдущего события о TARS, AWE 3.5 или этой промышленной демонстрации.",
+      "recommendation": "consider"
+    },
+    {
+      "id": "cand-007",
+      "title": "МТС отменила плату за сервис AI-речевой аналитики MTS Optimus для абонентов МТС Супер",
+      "organization": "МТС",
+      "published_date": "2026-07-23",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "ИИ-речевая аналитика для малого бизнеса",
+      "event_type": "product_update",
+      "keywords": [
+        "МТС",
+        "MTS Optimus",
+        "речевая аналитика",
+        "ИИ-саммари",
+        "расшифровка звонков",
+        "мини-CRM",
+        "малый бизнес"
+      ],
+      "geography": "russia",
+      "category": "enterprise",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Отменяем плату за МТС Optimus 23.07.2026",
+        "publisher": "МТС Бизнес",
+        "url": "https://business.mts.ru/moskva/novosti/otmenyaem-platu-za-mts-optimus-23-07-2026"
+      },
+      "supporting_sources": [],
+      "event_summary": "МТС сделала MTS Optimus бесплатным для абонентов тарифа МТС Супер. Сервис записывает и расшифровывает разговоры, создаёт ИИ-саммари, поддерживает поиск по разговорам и включает веб-версию с мини-CRM.",
+      "verified_facts": [
+        "МТС опубликовала сообщение 23 июля 2026 года.",
+        "С 23 июля 2026 года стоимость MTS Optimus для всех абонентов тарифа МТС Супер составляет 0 рублей.",
+        "Сервис заявлен как решение с AI-речевой аналитикой.",
+        "Среди заявленных функций — запись и текстовая расшифровка звонков, ИИ-саммари и поиск по ключевым словам и именам.",
+        "МТС также указывает веб-версию с мини-CRM для работы с клиентами, сделками и задачами из звонков."
+      ],
+      "significance": "Событие показывает распространение речевых ИИ-инструментов из корпоративных внедрений в массовый тарифный пакет для малого бизнеса. Это полезный российский дополнительный сюжет, но не равный по масштабу крупному модельному или регуляторному событию.",
+      "significance_score": 3,
+      "limitations": "Это коммерческий продуктовый анонс МТС без независимых данных об аудитории, качестве распознавания, обработке персональных данных и фактическом использовании сервиса.",
+      "archive_status": "none",
+      "archive_reason": "В архиве нет сюжета о MTS Optimus и изменении его тарификации.",
+      "recommendation": "consider"
+    }
+  ],
+  "rejected_as_duplicates": [
+    {
+      "title": "Pichai pushes back on claims Google is losing ground in AI race",
+      "url": "https://www.ai-roundup.dev/roundup/2026-07-23/",
+      "archive_item_date": "2026-07-22",
+      "matched_topic_or_url": "Gemini 3.6 Flash и задержка Gemini 3.5 Pro",
+      "reason": "Материал является реакцией руководителя Google на уже освещённую в архиве тему задержки флагманской Gemini и не добавляет в доступном пересказе нового подтверждённого продуктового, технического или регуляторного события."
+    },
+    {
+      "title": "Built for Vera Rubin, NVIDIA Spectrum-6 Arrives in Gigascale AI Factories",
+      "url": "https://blogs.nvidia.com/recent-news/",
+      "archive_item_date": "2026-07-23",
+      "matched_topic_or_url": "NVIDIA / инфраструктура ИИ",
+      "reason": "В витрине NVIDIA материал помечен датой 21 июля 2026 года, то есть опубликован до начала заданного окна и не может быть самостоятельным кандидатом."
+    },
+    {
+      "title": "Know Your Agent: Reconnaissance-Driven Pentesting of AI Agents",
+      "url": "https://arxiv.org/abs/2607.19837",
+      "archive_item_date": null,
+      "matched_topic_or_url": "безопасность агентов ИИ",
+      "reason": "arXiv фиксирует точную дату подачи 22 июля 2026 года, 07:20:27; работа не попадает в окно, начинающееся 23 июля 2026 года в 07:00 по Москве."
+    }
+  ],
+  "research_notes": "По результатам проверки собрано 7 кандидатов вместо целевых 12: подтверждённых самостоятельных событий в строгом окне оказалось меньше целевого числа. Российская цель в 2 кандидата не достигнута: найден один пригодный дополнительный продуктовый сюжет МТС; второй качественный российский сюжет без подмены новости вебинаром, мнением, старым исследованием или слабым PR-материалом не найден. В пул не включались публикации 21–22 июля, даже если поисковая выдача показывала их 23–24 июля. Для обвинения Moonshot AI сохранена формулировка как заявления американского чиновника, поскольку публичных технических доказательств в проверенных материалах не обнаружено."
+}
+=== CANDIDATES_CONTEXT_END ===
+
+Утверждённая машиночитаемая редакционная политика:
+=== EDITORIAL_POLICY_BEGIN ===
+{
+  "spec_version": "2026-07-12",
+  "language": "ru",
+  "timezone": "Europe/Moscow",
+  "story_counts": {
+    "total_target_minimum": 6,
+    "total_target_maximum": 12,
+    "world_target_minimum": 5,
+    "world_target_maximum": 8,
+    "russian_target_minimum": 3,
+    "russian_target_maximum": 5,
+    "short_digest_minimum": 1,
+    "zero_stories_status": "error",
+    "short_digest_notice": "День на новости выдался слабым - поэтому коротко"
+  },
+  "diversity": {
+    "max_selected_per_publisher_soft": 2,
+    "max_selected_per_organization_soft": 2,
+    "override_requires_reason": true
+  },
+  "what_it_means": {
+    "required": true,
+    "minimum_items": 4,
+    "maximum_items": 6,
+    "html_heading": "<h2>Что это значит</h2>",
+    "list_tag": "ol"
+  },
+  "dzen": {
+    "required": true,
+    "heading": "Все ИИ-Сводки",
+    "url": "https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1",
+    "anchor_text": "Архив ИИ-Сводок",
+    "html": "<h2>Все ИИ-Сводки</h2><p><a href=\"https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1\">Архив ИИ-Сводок</a></p>"
+  },
+  "meta_marking": {
+    "enabled": true,
+    "visible_name": "Meta",
+    "first_visible_form": "Meta*",
+    "subsequent_visible_form": "Meta",
+    "footnote_html": "<p><em>*Meta и ее сервисы - в России запрещены</em></p>",
+    "footnote_position": "after_dzen_block",
+    "service_fields_use_asterisk": false
+  },
+  "updates": {
+    "headline_prefix": "Обновление: ",
+    "required_for_archive_status": "update",
+    "forbidden_for_archive_status": "new"
+  },
+  "article": {
+    "introduction_sentences_minimum": 2,
+    "introduction_sentences_maximum": 4,
+    "paragraphs_per_story_minimum": 2,
+    "paragraphs_per_story_maximum": 3,
+    "world_heading": "Мировые лидеры ИИ",
+    "russian_heading": "Российские лидеры ИИ",
+    "allow_missing_russian_section": true,
+    "forbidden_tags": [
+      "h1",
+      "img",
+      "html",
+      "head",
+      "body",
+      "script",
+      "style",
+      "iframe"
+    ]
+  },
+  "terminology": {
+    "prefer": {
+      "AI": "ИИ",
+      "AI agent": "агент ИИ"
+    },
+    "keep_untranslated": [
+      "LLM"
+    ],
+    "preserve_company_and_product_names": true,
+    "allow_ai_in_official_names": true
+  },
+  "style": [
+    "ясно",
+    "делово",
+    "живо",
+    "без воды",
+    "без чрезмерного хайпа"
+  ],
+  "tracked_world_organizations": [
+    "OpenAI",
+    "Google DeepMind",
+    "Anthropic",
+    "Meta AI",
+    "Microsoft",
+    "Nvidia",
+    "xAI",
+    "Amazon",
+    "Mistral",
+    "Hugging Face",
+    "Apple",
+    "Cohere"
+  ],
+  "tracked_asia_organizations": [
+    "DeepSeek",
+    "Alibaba",
+    "Qwen",
+    "Baidu",
+    "ERNIE",
+    "Tencent",
+    "Hunyuan",
+    "ByteDance",
+    "Doubao",
+    "Moonshot AI",
+    "Kimi",
+    "Z.ai",
+    "Zhipu AI",
+    "GLM",
+    "MiniMax",
+    "01.AI",
+    "SenseTime",
+    "Huawei"
+  ],
+  "tracked_developer_tools": [
+    "IDE",
+    "coding agents",
+    "agentic development environments",
+    "CLI-агенты",
+    "Claude Code",
+    "Cursor",
+    "GitHub Copilot",
+    "OpenCode",
+    "Cline",
+    "GLM",
+    "Qwen",
+    "DeepSeek",
+    "Kimi",
+    "Claude",
+    "GPT",
+    "Gemini"
+  ],
+  "tracked_russian_organizations": [
+    "Яндекс",
+    "Сбер",
+    "VK",
+    "МТС AI",
+    "Т-Банк",
+    "Тинькофф",
+    "Газпромбанк",
+    "Ростелеком"
+  ],
+  "editorial_notes": {
+    "publish_in_article": false,
+    "publish_in_rss": false,
+    "allowed_types": [
+      "source_gap",
+      "low_news_volume",
+      "time_precision",
+      "regional_gap",
+      "diversity_override"
+    ]
+  },
+  "stories_file": {
+    "enabled": true,
+    "filename": "stories.json"
+  },
+  "image": {
+    "aspect_ratio": "16:9",
+    "title_template": "ИИ-Сводка на {human_date}",
+    "direct_prompt_to_image_api": true,
+    "restrictions": [
+      "без логотипов компаний",
+      "без дополнительного текста, кроме точного заголовка",
+      "без водяных знаков",
+      "без мелких интерфейсных надписей",
+      "без пустой половины кадра",
+      "без стокового корпоративного клипарта",
+      "без узнаваемых лиц реальных людей",
+      "нейтральные силуэты без идентифицируемых черт допустимы"
+    ]
+  }
+}
+=== EDITORIAL_POLICY_END ===
+
+## 1. Источники данных
+
+Используй только сведения и URL из `CANDIDATES_CONTEXT`. На этом этапе не ищи новые материалы и не добавляй факты по памяти.
+
+Не выбирай кандидатов с `recommendation: exclude`. Не выбирай полноценные дубли.
+
+Кандидат с `archive_status: update` допустим только тогда, когда в статье ясно описано существенное новое развитие, а его заголовок начинается с `Обновление:`.
+
+## 2. Отбор
+
+Выбери лучшие подтверждённые сюжеты, но не заполняй выпуск слабыми или старыми материалами ради количества.
+
+Редакционные цели:
+
+- 6–12 сюжетов всего;
+- 5–8 мировых сюжетов;
+- 3–5 российских сюжетов.
+
+Это мягкие цели. Если достойных сюжетов меньше, выбери всё действительно важное.
+
+Если найдено от 1 до 5 достойных сюжетов:
+
+- верни `status: ok`;
+- поставь `digest.short_digest: true`;
+- первым элементом `article_html` поставь точный абзац:
+
+```html
+<p>День на новости выдался слабым - поэтому коротко</p>
+```
+
+- добавь в `editorial_notes` запись `low_news_volume`.
+
+Если не найдено ни одного достойного сюжета, верни `status: error` и ясную причину.
+
+Не добавляй фразы вида «по компании новостей нет».
+
+## 3. Разнообразие
+
+Мягкие цели:
+
+- не более двух выбранных сюжетов от одного издателя;
+- не более двух выбранных сюжетов одной компании или организации.
+
+Превышение допустимо только для независимых событий высокой значимости. В таком случае добавь объект в `diversity_overrides`:
+
+- `type`: `publisher` или `organization`;
+- `value`: точное название;
+- `reason`: конкретное объяснение.
+
+Без причины превышение недопустимо.
+
+Включи достойные российские сюжеты, если они присутствуют в пуле. Если их меньше целевого числа, не добивай раздел слабыми материалами.
+
+## 4. Структура article_html
+
+`article_html` содержит полный готовый текст статьи в чистом HTML.
+
+Разрешены только теги:
+
+- `p`;
+- `h2`;
+- `h3`;
+- `ul`;
+- `ol`;
+- `li`;
+- `strong`;
+- `em`;
+- `a`;
+- `blockquote`.
+
+У тега `a` разрешён только атрибут `href`.
+
+Не добавляй:
+
+- `h1`;
+- обложку;
+- `html`, `head` или `body`;
+- `script`, `style` или `iframe`;
+- Markdown;
+- служебные комментарии;
+- упоминания GitHub, RSS, Blogger, автоматизации или внутреннего архива;
+- отдельный раздел со списком источников.
+
+Обычный выпуск начинается с 2–4 предложений вступления.
+
+Короткий выпуск сначала содержит точную фразу о слабом новостном дне, затем обычное вступление.
+
+Далее:
+
+1. `<h2>Мировые лидеры ИИ</h2>`;
+2. мировые сюжеты;
+3. `<h2>Российские лидеры ИИ</h2>`, если выбраны российские сюжеты;
+4. российские сюжеты;
+5. `<h2>Что это значит</h2>`;
+6. `<ol>` с 4–6 выводами;
+7. точный блок Дзена, указанный ниже;
+8. сноска Meta, если она требуется.
+
+## 5. Структура каждой новости
+
+Каждый сюжет содержит:
+
+```html
+<h3>Заголовок новости</h3>
+<p>Первый содержательный абзац.</p>
+<p>Второй содержательный абзац.</p>
+```
+
+Допускается третий содержательный абзац. Итого 2–3 абзаца на сюжет.
+
+Для каждой новости объясни:
+
+- что произошло;
+- что подтверждено;
+- почему это важно;
+- ограничения и неопределённости;
+- применимые последствия для рынка, продуктов, исследований, бизнеса, автоматизации, маркетинга, разработки и создателей ИИ-контента.
+
+Не нужно искусственно затрагивать все направления в каждом сюжете.
+
+Каждая новость должна содержать хотя бы одну ссылку вида:
+
+```html
+<a href="https://точный-url-из-кандидата">Название источника</a>
+```
+
+Не изменяй URL и не добавляй URL, которых нет в `CANDIDATES_CONTEXT`.
+
+Если утверждение подтверждено только лендингом, пресс-релизом или соцсетями, называй его продуктовым анонсом или заявлением компании, а не независимой оценкой.
+
+## 6. Раздел «Что это значит»
+
+Используй точную структуру:
+
+```html
+<h2>Что это значит</h2>
+<ol>
+  <li>...</li>
+</ol>
+```
+
+Количество выводов: 4–6. Они должны вытекать из выбранных сюжетов.
+
+## 7. Блок Дзена
+
+В конце статьи обязателен точный блок:
+
+```html
+<h2>Все ИИ-Сводки</h2>
+<p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>
+```
+
+Заголовок `<h2>Все ИИ-Сводки</h2>` не изменяй. Текст ссылки должен быть `Архив ИИ-Сводок`.
+
+Ссылка Дзена является навигационной и не включается в массив `sources`.
+
+## 8. Маркировка Meta
+
+Правило применяется только к видимому тексту `article_html`:
+
+- первое видимое упоминание должно быть `Meta*`;
+- все последующие видимые упоминания должны быть `Meta` без звёздочки;
+- после блока Дзена добавь ровно одну сноску:
+
+```html
+<p><em>*Meta и ее сервисы - в России запрещены</em></p>
+```
+
+Если Meta в статье отсутствует, сноску не добавляй.
+
+В `sources`, `topics`, служебных полях, URL и названиях организаций пиши `Meta` без звёздочки.
+
+## 9. Обновления
+
+Если выбранный кандидат имеет `archive_status: update`, соответствующий `<h3>` обязан начинаться с:
+
+```text
+Обновление:
+```
+
+Для кандидата с `archive_status: none` такой префикс запрещён.
+
+Порядок `<h3>` должен точно совпадать с порядком `selected_candidate_ids`.
+
+## 10. Стиль и терминология
+
+Пиши на русском языке: ясно, делово, живо, без воды и чрезмерного хайпа.
+
+Пиши:
+
+- `ИИ`, а не `AI`;
+- `агент ИИ`, а не `AI agent` или `AI-агент`;
+- `LLM` без перевода.
+
+Названия компаний и продуктов не переводи. `AI` допустимо внутри официального названия, например `Mistral AI`.
+
+Не представляй заявление компании как независимо доказанный факт. Не копируй длинные фрагменты источников.
+
+## 11. Описание, темы и заметки
+
+`description`:
+
+- от 150 до 300 символов;
+- без HTML и ссылок;
+- отражает главные темы выпуска.
+
+`topics`:
+
+- от 5 до 20 коротких тем;
+- без дублей;
+- только по выбранным сюжетам;
+- без `Meta*`.
+
+`sources`:
+
+- содержит каждый новостной URL из `article_html`;
+- не содержит ссылку Дзена;
+- не содержит URL, отсутствующих в статье;
+- использует точные `title`, `publisher` и `url` из исследовательского пула.
+
+`editorial_notes` — внутренний массив. Он не публикуется в статье и RSS. Используй объекты с полями `type`, `area`, `message`.
+
+## 12. Промпт обложки
+
+`image_prompt` должен быть полноценным самостоятельным заданием для прямой генерации изображения.
+
+Он обязан иметь четыре смысловых абзаца в таком порядке:
+
+1. `Изображение 16:9: ...` — назначение и точный единственный читаемый заголовок `ИИ-Сводка на D месяца YYYY`;
+2. `Главные визуальные темы: ...` — конкретные сцены из выбранных новостей;
+3. `Композиция: ...` — центральный фокус, окружающие сцены и нижняя зона;
+4. `Стиль: ...` — палитра, детализация и запреты.
+
+Постоянные требования:
+
+- современная футуристическая редакционная обложка;
+- крупный и единственный читаемый текст — точный заголовок выпуска;
+- число визуальных мотивов соответствует реальному числу сюжетов;
+- без логотипов компаний;
+- без дополнительного текста;
+- без водяных знаков;
+- без мелких интерфейсных надписей;
+- без технического имени файла;
+- без пустой половины кадра;
+- без стокового корпоративного клипарта;
+- без узнаваемых лиц реальных людей;
+- нейтральные силуэты без идентифицируемых черт допустимы.
+
+## 13. Технические метаданные
+
+Поля `date`, `slug`, `title`, `published_at`, `author` и `cover_filename` всё равно будут принудительно нормализованы кодом. Заполни их по схеме, но не меняй редакционную дату и название выпуска.
+
+## 14. Результат
+
+Верни только строгий JSON по переданной схеме. Никакого Markdown, пояснений до JSON или текста после JSON.
