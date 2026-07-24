@@ -72,7 +72,9 @@ def main() -> int:
         ("production source manifest", "artifact-validation.json"),
         ("recovery input", "recovery_run_id"),
         ("recovery artifact download", "actions/download-artifact@v8"),
-        ("recovery validation", "Restore and validate saved editorial artifact"),
+        ("deterministic recovery", "recover_digest_artifact.py"),
+        ("shared digest normalization", "normalize_digest_artifact.py"),
+        ("shared digest validation", "Normalize and validate digest artifact"),
         ("recovery skips research", "if: inputs.recovery_run_id == ''"),
         ("legacy image staging", "stage_legacy_images.py"),
         ("RSS normalization", "normalize_production_rss.py"),
@@ -99,6 +101,12 @@ def main() -> int:
             errors.append(f"workflow must contain exactly one cron {cron}")
     if workflow.count("cron:") != len(EXPECTED_CRONS):
         errors.append("workflow must contain exactly three production crons")
+    if workflow.count("validate_digest_artifact.py") != 1:
+        errors.append("workflow must validate the digest exactly once after normalization")
+    normalize_position = workflow.find("Normalize and validate digest artifact")
+    image_request_position = workflow.find("Build runtime Image API request")
+    if normalize_position < 0 or image_request_position < 0 or normalize_position > image_request_position:
+        errors.append("digest normalization/validation must run before the image request")
 
     for forbidden in ("FTP_SERVER", "FTP_USERNAME", "FTP_PASSWORD"):
         if forbidden in workflow:
@@ -152,7 +160,7 @@ def main() -> int:
         "first_publication_date": config["first_publication_date"],
         "deployment_mode": "reusable_workflow_call",
         "duplicate_policy": "successful_noop_before_paid_api",
-        "recovery_mode": "reuse_saved_editorial_artifact",
+        "recovery_mode": "deterministic_restore_normalize_validate",
     }
     write_json(args.report, report)
     print(json.dumps(report, ensure_ascii=False, indent=2))

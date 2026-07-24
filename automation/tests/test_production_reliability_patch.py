@@ -26,6 +26,14 @@ generator = load_module(
     "production_reliability_image_generator",
     SCRIPTS / "generate_image_preview.py",
 )
+normalizer = load_module(
+    "production_reliability_digest_normalizer",
+    SCRIPTS / "normalize_digest_artifact.py",
+)
+recovery = load_module(
+    "production_reliability_digest_recovery",
+    SCRIPTS / "recover_digest_artifact.py",
+)
 
 
 class ProductionImageHandoffTests(unittest.TestCase):
@@ -208,6 +216,102 @@ class ProductionImageHandoffTests(unittest.TestCase):
         self.assertEqual(payload["source_manifest"], "artifact-validation.json")
 
 
+class DigestArtifactNormalizationTests(unittest.TestCase):
+    def test_legacy_prompt_is_migrated_in_every_known_payload(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            artifact = Path(temp_dir) / "artifact"
+            artifact.mkdir()
+            original = (
+                "Изображение 16:9: Test digest.\n"
+                "Главные визуальные темы: servers.\n"
+                "Композиция: dashboard.\n"
+                "Стиль: editorial, без логотипов."
+            )
+            payloads = {
+                "digest.json": {"date": "2026-07-24", "image_prompt": original},
+                "editorial-output.json": {"digest": {"image_prompt": original}},
+                "editorial-output-raw.json": {"digest": {"image_prompt": original}},
+            }
+            for name, payload in payloads.items():
+                (artifact / name).write_text(
+                    json.dumps(payload, ensure_ascii=False) + "\n",
+                    encoding="utf-8",
+                )
+            (artifact / "image-prompt.txt").write_text(original + "\n", encoding="utf-8")
+            (artifact / "artifact-validation.json").write_text(
+                json.dumps({"status": "ok", "manifest": ["stale"]}) + "\n",
+                encoding="utf-8",
+            )
+
+            report = normalizer.normalize_artifact(
+                artifact,
+                artifact / "artifact-normalization.json",
+            )
+            self.assertEqual(report["status"], "ok")
+            self.assertFalse((artifact / "artifact-validation.json").exists())
+            for name in payloads:
+                rendered = (artifact / name).read_text(encoding="utf-8").lower()
+                for constraint in normalizer.CONSTRAINTS:
+                    self.assertIn(constraint, rendered)
+            rendered_text = (artifact / "image-prompt.txt").read_text(encoding="utf-8").lower()
+            for constraint in normalizer.CONSTRAINTS:
+                self.assertIn(constraint, rendered_text)
+
+            second = normalizer.normalize_artifact(
+                artifact,
+                artifact / "artifact-normalization-second.json",
+            )
+            self.assertEqual(second["changed_files"], [])
+
+
+class DigestArtifactRecoveryTests(unittest.TestCase):
+    def _write_complete_artifact(self, directory: Path, publication_date: str) -> None:
+        directory.mkdir(parents=True, exist_ok=True)
+        for name in recovery.REQUIRED_FILES:
+            payload = {"status": "ok"}
+            if name == "digest.json":
+                payload.update(
+                    {
+                        "date": publication_date,
+                        "image_prompt": "Изображение 16:9: x",
+                    }
+                )
+            (directory / name).write_text(
+                json.dumps(payload, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+
+    def test_complete_editorial_source_wins_over_incomplete_image_copy(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            recovery_root = root / "download"
+            incomplete = recovery_root / "production-daily" / "image" / "2026-07-24"
+            incomplete.mkdir(parents=True)
+            (incomplete / "digest.json").write_text(
+                json.dumps({"date": "2026-07-24"}) + "\n",
+                encoding="utf-8",
+            )
+            complete = recovery_root / "2026-07-24"
+            self._write_complete_artifact(complete, "2026-07-24")
+            (complete / "cover.png").write_bytes(b"old")
+            (complete / "artifact-validation.json").write_text(
+                json.dumps({"status": "ok"}) + "\n",
+                encoding="utf-8",
+            )
+
+            target = root / "target"
+            report = recovery.recover(
+                recovery_root,
+                target,
+                "2026-07-24",
+                root / "recovery-report.json",
+            )
+            self.assertEqual(Path(report["selected_source"]), complete)
+            self.assertTrue((target / "digest.json").is_file())
+            self.assertFalse((target / "cover.png").exists())
+            self.assertFalse((target / "artifact-validation.json").exists())
+
+
 class ProductionWorkflowReliabilityTests(unittest.TestCase):
     def test_three_crons_gate_and_recovery_are_present(self) -> None:
         workflow = (ROOT / ".github" / "workflows" / "daily-production.yml").read_text(
@@ -222,6 +326,14 @@ class ProductionWorkflowReliabilityTests(unittest.TestCase):
         self.assertIn("should_deploy", workflow)
         self.assertIn("recovery_run_id", workflow)
         self.assertIn("actions/download-artifact@v8", workflow)
+        self.assertIn("recover_digest_artifact.py", workflow)
+        self.assertIn("normalize_digest_artifact.py", workflow)
+        self.assertIn("Normalize and validate digest artifact", workflow)
+        self.assertEqual(workflow.count("validate_digest_artifact.py"), 1)
+        self.assertLess(
+            workflow.index("Normalize and validate digest artifact"),
+            workflow.index("Build runtime Image API request"),
+        )
         self.assertIn("if: inputs.recovery_run_id == ''", workflow)
         self.assertIn("rm -rf \"${image_dir}\"", workflow)
 
