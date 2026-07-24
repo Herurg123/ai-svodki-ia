@@ -223,6 +223,7 @@ jobs:
             --recovery-root "automation/recovery/${RECOVERY_RUN_ID}" \
             --target-dir "automation/preview/${PUBLICATION_DATE}" \
             --publication-date "${PUBLICATION_DATE}" \
+            --timezone Europe/Moscow \
             --report automation/preview/production-daily/recovery.json
           echo "Recovered paid research/editorial from run ${RECOVERY_RUN_ID}."
 
@@ -431,33 +432,12 @@ jobs:
             exit 1
           }
 
-          changed="$(git status --porcelain)"
-          [[ -n "${changed}" ]] || { echo "No production changes found" >&2; exit 1; }
-
-          python - <<'PY'
-          import subprocess
-          allowed_prefixes = (
-              "posts/",
-              "automation/content/",
-              "automation/archive/index.json",
-          )
-          lines = subprocess.check_output(
-              ["git", "status", "--porcelain"], text=True
-          ).splitlines()
-          bad = []
-          for line in lines:
-              path = line[3:]
-              if " -> " in path:
-                  path = path.split(" -> ", 1)[1]
-              if not path.startswith(allowed_prefixes):
-                  bad.append(path)
-          if bad:
-              raise SystemExit(f"Unexpected changed paths: {bad}")
-          PY
+          python automation/scripts/validate_publish_changes.py \
+            --publication-date "${date}" \
+            --report automation/preview/production-daily/publish-changes.json
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add posts automation/content/"${date}" automation/archive/index.json
           git commit -m "Publish AI digest for ${date}"
           commit_sha="$(git rev-parse HEAD)"
           git push origin HEAD:main
