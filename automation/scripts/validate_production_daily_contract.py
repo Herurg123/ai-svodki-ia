@@ -1,17 +1,22 @@
 from __future__ import annotations
-import argparse, json
+
+import argparse
+import json
 from pathlib import Path
+
 from production_daily_common import parse_rss, read_json, write_json
+
+EXPECTED_CRONS = ["17 3 * * *", "37 3 * * *", "57 3 * * *"]
 
 
 def main() -> int:
-    p = argparse.ArgumentParser()
-    p.add_argument("--config", type=Path, required=True)
-    p.add_argument("--site-config", type=Path, required=True)
-    p.add_argument("--workflow", type=Path, required=True)
-    p.add_argument("--rss", type=Path, required=True)
-    p.add_argument("--report", type=Path, required=True)
-    args = p.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", type=Path, required=True)
+    parser.add_argument("--site-config", type=Path, required=True)
+    parser.add_argument("--workflow", type=Path, required=True)
+    parser.add_argument("--rss", type=Path, required=True)
+    parser.add_argument("--report", type=Path, required=True)
+    args = parser.parse_args()
 
     config = read_json(args.config)
     site = read_json(args.site_config)
@@ -23,20 +28,30 @@ def main() -> int:
         else ""
     )
     rss = parse_rss(args.rss)
-    errors = []
+    errors: list[str] = []
 
     required = {
         "enabled": True,
         "timezone": "Europe/Moscow",
         "publication_hour_local": 6,
-        "schedule_cron_utc": "7 3 * * *",
         "production_branch": "main",
         "feed_url": "https://rybalka.one/posts/rss.xml",
         "first_publication_date": "2026-07-24",
     }
     for key, expected in required.items():
         if config.get(key) != expected:
-            errors.append(f"config {key}: expected {expected!r}, got {config.get(key)!r}")
+            errors.append(
+                f"config {key}: expected {expected!r}, got {config.get(key)!r}"
+            )
+
+    if config.get("schedule_crons_utc") != EXPECTED_CRONS:
+        errors.append(
+            "config schedule_crons_utc must contain the three accepted backup windows"
+        )
+    if config.get("schedule_cron_utc") != EXPECTED_CRONS[0]:
+        errors.append("config schedule_cron_utc must equal the primary window")
+    if config.get("publication_minute_local") != 17:
+        errors.append("config publication_minute_local must equal 17")
 
     if site.get("feed_url") != config.get("feed_url"):
         errors.append("site feed_url differs from production feed_url")
@@ -44,11 +59,21 @@ def main() -> int:
         errors.append("site timezone differs from production timezone")
 
     checks = [
-        ("cron", 'cron: "7 3 * * *"'),
         ("main branch guard", "refs/heads/main"),
         ("contents write", "contents: write"),
+        ("actions read", "actions: read"),
         ("full digest", "PIPELINE_MODE: full"),
+        ("pre-paid no-op gate", "Check RSS before paid APIs"),
+        ("successful no-op", "successful no-op"),
+        ("deploy-only recovery", "Redeploy already committed release"),
+        ("live URL gate", "ai-svodki-production-gate/1.0"),
+        ("current main checkout", "ref: main"),
         ("image API", "generate_image_preview.py"),
+        ("production source manifest", "artifact-validation.json"),
+        ("recovery input", "recovery_run_id"),
+        ("recovery artifact download", "actions/download-artifact@v8"),
+        ("recovery validation", "Restore and validate saved editorial artifact"),
+        ("recovery skips research", "if: inputs.recovery_run_id == ''"),
         ("legacy image staging", "stage_legacy_images.py"),
         ("RSS normalization", "normalize_production_rss.py"),
         ("structured data", "inject_blogposting_schema.py"),
@@ -68,13 +93,16 @@ def main() -> int:
         if needle not in workflow:
             errors.append(f"workflow missing {label}: {needle}")
 
-    if workflow.count('cron: "7 3 * * *"') != 1:
-        errors.append("workflow must contain exactly one production cron")
+    for cron in EXPECTED_CRONS:
+        needle = f'cron: "{cron}"'
+        if workflow.count(needle) != 1:
+            errors.append(f"workflow must contain exactly one cron {cron}")
+    if workflow.count("cron:") != len(EXPECTED_CRONS):
+        errors.append("workflow must contain exactly three production crons")
 
     for forbidden in ("FTP_SERVER", "FTP_USERNAME", "FTP_PASSWORD"):
         if forbidden in workflow:
             errors.append(f"production workflow must not access {forbidden}")
-
     if "gh workflow run deploy-posts.yml" in workflow:
         errors.append(
             "production workflow must call deploy-posts.yml as a reusable workflow, "
@@ -103,7 +131,8 @@ def main() -> int:
     if rss["self_url"] != config["feed_url"]:
         errors.append("current RSS self URL is not the accepted root URL")
     legacy_count = sum(
-        1 for row in rss["items"]
+        1
+        for row in rss["items"]
         if row["link"].startswith(str(config["legacy_prefix"]))
     )
     if legacy_count < int(config["minimum_legacy_items"]):
@@ -114,10 +143,16 @@ def main() -> int:
         "errors": errors,
         "rss_latest_date": rss["latest_date"],
         "legacy_items": legacy_count,
-        "schedule_local": "06:07 Europe/Moscow",
-        "schedule_utc": config["schedule_cron_utc"],
+        "schedule_local": [
+            "06:17 Europe/Moscow",
+            "06:37 Europe/Moscow",
+            "06:57 Europe/Moscow",
+        ],
+        "schedule_utc": EXPECTED_CRONS,
         "first_publication_date": config["first_publication_date"],
         "deployment_mode": "reusable_workflow_call",
+        "duplicate_policy": "successful_noop_before_paid_api",
+        "recovery_mode": "reuse_saved_editorial_artifact",
     }
     write_json(args.report, report)
     print(json.dumps(report, ensure_ascii=False, indent=2))

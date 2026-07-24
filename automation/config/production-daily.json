@@ -1,9 +1,15 @@
 {
-  "version": 1,
+  "version": 2,
   "enabled": true,
   "timezone": "Europe/Moscow",
   "publication_hour_local": 6,
-  "schedule_cron_utc": "7 3 * * *",
+  "publication_minute_local": 17,
+  "schedule_cron_utc": "17 3 * * *",
+  "schedule_crons_utc": [
+    "17 3 * * *",
+    "37 3 * * *",
+    "57 3 * * *"
+  ],
   "first_publication_date": "2026-07-24",
   "production_branch": "main",
   "site_base_url": "https://rybalka.one/posts",
@@ -22,6 +28,5 @@
   "commit_author_name": "github-actions[bot]",
   "commit_author_email": "41898282+github-actions[bot]@users.noreply.github.com",
   "commit_message_template": "Publish AI digest for {date}",
-  "ftp_delegated_to_existing_workflow": true,
-  "publication_minute_local": 7
+  "ftp_delegated_to_existing_workflow": true
 }

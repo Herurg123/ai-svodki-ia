@@ -2,8 +2,8 @@
 """Generate one artifact-only cover through the OpenAI Images API.
 
 The script performs exactly one POST request and has no retry loop. It copies a
-validated editorial fixture into an isolated output directory, writes only
-artifact metadata, and never touches production posts/ or FTP.
+validated editorial package into an isolated output directory, writes artifact
+metadata, and never touches production posts/ or FTP.
 """
 
 from __future__ import annotations
@@ -29,6 +29,7 @@ OUTPUT_FILES = {
     "image-request.json",
     "image-manifest.json",
     "image-api-response.json",
+    "image-api-error.json",
     "cover-validation.json",
 }
 
@@ -43,7 +44,9 @@ def load_json(path: Path, label: str) -> dict[str, Any]:
     except OSError as exc:
         raise ImageGenerationError(f"Не удалось прочитать {label}: {exc}") from exc
     except json.JSONDecodeError as exc:
-        raise ImageGenerationError(f"{label} содержит некорректный JSON: {exc}") from exc
+        raise ImageGenerationError(
+            f"{label} содержит некорректный JSON: {exc}"
+        ) from exc
     if not isinstance(payload, dict):
         raise ImageGenerationError(f"{label} должен содержать JSON-объект")
     return payload
@@ -78,9 +81,13 @@ def safe_copy_source(source_dir: Path, output_dir: Path) -> list[str]:
     copied: list[str] = []
     for path in sorted(source_dir.iterdir()):
         if not path.is_file() or path.is_symlink():
-            raise ImageGenerationError(f"Source должен содержать только обычные файлы: {path}")
+            raise ImageGenerationError(
+                f"Source должен содержать только обычные файлы: {path}"
+            )
         if path.name in OUTPUT_FILES:
-            raise ImageGenerationError(f"Source уже содержит output Image API: {path.name}")
+            raise ImageGenerationError(
+                f"Source уже содержит output Image API: {path.name}"
+            )
         destination = output_dir / path.name
         shutil.copy2(path, destination)
         copied.append(path.name)
@@ -100,7 +107,6 @@ def parse_response_payload(payload: dict[str, Any]) -> tuple[bytes, dict[str, An
         raise ImageGenerationError("Images API вернул некорректный base64") from exc
     if not image_bytes.startswith(b"\x89PNG\r\n\x1a\n"):
         raise ImageGenerationError("Images API вернул данные без сигнатуры PNG")
-
     item = data[0]
     safe_metadata = {
         "created": payload.get("created"),
@@ -142,7 +148,9 @@ def default_transport(
             f"Images API HTTP {exc.code}: {error_body}"
         ) from exc
     except urllib.error.URLError as exc:
-        raise ImageGenerationError(f"Images API network error: {exc.reason}") from exc
+        raise ImageGenerationError(
+            f"Images API network error: {exc.reason}"
+        ) from exc
     try:
         payload = json.loads(response_body.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
@@ -150,6 +158,48 @@ def default_transport(
     if not isinstance(payload, dict):
         raise ImageGenerationError("Images API response должен быть JSON-объектом")
     return payload
+
+
+def resolve_source_manifest(
+    *, request: dict[str, Any], output_dir: Path
+) -> tuple[str, Path, dict[str, Any]]:
+    manifest_name = str(request.get("source_manifest") or "image-source.json").strip()
+    if not manifest_name or Path(manifest_name).name != manifest_name:
+        raise ImageGenerationError(
+            "source_manifest должен быть безопасным именем файла"
+        )
+    manifest_path = output_dir / manifest_name
+    manifest = load_json(manifest_path, manifest_name)
+    if manifest.get("status") != "ok":
+        raise ImageGenerationError(f"{manifest_name}: status должен быть ok")
+    return manifest_name, manifest_path, manifest
+
+
+def resolve_editorial_request_id(
+    *,
+    source_manifest: dict[str, Any],
+    output_dir: Path,
+    digest: dict[str, Any],
+) -> str:
+    value = str(source_manifest.get("editorial_request_id") or "").strip()
+    if value:
+        return value
+    run_info_path = output_dir / "run-info.json"
+    if run_info_path.exists():
+        run_info = load_json(run_info_path, "run-info.json")
+        value = str(
+            run_info.get("request_id")
+            or run_info.get("editorial_request_id")
+            or ""
+        ).strip()
+        if value:
+            return value
+    value = str(
+        digest.get("request_id") or digest.get("editorial_request_id") or ""
+    ).strip()
+    if value:
+        return value
+    raise ImageGenerationError("Не удалось определить editorial request ID")
 
 
 def generate_image_artifact(
@@ -176,6 +226,7 @@ def generate_image_artifact(
         raise ImageGenerationError(
             f"OPENAI_IMAGE_MODEL не совпадает с config: {model!r} != {target_model!r}"
         )
+
     width = int(config["width"])
     height = int(config["height"])
     size = f"{width}x{height}"
@@ -185,21 +236,34 @@ def generate_image_artifact(
 
     copied = safe_copy_source(source_dir, output_dir)
     digest = load_json(output_dir / "digest.json", "digest.json")
-    source_manifest = load_json(output_dir / "image-source.json", "image-source.json")
+    manifest_name, manifest_path, source_manifest = resolve_source_manifest(
+        request=request, output_dir=output_dir
+    )
+
     title = str(digest.get("title", "")).strip()
     prompt = str(digest.get("image_prompt", "")).strip()
     publication_date = str(digest.get("date", "")).strip()
     publish_filename = str(digest.get("cover_filename", "")).strip()
     if publication_date != request.get("publication_date"):
-        raise ImageGenerationError("Request publication_date не совпадает с digest.date")
+        raise ImageGenerationError(
+            "Request publication_date не совпадает с digest.date"
+        )
     if not all((title, prompt, publication_date, publish_filename)):
         raise ImageGenerationError(
             "digest.json должен содержать title, image_prompt, date и cover_filename"
         )
 
     prompt_sha256 = sha256_bytes(prompt.encode("utf-8"))
-    source_manifest_sha256 = sha256_file(output_dir / "image-source.json")
+    source_manifest_sha256 = sha256_file(manifest_path)
+    editorial_request_id = resolve_editorial_request_id(
+        source_manifest=source_manifest,
+        output_dir=output_dir,
+        digest=digest,
+    )
     request_id = str(request.get("request_id", "")).strip()
+    if not request_id:
+        raise ImageGenerationError("Image request_id отсутствует")
+
     api_request = {
         "model": model,
         "prompt": prompt,
@@ -209,7 +273,6 @@ def generate_image_artifact(
         "output_format": output_format,
         "background": "opaque",
     }
-
     started_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
     response_payload = transport(
         api_url=api_url,
@@ -241,8 +304,9 @@ def generate_image_artifact(
         "artifact_filename": artifact_filename,
         "publish_filename": publish_filename,
         "source": request.get("source"),
+        "source_manifest": manifest_name,
         "source_manifest_sha256": source_manifest_sha256,
-        "editorial_request_id": source_manifest.get("editorial_request_id"),
+        "editorial_request_id": editorial_request_id,
         "network_used": True,
         "openai_used": True,
         "retry_count": 0,
@@ -263,6 +327,7 @@ def generate_image_artifact(
         "bytes": len(image_bytes),
         "sha256": cover_sha256,
         "prompt_sha256": prompt_sha256,
+        "source_manifest": manifest_name,
         "source_manifest_sha256": source_manifest_sha256,
         "network_used": True,
         "openai_used": True,
