@@ -451,6 +451,20 @@ class ProductionWorkflowReliabilityTests(unittest.TestCase):
         self.assertIn("rm -rf \"${image_dir}\"", workflow)
         self.assertIn("validate_publish_changes.py", workflow)
         self.assertIn("--timezone Europe/Moscow", workflow)
+        self.assertIn("ensure_story_coverage.py", workflow)
+        self.assertIn("validate_story_coverage.py", workflow)
+        self.assertIn("--minimum-total 7", workflow)
+        self.assertIn("--minimum-world 5", workflow)
+        self.assertIn("--minimum-russia 2", workflow)
+        self.assertIn("--maximum-audit-web-search-calls 5", workflow)
+        self.assertLess(
+            workflow.index("Enforce 5 world plus 2 Russian stories"),
+            workflow.index("Normalize and validate digest artifact"),
+        )
+        self.assertLess(
+            workflow.index("Validate final story coverage"),
+            workflow.index("Build runtime Image API request"),
+        )
 
 
 if __name__ == "__main__":

@@ -37,6 +37,12 @@ def main() -> int:
         "production_branch": "main",
         "feed_url": "https://rybalka.one/posts/rss.xml",
         "first_publication_date": "2026-07-24",
+        "minimum_selected_stories": 7,
+        "minimum_world_selected_stories": 5,
+        "minimum_russian_selected_stories": 2,
+        "coverage_audit_enabled": True,
+        "coverage_audit_max_web_search_calls": 5,
+        "coverage_audit_maximum_candidates": 20,
     }
     for key, expected in required.items():
         if config.get(key) != expected:
@@ -76,6 +82,12 @@ def main() -> int:
         ("recovery freshness", "--timezone Europe/Moscow"),
         ("shared digest normalization", "normalize_digest_artifact.py"),
         ("shared digest validation", "Normalize and validate digest artifact"),
+        ("targeted coverage audit", "ensure_story_coverage.py"),
+        ("hard final story coverage", "validate_story_coverage.py"),
+        ("five world requirement", "--minimum-world 5"),
+        ("two Russian requirement", "--minimum-russia 2"),
+        ("seven total requirement", "--minimum-total 7"),
+        ("bounded audit searches", "--maximum-audit-web-search-calls 5"),
         ("recovery skips research", "if: inputs.recovery_run_id == ''"),
         ("legacy image staging", "stage_legacy_images.py"),
         ("RSS normalization", "normalize_production_rss.py"),
@@ -106,8 +118,18 @@ def main() -> int:
         errors.append("workflow must contain exactly three production crons")
     if workflow.count("validate_digest_artifact.py") != 1:
         errors.append("workflow must validate the digest exactly once after normalization")
+    coverage_audit_position = workflow.find("Enforce 5 world plus 2 Russian stories")
     normalize_position = workflow.find("Normalize and validate digest artifact")
+    coverage_validation_position = workflow.find("Validate final story coverage")
     image_request_position = workflow.find("Build runtime Image API request")
+    if coverage_audit_position < 0 or normalize_position < 0 or coverage_audit_position > normalize_position:
+        errors.append("targeted coverage audit must run before digest normalization")
+    if (
+        coverage_validation_position < 0
+        or image_request_position < 0
+        or coverage_validation_position > image_request_position
+    ):
+        errors.append("final 5+2 coverage validation must run before the image request")
     if normalize_position < 0 or image_request_position < 0 or normalize_position > image_request_position:
         errors.append("digest normalization/validation must run before the image request")
 
@@ -165,6 +187,12 @@ def main() -> int:
         "duplicate_policy": "successful_noop_before_paid_api",
         "recovery_mode": "deterministic_restore_freshness_normalize_validate",
         "commit_guard": "stage_publish_paths_ignore_runtime_outputs",
+        "story_coverage_contract": {
+            "minimum_total": 7,
+            "minimum_world": 5,
+            "minimum_russia": 2,
+            "audit_max_web_search_calls": 5,
+        },
     }
     write_json(args.report, report)
     print(json.dumps(report, ensure_ascii=False, indent=2))

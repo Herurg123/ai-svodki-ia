@@ -20,7 +20,7 @@
   "minimum_candidates": 12,
   "minimum_russian_candidates": 2,
   "maximum_candidates": 20,
-  "minimum_selected_stories": 6,
+  "minimum_selected_stories": 7,
   "maximum_selected_stories": 12,
   "content_root": "automation/content",
   "preview_root": "automation/preview/production-daily",
@@ -28,5 +28,10 @@
   "commit_author_name": "github-actions[bot]",
   "commit_author_email": "41898282+github-actions[bot]@users.noreply.github.com",
   "commit_message_template": "Publish AI digest for {date}",
-  "ftp_delegated_to_existing_workflow": true
+  "ftp_delegated_to_existing_workflow": true,
+  "minimum_world_selected_stories": 5,
+  "minimum_russian_selected_stories": 2,
+  "coverage_audit_enabled": true,
+  "coverage_audit_max_web_search_calls": 5,
+  "coverage_audit_maximum_candidates": 20
 }

@@ -1,13 +1,13 @@
 {
-  "spec_version": "2026-07-12",
+  "spec_version": "2026-07-24",
   "language": "ru",
   "timezone": "Europe/Moscow",
   "story_counts": {
-    "total_target_minimum": 6,
+    "total_target_minimum": 7,
     "total_target_maximum": 12,
     "world_target_minimum": 5,
     "world_target_maximum": 8,
-    "russian_target_minimum": 3,
+    "russian_target_minimum": 2,
     "russian_target_maximum": 5,
     "short_digest_minimum": 1,
     "zero_stories_status": "error",
