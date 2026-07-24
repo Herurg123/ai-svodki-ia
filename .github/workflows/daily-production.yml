@@ -3,7 +3,9 @@ run-name: Daily production digest ${{ github.run_id }}
 
 on:
   schedule:
-    - cron: "7 3 * * *"
+    - cron: "17 3 * * *"
+    - cron: "37 3 * * *"
+    - cron: "57 3 * * *"
   workflow_dispatch:
     inputs:
       publication_date:
@@ -15,8 +17,13 @@ on:
         required: true
         default: false
         type: boolean
+      recovery_run_id:
+        description: "Optional failed run ID whose saved editorial artifact should be reused"
+        required: false
+        type: string
 
 permissions:
+  actions: read
   contents: write
 
 concurrency:
@@ -24,8 +31,112 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  production:
+  gate:
+    name: Check whether today's digest is needed
     if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    outputs:
+      publication_date: ${{ steps.gate.outputs.publication_date }}
+      should_run: ${{ steps.gate.outputs.should_run }}
+      should_deploy: ${{ steps.gate.outputs.should_deploy }}
+      target_url: ${{ steps.gate.outputs.target_url }}
+      main_sha: ${{ steps.gate.outputs.main_sha }}
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Check RSS before paid APIs
+        id: gate
+        shell: bash
+        env:
+          DATE_OVERRIDE: ${{ inputs.publication_date || '' }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          import subprocess
+          import urllib.error
+          import urllib.request
+          import xml.etree.ElementTree as ET
+          from datetime import datetime
+          from pathlib import Path
+          from zoneinfo import ZoneInfo
+
+          override = os.environ.get("DATE_OVERRIDE", "").strip()
+          publication_date = override or datetime.now(ZoneInfo("Europe/Moscow")).date().isoformat()
+          target_url = f"https://rybalka.one/posts/{publication_date}/"
+          root = ET.parse(Path("posts/rss.xml")).getroot()
+          links = {
+              (item.findtext("link") or "").strip()
+              for item in root.findall("./channel/item")
+          }
+          repository_has_release = target_url in links
+          should_run = not repository_has_release
+          should_deploy = False
+          live_status = "not_checked"
+
+          if repository_has_release:
+              article = Path("posts") / publication_date / "index.html"
+              image = Path("posts/images") / f"ai-svodka-{publication_date}.png"
+              if not article.is_file() or not image.is_file():
+                  raise SystemExit(
+                      "RSS contains the release but canonical article/image files are missing"
+                  )
+              request = urllib.request.Request(
+                  target_url, headers={"User-Agent": "ai-svodki-production-gate/1.0"}
+              )
+              try:
+                  with urllib.request.urlopen(request, timeout=20) as response:
+                      live_status = str(response.status)
+                      should_deploy = response.status != 200
+              except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
+                  live_status = f"unavailable:{type(exc).__name__}"
+                  should_deploy = True
+
+          main_sha = subprocess.check_output(
+              ["git", "rev-parse", "HEAD"], text=True
+          ).strip()
+          output = Path(os.environ["GITHUB_OUTPUT"])
+          with output.open("a", encoding="utf-8") as stream:
+              stream.write(f"publication_date={publication_date}\n")
+              stream.write(f"target_url={target_url}\n")
+              stream.write(f"main_sha={main_sha}\n")
+              stream.write(f"should_run={'true' if should_run else 'false'}\n")
+              stream.write(f"should_deploy={'true' if should_deploy else 'false'}\n")
+          action = "produce" if should_run else ("redeploy" if should_deploy else "no-op")
+          print(
+              f"Production gate: {action} for {publication_date}; live={live_status}"
+          )
+          PY
+
+      - name: No-op summary
+        if: steps.gate.outputs.should_run == 'false' && steps.gate.outputs.should_deploy == 'false'
+        shell: bash
+        run: |
+          {
+            echo "## Daily production digest"
+            echo
+            echo "- Status: successful no-op"
+            echo "- Already published: ${{ steps.gate.outputs.target_url }}"
+            echo "- Paid API calls: 0"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+  redeploy_existing:
+    name: Redeploy already committed release
+    needs: gate
+    if: needs.gate.outputs.should_deploy == 'true'
+    uses: ./.github/workflows/deploy-posts.yml
+    with:
+      ref: ${{ needs.gate.outputs.main_sha }}
+    secrets: inherit
+
+  production:
+    needs: gate
+    if: github.ref == 'refs/heads/main' && needs.gate.outputs.should_run == 'true'
     runs-on: ubuntu-latest
     outputs:
       publish: ${{ steps.mode.outputs.publish }}
@@ -39,6 +150,7 @@ jobs:
       - name: Check out main with full history
         uses: actions/checkout@v7
         with:
+          ref: main
           fetch-depth: 0
 
       - name: Set up Python
@@ -76,7 +188,7 @@ jobs:
         id: runtime
         shell: bash
         env:
-          DATE_OVERRIDE: ${{ inputs.publication_date || '' }}
+          DATE_OVERRIDE: ${{ needs.gate.outputs.publication_date }}
         run: |
           set -euo pipefail
           args=()
@@ -89,6 +201,46 @@ jobs:
             --output automation/preview/production-daily/preflight/runtime.json \
             --github-output "${GITHUB_OUTPUT}" \
             "${args[@]}"
+
+      - name: Download saved editorial artifact for recovery
+        if: inputs.recovery_run_id != ''
+        uses: actions/download-artifact@v8
+        with:
+          name: daily-production-${{ steps.runtime.outputs.publication_date }}
+          path: automation/recovery/${{ inputs.recovery_run_id }}
+          run-id: ${{ inputs.recovery_run_id }}
+          github-token: ${{ github.token }}
+
+      - name: Restore and validate saved editorial artifact
+        if: inputs.recovery_run_id != ''
+        shell: bash
+        env:
+          PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
+          RECOVERY_RUN_ID: ${{ inputs.recovery_run_id }}
+        run: |
+          set -euo pipefail
+          recovery_root="automation/recovery/${RECOVERY_RUN_ID}"
+          digest_path="$(find "${recovery_root}" -type f -path "*/${PUBLICATION_DATE}/digest.json" -print -quit)"
+          [[ -n "${digest_path}" ]] || {
+            echo "Saved artifact does not contain ${PUBLICATION_DATE}/digest.json" >&2
+            find "${recovery_root}" -maxdepth 4 -type f -print >&2 || true
+            exit 1
+          }
+          source_dir="$(dirname "${digest_path}")"
+          target_dir="automation/preview/${PUBLICATION_DATE}"
+          rm -rf "${target_dir}"
+          mkdir -p "${target_dir}"
+          cp -a "${source_dir}/." "${target_dir}/"
+          rm -f "${target_dir}/cover.png" \
+            "${target_dir}/image-request.json" \
+            "${target_dir}/image-manifest.json" \
+            "${target_dir}/image-api-response.json" \
+            "${target_dir}/image-api-error.json" \
+            "${target_dir}/cover-validation.json"
+          python automation/scripts/validate_digest_artifact.py \
+            --artifact-dir "${target_dir}" \
+            --report "${target_dir}/artifact-validation.json"
+          echo "Recovered paid research/editorial from run ${RECOVERY_RUN_ID}."
 
       - name: Install pinned OpenAI SDK
         run: |
@@ -129,6 +281,7 @@ jobs:
           python automation/scripts/validate_archive.py
 
       - name: Run full research and editorial
+        if: inputs.recovery_run_id == ''
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -171,6 +324,7 @@ jobs:
         run: |
           set -euo pipefail
           image_dir="automation/preview/production-daily/image/${{ steps.runtime.outputs.publication_date }}"
+          rm -rf "${image_dir}"
           python automation/scripts/generate_image_preview.py \
             --source-dir "automation/preview/${{ steps.runtime.outputs.publication_date }}" \
             --output-dir "${image_dir}" \
@@ -319,7 +473,8 @@ jobs:
             echo "## Daily production digest"
             echo
             echo "- Publication date: ${{ steps.runtime.outputs.publication_date }}"
-            echo "- Scheduled time: 06:07 Europe/Moscow"
+            echo "- Scheduled windows: 06:17, 06:37, 06:57 Europe/Moscow"
+            echo "- Recovery run ID: ${{ inputs.recovery_run_id || 'none' }}"
             echo "- Publish: ${{ steps.mode.outputs.publish }}"
             echo "- RSS: https://rybalka.one/posts/rss.xml"
             echo "- Legacy dzen-test items: preserved"
