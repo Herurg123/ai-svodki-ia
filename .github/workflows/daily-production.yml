@@ -212,6 +212,7 @@ jobs:
           github-token: ${{ github.token }}
 
       - name: Restore saved paid artifact
+        id: recovery
         if: inputs.recovery_run_id != ''
         shell: bash
         env:
@@ -224,7 +225,24 @@ jobs:
             --target-dir "automation/preview/${PUBLICATION_DATE}" \
             --publication-date "${PUBLICATION_DATE}" \
             --timezone Europe/Moscow \
+            --image-target-dir "automation/preview/production-daily/image/${PUBLICATION_DATE}" \
             --report automation/preview/production-daily/recovery.json
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          report = json.loads(
+              Path("automation/preview/production-daily/recovery.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as stream:
+              stream.write(
+                  "image_recovered="
+                  + ("true" if report.get("image_recovered") else "false")
+                  + "\n"
+              )
+          PY
           echo "Recovered reusable paid artifact from run ${RECOVERY_RUN_ID}."
 
       - name: Install pinned OpenAI SDK
@@ -342,6 +360,7 @@ jobs:
             --report automation/preview/production-daily/story-coverage-validation.json
 
       - name: Build runtime Image API request
+        if: steps.recovery.outputs.image_recovered != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -352,6 +371,7 @@ jobs:
             --output automation/preview/production-daily/image-request.json
 
       - name: Generate one production cover
+        if: steps.recovery.outputs.image_recovered != 'true'
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -365,6 +385,16 @@ jobs:
             --output-dir "${image_dir}" \
             --request automation/preview/production-daily/image-request.json \
             --model "${OPENAI_IMAGE_MODEL}"
+          python automation/scripts/validate_cover_contract.py \
+            --artifact-dir "${image_dir}" \
+            --report "${image_dir}/cover-validation.json"
+
+      - name: Revalidate recovered production cover
+        if: steps.recovery.outputs.image_recovered == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          image_dir="automation/preview/production-daily/image/${{ steps.runtime.outputs.publication_date }}"
           python automation/scripts/validate_cover_contract.py \
             --artifact-dir "${image_dir}" \
             --report "${image_dir}/cover-validation.json"
@@ -385,7 +415,7 @@ jobs:
           date="${{ steps.runtime.outputs.publication_date }}"
           source_dir="automation/preview/production-daily/image/${date}"
           candidate_root="automation/preview/production-daily/candidate"
-          python automation/scripts/build_site.py \
+          python automation/scripts/run_build_site.py \
             --source-dir "${source_dir}" \
             --output-dir "${candidate_root}/posts" \
             --build-info "${candidate_root}/build-info.json"
@@ -412,7 +442,7 @@ jobs:
             --sitemap "${candidate_root}/posts/sitemap.xml" \
             --rss "${candidate_root}/posts/rss.xml" \
             --report "${candidate_root}/posts-sitemap-validation.json"
-          python automation/scripts/validate_site.py \
+          python automation/scripts/run_validate_site.py \
             --source-dir "${source_dir}" \
             --site-dir "${candidate_root}/posts" \
             --report "${candidate_root}/site-validation.json"
