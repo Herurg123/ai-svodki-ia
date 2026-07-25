@@ -69,7 +69,6 @@ def main() -> int:
         ("contents write", "contents: write"),
         ("actions read", "actions: read"),
         ("full digest", "PIPELINE_MODE: full"),
-        ("shared agent policy runtime", "editorial_policy_runtime.py"),
         ("resilient digest wrapper", "run_digest_preview.py"),
         ("resilient site builder", "run_build_site.py"),
         ("resilient site validator", "run_validate_site.py"),
@@ -119,6 +118,25 @@ def main() -> int:
     for label, needle in checks:
         if needle not in workflow:
             errors.append(f"workflow missing {label}: {needle}")
+
+    repository_root = args.workflow.resolve().parents[2]
+    runtime_path = repository_root / "automation/scripts/editorial_policy_runtime.py"
+    runtime_consumers = {
+        "digest wrapper": repository_root / "automation/scripts/run_digest_preview.py",
+        "site builder wrapper": repository_root / "automation/scripts/run_build_site.py",
+        "site validator wrapper": repository_root / "automation/scripts/run_validate_site.py",
+    }
+    if not runtime_path.is_file():
+        errors.append(f"shared agent policy runtime missing: {runtime_path}")
+    for label, path in runtime_consumers.items():
+        if not path.is_file():
+            errors.append(f"{label} missing: {path}")
+            continue
+        consumer_text = path.read_text(encoding="utf-8")
+        if "editorial_policy_runtime" not in consumer_text:
+            errors.append(f"{label} does not import editorial_policy_runtime: {path}")
+        if "patch_editorial_policy" not in consumer_text:
+            errors.append(f"{label} does not apply patch_editorial_policy: {path}")
 
 
     coverage_step_start = workflow.find("- name: Enforce 5 world plus 2 Russian stories")

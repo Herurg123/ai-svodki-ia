@@ -16,7 +16,10 @@ from pathlib import Path
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 PREVIEW_ROOT = REPOSITORY_ROOT / "automation" / "preview"
 
-from editorial_policy_runtime import patch_editorial_policy
+from editorial_policy_runtime import (
+    actual_prohibited_agent_form,
+    patch_editorial_policy,
+)
 
 
 def publication_date_from_argv(argv: list[str]) -> str | None:
