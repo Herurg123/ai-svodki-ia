@@ -18,7 +18,7 @@ on:
         default: false
         type: boolean
       recovery_run_id:
-        description: "Optional failed run ID whose saved editorial artifact should be reused"
+        description: "Optional failed run ID whose saved paid research/editorial artifact should be reused"
         required: false
         type: string
 
@@ -211,7 +211,7 @@ jobs:
           run-id: ${{ inputs.recovery_run_id }}
           github-token: ${{ github.token }}
 
-      - name: Restore saved editorial artifact
+      - name: Restore saved paid artifact
         if: inputs.recovery_run_id != ''
         shell: bash
         env:
@@ -225,7 +225,7 @@ jobs:
             --publication-date "${PUBLICATION_DATE}" \
             --timezone Europe/Moscow \
             --report automation/preview/production-daily/recovery.json
-          echo "Recovered paid research/editorial from run ${RECOVERY_RUN_ID}."
+          echo "Recovered reusable paid artifact from run ${RECOVERY_RUN_ID}."
 
       - name: Install pinned OpenAI SDK
         run: |
@@ -243,9 +243,7 @@ jobs:
           set -euo pipefail
           [[ -n "${OPENAI_API_KEY}" ]] || { echo "OPENAI_API_KEY missing" >&2; exit 1; }
           [[ "${OPENAI_IMAGE_MODEL}" == "gpt-image-2" ]] || { echo "Unexpected image model" >&2; exit 1; }
-          if [[ -z "${RECOVERY_RUN_ID}" ]]; then
-            [[ "${OPENAI_TEXT_MODEL}" == "gpt-5.6-terra" ]] || { echo "Unexpected text model" >&2; exit 1; }
-          fi
+          [[ "${OPENAI_TEXT_MODEL}" == "gpt-5.6-terra" ]] || { echo "Unexpected text model" >&2; exit 1; }
 
       - name: Patch runtime publication hour to 06:00 Moscow
         shell: bash
@@ -283,7 +281,8 @@ jobs:
           MAXIMUM_SELECTED_STORIES: "12"
         run: |
           set -euo pipefail
-          python automation/scripts/generate_digest_preview.py \
+          python automation/scripts/run_digest_preview.py \
+            --allow-provisional-editorial \
             --publication-date "${PUBLICATION_DATE}" \
             --minimum-candidates "${MINIMUM_CANDIDATES}" \
             --minimum-russian-candidates "${MINIMUM_RUSSIAN_CANDIDATES}" \
@@ -292,12 +291,14 @@ jobs:
             --maximum-selected-stories "${MAXIMUM_SELECTED_STORIES}"
 
       - name: Enforce 5 world plus 2 Russian stories
-        if: inputs.recovery_run_id == ''
+        # Runs for both fresh and recovered artifacts. Partial recovery may
+        # reuse paid research, perform only a bounded audit, and rerun editorial.
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
           PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
+          DIGEST_REQUEST_ID: ${{ steps.runtime.outputs.digest_request_id }}
         run: |
           set -euo pipefail
           python automation/scripts/ensure_story_coverage.py \
