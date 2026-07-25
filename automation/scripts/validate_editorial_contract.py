@@ -72,11 +72,12 @@ def validate() -> list[str]:
     research = read_text(RESEARCH_PROMPT)
     generator = read_text(GENERATOR)
 
+    # Legacy editorial threshold used only to classify a short digest.
     require_equal(
         errors,
         nested(editorial, "story_counts", "total_target_minimum"),
         6,
-        "Минимальная обычная цель сюжетов",
+        "Внутренний порог обычного выпуска",
     )
     require_equal(
         errors,
@@ -84,6 +85,21 @@ def validate() -> list[str]:
         12,
         "Максимальная цель сюжетов",
     )
+
+    # Current production composition contract.
+    require_equal(
+        errors,
+        nested(editorial, "story_counts", "world_target_minimum"),
+        5,
+        "Минимальная цель мировых сюжетов",
+    )
+    require_equal(
+        errors,
+        nested(editorial, "story_counts", "russian_target_minimum"),
+        2,
+        "Минимальная цель российских сюжетов",
+    )
+
     require_equal(
         errors,
         nested(editorial, "story_counts", "short_digest_minimum"),
@@ -173,13 +189,19 @@ def validate() -> list[str]:
         "stories.json",
     ]
     require_markers(errors, spec, common_markers, "editorial-policy.md")
+
+    # These markers mirror the approved 7 total / 5 world / 2 Russia
+    # production contract. The previous validator still expected 3–5 Russia,
+    # which made production fail before the API stage.
     require_markers(
         errors,
         daily,
         [
             "День на новости выдался слабым - поэтому коротко",
-            "5–8 мировых сюжетов",
-            "3–5 российских сюжетов",
+            "7–12 сюжетов всего",
+            "минимум 5 мировых сюжетов",
+            "минимум 2 российских сюжета",
+            "Итоговый production-контракт — 5 мировых + 2 российских сюжета",
             "2–3 абзаца на сюжет",
             "Количество выводов: 4–6",
             "Архив ИИ-Сводок",
@@ -199,6 +221,9 @@ def validate() -> list[str]:
         [
             "{{SEARCH_WINDOW_START_AT}}",
             "{{SEARCH_WINDOW_END_AT}}",
+            "минимум 7 сюжетов",
+            "минимум 5 мировых",
+            "минимум 2 российских",
             "Alibaba и Qwen",
             "Baidu и ERNIE",
             "Moonshot AI и Kimi",
@@ -228,7 +253,6 @@ def validate() -> list[str]:
         ],
         "generate_digest_preview.py",
     )
-
     return errors
 
 
