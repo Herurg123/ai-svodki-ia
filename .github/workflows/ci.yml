@@ -55,6 +55,11 @@ jobs:
           set -euo pipefail
           python -m unittest discover -s automation/tests -v
 
+      - name: Validate editorial contract
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_editorial_contract.py
+
       - name: Validate committed archive
         run: |
           set -euo pipefail
