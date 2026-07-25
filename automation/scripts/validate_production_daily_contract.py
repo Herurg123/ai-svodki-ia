@@ -69,6 +69,8 @@ def main() -> int:
         ("contents write", "contents: write"),
         ("actions read", "actions: read"),
         ("full digest", "PIPELINE_MODE: full"),
+        ("resilient digest wrapper", "run_digest_preview.py"),
+        ("provisional editorial handoff", "--allow-provisional-editorial"),
         ("pre-paid no-op gate", "Check RSS before paid APIs"),
         ("successful no-op", "successful no-op"),
         ("deploy-only recovery", "Redeploy already committed release"),
@@ -79,6 +81,7 @@ def main() -> int:
         ("recovery input", "recovery_run_id"),
         ("recovery artifact download", "actions/download-artifact@v8"),
         ("deterministic recovery", "recover_digest_artifact.py"),
+        ("partial paid artifact recovery", "Runs for both fresh and recovered artifacts"),
         ("recovery freshness", "--timezone Europe/Moscow"),
         ("shared digest normalization", "normalize_digest_artifact.py"),
         ("shared digest validation", "Normalize and validate digest artifact"),
@@ -88,7 +91,7 @@ def main() -> int:
         ("two Russian requirement", "--minimum-russia 2"),
         ("seven total requirement", "--minimum-total 7"),
         ("bounded audit searches", "--maximum-audit-web-search-calls 5"),
-        ("recovery skips research", "if: inputs.recovery_run_id == ''"),
+        ("recovery skips full research", "if: inputs.recovery_run_id == ''"),
         ("legacy image staging", "stage_legacy_images.py"),
         ("RSS normalization", "normalize_production_rss.py"),
         ("structured data", "inject_blogposting_schema.py"),
@@ -109,6 +112,19 @@ def main() -> int:
     for label, needle in checks:
         if needle not in workflow:
             errors.append(f"workflow missing {label}: {needle}")
+
+
+    coverage_step_start = workflow.find("- name: Enforce 5 world plus 2 Russian stories")
+    coverage_step_end = workflow.find("- name:", coverage_step_start + 10)
+    coverage_step = (
+        workflow[coverage_step_start:coverage_step_end]
+        if coverage_step_start >= 0 and coverage_step_end > coverage_step_start
+        else ""
+    )
+    if "if: inputs.recovery_run_id == ''" in coverage_step:
+        errors.append("coverage audit must also run for recovered partial artifacts")
+    if workflow.count("run_digest_preview.py") < 1:
+        errors.append("workflow must invoke the resilient digest wrapper")
 
     for cron in EXPECTED_CRONS:
         needle = f'cron: "{cron}"'
@@ -185,7 +201,7 @@ def main() -> int:
         "first_publication_date": config["first_publication_date"],
         "deployment_mode": "reusable_workflow_call",
         "duplicate_policy": "successful_noop_before_paid_api",
-        "recovery_mode": "deterministic_restore_freshness_normalize_validate",
+        "recovery_mode": "full_partial_or_research_only_then_coverage_repair",
         "commit_guard": "stage_publish_paths_ignore_runtime_outputs",
         "story_coverage_contract": {
             "minimum_total": 7,

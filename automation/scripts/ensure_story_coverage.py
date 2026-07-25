@@ -19,8 +19,9 @@ from story_coverage import (
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 PROMPT_PATH = REPOSITORY_ROOT / "automation/prompts/coverage_audit.md"
-GENERATOR_PATH = REPOSITORY_ROOT / "automation/scripts/generate_digest_preview.py"
+GENERATOR_PATH = REPOSITORY_ROOT / "automation/scripts/run_digest_preview.py"
 RUNTIME_RESEARCH_ROOT = REPOSITORY_ROOT / "automation/fixtures/research"
+PERSISTED_RESEARCH_ROOT = REPOSITORY_ROOT / "automation/preview/production-daily"
 
 ALLOWED_CATEGORIES = [
     "models",
@@ -298,6 +299,7 @@ def rerun_editorial(
     publication_date: str,
     merged_research_path: Path,
     minimum_total: int,
+    minimum_russia: int,
     maximum_candidates: int,
     maximum_selected_stories: int,
 ) -> None:
@@ -309,7 +311,7 @@ def rerun_editorial(
         "--minimum-candidates",
         str(minimum_total),
         "--minimum-russian-candidates",
-        "2",
+        str(minimum_russia),
         "--maximum-candidates",
         str(maximum_candidates),
         "--minimum-selected-stories",
@@ -321,6 +323,57 @@ def rerun_editorial(
     ]
     subprocess.run(command, cwd=REPOSITORY_ROOT, env=os.environ.copy(), check=True)
 
+
+
+def load_initial_stories(
+    artifact_dir: Path,
+    research: dict[str, Any],
+) -> tuple[list[dict[str, Any]], str]:
+    """Load final stories or derive provisional geography from editorial output.
+
+    A failed initial editorial validation can leave a perfectly reusable paid
+    research result and parsed editorial JSON but no stories.json. Coverage must
+    still be able to decide whether a targeted search is needed.
+    """
+
+    stories_path = artifact_dir / "stories.json"
+    if stories_path.is_file():
+        stories = read_json(stories_path)
+        if not isinstance(stories, list):
+            raise RuntimeError("stories.json должен содержать массив")
+        return [item for item in stories if isinstance(item, dict)], "complete"
+
+    candidate_map = {
+        str(item.get("id")): item
+        for item in research.get("candidates", [])
+        if isinstance(item, dict) and item.get("id") is not None
+    }
+    for name in ("editorial-output.json", "editorial-output-raw.json"):
+        path = artifact_dir / name
+        if not path.is_file():
+            continue
+        payload = read_json(path)
+        if not isinstance(payload, dict):
+            continue
+        selected = payload.get("selected_candidate_ids")
+        if not isinstance(selected, list):
+            continue
+        provisional: list[dict[str, Any]] = []
+        for raw_id in selected:
+            candidate_id = str(raw_id)
+            candidate = candidate_map.get(candidate_id)
+            if not isinstance(candidate, dict):
+                continue
+            provisional.append(
+                {
+                    "candidate_id": candidate_id,
+                    "geography": candidate.get("geography"),
+                    "section": candidate.get("geography"),
+                }
+            )
+        return provisional, "partial_editorial"
+
+    return [], "research_only"
 
 def main() -> int:
     parser = argparse.ArgumentParser(
@@ -363,22 +416,27 @@ def main() -> int:
     runtime_research_path = (
         RUNTIME_RESEARCH_ROOT / f".coverage-audit-{args.publication_date}.json"
     )
+    persisted_research_path = (
+        PERSISTED_RESEARCH_ROOT
+        / f"coverage-audit-merged-candidates-{args.publication_date}.json"
+    )
     try:
-        stories = read_json(args.artifact_dir / "stories.json")
         research = read_json(args.artifact_dir / "candidates.json")
         archive = read_json(args.archive)
-        if not isinstance(stories, list):
-            raise RuntimeError("stories.json должен содержать массив")
         if not isinstance(research, dict) or not isinstance(research.get("candidates"), list):
             raise RuntimeError("candidates.json имеет неожиданную структуру")
         if not isinstance(archive, dict):
             raise RuntimeError("archive index должен содержать объект")
+        stories, artifact_mode = load_initial_stories(args.artifact_dir, research)
+        report["initial_artifact_mode"] = artifact_mode
 
         args.report.parent.mkdir(parents=True, exist_ok=True)
         for source_name, target_name in (
             ("run-info.json", "coverage-audit-initial-run-info.json"),
             ("candidates.json", "coverage-audit-initial-candidates.json"),
             ("stories.json", "coverage-audit-initial-stories.json"),
+            ("editorial-output.json", "coverage-audit-initial-editorial.json"),
+            ("editorial-output-raw.json", "coverage-audit-initial-editorial-raw.json"),
         ):
             source_path = args.artifact_dir / source_name
             if source_path.is_file():
@@ -394,7 +452,7 @@ def main() -> int:
         report["candidate_pool_before"] = eligible_candidate_summary(
             research["candidates"]
         )
-        if before["valid"]:
+        if before["valid"] and artifact_mode == "complete":
             report["status"] = "ok"
             report["mode"] = "no_op"
             report["after"] = before
@@ -479,11 +537,18 @@ def main() -> int:
             )
 
         RUNTIME_RESEARCH_ROOT.mkdir(parents=True, exist_ok=True)
+        PERSISTED_RESEARCH_ROOT.mkdir(parents=True, exist_ok=True)
         write_json(runtime_research_path, merged)
+        write_json(persisted_research_path, merged)
+        report["runtime_research_path"] = str(runtime_research_path)
+        report["persisted_research_path"] = str(persisted_research_path)
+        # Backward-compatible report key now points to the durable artifact copy.
+        report["merged_research_path"] = str(persisted_research_path)
         rerun_editorial(
             publication_date=args.publication_date,
             merged_research_path=runtime_research_path,
             minimum_total=args.minimum_total,
+            minimum_russia=args.minimum_russia,
             maximum_candidates=args.maximum_candidates,
             maximum_selected_stories=args.maximum_selected_stories,
         )
@@ -520,10 +585,12 @@ def main() -> int:
         print(json.dumps(report, ensure_ascii=False, indent=2), file=sys.stderr)
         return 1
     finally:
-        try:
-            runtime_research_path.unlink(missing_ok=True)
-        except OSError:
-            pass
+        # The generator intentionally accepts saved research only from the
+        # fixture root. Remove that transient execution copy, while retaining
+        # the persisted copy under automation/preview/production-daily for
+        # artifact recovery after any later failure.
+        if runtime_research_path.exists():
+            runtime_research_path.unlink()
 
 
 if __name__ == "__main__":
