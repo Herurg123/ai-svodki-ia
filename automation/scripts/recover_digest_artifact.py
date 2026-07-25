@@ -9,6 +9,7 @@ research pass.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import shutil
 from datetime import datetime
@@ -52,6 +53,17 @@ IMAGE_STAGE_FILES = (
     "cover-validation.json",
     "artifact-validation.json",
     "artifact-normalization.json",
+)
+
+IMAGE_RECOVERY_REQUIRED = (
+    "cover.png",
+    "image-manifest.json",
+    "cover-validation.json",
+    "digest.json",
+    "article.html",
+    "stories.json",
+    "sources.json",
+    "meta.json",
 )
 
 
@@ -255,12 +267,100 @@ def restore_merged_coverage_research(
         }
     return None
 
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def choose_reusable_image_source(
+    recovery_root: Path,
+    publication_date: str,
+) -> tuple[Path | None, list[dict[str, Any]]]:
+    diagnostics: list[dict[str, Any]] = []
+    valid: list[Path] = []
+
+    for manifest_path in sorted(recovery_root.rglob("image-manifest.json")):
+        source_dir = manifest_path.parent
+        row: dict[str, Any] = {"directory": str(source_dir)}
+        missing = [name for name in IMAGE_RECOVERY_REQUIRED if not (source_dir / name).is_file()]
+        if missing:
+            row["status"] = "incomplete"
+            row["missing_files"] = missing
+            diagnostics.append(row)
+            continue
+        try:
+            manifest = read_json(manifest_path)
+            validation = read_json(source_dir / "cover-validation.json")
+            found_date = artifact_date(source_dir)
+        except RecoveryError as exc:
+            row["status"] = "invalid"
+            row["error"] = str(exc)
+            diagnostics.append(row)
+            continue
+        if found_date != publication_date:
+            row["status"] = "wrong-date"
+            row["date"] = found_date
+            diagnostics.append(row)
+            continue
+        if not isinstance(manifest, dict) or manifest.get("status") != "ok":
+            row["status"] = "invalid-manifest"
+            diagnostics.append(row)
+            continue
+        if not isinstance(validation, dict) or validation.get("status") != "ok":
+            row["status"] = "invalid-cover-validation"
+            diagnostics.append(row)
+            continue
+        expected_sha = str(manifest.get("sha256", "")).strip()
+        actual_sha = sha256_file(source_dir / "cover.png")
+        if not expected_sha or expected_sha != actual_sha:
+            row["status"] = "cover-sha-mismatch"
+            row["expected_sha256"] = expected_sha
+            row["actual_sha256"] = actual_sha
+            diagnostics.append(row)
+            continue
+        row["status"] = "reusable"
+        row["cover_sha256"] = actual_sha
+        diagnostics.append(row)
+        valid.append(source_dir)
+
+    if not valid:
+        return None, diagnostics
+    valid.sort(key=lambda path: (len(path.parts), path.as_posix()))
+    return valid[0], diagnostics
+
+
+def restore_reusable_image(
+    recovery_root: Path,
+    image_target_dir: Path | None,
+    publication_date: str,
+) -> tuple[dict[str, Any] | None, list[dict[str, Any]]]:
+    source_dir, diagnostics = choose_reusable_image_source(
+        recovery_root,
+        publication_date,
+    )
+    if source_dir is None or image_target_dir is None:
+        return None, diagnostics
+    if image_target_dir.exists():
+        shutil.rmtree(image_target_dir)
+    image_target_dir.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(source_dir, image_target_dir)
+    return {
+        "source": str(source_dir),
+        "target": str(image_target_dir),
+        "cover_sha256": sha256_file(image_target_dir / "cover.png"),
+    }, diagnostics
+
+
 def recover(
     recovery_root: Path,
     target_dir: Path,
     publication_date: str,
     report_path: Path,
     timezone_name: str = "Europe/Moscow",
+    image_target_dir: Path | None = None,
 ) -> dict[str, Any]:
     if not recovery_root.is_dir():
         raise RecoveryError(f"Recovery artifact не найден: {recovery_root}")
@@ -284,6 +384,12 @@ def recover(
         publication_date,
     )
 
+    recovered_image, image_diagnostics = restore_reusable_image(
+        recovery_root,
+        image_target_dir,
+        publication_date,
+    )
+
     removed: list[str] = []
     for name in IMAGE_STAGE_FILES:
         path = target_dir / name
@@ -300,6 +406,9 @@ def recover(
         "target_dir": str(target_dir),
         "removed_stage_files": removed,
         "merged_coverage_research": merged_research,
+        "image_recovered": recovered_image is not None,
+        "recovered_image": recovered_image,
+        "image_candidates": image_diagnostics,
         "freshness": freshness,
         "candidates": diagnostics,
     }
@@ -314,6 +423,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--publication-date", required=True)
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--timezone", default="Europe/Moscow")
+    parser.add_argument("--image-target-dir", type=Path)
     return parser.parse_args()
 
 
@@ -326,6 +436,7 @@ def main() -> int:
             args.publication_date,
             args.report,
             args.timezone,
+            args.image_target_dir,
         )
     except RecoveryError as exc:
         write_json(

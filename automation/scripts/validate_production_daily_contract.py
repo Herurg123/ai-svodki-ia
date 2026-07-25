@@ -69,7 +69,10 @@ def main() -> int:
         ("contents write", "contents: write"),
         ("actions read", "actions: read"),
         ("full digest", "PIPELINE_MODE: full"),
+        ("shared agent policy runtime", "editorial_policy_runtime.py"),
         ("resilient digest wrapper", "run_digest_preview.py"),
+        ("resilient site builder", "run_build_site.py"),
+        ("resilient site validator", "run_validate_site.py"),
         ("provisional editorial handoff", "--allow-provisional-editorial"),
         ("pre-paid no-op gate", "Check RSS before paid APIs"),
         ("successful no-op", "successful no-op"),
@@ -81,6 +84,10 @@ def main() -> int:
         ("recovery input", "recovery_run_id"),
         ("recovery artifact download", "actions/download-artifact@v8"),
         ("deterministic recovery", "recover_digest_artifact.py"),
+        ("recovered image target", "--image-target-dir"),
+        ("recovered image output", "image_recovered"),
+        ("skip duplicate image request", "steps.recovery.outputs.image_recovered != 'true'"),
+        ("revalidate recovered cover", "Revalidate recovered production cover"),
         ("partial paid artifact recovery", "Runs for both fresh and recovered artifacts"),
         ("recovery freshness", "--timezone Europe/Moscow"),
         ("shared digest normalization", "normalize_digest_artifact.py"),
@@ -125,6 +132,15 @@ def main() -> int:
         errors.append("coverage audit must also run for recovered partial artifacts")
     if workflow.count("run_digest_preview.py") < 1:
         errors.append("workflow must invoke the resilient digest wrapper")
+
+    if "python automation/scripts/build_site.py" in workflow:
+        errors.append("workflow must call run_build_site.py, not build_site.py directly")
+    if "python automation/scripts/validate_site.py" in workflow:
+        errors.append("workflow must call run_validate_site.py, not validate_site.py directly")
+    if workflow.count("steps.recovery.outputs.image_recovered != 'true'") != 2:
+        errors.append("image request and image generation must both skip a recovered cover")
+    if workflow.count("steps.recovery.outputs.image_recovered == 'true'") != 1:
+        errors.append("workflow must revalidate exactly one recovered cover")
 
     for cron in EXPECTED_CRONS:
         needle = f'cron: "{cron}"'
