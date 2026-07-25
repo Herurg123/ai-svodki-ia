@@ -1,0 +1,227 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Meta добавила в Meta AI агентные функции и подключение к Gmail и Google Calendar",
+    "organization": "Meta",
+    "topic": "персональные агентные функции",
+    "event_type": "product_update",
+    "status": "new",
+    "summary": "Meta объявила, что Meta AI на базе Muse Spark 1.1 получает возможность планировать задачи, проводить исследования, создавать презентации и подключаться к Gmail и Google Calendar для работы с персональным контекстом.",
+    "published_at": null,
+    "published_date": "2026-07-24",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Meta AI Doesn’t Just Think, It Acts",
+        "publisher": "Meta",
+        "url": "https://about.fb.com/news/2026/07/meta-ai-muse-spark-doesnt-just-think-it-acts/"
+      }
+    ],
+    "keywords": [
+      "Meta",
+      "Meta AI",
+      "Muse Spark 1.1",
+      "агенты ИИ",
+      "Gmail",
+      "Google Calendar",
+      "исследования",
+      "планирование"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Anthropic выпустила Opus 5 как более доступную модель для рабочих и кодинговых задач",
+    "organization": "Anthropic",
+    "topic": "эффективные frontier-модели",
+    "event_type": "release",
+    "status": "new",
+    "summary": "Reuters сообщил о запуске Anthropic модели Opus 5. Компания позиционирует её как модель, близкую по возможностям к Fable 5, но с примерно вдвое меньшей стоимостью, для повседневных офисных и программных задач.",
+    "published_at": null,
+    "published_date": "2026-07-24",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Anthropic rolls out Opus 5 AI model in efficiency upgrade",
+        "publisher": "Reuters",
+        "url": "https://m.investing.com/news/stock-market-news/anthropic-rolls-out-opus-5-ai-model-in-efficiency-upgrade-4812323?ampMode=1"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "Opus 5",
+      "Fable 5",
+      "ИИ-кодинг",
+      "офисные задачи",
+      "кибербезопасность",
+      "стоимость моделей"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Коалиция из 25 компаний призвала США не вводить преждевременные ограничения на open-weight-модели",
+    "organization": "Microsoft; Nvidia; Meta; Hugging Face; Mistral и другие участники коалиции",
+    "topic": "политика open-weight-моделей",
+    "event_type": "industry_statement",
+    "status": "new",
+    "summary": "Microsoft, Nvidia, Meta, Hugging Face, Mistral и ещё ряд компаний и организаций опубликовали совместное обращение «Open Weights and American AI Leadership». Авторы выступают против преждевременных широких ограничений на open-weight-модели и предлагают разграничивать легитимную дистилляцию и незаконное присвоение результатов разработки.",
+    "published_at": null,
+    "published_date": "2026-07-24",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Open Weights and American AI Leadership",
+        "publisher": "Microsoft",
+        "url": "https://www.microsoft.com/en-us/corporate-responsibility/topics/open-weight/"
+      }
+    ],
+    "keywords": [
+      "open-weight",
+      "Microsoft",
+      "Nvidia",
+      "Meta",
+      "Hugging Face",
+      "Mistral",
+      "регулирование ИИ",
+      "дистилляция",
+      "открытые модели"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "APEC поддержала развитие open-source ИИ при требовании сильных гарантий безопасности",
+    "organization": "APEC",
+    "topic": "международное сотрудничество по open-source ИИ",
+    "event_type": "government_statement",
+    "status": "new",
+    "summary": "На форуме высокого уровня APEC по ИИ в Чэнду экономики-участницы опубликовали заявление о сотрудничестве в развитии ИИ. В документе поддерживаются open-source-модели и проекты при условии сильных гарантий безопасности, уважения защиты данных и прав интеллектуальной собственности.",
+    "published_at": null,
+    "published_date": "2026-07-24",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "APEC High-Level Forum on AI",
+        "publisher": "APEC",
+        "url": "https://www.apec.org/meeting-papers/sectoral-ministerial-meetings/highlevelpolicydialogue/apec-high-level-forum-on-ai"
+      }
+    ],
+    "keywords": [
+      "APEC",
+      "Китай",
+      "open-source",
+      "безопасность ИИ",
+      "защита данных",
+      "интеллектуальная собственность",
+      "международное сотрудничество",
+      "регулирование"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Индийская исследовательская команда показала смещение аудиомоделей при определении региональных диалектов",
+    "organization": "ARTPARK-IISc",
+    "topic": "смещение аудио-LLM",
+    "event_type": "research",
+    "status": "new",
+    "summary": "Команда ARTPARK-IISc представила PRiSM — бенчмарк для проверки способности аудиомоделей определять происхождение говорящего по индийским диалектам. Авторы сообщают, что Qwen3-Omni-Instruct для большинства голосов давала одинаковый ответ «Нью-Дели», включая записи из других регионов Индии.",
+    "published_at": null,
+    "published_date": "2026-07-24",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Can a Speech Model Hear Where You're From? Vaani Inside PRiSM's Dialect Geolocation Benchmark",
+        "publisher": "Hugging Face Community / ARTPARK-IISc",
+        "url": "https://huggingface.co/blog/ARTPARK-IISc/vaani-hears-your-dialect"
+      }
+    ],
+    "keywords": [
+      "ARTPARK-IISc",
+      "Vaani",
+      "аудиомодели",
+      "диалекты",
+      "геолокация речи",
+      "Qwen3-Omni",
+      "смещение моделей",
+      "оценка ИИ"
+    ],
+    "geography": "world",
+    "category": "research"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "russia",
+    "headline": "Сбер сообщил, что более 80% опрошенных россиян поддерживают дальнейшее развитие ИИ",
+    "organization": "Сбер",
+    "topic": "общественное отношение к ИИ в России",
+    "event_type": "survey",
+    "status": "new",
+    "summary": "Lenta.ru со ссылкой на Лабораторию нейронаук и поведения человека Сбера сообщила результаты шестилетнего мониторинга отношения россиян к ИИ: более 80% опрошенных поддержали дальнейшее развитие технологии. Исследование сопоставляет восприятие ИИ в 2019–2025 годах.",
+    "published_at": "2026-07-24T12:01:00+03:00",
+    "published_date": "2026-07-24",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Большинство россиян поддержало дальнейшее развитие ИИ и сочло его полезным",
+        "publisher": "Lenta.ru",
+        "url": "https://lenta.ru/news/2026/07/24/bolee-rossiyan-podderzhalo-dalneyshee-razvitie-ii-i-sochlo-ego-poleznym/amp/"
+      }
+    ],
+    "keywords": [
+      "Сбер",
+      "Россия",
+      "опрос",
+      "общественное мнение",
+      "доверие к ИИ",
+      "генеративный ИИ",
+      "интернет-магазины",
+      "исследование"
+    ],
+    "geography": "russia",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "russia",
+    "headline": "ИИ-видеоаналитика начала контролировать санитарные процессы на производстве питания для московских больниц",
+    "organization": "АйТи Империал; производственно-логистический комплекс — поставщик питания для государственных медучреждений Москвы",
+    "topic": "компьютерное зрение для производственного и санитарного контроля",
+    "event_type": "deployment",
+    "status": "new",
+    "summary": "Компания «АйТи Империал» сообщила о завершении первого этапа внедрения системы видеоаналитики с компьютерным зрением на предприятии, выпускающем питание для государственных медицинских учреждений Москвы. Система в реальном времени анализирует последовательности операций, контролирует более десяти санитарных и технологических сценариев и направляет ответственным сотрудникам уведомления об отклонениях.",
+    "published_at": "2026-07-24T14:51:00+03:00",
+    "published_date": "2026-07-24",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Искусственный интеллект начал круглосуточно контролировать безопасность производства питания для московских больниц",
+        "publisher": "CNews",
+        "url": "https://ai.cnews.ru/news/line/2026-07-24_iskusstvennyj_intellekt"
+      }
+    ],
+    "keywords": [
+      "АйТи Империал",
+      "компьютерное зрение",
+      "ИИ-видеоаналитика",
+      "санитарный контроль",
+      "СанПиН",
+      "московские больницы",
+      "пищевое производство",
+      "машинное зрение"
+    ],
+    "geography": "russia",
+    "category": "enterprise"
+  }
+]
