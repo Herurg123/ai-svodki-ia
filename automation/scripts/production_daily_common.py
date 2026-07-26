@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 import hashlib
@@ -14,15 +15,21 @@ from zoneinfo import ZoneInfo
 ATOM_NS = "http://www.w3.org/2005/Atom"
 CONTENT_NS = "http://purl.org/rss/1.0/modules/content/"
 
+
 def read_json(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
         raise RuntimeError(f"{path} must contain a JSON object")
     return value
 
+
 def write_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(value, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
 
 def tree_digest(root: Path) -> str:
     digest = hashlib.sha256()
@@ -34,51 +41,68 @@ def tree_digest(root: Path) -> str:
         digest.update(path.read_bytes())
     return digest.hexdigest()
 
+
 def assert_inside(path: Path, parent: Path, label: str) -> None:
     resolved = path.resolve()
     allowed = parent.resolve()
     if resolved != allowed and allowed not in resolved.parents:
         raise RuntimeError(f"{label} must be inside {allowed}")
 
+
 def parse_rss(path: Path) -> dict[str, Any]:
     try:
         root = ET.parse(path).getroot()
     except ET.ParseError as exc:
         raise RuntimeError(f"RSS XML is invalid: {exc}") from exc
+
     channel = root.find("channel")
     if channel is None:
         raise RuntimeError("RSS channel is missing")
+
     atom = channel.find(f"{{{ATOM_NS}}}link")
     self_url = atom.get("href", "").strip() if atom is not None else ""
-    items = []
+    items: list[dict[str, Any]] = []
+
     for item in channel.findall("item"):
         link = (item.findtext("link") or "").strip()
         pub_raw = (item.findtext("pubDate") or "").strip()
         title = (item.findtext("title") or "").strip()
         if not link or not pub_raw:
             raise RuntimeError(f"Incomplete RSS item: {title!r}")
+
         parsed = parsedate_to_datetime(pub_raw)
         if parsed.tzinfo is None:
             raise RuntimeError(f"RSS pubDate has no timezone: {pub_raw}")
-        items.append({
-            "title": title,
-            "link": link,
-            "date": parsed.date().isoformat(),
-            "categories": [
-                (node.text or "").strip()
-                for node in item.findall("category")
-                if (node.text or "").strip()
-            ],
-        })
+
+        items.append(
+            {
+                "title": title,
+                "link": link,
+                "date": parsed.date().isoformat(),
+                "published_at": parsed.isoformat(timespec="seconds"),
+                "categories": [
+                    (node.text or "").strip()
+                    for node in item.findall("category")
+                    if (node.text or "").strip()
+                ],
+            }
+        )
+
     if not items:
         raise RuntimeError("RSS contains no items")
-    items.sort(key=lambda row: row["date"], reverse=True)
+
+    items.sort(
+        key=lambda row: (row["date"], row["published_at"]),
+        reverse=True,
+    )
     return {
         "self_url": self_url,
         "channel_link": (channel.findtext("link") or "").strip(),
         "items": items,
         "latest_date": items[0]["date"],
+        "latest_item": items[0],
     }
+
 
 def runtime_context(
     *,
@@ -89,6 +113,7 @@ def runtime_context(
 ) -> dict[str, Any]:
     timezone_name = str(config["timezone"])
     zone = ZoneInfo(timezone_name)
+
     if now_iso:
         current = datetime.fromisoformat(now_iso)
         if current.tzinfo is None:
@@ -111,44 +136,78 @@ def runtime_context(
     expected_feed = str(config["feed_url"])
     if rss["self_url"] != expected_feed:
         raise RuntimeError(
-            f"RSS self URL must be {expected_feed!r}; received {rss['self_url']!r}"
+            f"RSS self URL must be {expected_feed!r}; "
+            f"received {rss['self_url']!r}"
         )
 
     legacy_prefix = str(config["legacy_prefix"])
     legacy_count = sum(
-        1 for row in rss["items"] if str(row["link"]).startswith(legacy_prefix)
+        1
+        for row in rss["items"]
+        if str(row["link"]).startswith(legacy_prefix)
     )
     minimum_legacy = int(config["minimum_legacy_items"])
     if legacy_count < minimum_legacy:
         raise RuntimeError(
-            f"RSS must preserve at least {minimum_legacy} legacy items; got {legacy_count}"
+            f"RSS must preserve at least {minimum_legacy} legacy items; "
+            f"got {legacy_count}"
         )
 
-    target_url = f"{str(config['site_base_url']).rstrip('/')}/{target.isoformat()}/"
+    target_url = (
+        f"{str(config['site_base_url']).rstrip('/')}/{target.isoformat()}/"
+    )
     if any(row["link"] == target_url for row in rss["items"]):
         raise RuntimeError(f"RSS already contains {target_url}")
 
-    if bool(config.get("require_previous_day_in_rss", True)):
-        expected_previous = (target - timedelta(days=1)).isoformat()
-        if rss["latest_date"] != expected_previous:
+    latest_published = date.fromisoformat(str(rss["latest_date"]))
+    if latest_published >= target:
+        raise RuntimeError(
+            "Последний опубликованный выпуск не может быть датирован "
+            f"{latest_published.isoformat()} при подготовке выпуска "
+            f"{target.isoformat()}."
+        )
+
+    allow_skipped = bool(
+        config.get("allow_skipped_publication_days", False)
+    )
+    require_previous = bool(
+        config.get("require_previous_day_in_rss", True)
+    )
+    expected_previous = target - timedelta(days=1)
+
+    if require_previous and not allow_skipped:
+        if latest_published != expected_previous:
             raise RuntimeError(
                 "Latest RSS item must be the previous calendar day: "
-                f"expected {expected_previous}, got {rss['latest_date']}"
+                f"expected {expected_previous.isoformat()}, "
+                f"got {latest_published.isoformat()}"
             )
+
+    missed_calendar_days = max(
+        (target - latest_published).days - 1,
+        0,
+    )
 
     return {
         "status": "ok",
         "publication_date": target.isoformat(),
-        "previous_date": (target - timedelta(days=1)).isoformat(),
+        # Kept for compatibility with existing scripts.
+        "previous_date": expected_previous.isoformat(),
+        # New authoritative continuity fields.
+        "previous_published_date": latest_published.isoformat(),
+        "missed_calendar_days": missed_calendar_days,
+        "search_window_start_date": latest_published.isoformat(),
         "target_url": target_url,
         "digest_request_id": f"production-digest-{target.isoformat()}",
         "image_request_id": f"production-image-{target.isoformat()}",
         "legacy_items": legacy_count,
         "rss_latest_date": rss["latest_date"],
+        "rss_latest_url": str(rss["latest_item"]["link"]),
         "timezone": timezone_name,
         "publication_hour_local": int(config["publication_hour_local"]),
         "generated_at": current.isoformat(timespec="seconds"),
     }
+
 
 def safe_replace_tree(source: Path, destination: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -156,6 +215,7 @@ def safe_replace_tree(source: Path, destination: Path) -> None:
     if temporary.exists():
         shutil.rmtree(temporary)
     shutil.copytree(source, temporary)
+
     if destination.exists():
         backup = destination.parent / f".{destination.name}.old-{os.getpid()}"
         if backup.exists():

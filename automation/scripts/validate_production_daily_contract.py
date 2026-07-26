@@ -43,6 +43,9 @@ def main() -> int:
         "coverage_audit_enabled": True,
         "coverage_audit_max_web_search_calls": 5,
         "coverage_audit_maximum_candidates": 20,
+        "require_previous_day_in_rss": False,
+        "allow_skipped_publication_days": True,
+        "verify_previous_release_on_live_site": True,
     }
     for key, expected in required.items():
         if config.get(key) != expected:
@@ -74,6 +77,26 @@ def main() -> int:
         ("resilient site validator", "run_validate_site.py"),
         ("provisional editorial handoff", "--allow-provisional-editorial"),
         ("pre-paid no-op gate", "Check RSS before paid APIs"),
+        (
+            "previous release verification",
+            "verify_previous_release.py",
+        ),
+        (
+            "search window continuity",
+            "validate_search_window_continuity.py",
+        ),
+        (
+            "Russian production status",
+            "summarize_production_status.py",
+        ),
+        (
+            "Russian status step",
+            "Publish Russian pipeline status",
+        ),
+        (
+            "overall workflow status",
+            "Итог публикации",
+        ),
         ("successful no-op", "successful no-op"),
         ("deploy-only recovery", "Redeploy already committed release"),
         ("live URL gate", "ai-svodki-production-gate/1.0"),
@@ -168,6 +191,58 @@ def main() -> int:
         errors.append("workflow must contain exactly three production crons")
     if workflow.count("validate_digest_artifact.py") != 1:
         errors.append("workflow must validate the digest exactly once after normalization")
+    runtime_position = workflow.find(
+        "Prepare runtime and verify archive freshness"
+    )
+    previous_release_position = workflow.find(
+        "Verify last successful release in repository and live site"
+    )
+    bootstrap_position = workflow.find(
+        "Validate editorial code and bootstrap archive"
+    )
+    continuity_position = workflow.find(
+        "Verify search window starts at last successful release"
+    )
+    research_position = workflow.find("Run full research and editorial")
+    summary_position = workflow.find("Publish Russian pipeline status")
+    artifact_position = workflow.find("actions/upload-artifact@v7")
+
+    if (
+        runtime_position < 0
+        or previous_release_position < 0
+        or runtime_position > previous_release_position
+    ):
+        errors.append(
+            "previous release verification must run after runtime preparation"
+        )
+    if (
+        bootstrap_position < 0
+        or continuity_position < 0
+        or research_position < 0
+        or not (
+            bootstrap_position
+            < continuity_position
+            < research_position
+        )
+    ):
+        errors.append(
+            "search window continuity must run after archive bootstrap "
+            "and before paid research"
+        )
+    if (
+        summary_position < 0
+        or artifact_position < 0
+        or summary_position > artifact_position
+    ):
+        errors.append(
+            "Russian pipeline status must be written before artifact upload"
+        )
+    if "if: always()" not in workflow[
+        max(0, summary_position - 120):
+        summary_position + 200
+    ]:
+        errors.append("Russian pipeline status must run with if: always()")
+
     coverage_audit_position = workflow.find("Enforce 5 world plus 2 Russian stories")
     normalize_position = workflow.find("Normalize and validate digest artifact")
     coverage_validation_position = workflow.find("Validate final story coverage")
@@ -237,6 +312,10 @@ def main() -> int:
         "duplicate_policy": "successful_noop_before_paid_api",
         "recovery_mode": "full_partial_or_research_only_then_coverage_repair",
         "commit_guard": "stage_publish_paths_ignore_runtime_outputs",
+        "continuity_policy": "from_last_successfully_published_release",
+        "skipped_calendar_days": "allowed",
+        "live_previous_release_check": True,
+        "failure_status": "Russian summary and GitHub annotations",
         "story_coverage_contract": {
             "minimum_total": 7,
             "minimum_world": 5,
