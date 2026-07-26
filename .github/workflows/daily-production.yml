@@ -125,6 +125,20 @@ jobs:
             echo "- Paid API calls: 0"
           } >> "${GITHUB_STEP_SUMMARY}"
 
+      - name: Показать причину ошибки gate
+        if: failure()
+        shell: bash
+        run: |
+          {
+            echo "## ❌ ИИ-Сводка не запущена"
+            echo
+            echo "- **Этап:** предварительная проверка RSS и сайта"
+            echo "- **Причина:** откройте первый красный шаг в job gate"
+            echo "- **Платные API:** не вызывались"
+            echo "- **Run:** https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          } >> "${GITHUB_STEP_SUMMARY}"
+          echo "::error title=ИИ-Сводка не запущена::Ошибка предварительной проверки RSS или сайта. Платные API не вызывались."
+
   redeploy_existing:
     name: Redeploy already committed release
     needs: gate
@@ -201,6 +215,17 @@ jobs:
             --output automation/preview/production-daily/preflight/runtime.json \
             --github-output "${GITHUB_OUTPUT}" \
             "${args[@]}"
+
+      - name: Verify last successful release in repository and live site
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/verify_previous_release.py \
+            --config automation/config/production-daily.json \
+            --rss posts/rss.xml \
+            --posts-root posts \
+            --publication-date "${{ steps.runtime.outputs.publication_date }}" \
+            --output automation/preview/production-daily/previous-release.json
 
       - name: Download saved editorial artifact for recovery
         if: inputs.recovery_run_id != ''
@@ -283,6 +308,17 @@ jobs:
           python automation/scripts/validate_editorial_contract.py
           python automation/scripts/bootstrap_archive.py
           python automation/scripts/validate_archive.py
+
+      - name: Verify search window starts at last successful release
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_search_window_continuity.py \
+            --runtime automation/preview/production-daily/preflight/runtime.json \
+            --archive automation/archive/index.json \
+            --timezone Europe/Moscow \
+            --publication-hour 6 \
+            --output automation/preview/production-daily/search-window-continuity.json
 
       - name: Run full research and editorial
         if: inputs.recovery_run_id == ''
@@ -509,21 +545,26 @@ jobs:
           git push origin HEAD:main
           echo "commit_sha=${commit_sha}" >> "${GITHUB_OUTPUT}"
 
-      - name: Job summary
+      - name: Publish Russian pipeline status
         if: always()
+        continue-on-error: true
         shell: bash
+        env:
+          PIPELINE_JOB_STATUS: ${{ job.status }}
+          PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date || needs.gate.outputs.publication_date }}
+          PUBLISH: ${{ steps.mode.outputs.publish || 'false' }}
+          RECOVERY_RUN_ID: ${{ inputs.recovery_run_id || '' }}
+          COMMIT_SHA: ${{ steps.commit.outputs.commit_sha || '' }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          {
-            echo "## Daily production digest"
-            echo
-            echo "- Publication date: ${{ steps.runtime.outputs.publication_date }}"
-            echo "- Scheduled windows: 06:17, 06:37, 06:57 Europe/Moscow"
-            echo "- Recovery run ID: ${{ inputs.recovery_run_id || 'none' }}"
-            echo "- Publish: ${{ steps.mode.outputs.publish }}"
-            echo "- RSS: https://rybalka.one/posts/rss.xml"
-            echo "- Legacy dzen-test items: preserved"
-            echo "- FTP: the reusable deployment job runs after a successful production commit"
-          } >> "${GITHUB_STEP_SUMMARY}"
+          python automation/scripts/summarize_production_status.py \
+            --job-status "${PIPELINE_JOB_STATUS}" \
+            --publication-date "${PUBLICATION_DATE}" \
+            --publish "${PUBLISH}" \
+            --recovery-run-id "${RECOVERY_RUN_ID}" \
+            --run-url "${RUN_URL}" \
+            --commit-sha "${COMMIT_SHA}" \
+            --output automation/preview/production-daily/pipeline-status.json
 
       - uses: actions/upload-artifact@v7
         if: always()
@@ -544,3 +585,41 @@ jobs:
       ref: ${{ needs.production.outputs.commit_sha }}
     secrets: inherit
 
+  final_status:
+    name: Итог публикации
+    needs:
+      - gate
+      - redeploy_existing
+      - production
+      - deploy
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Показать общий итог
+        shell: bash
+        env:
+          GATE_RESULT: ${{ needs.gate.result }}
+          REDEPLOY_RESULT: ${{ needs.redeploy_existing.result }}
+          PRODUCTION_RESULT: ${{ needs.production.result }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+        run: |
+          {
+            echo "## Итог Daily production digest"
+            echo
+            echo "| Этап | Результат |"
+            echo "|---|---|"
+            echo "| Gate | ${GATE_RESULT} |"
+            echo "| Production | ${PRODUCTION_RESULT} |"
+            echo "| Deploy | ${DEPLOY_RESULT} |"
+            echo "| FTP-only redeploy | ${REDEPLOY_RESULT} |"
+            echo
+            echo "Подробная русскоязычная причина production-ошибки находится выше в Summary job production."
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+          if [[ "${GATE_RESULT}" == "failure" ]]; then
+            echo "::error title=Ошибка gate::Не пройдена предварительная проверка RSS или сайта. Платные API не вызывались."
+          elif [[ "${PRODUCTION_RESULT}" == "failure" ]]; then
+            echo "::error title=Ошибка production::Выпуск не опубликован. Подробная причина выведена в русскоязычном Summary job production."
+          elif [[ "${DEPLOY_RESULT}" == "failure" || "${REDEPLOY_RESULT}" == "failure" ]]; then
+            echo "::error title=Ошибка FTP::Контент создан, но FTP-развёртывание завершилось ошибкой. Повторный research не нужен."
+          fi
