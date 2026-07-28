@@ -1,11 +1,10 @@
 name: Daily production digest
 run-name: Daily production digest ${{ github.run_id }}
-
 on:
   schedule:
-    - cron: "17 3 * * *"
-    - cron: "37 3 * * *"
-    - cron: "57 3 * * *"
+    - cron: "17 0 * * *"
+    - cron: "37 0 * * *"
+    - cron: "57 0 * * *"
   workflow_dispatch:
     inputs:
       publication_date:
@@ -21,7 +20,6 @@ on:
         description: "Optional failed run ID whose saved paid research/editorial artifact should be reused"
         required: false
         type: string
-
 permissions:
   actions: read
   contents: write
@@ -29,7 +27,6 @@ permissions:
 concurrency:
   group: daily-production-main
   cancel-in-progress: false
-
 jobs:
   gate:
     name: Check whether today's digest is needed
@@ -48,7 +45,6 @@ jobs:
           ref: main
           fetch-depth: 1
           persist-credentials: false
-
       - name: Check RSS before paid APIs
         id: gate
         shell: bash
@@ -65,7 +61,6 @@ jobs:
           from datetime import datetime
           from pathlib import Path
           from zoneinfo import ZoneInfo
-
           override = os.environ.get("DATE_OVERRIDE", "").strip()
           publication_date = override or datetime.now(ZoneInfo("Europe/Moscow")).date().isoformat()
           target_url = f"https://rybalka.one/posts/{publication_date}/"
@@ -78,7 +73,6 @@ jobs:
           should_run = not repository_has_release
           should_deploy = False
           live_status = "not_checked"
-
           if repository_has_release:
               article = Path("posts") / publication_date / "index.html"
               image = Path("posts/images") / f"ai-svodka-{publication_date}.png"
@@ -96,7 +90,6 @@ jobs:
               except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
                   live_status = f"unavailable:{type(exc).__name__}"
                   should_deploy = True
-
           main_sha = subprocess.check_output(
               ["git", "rev-parse", "HEAD"], text=True
           ).strip()
@@ -112,7 +105,6 @@ jobs:
               f"Production gate: {action} for {publication_date}; live={live_status}"
           )
           PY
-
       - name: No-op summary
         if: steps.gate.outputs.should_run == 'false' && steps.gate.outputs.should_deploy == 'false'
         shell: bash
@@ -124,7 +116,6 @@ jobs:
             echo "- Already published: ${{ steps.gate.outputs.target_url }}"
             echo "- Paid API calls: 0"
           } >> "${GITHUB_STEP_SUMMARY}"
-
       - name: Показать причину ошибки gate
         if: failure()
         shell: bash
@@ -138,7 +129,6 @@ jobs:
             echo "- **Run:** https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           } >> "${GITHUB_STEP_SUMMARY}"
           echo "::error title=ИИ-Сводка не запущена::Ошибка предварительной проверки RSS или сайта. Платные API не вызывались."
-
   redeploy_existing:
     name: Redeploy already committed release
     needs: gate
@@ -147,7 +137,6 @@ jobs:
     with:
       ref: ${{ needs.gate.outputs.main_sha }}
     secrets: inherit
-
   production:
     needs: gate
     if: github.ref == 'refs/heads/main' && needs.gate.outputs.should_run == 'true'
@@ -166,12 +155,10 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-
       - name: Determine publish mode
         id: mode
         shell: bash
@@ -185,7 +172,6 @@ jobs:
           else
             echo "publish=${MANUAL_PUBLISH}" >> "${GITHUB_OUTPUT}"
           fi
-
       - name: Validate production contract before API
         shell: bash
         run: |
@@ -197,7 +183,6 @@ jobs:
             --workflow .github/workflows/daily-production.yml \
             --rss posts/rss.xml \
             --report automation/preview/production-daily/preflight/contract.json
-
       - name: Prepare runtime and verify archive freshness
         id: runtime
         shell: bash
@@ -215,7 +200,6 @@ jobs:
             --output automation/preview/production-daily/preflight/runtime.json \
             --github-output "${GITHUB_OUTPUT}" \
             "${args[@]}"
-
       - name: Verify last successful release in repository and live site
         shell: bash
         run: |
@@ -226,23 +210,114 @@ jobs:
             --posts-root posts \
             --publication-date "${{ steps.runtime.outputs.publication_date }}" \
             --output automation/preview/production-daily/previous-release.json
-
+      - name: Resolve reusable artifact
+        id: recovery_source
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
+          MANUAL_RECOVERY_RUN_ID: ${{ inputs.recovery_run_id || '' }}
+        run: |
+          set -euo pipefail
+          run_id="${MANUAL_RECOVERY_RUN_ID}"
+          source="manual"
+          if [[ -z "${run_id}" ]]; then
+            source="automatic"
+            run_id="$(
+              gh api --paginate \
+                -H "X-GitHub-Api-Version: 2026-03-10" \
+                "/repos/${GITHUB_REPOSITORY}/actions/artifacts?name=daily-production-${PUBLICATION_DATE}&per_page=100" \
+                --jq '.artifacts[] | select(.expired == false and .workflow_run.id != null) | [.created_at, (.workflow_run.id | tostring)] | @tsv' \
+              | awk -v current="${GITHUB_RUN_ID}" '$2 != current { print }' \
+              | sort -r \
+              | sed -n '1p' \
+              | cut -f 2
+            )"
+          fi
+          if [[ -n "${run_id}" ]]; then
+            echo "run_id=${run_id}" >> "${GITHUB_OUTPUT}"
+            echo "source=${source}" >> "${GITHUB_OUTPUT}"
+            echo "Reusable artifact selected from run ${run_id} (${source})."
+          else
+            echo "run_id=" >> "${GITHUB_OUTPUT}"
+            echo "source=none" >> "${GITHUB_OUTPUT}"
+            echo "No reusable artifact found for ${PUBLICATION_DATE}."
+          fi
       - name: Download saved editorial artifact for recovery
-        if: inputs.recovery_run_id != ''
+        if: steps.recovery_source.outputs.run_id != ''
         uses: actions/download-artifact@v8
         with:
           name: daily-production-${{ steps.runtime.outputs.publication_date }}
-          path: automation/recovery/${{ inputs.recovery_run_id }}
-          run-id: ${{ inputs.recovery_run_id }}
+          path: automation/recovery/${{ steps.recovery_source.outputs.run_id }}
+          run-id: ${{ steps.recovery_source.outputs.run_id }}
           github-token: ${{ github.token }}
-
-      - name: Restore saved paid artifact
-        id: recovery
-        if: inputs.recovery_run_id != ''
+      - name: Stop on reused completed coverage audit
+        if: steps.recovery_source.outputs.run_id != ''
         shell: bash
         env:
           PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
-          RECOVERY_RUN_ID: ${{ inputs.recovery_run_id }}
+          RECOVERY_RUN_ID: ${{ steps.recovery_source.outputs.run_id }}
+          RECOVERY_SOURCE: ${{ steps.recovery_source.outputs.source }}
+        run: |
+          set -euo pipefail
+          [[ "${RECOVERY_SOURCE}" == "automatic" ]] || exit 0
+          recovery_root="automation/recovery/${RECOVERY_RUN_ID}"
+          report="${recovery_root}/production-daily/coverage-audit.json"
+          [[ -f "${report}" ]] || exit 0
+          verdict="$(
+            python - "${report}" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          data = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          api = data.get("api") or {}
+          terminal = (
+              data.get("status") == "error"
+              and data.get("web_search_performed") is True
+              and api.get("status") == "completed"
+          )
+          if terminal:
+              reason = str(
+                  data.get("error")
+                  or "Targeted coverage audit completed without a publishable 5+2 pool."
+              )
+              print("terminal:" + " ".join(reason.split()))
+          else:
+              print("continue")
+          PY
+          )"
+          [[ "${verdict}" == terminal:* ]] || exit 0
+          reason="${verdict#terminal:}"
+          mkdir -p \
+            automation/preview/production-daily \
+            "automation/preview/${PUBLICATION_DATE}"
+          cp -a \
+            "${recovery_root}/production-daily/." \
+            automation/preview/production-daily/
+          if [[ -d "${recovery_root}/${PUBLICATION_DATE}" ]]; then
+            cp -a \
+              "${recovery_root}/${PUBLICATION_DATE}/." \
+              "automation/preview/${PUBLICATION_DATE}/"
+          fi
+          {
+            echo "## ⏸️ Редакционная остановка переиспользована"
+            echo
+            echo "- **Дата выпуска:** ${PUBLICATION_DATE}"
+            echo "- **Артефакт:** run ${RECOVERY_RUN_ID}"
+            echo "- **Причина:** ${reason}"
+            echo "- **Платные API в этом запуске:** 0"
+            echo "- **Следующее действие:** дождаться следующего календарного окна; полный повтор сегодня не нужен"
+          } >> "${GITHUB_STEP_SUMMARY}"
+          echo "::warning title=Редакционная остановка переиспользована::Новый платный research и targeted audit не запускались; использован artifact run ${RECOVERY_RUN_ID}."
+          exit 1
+      - name: Restore saved paid artifact
+        id: recovery
+        if: steps.recovery_source.outputs.run_id != ''
+        shell: bash
+        env:
+          PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
+          RECOVERY_RUN_ID: ${{ steps.recovery_source.outputs.run_id }}
         run: |
           set -euo pipefail
           python automation/scripts/recover_digest_artifact.py \
@@ -269,25 +344,22 @@ jobs:
               )
           PY
           echo "Recovered reusable paid artifact from run ${RECOVERY_RUN_ID}."
-
       - name: Install pinned OpenAI SDK
         run: |
           set -euo pipefail
           python -m pip install --disable-pip-version-check "openai==2.45.0"
-
       - name: Validate API configuration
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
           OPENAI_IMAGE_MODEL: ${{ vars.OPENAI_IMAGE_MODEL || 'gpt-image-2' }}
-          RECOVERY_RUN_ID: ${{ inputs.recovery_run_id || '' }}
+          RECOVERY_RUN_ID: ${{ steps.recovery_source.outputs.run_id || '' }}
         run: |
           set -euo pipefail
           [[ -n "${OPENAI_API_KEY}" ]] || { echo "OPENAI_API_KEY missing" >&2; exit 1; }
           [[ "${OPENAI_IMAGE_MODEL}" == "gpt-image-2" ]] || { echo "Unexpected image model" >&2; exit 1; }
           [[ "${OPENAI_TEXT_MODEL}" == "gpt-5.6-terra" ]] || { echo "Unexpected text model" >&2; exit 1; }
-
       - name: Patch runtime publication hour to 06:00 Moscow
         shell: bash
         run: |
@@ -301,14 +373,12 @@ jobs:
           data["publication_hour"] = 6
           path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           PY
-
       - name: Validate editorial code and bootstrap archive
         run: |
           set -euo pipefail
           python automation/scripts/validate_editorial_contract.py
           python automation/scripts/bootstrap_archive.py
           python automation/scripts/validate_archive.py
-
       - name: Verify search window starts at last successful release
         shell: bash
         run: |
@@ -319,9 +389,8 @@ jobs:
             --timezone Europe/Moscow \
             --publication-hour 6 \
             --output automation/preview/production-daily/search-window-continuity.json
-
       - name: Run full research and editorial
-        if: inputs.recovery_run_id == ''
+        if: steps.recovery_source.outputs.run_id == ''
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -343,7 +412,6 @@ jobs:
             --maximum-candidates "${MAXIMUM_CANDIDATES}" \
             --minimum-selected-stories "${MINIMUM_SELECTED_STORIES}" \
             --maximum-selected-stories "${MAXIMUM_SELECTED_STORIES}"
-
       - name: Enforce 5 world plus 2 Russian stories
         # Runs for both fresh and recovered artifacts. Partial recovery may
         # reuse paid research, perform only a bounded audit, and rerun editorial.
@@ -367,7 +435,6 @@ jobs:
             --maximum-candidates 20 \
             --maximum-selected-stories 12 \
             --report automation/preview/production-daily/coverage-audit.json
-
       - name: Normalize and validate digest artifact
         shell: bash
         env:
@@ -381,7 +448,6 @@ jobs:
           python automation/scripts/validate_digest_artifact.py \
             --artifact-dir "${artifact_dir}" \
             --report "${artifact_dir}/artifact-validation.json"
-
       - name: Validate final story coverage
         shell: bash
         env:
@@ -394,7 +460,6 @@ jobs:
             --minimum-world 5 \
             --minimum-russia 2 \
             --report automation/preview/production-daily/story-coverage-validation.json
-
       - name: Build runtime Image API request
         if: steps.recovery.outputs.image_recovered != 'true'
         shell: bash
@@ -405,7 +470,6 @@ jobs:
             --publication-date "${{ steps.runtime.outputs.publication_date }}" \
             --request-id "${{ steps.runtime.outputs.image_request_id }}" \
             --output automation/preview/production-daily/image-request.json
-
       - name: Generate one production cover
         if: steps.recovery.outputs.image_recovered != 'true'
         shell: bash
@@ -424,7 +488,6 @@ jobs:
           python automation/scripts/validate_cover_contract.py \
             --artifact-dir "${image_dir}" \
             --report "${image_dir}/cover-validation.json"
-
       - name: Revalidate recovered production cover
         if: steps.recovery.outputs.image_recovered == 'true'
         shell: bash
@@ -434,7 +497,6 @@ jobs:
           python automation/scripts/validate_cover_contract.py \
             --artifact-dir "${image_dir}" \
             --report "${image_dir}/cover-validation.json"
-
       - name: Stage accepted legacy images under canonical posts/images
         shell: bash
         run: |
@@ -443,7 +505,6 @@ jobs:
             --source posts/dzen-test/images \
             --target posts/images \
             --report automation/preview/production-daily/legacy-images.json
-
       - name: Build and validate candidate site
         shell: bash
         run: |
@@ -485,7 +546,6 @@ jobs:
           python automation/scripts/validate_dzen_feed.py \
             --rss "${candidate_root}/posts/rss.xml" \
             --report "${candidate_root}/dzen-feed-validation.json"
-
       - name: Dry-run or promote candidate
         shell: bash
         env:
@@ -505,14 +565,12 @@ jobs:
             --publication-date "${{ steps.runtime.outputs.publication_date }}" \
             --report automation/preview/production-daily/promotion.json \
             "${args[@]}"
-
       - name: Refresh archive after promotion
         if: steps.mode.outputs.publish == 'true'
         run: |
           set -euo pipefail
           python automation/scripts/bootstrap_archive.py
           python automation/scripts/validate_archive.py
-
       - name: Restore repository site config
         if: always()
         run: |
@@ -520,7 +578,6 @@ jobs:
           if [[ -f automation/preview/production-daily/preflight/site.json.original ]]; then
             cp automation/preview/production-daily/preflight/site.json.original automation/config/site.json
           fi
-
       - name: Commit production release
         id: commit
         if: steps.mode.outputs.publish == 'true'
@@ -533,18 +590,15 @@ jobs:
             echo "main changed while generation was running; refusing to push" >&2
             exit 1
           }
-
           python automation/scripts/validate_publish_changes.py \
             --publication-date "${date}" \
             --report automation/preview/production-daily/publish-changes.json
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Publish AI digest for ${date}"
           commit_sha="$(git rev-parse HEAD)"
           git push origin HEAD:main
           echo "commit_sha=${commit_sha}" >> "${GITHUB_OUTPUT}"
-
       - name: Publish Russian pipeline status
         if: always()
         continue-on-error: true
@@ -553,7 +607,7 @@ jobs:
           PIPELINE_JOB_STATUS: ${{ job.status }}
           PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date || needs.gate.outputs.publication_date }}
           PUBLISH: ${{ steps.mode.outputs.publish || 'false' }}
-          RECOVERY_RUN_ID: ${{ inputs.recovery_run_id || '' }}
+          RECOVERY_RUN_ID: ${{ steps.recovery_source.outputs.run_id || '' }}
           COMMIT_SHA: ${{ steps.commit.outputs.commit_sha || '' }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
@@ -565,7 +619,6 @@ jobs:
             --run-url "${RUN_URL}" \
             --commit-sha "${COMMIT_SHA}" \
             --output automation/preview/production-daily/pipeline-status.json
-
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -575,7 +628,6 @@ jobs:
             automation/preview/${{ steps.runtime.outputs.publication_date }}/
           if-no-files-found: warn
           retention-days: 14
-
   deploy:
     name: Deploy published posts
     needs: production
@@ -584,7 +636,6 @@ jobs:
     with:
       ref: ${{ needs.production.outputs.commit_sha }}
     secrets: inherit
-
   final_status:
     name: Итог публикации
     needs:
@@ -615,7 +666,6 @@ jobs:
             echo
             echo "Подробная русскоязычная причина production-ошибки находится выше в Summary job production."
           } >> "${GITHUB_STEP_SUMMARY}"
-
           if [[ "${GATE_RESULT}" == "failure" ]]; then
             echo "::error title=Ошибка gate::Не пройдена предварительная проверка RSS или сайта. Платные API не вызывались."
           elif [[ "${PRODUCTION_RESULT}" == "failure" ]]; then
