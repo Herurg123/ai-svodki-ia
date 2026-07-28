@@ -251,7 +251,8 @@ jobs:
           path: automation/recovery/${{ steps.recovery_source.outputs.run_id }}
           run-id: ${{ steps.recovery_source.outputs.run_id }}
           github-token: ${{ github.token }}
-      - name: Stop on reused completed coverage audit
+      - name: Reuse completed editorial stop without paid APIs
+        id: terminal_reuse
         if: steps.recovery_source.outputs.run_id != ''
         shell: bash
         env:
@@ -260,12 +261,13 @@ jobs:
           RECOVERY_SOURCE: ${{ steps.recovery_source.outputs.source }}
         run: |
           set -euo pipefail
-          [[ "${RECOVERY_SOURCE}" == "automatic" ]] || exit 0
+          stop="false"
+          reason=""
           recovery_root="automation/recovery/${RECOVERY_RUN_ID}"
           report="${recovery_root}/production-daily/coverage-audit.json"
-          [[ -f "${report}" ]] || exit 0
-          verdict="$(
-            python - "${report}" <<'PY'
+          if [[ "${RECOVERY_SOURCE}" == "automatic" && -f "${report}" ]]; then
+            verdict="$(
+              python - "${report}" <<'PY'
           import json
           import sys
           from pathlib import Path
@@ -286,9 +288,14 @@ jobs:
           else:
               print("continue")
           PY
-          )"
-          [[ "${verdict}" == terminal:* ]] || exit 0
-          reason="${verdict#terminal:}"
+            )"
+            if [[ "${verdict}" == terminal:* ]]; then
+              stop="true"
+              reason="${verdict#terminal:}"
+            fi
+          fi
+          echo "stop=${stop}" >> "${GITHUB_OUTPUT}"
+          [[ "${stop}" == "true" ]] || exit 0
           mkdir -p \
             automation/preview/production-daily \
             "automation/preview/${PUBLICATION_DATE}"
@@ -310,10 +317,9 @@ jobs:
             echo "- **Следующее действие:** дождаться следующего календарного окна; полный повтор сегодня не нужен"
           } >> "${GITHUB_STEP_SUMMARY}"
           echo "::warning title=Редакционная остановка переиспользована::Новый платный research и targeted audit не запускались; использован artifact run ${RECOVERY_RUN_ID}."
-          exit 1
       - name: Restore saved paid artifact
         id: recovery
-        if: steps.recovery_source.outputs.run_id != ''
+        if: steps.recovery_source.outputs.run_id != '' && steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         env:
           PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
@@ -345,10 +351,12 @@ jobs:
           PY
           echo "Recovered reusable paid artifact from run ${RECOVERY_RUN_ID}."
       - name: Install pinned OpenAI SDK
+        if: steps.terminal_reuse.outputs.stop != 'true'
         run: |
           set -euo pipefail
           python -m pip install --disable-pip-version-check "openai==2.45.0"
       - name: Validate API configuration
+        if: steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -361,6 +369,7 @@ jobs:
           [[ "${OPENAI_IMAGE_MODEL}" == "gpt-image-2" ]] || { echo "Unexpected image model" >&2; exit 1; }
           [[ "${OPENAI_TEXT_MODEL}" == "gpt-5.6-terra" ]] || { echo "Unexpected text model" >&2; exit 1; }
       - name: Patch runtime publication hour to 06:00 Moscow
+        if: steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -374,12 +383,14 @@ jobs:
           path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           PY
       - name: Validate editorial code and bootstrap archive
+        if: steps.terminal_reuse.outputs.stop != 'true'
         run: |
           set -euo pipefail
           python automation/scripts/validate_editorial_contract.py
           python automation/scripts/bootstrap_archive.py
           python automation/scripts/validate_archive.py
       - name: Verify search window starts at last successful release
+        if: steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -390,7 +401,7 @@ jobs:
             --publication-hour 6 \
             --output automation/preview/production-daily/search-window-continuity.json
       - name: Run full research and editorial
-        if: steps.recovery_source.outputs.run_id == ''
+        if: steps.recovery_source.outputs.run_id == '' && steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -413,6 +424,7 @@ jobs:
             --minimum-selected-stories "${MINIMUM_SELECTED_STORIES}" \
             --maximum-selected-stories "${MAXIMUM_SELECTED_STORIES}"
       - name: Enforce 5 world plus 2 Russian stories
+        if: steps.terminal_reuse.outputs.stop != 'true'
         # Runs for both fresh and recovered artifacts. Partial recovery may
         # reuse paid research, perform only a bounded audit, and rerun editorial.
         shell: bash
@@ -436,6 +448,7 @@ jobs:
             --maximum-selected-stories 12 \
             --report automation/preview/production-daily/coverage-audit.json
       - name: Normalize and validate digest artifact
+        if: steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         env:
           PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
@@ -449,6 +462,7 @@ jobs:
             --artifact-dir "${artifact_dir}" \
             --report "${artifact_dir}/artifact-validation.json"
       - name: Validate final story coverage
+        if: steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         env:
           PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
@@ -461,7 +475,7 @@ jobs:
             --minimum-russia 2 \
             --report automation/preview/production-daily/story-coverage-validation.json
       - name: Build runtime Image API request
-        if: steps.recovery.outputs.image_recovered != 'true'
+        if: steps.terminal_reuse.outputs.stop != 'true' && steps.recovery.outputs.image_recovered != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -471,7 +485,7 @@ jobs:
             --request-id "${{ steps.runtime.outputs.image_request_id }}" \
             --output automation/preview/production-daily/image-request.json
       - name: Generate one production cover
-        if: steps.recovery.outputs.image_recovered != 'true'
+        if: steps.terminal_reuse.outputs.stop != 'true' && steps.recovery.outputs.image_recovered != 'true'
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -489,7 +503,7 @@ jobs:
             --artifact-dir "${image_dir}" \
             --report "${image_dir}/cover-validation.json"
       - name: Revalidate recovered production cover
-        if: steps.recovery.outputs.image_recovered == 'true'
+        if: steps.terminal_reuse.outputs.stop != 'true' && steps.recovery.outputs.image_recovered == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -498,6 +512,7 @@ jobs:
             --artifact-dir "${image_dir}" \
             --report "${image_dir}/cover-validation.json"
       - name: Stage accepted legacy images under canonical posts/images
+        if: steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -506,6 +521,7 @@ jobs:
             --target posts/images \
             --report automation/preview/production-daily/legacy-images.json
       - name: Build and validate candidate site
+        if: steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -547,6 +563,7 @@ jobs:
             --rss "${candidate_root}/posts/rss.xml" \
             --report "${candidate_root}/dzen-feed-validation.json"
       - name: Dry-run or promote candidate
+        if: steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         env:
           PUBLISH: ${{ steps.mode.outputs.publish }}
@@ -566,7 +583,7 @@ jobs:
             --report automation/preview/production-daily/promotion.json \
             "${args[@]}"
       - name: Refresh archive after promotion
-        if: steps.mode.outputs.publish == 'true'
+        if: steps.mode.outputs.publish == 'true' && steps.terminal_reuse.outputs.stop != 'true'
         run: |
           set -euo pipefail
           python automation/scripts/bootstrap_archive.py
@@ -580,7 +597,7 @@ jobs:
           fi
       - name: Commit production release
         id: commit
-        if: steps.mode.outputs.publish == 'true'
+        if: steps.mode.outputs.publish == 'true' && steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -600,7 +617,7 @@ jobs:
           git push origin HEAD:main
           echo "commit_sha=${commit_sha}" >> "${GITHUB_OUTPUT}"
       - name: Publish Russian pipeline status
-        if: always()
+        if: always() && steps.terminal_reuse.outputs.stop != 'true'
         continue-on-error: true
         shell: bash
         env:
@@ -631,7 +648,7 @@ jobs:
   deploy:
     name: Deploy published posts
     needs: production
-    if: needs.production.outputs.publish == 'true'
+    if: needs.production.result == 'success' && needs.production.outputs.publish == 'true' && needs.production.outputs.commit_sha != ''
     uses: ./.github/workflows/deploy-posts.yml
     with:
       ref: ${{ needs.production.outputs.commit_sha }}
