@@ -4,11 +4,11 @@
   "timezone": "Europe/Moscow",
   "publication_hour_local": 6,
   "publication_minute_local": 17,
-  "schedule_cron_utc": "17 3 * * *",
+  "schedule_cron_utc": "17 0 * * *",
   "schedule_crons_utc": [
-    "17 3 * * *",
-    "37 3 * * *",
-    "57 3 * * *"
+    "17 0 * * *",
+    "37 0 * * *",
+    "57 0 * * *"
   ],
   "first_publication_date": "2026-07-24",
   "production_branch": "main",

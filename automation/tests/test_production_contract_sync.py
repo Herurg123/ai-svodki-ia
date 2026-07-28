@@ -8,8 +8,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-EXPECTED_CRONS = ["17 3 * * *", "37 3 * * *", "57 3 * * *"]
-
+EXPECTED_CRONS = ["17 0 * * *", "37 0 * * *", "57 0 * * *"]
 
 class ProductionContractSyncTests(unittest.TestCase):
     def test_config_workflow_and_editorial_thresholds_are_synchronized(self) -> None:
@@ -24,7 +23,6 @@ class ProductionContractSyncTests(unittest.TestCase):
         workflow = (
             ROOT / ".github/workflows/daily-production.yml"
         ).read_text(encoding="utf-8")
-
         self.assertEqual(production["schedule_crons_utc"], EXPECTED_CRONS)
         self.assertEqual(production["schedule_cron_utc"], EXPECTED_CRONS[0])
         self.assertEqual(production["minimum_selected_stories"], 7)
@@ -32,13 +30,11 @@ class ProductionContractSyncTests(unittest.TestCase):
         self.assertEqual(production["minimum_russian_selected_stories"], 2)
         self.assertTrue(production["coverage_audit_enabled"])
         self.assertEqual(production["coverage_audit_max_web_search_calls"], 5)
-
         # Six remains the legacy editorial "short digest" boundary. Production
         # publication is independently and strictly gated at 7 = 5 world + 2 Russia.
         self.assertEqual(editorial["story_counts"]["total_target_minimum"], 6)
         self.assertEqual(editorial["story_counts"]["world_target_minimum"], 5)
         self.assertEqual(editorial["story_counts"]["russian_target_minimum"], 2)
-
         self.assertEqual(workflow.count("cron:"), 3)
         for cron in EXPECTED_CRONS:
             self.assertEqual(workflow.count(f'cron: "{cron}"'), 1)
@@ -48,7 +44,6 @@ class ProductionContractSyncTests(unittest.TestCase):
         self.assertIn("--minimum-world 5", workflow)
         self.assertIn("--minimum-russia 2", workflow)
         self.assertIn("--maximum-audit-web-search-calls 5", workflow)
-
     def test_same_contract_validator_used_by_ci_accepts_repository(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             report = Path(temp_dir) / "production-contract.json"
@@ -91,7 +86,6 @@ class ProductionContractSyncTests(unittest.TestCase):
                     "audit_max_web_search_calls": 5,
                 },
             )
-
 
 if __name__ == "__main__":
     unittest.main()

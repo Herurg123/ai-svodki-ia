@@ -6,8 +6,7 @@ from pathlib import Path
 
 from production_daily_common import parse_rss, read_json, write_json
 
-EXPECTED_CRONS = ["17 3 * * *", "37 3 * * *", "57 3 * * *"]
-
+EXPECTED_CRONS = ["17 0 * * *", "37 0 * * *", "57 0 * * *"]
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -17,7 +16,6 @@ def main() -> int:
     parser.add_argument("--rss", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
     args = parser.parse_args()
-
     config = read_json(args.config)
     site = read_json(args.site_config)
     workflow = args.workflow.read_text(encoding="utf-8")
@@ -29,7 +27,6 @@ def main() -> int:
     )
     rss = parse_rss(args.rss)
     errors: list[str] = []
-
     required = {
         "enabled": True,
         "timezone": "Europe/Moscow",
@@ -52,7 +49,6 @@ def main() -> int:
             errors.append(
                 f"config {key}: expected {expected!r}, got {config.get(key)!r}"
             )
-
     if config.get("schedule_crons_utc") != EXPECTED_CRONS:
         errors.append(
             "config schedule_crons_utc must contain the three accepted backup windows"
@@ -61,12 +57,10 @@ def main() -> int:
         errors.append("config schedule_cron_utc must equal the primary window")
     if config.get("publication_minute_local") != 17:
         errors.append("config publication_minute_local must equal 17")
-
     if site.get("feed_url") != config.get("feed_url"):
         errors.append("site feed_url differs from production feed_url")
     if site.get("timezone") != config.get("timezone"):
         errors.append("site timezone differs from production timezone")
-
     checks = [
         ("main branch guard", "refs/heads/main"),
         ("contents write", "contents: write"),
@@ -104,6 +98,18 @@ def main() -> int:
         ("image API", "generate_image_preview.py"),
         ("production source manifest", "artifact-validation.json"),
         ("recovery input", "recovery_run_id"),
+        (
+            "automatic recovery lookup",
+            "Resolve reusable artifact",
+        ),
+        (
+            "artifact API lookup",
+            "actions/artifacts?name=daily-production-",
+        ),
+        (
+            "terminal editorial stop reuse",
+            "Stop on reused completed coverage audit",
+        ),
         ("recovery artifact download", "actions/download-artifact@v8"),
         ("deterministic recovery", "recover_digest_artifact.py"),
         ("recovered image target", "--image-target-dir"),
@@ -120,7 +126,10 @@ def main() -> int:
         ("two Russian requirement", "--minimum-russia 2"),
         ("seven total requirement", "--minimum-total 7"),
         ("bounded audit searches", "--maximum-audit-web-search-calls 5"),
-        ("recovery skips full research", "if: inputs.recovery_run_id == ''"),
+        (
+            "recovery skips full research",
+            "if: steps.recovery_source.outputs.run_id == ''",
+        ),
         ("legacy image staging", "stage_legacy_images.py"),
         ("RSS normalization", "normalize_production_rss.py"),
         ("structured data", "inject_blogposting_schema.py"),
@@ -141,7 +150,6 @@ def main() -> int:
     for label, needle in checks:
         if needle not in workflow:
             errors.append(f"workflow missing {label}: {needle}")
-
     repository_root = args.workflow.resolve().parents[2]
     runtime_path = repository_root / "automation/scripts/editorial_policy_runtime.py"
     runtime_consumers = {
@@ -161,7 +169,6 @@ def main() -> int:
         if "patch_editorial_policy" not in consumer_text:
             errors.append(f"{label} does not apply patch_editorial_policy: {path}")
 
-
     coverage_step_start = workflow.find("- name: Enforce 5 world plus 2 Russian stories")
     coverage_step_end = workflow.find("- name:", coverage_step_start + 10)
     coverage_step = (
@@ -173,7 +180,6 @@ def main() -> int:
         errors.append("coverage audit must also run for recovered partial artifacts")
     if workflow.count("run_digest_preview.py") < 1:
         errors.append("workflow must invoke the resilient digest wrapper")
-
     if "python automation/scripts/build_site.py" in workflow:
         errors.append("workflow must call run_build_site.py, not build_site.py directly")
     if "python automation/scripts/validate_site.py" in workflow:
@@ -182,7 +188,6 @@ def main() -> int:
         errors.append("image request and image generation must both skip a recovered cover")
     if workflow.count("steps.recovery.outputs.image_recovered == 'true'") != 1:
         errors.append("workflow must revalidate exactly one recovered cover")
-
     for cron in EXPECTED_CRONS:
         needle = f'cron: "{cron}"'
         if workflow.count(needle) != 1:
@@ -206,7 +211,6 @@ def main() -> int:
     research_position = workflow.find("Run full research and editorial")
     summary_position = workflow.find("Publish Russian pipeline status")
     artifact_position = workflow.find("actions/upload-artifact@v7")
-
     if (
         runtime_position < 0
         or previous_release_position < 0
@@ -242,7 +246,6 @@ def main() -> int:
         summary_position + 200
     ]:
         errors.append("Russian pipeline status must run with if: always()")
-
     coverage_audit_position = workflow.find("Enforce 5 world plus 2 Russian stories")
     normalize_position = workflow.find("Normalize and validate digest artifact")
     coverage_validation_position = workflow.find("Validate final story coverage")
@@ -257,7 +260,6 @@ def main() -> int:
         errors.append("final 5+2 coverage validation must run before the image request")
     if normalize_position < 0 or image_request_position < 0 or normalize_position > image_request_position:
         errors.append("digest normalization/validation must run before the image request")
-
     for forbidden in ("FTP_SERVER", "FTP_USERNAME", "FTP_PASSWORD"):
         if forbidden in workflow:
             errors.append(f"production workflow must not access {forbidden}")
@@ -270,7 +272,6 @@ def main() -> int:
         errors.append(
             "workflow incorrectly assumes a GITHUB_TOKEN push starts another workflow"
         )
-
     if not deploy_workflow_path.exists():
         errors.append(f"deployment workflow missing: {deploy_workflow_path}")
     else:
@@ -285,7 +286,6 @@ def main() -> int:
         for label, needle in deploy_checks:
             if needle not in deploy_workflow:
                 errors.append(f"deployment workflow missing {label}: {needle}")
-
     if rss["self_url"] != config["feed_url"]:
         errors.append("current RSS self URL is not the accepted root URL")
     legacy_count = sum(
@@ -295,16 +295,15 @@ def main() -> int:
     )
     if legacy_count < int(config["minimum_legacy_items"]):
         errors.append("current RSS does not contain required legacy dzen-test items")
-
     report = {
         "status": "ok" if not errors else "error",
         "errors": errors,
         "rss_latest_date": rss["latest_date"],
         "legacy_items": legacy_count,
         "schedule_local": [
-            "06:17 Europe/Moscow",
-            "06:37 Europe/Moscow",
-            "06:57 Europe/Moscow",
+            "03:17 Europe/Moscow",
+            "03:37 Europe/Moscow",
+            "03:57 Europe/Moscow",
         ],
         "schedule_utc": EXPECTED_CRONS,
         "first_publication_date": config["first_publication_date"],
@@ -326,7 +325,6 @@ def main() -> int:
     write_json(args.report, report)
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0 if not errors else 1
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
