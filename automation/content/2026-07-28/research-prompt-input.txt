@@ -1,273 +1,23 @@
+Ты — исследователь редакции ежедневного выпуска «ИИ-сводка».
+
+Твоя задача — не писать статью, а собрать и проверить широкий пул кандидатов для следующего редакционного этапа.
+
+Дата выпуска: 2026-07-28
+Точное редакционное окно: 2026-07-25T06:00:00+03:00 → 2026-07-28T06:00:00+03:00
+Целевое число кандидатов: 12
+Обычная цель числа сюжетов в выпуске: 7
+Целевое число российских кандидатов: 2
+Максимальное число кандидатов: 20
+
+Обязательный итоговый контракт публикации: минимум 7 сюжетов, из них минимум 5 мировых и минимум 2 российских. Первичный research должен постараться обеспечить пул, из которого такой выпуск реально собрать. Если после добросовестной проверки это невозможно, не понижай качество, но подробно зафиксируй конкретные целевые проверки и пробелы: следующий этап выполнит ограниченный coverage audit.
+
+Контекст предыдущих выпусков:
+=== ARCHIVE_CONTEXT_BEGIN ===
 {
   "version": 2,
-  "generated_at": "2026-07-28T03:37:03+00:00",
+  "generated_at": "2026-07-28T03:31:35+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
-    {
-      "date": "2026-07-28",
-      "published_at": "2026-07-28T06:00:00+03:00",
-      "title": "ИИ-Сводка на 28 июля 2026",
-      "link": "https://rybalka.one/posts/2026-07-28/",
-      "summary": "Главные новости искусственного интеллекта за 28 июля 2026 года Повестка дня показывает, что ИИ-рынок одновременно открывает модели, строит инфраструктуру рекордного масштаба и пытается закрыть новые риски безопасности. На уровне практического внедрения главным дефицитом становятся не интерес к ИИ, а готовность данных, вычислений, политик доступа и навыков пользователей. Отдельно заметна конкуренция за доступные модели: китайские разработчики расширяют присутствие за пределами домашнего рынка, а ",
-      "topics": [
-        "открытая безопасность ИИ",
-        "Kimi K3 и open-weight-модели",
-        "финансирование ИИ-инфраструктуры",
-        "приватность ИИ-диалогов",
-        "китайские модели на рынке США",
-        "готовность корпоративной инфраструктуры",
-        "синтетическая речь и дипфейки"
-      ],
-      "source_urls": [
-        "https://blogs.nvidia.com/blog/open-secure-ai-alliance/",
-        "https://github.com/MoonshotAI/Kimi-K3",
-        "https://news.bloomberglaw.com/private-equity/nvidia-in-talks-to-back-openai-lease-of-softbank-us-data-center",
-        "https://www.wired.com/story/private-claude-chats-exposed-in-google-and-bing-search-results/",
-        "https://apnews.com/article/a00bf637866fcd4d81f4fde28c9862ce",
-        "https://ai.cnews.ru/news/line/2026-07-27_bolshe_poloviny_top-menedzherov",
-        "https://ai.cnews.ru/news/line/2026-07-27_idealno_znachit_fejk_77"
-      ],
-      "stories": [
-        {
-          "candidate_id": "cand-001",
-          "section": "world",
-          "headline": "Nvidia создала Open Secure AI Alliance для разработки открытых средств защиты ИИ",
-          "organization": "Nvidia; Microsoft; Hugging Face; Linux Foundation; CrowdStrike и другие основатели",
-          "topic": "открытая безопасность ИИ и агентов",
-          "event_type": "industry_alliance",
-          "status": "new",
-          "summary": "Nvidia объявила о создании Open Secure AI Alliance — коалиции компаний из сфер ИИ, облаков, корпоративного ПО, кибербезопасности и open source. Альянс намерен разрабатывать и распространять открытые технологии и практики для защиты программного обеспечения и агентов ИИ.",
-          "published_at": null,
-          "published_date": "2026-07-27",
-          "time_precision": "date",
-          "sources": [
-            {
-              "title": "Industry Leaders Unite in Open Secure AI Alliance for AI Safety and Security",
-              "publisher": "NVIDIA",
-              "url": "https://blogs.nvidia.com/blog/open-secure-ai-alliance/"
-            }
-          ],
-          "keywords": [
-            "Nvidia",
-            "Open Secure AI Alliance",
-            "безопасность ИИ",
-            "агенты ИИ",
-            "open source",
-            "Hugging Face",
-            "Microsoft",
-            "Linux Foundation",
-            "CrowdStrike",
-            "уязвимости"
-          ],
-          "geography": "world",
-          "category": "security"
-        },
-        {
-          "candidate_id": "cand-002",
-          "section": "world",
-          "headline": "Обновление: Moonshot AI опубликовала веса и технический отчёт Kimi K3",
-          "organization": "Moonshot AI",
-          "topic": "open-weight модели для агентских и кодинговых задач",
-          "event_type": "model_release",
-          "status": "update",
-          "summary": "Moonshot AI перешла от первоначального запуска Kimi K3 через сервисы к публикации её весов и технического отчёта. Это делает модель доступной для самостоятельного развёртывания и исследования, а не только через интерфейс и API компании.",
-          "published_at": null,
-          "published_date": "2026-07-27",
-          "time_precision": "date",
-          "sources": [
-            {
-              "title": "Kimi-K3",
-              "publisher": "Moonshot AI / GitHub",
-              "url": "https://github.com/MoonshotAI/Kimi-K3"
-            }
-          ],
-          "keywords": [
-            "Moonshot AI",
-            "Kimi K3",
-            "open-weight",
-            "MoE",
-            "технический отчёт",
-            "агенты ИИ",
-            "ИИ-кодинг",
-            "контекст",
-            "мультимодальность",
-            "Hugging Face"
-          ],
-          "geography": "world",
-          "category": "models"
-        },
-        {
-          "candidate_id": "cand-003",
-          "section": "world",
-          "headline": "Nvidia, по данным источников, обсуждает финансовую гарантию для дата-центра OpenAI в Огайо",
-          "organization": "Nvidia; OpenAI; SoftBank",
-          "topic": "финансирование ИИ-инфраструктуры",
-          "event_type": "infrastructure_financing",
-          "status": "new",
-          "summary": "По сообщениям Bloomberg и Reuters-перепечатки, Nvidia ведёт переговоры о предоставлении OpenAI финансовой гарантии примерно на 250 млрд долларов для аренды и финансирования крупного дата-центрового проекта в южном Огайо.",
-          "published_at": "2026-07-27T06:46:00+03:00",
-          "published_date": "2026-07-27",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Nvidia in Talks With OpenAI to Guarantee $250 Billion Financing for Data Center",
-              "publisher": "Bloomberg Law",
-              "url": "https://news.bloomberglaw.com/private-equity/nvidia-in-talks-to-back-openai-lease-of-softbank-us-data-center"
-            }
-          ],
-          "keywords": [
-            "Nvidia",
-            "OpenAI",
-            "дата-центры",
-            "Огайо",
-            "финансовая гарантия",
-            "10 ГВт",
-            "SoftBank",
-            "инфраструктура ИИ",
-            "GPU",
-            "финансирование"
-          ],
-          "geography": "world",
-          "category": "infrastructure"
-        },
-        {
-          "candidate_id": "cand-004",
-          "section": "world",
-          "headline": "Публичные ссылки на чаты и Artifacts Claude оказались в поисковой выдаче",
-          "organization": "Anthropic; Google; Microsoft",
-          "topic": "приватность опубликованных диалогов ИИ",
-          "event_type": "security_incident",
-          "status": "new",
-          "summary": "Журналисты обнаружили, что часть доступных по ссылке диалогов и созданных в Claude материалов индексировалась поисковыми системами. Проверка WIRED показала отсутствие на части просмотренных страниц директивы noindex.",
-          "published_at": null,
-          "published_date": "2026-07-27",
-          "time_precision": "date",
-          "sources": [
-            {
-              "title": "Private Claude Chats Exposed in Google and Bing Search Results",
-              "publisher": "WIRED",
-              "url": "https://www.wired.com/story/private-claude-chats-exposed-in-google-and-bing-search-results/"
-            }
-          ],
-          "keywords": [
-            "Anthropic",
-            "Claude",
-            "Google",
-            "Bing",
-            "приватность",
-            "индексация",
-            "shared links",
-            "Artifacts",
-            "поисковые роботы",
-            "безопасность ИИ"
-          ],
-          "geography": "world",
-          "category": "security"
-        },
-        {
-          "candidate_id": "cand-005",
-          "section": "world",
-          "headline": "Китайские модели расширяют присутствие среди американских разработчиков и компаний",
-          "organization": "DeepSeek; Alibaba; Moonshot AI; Z.ai; американские компании и разработчики",
-          "topic": "проникновение китайских моделей на рынок США",
-          "event_type": "market_report",
-          "status": "new",
-          "summary": "Associated Press собрал свидетельства о том, что китайские модели, включая DeepSeek, Qwen, Kimi и GLM, находят применение в США благодаря сочетанию цены, доступности весов и конкурентных возможностей.",
-          "published_at": null,
-          "published_date": "2026-07-26",
-          "time_precision": "date",
-          "sources": [
-            {
-              "title": "Cheaper, open and intelligent: Chinese AI models gain ground, as they make inroads in the US",
-              "publisher": "Associated Press",
-              "url": "https://apnews.com/article/a00bf637866fcd4d81f4fde28c9862ce"
-            }
-          ],
-          "keywords": [
-            "DeepSeek",
-            "Qwen",
-            "Kimi",
-            "GLM",
-            "Z.ai",
-            "Китай",
-            "США",
-            "open-weight",
-            "стоимость моделей",
-            "корпоративное внедрение"
-          ],
-          "geography": "world",
-          "category": "enterprise"
-        },
-        {
-          "candidate_id": "cand-007",
-          "section": "russia",
-          "headline": "К2 НейроТех: корпоративный спрос на ИИ опережает готовность инфраструктуры и политик безопасности",
-          "organization": "К2 НейроТех; К2Тех",
-          "topic": "готовность российской корпоративной инфраструктуры к ИИ",
-          "event_type": "survey",
-          "status": "new",
-          "summary": "К2 НейроТех опубликовала опрос 100 корпоративных компаний о готовности к внедрению генеративного ИИ. Респонденты фиксируют разрыв между ожиданиями руководства и состоянием инфраструктуры, данных и процессов безопасности.",
-          "published_at": "2026-07-27T15:58:00+03:00",
-          "published_date": "2026-07-27",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Больше половины топ-менеджеров торопят внедрение ИИ, игнорируя неготовность инфраструктуры",
-              "publisher": "CNews",
-              "url": "https://ai.cnews.ru/news/line/2026-07-27_bolshe_poloviny_top-menedzherov"
-            }
-          ],
-          "keywords": [
-            "К2 НейроТех",
-            "российский бизнес",
-            "ИИ-инфраструктура",
-            "MLSecOps",
-            "безопасность ИИ",
-            "гибридное облако",
-            "инференс",
-            "данные",
-            "корпоративный ИИ",
-            "исследование"
-          ],
-          "geography": "russia",
-          "category": "enterprise"
-        },
-        {
-          "candidate_id": "cand-008",
-          "section": "russia",
-          "headline": "Kokoc Group: синтетические голосовые сообщения оказались самым сложным форматом для распознавания",
-          "organization": "Kokoc Group",
-          "topic": "распознавание синтетического мультимедийного контента",
-          "event_type": "survey",
-          "status": "new",
-          "summary": "Kokoc Group провела исследование того, как аудитория отличает созданные человеком и синтетические материалы в текстах, изображениях, аудио и видео. Наиболее сложным форматом для участников оказались голосовые сообщения.",
-          "published_at": "2026-07-27T13:23:00+03:00",
-          "published_date": "2026-07-27",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Идеально — значит фейк: 77% россиян узнают ИИ по стерильной картинке, но 56% теряются, когда слышат цифровой голос",
-              "publisher": "CNews",
-              "url": "https://ai.cnews.ru/news/line/2026-07-27_idealno_znachit_fejk_77"
-            }
-          ],
-          "keywords": [
-            "Kokoc Group",
-            "синтетический контент",
-            "ИИ-голос",
-            "видео",
-            "изображения",
-            "музыка",
-            "доверие",
-            "маркировка",
-            "дипфейки",
-            "исследование"
-          ],
-          "geography": "russia",
-          "category": "multimodal"
-        }
-      ]
-    },
     {
       "date": "2026-07-25",
       "published_at": "2026-07-25T06:00:00+03:00",
@@ -4935,3 +4685,385 @@
     }
   ]
 }
+=== ARCHIVE_CONTEXT_END ===
+
+Утверждённая машиночитаемая редакционная политика:
+=== EDITORIAL_POLICY_BEGIN ===
+{
+  "spec_version": "2026-07-24",
+  "language": "ru",
+  "timezone": "Europe/Moscow",
+  "story_counts": {
+    "total_target_minimum": 6,
+    "total_target_maximum": 12,
+    "world_target_minimum": 5,
+    "world_target_maximum": 8,
+    "russian_target_minimum": 2,
+    "russian_target_maximum": 5,
+    "short_digest_minimum": 1,
+    "zero_stories_status": "error",
+    "short_digest_notice": "День на новости выдался слабым - поэтому коротко"
+  },
+  "diversity": {
+    "max_selected_per_publisher_soft": 2,
+    "max_selected_per_organization_soft": 2,
+    "override_requires_reason": true
+  },
+  "what_it_means": {
+    "required": true,
+    "minimum_items": 4,
+    "maximum_items": 6,
+    "html_heading": "<h2>Что это значит</h2>",
+    "list_tag": "ol"
+  },
+  "dzen": {
+    "required": true,
+    "heading": "Все ИИ-Сводки",
+    "url": "https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1",
+    "anchor_text": "Архив ИИ-Сводок",
+    "html": "<h2>Все ИИ-Сводки</h2><p><a href=\"https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1\">Архив ИИ-Сводок</a></p>"
+  },
+  "meta_marking": {
+    "enabled": true,
+    "visible_name": "Meta",
+    "first_visible_form": "Meta*",
+    "subsequent_visible_form": "Meta",
+    "footnote_html": "<p><em>*Meta и ее сервисы - в России запрещены</em></p>",
+    "footnote_position": "after_dzen_block",
+    "service_fields_use_asterisk": false
+  },
+  "updates": {
+    "headline_prefix": "Обновление: ",
+    "required_for_archive_status": "update",
+    "forbidden_for_archive_status": "new"
+  },
+  "article": {
+    "introduction_sentences_minimum": 2,
+    "introduction_sentences_maximum": 4,
+    "paragraphs_per_story_minimum": 2,
+    "paragraphs_per_story_maximum": 3,
+    "world_heading": "Мировые лидеры ИИ",
+    "russian_heading": "Российские лидеры ИИ",
+    "allow_missing_russian_section": true,
+    "forbidden_tags": [
+      "h1",
+      "img",
+      "html",
+      "head",
+      "body",
+      "script",
+      "style",
+      "iframe"
+    ]
+  },
+  "terminology": {
+    "prefer": {
+      "AI": "ИИ",
+      "AI agent": "агент ИИ"
+    },
+    "keep_untranslated": [
+      "LLM"
+    ],
+    "preserve_company_and_product_names": true,
+    "allow_ai_in_official_names": true
+  },
+  "style": [
+    "ясно",
+    "делово",
+    "живо",
+    "без воды",
+    "без чрезмерного хайпа"
+  ],
+  "tracked_world_organizations": [
+    "OpenAI",
+    "Google DeepMind",
+    "Anthropic",
+    "Meta AI",
+    "Microsoft",
+    "Nvidia",
+    "xAI",
+    "Amazon",
+    "Mistral",
+    "Hugging Face",
+    "Apple",
+    "Cohere"
+  ],
+  "tracked_asia_organizations": [
+    "DeepSeek",
+    "Alibaba",
+    "Qwen",
+    "Baidu",
+    "ERNIE",
+    "Tencent",
+    "Hunyuan",
+    "ByteDance",
+    "Doubao",
+    "Moonshot AI",
+    "Kimi",
+    "Z.ai",
+    "Zhipu AI",
+    "GLM",
+    "MiniMax",
+    "01.AI",
+    "SenseTime",
+    "Huawei"
+  ],
+  "tracked_developer_tools": [
+    "IDE",
+    "coding agents",
+    "agentic development environments",
+    "CLI-агенты",
+    "Claude Code",
+    "Cursor",
+    "GitHub Copilot",
+    "OpenCode",
+    "Cline",
+    "GLM",
+    "Qwen",
+    "DeepSeek",
+    "Kimi",
+    "Claude",
+    "GPT",
+    "Gemini"
+  ],
+  "tracked_russian_organizations": [
+    "Яндекс",
+    "Сбер",
+    "VK",
+    "МТС AI",
+    "Т-Банк",
+    "Тинькофф",
+    "Газпромбанк",
+    "Ростелеком"
+  ],
+  "editorial_notes": {
+    "publish_in_article": false,
+    "publish_in_rss": false,
+    "allowed_types": [
+      "source_gap",
+      "low_news_volume",
+      "time_precision",
+      "regional_gap",
+      "diversity_override"
+    ]
+  },
+  "stories_file": {
+    "enabled": true,
+    "filename": "stories.json"
+  },
+  "image": {
+    "aspect_ratio": "16:9",
+    "title_template": "ИИ-Сводка на {human_date}",
+    "direct_prompt_to_image_api": true,
+    "restrictions": [
+      "без логотипов компаний",
+      "без дополнительного текста, кроме точного заголовка",
+      "без водяных знаков",
+      "без мелких интерфейсных надписей",
+      "без пустой половины кадра",
+      "без стокового корпоративного клипарта",
+      "без узнаваемых лиц реальных людей",
+      "нейтральные силуэты без идентифицируемых черт допустимы"
+    ]
+  }
+}
+=== EDITORIAL_POLICY_END ===
+
+## 1. Временной диапазон
+
+Ищи новые события строго внутри окна 2026-07-25T06:00:00+03:00 → 2026-07-28T06:00:00+03:00.
+
+Для каждого кандидата укажи:
+
+- `published_date` в формате YYYY-MM-DD;
+- `published_at` как точный ISO timestamp с часовым поясом, если время опубликовано источником;
+- `time_precision: "datetime"`, если точное время подтверждено;
+- `published_at: null` и `time_precision: "date"`, если источник показывает только дату.
+
+Не выдумывай время публикации. Если доступна только дата, так и фиксируй.
+
+Старый документ допускается только как `supporting_source` к новому событию внутри окна. Не добавляй старые или слабые материалы ради количества.
+
+Если свежих подтверждённых событий меньше целевого числа, верни меньше кандидатов и честно зафиксируй дефицит в `coverage` и `research_notes`.
+
+Если найден хотя бы один достойный кандидат, `status` должен оставаться `ok`. Ноль достойных кандидатов означает `status: "error"`.
+
+## 2. Обязательный план исследования
+
+Проверь каждое направление отдельно. Не завершай поиск после первых нескольких подходящих материалов. До завершения первичного прохода отдельно перепроверь недостающие мировые и российские сегменты, если пул ещё не позволяет выбрать 5 мировых и 2 российских сюжета. В `coverage.notes` для каждого пробела перечисли конкретные группы компаний, типов источников и поисковых направлений, которые были проверены.
+
+### 2.1. Мировые лаборатории и компании
+
+Проверь OpenAI, Google DeepMind, Anthropic, Meta AI, Microsoft, Nvidia, xAI, Amazon, Mistral, Hugging Face, Apple, Cohere, крупные лаборатории, регуляторов и значимых инфраструктурных игроков.
+
+### 2.2. Китай и Азия
+
+Отдельно проверь:
+
+- DeepSeek;
+- Alibaba и Qwen;
+- Baidu и ERNIE;
+- Tencent и Hunyuan;
+- ByteDance и Doubao;
+- Moonshot AI и Kimi;
+- Z.ai, Zhipu AI и GLM;
+- MiniMax;
+- 01.AI;
+- SenseTime;
+- Huawei.
+
+Особенно отслеживай open-source и open-weight модели, агентов, ИИ-кодинг, мультимодальность, чипы, облака, инфраструктуру и регулирование.
+
+### 2.3. Инструменты разработчиков и ИИ-кодинг
+
+Отдельно ищи:
+
+- IDE;
+- coding agents;
+- agentic development environments;
+- CLI-агентов;
+- Claude Code;
+- Cursor;
+- GitHub Copilot;
+- OpenCode;
+- Cline;
+- инструменты генерации, ревью, рефакторинга, тестирования и сопровождения кода.
+
+Если важный самостоятельный инструмент связан с GLM, Qwen, DeepSeek, Kimi, Claude, GPT или Gemini, выделяй его отдельным кандидатом.
+
+### 2.4. Исследования и безопасность
+
+Проверь новые научные публикации, arXiv, оценки моделей, безопасность, интерпретируемость, надёжность, red teaming, agent security, sandbox и software supply chain.
+
+### 2.5. Мультимодальность и генеративные медиа
+
+Проверь генерацию изображений, видео, аудио, речи, музыки и мультимодальные системы.
+
+### 2.6. Робототехника и автономные системы
+
+Проверь робототехнику, physical AI, автономный транспорт, промышленные внедрения и embodied systems.
+
+### 2.7. Инфраструктура
+
+Проверь чипы, память, дата-центры, inference, облачные платформы, энергетику, открытые модели и вычислительную инфраструктуру.
+
+### 2.8. Регулирование и общественная политика
+
+Проверь государственную политику, суды, нормативные документы, международные стандарты и общественные инициативы.
+
+### 2.9. Бизнес, внедрения и инвестиции
+
+Проверь значимые корпоративные внедрения, сделки, инвестиции, партнёрства и влияние на рынок.
+
+### 2.10. Российский сектор
+
+Отдельно проверь:
+
+- Яндекс;
+- Сбер;
+- VK;
+- МТС AI;
+- Т-Банк и Тинькофф;
+- Газпромбанк;
+- Ростелеком;
+- российские исследовательские команды;
+- стартапы;
+- вузы;
+- госинициативы;
+- регулирование;
+- КИИ;
+- промышленность;
+- телеком;
+- банковский сектор.
+
+Для каждого направления либо найди достойный кандидат, либо зафиксируй пробел в `coverage`.
+
+## 3. Требования к кандидатам
+
+Стремись собрать 12 кандидатов, но не превышай 20. Целевое число не является поводом включать старые или слабые материалы.
+
+Стремись найти не менее 2 значимых российских кандидатов. Это мягкая редакционная цель. Не выдумывай российские новости ради количества. При дефиците выставь для российского направления `coverage.status = "gap"` и подробно укажи, где искал и почему материалы не прошли фильтр.
+
+Для каждого кандидата обязательно заполни:
+
+- `topic` — короткая нормализованная тема;
+- `event_type` — тип события, например release, research, regulation, investment, product_update, court_decision, infrastructure;
+- `keywords` — от 1 до 12 полезных ключевых слов без `Meta*`;
+- `organization` без юридической звёздочки;
+- `archive_status: "none"` или `"update"`.
+
+Ограничения разнообразия являются ориентирами, а не поводом удалять крупные независимые события:
+
+- желательно не более трёх кандидатов от одного издателя;
+- желательно не более двух кандидатов одной компании или организации;
+- не считать несколько пересказов одного пресс-релиза разными событиями;
+- не строить пул вокруг одного корпоративного блога;
+- не включать рекламные инструкции, подборки советов и мелкие обновления интерфейса;
+- не включать материалы, где ИИ упомянут только для привлечения внимания.
+
+## 4. Источники и проверка
+
+Приоритет источников:
+
+1. официальные страницы компаний и разработчиков;
+2. официальная документация;
+3. научные публикации;
+4. государственные органы и регуляторы;
+5. судебные и нормативные документы;
+6. GitHub;
+7. Hugging Face;
+8. arXiv;
+9. Reuters, Associated Press, Bloomberg и другие крупные агентства;
+10. авторитетные технологические и деловые издания;
+11. российские отраслевые СМИ с прямой ссылкой на первоисточник.
+
+Не используй поисковый сниппет как подтверждение. Открой страницу и проверь:
+
+- точный заголовок;
+- издателя;
+- дату и, если доступно, время публикации;
+- прямой URL;
+- факты, которые войдут в карточку кандидата;
+- существенные ограничения или оговорки.
+
+Если факт подтверждён только лендингом, пресс-релизом или соцсетями, называй его продуктовым анонсом или заявлением компании, а не независимой оценкой.
+
+Не выдумывай названия продуктов, даты, время, версии, числа, цитаты, параметры моделей, участников сделок и ссылки.
+
+## 5. Проверка дублей
+
+Сравни каждый сюжет с `ARCHIVE_CONTEXT`, включая `stories`, темы, компании, заголовки и URL.
+
+Используй `archive_status`:
+
+- `none` — сюжет отсутствует в архиве;
+- `update` — тема уже была, но появилось существенное новое событие.
+
+Полноценные дубли не должны попадать в `candidates`. Помести их в `rejected_as_duplicates`.
+
+Для `update` конкретно укажи, что изменилось: официальный релиз, новый документ, решение суда или регулятора, новые характеристики, новый этап сделки, новые независимые результаты или другое существенное развитие.
+
+## 6. Оценка кандидата
+
+Для каждого кандидата укажи:
+
+- краткое описание события;
+- от двух до шести подтверждённых фактов;
+- почему событие важно;
+- ограничения и неопределённости;
+- `geography: world` или `russia`;
+- `category` из разрешённого списка;
+- `significance_score` от 1 до 5;
+- `recommendation: include`, `consider` или `exclude`.
+
+Оценка 5 означает событие с заметным отраслевым влиянием. Оценка 3 означает достойный дополнительный сюжет. Оценки 1–2 обычно не должны получать `recommendation: include`.
+
+## 7. Терминология служебных полей
+
+В служебных данных пиши `Meta`, а не `Meta*`.
+
+Названия компаний и продуктов не переводи. `LLM` оставляй без перевода.
+
+## 8. Результат
+
+Верни только строгий JSON по переданной схеме. Никакого Markdown, пояснений до JSON или текста после JSON.

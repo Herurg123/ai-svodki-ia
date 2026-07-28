@@ -1,0 +1,547 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-07-28",
+  "search_window": {
+    "start_at": "2026-07-25T06:00:00+03:00",
+    "end_at": "2026-07-28T06:00:00+03:00",
+    "latest_archive_at": "2026-07-25T06:00:00+03:00",
+    "start_date": "2026-07-25",
+    "end_date": "2026-07-28",
+    "latest_archive_date": "2026-07-25"
+  },
+  "coverage": [
+    {
+      "area": "Мировые лаборатории и компании",
+      "status": "covered",
+      "notes": "Проверены официальные публикации OpenAI, Anthropic, Google, Meta, Microsoft, Nvidia, Hugging Face и крупные технологические медиа за 25–27 июля. Достойные новые события найдены у Nvidia, Anthropic и OpenAI; новых самостоятельных релизов от OpenAI, Google DeepMind, Meta, Microsoft, Apple, Amazon, xAI, Mistral и Cohere внутри окна, прошедших фильтр значимости, не подтверждено."
+    },
+    {
+      "area": "Китай и Азия",
+      "status": "covered",
+      "notes": "Проверены Moonshot AI/Kimi, DeepSeek, Alibaba/Qwen, Z.ai/GLM, Huawei, Tencent, Baidu, MiniMax, 01.AI и SenseTime через официальные площадки, Hugging Face, GitHub, AP и отраслевые медиа. Подтверждён существенный новый этап Kimi K3 — публикация весов и технического отчёта; отдельные новые подтверждённые события по DeepSeek, Qwen, Baidu, Tencent, ByteDance, MiniMax, 01.AI и SenseTime в окне не прошли фильтр."
+    },
+    {
+      "area": "Инструменты разработчиков и ИИ-кодинг",
+      "status": "gap",
+      "notes": "Проверены GitHub Blog, Cursor, Claude Code/Anthropic, OpenCode, Cline, агентные IDE и релизы, связанные с GPT, Gemini, Claude, Kimi, Qwen, GLM и DeepSeek. Внутри окна не найдено самостоятельного крупного релиза, не являющегося мелким интерфейсным обновлением или повтором сюжетов архива."
+    },
+    {
+      "area": "Исследования и безопасность",
+      "status": "covered",
+      "notes": "Проверены arXiv за 25–27 июля, Hugging Face, официальные блоги Nvidia и партнёров, публикации о безопасности агентов и supply chain. В пул включены запуск Open Secure AI Alliance и эпизод с индексированием публичных ссылок Claude; свежие arXiv-препринты просмотрены, но не включены как недостаточно значимые для ежедневного выпуска без независимой валидации."
+    },
+    {
+      "area": "Мультимодальность и генеративные медиа",
+      "status": "covered",
+      "notes": "Проверены обновления OpenAI, Meta, Google, Hugging Face и российские отраслевые источники по изображениям, видео, речи, музыке и синтетическому контенту. В российском сегменте найдено исследование Kokoc Group о распознавании ИИ-контента; крупных мировых продуктовых релизов в этой категории внутри окна не подтверждено."
+    },
+    {
+      "area": "Робототехника и автономные системы",
+      "status": "gap",
+      "notes": "Проверены Nvidia, крупные робототехнические компании, Reuters, корпоративные анонсы physical AI и азиатские источники. Новых подтверждённых запусков, внедрений или сделок достаточной редакционной значимости внутри окна не найдено; не включались старые материалы и анонсы без фактического нового этапа."
+    },
+    {
+      "area": "Инфраструктура",
+      "status": "covered",
+      "notes": "Проверены Nvidia, OpenAI, облачные и дата-центровые игроки, Reuters/Bloomberg-перепечатки и деловые медиа. Найдено сообщение о переговорах Nvidia и OpenAI о финансовой гарантии для проекта дата-центра в Огайо; оно отмечено как сообщение источников, без подтверждения сторонами."
+    },
+    {
+      "area": "Регулирование и общественная политика",
+      "status": "gap",
+      "notes": "Проверены официальные документы США, ЕС, суды, регуляторы, Reuters и отраслевые медиа. Решение суда Delaware по спору Starbuck v. Google датировано 24 июля 2026 года и потому находится вне заданного окна; свежих новых нормативных актов или решений суда внутри окна, соответствующих критериям, не найдено."
+    },
+    {
+      "area": "Бизнес, внедрения и инвестиции",
+      "status": "covered",
+      "notes": "Проверены Reuters, AP, Bloomberg-перепечатки, корпоративные сообщения и технологические медиа. Включены переговоры Nvidia–OpenAI о финансировании инфраструктуры и материал AP о проникновении китайских моделей на рынок США; второй сюжет является рыночной верификацией тренда, а не анонсом отдельного продукта."
+    },
+    {
+      "area": "Российский сектор",
+      "status": "covered",
+      "notes": "Отдельно проверены Яндекс, Сбер, VK, МТС, Т-Банк, Ростелеком, отраслевые СМИ CNews и ComNews, вузы, промышленность, телеком и ИБ. Найдены четыре пригодных кандидата: образовательные программы GigaChat, исследование готовности корпоративной ИИ-инфраструктуры К2 НейроТех, исследование распознавания синтетического контента Kokoc Group и опрос НОВИКОМ/НИУ ВШЭ. Новых значимых продуктовых запусков от Яндекса, VK, МТС, Т-Банка и Ростелекома внутри окна не подтверждено."
+    }
+  ],
+  "candidates": [
+    {
+      "id": "cand-001",
+      "title": "Nvidia создала Open Secure AI Alliance для разработки открытых инструментов защиты ИИ и агентов",
+      "organization": "Nvidia; Microsoft; Hugging Face; Linux Foundation; CrowdStrike и другие основатели",
+      "published_date": "2026-07-27",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "открытая безопасность ИИ и агентов",
+      "event_type": "industry_alliance",
+      "keywords": [
+        "Nvidia",
+        "Open Secure AI Alliance",
+        "безопасность ИИ",
+        "агенты ИИ",
+        "open source",
+        "Hugging Face",
+        "Microsoft",
+        "Linux Foundation",
+        "CrowdStrike",
+        "уязвимости"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Industry Leaders Unite in Open Secure AI Alliance for AI Safety and Security",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/open-secure-ai-alliance/"
+      },
+      "supporting_sources": [
+        {
+          "title": "HPE joins Open Secure AI Alliance to advance open cybersecurity innovation",
+          "publisher": "HPE",
+          "url": "https://www.hpe.com/us/en/newsroom/blog-post/2026/07/hpe-joins-open-secure-ai-alliance-to-advance-open-cybersecurity-innovation.html"
+        },
+        {
+          "title": "CrowdStrike Joins the Open Secure AI Alliance to Advance AI Safety and Security",
+          "publisher": "CrowdStrike",
+          "url": "https://www.crowdstrike.com/en-us/blog/crowdstrike-joins-the-open-secure-ai-alliance/"
+        }
+      ],
+      "event_summary": "Nvidia объявила о создании Open Secure AI Alliance — коалиции компаний из сфер ИИ, облаков, корпоративного ПО, кибербезопасности и open source. Альянс намерен разрабатывать и распространять открытые технологии и практики для защиты программного обеспечения и агентов ИИ.",
+      "verified_facts": [
+        "Nvidia указала, что среди учредителей — Microsoft, Hugging Face, Linux Foundation, CrowdStrike, IBM, Red Hat, Cloudflare, Databricks, Cisco, SAP и другие компании.",
+        "Заявленная работа альянса включает открытые модели, инструменты, техники и средства защиты программного обеспечения и агентов ИИ.",
+        "Инициатива опирается на работы Linux Foundation Akrites и сообщества OpenSSF.",
+        "Nvidia признаёт риски злоупотребления открытыми моделями, но заявляет, что эти риски не уникальны для открытых систем."
+      ],
+      "significance": "Это крупная межотраслевая коалиция вокруг практической защиты ИИ-стека. Она переводит спор об open-weight-моделях из общей политической плоскости в инструменты для защиты агентов, программного обеспечения и инфраструктуры.",
+      "significance_score": 4,
+      "limitations": "Это заявление основателей, а не сведения о уже выпущенных единых инструментах или измеримых результатах. Механизмы управления, финансирования и конкретный план релизов в анонсе детально не раскрыты.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть сюжет о политическом письме в защиту open-weight-моделей от 24 июля, но создание отдельного альянса безопасности 27 июля является новым самостоятельным событием.",
+      "recommendation": "include"
+    },
+    {
+      "id": "cand-002",
+      "title": "Moonshot AI опубликовала веса и технический отчёт Kimi K3",
+      "organization": "Moonshot AI",
+      "published_date": "2026-07-27",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "open-weight модели для агентских и кодинговых задач",
+      "event_type": "model_release",
+      "keywords": [
+        "Moonshot AI",
+        "Kimi K3",
+        "open-weight",
+        "MoE",
+        "технический отчёт",
+        "агенты ИИ",
+        "ИИ-кодинг",
+        "контекст",
+        "мультимодальность",
+        "Hugging Face"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Kimi-K3",
+        "publisher": "Moonshot AI / GitHub",
+        "url": "https://github.com/MoonshotAI/Kimi-K3"
+      },
+      "supporting_sources": [
+        {
+          "title": "Kimi K3 Model Overview: 2.8T Parameters, MXFP4 Quantization, and What the Open Weights Mean for the Community",
+          "publisher": "Hugging Face Community",
+          "url": "https://huggingface.co/blog/ResterChed/kimi-k3-model-overview-mxfp4-quantization-open-wei"
+        },
+        {
+          "title": "Kimi K3 weights are available on HuggingFace in official release",
+          "publisher": "Reddit / Hugging Face community",
+          "url": "https://www.reddit.com/r/huggingface/comments/1v84acw/kimik3_weights_are_available_on_huggingface_in/"
+        }
+      ],
+      "event_summary": "Moonshot AI перешла от первоначального запуска Kimi K3 через сервисы к публикации её весов и технического отчёта. Это делает модель доступной для самостоятельного развёртывания и исследования, а не только через интерфейс и API компании.",
+      "verified_facts": [
+        "В репозитории Moonshot AI опубликованы материалы Kimi K3, включая технический отчёт.",
+        "Публикация весов произошла 27 июля, как и было заявлено при первоначальном анонсе модели.",
+        "Kimi K3 описывается как MoE-модель с заявленной поддержкой агентского использования, длинного контекста и нативного визуального понимания.",
+        "Ранее опубликованные характеристики модели включают 2,8 трлн общих параметров и контекстное окно до 1 млн токенов; эти параметры являются заявлениями разработчика."
+      ],
+      "significance": "Это существенный новый этап уже известного запуска: одна из наиболее крупных китайских моделей становится open-weight, что расширяет возможности локального размещения, исследований и интеграции в инструменты разработки.",
+      "significance_score": 5,
+      "limitations": "Заявления о производительности и эффективности исходят от разработчика; независимые воспроизводимые оценки и практические требования к инфраструктуре для полного развёртывания нуждаются в дополнительной проверке.",
+      "archive_status": "update",
+      "archive_reason": "В выпуске за 17 июля Kimi K3 уже была представлена как анонс модели с обещанием опубликовать веса. 27 июля появились обещанные веса и технический отчёт — это новый этап доступности.",
+      "recommendation": "include"
+    },
+    {
+      "id": "cand-003",
+      "title": "Nvidia, по данным источников, обсуждает гарантию до 250 млрд долларов для дата-центра OpenAI в Огайо",
+      "organization": "Nvidia; OpenAI; SoftBank",
+      "published_date": "2026-07-27",
+      "published_at": "2026-07-27T06:46:00+03:00",
+      "time_precision": "datetime",
+      "topic": "финансирование ИИ-инфраструктуры",
+      "event_type": "infrastructure_financing",
+      "keywords": [
+        "Nvidia",
+        "OpenAI",
+        "дата-центры",
+        "Огайо",
+        "финансовая гарантия",
+        "10 ГВт",
+        "SoftBank",
+        "инфраструктура ИИ",
+        "GPU",
+        "финансирование"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "business_media",
+      "primary_source": {
+        "title": "Nvidia in Talks With OpenAI to Guarantee $250 Billion Financing for Data Center",
+        "publisher": "Bloomberg Law",
+        "url": "https://news.bloomberglaw.com/private-equity/nvidia-in-talks-to-back-openai-lease-of-softbank-us-data-center"
+      },
+      "supporting_sources": [
+        {
+          "title": "Nvidia negocia garantia de US$ 250 bilhões para data center da OpenAI",
+          "publisher": "Reuters / UOL",
+          "url": "https://economia.uol.com.br/noticias/reuters/2026/07/27/nvidia-negocia-com-openai-garantia-para-financiamento-de-us250-bi-para-data-center-diz-jornal.htm?forcedFormat=NORMAL&forcedUserAgent=SMART&uol_app=flash"
+        },
+        {
+          "title": "Nvidia considers $250bn backstop for OpenAI's planned 10GW Ohio data center - report",
+          "publisher": "Data Center Dynamics",
+          "url": "https://www.datacenterdynamics.com/en/news/nvidia-considers-250bn-backstop-for-openais-planned-10gw-ohio-data-center-report/"
+        }
+      ],
+      "event_summary": "По сообщениям Bloomberg и Reuters-перепечатки, Nvidia ведёт переговоры о предоставлении OpenAI финансовой гарантии примерно на 250 млрд долларов для аренды и финансирования крупного дата-центрового проекта в южном Огайо.",
+      "verified_facts": [
+        "Bloomberg Law сообщил, что предполагаемая гарантия может составить до 250 млрд долларов.",
+        "Сообщение связывает обсуждаемое финансирование с проектом дата-центра OpenAI в южном Огайо.",
+        "В публикациях проект описывается как потенциально 10-гигаваттный и связанный с инфраструктурой SoftBank.",
+        "На момент публикации источники характеризовали сделку как переговоры, а не заключённое соглашение."
+      ],
+      "significance": "Даже на стадии переговоров возможная гарантия такого масштаба показывает, что развитие frontier-ИИ всё сильнее зависит не только от поставок чипов, но и от сложных схем долгосрочного финансирования электрической и дата-центровой инфраструктуры.",
+      "significance_score": 5,
+      "limitations": "Ни Nvidia, ни OpenAI не подтвердили соглашение публично. Сумма, структура, сроки, контрагент и итоговое решение могут измениться либо сделка может не состояться.",
+      "archive_status": "none",
+      "archive_reason": "В архиве уже есть материалы о проектах дата-центров OpenAI и сделках с вычислениями, но новая потенциальная гарантия Nvidia для отдельного проекта в Огайо не описывалась.",
+      "recommendation": "include"
+    },
+    {
+      "id": "cand-004",
+      "title": "Публичные ссылки на чаты и Artifacts Claude оказались доступны в результатах Google и Bing",
+      "organization": "Anthropic; Google; Microsoft",
+      "published_date": "2026-07-27",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "приватность опубликованных диалогов ИИ",
+      "event_type": "security_incident",
+      "keywords": [
+        "Anthropic",
+        "Claude",
+        "Google",
+        "Bing",
+        "приватность",
+        "индексация",
+        "shared links",
+        "Artifacts",
+        "поисковые роботы",
+        "безопасность ИИ"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Private Claude Chats Exposed in Google and Bing Search Results",
+        "publisher": "WIRED",
+        "url": "https://www.wired.com/story/private-claude-chats-exposed-in-google-and-bing-search-results/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Users' Claude creations are showing up in Google search",
+          "publisher": "Axios",
+          "url": "https://www.axios.com/2026/07/27/anthropic-claude-public-chats-google-search"
+        },
+        {
+          "title": "Users’ seemingly private conversations with Anthropic’s Claude showed up in Google search results",
+          "publisher": "Fortune",
+          "url": "https://fortune.com/2026/07/27/a-trove-of-users-seemingly-private-conversations-with-anthropics-claude-ai-chatbot-showed-up-in-google-search-results/"
+        }
+      ],
+      "event_summary": "Журналисты обнаружили, что часть доступных по ссылке диалогов и созданных в Claude материалов индексировалась поисковыми системами. Проверка WIRED показала отсутствие на части просмотренных страниц директивы noindex.",
+      "verified_facts": [
+        "WIRED обнаружил доступные через поиск Google и Bing страницы с опубликованными чатами Claude.",
+        "Издание проверило выборку таких страниц и сообщило, что на них отсутствовала директива noindex.",
+        "Google заявил WIRED, что индексация публичных страниц находится в зоне ответственности владельца сайта.",
+        "Anthropic сообщила Axios и Fortune, что не передаёт поисковикам каталоги чатов или sitemap-файлы."
+      ],
+      "significance": "Событие подчёркивает риск смешения пользовательских ожиданий от «поделиться по ссылке» с фактической публичностью веб-страницы. Для корпоративных ИИ-сред это повод пересматривать настройки совместного доступа, индексации и публикации создаваемых агентами артефактов.",
+      "significance_score": 4,
+      "limitations": "Речь идёт о страницах, к которым можно было получить доступ по публичной ссылке, а не о подтверждённом взломе инфраструктуры Anthropic. Масштаб затронутых материалов и технические изменения после обнаружения инцидента не раскрыты полностью.",
+      "archive_status": "none",
+      "archive_reason": "В архиве нет сюжета о поисковой индексации публичных ссылок Claude или Artifacts.",
+      "recommendation": "include"
+    },
+    {
+      "id": "cand-005",
+      "title": "AP зафиксировало расширение использования китайских ИИ-моделей американскими компаниями и разработчиками",
+      "organization": "DeepSeek; Alibaba; Moonshot AI; Z.ai; американские компании и разработчики",
+      "published_date": "2026-07-26",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "проникновение китайских моделей на рынок США",
+      "event_type": "market_report",
+      "keywords": [
+        "DeepSeek",
+        "Qwen",
+        "Kimi",
+        "GLM",
+        "Z.ai",
+        "Китай",
+        "США",
+        "open-weight",
+        "стоимость моделей",
+        "корпоративное внедрение"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "Cheaper, open and intelligent: Chinese AI models gain ground, as they make inroads in the US",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/a00bf637866fcd4d81f4fde28c9862ce"
+      },
+      "supporting_sources": [
+        {
+          "title": "Kimi K3’s open weights drop today — is anyone actually using Chinese AI models instead of Claude or Codex?",
+          "publisher": "Reddit / ArtificialInteligence",
+          "url": "https://www.reddit.com/r/ArtificialInteligence/comments/1v7zfa3/kimi_k3s_open_weights_drop_today_is_anyone/"
+        }
+      ],
+      "event_summary": "Associated Press собрал свидетельства о том, что китайские модели, включая DeepSeek, Qwen, Kimi и GLM, находят применение в США благодаря сочетанию цены, доступности весов и конкурентных возможностей.",
+      "verified_facts": [
+        "AP описывает рост интереса к китайским моделям у американских разработчиков и компаний.",
+        "В публикации среди факторов распространения названы более низкая стоимость и возможность самостоятельного развёртывания open-weight-моделей.",
+        "Материал рассматривает DeepSeek, Alibaba/Qwen, Moonshot/Kimi и Z.ai/GLM как часть конкурентной динамики китайского сектора.",
+        "Это журналистский рыночный обзор, а не официальная статистика совокупной доли китайских моделей на американском рынке."
+      ],
+      "significance": "Сюжет показывает, что конкуренция между США и Китаем всё заметнее проявляется на уровне реального выбора моделей разработчиками и стартапами, а не только в сопоставлении закрытых бенчмарков.",
+      "significance_score": 3,
+      "limitations": "Материал не даёт репрезентативной количественной оценки рынка и опирается на отдельные примеры и интервью. Сам по себе он не означает массовой миграции американских предприятий на китайские модели.",
+      "archive_status": "none",
+      "archive_reason": "Архив освещал релизы отдельных китайских моделей, но не содержал самостоятельного сюжета о подтверждённых AP примерах их проникновения на рынок США.",
+      "recommendation": "consider"
+    },
+    {
+      "id": "cand-006",
+      "title": "GigaChat и образовательные платформы запустили бесплатные программы по практическому применению ИИ",
+      "organization": "Сбер; GigaChat; Нетология; Фоксфорд; Алгоритмика",
+      "published_date": "2026-07-27",
+      "published_at": "2026-07-27T12:05:00+03:00",
+      "time_precision": "datetime",
+      "topic": "массовое обучение работе с ИИ",
+      "event_type": "education_program",
+      "keywords": [
+        "Сбер",
+        "GigaChat",
+        "образование",
+        "ИИ-грамотность",
+        "Нетология",
+        "Фоксфорд",
+        "Алгоритмика",
+        "промпты",
+        "ИИ-ассистенты",
+        "школьники"
+      ],
+      "geography": "russia",
+      "category": "other",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "«ГигаЧат» совместно с ведущими образовательными платформами запускает бесплатные программы по работе с искусственным интеллектом",
+        "publisher": "CNews",
+        "url": "https://corp.cnews.ru/news/line/2026-07-27_gigachat_sovmestno_s_vedushchimi"
+      },
+      "supporting_sources": [],
+      "event_summary": "GigaChat совместно с «Нетологией», «Фоксфордом» и «Алгоритмикой» запустил бесплатные образовательные программы по использованию ИИ для школьников и взрослой аудитории.",
+      "verified_facts": [
+        "Для школьников 5–11 классов подготовлен курс с «Фоксфордом» и «Алгоритмикой».",
+        "В программе заявлены практики составления промптов, создания сайтов и ИИ-ассистентов, поиска информации и самообразования.",
+        "«Нетология» и GigaChat запустили отдельный марафон для взрослой аудитории.",
+        "CNews сообщил о запуске со ссылкой на представителей Сбербанка."
+      ],
+      "significance": "Инициатива расширяет дистрибуцию отечественного ИИ в образовательной и массовой пользовательской аудитории, связывая модель с практическими навыками, а не только с доступом к чат-боту.",
+      "significance_score": 3,
+      "limitations": "Это образовательная программа и заявление её организаторов, а не продуктовый релиз модели. Не раскрыты охват, бюджет, показатели завершения курсов и измеримый эффект обучения.",
+      "archive_status": "none",
+      "archive_reason": "В архиве нет сюжета о совместной образовательной программе GigaChat с тремя платформами.",
+      "recommendation": "consider"
+    },
+    {
+      "id": "cand-007",
+      "title": "К2 НейроТех: российские компании ускоряют ИИ-внедрение при нехватке готовой инфраструктуры и политик безопасности",
+      "organization": "К2 НейроТех; К2Тех",
+      "published_date": "2026-07-27",
+      "published_at": "2026-07-27T15:58:00+03:00",
+      "time_precision": "datetime",
+      "topic": "готовность российской корпоративной инфраструктуры к ИИ",
+      "event_type": "survey",
+      "keywords": [
+        "К2 НейроТех",
+        "российский бизнес",
+        "ИИ-инфраструктура",
+        "MLSecOps",
+        "безопасность ИИ",
+        "гибридное облако",
+        "инференс",
+        "данные",
+        "корпоративный ИИ",
+        "исследование"
+      ],
+      "geography": "russia",
+      "category": "enterprise",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "Больше половины топ-менеджеров торопят внедрение ИИ, игнорируя неготовность инфраструктуры",
+        "publisher": "CNews",
+        "url": "https://ai.cnews.ru/news/line/2026-07-27_bolshe_poloviny_top-menedzherov"
+      },
+      "supporting_sources": [],
+      "event_summary": "К2 НейроТех опубликовала опрос 100 корпоративных компаний о готовности к внедрению генеративного ИИ. Респонденты фиксируют разрыв между ожиданиями руководства и состоянием инфраструктуры, данных и процессов безопасности.",
+      "verified_facts": [
+        "В исследовании участвовали 100 компаний корпоративного сегмента.",
+        "65% респондентов сообщили о заметном разрыве между запросами руководства и реальными возможностями внедрения ИИ.",
+        "56% оценили свои ландшафты данных как частично готовые или неготовые к новым регуляторным требованиям.",
+        "52% заявили, что их ИТ-инфраструктура требует серьёзной модернизации либо ещё не оценивалась под ИИ-нагрузки.",
+        "29% компаний, согласно публикации, реализовали реальный контроль и политики безопасности использования ИИ-сервисов."
+      ],
+      "significance": "Это один из более предметных срезов российского корпоративного внедрения: барьером названы уже не интерес к ИИ, а вычисления, данные, нагрузочное планирование и MLSecOps. Сюжет может дополнить выпуск практической стороной рынка.",
+      "significance_score": 3,
+      "limitations": "Опрос проведён поставщиком ИИ- и инфраструктурных решений, выборка ограничена 100 компаниями, а методология и состав отраслей в публикации не раскрыты подробно. Приведённые показатели нельзя считать оценкой всего рынка.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть более ранние исследования о рисках утечек и корпоративном ИИ, но нет этого нового опроса о готовности инфраструктуры и MLSecOps.",
+      "recommendation": "include"
+    },
+    {
+      "id": "cand-008",
+      "title": "Kokoc Group: россияне хуже всего распознают синтетические голосовые сообщения",
+      "organization": "Kokoc Group",
+      "published_date": "2026-07-27",
+      "published_at": "2026-07-27T13:23:00+03:00",
+      "time_precision": "datetime",
+      "topic": "распознавание синтетического мультимедийного контента",
+      "event_type": "survey",
+      "keywords": [
+        "Kokoc Group",
+        "синтетический контент",
+        "ИИ-голос",
+        "видео",
+        "изображения",
+        "музыка",
+        "доверие",
+        "маркировка",
+        "дипфейки",
+        "исследование"
+      ],
+      "geography": "russia",
+      "category": "multimodal",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "Идеально — значит фейк: 77% россиян узнают ИИ по стерильной картинке, но 56% теряются, когда слышат цифровой голос",
+        "publisher": "CNews",
+        "url": "https://ai.cnews.ru/news/line/2026-07-27_idealno_znachit_fejk_77"
+      },
+      "supporting_sources": [],
+      "event_summary": "Kokoc Group провела исследование того, как аудитория отличает созданные человеком и синтетические материалы в текстах, изображениях, аудио и видео. Наиболее сложным форматом для участников оказались голосовые сообщения.",
+      "verified_facts": [
+        "Участникам показывали тексты, изображения, аудио и видео и просили определить происхождение материала.",
+        "В видео участники дали 77% верных ответов, в текстах — 74%.",
+        "Для реалистичных фотографий пейзажей правильность распознавания составила 61%.",
+        "Голосовые сообщения стали самым сложным форматом: верный ответ дали 44% участников.",
+        "Исследование фиксирует запрос аудитории на прозрачность, особенно для ИИ в поддержке банков, автоматизации сервисов и рекламе."
+      ],
+      "significance": "Сюжет даёт прикладной потребительский срез по самой рискованной зоне мультимодальности — синтетической речи. Он может быть полезен для контекста будущих требований к маркировке, антифроду и дизайну голосовых интерфейсов.",
+      "significance_score": 3,
+      "limitations": "Публикация не указывает размер выборки, способ рекрутирования, полный дизайн эксперимента и статистическую погрешность. Это исследование одной компании, а не репрезентативный общероссийский замер.",
+      "archive_status": "none",
+      "archive_reason": "Архив содержит общий опрос об отношении россиян к ИИ и материал о маркировке ИИ-контента, но не это новое сравнительное исследование распознавания текста, видео, изображений и голоса.",
+      "recommendation": "consider"
+    },
+    {
+      "id": "cand-009",
+      "title": "Опрос НОВИКОМа и НИУ ВШЭ: молодые инженеры активно используют ИИ, но не ждут замены человека",
+      "organization": "НОВИКОМ; НИУ ВШЭ; Ростех",
+      "published_date": "2026-07-27",
+      "published_at": "2026-07-27T14:37:00+03:00",
+      "time_precision": "datetime",
+      "topic": "отношение молодых инженеров к ИИ",
+      "event_type": "survey",
+      "keywords": [
+        "НОВИКОМ",
+        "НИУ ВШЭ",
+        "Ростех",
+        "инженеры",
+        "рынок труда",
+        "ИИ-грамотность",
+        "безопасность ИИ",
+        "LLM",
+        "регулирование",
+        "опрос"
+      ],
+      "geography": "russia",
+      "category": "other",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "Опрос НОВИКОМа и НИУ ВШЭ: молодые инженеры используют ИИ и не боятся, что он их заменит",
+        "publisher": "CNews",
+        "url": "https://www.cnews.ru/news/line/2026-07-27_opros_novikoma_i_niu_vshe"
+      },
+      "supporting_sources": [],
+      "event_summary": "НОВИКОМ и НИУ ВШЭ опубликовали результаты опроса молодых специалистов форума «Инженеры будущего» об использовании ИИ, рисках замены труда и необходимости регулирования и защиты моделей.",
+      "verified_facts": [
+        "В опросе участвовали 227 молодых специалистов — участников форума «Инженеры будущего».",
+        "81% респондентов сообщили об использовании нейросетей в повседневной жизни, более 60% — в профессиональной деятельности.",
+        "93,4% опрошенных не опасаются замены ИИ на рабочем месте.",
+        "90,2% считают, что этической и технической безопасности ИИ нужно уделять особое внимание.",
+        "Мнения о необходимости ограничений почти разделились поровну: 50,3% поддержали ограничения, 49,7% выступили против торможения технологического прогресса."
+      ],
+      "significance": "Сюжет добавляет кадровое измерение к российской ИИ-повестке: профессиональная аудитория уже использует ИИ, но сочетает оптимизм по занятости с запросом на безопасность и понятные правила.",
+      "significance_score": 3,
+      "limitations": "Выборка небольшая и нерепрезентативна для всех российских инженеров: она состоит из участников профильного форума. Результаты отражают самооценку респондентов, а не фактическое применение ИИ на предприятиях.",
+      "archive_status": "none",
+      "archive_reason": "В архиве были общероссийские опросы об отношении к ИИ и материалы о рынке труда, но не этот новый опрос узкой инженерной аудитории.",
+      "recommendation": "consider"
+    }
+  ],
+  "rejected_as_duplicates": [
+    {
+      "title": "Open Weights and American AI Leadership",
+      "url": "https://www.microsoft.com/en-us/corporate-responsibility/topics/open-weight/",
+      "archive_item_date": "2026-07-25",
+      "matched_topic_or_url": "Коалиция компаний в защиту open-weight-моделей уже опубликована в выпуске от 25 июля как cand-003.",
+      "reason": "Письмо опубликовано 24 июля и уже вошло в архивный выпуск; позднейшие пересказы и комментарии не создают самостоятельного нового события."
+    },
+    {
+      "title": "Starbuck v. Google LLC",
+      "url": "https://law.justia.com/cases/delaware/superior-court/2026/n25c-10-211-maa.html",
+      "archive_item_date": null,
+      "matched_topic_or_url": "Не дубль архива, но решение датировано 2026-07-24.",
+      "reason": "Судебное решение вынесено 24 июля 2026 года, то есть до начала строгого окна 25 июля 2026 года в 06:00 по Москве; его нельзя включать как новое событие."
+    },
+    {
+      "title": "United States Seizes Domain Names Publishing Nude Digital Forgeries of Famous Women",
+      "url": "https://www.justice.gov/opa/pr/united-states-seizes-domain-names-publishing-nude-digital-forgeries-famous-women",
+      "archive_item_date": null,
+      "matched_topic_or_url": "Не дубль архива, но исходное событие произошло 12 июня 2026 года.",
+      "reason": "Свежие упоминания в подборках вводили в заблуждение: официальное сообщение Минюста США датировано 12 июня, поэтому сюжет вне окна."
+    },
+    {
+      "title": "Path traversal flaw in AI dev platform Langflow exploited in attacks",
+      "url": "https://www.bleepingcomputer.com/news/security/path-traversal-flaw-in-ai-dev-platform-langflow-exploited-in-attacks/",
+      "archive_item_date": null,
+      "matched_topic_or_url": "Не дубль архива, но исходная публикация от 10 июня 2026 года.",
+      "reason": "Уязвимость Langflow CVE-2026-5027 и её эксплуатация — старое событие; не использовалось для заполнения пула."
+    }
+  ],
+  "research_notes": "Проведён широкий первичный проход по мировым лабораториям, Китаю и Азии, coding agents, исследованиям безопасности, мультимодальности, робототехнике, инфраструктуре, регулированию, бизнесу и российскому сектору. Найдено 9 достойных кандидатов: 5 мировых и 4 российских, поэтому контракт следующего этапа по минимуму 5 мировых и 2 российских сюжетов обеспечен. До цели в 12 кандидатов не добраны 3 позиции: в окне наблюдалась низкая плотность самостоятельных подтверждённых событий по робототехнике, инструментам разработки и регулированию. Мелкие обновления интерфейсов, непроверенные сообщения из соцсетей, старые публикации и пересказы событий 24 июля и ранее сознательно исключены."
+}

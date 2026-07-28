@@ -1,0 +1,240 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Nvidia создала Open Secure AI Alliance для разработки открытых средств защиты ИИ",
+    "organization": "Nvidia; Microsoft; Hugging Face; Linux Foundation; CrowdStrike и другие основатели",
+    "topic": "открытая безопасность ИИ и агентов",
+    "event_type": "industry_alliance",
+    "status": "new",
+    "summary": "Nvidia объявила о создании Open Secure AI Alliance — коалиции компаний из сфер ИИ, облаков, корпоративного ПО, кибербезопасности и open source. Альянс намерен разрабатывать и распространять открытые технологии и практики для защиты программного обеспечения и агентов ИИ.",
+    "published_at": null,
+    "published_date": "2026-07-27",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Industry Leaders Unite in Open Secure AI Alliance for AI Safety and Security",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/open-secure-ai-alliance/"
+      }
+    ],
+    "keywords": [
+      "Nvidia",
+      "Open Secure AI Alliance",
+      "безопасность ИИ",
+      "агенты ИИ",
+      "open source",
+      "Hugging Face",
+      "Microsoft",
+      "Linux Foundation",
+      "CrowdStrike",
+      "уязвимости"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Обновление: Moonshot AI опубликовала веса и технический отчёт Kimi K3",
+    "organization": "Moonshot AI",
+    "topic": "open-weight модели для агентских и кодинговых задач",
+    "event_type": "model_release",
+    "status": "update",
+    "summary": "Moonshot AI перешла от первоначального запуска Kimi K3 через сервисы к публикации её весов и технического отчёта. Это делает модель доступной для самостоятельного развёртывания и исследования, а не только через интерфейс и API компании.",
+    "published_at": null,
+    "published_date": "2026-07-27",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Kimi-K3",
+        "publisher": "Moonshot AI / GitHub",
+        "url": "https://github.com/MoonshotAI/Kimi-K3"
+      }
+    ],
+    "keywords": [
+      "Moonshot AI",
+      "Kimi K3",
+      "open-weight",
+      "MoE",
+      "технический отчёт",
+      "агенты ИИ",
+      "ИИ-кодинг",
+      "контекст",
+      "мультимодальность",
+      "Hugging Face"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Nvidia, по данным источников, обсуждает финансовую гарантию для дата-центра OpenAI в Огайо",
+    "organization": "Nvidia; OpenAI; SoftBank",
+    "topic": "финансирование ИИ-инфраструктуры",
+    "event_type": "infrastructure_financing",
+    "status": "new",
+    "summary": "По сообщениям Bloomberg и Reuters-перепечатки, Nvidia ведёт переговоры о предоставлении OpenAI финансовой гарантии примерно на 250 млрд долларов для аренды и финансирования крупного дата-центрового проекта в южном Огайо.",
+    "published_at": "2026-07-27T06:46:00+03:00",
+    "published_date": "2026-07-27",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Nvidia in Talks With OpenAI to Guarantee $250 Billion Financing for Data Center",
+        "publisher": "Bloomberg Law",
+        "url": "https://news.bloomberglaw.com/private-equity/nvidia-in-talks-to-back-openai-lease-of-softbank-us-data-center"
+      }
+    ],
+    "keywords": [
+      "Nvidia",
+      "OpenAI",
+      "дата-центры",
+      "Огайо",
+      "финансовая гарантия",
+      "10 ГВт",
+      "SoftBank",
+      "инфраструктура ИИ",
+      "GPU",
+      "финансирование"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Публичные ссылки на чаты и Artifacts Claude оказались в поисковой выдаче",
+    "organization": "Anthropic; Google; Microsoft",
+    "topic": "приватность опубликованных диалогов ИИ",
+    "event_type": "security_incident",
+    "status": "new",
+    "summary": "Журналисты обнаружили, что часть доступных по ссылке диалогов и созданных в Claude материалов индексировалась поисковыми системами. Проверка WIRED показала отсутствие на части просмотренных страниц директивы noindex.",
+    "published_at": null,
+    "published_date": "2026-07-27",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Private Claude Chats Exposed in Google and Bing Search Results",
+        "publisher": "WIRED",
+        "url": "https://www.wired.com/story/private-claude-chats-exposed-in-google-and-bing-search-results/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "Google",
+      "Bing",
+      "приватность",
+      "индексация",
+      "shared links",
+      "Artifacts",
+      "поисковые роботы",
+      "безопасность ИИ"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Китайские модели расширяют присутствие среди американских разработчиков и компаний",
+    "organization": "DeepSeek; Alibaba; Moonshot AI; Z.ai; американские компании и разработчики",
+    "topic": "проникновение китайских моделей на рынок США",
+    "event_type": "market_report",
+    "status": "new",
+    "summary": "Associated Press собрал свидетельства о том, что китайские модели, включая DeepSeek, Qwen, Kimi и GLM, находят применение в США благодаря сочетанию цены, доступности весов и конкурентных возможностей.",
+    "published_at": null,
+    "published_date": "2026-07-26",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Cheaper, open and intelligent: Chinese AI models gain ground, as they make inroads in the US",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/a00bf637866fcd4d81f4fde28c9862ce"
+      }
+    ],
+    "keywords": [
+      "DeepSeek",
+      "Qwen",
+      "Kimi",
+      "GLM",
+      "Z.ai",
+      "Китай",
+      "США",
+      "open-weight",
+      "стоимость моделей",
+      "корпоративное внедрение"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "russia",
+    "headline": "К2 НейроТех: корпоративный спрос на ИИ опережает готовность инфраструктуры и политик безопасности",
+    "organization": "К2 НейроТех; К2Тех",
+    "topic": "готовность российской корпоративной инфраструктуры к ИИ",
+    "event_type": "survey",
+    "status": "new",
+    "summary": "К2 НейроТех опубликовала опрос 100 корпоративных компаний о готовности к внедрению генеративного ИИ. Респонденты фиксируют разрыв между ожиданиями руководства и состоянием инфраструктуры, данных и процессов безопасности.",
+    "published_at": "2026-07-27T15:58:00+03:00",
+    "published_date": "2026-07-27",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Больше половины топ-менеджеров торопят внедрение ИИ, игнорируя неготовность инфраструктуры",
+        "publisher": "CNews",
+        "url": "https://ai.cnews.ru/news/line/2026-07-27_bolshe_poloviny_top-menedzherov"
+      }
+    ],
+    "keywords": [
+      "К2 НейроТех",
+      "российский бизнес",
+      "ИИ-инфраструктура",
+      "MLSecOps",
+      "безопасность ИИ",
+      "гибридное облако",
+      "инференс",
+      "данные",
+      "корпоративный ИИ",
+      "исследование"
+    ],
+    "geography": "russia",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "russia",
+    "headline": "Kokoc Group: синтетические голосовые сообщения оказались самым сложным форматом для распознавания",
+    "organization": "Kokoc Group",
+    "topic": "распознавание синтетического мультимедийного контента",
+    "event_type": "survey",
+    "status": "new",
+    "summary": "Kokoc Group провела исследование того, как аудитория отличает созданные человеком и синтетические материалы в текстах, изображениях, аудио и видео. Наиболее сложным форматом для участников оказались голосовые сообщения.",
+    "published_at": "2026-07-27T13:23:00+03:00",
+    "published_date": "2026-07-27",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Идеально — значит фейк: 77% россиян узнают ИИ по стерильной картинке, но 56% теряются, когда слышат цифровой голос",
+        "publisher": "CNews",
+        "url": "https://ai.cnews.ru/news/line/2026-07-27_idealno_znachit_fejk_77"
+      }
+    ],
+    "keywords": [
+      "Kokoc Group",
+      "синтетический контент",
+      "ИИ-голос",
+      "видео",
+      "изображения",
+      "музыка",
+      "доверие",
+      "маркировка",
+      "дипфейки",
+      "исследование"
+    ],
+    "geography": "russia",
+    "category": "multimodal"
+  }
+]
