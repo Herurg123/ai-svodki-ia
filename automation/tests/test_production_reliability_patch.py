@@ -246,7 +246,6 @@ class DigestArtifactNormalizationTests(unittest.TestCase):
                 json.dumps({"status": "ok", "manifest": ["stale"]}) + "\n",
                 encoding="utf-8",
             )
-
             report = normalizer.normalize_artifact(
                 artifact,
                 artifact / "artifact-normalization.json",
@@ -260,7 +259,6 @@ class DigestArtifactNormalizationTests(unittest.TestCase):
             rendered_text = (artifact / "image-prompt.txt").read_text(encoding="utf-8").lower()
             for constraint in normalizer.CONSTRAINTS:
                 self.assertIn(constraint, rendered_text)
-
             second = normalizer.normalize_artifact(
                 artifact,
                 artifact / "artifact-normalization-second.json",
@@ -309,7 +307,6 @@ class DigestArtifactRecoveryTests(unittest.TestCase):
                 json.dumps({"status": "ok"}) + "\n",
                 encoding="utf-8",
             )
-
             target = root / "target"
             report = recovery.recover(
                 recovery_root,
@@ -321,7 +318,6 @@ class DigestArtifactRecoveryTests(unittest.TestCase):
             self.assertTrue((target / "digest.json").is_file())
             self.assertFalse((target / "cover.png").exists())
             self.assertFalse((target / "artifact-validation.json").exists())
-
 
     def test_previous_day_recovery_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -385,10 +381,10 @@ class PublishChangeValidationTests(unittest.TestCase):
             recovery_dir = root / "automation" / "recovery" / "123"
             recovery_dir.mkdir(parents=True)
             (recovery_dir / "digest.json").write_text("{}\n", encoding="utf-8")
-
             old_cwd = Path.cwd()
             try:
                 import os
+
                 os.chdir(root)
                 report = publish_changes.validate_and_stage(
                     "2026-07-24", root / "report.json"
@@ -415,6 +411,7 @@ class PublishChangeValidationTests(unittest.TestCase):
             old_cwd = Path.cwd()
             try:
                 import os
+
                 os.chdir(root)
                 with self.assertRaisesRegex(
                     publish_changes.PublishChangesError, "Unexpected changed paths"
@@ -424,14 +421,13 @@ class PublishChangeValidationTests(unittest.TestCase):
                 os.chdir(old_cwd)
 
 
-
 class ProductionWorkflowReliabilityTests(unittest.TestCase):
     def test_three_crons_gate_and_recovery_are_present(self) -> None:
         workflow = (ROOT / ".github" / "workflows" / "daily-production.yml").read_text(
             encoding="utf-8"
         )
         self.assertEqual(workflow.count("cron:"), 3)
-        for cron in ("17 3 * * *", "37 3 * * *", "57 3 * * *"):
+        for cron in ("17 0 * * *", "37 0 * * *", "57 0 * * *"):
             self.assertEqual(workflow.count(f'cron: "{cron}"'), 1)
         self.assertIn("Check RSS before paid APIs", workflow)
         self.assertIn("successful no-op", workflow)
@@ -447,8 +443,12 @@ class ProductionWorkflowReliabilityTests(unittest.TestCase):
             workflow.index("Normalize and validate digest artifact"),
             workflow.index("Build runtime Image API request"),
         )
-        self.assertIn("if: inputs.recovery_run_id == ''", workflow)
-        self.assertIn("rm -rf \"${image_dir}\"", workflow)
+        self.assertIn("if: steps.recovery_source.outputs.run_id == ''", workflow)
+        self.assertIn("Reuse completed editorial stop without paid APIs", workflow)
+        self.assertIn('echo "stop=${stop}" >> "${GITHUB_OUTPUT}"', workflow)
+        self.assertIn("steps.terminal_reuse.outputs.stop != 'true'", workflow)
+        self.assertIn("needs.production.outputs.commit_sha != ''", workflow)
+        self.assertIn('rm -rf "${image_dir}"', workflow)
         self.assertIn("validate_publish_changes.py", workflow)
         self.assertIn("--timezone Europe/Moscow", workflow)
         self.assertIn("ensure_story_coverage.py", workflow)

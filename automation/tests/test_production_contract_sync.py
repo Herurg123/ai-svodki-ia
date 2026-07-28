@@ -44,6 +44,14 @@ class ProductionContractSyncTests(unittest.TestCase):
         self.assertIn("--minimum-world 5", workflow)
         self.assertIn("--minimum-russia 2", workflow)
         self.assertIn("--maximum-audit-web-search-calls 5", workflow)
+        self.assertIn(
+            "Reuse completed editorial stop without paid APIs", workflow
+        )
+        self.assertIn('echo "stop=${stop}" >> "${GITHUB_OUTPUT}"', workflow)
+        self.assertIn(
+            "steps.terminal_reuse.outputs.stop != 'true'", workflow
+        )
+        self.assertIn("needs.production.outputs.commit_sha != ''", workflow)
     def test_same_contract_validator_used_by_ci_accepts_repository(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             report = Path(temp_dir) / "production-contract.json"

@@ -108,7 +108,15 @@ def main() -> int:
         ),
         (
             "terminal editorial stop reuse",
-            "Stop on reused completed coverage audit",
+            "Reuse completed editorial stop without paid APIs",
+        ),
+        (
+            "terminal editorial stop output",
+            'echo "stop=${stop}" >> "${GITHUB_OUTPUT}"',
+        ),
+        (
+            "terminal editorial stop guard",
+            "steps.terminal_reuse.outputs.stop != 'true'",
         ),
         ("recovery artifact download", "actions/download-artifact@v8"),
         ("deterministic recovery", "recover_digest_artifact.py"),
@@ -144,6 +152,10 @@ def main() -> int:
         ("reusable deployment", "uses: ./.github/workflows/deploy-posts.yml"),
         ("deployment dependency", "needs: production"),
         ("deployment ref", "needs.production.outputs.commit_sha"),
+        (
+            "deployment requires a committed release",
+            "needs.production.outputs.commit_sha != ''",
+        ),
         ("deployment secrets", "secrets: inherit"),
         ("artifact upload", "upload-artifact"),
     ]
@@ -168,6 +180,64 @@ def main() -> int:
             errors.append(f"{label} does not import editorial_policy_runtime: {path}")
         if "patch_editorial_policy" not in consumer_text:
             errors.append(f"{label} does not apply patch_editorial_policy: {path}")
+
+    terminal_step_start = workflow.find(
+        "- name: Reuse completed editorial stop without paid APIs"
+    )
+    terminal_step_end = workflow.find("- name:", terminal_step_start + 10)
+    terminal_step = (
+        workflow[terminal_step_start:terminal_step_end]
+        if terminal_step_start >= 0 and terminal_step_end > terminal_step_start
+        else ""
+    )
+    if "exit 1" in terminal_step:
+        errors.append(
+            "reused completed editorial stop must finish as a successful no-op"
+        )
+    if 'echo "stop=${stop}" >> "${GITHUB_OUTPUT}"' not in terminal_step:
+        errors.append("terminal reuse step must expose the stop output")
+    guarded_steps = [
+        "Restore saved paid artifact",
+        "Install pinned OpenAI SDK",
+        "Validate API configuration",
+        "Patch runtime publication hour to 06:00 Moscow",
+        "Validate editorial code and bootstrap archive",
+        "Verify search window starts at last successful release",
+        "Run full research and editorial",
+        "Enforce 5 world plus 2 Russian stories",
+        "Normalize and validate digest artifact",
+        "Validate final story coverage",
+        "Build runtime Image API request",
+        "Generate one production cover",
+        "Revalidate recovered production cover",
+        "Stage accepted legacy images under canonical posts/images",
+        "Build and validate candidate site",
+        "Dry-run or promote candidate",
+        "Refresh archive after promotion",
+        "Commit production release",
+    ]
+    for step_name in guarded_steps:
+        step_start = workflow.find(f"- name: {step_name}")
+        step_end = workflow.find("- name:", step_start + 10)
+        if step_start < 0:
+            errors.append(f"workflow missing guarded step: {step_name}")
+            continue
+        if step_end < 0:
+            step_end = len(workflow)
+        step_text = workflow[step_start:step_end]
+        if "steps.terminal_reuse.outputs.stop != 'true'" not in step_text:
+            errors.append(
+                f"workflow step is not protected from terminal artifact reuse: {step_name}"
+            )
+    deploy_start = workflow.find("  deploy:")
+    final_status_start = workflow.find("  final_status:", deploy_start + 1)
+    deploy_job = (
+        workflow[deploy_start:final_status_start]
+        if deploy_start >= 0 and final_status_start > deploy_start
+        else ""
+    )
+    if "needs.production.outputs.commit_sha != ''" not in deploy_job:
+        errors.append("deploy job must require a non-empty production commit SHA")
 
     coverage_step_start = workflow.find("- name: Enforce 5 world plus 2 Russian stories")
     coverage_step_end = workflow.find("- name:", coverage_step_start + 10)
