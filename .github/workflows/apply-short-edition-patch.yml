@@ -1,0 +1,42 @@
+name: Apply short edition patch
+
+on:
+  push:
+    branches:
+      - chatgpt/short-editions-after-audit
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out patch branch
+        uses: actions/checkout@v7
+        with:
+          ref: chatgpt/short-editions-after-audit
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Apply requested changes
+        run: python automation/patches/apply_short_edition_patch.py
+      - name: Validate editorial contract
+        run: python automation/scripts/validate_editorial_contract.py
+      - name: Run repository tests
+        run: python -m unittest discover -s automation/tests -p 'test_*.py'
+      - name: Remove one-time migration files
+        run: |
+          rm -f automation/patches/apply_short_edition_patch.py
+          rm -f .github/workflows/apply-short-edition-patch.yml
+      - name: Commit patched files
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && { echo "No changes to commit"; exit 1; }
+          git commit -m "Publish marked short editions after coverage audit"
+          git push origin HEAD:chatgpt/short-editions-after-audit
