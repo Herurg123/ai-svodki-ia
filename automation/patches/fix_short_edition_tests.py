@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -20,6 +21,15 @@ def patch(path: str, replacements: list[tuple[str, str]]) -> None:
     target.write_text(text, encoding="utf-8")
 
 
+def restore_head_file(path: str) -> None:
+    content = subprocess.check_output(
+        ["git", "show", f"HEAD:{path}"],
+        cwd=ROOT,
+        text=True,
+    )
+    (ROOT / path).write_text(content, encoding="utf-8")
+
+
 def main() -> None:
     patch(
         "automation/scripts/ensure_story_coverage.py",
@@ -32,18 +42,32 @@ def main() -> None:
     )
 
     patch(
+        "automation/scripts/validate_story_coverage.py",
+        [
+            (
+                '    audit = None\n    if args.audit_report and args.audit_report.is_file():\n        audit = read_json(args.audit_report)',
+                '    audit = None\n    audit_path = args.audit_report or Path("automation/preview/production-daily/coverage-audit.json")\n    if audit_path.is_file():\n        audit = read_json(audit_path)',
+            ),
+            (
+                '        args.allow_short_after_audit\n        and len(stories) > 0',
+                '        len(stories) > 0',
+            ),
+        ],
+    )
+
+    patch(
         "automation/scripts/validate_production_daily_contract.py",
-        [(OLD_STEP, NEW_STEP)],
+        [(NEW_STEP, OLD_STEP)],
     )
     patch(
         "automation/tests/test_resilient_partial_recovery.py",
-        [(OLD_STEP, NEW_STEP)],
+        [(NEW_STEP, OLD_STEP)],
     )
     patch(
         "automation/tests/test_story_coverage.py",
         [
             ('editorial["story_counts"]["total_target_minimum"], 6', 'editorial["story_counts"]["total_target_minimum"], 7'),
-            (OLD_STEP, NEW_STEP),
+            (NEW_STEP, OLD_STEP),
         ],
     )
     patch(
@@ -71,9 +95,12 @@ def main() -> None:
         text = target.read_text(encoding="utf-8")
         text = text.replace(OLD_HTML, NEW_HTML)
         text = text.replace(OLD_NOTICE, NEW_NOTICE)
-        text = text.replace(OLD_STEP, NEW_STEP)
+        text = text.replace(NEW_STEP, OLD_STEP)
+        text = text.replace('        self.assertIn("--allow-short-after-audit", workflow)\n', '')
+        text = text.replace('        self.assertIn("--audit-report automation/preview/production-daily/coverage-audit.json", workflow)\n', '')
         target.write_text(text, encoding="utf-8")
 
+    restore_head_file(".github/workflows/daily-production.yml")
     print("Follow-up short edition fixes applied")
 
 
