@@ -3,7 +3,7 @@
   "language": "ru",
   "timezone": "Europe/Moscow",
   "story_counts": {
-    "total_target_minimum": 6,
+    "total_target_minimum": 7,
     "total_target_maximum": 12,
     "world_target_minimum": 5,
     "world_target_maximum": 8,
@@ -11,7 +11,8 @@
     "russian_target_maximum": 5,
     "short_digest_minimum": 1,
     "zero_stories_status": "error",
-    "short_digest_notice": "День на новости выдался слабым - поэтому коротко"
+    "short_digest_notice": "Новостей сегодня меньше, чем обычно",
+    "short_digest_notice_html": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
   },
   "diversity": {
     "max_selected_per_publisher_soft": 2,
@@ -63,7 +64,9 @@
       "script",
       "style",
       "iframe"
-    ]
+    ],
+    "china_heading": "Китайские лидеры ИИ",
+    "allow_missing_china_section": true
   },
   "terminology": {
     "prefer": {

@@ -162,7 +162,9 @@ def parse_article(article_html: str) -> PolicyHTMLParser:
 
 def _remove_exact_paragraph(article_html: str, text: str) -> str:
     pattern = re.compile(
-        r"<p>\s*" + re.escape(text) + r"\s*</p>\s*",
+        r"<p>\s*(?:<em>\s*)?"
+        + re.escape(text)
+        + r"(?:\s*</em>)?\s*</p>\s*",
         flags=re.IGNORECASE,
     )
     return pattern.sub("", article_html)
@@ -356,10 +358,15 @@ def normalize_article_html(
 
     story_counts = policy["story_counts"]
     short_notice = str(story_counts["short_digest_notice"])
+    short_notice_html = str(
+        story_counts.get("short_digest_notice_html")
+        or f"<p><em>{html.escape(short_notice, quote=False)}</em></p>"
+    )
     total_target_minimum = int(story_counts["total_target_minimum"])
     short_digest = 0 < len(selected_candidates) < total_target_minimum
 
     cleaned = _remove_exact_paragraph(article_html, short_notice)
+    cleaned = _remove_exact_paragraph(cleaned, "День на новости выдался слабым - поэтому коротко")
     cleaned = _remove_meta_footnotes(cleaned)
     cleaned = _remove_dzen_block(cleaned, str(policy["dzen"]["heading"]))
     cleaned = cleaned.strip()
@@ -375,7 +382,7 @@ def normalize_article_html(
     changes.extend(meta_changes)
 
     if short_digest:
-        canonical_notice = f"<p>{html.escape(short_notice, quote=False)}</p>"
+        canonical_notice = short_notice_html
         cleaned = canonical_notice + "\n" + cleaned
         changes.append(
             {
@@ -566,11 +573,17 @@ def validate_article_policy(
     counts = policy["story_counts"]
     short_notice = str(counts["short_digest_notice"])
 
+    short_notice_html = str(
+        counts.get("short_digest_notice_html")
+        or f"<p><em>{html.escape(short_notice, quote=False)}</em></p>"
+    )
     if short_digest:
         if parser.first_top_level_tag != "p" or parser.first_top_level_text != short_notice:
             errors.append(
-                "Короткий выпуск должен начинаться с точной фразы о слабом новостном дне."
+                "Короткий выпуск должен начинаться с точной пометки о меньшем числе новостей."
             )
+        if not article_html.lstrip().startswith(short_notice_html):
+            errors.append("Пометка короткого выпуска должна быть курсивной и иметь точный HTML.")
     elif parser.first_top_level_text == short_notice:
         errors.append("Обычный выпуск не должен содержать фразу короткого выпуска.")
 
@@ -595,6 +608,26 @@ def validate_article_policy(
         errors.append(
             f"Пустой раздел «{russian_heading}» не должен присутствовать без "
             "российских сюжетов."
+        )
+
+    china_heading = str(policy["article"].get("china_heading", "Китайские лидеры ИИ"))
+    tracked_asia = [str(item).casefold() for item in policy.get("tracked_asia_organizations", [])]
+    selected_china = 0
+    for item in selected_candidates:
+        organization = str(item.get("organization", "")).casefold()
+        title = str(item.get("title", "")).casefold()
+        if any(name and (name in organization or name in title) for name in tracked_asia):
+            selected_china += 1
+    china_heading_count = parser.h2_texts.count(china_heading)
+    if selected_china > 0 and china_heading_count != 1:
+        errors.append(
+            f"При выбранных китайских сюжетах заголовок «{china_heading}» "
+            "должен встречаться ровно один раз."
+        )
+    if selected_china == 0 and china_heading_count:
+        errors.append(
+            f"Пустой раздел «{china_heading}» не должен присутствовать без "
+            "китайских сюжетов."
         )
 
     intro_html = re.split(r"<h2\b", article_html, maxsplit=1, flags=re.IGNORECASE)[0]
