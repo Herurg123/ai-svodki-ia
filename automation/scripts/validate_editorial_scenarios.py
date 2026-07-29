@@ -156,16 +156,16 @@ def normalise_and_validate(
 
 
 def scenario_normal_digest(policy: dict[str, Any]) -> list[str]:
-    selected = [candidate(index) for index in range(1, 7)]
+    selected = [candidate(index) for index in range(1, 8)]
     normalized, short_digest, errors, _warnings, analysis = normalise_and_validate(
         article_html(selected), selected, policy
     )
-    require(not short_digest, "Шесть сюжетов не должны считаться коротким выпуском.")
+    require(not short_digest, "Семь сюжетов не должны считаться коротким выпуском.")
     require(errors == [], f"Обычный выпуск не прошёл политику: {errors}")
     require(analysis["what_it_means_items"] == 4, "Ожидалось четыре вывода.")
     notice = policy["story_counts"]["short_digest_notice"]
-    require(not normalized.startswith(f"<p>{notice}</p>"), "Лишняя short notice.")
-    return ["6 сюжетов", "short_digest=false", "4 вывода", "политика без ошибок"]
+    require(not normalized.startswith(str(policy["story_counts"].get("short_digest_notice_html"))), "Лишняя short notice.")
+    return ["7 сюжетов", "short_digest=false", "4 вывода", "политика без ошибок"]
 
 
 def scenario_short_digest(policy: dict[str, Any]) -> list[str]:
@@ -175,7 +175,7 @@ def scenario_short_digest(policy: dict[str, Any]) -> list[str]:
     )
     notice = policy["story_counts"]["short_digest_notice"]
     require(short_digest, "Три сюжета должны формировать короткий выпуск.")
-    require(normalized.startswith(f"<p>{notice}</p>"), "Нет точной short notice.")
+    require(normalized.startswith(str(policy["story_counts"].get("short_digest_notice_html"))), "Нет точной short notice.")
     require(errors == [], f"Короткий выпуск не прошёл политику: {errors}")
     notes = build_editorial_notes({"coverage": []}, selected, policy)
     note_types = {str(item.get("type")) for item in notes}

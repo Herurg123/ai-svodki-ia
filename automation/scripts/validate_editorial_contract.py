@@ -76,8 +76,8 @@ def validate() -> list[str]:
     require_equal(
         errors,
         nested(editorial, "story_counts", "total_target_minimum"),
-        6,
-        "Внутренний порог обычного выпуска",
+        7,
+        "Порог обычного выпуска",
     )
     require_equal(
         errors,
@@ -109,7 +109,7 @@ def validate() -> list[str]:
     require_equal(
         errors,
         nested(editorial, "story_counts", "short_digest_notice"),
-        "День на новости выдался слабым - поэтому коротко",
+        "Новостей сегодня меньше, чем обычно",
         "Точная фраза короткого выпуска",
     )
     require_equal(
@@ -180,7 +180,7 @@ def validate() -> list[str]:
     )
 
     common_markers = [
-        "День на новости выдался слабым - поэтому коротко",
+        "Новостей сегодня меньше, чем обычно",
         "Все ИИ-Сводки",
         "Архив ИИ-Сводок",
         "Meta*",
@@ -197,7 +197,7 @@ def validate() -> list[str]:
         errors,
         daily,
         [
-            "День на новости выдался слабым - поэтому коротко",
+            "Новостей сегодня меньше, чем обычно",
             "7–12 сюжетов всего",
             "минимум 5 мировых сюжетов",
             "минимум 2 российских сюжета",

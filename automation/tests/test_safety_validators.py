@@ -21,7 +21,7 @@ DZEN_URL = "https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1"
 def article_html(*, dzen_text: str = "Архив ИИ-Сводок", conclusions: int = 4) -> str:
     list_items = "".join(f"<li>Вывод {index}</li>" for index in range(1, conclusions + 1))
     return (
-        "<p>День на новости выдался слабым - поэтому коротко</p>"
+        "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
         "<h2>Мировые лидеры ИИ</h2>"
         "<h3>Тестовый сюжет</h3>"
         f'<p>Подтверждён факт со <a href="{SOURCE_URL}">ссылкой на источник</a>.</p>'
@@ -37,7 +37,7 @@ def article_html(*, dzen_text: str = "Архив ИИ-Сводок", conclusions
 def article_html_with_meta(*, repeated_star: bool = False) -> str:
     later = "Meta*" if repeated_star else "Meta"
     return (
-        "<p>День на новости выдался слабым - поэтому коротко</p>"
+        "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
         "<h2>Мировые лидеры ИИ</h2>"
         "<h3>Тестовый сюжет Meta*</h3>"
         f'<p>Meta объявила изменение со <a href="{SOURCE_URL}">ссылкой на источник</a>.</p>'

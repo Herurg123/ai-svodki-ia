@@ -466,16 +466,16 @@ def validate_artifact(root: Path, report_path: Path) -> dict[str, Any]:
         issue(report, "errors", "short_digest_type", "short_digest должен быть явным boolean.")
     if story_count == 0:
         issue(report, "errors", "zero_stories", "Artifact со status=ok не может содержать 0 сюжетов.")
-    elif 1 <= story_count <= 5:
+    elif 1 <= story_count <= 6:
         if short_digest is not True:
-            issue(report, "errors", "short_digest_flag", "Для 1–5 сюжетов short_digest должен быть true.")
-        notice = "<p>День на новости выдался слабым - поэтому коротко</p>"
+            issue(report, "errors", "short_digest_flag", "Для 1–6 сюжетов short_digest должен быть true.")
+        notice = "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
         if article_html and not article_html.lstrip().startswith(notice):
-            issue(report, "errors", "short_digest_notice", "Короткий выпуск должен начинаться с точного уведомления о слабом новостном дне.")
+            issue(report, "errors", "short_digest_notice", "Короткий выпуск должен начинаться с точной курсивной пометки о меньшем числе новостей.")
         if "low_news_volume" not in note_types(meta.get("editorial_notes")):
             issue(report, "errors", "low_news_volume_note", "Для короткого выпуска editorial_notes должен содержать low_news_volume.")
-    elif story_count >= 6 and short_digest is True:
-        issue(report, "errors", "short_digest_false", "Для 6 и более сюжетов short_digest не должен быть true.")
+    elif story_count >= 7 and short_digest is True:
+        issue(report, "errors", "short_digest_false", "Для 7 и более сюжетов short_digest не должен быть true.")
 
     cover_filename = str(meta.get("cover_filename", ""))
     if cover_filename and not cover_filename.lower().endswith(".png"):

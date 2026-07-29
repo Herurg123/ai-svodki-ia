@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -375,6 +376,84 @@ def load_initial_stories(
 
     return [], "research_only"
 
+
+SHORT_NOTICE = "Новостей сегодня меньше, чем обычно"
+SHORT_NOTICE_HTML = f"<p><em>{SHORT_NOTICE}</em></p>"
+LEGACY_SHORT_NOTICE = "День на новости выдался слабым - поэтому коротко"
+
+
+def completed_prior_audit(payload: Any) -> bool:
+    if not isinstance(payload, dict):
+        return False
+    api = payload.get("api") or {}
+    return (
+        payload.get("web_search_performed") is True
+        and isinstance(api, dict)
+        and api.get("status") == "completed"
+    )
+
+
+def _remove_short_notices(article_html: str) -> str:
+    value = article_html
+    for notice in (SHORT_NOTICE, LEGACY_SHORT_NOTICE):
+        value = re.sub(
+            r"^\s*<p>\s*(?:<em>\s*)?" + re.escape(notice) + r"(?:\s*</em>)?\s*</p>\s*",
+            "",
+            value,
+            flags=re.IGNORECASE,
+        )
+    return value.strip()
+
+
+def apply_short_edition_marker(artifact_dir: Path, *, short_edition: bool) -> None:
+    digest_path = artifact_dir / "digest.json"
+    if not digest_path.is_file():
+        return
+    meta_path = artifact_dir / "meta.json"
+    editorial_path = artifact_dir / "editorial-output.json"
+    article_path = artifact_dir / "article.html"
+    digest = read_json(digest_path)
+    if not isinstance(digest, dict):
+        raise RuntimeError("digest.json должен содержать объект")
+    article_html = _remove_short_notices(str(digest.get("article_html", "")))
+    notes = digest.get("editorial_notes")
+    if not isinstance(notes, list):
+        notes = []
+    notes = [
+        item
+        for item in notes
+        if not (isinstance(item, dict) and item.get("type") == "low_news_volume")
+    ]
+    if short_edition:
+        article_html = SHORT_NOTICE_HTML + "\n" + article_html
+        notes.insert(
+            0,
+            {
+                "type": "low_news_volume",
+                "area": "total",
+                "message": "После основного и дополнительного поиска опубликован сокращённый выпуск.",
+            },
+        )
+    digest["short_digest"] = short_edition
+    digest["article_html"] = article_html
+    digest["editorial_notes"] = notes
+    write_json(digest_path, digest)
+    article_path.write_text(article_html.rstrip() + "\n", encoding="utf-8")
+
+    if meta_path.is_file():
+        meta = read_json(meta_path)
+        if isinstance(meta, dict):
+            meta["short_digest"] = short_edition
+            meta["editorial_notes"] = notes
+            write_json(meta_path, meta)
+
+    if editorial_path.is_file():
+        editorial = read_json(editorial_path)
+        if isinstance(editorial, dict) and isinstance(editorial.get("digest"), dict):
+            editorial["digest"] = digest
+            write_json(editorial_path, editorial)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Довести итоговый выпуск до обязательного покрытия 5+2."
@@ -392,6 +471,15 @@ def main() -> int:
     parser.add_argument("--report", type=Path, required=True)
     args = parser.parse_args()
 
+    prior_report: dict[str, Any] | None = None
+    if args.report.is_file():
+        try:
+            loaded_prior = read_json(args.report)
+            if isinstance(loaded_prior, dict):
+                prior_report = loaded_prior
+        except Exception:
+            prior_report = None
+
     report: dict[str, Any] = {
         "status": "running",
         "publication_date": args.publication_date,
@@ -403,6 +491,8 @@ def main() -> int:
         "maximum_audit_web_search_calls": args.maximum_audit_web_search_calls,
         "audit_needed": False,
         "web_search_performed": False,
+        "prior_audit_reused": False,
+        "publication_mode": None,
         "before": None,
         "after": None,
         "candidate_pool_before": None,
@@ -469,7 +559,8 @@ def main() -> int:
             and candidate_pool["russia"] >= args.minimum_russia
         )
         additional_candidates: list[Any] = []
-        if not pool_has_required_geography:
+        prior_audit_complete = completed_prior_audit(prior_report)
+        if not pool_has_required_geography and not prior_audit_complete:
             api_key = os.getenv("OPENAI_API_KEY", "").strip()
             if not api_key:
                 raise RuntimeError("OPENAI_API_KEY не задан для coverage audit")
@@ -508,6 +599,15 @@ def main() -> int:
             additional_candidates = audit_payload.get("candidates", [])
             if not isinstance(additional_candidates, list):
                 raise RuntimeError("Coverage audit candidates должен быть массивом")
+        elif not pool_has_required_geography and prior_audit_complete:
+            report["audit_needed"] = True
+            report["prior_audit_reused"] = True
+            report["api"] = prior_report.get("api") if prior_report else None
+            report["queries_used"] = (prior_report or {}).get("queries_used", [])
+            report["audit_notes"] = (
+                "Использован уже завершённый targeted audit из recovery artifact; "
+                "повторный web search не выполнялся."
+            )
 
         merged, accepted, rejected = merge_candidates(
             research,
@@ -525,16 +625,16 @@ def main() -> int:
         report["rejected_candidates"] = rejected
         report["candidate_pool_after"] = eligible_candidate_summary(merged["candidates"])
         pool_after = report["candidate_pool_after"]
-        if (
-            pool_after["total"] < args.minimum_total
-            or pool_after["world"] < args.minimum_world
-            or pool_after["russia"] < args.minimum_russia
-        ):
+        if pool_after["total"] < 1:
             raise RuntimeError(
-                "После targeted audit пул всё ещё не позволяет собрать 5+2: "
-                f"всего={pool_after['total']}, world={pool_after['world']}, "
-                f"russia={pool_after['russia']}"
+                "После основного и targeted поиска не осталось ни одного достойного сюжета"
             )
+        full_pool_available = (
+            pool_after["total"] >= args.minimum_total
+            and pool_after["world"] >= args.minimum_world
+            and pool_after["russia"] >= args.minimum_russia
+        )
+        report["short_edition_candidate"] = not full_pool_available
 
         RUNTIME_RESEARCH_ROOT.mkdir(parents=True, exist_ok=True)
         PERSISTED_RESEARCH_ROOT.mkdir(parents=True, exist_ok=True)
@@ -562,19 +662,18 @@ def main() -> int:
             minimum_russia=args.minimum_russia,
         )
         report["after"] = after
-        if not after["valid"]:
-            raise RuntimeError(
-                "Редакторский повтор не выполнил обязательный минимум 5+2: "
-                f"всего={after['counts']['total']}, "
-                f"world={after['counts']['world']}, "
-                f"russia={after['counts']['russia']}"
-            )
+        if after["counts"]["total"] < 1:
+            raise RuntimeError("Редакторский повтор не выбрал ни одного достойного сюжета")
+        short_edition = not after["valid"]
+        apply_short_edition_marker(args.artifact_dir, short_edition=short_edition)
+        report["publication_mode"] = "short" if short_edition else "full"
         report["status"] = "ok"
-        report["mode"] = (
-            "targeted_web_search_and_editorial_rerun"
-            if report["web_search_performed"]
-            else "editorial_rerun_only"
-        )
+        if report["prior_audit_reused"]:
+            report["mode"] = "reused_completed_audit_and_editorial_rerun"
+        elif report["web_search_performed"]:
+            report["mode"] = "targeted_web_search_and_editorial_rerun"
+        else:
+            report["mode"] = "editorial_rerun_only"
         write_json(args.report, report)
         print(json.dumps(report, ensure_ascii=False, indent=2))
         return 0

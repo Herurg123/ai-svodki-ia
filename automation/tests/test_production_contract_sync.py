@@ -32,7 +32,7 @@ class ProductionContractSyncTests(unittest.TestCase):
         self.assertEqual(production["coverage_audit_max_web_search_calls"], 5)
         # Six remains the legacy editorial "short digest" boundary. Production
         # publication is independently and strictly gated at 7 = 5 world + 2 Russia.
-        self.assertEqual(editorial["story_counts"]["total_target_minimum"], 6)
+        self.assertEqual(editorial["story_counts"]["total_target_minimum"], 7)
         self.assertEqual(editorial["story_counts"]["world_target_minimum"], 5)
         self.assertEqual(editorial["story_counts"]["russian_target_minimum"], 2)
         self.assertEqual(workflow.count("cron:"), 3)

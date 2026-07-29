@@ -74,7 +74,7 @@ class EditorialPolicyTests(unittest.TestCase):
             POLICY,
         )
         self.assertTrue(short_digest)
-        self.assertTrue(html.startswith("<p>День на новости выдался слабым - поэтому коротко</p>"))
+        self.assertTrue(html.startswith("<p><em>Новостей сегодня меньше, чем обычно</em></p>"))
         self.assertEqual(html.count(DZEN), 1)
         errors, _warnings, _analysis = validate_article_policy(
             html, candidates, short_digest, POLICY
@@ -82,9 +82,9 @@ class EditorialPolicyTests(unittest.TestCase):
         self.assertEqual(errors, [])
 
     def test_normal_digest_has_no_short_notice(self) -> None:
-        candidates = [candidate(str(index)) for index in range(6)]
+        candidates = [candidate(str(index)) for index in range(7)]
         html, short_digest, _changes = normalize_article_html(
-            base_article([f"Сюжет {index}" for index in range(6)]),
+            base_article([f"Сюжет {index}" for index in range(7)]),
             candidates,
             POLICY,
         )
