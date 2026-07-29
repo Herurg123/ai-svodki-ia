@@ -30,6 +30,7 @@ jobs:
       - name: Remove one-time migration files
         run: |
           rm -f automation/patches/apply_short_edition_patch.py
+          rm -f automation/patches/trigger.txt
           rm -f .github/workflows/apply-short-edition-patch.yml
       - name: Commit patched files
         run: |
