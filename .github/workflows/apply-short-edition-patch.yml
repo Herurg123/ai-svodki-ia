@@ -27,6 +27,8 @@ jobs:
           python-version: "3.12"
       - name: Apply requested changes
         run: python automation/patches/apply_short_edition_patch.py
+      - name: Apply follow-up fixes
+        run: python automation/patches/fix_short_edition_tests.py
       - name: Validate editorial contract
         run: python automation/scripts/validate_editorial_contract.py
       - name: Run repository tests
@@ -34,6 +36,7 @@ jobs:
       - name: Remove one-time migration files
         run: |
           rm -f automation/patches/apply_short_edition_patch.py
+          rm -f automation/patches/fix_short_edition_tests.py
           rm -f automation/patches/trigger.txt
           rm -f .github/workflows/apply-short-edition-patch.yml
       - name: Commit patched files
