@@ -4,12 +4,16 @@ on:
   push:
     branches:
       - chatgpt/short-editions-after-audit
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
 
 jobs:
   patch:
+    if: github.head_ref == '' || github.head_ref == 'chatgpt/short-editions-after-audit'
     runs-on: ubuntu-latest
     steps:
       - name: Check out patch branch
