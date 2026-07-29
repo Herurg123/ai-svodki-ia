@@ -1,0 +1,40 @@
+name: Apply manual recovery audit fix
+
+on:
+  push:
+    branches:
+      - chatgpt/reuse-completed-audit-on-manual-recovery
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out patch branch
+        uses: actions/checkout@v7
+        with:
+          ref: chatgpt/reuse-completed-audit-on-manual-recovery
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Apply recovery fix
+        run: python automation/patches/apply_manual_recovery_audit_fix.py
+      - name: Run repository tests
+        run: python -m unittest discover -s automation/tests -p 'test_*.py'
+      - name: Remove migration script
+        run: rm -f automation/patches/apply_manual_recovery_audit_fix.py
+      - name: Commit patched files
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add automation/scripts/recover_digest_artifact.py
+          git add automation/tests/test_recovery_completed_audit.py
+          git add -A automation/patches/apply_manual_recovery_audit_fix.py
+          git diff --cached --quiet && { echo "No changes to commit"; exit 1; }
+          git commit -m "Reuse completed audit during manual recovery"
+          git push origin HEAD:chatgpt/reuse-completed-audit-on-manual-recovery
