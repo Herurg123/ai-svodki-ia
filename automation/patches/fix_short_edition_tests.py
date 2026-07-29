@@ -66,20 +66,13 @@ def main() -> None:
         ],
     )
 
-    for root in (ROOT / "automation" / "tests", ROOT / "automation" / "fixtures"):
-        if not root.exists():
-            continue
-        for target in root.rglob("*"):
-            if not target.is_file() or target.suffix.lower() not in {".py", ".json", ".md", ".txt", ".html"}:
-                continue
-            try:
-                text = target.read_text(encoding="utf-8")
-            except UnicodeDecodeError:
-                continue
-            text = text.replace(OLD_HTML, NEW_HTML)
-            text = text.replace(OLD_NOTICE, NEW_NOTICE)
-            text = text.replace(OLD_STEP, NEW_STEP)
-            target.write_text(text, encoding="utf-8")
+    tests_root = ROOT / "automation" / "tests"
+    for target in tests_root.rglob("*.py"):
+        text = target.read_text(encoding="utf-8")
+        text = text.replace(OLD_HTML, NEW_HTML)
+        text = text.replace(OLD_NOTICE, NEW_NOTICE)
+        text = text.replace(OLD_STEP, NEW_STEP)
+        target.write_text(text, encoding="utf-8")
 
     print("Follow-up short edition fixes applied")
 
