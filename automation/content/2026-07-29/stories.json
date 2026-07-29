@@ -1,0 +1,125 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Fitch назвал возможную коррекцию ИИ-рынка одним из глобальных кредитных рисков",
+    "organization": "Fitch Ratings",
+    "topic": "кредитные риски ИИ-бума",
+    "event_type": "market_report",
+    "status": "new",
+    "summary": "Fitch в квартальном Global Risk Outlook отнесло вероятность коррекции, связанной с ИИ-бумом, к числу существенных краткосрочных рисков для глобального кредитного рынка. Агентство связало риск с высокими оценками технологических компаний и масштабными инвестициями в ИИ при неопределённой будущей отдаче.",
+    "published_at": null,
+    "published_date": "2026-07-28",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Fitch warns AI market correction emerging as major global credit risk",
+        "publisher": "Reuters",
+        "url": "https://www.investing.com/news/stock-market-news/fitch-warns-ai-market-correction-emerging-as-major-global-credit-risk-4816118"
+      }
+    ],
+    "keywords": [
+      "Fitch Ratings",
+      "ИИ-инвестиции",
+      "кредитные риски",
+      "оценки технологических компаний",
+      "дата-центры",
+      "капитальные расходы"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "EPAM стала Advanced Partner OpenAI для внедрения моделей в крупных компаниях",
+    "organization": "EPAM Systems; OpenAI",
+    "topic": "партнёрская сеть внедрения корпоративного ИИ",
+    "event_type": "partnership",
+    "status": "new",
+    "summary": "EPAM объявила о вступлении в OpenAI Partner Network в статусе Advanced Partner. Компания заявила, что будет использовать собственные инженерные и кибербезопасностные компетенции для внедрения моделей OpenAI в новые и действующие процессы заказчиков.",
+    "published_at": "2026-07-28T15:02:00+03:00",
+    "published_date": "2026-07-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "EPAM and OpenAI Partner to Help Enterprises Unlock Higher Value Through Applied AI",
+        "publisher": "EPAM Systems",
+        "url": "https://www.prnewswire.com/news-releases/epam-and-openai-partner-to-help-enterprises-unlock-higher-value-through-applied-ai-302835746.html"
+      }
+    ],
+    "keywords": [
+      "EPAM",
+      "OpenAI",
+      "OpenAI Partner Network",
+      "корпоративный ИИ",
+      "внедрение ИИ",
+      "forward-deployed engineers",
+      "безопасность"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Cognizant создала отдельное EMEA-подразделение для масштабирования агентного ИИ",
+    "organization": "Cognizant",
+    "topic": "масштабирование агентного ИИ в корпорациях",
+    "event_type": "organization_launch",
+    "status": "new",
+    "summary": "Cognizant объявила о запуске EMEA AI Unit — выделенной структуры для консультаций, инженерной разработки и эксплуатации агентных ИИ-систем у клиентов в Европе, на Ближнем Востоке и в Африке. Подразделение опирается на модель Frontier Deployed Engineering и не привязано к одному поставщику моделей или облака.",
+    "published_at": "2026-07-28T12:00:00+03:00",
+    "published_date": "2026-07-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Cognizant launches EMEA AI Unit to help enterprises scale agentic AI adoption",
+        "publisher": "Cognizant",
+        "url": "https://www.prnewswire.com/news-releases/cognizant-launches-emea-ai-unit-to-help-enterprises-scale-agentic-ai-adoption-302835936.html"
+      }
+    ],
+    "keywords": [
+      "Cognizant",
+      "EMEA",
+      "агентный ИИ",
+      "AI Unit",
+      "внедрение ИИ",
+      "мультиагентные системы",
+      "корпоративная автоматизация"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Emerson добавила генерацию кода и тестовых последовательностей в инженерный пакет NI Nigel AI",
+    "organization": "Emerson",
+    "topic": "ИИ-генерация кода для инженерного тестирования",
+    "event_type": "product_update",
+    "status": "new",
+    "summary": "Emerson объявила о расширении NI Nigel AI на весь пакет NI LabVIEW+ Suite. Обновление добавляет генерацию кода по запросу в LabVIEW и автоматическое создание тестовых последовательностей в TestStand для инженерных процессов в автомобилестроении, электронике, аэрокосмической и полупроводниковой отраслях.",
+    "published_at": "2026-07-28T16:00:00+03:00",
+    "published_date": "2026-07-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Emerson Advances AI Across Software Portfolio, Accelerating Test Productivity by Up to 50 Percent",
+        "publisher": "Emerson",
+        "url": "https://www.prnewswire.com/news-releases/emerson-advances-ai-across-software-portfolio-accelerating-test-productivity-by-up-to-50-percent-302835464.html"
+      }
+    ],
+    "keywords": [
+      "Emerson",
+      "NI Nigel AI",
+      "LabVIEW",
+      "TestStand",
+      "генерация кода",
+      "автоматизация тестирования",
+      "инженерное ПО"
+    ],
+    "geography": "world",
+    "category": "coding"
+  }
+]

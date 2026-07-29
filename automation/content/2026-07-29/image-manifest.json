@@ -1,0 +1,23 @@
+{
+  "status": "ok",
+  "mode": "image_api_preview",
+  "request_id": "production-image-2026-07-29",
+  "source": "openai_images_api",
+  "endpoint": "/v1/images/generations",
+  "artifact_filename": "cover.png",
+  "publish_filename": "ai-svodka-2026-07-29.png",
+  "format": "png",
+  "width": 1536,
+  "height": 864,
+  "bytes": 2252704,
+  "sha256": "8fd3bbcfc36e207326bd80e3bcabe157139d827d72a210ac11cf91356dd25ad8",
+  "prompt_sha256": "032d385e5368846e4a8923287d44cf646e974d73ddc9ad84ff5acbe5fe63f355",
+  "source_manifest": "artifact-validation.json",
+  "source_manifest_sha256": "54171b6318fea600c6caf87a4569ed69e8e248fd048e7c9a39b6ffea57f06750",
+  "network_used": true,
+  "openai_used": true,
+  "visual_semantics_validated": false,
+  "rendered_title_validated": false,
+  "retry_count": 0,
+  "created_at": "2026-07-29T07:15:42+00:00"
+}
