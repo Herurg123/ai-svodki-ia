@@ -267,6 +267,45 @@ def restore_merged_coverage_research(
         }
     return None
 
+def restore_completed_coverage_audit(
+    recovery_root: Path,
+    report_path: Path,
+    publication_date: str,
+) -> dict[str, Any] | None:
+    """Restore a completed paid coverage audit beside the recovery report.
+
+    ensure_story_coverage.py reads this exact path before deciding whether a
+    targeted web search is needed. Restoring the report prevents a manual
+    recovery run from paying for the same completed audit twice.
+    """
+
+    target = report_path.parent / "coverage-audit.json"
+    matches = sorted(
+        path for path in recovery_root.rglob("coverage-audit.json") if path.is_file()
+    )
+    for path in matches:
+        try:
+            payload = read_json(path)
+        except RecoveryError:
+            continue
+        if not isinstance(payload, dict):
+            continue
+        if payload.get("publication_date") != publication_date:
+            continue
+        api = payload.get("api")
+        if payload.get("web_search_performed") is not True:
+            continue
+        if not isinstance(api, dict) or api.get("status") != "completed":
+            continue
+        write_json(target, payload)
+        return {
+            "source": str(path),
+            "target": str(target),
+            "web_search_calls": api.get("web_search_calls"),
+        }
+    return None
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -383,6 +422,11 @@ def recover(
         target_dir,
         publication_date,
     )
+    completed_coverage_audit = restore_completed_coverage_audit(
+        recovery_root,
+        report_path,
+        publication_date,
+    )
 
     recovered_image, image_diagnostics = restore_reusable_image(
         recovery_root,
@@ -406,6 +450,7 @@ def recover(
         "target_dir": str(target_dir),
         "removed_stage_files": removed,
         "merged_coverage_research": merged_research,
+        "completed_coverage_audit": completed_coverage_audit,
         "image_recovered": recovered_image is not None,
         "recovered_image": recovered_image,
         "image_candidates": image_diagnostics,
