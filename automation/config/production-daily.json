@@ -15,7 +15,7 @@
   "site_base_url": "https://rybalka.one/posts",
   "feed_url": "https://rybalka.one/posts/rss.xml",
   "legacy_prefix": "https://rybalka.one/posts/dzen-test/",
-  "minimum_legacy_items": 10,
+  "minimum_legacy_items": 0,
   "require_previous_day_in_rss": false,
   "allow_skipped_publication_days": true,
   "verify_previous_release_on_live_site": true,

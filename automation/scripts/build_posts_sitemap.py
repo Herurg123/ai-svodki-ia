@@ -19,28 +19,27 @@ def text(node: ET.Element | None) -> str:
     return (node.text or "").strip() if node is not None else ""
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--rss", type=Path, required=True)
-    parser.add_argument("--posts-root", type=Path, required=True)
-    parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--report", type=Path, required=True)
-    parser.add_argument(
-        "--base-url",
-        default="https://rybalka.one/posts/",
-    )
-    args = parser.parse_args()
+def build_sitemap(
+    *,
+    rss: Path,
+    posts_root: Path,
+    output: Path,
+    base_url: str = "https://rybalka.one/posts/",
+    reference_date: date | None = None,
+) -> dict[str, str | int]:
+    if posts_root.is_symlink() or not posts_root.is_dir():
+        raise RuntimeError(f"Posts root must be a regular directory: {posts_root}")
 
-    rss_root = ET.parse(args.rss).getroot()
+    rss_root = ET.parse(rss).getroot()
     channel = rss_root.find("channel")
     if channel is None:
         raise RuntimeError("RSS channel missing")
 
-    base = args.base_url.rstrip("/") + "/"
+    base = base_url.rstrip("/") + "/"
     entries: list[dict[str, str]] = [
         {
             "loc": base,
-            "lastmod": date.today().isoformat(),
+            "lastmod": (reference_date or date.today()).isoformat(),
             "changefreq": "daily",
             "priority": "0.9",
             "image": "",
@@ -82,18 +81,49 @@ def main() -> int:
             image = ET.SubElement(url, f"{{{IMAGE_NS}}}image")
             ET.SubElement(image, f"{{{IMAGE_NS}}}loc").text = entry["image"]
 
-    args.output.parent.mkdir(parents=True, exist_ok=True)
+    output.parent.mkdir(parents=True, exist_ok=True)
     tree = ET.ElementTree(urlset)
     ET.indent(tree, space="  ")
-    tree.write(args.output, encoding="utf-8", xml_declaration=True)
+    tree.write(output, encoding="utf-8", xml_declaration=True)
 
     report = {
         "status": "ok",
         "urls": len(entries),
         "articles": len(entries) - 1,
-        "output": str(args.output),
+        "output": str(output),
         "base_url": base,
     }
+    return report
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--rss", type=Path, required=True)
+    parser.add_argument("--posts-root", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument(
+        "--base-url",
+        default="https://rybalka.one/posts/",
+    )
+    parser.add_argument(
+        "--reference-date",
+        help="Optional deterministic YYYY-MM-DD date for the index lastmod.",
+    )
+    args = parser.parse_args()
+
+    reference_date = (
+        date.fromisoformat(args.reference_date)
+        if args.reference_date
+        else None
+    )
+    report = build_sitemap(
+        rss=args.rss,
+        posts_root=args.posts_root,
+        output=args.output,
+        base_url=args.base_url,
+        reference_date=reference_date,
+    )
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n",

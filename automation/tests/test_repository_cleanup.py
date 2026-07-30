@@ -187,7 +187,10 @@ class RepositoryContentCleanupTests(unittest.TestCase):
             self.assertIn("<code>meta.json</code>", summary)
             self.assertIn("<code>stories.json</code>", summary)
             self.assertIn("**3 файла**", summary)
-            self.assertIn("Публичные `posts/`, RSS, sitemap, FTP", summary)
+            self.assertIn(
+                "очистка публичных страниц, RSS и FTP показана ниже",
+                summary,
+            )
 
     def test_russian_summary_never_claims_dry_run_deleted_files(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -235,7 +238,7 @@ class RepositoryContentCleanupTests(unittest.TestCase):
             self.assertIn("не опубликовано", summary)
             self.assertNotIn("изменения записаны в `main`", summary)
 
-    def test_workflow_is_scoped_to_repository_content(self) -> None:
+    def test_workflow_cleans_repository_and_public_content_together(self) -> None:
         workflow = (
             ROOT / ".github" / "workflows" / "repository-cleanup.yml"
         ).read_text(encoding="utf-8")
@@ -245,12 +248,14 @@ class RepositoryContentCleanupTests(unittest.TestCase):
         self.assertIn("--retention-days", workflow)
         self.assertIn("retention_days must be at least 32", workflow)
         self.assertIn("cleanup_repository_content.py", workflow)
+        self.assertIn("cleanup_public_posts.py", workflow)
         self.assertIn("render_github_summary", workflow)
-        self.assertIn("Ночная очистка GitHub-репозитория", workflow)
+        self.assertIn("Ночная очистка контента", workflow)
         self.assertIn("steps.validation.outcome", workflow)
         self.assertIn("steps.commit.outcome", workflow)
-        self.assertNotIn("posts/", workflow)
-        self.assertNotIn("rss.xml", workflow)
+        self.assertIn("posts/rss.xml", workflow)
+        self.assertIn("uses: ./.github/workflows/deploy-posts.yml", workflow)
+        self.assertIn("secrets: inherit", workflow)
 
 
 if __name__ == "__main__":

@@ -27,10 +27,14 @@ concurrency:
 
 jobs:
   cleanup:
-    name: Compact expired repository content
+    name: Prune expired repository and public content
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    outputs:
+      mode: ${{ steps.mode.outputs.mode }}
+      commit_sha: ${{ steps.commit.outputs.commit_sha }}
+      public_changed: ${{ steps.public_cleanup.outputs.changed }}
 
     steps:
       - name: Check out current main
@@ -67,8 +71,8 @@ jobs:
           echo "mode=${mode}" >> "${GITHUB_OUTPUT}"
           echo "retention_days=${REQUESTED_RETENTION_DAYS}" >> "${GITHUB_OUTPUT}"
 
-      - name: Plan or apply repository cleanup
-        id: cleanup
+      - name: Plan or apply repository compaction
+        id: repository_cleanup
         shell: bash
         env:
           CLEANUP_MODE: ${{ steps.mode.outputs.mode }}
@@ -90,29 +94,92 @@ jobs:
           import os
           from pathlib import Path
 
-          report = json.loads(Path(os.environ["REPORT_PATH"]).read_text(encoding="utf-8"))
+          report = json.loads(
+              Path(os.environ["REPORT_PATH"]).read_text(encoding="utf-8")
+          )
           with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
               output.write(
                   f"changed={'true' if report['changes_applied'] else 'false'}\n"
               )
-              output.write(f"cutoff_date={report['cutoff_date']}\n")
               output.write(
-                  f"compacted_directories={len(report['compacted_directories'])}\n"
+                  f"planned={'true' if report['changes_planned'] else 'false'}\n"
               )
-              output.write(f"removed_files={report['removed_files']}\n")
-              output.write(f"removed_bytes={report['removed_bytes']}\n")
+          PY
+
+      - name: Plan or apply public posts and RSS cleanup
+        id: public_cleanup
+        shell: bash
+        env:
+          CLEANUP_MODE: ${{ steps.mode.outputs.mode }}
+          RETENTION_DAYS: ${{ steps.mode.outputs.retention_days }}
+          REPORT_PATH: ${{ runner.temp }}/public-posts-cleanup.json
+        run: |
+          set -euo pipefail
+          args=(
+            --retention-days "${RETENTION_DAYS}"
+            --timezone Europe/Moscow
+            --report "${REPORT_PATH}"
+          )
+          if [[ "${CLEANUP_MODE}" == "apply" ]]; then
+            args+=(--apply)
+          fi
+          python automation/scripts/cleanup_public_posts.py "${args[@]}"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          report = json.loads(
+              Path(os.environ["REPORT_PATH"]).read_text(encoding="utf-8")
+          )
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              output.write(
+                  f"changed={'true' if report['changes_applied'] else 'false'}\n"
+              )
+              output.write(
+                  f"planned={'true' if report['changes_planned'] else 'false'}\n"
+              )
+              output.write(f"rss_items_after={report['rss_items_after']}\n")
           PY
 
       - name: Validate applied cleanup
         id: validation
-        if: steps.cleanup.outputs.changed == 'true'
+        if: steps.repository_cleanup.outputs.changed == 'true' || steps.public_cleanup.outputs.changed == 'true'
         shell: bash
         env:
-          REPORT_PATH: ${{ runner.temp }}/repository-cleanup.json
+          REPOSITORY_REPORT: ${{ runner.temp }}/repository-cleanup.json
+          PUBLIC_REPORT: ${{ runner.temp }}/public-posts-cleanup.json
         run: |
           set -euo pipefail
-          python -m unittest automation.tests.test_repository_cleanup -v
+          python -m unittest \
+            automation.tests.test_repository_cleanup \
+            automation.tests.test_public_posts_cleanup \
+            -v
           python automation/scripts/validate_archive.py
+          mkdir -p automation/preview/cleanup-validation
+          python automation/scripts/validate_dzen_feed.py \
+            --rss posts/rss.xml \
+            --site-base-url https://rybalka.one/posts \
+            --report automation/preview/cleanup-validation/dzen-feed.json
+          python automation/scripts/validate_posts_sitemap.py \
+            --sitemap posts/sitemap.xml \
+            --rss posts/rss.xml \
+            --report automation/preview/cleanup-validation/sitemap.json
+          python automation/scripts/validate_production_daily_contract.py \
+            --config automation/config/production-daily.json \
+            --site-config automation/config/site.json \
+            --workflow .github/workflows/daily-production.yml \
+            --rss posts/rss.xml \
+            --report automation/preview/cleanup-validation/production-contract.json
+          latest_content_dir="$(
+            find automation/content -mindepth 1 -maxdepth 1 \
+              -type d -name '????-??-??' | sort | tail -n 1
+          )"
+          test -n "${latest_content_dir}"
+          python automation/scripts/validate_structured_data.py \
+            --source-dir "${latest_content_dir}" \
+            --posts-root posts \
+            --report automation/preview/cleanup-validation/structured-data.json
           git diff --check
           python - <<'PY'
           import json
@@ -122,34 +189,64 @@ jobs:
           from datetime import date
           from pathlib import Path
 
-          report = json.loads(Path(os.environ["REPORT_PATH"]).read_text(encoding="utf-8"))
-          cutoff = date.fromisoformat(report["cutoff_date"])
+          repository_report = json.loads(
+              Path(os.environ["REPOSITORY_REPORT"]).read_text(encoding="utf-8")
+          )
+          public_report = json.loads(
+              Path(os.environ["PUBLIC_REPORT"]).read_text(encoding="utf-8")
+          )
+          cutoff = date.fromisoformat(repository_report["cutoff_date"])
+          if public_report["cutoff_date"] != repository_report["cutoff_date"]:
+              raise SystemExit("Repository and public cleanup cutoffs differ.")
+
           raw = subprocess.check_output(["git", "diff", "--name-status", "-z"])
           fields = raw.decode("utf-8").split("\0")
           if fields and fields[-1] == "":
               fields.pop()
           if not fields or len(fields) % 2:
               raise SystemExit("Cleanup produced an invalid or empty Git diff.")
+          actual = dict(zip(fields[1::2], fields[0::2]))
 
-          allowed = re.compile(
+          content_pattern = re.compile(
               r"automation/content/(\d{4}-\d{2}-\d{2})/(.+)"
           )
-          for status, path in zip(fields[0::2], fields[1::2]):
-              if status != "D":
-                  raise SystemExit(f"Cleanup may only delete files: {status} {path}")
-              match = allowed.fullmatch(path)
-              if match is None:
-                  raise SystemExit(f"Cleanup changed a protected path: {path}")
-              publication_date = date.fromisoformat(match.group(1))
-              if publication_date >= cutoff:
-                  raise SystemExit(f"Cleanup changed a retained date: {path}")
-              if Path(path).name in {"meta.json", "stories.json"}:
-                  raise SystemExit(f"Cleanup deleted retained metadata: {path}")
+          actual_public = {}
+          for path, status in actual.items():
+              content_match = content_pattern.fullmatch(path)
+              if content_match is not None:
+                  if status != "D":
+                      raise SystemExit(
+                          f"Repository compaction may only delete files: {status} {path}"
+                      )
+                  publication_date = date.fromisoformat(content_match.group(1))
+                  if publication_date >= cutoff:
+                      raise SystemExit(
+                          f"Repository compaction changed a retained date: {path}"
+                      )
+                  if Path(path).name in {"meta.json", "stories.json"}:
+                      raise SystemExit(
+                          f"Repository compaction deleted retained metadata: {path}"
+                      )
+                  continue
+              if path.startswith("posts/"):
+                  actual_public[path] = status
+                  continue
+              raise SystemExit(f"Cleanup changed a protected path: {status} {path}")
+
+          expected_public = {
+              f"posts/{row['path']}": row["status"]
+              for row in public_report["expected_git_changes"]
+          }
+          if actual_public != expected_public:
+              raise SystemExit(
+                  "Public Git diff differs from the validated cleanup candidate: "
+                  f"expected={expected_public}, actual={actual_public}"
+              )
           PY
 
       - name: Commit applied cleanup
         id: commit
-        if: steps.cleanup.outputs.changed == 'true'
+        if: steps.repository_cleanup.outputs.changed == 'true' || steps.public_cleanup.outputs.changed == 'true'
         shell: bash
         env:
           RETENTION_DAYS: ${{ steps.mode.outputs.retention_days }}
@@ -160,29 +257,32 @@ jobs:
             echo "main changed while cleanup was running; refusing to push." >&2
             exit 1
           fi
-          git add -u -- automation/content
+          git add -u -- automation/content posts
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Prune repository content older than ${RETENTION_DAYS} days"
+          git commit -m "Prune content older than ${RETENTION_DAYS} days"
           git push origin HEAD:main
+          echo "commit_sha=$(git rev-parse HEAD)" >> "${GITHUB_OUTPUT}"
 
       - name: Publish cleanup summary
         if: always()
         shell: bash
         env:
-          REPORT_PATH: ${{ runner.temp }}/repository-cleanup.json
-          CLEANUP_OUTCOME: ${{ steps.cleanup.outcome }}
+          REPOSITORY_REPORT: ${{ runner.temp }}/repository-cleanup.json
+          PUBLIC_REPORT: ${{ runner.temp }}/public-posts-cleanup.json
+          REPOSITORY_OUTCOME: ${{ steps.repository_cleanup.outcome }}
+          PUBLIC_OUTCOME: ${{ steps.public_cleanup.outcome }}
           VALIDATION_OUTCOME: ${{ steps.validation.outcome }}
           COMMIT_OUTCOME: ${{ steps.commit.outcome }}
         run: |
           set -euo pipefail
-          if [[ ! -f automation/scripts/cleanup_repository_content.py ]]; then
+          if [[ ! -f automation/scripts/cleanup_repository_content.py || ! -f automation/scripts/cleanup_public_posts.py ]]; then
             {
-              echo "# Ночная очистка GitHub-репозитория"
+              echo "# Ночная очистка контента"
               echo
-              echo "❌ Workflow не смог получить скрипт очистки."
+              echo "❌ Workflow не смог получить скрипты очистки."
               echo
-              echo "Изменения в \`main\` этим запуском не опубликованы."
+              echo "Изменения в \`main\` и на FTP этим запуском не опубликованы."
             } >> "${GITHUB_STEP_SUMMARY}"
             exit 0
           fi
@@ -193,16 +293,28 @@ jobs:
           from pathlib import Path
 
           sys.path.insert(0, "automation/scripts")
-          from cleanup_repository_content import render_github_summary
+          from cleanup_public_posts import (
+              render_github_summary as render_public_summary,
+          )
+          from cleanup_repository_content import (
+              render_github_summary as render_repository_summary,
+          )
 
-          report_path = Path(os.environ["REPORT_PATH"])
-          report = None
-          if report_path.is_file():
-              report = json.loads(report_path.read_text(encoding="utf-8"))
+          def load_report(name):
+              path = Path(os.environ[name])
+              if not path.is_file():
+                  return None
+              return json.loads(path.read_text(encoding="utf-8"))
 
-          summary = render_github_summary(
-              report,
-              cleanup_outcome=os.environ["CLEANUP_OUTCOME"],
+          repository_summary = render_repository_summary(
+              load_report("REPOSITORY_REPORT"),
+              cleanup_outcome=os.environ["REPOSITORY_OUTCOME"],
+              validation_outcome=os.environ["VALIDATION_OUTCOME"],
+              commit_outcome=os.environ["COMMIT_OUTCOME"],
+          )
+          public_summary = render_public_summary(
+              load_report("PUBLIC_REPORT"),
+              cleanup_outcome=os.environ["PUBLIC_OUTCOME"],
               validation_outcome=os.environ["VALIDATION_OUTCOME"],
               commit_outcome=os.environ["COMMIT_OUTCOME"],
           )
@@ -210,5 +322,55 @@ jobs:
               "a",
               encoding="utf-8",
           ) as output:
-              output.write(summary)
+              output.write(repository_summary)
+              output.write("\n\n")
+              output.write(public_summary)
           PY
+
+  deploy:
+    name: Synchronize pruned posts to FTP
+    needs: cleanup
+    if: needs.cleanup.result == 'success' && needs.cleanup.outputs.public_changed == 'true' && needs.cleanup.outputs.commit_sha != ''
+    uses: ./.github/workflows/deploy-posts.yml
+    with:
+      ref: ${{ needs.cleanup.outputs.commit_sha }}
+    secrets: inherit
+
+  final_status:
+    name: Итог ночной очистки
+    needs:
+      - cleanup
+      - deploy
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Показать общий итог
+        shell: bash
+        env:
+          CLEANUP_RESULT: ${{ needs.cleanup.result }}
+          CLEANUP_MODE: ${{ needs.cleanup.outputs.mode }}
+          PUBLIC_CHANGED: ${{ needs.cleanup.outputs.public_changed }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+          COMMIT_SHA: ${{ needs.cleanup.outputs.commit_sha }}
+        run: |
+          set -euo pipefail
+          ftp_result="не требовалась"
+          if [[ "${PUBLIC_CHANGED}" == "true" ]]; then
+            ftp_result="${DEPLOY_RESULT}"
+          fi
+          {
+            echo "# Итог ночной очистки"
+            echo
+            echo "| Этап | Результат |"
+            echo "|---|---|"
+            echo "| Проверка и GitHub | ${CLEANUP_RESULT} |"
+            echo "| Режим | ${CLEANUP_MODE:-не определён} |"
+            echo "| FTP-синхронизация | ${ftp_result} |"
+            echo "| Commit | ${COMMIT_SHA:-не создавался} |"
+          } >> "${GITHUB_STEP_SUMMARY}"
+          if [[ "${CLEANUP_RESULT}" == "failure" ]]; then
+            echo "::error title=Ошибка ночной очистки::GitHub и FTP не приведены к новому состоянию. Открой подробную русскую Summary job cleanup."
+          elif [[ "${PUBLIC_CHANGED}" == "true" && "${DEPLOY_RESULT}" != "success" ]]; then
+            echo "::error title=Ошибка FTP-синхронизации::GitHub уже очищен, но FTP не подтверждён. Повторно запусти deploy-posts.yml для commit ${COMMIT_SHA}."
+            exit 1
+          fi

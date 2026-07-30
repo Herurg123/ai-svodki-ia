@@ -137,6 +137,9 @@ class ProductionDailyTests(unittest.TestCase):
         self.assertNotIn("gh workflow run deploy-posts.yml", daily)
         self.assertIn("workflow_call:", deploy)
         self.assertIn("inputs.ref || github.sha", deploy)
+        self.assertNotIn("dzen-test/**", deploy)
+        self.assertIn('".github/workflows/deploy-posts.yml"', deploy)
+        self.assertIn("FTP-синхронизация posts", deploy)
 
     def test_tree_digest_is_stable(self):
         with tempfile.TemporaryDirectory() as temp:
