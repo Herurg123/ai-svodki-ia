@@ -29,6 +29,8 @@ jobs:
           python automation/patches/fix_recovery_output_newlines.py
           python -m compileall -q automation/scripts automation/tests
           python -m unittest discover -s automation/tests -v
+          python automation/scripts/validate_editorial_contract.py
+          python automation/scripts/validate_archive.py
           mkdir -p automation/preview/ci
           python automation/scripts/validate_production_daily_contract.py \
             --config automation/config/production-daily.json \
