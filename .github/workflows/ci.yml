@@ -6,11 +6,12 @@ on:
       - main
 
 permissions:
-  contents: read
+  actions: read
+  contents: write
 
 jobs:
   validate:
-    name: Report branch tree
+    name: Prepare validated workflow blobs
     if: github.head_ref == 'chatgpt/fix-rate-limit-and-recovery-fallback'
     runs-on: ubuntu-latest
     steps:
@@ -19,7 +20,37 @@ jobs:
           ref: chatgpt/fix-rate-limit-and-recovery-fallback
           fetch-depth: 0
           persist-credentials: false
-      - name: Print branch tree
+      - name: Download validated source export
+        uses: actions/download-artifact@v8
+        with:
+          name: validated-rate-limit-recovery-fix
+          path: export
+          run-id: 30513950674
+          github-token: ${{ github.token }}
+      - name: Create Git blobs without moving refs
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
+          test -s export/.github/workflows/daily-production.yml
+          test -s export/.github/workflows/ci.yml
+          daily_blob="$(
+            gh api --method POST \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/repos/${GITHUB_REPOSITORY}/git/blobs" \
+              -F content=@export/.github/workflows/daily-production.yml \
+              -f encoding=utf-8 \
+              --jq .sha
+          )"
+          ci_blob="$(
+            gh api --method POST \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/repos/${GITHUB_REPOSITORY}/git/blobs" \
+              -F content=@export/.github/workflows/ci.yml \
+              -f encoding=utf-8 \
+              --jq .sha
+          )"
           echo "BRANCH_HEAD=$(git rev-parse HEAD)"
           echo "BRANCH_TREE=$(git rev-parse HEAD^{tree})"
+          echo "DAILY_BLOB=${daily_blob}"
+          echo "CI_BLOB=${ci_blob}"
