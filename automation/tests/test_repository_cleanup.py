@@ -12,7 +12,11 @@ SCRIPTS = ROOT / "automation" / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
-from cleanup_repository_content import CleanupError, run_cleanup  # noqa: E402
+from cleanup_repository_content import (  # noqa: E402
+    CleanupError,
+    render_github_summary,
+    run_cleanup,
+)
 
 
 class RepositoryContentCleanupTests(unittest.TestCase):
@@ -55,6 +59,21 @@ class RepositoryContentCleanupTests(unittest.TestCase):
             )
             self.assertEqual(preview["cutoff_date"], "2026-07-30")
             self.assertEqual(preview["compacted_directories"], ["2026-07-29"])
+            self.assertEqual(
+                preview["compaction_details"],
+                [
+                    {
+                        "publication_date": "2026-07-29",
+                        "removed_entries": [
+                            "article.html",
+                            "cover.png",
+                            "raw/",
+                        ],
+                        "removed_files": 3,
+                        "removed_bytes": 24,
+                    }
+                ],
+            )
             self.assertTrue((expired / "cover.png").is_file())
             self.assertTrue((boundary / "cover.png").is_file())
 
@@ -142,6 +161,80 @@ class RepositoryContentCleanupTests(unittest.TestCase):
             self.assertFalse(report["changes_applied"])
             self.assertEqual(report["already_compact_directories"], ["2026-07-01"])
 
+    def test_russian_summary_describes_applied_cleanup(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            content = Path(temp)
+            self.write_release(content, "2026-07-29")
+            report = run_cleanup(
+                content,
+                reference_date=date(2026, 8, 31),
+                retention_days=32,
+                apply=True,
+            )
+
+            summary = render_github_summary(
+                report,
+                cleanup_outcome="success",
+                validation_outcome="success",
+                commit_outcome="success",
+            )
+
+            self.assertIn("# Ночная очистка GitHub-репозитория", summary)
+            self.assertIn("изменения записаны в `main`", summary)
+            self.assertIn("2026-07-29", summary)
+            self.assertIn("<code>article.html</code>", summary)
+            self.assertIn("<code>raw/</code>", summary)
+            self.assertIn("<code>meta.json</code>", summary)
+            self.assertIn("<code>stories.json</code>", summary)
+            self.assertIn("**3 файла**", summary)
+            self.assertIn("Публичные `posts/`, RSS, sitemap, FTP", summary)
+
+    def test_russian_summary_never_claims_dry_run_deleted_files(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            content = Path(temp)
+            self.write_release(content, "2026-07-29")
+            report = run_cleanup(
+                content,
+                reference_date=date(2026, 8, 31),
+                retention_days=32,
+                apply=False,
+            )
+
+            summary = render_github_summary(
+                report,
+                cleanup_outcome="success",
+                validation_outcome="skipped",
+                commit_outcome="skipped",
+            )
+
+            self.assertIn("ничего не удалено", summary)
+            self.assertIn("К удалению найдено", summary)
+            self.assertIn("не удалено (dry-run)", summary)
+            self.assertNotIn("изменения записаны в `main`", summary)
+
+    def test_russian_summary_reports_failed_push_as_not_published(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            content = Path(temp)
+            self.write_release(content, "2026-07-29")
+            report = run_cleanup(
+                content,
+                reference_date=date(2026, 8, 31),
+                retention_days=32,
+                apply=True,
+            )
+
+            summary = render_github_summary(
+                report,
+                cleanup_outcome="success",
+                validation_outcome="success",
+                commit_outcome="failure",
+            )
+
+            self.assertIn("commit/push не завершился", summary)
+            self.assertIn("`main` не изменён", summary)
+            self.assertIn("не опубликовано", summary)
+            self.assertNotIn("изменения записаны в `main`", summary)
+
     def test_workflow_is_scoped_to_repository_content(self) -> None:
         workflow = (
             ROOT / ".github" / "workflows" / "repository-cleanup.yml"
@@ -152,6 +245,10 @@ class RepositoryContentCleanupTests(unittest.TestCase):
         self.assertIn("--retention-days", workflow)
         self.assertIn("retention_days must be at least 32", workflow)
         self.assertIn("cleanup_repository_content.py", workflow)
+        self.assertIn("render_github_summary", workflow)
+        self.assertIn("Ночная очистка GitHub-репозитория", workflow)
+        self.assertIn("steps.validation.outcome", workflow)
+        self.assertIn("steps.commit.outcome", workflow)
         self.assertNotIn("posts/", workflow)
         self.assertNotIn("rss.xml", workflow)
 
