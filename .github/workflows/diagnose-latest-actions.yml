@@ -1,0 +1,46 @@
+name: Diagnose latest Actions
+
+on:
+  push:
+    branches:
+      - chatgpt/diagnose-2026-07-30
+    paths:
+      - .github/workflows/diagnose-latest-actions.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: chatgpt/diagnose-2026-07-30
+          fetch-depth: 0
+      - name: Collect latest production runs and artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p automation/diagnostics
+          gh api --paginate \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "/repos/${GITHUB_REPOSITORY}/actions/runs?per_page=100" \
+            --jq '[.workflow_runs[] | select(.name == "Daily production digest" and .created_at >= "2026-07-30T00:00:00Z") | {id, run_number, event, status, conclusion, created_at, updated_at, head_sha, html_url}]' \
+            > automation/diagnostics/runs-2026-07-30.json
+          gh api --paginate \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "/repos/${GITHUB_REPOSITORY}/actions/artifacts?name=daily-production-2026-07-30&per_page=100" \
+            --jq '[.artifacts[] | {id, name, expired, size_in_bytes, created_at, updated_at, workflow_run}]' \
+            > automation/diagnostics/artifacts-2026-07-30.json
+      - name: Remove one-time workflow and commit report
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/diagnose-latest-actions.yml
+          git add automation/diagnostics
+          git commit -m "Capture 2026-07-30 Actions diagnostics"
+          git push origin HEAD:chatgpt/diagnose-2026-07-30
