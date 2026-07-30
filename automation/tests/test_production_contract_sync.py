@@ -30,6 +30,11 @@ class ProductionContractSyncTests(unittest.TestCase):
         self.assertEqual(production["minimum_russian_selected_stories"], 2)
         self.assertTrue(production["coverage_audit_enabled"])
         self.assertEqual(production["coverage_audit_max_web_search_calls"], 5)
+        self.assertEqual(
+            production["minimum_legacy_items"],
+            0,
+            "32-day retention must be allowed to remove every legacy item",
+        )
         # Six remains the legacy editorial "short digest" boundary. Production
         # publication is independently and strictly gated at 7 = 5 world + 2 Russia.
         self.assertEqual(editorial["story_counts"]["total_target_minimum"], 7)

@@ -19,6 +19,7 @@ on:
       - main
     paths:
       - "posts/**"
+      - ".github/workflows/deploy-posts.yml"
 
 permissions:
   contents: read
@@ -53,6 +54,7 @@ jobs:
           echo "Deploying commit $(git rev-parse HEAD)"
 
       - name: Deploy posts through FTP
+        id: ftp_deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -66,4 +68,24 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
-            dzen-test/**
+
+      - name: Показать итог FTP-синхронизации
+        if: always()
+        shell: bash
+        env:
+          DEPLOY_OUTCOME: ${{ steps.ftp_deploy.outcome }}
+          DEPLOY_REF: ${{ inputs.ref || github.sha }}
+        run: |
+          {
+            echo "# FTP-синхронизация posts"
+            echo
+            if [[ "${DEPLOY_OUTCOME}" == "success" ]]; then
+              echo "✅ FTP приведён к состоянию commit \`${DEPLOY_REF}\`."
+              echo
+              echo "Новые и изменённые файлы загружены, а ранее синхронизированные файлы, которых больше нет в \`posts/\`, удалены с сервера."
+            else
+              echo "❌ FTP-синхронизация commit \`${DEPLOY_REF}\` не подтверждена."
+              echo
+              echo "GitHub остаётся источником правильного состояния; этот же ref можно безопасно развернуть повторно."
+            fi
+          } >> "${GITHUB_STEP_SUMMARY}"

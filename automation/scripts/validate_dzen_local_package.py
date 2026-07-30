@@ -14,10 +14,10 @@ def host_ok(u):
     p=urllib.parse.urlparse(u)
     return p.scheme=="https" and p.netloc=="rybalka.one" and p.path.startswith("/posts/dzen-test/")
 def main():
-    a=argparse.ArgumentParser(); a.add_argument("--root",required=True); a.add_argument("--report",required=True); ns=a.parse_args()
+    a=argparse.ArgumentParser(); a.add_argument("--root",required=True); a.add_argument("--report",required=True); a.add_argument("--minimum-items",type=int,default=0); ns=a.parse_args()
     root=Path(ns.root); errors=[]; rss=root/"rss.xml"
     tree=ET.parse(rss); ch=tree.getroot().find("channel"); items=ch.findall("item")
-    if len(items)!=10: errors.append(f"expected 10 items, got {len(items)}")
+    if len(items)<ns.minimum_items: errors.append(f"expected at least {ns.minimum_items} items, got {len(items)}")
     for n,it in enumerate(items,1):
         title=it.findtext("title",""); urls=[it.findtext("link",""),it.findtext("guid","")]
         enc=it.find("enclosure")

@@ -394,8 +394,8 @@ def render_github_summary(
             "",
             "- В каждом старом выпуске: `meta.json` и `stories.json` "
             "(нужны для редакционной дедупликации).",
-            "- Публичные `posts/`, RSS, sitemap, FTP и `dzen-test` "
-            "этот workflow не меняет.",
+            "- Этот раздел описывает только `automation/content`; "
+            "очистка публичных страниц, RSS и FTP показана ниже отдельно.",
             "",
         ]
     )
