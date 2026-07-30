@@ -2175,7 +2175,7 @@ def main() -> int:
                     if args.research_input
                     else "responses_api_web_search"
                 ),
-                "max_retries": 0,
+                "max_retries": 2,
                 "reasoning_effort": "medium",
                 "search_context_size": "high",
                 "return_token_budget": "default",
@@ -2193,7 +2193,7 @@ def main() -> int:
             "metadata_normalization": None,
             "policy_normalization": None,
             "settings": {
-                "max_retries": 0,
+                "max_retries": 2,
                 "reasoning_effort": "medium",
                 "web_search": False,
                 "max_output_tokens": 18000,
@@ -2266,7 +2266,7 @@ def main() -> int:
         client = OpenAI(
             api_key=api_key,
             timeout=1200.0,
-            max_retries=0,
+            max_retries=2,
         )
 
         research_input_path = resolve_research_input(args.research_input)

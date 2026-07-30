@@ -135,8 +135,24 @@ def main() -> int:
         ("seven total requirement", "--minimum-total 7"),
         ("bounded audit searches", "--maximum-audit-web-search-calls 5"),
         (
-            "recovery skips full research",
-            "if: steps.recovery_source.outputs.run_id == ''",
+            "fresh research after unusable automatic recovery",
+            "if: steps.recovery.outputs.reused != 'true'",
+        ),
+        (
+            "automatic artifact eligibility check",
+            "/actions/runs/${candidate_run_id}/jobs?per_page=100",
+        ),
+        (
+            "automatic recovery fallback output",
+            'echo "reused=false" >> "${GITHUB_OUTPUT}"',
+        ),
+        (
+            "successful recovery output",
+            'reused=true',
+        ),
+        (
+            "zero-story terminal reuse",
+            "candidate_pool_after",
         ),
         ("legacy image staging", "stage_legacy_images.py"),
         ("RSS normalization", "normalize_production_rss.py"),

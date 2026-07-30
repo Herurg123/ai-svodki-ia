@@ -443,7 +443,12 @@ class ProductionWorkflowReliabilityTests(unittest.TestCase):
             workflow.index("Normalize and validate digest artifact"),
             workflow.index("Build runtime Image API request"),
         )
-        self.assertIn("if: steps.recovery_source.outputs.run_id == ''", workflow)
+        self.assertIn("if: steps.recovery.outputs.reused != 'true'", workflow)
+        self.assertIn("/actions/runs/${candidate_run_id}/jobs?per_page=100", workflow)
+        self.assertIn('echo "reused=false" >> "${GITHUB_OUTPUT}"', workflow)
+        self.assertIn('reused=true', workflow)
+        self.assertIn("candidate_pool_after", workflow)
+        self.assertIn("RECOVERY_SOURCE", workflow)
         self.assertIn("Reuse completed editorial stop without paid APIs", workflow)
         self.assertIn('echo "stop=${stop}" >> "${GITHUB_OUTPUT}"', workflow)
         self.assertIn("steps.terminal_reuse.outputs.stop != 'true'", workflow)
