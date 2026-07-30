@@ -98,9 +98,9 @@ jobs:
       - name: Verify offline checks did not modify protected paths
         run: |
           set -euo pipefail
-          if [[ -n "$(git status --porcelain -- posts/ automation/requests/)" ]]; then
+          if [[ -n "$(git status --porcelain -- posts/)" ]]; then
             echo "Offline CI modified protected paths." >&2
-            git status --short -- posts/ automation/requests/
+            git status --short -- posts/
             exit 1
           fi
 

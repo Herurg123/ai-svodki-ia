@@ -174,7 +174,7 @@ class CoverContractTests(unittest.TestCase):
             ROOT
             / "automation"
             / "fixtures"
-            / "digest-preview"
+            / "editorial"
             / "2026-07-11"
             / "digest.json"
         )
