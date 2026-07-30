@@ -12,11 +12,12 @@
 
 - `.github/workflows/ci.yml` проверяет изменения в `main` без платных API-вызовов;
 - `.github/workflows/daily-production.yml` выполняет исследование, редакционную сборку, генерацию обложки и обновление `posts/`;
+- `.github/workflows/repository-cleanup.yml` каждую ночь удаляет тяжёлые рабочие файлы выпусков старше 32 дней;
 - `.github/workflows/deploy-posts.yml` загружает изменившийся `posts/` через изолированного FTP-пользователя.
 
 ## Основные каталоги
 
-- `automation/content/YYYY-MM-DD/` — структурированный контент выпусков и архивные записи для поиска дублей;
+- `automation/content/YYYY-MM-DD/` — структурированный контент выпусков; после 32 дней остаются только `meta.json` и `stories.json` для поиска дублей;
 - `automation/archive/index.json` — агрегированный архив редакционной дедупликации;
 - `automation/config/` — производственная конфигурация;
 - `automation/scripts/` — генераторы и валидаторы;

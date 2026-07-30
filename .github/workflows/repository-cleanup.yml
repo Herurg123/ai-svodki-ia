@@ -1,0 +1,214 @@
+name: Repository content cleanup
+run-name: Repository content cleanup ${{ github.run_id }}
+
+on:
+  schedule:
+    # 01:43 Europe/Moscow. GitHub cron is always UTC.
+    - cron: "43 22 * * *"
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Apply cleanup; leave disabled for a dry-run"
+        required: true
+        default: false
+        type: boolean
+      retention_days:
+        description: "Keep this many full calendar days (minimum 32)"
+        required: true
+        default: "32"
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: repository-content-cleanup-main
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    name: Compact expired repository content
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Select cleanup mode
+        id: mode
+        shell: bash
+        env:
+          REQUESTED_RETENTION_DAYS: ${{ inputs.retention_days || '32' }}
+          MANUAL_APPLY: ${{ inputs.apply || 'false' }}
+        run: |
+          set -euo pipefail
+          if [[ ! "${REQUESTED_RETENTION_DAYS}" =~ ^[0-9]+$ ]]; then
+            echo "retention_days must be an integer." >&2
+            exit 1
+          fi
+          if (( REQUESTED_RETENTION_DAYS < 32 )); then
+            echo "retention_days must be at least 32." >&2
+            exit 1
+          fi
+          mode="dry-run"
+          if [[ "${GITHUB_EVENT_NAME}" == "schedule" || "${MANUAL_APPLY}" == "true" ]]; then
+            mode="apply"
+          fi
+          echo "mode=${mode}" >> "${GITHUB_OUTPUT}"
+          echo "retention_days=${REQUESTED_RETENTION_DAYS}" >> "${GITHUB_OUTPUT}"
+
+      - name: Plan or apply repository cleanup
+        id: cleanup
+        shell: bash
+        env:
+          CLEANUP_MODE: ${{ steps.mode.outputs.mode }}
+          RETENTION_DAYS: ${{ steps.mode.outputs.retention_days }}
+          REPORT_PATH: ${{ runner.temp }}/repository-cleanup.json
+        run: |
+          set -euo pipefail
+          args=(
+            --retention-days "${RETENTION_DAYS}"
+            --timezone Europe/Moscow
+            --report "${REPORT_PATH}"
+          )
+          if [[ "${CLEANUP_MODE}" == "apply" ]]; then
+            args+=(--apply)
+          fi
+          python automation/scripts/cleanup_repository_content.py "${args[@]}"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          report = json.loads(Path(os.environ["REPORT_PATH"]).read_text(encoding="utf-8"))
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as output:
+              output.write(
+                  f"changed={'true' if report['changes_applied'] else 'false'}\n"
+              )
+              output.write(f"cutoff_date={report['cutoff_date']}\n")
+              output.write(
+                  f"compacted_directories={len(report['compacted_directories'])}\n"
+              )
+              output.write(f"removed_files={report['removed_files']}\n")
+              output.write(f"removed_bytes={report['removed_bytes']}\n")
+          PY
+
+      - name: Validate applied cleanup
+        id: validation
+        if: steps.cleanup.outputs.changed == 'true'
+        shell: bash
+        env:
+          REPORT_PATH: ${{ runner.temp }}/repository-cleanup.json
+        run: |
+          set -euo pipefail
+          python -m unittest automation.tests.test_repository_cleanup -v
+          python automation/scripts/validate_archive.py
+          git diff --check
+          python - <<'PY'
+          import json
+          import os
+          import re
+          import subprocess
+          from datetime import date
+          from pathlib import Path
+
+          report = json.loads(Path(os.environ["REPORT_PATH"]).read_text(encoding="utf-8"))
+          cutoff = date.fromisoformat(report["cutoff_date"])
+          raw = subprocess.check_output(["git", "diff", "--name-status", "-z"])
+          fields = raw.decode("utf-8").split("\0")
+          if fields and fields[-1] == "":
+              fields.pop()
+          if not fields or len(fields) % 2:
+              raise SystemExit("Cleanup produced an invalid or empty Git diff.")
+
+          allowed = re.compile(
+              r"automation/content/(\d{4}-\d{2}-\d{2})/(.+)"
+          )
+          for status, path in zip(fields[0::2], fields[1::2]):
+              if status != "D":
+                  raise SystemExit(f"Cleanup may only delete files: {status} {path}")
+              match = allowed.fullmatch(path)
+              if match is None:
+                  raise SystemExit(f"Cleanup changed a protected path: {path}")
+              publication_date = date.fromisoformat(match.group(1))
+              if publication_date >= cutoff:
+                  raise SystemExit(f"Cleanup changed a retained date: {path}")
+              if Path(path).name in {"meta.json", "stories.json"}:
+                  raise SystemExit(f"Cleanup deleted retained metadata: {path}")
+          PY
+
+      - name: Commit applied cleanup
+        id: commit
+        if: steps.cleanup.outputs.changed == 'true'
+        shell: bash
+        env:
+          RETENTION_DAYS: ${{ steps.mode.outputs.retention_days }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main
+          if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]]; then
+            echo "main changed while cleanup was running; refusing to push." >&2
+            exit 1
+          fi
+          git add -u -- automation/content
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Prune repository content older than ${RETENTION_DAYS} days"
+          git push origin HEAD:main
+
+      - name: Publish cleanup summary
+        if: always()
+        shell: bash
+        env:
+          REPORT_PATH: ${{ runner.temp }}/repository-cleanup.json
+          CLEANUP_OUTCOME: ${{ steps.cleanup.outcome }}
+          VALIDATION_OUTCOME: ${{ steps.validation.outcome }}
+          COMMIT_OUTCOME: ${{ steps.commit.outcome }}
+        run: |
+          set -euo pipefail
+          if [[ ! -f automation/scripts/cleanup_repository_content.py ]]; then
+            {
+              echo "# Ночная очистка GitHub-репозитория"
+              echo
+              echo "❌ Workflow не смог получить скрипт очистки."
+              echo
+              echo "Изменения в \`main\` этим запуском не опубликованы."
+            } >> "${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
+          python - <<'PY'
+          import json
+          import os
+          import sys
+          from pathlib import Path
+
+          sys.path.insert(0, "automation/scripts")
+          from cleanup_repository_content import render_github_summary
+
+          report_path = Path(os.environ["REPORT_PATH"])
+          report = None
+          if report_path.is_file():
+              report = json.loads(report_path.read_text(encoding="utf-8"))
+
+          summary = render_github_summary(
+              report,
+              cleanup_outcome=os.environ["CLEANUP_OUTCOME"],
+              validation_outcome=os.environ["VALIDATION_OUTCOME"],
+              commit_outcome=os.environ["COMMIT_OUTCOME"],
+          )
+          with Path(os.environ["GITHUB_STEP_SUMMARY"]).open(
+              "a",
+              encoding="utf-8",
+          ) as output:
+              output.write(summary)
+          PY
