@@ -148,7 +148,11 @@ def main() -> int:
         ),
         (
             "successful recovery output",
-            'reused=true',
+            r'stream.write("reused=true\n")',
+        ),
+        (
+            "recovered image output newline",
+            r'+ "\n"',
         ),
         (
             "zero-story terminal reuse",
