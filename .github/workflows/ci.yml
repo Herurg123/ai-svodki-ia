@@ -6,65 +6,20 @@ on:
       - main
 
 permissions:
-  contents: write
-
-concurrency:
-  group: main-ci-${{ github.ref }}
-  cancel-in-progress: true
+  contents: read
 
 jobs:
   validate:
-    name: Commit validated recovery sources
+    name: Report branch tree
     if: github.head_ref == 'chatgpt/fix-rate-limit-and-recovery-fallback'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
     steps:
-      - name: Check out patch branch
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
           ref: chatgpt/fix-rate-limit-and-recovery-fallback
           fetch-depth: 0
-          persist-credentials: true
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-
-      - name: Apply fix
+          persist-credentials: false
+      - name: Print branch tree
         run: |
-          set -euo pipefail
-          python automation/patches/fix_rate_limit_patcher.py
-          python automation/patches/apply_rate_limit_and_recovery_fix.py
-
-      - name: Compile and run repository tests
-        run: |
-          set -euo pipefail
-          python -m compileall -q automation/scripts automation/tests
-          python -m unittest discover -s automation/tests -v
-          python automation/scripts/validate_editorial_contract.py
-          python automation/scripts/validate_archive.py
-          mkdir -p automation/preview/ci
-          python automation/scripts/validate_production_daily_contract.py \
-            --config automation/config/production-daily.json \
-            --site-config automation/config/site.json \
-            --workflow .github/workflows/daily-production.yml \
-            --rss posts/rss.xml \
-            --report automation/preview/ci/production-contract.json
-
-      - name: Commit validated non-workflow files
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add \
-            automation/scripts/generate_digest_preview.py \
-            automation/scripts/ensure_story_coverage.py \
-            automation/scripts/validate_production_daily_contract.py \
-            automation/tests/test_production_contract_sync.py \
-            automation/tests/test_production_reliability_patch.py \
-            automation/tests/test_rate_limit_retry_configuration.py
-          git diff --cached --quiet && { echo "No source changes to commit" >&2; exit 1; }
-          git commit -m "Retry transient text limits and validate recovery fallback"
-          git push origin HEAD:chatgpt/fix-rate-limit-and-recovery-fallback
+          echo "BRANCH_HEAD=$(git rev-parse HEAD)"
+          echo "BRANCH_TREE=$(git rev-parse HEAD^{tree})"
