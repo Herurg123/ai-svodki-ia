@@ -1,0 +1,148 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-07-30",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-07-30.json",
+  "warnings": [
+    "Целевой пул — 7 кандидатов, но после проверки свежести осталось 6.",
+    "Кандидатов меньше обычной цели выпуска (7); разрешён короткий выпуск.",
+    "Цель — 2 российских кандидатов, найдено 0; пробел явно зафиксирован в coverage.",
+    "Исследовательский пул перегружен одним издателем: 3dnews (6)",
+    "Выбрано 4 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Мировых сюжетов 4, редакционная цель — 5–8.",
+    "Российских сюжетов 0, редакционная цель — 2–5.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-07-30",
+  "started_at": "2026-07-30T06:04:01+00:00",
+  "finished_at": "2026-07-30T06:04:30+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 22,
+  "limits": {
+    "minimum_candidates": 7,
+    "minimum_russian_candidates": 2,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "c522f6e9c55405957e71b8d6d452ec747c4799bc480b8b2646649c6fdf60c107",
+    "candidates_sha256": "09115eb6a3d472af5a9c2d8910c042b033dc45d4eb852f4ada2e226ba00c717c",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "a6bcf83566cad6e41b479a9242802e912a6cd6fa5c98b09425760e9a02e8729b",
+    "editorial_sha256": "9b74ad2237a6080e2c59af6099e601262b3ac0fa60dbe37daecff0594f9ab2db",
+    "digest_sha256": "66d5cb05ae61e0f18561188de84cdfb1da6edebd0983cc7cffba441d3e75a487",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-07-30.png",
+          "normalized_value": "ai-svodka-2026-07-30.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        }
+      ],
+      "changed_count": 1,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 4 сюжетов."
+        },
+        {
+          "type": "regional_gap",
+          "area": "russian_ai",
+          "message": "Выбрано 0 российских сюжетов при редакционной цели 2; слабые материалы не добавлялись."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: Китай и Азия, Инструменты разработчиков и ИИ-кодинг, Мультимодальность и генеративные медиа, Российский сектор."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "3DNews: В доступном проверенном пуле все четыре выбранных самостоятельных события опубликованы 3DNews; это единственный предоставленный источник для каждого из них, а сюжеты относятся к разным организациям и тематическим направлениям."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0cedbc59e22619ed016a6ae952124c819cba12e34eb4297128",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 64764,
+        "input_tokens_details": {
+          "cache_write_tokens": 64761,
+          "cached_tokens": 0
+        },
+        "output_tokens": 3305,
+        "output_tokens_details": {
+          "reasoning_tokens": 353
+        },
+        "total_tokens": 68069
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 64764,
+    "output_tokens": 3305,
+    "total_tokens": 68069,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "e78a65e7da45860d03906d432d1dd9479582045c",
+    "run_id": "30518035333",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null
+}

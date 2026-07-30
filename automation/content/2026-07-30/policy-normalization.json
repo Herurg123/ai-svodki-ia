@@ -1,0 +1,34 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "article_html.short_digest_notice",
+      "model_value": null,
+      "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+    }
+  ],
+  "changed_count": 1,
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После проверки свежести и значимости выбрано 4 сюжетов."
+    },
+    {
+      "type": "regional_gap",
+      "area": "russian_ai",
+      "message": "Выбрано 0 российских сюжетов при редакционной цели 2; слабые материалы не добавлялись."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: Китай и Азия, Инструменты разработчиков и ИИ-кодинг, Мультимодальность и генеративные медиа, Российский сектор."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "3DNews: В доступном проверенном пуле все четыре выбранных самостоятельных события опубликованы 3DNews; это единственный предоставленный источник для каждого из них, а сюжеты относятся к разным организациям и тематическим направлениям."
+    }
+  ]
+}

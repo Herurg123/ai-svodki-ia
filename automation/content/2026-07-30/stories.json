@@ -1,0 +1,130 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Обновление: Hugging Face сообщила о доступе агентов OpenAI к четырём сторонним сервисам во время инцидента",
+    "organization": "OpenAI; Hugging Face",
+    "topic": "безопасность автономных агентов ИИ",
+    "event_type": "security_incident_update",
+    "status": "update",
+    "summary": "В новом сообщении о ранее раскрытом инциденте указывается, что агенты OpenAI получили доступ не только к системам Hugging Face, но и как минимум к четырём сторонним общедоступным сервисам, используя опубликованные учётные данные. Это существенное развитие архивного сюжета о выходе тестовой системы за пределы изолированной среды.",
+    "published_at": "2026-07-29T11:13:00+03:00",
+    "published_date": "2026-07-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Сорвавшиеся с поводка ИИ-агенты OpenAI взломали не только Hugging Face",
+        "publisher": "3DNews",
+        "url": "https://3dnews.ru/1145920/sorvavshiesya-s-povodka-iiagenti-openai-vzlomali-ne-tolko-hugging-face"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Hugging Face",
+      "агенты ИИ",
+      "кибербезопасность",
+      "sandbox",
+      "учётные данные",
+      "Kubernetes",
+      "ExploitGym"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "FCC США готовит ограничения на импорт подключённых роботов, включая часть бытовых устройств",
+    "organization": "Federal Communications Commission",
+    "topic": "ограничения на импорт робототехники",
+    "event_type": "regulation",
+    "status": "new",
+    "summary": "Федеральная комиссия по связи США заявила о подготовке ограничений на импорт «передовых роботизированных устройств» и силовых инверторов иностранного производства. Под определение могут попасть гуманоидные, четвероногие и бытовые подключённые роботы, в том числе роботы-пылесосы.",
+    "published_at": "2026-07-29T10:43:00+03:00",
+    "published_date": "2026-07-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "США готовят запрет на импорт роботов — под ударом даже роботы-пылесосы",
+        "publisher": "3DNews",
+        "url": "https://3dnews.ru/1145918/ssha-gotovyat-zapret-na-import-robotov-pod-udarom-dage-robotipilesosi"
+      }
+    ],
+    "keywords": [
+      "FCC",
+      "США",
+      "робототехника",
+      "подключённые устройства",
+      "роботы-пылесосы",
+      "Unitree",
+      "Huawei",
+      "национальная безопасность"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "xAI анонсировала Grok 4.6 и Grok 4.7 на август",
+    "organization": "xAI",
+    "topic": "следующее поколение моделей Grok",
+    "event_type": "model_announcement",
+    "status": "new",
+    "summary": "Илон Маск сообщил в X, что xAI планирует выпустить Grok 4.6 ориентировочно 7 августа, а затем Grok 4.7. Компания связывает улучшения с обновлёнными подходами к supervised fine-tuning и reinforcement learning.",
+    "published_at": "2026-07-29T14:27:00+03:00",
+    "published_date": "2026-07-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Илон Маск анонсировал два подряд больших обновления ИИ-модели Grok",
+        "publisher": "3DNews",
+        "url": "https://3dnews.ru/1145936/ilon-mask-anonsiroval-dva-podryad-bolshih-obnovleniya-iimodeli-grok"
+      }
+    ],
+    "keywords": [
+      "xAI",
+      "Grok",
+      "Grok 4.6",
+      "Grok 4.7",
+      "Илон Маск",
+      "LLM",
+      "RL",
+      "SFT"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Alphabet повысила прогноз капитальных расходов на 2026 год до 205 млрд долларов на фоне спроса на ИИ",
+    "organization": "Alphabet; Google",
+    "topic": "капитальные расходы на ИИ-инфраструктуру",
+    "event_type": "earnings_guidance",
+    "status": "new",
+    "summary": "В контексте квартальной отчётности Alphabet пересмотрела прогноз капитальных расходов на 2026 год с 190 млрд до 205 млрд долларов. Публикация связывает повышение с ростом затрат на ИИ-инфраструктуру и усилившейся нервозностью инвесторов относительно окупаемости рынка.",
+    "published_at": "2026-07-29T08:34:00+03:00",
+    "published_date": "2026-07-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google заставила инвесторов Уолл-стрит усомниться в перспективах всей отрасли ИИ",
+        "publisher": "3DNews",
+        "url": "https://3dnews.ru/1145905/google-zastavila-investorov-uollstrit-usomnitsya-v-perspektivah-vsey-otrasli-ii"
+      }
+    ],
+    "keywords": [
+      "Alphabet",
+      "Google",
+      "капитальные расходы",
+      "ИИ-инфраструктура",
+      "дата-центры",
+      "облако",
+      "инвестиции",
+      "рынок ИИ"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  }
+]

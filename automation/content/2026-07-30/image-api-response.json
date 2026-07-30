@@ -1,0 +1,63 @@
+{
+  "status": "ok",
+  "request_id": "production-image-2026-07-30",
+  "model": "gpt-image-2",
+  "endpoint": "/v1/images/generations",
+  "request": {
+    "size": "1536x864",
+    "quality": "high",
+    "output_format": "png",
+    "background": "opaque",
+    "n": 1,
+    "prompt_sha256": "94bc06361717a0dd22d5fb4a5abb072d1f8465c3705ac6a573f6c5a41fb6c7b9"
+  },
+  "response": {
+    "created": 1785391595,
+    "background": "opaque",
+    "output_format": "png",
+    "quality": "high",
+    "size": "1536x864",
+    "usage": {
+      "input_tokens": 379,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 379
+      },
+      "output_tokens": 4312,
+      "output_tokens_details": {
+        "image_tokens": 4312,
+        "text_tokens": 0
+      },
+      "total_tokens": 4691
+    },
+    "data_count": 1,
+    "revised_prompt": null
+  },
+  "cover_sha256": "5e5ee45c08b6553bf57841caef4e9b0f92c603fd4180cb676042a022048f0706",
+  "cover_bytes": 2151583,
+  "base64_stored": false,
+  "copied_source_files": [
+    "article.html",
+    "artifact-normalization.json",
+    "artifact-validation.json",
+    "candidates.json",
+    "digest.json",
+    "editorial-output-raw.json",
+    "editorial-output.json",
+    "editorial-prompt-input.txt",
+    "image-prompt.txt",
+    "meta.json",
+    "metadata-normalization.json",
+    "policy-normalization.json",
+    "research-filtered-out.json",
+    "research-input-info.json",
+    "research-output-raw.json",
+    "research-prompt-input.txt",
+    "run-info.json",
+    "selection.json",
+    "sources.json",
+    "stories.json"
+  ],
+  "started_at": "2026-07-30T06:04:31+00:00",
+  "finished_at": "2026-07-30T06:06:35+00:00"
+}
