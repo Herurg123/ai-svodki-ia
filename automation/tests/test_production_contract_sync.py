@@ -52,6 +52,10 @@ class ProductionContractSyncTests(unittest.TestCase):
             "steps.terminal_reuse.outputs.stop != 'true'", workflow
         )
         self.assertIn("needs.production.outputs.commit_sha != ''", workflow)
+        self.assertIn("if: steps.recovery.outputs.reused != 'true'", workflow)
+        self.assertIn("/actions/runs/${candidate_run_id}/jobs?per_page=100", workflow)
+        self.assertIn('echo "reused=false" >> "${GITHUB_OUTPUT}"', workflow)
+        self.assertIn("candidate_pool_after", workflow)
     def test_same_contract_validator_used_by_ci_accepts_repository(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             report = Path(temp_dir) / "production-contract.json"

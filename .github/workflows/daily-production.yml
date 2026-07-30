@@ -223,16 +223,28 @@ jobs:
           source="manual"
           if [[ -z "${run_id}" ]]; then
             source="automatic"
-            run_id="$(
+            candidates="$(
               gh api --paginate \
-                -H "X-GitHub-Api-Version: 2026-03-10" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
                 "/repos/${GITHUB_REPOSITORY}/actions/artifacts?name=daily-production-${PUBLICATION_DATE}&per_page=100" \
                 --jq '.artifacts[] | select(.expired == false and .workflow_run.id != null) | [.created_at, (.workflow_run.id | tostring)] | @tsv' \
               | awk -v current="${GITHUB_RUN_ID}" '$2 != current { print }' \
-              | sort -r \
-              | sed -n '1p' \
-              | cut -f 2
+              | sort -r
             )"
+            while IFS=$'\t' read -r _created_at candidate_run_id; do
+              [[ -n "${candidate_run_id}" ]] || continue
+              reusable_steps="$(
+                gh api \
+                  -H "X-GitHub-Api-Version: 2022-11-28" \
+                  "/repos/${GITHUB_REPOSITORY}/actions/runs/${candidate_run_id}/jobs?per_page=100" \
+                  --jq '[.jobs[] | select(.name == "production") | .steps[]? | select((((.name | startswith("Run full research")) or (.name | startswith("Restore saved paid artifact"))) and .conclusion == "success"))] | length'
+              )"
+              if [[ "${reusable_steps}" -gt 0 ]]; then
+                run_id="${candidate_run_id}"
+                break
+              fi
+              echo "Skipping artifact from run ${candidate_run_id}: no reusable paid research/editorial step completed."
+            done <<< "${candidates}"
           fi
           if [[ -n "${run_id}" ]]; then
             echo "run_id=${run_id}" >> "${GITHUB_OUTPUT}"
@@ -245,6 +257,7 @@ jobs:
           fi
       - name: Download saved editorial artifact for recovery
         if: steps.recovery_source.outputs.run_id != ''
+        continue-on-error: ${{ steps.recovery_source.outputs.source == 'automatic' }}
         uses: actions/download-artifact@v8
         with:
           name: daily-production-${{ steps.runtime.outputs.publication_date }}
@@ -274,10 +287,14 @@ jobs:
 
           data = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
           api = data.get("api") or {}
+          pool_after = data.get("candidate_pool_after") or {}
+          pool_total = pool_after.get("total") if isinstance(pool_after, dict) else None
           terminal = (
               data.get("status") == "error"
               and data.get("web_search_performed") is True
               and api.get("status") == "completed"
+              and isinstance(pool_total, int)
+              and pool_total == 0
           )
           if terminal:
               reason = str(
@@ -324,8 +341,9 @@ jobs:
         env:
           PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
           RECOVERY_RUN_ID: ${{ steps.recovery_source.outputs.run_id }}
+          RECOVERY_SOURCE: ${{ steps.recovery_source.outputs.source }}
         run: |
-          set -euo pipefail
+          set +e
           python automation/scripts/recover_digest_artifact.py \
             --recovery-root "automation/recovery/${RECOVERY_RUN_ID}" \
             --target-dir "automation/preview/${PUBLICATION_DATE}" \
@@ -333,6 +351,21 @@ jobs:
             --timezone Europe/Moscow \
             --image-target-dir "automation/preview/production-daily/image/${PUBLICATION_DATE}" \
             --report automation/preview/production-daily/recovery.json
+          recovery_status=$?
+          set -e
+          if [[ "${recovery_status}" -ne 0 ]]; then
+            echo "reused=false" >> "${GITHUB_OUTPUT}"
+            echo "image_recovered=false" >> "${GITHUB_OUTPUT}"
+            if [[ "${RECOVERY_SOURCE}" == "manual" ]]; then
+              echo "Manual recovery artifact is unusable; refusing to start paid research." >&2
+              exit "${recovery_status}"
+            fi
+            rm -rf \
+              "automation/preview/${PUBLICATION_DATE}" \
+              "automation/preview/production-daily/image/${PUBLICATION_DATE}"
+            echo "::warning title=Непригодный автоматический artifact::Artifact run ${RECOVERY_RUN_ID} не содержит завершённого платного research/editorial. Будет выполнен свежий research."
+            exit 0
+          fi
           python - <<'PY'
           import json
           import os
@@ -343,10 +376,13 @@ jobs:
               )
           )
           with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as stream:
+              stream.write("reused=true
+")
               stream.write(
                   "image_recovered="
                   + ("true" if report.get("image_recovered") else "false")
-                  + "\n"
+                  + "
+"
               )
           PY
           echo "Recovered reusable paid artifact from run ${RECOVERY_RUN_ID}."
@@ -401,7 +437,7 @@ jobs:
             --publication-hour 6 \
             --output automation/preview/production-daily/search-window-continuity.json
       - name: Run full research and editorial
-        if: steps.recovery_source.outputs.run_id == '' && steps.terminal_reuse.outputs.stop != 'true'
+        if: steps.recovery.outputs.reused != 'true' && steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

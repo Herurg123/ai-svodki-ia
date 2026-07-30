@@ -233,7 +233,7 @@ def run_audit_request(
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     from openai import OpenAI
 
-    client = OpenAI(api_key=api_key, timeout=1200.0, max_retries=0)
+    client = OpenAI(api_key=api_key, timeout=1200.0, max_retries=2)
     response = client.responses.create(
         model=model,
         input=prompt,
