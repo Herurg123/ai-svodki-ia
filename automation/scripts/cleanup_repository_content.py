@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import re
 import shutil
@@ -82,6 +83,13 @@ def remove_entry(path: Path) -> None:
         path.unlink()
     else:
         shutil.rmtree(path)
+
+
+def describe_entry(path: Path, directory: Path) -> str:
+    relative = path.relative_to(directory).as_posix()
+    if path.is_dir() and not path.is_symlink():
+        return f"{relative}/"
+    return relative
 
 
 def build_plan(
@@ -165,6 +173,18 @@ def run_cleanup(
         for target in changed_targets
         for entry in target.entries
     ]
+    compaction_details = [
+        {
+            "publication_date": target.publication_date.isoformat(),
+            "removed_entries": [
+                describe_entry(entry, target.directory)
+                for entry in target.entries
+            ],
+            "removed_files": target.files,
+            "removed_bytes": target.bytes,
+        }
+        for target in changed_targets
+    ]
     removed_files = sum(target.files for target in changed_targets)
     removed_bytes = sum(target.bytes for target in changed_targets)
 
@@ -194,12 +214,192 @@ def run_cleanup(
             for target in targets
             if not target.entries
         ],
+        "compaction_details": compaction_details,
         "removed_entries": removed_entries,
         "removed_files": removed_files,
         "removed_bytes": removed_bytes,
         "changes_planned": bool(changed_targets),
         "changes_applied": bool(changed_targets) and apply,
     }
+
+
+def format_bytes(value: int) -> str:
+    if value < 0:
+        raise ValueError("Byte count cannot be negative")
+    units = ("Б", "КиБ", "МиБ", "ГиБ")
+    amount = float(value)
+    unit = units[0]
+    for unit in units:
+        if amount < 1024 or unit == units[-1]:
+            break
+        amount /= 1024
+    if unit == "Б":
+        return f"{value} {unit}"
+    return f"{amount:.1f}".replace(".", ",") + f" {unit}"
+
+
+def markdown_code(value: str) -> str:
+    safe = html.escape(value.replace("\r", " ").replace("\n", " "))
+    safe = safe.replace("|", "&#124;")
+    return f"<code>{safe}</code>"
+
+
+def russian_plural(value: int, one: str, few: str, many: str) -> str:
+    last_two = value % 100
+    if 11 <= last_two <= 14:
+        return many
+    last = value % 10
+    if last == 1:
+        return one
+    if 2 <= last <= 4:
+        return few
+    return many
+
+
+def render_github_summary(
+    report: dict[str, Any] | None,
+    *,
+    cleanup_outcome: str,
+    validation_outcome: str,
+    commit_outcome: str,
+) -> str:
+    lines = ["# Ночная очистка GitHub-репозитория", ""]
+    if cleanup_outcome != "success" or report is None:
+        lines.extend(
+            [
+                "❌ Очистка не завершилась, итоговый отчёт не сформирован.",
+                "",
+                "Изменения в `main` этим запуском не опубликованы. "
+                "Причину смотри в шагах workflow.",
+                "",
+            ]
+        )
+        return "\n".join(lines)
+
+    mode = report["mode"]
+    details = report["compaction_details"]
+    changes_planned = bool(report["changes_planned"])
+    removed_files = int(report["removed_files"])
+    removed_bytes = int(report["removed_bytes"])
+    eligible_count = len(report["eligible_directories"])
+    compacted_count = len(report["compacted_directories"])
+    already_compact_count = len(report["already_compact_directories"])
+
+    published = (
+        mode == "apply"
+        and changes_planned
+        and validation_outcome == "success"
+        and commit_outcome == "success"
+    )
+    if mode == "dry-run":
+        if changes_planned:
+            headline = (
+                "🟡 Проверка завершена: мусор найден, но ничего не удалено "
+                "(ручной dry-run)."
+            )
+        else:
+            headline = "✅ Проверка завершена: удалять нечего."
+        result_label = "не удалено (dry-run)"
+        amount_label = "К удалению найдено"
+    elif not changes_planned:
+        headline = "✅ Ночная очистка завершена: удалять нечего."
+        result_label = "уже компактно"
+        amount_label = "Удалено"
+    elif published:
+        headline = "✅ Ночная очистка завершена, изменения записаны в `main`."
+        result_label = "удалено"
+        amount_label = "Удалено"
+    elif validation_outcome == "failure":
+        headline = (
+            "❌ Мусор найден, но проверка безопасности не прошла. "
+            "`main` не изменён."
+        )
+        result_label = "не опубликовано"
+        amount_label = "К удалению найдено"
+    elif commit_outcome == "failure":
+        headline = (
+            "❌ Мусор найден, но commit/push не завершился. "
+            "`main` не изменён."
+        )
+        result_label = "не опубликовано"
+        amount_label = "К удалению найдено"
+    else:
+        headline = (
+            "⚠️ Мусор найден, но изменения не были записаны в `main`. "
+            "Проверь шаги workflow."
+        )
+        result_label = "не опубликовано"
+        amount_label = "К удалению найдено"
+
+    lines.extend(
+        [
+            headline,
+            "",
+            f"- Режим: **{'очистка' if mode == 'apply' else 'проверка без удаления'}**.",
+            (
+                f"- Граница: обрабатываются только выпуски **раньше "
+                f"{report['cutoff_date']}**; эта дата и всё новее сохраняются полностью."
+            ),
+            (
+                f"- Старых выпусков: **{eligible_count}**; "
+                f"с лишними файлами: **{compacted_count}**; "
+                f"уже компактных: **{already_compact_count}**."
+            ),
+            (
+                f"- {amount_label}: **{removed_files} "
+                f"{russian_plural(removed_files, 'файл', 'файла', 'файлов')}**, "
+                f"**{format_bytes(removed_bytes)}**."
+            ),
+            "",
+        ]
+    )
+
+    if details:
+        lines.extend(
+            [
+                "## Что найдено по выпускам",
+                "",
+                "| Выпуск | Найденные элементы | Файлов | Объём | Сохранено | Итог |",
+                "|---|---|---:|---:|---|---|",
+            ]
+        )
+        preserved = ", ".join(
+            markdown_code(name) for name in report["preserved_filenames"]
+        )
+        for detail in details:
+            entries = "<br>".join(
+                markdown_code(name) for name in detail["removed_entries"]
+            )
+            lines.append(
+                "| "
+                + " | ".join(
+                    [
+                        str(detail["publication_date"]),
+                        entries or "—",
+                        str(detail["removed_files"]),
+                        format_bytes(int(detail["removed_bytes"])),
+                        preserved,
+                        result_label,
+                    ]
+                )
+                + " |"
+            )
+        lines.append("")
+    else:
+        lines.extend(["Обработанных выпусков нет: файлы не удалялись.", ""])
+
+    lines.extend(
+        [
+            "## Что гарантированно сохранено",
+            "",
+            "- В каждом старом выпуске: `meta.json` и `stories.json` "
+            "(нужны для редакционной дедупликации).",
+            "- Публичные `posts/`, RSS, sitemap, FTP и `dzen-test` "
+            "этот workflow не меняет.",
+            "",
+        ]
+    )
+    return "\n".join(lines)
 
 
 def parse_args() -> argparse.Namespace:
