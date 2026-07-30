@@ -35,10 +35,13 @@ jobs:
       - name: Apply fix and restore normal CI
         run: |
           set -euo pipefail
+          python automation/patches/fix_rate_limit_patcher.py
           python automation/patches/apply_rate_limit_and_recovery_fix.py
           git fetch origin main
           git checkout origin/main -- .github/workflows/ci.yml
-          rm automation/patches/apply_rate_limit_and_recovery_fix.py
+          rm \
+            automation/patches/apply_rate_limit_and_recovery_fix.py \
+            automation/patches/fix_rate_limit_patcher.py
 
       - name: Compile and run repository tests
         run: |
@@ -69,7 +72,7 @@ jobs:
             automation/tests/test_production_contract_sync.py \
             automation/tests/test_production_reliability_patch.py \
             automation/tests/test_rate_limit_retry_configuration.py
-          git add -A automation/patches/apply_rate_limit_and_recovery_fix.py
+          git add -A automation/patches/
           git diff --cached --quiet && { echo "No fix changes to commit" >&2; exit 1; }
           git commit -m "Retry transient text limits and skip unusable artifacts"
           git push origin HEAD:chatgpt/fix-rate-limit-and-recovery-fallback
