@@ -376,13 +376,11 @@ jobs:
               )
           )
           with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as stream:
-              stream.write("reused=true
-")
+              stream.write("reused=true\n")
               stream.write(
                   "image_recovered="
                   + ("true" if report.get("image_recovered") else "false")
-                  + "
-"
+                  + "\n"
               )
           PY
           echo "Recovered reusable paid artifact from run ${RECOVERY_RUN_ID}."
