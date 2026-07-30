@@ -104,6 +104,7 @@ jobs:
           PY
 
       - name: Validate applied cleanup
+        id: validation
         if: steps.cleanup.outputs.changed == 'true'
         shell: bash
         env:
@@ -147,6 +148,7 @@ jobs:
           PY
 
       - name: Commit applied cleanup
+        id: commit
         if: steps.cleanup.outputs.changed == 'true'
         shell: bash
         env:
@@ -165,23 +167,48 @@ jobs:
           git push origin HEAD:main
 
       - name: Publish cleanup summary
-        if: always() && steps.cleanup.outcome == 'success'
+        if: always()
         shell: bash
         env:
-          CLEANUP_MODE: ${{ steps.mode.outputs.mode }}
-          CUTOFF_DATE: ${{ steps.cleanup.outputs.cutoff_date }}
-          COMPACTED_DIRECTORIES: ${{ steps.cleanup.outputs.compacted_directories }}
-          REMOVED_FILES: ${{ steps.cleanup.outputs.removed_files }}
-          REMOVED_BYTES: ${{ steps.cleanup.outputs.removed_bytes }}
+          REPORT_PATH: ${{ runner.temp }}/repository-cleanup.json
+          CLEANUP_OUTCOME: ${{ steps.cleanup.outcome }}
+          VALIDATION_OUTCOME: ${{ steps.validation.outcome }}
+          COMMIT_OUTCOME: ${{ steps.commit.outcome }}
         run: |
-          {
-            echo "## Repository content cleanup"
-            echo
-            echo "- Mode: ${CLEANUP_MODE}"
-            echo "- Delete only dates older than: ${CUTOFF_DATE}"
-            echo "- Compacted directories: ${COMPACTED_DIRECTORIES}"
-            echo "- Removed files: ${REMOVED_FILES}"
-            echo "- Removed bytes: ${REMOVED_BYTES}"
-            echo "- Preserved in every old release: meta.json, stories.json"
-            echo "- Public posts, RSS, sitemap, FTP and dzen-test: unchanged"
-          } >> "${GITHUB_STEP_SUMMARY}"
+          set -euo pipefail
+          if [[ ! -f automation/scripts/cleanup_repository_content.py ]]; then
+            {
+              echo "# Ночная очистка GitHub-репозитория"
+              echo
+              echo "❌ Workflow не смог получить скрипт очистки."
+              echo
+              echo "Изменения в \`main\` этим запуском не опубликованы."
+            } >> "${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
+          python - <<'PY'
+          import json
+          import os
+          import sys
+          from pathlib import Path
+
+          sys.path.insert(0, "automation/scripts")
+          from cleanup_repository_content import render_github_summary
+
+          report_path = Path(os.environ["REPORT_PATH"])
+          report = None
+          if report_path.is_file():
+              report = json.loads(report_path.read_text(encoding="utf-8"))
+
+          summary = render_github_summary(
+              report,
+              cleanup_outcome=os.environ["CLEANUP_OUTCOME"],
+              validation_outcome=os.environ["VALIDATION_OUTCOME"],
+              commit_outcome=os.environ["COMMIT_OUTCOME"],
+          )
+          with Path(os.environ["GITHUB_STEP_SUMMARY"]).open(
+              "a",
+              encoding="utf-8",
+          ) as output:
+              output.write(summary)
+          PY
