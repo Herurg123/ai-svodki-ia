@@ -260,13 +260,18 @@ def run_audit_request(
         store=False,
     )
     web_search_calls = count_web_search_calls(response)
+    metadata = {
+        "response_id": getattr(response, "id", None),
+        "status": getattr(response, "status", None),
+        "model": getattr(response, "model", None),
+        "web_search_calls": web_search_calls,
+        "configured_web_search_limit": maximum_web_search_calls,
+        "observed_web_search_calls": web_search_calls,
+        "budget_overrun": web_search_calls > maximum_web_search_calls,
+        "usage": response_to_plain(getattr(response, "usage", None)),
+    }
     if web_search_calls < 1:
         raise RuntimeError("Coverage audit не выполнил ни одного web_search_call")
-    if web_search_calls > maximum_web_search_calls:
-        raise RuntimeError(
-            "Coverage audit превысил лимит web search: "
-            f"{web_search_calls}>{maximum_web_search_calls}"
-        )
     if getattr(response, "status", None) != "completed":
         raise RuntimeError(
             f"Coverage audit не завершён: status={getattr(response, 'status', None)!r}"
@@ -285,13 +290,14 @@ def run_audit_request(
         raise RuntimeError("Coverage audit не заполнил queries_used")
     if len(queries) > maximum_web_search_calls:
         raise RuntimeError("queries_used превышает установленный лимит")
-    metadata = {
-        "response_id": getattr(response, "id", None),
-        "status": getattr(response, "status", None),
-        "model": getattr(response, "model", None),
-        "web_search_calls": web_search_calls,
-        "usage": response_to_plain(getattr(response, "usage", None)),
-    }
+    if metadata["budget_overrun"]:
+        print(
+            "::warning title=Coverage audit web-search budget::"
+            "Responses API вернул больше web_search_call, чем настроено: "
+            f"{web_search_calls}>{maximum_web_search_calls}. "
+            "Ответ завершён и пригоден, поэтому публикация продолжается.",
+            file=sys.stderr,
+        )
     return payload, metadata
 
 
@@ -499,6 +505,7 @@ def main() -> int:
         "candidate_pool_after": None,
         "accepted_candidates": [],
         "rejected_candidates": [],
+        "warnings": [],
         "api": None,
         "error": None,
     }
@@ -587,8 +594,13 @@ def main() -> int:
                 prompt=prompt,
                 maximum_web_search_calls=args.maximum_audit_web_search_calls,
             )
-            report["web_search_performed"] = True
+            report["web_search_performed"] = api_metadata["web_search_calls"] > 0
             report["api"] = api_metadata
+            if api_metadata.get("budget_overrun"):
+                report["warnings"].append(
+                    "Responses API превысил настроенный счётчик web_search_call, "
+                    "но завершённый валидный audit был сохранён и использован."
+                )
             report["queries_used"] = audit_payload.get("queries_used", [])
             report["audit_notes"] = audit_payload.get("notes")
             if audit_payload.get("status") != "ok":
