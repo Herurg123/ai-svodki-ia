@@ -6,6 +6,7 @@ import os
 import re
 import subprocess
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -224,13 +225,27 @@ def response_to_plain(value: Any) -> Any:
     return str(value)
 
 
+@dataclass
+class AuditRequestResult:
+    payload: dict[str, Any] | None
+    metadata: dict[str, Any]
+    output_text: str
+    raw_response: Any
+    validation_error: str | None
+
+    def __iter__(self):
+        # Keep tuple unpacking compatible for older callers and regression tests.
+        yield self.payload
+        yield self.metadata
+
+
 def run_audit_request(
     *,
     api_key: str,
     model: str,
     prompt: str,
     maximum_web_search_calls: int,
-) -> tuple[dict[str, Any], dict[str, Any]]:
+) -> AuditRequestResult:
     from openai import OpenAI
 
     client = OpenAI(api_key=api_key, timeout=1200.0, max_retries=2)
@@ -270,27 +285,41 @@ def run_audit_request(
         "budget_overrun": web_search_calls > maximum_web_search_calls,
         "usage": response_to_plain(getattr(response, "usage", None)),
     }
-    if web_search_calls < 1:
-        raise RuntimeError("Coverage audit не выполнил ни одного web_search_call")
-    if getattr(response, "status", None) != "completed":
-        raise RuntimeError(
-            f"Coverage audit не завершён: status={getattr(response, 'status', None)!r}"
-        )
     output_text = (getattr(response, "output_text", None) or "").strip()
-    if not output_text:
-        raise RuntimeError("Coverage audit вернул пустой output_text")
-    try:
-        payload = json.loads(output_text)
-    except json.JSONDecodeError as exc:
-        raise RuntimeError(f"Coverage audit вернул некорректный JSON: {exc}") from exc
-    if not isinstance(payload, dict):
-        raise RuntimeError("Coverage audit должен вернуть JSON-объект")
-    queries = payload.get("queries_used")
-    if not isinstance(queries, list) or not queries:
-        raise RuntimeError("Coverage audit не заполнил queries_used")
-    if len(queries) > maximum_web_search_calls:
-        raise RuntimeError("queries_used превышает установленный лимит")
-    if metadata["budget_overrun"]:
+    payload: Any = None
+    validation_error: str | None = None
+
+    if web_search_calls < 1:
+        validation_error = "Coverage audit не выполнил ни одного web_search_call"
+    elif getattr(response, "status", None) != "completed":
+        validation_error = (
+            "Coverage audit не завершён: "
+            f"status={getattr(response, 'status', None)!r}"
+        )
+    elif not output_text:
+        validation_error = "Coverage audit вернул пустой output_text"
+    else:
+        try:
+            payload = json.loads(output_text)
+        except json.JSONDecodeError as exc:
+            validation_error = f"Coverage audit вернул некорректный JSON: {exc}"
+        if validation_error is None and not isinstance(payload, dict):
+            validation_error = "Coverage audit должен вернуть JSON-объект"
+        if validation_error is None:
+            queries = payload.get("queries_used")
+            if not isinstance(queries, list) or not queries:
+                validation_error = "Coverage audit не заполнил queries_used"
+            elif len(queries) > maximum_web_search_calls:
+                validation_error = "queries_used превышает установленный лимит"
+
+    result = AuditRequestResult(
+        payload=payload if isinstance(payload, dict) else None,
+        metadata=metadata,
+        output_text=output_text,
+        raw_response=response_to_plain(response),
+        validation_error=validation_error,
+    )
+    if validation_error is None and metadata["budget_overrun"]:
         print(
             "::warning title=Coverage audit web-search budget::"
             "Responses API вернул больше web_search_call, чем настроено: "
@@ -298,7 +327,35 @@ def run_audit_request(
             "Ответ завершён и пригоден, поэтому публикация продолжается.",
             file=sys.stderr,
         )
-    return payload, metadata
+    return result
+
+
+def persist_audit_diagnostics(
+    result: AuditRequestResult,
+    output_dir: Path,
+) -> dict[str, str]:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / "coverage-audit-output.txt"
+    response_path = output_dir / "coverage-audit-response.json"
+    output_text = result.output_text
+    output_path.write_text(
+        output_text + ("\n" if output_text else ""),
+        encoding="utf-8",
+    )
+    response_path.write_text(
+        json.dumps(
+            result.raw_response,
+            ensure_ascii=False,
+            indent=2,
+            default=str,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    return {
+        "api_output_path": str(output_path),
+        "api_response_path": str(response_path),
+    }
 
 
 def rerun_editorial(
@@ -329,7 +386,6 @@ def rerun_editorial(
         str(merged_research_path.relative_to(REPOSITORY_ROOT)),
     ]
     subprocess.run(command, cwd=REPOSITORY_ROOT, env=os.environ.copy(), check=True)
-
 
 
 def load_initial_stories(
@@ -389,7 +445,10 @@ LEGACY_SHORT_NOTICE = "День на новости выдался слабым 
 
 
 def completed_prior_audit(payload: Any) -> bool:
-    if not isinstance(payload, dict):
+    if not isinstance(payload, dict) or payload.get("status") != "ok":
+        return False
+    audit_state = payload.get("audit_state")
+    if audit_state is not None and audit_state != "completed_usable":
         return False
     api = payload.get("api") or {}
     return (
@@ -496,6 +555,8 @@ def main() -> int:
         },
         "maximum_audit_web_search_calls": args.maximum_audit_web_search_calls,
         "audit_needed": False,
+        "audit_state": "not_started",
+        "validation_error": None,
         "web_search_performed": False,
         "prior_audit_reused": False,
         "publication_mode": None,
@@ -507,6 +568,9 @@ def main() -> int:
         "rejected_candidates": [],
         "warnings": [],
         "api": None,
+        "api_output_path": None,
+        "api_response_path": None,
+        "error_stage": None,
         "error": None,
     }
 
@@ -588,14 +652,31 @@ def main() -> int:
             prompt_path = args.report.parent / "coverage-audit-prompt.txt"
             prompt_path.parent.mkdir(parents=True, exist_ok=True)
             prompt_path.write_text(prompt.rstrip() + "\n", encoding="utf-8")
-            audit_payload, api_metadata = run_audit_request(
+            audit_result = run_audit_request(
                 api_key=api_key,
                 model=args.model,
                 prompt=prompt,
                 maximum_web_search_calls=args.maximum_audit_web_search_calls,
             )
-            report["web_search_performed"] = api_metadata["web_search_calls"] > 0
+            api_metadata = audit_result.metadata
+            report["web_search_performed"] = api_metadata.get("web_search_calls", 0) > 0
             report["api"] = api_metadata
+            report.update(persist_audit_diagnostics(audit_result, args.report.parent))
+            report["audit_state"] = "completed_unusable"
+
+            validation_error = audit_result.validation_error
+            if validation_error:
+                report["validation_error"] = validation_error
+                report["error_stage"] = "response_validation"
+                raise RuntimeError(validation_error)
+
+            audit_payload = audit_result.payload
+            if not isinstance(audit_payload, dict):
+                report["validation_error"] = (
+                    "Coverage audit не вернул пригодный JSON-объект"
+                )
+                report["error_stage"] = "response_validation"
+                raise RuntimeError(report["validation_error"])
             if api_metadata.get("budget_overrun"):
                 report["warnings"].append(
                     "Responses API превысил настроенный счётчик web_search_call, "
@@ -604,15 +685,24 @@ def main() -> int:
             report["queries_used"] = audit_payload.get("queries_used", [])
             report["audit_notes"] = audit_payload.get("notes")
             if audit_payload.get("status") != "ok":
-                raise RuntimeError(
+                report["validation_error"] = (
                     "Coverage audit вернул status=error: "
                     + str(audit_payload.get("error_message") or "причина не указана")
                 )
+                report["error_stage"] = "response_validation"
+                raise RuntimeError(report["validation_error"])
             additional_candidates = audit_payload.get("candidates", [])
             if not isinstance(additional_candidates, list):
-                raise RuntimeError("Coverage audit candidates должен быть массивом")
+                report["validation_error"] = (
+                    "Coverage audit candidates должен быть массивом"
+                )
+                report["error_stage"] = "response_validation"
+                raise RuntimeError(report["validation_error"])
+            report["audit_state"] = "completed_usable"
         elif not pool_has_required_geography and prior_audit_complete:
             report["audit_needed"] = True
+            report["audit_state"] = "completed_usable"
+            report["web_search_performed"] = True
             report["prior_audit_reused"] = True
             report["api"] = prior_report.get("api") if prior_report else None
             report["queries_used"] = (prior_report or {}).get("queries_used", [])
