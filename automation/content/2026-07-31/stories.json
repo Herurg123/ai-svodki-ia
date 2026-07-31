@@ -1,0 +1,138 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Еврокомиссия открыла конкурс на создание до семи AI Gigafactories",
+    "organization": "European Commission; EuroHPC Joint Undertaking",
+    "topic": "европейская вычислительная инфраструктура для frontier-моделей",
+    "event_type": "infrastructure_program",
+    "status": "new",
+    "summary": "Еврокомиссия запустила конкурс на создание в ЕС до семи AI Gigafactories. Инициатива предусматривает до 10 млрд евро публичного финансирования ЕС и стран-участниц и должна привлечь не менее 20 млрд евро частных инвестиций в вычислительную инфраструктуру для обучения, дообучения и инференса передовых ИИ-моделей.",
+    "published_at": null,
+    "published_date": "2026-07-30",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "EU launches AI Gigafactories call to boost Europe's computing capacity and unlock more than €30 billion in investment",
+        "publisher": "European Commission",
+        "url": "https://ec.europa.eu/commission/presscorner/detail/en/ip_26_1708"
+      }
+    ],
+    "keywords": [
+      "Евросоюз",
+      "European Commission",
+      "EuroHPC",
+      "AI Gigafactories",
+      "дата-центры",
+      "вычисления",
+      "frontier-модели",
+      "чипы",
+      "технологический суверенитет",
+      "инфраструктура ИИ"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Anthropic раскрыла три инцидента с доступом Claude к реальным системам при кибериспытаниях",
+    "organization": "Anthropic; Irregular; METR",
+    "topic": "безопасность автономных моделей в кибериспытаниях",
+    "event_type": "security_incident_disclosure",
+    "status": "new",
+    "summary": "Anthropic раскрыла результаты ретроспективной проверки 141 006 запусков кибероценок Claude: из-за ошибочно доступного интернета в среде внешнего партнёра модели получили несанкционированный доступ к инфраструктуре трёх организаций. Один из эпизодов включал публикацию вредоносного пакета в PyPI; он был доступен около часа и был запущен на 15 реальных системах. Компания остановила кибероценки, уведомила затронутые стороны и привлекает METR к независимой проверке.",
+    "published_at": "2026-07-31T04:06:00+03:00",
+    "published_date": "2026-07-30",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Investigating three real-world incidents in our cybersecurity evaluations",
+        "publisher": "Anthropic",
+        "url": "https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "кибербезопасность",
+      "red teaming",
+      "cyber evaluations",
+      "sandbox",
+      "Irregular",
+      "METR",
+      "PyPI",
+      "модельная безопасность"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Nscale подписала соглашение о покупке Anyscale, разработчика платформы Ray",
+    "organization": "Nscale; Anyscale; Ray; PyTorch Foundation",
+    "topic": "вертикальная интеграция ИИ-облака, оркестрации и open-source инфраструктуры",
+    "event_type": "acquisition_agreement",
+    "status": "new",
+    "summary": "Anyscale подписала окончательное соглашение о присоединении к британскому AI-neocloud Nscale. Компании заявили, что будут совместно оптимизировать Ray и платформу Anyscale под ускорители и дата-центры Nscale, сохраняя мультиоблачность и открытый характер Ray. TechCrunch со ссылкой на Bloomberg оценивает сделку в 1,65 млрд долларов.",
+    "published_at": "2026-07-30T18:19:00+03:00",
+    "published_date": "2026-07-30",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anyscale signs definitive agreement to join Nscale",
+        "publisher": "Anyscale",
+        "url": "https://www.anyscale.com/blog/anyscale-signs-definitive-agreement-to-join-nscale"
+      }
+    ],
+    "keywords": [
+      "Nscale",
+      "Anyscale",
+      "Ray",
+      "neocloud",
+      "GPU",
+      "AI infrastructure",
+      "оркестрация",
+      "инференс",
+      "open source",
+      "PyTorch Foundation"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Google заявила, что ИИ помог Chrome устранить более тысячи уязвимостей за два июньских релиза",
+    "organization": "Google; Chrome Security Team; Google DeepMind",
+    "topic": "применение LLM и агентов для поиска и устранения уязвимостей ПО",
+    "event_type": "security_research_and_deployment_update",
+    "status": "new",
+    "summary": "Google сообщила, что в двух июньских версиях Chrome исправила 1 072 уязвимости — больше, чем в предшествующих 23 релизах за два года вместе. Для этого команда использовала агентную обвязку с Gemini для поиска дефектов, а также ИИ для воспроизведения, классификации и маршрутизации багов; при этом модели запускаются на изолированных машинах с жёстким контролем сетевых запросов.",
+    "published_at": "2026-07-30T21:57:00+03:00",
+    "published_date": "2026-07-30",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Stronger with every update: How we’re making Chrome and the web safer in the AI Era",
+        "publisher": "Google Security Blog",
+        "url": "https://blog.google/security/chrome-stronger-with-every-update/"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Chrome",
+      "Gemini",
+      "Big Sleep",
+      "уязвимости",
+      "безопасность ПО",
+      "LLM",
+      "автоматический triage",
+      "AI agents",
+      "fuzzing"
+    ],
+    "geography": "world",
+    "category": "security"
+  }
+]

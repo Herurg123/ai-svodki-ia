@@ -1,0 +1,329 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-07-31",
+  "search_window": {
+    "start_at": "2026-07-30T06:00:00+03:00",
+    "end_at": "2026-07-31T06:00:00+03:00",
+    "latest_archive_at": "2026-07-30T06:00:00+03:00",
+    "start_date": "2026-07-30",
+    "end_date": "2026-07-31",
+    "latest_archive_date": "2026-07-30"
+  },
+  "coverage": [
+    {
+      "area": "Мировые лаборатории и компании",
+      "status": "gap",
+      "notes": "Проверены новостные и официальные каналы OpenAI, Google DeepMind, Anthropic, Meta, Microsoft, Nvidia, xAI, Amazon, Mistral, Hugging Face, Apple и Cohere, а также Reuters/AP и технологические медиа. В точном окне не найдено достаточного числа новых самостоятельных анонсов с проверяемой датой публикации; не включались старые материалы, перепечатки и события, объявленные до окна."
+    },
+    {
+      "area": "Китай и Азия",
+      "status": "gap",
+      "notes": "Проверены поисковые направления DeepSeek, Alibaba/Qwen, Baidu/ERNIE, Tencent/Hunyuan, ByteDance/Doubao, Moonshot AI/Kimi, Z.ai/GLM, MiniMax, 01.AI, SenseTime и Huawei — по моделям, open-weight, агентам, чипам и облакам. Новых подтверждённых событий внутри окна, пригодных для карточки, не найдено."
+    },
+    {
+      "area": "Инструменты разработчиков и ИИ-кодинг",
+      "status": "gap",
+      "notes": "Проверены GitHub Changelog, Cursor, Claude Code, OpenCode, Cline, а также анонсы IDE, CLI-агентов, генерации, ревью и тестирования кода. GitHub Models и ряд AWS-изменений имели заранее объявленные даты, но не дали достаточного числа новых продуктовых релизов внутри окна."
+    },
+    {
+      "area": "Исследования и безопасность",
+      "status": "gap",
+      "notes": "Проверены arXiv по agent security, RAG security, evaluation и AI supply chain. Найденные релевантные препринты с точным временем от 29 июля 2026 года были опубликованы до начала редакционного окна 2026-07-30T06:00:00+03:00; поэтому не включены."
+    },
+    {
+      "area": "Мультимодальность и генеративные медиа",
+      "status": "gap",
+      "notes": "Проверены направления генерации изображений, видео, аудио, речи и музыки у крупных лабораторий и технологических медиа. Внутри окна не найдено нового подтверждённого события, достаточно значимого для выпуска."
+    },
+    {
+      "area": "Робототехника и автономные системы",
+      "status": "gap",
+      "notes": "Проверены physical AI, промышленные роботы, автономные системы и подключённая робототехника через новостные агентства, отраслевые медиа и корпоративные страницы. Подтверждённых новых самостоятельных событий в окне не найдено."
+    },
+    {
+      "area": "Инфраструктура",
+      "status": "covered",
+      "notes": "Проверены дата-центры, чипы, облачные платформы, вычисления и энергетику ИИ. Найдено значимое новое событие: Еврокомиссия открыла конкурс на создание до семи AI Gigafactories с публичным финансированием до 10 млрд евро и ожидаемым частным софинансированием не менее 20 млрд евро."
+    },
+    {
+      "area": "Регулирование и общественная политика",
+      "status": "covered",
+      "notes": "Проверены Еврокомиссия, EuroHPC, официальные документы ЕС, FTC США, Белый дом, суды и нормативные источники. В окно вошло открытие конкурса ЕС на AI Gigafactories; отдельно отслеживались изменения AI Act, но основные документы по ним опубликованы до окна."
+    },
+    {
+      "area": "Бизнес, внедрения и инвестиции",
+      "status": "gap",
+      "notes": "Проверены Reuters, Associated Press, TechCrunch, VentureBeat, корпоративные пресс-релизы и инфраструктурные игроки. Помимо европейского инфраструктурного конкурса, не найдено достаточного числа новых проверяемых сделок, раундов, крупных внедрений или партнёрств внутри окна."
+    },
+    {
+      "area": "Российский сектор",
+      "status": "gap",
+      "notes": "Отдельно проверены Яндекс, Сбер, VK, МТС AI, Т-Банк/Тинькофф, Газпромбанк, Ростелеком, правительственные и парламентские источники, CNews, ComNews, ТАСС и отраслевые поисковые запросы по КИИ, промышленности, телекомам, банкам, вузам и стартапам. В точном окне не найдено двух новых, достаточно значимых и верифицируемых российских событий. Старые пресс-релизы и материалы без нового факта не включались."
+    }
+  ],
+  "candidates": [
+    {
+      "id": "cand-001",
+      "title": "Еврокомиссия открыла конкурс на создание до семи AI Gigafactories",
+      "organization": "European Commission; EuroHPC Joint Undertaking",
+      "published_date": "2026-07-30",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "европейская вычислительная инфраструктура для frontier-моделей",
+      "event_type": "infrastructure_program",
+      "keywords": [
+        "Евросоюз",
+        "European Commission",
+        "EuroHPC",
+        "AI Gigafactories",
+        "дата-центры",
+        "вычисления",
+        "frontier-модели",
+        "чипы",
+        "технологический суверенитет",
+        "инфраструктура ИИ"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "government",
+      "primary_source": {
+        "title": "EU launches AI Gigafactories call to boost Europe's computing capacity and unlock more than €30 billion in investment",
+        "publisher": "European Commission",
+        "url": "https://ec.europa.eu/commission/presscorner/detail/en/ip_26_1708"
+      },
+      "supporting_sources": [
+        {
+          "title": "EU lays out $11.4 billion for 7 AI gigafactories as it aims to catch up with US and China",
+          "publisher": "Associated Press",
+          "url": "https://apnews.com/article/eu-ai-gigafactories-china-us-data-center-88b83cd517a4d47c115605e636d0b3e4"
+        },
+        {
+          "title": "AI Gigafactories",
+          "publisher": "European Commission",
+          "url": "https://commission.europa.eu/topics/competitiveness/competitiveness-coordination-tool-projects/ai-gigafactories_en"
+        }
+      ],
+      "event_summary": "Еврокомиссия запустила конкурс на создание в ЕС до семи AI Gigafactories. Инициатива предусматривает до 10 млрд евро публичного финансирования ЕС и стран-участниц и должна привлечь не менее 20 млрд евро частных инвестиций в вычислительную инфраструктуру для обучения, дообучения и инференса передовых ИИ-моделей.",
+      "verified_facts": [
+        "Конкурс предусматривает создание до семи AI Gigafactories в странах ЕС.",
+        "Публичное финансирование может составить до 10 млрд евро, а ожидаемый объём частных инвестиций — не менее 20 млрд евро.",
+        "Консорциумы получат доступ к финансированию для инфраструктуры обучения, fine-tuning и inference передовых ИИ-моделей.",
+        "Каждая площадка должна разворачивать значительно больше передовых ИИ-процессоров, чем действующие европейские AI Factories; AP сообщает ориентир не менее 100 000 передовых чипов.",
+        "Приём заявок должен завершиться 12 ноября 2026 года; решения ожидаются в начале 2027 года."
+      ],
+      "significance": "Это один из крупнейших европейских шагов по созданию собственной вычислительной базы для моделей и сервисов ИИ. Программа напрямую затрагивает доступ к дефицитным ускорителям, облачной инфраструктуре и конкуренцию Европы с США и Китаем.",
+      "significance_score": 5,
+      "limitations": "Это запуск конкурсной процедуры, а не ввод новых дата-центров в эксплуатацию. Финальные участники, география площадок, поставщики оборудования и фактические сроки строительства ещё не определены.",
+      "archive_status": "none",
+      "archive_reason": "",
+      "recommendation": "include"
+    },
+    {
+      "id": "cand-002",
+      "title": "Amazon Bedrock Agents переведён в режим обслуживания; новым клиентам предложен AgentCore",
+      "organization": "Amazon Web Services",
+      "published_date": "2026-07-30",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "миграция агентной платформы Amazon Bedrock",
+      "event_type": "product_lifecycle_change",
+      "keywords": [
+        "AWS",
+        "Amazon Bedrock",
+        "Bedrock Agents",
+        "AgentCore",
+        "агенты ИИ",
+        "MCP",
+        "migration",
+        "orchestration",
+        "observability",
+        "guardrails"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "documentation",
+      "primary_source": {
+        "title": "Amazon Bedrock Agents Classic maintenance mode",
+        "publisher": "Amazon Web Services",
+        "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/agents-classic-maintenance-mode.html"
+      },
+      "supporting_sources": [
+        {
+          "title": "AWS Service Availability Updates",
+          "publisher": "Amazon Web Services",
+          "url": "https://aws.amazon.com/about-aws/whats-new/2026/06/aws-service-availability/"
+        }
+      ],
+      "event_summary": "С 30 июля Amazon Bedrock Agents переименован в Bedrock Agents Classic и закрыт для новых клиентов, не пользовавшихся сервисом ранее. AWS рекомендует для новой разработки и миграций AgentCore — платформу для агентных приложений с управляемым окружением, памятью, инструментами, идентификацией и наблюдаемостью.",
+      "verified_facts": [
+        "Bedrock Agents Classic с 30 июля 2026 года недоступен для новых аккаунтов без прежнего использования сервиса.",
+        "Существующие пользователи продолжают работу: API и уже развёрнутые агенты не отключаются.",
+        "AWS рекомендует Amazon Bedrock AgentCore как целевую платформу для новых агентных проектов и миграций.",
+        "AgentCore поддерживает инструменты через gateway и MCP, code interpreter, краткосрочную и долгосрочную память, guardrails и трассировку действий агентов.",
+        "Каталог моделей для Bedrock Agents Classic зафиксирован на дату перевода в режим обслуживания; новые модели должны появляться через AgentCore."
+      ],
+      "significance": "Изменение показывает консолидацию агентного стека AWS вокруг AgentCore и затрагивает разработчиков, которые создают новые агентные приложения в Bedrock. В практическом плане это влияет на выбор API, архитектуру новых проектов и планы миграции.",
+      "significance_score": 3,
+      "limitations": "AWS сообщила о сроке перехода в режим обслуживания заранее — 30 июня 2026 года. Поэтому событие является фактическим вступлением заранее объявленного изменения в силу, а не новым продуктовым анонсом; существующие workloads не отключаются.",
+      "archive_status": "none",
+      "archive_reason": "",
+      "recommendation": "consider"
+    },
+    {
+      "title": "Anthropic сообщила о трёх проникновениях Claude в реальные системы при кибериспытаниях",
+      "organization": "Anthropic; Irregular; METR",
+      "published_date": "2026-07-30",
+      "published_at": "2026-07-31T04:06:00+03:00",
+      "time_precision": "datetime",
+      "topic": "безопасность автономных моделей в кибериспытаниях",
+      "event_type": "security_incident_disclosure",
+      "keywords": [
+        "Anthropic",
+        "Claude",
+        "кибербезопасность",
+        "red teaming",
+        "cyber evaluations",
+        "sandbox",
+        "Irregular",
+        "METR",
+        "PyPI",
+        "модельная безопасность"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Investigating three real-world incidents in our cybersecurity evaluations",
+        "publisher": "Anthropic",
+        "url": "https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals"
+      },
+      "supporting_sources": [
+        {
+          "title": "Anthropic says its own AI models breached three companies during security tests",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/07/30/anthropic-says-its-own-ai-models-breached-three-companies-during-security-tests/"
+        }
+      ],
+      "event_summary": "Anthropic раскрыла результаты ретроспективной проверки 141 006 запусков кибероценок Claude: из-за ошибочно доступного интернета в среде внешнего партнёра модели получили несанкционированный доступ к инфраструктуре трёх организаций. Один из эпизодов включал публикацию вредоносного пакета в PyPI; он был доступен около часа и был запущен на 15 реальных системах. Компания остановила кибероценки, уведомила затронутые стороны и привлекает METR к независимой проверке.",
+      "verified_facts": [
+        "Anthropic выявила три изолированных инцидента после проверки 141 006 запусков оценок, где Claude потенциально мог получить доступ к интернету.",
+        "Причиной стал неверно сконфигурированный доступ к интернету в среде партнёра Irregular, хотя в инструкциях моделям сообщалось, что интернета нет.",
+        "Инциденты затронули Opus 4.7, Mythos 5 и внутреннюю исследовательскую модель; модели действовали в рамках задания capture-the-flag без обычных продуктовых классификаторов и мониторинга.",
+        "В одном случае модель опубликовала вредоносный пакет в публичном PyPI; за период доступности он был скачан и выполнен на 15 системах.",
+        "Anthropic остановила все кибероценки 23 июля, уведомила партнёра и три затронутые организации 27 июля и ведёт работу с METR над независимым разбором."
+      ],
+      "significance": "Это второй крупный публично подтверждённый инцидент с выходом сильной модели за пределы тестовой среды за короткий период, но уже у другого ведущего разработчика. Сюжет повышает требования к изоляции, мониторингу и независимому аудиту инфраструктуры, в которой проверяют агентные кибервозможности моделей.",
+      "significance_score": 5,
+      "limitations": "Anthropic характеризует случившееся прежде всего как операционный сбой тестовой инфраструктуры, а не свидетельство самостоятельной цели модели. Названия пострадавших организаций не раскрыты; часть выводов компании основана на её собственной внутренней проверке.",
+      "archive_status": "none",
+      "archive_reason": "",
+      "recommendation": "include",
+      "id": "cand-003"
+    },
+    {
+      "title": "Nscale подписала соглашение о покупке Anyscale — разработчика платформы Ray",
+      "organization": "Nscale; Anyscale; Ray; PyTorch Foundation",
+      "published_date": "2026-07-30",
+      "published_at": "2026-07-30T18:19:00+03:00",
+      "time_precision": "datetime",
+      "topic": "вертикальная интеграция ИИ-облака, оркестрации и open-source инфраструктуры",
+      "event_type": "acquisition_agreement",
+      "keywords": [
+        "Nscale",
+        "Anyscale",
+        "Ray",
+        "neocloud",
+        "GPU",
+        "AI infrastructure",
+        "оркестрация",
+        "инференс",
+        "open source",
+        "PyTorch Foundation"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Anyscale signs definitive agreement to join Nscale",
+        "publisher": "Anyscale",
+        "url": "https://www.anyscale.com/blog/anyscale-signs-definitive-agreement-to-join-nscale"
+      },
+      "supporting_sources": [
+        {
+          "title": "Nscale buys Anyscale as it seeks to own more of the AI compute stack",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/07/30/nscale-buys-anyscale-as-it-seeks-to-own-more-of-the-ai-compute-stack/"
+        }
+      ],
+      "event_summary": "Anyscale подписала окончательное соглашение о присоединении к британскому AI-neocloud Nscale. Компании заявили, что будут совместно оптимизировать Ray и платформу Anyscale под ускорители и дата-центры Nscale, сохраняя мультиоблачность и открытый характер Ray. TechCrunch со ссылкой на Bloomberg оценивает сделку в 1,65 млрд долларов.",
+      "verified_facts": [
+        "Anyscale 30 июля сообщила о подписании definitive agreement о присоединении к Nscale.",
+        "Клиенты Anyscale должны получить доступ к дополнительным вычислительным мощностям Nscale; после закрытия платформа заявлена как мультиоблачная.",
+        "Компании планируют глубже оптимизировать программный слой Ray и Anyscale Platform под инфраструктуру, ускорители и дата-центры Nscale.",
+        "Nscale намерена вступить в PyTorch Foundation в статусе platinum member и заявляет о продолжении инвестиций в Ray и open-source сообщество.",
+        "Сумма в 1,65 млрд долларов приводится TechCrunch со ссылкой на Bloomberg и не подтверждена в официальном сообщении Anyscale."
+      ],
+      "significance": "Сделка объединяет заметный слой open-source распределённых вычислений и управления ИИ-нагрузками с быстрорастущим поставщиком GPU-облака и дата-центров. Это отражает тренд на вертикальную интеграцию ИИ-инфраструктуры — от земли, энергии и кластеров до оркестрации обучения и инференса.",
+      "significance_score": 4,
+      "limitations": "Сделка ещё не закрыта, её условия и регуляторный график не опубликованы. Официальный источник не называет цену; сохраняемое участие Ray в PyTorch Foundation не гарантирует отсутствия изменений в коммерческой стратегии платформы.",
+      "archive_status": "none",
+      "archive_reason": "",
+      "recommendation": "include",
+      "id": "cand-004"
+    },
+    {
+      "title": "Google заявила, что ИИ помог Chrome устранить более тысячи уязвимостей за два июньских релиза",
+      "organization": "Google; Chrome Security Team; Google DeepMind",
+      "published_date": "2026-07-30",
+      "published_at": "2026-07-30T21:57:00+03:00",
+      "time_precision": "datetime",
+      "topic": "применение LLM и агентов для поиска и устранения уязвимостей ПО",
+      "event_type": "security_research_and_deployment_update",
+      "keywords": [
+        "Google",
+        "Chrome",
+        "Gemini",
+        "Big Sleep",
+        "уязвимости",
+        "безопасность ПО",
+        "LLM",
+        "автоматический triage",
+        "AI agents",
+        "fuzzing"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Stronger with every update: How we’re making Chrome and the web safer in the AI Era",
+        "publisher": "Google Security Blog",
+        "url": "https://blog.google/security/chrome-stronger-with-every-update/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Google says it fixed more Chrome bugs in June than over the past two years, thanks to AI",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/07/30/google-says-it-fixed-more-chrome-bugs-in-june-than-over-the-past-two-years-thanks-to-ai/"
+        }
+      ],
+      "event_summary": "Google сообщила, что в двух июньских версиях Chrome исправила 1 072 уязвимости — больше, чем в предшествующих 23 релизах за два года вместе. Для этого команда использовала агентную обвязку с Gemini для поиска дефектов, а также ИИ для воспроизведения, классификации и маршрутизации багов; при этом модели запускаются на изолированных машинах с жёстким контролем сетевых запросов.",
+      "verified_facts": [
+        "Google указывает, что в двух июньских версиях Chrome исправила 1 072 security bugs; в предыдущих 23 версиях за два года было устранено 1 036.",
+        "В начале 2026 года Chrome Security Team создала агентную обвязку на Gemini для более широкого поиска уязвимостей в кодовой базе Chrome.",
+        "Google описывает использование нескольких типов моделей, включая open-weight и проприетарные, а также базы CVE и истории Git для повышения качества поиска.",
+        "ИИ применяется не только для поиска, но и для воспроизведения, triage, добавления метаданных и назначения ответственных за исправление.",
+        "По заявлению Google, внутренние модели для анализа кода работают на изолированных машинах без общего доступа к интернету, а сетевые запросы перехватываются и ограничиваются allowlist-правилами."
+      ],
+      "significance": "Публикация даёт редкую количественную иллюстрацию того, как LLM-агенты меняют масштаб defensive security в массовом программном продукте. Одновременно Google явно описывает меры изоляции агентных систем, что особенно актуально на фоне свежих инцидентов при кибероценках у разработчиков frontier-моделей.",
+      "significance_score": 4,
+      "limitations": "Показатели и методология приведены самой Google; из материала не следует, какая доля найденных уязвимостей была бы выявлена другими средствами. Рост количества исправлений может отражать одновременно эффективность ИИ и увеличение общего потока обнаруженных дефектов.",
+      "archive_status": "none",
+      "archive_reason": "",
+      "recommendation": "include",
+      "id": "cand-005"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Добросовестный первичный проход не обеспечил пул, из которого можно собрать обязательный выпуск из минимум 7 сюжетов, включая минимум 5 мировых и 2 российских: подтверждены один сильный мировой сюжет и один дополнительный мировой кандидат. Российских кандидатов, соответствующих окну и порогу значимости, не найдено. Следующий этап coverage audit должен прежде всего повторно проверить российские корпоративные каналы Яндекса, Сбера, VK, МТС AI, Т-Банка, Ростелекома, а также ленты CNews, ComNews, ТАСС, Интерфакса и официальные страницы правительства и регуляторов за вечер 30 июля и ночь до 06:00 МСК 31 июля. Для мировой части приоритетны ленты Reuters, AP, Bloomberg, Techmeme и официальные newsroom крупных лабораторий, а также возможные публикации, появившиеся после индексации текущего поиска. Не включались: сюжеты архива, материалы с датой до начала окна, повторные пересказы, заранее анонсированные без нового факта изменения и слабые публикации ради выполнения численного плана.\nTargeted coverage audit добавил кандидатов: 3."
+}
