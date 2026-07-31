@@ -307,7 +307,59 @@ class CoverageAuditExecutionTests(unittest.TestCase):
         self.assertEqual(captured["tool_choice"], "required")
         self.assertFalse(captured["store"])
         self.assertEqual(metadata["web_search_calls"], 1)
+        self.assertFalse(metadata["budget_overrun"])
         self.assertEqual(payload["status"], "ok")
+
+    def test_completed_response_survives_observed_tool_call_overrun(self) -> None:
+        captured: dict[str, object] = {}
+
+        class Item:
+            type = "web_search_call"
+
+        class Response:
+            status = "completed"
+            output_text = json.dumps(
+                {
+                    "status": "ok",
+                    "error_message": None,
+                    "queries_used": [
+                        {"area": "russia", "query": "q", "purpose": "p"}
+                    ],
+                    "candidates": [],
+                    "notes": "Новых достойных кандидатов нет",
+                },
+                ensure_ascii=False,
+            )
+            output = [Item() for _ in range(6)]
+            id = "resp_overrun"
+            model = "gpt-5.6-terra"
+            usage = {"input_tokens": 2, "output_tokens": 1}
+
+        class Responses:
+            def create(self, **kwargs):
+                captured.update(kwargs)
+                return Response()
+
+        class FakeOpenAI:
+            def __init__(self, **kwargs):
+                captured["client"] = kwargs
+                self.responses = Responses()
+
+        fake_module = types.ModuleType("openai")
+        fake_module.OpenAI = FakeOpenAI
+        with mock.patch.dict(sys.modules, {"openai": fake_module}):
+            payload, metadata = audit.run_audit_request(
+                api_key="secret",
+                model="gpt-5.6-terra",
+                prompt="targeted",
+                maximum_web_search_calls=5,
+            )
+        self.assertEqual(captured["max_tool_calls"], 5)
+        self.assertEqual(payload["status"], "ok")
+        self.assertEqual(metadata["configured_web_search_limit"], 5)
+        self.assertEqual(metadata["observed_web_search_calls"], 6)
+        self.assertEqual(metadata["web_search_calls"], 6)
+        self.assertTrue(metadata["budget_overrun"])
 
 
 class ConfigurationContractTests(unittest.TestCase):
