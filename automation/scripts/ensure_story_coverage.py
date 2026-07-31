@@ -330,6 +330,22 @@ def run_audit_request(
     return result
 
 
+def coerce_audit_result(value: Any) -> AuditRequestResult:
+    if isinstance(value, AuditRequestResult):
+        return value
+    if isinstance(value, tuple) and len(value) == 2:
+        payload, metadata = value
+        if isinstance(payload, dict) and isinstance(metadata, dict):
+            return AuditRequestResult(
+                payload=payload,
+                metadata=metadata,
+                output_text=json.dumps(payload, ensure_ascii=False),
+                raw_response=None,
+                validation_error=None,
+            )
+    raise RuntimeError("Coverage audit вернул результат неожиданного типа")
+
+
 def persist_audit_diagnostics(
     result: AuditRequestResult,
     output_dir: Path,
@@ -652,11 +668,13 @@ def main() -> int:
             prompt_path = args.report.parent / "coverage-audit-prompt.txt"
             prompt_path.parent.mkdir(parents=True, exist_ok=True)
             prompt_path.write_text(prompt.rstrip() + "\n", encoding="utf-8")
-            audit_result = run_audit_request(
-                api_key=api_key,
-                model=args.model,
-                prompt=prompt,
-                maximum_web_search_calls=args.maximum_audit_web_search_calls,
+            audit_result = coerce_audit_result(
+                run_audit_request(
+                    api_key=api_key,
+                    model=args.model,
+                    prompt=prompt,
+                    maximum_web_search_calls=args.maximum_audit_web_search_calls,
+                )
             )
             api_metadata = audit_result.metadata
             report["web_search_performed"] = api_metadata.get("web_search_calls", 0) > 0
