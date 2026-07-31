@@ -17,7 +17,7 @@ import summarize_production_status as status  # noqa: E402
 
 
 class RussianStatusSummaryTests(unittest.TestCase):
-    def test_coverage_failure_is_translated_and_actionable(self) -> None:
+    def test_zero_story_stop_is_translated_and_actionable(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             old = Path.cwd()
             os.chdir(temporary)
@@ -31,9 +31,8 @@ class RussianStatusSummaryTests(unittest.TestCase):
                         {
                             "status": "error",
                             "error": (
-                                "RuntimeError: После targeted audit пул "
-                                "всё ещё не позволяет собрать 5+2: "
-                                "всего=4, world=4, russia=0"
+                                "RuntimeError: После основного и дополнительного "
+                                "поиска не осталось ни одного достойного сюжета"
                             ),
                             "web_search_performed": True,
                         },
@@ -54,7 +53,7 @@ class RussianStatusSummaryTests(unittest.TestCase):
 
         self.assertIn("ИИ-Сводка не опубликована", markdown)
         self.assertIn(
-            "После дополнительного поиска",
+            "не найдено ни одного достойного сюжета",
             markdown,
         )
         self.assertIn(

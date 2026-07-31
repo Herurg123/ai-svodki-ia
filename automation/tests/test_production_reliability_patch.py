@@ -459,16 +459,19 @@ class ProductionWorkflowReliabilityTests(unittest.TestCase):
         self.assertIn("--timezone Europe/Moscow", workflow)
         self.assertIn("ensure_story_coverage.py", workflow)
         self.assertIn("validate_story_coverage.py", workflow)
-        self.assertIn("--minimum-total 7", workflow)
-        self.assertIn("--minimum-world 5", workflow)
-        self.assertIn("--minimum-russia 2", workflow)
+        self.assertIn("--usual-total 7", workflow)
+        self.assertIn("--minimum-publishable 1", workflow)
+        self.assertNotIn("--minimum-world", workflow)
+        self.assertNotIn("--minimum-russia", workflow)
         self.assertIn("--maximum-audit-web-search-calls 5", workflow)
         self.assertLess(
-            workflow.index("Enforce 5 world plus 2 Russian stories"),
+            workflow.index("Supplement a short digest when possible"),
             workflow.index("Normalize and validate digest artifact"),
         )
         self.assertLess(
-            workflow.index("Validate final story coverage"),
+            workflow.index(
+                "Validate publishable story count and short digest marker"
+            ),
             workflow.index("Build runtime Image API request"),
         )
 

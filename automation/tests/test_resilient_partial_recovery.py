@@ -199,8 +199,8 @@ class CoverageRepairFlowTests(unittest.TestCase):
             artifact.mkdir()
             candidates = [
                 self._candidate(f"cand-{index:03d}", "world")
-                for index in range(1, 7)
-            ] + [self._candidate("cand-007", "russia")]
+                for index in range(1, 6)
+            ] + [self._candidate("cand-006", "russia")]
             research = {
                 "status": "ok",
                 "error_message": None,
@@ -229,7 +229,7 @@ class CoverageRepairFlowTests(unittest.TestCase):
                     {
                         "selected_candidate_ids": [
                             "cand-001", "cand-002", "cand-003",
-                            "cand-004", "cand-005", "cand-007",
+                            "cand-004", "cand-005", "cand-006",
                         ]
                     }
                 ),
@@ -241,23 +241,17 @@ class CoverageRepairFlowTests(unittest.TestCase):
             runtime_root = root / "fixtures"
             persisted_root = root / "preview"
 
-            added = self._candidate("temporary", "russia")
+            added = self._candidate("temporary", "world")
             added.pop("id")
 
             def fake_rerun_editorial(**kwargs):
                 runtime_path = kwargs["merged_research_path"]
                 self.assertTrue(runtime_path.is_file())
                 merged = json.loads(runtime_path.read_text(encoding="utf-8"))
-                self.assertGreaterEqual(
-                    sum(
-                        1 for item in merged["candidates"]
-                        if item.get("geography") == "russia"
-                    ),
-                    2,
-                )
+                self.assertEqual(len(merged["candidates"]), 7)
                 stories = [
-                    {"geography": "world"} for _ in range(5)
-                ] + [{"geography": "russia"} for _ in range(2)]
+                    {"geography": "world"} for _ in range(6)
+                ] + [{"geography": "russia"}]
                 (artifact / "stories.json").write_text(
                     json.dumps(stories), encoding="utf-8"
                 )
@@ -268,9 +262,8 @@ class CoverageRepairFlowTests(unittest.TestCase):
                 "--archive", str(archive),
                 "--publication-date", "2026-07-25",
                 "--model", "gpt-5.6-terra",
-                "--minimum-total", "7",
-                "--minimum-world", "5",
-                "--minimum-russia", "2",
+                "--usual-total", "7",
+                "--minimum-publishable", "1",
                 "--maximum-audit-web-search-calls", "5",
                 "--report", str(report),
             ]
@@ -294,7 +287,10 @@ class CoverageRepairFlowTests(unittest.TestCase):
                             "candidates": [added],
                             "notes": "one candidate",
                         },
-                        {"web_search_calls": 1},
+                        {
+                            "web_search_calls": 1,
+                            "web_search_call_items_total": 1,
+                        },
                     ),
                 ),
                 mock.patch.object(audit, "rerun_editorial", side_effect=fake_rerun_editorial),
@@ -321,7 +317,7 @@ class WorkflowIntegrationTests(unittest.TestCase):
         )
         self.assertIn("run_digest_preview.py", workflow)
         self.assertIn("--allow-provisional-editorial", workflow)
-        start = workflow.index("- name: Enforce 5 world plus 2 Russian stories")
+        start = workflow.index("- name: Supplement a short digest when possible")
         end = workflow.index("- name:", start + 10)
         coverage_step = workflow[start:end]
         self.assertNotIn("if: inputs.recovery_run_id == ''", coverage_step)

@@ -50,6 +50,41 @@ class CompletedCoverageAuditRecoveryTests(unittest.TestCase):
             )
             self.assertEqual(restored["web_search_calls"], 4)
 
+    def test_legacy_six_over_five_attempt_is_restored_without_repeat(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            recovery_root = root / "download"
+            source = recovery_root / "production-daily" / "coverage-audit.json"
+            source.parent.mkdir(parents=True)
+            payload = {
+                "status": "error",
+                "publication_date": "2026-07-31",
+                "web_search_performed": False,
+                "api": None,
+                "error": (
+                    "RuntimeError: Coverage audit превысил лимит web search: 6>5"
+                ),
+            }
+            source.write_text(
+                json.dumps(payload, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+            report_path = root / "preview" / "production-daily" / "recovery.json"
+
+            restored = recovery.restore_prior_coverage_audit(
+                recovery_root,
+                report_path,
+                "2026-07-31",
+            )
+
+            self.assertIsNotNone(restored)
+            self.assertTrue(restored["legacy_limit_error"])
+            target = report_path.parent / "coverage-audit.json"
+            self.assertEqual(
+                json.loads(target.read_text(encoding="utf-8")),
+                payload,
+            )
+
     def test_incomplete_or_wrong_date_audit_is_not_restored(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

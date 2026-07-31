@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -152,7 +154,10 @@ AUDIT_SCHEMA: dict[str, Any] = {
                 "type": "object",
                 "additionalProperties": False,
                 "properties": {
-                    "area": {"type": "string", "enum": ["world", "russia", "cross"]},
+                    "area": {
+                        "type": "string",
+                        "enum": ["world", "china", "russia", "cross"],
+                    },
                     "query": {"type": "string", "minLength": 1},
                     "purpose": {"type": "string", "minLength": 1},
                 },
@@ -176,8 +181,7 @@ def build_prompt(
     *,
     publication_date: str,
     search_window: dict[str, Any],
-    missing_world: int,
-    missing_russia: int,
+    missing_total: int,
     maximum_web_search_calls: int,
     existing_candidates: list[Any],
     archive: dict[str, Any],
@@ -186,8 +190,7 @@ def build_prompt(
         "PUBLICATION_DATE": publication_date,
         "SEARCH_WINDOW_START_AT": str(search_window.get("start_at", "")),
         "SEARCH_WINDOW_END_AT": str(search_window.get("end_at", "")),
-        "MISSING_WORLD": str(missing_world),
-        "MISSING_RUSSIA": str(missing_russia),
+        "MISSING_TOTAL": str(missing_total),
         "MAX_WEB_SEARCH_CALLS": str(maximum_web_search_calls),
         "EXISTING_CANDIDATES": json.dumps(
             existing_candidates, ensure_ascii=False, indent=2
@@ -204,14 +207,6 @@ def build_prompt(
     return prompt
 
 
-def count_web_search_calls(response: Any) -> int:
-    return sum(
-        1
-        for item in getattr(response, "output", []) or []
-        if getattr(item, "type", None) == "web_search_call"
-    )
-
-
 def response_to_plain(value: Any) -> Any:
     if value is None:
         return None
@@ -222,6 +217,61 @@ def response_to_plain(value: Any) -> Any:
     if isinstance(value, (dict, list, str, int, float, bool)):
         return value
     return str(value)
+
+
+class CoverageAuditResponseError(RuntimeError):
+    def __init__(self, message: str, metadata: dict[str, Any]) -> None:
+        super().__init__(message)
+        self.metadata = metadata
+
+
+def build_audit_api_metadata(
+    response: Any,
+    *,
+    maximum_web_search_calls: int,
+) -> dict[str, Any]:
+    call_items: list[dict[str, Any]] = []
+    status_counts: dict[str, int] = {}
+    for item in getattr(response, "output", []) or []:
+        if getattr(item, "type", None) != "web_search_call":
+            continue
+        status = str(getattr(item, "status", None) or "unknown")
+        status_counts[status] = status_counts.get(status, 0) + 1
+        call_items.append(
+            {
+                "id": getattr(item, "id", None),
+                "status": status,
+            }
+        )
+
+    completed_calls = status_counts.get("completed", 0)
+    total_items = len(call_items)
+    output_item_limit_exceeded = total_items > maximum_web_search_calls
+    return {
+        "response_id": getattr(response, "id", None),
+        "status": getattr(response, "status", None),
+        "model": getattr(response, "model", None),
+        "configured_max_tool_calls": maximum_web_search_calls,
+        # Compatibility with the first production hotfix for run 30602601828.
+        "configured_web_search_limit": maximum_web_search_calls,
+        "observed_web_search_calls": total_items,
+        "budget_overrun": output_item_limit_exceeded,
+        # Backward-compatible key: only completed searches count as performed.
+        "web_search_calls": completed_calls,
+        "web_search_calls_completed": completed_calls,
+        "web_search_call_items_total": total_items,
+        "web_search_call_statuses": status_counts,
+        "web_search_call_items": call_items,
+        "completed_call_limit_exceeded": (
+            completed_calls > maximum_web_search_calls
+        ),
+        "output_item_limit_exceeded": output_item_limit_exceeded,
+        "usage": response_to_plain(getattr(response, "usage", None)),
+        "error": response_to_plain(getattr(response, "error", None)),
+        "incomplete_details": response_to_plain(
+            getattr(response, "incomplete_details", None)
+        ),
+    }
 
 
 def run_audit_request(
@@ -259,44 +309,57 @@ def run_audit_request(
         },
         store=False,
     )
-    web_search_calls = count_web_search_calls(response)
-    metadata = {
-        "response_id": getattr(response, "id", None),
-        "status": getattr(response, "status", None),
-        "model": getattr(response, "model", None),
-        "web_search_calls": web_search_calls,
-        "configured_web_search_limit": maximum_web_search_calls,
-        "observed_web_search_calls": web_search_calls,
-        "budget_overrun": web_search_calls > maximum_web_search_calls,
-        "usage": response_to_plain(getattr(response, "usage", None)),
-    }
-    if web_search_calls < 1:
-        raise RuntimeError("Coverage audit не выполнил ни одного web_search_call")
-    if getattr(response, "status", None) != "completed":
-        raise RuntimeError(
-            f"Coverage audit не завершён: status={getattr(response, 'status', None)!r}"
-        )
-    output_text = (getattr(response, "output_text", None) or "").strip()
-    if not output_text:
-        raise RuntimeError("Coverage audit вернул пустой output_text")
-    try:
-        payload = json.loads(output_text)
-    except json.JSONDecodeError as exc:
-        raise RuntimeError(f"Coverage audit вернул некорректный JSON: {exc}") from exc
-    if not isinstance(payload, dict):
-        raise RuntimeError("Coverage audit должен вернуть JSON-объект")
-    queries = payload.get("queries_used")
-    if not isinstance(queries, list) or not queries:
-        raise RuntimeError("Coverage audit не заполнил queries_used")
-    if len(queries) > maximum_web_search_calls:
-        raise RuntimeError("queries_used превышает установленный лимит")
-    if metadata["budget_overrun"]:
+    metadata = build_audit_api_metadata(
+        response,
+        maximum_web_search_calls=maximum_web_search_calls,
+    )
+    if metadata["output_item_limit_exceeded"]:
         print(
             "::warning title=Coverage audit web-search budget::"
             "Responses API вернул больше web_search_call, чем настроено: "
-            f"{web_search_calls}>{maximum_web_search_calls}. "
-            "Ответ завершён и пригоден, поэтому публикация продолжается.",
+            f"{metadata['web_search_call_items_total']}>"
+            f"{maximum_web_search_calls}. Ответ сохранён для диагностики; "
+            "пригодный короткий выпуск не блокируется.",
             file=sys.stderr,
+        )
+    if metadata["web_search_call_items_total"] < 1:
+        raise CoverageAuditResponseError(
+            "Coverage audit не вернул ни одного web_search_call",
+            metadata,
+        )
+    if getattr(response, "status", None) != "completed":
+        raise CoverageAuditResponseError(
+            f"Coverage audit не завершён: status={getattr(response, 'status', None)!r}",
+            metadata,
+        )
+    output_text = (getattr(response, "output_text", None) or "").strip()
+    if not output_text:
+        raise CoverageAuditResponseError(
+            "Coverage audit вернул пустой output_text",
+            metadata,
+        )
+    try:
+        payload = json.loads(output_text)
+    except json.JSONDecodeError as exc:
+        raise CoverageAuditResponseError(
+            f"Coverage audit вернул некорректный JSON: {exc}",
+            metadata,
+        ) from exc
+    if not isinstance(payload, dict):
+        raise CoverageAuditResponseError(
+            "Coverage audit должен вернуть JSON-объект",
+            metadata,
+        )
+    queries = payload.get("queries_used")
+    if not isinstance(queries, list) or not queries:
+        raise CoverageAuditResponseError(
+            "Coverage audit не заполнил queries_used",
+            metadata,
+        )
+    if len(queries) > maximum_web_search_calls:
+        raise CoverageAuditResponseError(
+            "queries_used превышает установленный лимит",
+            metadata,
         )
     return payload, metadata
 
@@ -306,7 +369,6 @@ def rerun_editorial(
     publication_date: str,
     merged_research_path: Path,
     minimum_total: int,
-    minimum_russia: int,
     maximum_candidates: int,
     maximum_selected_stories: int,
 ) -> None:
@@ -317,8 +379,6 @@ def rerun_editorial(
         publication_date,
         "--minimum-candidates",
         str(minimum_total),
-        "--minimum-russian-candidates",
-        str(minimum_russia),
         "--maximum-candidates",
         str(maximum_candidates),
         "--minimum-selected-stories",
@@ -388,14 +448,17 @@ SHORT_NOTICE_HTML = f"<p><em>{SHORT_NOTICE}</em></p>"
 LEGACY_SHORT_NOTICE = "День на новости выдался слабым - поэтому коротко"
 
 
-def completed_prior_audit(payload: Any) -> bool:
+def prior_audit_attempted(payload: Any) -> bool:
     if not isinstance(payload, dict):
         return False
     api = payload.get("api") or {}
-    return (
-        payload.get("web_search_performed") is True
-        and isinstance(api, dict)
-        and api.get("status") == "completed"
+    error = str(payload.get("error") or "")
+    return bool(
+        payload.get("web_search_requested") is True
+        or payload.get("web_search_performed") is True
+        or isinstance(api, dict)
+        and bool(api)
+        or "Coverage audit превысил лимит web search" in error
     )
 
 
@@ -428,7 +491,10 @@ def apply_short_edition_marker(artifact_dir: Path, *, short_edition: bool) -> No
     notes = [
         item
         for item in notes
-        if not (isinstance(item, dict) and item.get("type") == "low_news_volume")
+        if not (
+            isinstance(item, dict)
+            and item.get("type") in {"low_news_volume", "regional_gap"}
+        )
     ]
     if short_edition:
         article_html = SHORT_NOTICE_HTML + "\n" + article_html
@@ -460,22 +526,52 @@ def apply_short_edition_marker(artifact_dir: Path, *, short_edition: bool) -> No
             write_json(editorial_path, editorial)
 
 
+def snapshot_artifact(artifact_dir: Path) -> dict[Path, bytes]:
+    return {
+        path.relative_to(artifact_dir): path.read_bytes()
+        for path in artifact_dir.rglob("*")
+        if path.is_file()
+    }
+
+
+def restore_artifact(artifact_dir: Path, snapshot: dict[Path, bytes]) -> None:
+    if artifact_dir.exists():
+        shutil.rmtree(artifact_dir)
+    artifact_dir.mkdir(parents=True, exist_ok=True)
+    for relative_path, content in snapshot.items():
+        target = artifact_dir / relative_path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(content)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Довести итоговый выпуск до обязательного покрытия 5+2."
+        description=(
+            "Попытаться дополнить короткий выпуск без региональных квот и "
+            "сохранить публикацию, если найден хотя бы один достойный сюжет."
+        )
     )
     parser.add_argument("--artifact-dir", type=Path, required=True)
     parser.add_argument("--archive", type=Path, required=True)
     parser.add_argument("--publication-date", required=True)
     parser.add_argument("--model", required=True)
-    parser.add_argument("--minimum-total", type=int, default=7)
-    parser.add_argument("--minimum-world", type=int, default=5)
-    parser.add_argument("--minimum-russia", type=int, default=2)
+    parser.add_argument("--usual-total", type=int, default=7)
+    parser.add_argument("--minimum-publishable", type=int, default=1)
     parser.add_argument("--maximum-audit-web-search-calls", type=int, default=5)
     parser.add_argument("--maximum-candidates", type=int, default=20)
     parser.add_argument("--maximum-selected-stories", type=int, default=12)
     parser.add_argument("--report", type=Path, required=True)
     args = parser.parse_args()
+    if not (
+        1
+        <= args.minimum_publishable
+        <= args.usual_total
+        <= args.maximum_selected_stories
+    ):
+        parser.error(
+            "Требуется 1 <= minimum-publishable <= usual-total "
+            "<= maximum-selected-stories."
+        )
 
     prior_report: dict[str, Any] | None = None
     if args.report.is_file():
@@ -489,15 +585,18 @@ def main() -> int:
     report: dict[str, Any] = {
         "status": "running",
         "publication_date": args.publication_date,
-        "requirements": {
-            "total": args.minimum_total,
-            "world": args.minimum_world,
-            "russia": args.minimum_russia,
+        "targets": {
+            "usual_total": args.usual_total,
+            "minimum_publishable": args.minimum_publishable,
         },
+        "regional_story_quotas_enabled": False,
+        "audit_failure_blocks_publication": False,
         "maximum_audit_web_search_calls": args.maximum_audit_web_search_calls,
         "audit_needed": False,
+        "web_search_requested": False,
         "web_search_performed": False,
         "prior_audit_reused": False,
+        "audit_error": None,
         "publication_mode": None,
         "before": None,
         "after": None,
@@ -526,12 +625,20 @@ def main() -> int:
             raise RuntimeError("archive index должен содержать объект")
         stories, artifact_mode = load_initial_stories(args.artifact_dir, research)
         report["initial_artifact_mode"] = artifact_mode
+        initial_snapshot = (
+            snapshot_artifact(args.artifact_dir)
+            if artifact_mode == "complete"
+            else {}
+        )
 
         args.report.parent.mkdir(parents=True, exist_ok=True)
         for source_name, target_name in (
             ("run-info.json", "coverage-audit-initial-run-info.json"),
             ("candidates.json", "coverage-audit-initial-candidates.json"),
             ("stories.json", "coverage-audit-initial-stories.json"),
+            ("digest.json", "coverage-audit-initial-digest.json"),
+            ("meta.json", "coverage-audit-initial-meta.json"),
+            ("article.html", "coverage-audit-initial-article.html"),
             ("editorial-output.json", "coverage-audit-initial-editorial.json"),
             ("editorial-output-raw.json", "coverage-audit-initial-editorial-raw.json"),
         ):
@@ -541,91 +648,139 @@ def main() -> int:
 
         before = coverage_summary(
             stories,
-            minimum_total=args.minimum_total,
-            minimum_world=args.minimum_world,
-            minimum_russia=args.minimum_russia,
+            usual_total=args.usual_total,
+            minimum_publishable=args.minimum_publishable,
         )
         report["before"] = before
         report["candidate_pool_before"] = eligible_candidate_summary(
             research["candidates"]
         )
-        if before["valid"] and artifact_mode == "complete":
+        candidate_pool = report["candidate_pool_before"]
+
+        if (
+            artifact_mode == "complete"
+            and before["publication_allowed"]
+            and before["usual_target_met"]
+        ):
+            apply_short_edition_marker(args.artifact_dir, short_edition=False)
             report["status"] = "ok"
-            report["mode"] = "no_op"
+            report["mode"] = "existing_full_digest"
+            report["publication_mode"] = "full"
             report["after"] = before
-            report["candidate_pool_after"] = report["candidate_pool_before"]
+            report["candidate_pool_after"] = candidate_pool
             write_json(args.report, report)
             print(json.dumps(report, ensure_ascii=False, indent=2))
             return 0
 
-        report["audit_needed"] = True
-        candidate_pool = report["candidate_pool_before"]
-        pool_has_required_geography = (
-            candidate_pool["total"] >= args.minimum_total
-            and candidate_pool["world"] >= args.minimum_world
-            and candidate_pool["russia"] >= args.minimum_russia
-        )
+        report["audit_needed"] = candidate_pool["total"] < args.usual_total
         additional_candidates: list[Any] = []
-        prior_audit_complete = completed_prior_audit(prior_report)
-        if not pool_has_required_geography and not prior_audit_complete:
+        prior_attempted = prior_audit_attempted(prior_report)
+        if report["audit_needed"] and not prior_attempted:
             api_key = os.getenv("OPENAI_API_KEY", "").strip()
             if not api_key:
-                raise RuntimeError("OPENAI_API_KEY не задан для coverage audit")
-            template = PROMPT_PATH.read_text(encoding="utf-8")
-            search_window = research.get("search_window")
-            if not isinstance(search_window, dict):
-                raise RuntimeError("candidates.json не содержит search_window")
-            prompt = build_prompt(
-                template,
-                publication_date=args.publication_date,
-                search_window=search_window,
-                missing_world=max(0, args.minimum_world - candidate_pool["world"]),
-                missing_russia=max(0, args.minimum_russia - candidate_pool["russia"]),
-                maximum_web_search_calls=args.maximum_audit_web_search_calls,
-                existing_candidates=research["candidates"],
-                archive=archive,
-            )
-            prompt_path = args.report.parent / "coverage-audit-prompt.txt"
-            prompt_path.parent.mkdir(parents=True, exist_ok=True)
-            prompt_path.write_text(prompt.rstrip() + "\n", encoding="utf-8")
-            audit_payload, api_metadata = run_audit_request(
-                api_key=api_key,
-                model=args.model,
-                prompt=prompt,
-                maximum_web_search_calls=args.maximum_audit_web_search_calls,
-            )
-            report["web_search_performed"] = api_metadata["web_search_calls"] > 0
-            report["api"] = api_metadata
-            if api_metadata.get("budget_overrun"):
-                report["warnings"].append(
-                    "Responses API превысил настроенный счётчик web_search_call, "
-                    "но завершённый валидный audit был сохранён и использован."
+                report["audit_error"] = (
+                    "OPENAI_API_KEY не задан для необязательного coverage audit"
                 )
-            report["queries_used"] = audit_payload.get("queries_used", [])
-            report["audit_notes"] = audit_payload.get("notes")
-            if audit_payload.get("status") != "ok":
-                raise RuntimeError(
-                    "Coverage audit вернул status=error: "
-                    + str(audit_payload.get("error_message") or "причина не указана")
+            else:
+                template = PROMPT_PATH.read_text(encoding="utf-8")
+                search_window = research.get("search_window")
+                if not isinstance(search_window, dict):
+                    raise RuntimeError("candidates.json не содержит search_window")
+                prompt = build_prompt(
+                    template,
+                    publication_date=args.publication_date,
+                    search_window=search_window,
+                    missing_total=max(0, args.usual_total - candidate_pool["total"]),
+                    maximum_web_search_calls=args.maximum_audit_web_search_calls,
+                    existing_candidates=research["candidates"],
+                    archive=archive,
                 )
-            additional_candidates = audit_payload.get("candidates", [])
-            if not isinstance(additional_candidates, list):
-                raise RuntimeError("Coverage audit candidates должен быть массивом")
-        elif not pool_has_required_geography and prior_audit_complete:
-            report["audit_needed"] = True
+                prompt_path = args.report.parent / "coverage-audit-prompt.txt"
+                prompt_path.parent.mkdir(parents=True, exist_ok=True)
+                prompt_path.write_text(prompt.rstrip() + "\n", encoding="utf-8")
+                report["web_search_requested"] = True
+                try:
+                    audit_payload, api_metadata = run_audit_request(
+                        api_key=api_key,
+                        model=args.model,
+                        prompt=prompt,
+                        maximum_web_search_calls=(
+                            args.maximum_audit_web_search_calls
+                        ),
+                    )
+                except CoverageAuditResponseError as exc:
+                    report["api"] = exc.metadata
+                    report["web_search_performed"] = (
+                        exc.metadata.get("web_search_call_items_total", 0) > 0
+                    )
+                    report["audit_error"] = (
+                        f"{type(exc).__name__}: {exc}"
+                    )
+                except Exception as exc:
+                    report["audit_error"] = (
+                        f"{type(exc).__name__}: {exc}"
+                    )
+                else:
+                    report["api"] = api_metadata
+                    report["web_search_performed"] = (
+                        api_metadata.get("web_search_call_items_total", 0) > 0
+                    )
+                    report["queries_used"] = audit_payload.get("queries_used", [])
+                    report["audit_notes"] = audit_payload.get("notes")
+                    if (
+                        api_metadata.get("completed_call_limit_exceeded")
+                        or api_metadata.get("output_item_limit_exceeded")
+                    ):
+                        audit_warning = (
+                            "Ответ API содержит больше web_search_call items, "
+                            "чем настроенный max_tool_calls; результат сохранён "
+                            "для диагностики и не блокирует короткий выпуск."
+                        )
+                        report["audit_warning"] = audit_warning
+                        report["warnings"].append(audit_warning)
+                    if audit_payload.get("status") != "ok":
+                        report["audit_error"] = (
+                            "Coverage audit вернул status=error: "
+                            + str(
+                                audit_payload.get("error_message")
+                                or "причина не указана"
+                            )
+                        )
+                    else:
+                        raw_candidates = audit_payload.get("candidates", [])
+                        if isinstance(raw_candidates, list):
+                            additional_candidates = raw_candidates
+                        else:
+                            report["audit_error"] = (
+                                "Coverage audit candidates должен быть массивом"
+                            )
+        elif report["audit_needed"] and prior_attempted:
             report["prior_audit_reused"] = True
+            report["web_search_requested"] = True
+            report["web_search_performed"] = bool(
+                (prior_report or {}).get("web_search_performed")
+                or (prior_report or {}).get("api")
+                or "Coverage audit превысил лимит web search"
+                in str((prior_report or {}).get("error") or "")
+            )
             report["api"] = prior_report.get("api") if prior_report else None
             report["queries_used"] = (prior_report or {}).get("queries_used", [])
             report["audit_notes"] = (
-                "Использован уже завершённый targeted audit из recovery artifact; "
-                "повторный web search не выполнялся."
+                "Использован отчёт уже выполненной попытки coverage audit из "
+                "recovery artifact; повторный web search не выполнялся."
             )
+            report["prior_audit_error"] = (prior_report or {}).get("error")
 
-        merged, accepted, rejected = merge_candidates(
-            research,
-            additional_candidates,
-            maximum_candidates=args.maximum_candidates,
-        )
+        if additional_candidates:
+            merged, accepted, rejected = merge_candidates(
+                research,
+                additional_candidates,
+                maximum_candidates=args.maximum_candidates,
+            )
+        else:
+            merged = copy.deepcopy(research)
+            accepted = []
+            rejected = []
         report["accepted_candidates"] = [
             {
                 "title": item.get("title"),
@@ -637,16 +792,41 @@ def main() -> int:
         report["rejected_candidates"] = rejected
         report["candidate_pool_after"] = eligible_candidate_summary(merged["candidates"])
         pool_after = report["candidate_pool_after"]
-        if pool_after["total"] < 1:
+        if pool_after["total"] < args.minimum_publishable:
             raise RuntimeError(
-                "После основного и targeted поиска не осталось ни одного достойного сюжета"
+                "После основного и дополнительного поиска не осталось ни одного "
+                "достойного сюжета"
             )
-        full_pool_available = (
-            pool_after["total"] >= args.minimum_total
-            and pool_after["world"] >= args.minimum_world
-            and pool_after["russia"] >= args.minimum_russia
+        report["short_edition_candidate"] = (
+            pool_after["total"] < args.usual_total
         )
-        report["short_edition_candidate"] = not full_pool_available
+
+        if (
+            artifact_mode == "complete"
+            and before["publication_allowed"]
+            and not accepted
+        ):
+            short_edition = bool(before["short_digest"])
+            apply_short_edition_marker(
+                args.artifact_dir,
+                short_edition=short_edition,
+            )
+            report["after"] = before
+            report["publication_mode"] = (
+                "short" if short_edition else "full"
+            )
+            report["status"] = "ok"
+            if report["prior_audit_reused"]:
+                report["mode"] = "existing_short_digest_after_reused_audit"
+            elif report["audit_needed"]:
+                report["mode"] = (
+                    "existing_short_digest_after_best_effort_audit"
+                )
+            else:
+                report["mode"] = "existing_short_digest"
+            write_json(args.report, report)
+            print(json.dumps(report, ensure_ascii=False, indent=2))
+            return 0
 
         RUNTIME_RESEARCH_ROOT.mkdir(parents=True, exist_ok=True)
         PERSISTED_RESEARCH_ROOT.mkdir(parents=True, exist_ok=True)
@@ -656,32 +836,69 @@ def main() -> int:
         report["persisted_research_path"] = str(persisted_research_path)
         # Backward-compatible report key now points to the durable artifact copy.
         report["merged_research_path"] = str(persisted_research_path)
-        rerun_editorial(
-            publication_date=args.publication_date,
-            merged_research_path=runtime_research_path,
-            minimum_total=args.minimum_total,
-            minimum_russia=args.minimum_russia,
-            maximum_candidates=args.maximum_candidates,
-            maximum_selected_stories=args.maximum_selected_stories,
-        )
+        try:
+            rerun_editorial(
+                publication_date=args.publication_date,
+                merged_research_path=runtime_research_path,
+                minimum_total=args.usual_total,
+                maximum_candidates=args.maximum_candidates,
+                maximum_selected_stories=args.maximum_selected_stories,
+            )
+        except Exception as exc:
+            if initial_snapshot and before["publication_allowed"]:
+                restore_artifact(args.artifact_dir, initial_snapshot)
+                short_edition = bool(before["short_digest"])
+                apply_short_edition_marker(
+                    args.artifact_dir,
+                    short_edition=short_edition,
+                )
+                report["editorial_repair_error"] = (
+                    f"{type(exc).__name__}: {exc}"
+                )
+                report["after"] = before
+                report["publication_mode"] = (
+                    "short" if short_edition else "full"
+                )
+                report["status"] = "ok"
+                report["mode"] = (
+                    "existing_digest_after_editorial_repair_error"
+                )
+                write_json(args.report, report)
+                print(json.dumps(report, ensure_ascii=False, indent=2))
+                return 0
+            raise
         rerun_stories = read_json(args.artifact_dir / "stories.json")
         if not isinstance(rerun_stories, list):
             raise RuntimeError("После editorial rerun stories.json должен быть массивом")
         after = coverage_summary(
             rerun_stories,
-            minimum_total=args.minimum_total,
-            minimum_world=args.minimum_world,
-            minimum_russia=args.minimum_russia,
+            usual_total=args.usual_total,
+            minimum_publishable=args.minimum_publishable,
         )
         report["after"] = after
-        if after["counts"]["total"] < 1:
+        if not after["publication_allowed"]:
+            if initial_snapshot and before["publication_allowed"]:
+                restore_artifact(args.artifact_dir, initial_snapshot)
+                apply_short_edition_marker(
+                    args.artifact_dir,
+                    short_edition=bool(before["short_digest"]),
+                )
+                report["after"] = before
+                report["publication_mode"] = (
+                    "short" if before["short_digest"] else "full"
+                )
+                report["status"] = "ok"
+                report["mode"] = "existing_digest_after_empty_editorial_rerun"
+                write_json(args.report, report)
+                print(json.dumps(report, ensure_ascii=False, indent=2))
+                return 0
             raise RuntimeError("Редакторский повтор не выбрал ни одного достойного сюжета")
-        short_edition = not after["valid"]
+        short_edition = bool(after["short_digest"])
         apply_short_edition_marker(args.artifact_dir, short_edition=short_edition)
         report["publication_mode"] = "short" if short_edition else "full"
         report["status"] = "ok"
         if report["prior_audit_reused"]:
-            report["mode"] = "reused_completed_audit_and_editorial_rerun"
+            report["mode"] = "reused_prior_audit_and_editorial_rerun"
         elif report["web_search_performed"]:
             report["mode"] = "targeted_web_search_and_editorial_rerun"
         else:

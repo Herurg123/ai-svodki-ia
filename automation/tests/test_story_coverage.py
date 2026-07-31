@@ -67,21 +67,33 @@ def candidate(
 
 
 class StoryCoverageTests(unittest.TestCase):
-    def test_exact_five_world_two_russia_passes(self) -> None:
-        result = coverage.coverage_summary(
-            [story("world") for _ in range(5)]
-            + [story("russia") for _ in range(2)]
-        )
-        self.assertTrue(result["valid"])
-        self.assertEqual(result["counts"], {"total": 7, "world": 5, "russia": 2, "unknown": 0})
-
-    def test_six_world_one_russia_fails(self) -> None:
+    def test_seven_stories_are_full_regardless_of_regional_mix(self) -> None:
         result = coverage.coverage_summary(
             [story("world") for _ in range(6)] + [story("russia")]
         )
+        self.assertTrue(result["valid"])
+        self.assertTrue(result["usual_target_met"])
+        self.assertFalse(result["short_digest"])
+        self.assertEqual(
+            result["counts"],
+            {"total": 7, "world": 6, "russia": 1, "unknown": 0},
+        )
+
+    def test_two_world_stories_are_a_publishable_short_digest(self) -> None:
+        result = coverage.coverage_summary(
+            [story("world"), story("world")]
+        )
+        self.assertTrue(result["valid"])
+        self.assertTrue(result["publication_allowed"])
+        self.assertTrue(result["short_digest"])
+        self.assertEqual(result["missing_to_usual"], 5)
+        self.assertEqual(result["counts"]["russia"], 0)
+
+    def test_empty_digest_is_not_publishable(self) -> None:
+        result = coverage.coverage_summary([])
         self.assertFalse(result["valid"])
-        self.assertEqual(result["missing"]["russia"], 1)
-        self.assertEqual(result["missing"]["total"], 0)
+        self.assertFalse(result["publication_allowed"])
+        self.assertEqual(result["status"], "empty")
 
     def test_merge_deduplicates_tracking_variants_and_rejects_old_date(self) -> None:
         base_candidate = candidate(
@@ -137,25 +149,24 @@ class StoryCoverageTests(unittest.TestCase):
     def test_prompt_is_targeted_and_bounded(self) -> None:
         prompt = audit.build_prompt(
             "{{PUBLICATION_DATE}}|{{SEARCH_WINDOW_START_AT}}|{{SEARCH_WINDOW_END_AT}}|"
-            "{{MISSING_WORLD}}|{{MISSING_RUSSIA}}|{{MAX_WEB_SEARCH_CALLS}}|"
+            "{{MISSING_TOTAL}}|{{MAX_WEB_SEARCH_CALLS}}|"
             "{{EXISTING_CANDIDATES}}|{{ARCHIVE_INDEX}}",
             publication_date="2026-07-25",
             search_window={
                 "start_at": "2026-07-24T06:00:00+03:00",
                 "end_at": "2026-07-25T06:00:00+03:00",
             },
-            missing_world=1,
-            missing_russia=2,
+            missing_total=5,
             maximum_web_search_calls=5,
             existing_candidates=[{"title": "Existing"}],
             archive={"items": [{"date": "2026-07-24", "title": "Archive"}]},
         )
         self.assertIn("2026-07-25", prompt)
-        self.assertIn("|1|2|5|", prompt)
+        self.assertIn("|5|5|", prompt)
         self.assertIn("Existing", prompt)
         self.assertIn("Archive", prompt)
 
-    def test_final_validator_returns_error_before_image_for_six_plus_one(self) -> None:
+    def test_final_validator_accepts_seven_with_one_russian_story(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             artifact = root / "artifact"
@@ -163,6 +174,16 @@ class StoryCoverageTests(unittest.TestCase):
             (artifact / "stories.json").write_text(
                 json.dumps(
                     [story("world") for _ in range(6)] + [story("russia")],
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            (artifact / "digest.json").write_text(
+                json.dumps(
+                    {
+                        "short_digest": False,
+                        "article_html": "<p>Обычный выпуск.</p>",
+                    },
                     ensure_ascii=False,
                 ),
                 encoding="utf-8",
@@ -175,12 +196,10 @@ class StoryCoverageTests(unittest.TestCase):
                     str(SCRIPTS / "validate_story_coverage.py"),
                     "--artifact-dir",
                     str(artifact),
-                    "--minimum-total",
+                    "--usual-total",
                     "7",
-                    "--minimum-world",
-                    "5",
-                    "--minimum-russia",
-                    "2",
+                    "--minimum-publishable",
+                    "1",
                     "--report",
                     str(report),
                 ],
@@ -188,13 +207,102 @@ class StoryCoverageTests(unittest.TestCase):
                 stderr=subprocess.PIPE,
                 text=True,
             )
-            self.assertEqual(completed.returncode, 1)
+            self.assertEqual(completed.returncode, 0, completed.stderr)
             payload = json.loads(report.read_text(encoding="utf-8"))
-            self.assertEqual(payload["status"], "error")
+            self.assertEqual(payload["status"], "ok")
             self.assertEqual(payload["counts"]["russia"], 1)
+
+    def test_final_validator_accepts_short_digest_without_regional_sections(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            artifact = root / "artifact"
+            artifact.mkdir()
+            (artifact / "stories.json").write_text(
+                json.dumps(
+                    [story("world"), story("world")],
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            (artifact / "digest.json").write_text(
+                json.dumps(
+                    {
+                        "short_digest": True,
+                        "article_html": (
+                            "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+                            "<p>Короткий выпуск.</p>"
+                        ),
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            report = root / "report.json"
+            import subprocess
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(SCRIPTS / "validate_story_coverage.py"),
+                    "--artifact-dir",
+                    str(artifact),
+                    "--usual-total",
+                    "7",
+                    "--minimum-publishable",
+                    "1",
+                    "--report",
+                    str(report),
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            payload = json.loads(report.read_text(encoding="utf-8"))
+            self.assertEqual(payload["publication_mode"], "short")
+            self.assertEqual(payload["counts"]["russia"], 0)
 
 
 class CoverageAuditExecutionTests(unittest.TestCase):
+    def test_audit_metadata_separates_completed_calls_from_output_items(
+        self,
+    ) -> None:
+        items = [
+            types.SimpleNamespace(
+                type="web_search_call",
+                id=f"ws_{index}",
+                status="completed" if index < 5 else "failed",
+            )
+            for index in range(6)
+        ]
+        response = types.SimpleNamespace(
+            id="resp_mixed",
+            status="completed",
+            model="gpt-5.6-terra",
+            output=items,
+            usage={"input_tokens": 1, "output_tokens": 1},
+            error=None,
+            incomplete_details=None,
+        )
+
+        metadata = audit.build_audit_api_metadata(
+            response,
+            maximum_web_search_calls=5,
+        )
+
+        self.assertEqual(metadata["web_search_calls_completed"], 5)
+        self.assertEqual(metadata["web_search_call_items_total"], 6)
+        self.assertEqual(metadata["configured_web_search_limit"], 5)
+        self.assertEqual(metadata["observed_web_search_calls"], 6)
+        self.assertTrue(metadata["budget_overrun"])
+        self.assertFalse(metadata["completed_call_limit_exceeded"])
+        self.assertTrue(metadata["output_item_limit_exceeded"])
+        self.assertEqual(
+            metadata["web_search_call_statuses"],
+            {"completed": 5, "failed": 1},
+        )
+
     def test_complete_artifact_is_noop_without_openai(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -235,6 +343,17 @@ class CoverageAuditExecutionTests(unittest.TestCase):
                 json.dumps(research, ensure_ascii=False), encoding="utf-8"
             )
             (artifact / "run-info.json").write_text("{}", encoding="utf-8")
+            (artifact / "digest.json").write_text(
+                json.dumps(
+                    {
+                        "short_digest": False,
+                        "article_html": "<p>Обычный выпуск.</p>",
+                        "editorial_notes": [],
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
             archive = root / "archive.json"
             archive.write_text('{"items": []}', encoding="utf-8")
             report = root / "coverage-audit.json"
@@ -256,14 +375,139 @@ class CoverageAuditExecutionTests(unittest.TestCase):
             ):
                 self.assertEqual(audit.main(), 0)
             payload = json.loads(report.read_text(encoding="utf-8"))
-            self.assertEqual(payload["mode"], "no_op")
+            self.assertEqual(payload["mode"], "existing_full_digest")
             self.assertFalse(payload["web_search_performed"])
+
+    def test_legacy_six_over_five_report_reuses_two_story_digest(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            artifact = root / "artifact"
+            artifact.mkdir()
+            stories = [story("world"), story("world")]
+            (artifact / "stories.json").write_text(
+                json.dumps(stories, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            candidates = []
+            for index in range(2):
+                item = candidate(
+                    geography="world",
+                    url=f"https://example.com/world-{index}",
+                    title=f"World {index}",
+                )
+                item["id"] = f"cand-{index + 1:03d}"
+                candidates.append(item)
+            research = {
+                "status": "ok",
+                "candidates": candidates,
+                "search_window": {
+                    "start_at": "2026-07-30T06:00:00+03:00",
+                    "end_at": "2026-07-31T06:00:00+03:00",
+                    "start_date": "2026-07-30",
+                    "end_date": "2026-07-31",
+                },
+            }
+            (artifact / "candidates.json").write_text(
+                json.dumps(research, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            (artifact / "run-info.json").write_text("{}", encoding="utf-8")
+            (artifact / "digest.json").write_text(
+                json.dumps(
+                    {
+                        "short_digest": True,
+                        "article_html": (
+                            "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+                            "<p>Два достойных сюжета.</p>"
+                        ),
+                        "editorial_notes": [
+                            {
+                                "type": "regional_gap",
+                                "area": "russian_ai",
+                                "message": (
+                                    "Legacy: выбрано 0 российских сюжетов "
+                                    "при цели 2."
+                                ),
+                            }
+                        ],
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            archive = root / "archive.json"
+            archive.write_text('{"items": []}', encoding="utf-8")
+            report = root / "coverage-audit.json"
+            report.write_text(
+                json.dumps(
+                    {
+                        "status": "error",
+                        "publication_date": "2026-07-31",
+                        "web_search_performed": False,
+                        "api": None,
+                        "error": (
+                            "RuntimeError: Coverage audit превысил лимит "
+                            "web search: 6>5"
+                        ),
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            argv = [
+                "ensure_story_coverage.py",
+                "--artifact-dir",
+                str(artifact),
+                "--archive",
+                str(archive),
+                "--publication-date",
+                "2026-07-31",
+                "--model",
+                "gpt-5.6-terra",
+                "--report",
+                str(report),
+            ]
+            with mock.patch.object(sys, "argv", argv), mock.patch.object(
+                audit,
+                "run_audit_request",
+                side_effect=AssertionError("paid audit must not repeat"),
+            ):
+                self.assertEqual(audit.main(), 0)
+
+            payload = json.loads(report.read_text(encoding="utf-8"))
+            self.assertEqual(
+                payload["mode"],
+                "existing_short_digest_after_reused_audit",
+            )
+            self.assertTrue(payload["prior_audit_reused"])
+            self.assertEqual(payload["publication_mode"], "short")
+            digest = json.loads(
+                (artifact / "digest.json").read_text(encoding="utf-8")
+            )
+            self.assertTrue(digest["short_digest"])
+            self.assertTrue(
+                digest["article_html"].startswith(
+                    "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+                )
+            )
+            self.assertNotIn(
+                "regional_gap",
+                {
+                    item.get("type")
+                    for item in digest["editorial_notes"]
+                    if isinstance(item, dict)
+                },
+            )
 
     def test_api_request_has_hard_tool_call_cap(self) -> None:
         captured: dict[str, object] = {}
 
         class Item:
             type = "web_search_call"
+
+            def __init__(self, index: int) -> None:
+                self.id = f"ws_{index}"
+                self.status = "completed"
 
         class Response:
             status = "completed"
@@ -279,7 +523,10 @@ class CoverageAuditExecutionTests(unittest.TestCase):
                 },
                 ensure_ascii=False,
             )
-            output = [Item()]
+            # Reproduces run 30602601828: the response contains six completed
+            # items even though max_tool_calls=5. The useful payload must not
+            # be discarded.
+            output = [Item(index) for index in range(6)]
             id = "resp_test"
             model = "gpt-5.6-terra"
             usage = {"input_tokens": 1, "output_tokens": 1}
@@ -306,85 +553,53 @@ class CoverageAuditExecutionTests(unittest.TestCase):
         self.assertEqual(captured["max_tool_calls"], 5)
         self.assertEqual(captured["tool_choice"], "required")
         self.assertFalse(captured["store"])
-        self.assertEqual(metadata["web_search_calls"], 1)
-        self.assertFalse(metadata["budget_overrun"])
-        self.assertEqual(payload["status"], "ok")
-
-    def test_completed_response_survives_observed_tool_call_overrun(self) -> None:
-        captured: dict[str, object] = {}
-
-        class Item:
-            type = "web_search_call"
-
-        class Response:
-            status = "completed"
-            output_text = json.dumps(
-                {
-                    "status": "ok",
-                    "error_message": None,
-                    "queries_used": [
-                        {"area": "russia", "query": "q", "purpose": "p"}
-                    ],
-                    "candidates": [],
-                    "notes": "Новых достойных кандидатов нет",
-                },
-                ensure_ascii=False,
-            )
-            output = [Item() for _ in range(6)]
-            id = "resp_overrun"
-            model = "gpt-5.6-terra"
-            usage = {"input_tokens": 2, "output_tokens": 1}
-
-        class Responses:
-            def create(self, **kwargs):
-                captured.update(kwargs)
-                return Response()
-
-        class FakeOpenAI:
-            def __init__(self, **kwargs):
-                captured["client"] = kwargs
-                self.responses = Responses()
-
-        fake_module = types.ModuleType("openai")
-        fake_module.OpenAI = FakeOpenAI
-        with mock.patch.dict(sys.modules, {"openai": fake_module}):
-            payload, metadata = audit.run_audit_request(
-                api_key="secret",
-                model="gpt-5.6-terra",
-                prompt="targeted",
-                maximum_web_search_calls=5,
-            )
-        self.assertEqual(captured["max_tool_calls"], 5)
-        self.assertEqual(payload["status"], "ok")
+        self.assertEqual(metadata["web_search_calls"], 6)
         self.assertEqual(metadata["configured_web_search_limit"], 5)
         self.assertEqual(metadata["observed_web_search_calls"], 6)
-        self.assertEqual(metadata["web_search_calls"], 6)
         self.assertTrue(metadata["budget_overrun"])
+        self.assertTrue(metadata["completed_call_limit_exceeded"])
+        self.assertEqual(metadata["configured_max_tool_calls"], 5)
+        self.assertEqual(payload["status"], "ok")
 
 
 class ConfigurationContractTests(unittest.TestCase):
-    def test_config_contains_hard_5_plus_2_contract(self) -> None:
+    def test_config_contains_non_blocking_short_digest_contract(self) -> None:
         config = json.loads(
             (ROOT / "automation/config/production-daily.json").read_text(encoding="utf-8")
         )
         self.assertEqual(config["minimum_selected_stories"], 7)
-        self.assertEqual(config["minimum_world_selected_stories"], 5)
-        self.assertEqual(config["minimum_russian_selected_stories"], 2)
+        self.assertEqual(config["minimum_publishable_stories"], 1)
+        self.assertFalse(config["regional_story_quotas_enabled"])
+        self.assertFalse(config["coverage_audit_failure_blocks_publication"])
+        self.assertNotIn("minimum_world_selected_stories", config)
+        self.assertNotIn("minimum_russian_selected_stories", config)
         self.assertTrue(config["coverage_audit_enabled"])
         self.assertEqual(config["coverage_audit_max_web_search_calls"], 5)
         editorial = json.loads(
             (ROOT / "automation/config/editorial.json").read_text(encoding="utf-8")
         )
         self.assertEqual(editorial["story_counts"]["total_target_minimum"], 7)
-        self.assertEqual(editorial["story_counts"]["world_target_minimum"], 5)
-        self.assertEqual(editorial["story_counts"]["russian_target_minimum"], 2)
+        self.assertFalse(
+            editorial["story_counts"]["regional_story_quotas_enabled"]
+        )
+        self.assertNotIn("world_target_minimum", editorial["story_counts"])
+        self.assertNotIn("russian_target_minimum", editorial["story_counts"])
 
     def test_prompts_describe_final_contract(self) -> None:
         editorial = (ROOT / "automation/prompts/daily_digest.md").read_text(encoding="utf-8")
         research = (ROOT / "automation/prompts/research_candidates.md").read_text(encoding="utf-8")
-        self.assertIn("минимум 5 мировых", editorial)
-        self.assertIn("минимум 2 российских", editorial)
-        self.assertIn("5 мировых и 2 российских", research)
+        self.assertIn(
+            "Числовых квот для китайских и российских новостей нет",
+            editorial,
+        )
+        self.assertIn(
+            "отсутствие дополнений не является ошибкой",
+            editorial,
+        )
+        self.assertIn(
+            "Числовых квот для китайских и российских",
+            research,
+        )
 
 
 if __name__ == "__main__":
