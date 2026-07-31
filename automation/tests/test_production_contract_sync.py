@@ -26,8 +26,11 @@ class ProductionContractSyncTests(unittest.TestCase):
         self.assertEqual(production["schedule_crons_utc"], EXPECTED_CRONS)
         self.assertEqual(production["schedule_cron_utc"], EXPECTED_CRONS[0])
         self.assertEqual(production["minimum_selected_stories"], 7)
-        self.assertEqual(production["minimum_world_selected_stories"], 5)
-        self.assertEqual(production["minimum_russian_selected_stories"], 2)
+        self.assertEqual(production["minimum_publishable_stories"], 1)
+        self.assertFalse(production["regional_story_quotas_enabled"])
+        self.assertFalse(
+            production["coverage_audit_failure_blocks_publication"]
+        )
         self.assertTrue(production["coverage_audit_enabled"])
         self.assertEqual(production["coverage_audit_max_web_search_calls"], 5)
         self.assertEqual(
@@ -35,19 +38,28 @@ class ProductionContractSyncTests(unittest.TestCase):
             0,
             "32-day retention must be allowed to remove every legacy item",
         )
-        # Six remains the legacy editorial "short digest" boundary. Production
-        # publication is independently and strictly gated at 7 = 5 world + 2 Russia.
+        # Seven is the ordinary-volume boundary; one worthy story is enough
+        # to publish and regional sections never have numeric quotas.
         self.assertEqual(editorial["story_counts"]["total_target_minimum"], 7)
-        self.assertEqual(editorial["story_counts"]["world_target_minimum"], 5)
-        self.assertEqual(editorial["story_counts"]["russian_target_minimum"], 2)
+        self.assertEqual(editorial["story_counts"]["short_digest_minimum"], 1)
+        self.assertFalse(
+            editorial["story_counts"]["regional_story_quotas_enabled"]
+        )
+        self.assertTrue(editorial["article"]["allow_missing_china_section"])
+        self.assertTrue(editorial["article"]["allow_missing_russian_section"])
         self.assertEqual(workflow.count("cron:"), 3)
         for cron in EXPECTED_CRONS:
             self.assertEqual(workflow.count(f'cron: "{cron}"'), 1)
-        self.assertIn("Enforce 5 world plus 2 Russian stories", workflow)
-        self.assertIn("Validate final story coverage", workflow)
-        self.assertIn("--minimum-total 7", workflow)
-        self.assertIn("--minimum-world 5", workflow)
-        self.assertIn("--minimum-russia 2", workflow)
+        self.assertIn("Supplement a short digest when possible", workflow)
+        self.assertIn(
+            "Validate publishable story count and short digest marker",
+            workflow,
+        )
+        self.assertIn("--usual-total 7", workflow)
+        self.assertIn("--minimum-publishable 1", workflow)
+        self.assertNotIn("--minimum-world", workflow)
+        self.assertNotIn("--minimum-russia", workflow)
+        self.assertNotIn("--minimum-russian-candidates", workflow)
         self.assertIn("--maximum-audit-web-search-calls 5", workflow)
         self.assertIn(
             "Reuse completed editorial stop without paid APIs", workflow
@@ -99,9 +111,10 @@ class ProductionContractSyncTests(unittest.TestCase):
             self.assertEqual(
                 payload["story_coverage_contract"],
                 {
-                    "minimum_total": 7,
-                    "minimum_world": 5,
-                    "minimum_russia": 2,
+                    "usual_total": 7,
+                    "minimum_publishable": 1,
+                    "regional_story_quotas_enabled": False,
+                    "audit_failure_blocks_publication": False,
                     "audit_max_web_search_calls": 5,
                 },
             )

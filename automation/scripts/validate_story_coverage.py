@@ -7,71 +7,84 @@ from pathlib import Path
 from story_coverage import coverage_summary, read_json, write_json
 
 
+SHORT_NOTICE_HTML = "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Проверить состав итоговой ИИ-сводки и разрешённый короткий выпуск."
+        description=(
+            "Проверить, что выпуск содержит хотя бы один сюжет и корректно "
+            "помечен как обычный или короткий."
+        )
     )
     parser.add_argument("--artifact-dir", type=Path, required=True)
-    parser.add_argument("--minimum-total", type=int, default=7)
-    parser.add_argument("--minimum-world", type=int, default=5)
-    parser.add_argument("--minimum-russia", type=int, default=2)
-    parser.add_argument("--audit-report", type=Path)
-    parser.add_argument("--allow-short-after-audit", action="store_true")
+    parser.add_argument("--usual-total", type=int, default=7)
+    parser.add_argument("--minimum-publishable", type=int, default=1)
     parser.add_argument("--report", type=Path, required=True)
     args = parser.parse_args()
 
+    errors: list[str] = []
     stories = read_json(args.artifact_dir / "stories.json")
     if not isinstance(stories, list):
-        report = {"status": "error", "errors": ["stories.json должен содержать массив"]}
+        report = {
+            "status": "error",
+            "valid": False,
+            "errors": ["stories.json должен содержать массив"],
+        }
         write_json(args.report, report)
         print(json.dumps(report, ensure_ascii=False, indent=2))
         return 1
 
     report = coverage_summary(
         stories,
-        minimum_total=args.minimum_total,
-        minimum_world=args.minimum_world,
-        minimum_russia=args.minimum_russia,
+        usual_total=args.usual_total,
+        minimum_publishable=args.minimum_publishable,
     )
     report["artifact_dir"] = args.artifact_dir.as_posix()
-    report["publication_mode"] = "full" if report["valid"] else "short"
-
-    if report["valid"]:
-        write_json(args.report, report)
-        print(json.dumps(report, ensure_ascii=False, indent=2))
-        return 0
-
-    audit = None
-    audit_path = args.audit_report or Path("automation/preview/production-daily/coverage-audit.json")
-    if audit_path.is_file():
-        audit = read_json(audit_path)
-    short_allowed = (
-        len(stories) > 0
-        and isinstance(audit, dict)
-        and audit.get("status") == "ok"
-        and audit.get("publication_mode") == "short"
+    report["publication_mode"] = (
+        "full"
+        if report["usual_target_met"]
+        else ("short" if report["publication_allowed"] else "empty")
     )
-    if short_allowed:
-        report["status"] = "ok"
-        report["valid"] = True
-        report["coverage_target_met"] = False
-        report["warning"] = (
-            "После основного и дополнительного поиска опубликован короткий выпуск."
-        )
-        write_json(args.report, report)
-        print(json.dumps(report, ensure_ascii=False, indent=2))
-        return 0
 
-    report["errors"] = [
-        "Итоговый выпуск не выполняет обычный минимум и не подтверждён как короткий: "
-        f"всего {report['counts']['total']}/{args.minimum_total}, "
-        f"мировых {report['counts']['world']}/{args.minimum_world}, "
-        f"российских {report['counts']['russia']}/{args.minimum_russia}."
-    ]
-    report["status"] = "error"
+    if not report["publication_allowed"]:
+        errors.append(
+            "После проверки не осталось ни одного достойного сюжета; "
+            "пустой выпуск публиковать нельзя."
+        )
+    else:
+        digest = read_json(args.artifact_dir / "digest.json")
+        if not isinstance(digest, dict):
+            errors.append("digest.json должен содержать объект")
+        else:
+            expected_short = bool(report["short_digest"])
+            actual_short = digest.get("short_digest")
+            article_html = str(digest.get("article_html", "")).lstrip()
+            if actual_short is not expected_short:
+                errors.append(
+                    "short_digest не соответствует числу сюжетов: "
+                    f"ожидалось {expected_short}, получено {actual_short!r}."
+                )
+            if expected_short and not article_html.startswith(SHORT_NOTICE_HTML):
+                errors.append(
+                    "Короткий выпуск должен начинаться с точной курсивной "
+                    "пометки о меньшем числе новостей."
+                )
+            if not expected_short and article_html.startswith(SHORT_NOTICE_HTML):
+                errors.append(
+                    "Обычный выпуск не должен содержать пометку короткого выпуска."
+                )
+
+    report["errors"] = errors
+    report["valid"] = not errors
+    report["status"] = "ok" if not errors else "error"
+    if report["publication_mode"] == "short" and not errors:
+        report["warning"] = (
+            "Опубликован короткий выпуск; региональные квоты не применяются."
+        )
     write_json(args.report, report)
     print(json.dumps(report, ensure_ascii=False, indent=2))
-    return 1
+    return 0 if not errors else 1
 
 
 if __name__ == "__main__":

@@ -267,16 +267,31 @@ def restore_merged_coverage_research(
         }
     return None
 
-def restore_completed_coverage_audit(
+def coverage_audit_was_attempted(payload: dict[str, Any]) -> bool:
+    api = payload.get("api")
+    error = str(payload.get("error") or "")
+    return bool(
+        payload.get("web_search_requested") is True
+        or payload.get("web_search_performed") is True
+        or isinstance(api, dict)
+        and bool(api)
+        or "Coverage audit превысил лимит web search" in error
+    )
+
+
+def restore_prior_coverage_audit(
     recovery_root: Path,
     report_path: Path,
     publication_date: str,
 ) -> dict[str, Any] | None:
-    """Restore a completed paid coverage audit beside the recovery report.
+    """Restore evidence of a prior paid coverage-audit attempt.
 
     ensure_story_coverage.py reads this exact path before deciding whether a
-    targeted web search is needed. Restoring the report prevents a manual
-    recovery run from paying for the same completed audit twice.
+    targeted web search is needed. This also recognizes the legacy 6>5 error
+    from 2026-07-31, whose report incorrectly recorded
+    web_search_performed=false even though the paid response had arrived.
+    Restoring the report prevents recovery from paying for the same attempt
+    twice.
     """
 
     target = report_path.parent / "coverage-audit.json"
@@ -292,18 +307,37 @@ def restore_completed_coverage_audit(
             continue
         if payload.get("publication_date") != publication_date:
             continue
+        if not coverage_audit_was_attempted(payload):
+            continue
         api = payload.get("api")
-        if payload.get("web_search_performed") is not True:
-            continue
-        if not isinstance(api, dict) or api.get("status") != "completed":
-            continue
         write_json(target, payload)
         return {
             "source": str(path),
             "target": str(target),
-            "web_search_calls": api.get("web_search_calls"),
+            "status": payload.get("status"),
+            "web_search_calls": (
+                api.get("web_search_calls") if isinstance(api, dict) else None
+            ),
+            "legacy_limit_error": (
+                "Coverage audit превысил лимит web search"
+                in str(payload.get("error") or "")
+            ),
         }
     return None
+
+
+def restore_completed_coverage_audit(
+    recovery_root: Path,
+    report_path: Path,
+    publication_date: str,
+) -> dict[str, Any] | None:
+    """Backward-compatible alias for older callers and tests."""
+
+    return restore_prior_coverage_audit(
+        recovery_root,
+        report_path,
+        publication_date,
+    )
 
 
 def sha256_file(path: Path) -> str:
@@ -422,7 +456,7 @@ def recover(
         target_dir,
         publication_date,
     )
-    completed_coverage_audit = restore_completed_coverage_audit(
+    prior_coverage_audit = restore_prior_coverage_audit(
         recovery_root,
         report_path,
         publication_date,
@@ -450,7 +484,9 @@ def recover(
         "target_dir": str(target_dir),
         "removed_stage_files": removed,
         "merged_coverage_research": merged_research,
-        "completed_coverage_audit": completed_coverage_audit,
+        "prior_coverage_audit": prior_coverage_audit,
+        # Kept for compatibility with older recovery-report consumers.
+        "completed_coverage_audit": prior_coverage_audit,
         "image_recovered": recovered_image is not None,
         "recovered_image": recovered_image,
         "image_candidates": image_diagnostics,

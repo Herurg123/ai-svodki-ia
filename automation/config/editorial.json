@@ -1,16 +1,13 @@
 {
-  "spec_version": "2026-07-24",
+  "spec_version": "2026-07-31",
   "language": "ru",
   "timezone": "Europe/Moscow",
   "story_counts": {
     "total_target_minimum": 7,
     "total_target_maximum": 12,
-    "world_target_minimum": 5,
-    "world_target_maximum": 8,
-    "russian_target_minimum": 2,
-    "russian_target_maximum": 5,
     "short_digest_minimum": 1,
     "zero_stories_status": "error",
+    "regional_story_quotas_enabled": false,
     "short_digest_notice": "Новостей сегодня меньше, чем обычно",
     "short_digest_notice_html": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
   },
@@ -155,7 +152,6 @@
       "source_gap",
       "low_news_volume",
       "time_precision",
-      "regional_gap",
       "diversity_override"
     ]
   },

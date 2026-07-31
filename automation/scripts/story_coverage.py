@@ -79,9 +79,8 @@ def geography_of_story(story: dict[str, Any]) -> str:
 def coverage_summary(
     stories: list[Any],
     *,
-    minimum_total: int = 7,
-    minimum_world: int = 5,
-    minimum_russia: int = 2,
+    usual_total: int = 7,
+    minimum_publishable: int = 1,
 ) -> dict[str, Any]:
     world = 0
     russia = 0
@@ -98,26 +97,30 @@ def coverage_summary(
         else:
             unknown += 1
     total = world + russia + unknown
-    missing = {
-        "total": max(0, minimum_total - total),
-        "world": max(0, minimum_world - world),
-        "russia": max(0, minimum_russia - russia),
-    }
+    publication_allowed = total >= minimum_publishable
+    usual_target_met = total >= usual_total
+    short_digest = publication_allowed and not usual_target_met
     return {
-        "status": "ok" if not any(missing.values()) else "incomplete",
+        "status": (
+            "full"
+            if usual_target_met
+            else ("short" if publication_allowed else "empty")
+        ),
         "counts": {
             "total": total,
             "world": world,
             "russia": russia,
             "unknown": unknown,
         },
-        "required": {
-            "total": minimum_total,
-            "world": minimum_world,
-            "russia": minimum_russia,
+        "targets": {
+            "usual_total": usual_total,
+            "minimum_publishable": minimum_publishable,
         },
-        "missing": missing,
-        "valid": not any(missing.values()),
+        "missing_to_usual": max(0, usual_total - total),
+        "publication_allowed": publication_allowed,
+        "usual_target_met": usual_target_met,
+        "short_digest": short_digest,
+        "valid": publication_allowed,
     }
 
 

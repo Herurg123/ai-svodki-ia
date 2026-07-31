@@ -10,10 +10,12 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "automation" / "scripts"))
 
 from production_daily_common import parse_rss, runtime_context, tree_digest
+from build_site import render_article_page, render_rss
 import promote_production_site as promote
 from stage_legacy_images import stage_images
 
 ATOM = "http://www.w3.org/2005/Atom"
+CONTENT = "http://purl.org/rss/1.0/modules/content/"
 
 def write_rss(path: Path, dates: list[str], prefix: str = "https://rybalka.one/posts/dzen-test/") -> None:
     ET.register_namespace("atom", ATOM)
@@ -140,6 +142,62 @@ class ProductionDailyTests(unittest.TestCase):
         self.assertNotIn("dzen-test/**", deploy)
         self.assertIn('".github/workflows/deploy-posts.yml"', deploy)
         self.assertIn("FTP-синхронизация posts", deploy)
+
+    def test_short_digest_notice_follows_cover_in_rss(self):
+        with tempfile.TemporaryDirectory() as temp:
+            posts = Path(temp)
+            image_name = "ai-svodka-2026-07-31.png"
+            (posts / "images").mkdir()
+            (posts / "images" / image_name).write_bytes(b"png")
+            config = json.loads(
+                (ROOT / "automation/config/site.json").read_text(encoding="utf-8")
+            )
+            item = {
+                "title": "ИИ-Сводка на 31 июля 2026",
+                "link": "https://rybalka.one/posts/2026-07-31/",
+                "guid": "https://rybalka.one/posts/2026-07-31/",
+                "published_datetime": datetime(
+                    2026, 7, 31, 6, tzinfo=timezone.utc
+                ),
+                "author": "ИИ-сводки",
+                "description_html": "<p>Короткий выпуск.</p>",
+                "article_html": (
+                    "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+                    "<h2>Мировые лидеры ИИ</h2>"
+                ),
+                "image_filename": image_name,
+                "categories": ["Статья", "ИИ", "native-yes"],
+                "is_new": True,
+            }
+
+            rss = render_rss(
+                config,
+                {"title": "ИИ-Сводки", "description": "Новости ИИ"},
+                [item],
+                posts,
+            )
+            root = ET.fromstring(rss)
+            content = root.findtext(f"channel/item/{{{CONTENT}}}encoded") or ""
+
+            self.assertIn(
+                "</figure>\n"
+                "<p><em>Новостей сегодня меньше, чем обычно</em></p>",
+                content,
+            )
+            page = render_article_page(
+                config,
+                {
+                    "title": item["title"],
+                    "description": "Короткий выпуск.",
+                    "cover_filename": image_name,
+                    "article_html": item["article_html"],
+                },
+            )
+            self.assertIn(
+                f'<img src="../images/{image_name}" alt="{item["title"]}">\n'
+                "<p><em>Новостей сегодня меньше, чем обычно</em></p>",
+                page,
+            )
 
     def test_tree_digest_is_stable(self):
         with tempfile.TemporaryDirectory() as temp:

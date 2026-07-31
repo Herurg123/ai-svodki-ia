@@ -28,6 +28,7 @@ def main() -> int:
     rss = parse_rss(args.rss)
     errors: list[str] = []
     required = {
+        "version": 3,
         "enabled": True,
         "timezone": "Europe/Moscow",
         "publication_hour_local": 6,
@@ -35,9 +36,15 @@ def main() -> int:
         "feed_url": "https://rybalka.one/posts/rss.xml",
         "first_publication_date": "2026-07-24",
         "minimum_selected_stories": 7,
-        "minimum_world_selected_stories": 5,
-        "minimum_russian_selected_stories": 2,
+        "minimum_publishable_stories": 1,
+        "regional_story_quotas_enabled": False,
+        "short_digest_notice": "Новостей сегодня меньше, чем обычно",
+        "short_digest_notice_html": (
+            "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        ),
+        "short_digest_notice_position": "first_article_block_after_cover",
         "coverage_audit_enabled": True,
+        "coverage_audit_failure_blocks_publication": False,
         "coverage_audit_max_web_search_calls": 5,
         "coverage_audit_maximum_candidates": 20,
         "require_previous_day_in_rss": False,
@@ -48,6 +55,15 @@ def main() -> int:
         if config.get(key) != expected:
             errors.append(
                 f"config {key}: expected {expected!r}, got {config.get(key)!r}"
+            )
+    for forbidden_key in (
+        "minimum_russian_candidates",
+        "minimum_world_selected_stories",
+        "minimum_russian_selected_stories",
+    ):
+        if forbidden_key in config:
+            errors.append(
+                f"config must not restore regional quota key: {forbidden_key}"
             )
     if config.get("schedule_crons_utc") != EXPECTED_CRONS:
         errors.append(
@@ -129,10 +145,9 @@ def main() -> int:
         ("shared digest normalization", "normalize_digest_artifact.py"),
         ("shared digest validation", "Normalize and validate digest artifact"),
         ("targeted coverage audit", "ensure_story_coverage.py"),
-        ("hard final story coverage", "validate_story_coverage.py"),
-        ("five world requirement", "--minimum-world 5"),
-        ("two Russian requirement", "--minimum-russia 2"),
-        ("seven total requirement", "--minimum-total 7"),
+        ("publishable story validation", "validate_story_coverage.py"),
+        ("usual seven-story target", "--usual-total 7"),
+        ("one-story publication floor", "--minimum-publishable 1"),
         ("bounded audit searches", "--maximum-audit-web-search-calls 5"),
         (
             "fresh research after unusable automatic recovery",
@@ -182,6 +197,17 @@ def main() -> int:
     for label, needle in checks:
         if needle not in workflow:
             errors.append(f"workflow missing {label}: {needle}")
+    for forbidden_needle in (
+        "--minimum-world",
+        "--minimum-russia",
+        "--minimum-russian-candidates",
+        "Enforce 5 world plus 2 Russian stories",
+    ):
+        if forbidden_needle in workflow:
+            errors.append(
+                "workflow must not restore a regional story quota: "
+                f"{forbidden_needle}"
+            )
     repository_root = args.workflow.resolve().parents[2]
     runtime_path = repository_root / "automation/scripts/editorial_policy_runtime.py"
     runtime_consumers = {
@@ -224,9 +250,9 @@ def main() -> int:
         "Validate editorial code and bootstrap archive",
         "Verify search window starts at last successful release",
         "Run full research and editorial",
-        "Enforce 5 world plus 2 Russian stories",
+        "Supplement a short digest when possible",
         "Normalize and validate digest artifact",
-        "Validate final story coverage",
+        "Validate publishable story count and short digest marker",
         "Build runtime Image API request",
         "Generate one production cover",
         "Revalidate recovered production cover",
@@ -259,7 +285,9 @@ def main() -> int:
     if "needs.production.outputs.commit_sha != ''" not in deploy_job:
         errors.append("deploy job must require a non-empty production commit SHA")
 
-    coverage_step_start = workflow.find("- name: Enforce 5 world plus 2 Russian stories")
+    coverage_step_start = workflow.find(
+        "- name: Supplement a short digest when possible"
+    )
     coverage_step_end = workflow.find("- name:", coverage_step_start + 10)
     coverage_step = (
         workflow[coverage_step_start:coverage_step_end]
@@ -336,9 +364,13 @@ def main() -> int:
         summary_position + 200
     ]:
         errors.append("Russian pipeline status must run with if: always()")
-    coverage_audit_position = workflow.find("Enforce 5 world plus 2 Russian stories")
+    coverage_audit_position = workflow.find(
+        "Supplement a short digest when possible"
+    )
     normalize_position = workflow.find("Normalize and validate digest artifact")
-    coverage_validation_position = workflow.find("Validate final story coverage")
+    coverage_validation_position = workflow.find(
+        "Validate publishable story count and short digest marker"
+    )
     image_request_position = workflow.find("Build runtime Image API request")
     if coverage_audit_position < 0 or normalize_position < 0 or coverage_audit_position > normalize_position:
         errors.append("targeted coverage audit must run before digest normalization")
@@ -347,7 +379,9 @@ def main() -> int:
         or image_request_position < 0
         or coverage_validation_position > image_request_position
     ):
-        errors.append("final 5+2 coverage validation must run before the image request")
+        errors.append(
+            "publishable story validation must run before the image request"
+        )
     if normalize_position < 0 or image_request_position < 0 or normalize_position > image_request_position:
         errors.append("digest normalization/validation must run before the image request")
     for forbidden in ("FTP_SERVER", "FTP_USERNAME", "FTP_PASSWORD"):
@@ -406,9 +440,10 @@ def main() -> int:
         "live_previous_release_check": True,
         "failure_status": "Russian summary and GitHub annotations",
         "story_coverage_contract": {
-            "minimum_total": 7,
-            "minimum_world": 5,
-            "minimum_russia": 2,
+            "usual_total": 7,
+            "minimum_publishable": 1,
+            "regional_story_quotas_enabled": False,
+            "audit_failure_blocks_publication": False,
             "audit_max_web_search_calls": 5,
         },
     }
