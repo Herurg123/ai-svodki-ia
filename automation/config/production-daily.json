@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "enabled": true,
   "timezone": "Europe/Moscow",
   "publication_hour_local": 6,
@@ -20,10 +20,14 @@
   "allow_skipped_publication_days": true,
   "verify_previous_release_on_live_site": true,
   "minimum_candidates": 12,
-  "minimum_russian_candidates": 2,
   "maximum_candidates": 20,
   "minimum_selected_stories": 7,
+  "minimum_publishable_stories": 1,
   "maximum_selected_stories": 12,
+  "regional_story_quotas_enabled": false,
+  "short_digest_notice": "Новостей сегодня меньше, чем обычно",
+  "short_digest_notice_html": "<p><em>Новостей сегодня меньше, чем обычно</em></p>",
+  "short_digest_notice_position": "first_article_block_after_cover",
   "content_root": "automation/content",
   "preview_root": "automation/preview/production-daily",
   "live_posts_root": "posts",
@@ -31,9 +35,8 @@
   "commit_author_email": "41898282+github-actions[bot]@users.noreply.github.com",
   "commit_message_template": "Publish AI digest for {date}",
   "ftp_delegated_to_existing_workflow": true,
-  "minimum_world_selected_stories": 5,
-  "minimum_russian_selected_stories": 2,
   "coverage_audit_enabled": true,
+  "coverage_audit_failure_blocks_publication": false,
   "coverage_audit_max_web_search_calls": 5,
   "coverage_audit_maximum_candidates": 20
 }

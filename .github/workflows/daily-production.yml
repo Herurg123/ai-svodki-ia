@@ -299,7 +299,7 @@ jobs:
           if terminal:
               reason = str(
                   data.get("error")
-                  or "Targeted coverage audit completed without a publishable 5+2 pool."
+                  or "Research and coverage audit found no publishable stories."
               )
               print("terminal:" + " ".join(reason.split()))
           else:
@@ -443,7 +443,6 @@ jobs:
           PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
           DIGEST_REQUEST_ID: ${{ steps.runtime.outputs.digest_request_id }}
           MINIMUM_CANDIDATES: "12"
-          MINIMUM_RUSSIAN_CANDIDATES: "2"
           MAXIMUM_CANDIDATES: "20"
           MINIMUM_SELECTED_STORIES: "7"
           MAXIMUM_SELECTED_STORIES: "12"
@@ -453,14 +452,15 @@ jobs:
             --allow-provisional-editorial \
             --publication-date "${PUBLICATION_DATE}" \
             --minimum-candidates "${MINIMUM_CANDIDATES}" \
-            --minimum-russian-candidates "${MINIMUM_RUSSIAN_CANDIDATES}" \
             --maximum-candidates "${MAXIMUM_CANDIDATES}" \
             --minimum-selected-stories "${MINIMUM_SELECTED_STORIES}" \
             --maximum-selected-stories "${MAXIMUM_SELECTED_STORIES}"
-      - name: Enforce 5 world plus 2 Russian stories
+      - name: Supplement a short digest when possible
         if: steps.terminal_reuse.outputs.stop != 'true'
         # Runs for both fresh and recovered artifacts. Partial recovery may
-        # reuse paid research, perform only a bounded audit, and rerun editorial.
+        # reuse paid research, perform only a bounded best-effort audit, and
+        # rerun editorial. Regional gaps and audit anomalies never block an
+        # existing publishable short digest.
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -474,9 +474,8 @@ jobs:
             --archive automation/archive/index.json \
             --publication-date "${PUBLICATION_DATE}" \
             --model "${OPENAI_TEXT_MODEL}" \
-            --minimum-total 7 \
-            --minimum-world 5 \
-            --minimum-russia 2 \
+            --usual-total 7 \
+            --minimum-publishable 1 \
             --maximum-audit-web-search-calls 5 \
             --maximum-candidates 20 \
             --maximum-selected-stories 12 \
@@ -495,7 +494,7 @@ jobs:
           python automation/scripts/validate_digest_artifact.py \
             --artifact-dir "${artifact_dir}" \
             --report "${artifact_dir}/artifact-validation.json"
-      - name: Validate final story coverage
+      - name: Validate publishable story count and short digest marker
         if: steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         env:
@@ -504,9 +503,8 @@ jobs:
           set -euo pipefail
           python automation/scripts/validate_story_coverage.py \
             --artifact-dir "automation/preview/${PUBLICATION_DATE}" \
-            --minimum-total 7 \
-            --minimum-world 5 \
-            --minimum-russia 2 \
+            --usual-total 7 \
+            --minimum-publishable 1 \
             --report automation/preview/production-daily/story-coverage-validation.json
       - name: Build runtime Image API request
         if: steps.terminal_reuse.outputs.stop != 'true' && steps.recovery.outputs.image_recovered != 'true'

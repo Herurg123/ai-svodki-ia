@@ -421,22 +421,6 @@ def build_editorial_notes(
             }
         )
 
-    russian_count = sum(
-        1 for item in selected_candidates if item.get("geography") == "russia"
-    )
-    russian_target = int(counts["russian_target_minimum"])
-    if russian_count < russian_target:
-        notes.append(
-            {
-                "type": "regional_gap",
-                "area": "russian_ai",
-                "message": (
-                    f"Выбрано {russian_count} российских сюжетов при редакционной "
-                    f"цели {russian_target}; слабые материалы не добавлялись."
-                ),
-            }
-        )
-
     date_only = [
         str(item.get("id", "unknown"))
         for item in selected_candidates

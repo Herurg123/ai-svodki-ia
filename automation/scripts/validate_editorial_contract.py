@@ -72,7 +72,14 @@ def validate() -> list[str]:
     research = read_text(RESEARCH_PROMPT)
     generator = read_text(GENERATOR)
 
-    # Legacy editorial threshold used only to classify a short digest.
+    require_equal(
+        errors,
+        editorial.get("spec_version"),
+        "2026-07-31",
+        "Версия редакционной политики",
+    )
+
+    # The threshold classifies a short digest; it is not a publication gate.
     require_equal(
         errors,
         nested(editorial, "story_counts", "total_target_minimum"),
@@ -86,18 +93,41 @@ def validate() -> list[str]:
         "Максимальная цель сюжетов",
     )
 
-    # Current production composition contract.
     require_equal(
         errors,
-        nested(editorial, "story_counts", "world_target_minimum"),
-        5,
-        "Минимальная цель мировых сюжетов",
+        nested(editorial, "story_counts", "regional_story_quotas_enabled"),
+        False,
+        "Региональные числовые квоты",
+    )
+    story_counts = editorial.get("story_counts")
+    if isinstance(story_counts, dict):
+        for forbidden_key in (
+            "world_target_minimum",
+            "world_target_maximum",
+            "russian_target_minimum",
+            "russian_target_maximum",
+        ):
+            if forbidden_key in story_counts:
+                errors.append(
+                    "Редакционная политика не должна возвращать региональную "
+                    f"квоту {forbidden_key}."
+                )
+    allowed_note_types = nested(editorial, "editorial_notes", "allowed_types")
+    if isinstance(allowed_note_types, list) and "regional_gap" in allowed_note_types:
+        errors.append(
+            "regional_gap не должен возвращаться как редакционное ограничение."
+        )
+    require_equal(
+        errors,
+        nested(editorial, "article", "allow_missing_russian_section"),
+        True,
+        "Необязательный российский раздел",
     )
     require_equal(
         errors,
-        nested(editorial, "story_counts", "russian_target_minimum"),
-        2,
-        "Минимальная цель российских сюжетов",
+        nested(editorial, "article", "allow_missing_china_section"),
+        True,
+        "Необязательный китайский раздел",
     )
 
     require_equal(
@@ -181,6 +211,8 @@ def validate() -> list[str]:
 
     common_markers = [
         "Новостей сегодня меньше, чем обычно",
+        "числовых квот нет",
+        "под изображением",
         "Все ИИ-Сводки",
         "Архив ИИ-Сводок",
         "Meta*",
@@ -190,18 +222,15 @@ def validate() -> list[str]:
     ]
     require_markers(errors, spec, common_markers, "editorial-policy.md")
 
-    # These markers mirror the approved 7 total / 5 world / 2 Russia
-    # production contract. The previous validator still expected 3–5 Russia,
-    # which made production fail before the API stage.
     require_markers(
         errors,
         daily,
         [
             "Новостей сегодня меньше, чем обычно",
             "7–12 сюжетов всего",
-            "минимум 5 мировых сюжетов",
-            "минимум 2 российских сюжета",
-            "Итоговый production-контракт — 5 мировых + 2 российских сюжета",
+            "Числовых квот для китайских и российских новостей нет",
+            "отсутствие дополнений не является ошибкой",
+            "не создавай соответствующий раздел",
             "2–3 абзаца на сюжет",
             "Количество выводов: 4–6",
             "Архив ИИ-Сводок",
@@ -221,9 +250,9 @@ def validate() -> list[str]:
         [
             "{{SEARCH_WINDOW_START_AT}}",
             "{{SEARCH_WINDOW_END_AT}}",
-            "минимум 7 сюжетов",
-            "минимум 5 мировых",
-            "минимум 2 российских",
+            "Обычный объём публикации — 7–12 сюжетов",
+            "Числовых квот для китайских и российских",
+            "Российский сектор является обязательным направлением проверки",
             "Alibaba и Qwen",
             "Baidu и ERNIE",
             "Moonshot AI и Kimi",

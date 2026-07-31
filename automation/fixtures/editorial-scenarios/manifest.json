@@ -3,10 +3,10 @@
   "description": "Бесплатная регрессионная матрица канонической редакционной политики.",
   "scenarios": [
     {
-      "id": "normal-digest-6",
+      "id": "normal-digest-7",
       "expected": "pass",
       "requirements": [
-        "6 сюжетов",
+        "7 сюжетов",
         "short_digest=false",
         "4–6 выводов"
       ]
@@ -15,7 +15,7 @@
       "id": "short-digest-3",
       "expected": "pass",
       "requirements": [
-        "1–5 сюжетов публикуются",
+        "1–6 сюжетов публикуются",
         "точная вводная",
         "low_news_volume"
       ]
@@ -61,9 +61,9 @@
       "expected": "pass",
       "requirements": [
         "low_news_volume",
-        "regional_gap",
         "time_precision",
-        "source_gap"
+        "source_gap",
+        "региональный пробел не является квотой"
       ]
     },
     {

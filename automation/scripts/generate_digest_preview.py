@@ -44,9 +44,8 @@ PREVIEW_ROOT = REPOSITORY_ROOT / "automation/preview"
 
 DEFAULT_MODEL = "gpt-5.6-terra"
 DEFAULT_MINIMUM_CANDIDATES = 12
-DEFAULT_MINIMUM_RUSSIAN_CANDIDATES = 2
 DEFAULT_MAXIMUM_CANDIDATES = 20
-DEFAULT_MINIMUM_SELECTED_STORIES = 6
+DEFAULT_MINIMUM_SELECTED_STORIES = 7
 DEFAULT_MAXIMUM_SELECTED_STORIES = 12
 
 ALLOWED_HTML_TAGS = {
@@ -545,11 +544,6 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_MINIMUM_CANDIDATES,
     )
     parser.add_argument(
-        "--minimum-russian-candidates",
-        type=int,
-        default=DEFAULT_MINIMUM_RUSSIAN_CANDIDATES,
-    )
-    parser.add_argument(
         "--maximum-candidates",
         type=int,
         default=DEFAULT_MAXIMUM_CANDIDATES,
@@ -618,11 +612,6 @@ def validate_limits(args: argparse.Namespace) -> None:
     if not 1 <= args.minimum_candidates <= args.maximum_candidates <= 24:
         raise RuntimeError(
             "Требуется 1 <= minimum_candidates <= maximum_candidates <= 24."
-        )
-
-    if not 0 <= args.minimum_russian_candidates <= args.maximum_candidates:
-        raise RuntimeError(
-            "minimum_russian_candidates имеет недопустимое значение."
         )
 
     if not 1 <= args.minimum_selected_stories <= args.maximum_selected_stories <= 15:
@@ -1088,23 +1077,6 @@ def resolve_research_input(value: str | None) -> Path | None:
     return candidate
 
 
-def russian_gap_documented(research: dict[str, Any]) -> bool:
-    coverage = research.get("coverage")
-    if not isinstance(coverage, list):
-        return False
-
-    for item in coverage:
-        if not isinstance(item, dict):
-            continue
-        area = str(item.get("area", "")).casefold()
-        status = str(item.get("status", "")).casefold()
-        notes = str(item.get("notes", "")).strip()
-        if "россий" in area and status == "gap" and notes:
-            return True
-
-    return False
-
-
 def sanitize_research_candidates(
     research: dict[str, Any],
     publication_date: date,
@@ -1265,7 +1237,6 @@ def validate_research(
     archive: dict[str, Any],
     config: dict[str, Any],
     target_candidates: int,
-    target_russian_candidates: int,
     maximum_candidates: int,
     target_selected_stories: int,
 ) -> tuple[list[str], list[str]]:
@@ -1357,7 +1328,6 @@ def validate_research(
     source_owners: dict[str, list[str]] = {}
     publisher_counter: Counter[str] = Counter()
     organization_counter: Counter[str] = Counter()
-    russian_count = 0
     archive_urls = archive_source_urls(archive)
 
     for index, candidate in enumerate(candidates, start=1):
@@ -1367,9 +1337,6 @@ def validate_research(
 
         candidate_id = str(candidate.get("id", ""))
         candidate_ids.append(candidate_id)
-
-        if candidate.get("geography") == "russia":
-            russian_count += 1
 
         recommendation = candidate.get("recommendation")
         score = candidate.get("significance_score")
@@ -1487,19 +1454,6 @@ def validate_research(
 
     if len(set(candidate_ids)) != len(candidate_ids):
         errors.append("Кандидаты содержат повторяющиеся id.")
-
-    if russian_count < target_russian_candidates:
-        if russian_gap_documented(research):
-            warnings.append(
-                f"Цель — {target_russian_candidates} российских кандидатов, "
-                f"найдено {russian_count}; пробел явно зафиксирован в coverage."
-            )
-        else:
-            errors.append(
-                f"Найдено {russian_count} российских кандидатов при цели "
-                f"{target_russian_candidates}, но российский пробел не "
-                "зафиксирован в coverage."
-            )
 
     overloaded_publishers = [
         f"{name} ({count})"
@@ -1963,23 +1917,9 @@ def validate_editorial(
         validate_diversity_overrides(selected_candidates, overrides, policy)
     )
 
-    selected_world = sum(
-        1 for item in selected_candidates if item.get("geography") == "world"
-    )
     selected_russian = sum(
         1 for item in selected_candidates if item.get("geography") == "russia"
     )
-    counts = policy["story_counts"]
-    if selected_world < int(counts["world_target_minimum"]):
-        warnings.append(
-            f"Мировых сюжетов {selected_world}, редакционная цель — "
-            f"{counts['world_target_minimum']}–{counts['world_target_maximum']}."
-        )
-    if selected_russian < int(counts["russian_target_minimum"]):
-        warnings.append(
-            f"Российских сюжетов {selected_russian}, редакционная цель — "
-            f"{counts['russian_target_minimum']}–{counts['russian_target_maximum']}."
-        )
 
     worthy_russian = [
         candidate
@@ -2160,7 +2100,6 @@ def main() -> int:
         "archive_items": 0,
         "limits": {
             "minimum_candidates": args.minimum_candidates,
-            "minimum_russian_candidates": args.minimum_russian_candidates,
             "maximum_candidates": args.maximum_candidates,
             "minimum_selected_stories": args.minimum_selected_stories,
             "maximum_selected_stories": args.maximum_selected_stories,
@@ -2240,9 +2179,6 @@ def main() -> int:
                 "CURRENT_DATE": publication_date_text,
                 "ARCHIVE_CONTEXT": archive_context,
                 "MINIMUM_CANDIDATES": str(args.minimum_candidates),
-                "MINIMUM_RUSSIAN_CANDIDATES": str(
-                    args.minimum_russian_candidates
-                ),
                 "MAXIMUM_CANDIDATES": str(args.maximum_candidates),
                 "MINIMUM_SELECTED_STORIES": str(
                     args.minimum_selected_stories
@@ -2370,7 +2306,6 @@ def main() -> int:
             archive,
             config,
             args.minimum_candidates,
-            args.minimum_russian_candidates,
             args.maximum_candidates,
             args.minimum_selected_stories,
         )

@@ -283,8 +283,12 @@ def scenario_editorial_notes(policy: dict[str, Any]) -> list[str]:
     }
     notes = build_editorial_notes(research, selected, policy)
     note_types = {str(item.get("type")) for item in notes}
-    expected = {"low_news_volume", "regional_gap", "time_precision", "source_gap"}
+    expected = {"low_news_volume", "time_precision", "source_gap"}
     require(expected.issubset(note_types), f"Не хватает editorial_notes: {expected - note_types}")
+    require(
+        "regional_gap" not in note_types,
+        "Региональный пробел не должен превращаться в числовую квоту.",
+    )
     return sorted(expected)
 
 
@@ -439,7 +443,7 @@ def scenario_cited_sources_only(policy: dict[str, Any]) -> list[str]:
 
 
 SCENARIOS: dict[str, Callable[[dict[str, Any]], list[str]]] = {
-    "normal-digest-6": scenario_normal_digest,
+    "normal-digest-7": scenario_normal_digest,
     "short-digest-3": scenario_short_digest,
     "zero-stories-error": scenario_zero_stories_guard,
     "meta-marking": scenario_meta_marking,
