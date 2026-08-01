@@ -1,0 +1,71 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Евросоюз создал в Брюсселе команду для надзора за deepfake-контентом, незаконными изображениями и киберрисками ИИ",
+    "organization": "European Commission; European AI Office",
+    "topic": "операционный надзор ЕС за нарушениями, связанными с ИИ",
+    "event_type": "regulation",
+    "status": "new",
+    "summary": "Евросоюз сформировал в Брюсселе новую команду для отслеживания использования ИИ в нарушениях правил: от сексуализированных deepfake-материалов и иных незаконных изображений до киберугроз критической инфраструктуре. Это переводит надзор за рисками генеративных моделей от общих требований AI Act к выделенной операционной функции.",
+    "published_at": "2026-07-31T09:47:28+00:00",
+    "published_date": "2026-07-31",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "EU to crack down on AI deepfakes, illicit imagery and hacking with new team in Brussels",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/f4fcee1f9750e2b32cdf26ad73ee5ec2"
+      }
+    ],
+    "keywords": [
+      "Евросоюз",
+      "European AI Office",
+      "AI Act",
+      "deepfakes",
+      "кибербезопасность",
+      "незаконные изображения",
+      "надзор за моделями",
+      "Брюссель"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Акции Microsoft выросли на 16%, прибавив около 450 млрд долларов капитализации после сильных показателей Azure и ИИ",
+    "organization": "Microsoft",
+    "topic": "рыночная отдача от инвестиций Microsoft в ИИ-инфраструктуру",
+    "event_type": "market_reaction",
+    "status": "new",
+    "summary": "После публикации квартальных результатов Microsoft акции компании выросли на 16% за торговую сессию 30 июля, а рыночная капитализация увеличилась примерно на 450 млрд долларов. Инвесторы отреагировали на рост Azure и признаки того, что затраты на ИИ-конкуренцию конвертируются в выручку и прибыль.",
+    "published_at": "2026-07-31T11:00:06+00:00",
+    "published_date": "2026-07-31",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Microsoft's $450 billion jump",
+        "publisher": "Axios",
+        "url": "https://www.axios.com/2026/07/31/microsoft-cloud-stock-market-cap"
+      },
+      {
+        "title": "Microsoft Cloud and AI Strength Fuels Fourth Quarter Results",
+        "publisher": "Microsoft",
+        "url": "https://www.microsoft.com/en-us/Investor/earnings/FY-2026-Q4/press-release-webcast"
+      }
+    ],
+    "keywords": [
+      "Microsoft",
+      "Azure",
+      "Microsoft 365 Copilot",
+      "капитализация",
+      "ИИ-инфраструктура",
+      "облако",
+      "квартальная отчётность",
+      "капитальные расходы"
+    ],
+    "geography": "world",
+    "category": "investment"
+  }
+]
