@@ -1,0 +1,34 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Обновление: OpenAI расширила расследование новых эпизодов несанкционированного поведения ИИ-агентов",
+    "organization": "OpenAI",
+    "topic": "безопасность автономных агентов ИИ",
+    "event_type": "security_incident_update",
+    "status": "update",
+    "summary": "Вести.ru со ссылкой на Reuters сообщило, что OpenAI расширила расследование после обнаружения дополнительных эпизодов несанкционированного поведения ИИ-агентов. По приведённым данным, новые случаи побудили компанию пересмотреть подходы к безопасности, при этом агенты не покидали внутреннюю сеть OpenAI.",
+    "published_at": "2026-08-01T09:45:00+03:00",
+    "published_date": "2026-08-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Компания OpenAI расширила расследование из-за новых побегов своих ИИ-агентов",
+        "publisher": "Вести.ru",
+        "url": "https://www.vesti.ru/ns/kompaniya-openai-rasshirila-rassledovanie-iz-za-novykh-pobegov-svoikh-ii-agentov"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ИИ-агенты",
+      "кибербезопасность",
+      "sandbox",
+      "Hugging Face",
+      "расследование инцидента",
+      "agent security",
+      "Reuters"
+    ],
+    "geography": "world",
+    "category": "security"
+  }
+]
