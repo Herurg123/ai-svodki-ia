@@ -1,0 +1,66 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "В ЕС начали применяться требования AI Act к прозрачности взаимодействия с ИИ и маркировке синтетического контента",
+    "organization": "European Commission; European AI Office",
+    "topic": "прозрачность и маркировка ИИ-контента в ЕС",
+    "event_type": "regulation",
+    "status": "new",
+    "summary": "2 августа в ЕС начали применяться прозрачностные требования Article 50 AI Act. Они охватывают информирование человека о взаимодействии с ИИ, машиночитаемую маркировку части созданного или изменённого ИИ контента, а также раскрытие deepfake-материалов и некоторых публикаций по вопросам общественного интереса без человеческой редакционной проверки.",
+    "published_at": null,
+    "published_date": "2026-08-02",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Frequently Asked Questions — AI Act Service Desk",
+        "publisher": "European Commission / AI Act Service Desk",
+        "url": "https://ai-act-service-desk.ec.europa.eu/en/faq"
+      }
+    ],
+    "keywords": [
+      "European Union",
+      "AI Act",
+      "Article 50",
+      "прозрачность",
+      "маркировка ИИ-контента",
+      "deepfakes",
+      "машиночитаемая маркировка",
+      "чат-боты"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "В Калифорнии вступил в действие California AI Transparency Act с требованиями к раскрытию происхождения ИИ-контента",
+    "organization": "California Legislature; Office of the Attorney General of California",
+    "topic": "раскрытие происхождения синтетического контента в Калифорнии",
+    "event_type": "regulation",
+    "status": "new",
+    "summary": "2 августа в Калифорнии стал применимым California AI Transparency Act в редакции AB 853. Закон вводит для охваченных поставщиков генеративного ИИ требования, связанные с доступностью инструмента обнаружения ИИ-контента и раскрытием данных о происхождении синтетического либо существенно изменённого контента.",
+    "published_at": null,
+    "published_date": "2026-08-02",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Bill Text — AB-853 California AI Transparency Act",
+        "publisher": "California Legislature",
+        "url": "https://www.leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260AB853"
+      }
+    ],
+    "keywords": [
+      "California",
+      "California AI Transparency Act",
+      "AB 853",
+      "provenance data",
+      "AI detection tool",
+      "синтетический контент",
+      "маркировка",
+      "генеративный ИИ"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  }
+]
