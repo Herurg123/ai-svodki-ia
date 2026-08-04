@@ -427,7 +427,7 @@ class ProductionWorkflowReliabilityTests(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertEqual(workflow.count("cron:"), 3)
-        for cron in ("17 0 * * *", "37 0 * * *", "57 0 * * *"):
+        for cron in ("17 23 * * *", "37 23 * * *", "57 23 * * *"):
             self.assertEqual(workflow.count(f'cron: "{cron}"'), 1)
         self.assertIn("Check RSS before paid APIs", workflow)
         self.assertIn("successful no-op", workflow)
