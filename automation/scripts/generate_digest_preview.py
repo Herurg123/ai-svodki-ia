@@ -47,6 +47,7 @@ DEFAULT_MINIMUM_CANDIDATES = 12
 DEFAULT_MAXIMUM_CANDIDATES = 20
 DEFAULT_MINIMUM_SELECTED_STORIES = 7
 DEFAULT_MAXIMUM_SELECTED_STORIES = 12
+DEFAULT_MAXIMUM_RESEARCH_WEB_SEARCH_CALLS = 12
 
 ALLOWED_HTML_TAGS = {
     "p",
@@ -75,6 +76,8 @@ ALLOWED_CATEGORIES = [
     "enterprise",
     "open_source",
     "investment",
+    "legal",
+    "curiosity",
     "russia",
     "other",
 ]
@@ -193,6 +196,23 @@ CANDIDATE_SCHEMA: dict[str, Any] = {
             "type": "string",
             "enum": ["include", "consider", "exclude"],
         },
+        "verification_status": {
+            "type": "string",
+            "enum": ["verified", "unconfirmed", "contradicted"],
+        },
+        "verification_notes": {"type": "string"},
+        "freshness_status": {
+            "type": "string",
+            "enum": ["new_event", "material_update", "old_reprint"],
+        },
+        "freshness_reason": {"type": "string"},
+        "legal_scale": {
+            "type": "string",
+            "enum": ["not_applicable", "major", "minor"],
+        },
+        "legal_scale_reason": {"type": "string"},
+        "curiosity_eligible": {"type": "boolean"},
+        "curiosity_verification": {"type": "string"},
     },
     "required": [
         "id",
@@ -217,6 +237,14 @@ CANDIDATE_SCHEMA: dict[str, Any] = {
         "archive_status",
         "archive_reason",
         "recommendation",
+        "verification_status",
+        "verification_notes",
+        "freshness_status",
+        "freshness_reason",
+        "legal_scale",
+        "legal_scale_reason",
+        "curiosity_eligible",
+        "curiosity_verification",
     ],
 }
 
@@ -262,7 +290,7 @@ RESEARCH_SCHEMA: dict[str, Any] = {
         "coverage": {
             "type": "array",
             "minItems": 9,
-            "maxItems": 12,
+            "maxItems": 18,
             "items": {
                 "type": "object",
                 "additionalProperties": False,
@@ -559,6 +587,15 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_MAXIMUM_SELECTED_STORIES,
     )
     parser.add_argument(
+        "--maximum-research-web-search-calls",
+        type=int,
+        default=DEFAULT_MAXIMUM_RESEARCH_WEB_SEARCH_CALLS,
+        help=(
+            "Жёсткий верхний предел built-in web_search calls основного "
+            "research. Production-контракт фиксирует значение 12."
+        ),
+    )
+    parser.add_argument(
         "--research-input",
         default=None,
         help=(
@@ -618,6 +655,10 @@ def validate_limits(args: argparse.Namespace) -> None:
         raise RuntimeError(
             "Требуется 1 <= minimum_selected_stories "
             "<= maximum_selected_stories <= 15."
+        )
+    if not 1 <= args.maximum_research_web_search_calls <= 12:
+        raise RuntimeError(
+            "maximum_research_web_search_calls должен быть в диапазоне 1..12."
         )
 
 
@@ -842,7 +883,53 @@ def count_web_search_calls(response: Any) -> int:
         1
         for item in getattr(response, "output", []) or []
         if getattr(item, "type", None) == "web_search_call"
+        and str(getattr(item, "status", None) or "unknown")
+        in {"completed", "unknown"}
     )
+
+
+def extract_web_search_trajectory(response: Any) -> dict[str, Any]:
+    calls: list[dict[str, Any]] = []
+    status_counts: dict[str, int] = {}
+    queries: list[str] = []
+    seen_queries: set[str] = set()
+    for item in getattr(response, "output", []) or []:
+        if getattr(item, "type", None) != "web_search_call":
+            continue
+        status = str(getattr(item, "status", None) or "unknown")
+        status_counts[status] = status_counts.get(status, 0) + 1
+        plain_item = to_plain_dict(item)
+        action = to_plain_dict(getattr(item, "action", None))
+        if not isinstance(action, dict) and isinstance(plain_item, dict):
+            action = plain_item.get("action")
+        if not isinstance(action, dict):
+            action = {}
+        raw_queries: list[Any] = []
+        if action.get("query") is not None:
+            raw_queries.append(action.get("query"))
+        if isinstance(action.get("queries"), list):
+            raw_queries.extend(action["queries"])
+        for raw_query in raw_queries:
+            query = str(raw_query).strip()
+            if query and query not in seen_queries:
+                seen_queries.add(query)
+                queries.append(query)
+        calls.append(
+            {
+                "id": getattr(item, "id", None),
+                "status": status,
+                "action": action,
+            }
+        )
+    return {
+        "call_items_total": len(calls),
+        "completed_calls": status_counts.get("completed", 0),
+        "performed_calls": status_counts.get("completed", 0)
+        + status_counts.get("unknown", 0),
+        "statuses": status_counts,
+        "actual_queries": queries,
+        "calls": calls,
+    }
 
 
 def extract_consulted_sources(response: Any) -> list[dict[str, Any]]:
@@ -1126,6 +1213,28 @@ def sanitize_research_candidates(
             ]
             or ["ИИ"],
         )
+        # Older paid research artifacts predate the explicit verification,
+        # legal-scale and curiosity fields. They were already accepted by the
+        # previous validator, so preserve recovery compatibility while every
+        # new API response is held to the strict schema.
+        candidate.setdefault("verification_status", "verified")
+        candidate.setdefault(
+            "verification_notes",
+            "Legacy research artifact accepted by the previous validator.",
+        )
+        candidate.setdefault(
+            "freshness_status",
+            (
+                "material_update"
+                if candidate.get("archive_status") == "update"
+                else "new_event"
+            ),
+        )
+        candidate.setdefault("freshness_reason", "Legacy validated event.")
+        candidate.setdefault("legal_scale", "not_applicable")
+        candidate.setdefault("legal_scale_reason", "")
+        candidate.setdefault("curiosity_eligible", False)
+        candidate.setdefault("curiosity_verification", "")
 
         try:
             candidate_date = date.fromisoformat(raw_date)
@@ -1345,6 +1454,68 @@ def validate_research(
                 f"{candidate_id}: recommendation include несовместим "
                 f"с significance_score={score}."
             )
+        if (
+            recommendation in {"include", "consider"}
+            and candidate.get("verification_status") != "verified"
+        ):
+            errors.append(
+                f"{candidate_id}: include/consider требует "
+                "verification_status=verified."
+            )
+        if (
+            recommendation in {"include", "consider"}
+            and candidate.get("freshness_status")
+            not in {"new_event", "material_update"}
+        ):
+            errors.append(
+                f"{candidate_id}: старая перепечатка без нового события "
+                "не может получить include/consider."
+            )
+        if not str(candidate.get("freshness_reason", "")).strip():
+            errors.append(f"{candidate_id}: freshness_reason не должен быть пустым.")
+
+        category = candidate.get("category")
+        event_type = str(candidate.get("event_type", "")).casefold()
+        legal_event = category == "legal" or event_type in {
+            "court_decision",
+            "lawsuit",
+            "litigation",
+            "copyright",
+            "data_scraping",
+        }
+        legal_scale = candidate.get("legal_scale")
+        if legal_event and category != "legal":
+            errors.append(
+                f"{candidate_id}: судебное/copyright/scraping событие "
+                "должно иметь category=legal."
+            )
+        if legal_event:
+            if recommendation in {"include", "consider"} and legal_scale != "major":
+                errors.append(
+                    f"{candidate_id}: legal include/consider требует "
+                    "legal_scale=major."
+                )
+            if legal_scale == "major" and not str(
+                candidate.get("legal_scale_reason", "")
+            ).strip():
+                errors.append(
+                    f"{candidate_id}: major legal event требует объяснение масштаба."
+                )
+        elif legal_scale not in {None, "not_applicable"}:
+            errors.append(
+                f"{candidate_id}: legal_scale применим только к category=legal."
+            )
+
+        if category == "curiosity" and recommendation in {"include", "consider"}:
+            if candidate.get("curiosity_eligible") is not True:
+                errors.append(
+                    f"{candidate_id}: curiosity include/consider требует "
+                    "curiosity_eligible=true."
+                )
+            if not str(candidate.get("curiosity_verification", "")).strip():
+                errors.append(
+                    f"{candidate_id}: curiosity требует проверяемое объяснение."
+                )
 
         if candidate.get("archive_status") == "update" and not str(
             candidate.get("archive_reason", "")
@@ -1887,6 +2058,22 @@ def validate_editorial(
     selected_candidates = [
         candidate_map[item] for item in selected if item in candidate_map
     ]
+    selected_curiosities = [
+        item
+        for item in selected_candidates
+        if item.get("category") == "curiosity"
+    ]
+    selection_policy = policy.get("candidate_selection")
+    maximum_curiosities = (
+        int(selection_policy.get("maximum_selected_curiosity_stories", 1))
+        if isinstance(selection_policy, dict)
+        else 1
+    )
+    if len(selected_curiosities) > maximum_curiosities:
+        errors.append(
+            "В выпуск можно выбрать не более "
+            f"{maximum_curiosities} сюжета категории curiosity."
+        )
 
     digest_for_order = editorial.get("digest")
     article_for_order = (
@@ -2103,6 +2290,9 @@ def main() -> int:
             "maximum_candidates": args.maximum_candidates,
             "minimum_selected_stories": args.minimum_selected_stories,
             "maximum_selected_stories": args.maximum_selected_stories,
+            "maximum_research_web_search_calls": (
+                args.maximum_research_web_search_calls
+            ),
         },
         "research": {
             "status": "pending",
@@ -2118,6 +2308,7 @@ def main() -> int:
                 "reasoning_effort": "medium",
                 "search_context_size": "high",
                 "return_token_budget": "default",
+                "max_tool_calls": args.maximum_research_web_search_calls,
                 "max_output_tokens": 16000,
                 "store": False,
             },
@@ -2220,6 +2411,7 @@ def main() -> int:
                     }
                 ],
                 tool_choice="required",
+                max_tool_calls=args.maximum_research_web_search_calls,
                 include=["web_search_call.action.sources"],
                 reasoning={"effort": "medium"},
                 max_output_tokens=16000,
@@ -2234,11 +2426,20 @@ def main() -> int:
                 store=False,
             )
 
-            research_calls = count_web_search_calls(research_response)
+            research_trajectory = extract_web_search_trajectory(
+                research_response
+            )
+            research_calls = int(research_trajectory["performed_calls"])
             run_info["research"]["response"] = stage_info(
                 research_response,
                 web_search_calls=research_calls,
             )
+            run_info["research"]["response"]["search_trajectory"] = {
+                "call_items_total": research_trajectory["call_items_total"],
+                "completed_calls": research_trajectory["completed_calls"],
+                "statuses": research_trajectory["statuses"],
+                "actual_queries": research_trajectory["actual_queries"],
+            }
 
             if research_calls < 1:
                 raise RuntimeError(
@@ -2246,6 +2447,10 @@ def main() -> int:
                 )
 
             consulted_sources = extract_consulted_sources(research_response)
+            atomic_write(
+                output_dir / "research-search-trajectory.json",
+                pretty_json(research_trajectory),
+            )
             atomic_write(
                 output_dir / "research-consulted-sources.json",
                 pretty_json(consulted_sources),

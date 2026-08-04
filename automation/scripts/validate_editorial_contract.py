@@ -75,8 +75,48 @@ def validate() -> list[str]:
     require_equal(
         errors,
         editorial.get("spec_version"),
-        "2026-07-31",
+        "2026-08-04",
         "Версия редакционной политики",
+    )
+    require_equal(
+        errors,
+        nested(
+            editorial,
+            "candidate_selection",
+            "verification_required_for_selection",
+        ),
+        "verified",
+        "Проверка кандидата перед отбором",
+    )
+    require_equal(
+        errors,
+        nested(
+            editorial,
+            "candidate_selection",
+            "allowed_freshness_for_selection",
+        ),
+        ["new_event", "material_update"],
+        "Допустимая новизна кандидата",
+    )
+    require_equal(
+        errors,
+        nested(
+            editorial,
+            "candidate_selection",
+            "legal_scale_required_for_selection",
+        ),
+        "major",
+        "Масштаб legal-кандидата",
+    )
+    require_equal(
+        errors,
+        nested(
+            editorial,
+            "candidate_selection",
+            "maximum_selected_curiosity_stories",
+        ),
+        1,
+        "Максимум curiosity-сюжетов",
     )
 
     # The threshold classifies a short digest; it is not a publication gate.

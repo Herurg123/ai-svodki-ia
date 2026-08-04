@@ -17,6 +17,53 @@ import summarize_production_status as status  # noqa: E402
 
 
 class RussianStatusSummaryTests(unittest.TestCase):
+    def test_success_summary_exposes_partial_audit_and_unchecked_direction(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            old = Path.cwd()
+            os.chdir(temporary)
+            try:
+                report_dir = Path("automation/preview/production-daily")
+                report_dir.mkdir(parents=True)
+                (report_dir / "coverage-audit.json").write_text(
+                    json.dumps(
+                        {
+                            "status": "ok",
+                            "audit_needed": True,
+                            "audit_status": "partial",
+                            "required_directions": ["security_world", "security_russia"],
+                            "checked_directions": ["security_world"],
+                            "partial_directions": ["security_russia"],
+                            "unchecked_directions": [],
+                            "search_budget": {
+                                "completed_calls": 5,
+                                "maximum_calls": 7,
+                            },
+                            "audit_added_candidates": 0,
+                            "editorial_rerun_performed": False,
+                            "time_precision_warnings": [{"title": "Date-only"}],
+                        },
+                        ensure_ascii=False,
+                    ),
+                    encoding="utf-8",
+                )
+                markdown, annotation = status.build_summary(
+                    job_status="success",
+                    publication_date="2026-08-01",
+                    publish="true",
+                    recovery_run_id="",
+                    run_url="https://github.test/run",
+                    commit_sha="abc",
+                )
+            finally:
+                os.chdir(old)
+
+        self.assertIsNone(annotation)
+        self.assertIn("partial", markdown)
+        self.assertIn("1/2", markdown)
+        self.assertIn("security_russia", markdown)
+        self.assertIn("предел 7", markdown)
+        self.assertIn("time_precision", markdown)
+
     def test_zero_story_stop_is_translated_and_actionable(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             old = Path.cwd()

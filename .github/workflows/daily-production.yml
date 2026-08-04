@@ -292,7 +292,7 @@ jobs:
           terminal = (
               data.get("status") == "error"
               and data.get("web_search_performed") is True
-              and api.get("status") == "completed"
+              and api.get("status") in {"completed", "partial"}
               and isinstance(pool_total, int)
               and pool_total == 0
           )
@@ -454,7 +454,8 @@ jobs:
             --minimum-candidates "${MINIMUM_CANDIDATES}" \
             --maximum-candidates "${MAXIMUM_CANDIDATES}" \
             --minimum-selected-stories "${MINIMUM_SELECTED_STORIES}" \
-            --maximum-selected-stories "${MAXIMUM_SELECTED_STORIES}"
+            --maximum-selected-stories "${MAXIMUM_SELECTED_STORIES}" \
+            --maximum-research-web-search-calls 12
       - name: Supplement a short digest when possible
         if: steps.terminal_reuse.outputs.stop != 'true'
         # Runs for both fresh and recovered artifacts. Partial recovery may
@@ -476,7 +477,7 @@ jobs:
             --model "${OPENAI_TEXT_MODEL}" \
             --usual-total 7 \
             --minimum-publishable 1 \
-            --maximum-audit-web-search-calls 5 \
+            --maximum-audit-web-search-calls 7 \
             --maximum-candidates 20 \
             --maximum-selected-stories 12 \
             --report automation/preview/production-daily/coverage-audit.json

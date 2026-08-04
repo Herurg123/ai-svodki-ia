@@ -199,6 +199,24 @@ def validate_audit_candidate(
     candidate: dict[str, Any], search_window: dict[str, Any]
 ) -> list[str]:
     errors: list[str] = []
+    # Paid research artifacts produced before the expanded audit schema remain
+    # valid recovery inputs. New API responses always contain these fields via
+    # their strict JSON schema.
+    candidate.setdefault("verification_status", "verified")
+    candidate.setdefault("verification_notes", "Legacy validated candidate.")
+    candidate.setdefault(
+        "freshness_status",
+        (
+            "material_update"
+            if candidate.get("archive_status") == "update"
+            else "new_event"
+        ),
+    )
+    candidate.setdefault("freshness_reason", "Legacy validated event.")
+    candidate.setdefault("legal_scale", "not_applicable")
+    candidate.setdefault("legal_scale_reason", "")
+    candidate.setdefault("curiosity_eligible", False)
+    candidate.setdefault("curiosity_verification", "")
     required_strings = (
         "title",
         "organization",
@@ -223,6 +241,8 @@ def validate_audit_candidate(
         errors.append("time_precision должен быть date или datetime")
     if candidate.get("recommendation") not in {"include", "consider", "exclude"}:
         errors.append("некорректный recommendation")
+    elif candidate.get("recommendation") == "exclude":
+        errors.append("recommendation=exclude должен находиться в rejections")
     if candidate.get("archive_status") not in {"none", "update"}:
         errors.append("некорректный archive_status")
     if not isinstance(candidate.get("keywords"), list) or not candidate["keywords"]:
@@ -245,6 +265,60 @@ def validate_audit_candidate(
     score = candidate.get("significance_score")
     if not isinstance(score, int) or not 1 <= score <= 5:
         errors.append("significance_score должен быть целым 1..5")
+    if (
+        candidate.get("recommendation") in {"include", "consider"}
+        and candidate.get("verification_status") != "verified"
+    ):
+        errors.append("include/consider требует verification_status=verified")
+    if (
+        candidate.get("recommendation") in {"include", "consider"}
+        and candidate.get("freshness_status")
+        not in {"new_event", "material_update"}
+    ):
+        errors.append("старая перепечатка без нового события отклоняется")
+    if not str(candidate.get("freshness_reason", "")).strip():
+        errors.append("freshness_reason должен объяснять новизну события")
+
+    category = candidate.get("category")
+    event_type = str(candidate.get("event_type", "")).casefold()
+    legal_event = category == "legal" or event_type in {
+        "court_decision",
+        "lawsuit",
+        "litigation",
+        "copyright",
+        "data_scraping",
+    }
+    if legal_event and category != "legal":
+        errors.append("судебное/copyright/scraping событие требует category=legal")
+    if legal_event:
+        if candidate.get("legal_scale") != "major":
+            errors.append("legal candidate требует legal_scale=major")
+        if not str(candidate.get("legal_scale_reason", "")).strip():
+            errors.append("legal candidate требует объяснение новостного масштаба")
+        if isinstance(score, int) and score < 4:
+            errors.append("legal candidate требует significance_score не ниже 4")
+        if candidate.get("source_type") not in {
+            "court",
+            "government",
+            "regulator",
+            "news_agency",
+            "business_media",
+            "technology_media",
+        }:
+            errors.append(
+                "legal candidate требует судебный, регуляторный или "
+                "авторитетный новостной источник"
+            )
+    elif candidate.get("legal_scale") not in {None, "not_applicable"}:
+        errors.append("legal_scale применим только к category=legal")
+
+    if category == "curiosity":
+        if candidate.get("curiosity_eligible") is not True:
+            errors.append("curiosity candidate требует curiosity_eligible=true")
+        if not str(candidate.get("curiosity_verification", "")).strip():
+            errors.append("curiosity candidate требует проверяемое объяснение")
+        if isinstance(score, int) and score < 3:
+            errors.append("curiosity candidate требует significance_score не ниже 3")
     if not candidate_in_window(candidate, search_window):
         errors.append("кандидат находится вне редакционного окна")
     return errors
@@ -270,6 +344,12 @@ def merge_candidates(
     seen = {candidate_fingerprint(item) for item in result}
     accepted: list[dict[str, Any]] = []
     rejected: list[dict[str, Any]] = []
+    curiosity_selected = any(
+        isinstance(item, dict)
+        and item.get("category") == "curiosity"
+        and item.get("recommendation") in {"include", "consider"}
+        for item in result
+    )
 
     ranked = sorted(
         (item for item in additional_candidates if isinstance(item, dict)),
@@ -285,11 +365,14 @@ def merge_candidates(
         fingerprint = candidate_fingerprint(candidate)
         if fingerprint in seen:
             errors.append("дубликат существующего кандидата")
+        if candidate.get("category") == "curiosity" and curiosity_selected:
+            errors.append("в выпуск допускается максимум один curiosity candidate")
         if errors:
             rejected.append(
                 {
                     "title": candidate.get("title"),
                     "primary_url": candidate_primary_url(candidate),
+                    "audit_direction": candidate.get("audit_direction"),
                     "errors": errors,
                 }
             )
@@ -299,6 +382,7 @@ def merge_candidates(
                 {
                     "title": candidate.get("title"),
                     "primary_url": candidate_primary_url(candidate),
+                    "audit_direction": candidate.get("audit_direction"),
                     "errors": ["достигнут maximum_candidates"],
                 }
             )
@@ -306,6 +390,8 @@ def merge_candidates(
         seen.add(fingerprint)
         result.append(candidate)
         accepted.append(candidate)
+        if candidate.get("category") == "curiosity":
+            curiosity_selected = True
 
     for index, candidate in enumerate(result, start=1):
         candidate["id"] = f"cand-{index:03d}"

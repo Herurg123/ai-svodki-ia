@@ -1,5 +1,5 @@
 {
-  "spec_version": "2026-07-31",
+  "spec_version": "2026-08-04",
   "language": "ru",
   "timezone": "Europe/Moscow",
   "story_counts": {
@@ -15,6 +15,20 @@
     "max_selected_per_publisher_soft": 2,
     "max_selected_per_organization_soft": 2,
     "override_requires_reason": true
+  },
+  "candidate_selection": {
+    "verification_required_for_selection": "verified",
+    "allowed_freshness_for_selection": [
+      "new_event",
+      "material_update"
+    ],
+    "legal_category": "legal",
+    "legal_scale_required_for_selection": "major",
+    "legal_minimum_significance_score": 4,
+    "curiosity_category": "curiosity",
+    "curiosity_optional": true,
+    "maximum_selected_curiosity_stories": 1,
+    "curiosity_requires_explicit_verification": true
   },
   "what_it_means": {
     "required": true,

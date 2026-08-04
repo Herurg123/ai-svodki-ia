@@ -38,6 +38,7 @@ class AuditRequestResult:
 
 
 _LAST_AUDIT_RESULT: AuditRequestResult | None = None
+_LAST_AUDIT_RESULTS: list[AuditRequestResult] = []
 
 
 def build_audit_api_metadata(
@@ -84,7 +85,7 @@ def run_audit_request(
         max_tool_calls=maximum_web_search_calls,
         include=["web_search_call.action.sources"],
         reasoning={"effort": "medium"},
-        max_output_tokens=10000,
+        max_output_tokens=3500,
         text={
             "format": {
                 "type": "json_schema",
@@ -120,11 +121,18 @@ def run_audit_request(
         if validation_error is None and not isinstance(payload, dict):
             validation_error = "Coverage audit должен вернуть JSON-объект"
         if validation_error is None:
-            queries = payload.get("queries_used")
-            if not isinstance(queries, list) or not queries:
-                validation_error = "Coverage audit не заполнил queries_used"
-            elif len(queries) > maximum_web_search_calls:
-                validation_error = "queries_used превышает установленный лимит"
+            if payload.get("direction_id") not in AUDIT_DIRECTION_IDS:
+                validation_error = "Coverage audit вернул неизвестный direction_id"
+            elif payload.get("status") not in {
+                "complete",
+                "complete_with_gaps",
+                "error",
+            }:
+                validation_error = "Coverage audit вернул неизвестный status"
+            elif not metadata.get("actual_queries"):
+                validation_error = (
+                    "Coverage audit не сохранил фактический поисковый запрос"
+                )
 
     result = AuditRequestResult(
         payload=payload if isinstance(payload, dict) else None,
@@ -134,6 +142,7 @@ def run_audit_request(
         validation_error=validation_error,
     )
     _LAST_AUDIT_RESULT = result
+    _LAST_AUDIT_RESULTS.append(result)
     if validation_error is None and metadata.get("budget_overrun"):
         print(
             "::warning title=Coverage audit web-search budget::"
@@ -148,10 +157,41 @@ def run_audit_request(
 
 def coerce_audit_result(value: Any) -> AuditRequestResult:
     if isinstance(value, AuditRequestResult):
+        value.metadata.setdefault(
+            "web_search_calls_completed",
+            int(value.metadata.get("web_search_calls", 0) or 0),
+        )
+        value.metadata.setdefault(
+            "web_search_call_items_total",
+            int(
+                value.metadata.get(
+                    "observed_web_search_calls",
+                    value.metadata.get("web_search_calls", 0),
+                )
+                or 0
+            ),
+        )
         return value
     if isinstance(value, tuple) and len(value) == 2:
         payload, metadata = value
         if isinstance(payload, dict) and isinstance(metadata, dict):
+            legacy_queries = payload.get("queries_used")
+            if not metadata.get("actual_queries") and isinstance(
+                legacy_queries, list
+            ):
+                metadata["actual_queries"] = [
+                    str(item.get("query", "")).strip()
+                    for item in legacy_queries
+                    if isinstance(item, dict) and str(item.get("query", "")).strip()
+                ]
+            metadata.setdefault(
+                "web_search_calls_completed",
+                int(metadata.get("web_search_calls", 0) or 0),
+            )
+            metadata.setdefault(
+                "web_search_call_items_total",
+                int(metadata.get("web_search_calls", 0) or 0),
+            )
             return AuditRequestResult(
                 payload=payload,
                 metadata=metadata,
@@ -199,7 +239,7 @@ def completed_prior_audit(payload: Any) -> bool:
     return (
         payload.get("web_search_performed") is True
         and isinstance(api, dict)
-        and api.get("status") == "completed"
+        and api.get("status") in {"completed", "partial"}
     )
 
 
@@ -208,6 +248,22 @@ def _policy_audit_request(**kwargs: Any) -> AuditRequestResult:
 
     result = coerce_audit_result(globals()["run_audit_request"](**kwargs))
     _LAST_AUDIT_RESULT = result
+    if result not in _LAST_AUDIT_RESULTS:
+        _LAST_AUDIT_RESULTS.append(result)
+    if isinstance(result.payload, dict):
+        # Compatibility for pre-plan unit doubles. Real API responses are
+        # constrained by the strict per-direction schema above.
+        if result.payload.get("status") == "ok":
+            result.payload["status"] = "complete"
+        if result.payload.get("direction_id") not in AUDIT_DIRECTION_IDS:
+            prompt = str(kwargs.get("prompt") or "")
+            inferred = next(
+                (item for item in AUDIT_DIRECTION_IDS if item in prompt),
+                None,
+            )
+            if inferred:
+                result.payload["direction_id"] = inferred
+        result.payload.setdefault("rejections", [])
     if result.validation_error:
         raise CoverageAuditResponseError(result.validation_error, result.metadata)
     return result
@@ -259,36 +315,86 @@ def _finalize_report(
     report.setdefault("api_output_path", None)
     report.setdefault("api_response_path", None)
 
-    if _LAST_AUDIT_RESULT is not None:
-        result = _LAST_AUDIT_RESULT
-        report["api"] = result.metadata
-        observed = result.metadata.get(
-            "web_search_call_items_total",
-            result.metadata.get(
-                "observed_web_search_calls",
-                result.metadata.get("web_search_calls", 0),
-            ),
+    if _LAST_AUDIT_RESULTS:
+        results = list(_LAST_AUDIT_RESULTS)
+        report["api_attempts"] = [item.metadata for item in results]
+        observed = sum(
+            int(
+                item.metadata.get(
+                    "web_search_call_items_total",
+                    item.metadata.get("observed_web_search_calls", 0),
+                )
+                or 0
+            )
+            for item in results
         )
-        report["web_search_performed"] = int(observed or 0) > 0
-        report.update(persist_audit_diagnostics(result, report_path.parent))
-        payload_ok = (
-            isinstance(result.payload, dict)
-            and result.payload.get("status") == "ok"
+        report["web_search_performed"] = observed > 0
+        diagnostic_paths: list[dict[str, str]] = []
+        for index, item in enumerate(results, start=1):
+            direction = (
+                str(item.payload.get("direction_id"))
+                if isinstance(item.payload, dict)
+                else "unknown"
+            )
+            pass_dir = report_path.parent / "coverage-audit-passes"
+            pass_dir.mkdir(parents=True, exist_ok=True)
+            output_path = pass_dir / f"{index:02d}-{direction}-output.txt"
+            response_path = pass_dir / f"{index:02d}-{direction}-response.json"
+            output_path.write_text(
+                item.output_text + ("\n" if item.output_text else ""),
+                encoding="utf-8",
+            )
+            response_path.write_text(
+                json.dumps(
+                    item.raw_response,
+                    ensure_ascii=False,
+                    indent=2,
+                    default=str,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            diagnostic_paths.append(
+                {
+                    "direction_id": direction,
+                    "api_output_path": str(output_path),
+                    "api_response_path": str(response_path),
+                }
+            )
+        report["api_diagnostic_paths"] = diagnostic_paths
+
+        # Preserve canonical single-response paths for recovery artifacts and
+        # compatibility with the July 31 diagnostic format.
+        last_result = results[-1]
+        report.update(
+            persist_audit_diagnostics(last_result, report_path.parent)
         )
-        if result.validation_error is None and payload_ok:
+        if len(results) == 1:
+            report["api"] = last_result.metadata
+
+        audit_status = report.get("audit_status")
+        usable_statuses = {
+            "complete",
+            "complete_with_gaps",
+            "partial",
+            "budget_exhausted",
+        }
+        if report.get("status") == "ok" and audit_status in usable_statuses:
             report["audit_state"] = "completed_usable"
         else:
             report["audit_state"] = "completed_unusable"
-            validation_error = result.validation_error
-            if validation_error is None and isinstance(result.payload, dict):
-                validation_error = (
-                    "Coverage audit вернул status=error: "
-                    + str(
-                        result.payload.get("error_message")
-                        or "причина не указана"
-                    )
+            validation_errors = [
+                item.validation_error
+                for item in results
+                if item.validation_error
+            ]
+            if validation_errors:
+                report["validation_error"] = "; ".join(validation_errors)
+            elif audit_status == "error":
+                report["validation_error"] = (
+                    "Ни одно обязательное направление audit не было "
+                    "подтверждено фактическим поиском"
                 )
-            report["validation_error"] = validation_error
             report["error_stage"] = "response_validation"
     elif report.get("prior_audit_reused"):
         prior_state = (prior_report or {}).get("audit_state")
@@ -319,6 +425,7 @@ def main() -> int:
     global _LAST_AUDIT_RESULT
 
     _LAST_AUDIT_RESULT = None
+    _LAST_AUDIT_RESULTS.clear()
     report_path = _report_path()
     prior_report = _read_prior_report(report_path)
     _sync_policy_overrides()

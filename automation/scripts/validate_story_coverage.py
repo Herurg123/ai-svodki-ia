@@ -47,6 +47,17 @@ def main() -> int:
         else ("short" if report["publication_allowed"] else "empty")
     )
 
+    curiosity_count = sum(
+        1
+        for story in stories
+        if isinstance(story, dict) and story.get("category") == "curiosity"
+    )
+    report["curiosity_story_count"] = curiosity_count
+    if curiosity_count > 1:
+        errors.append(
+            "В выпуске допускается не более одного сюжета категории curiosity."
+        )
+
     if not report["publication_allowed"]:
         errors.append(
             "После проверки не осталось ни одного достойного сюжета; "

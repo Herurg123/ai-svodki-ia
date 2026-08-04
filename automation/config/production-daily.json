@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "enabled": true,
   "timezone": "Europe/Moscow",
   "publication_hour_local": 6,
@@ -24,6 +24,7 @@
   "minimum_selected_stories": 7,
   "minimum_publishable_stories": 1,
   "maximum_selected_stories": 12,
+  "research_max_web_search_calls": 12,
   "regional_story_quotas_enabled": false,
   "short_digest_notice": "Новостей сегодня меньше, чем обычно",
   "short_digest_notice_html": "<p><em>Новостей сегодня меньше, чем обычно</em></p>",
@@ -37,6 +38,25 @@
   "ftp_delegated_to_existing_workflow": true,
   "coverage_audit_enabled": true,
   "coverage_audit_failure_blocks_publication": false,
-  "coverage_audit_max_web_search_calls": 5,
+  "coverage_audit_max_web_search_calls": 7,
+  "coverage_audit_minimum_required_web_search_calls": 6,
+  "coverage_audit_required_directions": [
+    "security_world",
+    "security_russia",
+    "security_asia",
+    "legal_copyright_scraping",
+    "curiosity",
+    "general_coverage_gaps"
+  ],
+  "coverage_audit_statuses": [
+    "complete",
+    "complete_with_gaps",
+    "partial",
+    "budget_exhausted",
+    "error"
+  ],
+  "coverage_audit_editorial_rerun_only_on_added_candidates": true,
+  "maximum_curiosity_stories": 1,
+  "legal_candidate_minimum_significance_score": 4,
   "coverage_audit_maximum_candidates": 20
 }

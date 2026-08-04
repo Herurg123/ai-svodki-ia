@@ -270,6 +270,72 @@ def markdown_bool(value: bool) -> str:
     return "✅ завершён" if value else "➖ не завершён"
 
 
+def coverage_audit_summary_lines() -> list[str]:
+    coverage = read_json_if_exists(REPORT_ROOT / "coverage-audit.json")
+    if not isinstance(coverage, dict):
+        return []
+    if not coverage.get("audit_needed"):
+        return ["", "### Coverage audit", "- Не требовался: обычный объём уже достигнут."]
+
+    status = str(coverage.get("audit_status") or "unknown")
+    status_labels = {
+        "complete": "✅ complete",
+        "complete_with_gaps": "⚠️ complete_with_gaps",
+        "partial": "⚠️ partial",
+        "budget_exhausted": "⚠️ budget_exhausted",
+        "error": "❌ error",
+    }
+    required = coverage.get("required_directions")
+    checked = coverage.get("checked_directions")
+    partial = coverage.get("partial_directions")
+    unchecked = coverage.get("unchecked_directions")
+    budget = coverage.get("search_budget")
+    if not isinstance(required, list):
+        required = []
+    if not isinstance(checked, list):
+        checked = []
+    if not isinstance(partial, list):
+        partial = []
+    if not isinstance(unchecked, list):
+        unchecked = []
+    if not isinstance(budget, dict):
+        budget = {}
+
+    lines = [
+        "",
+        "### Coverage audit",
+        f"- **Статус полноты:** `{status_labels.get(status, status)}`",
+        f"- **Проверено направлений:** {len(checked)}/{len(required)}",
+        (
+            "- **Web Search calls:** "
+            f"{int(budget.get('completed_calls', 0) or 0)} завершённых, "
+            f"предел {int(budget.get('maximum_calls', 0) or 0)}"
+        ),
+        (
+            "- **Добавлено пригодных кандидатов:** "
+            f"{int(coverage.get('audit_added_candidates', 0) or 0)}"
+        ),
+        (
+            "- **Editorial rerun из-за audit:** "
+            + (
+                "да"
+                if coverage.get("editorial_rerun_performed")
+                else "нет"
+            )
+        ),
+    ]
+    if partial:
+        lines.append("- **Частично:** " + ", ".join(map(str, partial)))
+    if unchecked:
+        lines.append("- **Не проверено:** " + ", ".join(map(str, unchecked)))
+    time_warnings = coverage.get("time_precision_warnings")
+    if isinstance(time_warnings, list) and time_warnings:
+        lines.append(
+            "- **Предупреждения time_precision:** " + str(len(time_warnings))
+        )
+    return lines
+
+
 def escape_annotation(value: str) -> str:
     return (
         value.replace("%", "%25")
@@ -314,6 +380,7 @@ def build_summary(
             f"- Изображение: {markdown_bool(states['image'])}",
             f"- Promotion: {markdown_bool(states['promoted'])}",
         ]
+        lines.extend(coverage_audit_summary_lines())
         return "\n".join(lines) + "\n", None
 
     stage, reason = locate_reason(publication_date)
@@ -368,6 +435,7 @@ def build_summary(
         "### Безопасное следующее действие",
         action,
     ]
+    lines.extend(coverage_audit_summary_lines())
     annotation = f"{stage}: {reason}"
     return "\n".join(lines) + "\n", annotation
 

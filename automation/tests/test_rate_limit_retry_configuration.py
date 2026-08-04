@@ -20,6 +20,13 @@ class RateLimitRetryConfigurationTests(unittest.TestCase):
         self.assertEqual(generator.count('"max_retries": 2'), 2)
         self.assertNotIn("max_retries=0", coverage)
         self.assertIn("max_retries=2", coverage)
+        self.assertIn(
+            "max_tool_calls=args.maximum_research_web_search_calls",
+            generator,
+        )
+        self.assertIn("maximum_web_search_calls=1", (
+            ROOT / "automation/scripts/ensure_story_coverage_policy.py"
+        ).read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
