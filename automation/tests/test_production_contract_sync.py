@@ -91,6 +91,48 @@ class ProductionContractSyncTests(unittest.TestCase):
         self.assertIn(r'stream.write("reused=true\n")', workflow)
         self.assertIn(r'+ "\n"', workflow)
         self.assertIn("candidate_pool_after", workflow)
+
+    def test_documentation_tracks_current_production_contract(self) -> None:
+        root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        automation_readme = (ROOT / "automation/README.md").read_text(
+            encoding="utf-8"
+        )
+        editorial_spec = (
+            ROOT / "automation/specs/editorial-policy.md"
+        ).read_text(encoding="utf-8")
+        documentation = "\n".join((root_readme, automation_readme))
+        normalized_documentation = " ".join(documentation.split())
+        normalized_spec = " ".join(editorial_spec.split())
+
+        for marker in (
+            "`23:17`, `23:37` и `23:57 UTC`",
+            "`02:17`, `02:37` и `02:57",
+            "06:00 МСК",
+            "12 Web Search",
+            "до 7 coverage",
+            "`security_world`",
+            "`security_russia`",
+            "`security_asia`",
+            "`legal_copyright_scraping`",
+            "`curiosity`",
+            "`general_coverage_gaps`",
+            "Новостей сегодня меньше, чем обычно",
+            "`publish` — по умолчанию `false`",
+            "`recovery_run_id`",
+            "`gpt-5.6-terra`",
+            "`gpt-image-2`",
+        ):
+            self.assertIn(marker, normalized_documentation)
+
+        self.assertIn(
+            "от 06:00 последнего успешно опубликованного выпуска до 06:00",
+            normalized_spec,
+        )
+        self.assertNotIn(
+            "от 07:00 предыдущего дня до 07:00 текущего дня",
+            normalized_spec,
+        )
+
     def test_same_contract_validator_used_by_ci_accepts_repository(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             report = Path(temp_dir) / "production-contract.json"
