@@ -264,34 +264,47 @@ class CoverageRepairFlowTests(unittest.TestCase):
                 "--model", "gpt-5.6-terra",
                 "--usual-total", "7",
                 "--minimum-publishable", "1",
-                "--maximum-audit-web-search-calls", "5",
+                "--maximum-audit-web-search-calls", "7",
                 "--report", str(report),
             ]
+
+            def fake_audit_request(**kwargs):
+                prompt = str(kwargs["prompt"])
+                direction_id = next(
+                    item
+                    for item in audit.AUDIT_DIRECTION_IDS
+                    if f"Идентификатор направления: {item}" in prompt
+                )
+                return (
+                    {
+                        "status": "complete_with_gaps",
+                        "error_message": None,
+                        "direction_id": direction_id,
+                        "candidates": (
+                            [added]
+                            if direction_id == "general_coverage_gaps"
+                            else []
+                        ),
+                        "rejections": [],
+                        "notes": "one candidate" if direction_id == "general_coverage_gaps" else "checked",
+                    },
+                    {
+                        "status": "completed",
+                        "web_search_calls": 1,
+                        "web_search_calls_completed": 1,
+                        "web_search_call_items_total": 1,
+                        "actual_queries": [f"query for {direction_id}"],
+                        "consulted_sources": [],
+                    },
+                )
+
             with (
                 mock.patch.object(audit, "RUNTIME_RESEARCH_ROOT", runtime_root),
                 mock.patch.object(audit, "PERSISTED_RESEARCH_ROOT", persisted_root),
                 mock.patch.object(
                     audit,
                     "run_audit_request",
-                    return_value=(
-                        {
-                            "status": "ok",
-                            "error_message": None,
-                            "queries_used": [
-                                {
-                                    "area": "russia",
-                                    "query": "fresh Russian AI news",
-                                    "purpose": "fill one missing story",
-                                }
-                            ],
-                            "candidates": [added],
-                            "notes": "one candidate",
-                        },
-                        {
-                            "web_search_calls": 1,
-                            "web_search_call_items_total": 1,
-                        },
-                    ),
+                    side_effect=fake_audit_request,
                 ),
                 mock.patch.object(audit, "rerun_editorial", side_effect=fake_rerun_editorial),
                 mock.patch.object(sys, "argv", argv),

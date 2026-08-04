@@ -32,7 +32,22 @@ class ProductionContractSyncTests(unittest.TestCase):
             production["coverage_audit_failure_blocks_publication"]
         )
         self.assertTrue(production["coverage_audit_enabled"])
-        self.assertEqual(production["coverage_audit_max_web_search_calls"], 5)
+        self.assertEqual(production["research_max_web_search_calls"], 12)
+        self.assertEqual(production["coverage_audit_max_web_search_calls"], 7)
+        self.assertEqual(
+            production["coverage_audit_minimum_required_web_search_calls"], 6
+        )
+        self.assertEqual(
+            production["coverage_audit_required_directions"],
+            [
+                "security_world",
+                "security_russia",
+                "security_asia",
+                "legal_copyright_scraping",
+                "curiosity",
+                "general_coverage_gaps",
+            ],
+        )
         self.assertEqual(
             production["minimum_legacy_items"],
             0,
@@ -60,7 +75,8 @@ class ProductionContractSyncTests(unittest.TestCase):
         self.assertNotIn("--minimum-world", workflow)
         self.assertNotIn("--minimum-russia", workflow)
         self.assertNotIn("--minimum-russian-candidates", workflow)
-        self.assertIn("--maximum-audit-web-search-calls 5", workflow)
+        self.assertIn("--maximum-research-web-search-calls 12", workflow)
+        self.assertIn("--maximum-audit-web-search-calls 7", workflow)
         self.assertIn(
             "Reuse completed editorial stop without paid APIs", workflow
         )
@@ -123,7 +139,18 @@ class ProductionContractSyncTests(unittest.TestCase):
                     "minimum_publishable": 1,
                     "regional_story_quotas_enabled": False,
                     "audit_failure_blocks_publication": False,
-                    "audit_max_web_search_calls": 5,
+                    "research_max_web_search_calls": 12,
+                    "audit_max_web_search_calls": 7,
+                    "audit_minimum_required_web_search_calls": 6,
+                    "audit_required_directions": [
+                        "security_world",
+                        "security_russia",
+                        "security_asia",
+                        "legal_copyright_scraping",
+                        "curiosity",
+                        "general_coverage_gaps",
+                    ],
+                    "maximum_curiosity_stories": 1,
                 },
             )
 

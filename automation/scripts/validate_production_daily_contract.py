@@ -7,6 +7,21 @@ from pathlib import Path
 from production_daily_common import parse_rss, read_json, write_json
 
 EXPECTED_CRONS = ["17 23 * * *", "37 23 * * *", "57 23 * * *"]
+EXPECTED_AUDIT_DIRECTIONS = [
+    "security_world",
+    "security_russia",
+    "security_asia",
+    "legal_copyright_scraping",
+    "curiosity",
+    "general_coverage_gaps",
+]
+EXPECTED_AUDIT_STATUSES = [
+    "complete",
+    "complete_with_gaps",
+    "partial",
+    "budget_exhausted",
+    "error",
+]
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -28,7 +43,7 @@ def main() -> int:
     rss = parse_rss(args.rss)
     errors: list[str] = []
     required = {
-        "version": 3,
+        "version": 4,
         "enabled": True,
         "timezone": "Europe/Moscow",
         "publication_hour_local": 6,
@@ -37,6 +52,7 @@ def main() -> int:
         "first_publication_date": "2026-07-24",
         "minimum_selected_stories": 7,
         "minimum_publishable_stories": 1,
+        "research_max_web_search_calls": 12,
         "regional_story_quotas_enabled": False,
         "short_digest_notice": "Новостей сегодня меньше, чем обычно",
         "short_digest_notice_html": (
@@ -45,7 +61,13 @@ def main() -> int:
         "short_digest_notice_position": "first_article_block_after_cover",
         "coverage_audit_enabled": True,
         "coverage_audit_failure_blocks_publication": False,
-        "coverage_audit_max_web_search_calls": 5,
+        "coverage_audit_max_web_search_calls": 7,
+        "coverage_audit_minimum_required_web_search_calls": 6,
+        "coverage_audit_required_directions": EXPECTED_AUDIT_DIRECTIONS,
+        "coverage_audit_statuses": EXPECTED_AUDIT_STATUSES,
+        "coverage_audit_editorial_rerun_only_on_added_candidates": True,
+        "maximum_curiosity_stories": 1,
+        "legal_candidate_minimum_significance_score": 4,
         "coverage_audit_maximum_candidates": 20,
         "require_previous_day_in_rss": False,
         "allow_skipped_publication_days": True,
@@ -148,7 +170,8 @@ def main() -> int:
         ("publishable story validation", "validate_story_coverage.py"),
         ("usual seven-story target", "--usual-total 7"),
         ("one-story publication floor", "--minimum-publishable 1"),
-        ("bounded audit searches", "--maximum-audit-web-search-calls 5"),
+        ("bounded primary research", "--maximum-research-web-search-calls 12"),
+        ("bounded audit searches", "--maximum-audit-web-search-calls 7"),
         (
             "fresh research after unusable automatic recovery",
             "if: steps.recovery.outputs.reused != 'true'",
@@ -444,7 +467,11 @@ def main() -> int:
             "minimum_publishable": 1,
             "regional_story_quotas_enabled": False,
             "audit_failure_blocks_publication": False,
-            "audit_max_web_search_calls": 5,
+            "research_max_web_search_calls": 12,
+            "audit_max_web_search_calls": 7,
+            "audit_minimum_required_web_search_calls": 6,
+            "audit_required_directions": EXPECTED_AUDIT_DIRECTIONS,
+            "maximum_curiosity_stories": 1,
         },
     }
     write_json(args.report, report)

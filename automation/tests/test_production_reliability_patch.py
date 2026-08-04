@@ -463,7 +463,8 @@ class ProductionWorkflowReliabilityTests(unittest.TestCase):
         self.assertIn("--minimum-publishable 1", workflow)
         self.assertNotIn("--minimum-world", workflow)
         self.assertNotIn("--minimum-russia", workflow)
-        self.assertIn("--maximum-audit-web-search-calls 5", workflow)
+        self.assertIn("--maximum-research-web-search-calls 12", workflow)
+        self.assertIn("--maximum-audit-web-search-calls 7", workflow)
         self.assertLess(
             workflow.index("Supplement a short digest when possible"),
             workflow.index("Normalize and validate digest artifact"),

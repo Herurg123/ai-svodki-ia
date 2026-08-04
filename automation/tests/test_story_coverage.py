@@ -263,6 +263,53 @@ class StoryCoverageTests(unittest.TestCase):
             self.assertEqual(payload["publication_mode"], "short")
             self.assertEqual(payload["counts"]["russia"], 0)
 
+    def test_final_validator_rejects_more_than_one_curiosity_story(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            artifact = root / "artifact"
+            artifact.mkdir()
+            (artifact / "stories.json").write_text(
+                json.dumps(
+                    [
+                        {"geography": "world", "category": "curiosity"},
+                        {"geography": "world", "category": "curiosity"},
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            (artifact / "digest.json").write_text(
+                json.dumps(
+                    {
+                        "short_digest": True,
+                        "article_html": (
+                            "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+                            "<p>Короткий выпуск.</p>"
+                        ),
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            report = root / "report.json"
+            import subprocess
+
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(SCRIPTS / "validate_story_coverage.py"),
+                    "--artifact-dir",
+                    str(artifact),
+                    "--report",
+                    str(report),
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            self.assertEqual(completed.returncode, 1)
+            payload = json.loads(report.read_text(encoding="utf-8"))
+            self.assertIn("не более одного", " ".join(payload["errors"]))
+
 
 class CoverageAuditExecutionTests(unittest.TestCase):
     def test_audit_metadata_separates_completed_calls_from_output_items(
@@ -273,6 +320,16 @@ class CoverageAuditExecutionTests(unittest.TestCase):
                 type="web_search_call",
                 id=f"ws_{index}",
                 status="completed" if index < 5 else "failed",
+                action={
+                    "type": "search",
+                    "query": f"query-{index}",
+                    "sources": [
+                        {
+                            "title": f"Source {index}",
+                            "url": f"https://example.com/source-{index}",
+                        }
+                    ],
+                },
             )
             for index in range(6)
         ]
@@ -302,6 +359,8 @@ class CoverageAuditExecutionTests(unittest.TestCase):
             metadata["web_search_call_statuses"],
             {"completed": 5, "failed": 1},
         )
+        self.assertEqual(metadata["actual_queries"], [f"query-{i}" for i in range(6)])
+        self.assertEqual(len(metadata["consulted_sources"]), 6)
 
     def test_complete_artifact_is_noop_without_openai(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -508,17 +567,21 @@ class CoverageAuditExecutionTests(unittest.TestCase):
             def __init__(self, index: int) -> None:
                 self.id = f"ws_{index}"
                 self.status = "completed"
+                self.action = {
+                    "type": "search",
+                    "query": f"query-{index}",
+                    "sources": [],
+                }
 
         class Response:
             status = "completed"
             output_text = json.dumps(
                 {
-                    "status": "ok",
+                    "status": "complete_with_gaps",
                     "error_message": None,
-                    "queries_used": [
-                        {"area": "russia", "query": "q", "purpose": "p"}
-                    ],
+                    "direction_id": "general_coverage_gaps",
                     "candidates": [],
+                    "rejections": [],
                     "notes": "Новых достойных кандидатов нет",
                 },
                 ensure_ascii=False,
@@ -559,7 +622,7 @@ class CoverageAuditExecutionTests(unittest.TestCase):
         self.assertTrue(metadata["budget_overrun"])
         self.assertTrue(metadata["completed_call_limit_exceeded"])
         self.assertEqual(metadata["configured_max_tool_calls"], 5)
-        self.assertEqual(payload["status"], "ok")
+        self.assertEqual(payload["status"], "complete_with_gaps")
 
 
 class ConfigurationContractTests(unittest.TestCase):
@@ -574,7 +637,11 @@ class ConfigurationContractTests(unittest.TestCase):
         self.assertNotIn("minimum_world_selected_stories", config)
         self.assertNotIn("minimum_russian_selected_stories", config)
         self.assertTrue(config["coverage_audit_enabled"])
-        self.assertEqual(config["coverage_audit_max_web_search_calls"], 5)
+        self.assertEqual(config["research_max_web_search_calls"], 12)
+        self.assertEqual(config["coverage_audit_max_web_search_calls"], 7)
+        self.assertEqual(
+            config["coverage_audit_minimum_required_web_search_calls"], 6
+        )
         editorial = json.loads(
             (ROOT / "automation/config/editorial.json").read_text(encoding="utf-8")
         )
@@ -584,6 +651,15 @@ class ConfigurationContractTests(unittest.TestCase):
         )
         self.assertNotIn("world_target_minimum", editorial["story_counts"])
         self.assertNotIn("russian_target_minimum", editorial["story_counts"])
+        self.assertEqual(editorial["spec_version"], "2026-08-04")
+        self.assertEqual(
+            editorial["candidate_selection"]["maximum_selected_curiosity_stories"],
+            1,
+        )
+        self.assertEqual(
+            editorial["candidate_selection"]["legal_scale_required_for_selection"],
+            "major",
+        )
 
     def test_prompts_describe_final_contract(self) -> None:
         editorial = (ROOT / "automation/prompts/daily_digest.md").read_text(encoding="utf-8")
