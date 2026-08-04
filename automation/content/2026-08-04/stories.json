@@ -1,0 +1,33 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Palantir сообщила о росте выручки коммерческого сегмента США на 149% и повысила ориентир на 2026 год",
+    "organization": "Palantir Technologies",
+    "topic": "рост коммерческого спроса на корпоративную ИИ-платформу",
+    "event_type": "earnings_guidance",
+    "status": "new",
+    "summary": "Palantir опубликовала результаты второго квартала 2026 года после закрытия американского рынка 3 августа. Компания сообщила о росте выручки коммерческого сегмента США на 149% год к году и повысила ориентир по этому сегменту на весь 2026 год до более чем 3,42 млрд долларов.",
+    "published_at": null,
+    "published_date": "2026-08-03",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Palantir Reports Q2 2026 U.S. Comm Revenue Growth of 149% Y/Y and Raises FY 2026 U.S. Comm Revenue Guidance to >$3.42B",
+        "publisher": "Palantir Technologies / StockTitan",
+        "url": "https://www.stocktitan.net/news/PLTR/palantir-reports-q2-2026-u-s-comm-revenue-growth-of-149-y-y-and-c8762wptyyap.html"
+      }
+    ],
+    "keywords": [
+      "Palantir",
+      "AIP",
+      "корпоративный ИИ",
+      "коммерческий сектор США",
+      "квартальная отчётность",
+      "выручка",
+      "guidance"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  }
+]
