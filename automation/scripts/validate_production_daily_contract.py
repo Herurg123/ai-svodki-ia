@@ -6,7 +6,7 @@ from pathlib import Path
 
 from production_daily_common import parse_rss, read_json, write_json
 
-EXPECTED_CRONS = ["17 0 * * *", "37 0 * * *", "57 0 * * *"]
+EXPECTED_CRONS = ["17 23 * * *", "37 23 * * *", "57 23 * * *"]
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -425,9 +425,9 @@ def main() -> int:
         "rss_latest_date": rss["latest_date"],
         "legacy_items": legacy_count,
         "schedule_local": [
-            "03:17 Europe/Moscow",
-            "03:37 Europe/Moscow",
-            "03:57 Europe/Moscow",
+            "02:17 Europe/Moscow",
+            "02:37 Europe/Moscow",
+            "02:57 Europe/Moscow",
         ],
         "schedule_utc": EXPECTED_CRONS,
         "first_publication_date": config["first_publication_date"],

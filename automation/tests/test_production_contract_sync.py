@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-EXPECTED_CRONS = ["17 0 * * *", "37 0 * * *", "57 0 * * *"]
+EXPECTED_CRONS = ["17 23 * * *", "37 23 * * *", "57 23 * * *"]
 
 class ProductionContractSyncTests(unittest.TestCase):
     def test_config_workflow_and_editorial_thresholds_are_synchronized(self) -> None:
@@ -108,6 +108,14 @@ class ProductionContractSyncTests(unittest.TestCase):
             payload = json.loads(report.read_text(encoding="utf-8"))
             self.assertEqual(payload["status"], "ok")
             self.assertEqual(payload["schedule_utc"], EXPECTED_CRONS)
+            self.assertEqual(
+                payload["schedule_local"],
+                [
+                    "02:17 Europe/Moscow",
+                    "02:37 Europe/Moscow",
+                    "02:57 Europe/Moscow",
+                ],
+            )
             self.assertEqual(
                 payload["story_coverage_contract"],
                 {
