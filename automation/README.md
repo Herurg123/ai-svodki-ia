@@ -59,6 +59,37 @@ GitHub Actions управляет:
 
 Экспериментальные preview, fixture, recovery и pre-production workflow удалены. Их полезные проверки остаются в `automation/tests/` и выполняются единым CI.
 
+## Расписание и режимы запуска
+
+`daily-production.yml` имеет три страховочных cron-окна: `23:17`, `23:37` и
+`23:57 UTC` предыдущего календарного дня, то есть `02:17`, `02:37` и
+`02:57 Europe/Moscow` даты выпуска. GitHub Actions может поставить schedule в
+очередь и фактически начать его позднее. Все три окна защищены одним gate:
+
+- если выпуск уже есть в RSS и на живом сайте, запуск завершается бесплатным
+  no-op;
+- если выпуск есть в GitHub, но живой URL недоступен, выполняется только
+  FTP-redeploy точного commit;
+- только отсутствие выпуска разрешает research и остальные платные этапы.
+
+Плановый запуск всегда работает с `publish=true`. У ручного
+`workflow_dispatch` доступны три входа:
+
+- `publication_date` — необязательная дата `YYYY-MM-DD`;
+- `publish` — по умолчанию `false`, поэтому ручной запуск является dry-run;
+- `recovery_run_id` — необязательный ID запуска с сохранённым оплаченным
+  artifact.
+
+Без явного `recovery_run_id` workflow сам ищет пригодный artifact той же даты.
+Он может переиспользовать полный, частичный или research-only результат и уже
+сгенерированную обложку. Завершённая редакционная остановка с нулём достойных
+сюжетов также переиспользуется без нового платного поиска. Production-
+artifacts хранятся 14 дней.
+
+Метаданные выпуска нормализуются к 06:00 МСК. Окно research начинается с
+`published_at` последнего успешно опубликованного выпуска; пропущенные
+календарные дни допустимы.
+
 ## Редакционный контракт короткого выпуска
 
 Канонические правила находятся в
@@ -83,6 +114,11 @@ audit разрешён лишь после фактического добавл
 `coverage-audit.json` и выводятся в Actions Summary. Полный контракт описан в
 [`specs/editorial-policy.md`](specs/editorial-policy.md).
 
+Основной research ограничен 12 Web Search calls. Поэтому максимальный бюджет
+короткого дня составляет 19 вызовов: 12 основного research и до 7 coverage
+audit. Текущий текстовый контракт принимает `gpt-5.6-terra`, image-контракт —
+`gpt-image-2`.
+
 ## Архив и дедупликация
 
 Перед production-запуском:
@@ -96,7 +132,15 @@ python automation/scripts/validate_archive.py
 
 ## Локальная проверка
 
+Минимальная редакционная проверка:
+
 ```bash
 python -m unittest discover -s automation/tests -v
+python automation/scripts/validate_editorial_contract.py
 python automation/scripts/validate_archive.py
 ```
+
+Main CI дополнительно компилирует Python и проверяет production-контракт, RSS,
+sitemap и Schema.org. Точный актуальный набор команд находится в
+[`../.github/workflows/ci.yml`](../.github/workflows/ci.yml); все эти проверки
+офлайн и не используют платные API.
