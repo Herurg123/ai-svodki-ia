@@ -75,7 +75,7 @@ def validate() -> list[str]:
     require_equal(
         errors,
         editorial.get("spec_version"),
-        "2026-08-04",
+        "2026-08-05",
         "Версия редакционной политики",
     )
     require_equal(

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import importlib.util
 import json
 import sys
@@ -50,12 +51,6 @@ def build_audit_api_metadata(
         response,
         maximum_web_search_calls=maximum_web_search_calls,
     )
-    statuses = metadata.get("web_search_call_statuses") or {}
-    # Older SDK objects and test doubles may omit per-call status. Such items
-    # were historically counted as performed, so retain that compatibility.
-    metadata["web_search_calls"] = int(statuses.get("completed", 0)) + int(
-        statuses.get("unknown", 0)
-    )
     return metadata
 
 
@@ -65,22 +60,26 @@ def run_audit_request(
     model: str,
     prompt: str,
     maximum_web_search_calls: int,
+    allowed_domains: list[str] | tuple[str, ...] | None = None,
 ) -> AuditRequestResult:
     global _LAST_AUDIT_RESULT
 
     from openai import OpenAI
 
     client = OpenAI(api_key=api_key, timeout=1200.0, max_retries=2)
+    web_search_tool: dict[str, Any] = {
+        "type": "web_search",
+        "search_context_size": "medium",
+        "return_token_budget": "default",
+    }
+    if allowed_domains:
+        web_search_tool["filters"] = {
+            "allowed_domains": list(allowed_domains),
+        }
     response = client.responses.create(
         model=model,
         input=prompt,
-        tools=[
-            {
-                "type": "web_search",
-                "search_context_size": "medium",
-                "return_token_budget": "default",
-            }
-        ],
+        tools=[web_search_tool],
         tool_choice="required",
         max_tool_calls=maximum_web_search_calls,
         include=["web_search_call.action.sources"],
@@ -104,8 +103,11 @@ def run_audit_request(
     payload: Any = None
     validation_error: str | None = None
 
-    if metadata.get("web_search_call_items_total", 0) < 1:
-        validation_error = "Coverage audit не вернул ни одного web_search_call"
+    if metadata.get("web_search_calls_completed", 0) < 1:
+        validation_error = (
+            "Coverage audit не завершил ни одной поисковой операции "
+            "web_search action.type=search"
+        )
     elif getattr(response, "status", None) != "completed":
         validation_error = (
             "Coverage audit не завершён: "
@@ -146,10 +148,10 @@ def run_audit_request(
     if validation_error is None and metadata.get("budget_overrun"):
         print(
             "::warning title=Coverage audit web-search budget::"
-            "Responses API вернул больше web_search_call, чем настроено: "
-            f"{metadata.get('observed_web_search_calls')}>"
-            f"{maximum_web_search_calls}. Ответ завершён и пригоден, "
-            "поэтому короткий выпуск не блокируется.",
+            "Responses API завершил больше поисковых операций, чем настроено: "
+            f"{metadata.get('web_search_calls_completed')}>"
+            f"{maximum_web_search_calls}. Ответ сохранён для диагностики; "
+            "неполный обязательный audit заблокирует публикацию.",
             file=sys.stderr,
         )
     return result
@@ -230,7 +232,7 @@ def persist_audit_diagnostics(
 
 
 def completed_prior_audit(payload: Any) -> bool:
-    if not isinstance(payload, dict) or payload.get("status") != "ok":
+    if not isinstance(payload, dict):
         return False
     audit_state = payload.get("audit_state")
     if audit_state is not None and audit_state != "completed_usable":
@@ -238,8 +240,10 @@ def completed_prior_audit(payload: Any) -> bool:
     api = payload.get("api") or {}
     return (
         payload.get("web_search_performed") is True
+        and payload.get("audit_status") in {"complete", "complete_with_gaps"}
+        and set(payload.get("checked_directions") or ()) == set(AUDIT_DIRECTION_IDS)
         and isinstance(api, dict)
-        and api.get("status") in {"completed", "partial"}
+        and api.get("status") == "completed"
     )
 
 
@@ -317,20 +321,31 @@ def _finalize_report(
 
     if _LAST_AUDIT_RESULTS:
         results = list(_LAST_AUDIT_RESULTS)
-        report["api_attempts"] = [item.metadata for item in results]
-        observed = sum(
+        prior_api_attempts = (prior_report or {}).get("api_attempts")
+        report["api_attempts"] = (
+            copy.deepcopy(prior_api_attempts)
+            if isinstance(prior_api_attempts, list)
+            else []
+        ) + [item.metadata for item in results]
+        completed_searches = sum(
             int(
                 item.metadata.get(
-                    "web_search_call_items_total",
-                    item.metadata.get("observed_web_search_calls", 0),
+                    "web_search_calls_completed",
+                    item.metadata.get("web_search_calls", 0),
                 )
                 or 0
             )
             for item in results
         )
-        report["web_search_performed"] = observed > 0
-        diagnostic_paths: list[dict[str, str]] = []
-        for index, item in enumerate(results, start=1):
+        report["web_search_performed"] = completed_searches > 0
+        prior_diagnostic_paths = (prior_report or {}).get("api_diagnostic_paths")
+        diagnostic_paths: list[dict[str, str]] = (
+            copy.deepcopy(prior_diagnostic_paths)
+            if isinstance(prior_diagnostic_paths, list)
+            else []
+        )
+        index_offset = len(diagnostic_paths)
+        for index, item in enumerate(results, start=1 + index_offset):
             direction = (
                 str(item.payload.get("direction_id"))
                 if isinstance(item.payload, dict)
@@ -369,25 +384,28 @@ def _finalize_report(
         report.update(
             persist_audit_diagnostics(last_result, report_path.parent)
         )
-        if len(results) == 1:
+        if len(results) == 1 and not report.get("api"):
             report["api"] = last_result.metadata
 
         audit_status = report.get("audit_status")
         usable_statuses = {
             "complete",
             "complete_with_gaps",
-            "partial",
-            "budget_exhausted",
         }
-        if report.get("status") == "ok" and audit_status in usable_statuses:
+        validation_errors = [
+            item.validation_error
+            for item in results
+            if item.validation_error
+        ]
+        if (
+            audit_status in usable_statuses
+            and not validation_errors
+            and set(report.get("checked_directions") or ())
+            == set(AUDIT_DIRECTION_IDS)
+        ):
             report["audit_state"] = "completed_usable"
         else:
             report["audit_state"] = "completed_unusable"
-            validation_errors = [
-                item.validation_error
-                for item in results
-                if item.validation_error
-            ]
             if validation_errors:
                 report["validation_error"] = "; ".join(validation_errors)
             elif audit_status == "error":

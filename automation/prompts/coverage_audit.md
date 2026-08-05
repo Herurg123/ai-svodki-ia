@@ -21,6 +21,8 @@
 Идентификатор направления: {{DIRECTION_ID}}
 Номер попытки этого направления: {{DIRECTION_ATTEMPT}}
 Что именно проверить: {{DIRECTION_GUIDANCE}}
+Стратегия поиска: {{DIRECTION_SEARCH_STRATEGY}}
+Доменный фильтр API: {{DIRECTION_ALLOWED_DOMAINS}}
 
 Правила:
 

@@ -35,7 +35,7 @@ class ContinuityWorkflowContractTests(unittest.TestCase):
         self.assertIn("Итог публикации", workflow)
 
         continuity = workflow.index(
-            "Verify search window starts at last successful release"
+            "Verify search window starts at last successful research cutoff"
         )
         research = workflow.index(
             "Run full research and editorial"

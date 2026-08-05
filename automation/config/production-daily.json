@@ -37,7 +37,7 @@
   "commit_message_template": "Publish AI digest for {date}",
   "ftp_delegated_to_existing_workflow": true,
   "coverage_audit_enabled": true,
-  "coverage_audit_failure_blocks_publication": false,
+  "coverage_audit_failure_blocks_publication": true,
   "coverage_audit_max_web_search_calls": 7,
   "coverage_audit_minimum_required_web_search_calls": 6,
   "coverage_audit_required_directions": [

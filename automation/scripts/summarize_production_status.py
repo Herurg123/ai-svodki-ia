@@ -245,7 +245,8 @@ def stage_state(publication_date: str) -> dict[str, bool]:
 
     audit = (
         isinstance(coverage, dict)
-        and bool(coverage.get("web_search_performed"))
+        and coverage.get("status") == "ok"
+        and coverage.get("audit_status") in {"complete", "complete_with_gaps"}
     )
     image = (
         (image_dir / "cover.png").is_file()
@@ -312,6 +313,11 @@ def coverage_audit_summary_lines() -> list[str]:
             f"предел {int(budget.get('maximum_calls', 0) or 0)}"
         ),
         (
+            "- **Служебные tool items:** "
+            f"{int(budget.get('observed_call_items', 0) or 0)}; "
+            "open_page/find_in_page не расходуют search-бюджет"
+        ),
+        (
             "- **Добавлено пригодных кандидатов:** "
             f"{int(coverage.get('audit_added_candidates', 0) or 0)}"
         ),
@@ -328,6 +334,9 @@ def coverage_audit_summary_lines() -> list[str]:
         lines.append("- **Частично:** " + ", ".join(map(str, partial)))
     if unchecked:
         lines.append("- **Не проверено:** " + ", ".join(map(str, unchecked)))
+    stop_reason = budget.get("stop_reason")
+    if stop_reason:
+        lines.append(f"- **Причина остановки:** `{stop_reason}`")
     time_warnings = coverage.get("time_precision_warnings")
     if isinstance(time_warnings, list) and time_warnings:
         lines.append(

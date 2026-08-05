@@ -15,7 +15,7 @@ def parse_aware(value: str) -> datetime:
     parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
     if parsed.tzinfo is None:
         raise RuntimeError(
-            f"published_at должен содержать часовой пояс: {value!r}"
+            f"timestamp должен содержать часовой пояс: {value!r}"
         )
     return parsed
 
@@ -40,23 +40,23 @@ def latest_archive_release(
         except ValueError:
             continue
 
-        raw_published = item.get("published_at")
-        if isinstance(raw_published, str) and raw_published.strip():
+        raw_cutoff = item.get("search_cutoff_at") or item.get("published_at")
+        if isinstance(raw_cutoff, str) and raw_cutoff.strip():
             try:
-                published_at = parse_aware(raw_published)
+                search_cutoff_at = parse_aware(raw_cutoff)
             except (RuntimeError, ValueError):
-                published_at = datetime.combine(
+                search_cutoff_at = datetime.combine(
                     item_date,
                     time(hour=publication_hour),
                     tzinfo=zone,
                 )
         else:
-            published_at = datetime.combine(
+            search_cutoff_at = datetime.combine(
                 item_date,
                 time(hour=publication_hour),
                 tzinfo=zone,
             )
-        values.append((item_date, published_at))
+        values.append((item_date, search_cutoff_at))
 
     if not values:
         raise RuntimeError("Архив дедупликации не содержит выпусков.")
@@ -104,7 +104,7 @@ def validate(
         "missed_calendar_days": int(
             runtime.get("missed_calendar_days", 0)
         ),
-        "policy": "from_last_successfully_published_release",
+        "policy": "from_last_successful_research_cutoff",
     }
 
 

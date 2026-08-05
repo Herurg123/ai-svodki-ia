@@ -168,7 +168,51 @@ AUDIT_CANDIDATE_SCHEMA: dict[str, Any] = {
     ],
 }
 
-AUDIT_DIRECTIONS: tuple[dict[str, str], ...] = (
+AUTHORITATIVE_LAST_MILE_DOMAINS: tuple[str, ...] = (
+    "reuters.com",
+    "apnews.com",
+    "bloomberg.com",
+    "ft.com",
+    "openai.com",
+    "anthropic.com",
+    "deepmind.google",
+    "blog.google",
+    "microsoft.com",
+    "aws.amazon.com",
+    "aboutamazon.com",
+    "about.fb.com",
+    "ai.meta.com",
+    "nvidia.com",
+    "amd.com",
+    "news.samsung.com",
+    "news.skhynix.com",
+    "pr.tsmc.com",
+    "alibabacloud.com",
+    "tencent.com",
+    "huawei.com",
+    "baidu.com",
+    "bytedance.com",
+    "deepseek.com",
+    "yandex.ru",
+    "sber.ru",
+    "tass.com",
+    "interfax.ru",
+    "whitehouse.gov",
+    "congress.gov",
+    "justice.gov",
+    "ftc.gov",
+    "ec.europa.eu",
+    "gov.uk",
+    "aisi.gov.uk",
+    "theregister.com",
+    "bleepingcomputer.com",
+    "securityweek.com",
+    "techcrunch.com",
+    "arstechnica.com",
+)
+
+
+AUDIT_DIRECTIONS: tuple[dict[str, Any], ...] = (
     {
         "id": "security_world",
         "label": "Security — мировой сегмент",
@@ -216,13 +260,18 @@ AUDIT_DIRECTIONS: tuple[dict[str, str], ...] = (
     },
     {
         "id": "general_coverage_gaps",
-        "label": "Оставшиеся пробелы обязательного research",
+        "label": "Авторитетный last-mile sweep оставшихся пробелов",
         "guidance": (
-            "Перепроверь незакрытые значимые события мировых компаний, Китая "
-            "и Азии, России, coding tools, исследований, мультимодальности, "
-            "робототехники, инфраструктуры, чипов, облаков, регулирования, "
-            "бизнеса, внедрений и инвестиций. Не повторяй уже найденное."
+            "Последним проходом перепроверь первоисточники, агентства, суды и "
+            "регуляторов на предмет незакрытых значимых событий мировых "
+            "компаний, Китая и Азии, России, coding tools, исследований, "
+            "мультимодальности, робототехники, инфраструктуры, чипов, облаков, "
+            "регулирования, бизнеса, внедрений и инвестиций. Не повторяй уже "
+            "найденное и не считай отсутствие Reuters-документа отсутствием "
+            "события: подтверждай доступным авторитетным первоисточником."
         ),
+        "search_strategy": "authoritative_last_mile",
+        "allowed_domains": AUTHORITATIVE_LAST_MILE_DOMAINS,
     },
 )
 AUDIT_DIRECTION_IDS = tuple(item["id"] for item in AUDIT_DIRECTIONS)
@@ -302,7 +351,7 @@ def build_prompt(
     maximum_web_search_calls: int,
     existing_candidates: list[Any],
     archive: dict[str, Any],
-    direction: dict[str, str] | None = None,
+    direction: dict[str, Any] | None = None,
     attempt: int = 1,
 ) -> str:
     selected_direction = direction or AUDIT_DIRECTIONS[-1]
@@ -315,6 +364,13 @@ def build_prompt(
         "DIRECTION_ID": selected_direction["id"],
         "DIRECTION_LABEL": selected_direction["label"],
         "DIRECTION_GUIDANCE": selected_direction["guidance"],
+        "DIRECTION_SEARCH_STRATEGY": str(
+            selected_direction.get("search_strategy", "targeted_topic_search")
+        ),
+        "DIRECTION_ALLOWED_DOMAINS": ", ".join(
+            selected_direction.get("allowed_domains", ())
+        )
+        or "без доменного фильтра",
         "DIRECTION_ATTEMPT": str(attempt),
         "EXISTING_CANDIDATES": json.dumps(
             existing_candidates, ensure_ascii=False, indent=2
@@ -356,6 +412,8 @@ def build_audit_api_metadata(
 ) -> dict[str, Any]:
     call_items: list[dict[str, Any]] = []
     status_counts: dict[str, int] = {}
+    action_type_counts: dict[str, int] = {}
+    search_status_counts: dict[str, int] = {}
     actual_queries: list[str] = []
     consulted_sources: list[dict[str, Any]] = []
     seen_queries: set[str] = set()
@@ -372,6 +430,10 @@ def build_audit_api_metadata(
             plain_action = plain_item.get("action")
         if not isinstance(plain_action, dict):
             plain_action = {}
+        action_type = str(plain_action.get("type") or "unknown")
+        action_type_counts[action_type] = action_type_counts.get(action_type, 0) + 1
+        if action_type == "search":
+            search_status_counts[status] = search_status_counts.get(status, 0) + 1
 
         raw_queries: list[Any] = []
         if plain_action.get("query") is not None:
@@ -399,13 +461,21 @@ def build_audit_api_metadata(
             {
                 "id": getattr(item, "id", None),
                 "status": status,
+                "action_type": action_type,
                 "action": plain_action,
             }
         )
 
-    completed_calls = status_counts.get("completed", 0)
+    completed_searches = search_status_counts.get("completed", 0)
+    performed_searches = completed_searches + search_status_counts.get("unknown", 0)
+    incomplete_searches = sum(
+        count
+        for status, count in search_status_counts.items()
+        if status not in {"completed", "unknown"}
+    )
     total_items = len(call_items)
     output_item_limit_exceeded = total_items > maximum_web_search_calls
+    completed_call_limit_exceeded = completed_searches > maximum_web_search_calls
     return {
         "response_id": getattr(response, "id", None),
         "status": getattr(response, "status", None),
@@ -414,18 +484,27 @@ def build_audit_api_metadata(
         # Compatibility with the first production hotfix for run 30602601828.
         "configured_web_search_limit": maximum_web_search_calls,
         "observed_web_search_calls": total_items,
-        "budget_overrun": output_item_limit_exceeded,
-        # Backward-compatible key: only completed searches count as performed.
-        "web_search_calls": completed_calls,
-        "web_search_calls_completed": completed_calls,
+        # Only completed action.type=search operations spend the audit budget.
+        # open_page/find_in_page remain visible diagnostics but are not searches.
+        "budget_overrun": completed_call_limit_exceeded,
+        "web_search_calls": completed_searches,
+        "web_search_calls_completed": completed_searches,
+        "web_search_search_operations_total": sum(search_status_counts.values()),
+        "web_search_search_operations_performed": performed_searches,
+        "web_search_search_operations_incomplete": incomplete_searches,
+        "web_search_navigation_items_total": sum(
+            count
+            for action_type, count in action_type_counts.items()
+            if action_type in {"open_page", "find_in_page"}
+        ),
         "web_search_call_items_total": total_items,
         "web_search_call_statuses": status_counts,
+        "web_search_search_statuses": search_status_counts,
+        "web_search_action_type_counts": action_type_counts,
         "web_search_call_items": call_items,
         "actual_queries": actual_queries,
         "consulted_sources": consulted_sources,
-        "completed_call_limit_exceeded": (
-            completed_calls > maximum_web_search_calls
-        ),
+        "completed_call_limit_exceeded": completed_call_limit_exceeded,
         "output_item_limit_exceeded": output_item_limit_exceeded,
         "usage": response_to_plain(getattr(response, "usage", None)),
         "error": response_to_plain(getattr(response, "error", None)),
@@ -441,20 +520,24 @@ def run_audit_request(
     model: str,
     prompt: str,
     maximum_web_search_calls: int,
+    allowed_domains: list[str] | tuple[str, ...] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     from openai import OpenAI
 
     client = OpenAI(api_key=api_key, timeout=1200.0, max_retries=2)
+    web_search_tool: dict[str, Any] = {
+        "type": "web_search",
+        "search_context_size": "medium",
+        "return_token_budget": "default",
+    }
+    if allowed_domains:
+        web_search_tool["filters"] = {
+            "allowed_domains": list(allowed_domains),
+        }
     response = client.responses.create(
         model=model,
         input=prompt,
-        tools=[
-            {
-                "type": "web_search",
-                "search_context_size": "medium",
-                "return_token_budget": "default",
-            }
-        ],
+        tools=[web_search_tool],
         tool_choice="required",
         max_tool_calls=maximum_web_search_calls,
         include=["web_search_call.action.sources"],
@@ -476,16 +559,18 @@ def run_audit_request(
     )
     if metadata["output_item_limit_exceeded"]:
         print(
-            "::warning title=Coverage audit web-search budget::"
-            "Responses API вернул больше web_search_call, чем настроено: "
+            "::notice title=Coverage audit tool trajectory::"
+            "Responses API вернул больше служебных web_search_call items, чем "
+            "поисковых операций разрешено: "
             f"{metadata['web_search_call_items_total']}>"
-            f"{maximum_web_search_calls}. Ответ сохранён для диагностики; "
-            "пригодный короткий выпуск не блокируется.",
+            f"{maximum_web_search_calls}. Навигационные open_page/find_in_page "
+            "не расходуют поисковый бюджет.",
             file=sys.stderr,
         )
-    if metadata["web_search_call_items_total"] < 1:
+    if metadata["web_search_calls_completed"] < 1:
         raise CoverageAuditResponseError(
-            "Coverage audit не вернул ни одного web_search_call",
+            "Coverage audit не завершил ни одной поисковой операции "
+            "web_search action.type=search",
             metadata,
         )
     if getattr(response, "status", None) != "completed":
@@ -532,12 +617,26 @@ def _aggregate_api_metadata(attempts: list[dict[str, Any]]) -> dict[str, Any]:
         if isinstance(item.get("api"), dict)
     ]
     status_counts: dict[str, int] = {}
+    action_type_counts: dict[str, int] = {}
+    search_status_counts: dict[str, int] = {}
     usage: dict[str, int] = {}
     for response in responses:
         for status, count in (response.get("web_search_call_statuses") or {}).items():
             status_counts[str(status)] = status_counts.get(str(status), 0) + int(
                 count or 0
             )
+        for action_type, count in (
+            response.get("web_search_action_type_counts") or {}
+        ).items():
+            action_type_counts[str(action_type)] = action_type_counts.get(
+                str(action_type), 0
+            ) + int(count or 0)
+        for status, count in (
+            response.get("web_search_search_statuses") or {}
+        ).items():
+            search_status_counts[str(status)] = search_status_counts.get(
+                str(status), 0
+            ) + int(count or 0)
         response_usage = response.get("usage")
         if isinstance(response_usage, dict):
             for key in ("input_tokens", "output_tokens", "total_tokens"):
@@ -566,6 +665,12 @@ def _aggregate_api_metadata(attempts: list[dict[str, Any]]) -> dict[str, Any]:
             for item in responses
         ),
         "web_search_call_statuses": status_counts,
+        "web_search_action_type_counts": action_type_counts,
+        "web_search_search_statuses": search_status_counts,
+        "web_search_navigation_items_total": sum(
+            int(item.get("web_search_navigation_items_total", 0) or 0)
+            for item in responses
+        ),
         "usage": usage or None,
     }
 
@@ -581,13 +686,16 @@ def execute_audit_plan(
     maximum_web_search_calls: int,
     existing_candidates: list[Any],
     archive: dict[str, Any],
+    prior_plan: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Run six explicit one-search passes plus at most one retry.
 
     A separate Responses request per direction prevents a broad model answer
     from claiming that one generic query covered every required beat. The
-    configured tool cap is one for every request; the global observed-call
-    budget is enforced here and any provider-side overrun is surfaced.
+    configured tool cap is one for every request; the global budget counts
+    only completed action.type=search operations. Navigation items such as
+    open_page/find_in_page remain diagnostics and never stop later directions.
+    A recovered partial plan resumes only directions that were not completed.
     """
 
     if maximum_web_search_calls < MINIMUM_REQUIRED_AUDIT_CALLS:
@@ -596,15 +704,54 @@ def execute_audit_plan(
             f"{MINIMUM_REQUIRED_AUDIT_CALLS} web-search calls"
         )
 
-    attempts: list[dict[str, Any]] = []
+    prior_plan = prior_plan if isinstance(prior_plan, dict) else {}
+    prior_attempts = prior_plan.get("attempts")
+    attempts: list[dict[str, Any]] = copy.deepcopy(
+        prior_attempts if isinstance(prior_attempts, list) else []
+    )
     latest_by_direction: dict[str, dict[str, Any]] = {}
-    candidates: list[Any] = []
-    response_attempts = 0
-    observed_calls = 0
-    provider_pass_overrun = False
+    prior_directions = prior_plan.get("directions")
+    if isinstance(prior_directions, list):
+        for record in prior_directions:
+            if (
+                isinstance(record, dict)
+                and record.get("direction_id") in AUDIT_DIRECTION_IDS
+                and int(record.get("attempt", 0) or 0) > 0
+            ):
+                latest_by_direction[str(record["direction_id"])] = copy.deepcopy(
+                    record
+                )
+    for record in attempts:
+        if (
+            isinstance(record, dict)
+            and record.get("direction_id") in AUDIT_DIRECTION_IDS
+        ):
+            direction_id = str(record["direction_id"])
+            if int(record.get("attempt", 0) or 0) >= int(
+                latest_by_direction.get(direction_id, {}).get("attempt", 0) or 0
+            ):
+                latest_by_direction[direction_id] = copy.deepcopy(record)
 
-    def run_direction(direction: dict[str, str], attempt_number: int) -> None:
-        nonlocal response_attempts, observed_calls, provider_pass_overrun
+    candidates: list[Any] = []
+    for record in latest_by_direction.values():
+        if record.get("status") not in {"checked", "checked_with_gaps"}:
+            continue
+        raw_candidates = record.get("candidates")
+        if isinstance(raw_candidates, list):
+            candidates.extend(copy.deepcopy(raw_candidates))
+
+    prior_budget = prior_plan.get("search_budget")
+    prior_budget = prior_budget if isinstance(prior_budget, dict) else {}
+    response_attempts = int(
+        prior_budget.get("response_attempts", len(attempts)) or 0
+    )
+    observed_call_items = int(prior_budget.get("observed_call_items", 0) or 0)
+    completed_searches = int(prior_budget.get("completed_calls", 0) or 0)
+    provider_search_overrun = bool(prior_budget.get("provider_overrun"))
+
+    def run_direction(direction: dict[str, Any], attempt_number: int) -> None:
+        nonlocal response_attempts, observed_call_items
+        nonlocal completed_searches, provider_search_overrun
         prompt = build_prompt(
             template,
             publication_date=publication_date,
@@ -621,8 +768,13 @@ def execute_audit_plan(
             "label": direction["label"],
             "required": True,
             "attempt": attempt_number,
+            "search_strategy": direction.get(
+                "search_strategy", "targeted_topic_search"
+            ),
+            "allowed_domains": list(direction.get("allowed_domains", ())),
             "prompt": prompt,
             "status": "error",
+            "outcome": "search_not_completed",
             "actual_queries": [],
             "sources": [],
             "candidate_count": 0,
@@ -640,14 +792,21 @@ def execute_audit_plan(
                 prompt=prompt,
                 # Every thematic pass gets exactly one search opportunity.
                 maximum_web_search_calls=1,
+                allowed_domains=direction.get("allowed_domains"),
             )
         except CoverageAuditResponseError as exc:
             metadata = exc.metadata
             record["api"] = metadata
             record["error"] = f"{type(exc).__name__}: {exc}"
+            record["outcome"] = (
+                "incomplete_response"
+                if int(metadata.get("web_search_calls_completed", 0) or 0) > 0
+                else "search_not_completed"
+            )
         except Exception as exc:
             metadata = {}
             record["error"] = f"{type(exc).__name__}: {exc}"
+            record["outcome"] = "transport_error"
         else:
             record["api"] = metadata
             actual_queries = metadata.get("actual_queries")
@@ -673,6 +832,12 @@ def execute_audit_plan(
                     "checked"
                     if payload_status == "complete"
                     else "checked_with_gaps"
+                )
+                record["outcome"] = (
+                    "candidates_found"
+                    if isinstance(payload.get("candidates"), list)
+                    and bool(payload.get("candidates"))
+                    else "no_news_found"
                 )
                 raw_rejections = payload.get("rejections")
                 if isinstance(raw_rejections, list):
@@ -749,6 +914,7 @@ def execute_audit_plan(
                 record["status"] = (
                     "partial" if direction_matches else "unchecked"
                 )
+                record["outcome"] = "response_validation_failed"
                 problems: list[str] = []
                 if not direction_matches:
                     problems.append("response direction_id does not match request")
@@ -765,9 +931,13 @@ def execute_audit_plan(
             pass_call_items = int(
                 metadata.get("web_search_call_items_total", 0) or 0
             )
-            observed_calls += pass_call_items
-            if pass_call_items > 1:
-                provider_pass_overrun = True
+            pass_completed_searches = int(
+                metadata.get("web_search_calls_completed", 0) or 0
+            )
+            observed_call_items += pass_call_items
+            completed_searches += pass_completed_searches
+            if pass_completed_searches > 1:
+                provider_search_overrun = True
             if not record["actual_queries"]:
                 queries = metadata.get("actual_queries")
                 if isinstance(queries, list):
@@ -779,12 +949,15 @@ def execute_audit_plan(
         attempts.append(record)
         latest_by_direction[direction["id"]] = record
 
+    # First finish every never-attempted mandatory direction. A failed prior
+    # direction is retried only after the other mandatory beats received their
+    # first chance, preserving the six-direction contract under a seven-call cap.
     for direction in AUDIT_DIRECTIONS:
+        if direction["id"] in latest_by_direction:
+            continue
         if response_attempts >= maximum_web_search_calls:
             break
-        if observed_calls >= maximum_web_search_calls:
-            break
-        if provider_pass_overrun:
+        if completed_searches >= maximum_web_search_calls:
             break
         run_direction(direction, 1)
 
@@ -797,11 +970,30 @@ def execute_audit_plan(
     if (
         incomplete
         and response_attempts < maximum_web_search_calls
-        and observed_calls < maximum_web_search_calls
-        and not provider_pass_overrun
+        and completed_searches < maximum_web_search_calls
     ):
-        retry_direction = incomplete[0]
-        run_direction(retry_direction, 2)
+        retry_direction = next(
+            (
+                direction
+                for direction in incomplete
+                if int(
+                    latest_by_direction.get(direction["id"], {}).get(
+                        "attempt", 0
+                    )
+                    or 0
+                )
+                < 2
+            ),
+            None,
+        )
+        if retry_direction is not None:
+            retry_number = int(
+                latest_by_direction.get(retry_direction["id"], {}).get(
+                    "attempt", 0
+                )
+                or 0
+            ) + 1
+            run_direction(retry_direction, retry_number)
 
     checked = [
         direction_id
@@ -822,7 +1014,10 @@ def execute_audit_plan(
         in {None, "unchecked"}
     ]
     budget_exhausted = bool(partial or unchecked) and (
-        observed_calls >= maximum_web_search_calls
+        completed_searches >= maximum_web_search_calls
+    )
+    attempt_limit_exhausted = bool(partial or unchecked) and (
+        response_attempts >= maximum_web_search_calls
     )
     if len(checked) == len(AUDIT_DIRECTION_IDS):
         audit_status = (
@@ -835,7 +1030,7 @@ def execute_audit_plan(
         )
     elif not checked:
         audit_status = "error"
-    elif budget_exhausted:
+    elif budget_exhausted or attempt_limit_exhausted:
         audit_status = "budget_exhausted"
     elif checked:
         audit_status = "partial"
@@ -856,6 +1051,11 @@ def execute_audit_plan(
                     "required": True,
                     "attempt": 0,
                     "status": "unchecked",
+                    "outcome": (
+                        "budget_exhausted"
+                        if budget_exhausted or attempt_limit_exhausted
+                        else "not_attempted"
+                    ),
                     "actual_queries": [],
                     "sources": [],
                     "candidate_count": 0,
@@ -863,7 +1063,11 @@ def execute_audit_plan(
                     "rejections": [],
                     "notes": None,
                     "api": None,
-                    "error": "search budget ended before this direction",
+                    "error": (
+                        "search budget ended before this direction"
+                        if budget_exhausted or attempt_limit_exhausted
+                        else "direction was not completed"
+                    ),
                 },
             )
             for direction in AUDIT_DIRECTIONS
@@ -873,13 +1077,27 @@ def execute_audit_plan(
             "maximum_calls": maximum_web_search_calls,
             "minimum_required_calls": MINIMUM_REQUIRED_AUDIT_CALLS,
             "response_attempts": response_attempts,
-            "observed_call_items": observed_calls,
-            "completed_calls": int(api.get("web_search_calls_completed", 0) or 0),
-            "remaining_calls": max(0, maximum_web_search_calls - observed_calls),
-            "exhausted": budget_exhausted,
-            "provider_overrun": (
-                provider_pass_overrun
-                or observed_calls > maximum_web_search_calls
+            "observed_call_items": observed_call_items,
+            "completed_calls": completed_searches,
+            "remaining_calls": max(
+                0, maximum_web_search_calls - completed_searches
+            ),
+            "exhausted": budget_exhausted or attempt_limit_exhausted,
+            "search_budget_exhausted": budget_exhausted,
+            "response_attempt_limit_exhausted": attempt_limit_exhausted,
+            "provider_overrun": provider_search_overrun,
+            "stop_reason": (
+                "all_required_directions_checked"
+                if len(checked) == len(AUDIT_DIRECTION_IDS)
+                else (
+                    "completed_search_budget_exhausted"
+                    if budget_exhausted
+                    else (
+                        "response_attempt_limit_exhausted"
+                        if attempt_limit_exhausted
+                        else "mandatory_direction_incomplete"
+                    )
+                )
             ),
         },
         "api": api,
@@ -991,6 +1209,22 @@ def prior_audit_attempted(payload: Any) -> bool:
         or isinstance(api, dict)
         and bool(api)
         or "Coverage audit превысил лимит web search" in error
+    )
+
+
+def completed_prior_audit(payload: Any) -> bool:
+    if not isinstance(payload, dict):
+        return False
+    if payload.get("audit_state") not in {None, "completed_usable"}:
+        return False
+    api = payload.get("api") or {}
+    return bool(
+        payload.get("web_search_performed") is True
+        and payload.get("audit_status") in {"complete", "complete_with_gaps"}
+        and set(payload.get("checked_directions") or ())
+        == set(AUDIT_DIRECTION_IDS)
+        and isinstance(api, dict)
+        and api.get("status") == "completed"
     )
 
 
@@ -1135,7 +1369,7 @@ def main() -> int:
             "minimum_publishable": args.minimum_publishable,
         },
         "regional_story_quotas_enabled": False,
-        "audit_failure_blocks_publication": False,
+        "audit_failure_blocks_publication": True,
         "maximum_audit_web_search_calls": args.maximum_audit_web_search_calls,
         "minimum_required_audit_web_search_calls": (
             MINIMUM_REQUIRED_AUDIT_CALLS
@@ -1160,6 +1394,7 @@ def main() -> int:
         "web_search_requested": False,
         "web_search_performed": False,
         "prior_audit_reused": False,
+        "prior_audit_resumed": False,
         "audit_error": None,
         "publication_mode": None,
         "before": None,
@@ -1247,11 +1482,12 @@ def main() -> int:
         )
         additional_candidates: list[Any] = []
         prior_attempted = prior_audit_attempted(prior_report)
-        if report["audit_needed"] and not prior_attempted:
+        prior_complete = completed_prior_audit(prior_report)
+        if report["audit_needed"] and not prior_complete:
             api_key = os.getenv("OPENAI_API_KEY", "").strip()
             if not api_key:
                 report["audit_error"] = (
-                    "OPENAI_API_KEY не задан для необязательного coverage audit"
+                    "OPENAI_API_KEY не задан для обязательного coverage audit"
                 )
                 report["audit_status"] = "error"
             else:
@@ -1260,6 +1496,7 @@ def main() -> int:
                 if not isinstance(search_window, dict):
                     raise RuntimeError("candidates.json не содержит search_window")
                 report["web_search_requested"] = True
+                report["prior_audit_resumed"] = prior_attempted
                 try:
                     audit_plan = execute_audit_plan(
                         api_key=api_key,
@@ -1273,6 +1510,7 @@ def main() -> int:
                         maximum_web_search_calls=args.maximum_audit_web_search_calls,
                         existing_candidates=research["candidates"],
                         archive=archive,
+                        prior_plan=prior_report if prior_attempted else None,
                     )
                 except Exception as exc:
                     report["audit_error"] = (
@@ -1286,6 +1524,10 @@ def main() -> int:
                         audit_plan.get("attempts", []), start=1
                     ):
                         if not isinstance(attempt, dict):
+                            continue
+                        if "prompt" not in attempt:
+                            # Recovered attempts already point to their original
+                            # diagnostics and must not be replaced by blank files.
                             continue
                         prompt = str(attempt.pop("prompt", ""))
                         direction_id = str(
@@ -1316,7 +1558,7 @@ def main() -> int:
                     report["web_search_performed"] = (
                         int(
                             (audit_plan.get("search_budget") or {}).get(
-                                "observed_call_items", 0
+                                "completed_calls", 0
                             )
                             or 0
                         )
@@ -1340,8 +1582,9 @@ def main() -> int:
                     budget = audit_plan.get("search_budget") or {}
                     if budget.get("provider_overrun"):
                         audit_warning = (
-                            "Responses API превысил суммарный ожидаемый лимит "
-                            "web_search_call items; дальнейшие проходы остановлены."
+                            "Responses API завершил больше одной поисковой "
+                            "операции внутри отдельного прохода; расход учтён "
+                            "по фактическим search actions."
                         )
                         report["audit_warning"] = audit_warning
                         report["warnings"].append(audit_warning)
@@ -1351,13 +1594,13 @@ def main() -> int:
                         "error",
                     }:
                         report["warnings"].append(
-                            "Coverage audit завершён не полностью; пригодный "
-                            "короткий выпуск остаётся публикуемым."
+                            "Coverage audit завершён не полностью; publication, "
+                            "image generation и deploy будут заблокированы."
                         )
                     raw_candidates = audit_plan.get("candidates", [])
                     if isinstance(raw_candidates, list):
                         additional_candidates = raw_candidates
-        elif report["audit_needed"] and prior_attempted:
+        elif report["audit_needed"] and prior_complete:
             report["prior_audit_reused"] = True
             report["web_search_requested"] = True
             report["web_search_performed"] = bool(
@@ -1388,10 +1631,42 @@ def main() -> int:
                     "диагностики; полнота прежнего audit неизвестна."
                 )
             report["audit_notes"] = (
-                "Использован отчёт уже выполненной попытки coverage audit из "
-                "recovery artifact; повторный web search не выполнялся."
+                "Использован полный отчёт coverage audit из recovery artifact; "
+                "повторный web search не выполнялся."
             )
             report["prior_audit_error"] = (prior_report or {}).get("error")
+            for direction_record in (prior_report or {}).get("directions", []):
+                if not isinstance(direction_record, dict):
+                    continue
+                raw_candidates = direction_record.get("candidates")
+                if isinstance(raw_candidates, list):
+                    additional_candidates.extend(copy.deepcopy(raw_candidates))
+
+        if report["audit_needed"] and report.get("audit_status") not in {
+            "complete",
+            "complete_with_gaps",
+        }:
+            unchecked = ", ".join(
+                map(str, report.get("unchecked_directions") or [])
+            ) or "нет данных"
+            partial = ", ".join(
+                map(str, report.get("partial_directions") or [])
+            ) or "нет данных"
+            stop_reason = str(
+                (report.get("search_budget") or {}).get("stop_reason")
+                or report.get("audit_error")
+                or "mandatory_direction_incomplete"
+            )
+            report["audit_error"] = (
+                "Обязательный coverage audit не завершён: "
+                f"status={report.get('audit_status')}; "
+                f"partial={partial}; unchecked={unchecked}; "
+                f"stop_reason={stop_reason}."
+            )
+            raise RuntimeError(
+                report["audit_error"]
+                + " Публикация, генерация изображения и deploy заблокированы."
+            )
 
         if additional_candidates:
             merged, accepted, rejected = merge_candidates(

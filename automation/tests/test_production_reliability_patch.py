@@ -451,6 +451,9 @@ class ProductionWorkflowReliabilityTests(unittest.TestCase):
         self.assertIn("candidate_pool_after", workflow)
         self.assertIn("RECOVERY_SOURCE", workflow)
         self.assertIn("Reuse completed editorial stop without paid APIs", workflow)
+        self.assertIn(
+            "Complete mandatory coverage audit for a short digest", workflow
+        )
         self.assertIn('echo "stop=${stop}" >> "${GITHUB_OUTPUT}"', workflow)
         self.assertIn("steps.terminal_reuse.outputs.stop != 'true'", workflow)
         self.assertIn("needs.production.outputs.commit_sha != ''", workflow)
@@ -466,7 +469,7 @@ class ProductionWorkflowReliabilityTests(unittest.TestCase):
         self.assertIn("--maximum-research-web-search-calls 12", workflow)
         self.assertIn("--maximum-audit-web-search-calls 7", workflow)
         self.assertLess(
-            workflow.index("Supplement a short digest when possible"),
+            workflow.index("Complete mandatory coverage audit for a short digest"),
             workflow.index("Normalize and validate digest artifact"),
         )
         self.assertLess(

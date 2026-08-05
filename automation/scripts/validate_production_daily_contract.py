@@ -60,7 +60,7 @@ def main() -> int:
         ),
         "short_digest_notice_position": "first_article_block_after_cover",
         "coverage_audit_enabled": True,
-        "coverage_audit_failure_blocks_publication": False,
+        "coverage_audit_failure_blocks_publication": True,
         "coverage_audit_max_web_search_calls": 7,
         "coverage_audit_minimum_required_web_search_calls": 6,
         "coverage_audit_required_directions": EXPECTED_AUDIT_DIRECTIONS,
@@ -271,9 +271,9 @@ def main() -> int:
         "Validate API configuration",
         "Patch runtime publication hour to 06:00 Moscow",
         "Validate editorial code and bootstrap archive",
-        "Verify search window starts at last successful release",
+        "Verify search window starts at last successful research cutoff",
         "Run full research and editorial",
-        "Supplement a short digest when possible",
+        "Complete mandatory coverage audit for a short digest",
         "Normalize and validate digest artifact",
         "Validate publishable story count and short digest marker",
         "Build runtime Image API request",
@@ -309,7 +309,7 @@ def main() -> int:
         errors.append("deploy job must require a non-empty production commit SHA")
 
     coverage_step_start = workflow.find(
-        "- name: Supplement a short digest when possible"
+        "- name: Complete mandatory coverage audit for a short digest"
     )
     coverage_step_end = workflow.find("- name:", coverage_step_start + 10)
     coverage_step = (
@@ -347,7 +347,7 @@ def main() -> int:
         "Validate editorial code and bootstrap archive"
     )
     continuity_position = workflow.find(
-        "Verify search window starts at last successful release"
+        "Verify search window starts at last successful research cutoff"
     )
     research_position = workflow.find("Run full research and editorial")
     summary_position = workflow.find("Publish Russian pipeline status")
@@ -388,7 +388,7 @@ def main() -> int:
     ]:
         errors.append("Russian pipeline status must run with if: always()")
     coverage_audit_position = workflow.find(
-        "Supplement a short digest when possible"
+        "Complete mandatory coverage audit for a short digest"
     )
     normalize_position = workflow.find("Normalize and validate digest artifact")
     coverage_validation_position = workflow.find(
@@ -458,7 +458,7 @@ def main() -> int:
         "duplicate_policy": "successful_noop_before_paid_api",
         "recovery_mode": "full_partial_or_research_only_then_coverage_repair",
         "commit_guard": "stage_publish_paths_ignore_runtime_outputs",
-        "continuity_policy": "from_last_successfully_published_release",
+        "continuity_policy": "from_last_successful_research_cutoff",
         "skipped_calendar_days": "allowed",
         "live_previous_release_check": True,
         "failure_status": "Russian summary and GitHub annotations",
@@ -466,7 +466,7 @@ def main() -> int:
             "usual_total": 7,
             "minimum_publishable": 1,
             "regional_story_quotas_enabled": False,
-            "audit_failure_blocks_publication": False,
+            "audit_failure_blocks_publication": True,
             "research_max_web_search_calls": 12,
             "audit_max_web_search_calls": 7,
             "audit_minimum_required_web_search_calls": 6,

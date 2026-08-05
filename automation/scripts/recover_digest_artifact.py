@@ -286,12 +286,13 @@ def restore_prior_coverage_audit(
 ) -> dict[str, Any] | None:
     """Restore evidence of a prior paid coverage-audit attempt.
 
-    ensure_story_coverage.py reads this exact path before deciding whether a
-    targeted web search is needed. This also recognizes the legacy 6>5 error
-    from 2026-07-31, whose report incorrectly recorded
-    web_search_performed=false even though the paid response had arrived.
-    Restoring the report prevents recovery from paying for the same attempt
-    twice.
+    ensure_story_coverage.py reads this exact path before deciding which
+    directions still need a targeted search. A complete plan is reused as-is;
+    a partial plan resumes only missing directions and preserves prior calls.
+    This also recognizes the legacy 6>5 error from 2026-07-31, whose report
+    incorrectly recorded web_search_performed=false. That legacy evidence is
+    restored for diagnostics but cannot authorize publication without a
+    complete six-direction plan.
     """
 
     target = report_path.parent / "coverage-audit.json"

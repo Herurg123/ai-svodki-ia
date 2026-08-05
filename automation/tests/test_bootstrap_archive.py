@@ -118,6 +118,29 @@ class BootstrapArchiveTests(unittest.TestCase):
                 "Архивный сюжет",
             )
 
+    def test_legacy_run_start_becomes_archive_search_cutoff(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            content_root = Path(temporary_directory) / "content"
+            release = content_root / "2026-08-05"
+            release.mkdir(parents=True)
+            (release / "run-info.json").write_text(
+                json.dumps(
+                    {
+                        "started_at": "2026-08-05T00:14:42+00:00",
+                        "finished_at": "2026-08-05T00:16:37+00:00",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            cutoff = bootstrap_archive.content_search_cutoff_at(
+                content_root,
+                "2026-08-05",
+                "2026-08-05T06:00:00+03:00",
+            )
+
+            self.assertEqual(cutoff, "2026-08-05T00:14:42+00:00")
+
 
 if __name__ == "__main__":
     unittest.main()
