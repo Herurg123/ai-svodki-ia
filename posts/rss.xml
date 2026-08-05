@@ -9,9 +9,33 @@
   <link>https://rybalka.one/posts/</link>
   <description>Десять полнотекстовых аналитических статей об искусственном интеллекте.</description>
   <language>ru</language>
-  <lastBuildDate>Tue, 04 Aug 2026 06:00:00 +0300</lastBuildDate>
+  <lastBuildDate>Wed, 05 Aug 2026 06:00:00 +0300</lastBuildDate>
   <dc:creator>ИИ-сводки</dc:creator>
   <atom:link href="https://rybalka.one/posts/rss.xml" rel="self" type="application/rss+xml" />
+
+  <item>
+    <title>ИИ-Сводка на 5 августа 2026</title>
+    <link>https://rybalka.one/posts/2026-08-05/</link>
+    <guid isPermaLink="true">https://rybalka.one/posts/2026-08-05/</guid>
+    <pubDate>Wed, 05 Aug 2026 06:00:00 +0300</pubDate>
+    <dc:creator>ИИ-сводки</dc:creator>
+    <category>Статья</category>
+    <category>ИИ</category>
+    <category>Технологии</category>
+    <category>native-yes</category>
+    <media:rating scheme="urn:simple">nonadult</media:rating>
+    <enclosure url="https://rybalka.one/posts/images/ai-svodka-2026-08-05.png" type="image/png" length="2307976" />
+    <media:content url="https://rybalka.one/posts/images/ai-svodka-2026-08-05.png" medium="image" type="image/png" />
+    <media:thumbnail url="https://rybalka.one/posts/images/ai-svodka-2026-08-05.png" />
+    <description><![CDATA[<p>AMD сообщила о росте выручки сегмента Data Center на 107% год к году. Квартальная отчётность стала свежим индикатором спроса на серверные процессоры и ускорители для ИИ-вычислений.</p>]]></description>
+    <content:encoded><![CDATA[<figure>
+<img src="https://rybalka.one/posts/images/ai-svodka-2026-08-05.png" alt="ИИ-Сводка на 5 августа 2026">
+<figcaption>Главные новости искусственного интеллекта за 5 августа 2026 года</figcaption>
+</figure>
+<p><em>Новостей сегодня меньше, чем обычно</em></p>
+<p>Главный подтверждённый сигнал дня пришёл с рынка вычислительной инфраструктуры. AMD отчиталась об ускорении сегмента Data Center, который объединяет серверные процессоры и GPU для крупных вычислительных нагрузок, включая ИИ.</p><p>Это не независимая оценка конкретных ускорителей и не полная разбивка продаж ИИ-GPU. Но квартальные показатели одного из крупнейших поставщиков серверных чипов помогают оценить, насколько спрос на мощности дата-центров переходит в выручку производителей оборудования.</p><h2>Мировые лидеры ИИ</h2><h3>AMD отчиталась о росте выручки сегмента Data Center на 107% год к году</h3><p>AMD 4 августа опубликовала результаты второго квартала 2026 года. Согласно <a href="https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results">квартальной отчётности AMD</a>, выручка сегмента Data Center составила около 6,7 млрд долларов и выросла на 107% год к году.</p><p>Компания связывает рост с поставками серверных процессоров EPYC и GPU для вычислительных задач, включая ИИ. Это важный рыночный индикатор для конкуренции на рынке дата-центров и ускорителей: спрос на вычисления остаётся высоким не только в планах операторов инфраструктуры, но и в финансовых результатах поставщика. При этом AMD не приводит в доступной карточке отдельную выручку именно от ИИ-GPU, поэтому нельзя по этому показателю точно измерить продажи конкретной линейки Instinct или конечный спрос на отдельные ИИ-продукты.</p><h2>Что это значит</h2><ol><li>Рост Data Center показывает, что расширение ИИ-инфраструктуры поддерживает спрос не только на специализированные ускорители, но и на серверные CPU.</li><li>Конкуренция AMD с Nvidia всё заметнее отражается в квартальной отчётности, а не только в анонсах будущих кластеров и чипов.</li><li>Для операторов облаков и дата-центров сохраняется значение диверсификации поставок вычислительного оборудования.</li><li>Показатель сегмента Data Center нельзя напрямую приравнивать к выручке от ИИ: в нём учитываются разные серверные продукты и вычислительные сценарии.</li></ol>
+<h2>Все ИИ-Сводки</h2><p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>]]></content:encoded>
+  </item>
 
   <item>
     <title>ИИ-Сводка на 4 августа 2026</title>

@@ -1,0 +1,192 @@
+{
+  "status": "ok",
+  "pipeline": "research_then_editorial",
+  "request_id": "production-digest-2026-08-05",
+  "research_input": null,
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "Целевой пул — 12 кандидатов, но после проверки свежести осталось 1.",
+    "Кандидатов меньше обычной цели выпуска (7); разрешён короткий выпуск.",
+    "Выбрано 1 сюжетов при обычной цели 7; формируется короткий выпуск."
+  ],
+  "publication_date": "2026-08-05",
+  "started_at": "2026-08-05T00:14:42+00:00",
+  "finished_at": "2026-08-05T00:16:37+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 28,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "adb3bb18f2bcab1d4241490f1c220ef4476f52ac8d6efcd14e857e6bec668fc7",
+    "candidates_sha256": "f25e40cd9cc6101a44964fbe5c13de960c588ac28bcb2a0d411ba9632a4bdcc1",
+    "settings": {
+      "source": "responses_api_web_search",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_01f69492e554e8f6016a7280740cc08197b2a351e4e2b7f9de",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 8,
+      "usage": {
+        "input_tokens": 134510,
+        "input_tokens_details": {
+          "cache_write_tokens": 71484,
+          "cached_tokens": 0
+        },
+        "output_tokens": 5194,
+        "output_tokens_details": {
+          "reasoning_tokens": 2825
+        },
+        "total_tokens": 139704
+      },
+      "search_trajectory": {
+        "call_items_total": 8,
+        "completed_calls": 8,
+        "statuses": {
+          "completed": 8
+        },
+        "actual_queries": [
+          "AI news August 4 2026 OpenAI Google Anthropic Nvidia Microsoft AI",
+          "site:reuters.com August 4 2026 AI artificial intelligence",
+          "site:techcrunch.com 2026/08/04 AI OR artificial intelligence",
+          "site:arxiv.org August 4 2026 artificial intelligence security agents",
+          "\"August 4, 2026\" AI announcement",
+          "\"2026-08-04\" AI OpenAI OR Google OR Anthropic OR Microsoft OR Nvidia",
+          "ИИ 4 августа 2026 нейросеть Яндекс Сбер VK МТС",
+          "人工智能 2026年8月4日 大模型 发布 Qwen DeepSeek 百度 腾讯 华为",
+          "AI \"Aug 4, 2026\" -conference -event",
+          "site:github.com \"2026-08-04\" \"AI\" release",
+          "site:openai.com OR site:blog.google OR site:anthropic.com OR site:blogs.microsoft.com \"August 4, 2026\"",
+          "site:cnews.ru OR site:comnews.ru OR site:tass.ru \"4 августа 2026\" \"ИИ\"",
+          "\"Aug 4, 2026\" \"OpenAI\"",
+          "\"Aug 4, 2026\" \"Anthropic\" OR \"Claude\"",
+          "\"Aug 4, 2026\" \"Google\" \"Gemini\"",
+          "\"Aug 4, 2026\" \"Nvidia\" OR \"Microsoft\" artificial intelligence",
+          "AMD reports second quarter 2026 financial results August 4 2026 AMD investor",
+          "AMD Q2 2026 earnings August 4 2026 AI data center revenue Reuters",
+          "\"August 4, 2026\" \"AI\" \"Reuters\" technology",
+          "\"4 августа 2026\" искусственный интеллект site:tass.ru OR site:comnews.ru OR site:cnews.ru",
+          "site:ir.amd.com/news-events/press-releases/detail/1295 \"AMD Reports Second Quarter 2026 Financial Results\"",
+          "\"AMD Reports Second Quarter 2026 Financial Results\" \"$6.7\"",
+          "\"AMD Reports Second Quarter 2026 Financial Results\" \"August 4, 2026\"",
+          "site:arxiv.org/abs/2608 \"Aug 4, 2026\" AI agents security",
+          "site:arxiv.org/abs/2608 \"Tue Aug 4\" LLM OR \"large language model\"",
+          "site:github.blog/changelog/2026-08-04 OR site:cursor.com/changelog \"August 4, 2026\"",
+          "site:blogs.nvidia.com OR site:developer.nvidia.com/blog \"August 4, 2026\" AI"
+        ]
+      }
+    },
+    "error": null
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "bff82fc55c27715eccc68d6f5401fac42b01c1ef90eda19725cabf7bba51c099",
+    "editorial_sha256": "6b552d60ec7abe5c41b7df711ba04abc14f83aa057e2cb0d71091ae51a866f01",
+    "digest_sha256": "56056101833109e11f38c262b17499f6189f90fefb0011d172b096d1dbc21063",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-08-05.png",
+          "normalized_value": "ai-svodka-2026-08-05.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        },
+        {
+          "field": "image_prompt",
+          "model_value": "Изображение 16:9: современная футуристическая редакционная обложка ежедневного выпуска о технологиях. Крупный и единственный читаемый текст: «ИИ-Сводка на 5 августа 2026».\n\nГлавные визуальные темы: один сюжет — растущий спрос на вычислительную инфраструктуру ИИ, показанный через мощный модульный дата-центр, ряды серверных стоек, абстрактные вычислительные ускорители и направленные вверх потоки света, символизирующие рост сегмента Data Center.\n\nКомпозиция: в центре — светящийся вычислительный кластер и крупный серверный модуль; вокруг него — плотная перспективная сетка серверных стоек и тонкие потоки данных, создающие ощущение масштаба дата-центра; в нижней зоне — спокойный тёмный технологический фундамент без пустого пространства. Заголовок расположен в верхней части и хорошо читается.\n\nСтиль: глубокая тёмно-синяя и графитовая палитра с янтарными и холодными голубыми акцентами, реалистичная редакционная 3D-иллюстрация с высокой детализацией. Без логотипов компаний, без дополнительного текста, без водяных знаков, без мелких интерфейсных надписей, без технического имени файла, без стокового корпоративного клипарта и без узнаваемых лиц реальных людей.",
+          "normalized_value": "Изображение 16:9: современная футуристическая редакционная обложка ежедневного выпуска о технологиях. Крупный и единственный читаемый текст: «ИИ-Сводка на 5 августа 2026».\n\nГлавные визуальные темы: один сюжет — растущий спрос на вычислительную инфраструктуру ИИ, показанный через мощный модульный дата-центр, ряды серверных стоек, абстрактные вычислительные ускорители и направленные вверх потоки света, символизирующие рост сегмента Data Center.\n\nКомпозиция: в центре — светящийся вычислительный кластер и крупный серверный модуль; вокруг него — плотная перспективная сетка серверных стоек и тонкие потоки данных, создающие ощущение масштаба дата-центра; в нижней зоне — спокойный тёмный технологический фундамент без пустого пространства. Заголовок расположен в верхней части и хорошо читается.\n\nСтиль: глубокая тёмно-синяя и графитовая палитра с янтарными и холодными голубыми акцентами, реалистичная редакционная 3D-иллюстрация с высокой детализацией. Без логотипов компаний, без дополнительного текста, без водяных знаков, без мелких интерфейсных надписей, без технического имени файла, без стокового корпоративного клипарта и без узнаваемых лиц реальных людей. Обязательные ограничения: без пустой половины кадра."
+        }
+      ],
+      "changed_count": 2,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 1 сюжетов."
+        },
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-001."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: Китай и Азия, Инструменты разработчиков и ИИ-кодинг, Исследования, Security — мировой сегмент, Security — Россия, Security — Китай и остальная Азия, Legal / copyright / scraping, Курьёзы и необычные новости, Мультимодальность и генеративные медиа, Робототехника и автономные системы, Регулирование и общественная политика, Российский сектор."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_026edcb6c56beb7d016a7280d713ac819092ff2cb009c7a622",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 69204,
+        "input_tokens_details": {
+          "cache_write_tokens": 69201,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1531,
+        "output_tokens_details": {
+          "reasoning_tokens": 205
+        },
+        "total_tokens": 70735
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 203714,
+    "output_tokens": 6725,
+    "total_tokens": 210439,
+    "web_search_calls": 8
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "8f93bbbe557e227ae8f6294c66fabd2059f9a762",
+    "run_id": "30962655769",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "AMD отчиталась о росте выручки сегмента Data Center на 107% год к году",
+    "organization": "AMD",
+    "topic": "рост спроса на ИИ-вычисления и серверные ускорители",
+    "event_type": "earnings_guidance",
+    "status": "new",
+    "summary": "AMD опубликовала результаты второго квартала 2026 года. По данным отчётности, выручка сегмента Data Center составила около 6,7 млрд долларов и выросла на 107% год к году; рост компания связывает с поставками серверных CPU EPYC и GPU для вычислительных задач, включая ИИ.",
+    "published_at": null,
+    "published_date": "2026-08-04",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "AMD Reports Second Quarter 2026 Financial Results",
+        "publisher": "AMD Investor Relations",
+        "url": "https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results"
+      }
+    ],
+    "keywords": [
+      "AMD",
+      "Data Center",
+      "ИИ-инфраструктура",
+      "серверные процессоры",
+      "ускорители",
+      "выручка",
+      "квартальная отчётность",
+      "Instinct"
+    ],
+    "geography": "world",
+    "category": "chips"
+  }
+]
