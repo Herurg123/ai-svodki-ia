@@ -216,7 +216,7 @@ class AuditDirectionPlanTests(unittest.TestCase):
         self.assertTrue(result["search_budget"]["exhausted"])
         self.assertNotEqual(result["audit_status"], "complete")
 
-    def test_transport_failure_with_budget_left_is_partial(self) -> None:
+    def test_repeated_transport_failure_exhausts_the_seven_attempt_cap(self) -> None:
         def fake_request(**kwargs):
             direction_id = direction_from_prompt(str(kwargs["prompt"]))
             if direction_id == "security_world":
@@ -230,11 +230,15 @@ class AuditDirectionPlanTests(unittest.TestCase):
 
         result = self._run_plan(fake_request)
 
-        self.assertEqual(result["audit_status"], "partial")
+        self.assertEqual(result["audit_status"], "budget_exhausted")
         self.assertEqual(result["partial_directions"], ["security_world"])
-        self.assertFalse(result["search_budget"]["exhausted"])
+        self.assertTrue(result["search_budget"]["exhausted"])
+        self.assertEqual(
+            result["search_budget"]["stop_reason"],
+            "response_attempt_limit_exhausted",
+        )
 
-    def test_provider_side_per_pass_overrun_stops_further_requests(self) -> None:
+    def test_navigation_item_does_not_stop_later_required_searches(self) -> None:
         calls = 0
 
         def fake_request(**kwargs):
@@ -245,10 +249,94 @@ class AuditDirectionPlanTests(unittest.TestCase):
 
         result = self._run_plan(fake_request)
 
-        self.assertEqual(calls, 1)
-        self.assertTrue(result["search_budget"]["provider_overrun"])
-        self.assertEqual(result["unchecked_directions"][0], "security_russia")
-        self.assertNotIn(result["audit_status"], {"complete", "complete_with_gaps"})
+        self.assertEqual(calls, 6)
+        self.assertFalse(result["search_budget"]["provider_overrun"])
+        self.assertEqual(result["search_budget"]["observed_call_items"], 12)
+        self.assertEqual(result["search_budget"]["completed_calls"], 6)
+        self.assertEqual(result["unchecked_directions"], [])
+        self.assertEqual(result["audit_status"], "complete_with_gaps")
+
+    def test_partial_recovery_runs_only_missing_directions(self) -> None:
+        prior_direction = {
+            "direction_id": "security_world",
+            "label": "Security — мировой сегмент",
+            "required": True,
+            "attempt": 1,
+            "status": "checked_with_gaps",
+            "outcome": "no_news_found",
+            "actual_queries": ["security_world prior query"],
+            "sources": [],
+            "candidate_count": 0,
+            "candidates": [],
+            "rejections": [],
+            "notes": "checked before recovery",
+            "api": {
+                "status": "completed",
+                "web_search_calls": 1,
+                "web_search_calls_completed": 1,
+                "web_search_call_items_total": 2,
+            },
+            "error": None,
+        }
+        prior_plan = {
+            "audit_status": "partial",
+            "directions": [prior_direction],
+            "attempts": [prior_direction],
+            "search_budget": {
+                "response_attempts": 1,
+                "observed_call_items": 2,
+                "completed_calls": 1,
+                "provider_overrun": False,
+            },
+        }
+        called: list[str] = []
+
+        def fake_request(**kwargs):
+            direction_id = direction_from_prompt(str(kwargs["prompt"]))
+            called.append(direction_id)
+            return successful_pass(direction_id)
+
+        with mock.patch.object(policy, "run_audit_request", side_effect=fake_request):
+            result = policy.execute_audit_plan(
+                api_key="secret",
+                model="gpt-5.6-terra",
+                template=(ROOT / "automation/prompts/coverage_audit.md").read_text(
+                    encoding="utf-8"
+                ),
+                publication_date="2026-08-05",
+                search_window=SEARCH_WINDOW,
+                missing_total=6,
+                maximum_web_search_calls=7,
+                existing_candidates=[],
+                archive={"items": []},
+                prior_plan=prior_plan,
+            )
+
+        self.assertNotIn("security_world", called)
+        self.assertEqual(called, list(policy.AUDIT_DIRECTION_IDS[1:]))
+        self.assertEqual(result["audit_status"], "complete_with_gaps")
+        self.assertEqual(result["search_budget"]["completed_calls"], 6)
+        self.assertEqual(result["search_budget"]["observed_call_items"], 7)
+
+    def test_last_mile_pass_uses_authoritative_domain_filter(self) -> None:
+        captured: list[dict[str, object]] = []
+
+        def fake_request(**kwargs):
+            captured.append(kwargs)
+            return successful_pass(direction_from_prompt(str(kwargs["prompt"])))
+
+        self._run_plan(fake_request)
+        last = captured[-1]
+        self.assertEqual(
+            direction_from_prompt(str(last["prompt"])),
+            "general_coverage_gaps",
+        )
+        domains = set(last["allowed_domains"])
+        self.assertIn("reuters.com", domains)
+        self.assertIn("aisi.gov.uk", domains)
+        self.assertIn("news.samsung.com", domains)
+        self.assertNotIn("reddit.com", domains)
+        self.assertNotIn("wikipedia.org", domains)
 
 
 class HistoricalCandidateRegressionTests(unittest.TestCase):
@@ -393,6 +481,106 @@ class HistoricalCandidateRegressionTests(unittest.TestCase):
 
 
 class EditorialRerunGateTests(unittest.TestCase):
+    def test_partial_mandatory_audit_blocks_existing_short_digest(self) -> None:
+        with tempfile.TemporaryDirectory(dir=ROOT) as temp_dir:
+            root = Path(temp_dir)
+            artifact = root / "artifact"
+            artifact.mkdir()
+            (artifact / "stories.json").write_text(
+                json.dumps([{"geography": "world", "category": "security"}]),
+                encoding="utf-8",
+            )
+            original_digest = {
+                "short_digest": True,
+                "article_html": "<p>Existing short digest.</p>",
+                "editorial_notes": [],
+            }
+            (artifact / "digest.json").write_text(
+                json.dumps(original_digest, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            (artifact / "candidates.json").write_text(
+                json.dumps(
+                    {
+                        "status": "ok",
+                        "publication_date": "2026-08-05",
+                        "search_window": SEARCH_WINDOW,
+                        "candidates": [
+                            {
+                                "id": "cand-001",
+                                "geography": "world",
+                                "recommendation": "include",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            archive = root / "archive.json"
+            archive.write_text('{"items": []}', encoding="utf-8")
+            report = root / "coverage-audit.json"
+            partial_plan = {
+                "audit_status": "partial",
+                "required_directions": list(policy.AUDIT_DIRECTION_IDS),
+                "checked_directions": ["security_world"],
+                "partial_directions": [],
+                "unchecked_directions": list(policy.AUDIT_DIRECTION_IDS[1:]),
+                "directions": [],
+                "attempts": [],
+                "search_budget": {
+                    "maximum_calls": 7,
+                    "minimum_required_calls": 6,
+                    "response_attempts": 1,
+                    "observed_call_items": 2,
+                    "completed_calls": 1,
+                    "remaining_calls": 6,
+                    "exhausted": False,
+                    "provider_overrun": False,
+                    "stop_reason": "mandatory_direction_incomplete",
+                },
+                "time_precision_warnings": [],
+                "api": {"status": "partial"},
+                "candidates": [],
+            }
+            argv = [
+                "ensure_story_coverage_policy.py",
+                "--artifact-dir",
+                str(artifact),
+                "--archive",
+                str(archive),
+                "--publication-date",
+                "2026-08-05",
+                "--model",
+                "gpt-5.6-terra",
+                "--maximum-audit-web-search-calls",
+                "7",
+                "--report",
+                str(report),
+            ]
+            with (
+                mock.patch.object(sys, "argv", argv),
+                mock.patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}),
+                mock.patch.object(
+                    policy, "execute_audit_plan", return_value=partial_plan
+                ),
+                mock.patch.object(
+                    policy,
+                    "rerun_editorial",
+                    side_effect=AssertionError("editorial must not run"),
+                ) as rerun,
+            ):
+                self.assertEqual(policy.main(), 1)
+
+            rerun.assert_not_called()
+            result = json.loads(report.read_text(encoding="utf-8"))
+            self.assertEqual(result["status"], "error")
+            self.assertTrue(result["audit_failure_blocks_publication"])
+            self.assertIn("Публикация", result["error"])
+            self.assertEqual(
+                json.loads((artifact / "digest.json").read_text(encoding="utf-8")),
+                original_digest,
+            )
+
     def test_publishable_short_digest_without_new_candidates_skips_editorial(self) -> None:
         with tempfile.TemporaryDirectory(dir=ROOT) as temp_dir:
             root = Path(temp_dir)

@@ -17,7 +17,7 @@ import summarize_production_status as status  # noqa: E402
 
 
 class RussianStatusSummaryTests(unittest.TestCase):
-    def test_success_summary_exposes_partial_audit_and_unchecked_direction(self) -> None:
+    def test_partial_audit_is_reported_as_failed_and_unchecked(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             old = Path.cwd()
             os.chdir(temporary)
@@ -27,7 +27,7 @@ class RussianStatusSummaryTests(unittest.TestCase):
                 (report_dir / "coverage-audit.json").write_text(
                     json.dumps(
                         {
-                            "status": "ok",
+                            "status": "error",
                             "audit_needed": True,
                             "audit_status": "partial",
                             "required_directions": ["security_world", "security_russia"],
@@ -41,13 +41,17 @@ class RussianStatusSummaryTests(unittest.TestCase):
                             "audit_added_candidates": 0,
                             "editorial_rerun_performed": False,
                             "time_precision_warnings": [{"title": "Date-only"}],
+                            "error": (
+                                "Обязательный coverage audit не завершён: "
+                                "security_russia не проверен"
+                            ),
                         },
                         ensure_ascii=False,
                     ),
                     encoding="utf-8",
                 )
                 markdown, annotation = status.build_summary(
-                    job_status="success",
+                    job_status="failure",
                     publication_date="2026-08-01",
                     publish="true",
                     recovery_run_id="",
@@ -57,7 +61,8 @@ class RussianStatusSummaryTests(unittest.TestCase):
             finally:
                 os.chdir(old)
 
-        self.assertIsNone(annotation)
+        self.assertIsNotNone(annotation)
+        self.assertIn("ИИ-Сводка не опубликована", markdown)
         self.assertIn("partial", markdown)
         self.assertIn("1/2", markdown)
         self.assertIn("security_russia", markdown)

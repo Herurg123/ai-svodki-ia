@@ -28,7 +28,7 @@ class ProductionContractSyncTests(unittest.TestCase):
         self.assertEqual(production["minimum_selected_stories"], 7)
         self.assertEqual(production["minimum_publishable_stories"], 1)
         self.assertFalse(production["regional_story_quotas_enabled"])
-        self.assertFalse(
+        self.assertTrue(
             production["coverage_audit_failure_blocks_publication"]
         )
         self.assertTrue(production["coverage_audit_enabled"])
@@ -65,7 +65,9 @@ class ProductionContractSyncTests(unittest.TestCase):
         self.assertEqual(workflow.count("cron:"), 3)
         for cron in EXPECTED_CRONS:
             self.assertEqual(workflow.count(f'cron: "{cron}"'), 1)
-        self.assertIn("Supplement a short digest when possible", workflow)
+        self.assertIn(
+            "Complete mandatory coverage audit for a short digest", workflow
+        )
         self.assertIn(
             "Validate publishable story count and short digest marker",
             workflow,
@@ -91,6 +93,14 @@ class ProductionContractSyncTests(unittest.TestCase):
         self.assertIn(r'stream.write("reused=true\n")', workflow)
         self.assertIn(r'+ "\n"', workflow)
         self.assertIn("candidate_pool_after", workflow)
+        self.assertLess(
+            workflow.index("Complete mandatory coverage audit for a short digest"),
+            workflow.index("Generate one production cover"),
+        )
+        self.assertIn(
+            "data.get(\"audit_status\") in {\"complete\", \"complete_with_gaps\"}",
+            workflow,
+        )
 
     def test_documentation_tracks_current_production_contract(self) -> None:
         root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
@@ -116,6 +126,10 @@ class ProductionContractSyncTests(unittest.TestCase):
             "`legal_copyright_scraping`",
             "`curiosity`",
             "`general_coverage_gaps`",
+            "фактического `search_cutoff_at`",
+            "`open_page` и `find_in_page`",
+            "технически неполный audit блокирует",
+            "авторитетный last-mile sweep",
             "Новостей сегодня меньше, чем обычно",
             "`publish` — по умолчанию `false`",
             "`recovery_run_id`",
@@ -125,7 +139,7 @@ class ProductionContractSyncTests(unittest.TestCase):
             self.assertIn(marker, normalized_documentation)
 
         self.assertIn(
-            "от 06:00 последнего успешно опубликованного выпуска до 06:00",
+            "`search_cutoff_at` предыдущего выпуска → фактический pre-research cutoff",
             normalized_spec,
         )
         self.assertNotIn(
@@ -180,7 +194,7 @@ class ProductionContractSyncTests(unittest.TestCase):
                     "usual_total": 7,
                     "minimum_publishable": 1,
                     "regional_story_quotas_enabled": False,
-                    "audit_failure_blocks_publication": False,
+                    "audit_failure_blocks_publication": True,
                     "research_max_web_search_calls": 12,
                     "audit_max_web_search_calls": 7,
                     "audit_minimum_required_web_search_calls": 6,

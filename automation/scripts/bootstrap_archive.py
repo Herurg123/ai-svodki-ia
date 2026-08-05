@@ -138,6 +138,49 @@ def load_content_record(
     return meta, stories
 
 
+def content_search_cutoff_at(
+    content_directory: Path,
+    publication_date: str,
+    published_at: str,
+) -> str:
+    """Return the actual cutoff used before research for a published release.
+
+    New run-info files persist it explicitly. For releases created before this
+    contract, started_at is the safest conservative boundary because the first
+    paid search could not have seen an event published after that instant.
+    """
+
+    run_info_path = content_directory / publication_date / "run-info.json"
+    if not run_info_path.is_file():
+        return published_at
+    run_info = read_json(run_info_path)
+    if not isinstance(run_info, dict):
+        return published_at
+    research = run_info.get("research")
+    research_window = (
+        research.get("search_window") if isinstance(research, dict) else None
+    )
+    top_window = run_info.get("search_window")
+    candidates = [
+        research_window.get("end_at")
+        if isinstance(research_window, dict)
+        else None,
+        top_window.get("end_at") if isinstance(top_window, dict) else None,
+        run_info.get("research_cutoff_at"),
+        run_info.get("started_at"),
+    ]
+    for value in candidates:
+        if not isinstance(value, str) or not value.strip():
+            continue
+        try:
+            parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except ValueError:
+            continue
+        if parsed.tzinfo is not None:
+            return parsed.isoformat(timespec="seconds")
+    return published_at
+
+
 def fallback_story_records(parser: ArticleParser) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     section = "world"
@@ -248,11 +291,17 @@ def build_archive() -> dict[str, Any]:
             if meta and isinstance(meta.get("published_at"), str)
             else published_datetime.isoformat(timespec="seconds")
         )
+        search_cutoff_at = content_search_cutoff_at(
+            content_directory,
+            publication_date,
+            published_at,
+        )
 
         items.append(
             {
                 "date": publication_date,
                 "published_at": published_at,
+                "search_cutoff_at": search_cutoff_at,
                 "title": title,
                 "link": link,
                 "summary": readable_text[:500],
@@ -278,6 +327,11 @@ def build_archive() -> dict[str, Any]:
                 {
                     "date": content_dir.name,
                     "published_at": str(meta.get("published_at", "")),
+                    "search_cutoff_at": content_search_cutoff_at(
+                        content_directory,
+                        content_dir.name,
+                        str(meta.get("published_at", "")),
+                    ),
                     "title": str(meta.get("title", "")),
                     "link": f"{site_base}/{content_dir.name}/",
                     "summary": str(meta.get("description", ""))[:500],

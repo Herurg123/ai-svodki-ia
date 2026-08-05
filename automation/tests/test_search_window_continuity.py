@@ -42,7 +42,32 @@ class SearchWindowContinuityTests(unittest.TestCase):
         )
         self.assertEqual(
             report["policy"],
-            "from_last_successfully_published_release",
+            "from_last_successful_research_cutoff",
+        )
+
+    def test_window_prefers_actual_search_cutoff_over_nominal_publish_time(self) -> None:
+        report = validate(
+            runtime={
+                "publication_date": "2026-08-06",
+                "previous_published_date": "2026-08-05",
+                "missed_calendar_days": 0,
+            },
+            archive={
+                "items": [
+                    {
+                        "date": "2026-08-05",
+                        "published_at": "2026-08-05T06:00:00+03:00",
+                        "search_cutoff_at": "2026-08-05T03:14:42+03:00",
+                    }
+                ]
+            },
+            timezone_name="Europe/Moscow",
+            publication_hour=6,
+        )
+
+        self.assertEqual(
+            report["search_window_start_at"],
+            "2026-08-05T03:14:42+03:00",
         )
 
     def test_archive_rss_mismatch_is_rejected(self) -> None:

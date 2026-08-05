@@ -352,9 +352,11 @@ class CoverageAuditExecutionTests(unittest.TestCase):
         self.assertEqual(metadata["web_search_call_items_total"], 6)
         self.assertEqual(metadata["configured_web_search_limit"], 5)
         self.assertEqual(metadata["observed_web_search_calls"], 6)
-        self.assertTrue(metadata["budget_overrun"])
+        self.assertFalse(metadata["budget_overrun"])
         self.assertFalse(metadata["completed_call_limit_exceeded"])
         self.assertTrue(metadata["output_item_limit_exceeded"])
+        self.assertEqual(metadata["web_search_search_operations_total"], 6)
+        self.assertEqual(metadata["web_search_navigation_items_total"], 0)
         self.assertEqual(
             metadata["web_search_call_statuses"],
             {"completed": 5, "failed": 1},
@@ -437,7 +439,7 @@ class CoverageAuditExecutionTests(unittest.TestCase):
             self.assertEqual(payload["mode"], "existing_full_digest")
             self.assertFalse(payload["web_search_performed"])
 
-    def test_legacy_six_over_five_report_reuses_two_story_digest(self) -> None:
+    def test_legacy_incomplete_audit_cannot_publish_short_digest(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             artifact = root / "artifact"
@@ -531,15 +533,12 @@ class CoverageAuditExecutionTests(unittest.TestCase):
                 "run_audit_request",
                 side_effect=AssertionError("paid audit must not repeat"),
             ):
-                self.assertEqual(audit.main(), 0)
+                self.assertEqual(audit.main(), 1)
 
             payload = json.loads(report.read_text(encoding="utf-8"))
-            self.assertEqual(
-                payload["mode"],
-                "existing_short_digest_after_reused_audit",
-            )
-            self.assertTrue(payload["prior_audit_reused"])
-            self.assertEqual(payload["publication_mode"], "short")
+            self.assertEqual(payload["status"], "error")
+            self.assertFalse(payload["prior_audit_reused"])
+            self.assertIn("заблокированы", payload["error"])
             digest = json.loads(
                 (artifact / "digest.json").read_text(encoding="utf-8")
             )
@@ -549,13 +548,14 @@ class CoverageAuditExecutionTests(unittest.TestCase):
                     "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
                 )
             )
-            self.assertNotIn(
+            self.assertIn(
                 "regional_gap",
                 {
                     item.get("type")
                     for item in digest["editorial_notes"]
                     if isinstance(item, dict)
                 },
+                "fail-closed audit must leave the pre-existing artifact untouched",
             )
 
     def test_api_request_has_hard_tool_call_cap(self) -> None:
@@ -626,14 +626,14 @@ class CoverageAuditExecutionTests(unittest.TestCase):
 
 
 class ConfigurationContractTests(unittest.TestCase):
-    def test_config_contains_non_blocking_short_digest_contract(self) -> None:
+    def test_config_contains_fail_closed_short_digest_contract(self) -> None:
         config = json.loads(
             (ROOT / "automation/config/production-daily.json").read_text(encoding="utf-8")
         )
         self.assertEqual(config["minimum_selected_stories"], 7)
         self.assertEqual(config["minimum_publishable_stories"], 1)
         self.assertFalse(config["regional_story_quotas_enabled"])
-        self.assertFalse(config["coverage_audit_failure_blocks_publication"])
+        self.assertTrue(config["coverage_audit_failure_blocks_publication"])
         self.assertNotIn("minimum_world_selected_stories", config)
         self.assertNotIn("minimum_russian_selected_stories", config)
         self.assertTrue(config["coverage_audit_enabled"])
@@ -651,7 +651,7 @@ class ConfigurationContractTests(unittest.TestCase):
         )
         self.assertNotIn("world_target_minimum", editorial["story_counts"])
         self.assertNotIn("russian_target_minimum", editorial["story_counts"])
-        self.assertEqual(editorial["spec_version"], "2026-08-04")
+        self.assertEqual(editorial["spec_version"], "2026-08-05")
         self.assertEqual(
             editorial["candidate_selection"]["maximum_selected_curiosity_stories"],
             1,

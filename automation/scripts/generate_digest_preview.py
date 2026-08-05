@@ -819,10 +819,12 @@ def latest_archive_published_at(
     for item in archive.get("items", []):
         if not isinstance(item, dict):
             continue
-        published_at = item.get("published_at")
-        if isinstance(published_at, str) and published_at.strip():
+        cutoff_at = item.get("search_cutoff_at") or item.get("published_at")
+        if isinstance(cutoff_at, str) and cutoff_at.strip():
             try:
-                values.append(parse_aware_datetime(published_at, "archive.published_at"))
+                values.append(
+                    parse_aware_datetime(cutoff_at, "archive.search_cutoff_at")
+                )
                 continue
             except RuntimeError:
                 pass
@@ -879,18 +881,14 @@ def response_output_text(response: Any) -> str:
 
 
 def count_web_search_calls(response: Any) -> int:
-    return sum(
-        1
-        for item in getattr(response, "output", []) or []
-        if getattr(item, "type", None) == "web_search_call"
-        and str(getattr(item, "status", None) or "unknown")
-        in {"completed", "unknown"}
-    )
+    return int(extract_web_search_trajectory(response)["completed_calls"])
 
 
 def extract_web_search_trajectory(response: Any) -> dict[str, Any]:
     calls: list[dict[str, Any]] = []
     status_counts: dict[str, int] = {}
+    action_type_counts: dict[str, int] = {}
+    search_status_counts: dict[str, int] = {}
     queries: list[str] = []
     seen_queries: set[str] = set()
     for item in getattr(response, "output", []) or []:
@@ -904,6 +902,10 @@ def extract_web_search_trajectory(response: Any) -> dict[str, Any]:
             action = plain_item.get("action")
         if not isinstance(action, dict):
             action = {}
+        action_type = str(action.get("type") or "unknown")
+        action_type_counts[action_type] = action_type_counts.get(action_type, 0) + 1
+        if action_type == "search":
+            search_status_counts[status] = search_status_counts.get(status, 0) + 1
         raw_queries: list[Any] = []
         if action.get("query") is not None:
             raw_queries.append(action.get("query"))
@@ -918,15 +920,23 @@ def extract_web_search_trajectory(response: Any) -> dict[str, Any]:
             {
                 "id": getattr(item, "id", None),
                 "status": status,
+                "action_type": action_type,
                 "action": action,
             }
         )
     return {
         "call_items_total": len(calls),
-        "completed_calls": status_counts.get("completed", 0),
-        "performed_calls": status_counts.get("completed", 0)
-        + status_counts.get("unknown", 0),
+        "completed_calls": search_status_counts.get("completed", 0),
+        "performed_calls": search_status_counts.get("completed", 0)
+        + search_status_counts.get("unknown", 0),
         "statuses": status_counts,
+        "search_statuses": search_status_counts,
+        "action_type_counts": action_type_counts,
+        "navigation_items_total": sum(
+            count
+            for action_type, count in action_type_counts.items()
+            if action_type in {"open_page", "find_in_page"}
+        ),
         "actual_queries": queries,
         "calls": calls,
     }
@@ -1135,8 +1145,12 @@ def expected_search_window(
     publication_date: date,
     archive: dict[str, Any],
     config: dict[str, Any],
+    *,
+    cutoff_at: datetime | None = None,
 ) -> tuple[datetime, datetime]:
-    end_at = planned_published_datetime(publication_date, config)
+    end_at = cutoff_at or planned_published_datetime(publication_date, config)
+    if end_at.tzinfo is None:
+        raise RuntimeError("cutoff_at должен содержать часовой пояс.")
     latest_at = latest_archive_published_at(archive, config)
     if latest_at is None:
         return end_at - timedelta(days=1), end_at
@@ -1169,6 +1183,8 @@ def sanitize_research_candidates(
     publication_date: date,
     archive: dict[str, Any],
     config: dict[str, Any],
+    *,
+    cutoff_at: datetime | None = None,
 ) -> tuple[dict[str, Any], list[dict[str, Any]], list[str]]:
     sanitized = copy.deepcopy(research)
     candidates = sanitized.get("candidates")
@@ -1176,7 +1192,12 @@ def sanitize_research_candidates(
     if not isinstance(candidates, list):
         return sanitized, [], []
 
-    start_at, end_at = expected_search_window(publication_date, archive, config)
+    start_at, end_at = expected_search_window(
+        publication_date,
+        archive,
+        config,
+        cutoff_at=cutoff_at,
+    )
     local_zone = ZoneInfo(str(config["timezone"]))
     start_date = start_at.astimezone(local_zone).date()
     end_date = end_at.astimezone(local_zone).date()
@@ -1348,6 +1369,8 @@ def validate_research(
     target_candidates: int,
     maximum_candidates: int,
     target_selected_stories: int,
+    *,
+    cutoff_at: datetime | None = None,
 ) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -1371,6 +1394,7 @@ def validate_research(
         publication_date,
         archive,
         config,
+        cutoff_at=cutoff_at,
     )
     local_zone = ZoneInfo(str(config["timezone"]))
     expected_start_date = expected_start.astimezone(local_zone).date().isoformat()
@@ -2358,10 +2382,19 @@ def main() -> int:
             raise RuntimeError("automation/archive/index.json имеет неожиданную структуру.")
 
         run_info["archive_items"] = len(archive["items"])
+        research_cutoff_at = datetime.now(timezone.utc).astimezone(
+            ZoneInfo(str(config["timezone"]))
+        )
+        run_info["research_cutoff_at"] = research_cutoff_at.isoformat(
+            timespec="seconds"
+        )
         archive_context = pretty_json(archive).strip()
         policy_context = pretty_json(policy).strip()
         search_start_at, search_end_at = expected_search_window(
-            publication_date, archive, config
+            publication_date,
+            archive,
+            config,
+            cutoff_at=research_cutoff_at,
         )
 
         research_prompt = build_prompt(
@@ -2429,7 +2462,7 @@ def main() -> int:
             research_trajectory = extract_web_search_trajectory(
                 research_response
             )
-            research_calls = int(research_trajectory["performed_calls"])
+            research_calls = int(research_trajectory["completed_calls"])
             run_info["research"]["response"] = stage_info(
                 research_response,
                 web_search_calls=research_calls,
@@ -2438,6 +2471,13 @@ def main() -> int:
                 "call_items_total": research_trajectory["call_items_total"],
                 "completed_calls": research_trajectory["completed_calls"],
                 "statuses": research_trajectory["statuses"],
+                "search_statuses": research_trajectory["search_statuses"],
+                "action_type_counts": research_trajectory[
+                    "action_type_counts"
+                ],
+                "navigation_items_total": research_trajectory[
+                    "navigation_items_total"
+                ],
                 "actual_queries": research_trajectory["actual_queries"],
             }
 
@@ -2490,12 +2530,30 @@ def main() -> int:
             pretty_json(research_raw),
         )
 
+        effective_cutoff_at = research_cutoff_at
+        if research_input_path is not None:
+            saved_window = research_raw.get("search_window")
+            saved_end = (
+                saved_window.get("end_at")
+                if isinstance(saved_window, dict)
+                else None
+            )
+            if isinstance(saved_end, str) and saved_end.strip():
+                effective_cutoff_at = parse_aware_datetime(
+                    saved_end,
+                    "research_input.search_window.end_at",
+                )
+                run_info["research_cutoff_at"] = effective_cutoff_at.isoformat(
+                    timespec="seconds"
+                )
+
         research, filtered_candidates, sanitation_warnings = (
             sanitize_research_candidates(
                 research_raw,
                 publication_date,
                 archive,
                 config,
+                cutoff_at=effective_cutoff_at,
             )
         )
 
@@ -2513,6 +2571,7 @@ def main() -> int:
             args.minimum_candidates,
             args.maximum_candidates,
             args.minimum_selected_stories,
+            cutoff_at=effective_cutoff_at,
         )
         run_info["warnings"].extend(sanitation_warnings)
         run_info["warnings"].extend(research_warnings)
@@ -2525,6 +2584,7 @@ def main() -> int:
 
         candidates_serialized = pretty_json(research)
         run_info["research"]["status"] = "ok"
+        run_info["research"]["search_window"] = research.get("search_window")
         run_info["research"]["candidates_sha256"] = sha256_text(
             candidates_serialized
         )

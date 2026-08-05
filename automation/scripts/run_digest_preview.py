@@ -84,7 +84,7 @@ def main() -> int:
 
     print(
         "Initial editorial is provisional, but paid research is reusable; "
-        "continuing to the best-effort coverage and editorial-repair stage."
+        "continuing to mandatory coverage completion and editorial repair."
     )
     return 0
 

@@ -330,7 +330,9 @@ class WorkflowIntegrationTests(unittest.TestCase):
         )
         self.assertIn("run_digest_preview.py", workflow)
         self.assertIn("--allow-provisional-editorial", workflow)
-        start = workflow.index("- name: Supplement a short digest when possible")
+        start = workflow.index(
+            "- name: Complete mandatory coverage audit for a short digest"
+        )
         end = workflow.index("- name:", start + 10)
         coverage_step = workflow[start:end]
         self.assertNotIn("if: inputs.recovery_run_id == ''", coverage_step)

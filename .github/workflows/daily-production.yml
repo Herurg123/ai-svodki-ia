@@ -292,7 +292,8 @@ jobs:
           terminal = (
               data.get("status") == "error"
               and data.get("web_search_performed") is True
-              and api.get("status") in {"completed", "partial"}
+              and api.get("status") == "completed"
+              and data.get("audit_status") in {"complete", "complete_with_gaps"}
               and isinstance(pool_total, int)
               and pool_total == 0
           )
@@ -423,7 +424,7 @@ jobs:
           python automation/scripts/validate_editorial_contract.py
           python automation/scripts/bootstrap_archive.py
           python automation/scripts/validate_archive.py
-      - name: Verify search window starts at last successful release
+      - name: Verify search window starts at last successful research cutoff
         if: steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         run: |
@@ -456,12 +457,12 @@ jobs:
             --minimum-selected-stories "${MINIMUM_SELECTED_STORIES}" \
             --maximum-selected-stories "${MAXIMUM_SELECTED_STORIES}" \
             --maximum-research-web-search-calls 12
-      - name: Supplement a short digest when possible
+      - name: Complete mandatory coverage audit for a short digest
         if: steps.terminal_reuse.outputs.stop != 'true'
-        # Runs for both fresh and recovered artifacts. Partial recovery may
-        # reuse paid research, perform only a bounded best-effort audit, and
-        # rerun editorial. Regional gaps and audit anomalies never block an
-        # existing publishable short digest.
+        # Runs for both fresh and recovered artifacts. Partial recovery reuses
+        # completed directions and searches only missing beats. A short digest
+        # proceeds only after all six required directions have completed; any
+        # technical partial/error exits before Image API, commit and deploy.
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

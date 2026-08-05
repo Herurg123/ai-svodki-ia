@@ -30,8 +30,12 @@ audit = load_module("ensure_story_coverage", SCRIPTS / "ensure_story_coverage.py
 class Item:
     type = "web_search_call"
 
+    def __init__(self, query: str = "targeted AI query") -> None:
+        self.status = "completed"
+        self.action = {"type": "search", "query": query, "sources": []}
 
-def run_fake_response(response):
+
+def run_fake_response(response, maximum_web_search_calls: int = 5):
     class Responses:
         def create(self, **kwargs):
             return response
@@ -47,16 +51,117 @@ def run_fake_response(response):
             api_key="secret",
             model="gpt-5.6-terra",
             prompt="targeted",
-            maximum_web_search_calls=5,
+            maximum_web_search_calls=maximum_web_search_calls,
         )
 
 
 class CoverageAuditDiagnosticsTests(unittest.TestCase):
+    def test_allowed_domains_are_sent_through_responses_web_search_filter(self) -> None:
+        captured: dict[str, object] = {}
+
+        class Response:
+            status = "completed"
+            output_text = json.dumps(
+                {
+                    "status": "complete_with_gaps",
+                    "error_message": None,
+                    "direction_id": "general_coverage_gaps",
+                    "candidates": [],
+                    "rejections": [],
+                    "notes": "Авторитетные источники проверены",
+                },
+                ensure_ascii=False,
+            )
+            output = [Item("authoritative AI news August 4 2026")]
+            id = "resp_filtered"
+            model = "gpt-5.6-terra"
+            usage = {}
+
+            def model_dump(self):
+                return {"id": self.id, "status": self.status}
+
+        class Responses:
+            def create(self, **kwargs):
+                captured.update(kwargs)
+                return Response()
+
+        class FakeOpenAI:
+            def __init__(self, **kwargs):
+                self.responses = Responses()
+
+        fake_module = types.ModuleType("openai")
+        fake_module.OpenAI = FakeOpenAI
+        with mock.patch.dict(sys.modules, {"openai": fake_module}):
+            result = audit.run_audit_request(
+                api_key="secret",
+                model="gpt-5.6-terra",
+                prompt="authoritative last mile",
+                maximum_web_search_calls=1,
+                allowed_domains=["reuters.com", "aisi.gov.uk"],
+            )
+
+        self.assertIsNone(result.validation_error)
+        tools = captured["tools"]
+        self.assertEqual(
+            tools[0]["filters"]["allowed_domains"],
+            ["reuters.com", "aisi.gov.uk"],
+        )
+
+    def test_search_plus_open_page_counts_as_one_search(self) -> None:
+        search = Item("August 4 2026 authoritative AI news")
+        open_page = Item()
+        open_page.status = "searching"
+        open_page.action = {
+            "type": "open_page",
+            "url": None,
+        }
+
+        class Response:
+            status = "completed"
+            output_text = json.dumps(
+                {
+                    "status": "complete_with_gaps",
+                    "error_message": None,
+                    "direction_id": "security_world",
+                    "candidates": [],
+                    "rejections": [],
+                    "notes": "Проверено, достойных событий нет",
+                },
+                ensure_ascii=False,
+            )
+            output = [search, open_page]
+            id = "resp_aug5_shape"
+            model = "gpt-5.6-terra"
+            usage = {"input_tokens": 12, "output_tokens": 4}
+
+            def model_dump(self):
+                return {
+                    "id": self.id,
+                    "status": self.status,
+                    "output": [
+                        {"type": item.type, "status": item.status, "action": item.action}
+                        for item in self.output
+                    ],
+                }
+
+        result = run_fake_response(Response(), maximum_web_search_calls=1)
+
+        self.assertIsNone(result.validation_error)
+        self.assertEqual(result.metadata["web_search_calls_completed"], 1)
+        self.assertEqual(result.metadata["web_search_call_items_total"], 2)
+        self.assertEqual(result.metadata["web_search_navigation_items_total"], 1)
+        self.assertEqual(
+            result.metadata["web_search_action_type_counts"],
+            {"search": 1, "open_page": 1},
+        )
+        self.assertFalse(result.metadata["budget_overrun"])
+        self.assertTrue(result.metadata["output_item_limit_exceeded"])
+
     def test_incomplete_response_keeps_metadata_and_raw_response(self) -> None:
         class Response:
             status = "incomplete"
             output_text = ""
-            output = [Item(), Item()]
+            output = [Item("one"), Item("two")]
             id = "resp_incomplete"
             model = "gpt-5.6-terra"
             usage = {"input_tokens": 12, "output_tokens": 0}
@@ -168,8 +273,10 @@ class CoverageAuditDiagnosticsTests(unittest.TestCase):
             self.assertEqual(report["audit_state"], "completed_unusable")
             self.assertEqual(report["error_stage"], "response_validation")
             self.assertTrue(report["web_search_performed"])
-            self.assertEqual(report["api"]["response_id"], "resp_empty")
-            self.assertEqual(report["api"]["usage"]["input_tokens"], 20)
+            self.assertEqual(
+                report["api"]["responses"][0]["response_id"], "resp_empty"
+            )
+            self.assertEqual(report["api"]["usage"]["input_tokens"], 40)
             self.assertEqual(
                 report["validation_error"],
                 "Coverage audit вернул пустой output_text",
@@ -185,7 +292,7 @@ class CoverageAuditDiagnosticsTests(unittest.TestCase):
             self.assertEqual(len(raw["output"]), 4)
 
     def test_only_usable_completed_audit_is_reused(self) -> None:
-        metadata = {"status": "completed", "web_search_calls": 4}
+        metadata = {"status": "completed", "web_search_calls": 6}
         unusable = {
             "status": "error",
             "audit_state": "completed_unusable",
@@ -193,9 +300,11 @@ class CoverageAuditDiagnosticsTests(unittest.TestCase):
             "api": metadata,
         }
         usable = {
-            "status": "ok",
+            "status": "error",
             "audit_state": "completed_usable",
             "web_search_performed": True,
+            "audit_status": "complete_with_gaps",
+            "checked_directions": list(audit.AUDIT_DIRECTION_IDS),
             "api": metadata,
         }
         legacy_usable = {
@@ -206,7 +315,7 @@ class CoverageAuditDiagnosticsTests(unittest.TestCase):
 
         self.assertFalse(audit.completed_prior_audit(unusable))
         self.assertTrue(audit.completed_prior_audit(usable))
-        self.assertTrue(audit.completed_prior_audit(legacy_usable))
+        self.assertFalse(audit.completed_prior_audit(legacy_usable))
 
 
 if __name__ == "__main__":
