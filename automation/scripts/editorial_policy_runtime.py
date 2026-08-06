@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
-"""Shared runtime correction for the editorial AI-agent wording policy.
+"""Runtime corrections for deterministic editorial validation.
 
-The repository policy rejects the noun forms ``AI agent`` and ``AI-агент``.
-The historical regular expression also rejected legitimate product-name
-phrases such as ``Meta AI агентные функции`` because it treated the adjective
-``агентные`` as a noun.  Production entry points import this module before
-calling the shared editorial validator.
+Production entry points import this module before calling the shared editorial
+validator.  The corrections are deliberately narrow: preserve every unrelated
+policy error, accept only the explicitly allowed Russian wording, and restore
+source metadata from the paid research pool instead of asking the model to copy
+URLs perfectly.
 """
 from __future__ import annotations
 
+import copy
+import html
 import re
 from typing import Any, Callable
 
 AGENT_ERROR = "Используй «агент ИИ», а не AI agent или AI-агент."
 Validator = Callable[..., tuple[list[str], list[str], dict[str, Any]]]
+EditorialValidator = Callable[..., Any]
+UrlNormalizer = Callable[[str], str]
 
 
 def actual_prohibited_agent_form(text: str) -> bool:
@@ -27,7 +31,7 @@ def actual_prohibited_agent_form(text: str) -> bool:
 
 
 def wrap_validator(original: Validator) -> Validator:
-    """Wrap one validator while preserving every unrelated policy error."""
+    """Wrap one article validator while preserving every unrelated error."""
 
     if getattr(original, "_ai_svodki_agent_policy_fixed", False):
         return original
@@ -64,8 +68,164 @@ def wrap_validator(original: Validator) -> Validator:
     return corrected
 
 
+def _research_sources(research: dict[str, Any]) -> list[dict[str, Any]]:
+    sources: list[dict[str, Any]] = []
+    candidates = research.get("candidates")
+    if not isinstance(candidates, list):
+        return sources
+    for candidate in candidates:
+        if not isinstance(candidate, dict):
+            continue
+        primary = candidate.get("primary_source")
+        if isinstance(primary, dict):
+            sources.append(primary)
+        supporting = candidate.get("supporting_sources")
+        if isinstance(supporting, list):
+            sources.extend(item for item in supporting if isinstance(item, dict))
+    return sources
+
+
+def _canonical_sources_by_url(
+    research: dict[str, Any],
+    normalize_url: UrlNormalizer,
+) -> dict[str, dict[str, Any]]:
+    canonical_by_url: dict[str, dict[str, Any]] = {}
+    for source in _research_sources(research):
+        raw_url = str(source.get("url", "")).strip()
+        if not raw_url:
+            continue
+        try:
+            key = normalize_url(raw_url)
+        except Exception:
+            continue
+        canonical_by_url.setdefault(key, copy.deepcopy(source))
+    return canonical_by_url
+
+
+def _normalize_article_source_links(
+    article_html: str,
+    canonical_by_url: dict[str, dict[str, Any]],
+    normalize_url: UrlNormalizer,
+) -> tuple[str, list[dict[str, Any]]]:
+    changes: list[dict[str, Any]] = []
+    pattern = re.compile(
+        r"(?P<prefix><a\b[^>]*\bhref\s*=\s*)"
+        r"(?P<quote>[\"'])(?P<url>[^\"']+)(?P=quote)",
+        flags=re.IGNORECASE,
+    )
+
+    def replace(match: re.Match[str]) -> str:
+        raw_url = html.unescape(match.group("url")).strip()
+        try:
+            key = normalize_url(raw_url)
+        except Exception:
+            return match.group(0)
+        canonical = canonical_by_url.get(key)
+        if canonical is None:
+            return match.group(0)
+        canonical_url = str(canonical.get("url", "")).strip()
+        if not canonical_url or canonical_url == raw_url:
+            return match.group(0)
+        changes.append(
+            {
+                "field": "digest.article_html.href",
+                "model_url": raw_url,
+                "canonical_url": canonical_url,
+            }
+        )
+        escaped_url = html.escape(canonical_url, quote=True)
+        return (
+            match.group("prefix")
+            + match.group("quote")
+            + escaped_url
+            + match.group("quote")
+        )
+
+    return pattern.sub(replace, article_html), changes
+
+
+def normalize_editorial_sources(
+    editorial: dict[str, Any],
+    research: dict[str, Any],
+    normalize_url: UrlNormalizer,
+) -> list[dict[str, Any]]:
+    """Restore exact source metadata and links already present in research.
+
+    The model may remove a trailing slash or repeat a publisher title with a
+    cosmetic difference. Source identity is owned by ``candidates.json``;
+    editorial may select and cite a source, but it must not redefine it. New or
+    unknown URLs are intentionally left untouched so the original validator can
+    reject them.
+    """
+
+    digest = editorial.get("digest")
+    if not isinstance(digest, dict):
+        return []
+
+    canonical_by_url = _canonical_sources_by_url(research, normalize_url)
+    changes: list[dict[str, Any]] = []
+    editorial_sources = digest.get("sources")
+    if isinstance(editorial_sources, list):
+        for index, source in enumerate(editorial_sources):
+            if not isinstance(source, dict):
+                continue
+            raw_url = str(source.get("url", "")).strip()
+            if not raw_url:
+                continue
+            try:
+                key = normalize_url(raw_url)
+            except Exception:
+                continue
+            canonical = canonical_by_url.get(key)
+            if canonical is None or source == canonical:
+                continue
+            editorial_sources[index] = copy.deepcopy(canonical)
+            changes.append(
+                {
+                    "field": f"digest.sources[{index}]",
+                    "model_url": raw_url,
+                    "canonical_url": str(canonical.get("url", "")),
+                }
+            )
+
+    article_html = digest.get("article_html")
+    if isinstance(article_html, str):
+        normalized_html, link_changes = _normalize_article_source_links(
+            article_html,
+            canonical_by_url,
+            normalize_url,
+        )
+        digest["article_html"] = normalized_html
+        changes.extend(link_changes)
+    return changes
+
+
+def wrap_editorial_validator(
+    original: EditorialValidator,
+    normalize_url: UrlNormalizer,
+) -> EditorialValidator:
+    """Normalize known source metadata immediately before validation."""
+
+    if getattr(original, "_ai_svodki_source_metadata_fixed", False):
+        return original
+
+    def corrected(
+        editorial: dict[str, Any],
+        research: dict[str, Any],
+        *args: Any,
+        **kwargs: Any,
+    ) -> Any:
+        if isinstance(editorial, dict) and isinstance(research, dict):
+            normalize_editorial_sources(editorial, research, normalize_url)
+        return original(editorial, research, *args, **kwargs)
+
+    setattr(corrected, "_ai_svodki_source_metadata_fixed", True)
+    setattr(corrected, "__wrapped__", original)
+    return corrected
+
+
 def patch_editorial_policy(*consumer_modules: Any) -> Validator:
-    """Patch the shared module and any direct-import consumer bindings."""
+    """Patch the shared article validator and direct-import consumer bindings."""
 
     import editorial_policy
 
@@ -74,4 +234,17 @@ def patch_editorial_policy(*consumer_modules: Any) -> Validator:
     for module in consumer_modules:
         if hasattr(module, "validate_article_policy"):
             module.validate_article_policy = corrected
+    return corrected
+
+
+def patch_editorial_source_validation(module: Any) -> EditorialValidator:
+    """Patch one generator module without changing its public data contract."""
+
+    if not hasattr(module, "validate_editorial") or not hasattr(module, "normalize_url"):
+        raise RuntimeError("Generator module lacks editorial validation helpers")
+    corrected = wrap_editorial_validator(
+        module.validate_editorial,
+        module.normalize_url,
+    )
+    module.validate_editorial = corrected
     return corrected
