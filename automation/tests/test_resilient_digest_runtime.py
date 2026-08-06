@@ -124,13 +124,17 @@ class EditorialSourceNormalizationTests(unittest.TestCase):
     def test_known_url_gets_exact_research_metadata(self) -> None:
         editorial = {
             "digest": {
+                "article_html": (
+                    '<h3>Story</h3><p><a href="https://techcrunch.com/report">'
+                    "Source</a></p>"
+                ),
                 "sources": [
                     {
                         "title": "Changed title",
                         "publisher": "Tech Crunch",
                         "url": "https://techcrunch.com/report",
                     }
-                ]
+                ],
             }
         }
         changes = normalize_editorial_sources(
@@ -138,10 +142,14 @@ class EditorialSourceNormalizationTests(unittest.TestCase):
             self.research(),
             simple_normalize_url,
         )
-        self.assertEqual(len(changes), 1)
+        self.assertEqual(len(changes), 2)
         self.assertEqual(
             editorial["digest"]["sources"][0],
             self.research()["candidates"][0]["supporting_sources"][0],
+        )
+        self.assertIn(
+            'href="https://techcrunch.com/report/"',
+            editorial["digest"]["article_html"],
         )
 
     def test_unknown_url_is_left_for_original_validator(self) -> None:
