@@ -10,6 +10,7 @@ URLs perfectly.
 from __future__ import annotations
 
 import copy
+import html
 import re
 from typing import Any, Callable
 
@@ -84,27 +85,10 @@ def _research_sources(research: dict[str, Any]) -> list[dict[str, Any]]:
     return sources
 
 
-def normalize_editorial_sources(
-    editorial: dict[str, Any],
+def _canonical_sources_by_url(
     research: dict[str, Any],
     normalize_url: UrlNormalizer,
-) -> list[dict[str, Any]]:
-    """Restore exact source metadata for URLs already present in research.
-
-    The model may remove a trailing slash or repeat a publisher title with a
-    cosmetic difference.  Source identity is owned by ``candidates.json``;
-    editorial may select and cite a source, but it must not redefine it.  New or
-    unknown URLs are intentionally left untouched so the original validator can
-    reject them.
-    """
-
-    digest = editorial.get("digest")
-    if not isinstance(digest, dict):
-        return []
-    editorial_sources = digest.get("sources")
-    if not isinstance(editorial_sources, list):
-        return []
-
+) -> dict[str, dict[str, Any]]:
     canonical_by_url: dict[str, dict[str, Any]] = {}
     for source in _research_sources(research):
         raw_url = str(source.get("url", "")).strip()
@@ -115,29 +99,104 @@ def normalize_editorial_sources(
         except Exception:
             continue
         canonical_by_url.setdefault(key, copy.deepcopy(source))
+    return canonical_by_url
 
+
+def _normalize_article_source_links(
+    article_html: str,
+    canonical_by_url: dict[str, dict[str, Any]],
+    normalize_url: UrlNormalizer,
+) -> tuple[str, list[dict[str, Any]]]:
     changes: list[dict[str, Any]] = []
-    for index, source in enumerate(editorial_sources):
-        if not isinstance(source, dict):
-            continue
-        raw_url = str(source.get("url", "")).strip()
-        if not raw_url:
-            continue
+    pattern = re.compile(
+        r"(?P<prefix><a\b[^>]*\bhref\s*=\s*)"
+        r"(?P<quote>[\"'])(?P<url>[^\"']+)(?P=quote)",
+        flags=re.IGNORECASE,
+    )
+
+    def replace(match: re.Match[str]) -> str:
+        raw_url = html.unescape(match.group("url")).strip()
         try:
             key = normalize_url(raw_url)
         except Exception:
-            continue
+            return match.group(0)
         canonical = canonical_by_url.get(key)
-        if canonical is None or source == canonical:
-            continue
-        editorial_sources[index] = copy.deepcopy(canonical)
+        if canonical is None:
+            return match.group(0)
+        canonical_url = str(canonical.get("url", "")).strip()
+        if not canonical_url or canonical_url == raw_url:
+            return match.group(0)
         changes.append(
             {
-                "index": index,
+                "field": "digest.article_html.href",
                 "model_url": raw_url,
-                "canonical_url": str(canonical.get("url", "")),
+                "canonical_url": canonical_url,
             }
         )
+        escaped_url = html.escape(canonical_url, quote=True)
+        return (
+            match.group("prefix")
+            + match.group("quote")
+            + escaped_url
+            + match.group("quote")
+        )
+
+    return pattern.sub(replace, article_html), changes
+
+
+def normalize_editorial_sources(
+    editorial: dict[str, Any],
+    research: dict[str, Any],
+    normalize_url: UrlNormalizer,
+) -> list[dict[str, Any]]:
+    """Restore exact source metadata and links already present in research.
+
+    The model may remove a trailing slash or repeat a publisher title with a
+    cosmetic difference. Source identity is owned by ``candidates.json``;
+    editorial may select and cite a source, but it must not redefine it. New or
+    unknown URLs are intentionally left untouched so the original validator can
+    reject them.
+    """
+
+    digest = editorial.get("digest")
+    if not isinstance(digest, dict):
+        return []
+
+    canonical_by_url = _canonical_sources_by_url(research, normalize_url)
+    changes: list[dict[str, Any]] = []
+    editorial_sources = digest.get("sources")
+    if isinstance(editorial_sources, list):
+        for index, source in enumerate(editorial_sources):
+            if not isinstance(source, dict):
+                continue
+            raw_url = str(source.get("url", "")).strip()
+            if not raw_url:
+                continue
+            try:
+                key = normalize_url(raw_url)
+            except Exception:
+                continue
+            canonical = canonical_by_url.get(key)
+            if canonical is None or source == canonical:
+                continue
+            editorial_sources[index] = copy.deepcopy(canonical)
+            changes.append(
+                {
+                    "field": f"digest.sources[{index}]",
+                    "model_url": raw_url,
+                    "canonical_url": str(canonical.get("url", "")),
+                }
+            )
+
+    article_html = digest.get("article_html")
+    if isinstance(article_html, str):
+        normalized_html, link_changes = _normalize_article_source_links(
+            article_html,
+            canonical_by_url,
+            normalize_url,
+        )
+        digest["article_html"] = normalized_html
+        changes.extend(link_changes)
     return changes
 
 
