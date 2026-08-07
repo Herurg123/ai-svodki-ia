@@ -1,0 +1,710 @@
+{
+  "call_items_total": 6,
+  "completed_calls": 5,
+  "performed_calls": 5,
+  "statuses": {
+    "completed": 6
+  },
+  "search_statuses": {
+    "completed": 5
+  },
+  "action_type_counts": {
+    "search": 5,
+    "open_page": 1
+  },
+  "navigation_items_total": 1,
+  "actual_queries": [
+    "AI news August 6 2026 OpenAI Anthropic Google Microsoft Nvidia xAI",
+    "site:openai.com OR site:anthropic.com OR site:blog.google August 6 2026 AI",
+    "AI новости 6 августа 2026 Яндекс Сбер VK МТС ИИ",
+    "AI China August 6 2026 Qwen DeepSeek Kimi GLM Huawei",
+    "after:2026-08-05 before:2026-08-08 artificial intelligence Reuters August 6 2026",
+    "after:2026-08-05 before:2026-08-08 AI site:techcrunch.com 2026",
+    "after:2026-08-05 before:2026-08-08 AI security vulnerability agent August 6 2026",
+    "after:2026-08-05 before:2026-08-08 AI Russia Сбер Яндекс МТС VK",
+    "Meta AI security incident model hacked third party August 6 2026 official",
+    "OpenAI Black Hat August 2026 Artifactory agent official presentation",
+    "August 6 2026 artificial intelligence funding acquisition regulation Reuters AP",
+    "August 6 2026 AI model release official GitHub Hugging Face",
+    "\"Aug 6, 2026\" \"AI\" \"announced\"",
+    "\"August 6, 2026\" \"artificial intelligence\" \"announced\"",
+    "site:reuters.com \"Aug 6, 2026\" AI Nvidia Amazon OpenAI",
+    "site:github.blog/changelog/2026-08-06 OR site:docs.anthropic.com August 6 2026 AI",
+    "site:arxiv.org/abs/2608 \"Thu Aug 6\" 2026 AI",
+    "site:arxiv.org/abs/2608 \"Date: Thu Aug 6\" \"LLM\"",
+    "site:arxiv.org/abs/2608 \"Date: Thu Aug 6\" \"agent\"",
+    "\"August 6, 2026\" \"AI\" \"Reuters\" \"announced\" -BlackHat"
+  ],
+  "calls": [
+    {
+      "id": "ws_08a6df331c05c5a3016a75394bb3408199b13d212bdee935be",
+      "status": "completed",
+      "action_type": "search",
+      "action": {
+        "type": "search",
+        "queries": [
+          "AI news August 6 2026 OpenAI Anthropic Google Microsoft Nvidia xAI",
+          "site:openai.com OR site:anthropic.com OR site:blog.google August 6 2026 AI",
+          "AI новости 6 августа 2026 Яндекс Сбер VK МТС ИИ",
+          "AI China August 6 2026 Qwen DeepSeek Kimi GLM Huawei"
+        ],
+        "query": "AI news August 6 2026 OpenAI Anthropic Google Microsoft Nvidia xAI",
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://www.axios.com/newsletters/axios-am-e6e15a72-3b81-4056-9657-5c07f9825685"
+          },
+          {
+            "type": "url",
+            "url": "https://www.axios.com/newsletters/axios-am-c28a0dcf-07c5-4caa-b46b-da0e202609d6"
+          },
+          {
+            "type": "url",
+            "url": "https://support.huaweicloud.com/bulletin-maas/bulletin-maas-0002.html"
+          },
+          {
+            "type": "url",
+            "url": "https://vk.company.ru/ru/press/releases/12345/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.axios.com/2026/07/27/nvidia-anthropic-openai-open-weight-debate"
+          },
+          {
+            "type": "url",
+            "url": "https://www.anthropic.com/news?via=AISolvesThat"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2607.08215"
+          },
+          {
+            "type": "url",
+            "url": "https://techsy.io/en/blog/qwen-vs-deepseek-vs-glm"
+          },
+          {
+            "type": "url",
+            "url": "https://toolbridge.pages.dev/posts/chinese-ai-llm-comparison-2026/"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/DeepSeek"
+          },
+          {
+            "type": "url",
+            "url": "https://www.investing.com/news/stock-market-news/chinas-ai-darling-deepseek-previews-new-model-4634553"
+          },
+          {
+            "type": "url",
+            "url": "https://presenc.ai/research/chinese-open-source-llm-comparison-2026"
+          },
+          {
+            "type": "url",
+            "url": "https://www.ai-roundup.dev/roundup/2026-07-28/"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2401.02954"
+          },
+          {
+            "type": "url",
+            "url": "https://www.un.org/independent-international-scientific-panel-ai/sites/default/files/2026-07/en_Preliminary%20Report_.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://sunsetbrowser.app/blog/china-open-source-llm-eruption-2026-which-to-use-en?lang=en"
+          },
+          {
+            "type": "url",
+            "url": "https://digitechbytes.com/emerging-consumer-tech-explained/china-sphere-capability-gap-q2-2026-update-five-labs-five-strategies-one-narrowi/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.ixbt.com/live/sw/kakaya-neyroset-luchshe-sravnivaem-kimi-qwen-glm-i-deepseek.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.idc.com/wp-content/uploads/2025/11/IDC-Asia-Pacific-FutureScape-2026_China-AI-Excerpt.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://digichina.stanford.edu/wp-content/uploads/2025/12/hai-digichina-issue-brief-beyond-deepseek-chinas-diverse-open-weight-ai-ecosystem-policy-implications.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2604.17187"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2601.02830"
+          },
+          {
+            "type": "url",
+            "url": "https://artificialanalysis.ai/downloads/china-report/2025/Artificial-Analysis-State-of-AI-China-Q2-2025-Highlights.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Artificial_intelligence_industry_in_China"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/hardware/comments/1uqsjim/removed/"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/2026_in_artificial_intelligence"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Qwen"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/China/comments/1sus9sq/deepseeks_longawaited_new_model_fails_to_narrow/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.cluebenchmarks.com/superclue_2025_en"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/United_States_export_controls_on_AI_chips_and_semiconductors"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/Sino/comments/1ur53h2/us_firms_growing_adoption_highlights_rising/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.wsj.com/public/resources/documents/d5i7jqt7T6YAUcevUkm3-WSJNewsPaper-10-1-2025.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/Sino/comments/1uqi3wl/removed/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/Sino/comments/1uzwx52/waic_2026_china_unveiled_two_new_ai_models_fenghe/"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Kimi_%28chatbot%29"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/LocalLLM/comments/1syz4kk/3_of_times_top_10_ai_companies_are_chinese_and_i/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/CreatorsAI/comments/1va97x4/2024_which_ai_do_you_use_2026_which_chinese_ai_do/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/Sino/comments/1vc6g0u/deepseek_v4_ai_models_disrupt_chinas_market/"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ws_08a6df331c05c5a3016a75395241f48199ae8dcf871944808e",
+      "status": "completed",
+      "action_type": "search",
+      "action": {
+        "type": "search",
+        "queries": [
+          "after:2026-08-05 before:2026-08-08 artificial intelligence Reuters August 6 2026",
+          "after:2026-08-05 before:2026-08-08 AI site:techcrunch.com 2026",
+          "after:2026-08-05 before:2026-08-08 AI security vulnerability agent August 6 2026",
+          "after:2026-08-05 before:2026-08-08 AI Russia Сбер Яндекс МТС VK"
+        ],
+        "query": "after:2026-08-05 before:2026-08-08 artificial intelligence Reuters August 6 2026",
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://apnews.com/article/0e8061437da6779be962b24ac134a514"
+          },
+          {
+            "type": "url",
+            "url": "https://www.axios.com/2026/08/06/openai-hugging-face-black-hat"
+          },
+          {
+            "type": "url",
+            "url": "https://www.itpro.com/technology/neural-network/after-openai-hugging-face-how-do-it-leaders-need-to-change-the-way-they-think-about-ai"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2608.05108"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Zen_%28recommendation_system%29"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2608.04565"
+          },
+          {
+            "type": "url",
+            "url": "https://ru.wikipedia.org/wiki/%D0%93%D0%B8%D0%B3%D0%B0%D0%A7%D0%B0%D1%82"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2608.04366"
+          },
+          {
+            "type": "url",
+            "url": "https://ru.wikipedia.org/wiki/VK_%28%D0%BA%D0%BE%D0%BC%D0%BF%D0%B0%D0%BD%D0%B8%D1%8F%29"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2608.04741"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Alice_AI"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/cybersecurity/comments/1vh1zog/humans_missed_1_in_3_threats_approving_ai_agent/"
+          },
+          {
+            "type": "url",
+            "url": "https://ru.wikipedia.org/wiki/Kandinsky"
+          },
+          {
+            "type": "url",
+            "url": "https://ru.wikipedia.org/wiki/%D0%A1%D0%B1%D0%B5%D1%80%D0%B1%D0%B0%D0%BD%D0%BA_%D0%A0%D0%BE%D1%81%D1%81%D0%B8%D0%B8"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/pwnhub/comments/1vh5ukw/black_hat_2026_ai_coding_agents_for_claude_gemini/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/expectedrussians/comments/1vcpguy/%D0%BC%D0%BE%D0%BD%D0%BE%D0%BF%D0%BE%D0%BB%D0%B8%D0%B8/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/OpenAIDev/comments/1vhfr8l/humans_missed_1_in_3_threats_approving_ai_agent/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/SecOpsDaily/comments/1vgsdfz/what_is_an_ai_agent_cybersecurity_risks/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/pwnhub/comments/1vgd2hm/uk_ai_security_institute_report_reveals_anthropic/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/rusAskReddit/comments/1vg4l3j/%D1%87%D1%82%D0%BE_%D0%B4%D1%83%D0%BC%D0%B0%D0%B5%D1%82%D0%B5_%D0%BD%D0%B0%D1%81%D1%87%D1%91%D1%82_%D1%8F%D0%BD%D0%B4%D0%B5%D0%BA%D1%81%D0%B0/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/AI_Agents/comments/1vh5xhm/an_ai_agent_invented_fake_humans_to_pressure_a/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/technology/comments/1vhjj7h/blackhat_usa_2026_the_openaihugging_face_incident/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/videos/comments/1vhg6ba/black_hat_usa_2026_the_openaihugging_face_incident/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/singularity/comments/1vfnhoj/aisi_caught_mythos_5_trying_to_insert_malicious/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/cybersecurity/comments/1vex55k/has_anyone_actually_had_a_security_incident/"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ws_08a6df331c05c5a3016a753959f25881998a6caa1053afae1c",
+      "status": "completed",
+      "action_type": "search",
+      "action": {
+        "type": "search",
+        "queries": [
+          "Meta AI security incident model hacked third party August 6 2026 official",
+          "OpenAI Black Hat August 2026 Artifactory agent official presentation",
+          "August 6 2026 artificial intelligence funding acquisition regulation Reuters AP",
+          "August 6 2026 AI model release official GitHub Hugging Face"
+        ],
+        "query": "Meta AI security incident model hacked third party August 6 2026 official",
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://apnews.com/article/0e8061437da6779be962b24ac134a514"
+          },
+          {
+            "type": "url",
+            "url": "https://www.axios.com/2026/08/06/openai-hugging-face-black-hat"
+          },
+          {
+            "type": "url",
+            "url": "https://www.techradar.com/pro/in-a-twist-of-irony-a-chinese-open-source-glm-5-2-ai-model-contained-rogue-openai-gpt-5-6-sol-in-a-hugging-face-hack-just-as-the-us-mulls-banning-open-weight-ai"
+          },
+          {
+            "type": "url",
+            "url": "https://huggingface.co/docs/hub/en/model-release-checklist"
+          },
+          {
+            "type": "url",
+            "url": "https://blackhat.com/briefings/"
+          },
+          {
+            "type": "url",
+            "url": "https://blackhat.com/html/press/2026-07-16.html"
+          },
+          {
+            "type": "url",
+            "url": "https://blackhat.com/us-26/sponsor-activities.html"
+          },
+          {
+            "type": "url",
+            "url": "https://github.blog/changelog/2026-07-01-github-models-is-being-fully-retired-on-july-30-2026/"
+          },
+          {
+            "type": "url",
+            "url": "https://github.com/huggingface/blog/blob/main/security-incident-july-2026.md"
+          },
+          {
+            "type": "url",
+            "url": "https://huggingface.co/docs/hub/model-release-checklist"
+          },
+          {
+            "type": "url",
+            "url": "https://cli.github.com/manual/gh_release_view"
+          },
+          {
+            "type": "url",
+            "url": "https://github.com/huggingface/huggingface_hub/releases"
+          },
+          {
+            "type": "url",
+            "url": "https://huggingface.co/huggingface/models"
+          },
+          {
+            "type": "url",
+            "url": "https://openai.com/news/safety-and-alignment/"
+          },
+          {
+            "type": "url",
+            "url": "https://blackhat.com/us-26/summit-sessions/schedule/index.html"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/security/comments/1vguqbl/meta_ai_model_hacks_another_company_during_testing/"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2607.21738"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/singularity/comments/1vhkc5j/black_hat_usa_2026_the_breaking_news_the/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/OpenAIDev/comments/1vhaiwb/meta_ai_agent_exploited_thirdparty_flaw_during/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/videos/comments/1vhg6ba/black_hat_usa_2026_the_openaihugging_face_incident/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/technology/comments/1vhjj7h/blackhat_usa_2026_the_openaihugging_face_incident/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/NoSpinMedia/comments/1vhhsgl/meta_says_ai_model_reached_outside_company_during/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/allenai/comments/1vh4ku7/ai2_hugging_face_expand_their_open_science/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/news/comments/1vgmkqm/metas_ai_model_hacked_another_company_during/"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2507.02735"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/AIGuild/comments/1vgpdf6/meta_confirms_its_coding_model_hacked_a_real/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/MetaAI/comments/1vd77dx/meta_business_portfolio_hacked_and_i_was_removed/"
+          },
+          {
+            "type": "url",
+            "url": "https://unpan.un.org/sites/default/files/resource/2026/The%20Fourth%20Quarter%20APCIB.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/technology/comments/1vh1skj/metas_ai_model_follows_rivals_in_revealing_hacks/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/CyberNews/comments/1vgupqu/meta_says_its_ai_model_hacked_another_company/"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2607.17242"
+          },
+          {
+            "type": "url",
+            "url": "https://s3.amazonaws.com/content-production.cloudsecurityalliance/b9j0yq3b5mumvuld3v0bo104a7b0?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAS6XDIRHKHO4F5SU4%2F20260605%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260605T055458Z&X-Amz-Expires=300&X-Amz-Signature=8024b259bf3426caf452ca669578a8e9e69b61c431520d471d2330253217e35b&X-Amz-SignedHeaders=host&response-content-disposition=inline%3B+filename%3D%22CSA_research_note_ai_support_bot_identity_bypass_20260603-csa-styled.pdf%22%3B+filename%2A%3DUTF-8%27%27CSA_research_note_ai_support_bot_identity_bypass_20260603-csa-styled.pdf&response-content-type=application%2Fpdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.wsj.com/public/resources/documents/UfCrup2QFf8arruFYBNx-WSJNewsPaper-4-9-2026.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2508.10157"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Regulation_of_artificial_intelligence_in_the_United_States"
+          },
+          {
+            "type": "url",
+            "url": "https://labs.cloudsecurityalliance.org/wp-content/uploads/2026/06/CSA_research_note_meta_ai_support_bot_account_takeover_20260613-csa-styled.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.imf.org/-/media/Files/Publications/WP/2025/English/wpiea2025067-print-pdf.ashx"
+          },
+          {
+            "type": "url",
+            "url": "https://downloads.regulations.gov/NIST-2024-0002-0060/attachment_1.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Timeline_of_artificial_intelligence_risks_in_global_finance"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Aura_data_breach"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/2026_Canvas_security_incident"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Sarvam_AI"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Hugging_Face"
+          },
+          {
+            "type": "url",
+            "url": "https://apnews.com/article/63ab84fed5612af04d8a160d60f6def3"
+          },
+          {
+            "type": "url",
+            "url": "https://www.techradar.com/pro/security/meta-reveals-over-20-000-instagram-accounts-hacked-and-stolen-using-ai-support-bot"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ws_08a6df331c05c5a3016a753967069881999fd21b1a78fb8483",
+      "status": "completed",
+      "action_type": "search",
+      "action": {
+        "type": "search",
+        "queries": [
+          "\"Aug 6, 2026\" \"AI\" \"announced\"",
+          "\"August 6, 2026\" \"artificial intelligence\" \"announced\"",
+          "site:reuters.com \"Aug 6, 2026\" AI Nvidia Amazon OpenAI",
+          "site:github.blog/changelog/2026-08-06 OR site:docs.anthropic.com August 6 2026 AI"
+        ],
+        "query": "\"Aug 6, 2026\" \"AI\" \"announced\"",
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://www.globenewswire.com/news-release/2026/07/16/3328469/0/en/Kodiak-to-Report-Second-Quarter-2026-Financial-Results-on-August-6-2026.html"
+          },
+          {
+            "type": "url",
+            "url": "https://github.blog/changelog/2026-03-25-updates-to-our-privacy-statement-and-terms-of-service-how-we-use-your-data/"
+          },
+          {
+            "type": "url",
+            "url": "https://github.blog/changelog/month/06-2026/page/5/"
+          },
+          {
+            "type": "url",
+            "url": "https://github.blog/changelog/2026-06-01-updates-to-github-copilot-billing-and-plans/"
+          },
+          {
+            "type": "url",
+            "url": "https://github.blog/changelog/2026-07-01-github-models-is-being-fully-retired-on-july-30-2026/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.palladyneai.com/press-releases/palladyne-ai-announces-second-quarter-fiscal-2026-financial-results-conference-call-and-webcast/"
+          },
+          {
+            "type": "url",
+            "url": "https://github.blog/changelog/2026-06-04-copilot-chat-brings-richer-context-to-pull-requests/"
+          },
+          {
+            "type": "url",
+            "url": "https://github.blog/tag/ai/"
+          },
+          {
+            "type": "url",
+            "url": "https://github.blog/changelog/2026-03-11-explore-a-repository-using-copilot-on-the-web/"
+          },
+          {
+            "type": "url",
+            "url": "https://github.blog/changelog/2026-02-03-simplified-copilot-model-enablement-experience-for-individual-users/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.techmeme.com/260706/h0940"
+          },
+          {
+            "type": "url",
+            "url": "https://github.blog/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.summitna.com/wp-content/support/2026/2026_sponsorship_prospectus.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.thefinancialworld.com/wp-content/uploads/2026/06/06-June-FW-Chandigarh-Edition.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/List_of_3D_films_%282005%E2%80%93present%29"
+          },
+          {
+            "type": "url",
+            "url": "https://www.yugmarg.com/edition/2026/06/30/pages.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/OpenAI"
+          },
+          {
+            "type": "url",
+            "url": "https://github.blog/wp-content/uploads/2023/07/Supporting-Open-Source-and-Open-Science-in-the-EU-AI-Act.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://github.blog/wp-content/uploads/2023/06/Sea-Change-in-Software-Dev.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ws_08a6df331c05c5a3016a75396dc99081999f4b833970cd6f04",
+      "status": "completed",
+      "action_type": "search",
+      "action": {
+        "type": "search",
+        "queries": [
+          "site:arxiv.org/abs/2608 \"Thu Aug 6\" 2026 AI",
+          "site:arxiv.org/abs/2608 \"Date: Thu Aug 6\" \"LLM\"",
+          "site:arxiv.org/abs/2608 \"Date: Thu Aug 6\" \"agent\"",
+          "\"August 6, 2026\" \"AI\" \"Reuters\" \"announced\" -BlackHat"
+        ],
+        "query": "site:arxiv.org/abs/2608 \"Thu Aug 6\" 2026 AI",
+        "sources": [
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2008.04109"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2008.05882"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2008.02691"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2008.02616"
+          },
+          {
+            "type": "url",
+            "url": "https://www.investing.com/news/company-news/franklin-electric-declares-028-quarterly-dividend-93CH-4813989"
+          },
+          {
+            "type": "url",
+            "url": "https://www.investing.com/news/company-news/hope-bancorp-declares-014-quarterly-dividend-93CH-4814019"
+          },
+          {
+            "type": "url",
+            "url": "https://www.investing.com/news/company-news/waste-connections-declares-035-quarterly-dividend-93CH-4806862"
+          },
+          {
+            "type": "url",
+            "url": "https://www.investing.com/news/company-news/graham-holdings-declares-188-quarterly-dividend-93CH-4659995"
+          },
+          {
+            "type": "url",
+            "url": "https://www.investing.com/news/company-news/investec-announces-chair-succession-board-changes-93CH-4703922"
+          },
+          {
+            "type": "url",
+            "url": "https://www.investing.com/news/company-news/innodata-to-report-q2-2026-results-on-august-6-93CH-4793380"
+          },
+          {
+            "type": "url",
+            "url": "https://ca.investing.com/news/stock-market-news/graham-holdings-declares-188-quarterly-dividend-93CH-4610066"
+          },
+          {
+            "type": "url",
+            "url": "https://ph.investing.com/news/stock-market-news/guinness-vct-reports-net-asset-growth-declares-17p-dividend-93CH-2493609"
+          },
+          {
+            "type": "url",
+            "url": "https://au.investing.com/news/stock-market-news/innodata-to-report-q2-2026-results-on-august-6-93CH-4534632"
+          },
+          {
+            "type": "url",
+            "url": "https://www.investing.com/news/company-news/janus-henderson-to-liquidate-us-real-estate-etf-in-august-93CH-4729305"
+          },
+          {
+            "type": "url",
+            "url": "https://ph.investing.com/news/stock-market-news/riley-permian-declares-040-quarterly-dividend-93CH-2492922"
+          },
+          {
+            "type": "url",
+            "url": "https://openuk.uk/events-calendar/list/?eventDisplay=past&tribe-bar-date=2026-09-03"
+          },
+          {
+            "type": "url",
+            "url": "https://epaper.hyderabadheadlines.com/media/2026-05/hh_16-05-2026.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ws_08a6df331c05c5a3016a753975d4d08199ad145ce85a2dda7b",
+      "status": "completed",
+      "action_type": "open_page",
+      "action": {
+        "type": "open_page",
+        "url": "https://apnews.com/article/0e8061437da6779be962b24ac134a514"
+      }
+    }
+  ]
+}

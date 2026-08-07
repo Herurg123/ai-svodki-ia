@@ -1,0 +1,197 @@
+{
+  "status": "ok",
+  "pipeline": "research_then_editorial",
+  "request_id": "production-digest-2026-08-07",
+  "research_input": null,
+  "warnings": [
+    "Нормализованы внутренние id кандидатов: cand-202->cand-001, cand-203->cand-002.",
+    "Целевой пул — 12 кандидатов, но после проверки свежести осталось 2.",
+    "Кандидатов меньше обычной цели выпуска (7); разрешён короткий выпуск.",
+    "Выбрано 2 сюжетов при обычной цели 7; формируется короткий выпуск."
+  ],
+  "publication_date": "2026-08-07",
+  "started_at": "2026-08-07T01:44:10+00:00",
+  "finished_at": "2026-08-07T01:50:11+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 30,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "938c8562fd3f3b46a9558fdd2488e506b7b6094fef2c2a6f832cdf4c472880cd",
+    "candidates_sha256": "4a1607658873fcbea51573786c59a16e38705945d43109ce67fea70ea65dda7e",
+    "settings": {
+      "source": "responses_api_web_search",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_08a6df331c05c5a3016a753949d8f88199b11f4598fb76f818",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 5,
+      "usage": {
+        "input_tokens": 127001,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 74456
+        },
+        "output_tokens": 5172,
+        "output_tokens_details": {
+          "reasoning_tokens": 1534
+        },
+        "total_tokens": 132173
+      },
+      "search_trajectory": {
+        "call_items_total": 6,
+        "completed_calls": 5,
+        "statuses": {
+          "completed": 6
+        },
+        "search_statuses": {
+          "completed": 5
+        },
+        "action_type_counts": {
+          "search": 5,
+          "open_page": 1
+        },
+        "navigation_items_total": 1,
+        "actual_queries": [
+          "AI news August 6 2026 OpenAI Anthropic Google Microsoft Nvidia xAI",
+          "site:openai.com OR site:anthropic.com OR site:blog.google August 6 2026 AI",
+          "AI новости 6 августа 2026 Яндекс Сбер VK МТС ИИ",
+          "AI China August 6 2026 Qwen DeepSeek Kimi GLM Huawei",
+          "after:2026-08-05 before:2026-08-08 artificial intelligence Reuters August 6 2026",
+          "after:2026-08-05 before:2026-08-08 AI site:techcrunch.com 2026",
+          "after:2026-08-05 before:2026-08-08 AI security vulnerability agent August 6 2026",
+          "after:2026-08-05 before:2026-08-08 AI Russia Сбер Яндекс МТС VK",
+          "Meta AI security incident model hacked third party August 6 2026 official",
+          "OpenAI Black Hat August 2026 Artifactory agent official presentation",
+          "August 6 2026 artificial intelligence funding acquisition regulation Reuters AP",
+          "August 6 2026 AI model release official GitHub Hugging Face",
+          "\"Aug 6, 2026\" \"AI\" \"announced\"",
+          "\"August 6, 2026\" \"artificial intelligence\" \"announced\"",
+          "site:reuters.com \"Aug 6, 2026\" AI Nvidia Amazon OpenAI",
+          "site:github.blog/changelog/2026-08-06 OR site:docs.anthropic.com August 6 2026 AI",
+          "site:arxiv.org/abs/2608 \"Thu Aug 6\" 2026 AI",
+          "site:arxiv.org/abs/2608 \"Date: Thu Aug 6\" \"LLM\"",
+          "site:arxiv.org/abs/2608 \"Date: Thu Aug 6\" \"agent\"",
+          "\"August 6, 2026\" \"AI\" \"Reuters\" \"announced\" -BlackHat"
+        ]
+      }
+    },
+    "error": null,
+    "search_window": {
+      "start_at": "2026-08-06T03:56:21+03:00",
+      "end_at": "2026-08-07T04:44:10+03:00",
+      "latest_archive_at": "2026-08-06T03:56:21+03:00",
+      "start_date": "2026-08-06",
+      "end_date": "2026-08-07",
+      "latest_archive_date": "2026-08-06"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "1d3977dbc4b13af31a0f4783deb11738ff52b902127f035b31478d603d2d4eca",
+    "editorial_sha256": "61c84a25eb9c53bf68960314a0efa005adf79053532a8c389fb269a448f83594",
+    "digest_sha256": "1fac349879251a7bfdfb443d3959a412d1d9c91002a9d563ac9ecd2e307a25ec",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-08-07.webp",
+          "normalized_value": "ai-svodka-2026-08-07.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        },
+        {
+          "field": "image_prompt",
+          "model_value": "Изображение 16:9: современная футуристическая редакционная обложка для ежедневного аналитического выпуска, крупный и единственный читаемый заголовок: «ИИ-Сводка на 7 августа 2026».\n\nГлавные визуальные темы: два связанных сюжета о безопасности кибероценок ИИ — слева изолированная цифровая лаборатория с нейтральным силуэтом агента, случайно выходящим через светящийся сетевой шлюз к абстрактному внешнему серверу; справа защищённый репозиторий пакетов в виде многоуровневого хранилища, по которому между несколькими абстрактными агентными узлами проходят тонкие сигнальные линии.\n\nКомпозиция: в центре — крупный прозрачный защитный контур с разрывом и сетевыми трассами, связывающими обе сцены; вокруг него — визуальные мотивы сегментации сети, контроля доступа и мониторинга действий. В нижней зоне разместить крупный заголовок на цельной тёмной подложке, без иных надписей; кадр должен быть плотно заполнен деталями без пустой половины.\n\nСтиль: сине-графитовая и холодная бирюзовая палитра с редкими янтарными сигналами тревоги, кинематографичная технологическая иллюстрация с высокой детализацией. Без логотипов компаний, без дополнительного текста, без водяных знаков, без мелких интерфейсных надписей, без технического имени файла, без стокового корпоративного клипарта и без узнаваемых лиц реальных людей.",
+          "normalized_value": "Изображение 16:9: современная футуристическая редакционная обложка для ежедневного аналитического выпуска, крупный и единственный читаемый заголовок: «ИИ-Сводка на 7 августа 2026».\n\nГлавные визуальные темы: два связанных сюжета о безопасности кибероценок ИИ — слева изолированная цифровая лаборатория с нейтральным силуэтом агента, случайно выходящим через светящийся сетевой шлюз к абстрактному внешнему серверу; справа защищённый репозиторий пакетов в виде многоуровневого хранилища, по которому между несколькими абстрактными агентными узлами проходят тонкие сигнальные линии.\n\nКомпозиция: в центре — крупный прозрачный защитный контур с разрывом и сетевыми трассами, связывающими обе сцены; вокруг него — визуальные мотивы сегментации сети, контроля доступа и мониторинга действий. В нижней зоне разместить крупный заголовок на цельной тёмной подложке, без иных надписей; кадр должен быть плотно заполнен деталями без пустой половины.\n\nСтиль: сине-графитовая и холодная бирюзовая палитра с редкими янтарными сигналами тревоги, кинематографичная технологическая иллюстрация с высокой детализацией. Без логотипов компаний, без дополнительного текста, без водяных знаков, без мелких интерфейсных надписей, без технического имени файла, без стокового корпоративного клипарта и без узнаваемых лиц реальных людей. Обязательные ограничения: без пустой половины кадра."
+        }
+      ],
+      "changed_count": 2,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 2 сюжетов."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: Китай и Азия, Инструменты разработчиков и ИИ-кодинг, Исследования и оценки моделей, Security — Россия, Security — Китай и остальные страны Азии, Legal / copyright / scraping, Курьёзы и необычные новости, Мультимодальность и генеративные медиа, Робототехника и автономные системы, Инфраструктура, чипы, облака и энергия, Регулирование и общественная политика, Бизнес, внедрения и инвестиции, Российский сектор."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0419a668da160676016a75399d0f60819a8da9361ae04874ef",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 73596,
+        "input_tokens_details": {
+          "cache_write_tokens": 73593,
+          "cached_tokens": 0
+        },
+        "output_tokens": 2180,
+        "output_tokens_details": {
+          "reasoning_tokens": 241
+        },
+        "total_tokens": 75776
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 200597,
+    "output_tokens": 7352,
+    "total_tokens": 207949,
+    "web_search_calls": 5
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "927fe8dab732b2e8433a6e89cdf5c089b50a3469",
+    "run_id": "31138945327",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-08-07T04:44:10+03:00"
+}

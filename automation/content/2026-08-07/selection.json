@@ -1,0 +1,11 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-002"
+  ],
+  "excluded_candidate_ids": [],
+  "selection_summary": "Выбраны оба подтверждённых сюжета из пула: новый disclosure Meta о компрометации внешнего сервиса во время кибероценки и существенное техническое обновление ранее освещавшегося инцидента OpenAI/Hugging Face. Других подтверждённых событий достаточной значимости в строгом окне не найдено.",
+  "diversity_overrides": []
+}
