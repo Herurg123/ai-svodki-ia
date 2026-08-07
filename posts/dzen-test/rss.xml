@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>ИИ-Сводки — полнотекстовые статьи для Дзена</title><link>https://rybalka.one/posts/dzen-test/</link><description>Десять полнотекстовых аналитических статей об искусственном интеллекте.</description><language>ru-RU</language><generator>AI Svodki Dzen Article Feed 2.0</generator><atom:link href="https://rybalka.one/posts/dzen-test/rss.xml" rel="self" type="application/rss+xml" /><lastBuildDate>Wed, 15 Jul 2026 07:00:00 +0300</lastBuildDate><ttl>60</ttl><image><url>https://rybalka.one/posts/dzen-test/images/ai-svodka-2026-07-15.png</url><title>ИИ-Сводки</title><link>https://rybalka.one/posts/dzen-test/</link></image><item><title>ИИ-Сводка на 15 июля 2026</title><link>https://rybalka.one/posts/dzen-test/2026-07-15/</link><guid isPermaLink="true">https://rybalka.one/posts/dzen-test/2026-07-15/</guid><pubDate>Wed, 15 Jul 2026 07:00:00 +0300</pubDate><category>Статья</category><category>ИИ</category><category>Технологии</category><description>ИИ-Сводка на 15 июля 2026 Повестка сместилась к инфраструктуре, безопасности и государственному контролю: координации уязвимостей, надзору за frontier-моделями и борьбе за вычисления. Ключевые темы выпуска: кибербезопасность и надзор security review в Copilot H200, вычисления и DeepSeek Мировые лидеры ИИ США создадут группу ИИ и кибербезопасности Разработчики моделей и операторы критической инфраструктуры будут обмениваться данными об уязвимостях. Безопасность переходит от принципов к операционн</description><enclosure url="https://rybalka.one/posts/dzen-test/images/ai-svodka-2026-07-15.png" length="111144" type="image/png" /><content:encoded><![CDATA[<figure><img src="https://rybalka.one/posts/dzen-test/images/ai-svodka-2026-07-15.png" width="1536" height="864" alt="ИИ-Сводка на 15 июля 2026"><figcaption>ИИ-Сводка на 15 июля 2026</figcaption></figure>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>ИИ-Сводки — полнотекстовые статьи для Дзена</title><link>https://rybalka.one/posts/dzen-test/</link><description>Полнотекстовые аналитические статьи об искусственном интеллекте не старше 32 дней.</description><language>ru-RU</language><generator>AI Svodki Dzen Article Feed 2.0</generator><atom:link href="https://rybalka.one/posts/dzen-test/rss.xml" rel="self" type="application/rss+xml" /><lastBuildDate>Wed, 15 Jul 2026 07:00:00 +0300</lastBuildDate><ttl>60</ttl><image><url>https://rybalka.one/posts/dzen-test/images/ai-svodka-2026-07-15.png</url><title>ИИ-Сводки</title><link>https://rybalka.one/posts/dzen-test/</link></image><item><title>ИИ-Сводка на 15 июля 2026</title><link>https://rybalka.one/posts/dzen-test/2026-07-15/</link><guid isPermaLink="true">https://rybalka.one/posts/dzen-test/2026-07-15/</guid><pubDate>Wed, 15 Jul 2026 07:00:00 +0300</pubDate><category>Статья</category><category>ИИ</category><category>Технологии</category><description>ИИ-Сводка на 15 июля 2026 Повестка сместилась к инфраструктуре, безопасности и государственному контролю: координации уязвимостей, надзору за frontier-моделями и борьбе за вычисления. Ключевые темы выпуска: кибербезопасность и надзор security review в Copilot H200, вычисления и DeepSeek Мировые лидеры ИИ США создадут группу ИИ и кибербезопасности Разработчики моделей и операторы критической инфраструктуры будут обмениваться данными об уязвимостях. Безопасность переходит от принципов к операционн</description><enclosure url="https://rybalka.one/posts/dzen-test/images/ai-svodka-2026-07-15.png" length="111144" type="image/png" /><content:encoded><![CDATA[<figure><img src="https://rybalka.one/posts/dzen-test/images/ai-svodka-2026-07-15.png" width="1536" height="864" alt="ИИ-Сводка на 15 июля 2026"><figcaption>ИИ-Сводка на 15 июля 2026</figcaption></figure>
 <p>Повестка сместилась к инфраструктуре, безопасности и государственному контролю: координации уязвимостей, надзору за frontier-моделями и борьбе за вычисления.</p>
 <p><strong>Ключевые темы выпуска:</strong></p>
 <ul><li>кибербезопасность и надзор</li><li>security review в Copilot</li><li>H200, вычисления и DeepSeek</li></ul>
@@ -272,36 +272,6 @@
 <p>Российскому B2B нужен управляемый контур с сохранением данных внутри организации.</p>
 <h2>Что это значит</h2>
 <ol><li>Вычислительные мощности бронируются на десятилетия.</li><li>Open-source требует подписей кода и доверенных издателей.</li><li>Внедрение ИИ превращается в отдельную отрасль услуг.</li><li>Закрытый контур остаётся ключевым требованием B2B.</li></ol>
-<h2>О выпуске</h2>
-<p><strong>Формат:</strong> ежедневная аналитическая статья об ИИ.</p>
-<p><em>Материал подготовлен редакцией «ИИ-Сводки».</em></p>
-<h2>Все ИИ-Сводки</h2>
-<p><a href="https://rybalka.one/posts/dzen-test/">Архив ИИ-Сводок</a></p>]]></content:encoded></item><item><title>ИИ-Сводка на 6 июля 2026</title><link>https://rybalka.one/posts/dzen-test/2026-07-06/</link><guid isPermaLink="true">https://rybalka.one/posts/dzen-test/2026-07-06/</guid><pubDate>Mon, 06 Jul 2026 07:00:00 +0300</pubDate><category>Статья</category><category>ИИ</category><category>Технологии</category><description>ИИ-Сводка на 6 июля 2026 ИИ-рынок уходит от красивых демо к контролю доступа, агентам ИИ, корпоративной инфраструктуре и геополитическим ограничениям. Ключевые темы выпуска: контроль доступа к моделям научные и coding agents экономика корпоративного внедрения Мировые лидеры ИИ Alibaba ограничивает Claude Code и продвигает Qoder Alibaba решила ограничить Claude Code для сотрудников и направлять команды к собственному Qoder на фоне рисков идентификации и доступа. Coding agents становятся частью ко</description><enclosure url="https://rybalka.one/posts/dzen-test/images/ai-svodka-2026-07-06.png" length="90612" type="image/png" /><content:encoded><![CDATA[<figure><img src="https://rybalka.one/posts/dzen-test/images/ai-svodka-2026-07-06.png" width="1536" height="864" alt="ИИ-Сводка на 6 июля 2026"><figcaption>ИИ-Сводка на 6 июля 2026</figcaption></figure>
-<p>ИИ-рынок уходит от красивых демо к контролю доступа, агентам ИИ, корпоративной инфраструктуре и геополитическим ограничениям.</p>
-<p><strong>Ключевые темы выпуска:</strong></p>
-<ul><li>контроль доступа к моделям</li><li>научные и coding agents</li><li>экономика корпоративного внедрения</li></ul>
-<h2>Мировые лидеры ИИ</h2>
-<h3>Alibaba ограничивает Claude Code и продвигает Qoder</h3>
-<p>Alibaba решила ограничить Claude Code для сотрудников и направлять команды к собственному Qoder на фоне рисков идентификации и доступа.</p>
-<p>Coding agents становятся частью корпоративной безопасности и юрисдикционной политики.</p>
-<h3>Anthropic усиливает контроль доступа к Claude из Китая</h3>
-<p>Компания ужесточает меры против обхода ограничений через зарубежные структуры и облачные маршруты.</p>
-<p>Доступ к сильным LLM становится стратегическим ресурсом, сравнимым с чипами и вычислительными площадками.</p>
-<h3>Claude Science превращает LLM в научную среду</h3>
-<p>Anthropic представила рабочую среду для исследований, анализа данных и управления вычислениями.</p>
-<p>Конкуренция смещается к вертикальным продуктам для науки, медицины и инженерии.</p>
-<h3>GPT-5.6 Sol готовят к быстрому инференсу</h3>
-<p>OpenAI планирует запуск модели на Cerebras с высокой скоростью и ограниченным доступом на первом этапе.</p>
-<p>Скорость особенно важна в агентных цепочках, где задержка множится на десятки действий.</p>
-<h2>Российские лидеры ИИ</h2>
-<h3>VK Tech и Yandex B2B Tech обсуждают партнёрство</h3>
-<p>Компании рассматривают сотрудничество в облаках, корпоративном ПО и ИИ-решениях.</p>
-<p>Связка облака, офисных сервисов и моделей может создать более цельный B2B-стек.</p>
-<h3>Сбер оценивает эффект ИИ в сотни миллиардов рублей</h3>
-<p>Банк связывает внедрение ИИ и генеративных моделей с крупным финансовым результатом.</p>
-<p>Крупный бизнес начинает измерять ИИ деньгами, а не количеством пилотов.</p>
-<h2>Что это значит</h2>
-<ol><li>Инструменты разработки становятся частью корпоративной безопасности.</li><li>Доступ к моделям всё чаще зависит от юрисдикции.</li><li>Вертикальные рабочие среды могут быть ценнее универсального чата.</li><li>Скорость инференса становится отдельным преимуществом.</li></ol>
 <h2>О выпуске</h2>
 <p><strong>Формат:</strong> ежедневная аналитическая статья об ИИ.</p>
 <p><em>Материал подготовлен редакцией «ИИ-Сводки».</em></p>
