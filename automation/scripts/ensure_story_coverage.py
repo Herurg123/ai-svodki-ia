@@ -38,8 +38,8 @@ _BASE_EXECUTE_AUDIT_PLAN = _base._BASE_EXECUTE_AUDIT_PLAN
 _LAST_RECALL_SENTINEL: dict[str, Any] | None = None
 
 RECALL_SENTINEL_STRATEGY = "high_signal_recall_sentinel"
-RECALL_SENTINEL_VERSION = 4
-RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ("reuters.com",)
+RECALL_SENTINEL_VERSION = 5
+RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ()
 RECALL_SENTINEL_MINIMUM_BUDGET = 7
 
 # Transport remains implemented by the preserved runtime base. Keep this
@@ -258,7 +258,7 @@ def build_recall_sentinel_prompt(
         query_date = f"{end_utc.strftime('%B')} {end_utc.day} {end_utc.year}"
     except ValueError:
         query_date = str(search_window.get("start_date") or "")
-    required_query = f"OpenAI cybersecurity {query_date}"
+    required_query = f"OpenAI cybersecurity Reuters {query_date}"
 
     return f"""Ты — финальный Reuters OpenAI security recall sentinel редакции «ИИ-сводки».
 
@@ -267,7 +267,7 @@ def build_recall_sentinel_prompt(
 Версия sentinel: {RECALL_SENTINEL_VERSION}
 
 Основной research и шесть обязательных coverage-проходов уже завершились, но
-пригодный пул всё ещё равен нулю. API уже ограничивает поиск доменом Reuters.
+пригодный пул всё ещё равен нулю. API-доменный фильтр намеренно отключён после подтверждённого случая, когда Reuters-only filter возвращал пустую выдачу. Reuters фиксируется прямо в коротком запросе.
 Выполни РОВНО ОДИН Web Search. Не расширяй и не переписывай поисковую строку.
 Фактический поисковый запрос должен быть точно:
 `{required_query}`
@@ -445,7 +445,7 @@ def execute_audit_plan(
     payload_status = str(payload.get("status"))
     record = {
         "direction_id": "general_coverage_gaps",
-        "label": "Reuters OpenAI security recall sentinel v4",
+        "label": "Reuters unfiltered OpenAI recall sentinel v5",
         "required": True,
         "attempt": attempt_number,
         "search_strategy": RECALL_SENTINEL_STRATEGY,
