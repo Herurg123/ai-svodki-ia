@@ -20,7 +20,8 @@ _POLICY_SPEC.loader.exec_module(_policy)
 _BASE_EXECUTE_AUDIT_PLAN = _policy.execute_audit_plan
 
 # Re-export the policy surface so existing tests and callers keep importing the
-# historical entry point. Transport diagnostics are overridden below.
+# historical entry point. Runtime transport/recovery behavior is overridden
+# below while the policy module remains the canonical implementation.
 for _name in dir(_policy):
     if not _name.startswith("_"):
         globals()[_name] = getattr(_policy, _name)
@@ -59,11 +60,10 @@ def build_audit_api_metadata(
     *,
     maximum_web_search_calls: int,
 ) -> dict[str, Any]:
-    metadata = _policy.build_audit_api_metadata(
+    return _policy.build_audit_api_metadata(
         response,
         maximum_web_search_calls=maximum_web_search_calls,
     )
-    return metadata
 
 
 def run_audit_request(
@@ -243,20 +243,59 @@ def persist_audit_diagnostics(
     }
 
 
+def _pool_total(payload: dict[str, Any]) -> int | None:
+    for key in ("candidate_pool_after", "candidate_pool_before"):
+        pool = payload.get(key)
+        if not isinstance(pool, dict):
+            continue
+        total = pool.get("total")
+        if isinstance(total, int):
+            return total
+    return None
+
+
+def _completed_sentinel_evidence(payload: dict[str, Any]) -> bool:
+    sentinel = payload.get("recall_sentinel")
+    if isinstance(sentinel, dict) and sentinel.get("status") in {
+        "complete",
+        "complete_with_gaps",
+        "reused",
+    }:
+        return True
+    attempts = payload.get("attempts")
+    if not isinstance(attempts, list):
+        return False
+    return any(
+        isinstance(item, dict)
+        and item.get("search_strategy") == RECALL_SENTINEL_STRATEGY
+        and item.get("status") in {"checked", "checked_with_gaps"}
+        for item in attempts
+    )
+
+
 def completed_prior_audit(payload: Any) -> bool:
+    """Reuse a completed audit unless a zero pool predates the recall sentinel."""
     if not isinstance(payload, dict):
         return False
     audit_state = payload.get("audit_state")
     if audit_state is not None and audit_state != "completed_usable":
         return False
     api = payload.get("api") or {}
-    return (
+    complete = (
         payload.get("web_search_performed") is True
         and payload.get("audit_status") in {"complete", "complete_with_gaps"}
         and set(payload.get("checked_directions") or ()) == set(AUDIT_DIRECTION_IDS)
         and isinstance(api, dict)
         and api.get("status") == "completed"
     )
+    if not complete:
+        return False
+    # Before the sentinel existed, a six-direction audit with an empty pool was
+    # considered a terminal editorial stop. It must be resumed once so the
+    # still-free seventh slot can perform the high-signal agency recall check.
+    if _pool_total(payload) == 0 and not _completed_sentinel_evidence(payload):
+        return False
+    return True
 
 
 def _policy_audit_request(**kwargs: Any) -> AuditRequestResult:
@@ -297,9 +336,8 @@ def _eligible_candidate_count(candidates: Any) -> int:
 
 
 def _compact_recent_archive(archive: dict[str, Any]) -> list[dict[str, Any]]:
-    compact = _policy.compact_archive(archive, limit=14)
     result: list[dict[str, Any]] = []
-    for item in compact:
+    for item in compact_archive(archive, limit=14):
         if not isinstance(item, dict):
             continue
         result.append(
@@ -392,7 +430,7 @@ def execute_audit_plan(
     archive: dict[str, Any],
     prior_plan: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Run the mandatory plan and spend the seventh slot on recall if useful."""
+    """Run the mandatory plan, then spend the free seventh slot on recall."""
     global _LAST_RECALL_SENTINEL
 
     plan = _BASE_EXECUTE_AUDIT_PLAN(
@@ -426,9 +464,9 @@ def execute_audit_plan(
         plan.get("audit_status") in {"complete", "complete_with_gaps"}
         and set(plan.get("checked_directions") or ()) == set(AUDIT_DIRECTION_IDS)
     )
-    final_eligible = _eligible_candidate_count(existing_candidates) + _eligible_candidate_count(
-        plan.get("candidates")
-    )
+    final_eligible = _eligible_candidate_count(
+        existing_candidates
+    ) + _eligible_candidate_count(plan.get("candidates"))
     remaining_calls = int(budget.get("remaining_calls", 0) or 0)
     if not (
         maximum_web_search_calls >= RECALL_SENTINEL_MINIMUM_BUDGET
@@ -480,13 +518,13 @@ def execute_audit_plan(
             candidate["audit_direction"] = "recall_sentinel"
             accepted_for_pass.append(candidate)
 
-    general_attempts = [
+    prior_general_attempts = [
         int(item.get("attempt", 0) or 0)
         for item in plan.get("attempts", [])
         if isinstance(item, dict)
         and item.get("direction_id") == "general_coverage_gaps"
     ]
-    attempt_number = max(general_attempts or [0]) + 1
+    attempt_number = max(prior_general_attempts or [0]) + 1
     payload_status = str(payload.get("status"))
     record = {
         "direction_id": "general_coverage_gaps",
@@ -499,9 +537,7 @@ def execute_audit_plan(
         "status": (
             "checked" if payload_status == "complete" else "checked_with_gaps"
         ),
-        "outcome": (
-            "candidates_found" if accepted_for_pass else "no_news_found"
-        ),
+        "outcome": "candidates_found" if accepted_for_pass else "no_news_found",
         "actual_queries": list(metadata.get("actual_queries") or []),
         "sources": list(metadata.get("consulted_sources") or []),
         "candidate_count": len(accepted_for_pass),
@@ -512,15 +548,6 @@ def execute_audit_plan(
         "error": None,
     }
     plan.setdefault("attempts", []).append(record)
-    directions = plan.get("directions")
-    if isinstance(directions, list):
-        for index, direction in enumerate(directions):
-            if (
-                isinstance(direction, dict)
-                and direction.get("direction_id") == "general_coverage_gaps"
-            ):
-                directions[index] = copy.deepcopy(record)
-                break
     plan.setdefault("candidates", []).extend(copy.deepcopy(accepted_for_pass))
 
     completed = int(metadata.get("web_search_calls_completed", 0) or 0)
@@ -529,7 +556,8 @@ def execute_audit_plan(
     budget["observed_call_items"] = int(budget.get("observed_call_items", 0) or 0) + observed
     budget["completed_calls"] = int(budget.get("completed_calls", 0) or 0) + completed
     budget["remaining_calls"] = max(
-        0, maximum_web_search_calls - int(budget.get("completed_calls", 0) or 0)
+        0,
+        maximum_web_search_calls - int(budget.get("completed_calls", 0) or 0),
     )
     budget["provider_overrun"] = bool(budget.get("provider_overrun")) or completed > 1
     budget["exhausted"] = False
@@ -538,7 +566,9 @@ def execute_audit_plan(
     budget["stop_reason"] = "recall_sentinel_completed"
     plan["api"] = _policy._aggregate_api_metadata(plan.get("attempts", []))
     _LAST_RECALL_SENTINEL = {
-        "status": "complete" if payload_status == "complete" else "complete_with_gaps",
+        "status": (
+            "complete" if payload_status == "complete" else "complete_with_gaps"
+        ),
         "search_strategy": RECALL_SENTINEL_STRATEGY,
         "allowed_domains": list(RECALL_SENTINEL_DOMAINS),
         "attempt": attempt_number,
@@ -583,6 +613,7 @@ def _primary_search_diagnostics(publication_date: str) -> dict[str, Any] | None:
         return None
     if not isinstance(trajectory, dict):
         return None
+
     per_operation: list[int] = []
     calls = trajectory.get("calls")
     if isinstance(calls, list):
@@ -604,6 +635,7 @@ def _primary_search_diagnostics(publication_date: str) -> dict[str, Any] | None:
                     if query and query not in queries:
                         queries.append(query)
             per_operation.append(len(queries))
+
     actual_queries = trajectory.get("actual_queries")
     logical_query_count = len(actual_queries) if isinstance(actual_queries, list) else 0
     completed_calls = int(trajectory.get("completed_calls", 0) or 0)
@@ -661,6 +693,7 @@ def _sync_policy_overrides() -> None:
         setattr(_policy, name, globals()[name])
     _policy.run_audit_request = _policy_audit_request
     _policy.execute_audit_plan = execute_audit_plan
+    _policy.completed_prior_audit = completed_prior_audit
 
 
 def _finalize_report(
@@ -741,21 +774,14 @@ def _finalize_report(
         # Preserve canonical single-response paths for recovery artifacts and
         # compatibility with the July 31 diagnostic format.
         last_result = results[-1]
-        report.update(
-            persist_audit_diagnostics(last_result, report_path.parent)
-        )
+        report.update(persist_audit_diagnostics(last_result, report_path.parent))
         if len(results) == 1 and not report.get("api"):
             report["api"] = last_result.metadata
 
         audit_status = report.get("audit_status")
-        usable_statuses = {
-            "complete",
-            "complete_with_gaps",
-        }
+        usable_statuses = {"complete", "complete_with_gaps"}
         validation_errors = [
-            item.validation_error
-            for item in results
-            if item.validation_error
+            item.validation_error for item in results if item.validation_error
         ]
         if (
             audit_status in usable_statuses
@@ -801,6 +827,7 @@ def _finalize_report(
     if primary_diagnostics is not None:
         report["primary_search_retrieval"] = primary_diagnostics
     report["audit_search_retrieval"] = _audit_search_diagnostics(report)
+
     if _LAST_RECALL_SENTINEL is not None:
         report["recall_sentinel"] = copy.deepcopy(_LAST_RECALL_SENTINEL)
     elif isinstance((prior_report or {}).get("recall_sentinel"), dict):
