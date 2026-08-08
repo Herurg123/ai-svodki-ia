@@ -6,7 +6,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 HYGIENE = ROOT / ".github" / "workflows" / "repository-hygiene.yml"
 CONTENT = ROOT / ".github" / "workflows" / "repository-cleanup.yml"
+CI = ROOT / ".github" / "workflows" / "ci.yml"
 AGENTS = ROOT / "AGENTS.md"
+ROOT_README = ROOT / "README.md"
+AUTOMATION_README = ROOT / "automation" / "README.md"
+GITIGNORE = ROOT / ".gitignore"
 
 
 class RepositoryHygieneWorkflowTests(unittest.TestCase):
@@ -39,6 +43,21 @@ class RepositoryHygieneWorkflowTests(unittest.TestCase):
         self.assertIn("repository hygiene", text.lower())
         self.assertIn("ephemeral GitHub objects", text)
         self.assertIn("must not edit tracked project files", text)
+
+    def test_readmes_and_runtime_ignores_document_hygiene(self) -> None:
+        root_readme = ROOT_README.read_text(encoding="utf-8")
+        automation_readme = AUTOMATION_README.read_text(encoding="utf-8")
+        gitignore = GITIGNORE.read_text(encoding="utf-8")
+        self.assertIn("repository-hygiene.yml", root_readme)
+        self.assertIn("## Правила инженерной уборки GitHub", root_readme)
+        self.assertIn("repository-hygiene.yml", automation_readme)
+        self.assertIn("## Repository hygiene", automation_readme)
+        self.assertIn("automation/preview/", gitignore)
+        self.assertIn("automation/recovery/", gitignore)
+
+    def test_main_ci_runs_when_agent_contract_changes(self) -> None:
+        ci = CI.read_text(encoding="utf-8")
+        self.assertEqual(ci.count('- "AGENTS.md"'), 2)
 
 
 if __name__ == "__main__":
