@@ -216,6 +216,13 @@ Production-artifacts создаются с `retention-days: 14`, но инжен
 `workflow_dispatch` по умолчанию является audit-only и требует `apply=true`
 для destructive-фазы.
 
+Результат каждого этапа выводится в понятный GitHub Actions Summary. Смотреть:
+`Actions → Repository hygiene → последний запуск → Summary`. Там показываются
+счётчики защищённых, удаляемых и требующих внимания объектов, фактически
+удалённые ветки/artifacts, отключённые workflows и причины безопасных пропусков.
+Полный JSON каждого этапа прикладывается к запуску как Actions artifact с
+`retention: 2 дня`, после чего GitHub удаляет его автоматически.
+
 - Окно веток считается по пяти последним PR, реально смёрженным в `main`, в
   порядке `merged_at`, а не по номеру PR. `main`, protected branches, ветки
   открытых PR и ветки с активным Actions-run никогда не удаляются. Старая
