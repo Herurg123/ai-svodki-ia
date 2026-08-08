@@ -3,8 +3,6 @@ run-name: Daily production digest ${{ github.run_id }}
 on:
   schedule:
     - cron: "17 23 * * *"
-    - cron: "37 23 * * *"
-    - cron: "57 23 * * *"
   workflow_dispatch:
     inputs:
       publication_date:
@@ -150,11 +148,11 @@ jobs:
       PIPELINE_MODE: full
 
     steps:
-      - name: Check out main with full history
+      - name: Check out main
         uses: actions/checkout@v7
         with:
           ref: main
-          fetch-depth: 0
+          fetch-depth: 1
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -231,20 +229,32 @@ jobs:
               | awk -v current="${GITHUB_RUN_ID}" '$2 != current { print }' \
               | sort -r
             )"
+            best_rank=0
+            best_run_id=""
             while IFS=$'\t' read -r _created_at candidate_run_id; do
               [[ -n "${candidate_run_id}" ]] || continue
-              reusable_steps="$(
+              rank="$(
                 gh api \
                   -H "X-GitHub-Api-Version: 2022-11-28" \
                   "/repos/${GITHUB_REPOSITORY}/actions/runs/${candidate_run_id}/jobs?per_page=100" \
-                  --jq '[.jobs[] | select(.name == "production") | .steps[]? | select((((.name | startswith("Run full research")) or (.name | startswith("Restore saved paid artifact"))) and .conclusion == "success"))] | length'
+                  --jq '
+                    [.jobs[] | select(.name == "production") | .steps[]?] as $steps
+                    | if any($steps[]; ((.name == "Generate one production cover" or .name == "Revalidate recovered production cover") and .conclusion == "success")) then 3
+                      elif any($steps[]; (.name == "Validate publishable story count and short digest marker" and .conclusion == "success")) then 2
+                      elif any($steps[]; (((.name | startswith("Run full research")) or (.name | startswith("Restore saved paid artifact"))) and .conclusion == "success")) then 1
+                      else 0
+                      end
+                  '
               )"
-              if [[ "${reusable_steps}" -gt 0 ]]; then
-                run_id="${candidate_run_id}"
-                break
+              if [[ "${rank}" -gt "${best_rank}" ]]; then
+                best_rank="${rank}"
+                best_run_id="${candidate_run_id}"
               fi
-              echo "Skipping artifact from run ${candidate_run_id}: no reusable paid research/editorial step completed."
             done <<< "${candidates}"
+            if [[ "${best_rank}" -gt 0 ]]; then
+              run_id="${best_run_id}"
+              echo "Automatic recovery selected run ${run_id} with completeness rank ${best_rank}."
+            fi
           fi
           if [[ -n "${run_id}" ]]; then
             echo "run_id=${run_id}" >> "${GITHUB_OUTPUT}"
@@ -376,22 +386,54 @@ jobs:
                   encoding="utf-8"
               )
           )
+          recovery_mode = str(report.get("recovery_mode") or "")
+          image_recovered = bool(report.get("image_recovered"))
+          text_api_needed = True
+          if recovery_mode == "full":
+              stories_path = Path(f"automation/preview/{os.environ['PUBLICATION_DATE']}/stories.json")
+              full_story_target = False
+              if stories_path.is_file():
+                  try:
+                      stories = json.loads(stories_path.read_text(encoding="utf-8"))
+                  except json.JSONDecodeError:
+                      stories = None
+                  full_story_target = isinstance(stories, list) and len(stories) >= 7
+              prior_complete = False
+              prior_path = Path("automation/preview/production-daily/coverage-audit.json")
+              if prior_path.is_file():
+                  try:
+                      prior = json.loads(prior_path.read_text(encoding="utf-8"))
+                  except json.JSONDecodeError:
+                      prior = None
+                  if isinstance(prior, dict):
+                      import sys
+                      sys.path.insert(0, "automation/scripts")
+                      from ensure_story_coverage_runtime_base import completed_prior_audit
+                      prior_complete = completed_prior_audit(prior)
+              text_api_needed = not (full_story_target or prior_complete)
+          openai_needed = text_api_needed or not image_recovered
           with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as stream:
               stream.write("reused=true\n")
+              stream.write(f"recovery_mode={recovery_mode}\n")
               stream.write(
                   "image_recovered="
-                  + ("true" if report.get("image_recovered") else "false")
+                  + ("true" if image_recovered else "false")
+                  + "\n"
+              )
+              stream.write(
+                  "openai_needed="
+                  + ("true" if openai_needed else "false")
                   + "\n"
               )
           PY
           echo "Recovered reusable paid artifact from run ${RECOVERY_RUN_ID}."
       - name: Install pinned OpenAI SDK
-        if: steps.terminal_reuse.outputs.stop != 'true'
+        if: steps.terminal_reuse.outputs.stop != 'true' && (steps.recovery.outputs.reused != 'true' || steps.recovery.outputs.openai_needed == 'true')
         run: |
           set -euo pipefail
           python -m pip install --disable-pip-version-check "openai==2.45.0"
       - name: Validate API configuration
-        if: steps.terminal_reuse.outputs.stop != 'true'
+        if: steps.terminal_reuse.outputs.stop != 'true' && (steps.recovery.outputs.reused != 'true' || steps.recovery.outputs.openai_needed == 'true')
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
