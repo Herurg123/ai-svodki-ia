@@ -38,6 +38,21 @@ class RepositoryHygieneTests(unittest.TestCase):
         ]
         self.assertEqual([p["number"] for p in rh.merged_sorted(items)], [2, 100])
 
+    def test_reused_branch_uses_pr_creation_order_not_late_update(self):
+        older = pr(
+            10, "agent/reused", "1"*40,
+            merged_at="2026-07-10T00:00:00Z",
+            updated_at="2026-08-08T00:00:00Z",
+        )
+        newer = pr(
+            20, "agent/reused", "2"*40,
+            merged_at="2026-08-02T00:00:00Z",
+            updated_at="2026-08-03T00:00:00Z",
+        )
+        older["created_at"] = "2026-07-01T00:00:00Z"
+        newer["created_at"] = "2026-08-01T00:00:00Z"
+        self.assertEqual(rh.latest_pr_for_branch("agent/reused", [older, newer], REPO)["number"], 20)
+
     def test_branch_safety_requires_old_merged_unchanged_head(self):
         old = pr(10, "agent/old", "1"*40, merged_at="2026-07-01T00:00:00Z")
         recent = pr(20, "agent/recent", "2"*40, merged_at="2026-08-01T00:00:00Z")
