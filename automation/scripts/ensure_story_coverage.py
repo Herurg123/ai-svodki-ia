@@ -38,7 +38,7 @@ _BASE_EXECUTE_AUDIT_PLAN = _base._BASE_EXECUTE_AUDIT_PLAN
 _LAST_RECALL_SENTINEL: dict[str, Any] | None = None
 
 RECALL_SENTINEL_STRATEGY = "high_signal_recall_sentinel"
-RECALL_SENTINEL_VERSION = 3
+RECALL_SENTINEL_VERSION = 4
 RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ("reuters.com",)
 RECALL_SENTINEL_MINIMUM_BUDGET = 7
 
@@ -258,9 +258,9 @@ def build_recall_sentinel_prompt(
         query_date = f"{end_utc.strftime('%B')} {end_utc.day} {end_utc.year}"
     except ValueError:
         query_date = str(search_window.get("start_date") or "")
-    required_query = f"artificial intelligence {query_date} cybersecurity model"
+    required_query = f"OpenAI cybersecurity {query_date}"
 
-    return f"""Ты — финальный Reuters security recall sentinel редакции «ИИ-сводки».
+    return f"""Ты — финальный Reuters OpenAI security recall sentinel редакции «ИИ-сводки».
 
 Строгое редакционное окно: {start_at} → {end_at}
 Идентификатор направления: general_coverage_gaps
@@ -272,11 +272,12 @@ def build_recall_sentinel_prompt(
 Фактический поисковый запрос должен быть точно:
 `{required_query}`
 
-Это намеренно короткий safety/security probe. Production-регрессия показала,
-что перечисление множества компаний, классов событий и издателей превращает
-поиск в чрезмерно узкую конъюнкцию и может дать ноль результатов даже при
-наличии свежей Reuters-новости. После поиска открой все релевантные свежие
-Reuters-страницы из результатов и проверь их против строгого окна.
+Это намеренно адресный safety/security probe для подтверждённого класса
+пропусков вокруг OpenAI. Production-регрессия показала, что и широкий Reuters
+запрос, и общий security-запрос могут возвращать пустую выдачу, тогда как
+короткий запрос по организации и теме поднимает свежий Reuters-материал. После
+поиска открой все релевантные свежие Reuters-страницы из результатов и проверь
+их против строгого окна.
 
 Пригодны самостоятельные ИИ-события высокой новостной ценности, связанные с
 cybersecurity, безопасностью frontier-моделей, sandbox escape, jailbreak,
@@ -444,7 +445,7 @@ def execute_audit_plan(
     payload_status = str(payload.get("status"))
     record = {
         "direction_id": "general_coverage_gaps",
-        "label": "Reuters security recall sentinel v3",
+        "label": "Reuters OpenAI security recall sentinel v4",
         "required": True,
         "attempt": attempt_number,
         "search_strategy": RECALL_SENTINEL_STRATEGY,
