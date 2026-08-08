@@ -13,6 +13,7 @@ import copy
 import importlib.util
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -37,7 +38,7 @@ _BASE_EXECUTE_AUDIT_PLAN = _base._BASE_EXECUTE_AUDIT_PLAN
 _LAST_RECALL_SENTINEL: dict[str, Any] | None = None
 
 RECALL_SENTINEL_STRATEGY = "high_signal_recall_sentinel"
-RECALL_SENTINEL_VERSION = 2
+RECALL_SENTINEL_VERSION = 3
 RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ("reuters.com",)
 RECALL_SENTINEL_MINIMUM_BUDGET = 7
 
@@ -225,6 +226,7 @@ def _prepare_prior_plan(prior_plan: dict[str, Any] | None) -> dict[str, Any] | N
     return prepared
 
 
+\
 def build_recall_sentinel_prompt(
     *,
     publication_date: str,
@@ -249,36 +251,40 @@ def build_recall_sentinel_prompt(
     recent_archive = _base._compact_recent_archive(archive)
     start_at = str(search_window.get("start_at") or "")
     end_at = str(search_window.get("end_at") or "")
-    start_date = str(search_window.get("start_date") or "")
-    end_date = str(search_window.get("end_date") or "")
+    try:
+        end_utc = datetime.fromisoformat(
+            end_at.replace("Z", "+00:00")
+        ).astimezone(timezone.utc)
+        query_date = f"{end_utc.strftime('%B')} {end_utc.day} {end_utc.year}"
+    except ValueError:
+        query_date = str(search_window.get("start_date") or "")
+    required_query = f"artificial intelligence {query_date} cybersecurity model"
 
-    return f"""Ты — финальный Reuters recall sentinel редакции «ИИ-сводки».
+    return f"""Ты — финальный Reuters security recall sentinel редакции «ИИ-сводки».
 
 Строгое редакционное окно: {start_at} → {end_at}
-Календарные даты окна: {start_date} → {end_date}
 Идентификатор направления: general_coverage_gaps
+Версия sentinel: {RECALL_SENTINEL_VERSION}
 
 Основной research и шесть обязательных coverage-проходов уже завершились, но
 пригодный пул всё ещё равен нулю. API уже ограничивает поиск доменом Reuters.
-Выполни РОВНО ОДИН Web Search и проверь, не пропущено ли значимое ИИ-событие
-внутри этого окна.
+Выполни РОВНО ОДИН Web Search. Не расширяй и не переписывай поисковую строку.
+Фактический поисковый запрос должен быть точно:
+`{required_query}`
 
-Требования к поиску:
-- один запрос, без `site:`, без `OR` и без перечисления названий издателей;
-- начни со смысла `artificial intelligence` и добавь компактный набор
-  high-signal терминов: OpenAI, Anthropic, Google, Meta, Microsoft, Nvidia,
-  model, agent, cybersecurity, risk, chips, regulation, investment;
-- используй даты окна, а не старые обзорные материалы;
-- из результатов открой наиболее релевантные свежие Reuters-страницы.
+Это намеренно короткий safety/security probe. Production-регрессия показала,
+что перечисление множества компаний, классов событий и издателей превращает
+поиск в чрезмерно узкую конъюнкцию и может дать ноль результатов даже при
+наличии свежей Reuters-новости. После поиска открой все релевантные свежие
+Reuters-страницы из результатов и проверь их против строгого окна.
 
-Пригодны только самостоятельные события высокой новостной ценности: новый или
-существенно обновлённый frontier-модель/продукт, важный security/cyber risk,
-крупный agent/coding релиз, чипы/инфраструктура, регулирование, робототехника,
-крупная инвестиция/сделка или существенное корпоративное решение ведущей
-ИИ-компании. Путь URL и рубрика Reuters не определяют редакционную категорию:
-событие о киберриске остаётся `category=security`, даже если URL расположен в
-`/legal/` или `/litigation/`. `legal` используй только для реального суда,
-иска, copyright/scraping или регуляторно-правового события.
+Пригодны самостоятельные ИИ-события высокой новостной ценности, связанные с
+cybersecurity, безопасностью frontier-моделей, sandbox escape, jailbreak,
+несанкционированными действиями агентов, эксплуатацией уязвимостей или
+существенным изменением защитных мер. Путь URL и рубрика Reuters не определяют
+редакционную категорию: событие о киберриске остаётся `category=security`, даже
+если URL расположен в `/legal/` или `/litigation/`. `legal` используй только
+для реального суда, иска, copyright/scraping или регуляторно-правового события.
 
 Событие и основной источник обязаны попадать в окно. Старую перепечатку без
 нового развития отклоняй. Для include/consider нужны
@@ -293,7 +299,7 @@ def build_recall_sentinel_prompt(
 Недавний архив для дедупликации:
 {json.dumps(recent_archive, ensure_ascii=False, indent=2)}
 
-Если достойное событие найдено, верни его кандидатом по заданной JSON-схеме.
+Если достойные события найдены, верни до 3 кандидатов по заданной JSON-схеме.
 Если нет, верни пустой `candidates` и status=complete_with_gaps. `direction_id`
 должен быть строго `general_coverage_gaps`. Верни только JSON по схеме."""
 
@@ -438,7 +444,7 @@ def execute_audit_plan(
     payload_status = str(payload.get("status"))
     record = {
         "direction_id": "general_coverage_gaps",
-        "label": "Reuters high-signal recall sentinel v2",
+        "label": "Reuters security recall sentinel v3",
         "required": True,
         "attempt": attempt_number,
         "search_strategy": RECALL_SENTINEL_STRATEGY,
