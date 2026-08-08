@@ -153,7 +153,7 @@ def current_sentinel_attempt() -> dict[str, object]:
     sentinel = base_attempt("general_coverage_gaps", attempt=2)
     sentinel.update(
         {
-            "label": "Reuters unfiltered OpenAI recall sentinel v5",
+            "label": "Source-agnostic OpenAI recall sentinel v6",
             "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
             "recall_sentinel_version": runtime.RECALL_SENTINEL_VERSION,
             "allowed_domains": [],
@@ -189,31 +189,40 @@ class RecallSentinelTests(unittest.TestCase):
             )
         return result, request
 
-    def test_seventh_slot_is_one_reuters_only_search(self) -> None:
+    def test_seventh_slot_is_one_source_agnostic_search(self) -> None:
         def fake_request(**kwargs):
             self.assertEqual(kwargs["maximum_web_search_calls"], 1)
             self.assertEqual(tuple(kwargs["allowed_domains"]), ())
             self.assertIn("РОВНО ОДИН Web Search", kwargs["prompt"])
             self.assertIn(
+                "OpenAI cybersecurity August 7 2026",
+                kwargs["prompt"],
+            )
+            self.assertNotIn(
                 "OpenAI cybersecurity Reuters August 7 2026",
                 kwargs["prompt"],
             )
             self.assertIn("Не расширяй и не переписывай", kwargs["prompt"])
-            self.assertIn("Путь URL и рубрика Reuters не определяют", kwargs["prompt"])
+            self.assertIn("Reuters не обязателен", kwargs["prompt"])
+            self.assertIn("издатель\nне Reuters", kwargs["prompt"])
+            story = candidate(legal_scale="major")
+            story["source_type"] = "technology_media"
+            story["primary_source"] = {
+                "title": "Exclusive: OpenAI slows release of Astra model citing cyber capabilities",
+                "publisher": "Axios",
+                "url": "https://www.axios.com/2026/08/07/openai-astra-model-delay-cybersecurity-risks",
+            }
+            story["verification_notes"] = "Axios report within the editorial window."
             return (
                 {
                     "status": "complete",
                     "error_message": None,
                     "direction_id": "general_coverage_gaps",
-                    "candidates": [candidate(legal_scale="major")],
+                    "candidates": [story],
                     "rejections": [],
-                    "notes": "High-signal story found.",
+                    "notes": "High-signal non-Reuters story found.",
                 },
-                api_metadata(
-                    "artificial intelligence OpenAI Anthropic Google Meta Microsoft "
-                    "Nvidia model cybersecurity risk agent chips regulation "
-                    "investment August 7 2026"
-                ),
+                api_metadata("OpenAI cybersecurity August 7 2026"),
             )
 
         result, request = self.run_plan(complete_zero_plan(), fake_request)
@@ -230,6 +239,7 @@ class RecallSentinelTests(unittest.TestCase):
         found = result["candidates"][0]
         self.assertEqual(found["audit_direction"], "recall_sentinel")
         self.assertEqual(found["category"], "security")
+        self.assertEqual(found["primary_source"]["publisher"], "Axios")
         self.assertEqual(found["legal_scale"], "not_applicable")
         self.assertEqual(found["legal_scale_reason"], "")
         self.assertEqual(result["search_budget"]["completed_calls"], 7)
@@ -267,9 +277,9 @@ class RecallSentinelTests(unittest.TestCase):
                     "direction_id": "general_coverage_gaps",
                     "candidates": [],
                     "rejections": [],
-                    "notes": "No high-signal Reuters story found.",
+                    "notes": "No high-signal source-agnostic story found.",
                 },
-                api_metadata("artificial intelligence model cybersecurity August 7 2026"),
+                api_metadata("OpenAI cybersecurity August 7 2026"),
             )
 
         result, request = self.run_plan(complete_zero_plan(), fake_request)
@@ -325,12 +335,8 @@ class RecallSentinelTests(unittest.TestCase):
         stale.update(
             {
                 "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
-                "allowed_domains": [
-                    "reuters.com",
-                    "apnews.com",
-                    "bloomberg.com",
-                    "ft.com",
-                ],
+                "recall_sentinel_version": 5,
+                "allowed_domains": [],
             }
         )
         plan["attempts"].append(stale)
@@ -344,8 +350,9 @@ class RecallSentinelTests(unittest.TestCase):
         )
         plan["recall_sentinel"] = {
             "status": "complete_with_gaps",
+            "version": 5,
             "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
-            "allowed_domains": stale["allowed_domains"],
+            "allowed_domains": [],
         }
 
         captured = {}
@@ -362,9 +369,9 @@ class RecallSentinelTests(unittest.TestCase):
                     "direction_id": "general_coverage_gaps",
                     "candidates": [],
                     "rejections": [],
-                    "notes": "checked by v5",
+                    "notes": "checked by v6",
                 },
-                api_metadata("artificial intelligence cybersecurity August 7 2026"),
+                api_metadata("OpenAI cybersecurity August 7 2026"),
             )
 
         with (
@@ -403,9 +410,11 @@ class RecallSentinelTests(unittest.TestCase):
 
         stale = base_attempt("general_coverage_gaps", attempt=2)
         stale["search_strategy"] = runtime.RECALL_SENTINEL_STRATEGY
+        stale["recall_sentinel_version"] = 5
         report["attempts"].append(stale)
         report["recall_sentinel"] = {
             "status": "complete_with_gaps",
+            "version": 5,
             "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
         }
         self.assertFalse(runtime.completed_prior_audit(report))
