@@ -13,8 +13,6 @@ def sha256(path: Path) -> str:
 
 def stage_images(source: Path, target: Path, *, dry_run: bool) -> dict:
     files = sorted(source.glob("ai-svodka-*.png"))
-    if len(files) < 10:
-        raise ValueError(f"Expected at least 10 legacy images, got {len(files)}")
 
     copied: list[str] = []
     existing: list[str] = []
@@ -76,7 +74,7 @@ def stage_images_best_effort(source: Path, target: Path, *, dry_run: bool) -> di
 
     try:
         return stage_images(source, target, dry_run=dry_run)
-    except (OSError, ValueError) as exc:
+    except OSError as exc:
         return {
             "status": "warning",
             "blocking": False,
