@@ -17,12 +17,24 @@ assert _POLICY_SPEC and _POLICY_SPEC.loader
 _policy = importlib.util.module_from_spec(_POLICY_SPEC)
 sys.modules[_POLICY_SPEC.name] = _policy
 _POLICY_SPEC.loader.exec_module(_policy)
+_BASE_EXECUTE_AUDIT_PLAN = _policy.execute_audit_plan
 
 # Re-export the policy surface so existing tests and callers keep importing the
-# historical entry point. Transport diagnostics are overridden below.
+# historical entry point. Runtime transport/recovery behavior is overridden
+# below while the policy module remains the canonical implementation.
 for _name in dir(_policy):
     if not _name.startswith("_"):
         globals()[_name] = getattr(_policy, _name)
+
+
+RECALL_SENTINEL_STRATEGY = "high_signal_recall_sentinel"
+RECALL_SENTINEL_DOMAINS: tuple[str, ...] = (
+    "reuters.com",
+    "apnews.com",
+    "bloomberg.com",
+    "ft.com",
+)
+RECALL_SENTINEL_MINIMUM_BUDGET = 7
 
 
 @dataclass
@@ -40,6 +52,7 @@ class AuditRequestResult:
 
 _LAST_AUDIT_RESULT: AuditRequestResult | None = None
 _LAST_AUDIT_RESULTS: list[AuditRequestResult] = []
+_LAST_RECALL_SENTINEL: dict[str, Any] | None = None
 
 
 def build_audit_api_metadata(
@@ -47,11 +60,10 @@ def build_audit_api_metadata(
     *,
     maximum_web_search_calls: int,
 ) -> dict[str, Any]:
-    metadata = _policy.build_audit_api_metadata(
+    return _policy.build_audit_api_metadata(
         response,
         maximum_web_search_calls=maximum_web_search_calls,
     )
-    return metadata
 
 
 def run_audit_request(
@@ -231,20 +243,59 @@ def persist_audit_diagnostics(
     }
 
 
+def _pool_total(payload: dict[str, Any]) -> int | None:
+    for key in ("candidate_pool_after", "candidate_pool_before"):
+        pool = payload.get(key)
+        if not isinstance(pool, dict):
+            continue
+        total = pool.get("total")
+        if isinstance(total, int):
+            return total
+    return None
+
+
+def _completed_sentinel_evidence(payload: dict[str, Any]) -> bool:
+    sentinel = payload.get("recall_sentinel")
+    if isinstance(sentinel, dict) and sentinel.get("status") in {
+        "complete",
+        "complete_with_gaps",
+        "reused",
+    }:
+        return True
+    attempts = payload.get("attempts")
+    if not isinstance(attempts, list):
+        return False
+    return any(
+        isinstance(item, dict)
+        and item.get("search_strategy") == RECALL_SENTINEL_STRATEGY
+        and item.get("status") in {"checked", "checked_with_gaps"}
+        for item in attempts
+    )
+
+
 def completed_prior_audit(payload: Any) -> bool:
+    """Reuse a completed audit unless a zero pool predates the recall sentinel."""
     if not isinstance(payload, dict):
         return False
     audit_state = payload.get("audit_state")
     if audit_state is not None and audit_state != "completed_usable":
         return False
     api = payload.get("api") or {}
-    return (
+    complete = (
         payload.get("web_search_performed") is True
         and payload.get("audit_status") in {"complete", "complete_with_gaps"}
         and set(payload.get("checked_directions") or ()) == set(AUDIT_DIRECTION_IDS)
         and isinstance(api, dict)
         and api.get("status") == "completed"
     )
+    if not complete:
+        return False
+    # Before the sentinel existed, a six-direction audit with an empty pool was
+    # considered a terminal editorial stop. It must be resumed once so the
+    # still-free seventh slot can perform the high-signal agency recall check.
+    if _pool_total(payload) == 0 and not _completed_sentinel_evidence(payload):
+        return False
+    return True
 
 
 def _policy_audit_request(**kwargs: Any) -> AuditRequestResult:
@@ -273,6 +324,261 @@ def _policy_audit_request(**kwargs: Any) -> AuditRequestResult:
     return result
 
 
+def _eligible_candidate_count(candidates: Any) -> int:
+    if not isinstance(candidates, list):
+        return 0
+    return sum(
+        1
+        for item in candidates
+        if isinstance(item, dict)
+        and item.get("recommendation") in {"include", "consider"}
+    )
+
+
+def _compact_recent_archive(archive: dict[str, Any]) -> list[dict[str, Any]]:
+    result: list[dict[str, Any]] = []
+    for item in compact_archive(archive, limit=14):
+        if not isinstance(item, dict):
+            continue
+        result.append(
+            {
+                "date": item.get("date"),
+                "stories": item.get("stories", []),
+                "source_urls": item.get("source_urls", []),
+            }
+        )
+    return result
+
+
+def build_recall_sentinel_prompt(
+    *,
+    publication_date: str,
+    search_window: dict[str, Any],
+    existing_candidates: list[Any],
+    archive: dict[str, Any],
+) -> str:
+    existing = [
+        {
+            "title": item.get("title"),
+            "organization": item.get("organization"),
+            "primary_source": item.get("primary_source"),
+        }
+        for item in existing_candidates
+        if isinstance(item, dict)
+    ]
+    return f"""Ты — финальный high-signal recall sentinel редакции «ИИ-сводки».
+
+Дата выпуска: {publication_date}
+Строгое редакционное окно: {search_window.get('start_at', '')} → {search_window.get('end_at', '')}
+Идентификатор направления: general_coverage_gaps
+
+Основной research и все шесть обязательных coverage-проходов уже завершились,
+но пригодный пул всё ещё равен нулю. Выполни РОВНО ОДИН широкий Web Search
+по крупнейшим новостным агентствам, чтобы проверить, не пропущено ли явно
+значимое ИИ-событие внутри окна. Не разбивай задачу на массив независимых
+поисковых запросов и не пытайся заново исследовать весь интернет.
+
+Ищи только события высокой самостоятельной новостной ценности: новый или
+существенно обновлённый frontier-модель/продукт, крупный security/cyber risk,
+важный coding/agent релиз, чипы и инфраструктуру, значимое регулирование,
+робототехнику, крупную инвестицию/сделку или существенное корпоративное
+решение ведущей ИИ-компании. В первую очередь проверяй Reuters, AP, Bloomberg
+и Financial Times. Путь URL или рубрика источника не определяют категорию
+события.
+
+Событие и основной источник обязаны попадать в окно. Старую перепечатку без
+нового развития отклоняй. Для include/consider требуются verified и
+freshness_status new_event/material_update. Если точного времени публикации
+нет, используй published_at=null и time_precision=date. Не придумывай время.
+Не добивай количество слабым материалом.
+
+Уже найденные кандидаты:
+{json.dumps(existing, ensure_ascii=False, indent=2)}
+
+Недавний архив для дедупликации:
+{json.dumps(_compact_recent_archive(archive), ensure_ascii=False, indent=2)}
+
+Если достойное событие найдено, верни его кандидатом по заданной JSON-схеме.
+Если нет, верни пустой candidates и status=complete_with_gaps. direction_id
+должен быть строго general_coverage_gaps. Верни только JSON по схеме."""
+
+
+def _existing_recall_sentinel(plan: dict[str, Any]) -> dict[str, Any] | None:
+    attempts = plan.get("attempts")
+    if not isinstance(attempts, list):
+        return None
+    for attempt in reversed(attempts):
+        if (
+            isinstance(attempt, dict)
+            and attempt.get("search_strategy") == RECALL_SENTINEL_STRATEGY
+            and attempt.get("status") in {"checked", "checked_with_gaps"}
+        ):
+            return attempt
+    return None
+
+
+def execute_audit_plan(
+    *,
+    api_key: str,
+    model: str,
+    template: str,
+    publication_date: str,
+    search_window: dict[str, Any],
+    missing_total: int,
+    maximum_web_search_calls: int,
+    existing_candidates: list[Any],
+    archive: dict[str, Any],
+    prior_plan: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Run the mandatory plan, then spend the free seventh slot on recall."""
+    global _LAST_RECALL_SENTINEL
+
+    plan = _BASE_EXECUTE_AUDIT_PLAN(
+        api_key=api_key,
+        model=model,
+        template=template,
+        publication_date=publication_date,
+        search_window=search_window,
+        missing_total=missing_total,
+        maximum_web_search_calls=maximum_web_search_calls,
+        existing_candidates=existing_candidates,
+        archive=archive,
+        prior_plan=prior_plan,
+    )
+
+    existing_sentinel = _existing_recall_sentinel(plan)
+    if existing_sentinel is not None:
+        _LAST_RECALL_SENTINEL = {
+            "status": "reused",
+            "search_strategy": RECALL_SENTINEL_STRATEGY,
+            "attempt": existing_sentinel.get("attempt"),
+            "actual_queries": existing_sentinel.get("actual_queries", []),
+            "candidate_count": existing_sentinel.get("candidate_count", 0),
+        }
+        return plan
+
+    budget = plan.get("search_budget")
+    if not isinstance(budget, dict):
+        return plan
+    mandatory_complete = (
+        plan.get("audit_status") in {"complete", "complete_with_gaps"}
+        and set(plan.get("checked_directions") or ()) == set(AUDIT_DIRECTION_IDS)
+    )
+    final_eligible = _eligible_candidate_count(
+        existing_candidates
+    ) + _eligible_candidate_count(plan.get("candidates"))
+    remaining_calls = int(budget.get("remaining_calls", 0) or 0)
+    if not (
+        maximum_web_search_calls >= RECALL_SENTINEL_MINIMUM_BUDGET
+        and mandatory_complete
+        and final_eligible == 0
+        and remaining_calls >= 1
+    ):
+        return plan
+
+    prompt = build_recall_sentinel_prompt(
+        publication_date=publication_date,
+        search_window=search_window,
+        existing_candidates=existing_candidates,
+        archive=archive,
+    )
+    try:
+        result = _policy_audit_request(
+            api_key=api_key,
+            model=model,
+            prompt=prompt,
+            maximum_web_search_calls=1,
+            allowed_domains=RECALL_SENTINEL_DOMAINS,
+        )
+        payload = result.payload or {}
+        if payload.get("status") not in {"complete", "complete_with_gaps"}:
+            raise RuntimeError(
+                "Recall sentinel вернул непригодный status="
+                + repr(payload.get("status"))
+            )
+    except Exception as exc:
+        _LAST_RECALL_SENTINEL = {
+            "status": "error",
+            "search_strategy": RECALL_SENTINEL_STRATEGY,
+            "allowed_domains": list(RECALL_SENTINEL_DOMAINS),
+            "error": f"{type(exc).__name__}: {exc}",
+        }
+        plan["audit_status"] = "partial"
+        budget["stop_reason"] = "recall_sentinel_incomplete"
+        return plan
+
+    metadata = result.metadata
+    raw_candidates = payload.get("candidates")
+    accepted_for_pass: list[dict[str, Any]] = []
+    if isinstance(raw_candidates, list):
+        for raw_candidate in raw_candidates:
+            if not isinstance(raw_candidate, dict):
+                continue
+            candidate = copy.deepcopy(raw_candidate)
+            candidate["audit_direction"] = "recall_sentinel"
+            accepted_for_pass.append(candidate)
+
+    prior_general_attempts = [
+        int(item.get("attempt", 0) or 0)
+        for item in plan.get("attempts", [])
+        if isinstance(item, dict)
+        and item.get("direction_id") == "general_coverage_gaps"
+    ]
+    attempt_number = max(prior_general_attempts or [0]) + 1
+    payload_status = str(payload.get("status"))
+    record = {
+        "direction_id": "general_coverage_gaps",
+        "label": "High-signal recall sentinel",
+        "required": True,
+        "attempt": attempt_number,
+        "search_strategy": RECALL_SENTINEL_STRATEGY,
+        "allowed_domains": list(RECALL_SENTINEL_DOMAINS),
+        "prompt": prompt,
+        "status": (
+            "checked" if payload_status == "complete" else "checked_with_gaps"
+        ),
+        "outcome": "candidates_found" if accepted_for_pass else "no_news_found",
+        "actual_queries": list(metadata.get("actual_queries") or []),
+        "sources": list(metadata.get("consulted_sources") or []),
+        "candidate_count": len(accepted_for_pass),
+        "candidates": accepted_for_pass,
+        "rejections": list(payload.get("rejections") or []),
+        "notes": payload.get("notes"),
+        "api": metadata,
+        "error": None,
+    }
+    plan.setdefault("attempts", []).append(record)
+    plan.setdefault("candidates", []).extend(copy.deepcopy(accepted_for_pass))
+
+    completed = int(metadata.get("web_search_calls_completed", 0) or 0)
+    observed = int(metadata.get("web_search_call_items_total", 0) or 0)
+    budget["response_attempts"] = int(budget.get("response_attempts", 0) or 0) + 1
+    budget["observed_call_items"] = int(budget.get("observed_call_items", 0) or 0) + observed
+    budget["completed_calls"] = int(budget.get("completed_calls", 0) or 0) + completed
+    budget["remaining_calls"] = max(
+        0,
+        maximum_web_search_calls - int(budget.get("completed_calls", 0) or 0),
+    )
+    budget["provider_overrun"] = bool(budget.get("provider_overrun")) or completed > 1
+    budget["exhausted"] = False
+    budget["search_budget_exhausted"] = False
+    budget["response_attempt_limit_exhausted"] = False
+    budget["stop_reason"] = "recall_sentinel_completed"
+    plan["api"] = _policy._aggregate_api_metadata(plan.get("attempts", []))
+    _LAST_RECALL_SENTINEL = {
+        "status": (
+            "complete" if payload_status == "complete" else "complete_with_gaps"
+        ),
+        "search_strategy": RECALL_SENTINEL_STRATEGY,
+        "allowed_domains": list(RECALL_SENTINEL_DOMAINS),
+        "attempt": attempt_number,
+        "actual_queries": record["actual_queries"],
+        "candidate_count": len(accepted_for_pass),
+        "sources": record["sources"],
+    }
+    return plan
+
+
 def _report_path() -> Path | None:
     try:
         index = sys.argv.index("--report")
@@ -291,6 +597,91 @@ def _read_prior_report(path: Path | None) -> dict[str, Any] | None:
     return payload if isinstance(payload, dict) else None
 
 
+def _primary_search_diagnostics(publication_date: str) -> dict[str, Any] | None:
+    trajectory_path = (
+        REPOSITORY_ROOT
+        / "automation"
+        / "preview"
+        / publication_date
+        / "research-search-trajectory.json"
+    )
+    if not trajectory_path.is_file():
+        return None
+    try:
+        trajectory = json.loads(trajectory_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    if not isinstance(trajectory, dict):
+        return None
+
+    per_operation: list[int] = []
+    calls = trajectory.get("calls")
+    if isinstance(calls, list):
+        for call in calls:
+            if not isinstance(call, dict) or call.get("action_type") != "search":
+                continue
+            action = call.get("action")
+            if not isinstance(action, dict):
+                action = {}
+            queries: list[str] = []
+            if action.get("query") is not None:
+                query = str(action.get("query")).strip()
+                if query:
+                    queries.append(query)
+            raw_queries = action.get("queries")
+            if isinstance(raw_queries, list):
+                for raw in raw_queries:
+                    query = str(raw).strip()
+                    if query and query not in queries:
+                        queries.append(query)
+            per_operation.append(len(queries))
+
+    actual_queries = trajectory.get("actual_queries")
+    logical_query_count = len(actual_queries) if isinstance(actual_queries, list) else 0
+    completed_calls = int(trajectory.get("completed_calls", 0) or 0)
+    return {
+        "search_operation_count": completed_calls,
+        "logical_query_count": logical_query_count,
+        "queries_per_search_operation": per_operation,
+        "query_batching_detected": any(count > 1 for count in per_operation),
+    }
+
+
+def _audit_search_diagnostics(report: dict[str, Any]) -> dict[str, Any]:
+    operations = 0
+    logical_queries = 0
+    batched_attempts: list[dict[str, Any]] = []
+    for attempt in report.get("attempts", []):
+        if not isinstance(attempt, dict):
+            continue
+        api = attempt.get("api")
+        completed = (
+            int(api.get("web_search_calls_completed", 0) or 0)
+            if isinstance(api, dict)
+            else 0
+        )
+        queries = attempt.get("actual_queries")
+        query_count = len(queries) if isinstance(queries, list) else 0
+        operations += completed
+        logical_queries += query_count
+        if completed > 0 and query_count > completed:
+            batched_attempts.append(
+                {
+                    "direction_id": attempt.get("direction_id"),
+                    "attempt": attempt.get("attempt"),
+                    "search_strategy": attempt.get("search_strategy"),
+                    "search_operations": completed,
+                    "logical_queries": query_count,
+                }
+            )
+    return {
+        "search_operation_count": operations,
+        "logical_query_count": logical_queries,
+        "query_batching_detected": bool(batched_attempts),
+        "batched_attempts": batched_attempts,
+    }
+
+
 def _sync_policy_overrides() -> None:
     for name in (
         "RUNTIME_RESEARCH_ROOT",
@@ -301,6 +692,8 @@ def _sync_policy_overrides() -> None:
     ):
         setattr(_policy, name, globals()[name])
     _policy.run_audit_request = _policy_audit_request
+    _policy.execute_audit_plan = execute_audit_plan
+    _policy.completed_prior_audit = completed_prior_audit
 
 
 def _finalize_report(
@@ -381,21 +774,14 @@ def _finalize_report(
         # Preserve canonical single-response paths for recovery artifacts and
         # compatibility with the July 31 diagnostic format.
         last_result = results[-1]
-        report.update(
-            persist_audit_diagnostics(last_result, report_path.parent)
-        )
+        report.update(persist_audit_diagnostics(last_result, report_path.parent))
         if len(results) == 1 and not report.get("api"):
             report["api"] = last_result.metadata
 
         audit_status = report.get("audit_status")
-        usable_statuses = {
-            "complete",
-            "complete_with_gaps",
-        }
+        usable_statuses = {"complete", "complete_with_gaps"}
         validation_errors = [
-            item.validation_error
-            for item in results
-            if item.validation_error
+            item.validation_error for item in results if item.validation_error
         ]
         if (
             audit_status in usable_statuses
@@ -436,13 +822,41 @@ def _finalize_report(
         if report["audit_state"] == "completed_unusable":
             report["error_stage"] = "response_validation"
 
+    publication_date = str(report.get("publication_date") or "")
+    primary_diagnostics = _primary_search_diagnostics(publication_date)
+    if primary_diagnostics is not None:
+        report["primary_search_retrieval"] = primary_diagnostics
+    report["audit_search_retrieval"] = _audit_search_diagnostics(report)
+
+    if _LAST_RECALL_SENTINEL is not None:
+        report["recall_sentinel"] = copy.deepcopy(_LAST_RECALL_SENTINEL)
+    elif isinstance((prior_report or {}).get("recall_sentinel"), dict):
+        report["recall_sentinel"] = copy.deepcopy(prior_report["recall_sentinel"])
+
+    sentinel = report.get("recall_sentinel")
+    if isinstance(sentinel, dict):
+        status = str(sentinel.get("status") or "")
+        if status in {"complete", "complete_with_gaps", "reused"}:
+            report["audit_notes"] = (
+                "Шесть обязательных тематических проходов завершены; свободный "
+                "седьмой вызов использован как high-signal recall sentinel, "
+                "поскольку итоговый пригодный пул оставался нулевым."
+            )
+        elif status == "error":
+            report["audit_notes"] = (
+                "Шесть обязательных проходов завершены, но обязательный для "
+                "нулевого пула high-signal recall sentinel технически не "
+                "завершён; редакционная остановка не считается надёжной."
+            )
+
     write_json(report_path, report)
 
 
 def main() -> int:
-    global _LAST_AUDIT_RESULT
+    global _LAST_AUDIT_RESULT, _LAST_RECALL_SENTINEL
 
     _LAST_AUDIT_RESULT = None
+    _LAST_RECALL_SENTINEL = None
     _LAST_AUDIT_RESULTS.clear()
     report_path = _report_path()
     prior_report = _read_prior_report(report_path)
