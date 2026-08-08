@@ -107,12 +107,15 @@ class RepositoryHygieneTests(unittest.TestCase):
         self.assertEqual(result[6][0], "protected")
         self.assertEqual(result[7][0], "review_only")
 
-    def test_ci_artifact_keeps_only_final_recent_shas(self):
+    def test_ci_artifact_keeps_only_protected_shas(self):
         artifact = {"name":"main-ci-" + "a"*40, "workflow_run":{"head_branch":"agent/x"}}
         self.assertEqual(rh.classify_ci(artifact, {"a"*40}, {}, {})[0], "protected")
         self.assertEqual(rh.classify_ci(artifact, set(), {"agent/x":"safe_delete"}, {})[0], "safe_delete")
-        self.assertEqual(rh.classify_ci(artifact, set(), {"agent/x":"protected"}, {})[0], "protected")
+        self.assertEqual(rh.classify_ci(artifact, set(), {"agent/x":"protected"}, {})[0], "safe_delete")
         self.assertEqual(rh.classify_ci(artifact, set(), {"agent/x":"review_only"}, {})[0], "review_only")
+        self.assertEqual(rh.classify_ci(artifact, set(), {}, {})[0], "review_only")
+        main_artifact = {"name":"main-ci-" + "b"*40, "workflow_run":{"head_branch":"main"}}
+        self.assertEqual(rh.classify_ci(main_artifact, set(), {"main":"protected"}, {})[0], "safe_delete")
 
     def test_rss_dates_are_unique_and_descending(self):
         text = "https://x/posts/2026-08-07/ x https://x/posts/2026-08-08/ https://x/posts/2026-08-07/"
