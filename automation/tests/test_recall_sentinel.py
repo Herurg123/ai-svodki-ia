@@ -153,7 +153,7 @@ def current_sentinel_attempt() -> dict[str, object]:
     sentinel = base_attempt("general_coverage_gaps", attempt=2)
     sentinel.update(
         {
-            "label": "Reuters security recall sentinel v3",
+            "label": "Reuters OpenAI security recall sentinel v4",
             "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
             "recall_sentinel_version": runtime.RECALL_SENTINEL_VERSION,
             "allowed_domains": ["reuters.com"],
@@ -195,7 +195,7 @@ class RecallSentinelTests(unittest.TestCase):
             self.assertEqual(tuple(kwargs["allowed_domains"]), ("reuters.com",))
             self.assertIn("РОВНО ОДИН Web Search", kwargs["prompt"])
             self.assertIn(
-                "artificial intelligence August 7 2026 cybersecurity model",
+                "OpenAI cybersecurity August 7 2026",
                 kwargs["prompt"],
             )
             self.assertIn("Не расширяй и не переписывай", kwargs["prompt"])
@@ -362,7 +362,7 @@ class RecallSentinelTests(unittest.TestCase):
                     "direction_id": "general_coverage_gaps",
                     "candidates": [],
                     "rejections": [],
-                    "notes": "checked by v3",
+                    "notes": "checked by v4",
                 },
                 api_metadata("artificial intelligence cybersecurity August 7 2026"),
             )
