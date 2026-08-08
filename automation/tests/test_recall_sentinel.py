@@ -128,7 +128,10 @@ def candidate() -> dict[str, object]:
         },
         "supporting_sources": [],
         "event_summary": "OpenAI tightened safeguards around an upcoming model.",
-        "verified_facts": ["Reuters reported the disclosure.", "OpenAI tightened safeguards."],
+        "verified_facts": [
+            "Reuters reported the disclosure.",
+            "OpenAI tightened safeguards.",
+        ],
         "significance": "Potential critical cyber capability at a frontier lab.",
         "significance_score": 5,
         "limitations": "No public model release yet.",
@@ -149,8 +152,16 @@ def candidate() -> dict[str, object]:
 class RecallSentinelTests(unittest.TestCase):
     def run_plan(self, plan, fake_request, *, existing_candidates=None):
         with (
-            mock.patch.object(runtime, "_BASE_EXECUTE_AUDIT_PLAN", return_value=copy.deepcopy(plan)),
-            mock.patch.object(runtime, "run_audit_request", side_effect=fake_request) as request,
+            mock.patch.object(
+                runtime,
+                "_BASE_EXECUTE_AUDIT_PLAN",
+                return_value=copy.deepcopy(plan),
+            ),
+            mock.patch.object(
+                runtime,
+                "run_audit_request",
+                side_effect=fake_request,
+            ) as request,
         ):
             result = runtime.execute_audit_plan(
                 api_key="secret",
@@ -190,13 +201,20 @@ class RecallSentinelTests(unittest.TestCase):
         self.assertEqual(request.call_count, 1)
         self.assertEqual(len(result["attempts"]), 7)
         sentinel = result["attempts"][-1]
-        self.assertEqual(sentinel["search_strategy"], runtime.RECALL_SENTINEL_STRATEGY)
+        self.assertEqual(
+            sentinel["search_strategy"], runtime.RECALL_SENTINEL_STRATEGY
+        )
         self.assertEqual(sentinel["attempt"], 2)
         self.assertEqual(sentinel["candidate_count"], 1)
-        self.assertEqual(result["candidates"][0]["audit_direction"], "recall_sentinel")
+        self.assertEqual(
+            result["candidates"][0]["audit_direction"], "recall_sentinel"
+        )
         self.assertEqual(result["search_budget"]["completed_calls"], 7)
         self.assertEqual(result["search_budget"]["remaining_calls"], 0)
-        self.assertEqual(result["search_budget"]["stop_reason"], "recall_sentinel_completed")
+        self.assertEqual(
+            result["search_budget"]["stop_reason"],
+            "recall_sentinel_completed",
+        )
 
     def test_sentinel_is_not_used_when_pool_is_nonzero(self) -> None:
         existing = [{"recommendation": "include"}]
@@ -258,7 +276,10 @@ class RecallSentinelTests(unittest.TestCase):
         self.assertEqual(len(result["attempts"]), 6)
         self.assertEqual(result["search_budget"]["completed_calls"], 6)
         self.assertEqual(result["search_budget"]["remaining_calls"], 1)
-        self.assertEqual(result["search_budget"]["stop_reason"], "recall_sentinel_incomplete")
+        self.assertEqual(
+            result["search_budget"]["stop_reason"],
+            "recall_sentinel_incomplete",
+        )
         self.assertEqual(runtime._LAST_RECALL_SENTINEL["status"], "error")
 
     def test_completed_sentinel_is_reused_from_recovery(self) -> None:
@@ -267,7 +288,6 @@ class RecallSentinelTests(unittest.TestCase):
         sentinel["search_strategy"] = runtime.RECALL_SENTINEL_STRATEGY
         sentinel["label"] = "High-signal recall sentinel"
         plan["attempts"].append(sentinel)
-        plan["directions"][-1] = copy.deepcopy(sentinel)
         plan["search_budget"]["response_attempts"] = 7
         plan["search_budget"]["completed_calls"] = 7
         plan["search_budget"]["remaining_calls"] = 0
@@ -281,6 +301,43 @@ class RecallSentinelTests(unittest.TestCase):
         self.assertEqual(len(result["attempts"]), 7)
         self.assertEqual(runtime._LAST_RECALL_SENTINEL["status"], "reused")
 
+    def test_pre_sentinel_zero_pool_audit_is_resumed_once(self) -> None:
+        old_report = complete_zero_plan()
+        old_report.update(
+            {
+                "audit_state": "completed_usable",
+                "web_search_performed": True,
+                "candidate_pool_after": {"total": 0},
+            }
+        )
+        self.assertFalse(runtime.completed_prior_audit(old_report))
+
+        sentinel = base_attempt("general_coverage_gaps", attempt=2)
+        sentinel["search_strategy"] = runtime.RECALL_SENTINEL_STRATEGY
+        old_report["attempts"].append(sentinel)
+        old_report["recall_sentinel"] = {
+            "status": "complete_with_gaps",
+            "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
+        }
+        self.assertTrue(runtime.completed_prior_audit(old_report))
+
+        runtime._sync_policy_overrides()
+        self.assertIs(
+            runtime._policy.completed_prior_audit,
+            runtime.completed_prior_audit,
+        )
+
+    def test_nonzero_completed_legacy_audit_remains_reusable(self) -> None:
+        report = complete_zero_plan()
+        report.update(
+            {
+                "audit_state": "completed_usable",
+                "web_search_performed": True,
+                "candidate_pool_after": {"total": 2},
+            }
+        )
+        self.assertTrue(runtime.completed_prior_audit(report))
+
     def test_primary_search_diagnostics_exposes_query_batching(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -292,7 +349,10 @@ class RecallSentinelTests(unittest.TestCase):
                 "calls": [
                     {
                         "action_type": "search",
-                        "action": {"type": "search", "queries": [f"q{i}" for i in range(start, start + 4)]},
+                        "action": {
+                            "type": "search",
+                            "queries": [f"q{i}" for i in range(start, start + 4)],
+                        },
                     }
                     for start in (0, 4, 8)
                 ],
@@ -305,7 +365,10 @@ class RecallSentinelTests(unittest.TestCase):
 
         self.assertEqual(diagnostics["search_operation_count"], 3)
         self.assertEqual(diagnostics["logical_query_count"], 12)
-        self.assertEqual(diagnostics["queries_per_search_operation"], [4, 4, 4])
+        self.assertEqual(
+            diagnostics["queries_per_search_operation"],
+            [4, 4, 4],
+        )
         self.assertTrue(diagnostics["query_batching_detected"])
 
 
