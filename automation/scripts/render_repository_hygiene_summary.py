@@ -53,7 +53,12 @@ def render_report(report: dict) -> str:
         lines.append("**Защитное окно merged PR:** " + ", ".join(f"#{number}" for number in recent))
 
     branch_counts = _counts(list(plan.get("branches") or []))
-    artifact_counts = _counts(list(plan.get("artifacts") or []))
+    visible_artifacts = [
+        item
+        for item in plan.get("artifacts") or []
+        if not str(item.get("name") or "").startswith("repository-hygiene-")
+    ]
+    artifact_counts = _counts(visible_artifacts)
     workflow_counts = _counts(list(plan.get("workflows") or []))
     run_counts = _counts(list(plan.get("workflow_runs") or []))
 
