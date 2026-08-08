@@ -1,0 +1,33 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "OpenAI замедляет выпуск модели Astra из-за киберрисков",
+    "organization": "OpenAI",
+    "topic": "безопасность frontier-моделей и усиление защитных практик перед выпуском новой модели",
+    "event_type": "изменение планов выпуска и мер безопасности",
+    "status": "new",
+    "summary": "Axios сообщил, что OpenAI замедляет выпуск следующей модели Astra, ссылаясь на её кибервозможности и необходимость обновить практики безопасности и тестирования.",
+    "published_at": "2026-08-07T16:30:28+00:00",
+    "published_date": "2026-08-07",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Exclusive: OpenAI slows release of Astra model citing cyber capabilities",
+        "publisher": "Axios",
+        "url": "https://www.axios.com/2026/08/07/openai-astra-model-delay-cybersecurity-risks"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Astra",
+      "frontier model",
+      "cybersecurity",
+      "cyber capabilities",
+      "model safety",
+      "release delay"
+    ],
+    "geography": "world",
+    "category": "security"
+  }
+]

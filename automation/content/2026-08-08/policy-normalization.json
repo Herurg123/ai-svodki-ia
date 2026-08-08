@@ -1,0 +1,24 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "article_html.short_digest_notice",
+      "model_value": null,
+      "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+    }
+  ],
+  "changed_count": 1,
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После проверки свежести и значимости выбрано 1 сюжетов."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: Широкий мировой discovery, Крупные новостные агентства: Reuters, Associated Press и Bloomberg, Мировые лаборатории и платформы, Китай и Азия: модели, чипы, агенты, инвестиции и регулирование, Инструменты разработчиков и ИИ-кодинг, Security — мировой сегмент, Security — Китай и остальные страны Азии, Security — Россия, Legal, copyright и scraping, Мультимодальность и генеративные медиа, Робототехника, physical AI и автономные системы, Чипы, облака, дата-центры и энергетическая инфраструктура, Регулирование и общественная политика, Российский сектор, Last-mile поиск крупных событий, Курьёз или необычная новость."
+    }
+  ]
+}
