@@ -31,6 +31,7 @@ class RepositoryHygieneSummaryTests(unittest.TestCase):
                 "artifacts": [
                     {"id": 10, "name": "main-ci-old", "classification": "safe_delete"},
                     {"id": 11, "name": "production-2026-08-08", "classification": "protected"},
+                    {"id": 12, "name": "repository-hygiene-audit-123", "classification": "review_only"},
                 ],
                 "workflows": [
                     {"id": 20, "name": "Old patch", "classification": "safe_disable"},
@@ -46,6 +47,7 @@ class RepositoryHygieneSummaryTests(unittest.TestCase):
         self.assertIn("Статус:", text)
         self.assertIn("#37", text)
         self.assertIn("Состояние репозитория", text)
+        self.assertIn("| Actions artifacts | 1 | 1 | 0 |", text)
         self.assertIn("Гарантированно не трогается", text)
         self.assertIn("retention: 2 дня", text)
 
