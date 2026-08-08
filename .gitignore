@@ -1,2 +1,4 @@
 __pycache__/
 *.py[cod]
+automation/preview/
+automation/recovery/

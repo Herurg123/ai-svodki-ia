@@ -10,6 +10,7 @@ on:
       - "posts/**"
       - ".github/workflows/**"
       - "README.md"
+      - "AGENTS.md"
       - ".gitignore"
   push:
     branches:
@@ -19,6 +20,7 @@ on:
       - "posts/**"
       - ".github/workflows/**"
       - "README.md"
+      - "AGENTS.md"
       - ".gitignore"
 
 permissions:

@@ -32,3 +32,18 @@ owner gives a separate explicit merge command for that prepared pull request.
 Production recovery or publication that depends on the change must wait for that
 merge command; preparation, diagnostics, CI and diff review may proceed before
 it.
+
+## Repository hygiene operational boundary
+
+The scheduled repository hygiene workflow may mutate only explicitly classified
+ephemeral GitHub objects: old merged branch refs, safe Actions artifacts, and
+the enabled state of orphaned Actions workflows. It must not edit tracked
+project files, `main`, releases, tags, or published/editorial content.
+
+Source-code, test, prompt, configuration, fixture, and specification orphan
+detection is report-only. Any tracked-file cleanup still follows the normal
+branch → pull request → CI → diff review → separate explicit merge command.
+
+The existing 32-day repository/public-content cleanup remains a separate,
+documented operational workflow. The repository hygiene exception does not
+broaden its scope or weaken its retention and validation rules.

@@ -17,6 +17,7 @@ class WorkflowInventoryTests(unittest.TestCase):
                 "daily-production.yml",
                 "deploy-posts.yml",
                 "repository-cleanup.yml",
+                "repository-hygiene.yml",
             },
         )
 
