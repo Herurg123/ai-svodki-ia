@@ -108,7 +108,7 @@ def complete_zero_plan() -> dict[str, object]:
     }
 
 
-def candidate() -> dict[str, object]:
+def candidate(*, legal_scale: str = "not_applicable") -> dict[str, object]:
     return {
         "title": "OpenAI flags possible critical cybersecurity risk",
         "organization": "OpenAI",
@@ -142,11 +142,24 @@ def candidate() -> dict[str, object]:
         "verification_notes": "Reuters report within the editorial window.",
         "freshness_status": "new_event",
         "freshness_reason": "Fresh public disclosure inside the window.",
-        "legal_scale": "not_applicable",
-        "legal_scale_reason": "",
+        "legal_scale": legal_scale,
+        "legal_scale_reason": "URL looked legal" if legal_scale != "not_applicable" else "",
         "curiosity_eligible": False,
         "curiosity_verification": "",
     }
+
+
+def current_sentinel_attempt() -> dict[str, object]:
+    sentinel = base_attempt("general_coverage_gaps", attempt=2)
+    sentinel.update(
+        {
+            "label": "Reuters high-signal recall sentinel v2",
+            "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
+            "recall_sentinel_version": runtime.RECALL_SENTINEL_VERSION,
+            "allowed_domains": ["reuters.com"],
+        }
+    )
+    return sentinel
 
 
 class RecallSentinelTests(unittest.TestCase):
@@ -176,24 +189,28 @@ class RecallSentinelTests(unittest.TestCase):
             )
         return result, request
 
-    def test_seventh_slot_becomes_recall_sentinel_for_zero_pool(self) -> None:
+    def test_seventh_slot_is_one_reuters_only_search(self) -> None:
         def fake_request(**kwargs):
             self.assertEqual(kwargs["maximum_web_search_calls"], 1)
-            self.assertEqual(
-                tuple(kwargs["allowed_domains"]),
-                runtime.RECALL_SENTINEL_DOMAINS,
-            )
-            self.assertIn("РОВНО ОДИН широкий Web Search", kwargs["prompt"])
+            self.assertEqual(tuple(kwargs["allowed_domains"]), ("reuters.com",))
+            self.assertIn("РОВНО ОДИН Web Search", kwargs["prompt"])
+            self.assertIn("без `site:`", kwargs["prompt"])
+            self.assertIn("без `OR`", kwargs["prompt"])
+            self.assertIn("Путь URL и рубрика Reuters не определяют", kwargs["prompt"])
             return (
                 {
                     "status": "complete",
                     "error_message": None,
                     "direction_id": "general_coverage_gaps",
-                    "candidates": [candidate()],
+                    "candidates": [candidate(legal_scale="major")],
                     "rejections": [],
                     "notes": "High-signal story found.",
                 },
-                api_metadata("latest major AI news Reuters OpenAI August 7 2026"),
+                api_metadata(
+                    "artificial intelligence OpenAI Anthropic Google Meta Microsoft "
+                    "Nvidia model cybersecurity risk agent chips regulation "
+                    "investment August 7 2026"
+                ),
             )
 
         result, request = self.run_plan(complete_zero_plan(), fake_request)
@@ -201,30 +218,27 @@ class RecallSentinelTests(unittest.TestCase):
         self.assertEqual(request.call_count, 1)
         self.assertEqual(len(result["attempts"]), 7)
         sentinel = result["attempts"][-1]
+        self.assertEqual(sentinel["search_strategy"], runtime.RECALL_SENTINEL_STRATEGY)
         self.assertEqual(
-            sentinel["search_strategy"], runtime.RECALL_SENTINEL_STRATEGY
+            sentinel["recall_sentinel_version"], runtime.RECALL_SENTINEL_VERSION
         )
-        self.assertEqual(sentinel["attempt"], 2)
+        self.assertEqual(sentinel["allowed_domains"], ["reuters.com"])
         self.assertEqual(sentinel["candidate_count"], 1)
-        self.assertEqual(
-            result["candidates"][0]["audit_direction"], "recall_sentinel"
-        )
+        found = result["candidates"][0]
+        self.assertEqual(found["audit_direction"], "recall_sentinel")
+        self.assertEqual(found["category"], "security")
+        self.assertEqual(found["legal_scale"], "not_applicable")
+        self.assertEqual(found["legal_scale_reason"], "")
         self.assertEqual(result["search_budget"]["completed_calls"], 7)
         self.assertEqual(result["search_budget"]["remaining_calls"], 0)
-        self.assertEqual(
-            result["search_budget"]["stop_reason"],
-            "recall_sentinel_completed",
-        )
 
     def test_sentinel_is_not_used_when_pool_is_nonzero(self) -> None:
         existing = [{"recommendation": "include"}]
-
         result, request = self.run_plan(
             complete_zero_plan(),
             lambda **kwargs: self.fail("sentinel must not run"),
             existing_candidates=existing,
         )
-
         self.assertEqual(request.call_count, 0)
         self.assertEqual(len(result["attempts"]), 6)
         self.assertEqual(result["search_budget"]["remaining_calls"], 1)
@@ -234,12 +248,10 @@ class RecallSentinelTests(unittest.TestCase):
         plan["audit_status"] = "partial"
         plan["checked_directions"] = list(runtime.AUDIT_DIRECTION_IDS[:-1])
         plan["unchecked_directions"] = [runtime.AUDIT_DIRECTION_IDS[-1]]
-
         result, request = self.run_plan(
             plan,
             lambda **kwargs: self.fail("sentinel must not run"),
         )
-
         self.assertEqual(request.call_count, 0)
         self.assertEqual(result["audit_status"], "partial")
 
@@ -252,13 +264,12 @@ class RecallSentinelTests(unittest.TestCase):
                     "direction_id": "general_coverage_gaps",
                     "candidates": [],
                     "rejections": [],
-                    "notes": "No high-signal agency story found.",
+                    "notes": "No high-signal Reuters story found.",
                 },
-                api_metadata("latest major AI news Reuters AP Bloomberg FT"),
+                api_metadata("artificial intelligence model cybersecurity August 7 2026"),
             )
 
         result, request = self.run_plan(complete_zero_plan(), fake_request)
-
         self.assertEqual(request.call_count, 1)
         self.assertEqual(result["audit_status"], "complete_with_gaps")
         self.assertEqual(result["candidates"], [])
@@ -270,7 +281,6 @@ class RecallSentinelTests(unittest.TestCase):
             raise RuntimeError("transport failed")
 
         result, request = self.run_plan(complete_zero_plan(), fake_request)
-
         self.assertEqual(request.call_count, 1)
         self.assertEqual(result["audit_status"], "partial")
         self.assertEqual(len(result["attempts"]), 6)
@@ -281,12 +291,14 @@ class RecallSentinelTests(unittest.TestCase):
             "recall_sentinel_incomplete",
         )
         self.assertEqual(runtime._LAST_RECALL_SENTINEL["status"], "error")
+        self.assertEqual(
+            runtime._LAST_RECALL_SENTINEL["version"],
+            runtime.RECALL_SENTINEL_VERSION,
+        )
 
-    def test_completed_sentinel_is_reused_from_recovery(self) -> None:
+    def test_current_sentinel_is_reused_from_recovery(self) -> None:
         plan = complete_zero_plan()
-        sentinel = base_attempt("general_coverage_gaps", attempt=2)
-        sentinel["search_strategy"] = runtime.RECALL_SENTINEL_STRATEGY
-        sentinel["label"] = "High-signal recall sentinel"
+        sentinel = current_sentinel_attempt()
         plan["attempts"].append(sentinel)
         plan["search_budget"]["response_attempts"] = 7
         plan["search_budget"]["completed_calls"] = 7
@@ -296,30 +308,114 @@ class RecallSentinelTests(unittest.TestCase):
             plan,
             lambda **kwargs: self.fail("reused sentinel must not run"),
         )
-
         self.assertEqual(request.call_count, 0)
         self.assertEqual(len(result["attempts"]), 7)
         self.assertEqual(runtime._LAST_RECALL_SENTINEL["status"], "reused")
+        self.assertEqual(
+            runtime._LAST_RECALL_SENTINEL["version"],
+            runtime.RECALL_SENTINEL_VERSION,
+        )
 
-    def test_pre_sentinel_zero_pool_audit_is_resumed_once(self) -> None:
-        old_report = complete_zero_plan()
-        old_report.update(
+    def test_stale_v1_sentinel_is_removed_and_budget_restored(self) -> None:
+        plan = complete_zero_plan()
+        stale = base_attempt("general_coverage_gaps", attempt=2)
+        stale.update(
+            {
+                "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
+                "allowed_domains": [
+                    "reuters.com",
+                    "apnews.com",
+                    "bloomberg.com",
+                    "ft.com",
+                ],
+            }
+        )
+        plan["attempts"].append(stale)
+        plan["search_budget"].update(
+            {
+                "response_attempts": 7,
+                "completed_calls": 7,
+                "remaining_calls": 0,
+                "stop_reason": "recall_sentinel_completed",
+            }
+        )
+        plan["recall_sentinel"] = {
+            "status": "complete_with_gaps",
+            "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
+            "allowed_domains": stale["allowed_domains"],
+        }
+
+        captured = {}
+
+        def fake_base(**kwargs):
+            captured["prior"] = copy.deepcopy(kwargs["prior_plan"])
+            return complete_zero_plan()
+
+        def fake_request(**kwargs):
+            return (
+                {
+                    "status": "complete_with_gaps",
+                    "error_message": None,
+                    "direction_id": "general_coverage_gaps",
+                    "candidates": [],
+                    "rejections": [],
+                    "notes": "checked by v2",
+                },
+                api_metadata("artificial intelligence cybersecurity August 7 2026"),
+            )
+
+        with (
+            mock.patch.object(runtime, "_BASE_EXECUTE_AUDIT_PLAN", side_effect=fake_base),
+            mock.patch.object(runtime, "run_audit_request", side_effect=fake_request),
+        ):
+            runtime.execute_audit_plan(
+                api_key="secret",
+                model="gpt-5.6-terra",
+                template="unused",
+                publication_date="2026-08-08",
+                search_window=SEARCH_WINDOW,
+                missing_total=7,
+                maximum_web_search_calls=7,
+                existing_candidates=[],
+                archive={"items": []},
+                prior_plan=plan,
+            )
+
+        prepared = captured["prior"]
+        self.assertEqual(len(prepared["attempts"]), 6)
+        self.assertEqual(prepared["search_budget"]["completed_calls"], 6)
+        self.assertEqual(prepared["search_budget"]["remaining_calls"], 1)
+        self.assertNotIn("recall_sentinel", prepared)
+
+    def test_zero_pool_completion_requires_current_sentinel_version(self) -> None:
+        report = complete_zero_plan()
+        report.update(
             {
                 "audit_state": "completed_usable",
                 "web_search_performed": True,
                 "candidate_pool_after": {"total": 0},
             }
         )
-        self.assertFalse(runtime.completed_prior_audit(old_report))
+        self.assertFalse(runtime.completed_prior_audit(report))
 
-        sentinel = base_attempt("general_coverage_gaps", attempt=2)
-        sentinel["search_strategy"] = runtime.RECALL_SENTINEL_STRATEGY
-        old_report["attempts"].append(sentinel)
-        old_report["recall_sentinel"] = {
+        stale = base_attempt("general_coverage_gaps", attempt=2)
+        stale["search_strategy"] = runtime.RECALL_SENTINEL_STRATEGY
+        report["attempts"].append(stale)
+        report["recall_sentinel"] = {
             "status": "complete_with_gaps",
             "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
         }
-        self.assertTrue(runtime.completed_prior_audit(old_report))
+        self.assertFalse(runtime.completed_prior_audit(report))
+
+        current = current_sentinel_attempt()
+        report["attempts"][-1] = current
+        report["recall_sentinel"] = {
+            "status": "complete_with_gaps",
+            "version": runtime.RECALL_SENTINEL_VERSION,
+            "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
+            "allowed_domains": ["reuters.com"],
+        }
+        self.assertTrue(runtime.completed_prior_audit(report))
 
         runtime._sync_policy_overrides()
         self.assertIs(
@@ -365,10 +461,7 @@ class RecallSentinelTests(unittest.TestCase):
 
         self.assertEqual(diagnostics["search_operation_count"], 3)
         self.assertEqual(diagnostics["logical_query_count"], 12)
-        self.assertEqual(
-            diagnostics["queries_per_search_operation"],
-            [4, 4, 4],
-        )
+        self.assertEqual(diagnostics["queries_per_search_operation"], [4, 4, 4])
         self.assertTrue(diagnostics["query_batching_detected"])
 
 
