@@ -165,13 +165,12 @@ def build_plan(api: GitHub, root: Path):
             status = str(run.get("status") or "")
             if status != "queued" or live_run(run, now):
                 continue
-            created = run.get("created_at")
             stale_runs.append({
                 "id": int(run["id"]),
                 "workflow_id": workflow_id,
                 "workflow": str(workflow.get("name") or ""),
                 "head_branch": str(run.get("head_branch") or ""),
-                "created_at": created,
+                "created_at": run.get("created_at"),
                 "classification": "review_only",
                 "reason": "stale_orphan_run" if workflow_classes[workflow_id] == "safe_disable" else "stale_queued_run",
             })
@@ -286,39 +285,68 @@ def _workflow(api, workflow_id):
     return data if status == 200 else None
 
 
-def production_active(api):
-    workflows = api.workflows()
-    production_ids = {
-        int(workflow["id"])
-        for workflow in workflows
-        if str(workflow.get("path") or "") == ".github/workflows/daily-production.yml"
-    }
-    return any(
-        int(run.get("workflow_id") or -1) in production_ids and live_run(run)
-        for status in ("queued", "in_progress")
-        for run in api.runs(status)
-    )
+def production_workflow_id(api):
+    for workflow in api.workflows():
+        if str(workflow.get("path") or "") == ".github/workflows/daily-production.yml":
+            return int(workflow["id"])
+    return None
+
+
+def production_active(api, workflow_id=None):
+    workflow_id = workflow_id if workflow_id is not None else production_workflow_id(api)
+    if workflow_id is None:
+        return False
+    return any(live_run(run) for run in api.workflow_runs(workflow_id, limit=20))
+
+
+def current_ci_protected_shas(api, plan):
+    protected = {str(plan["main_sha"])}
+    for item in plan["recent_merged_prs"]:
+        if item.get("head_sha"):
+            protected.add(str(item["head_sha"]))
+        if item.get("merge_sha"):
+            protected.add(str(item["merge_sha"]))
+    for pr in api.prs("open"):
+        head_sha = str((pr.get("head") or {}).get("sha") or "")
+        if head_sha:
+            protected.add(head_sha)
+    return protected
 
 
 def apply_actions(api, root, plan):
     safe_main(api, plan["main_sha"])
-    if production_active(api):
+    production_id = production_workflow_id(api)
+    if production_active(api, production_id):
         return {"skipped": "active_production_run", "artifacts_deleted": [], "workflows_disabled": []}
 
+    # Rebuild once at the start of the destructive phase. Individual objects,
+    # main and production activity are then rechecked without rebuilding the
+    # whole repository graph before every artifact deletion.
+    fresh = build_plan(api, root)
+    safe_main(api, plan["main_sha"])
     deleted = []
     skipped = []
-    for item in plan["artifacts"]:
+    for item in fresh["artifacts"]:
         if item["classification"] != "safe_delete":
             continue
         safe_main(api, plan["main_sha"])
+        if production_active(api, production_id):
+            return {
+                "skipped": "production_started_during_actions_cleanup",
+                "artifacts_deleted": deleted,
+                "artifact_skipped": skipped,
+                "workflows_disabled": [],
+            }
         artifact = _artifact(api, item["id"])
         if not artifact or artifact.get("expired"):
             skipped.append({"id": item["id"], "reason": "already_missing_or_expired"})
             continue
-        fresh = build_plan(api, root)
-        match = next((entry for entry in fresh["artifacts"] if entry["id"] == item["id"]), None)
-        if not match or match["classification"] != "safe_delete":
-            skipped.append({"id": item["id"], "reason": (match or {}).get("reason", "reclassified")})
+        if str(artifact.get("name") or "") != str(item["name"]):
+            skipped.append({"id": item["id"], "reason": "artifact_identity_changed"})
+            continue
+        ci_match = CI_RE.match(str(item["name"]))
+        if ci_match and ci_match.group(1) in current_ci_protected_shas(api, fresh):
+            skipped.append({"id": item["id"], "reason": "ci_sha_became_protected"})
             continue
         api.delete_artifact(item["id"])
         deleted.append(item["id"])
@@ -330,16 +358,33 @@ def apply_actions(api, root, plan):
     for item in fresh["workflows"]:
         if item["classification"] != "safe_disable":
             continue
+        safe_main(api, plan["main_sha"])
+        if production_active(api, production_id):
+            return {
+                "skipped": "production_started_during_actions_cleanup",
+                "artifacts_deleted": deleted,
+                "artifact_skipped": skipped,
+                "workflows_disabled": disabled,
+                "workflow_skipped": workflow_skipped,
+            }
         workflow = _workflow(api, item["id"])
         if not workflow or workflow.get("state") != "active":
             workflow_skipped.append({"id": item["id"], "reason": "already_missing_or_disabled"})
             continue
-        check = build_plan(api, root)
-        current = next((entry for entry in check["workflows"] if entry["id"] == item["id"]), None)
-        if not current or current["classification"] != "safe_disable":
-            workflow_skipped.append({"id": item["id"], "reason": (current or {}).get("reason", "reclassified")})
+        runs = api.workflow_runs(item["id"])
+        if any(live_run(run) for run in runs):
+            workflow_skipped.append({"id": item["id"], "reason": "workflow_has_active_run"})
             continue
-        safe_main(api, plan["main_sha"])
+        path = str(workflow.get("path") or "")
+        if path.startswith("dynamic/pages/") and bool(api.repo().get("has_pages")):
+            workflow_skipped.append({"id": item["id"], "reason": "github_pages_enabled"})
+            continue
+        if runs:
+            latest = max(runs, key=lambda run: run.get("created_at") or "")
+            latest_branch = str(latest.get("head_branch") or "")
+            if latest_branch and any(pr_branch(pr, api.repository) == latest_branch for pr in api.prs("open")):
+                workflow_skipped.append({"id": item["id"], "reason": "workflow_branch_has_open_pr"})
+                continue
         api.disable_workflow(item["id"])
         disabled.append(item["id"])
 
