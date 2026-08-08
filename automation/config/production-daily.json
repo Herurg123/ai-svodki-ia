@@ -6,9 +6,7 @@
   "publication_minute_local": 17,
   "schedule_cron_utc": "17 23 * * *",
   "schedule_crons_utc": [
-    "17 23 * * *",
-    "37 23 * * *",
-    "57 23 * * *"
+    "17 23 * * *"
   ],
   "first_publication_date": "2026-07-24",
   "production_branch": "main",

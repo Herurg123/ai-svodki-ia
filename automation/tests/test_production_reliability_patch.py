@@ -422,13 +422,13 @@ class PublishChangeValidationTests(unittest.TestCase):
 
 
 class ProductionWorkflowReliabilityTests(unittest.TestCase):
-    def test_three_crons_gate_and_recovery_are_present(self) -> None:
+    def test_primary_cron_gate_and_recovery_are_present(self) -> None:
         workflow = (ROOT / ".github" / "workflows" / "daily-production.yml").read_text(
             encoding="utf-8"
         )
-        self.assertEqual(workflow.count("cron:"), 3)
-        for cron in ("17 23 * * *", "37 23 * * *", "57 23 * * *"):
-            self.assertEqual(workflow.count(f'cron: "{cron}"'), 1)
+        self.assertEqual(workflow.count("cron:"), 1)
+        self.assertEqual(workflow.count('cron: "17 23 * * *"'), 1)
+        self.assertIn("best_rank=0", workflow)
         self.assertIn("Check RSS before paid APIs", workflow)
         self.assertIn("successful no-op", workflow)
         self.assertIn("Redeploy already committed release", workflow)

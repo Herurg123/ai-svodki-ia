@@ -30,6 +30,18 @@ class FinalRuntimeWorkflowTests(unittest.TestCase):
         )
         self.assertIn("--image-target-dir", workflow)
 
+    def test_complete_recovery_can_skip_openai_setup(self) -> None:
+        workflow = (
+            ROOT / ".github" / "workflows" / "daily-production.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("openai_needed", workflow)
+        self.assertEqual(
+            workflow.count("steps.recovery.outputs.openai_needed == 'true'"),
+            2,
+        )
+        self.assertIn("recovery_mode == \"full\"", workflow)
+        self.assertIn("completed_prior_audit", workflow)
+
 
 if __name__ == "__main__":
     unittest.main()

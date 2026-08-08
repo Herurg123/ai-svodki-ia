@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-EXPECTED_CRONS = ["17 23 * * *", "37 23 * * *", "57 23 * * *"]
+EXPECTED_CRONS = ["17 23 * * *"]
 
 class ProductionContractSyncTests(unittest.TestCase):
     def test_config_workflow_and_editorial_thresholds_are_synchronized(self) -> None:
@@ -62,7 +62,7 @@ class ProductionContractSyncTests(unittest.TestCase):
         )
         self.assertTrue(editorial["article"]["allow_missing_china_section"])
         self.assertTrue(editorial["article"]["allow_missing_russian_section"])
-        self.assertEqual(workflow.count("cron:"), 3)
+        self.assertEqual(workflow.count("cron:"), 1)
         for cron in EXPECTED_CRONS:
             self.assertEqual(workflow.count(f'cron: "{cron}"'), 1)
         self.assertIn(
@@ -94,8 +94,8 @@ class ProductionContractSyncTests(unittest.TestCase):
         self.assertIn(r'+ "\n"', workflow)
         self.assertIn("candidate_pool_after", workflow)
         self.assertLess(
-            workflow.index("Complete mandatory coverage audit for a short digest"),
-            workflow.index("Generate one production cover"),
+            workflow.index("- name: Complete mandatory coverage audit for a short digest"),
+            workflow.index("- name: Generate one production cover"),
         )
         self.assertIn(
             "data.get(\"audit_status\") in {\"complete\", \"complete_with_gaps\"}",
@@ -115,8 +115,10 @@ class ProductionContractSyncTests(unittest.TestCase):
         normalized_spec = " ".join(editorial_spec.split())
 
         for marker in (
-            "`23:17`, `23:37` и `23:57 UTC`",
-            "`02:17`, `02:37` и `02:57",
+            "`23:17 UTC`",
+            "`02:17",
+            "cron-job.org",
+            "наиболее полный",
             "06:00 МСК",
             "12 Web Search",
             "до 7 coverage",
@@ -184,8 +186,6 @@ class ProductionContractSyncTests(unittest.TestCase):
                 payload["schedule_local"],
                 [
                     "02:17 Europe/Moscow",
-                    "02:37 Europe/Moscow",
-                    "02:57 Europe/Moscow",
                 ],
             )
             self.assertEqual(

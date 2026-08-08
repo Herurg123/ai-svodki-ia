@@ -6,7 +6,7 @@ from pathlib import Path
 
 from production_daily_common import parse_rss, read_json, write_json
 
-EXPECTED_CRONS = ["17 23 * * *", "37 23 * * *", "57 23 * * *"]
+EXPECTED_CRONS = ["17 23 * * *"]
 EXPECTED_AUDIT_DIRECTIONS = [
     "security_world",
     "security_russia",
@@ -89,7 +89,7 @@ def main() -> int:
             )
     if config.get("schedule_crons_utc") != EXPECTED_CRONS:
         errors.append(
-            "config schedule_crons_utc must contain the three accepted backup windows"
+            "config schedule_crons_utc must contain the accepted production windows"
         )
     if config.get("schedule_cron_utc") != EXPECTED_CRONS[0]:
         errors.append("config schedule_cron_utc must equal the primary window")
@@ -104,6 +104,8 @@ def main() -> int:
         ("contents write", "contents: write"),
         ("actions read", "actions: read"),
         ("full digest", "PIPELINE_MODE: full"),
+        ("shallow production checkout", "fetch-depth: 1"),
+        ("ranked recovery selection", "best_rank=0"),
         ("resilient digest wrapper", "run_digest_preview.py"),
         ("resilient site builder", "run_build_site.py"),
         ("resilient site validator", "run_validate_site.py"),
@@ -160,6 +162,7 @@ def main() -> int:
         ("deterministic recovery", "recover_digest_artifact.py"),
         ("recovered image target", "--image-target-dir"),
         ("recovered image output", "image_recovered"),
+        ("conditional OpenAI recovery", "openai_needed"),
         ("skip duplicate image request", "steps.recovery.outputs.image_recovered != 'true'"),
         ("revalidate recovered cover", "Revalidate recovered production cover"),
         ("partial paid artifact recovery", "Runs for both fresh and recovered artifacts"),
@@ -329,12 +332,16 @@ def main() -> int:
         errors.append("image request and image generation must both skip a recovered cover")
     if workflow.count("steps.recovery.outputs.image_recovered == 'true'") != 1:
         errors.append("workflow must revalidate exactly one recovered cover")
+    if workflow.count("steps.recovery.outputs.openai_needed == 'true'") != 2:
+        errors.append(
+            "OpenAI SDK install and API validation must both be conditional on paid recovery work"
+        )
     for cron in EXPECTED_CRONS:
         needle = f'cron: "{cron}"'
         if workflow.count(needle) != 1:
             errors.append(f"workflow must contain exactly one cron {cron}")
     if workflow.count("cron:") != len(EXPECTED_CRONS):
-        errors.append("workflow must contain exactly three production crons")
+        errors.append("workflow must contain exactly the configured production crons")
     if workflow.count("validate_digest_artifact.py") != 1:
         errors.append("workflow must validate the digest exactly once after normalization")
     runtime_position = workflow.find(
@@ -388,13 +395,15 @@ def main() -> int:
     ]:
         errors.append("Russian pipeline status must run with if: always()")
     coverage_audit_position = workflow.find(
-        "Complete mandatory coverage audit for a short digest"
+        "- name: Complete mandatory coverage audit for a short digest"
     )
-    normalize_position = workflow.find("Normalize and validate digest artifact")
+    normalize_position = workflow.find(
+        "- name: Normalize and validate digest artifact"
+    )
     coverage_validation_position = workflow.find(
-        "Validate publishable story count and short digest marker"
+        "- name: Validate publishable story count and short digest marker"
     )
-    image_request_position = workflow.find("Build runtime Image API request")
+    image_request_position = workflow.find("- name: Build runtime Image API request")
     if coverage_audit_position < 0 or normalize_position < 0 or coverage_audit_position > normalize_position:
         errors.append("targeted coverage audit must run before digest normalization")
     if (
@@ -449,8 +458,6 @@ def main() -> int:
         "legacy_items": legacy_count,
         "schedule_local": [
             "02:17 Europe/Moscow",
-            "02:37 Europe/Moscow",
-            "02:57 Europe/Moscow",
         ],
         "schedule_utc": EXPECTED_CRONS,
         "first_publication_date": config["first_publication_date"],
