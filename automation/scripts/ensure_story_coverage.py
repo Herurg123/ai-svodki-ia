@@ -4,7 +4,7 @@
 The previous runtime is kept in ``ensure_story_coverage_runtime_base.py`` so
 its transport diagnostics and battle-tested policy bridge remain reusable.
 This thin layer only owns recall-sentinel versioning, stale-artifact migration
-and the Reuters-only high-signal query used when all mandatory coverage passes
+and the source-agnostic high-signal query used when all mandatory coverage passes
 finished with no eligible story.
 """
 from __future__ import annotations
@@ -38,7 +38,7 @@ _BASE_EXECUTE_AUDIT_PLAN = _base._BASE_EXECUTE_AUDIT_PLAN
 _LAST_RECALL_SENTINEL: dict[str, Any] | None = None
 
 RECALL_SENTINEL_STRATEGY = "high_signal_recall_sentinel"
-RECALL_SENTINEL_VERSION = 5
+RECALL_SENTINEL_VERSION = 6
 RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ()
 RECALL_SENTINEL_MINIMUM_BUDGET = 7
 
@@ -258,31 +258,34 @@ def build_recall_sentinel_prompt(
         query_date = f"{end_utc.strftime('%B')} {end_utc.day} {end_utc.year}"
     except ValueError:
         query_date = str(search_window.get("start_date") or "")
-    required_query = f"OpenAI cybersecurity Reuters {query_date}"
+    required_query = f"OpenAI cybersecurity {query_date}"
 
-    return f"""Ты — финальный Reuters OpenAI security recall sentinel редакции «ИИ-сводки».
+    return f"""Ты — финальный OpenAI security recall sentinel редакции «ИИ-сводки».
 
 Строгое редакционное окно: {start_at} → {end_at}
 Идентификатор направления: general_coverage_gaps
 Версия sentinel: {RECALL_SENTINEL_VERSION}
 
 Основной research и шесть обязательных coverage-проходов уже завершились, но
-пригодный пул всё ещё равен нулю. API-доменный фильтр намеренно отключён после подтверждённого случая, когда Reuters-only filter возвращал пустую выдачу. Reuters фиксируется прямо в коротком запросе.
+пригодный пул всё ещё равен нулю. API-доменный фильтр отключён: production показал,
+что привязка rescue-прохода к одному издателю создаёт false-zero и может заставить
+модель отклонить уже найденный свежий материал только из-за домена источника.
 Выполни РОВНО ОДИН Web Search. Не расширяй и не переписывай поисковую строку.
 Фактический поисковый запрос должен быть точно:
 `{required_query}`
 
 Это намеренно адресный safety/security probe для подтверждённого класса
-пропусков вокруг OpenAI. Production-регрессия показала, что и широкий Reuters
-запрос, и общий security-запрос могут возвращать пустую выдачу, тогда как
-короткий запрос по организации и теме поднимает свежий Reuters-материал. После
-поиска открой все релевантные свежие Reuters-страницы из результатов и проверь
-их против строгого окна.
+пропусков вокруг OpenAI. После поиска открой все релевантные свежие страницы из
+результатов и проверь их против строгого окна. Reuters не обязателен: пригоден
+любой надёжный первичный источник, крупное информационное агентство либо
+авторитетное технологическое/деловое СМИ, если событие проверяемо и проходит
+обычные редакционные правила. Не отклоняй материал только потому, что издатель
+не Reuters.
 
 Пригодны самостоятельные ИИ-события высокой новостной ценности, связанные с
 cybersecurity, безопасностью frontier-моделей, sandbox escape, jailbreak,
 несанкционированными действиями агентов, эксплуатацией уязвимостей или
-существенным изменением защитных мер. Путь URL и рубрика Reuters не определяют
+существенным изменением защитных мер. Путь URL и рубрика источника не определяют
 редакционную категорию: событие о киберриске остаётся `category=security`, даже
 если URL расположен в `/legal/` или `/litigation/`. `legal` используй только
 для реального суда, иска, copyright/scraping или регуляторно-правового события.
@@ -341,7 +344,7 @@ def execute_audit_plan(
     archive: dict[str, Any],
     prior_plan: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Run mandatory coverage, then one versioned Reuters recall operation."""
+    """Run mandatory coverage, then one versioned source-agnostic recall operation."""
     prepared_prior = _prepare_prior_plan(prior_plan)
     plan = globals()["_BASE_EXECUTE_AUDIT_PLAN"](
         api_key=api_key,
@@ -445,7 +448,7 @@ def execute_audit_plan(
     payload_status = str(payload.get("status"))
     record = {
         "direction_id": "general_coverage_gaps",
-        "label": "Reuters unfiltered OpenAI recall sentinel v5",
+        "label": "Source-agnostic OpenAI recall sentinel v6",
         "required": True,
         "attempt": attempt_number,
         "search_strategy": RECALL_SENTINEL_STRATEGY,
