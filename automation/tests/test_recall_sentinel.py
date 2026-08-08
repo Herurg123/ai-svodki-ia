@@ -156,7 +156,7 @@ def current_sentinel_attempt() -> dict[str, object]:
             "label": "Reuters unfiltered OpenAI recall sentinel v5",
             "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
             "recall_sentinel_version": runtime.RECALL_SENTINEL_VERSION,
-            "allowed_domains": ["reuters.com"],
+            "allowed_domains": [],
         }
     )
     return sentinel
@@ -225,7 +225,7 @@ class RecallSentinelTests(unittest.TestCase):
         self.assertEqual(
             sentinel["recall_sentinel_version"], runtime.RECALL_SENTINEL_VERSION
         )
-        self.assertEqual(sentinel["allowed_domains"], ["reuters.com"])
+        self.assertEqual(sentinel["allowed_domains"], [])
         self.assertEqual(sentinel["candidate_count"], 1)
         found = result["candidates"][0]
         self.assertEqual(found["audit_direction"], "recall_sentinel")
@@ -416,7 +416,7 @@ class RecallSentinelTests(unittest.TestCase):
             "status": "complete_with_gaps",
             "version": runtime.RECALL_SENTINEL_VERSION,
             "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
-            "allowed_domains": ["reuters.com"],
+            "allowed_domains": [],
         }
         self.assertTrue(runtime.completed_prior_audit(report))
 
