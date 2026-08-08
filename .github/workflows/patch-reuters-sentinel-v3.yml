@@ -1,0 +1,72 @@
+name: Patch Reuters sentinel v3 once
+
+on:
+  push:
+    branches:
+      - agent/reuters-recall-sentinel-v3
+    paths:
+      - .github/workflows/patch-reuters-sentinel-v3.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: agent/reuters-recall-sentinel-v3
+          fetch-depth: 0
+      - name: Apply v3 retrieval patch and remove this workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('automation/scripts/ensure_story_coverage.py')
+          text = path.read_text(encoding='utf-8')
+          text = text.replace('from pathlib import Path\n', 'from datetime import datetime, timezone\nfrom pathlib import Path\n', 1)
+          text = text.replace('RECALL_SENTINEL_VERSION = 2', 'RECALL_SENTINEL_VERSION = 3', 1)
+
+          start = text.index('def build_recall_sentinel_prompt(')
+          end = text.index('\n\ndef _existing_recall_sentinel', start)
+          replacement = '''def build_recall_sentinel_prompt(\n    *,\n    publication_date: str,\n    search_window: dict[str, Any],\n    existing_candidates: list[Any],\n    archive: dict[str, Any],\n) -> str:\n    del publication_date\n    existing = [\n        {\n            "title": item.get("title"),\n            "organization": item.get("organization"),\n            "primary_url": (\n                item.get("primary_source", {}).get("url")\n                if isinstance(item.get("primary_source"), dict)\n                else None\n            ),\n        }\n        for item in existing_candidates\n        if isinstance(item, dict)\n    ]\n    recent_archive = _base._compact_recent_archive(archive)\n    start_at = str(search_window.get("start_at") or "")\n    end_at = str(search_window.get("end_at") or "")\n    try:\n        end_utc = datetime.fromisoformat(end_at.replace("Z", "+00:00")).astimezone(\n            timezone.utc\n        )\n        query_date = f"{end_utc.strftime('%B')} {end_utc.day} {end_utc.year}"\n    except ValueError:\n        query_date = str(search_window.get("start_date") or "")\n    required_query = f"artificial intelligence {query_date} cybersecurity model"\n\n    return f"""Ты — финальный Reuters security recall sentinel редакции «ИИ-сводки».\n\nСтрогое редакционное окно: {start_at} → {end_at}\nИдентификатор направления: general_coverage_gaps\nВерсия sentinel: {RECALL_SENTINEL_VERSION}\n\nОсновной research и шесть обязательных coverage-проходов уже завершились, но\nпригодный пул всё ещё равен нулю. API уже ограничивает поиск доменом Reuters.\nВыполни РОВНО ОДИН Web Search. Не расширяй и не переписывай поисковую строку.\nФактический поисковый запрос должен быть точно:\n`{required_query}`\n\nЭто намеренно короткий safety/security probe. Production-регрессия показала,\nчто перечисление множества компаний, классов событий и издателей превращает\nпоиск в чрезмерно узкую конъюнкцию и может дать ноль результатов даже при\nналичии свежей Reuters-новости. После поиска открой все релевантные свежие\nReuters-страницы из результатов и проверь их против строгого окна.\n\nПригодны самостоятельные ИИ-события высокой новостной ценности, связанные с\ncybersecurity, безопасностью frontier-моделей, sandbox escape, jailbreak,\nнесанкционированными действиями агентов, эксплуатацией уязвимостей или\nсущественным изменением защитных мер. Путь URL и рубрика Reuters не определяют\nредакционную категорию: событие о киберриске остаётся `category=security`, даже\nесли URL расположен в `/legal/` или `/litigation/`. `legal` используй только\nдля реального суда, иска, copyright/scraping или регуляторно-правового события.\n\nСобытие и основной источник обязаны попадать в окно. Старую перепечатку без\nнового развития отклоняй. Для include/consider нужны\n`verification_status=verified` и `freshness_status` new_event/material_update.\nЕсли точного времени публикации нет, ставь `published_at=null` и\n`time_precision=date`; время не выдумывай. Не добивай количество слабым\nматериалом.\n\nУже найденные кандидаты:\n{json.dumps(existing, ensure_ascii=False, indent=2)}\n\nНедавний архив для дедупликации:\n{json.dumps(recent_archive, ensure_ascii=False, indent=2)}\n\nЕсли достойные события найдены, верни до 3 кандидатов по заданной JSON-схеме.\nЕсли нет, верни пустой `candidates` и status=complete_with_gaps. `direction_id`\nдолжен быть строго `general_coverage_gaps`. Верни только JSON по схеме."""\n'''
+          text = text[:start] + replacement + text[end:]
+          text = text.replace('Reuters high-signal recall sentinel v2', 'Reuters security recall sentinel v3')
+          path.write_text(text, encoding='utf-8')
+
+          test = Path('automation/tests/test_recall_sentinel.py')
+          t = test.read_text(encoding='utf-8')
+          t = t.replace('Reuters high-signal recall sentinel v2', 'Reuters security recall sentinel v3')
+          old = '''            self.assertIn("РОВНО ОДИН Web Search", kwargs["prompt"])\n            self.assertIn("без `site:`", kwargs["prompt"])\n            self.assertIn("без `OR`", kwargs["prompt"])\n            self.assertIn("Путь URL и рубрика Reuters не определяют", kwargs["prompt"])\n'''
+          new = '''            self.assertIn("РОВНО ОДИН Web Search", kwargs["prompt"])\n            self.assertIn(\n                "artificial intelligence August 7 2026 cybersecurity model",\n                kwargs["prompt"],\n            )\n            self.assertIn("Не расширяй и не переписывай", kwargs["prompt"])\n            self.assertIn("Путь URL и рубрика Reuters не определяют", kwargs["prompt"])\n'''
+          if old not in t:
+              raise SystemExit('sentinel prompt assertions not found')
+          t = t.replace(old, new, 1)
+          t = t.replace('test_stale_v1_sentinel_is_removed_and_budget_restored', 'test_stale_sentinel_is_removed_and_budget_restored')
+          t = t.replace('"checked by v2"', '"checked by v3"')
+          test.write_text(t, encoding='utf-8')
+
+          for name in ('README.md', 'automation/README.md'):
+              p = Path(name)
+              d = p.read_text(encoding='utf-8')
+              d = d.replace('версии 2', 'версии 3')
+              d = d.replace('sentinel v2', 'sentinel v3')
+              d = d.replace('sentinel версии 2', 'sentinel версии 3')
+              d = d.replace('`recall_sentinel_version: 2`', '`recall_sentinel_version: 3`')
+              d = d.replace('Reuters-only high-signal recall sentinel v2', 'Reuters security recall sentinel v3')
+              d = d.replace('Reuters-only проходом', 'Reuters security проходом')
+              d = d.replace('Reuters-only Web Search', 'Reuters security Web Search')
+              d = d.replace('Reuters-only режиме', 'Reuters security режиме')
+              d = d.replace('Reuters-only режим', 'Reuters security режим')
+              d += (\n                  '\\n\\n### Retrieval note: recall sentinel v3\\n\\n'\n                  'Для нулевого пула версия 3 использует один короткий Reuters-only '\n                  'security-запрос вида `artificial intelligence <UTC date> cybersecurity model`. '\n                  'Дата берётся из UTC-даты конца редакционного окна. Это устраняет подтверждённый '\n                  'регрессионный случай, когда длинная строка с перечнем компаний и тем возвращала '\n                  'ноль результатов. Версия хранится в artifact; zero-pool artifact старой версии '\n                  'возобновляется только для этого одного седьмого поиска.\\n'\n              )
+              p.write_text(d, encoding='utf-8')
+          PY
+          rm .github/workflows/patch-reuters-sentinel-v3.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add automation/scripts/ensure_story_coverage.py automation/tests/test_recall_sentinel.py README.md automation/README.md .github/workflows/patch-reuters-sentinel-v3.yml
+          git commit -m 'Use concise Reuters security recall query'
+          git push origin HEAD:agent/reuters-recall-sentinel-v3
