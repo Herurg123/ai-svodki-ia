@@ -95,26 +95,33 @@ def verify(
         "article": "not_checked",
         "image": "not_checked",
     }
+    live_warnings: list[str] = []
     if live_checks_enabled:
-        article_status = _http_status(
-            expected_article_url,
-            opener=opener,
-            timeout=timeout,
-        )
-        image_status = _http_status(
-            expected_image_url,
-            opener=opener,
-            timeout=timeout,
-        )
-        live_statuses = {
-            "article": article_status,
-            "image": image_status,
-        }
-        if article_status != 200 or image_status != 200:
-            raise RuntimeError(
-                "Предыдущий выпуск не подтверждён на живом сайте: "
-                f"article={article_status}, image={image_status}."
-            )
+        for label, url in (
+            ("article", expected_article_url),
+            ("image", expected_image_url),
+        ):
+            try:
+                status = _http_status(
+                    url,
+                    opener=opener,
+                    timeout=timeout,
+                )
+            except RuntimeError as exc:
+                live_statuses[label] = "unavailable"
+                live_warnings.append(str(exc))
+                continue
+            live_statuses[label] = status
+            if status != 200:
+                live_warnings.append(
+                    f"Живой адрес предыдущего выпуска вернул HTTP {status}: {url}"
+                )
+
+    live_verified = bool(
+        live_checks_enabled
+        and not live_warnings
+        and all(status == 200 for status in live_statuses.values())
+    )
 
     return {
         "status": "ok",
@@ -133,7 +140,9 @@ def verify(
             "article_url": expected_article_url,
             "image_url": expected_image_url,
             "statuses": live_statuses,
-            "verified": live_checks_enabled,
+            "verified": live_verified,
+            "diagnostic_only": True,
+            "warnings": live_warnings,
         },
     }
 

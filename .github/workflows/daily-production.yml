@@ -198,7 +198,7 @@ jobs:
             --output automation/preview/production-daily/preflight/runtime.json \
             --github-output "${GITHUB_OUTPUT}" \
             "${args[@]}"
-      - name: Verify last successful release in repository and live site
+      - name: Verify previous repository continuity and diagnose live site
         shell: bash
         run: |
           set -euo pipefail
@@ -411,13 +411,24 @@ jobs:
                       from ensure_story_coverage_runtime_base import completed_prior_audit
                       prior_complete = completed_prior_audit(prior)
               text_api_needed = not (full_story_target or prior_complete)
-          openai_needed = text_api_needed or not image_recovered
+          image_api_needed = not image_recovered
+          openai_needed = text_api_needed or image_api_needed
           with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as stream:
               stream.write("reused=true\n")
               stream.write(f"recovery_mode={recovery_mode}\n")
               stream.write(
                   "image_recovered="
                   + ("true" if image_recovered else "false")
+                  + "\n"
+              )
+              stream.write(
+                  "text_api_needed="
+                  + ("true" if text_api_needed else "false")
+                  + "\n"
+              )
+              stream.write(
+                  "image_api_needed="
+                  + ("true" if image_api_needed else "false")
                   + "\n"
               )
               stream.write(
@@ -428,7 +439,7 @@ jobs:
           PY
           echo "Recovered reusable paid artifact from run ${RECOVERY_RUN_ID}."
       - name: Install pinned OpenAI SDK
-        if: steps.terminal_reuse.outputs.stop != 'true' && (steps.recovery.outputs.reused != 'true' || steps.recovery.outputs.openai_needed == 'true')
+        if: steps.terminal_reuse.outputs.stop != 'true' && (steps.recovery.outputs.reused != 'true' || (steps.recovery.outputs.openai_needed == 'true' && steps.recovery.outputs.text_api_needed == 'true'))
         run: |
           set -euo pipefail
           python -m pip install --disable-pip-version-check "openai==2.45.0"
@@ -440,11 +451,18 @@ jobs:
           OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
           OPENAI_IMAGE_MODEL: ${{ vars.OPENAI_IMAGE_MODEL || 'gpt-image-2' }}
           RECOVERY_RUN_ID: ${{ steps.recovery_source.outputs.run_id || '' }}
+          RECOVERY_REUSED: ${{ steps.recovery.outputs.reused || 'false' }}
+          TEXT_API_NEEDED: ${{ steps.recovery.outputs.text_api_needed || 'false' }}
+          IMAGE_API_NEEDED: ${{ steps.recovery.outputs.image_api_needed || 'false' }}
         run: |
           set -euo pipefail
           [[ -n "${OPENAI_API_KEY}" ]] || { echo "OPENAI_API_KEY missing" >&2; exit 1; }
-          [[ "${OPENAI_IMAGE_MODEL}" == "gpt-image-2" ]] || { echo "Unexpected image model" >&2; exit 1; }
-          [[ "${OPENAI_TEXT_MODEL}" == "gpt-5.6-terra" ]] || { echo "Unexpected text model" >&2; exit 1; }
+          if [[ "${RECOVERY_REUSED}" != "true" || "${TEXT_API_NEEDED}" == "true" ]]; then
+            [[ "${OPENAI_TEXT_MODEL}" == "gpt-5.6-terra" ]] || { echo "Unexpected text model" >&2; exit 1; }
+          fi
+          if [[ "${RECOVERY_REUSED}" != "true" || "${IMAGE_API_NEEDED}" == "true" ]]; then
+            [[ "${OPENAI_IMAGE_MODEL}" == "gpt-image-2" ]] || { echo "Unexpected image model" >&2; exit 1; }
+          fi
       - name: Patch runtime publication hour to 06:00 Moscow
         if: steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
@@ -524,6 +542,23 @@ jobs:
             --maximum-candidates 20 \
             --maximum-selected-stories 12 \
             --report automation/preview/production-daily/coverage-audit.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path("automation/preview/production-daily/coverage-audit.json")
+          report = json.loads(path.read_text(encoding="utf-8"))
+          if report.get("audit_needed"):
+              report["audit_notes"] = (
+                  "Шесть обязательных тематических проходов; седьмой слот "
+                  "используется для повтора незавершённого направления, а при "
+                  "полных шести проходах и нулевом пригодном пуле — для "
+                  "актуального high-signal recall sentinel."
+              )
+              path.write_text(
+                  json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+                  encoding="utf-8",
+              )
+          PY
       - name: Normalize and validate digest artifact
         if: steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
