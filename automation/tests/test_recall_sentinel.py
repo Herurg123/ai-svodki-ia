@@ -153,7 +153,7 @@ def current_sentinel_attempt() -> dict[str, object]:
     sentinel = base_attempt("general_coverage_gaps", attempt=2)
     sentinel.update(
         {
-            "label": "Reuters high-signal recall sentinel v2",
+            "label": "Reuters security recall sentinel v3",
             "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
             "recall_sentinel_version": runtime.RECALL_SENTINEL_VERSION,
             "allowed_domains": ["reuters.com"],
@@ -194,8 +194,11 @@ class RecallSentinelTests(unittest.TestCase):
             self.assertEqual(kwargs["maximum_web_search_calls"], 1)
             self.assertEqual(tuple(kwargs["allowed_domains"]), ("reuters.com",))
             self.assertIn("РОВНО ОДИН Web Search", kwargs["prompt"])
-            self.assertIn("без `site:`", kwargs["prompt"])
-            self.assertIn("без `OR`", kwargs["prompt"])
+            self.assertIn(
+                "artificial intelligence August 7 2026 cybersecurity model",
+                kwargs["prompt"],
+            )
+            self.assertIn("Не расширяй и не переписывай", kwargs["prompt"])
             self.assertIn("Путь URL и рубрика Reuters не определяют", kwargs["prompt"])
             return (
                 {
@@ -316,7 +319,7 @@ class RecallSentinelTests(unittest.TestCase):
             runtime.RECALL_SENTINEL_VERSION,
         )
 
-    def test_stale_v1_sentinel_is_removed_and_budget_restored(self) -> None:
+    def test_stale_sentinel_is_removed_and_budget_restored(self) -> None:
         plan = complete_zero_plan()
         stale = base_attempt("general_coverage_gaps", attempt=2)
         stale.update(
@@ -359,7 +362,7 @@ class RecallSentinelTests(unittest.TestCase):
                     "direction_id": "general_coverage_gaps",
                     "candidates": [],
                     "rejections": [],
-                    "notes": "checked by v2",
+                    "notes": "checked by v3",
                 },
                 api_metadata("artificial intelligence cybersecurity August 7 2026"),
             )
