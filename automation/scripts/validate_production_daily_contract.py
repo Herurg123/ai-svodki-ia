@@ -348,7 +348,7 @@ def main() -> int:
         "Prepare runtime and verify archive freshness"
     )
     previous_release_position = workflow.find(
-        "Verify last successful release in repository and live site"
+        "python automation/scripts/verify_previous_release.py"
     )
     bootstrap_position = workflow.find(
         "Validate editorial code and bootstrap archive"
