@@ -153,10 +153,10 @@ def current_sentinel_attempt() -> dict[str, object]:
     sentinel = base_attempt("general_coverage_gaps", attempt=2)
     sentinel.update(
         {
-            "label": "Reuters OpenAI security recall sentinel v4",
+            "label": "Reuters unfiltered OpenAI recall sentinel v5",
             "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
             "recall_sentinel_version": runtime.RECALL_SENTINEL_VERSION,
-            "allowed_domains": ["reuters.com"],
+            "allowed_domains": [],
         }
     )
     return sentinel
@@ -192,10 +192,10 @@ class RecallSentinelTests(unittest.TestCase):
     def test_seventh_slot_is_one_reuters_only_search(self) -> None:
         def fake_request(**kwargs):
             self.assertEqual(kwargs["maximum_web_search_calls"], 1)
-            self.assertEqual(tuple(kwargs["allowed_domains"]), ("reuters.com",))
+            self.assertEqual(tuple(kwargs["allowed_domains"]), ())
             self.assertIn("РОВНО ОДИН Web Search", kwargs["prompt"])
             self.assertIn(
-                "OpenAI cybersecurity August 7 2026",
+                "OpenAI cybersecurity Reuters August 7 2026",
                 kwargs["prompt"],
             )
             self.assertIn("Не расширяй и не переписывай", kwargs["prompt"])
@@ -225,7 +225,7 @@ class RecallSentinelTests(unittest.TestCase):
         self.assertEqual(
             sentinel["recall_sentinel_version"], runtime.RECALL_SENTINEL_VERSION
         )
-        self.assertEqual(sentinel["allowed_domains"], ["reuters.com"])
+        self.assertEqual(sentinel["allowed_domains"], [])
         self.assertEqual(sentinel["candidate_count"], 1)
         found = result["candidates"][0]
         self.assertEqual(found["audit_direction"], "recall_sentinel")
@@ -362,7 +362,7 @@ class RecallSentinelTests(unittest.TestCase):
                     "direction_id": "general_coverage_gaps",
                     "candidates": [],
                     "rejections": [],
-                    "notes": "checked by v4",
+                    "notes": "checked by v5",
                 },
                 api_metadata("artificial intelligence cybersecurity August 7 2026"),
             )
@@ -416,7 +416,7 @@ class RecallSentinelTests(unittest.TestCase):
             "status": "complete_with_gaps",
             "version": runtime.RECALL_SENTINEL_VERSION,
             "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
-            "allowed_domains": ["reuters.com"],
+            "allowed_domains": [],
         }
         self.assertTrue(runtime.completed_prior_audit(report))
 
