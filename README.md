@@ -26,6 +26,7 @@ cutoff, зафиксированным непосредственно перед
 | `.github/workflows/ci.yml` | Бесплатные офлайн-проверки pull request и `main`: компиляция, unit-тесты, редакционный и production-контракты, архив, RSS, sitemap и Schema.org. |
 | `.github/workflows/daily-production.yml` | Gate, research, editorial, ограниченный coverage audit, обложка, сборка сайта, commit в `main` и вызов FTP-деплоя. |
 | `.github/workflows/repository-cleanup.yml` | Ежедневная очистка в 01:43 МСК: компактация архива и удаление публичных выпусков старше 32 дней. |
+| `.github/workflows/repository-hygiene.yml` | Отдельная инженерная уборка GitHub в 15:43 МСК: старые merged-ветки, безопасно классифицированные Actions artifacts и orphaned workflows; исходники и старые runs только диагностируются. |
 | `.github/workflows/deploy-posts.yml` | Синхронизация точного состояния `posts/` выбранного commit на FTP, включая контролируемое удаление исчезнувших файлов. |
 
 Число unit-тестов может расти; источником точного набора проверок остаётся
@@ -169,7 +170,10 @@ cron-окна больше не дублируют один и тот же gate.
   no-op, а если commit уже есть, но живой URL недоступен, выполняется только
   FTP-redeploy.
 
-Production-artifacts хранятся 14 дней.
+Production-artifacts создаются с `retention-days: 14`, но инженерный hygiene
+может удалить уже ненужные опубликованные artifacts раньше по безопасному
+окну выпусков, описанному ниже. Artifacts неопубликованной актуальной даты
+остаются защищены для recovery.
 
 ## Модели и доступы
 
@@ -201,6 +205,55 @@ Production-artifacts хранятся 14 дней.
 - плановый запуск применяет очистку автоматически, ручной по умолчанию
   работает как dry-run, а срок хранения нельзя уменьшить ниже 32 дней;
 - после успешного commit FTP синхронизируется с точным созданным SHA.
+
+Эта 32-дневная механика не используется для инженерной уборки GitHub и не
+изменяется `repository-hygiene.yml`.
+
+## Правила инженерной уборки GitHub
+
+`repository-hygiene.yml` работает отдельно от очистки выпусков. Плановый запуск
+в 15:43 МСК применяет только доказуемо безопасные операции; ручной
+`workflow_dispatch` по умолчанию является audit-only и требует `apply=true`
+для destructive-фазы.
+
+- Окно веток считается по пяти последним PR, реально смёрженным в `main`, в
+  порядке `merged_at`, а не по номеру PR. `main`, protected branches, ветки
+  открытых PR и ветки с активным Actions-run никогда не удаляются. Старая
+  merged-ветка удаляется только если её текущий HEAD всё ещё совпадает с
+  `head.sha` смёрженного PR; ветки без PR, closed-unmerged и изменённые после
+  merge остаются `review_only`.
+- CI-artifact `main-ci-<sha>` сохраняется для текущего `main`, head SHA пяти
+  последних merged PR, их merge SHA и текущих head SHA открытых PR. Остальные
+  однозначно superseded CI-artifacts удаляются; artifacts неоднозначных веток
+  остаются `review_only`.
+- Для production-artifacts полностью сохраняется цепочка двух последних
+  опубликованных дат. Для опубликованных дат №3–5 сохраняется только artifact
+  run, где успешно завершился `Commit production release`; остальные варианты
+  этой даты удаляются. Artifacts более старых опубликованных дат удаляются.
+  Актуальная/будущая неопубликованная дата защищена, а историческая
+  неопубликованная дата остаётся `review_only`, чтобы не потерять оплаченный
+  recovery.
+- Workflow, которого больше нет среди файлов `.github/workflows/` в `main`,
+  отключается только когда он связан со старой merged-веткой и не имеет живого
+  run. Динамический GitHub Pages workflow отключается только при
+  `has_pages=false`. `in_progress` всегда считается живым; `queued` старше
+  14 дней считается зависшим и не защищает orphan-workflow.
+- Старые workflow runs не удаляются автоматически. Зависшие runs orphaned
+  workflows и подозрительно неиспользуемые scripts/config/prompts/specs лишь
+  попадают в отчёт. Source scanner начинает watchlist после пяти merge и
+  отмечает `suspected_orphan` после десяти, но никогда не меняет tracked-файлы.
+- Перед destructive-фазой строится новый план, а `main` повторно проверяется
+  перед удалениями. Если SHA `main` изменился, запуск завершает cleanup
+  безопасной ошибкой. При активном production-run вся Actions-уборка
+  пропускается.
+- Права разделены по jobs: audit имеет только read-доступ, branch-pruner не
+  получает `actions: write`, а Actions-pruner не получает `contents: write`.
+  Releases, tags, published/editorial content и tracked-файлы этим workflow не
+  изменяются.
+
+Канонический алгоритм классификации находится в
+`automation/scripts/repository_hygiene_policy.py`, GitHub runtime — в
+`automation/scripts/repository_hygiene.py`.
 
 ## Основные каталоги
 

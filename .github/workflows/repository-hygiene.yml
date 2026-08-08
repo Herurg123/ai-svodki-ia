@@ -1,0 +1,124 @@
+name: Repository hygiene
+run-name: Repository hygiene ${{ github.run_id }}
+
+on:
+  schedule:
+    # 15:43 Europe/Moscow. Deliberately far from 01:43 content cleanup and 02:17 production.
+    - cron: "43 12 * * *"
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Apply safe GitHub-object cleanup; leave disabled for audit-only"
+        required: true
+        default: false
+        type: boolean
+
+concurrency:
+  group: repository-hygiene-main
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    name: Build repository hygiene plan
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+    steps:
+      - name: Check out current main with history for report-only source scan
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Build hygiene plan
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p automation/preview/repository-hygiene
+          python automation/scripts/repository_hygiene.py \
+            --mode plan \
+            --output automation/preview/repository-hygiene/plan.json \
+            --summary "${GITHUB_STEP_SUMMARY}"
+
+  prune-branches:
+    name: Delete proven stale merged branches
+    needs: audit
+    if: github.event_name == 'schedule' || inputs.apply == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      actions: read
+      pull-requests: read
+    steps:
+      - name: Check out current main with history
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Replan and prune branches
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p automation/preview/repository-hygiene
+          python automation/scripts/repository_hygiene.py \
+            --mode apply \
+            --scope branches \
+            --output automation/preview/repository-hygiene/branches.json \
+            --summary "${GITHUB_STEP_SUMMARY}"
+
+  prune-actions:
+    name: Prune safe Actions artifacts and orphan workflows
+    needs:
+      - audit
+      - prune-branches
+    if: github.event_name == 'schedule' || inputs.apply == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      actions: write
+      pull-requests: read
+    steps:
+      - name: Check out current main with history
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Replan and prune Actions objects
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p automation/preview/repository-hygiene
+          python automation/scripts/repository_hygiene.py \
+            --mode apply \
+            --scope actions \
+            --output automation/preview/repository-hygiene/actions.json \
+            --summary "${GITHUB_STEP_SUMMARY}"
