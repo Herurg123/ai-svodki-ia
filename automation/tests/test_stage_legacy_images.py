@@ -53,6 +53,17 @@ class StageLegacyImagesTests(unittest.TestCase):
             self.assertEqual(len(report["copied"]), 10)
             self.assertEqual(len(list(target.glob("ai-svodka-*.png"))), 10)
 
+    def test_repository_legacy_set_is_stageable_in_dry_run(self) -> None:
+        repo = Path(__file__).resolve().parents[2]
+        report = stage_images_best_effort(
+            repo / "posts" / "dzen-test" / "images",
+            repo / "posts" / "images",
+            dry_run=True,
+        )
+
+        self.assertEqual(report["status"], "ok", report.get("warnings"))
+        self.assertGreaterEqual(report["source_images"], 10)
+
 
 if __name__ == "__main__":
     unittest.main()
