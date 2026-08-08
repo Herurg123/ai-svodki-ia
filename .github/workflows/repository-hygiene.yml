@@ -48,8 +48,19 @@ jobs:
           mkdir -p automation/preview/repository-hygiene
           python automation/scripts/repository_hygiene.py \
             --mode plan \
-            --output automation/preview/repository-hygiene/plan.json \
+            --report automation/preview/repository-hygiene/plan.json
+          python automation/scripts/render_repository_hygiene_summary.py \
+            automation/preview/repository-hygiene/plan.json \
             --summary "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload audit JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repository-hygiene-audit-${{ github.run_id }}
+          path: automation/preview/repository-hygiene/plan.json
+          if-no-files-found: ignore
+          retention-days: 2
 
   prune-branches:
     name: Delete proven stale merged branches
@@ -83,8 +94,19 @@ jobs:
           python automation/scripts/repository_hygiene.py \
             --mode apply \
             --scope branches \
-            --output automation/preview/repository-hygiene/branches.json \
+            --report automation/preview/repository-hygiene/branches.json
+          python automation/scripts/render_repository_hygiene_summary.py \
+            automation/preview/repository-hygiene/branches.json \
             --summary "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload branch-cleanup JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repository-hygiene-branches-${{ github.run_id }}
+          path: automation/preview/repository-hygiene/branches.json
+          if-no-files-found: ignore
+          retention-days: 2
 
   prune-actions:
     name: Prune safe Actions artifacts and orphan workflows
@@ -120,5 +142,16 @@ jobs:
           python automation/scripts/repository_hygiene.py \
             --mode apply \
             --scope actions \
-            --output automation/preview/repository-hygiene/actions.json \
+            --report automation/preview/repository-hygiene/actions.json
+          python automation/scripts/render_repository_hygiene_summary.py \
+            automation/preview/repository-hygiene/actions.json \
             --summary "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload Actions-cleanup JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repository-hygiene-actions-${{ github.run_id }}
+          path: automation/preview/repository-hygiene/actions.json
+          if-no-files-found: ignore
+          retention-days: 2
