@@ -37,7 +37,7 @@ def latest_pr_for_branch(name, prs, repository):
     if not related:
         return None
     floor = dt.datetime.min.replace(tzinfo=dt.timezone.utc)
-    return max(related, key=lambda pr: iso(pr.get("updated_at")) or iso(pr.get("created_at")) or floor)
+    return max(related, key=lambda pr: iso(pr.get("created_at")) or iso(pr.get("updated_at")) or floor)
 
 
 def branch_history_class(name, prs, repository, recent_numbers):
