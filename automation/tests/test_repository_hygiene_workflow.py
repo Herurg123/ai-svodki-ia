@@ -39,7 +39,7 @@ class RepositoryHygieneWorkflowTests(unittest.TestCase):
         self.assertIn("--scope actions", workflow)
 
     def test_agent_contract_limits_automatic_mutation(self) -> None:
-        text = AGENTS.read_text(encoding="utf-8")
+        text = " ".join(AGENTS.read_text(encoding="utf-8").split())
         self.assertIn("repository hygiene", text.lower())
         self.assertIn("ephemeral GitHub objects", text)
         self.assertIn("must not edit tracked project files", text)
