@@ -1,4 +1,4 @@
-name: One-shot Reuters sentinel v2 production trigger
+name: One-shot Reuters sentinel v3 production trigger
 
 on:
   push:
@@ -28,5 +28,5 @@ jobs:
             --header "Accept: application/vnd.github+json" \
             --header "Authorization: Bearer ${GH_TOKEN}" \
             --header "X-GitHub-Api-Version: 2022-11-28" \
-            --data '{"ref":"main","inputs":{"publication_date":"2026-08-08","publish":"true","recovery_run_id":"31239216246"}}'
-          echo "Daily production for 2026-08-08 dispatched from v1 artifact 31239216246; v2 should reuse six mandatory passes and replace only the stale sentinel."
+            --data '{"ref":"main","inputs":{"publication_date":"2026-08-08","publish":"true","recovery_run_id":"31240060433"}}'
+          echo "Daily production for 2026-08-08 dispatched from v2 artifact 31240060433; v3 should reuse six mandatory passes, replace only the stale sentinel and run one concise Reuters security search."
