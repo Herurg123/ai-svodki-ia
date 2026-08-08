@@ -83,7 +83,7 @@ def build_plan(api: GitHub, root: Path):
     canonical_paths = {
         str(item.get("path") or "")
         for item in workflow_entries
-        if item.get("type") == "file" and str(item.get("name") or "").endswith((".yml", ".yaml"))
+        if item.get("type") == "file" and str(item.get("path") or "").endswith((".yml", ".yaml"))
     }
     workflows = api.workflows()
     workflow_runs = {int(w["id"]): api.workflow_runs(int(w["id"])) for w in workflows}
