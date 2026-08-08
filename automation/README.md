@@ -60,6 +60,13 @@ GitHub Actions управляет:
 - `repository-cleanup.yml` — единая ночная очистка рабочих материалов, публичных страниц, RSS и sitemap старше 32 дней;
 - `deploy-posts.yml` — единственная FTP-синхронизация каталога `posts/`, включая контролируемые удаления.
 
+Перед сборкой `daily-production.yml` запускает `stage_legacy_images.py` для
+совместимости со старыми обложками из `posts/dzen-test/images`. Это best-effort
+миграционный слой: отсутствие или файловая ошибка legacy-набора сохраняются в
+`legacy-images.json` как warning и сами по себе не блокируют выпуск. Реальным
+gate остаётся последующая сборка и валидация canonical `posts/`: если нужной
+страницы или картинки действительно нет, publication всё равно остановится.
+
 Экспериментальные preview, fixture, recovery и pre-production workflow удалены. Их полезные проверки остаются в `automation/tests/` и выполняются единым CI.
 
 ## Расписание и режимы запуска
