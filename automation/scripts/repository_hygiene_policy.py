@@ -121,14 +121,14 @@ def classify_ci(artifact, protected_shas, branch_classes, history_classes):
     match = CI_RE.match(str(artifact.get("name") or ""))
     if not match:
         return "review_only", "not_ci_artifact"
-    branch = str((artifact.get("workflow_run") or {}).get("head_branch") or "")
-    branch_class = branch_classes.get(branch, history_classes.get(branch))
-    if branch_class == "protected":
-        return "protected", "retained_branch"
-    if branch_class == "review_only":
-        return "review_only", "review_only_branch"
     if match.group(1) in protected_shas:
         return "protected", "recent_final_ci"
+    branch = str((artifact.get("workflow_run") or {}).get("head_branch") or "")
+    branch_class = branch_classes.get(branch, history_classes.get(branch))
+    if branch_class == "review_only":
+        return "review_only", "review_only_branch"
+    if branch_class is None:
+        return "review_only", "unknown_ci_branch"
     return "safe_delete", "superseded_ci_artifact"
 
 
