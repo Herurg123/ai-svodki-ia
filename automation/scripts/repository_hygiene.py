@@ -24,6 +24,7 @@ from repository_hygiene_policy import (
     classify_production,
     classify_workflow,
     has_publish_step,
+    latest_pr_for_branch,
     live_run,
     merged_sorted,
     pr_branch,
@@ -48,18 +49,14 @@ def build_plan(api: GitHub, root: Path):
     recent_numbers = {int(pr["number"]) for pr in recent}
 
     status_runs = [run for status in ("queued", "in_progress") for run in api.runs(status)]
-    active_runs = [run for run in status_runs if live_run(run)]
-    active_branches = {str(run.get("head_branch")) for run in active_runs if run.get("head_branch")}
+    live_runs = [run for run in status_runs if live_run(run)]
+    active_branches = {str(run.get("head_branch") or "") for run in live_runs if run.get("head_branch")}
 
-    historical_names = {name for pr in all_prs if (name := pr_branch(pr, api.repository))}
-    history_classes = {
-        name: branch_history_class(name, all_prs, api.repository, recent_numbers)
-        for name in historical_names
-    }
-    branch_records = []
+    branches = api.branches()
     branch_classes = {}
-    for branch in api.branches():
-        classification, reason, pr = classify_branch(
+    branch_items = []
+    for branch in branches:
+        cls, reason, related = classify_branch(
             branch,
             repository=api.repository,
             default_branch=default_branch,
@@ -68,281 +65,323 @@ def build_plan(api: GitHub, root: Path):
             active_branches=active_branches,
         )
         name = str(branch.get("name") or "")
-        branch_classes[name] = classification
-        branch_records.append({
+        branch_classes[name] = cls
+        branch_items.append({
             "name": name,
-            "sha": (branch.get("commit") or {}).get("sha"),
-            "classification": classification,
+            "sha": str((branch.get("commit") or {}).get("sha") or ""),
+            "classification": cls,
             "reason": reason,
-            "pull_request": int(pr["number"]) if pr else None,
+            "pull_request": int(related["number"]) if related else None,
         })
 
+    history_classes = {}
+    history_names = {pr_branch(pr, api.repository) for pr in all_prs}
+    for name in sorted(item for item in history_names if item):
+        history_classes[name] = branch_history_class(name, all_prs, api.repository, recent_numbers)
+
+    workflow_entries = api.contents(".github/workflows", default_branch)
     canonical_paths = {
-        str(item.get("path"))
-        for item in api.contents(".github/workflows", default_branch)
-        if item.get("type") == "file"
+        str(item.get("path") or "")
+        for item in workflow_entries
+        if item.get("type") == "file" and str(item.get("name") or "").endswith((".yml", ".yaml"))
     }
-    workflow_records = []
-    for workflow in api.workflows():
-        runs = api.workflow_runs(int(workflow["id"]))
-        classification, reason = classify_workflow(
-            workflow, canonical_paths, bool(meta.get("has_pages")),
-            branch_classes, history_classes, runs,
+    workflows = api.workflows()
+    workflow_runs = {int(w["id"]): api.workflow_runs(int(w["id"])) for w in workflows}
+    workflow_items = []
+    for workflow in workflows:
+        cls, reason = classify_workflow(
+            workflow,
+            canonical_paths,
+            bool(meta.get("has_pages")),
+            branch_classes,
+            history_classes,
+            workflow_runs[int(workflow["id"])],
         )
-        latest = max(runs, key=lambda run: run.get("created_at") or "") if runs else None
-        workflow_records.append({
+        workflow_items.append({
             "id": int(workflow["id"]),
-            "name": workflow.get("name"),
-            "path": workflow.get("path"),
-            "state": workflow.get("state"),
-            "classification": classification,
+            "name": str(workflow.get("name") or ""),
+            "path": str(workflow.get("path") or ""),
+            "state": str(workflow.get("state") or ""),
+            "classification": cls,
             "reason": reason,
-            "latest_run_branch": (latest or {}).get("head_branch"),
         })
 
-    dates = publication_dates(api.file_text("posts/rss.xml", default_branch))
+    rss_text = api.file_text("posts/rss.xml", default_branch)
+    dates = publication_dates(rss_text)
     artifacts = [artifact for artifact in api.artifacts() if not artifact.get("expired")]
-    groups = defaultdict(list)
+    production_groups = defaultdict(list)
     for artifact in artifacts:
         match = PRODUCTION_RE.match(str(artifact.get("name") or ""))
         if match:
-            groups[match.group(1)].append(artifact)
+            production_groups[match.group(1)].append(artifact)
 
-    final_runs = set()
-    positions = {date: index for index, date in enumerate(dates)}
-    for date, group in groups.items():
-        position = positions.get(date)
-        if position is None or not (KEEP_FULL_PRODUCTION_DATES <= position < KEEP_FINAL_PRODUCTION_DATES):
-            continue
-        for artifact in group:
-            run_id = int((artifact.get("workflow_run") or {}).get("id") or -1)
-            if run_id >= 0 and run_id not in final_runs and has_publish_step(api.jobs(run_id)):
-                final_runs.add(run_id)
-    production_classes = classify_production(groups, dates, final_runs)
+    production_run_ids = {
+        int((artifact.get("workflow_run") or {}).get("id") or 0)
+        for group in production_groups.values()
+        for artifact in group
+        if (artifact.get("workflow_run") or {}).get("id")
+    }
+    final_runs = {run_id for run_id in production_run_ids if has_publish_step(api.jobs(run_id))}
+    production_classes = classify_production(production_groups, dates, final_runs)
 
     protected_shas = {main_sha}
     for pr in recent:
-        head_sha = (pr.get("head") or {}).get("sha")
+        head_sha = str((pr.get("head") or {}).get("sha") or "")
+        merge_sha = str(pr.get("merge_commit_sha") or "")
         if head_sha:
-            protected_shas.add(str(head_sha))
-        if pr.get("merge_commit_sha"):
-            protected_shas.add(str(pr["merge_commit_sha"]))
+            protected_shas.add(head_sha)
+        if merge_sha:
+            protected_shas.add(merge_sha)
     for pr in open_prs:
-        head_sha = (pr.get("head") or {}).get("sha")
+        head_sha = str((pr.get("head") or {}).get("sha") or "")
         if head_sha:
-            protected_shas.add(str(head_sha))
+            protected_shas.add(head_sha)
 
-    artifact_records = []
+    artifact_items = []
     for artifact in artifacts:
         artifact_id = int(artifact["id"])
         name = str(artifact.get("name") or "")
         if artifact_id in production_classes:
-            classification, reason = production_classes[artifact_id]
+            cls, reason = production_classes[artifact_id]
         elif CI_RE.match(name):
-            classification, reason = classify_ci(artifact, protected_shas, branch_classes, history_classes)
+            cls, reason = classify_ci(artifact, protected_shas, branch_classes, history_classes)
         else:
-            classification, reason = "review_only", "unknown_artifact_type"
-        run = artifact.get("workflow_run") or {}
-        artifact_records.append({
+            cls, reason = "review_only", "unknown_artifact_type"
+        artifact_items.append({
             "id": artifact_id,
             "name": name,
-            "size_in_bytes": int(artifact.get("size_in_bytes") or 0),
             "created_at": artifact.get("created_at"),
-            "expires_at": artifact.get("expires_at"),
-            "run_id": run.get("id"),
-            "head_branch": run.get("head_branch"),
-            "head_sha": run.get("head_sha"),
-            "classification": classification,
+            "run_id": int((artifact.get("workflow_run") or {}).get("id") or 0) or None,
+            "classification": cls,
             "reason": reason,
         })
 
-    workflows_by_id = {item["id"]: item for item in workflow_records}
     stale_runs = []
-    for run in (item for item in status_runs if item.get("status") == "queued" and not live_run(item)):
-        workflow = workflows_by_id.get(int(run.get("workflow_id") or -1))
-        if workflow and workflow["classification"] == "safe_disable":
+    now = dt.datetime.now(dt.timezone.utc)
+    workflow_classes = {item["id"]: item["classification"] for item in workflow_items}
+    for workflow in workflows:
+        workflow_id = int(workflow["id"])
+        for run in workflow_runs[workflow_id]:
+            status = str(run.get("status") or "")
+            if status != "queued" or live_run(run, now):
+                continue
+            created = run.get("created_at")
             stale_runs.append({
-                "id": run.get("id"),
-                "name": run.get("name"),
-                "created_at": run.get("created_at"),
+                "id": int(run["id"]),
+                "workflow_id": workflow_id,
+                "workflow": str(workflow.get("name") or ""),
+                "head_branch": str(run.get("head_branch") or ""),
+                "created_at": created,
                 "classification": "review_only",
-                "reason": "queued_run_of_orphan_workflow",
+                "reason": "stale_orphan_run" if workflow_classes[workflow_id] == "safe_disable" else "stale_queued_run",
             })
 
-    active_production = [
-        {"id": run.get("id"), "status": run.get("status"), "name": run.get("name")}
-        for run in active_runs
-        if run.get("path") == ".github/workflows/daily-production.yml"
-    ]
+    source_scan = scan_sources(root, merged)
     return {
-        "version": 1,
-        "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+        "schema_version": 1,
+        "generated_at": now.isoformat(),
         "repository": api.repository,
         "default_branch": default_branch,
         "main_sha": main_sha,
         "policy": {
-            "recent_merged_pr_window": RECENT_MERGED_PRS,
-            "recent_publication_full_chain": KEEP_FULL_PRODUCTION_DATES,
-            "recent_publication_keep_final": KEEP_FINAL_PRODUCTION_DATES,
+            "recent_merged_prs": RECENT_MERGED_PRS,
+            "keep_full_production_dates": KEEP_FULL_PRODUCTION_DATES,
+            "keep_final_production_dates": KEEP_FINAL_PRODUCTION_DATES,
             "orphan_watch_merges": ORPHAN_WATCH_MERGES,
             "orphan_suspect_merges": ORPHAN_SUSPECT_MERGES,
             "stale_queued_after_days": STALE_QUEUED_AFTER_DAYS,
         },
         "recent_merged_prs": [
-            {"number": pr.get("number"), "merged_at": pr.get("merged_at"), "head": (pr.get("head") or {}).get("ref")}
+            {
+                "number": int(pr["number"]),
+                "merged_at": pr.get("merged_at"),
+                "head_branch": pr_branch(pr, api.repository),
+                "head_sha": str((pr.get("head") or {}).get("sha") or ""),
+                "merge_sha": str(pr.get("merge_commit_sha") or ""),
+            }
             for pr in recent
         ],
         "publication_dates": dates,
-        "active_production_runs": active_production,
-        "branches": sorted(branch_records, key=lambda item: item["name"]),
-        "workflows": sorted(workflow_records, key=lambda item: (str(item["path"]), item["id"])),
-        "artifacts": sorted(artifact_records, key=lambda item: item["id"], reverse=True),
-        "workflow_runs_review_only": stale_runs,
-        "source_scan": scan_sources(root, merged),
+        "branches": sorted(branch_items, key=lambda item: item["name"]),
+        "artifacts": sorted(artifact_items, key=lambda item: (item.get("created_at") or "", item["id"]), reverse=True),
+        "workflows": sorted(workflow_items, key=lambda item: (item["path"], item["id"])),
+        "workflow_runs": sorted(stale_runs, key=lambda item: (item.get("created_at") or "", item["id"])),
+        "sources": source_scan,
     }
 
 
-def revalidate_main(api: GitHub, plan):
-    current = api.branch(plan["default_branch"])
+def compact_summary(plan):
+    def counts(items):
+        return dict(sorted(Counter(item["classification"] for item in items).items()))
+    return {
+        "main_sha": plan["main_sha"],
+        "recent_merged_prs": [item["number"] for item in plan["recent_merged_prs"]],
+        "publication_dates": plan["publication_dates"][:KEEP_FINAL_PRODUCTION_DATES],
+        "branches": counts(plan["branches"]),
+        "artifacts": counts(plan["artifacts"]),
+        "workflows": counts(plan["workflows"]),
+        "workflow_runs": counts(plan["workflow_runs"]),
+        "source_watchlist": len(plan["sources"]["watchlist"]),
+        "suspected_orphans": len(plan["sources"]["suspected_orphans"]),
+    }
+
+
+def safe_main(api, expected_sha):
+    current = api.branch("main")
     current_sha = str(((current or {}).get("commit") or {}).get("sha") or "")
-    if current_sha != plan["main_sha"]:
-        raise RuntimeError(f"main changed during hygiene: {plan['main_sha']} -> {current_sha}")
+    if current_sha != expected_sha:
+        raise RuntimeError(f"main changed after hygiene plan: {expected_sha} -> {current_sha}")
 
 
-def apply_branches(api: GitHub, root: Path):
-    plan = build_plan(api, root)
-    revalidate_main(api, plan)
-    actions = []
-    for item in (record for record in plan["branches"] if record["classification"] == "safe_delete"):
-        name = item["name"]
-        branch = api.branch(name)
+def apply_branches(api, root, plan):
+    safe_main(api, plan["main_sha"])
+    recent_numbers = {int(item["number"]) for item in plan["recent_merged_prs"]}
+    deleted = []
+    skipped = []
+    for item in plan["branches"]:
+        if item["classification"] != "safe_delete":
+            continue
+        safe_main(api, plan["main_sha"])
+        branch = api.branch(item["name"])
         if not branch:
-            actions.append(f"skip branch `{name}`: already absent")
+            skipped.append({"name": item["name"], "reason": "already_missing"})
             continue
-        if any(pr_branch(pr, api.repository) == name for pr in api.prs("open")):
-            actions.append(f"skip branch `{name}`: open PR appeared")
-            continue
+        open_prs = api.prs("open")
+        closed = api.prs("closed", base="main")
+        prs = open_prs + closed
         active = {
-            str(run.get("head_branch"))
+            str(run.get("head_branch") or "")
             for status in ("queued", "in_progress")
             for run in api.runs(status)
-            if live_run(run)
+            if live_run(run) and run.get("head_branch")
         }
-        if name in active:
-            actions.append(f"skip branch `{name}`: Actions run is active")
-            continue
-        if (branch.get("commit") or {}).get("sha") != item["sha"]:
-            actions.append(f"skip branch `{name}`: head changed")
-            continue
-        revalidate_main(api, plan)
-        api.delete_branch(name)
-        actions.append(f"deleted merged branch `{name}`")
-    return plan, actions
-
-
-def apply_actions(api: GitHub, root: Path):
-    plan = build_plan(api, root)
-    revalidate_main(api, plan)
-    if plan["active_production_runs"]:
-        return plan, ["skipped Actions cleanup: production run is active"]
-    actions = []
-    for item in (record for record in plan["artifacts"] if record["classification"] == "safe_delete"):
-        revalidate_main(api, plan)
-        status, artifact = api.request(
-            "GET", f"/repos/{api.repository}/actions/artifacts/{item['id']}", (200, 404)
+        cls, reason, related = classify_branch(
+            branch,
+            repository=api.repository,
+            default_branch="main",
+            prs=prs,
+            recent_numbers=recent_numbers,
+            active_branches=active,
         )
-        if status == 404:
-            actions.append(f"skip artifact `{item['id']}`: already absent")
+        current_sha = str((branch.get("commit") or {}).get("sha") or "")
+        expected_sha = str(item["sha"])
+        if cls != "safe_delete" or current_sha != expected_sha:
+            skipped.append({"name": item["name"], "reason": reason if cls != "safe_delete" else "head_changed"})
             continue
-        branch = str(((artifact or {}).get("workflow_run") or {}).get("head_branch") or "")
-        if branch and any(pr_branch(pr, api.repository) == branch for pr in api.prs("open")):
-            actions.append(f"skip artifact `{item['id']}`: branch gained an open PR")
+        if related and str((related.get("head") or {}).get("sha") or "") != current_sha:
+            skipped.append({"name": item["name"], "reason": "pull_request_head_changed"})
+            continue
+        api.delete_branch(item["name"])
+        deleted.append(item["name"])
+    return {"deleted": deleted, "skipped": skipped}
+
+
+def _artifact(api, artifact_id):
+    status, data = api.request("GET", f"/repos/{api.repository}/actions/artifacts/{artifact_id}", (200, 404))
+    return data if status == 200 else None
+
+
+def _workflow(api, workflow_id):
+    status, data = api.request("GET", f"/repos/{api.repository}/actions/workflows/{workflow_id}", (200, 404))
+    return data if status == 200 else None
+
+
+def production_active(api):
+    workflows = api.workflows()
+    production_ids = {
+        int(workflow["id"])
+        for workflow in workflows
+        if str(workflow.get("path") or "") == ".github/workflows/daily-production.yml"
+    }
+    return any(
+        int(run.get("workflow_id") or -1) in production_ids and live_run(run)
+        for status in ("queued", "in_progress")
+        for run in api.runs(status)
+    )
+
+
+def apply_actions(api, root, plan):
+    safe_main(api, plan["main_sha"])
+    if production_active(api):
+        return {"skipped": "active_production_run", "artifacts_deleted": [], "workflows_disabled": []}
+
+    deleted = []
+    skipped = []
+    for item in plan["artifacts"]:
+        if item["classification"] != "safe_delete":
+            continue
+        safe_main(api, plan["main_sha"])
+        artifact = _artifact(api, item["id"])
+        if not artifact or artifact.get("expired"):
+            skipped.append({"id": item["id"], "reason": "already_missing_or_expired"})
+            continue
+        fresh = build_plan(api, root)
+        match = next((entry for entry in fresh["artifacts"] if entry["id"] == item["id"]), None)
+        if not match or match["classification"] != "safe_delete":
+            skipped.append({"id": item["id"], "reason": (match or {}).get("reason", "reclassified")})
             continue
         api.delete_artifact(item["id"])
-        actions.append(f"deleted artifact `{item['name']}` ({item['id']})")
+        deleted.append(item["id"])
 
+    disabled = []
+    workflow_skipped = []
     fresh = build_plan(api, root)
-    revalidate_main(api, plan)
-    for item in (record for record in fresh["workflows"] if record["classification"] == "safe_disable"):
-        status, workflow = api.request(
-            "GET", f"/repos/{api.repository}/actions/workflows/{item['id']}", (200, 404)
-        )
-        if status == 404 or (workflow or {}).get("state") != "active":
-            actions.append(f"skip workflow `{item['id']}`: absent or already disabled")
+    safe_main(api, plan["main_sha"])
+    for item in fresh["workflows"]:
+        if item["classification"] != "safe_disable":
             continue
+        workflow = _workflow(api, item["id"])
+        if not workflow or workflow.get("state") != "active":
+            workflow_skipped.append({"id": item["id"], "reason": "already_missing_or_disabled"})
+            continue
+        check = build_plan(api, root)
+        current = next((entry for entry in check["workflows"] if entry["id"] == item["id"]), None)
+        if not current or current["classification"] != "safe_disable":
+            workflow_skipped.append({"id": item["id"], "reason": (current or {}).get("reason", "reclassified")})
+            continue
+        safe_main(api, plan["main_sha"])
         api.disable_workflow(item["id"])
-        actions.append(f"disabled orphan workflow `{item['name']}` ({item['id']})")
-    return fresh, actions
+        disabled.append(item["id"])
 
-
-def render_summary(plan, mode, actions=None):
-    branches = Counter(item["classification"] for item in plan["branches"])
-    workflows = Counter(item["classification"] for item in plan["workflows"])
-    artifacts = Counter(item["classification"] for item in plan["artifacts"])
-    reclaim = sum(item["size_in_bytes"] for item in plan["artifacts"] if item["classification"] == "safe_delete")
-    lines = [
-        "# Repository hygiene",
-        "",
-        f"Режим: **{mode}**",
-        f"Снимок `main`: `{plan['main_sha']}`",
-        f"Окно веток: последние **{RECENT_MERGED_PRS}** merged PR по `merged_at`.",
-        "",
-        f"- Ветки: `{dict(branches)}`",
-        f"- Workflows: `{dict(workflows)}`",
-        f"- Artifacts: `{dict(artifacts)}`",
-        f"- Потенциально освобождаемый объём artifacts: **{reclaim / 1024 / 1024:.1f} MiB**.",
-        f"- Source watchlist: **{len(plan['source_scan']['watchlist'])}**.",
-        f"- Suspected orphan files, report-only: **{len(plan['source_scan']['suspected_orphans'])}**.",
-        f"- Stale workflow runs, report-only: **{len(plan['workflow_runs_review_only'])}**.",
-    ]
-    if plan["active_production_runs"]:
-        lines += ["", "**Actions cleanup blocked: production run is active.**"]
-    if actions is not None:
-        lines += ["", "## Выполненные действия", ""]
-        lines += [f"- {action}" for action in actions] or ["- Изменений нет."]
-    return "\n".join(lines) + "\n"
-
-
-def write_results(plan, output: Path | None, summary_path: Path | None, mode: str, actions=None):
-    if output:
-        output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(json.dumps(plan, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    text = render_summary(plan, mode, actions)
-    if summary_path:
-        with summary_path.open("a", encoding="utf-8") as stream:
-            stream.write(text)
-    else:
-        print(text, end="")
+    return {
+        "artifacts_deleted": deleted,
+        "artifact_skipped": skipped,
+        "workflows_disabled": disabled,
+        "workflow_skipped": workflow_skipped,
+    }
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=("plan", "apply"), default="plan")
-    parser.add_argument("--scope", choices=("branches", "actions"), default="branches")
-    parser.add_argument("--output", type=Path)
-    parser.add_argument("--summary", type=Path)
-    parser.add_argument("--repository", default=os.environ.get("GITHUB_REPOSITORY", ""))
-    parser.add_argument("--api-url", default=os.environ.get("GITHUB_API_URL", "https://api.github.com"))
+    parser.add_argument("--scope", choices=("all", "branches", "actions"), default="all")
+    parser.add_argument("--report", type=Path, default=Path("automation/preview/repository-hygiene.json"))
     args = parser.parse_args()
+
     token = os.environ.get("GITHUB_TOKEN", "")
-    if not args.repository or not token:
-        parser.error("GITHUB_REPOSITORY and GITHUB_TOKEN are required")
-    api = GitHub(args.repository, token, args.api_url)
-    try:
-        if args.mode == "plan":
-            plan = build_plan(api, Path.cwd())
-            write_results(plan, args.output, args.summary, "plan")
-        elif args.scope == "branches":
-            plan, actions = apply_branches(api, Path.cwd())
-            write_results(plan, args.output, args.summary, "apply/branches", actions)
-        else:
-            plan, actions = apply_actions(api, Path.cwd())
-            write_results(plan, args.output, args.summary, "apply/actions", actions)
-        return 0
-    except (ApiError, RuntimeError) as exc:
-        print(f"repository hygiene failed safely: {exc}", file=sys.stderr)
-        return 2
+    repository = os.environ.get("GITHUB_REPOSITORY", "")
+    api_url = os.environ.get("GITHUB_API_URL", "https://api.github.com")
+    if not token or not repository:
+        raise SystemExit("GITHUB_TOKEN and GITHUB_REPOSITORY are required")
+    root = Path(__file__).resolve().parents[2]
+    api = GitHub(repository, token, api_url)
+    plan = build_plan(api, root)
+    result = {"plan": plan, "summary": compact_summary(plan)}
+
+    if args.mode == "apply":
+        if args.scope in {"all", "branches"}:
+            result["branch_apply"] = apply_branches(api, root, plan)
+        if args.scope in {"all", "actions"}:
+            result["actions_apply"] = apply_actions(api, root, plan)
+
+    args.report.parent.mkdir(parents=True, exist_ok=True)
+    args.report.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(result["summary"], ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        main()
+    except ApiError as exc:
+        print(str(exc), file=sys.stderr)
+        raise SystemExit(2)
