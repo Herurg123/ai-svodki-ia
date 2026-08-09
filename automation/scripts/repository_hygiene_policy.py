@@ -195,7 +195,9 @@ def classify_workflow(
             else ("protected", "github_pages_platform_managed")
         )
     if not runs:
-        return "review_only", "orphan_workflow_without_runs"
+        if str(workflow.get("state") or "") == "active":
+            return "safe_disable", "orphan_workflow_removed_without_runs"
+        return "review_only", "orphan_workflow_already_disabled_without_runs"
     latest = max(runs, key=lambda run: run.get("created_at") or "")
     branch = str(latest.get("head_branch") or "")
     if branch == default_branch:

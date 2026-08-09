@@ -192,7 +192,9 @@ Workflow, которого больше нет среди файлов `.github/
 самой default-ветке и живых runs нет: отсутствие файла в текущем `main` является
 прямым доказательством, что объект больше не канонический. Для workflow с
 последним run на другой ветке действует lifecycle этой ветки; canonical workflow
-и любой workflow с живым run защищён. Для динамического GitHub Pages workflow
+и любой workflow с живым run защищён. Активный orphan workflow без единого run
+тоже отключается, если его файла уже нет в текущем `main`; уже отключённый
+объект без runs остаётся только диагностическим. Для динамического GitHub Pages workflow
 используется отдельная классификация: это GitHub-managed workflow, поэтому при
 `has_pages=false` он остаётся диагностическим `github_pages_platform_managed` и
 не передаётся в REST disable, который GitHub для такого объекта отклоняет.
