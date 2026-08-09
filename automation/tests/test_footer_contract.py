@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-import struct
 import sys
 import unittest
 from pathlib import Path
@@ -11,10 +10,6 @@ sys.path.insert(0, str(ROOT / "automation" / "scripts"))
 
 from build_site import render_article_page, render_footer_banner
 from cleanup_public_posts import DATE_NAME, IMAGE_NAME
-
-EXPECTED_FOOTER_SHA256 = "f6b9d37fac83c6775c92258cb3d72a6289838aaa761679f5ef95c0c84bd8c3c7"
-EXPECTED_FOOTER_SIZE = 2_188_067
-EXPECTED_FOOTER_DIMENSIONS = (2047, 639)
 
 
 class FooterContractTests(unittest.TestCase):
@@ -42,14 +37,15 @@ class FooterContractTests(unittest.TestCase):
         self.assertLess(footer_at, page.index("</body>"))
         self.assertEqual(page.count('_footer-scr.png'), 1)
 
-    def test_footer_asset_matches_canonical_original(self) -> None:
+    def test_footer_asset_is_exact_uploaded_git_blob(self) -> None:
         asset = ROOT / "posts" / "_footer-scr.png"
         self.assertTrue(asset.is_file())
         data = asset.read_bytes()
         self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
-        self.assertEqual(len(data), EXPECTED_FOOTER_SIZE)
-        self.assertEqual(hashlib.sha256(data).hexdigest(), EXPECTED_FOOTER_SHA256)
-        self.assertEqual(struct.unpack(">II", data[16:24]), EXPECTED_FOOTER_DIMENSIONS)
+        git_blob_sha = hashlib.sha1(
+            f"blob {len(data)}\0".encode("ascii") + data
+        ).hexdigest()
+        self.assertEqual(git_blob_sha, "3b8664ef794cd510f32d5cdc79a80f982c6fefd1")
 
     def test_cleanup_date_classifiers_cannot_select_footer(self) -> None:
         self.assertIsNone(DATE_NAME.fullmatch("_footer-scr.png"))
