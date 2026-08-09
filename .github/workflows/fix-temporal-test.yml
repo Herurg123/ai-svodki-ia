@@ -36,6 +36,8 @@ jobs:
           path.write_text(text.replace(old, new, 1), encoding='utf-8')
           PY
       - name: Run focused tests
+        env:
+          PYTHONPATH: automation/scripts
         run: |
           python -m unittest \
             automation.tests.test_recall_sentinel \
