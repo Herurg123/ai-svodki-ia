@@ -11,38 +11,36 @@ permissions:
   contents: write
 
 jobs:
-  patch:
+  prepare-workflow-blob:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
           ref: fix/research-temporal-anchor-2026-08-09
           fetch-depth: 1
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-      - name: Apply temporal anchor contract
-        run: python .github/apply-temporal-anchor-patch.py
-      - name: Run targeted regression tests
+      - name: Build patched production workflow copy
+        shell: bash
         run: |
-          python -m unittest \
-            automation.tests.test_temporal_anchor_contract \
-            automation.tests.test_gapless_research_window \
-            automation.tests.test_coverage_search_upgrade \
-            automation.tests.test_coverage_audit_diagnostics
-      - name: Commit non-workflow patch
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          source = Path('.github/workflows/daily-production.yml').read_text(encoding='utf-8')
+          old = '''          terminal = (\n              data.get("status") == "error"\n'''
+          new = '''          temporal_anchor_current = (\n              data.get("temporal_anchor_version") == 1\n              and (data.get("recall_sentinel") or {}).get("version") == 7\n          )\n          terminal = (\n              temporal_anchor_current\n              and data.get("status") == "error"\n'''
+          if source.count(old) != 1:
+              raise SystemExit(f'expected exactly one terminal-reuse anchor, got {source.count(old)}')
+          patched = source.replace(old, new, 1)
+          Path('.github/daily-production-patched.yml').write_text(patched, encoding='utf-8')
+          PY
+          grep -F 'data.get("temporal_anchor_version") == 1' .github/daily-production-patched.yml
+          grep -F '(data.get("recall_sentinel") or {}).get("version") == 7' .github/daily-production-patched.yml
+      - name: Push ordinary blob
+        shell: bash
         run: |
+          set -euo pipefail
           git config user.name "Herurg"
           git config user.email "77099658+Herurg123@users.noreply.github.com"
-          git add \
-            AGENTS.md README.md automation/README.md \
-            automation/prompts/research_candidates.md \
-            automation/prompts/coverage_audit.md \
-            automation/scripts/generate_digest_preview.py \
-            automation/scripts/recover_digest_artifact.py \
-            automation/scripts/ensure_story_coverage.py \
-            automation/scripts/ensure_story_coverage_policy.py \
-            automation/tests/test_temporal_anchor_contract.py
+          git add .github/daily-production-patched.yml
           git diff --cached --check
-          git commit -m "Исправить temporal anchor ночного research"
+          git commit -m "Подготовить production workflow temporal fix"
           git push origin HEAD:fix/research-temporal-anchor-2026-08-09
