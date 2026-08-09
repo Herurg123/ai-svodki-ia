@@ -12,7 +12,7 @@ import argparse
 import hashlib
 import json
 import shutil
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -54,6 +54,8 @@ IMAGE_STAGE_FILES = (
     "artifact-validation.json",
     "artifact-normalization.json",
 )
+
+TEMPORAL_ANCHOR_VERSION = 1
 
 IMAGE_RECOVERY_REQUIRED = (
     "cover.png",
@@ -106,6 +108,22 @@ def artifact_date(source_dir: Path) -> str:
     return ""
 
 
+def _legacy_cross_midnight_research(candidates: dict[str, Any]) -> bool:
+    search_window = candidates.get("search_window")
+    if not isinstance(search_window, dict):
+        return False
+    end_at = search_window.get("end_at")
+    if not isinstance(end_at, str) or not end_at.strip():
+        return False
+    try:
+        parsed = datetime.fromisoformat(end_at.replace("Z", "+00:00"))
+    except ValueError:
+        return False
+    if parsed.tzinfo is None:
+        return False
+    return parsed.date() > parsed.astimezone(timezone.utc).date()
+
+
 def research_is_reusable(source_dir: Path) -> tuple[bool, str | None]:
     run_info = read_json(source_dir / "run-info.json")
     candidates = read_json(source_dir / "candidates.json")
@@ -116,6 +134,15 @@ def research_is_reusable(source_dir: Path) -> tuple[bool, str | None]:
         return False, "research.status не равен ok"
     if not isinstance(candidates, dict) or not isinstance(candidates.get("candidates"), list):
         return False, "candidates.json не содержит candidates[]"
+    temporal_version = research.get("temporal_anchor_version")
+    if (
+        temporal_version != TEMPORAL_ANCHOR_VERSION
+        and _legacy_cross_midnight_research(candidates)
+    ):
+        return (
+            False,
+            "legacy cross-midnight research не содержит авторитетный temporal anchor",
+        )
     return True, None
 
 

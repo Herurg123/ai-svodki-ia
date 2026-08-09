@@ -59,3 +59,12 @@ width must not exceed 50%.
 Every FTP deployment must verify the actual remote presence of
 `_footer-scr.png` after normal synchronization and restore it if it is missing.
 The scheduled 32-day content cleanup must never classify or delete this file.
+
+## Temporal contract for nightly research
+
+For nightly production, the exact `search_window.end_at` timestamp is the
+authoritative current time for research, every coverage pass, and the recall
+sentinel. Do not let model/system calendar dates override that timestamp.
+Legacy recovery data from a cross-midnight local/UTC window must not be reused
+as final research or a terminal zero-pool stop unless it carries the current
+temporal-anchor contract version.

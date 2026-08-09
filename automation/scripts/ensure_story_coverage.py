@@ -38,7 +38,8 @@ _BASE_EXECUTE_AUDIT_PLAN = _base._BASE_EXECUTE_AUDIT_PLAN
 _LAST_RECALL_SENTINEL: dict[str, Any] | None = None
 
 RECALL_SENTINEL_STRATEGY = "high_signal_recall_sentinel"
-RECALL_SENTINEL_VERSION = 6
+TEMPORAL_ANCHOR_VERSION = 1
+RECALL_SENTINEL_VERSION = 7
 RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ()
 RECALL_SENTINEL_MINIMUM_BUDGET = 7
 
@@ -163,10 +164,33 @@ def _rebuild_directions(
     ]
 
 
-def _prepare_prior_plan(prior_plan: dict[str, Any] | None) -> dict[str, Any] | None:
+def _legacy_cross_midnight_window(search_window: dict[str, Any] | None) -> bool:
+    if not isinstance(search_window, dict):
+        return False
+    end_at = search_window.get("end_at")
+    if not isinstance(end_at, str) or not end_at.strip():
+        return False
+    try:
+        parsed = datetime.fromisoformat(end_at.replace("Z", "+00:00"))
+    except ValueError:
+        return False
+    if parsed.tzinfo is None:
+        return False
+    return parsed.date() > parsed.astimezone(timezone.utc).date()
+
+
+def _prepare_prior_plan(
+    prior_plan: dict[str, Any] | None,
+    search_window: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
     """Drop obsolete sentinel attempts while retaining the six paid passes."""
     if not isinstance(prior_plan, dict):
         return prior_plan
+    if (
+        prior_plan.get("temporal_anchor_version") != TEMPORAL_ANCHOR_VERSION
+        and _legacy_cross_midnight_window(search_window)
+    ):
+        return None
 
     prepared = copy.deepcopy(prior_plan)
     raw_attempts = prepared.get("attempts")
@@ -263,6 +287,10 @@ def build_recall_sentinel_prompt(
     return f"""Ты — финальный OpenAI security recall sentinel редакции «ИИ-сводки».
 
 Строгое редакционное окно: {start_at} → {end_at}
+Авторитетное текущее время этого sentinel-прохода: {end_at}.
+Считай эту отметку фактическим «сейчас» независимо от системной даты модели,
+UTC-даты запуска API или календарной даты среды исполнения. Любой timestamp,
+который не позже {end_at}, не является будущим. Не ищи события позже этой границы.
 Идентификатор направления: general_coverage_gaps
 Версия sentinel: {RECALL_SENTINEL_VERSION}
 
@@ -345,7 +373,7 @@ def execute_audit_plan(
     prior_plan: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Run mandatory coverage, then one versioned source-agnostic recall operation."""
-    prepared_prior = _prepare_prior_plan(prior_plan)
+    prepared_prior = _prepare_prior_plan(prior_plan, search_window)
     plan = globals()["_BASE_EXECUTE_AUDIT_PLAN"](
         api_key=api_key,
         model=model,
@@ -358,6 +386,7 @@ def execute_audit_plan(
         archive=archive,
         prior_plan=prepared_prior,
     )
+    plan["temporal_anchor_version"] = TEMPORAL_ANCHOR_VERSION
 
     existing_sentinel = _existing_recall_sentinel(plan)
     if existing_sentinel is not None:
