@@ -47,3 +47,15 @@ branch → pull request → CI → diff review → separate explicit merge comma
 The existing 32-day repository/public-content cleanup remains a separate,
 documented operational workflow. The repository hygiene exception does not
 broaden its scope or weaken its retention and validation rules.
+
+## Permanent digest footer asset
+
+`posts/_footer-scr.png` is a permanent production asset, not dated release
+content. Every newly rendered digest page and the RSS article content for a new
+release must end with a linked footer image pointing to `https://dzen.ru/rybv`;
+the image source is `https://rybalka.one/posts/_footer-scr.png` and its displayed
+width must not exceed 50%.
+
+Every FTP deployment must verify the actual remote presence of
+`_footer-scr.png` after normal synchronization and restore it if it is missing.
+The scheduled 32-day content cleanup must never classify or delete this file.
