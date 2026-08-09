@@ -331,6 +331,7 @@ class RecallSentinelTests(unittest.TestCase):
 
     def test_stale_sentinel_is_removed_and_budget_restored(self) -> None:
         plan = complete_zero_plan()
+        plan["temporal_anchor_version"] = runtime.TEMPORAL_ANCHOR_VERSION
         stale = base_attempt("general_coverage_gaps", attempt=2)
         stale.update(
             {

@@ -336,3 +336,15 @@ sitemap и Schema.org. Точный актуальный набор команд
 Axios-сюжет в редакционном окне, но Reuters-only инструкция заставила модель
 отбросить его. Версия хранится в artifact; zero-pool artifact старой версии
 возобновляется только для этого одного седьмого поиска.
+
+## Temporal anchor ночного production
+
+`SEARCH_WINDOW_END_AT` — авторитетное `now` для main research, targeted coverage
+audit и recall sentinel. Это защищает запуск около полуночи UTC от ложного вывода,
+что московская часть окна следующего календарного дня находится в будущем.
+
+Текущая версия temporal contract — `1`, текущая версия recall sentinel — `7`.
+`run-info.json` сохраняет `research.temporal_anchor_version`; coverage report
+сохраняет `temporal_anchor_version`. Legacy кросс-полуночный research без этой
+версии не считается reusable. Старый zero-pool terminal stop также не может
+обойти новый temporal contract до recovery.

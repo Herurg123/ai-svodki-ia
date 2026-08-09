@@ -1553,6 +1553,7 @@ def main() -> int:
                         "search_budget",
                         "time_precision_warnings",
                         "api",
+                        "temporal_anchor_version",
                     ):
                         report[key] = audit_plan.get(key)
                     report["web_search_performed"] = (
@@ -1602,6 +1603,9 @@ def main() -> int:
                         additional_candidates = raw_candidates
         elif report["audit_needed"] and prior_complete:
             report["prior_audit_reused"] = True
+            report["temporal_anchor_version"] = (prior_report or {}).get(
+                "temporal_anchor_version"
+            )
             report["web_search_requested"] = True
             report["web_search_performed"] = bool(
                 (prior_report or {}).get("web_search_performed")

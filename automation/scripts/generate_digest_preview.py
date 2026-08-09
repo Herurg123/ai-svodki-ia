@@ -48,6 +48,7 @@ DEFAULT_MAXIMUM_CANDIDATES = 20
 DEFAULT_MINIMUM_SELECTED_STORIES = 7
 DEFAULT_MAXIMUM_SELECTED_STORIES = 12
 DEFAULT_MAXIMUM_RESEARCH_WEB_SEARCH_CALLS = 12
+TEMPORAL_ANCHOR_VERSION = 1
 
 ALLOWED_HTML_TAGS = {
     "p",
@@ -2417,6 +2418,7 @@ def main() -> int:
             },
         )
 
+        run_info["research"]["temporal_anchor_version"] = TEMPORAL_ANCHOR_VERSION
         run_info["research"]["prompt_sha256"] = sha256_text(research_prompt)
         atomic_write(
             output_dir / "research-prompt-input.txt",
