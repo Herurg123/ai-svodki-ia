@@ -217,6 +217,10 @@ class HybridSearchCompletenessTests(unittest.TestCase):
         self.assertIn("РОВНО ОДИН Web Search", prompt)
         self.assertIn("API domain filter отсутствует", prompt)
 
+    def test_generic_other_does_not_close_safety_policy_region_gap(self):
+        counts = hc.cluster_counts([candidate("Misc Zeta", "other")])
+        self.assertEqual(counts["safety_policy_regions"], 0)
+
     def test_budget_cannot_be_configured_above_four(self):
         write_json(self.artifact_dir / "candidates.json", research([]))
         seen = []
