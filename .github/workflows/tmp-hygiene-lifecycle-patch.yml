@@ -1,0 +1,291 @@
+name: Temporary hygiene lifecycle patch
+
+on:
+  push:
+    branches:
+      - fix/hygiene-lifecycle-2026-08-09
+
+permissions:
+  contents: write
+  actions: write
+  pull-requests: read
+
+jobs:
+  patch-and-clean:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: fix/hygiene-lifecycle-2026-08-09
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Patch repository hygiene lifecycle
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          def replace_once(path, old, new):
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              if text.count(old) != 1:
+                  raise SystemExit(f'{path}: expected exactly one literal match, got {text.count(old)}')
+              p.write_text(text.replace(old, new), encoding='utf-8')
+
+          def replace_re_once(path, pattern, replacement):
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              new, count = re.subn(pattern, replacement, text, count=1, flags=re.S)
+              if count != 1:
+                  raise SystemExit(f'{path}: expected exactly one regex match, got {count}')
+              p.write_text(new, encoding='utf-8')
+
+          policy = 'automation/scripts/repository_hygiene_policy.py'
+          replace_once(
+              policy,
+              'RECENT_MERGED_PRS = 5\nKEEP_FULL_PRODUCTION_DATES = 2\n',
+              'RECENT_MERGED_PRS = 5\nRECENT_MERGED_TTL_DAYS = 7\nCLOSED_UNMERGED_TTL_DAYS = 14\nKEEP_FULL_PRODUCTION_DATES = 2\n',
+          )
+          replace_once(
+              policy,
+              'def latest_pr_for_branch(name, prs, repository):\n',
+              '''def currently_protected_recent_merges(merged_prs, now=None):\n    now = now or dt.datetime.now(dt.timezone.utc)\n    cutoff = now - dt.timedelta(days=RECENT_MERGED_TTL_DAYS)\n    result = []\n    for pr in list(merged_prs)[:RECENT_MERGED_PRS]:\n        merged_at = iso(pr.get("merged_at"))\n        if merged_at and merged_at >= cutoff:\n            result.append(pr)\n    return result\n\n\ndef stale_closed_unmerged(pr, now=None):\n    if not isinstance(pr, dict) or pr.get("state") != "closed" or pr.get("merged_at"):\n        return False\n    closed_at = iso(pr.get("closed_at") or pr.get("updated_at"))\n    if not closed_at:\n        return False\n    now = now or dt.datetime.now(dt.timezone.utc)\n    return closed_at <= now - dt.timedelta(days=CLOSED_UNMERGED_TTL_DAYS)\n\n\ndef latest_pr_for_branch(name, prs, repository):\n''',
+          )
+          replace_re_once(
+              policy,
+              r'def branch_history_class\(name, prs, repository, recent_numbers\):\n.*?\n\ndef classify_branch',
+              '''def branch_history_class(name, prs, repository, recent_numbers, now=None):\n    related = [pr for pr in prs if pr_branch(pr, repository) == name]\n    if any(pr.get("state") == "open" for pr in related):\n        return "protected"\n    latest = latest_pr_for_branch(name, prs, repository)\n    if not latest:\n        return "review_only"\n    if not latest.get("merged_at"):\n        return "safe_delete" if stale_closed_unmerged(latest, now) else "review_only"\n    return "protected" if int(latest["number"]) in recent_numbers else "safe_delete"\n\n\ndef classify_branch''',
+          )
+          replace_re_once(
+              policy,
+              r'def classify_branch\(branch, \*, repository, default_branch, prs, recent_numbers, active_branches=frozenset\(\)\):\n.*?\n\ndef publication_dates',
+              '''def classify_branch(\n    branch, *, repository, default_branch, prs, recent_numbers,\n    active_branches=frozenset(), now=None,\n):\n    name = str(branch.get("name") or "")\n    if name == default_branch:\n        return "protected", "default_branch", None\n    if branch.get("protected"):\n        return "protected", "github_protected_branch", None\n    if name in active_branches:\n        return "protected", "active_actions_run", None\n    related = [pr for pr in prs if pr_branch(pr, repository) == name]\n    if any(pr.get("state") == "open" for pr in related):\n        return "protected", "open_pull_request", None\n    latest = latest_pr_for_branch(name, prs, repository)\n    if not latest:\n        return "review_only", "branch_has_no_pull_request", None\n    current_sha = str((branch.get("commit") or {}).get("sha") or "")\n    head_sha = str((latest.get("head") or {}).get("sha") or "")\n    if not latest.get("merged_at"):\n        if stale_closed_unmerged(latest, now):\n            if head_sha and head_sha == current_sha:\n                return "safe_delete", "stale_closed_unmerged_pull_request", latest\n            return "review_only", "closed_pull_request_head_changed", latest\n        return "review_only", "latest_pull_request_not_merged", latest\n    if int(latest["number"]) in recent_numbers:\n        return "protected", "recent_merged_pull_request", latest\n    if head_sha != current_sha:\n        return "review_only", "branch_diverged_after_merge", latest\n    return "safe_delete", "old_merged_pull_request", latest\n\n\ndef publication_dates''',
+          )
+          replace_re_once(
+              policy,
+              r'def classify_workflow\(workflow, canonical_paths, has_pages, branch_classes, history_classes, runs\):\n.*?\n\ndef _text_corpus',
+              '''def classify_workflow(\n    workflow, canonical_paths, has_pages, branch_classes, history_classes, runs,\n    default_branch="main",\n):\n    path = str(workflow.get("path") or "")\n    if path in canonical_paths:\n        return "protected", "canonical_workflow"\n    if any(live_run(run) for run in runs):\n        return "protected", "workflow_has_active_run"\n    if path.startswith("dynamic/pages/"):\n        return ("protected", "github_pages_enabled") if has_pages else ("safe_disable", "github_pages_disabled")\n    if not runs:\n        return "review_only", "orphan_workflow_without_runs"\n    latest = max(runs, key=lambda run: run.get("created_at") or "")\n    branch = str(latest.get("head_branch") or "")\n    if branch == default_branch:\n        return "safe_disable", "orphan_workflow_removed_from_default_branch"\n    branch_class = branch_classes.get(branch, history_classes.get(branch, "review_only"))\n    if branch_class in {"protected", "review_only"}:\n        return "protected", "workflow_tied_to_retained_branch"\n    return "safe_disable", "orphan_workflow_from_old_branch"\n\n\ndef _text_corpus''',
+          )
+
+          runtime = 'automation/scripts/repository_hygiene.py'
+          replace_once(
+              runtime,
+              '    ORPHAN_SUSPECT_MERGES,\n    ORPHAN_WATCH_MERGES,\n    PRODUCTION_RE,\n    RECENT_MERGED_PRS,\n',
+              '    ORPHAN_SUSPECT_MERGES,\n    ORPHAN_WATCH_MERGES,\n    PRODUCTION_RE,\n    RECENT_MERGED_PRS,\n    RECENT_MERGED_TTL_DAYS,\n    CLOSED_UNMERGED_TTL_DAYS,\n',
+          )
+          replace_once(
+              runtime,
+              '    branch_history_class,\n    classify_branch,\n',
+              '    branch_history_class,\n    currently_protected_recent_merges,\n    classify_branch,\n',
+          )
+          replace_once(
+              runtime,
+              '    merged = merged_sorted(closed_main_prs)\n    recent = merged[:RECENT_MERGED_PRS]\n    recent_numbers = {int(pr["number"]) for pr in recent}\n',
+              '    now = dt.datetime.now(dt.timezone.utc)\n    merged = merged_sorted(closed_main_prs)\n    recent = currently_protected_recent_merges(merged, now)\n    recent_numbers = {int(pr["number"]) for pr in recent}\n',
+          )
+          replace_once(
+              runtime,
+              '            recent_numbers=recent_numbers,\n            active_branches=active_branches,\n        )\n',
+              '            recent_numbers=recent_numbers,\n            active_branches=active_branches,\n            now=now,\n        )\n',
+          )
+          replace_once(
+              runtime,
+              '        history_classes[name] = branch_history_class(name, all_prs, api.repository, recent_numbers)\n',
+              '        history_classes[name] = branch_history_class(name, all_prs, api.repository, recent_numbers, now)\n',
+          )
+          replace_once(
+              runtime,
+              '            history_classes,\n            workflow_runs[int(workflow["id"])],\n        )\n',
+              '            history_classes,\n            workflow_runs[int(workflow["id"])],\n            default_branch=default_branch,\n        )\n',
+          )
+          replace_once(
+              runtime,
+              '    stale_runs = []\n    now = dt.datetime.now(dt.timezone.utc)\n',
+              '    stale_runs = []\n',
+          )
+          replace_once(
+              runtime,
+              '            "recent_merged_prs": RECENT_MERGED_PRS,\n            "keep_full_production_dates": KEEP_FULL_PRODUCTION_DATES,\n',
+              '            "recent_merged_prs": RECENT_MERGED_PRS,\n            "recent_merged_ttl_days": RECENT_MERGED_TTL_DAYS,\n            "closed_unmerged_ttl_days": CLOSED_UNMERGED_TTL_DAYS,\n            "keep_full_production_dates": KEEP_FULL_PRODUCTION_DATES,\n',
+          )
+          replace_once(
+              runtime,
+              '            recent_numbers=recent_numbers,\n            active_branches=active,\n        )\n',
+              '            recent_numbers=recent_numbers,\n            active_branches=active,\n            now=dt.datetime.now(dt.timezone.utc),\n        )\n',
+          )
+
+          tests = 'automation/tests/test_repository_hygiene.py'
+          replace_once(
+              tests,
+              'def pr(number, branch, sha, *, merged_at=None, state="closed", updated_at=None, merge_sha=None):\n',
+              'def pr(number, branch, sha, *, merged_at=None, state="closed", updated_at=None, merge_sha=None, closed_at=None):\n',
+          )
+          replace_once(
+              tests,
+              '        "created_at": "2026-07-01T00:00:00Z",\n        "merge_commit_sha": merge_sha,\n',
+              '        "created_at": "2026-07-01T00:00:00Z",\n        "closed_at": closed_at if closed_at is not None else ((updated_at or merged_at or "2026-08-01T00:00:00Z") if state == "closed" else None),\n        "merge_commit_sha": merge_sha,\n',
+          )
+          insert_before = '    def test_workflow_grace_and_pages_special_case(self):\n'
+          new_tests = '''    def test_recent_merge_window_expires_by_age_even_if_it_is_still_in_last_five(self):\n        now = rh.dt.datetime(2026, 8, 9, 9, 0, tzinfo=rh.dt.timezone.utc)\n        merged = rh.merged_sorted([\n            pr(1, "agent/old-recent", "1"*40, merged_at="2026-08-01T00:00:00Z"),\n            pr(2, "agent/fresh", "2"*40, merged_at="2026-08-08T00:00:00Z"),\n        ])\n        protected = rh.currently_protected_recent_merges(merged, now)\n        self.assertEqual([item["number"] for item in protected], [2])\n\n    def test_closed_unmerged_branch_ages_out_only_with_unchanged_head(self):\n        now = rh.dt.datetime(2026, 8, 20, tzinfo=rh.dt.timezone.utc)\n        abandoned = pr(9, "agent/abandoned", "3"*40, state="closed", merged_at=None, closed_at="2026-08-01T00:00:00Z")\n        cls, reason, _ = rh.classify_branch(\n            {"name":"agent/abandoned", "protected":False, "commit":{"sha":"3"*40}},\n            repository=REPO, default_branch="main", prs=[abandoned], recent_numbers=set(), now=now,\n        )\n        self.assertEqual((cls, reason), ("safe_delete", "stale_closed_unmerged_pull_request"))\n        cls, reason, _ = rh.classify_branch(\n            {"name":"agent/abandoned", "protected":False, "commit":{"sha":"4"*40}},\n            repository=REPO, default_branch="main", prs=[abandoned], recent_numbers=set(), now=now,\n        )\n        self.assertEqual((cls, reason), ("review_only", "closed_pull_request_head_changed"))\n\n'''
+          replace_once(tests, insert_before, new_tests + insert_before)
+          replace_once(
+              tests,
+              '        orphan = {"id":3, "path":".github/workflows/temporary.yml"}\n        runs = [{"head_branch":"agent/old", "created_at":"2026-08-01T00:00:00Z"}]\n',
+              '        orphan = {"id":3, "path":".github/workflows/temporary.yml"}\n        main_runs = [{"head_branch":"main", "created_at":"2026-08-01T00:00:00Z"}]\n        self.assertEqual(rh.classify_workflow(orphan, canonical, False, {"main":"protected"}, {}, main_runs, default_branch="main"), ("safe_disable", "orphan_workflow_removed_from_default_branch"))\n        runs = [{"head_branch":"agent/old", "created_at":"2026-08-01T00:00:00Z"}]\n',
+          )
+
+          replace_once(
+              'README.md',
+              '''- Окно веток считается по пяти последним PR, реально смёрженным в `main`, в\n  порядке `merged_at`, а не по номеру PR. `main`, protected branches, ветки\n  открытых PR и ветки с активным Actions-run никогда не удаляются. Старая\n  merged-ветка удаляется только если её текущий HEAD всё ещё совпадает с\n  `head.sha` смёрженного PR; ветки без PR, closed-unmerged и изменённые после\n  merge остаются `review_only`.\n''',
+              '''- Защитное окно веток ограничено одновременно пятью последними PR, реально\n  смёрженными в `main` по `merged_at`, и семью сутками после merge. Поэтому\n  «последние пять» не могут стать вечной бронёй в спокойном репозитории. `main`,\n  protected branches, ветки открытых PR и ветки с активным Actions-run никогда\n  не удаляются. Старая merged-ветка удаляется только если её текущий HEAD всё\n  ещё совпадает с `head.sha` смёрженного PR. Closed-unmerged ветка после 14\n  суток без открытого PR может перейти в `safe_delete`, но только при точном\n  совпадении текущего HEAD с `head.sha` закрытого PR; ветки без PR и изменённые\n  после merge/закрытия остаются `review_only`.\n''',
+          )
+          replace_once(
+              'README.md',
+              '''- Workflow, которого больше нет среди файлов `.github/workflows/` в `main`,\n  отключается только когда он связан со старой merged-веткой и не имеет живого\n  run. Динамический GitHub Pages workflow отключается только при\n  `has_pages=false`. `in_progress` всегда считается живым; `queued` старше\n  14 дней считается зависшим и не защищает orphan-workflow.\n''',
+              '''- Workflow, которого больше нет среди файлов `.github/workflows/` в `main`,\n  и не имеет живого run, больше не может зависнуть навечно из-за того, что его\n  последний запуск был на `main`: такой объект безопасно отключается как\n  удалённый из текущей default-ветки. Для workflow, чей последний запуск был на\n  другой ветке, действует классификация этой ветки и её grace/TTL. Динамический\n  GitHub Pages workflow отключается только при `has_pages=false`. `in_progress`\n  всегда считается живым; `queued` старше 14 дней считается зависшим и не\n  защищает orphan-workflow.\n''',
+          )
+
+          replace_once(
+              'automation/README.md',
+              '''- защитное окно — пять последних PR, смёрженных в `main` по `merged_at`;\n- `main`, protected branches, ветки открытых PR и ветки с живым Actions-run\n  сохраняются;\n- старая merged-ветка удаляется только при точном совпадении текущего HEAD с\n  `head.sha` её последнего merged PR;\n- branch без PR, closed-unmerged или изменённый после merge остаётся\n  `review_only`.\n''',
+              '''- защитное окно — не более пяти последних PR, смёрженных в `main` по\n  `merged_at`, и не дольше семи суток после merge; счётчик PR без временного\n  TTL больше не создаёт вечных веток;\n- `main`, protected branches, ветки открытых PR и ветки с живым Actions-run\n  сохраняются;\n- старая merged-ветка удаляется только при точном совпадении текущего HEAD с\n  `head.sha` её последнего merged PR;\n- closed-unmerged ветка после 14 суток может удаляться автоматически только\n  если её HEAD всё ещё точно равен `head.sha` закрытого PR; branch без PR и\n  ветка, изменённая после merge/закрытия, остаются `review_only`.\n''',
+          )
+          replace_once(
+              'automation/README.md',
+              '''Workflow, которого больше нет среди файлов `.github/workflows/` текущего\n`main`, отключается только если его последние runs относятся к старой merged-\nветке. Canonical workflows, workflow с живым run и workflow, связанный с\nсохраняемой либо неоднозначной веткой, защищены. Для динамического GitHub Pages\nworkflow используется отдельный gate: он может быть отключён только если\nрепозиторий сообщает `has_pages=false`.\n''',
+              '''Workflow, которого больше нет среди файлов `.github/workflows/` текущего\n`main`, отключается без ожидания branch grace, если его последний run был на\nсамой default-ветке и живых runs нет: отсутствие файла в текущем `main` является\nпрямым доказательством, что объект больше не канонический. Для workflow с\nпоследним run на другой ветке действует lifecycle этой ветки; canonical workflow\nи любой workflow с живым run защищён. Для динамического GitHub Pages workflow\nиспользуется отдельный gate: он может быть отключён только если репозиторий\nсообщает `has_pages=false`.\n''',
+          )
+
+          replace_once(
+              'AGENTS.md',
+              '''The scheduled repository hygiene workflow may mutate only explicitly classified\nephemeral GitHub objects: old merged branch refs, safe Actions artifacts, and\nthe enabled state of orphaned Actions workflows. It must not edit tracked\nproject files, `main`, releases, tags, or published/editorial content.\n''',
+              '''The scheduled repository hygiene workflow may mutate only explicitly classified\nephemeral GitHub objects: old merged branch refs, safe Actions artifacts, and\nthe enabled state of orphaned Actions workflows. It must not edit tracked\nproject files, `main`, releases, tags, or published/editorial content. The\nfive-merged-PR branch grace is also capped at 7 days, so quiet periods cannot\nprotect stale refs forever. Closed-unmerged branches may age into `safe_delete`\nafter 14 days only when their current HEAD still exactly matches the closed PR\nhead. An orphan workflow absent from current `main` whose latest run was on the\ndefault branch may be disabled once it has no live run; absence from current\n`main` is the canonical proof that the workflow was removed.\n''',
+          )
+          PY
+
+      - name: Run focused hygiene tests
+        run: |
+          python -m unittest \
+            automation.tests.test_repository_hygiene \
+            automation.tests.test_repository_hygiene_summary \
+            automation.tests.test_repository_hygiene_workflow -v
+          git diff --check
+
+      - name: Commit patched files to feature branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add automation/scripts/repository_hygiene_policy.py automation/scripts/repository_hygiene.py automation/tests/test_repository_hygiene.py README.md automation/README.md AGENTS.md
+          git commit -m 'Bound repository hygiene object lifetimes'
+          git push origin HEAD:fix/hygiene-lifecycle-2026-08-09
+
+      - name: Remove proven one-shot GitHub garbage
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.error, urllib.parse, urllib.request
+
+          token = os.environ['GH_TOKEN']
+          repo = os.environ['GH_REPO']
+          api = 'https://api.github.com'
+          headers = {
+              'Accept': 'application/vnd.github+json',
+              'Authorization': f'Bearer {token}',
+              'X-GitHub-Api-Version': '2022-11-28',
+              'User-Agent': 'ai-svodki-one-shot-hygiene-cleanup',
+          }
+
+          def request(method, path, expected=(200,)):
+              req = urllib.request.Request(api + path, headers=headers, method=method)
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as r:
+                      raw = r.read()
+                      status = r.status
+              except urllib.error.HTTPError as e:
+                  raw = e.read()
+                  status = e.code
+              if status not in expected:
+                  raise RuntimeError(f'{method} {path}: HTTP {status}: {raw[:500]!r}')
+              return json.loads(raw.decode()) if raw else None
+
+          meta = request('GET', f'/repos/{repo}')
+          canonical = request('GET', f'/repos/{repo}/contents/.github/workflows?ref=main')
+          canonical_paths = {x['path'] for x in canonical if x.get('type') == 'file'}
+          known_one_shot_paths = {
+              '.github/workflows/bootstrap-footer-asset.yml',
+              '.github/workflows/apply-temporal-anchor-patch.yml',
+              '.github/workflows/fix-temporal-test.yml',
+              '.github/workflows/dispatch-aug9-production.yml',
+              '.github/workflows/apply-zero-research-fix.yml',
+              '.github/workflows/dispatch-aug9-recovery.yml',
+              '.github/workflows/tmp-editorial-stop-patch.yml',
+          }
+
+          workflows = request('GET', f'/repos/{repo}/actions/workflows?per_page=100').get('workflows', [])
+          disabled = []
+          skipped = []
+          for wf in workflows:
+              path = str(wf.get('path') or '')
+              eligible = path in known_one_shot_paths or (path.startswith('dynamic/pages/') and not meta.get('has_pages'))
+              if not eligible or path in canonical_paths:
+                  continue
+              runs = request('GET', f'/repos/{repo}/actions/workflows/{wf["id"]}/runs?per_page=30').get('workflow_runs', [])
+              if any(run.get('status') in {'queued', 'in_progress'} for run in runs):
+                  skipped.append([wf['id'], path, 'live_run'])
+                  continue
+              if wf.get('state') == 'active':
+                  request('PUT', f'/repos/{repo}/actions/workflows/{wf["id"]}/disable', expected=(204,))
+                  disabled.append([wf['id'], path])
+
+          branch = 'agent/allow-short-regional-digests'
+          quoted = urllib.parse.quote(branch, safe='')
+          branch_data = request('GET', f'/repos/{repo}/branches/{quoted}')
+          pr = request('GET', f'/repos/{repo}/pulls/18')
+          open_prs = request('GET', f'/repos/{repo}/pulls?state=open&head=Herurg123:{urllib.parse.quote(branch, safe="")}&per_page=10')
+          runs = request('GET', f'/repos/{repo}/actions/runs?branch={urllib.parse.quote(branch, safe="")}&per_page=50').get('workflow_runs', [])
+          branch_sha = str((branch_data.get('commit') or {}).get('sha') or '')
+          pr_sha = str((pr.get('head') or {}).get('sha') or '')
+          branch_deleted = False
+          if (
+              pr.get('state') == 'closed'
+              and pr.get('merged_at') is None
+              and (pr.get('head') or {}).get('ref') == branch
+              and branch_sha
+              and branch_sha == pr_sha
+              and not open_prs
+              and not any(run.get('status') in {'queued', 'in_progress'} for run in runs)
+          ):
+              ref = '/'.join(urllib.parse.quote(part, safe='') for part in ('heads', *branch.split('/')))
+              request('DELETE', f'/repos/{repo}/git/refs/{ref}', expected=(204,))
+              branch_deleted = True
+
+          print(json.dumps({'workflows_disabled': disabled, 'workflow_skipped': skipped, 'closed_unmerged_branch_deleted': branch_deleted}, ensure_ascii=False, indent=2))
+          PY
+
+      - name: Disable this temporary patch workflow
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request
+          token=os.environ['GH_TOKEN']; repo=os.environ['GH_REPO']
+          headers={'Accept':'application/vnd.github+json','Authorization':f'Bearer {token}','X-GitHub-Api-Version':'2022-11-28','User-Agent':'ai-svodki-self-disable'}
+          req=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/workflows?per_page=100',headers=headers)
+          with urllib.request.urlopen(req,timeout=30) as r: workflows=json.load(r).get('workflows',[])
+          target=next((w for w in workflows if w.get('path')=='.github/workflows/tmp-hygiene-lifecycle-patch.yml'),None)
+          if target and target.get('state')=='active':
+              req=urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/workflows/{target["id"]}/disable',headers=headers,method='PUT')
+              try:
+                  with urllib.request.urlopen(req,timeout=30) as r: print('self-disabled', target['id'], r.status)
+              except Exception as exc:
+                  print('self-disable warning:', repr(exc))
+          PY
