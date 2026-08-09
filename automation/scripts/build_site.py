@@ -28,6 +28,8 @@ CONTENT_NS = "http://purl.org/rss/1.0/modules/content/"
 DC_NS = "http://purl.org/dc/elements/1.1/"
 MEDIA_NS = "http://search.yahoo.com/mrss/"
 ATOM_NS = "http://www.w3.org/2005/Atom"
+FOOTER_TARGET_URL = "https://dzen.ru/rybv"
+FOOTER_FILENAME = "_footer-scr.png"
 
 RUSSIAN_MONTHS = {
     1: "января",
@@ -137,6 +139,17 @@ def xml_attr(value: str) -> str:
 
 def normalise_base_url(value: str) -> str:
     return value.rstrip("/")
+
+
+def render_footer_banner(config: dict[str, Any]) -> str:
+    image_url = normalise_base_url(str(config["site_base_url"])) + f"/{FOOTER_FILENAME}"
+    return (
+        '<p class="digest-footer" style="text-align:center;margin:32px 0 0;">'
+        f'<a href="{xml_attr(FOOTER_TARGET_URL)}" target="_blank" rel="noopener noreferrer">'
+        f'<img src="{xml_attr(image_url)}" alt="Подписаться на канал" '
+        'style="display:block;max-width:50%;width:auto;height:auto;margin:0 auto;">'
+        '</a></p>'
+    )
 
 
 def parse_iso_datetime(value: str) -> datetime:
@@ -383,6 +396,7 @@ def render_article_page(config: dict[str, Any], source: dict[str, Any]) -> str:
     ).strip()
     title = str(source["title"])
     image_filename = str(source["cover_filename"])
+    footer_html = render_footer_banner(config)
     return f"""<!doctype html>
 <html lang=\"ru\">
 <head>
@@ -395,6 +409,7 @@ def render_article_page(config: dict[str, Any], source: dict[str, Any]) -> str:
 <h1>{xml_text(title)}</h1>
 <img src=\"../images/{xml_attr(image_filename)}\" alt=\"{xml_attr(title)}\">
 {source['article_html']}
+{footer_html}
 </body>
 </html>
 """
@@ -609,7 +624,7 @@ def main() -> int:
             "published_datetime": source["published_datetime"],
             "author": source["author"],
             "description_html": f"<p>{xml_text(str(source['description']))}</p>",
-            "article_html": source["article_html"],
+            "article_html": f"{source['article_html']}\n{render_footer_banner(config)}",
             "image_url": f"{site_base_url}/images/{source['cover_filename']}",
             "image_filename": source["cover_filename"],
             "categories": ["Статья", "ИИ", "Технологии", "native-yes"],

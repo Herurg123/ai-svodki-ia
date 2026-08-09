@@ -51,6 +51,10 @@ jobs:
             echo "Local posts/ directory is missing." >&2
             exit 1
           fi
+          if [[ ! -f "posts/_footer-scr.png" ]]; then
+            echo "Permanent footer asset posts/_footer-scr.png is missing." >&2
+            exit 1
+          fi
           echo "Deploying commit $(git rev-parse HEAD)"
 
       - name: Deploy posts through FTP
@@ -69,22 +73,63 @@ jobs:
             **/.git*/**
             **/node_modules/**
 
+      - name: Verify permanent footer asset on FTP
+        id: footer_asset
+        if: steps.ftp_deploy.outcome == 'success'
+        shell: bash
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          remote_url="ftp://${FTP_SERVER}:21/_footer-scr.png"
+          curl_args=(
+            --fail
+            --silent
+            --show-error
+            --user "${FTP_USERNAME}:${FTP_PASSWORD}"
+          )
+
+          if curl "${curl_args[@]}" "${remote_url}" --output /dev/null; then
+            echo "footer_repaired=false" >> "${GITHUB_OUTPUT}"
+            echo "Permanent footer asset is present on FTP."
+          else
+            echo "Permanent footer asset is absent on FTP; restoring it."
+            curl "${curl_args[@]}" \
+              --upload-file "posts/_footer-scr.png" \
+              "${remote_url}"
+            echo "footer_repaired=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+          curl "${curl_args[@]}" "${remote_url}" --output /dev/null
+          echo "Permanent footer asset presence verified."
+
       - name: Показать итог FTP-синхронизации
         if: always()
         shell: bash
         env:
           DEPLOY_OUTCOME: ${{ steps.ftp_deploy.outcome }}
           DEPLOY_REF: ${{ inputs.ref || github.sha }}
+          FOOTER_OUTCOME: ${{ steps.footer_asset.outcome }}
+          FOOTER_REPAIRED: ${{ steps.footer_asset.outputs.footer_repaired }}
         run: |
           {
             echo "# FTP-синхронизация posts"
             echo
-            if [[ "${DEPLOY_OUTCOME}" == "success" ]]; then
+            if [[ "${DEPLOY_OUTCOME}" == "success" && "${FOOTER_OUTCOME}" == "success" ]]; then
               echo "✅ FTP приведён к состоянию commit \`${DEPLOY_REF}\`."
               echo
               echo "Новые и изменённые файлы загружены, а ранее синхронизированные файлы, которых больше нет в \`posts/\`, удалены с сервера."
+              if [[ "${FOOTER_REPAIRED}" == "true" ]]; then
+                echo
+                echo "Постоянный файл \`_footer-scr.png\` отсутствовал на FTP и был восстановлен."
+              else
+                echo
+                echo "Наличие постоянного файла \`_footer-scr.png\` на FTP подтверждено."
+              fi
             else
-              echo "❌ FTP-синхронизация commit \`${DEPLOY_REF}\` не подтверждена."
+              echo "❌ FTP-синхронизация commit \`${DEPLOY_REF}\` не подтверждена полностью."
               echo
               echo "GitHub остаётся источником правильного состояния; этот же ref можно безопасно развернуть повторно."
             fi
