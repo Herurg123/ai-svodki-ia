@@ -188,7 +188,11 @@ def classify_workflow(
     if any(live_run(run) for run in runs):
         return "protected", "workflow_has_active_run"
     if path.startswith("dynamic/pages/"):
-        return ("protected", "github_pages_enabled") if has_pages else ("safe_disable", "github_pages_disabled")
+        return (
+            ("protected", "github_pages_enabled")
+            if has_pages
+            else ("protected", "github_pages_platform_managed")
+        )
     if not runs:
         return "review_only", "orphan_workflow_without_runs"
     latest = max(runs, key=lambda run: run.get("created_at") or "")

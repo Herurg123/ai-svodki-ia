@@ -193,8 +193,9 @@ Workflow, которого больше нет среди файлов `.github/
 прямым доказательством, что объект больше не канонический. Для workflow с
 последним run на другой ветке действует lifecycle этой ветки; canonical workflow
 и любой workflow с живым run защищён. Для динамического GitHub Pages workflow
-используется отдельный gate: он может быть отключён только если репозиторий
-сообщает `has_pages=false`.
+используется отдельная классификация: это GitHub-managed workflow, поэтому при
+`has_pages=false` он остаётся диагностическим `github_pages_platform_managed` и
+не передаётся в REST disable, который GitHub для такого объекта отклоняет.
 
 `in_progress` всегда живой. `queued` старше 14 дней считается зависшим и не
 может навечно защищать orphan-workflow. Такие stale runs попадают в отчёт, но

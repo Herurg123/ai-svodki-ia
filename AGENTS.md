@@ -44,7 +44,10 @@ protect stale refs forever. Closed-unmerged branches may age into `safe_delete`
 after 14 days only when their current HEAD still exactly matches the closed PR
 head. An orphan workflow absent from current `main` whose latest run was on the
 default branch may be disabled once it has no live run; absence from current
-`main` is the canonical proof that the workflow was removed.
+`main` is the canonical proof that the workflow was removed. GitHub-managed
+dynamic Pages workflows are diagnostic objects: when Pages is disabled they
+must not be sent to the normal workflow-disable REST endpoint, which GitHub
+rejects for this platform-managed workflow.
 
 Source-code, test, prompt, configuration, fixture, and specification orphan
 detection is report-only. Any tracked-file cleanup still follows the normal

@@ -251,9 +251,11 @@ Production-artifacts создаются с `retention-days: 14`, но инжен
   последний запуск был на `main`: такой объект безопасно отключается как
   удалённый из текущей default-ветки. Для workflow, чей последний запуск был на
   другой ветке, действует классификация этой ветки и её grace/TTL. Динамический
-  GitHub Pages workflow отключается только при `has_pages=false`. `in_progress`
-  всегда считается живым; `queued` старше 14 дней считается зависшим и не
-  защищает orphan-workflow.
+  GitHub Pages workflow является платформенным объектом GitHub: при
+  `has_pages=false` он остаётся диагностическим `github_pages_platform_managed`
+  и не отправляется на REST disable, который GitHub для него отклоняет.
+  `in_progress` всегда считается живым; `queued` старше 14 дней считается
+  зависшим и не защищает orphan-workflow.
 - Старые workflow runs не удаляются автоматически. Зависшие runs orphaned
   workflows и подозрительно неиспользуемые scripts/config/prompts/specs лишь
   попадают в отчёт. Source scanner начинает watchlist после пяти merge и

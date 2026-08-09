@@ -114,7 +114,10 @@ class RepositoryHygieneTests(unittest.TestCase):
         base = {"id":1, "path":".github/workflows/ci.yml"}
         self.assertEqual(rh.classify_workflow(base, canonical, False, {}, {}, [])[0], "protected")
         pages = {"id":2, "path":"dynamic/pages/pages-build-deployment"}
-        self.assertEqual(rh.classify_workflow(pages, canonical, False, {}, {}, [])[0], "safe_disable")
+        self.assertEqual(
+            rh.classify_workflow(pages, canonical, False, {}, {}, []),
+            ("protected", "github_pages_platform_managed"),
+        )
         orphan = {"id":3, "path":".github/workflows/temporary.yml"}
         main_runs = [{"head_branch":"main", "created_at":"2026-08-01T00:00:00Z"}]
         self.assertEqual(rh.classify_workflow(orphan, canonical, False, {"main":"protected"}, {}, main_runs, default_branch="main"), ("safe_disable", "orphan_workflow_removed_from_default_branch"))
