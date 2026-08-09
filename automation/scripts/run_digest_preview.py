@@ -2,13 +2,17 @@
 """Run generate_digest_preview with resilient editorial handling.
 
 The underlying generator writes research and parsed editorial artifacts before
-its final policy validation.  This wrapper keeps completed paid research
-reusable, lets mandatory coverage audit rescue an empty primary pool, and
-applies deterministic runtime fixes before validation.
+its final policy validation. This wrapper keeps completed paid research
+reusable, adds a small independent hybrid completeness layer after fresh primary
+research, lets mandatory coverage audit rescue a short/empty pool, and applies
+deterministic runtime fixes before validation.
 """
 from __future__ import annotations
 
 import json
+import os
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -39,6 +43,21 @@ def publication_date_from_argv(argv: list[str]) -> str | None:
         return None
     value = argv[index + 1].strip()
     return value or None
+
+
+def argv_value(argv: list[str], name: str, default: str | None = None) -> str | None:
+    try:
+        index = argv.index(name)
+    except ValueError:
+        return default
+    if index + 1 >= len(argv):
+        return default
+    value = argv[index + 1].strip()
+    return value or default
+
+
+def research_input_from_argv(argv: list[str]) -> str | None:
+    return argv_value(argv, "--research-input")
 
 
 def _read_json(path: Path) -> dict[str, Any] | None:
@@ -115,7 +134,7 @@ def normalize_completed_empty_research(output_dir: Path) -> bool:
         run_info["warnings"] = warnings
     warning = (
         "Основной research завершил Web Search без кандидатов; пустой пул "
-        "передан обязательному coverage audit."
+        "передан hybrid completeness и обязательному coverage audit."
     )
     if warning not in warnings:
         warnings.append(warning)
@@ -145,6 +164,138 @@ def provisional_artifact_is_reusable(output_dir: Path) -> bool:
     return True
 
 
+def _snapshot_artifact(output_dir: Path) -> dict[Path, bytes]:
+    if not output_dir.is_dir():
+        return {}
+    return {
+        path.relative_to(output_dir): path.read_bytes()
+        for path in output_dir.rglob("*")
+        if path.is_file()
+    }
+
+
+def _restore_artifact(output_dir: Path, snapshot: dict[Path, bytes]) -> None:
+    if output_dir.exists():
+        shutil.rmtree(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    for relative, content in snapshot.items():
+        target = output_dir / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(content)
+
+
+def _run_hybrid_completeness(
+    *,
+    forwarded: list[str],
+    output_dir: Path,
+    publication_date: str,
+) -> tuple[dict[str, Any] | None, bool]:
+    """Run paid completeness only after a fresh primary research call.
+
+    A --research-input invocation is an editorial rerun/recovery path and must
+    never recursively pay for completeness again.
+    """
+
+    if research_input_from_argv(forwarded):
+        return None, False
+    if not provisional_artifact_is_reusable(output_dir):
+        return None, False
+
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        print(
+            "::warning title=Hybrid completeness skipped::"
+            "OPENAI_API_KEY отсутствует; сохранён baseline primary result."
+        )
+        return None, False
+
+    model = (
+        argv_value(forwarded, "--model")
+        or os.getenv("OPENAI_TEXT_MODEL", "").strip()
+        or "gpt-5.6-terra"
+    )
+    try:
+        maximum_candidates = int(argv_value(forwarded, "--maximum-candidates", "20") or 20)
+    except ValueError:
+        maximum_candidates = 20
+
+    from hybrid_search_completeness import persist_report, run_hybrid_completeness
+
+    try:
+        report = run_hybrid_completeness(
+            artifact_dir=output_dir,
+            archive_path=REPOSITORY_ROOT / "automation" / "archive" / "index.json",
+            publication_date=publication_date,
+            api_key=api_key,
+            model=model,
+            maximum_search_calls=4,
+            maximum_candidates=maximum_candidates,
+        )
+    except Exception as exc:
+        print(
+            "::warning title=Hybrid completeness failed open::"
+            f"{type(exc).__name__}: {exc}. Основной research сохранён без изменений."
+        )
+        return None, False
+
+    merged_path_raw = report.get("merged_research_path")
+    if not report.get("editorial_rerun_needed") or not isinstance(merged_path_raw, str):
+        print(
+            "Hybrid completeness completed with "
+            f"{report.get('search_budget', {}).get('completed_calls', 0)} search operations; "
+            "no additional candidate required editorial rerun."
+        )
+        persist_report(output_dir, report)
+        return report, False
+
+    merged_path = Path(merged_path_raw)
+    try:
+        relative_merged = merged_path.resolve().relative_to(REPOSITORY_ROOT)
+    except ValueError:
+        report["editorial_rerun_error"] = "merged research path escaped repository root"
+        persist_report(output_dir, report)
+        return report, False
+
+    snapshot = _snapshot_artifact(output_dir)
+    command = [
+        sys.executable,
+        str(Path(__file__).resolve()),
+        "--allow-provisional-editorial",
+        *forwarded[1:],
+        "--research-input",
+        str(relative_merged),
+    ]
+    completed = subprocess.run(
+        command,
+        cwd=REPOSITORY_ROOT,
+        env=os.environ.copy(),
+        check=False,
+    )
+    if completed.returncode != 0:
+        _restore_artifact(output_dir, snapshot)
+        report["editorial_rerun_performed"] = False
+        report["editorial_rerun_error"] = (
+            f"hybrid editorial rerun exited with code {completed.returncode}; "
+            "baseline primary artifact restored"
+        )
+        persist_report(output_dir, report)
+        print(
+            "::warning title=Hybrid editorial rerun rolled back::"
+            "Новые кандидаты сохранены в диагностике, но baseline artifact восстановлен."
+        )
+        return report, False
+
+    report["editorial_rerun_performed"] = True
+    report["editorial_rerun_error"] = None
+    persist_report(output_dir, report)
+    print(
+        "Hybrid completeness added "
+        f"{len(report.get('accepted_candidates') or [])} candidate(s) after "
+        f"{report.get('search_budget', {}).get('completed_calls', 0)} search operations."
+    )
+    return report, True
+
+
 def main() -> int:
     allow_provisional = False
     forwarded: list[str] = [sys.argv[0]]
@@ -161,26 +312,40 @@ def main() -> int:
     patch_editorial_policy(generate_digest_preview)
     patch_editorial_source_validation(generate_digest_preview)
     result = int(generate_digest_preview.main())
+
+    publication_date = publication_date_from_argv(forwarded)
+    output_dir = PREVIEW_ROOT / publication_date if publication_date else None
+    empty_research_normalized = False
+    if result != 0 and allow_provisional and output_dir is not None:
+        empty_research_normalized = normalize_completed_empty_research(output_dir)
+
+    if publication_date and output_dir is not None and provisional_artifact_is_reusable(output_dir):
+        _report, rerun_succeeded = _run_hybrid_completeness(
+            forwarded=forwarded,
+            output_dir=output_dir,
+            publication_date=publication_date,
+        )
+        if rerun_succeeded:
+            result = 0
+
     if result == 0 or not allow_provisional:
         return result
 
-    publication_date = publication_date_from_argv(forwarded)
-    if not publication_date:
+    if not publication_date or output_dir is None:
         return result
-    output_dir = PREVIEW_ROOT / publication_date
-    empty_research_normalized = normalize_completed_empty_research(output_dir)
     if not provisional_artifact_is_reusable(output_dir):
         return result
 
     if empty_research_normalized:
         print(
             "Primary research completed with zero candidates; continuing to "
-            "the mandatory six-direction coverage audit."
+            "hybrid completeness and the mandatory six-direction coverage audit."
         )
     else:
         print(
             "Initial editorial is provisional, but paid research is reusable; "
-            "continuing to mandatory coverage completion and editorial repair."
+            "continuing to hybrid completeness / mandatory coverage completion "
+            "and editorial repair."
         )
     return 0
 

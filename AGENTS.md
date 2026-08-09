@@ -33,6 +33,24 @@ Production recovery or publication that depends on the change must wait for that
 merge command; preparation, diagnostics, CI and diff review may proceed before
 it.
 
+## Permanent pre-hybrid search baseline
+
+The repository state immediately before the hybrid completeness architecture is
+permanently preserved at commit
+`d926a3abf8b9443f58f303d984ef79fdc289fc3e` and branch
+`archive/search-baseline-pre-hybrid-2026-08-09`.
+
+This baseline is a long-lived analytical and rollback reference for releases
+created by the previous search mechanism. Do not move, rewrite, repurpose or
+delete the branch. The commit SHA is the canonical immutable identity; the
+branch is the stable human-readable pointer. Any future baseline must use a new
+archive branch and manifest instead of changing this one. The companion manifest
+is `automation/archive/search-baselines/2026-08-09-pre-hybrid.md`.
+
+Repository hygiene must always classify this exact branch as `protected` with
+reason `permanent_archive_branch`, independent of PR age, branch age, Actions
+history or the normal stale-branch lifecycle.
+
 ## Repository hygiene operational boundary
 
 The scheduled repository hygiene workflow may mutate only explicitly classified
@@ -40,18 +58,18 @@ ephemeral GitHub objects: old merged branch refs, safe Actions artifacts, the
 enabled state of orphaned Actions workflows, and completed runs older than 14
 days only when their workflow is independently classified `safe_disable`. It
 must not edit tracked
-project files, `main`, releases, tags, or published/editorial content. The
-five-merged-PR branch grace is also capped at 7 days, so quiet periods cannot
-protect stale refs forever. Closed-unmerged branches may age into `safe_delete`
-after 14 days only when their current HEAD still exactly matches the closed PR
-head. An orphan workflow absent from current `main` whose latest run was on the
-default branch may be disabled once it has no live run; absence from current
-`main` is the canonical proof that the workflow was removed. An active orphan
-workflow with no runs may also be disabled on the same canonical-absence proof;
-already-disabled no-run workflow metadata is report-only. GitHub-managed
-dynamic Pages workflows are diagnostic objects: when Pages is disabled they
-must not be sent to the normal workflow-disable REST endpoint, which GitHub
-rejects for this platform-managed workflow.
+project files, `main`, releases, tags, permanent archive branches, or
+published/editorial content. The five-merged-PR branch grace is also capped at
+7 days, so quiet periods cannot protect stale refs forever. Closed-unmerged
+branches may age into `safe_delete` after 14 days only when their current HEAD
+still exactly matches the closed PR head. An orphan workflow absent from current
+`main` whose latest run was on the default branch may be disabled once it has no
+live run; absence from current `main` is the canonical proof that the workflow
+was removed. An active orphan workflow with no runs may also be disabled on the
+same canonical-absence proof; already-disabled no-run workflow metadata is
+report-only. GitHub-managed dynamic Pages workflows are diagnostic objects:
+when Pages is disabled they must not be sent to the normal workflow-disable REST
+endpoint, which GitHub rejects for this platform-managed workflow.
 
 Source-code, test, prompt, configuration, fixture, and specification orphan
 detection is report-only. Any tracked-file cleanup still follows the normal
@@ -76,11 +94,39 @@ The scheduled 32-day content cleanup must never classify or delete this file.
 ## Temporal contract for nightly research
 
 For nightly production, the exact `search_window.end_at` timestamp is the
-authoritative current time for research, every coverage pass, and the recall
-sentinel. Do not let model/system calendar dates override that timestamp.
-Legacy recovery data from a cross-midnight local/UTC window must not be reused
-as final research or a terminal zero-pool stop unless it carries the current
-temporal-anchor contract version.
+authoritative current time for research, hybrid completeness, every coverage
+pass, and the recall sentinel. Do not let model/system calendar dates override
+that timestamp. Legacy recovery data from a cross-midnight local/UTC window must
+not be reused as final research or a terminal zero-pool stop unless it carries
+the current temporal-anchor contract version.
+
+## Hybrid search completeness contract
+
+The primary research mechanism is intentionally preserved. A fresh primary run
+is followed by a separate budget-capped completeness layer rather than being
+replaced by a broader research prompt.
+
+The completeness layer performs three fixed one-search passes:
+
+1. models/products/agents/research;
+2. infrastructure/chips/business;
+3. safety/security/policy/major regional gaps.
+
+After those passes, deterministic cluster coverage may authorize at most one
+adaptive gap search when a whole cluster is still absent from the combined
+primary + completeness candidate pool. The hard ceiling is four completed
+Web Search operations. Each pass gets `max_tool_calls=1`; API domain filtering
+is deliberately disabled, and source quality is validated after retrieval.
+
+New candidates are merged through the existing strict story-coverage validator
+and editorial is rerun only when at least one candidate is actually accepted.
+The completeness layer never runs recursively for `--research-input` editorial
+reruns or recovery, so already-paid primary/completeness work is not repeated.
+A transport or completeness-editorial failure must preserve or restore the
+baseline primary artifact and remain diagnostic rather than destroying an
+otherwise publishable old-mechanism result. Short/empty pools still proceed to
+the existing mandatory six-direction coverage audit and zero-pool recall
+sentinel.
 
 ## Editorial zero-pool stop
 
