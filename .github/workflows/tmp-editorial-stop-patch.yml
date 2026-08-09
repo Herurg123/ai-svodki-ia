@@ -21,7 +21,7 @@ jobs:
         run: python .tmp/apply_editorial_stop_patch.py
       - name: Focused regression tests
         run: |
-          python -m unittest \
+          PYTHONPATH=automation/scripts python -m unittest \
             automation.tests.test_editorial_stop_semantics.EditorialStopRuntimeTests \
             automation.tests.test_editorial_stop_semantics.EditorialStopSummaryTests
           python -m py_compile \
