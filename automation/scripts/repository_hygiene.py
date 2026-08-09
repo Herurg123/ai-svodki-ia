@@ -17,12 +17,17 @@ from repository_hygiene_policy import (
     ORPHAN_WATCH_MERGES,
     PRODUCTION_RE,
     RECENT_MERGED_PRS,
+    RECENT_MERGED_TTL_DAYS,
+    CLOSED_UNMERGED_TTL_DAYS,
+    ORPHAN_WORKFLOW_RUN_RETENTION_DAYS,
     STALE_QUEUED_AFTER_DAYS,
     branch_history_class,
+    currently_protected_recent_merges,
     classify_branch,
     classify_ci,
     classify_production,
     classify_workflow,
+    classify_orphan_workflow_run,
     has_publish_step,
     latest_pr_for_branch,
     live_run,
@@ -44,8 +49,9 @@ def build_plan(api: GitHub, root: Path):
     open_prs = api.prs("open")
     closed_main_prs = api.prs("closed", base=default_branch)
     all_prs = open_prs + closed_main_prs
+    now = dt.datetime.now(dt.timezone.utc)
     merged = merged_sorted(closed_main_prs)
-    recent = merged[:RECENT_MERGED_PRS]
+    recent = currently_protected_recent_merges(merged, now)
     recent_numbers = {int(pr["number"]) for pr in recent}
 
     status_runs = [run for status in ("queued", "in_progress") for run in api.runs(status)]
@@ -63,6 +69,7 @@ def build_plan(api: GitHub, root: Path):
             prs=all_prs,
             recent_numbers=recent_numbers,
             active_branches=active_branches,
+            now=now,
         )
         name = str(branch.get("name") or "")
         branch_classes[name] = cls
@@ -77,7 +84,7 @@ def build_plan(api: GitHub, root: Path):
     history_classes = {}
     history_names = {pr_branch(pr, api.repository) for pr in all_prs}
     for name in sorted(item for item in history_names if item):
-        history_classes[name] = branch_history_class(name, all_prs, api.repository, recent_numbers)
+        history_classes[name] = branch_history_class(name, all_prs, api.repository, recent_numbers, now)
 
     workflow_entries = api.contents(".github/workflows", default_branch)
     canonical_paths = {
@@ -96,6 +103,7 @@ def build_plan(api: GitHub, root: Path):
             branch_classes,
             history_classes,
             workflow_runs[int(workflow["id"])],
+            default_branch=default_branch,
         )
         workflow_items.append({
             "id": int(workflow["id"]),
@@ -157,22 +165,34 @@ def build_plan(api: GitHub, root: Path):
         })
 
     stale_runs = []
-    now = dt.datetime.now(dt.timezone.utc)
     workflow_classes = {item["id"]: item["classification"] for item in workflow_items}
     for workflow in workflows:
         workflow_id = int(workflow["id"])
+        workflow_class = workflow_classes[workflow_id]
         for run in workflow_runs[workflow_id]:
             status = str(run.get("status") or "")
-            if status != "queued" or live_run(run, now):
+            if status == "queued" and not live_run(run, now):
+                stale_runs.append({
+                    "id": int(run["id"]),
+                    "workflow_id": workflow_id,
+                    "workflow": str(workflow.get("name") or ""),
+                    "head_branch": str(run.get("head_branch") or ""),
+                    "created_at": run.get("created_at"),
+                    "classification": "review_only",
+                    "reason": "stale_orphan_run" if workflow_class == "safe_disable" else "stale_queued_run",
+                })
                 continue
+            if status != "completed" or workflow_class != "safe_disable":
+                continue
+            cls, reason = classify_orphan_workflow_run(run, workflow_class, now)
             stale_runs.append({
                 "id": int(run["id"]),
                 "workflow_id": workflow_id,
                 "workflow": str(workflow.get("name") or ""),
                 "head_branch": str(run.get("head_branch") or ""),
                 "created_at": run.get("created_at"),
-                "classification": "review_only",
-                "reason": "stale_orphan_run" if workflow_classes[workflow_id] == "safe_disable" else "stale_queued_run",
+                "classification": cls,
+                "reason": reason,
             })
 
     source_scan = scan_sources(root, merged)
@@ -184,6 +204,9 @@ def build_plan(api: GitHub, root: Path):
         "main_sha": main_sha,
         "policy": {
             "recent_merged_prs": RECENT_MERGED_PRS,
+            "recent_merged_ttl_days": RECENT_MERGED_TTL_DAYS,
+            "closed_unmerged_ttl_days": CLOSED_UNMERGED_TTL_DAYS,
+            "orphan_workflow_run_retention_days": ORPHAN_WORKFLOW_RUN_RETENTION_DAYS,
             "keep_full_production_dates": KEEP_FULL_PRODUCTION_DATES,
             "keep_final_production_dates": KEEP_FINAL_PRODUCTION_DATES,
             "orphan_watch_merges": ORPHAN_WATCH_MERGES,
@@ -261,6 +284,7 @@ def apply_branches(api, root, plan):
             prs=prs,
             recent_numbers=recent_numbers,
             active_branches=active,
+            now=dt.datetime.now(dt.timezone.utc),
         )
         current_sha = str((branch.get("commit") or {}).get("sha") or "")
         expected_sha = str(item["sha"])
@@ -388,11 +412,53 @@ def apply_actions(api, root, plan):
         api.disable_workflow(item["id"])
         disabled.append(item["id"])
 
+    run_deleted = []
+    run_skipped = []
+    fresh = build_plan(api, root)
+    safe_main(api, plan["main_sha"])
+    workflow_classes = {int(item["id"]): item["classification"] for item in fresh["workflows"]}
+    for item in fresh["workflow_runs"]:
+        if item["classification"] != "safe_delete":
+            continue
+        safe_main(api, plan["main_sha"])
+        if production_active(api, production_id):
+            return {
+                "skipped": "production_started_during_actions_cleanup",
+                "artifacts_deleted": deleted,
+                "artifact_skipped": skipped,
+                "workflows_disabled": disabled,
+                "workflow_skipped": workflow_skipped,
+                "workflow_runs_deleted": run_deleted,
+                "workflow_run_skipped": run_skipped,
+            }
+        workflow_id = int(item["workflow_id"])
+        if workflow_classes.get(workflow_id) != "safe_disable":
+            run_skipped.append({"id": item["id"], "reason": "workflow_no_longer_safe"})
+            continue
+        current_runs = api.workflow_runs(workflow_id)
+        current = next(
+            (run for run in current_runs if int(run.get("id") or 0) == int(item["id"])),
+            None,
+        )
+        if current is None:
+            run_skipped.append({"id": item["id"], "reason": "already_missing"})
+            continue
+        cls, reason = classify_orphan_workflow_run(
+            current, "safe_disable", dt.datetime.now(dt.timezone.utc)
+        )
+        if cls != "safe_delete":
+            run_skipped.append({"id": item["id"], "reason": reason})
+            continue
+        api.delete_run(int(item["id"]))
+        run_deleted.append(int(item["id"]))
+
     return {
         "artifacts_deleted": deleted,
         "artifact_skipped": skipped,
         "workflows_disabled": disabled,
         "workflow_skipped": workflow_skipped,
+        "workflow_runs_deleted": run_deleted,
+        "workflow_run_skipped": run_skipped,
     }
 
 

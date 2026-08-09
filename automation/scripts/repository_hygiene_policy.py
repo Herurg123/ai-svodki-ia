@@ -6,6 +6,9 @@ import subprocess
 from pathlib import Path
 
 RECENT_MERGED_PRS = 5
+RECENT_MERGED_TTL_DAYS = 7
+CLOSED_UNMERGED_TTL_DAYS = 14
+ORPHAN_WORKFLOW_RUN_RETENTION_DAYS = 14
 KEEP_FULL_PRODUCTION_DATES = 2
 KEEP_FINAL_PRODUCTION_DATES = 5
 ORPHAN_WATCH_MERGES = 5
@@ -32,6 +35,27 @@ def merged_sorted(prs):
     return sorted((pr for pr in prs if pr.get("merged_at")), key=lambda pr: iso(pr["merged_at"]), reverse=True)
 
 
+def currently_protected_recent_merges(merged_prs, now=None):
+    now = now or dt.datetime.now(dt.timezone.utc)
+    cutoff = now - dt.timedelta(days=RECENT_MERGED_TTL_DAYS)
+    result = []
+    for pr in list(merged_prs)[:RECENT_MERGED_PRS]:
+        merged_at = iso(pr.get("merged_at"))
+        if merged_at and merged_at >= cutoff:
+            result.append(pr)
+    return result
+
+
+def stale_closed_unmerged(pr, now=None):
+    if not isinstance(pr, dict) or pr.get("state") != "closed" or pr.get("merged_at"):
+        return False
+    closed_at = iso(pr.get("closed_at") or pr.get("updated_at"))
+    if not closed_at:
+        return False
+    now = now or dt.datetime.now(dt.timezone.utc)
+    return closed_at <= now - dt.timedelta(days=CLOSED_UNMERGED_TTL_DAYS)
+
+
 def latest_pr_for_branch(name, prs, repository):
     related = [pr for pr in prs if pr_branch(pr, repository) == name]
     if not related:
@@ -40,17 +64,22 @@ def latest_pr_for_branch(name, prs, repository):
     return max(related, key=lambda pr: iso(pr.get("created_at")) or iso(pr.get("updated_at")) or floor)
 
 
-def branch_history_class(name, prs, repository, recent_numbers):
+def branch_history_class(name, prs, repository, recent_numbers, now=None):
     related = [pr for pr in prs if pr_branch(pr, repository) == name]
     if any(pr.get("state") == "open" for pr in related):
         return "protected"
     latest = latest_pr_for_branch(name, prs, repository)
-    if not latest or not latest.get("merged_at"):
+    if not latest:
         return "review_only"
+    if not latest.get("merged_at"):
+        return "safe_delete" if stale_closed_unmerged(latest, now) else "review_only"
     return "protected" if int(latest["number"]) in recent_numbers else "safe_delete"
 
 
-def classify_branch(branch, *, repository, default_branch, prs, recent_numbers, active_branches=frozenset()):
+def classify_branch(
+    branch, *, repository, default_branch, prs, recent_numbers,
+    active_branches=frozenset(), now=None,
+):
     name = str(branch.get("name") or "")
     if name == default_branch:
         return "protected", "default_branch", None
@@ -64,11 +93,17 @@ def classify_branch(branch, *, repository, default_branch, prs, recent_numbers, 
     latest = latest_pr_for_branch(name, prs, repository)
     if not latest:
         return "review_only", "branch_has_no_pull_request", None
+    current_sha = str((branch.get("commit") or {}).get("sha") or "")
+    head_sha = str((latest.get("head") or {}).get("sha") or "")
     if not latest.get("merged_at"):
+        if stale_closed_unmerged(latest, now):
+            if head_sha and head_sha == current_sha:
+                return "safe_delete", "stale_closed_unmerged_pull_request", latest
+            return "review_only", "closed_pull_request_head_changed", latest
         return "review_only", "latest_pull_request_not_merged", latest
     if int(latest["number"]) in recent_numbers:
         return "protected", "recent_merged_pull_request", latest
-    if (latest.get("head") or {}).get("sha") != (branch.get("commit") or {}).get("sha"):
+    if head_sha != current_sha:
         return "review_only", "branch_diverged_after_merge", latest
     return "safe_delete", "old_merged_pull_request", latest
 
@@ -144,22 +179,48 @@ def live_run(run, now=None):
     return created >= now - dt.timedelta(days=STALE_QUEUED_AFTER_DAYS)
 
 
-def classify_workflow(workflow, canonical_paths, has_pages, branch_classes, history_classes, runs):
+def classify_workflow(
+    workflow, canonical_paths, has_pages, branch_classes, history_classes, runs,
+    default_branch="main",
+):
     path = str(workflow.get("path") or "")
     if path in canonical_paths:
         return "protected", "canonical_workflow"
     if any(live_run(run) for run in runs):
         return "protected", "workflow_has_active_run"
     if path.startswith("dynamic/pages/"):
-        return ("protected", "github_pages_enabled") if has_pages else ("safe_disable", "github_pages_disabled")
+        return (
+            ("protected", "github_pages_enabled")
+            if has_pages
+            else ("protected", "github_pages_platform_managed")
+        )
     if not runs:
-        return "review_only", "orphan_workflow_without_runs"
+        if str(workflow.get("state") or "") == "active":
+            return "safe_disable", "orphan_workflow_removed_without_runs"
+        return "review_only", "orphan_workflow_already_disabled_without_runs"
     latest = max(runs, key=lambda run: run.get("created_at") or "")
     branch = str(latest.get("head_branch") or "")
+    if branch == default_branch:
+        return "safe_disable", "orphan_workflow_removed_from_default_branch"
     branch_class = branch_classes.get(branch, history_classes.get(branch, "review_only"))
     if branch_class in {"protected", "review_only"}:
         return "protected", "workflow_tied_to_retained_branch"
-    return "safe_disable", "orphan_workflow_from_old_merged_branch"
+    return "safe_disable", "orphan_workflow_from_old_branch"
+
+
+def classify_orphan_workflow_run(run, workflow_classification, now=None):
+    if workflow_classification != "safe_disable":
+        return "review_only", "workflow_not_safe_to_disable"
+    if str(run.get("status") or "") != "completed":
+        return "review_only", "workflow_run_not_completed"
+    created = iso(run.get("created_at"))
+    if not created:
+        return "review_only", "workflow_run_missing_created_at"
+    now = now or dt.datetime.now(dt.timezone.utc)
+    cutoff = now - dt.timedelta(days=ORPHAN_WORKFLOW_RUN_RETENTION_DAYS)
+    if created > cutoff:
+        return "protected", "recent_orphan_workflow_run"
+    return "safe_delete", "expired_orphan_workflow_run"
 
 
 def _text_corpus(root: Path):

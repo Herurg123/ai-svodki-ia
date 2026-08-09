@@ -75,9 +75,13 @@ class GitHub:
         data = self.request("GET", f"/repos/{self.repository}/actions/workflows?per_page=100")[1]
         return data.get("workflows", [])
 
-    def workflow_runs(self, workflow_id: int):
-        data = self.request("GET", f"/repos/{self.repository}/actions/workflows/{workflow_id}/runs?per_page=100")[1]
-        return data.get("workflow_runs", [])
+    def workflow_runs(self, workflow_id: int, limit: int = 100):
+        limit = max(1, min(int(limit), 100))
+        data = self.request(
+            "GET",
+            f"/repos/{self.repository}/actions/workflows/{workflow_id}/runs?per_page={limit}",
+        )[1]
+        return list(data.get("workflow_runs", []))[:limit]
 
     def runs(self, status: str):
         result = []
@@ -125,3 +129,6 @@ class GitHub:
 
     def disable_workflow(self, workflow_id: int):
         self.request("PUT", f"/repos/{self.repository}/actions/workflows/{workflow_id}/disable", (204,))
+
+    def delete_run(self, run_id: int):
+        self.request("DELETE", f"/repos/{self.repository}/actions/runs/{run_id}", (204,))

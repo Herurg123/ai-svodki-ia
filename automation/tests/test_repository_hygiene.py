@@ -18,13 +18,14 @@ SPEC.loader.exec_module(rh)
 REPO = "Herurg123/ai-svodki-ia"
 
 
-def pr(number, branch, sha, *, merged_at=None, state="closed", updated_at=None, merge_sha=None):
+def pr(number, branch, sha, *, merged_at=None, state="closed", updated_at=None, merge_sha=None, closed_at=None):
     return {
         "number": number,
         "state": state,
         "merged_at": merged_at,
         "updated_at": updated_at or merged_at or "2026-08-01T00:00:00Z",
         "created_at": "2026-07-01T00:00:00Z",
+        "closed_at": closed_at if closed_at is not None else ((updated_at or merged_at or "2026-08-01T00:00:00Z") if state == "closed" else None),
         "merge_commit_sha": merge_sha,
         "head": {"ref": branch, "sha": sha, "repo": {"full_name": REPO}},
     }
@@ -85,13 +86,50 @@ class RepositoryHygieneTests(unittest.TestCase):
         )
         self.assertEqual((cls, reason), ("protected", "active_actions_run"))
 
+    def test_recent_merge_window_expires_by_age_even_if_it_is_still_in_last_five(self):
+        now = rh.dt.datetime(2026, 8, 9, 9, 0, tzinfo=rh.dt.timezone.utc)
+        merged = rh.merged_sorted([
+            pr(1, "agent/old-recent", "1"*40, merged_at="2026-08-01T00:00:00Z"),
+            pr(2, "agent/fresh", "2"*40, merged_at="2026-08-08T00:00:00Z"),
+        ])
+        protected = rh.currently_protected_recent_merges(merged, now)
+        self.assertEqual([item["number"] for item in protected], [2])
+
+    def test_closed_unmerged_branch_ages_out_only_with_unchanged_head(self):
+        now = rh.dt.datetime(2026, 8, 20, tzinfo=rh.dt.timezone.utc)
+        abandoned = pr(9, "agent/abandoned", "3"*40, state="closed", merged_at=None, closed_at="2026-08-01T00:00:00Z")
+        cls, reason, _ = rh.classify_branch(
+            {"name":"agent/abandoned", "protected":False, "commit":{"sha":"3"*40}},
+            repository=REPO, default_branch="main", prs=[abandoned], recent_numbers=set(), now=now,
+        )
+        self.assertEqual((cls, reason), ("safe_delete", "stale_closed_unmerged_pull_request"))
+        cls, reason, _ = rh.classify_branch(
+            {"name":"agent/abandoned", "protected":False, "commit":{"sha":"4"*40}},
+            repository=REPO, default_branch="main", prs=[abandoned], recent_numbers=set(), now=now,
+        )
+        self.assertEqual((cls, reason), ("review_only", "closed_pull_request_head_changed"))
+
     def test_workflow_grace_and_pages_special_case(self):
         canonical = {".github/workflows/ci.yml"}
         base = {"id":1, "path":".github/workflows/ci.yml"}
         self.assertEqual(rh.classify_workflow(base, canonical, False, {}, {}, [])[0], "protected")
         pages = {"id":2, "path":"dynamic/pages/pages-build-deployment"}
-        self.assertEqual(rh.classify_workflow(pages, canonical, False, {}, {}, [])[0], "safe_disable")
-        orphan = {"id":3, "path":".github/workflows/temporary.yml"}
+        self.assertEqual(
+            rh.classify_workflow(pages, canonical, False, {}, {}, []),
+            ("protected", "github_pages_platform_managed"),
+        )
+        orphan = {"id":3, "path":".github/workflows/temporary.yml", "state":"active"}
+        self.assertEqual(
+            rh.classify_workflow(orphan, canonical, False, {}, {}, []),
+            ("safe_disable", "orphan_workflow_removed_without_runs"),
+        )
+        disabled_orphan = {"id":4, "path":".github/workflows/old.yml", "state":"disabled_manually"}
+        self.assertEqual(
+            rh.classify_workflow(disabled_orphan, canonical, False, {}, {}, []),
+            ("review_only", "orphan_workflow_already_disabled_without_runs"),
+        )
+        main_runs = [{"head_branch":"main", "created_at":"2026-08-01T00:00:00Z"}]
+        self.assertEqual(rh.classify_workflow(orphan, canonical, False, {"main":"protected"}, {}, main_runs, default_branch="main"), ("safe_disable", "orphan_workflow_removed_from_default_branch"))
         runs = [{"head_branch":"agent/old", "created_at":"2026-08-01T00:00:00Z"}]
         self.assertEqual(rh.classify_workflow(orphan, canonical, False, {}, {"agent/old":"safe_delete"}, runs)[0], "safe_disable")
         self.assertEqual(rh.classify_workflow(orphan, canonical, False, {}, {"agent/old":"protected"}, runs)[0], "protected")
@@ -101,6 +139,23 @@ class RepositoryHygieneTests(unittest.TestCase):
         old_queued = {"status":"queued", "created_at":"2026-07-03T00:00:00Z"}
         now = rh.dt.datetime(2026, 8, 8, tzinfo=rh.dt.timezone.utc)
         self.assertFalse(rh.live_run(old_queued, now))
+
+    def test_completed_orphan_workflow_runs_expire_after_retention(self):
+        now = rh.dt.datetime(2026, 8, 20, tzinfo=rh.dt.timezone.utc)
+        old_run = {"id": 100, "status": "completed", "created_at": "2026-08-01T00:00:00Z"}
+        fresh_run = {"id": 101, "status": "completed", "created_at": "2026-08-10T00:00:00Z"}
+        self.assertEqual(
+            rh.classify_orphan_workflow_run(old_run, "safe_disable", now),
+            ("safe_delete", "expired_orphan_workflow_run"),
+        )
+        self.assertEqual(
+            rh.classify_orphan_workflow_run(fresh_run, "safe_disable", now),
+            ("protected", "recent_orphan_workflow_run"),
+        )
+        self.assertEqual(
+            rh.classify_orphan_workflow_run(old_run, "protected", now),
+            ("review_only", "workflow_not_safe_to_disable"),
+        )
 
     def test_production_artifact_windows(self):
         def artifact(i, run):

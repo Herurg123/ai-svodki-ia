@@ -36,9 +36,22 @@ it.
 ## Repository hygiene operational boundary
 
 The scheduled repository hygiene workflow may mutate only explicitly classified
-ephemeral GitHub objects: old merged branch refs, safe Actions artifacts, and
-the enabled state of orphaned Actions workflows. It must not edit tracked
-project files, `main`, releases, tags, or published/editorial content.
+ephemeral GitHub objects: old merged branch refs, safe Actions artifacts, the
+enabled state of orphaned Actions workflows, and completed runs older than 14
+days only when their workflow is independently classified `safe_disable`. It
+must not edit tracked
+project files, `main`, releases, tags, or published/editorial content. The
+five-merged-PR branch grace is also capped at 7 days, so quiet periods cannot
+protect stale refs forever. Closed-unmerged branches may age into `safe_delete`
+after 14 days only when their current HEAD still exactly matches the closed PR
+head. An orphan workflow absent from current `main` whose latest run was on the
+default branch may be disabled once it has no live run; absence from current
+`main` is the canonical proof that the workflow was removed. An active orphan
+workflow with no runs may also be disabled on the same canonical-absence proof;
+already-disabled no-run workflow metadata is report-only. GitHub-managed
+dynamic Pages workflows are diagnostic objects: when Pages is disabled they
+must not be sent to the normal workflow-disable REST endpoint, which GitHub
+rejects for this platform-managed workflow.
 
 Source-code, test, prompt, configuration, fixture, and specification orphan
 detection is report-only. Any tracked-file cleanup still follows the normal

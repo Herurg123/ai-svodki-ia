@@ -226,12 +226,15 @@ Production-artifacts создаются с `retention-days: 14`, но инжен
 Полный JSON каждого этапа прикладывается к запуску как Actions artifact с
 `retention: 2 дня`, после чего GitHub удаляет его автоматически.
 
-- Окно веток считается по пяти последним PR, реально смёрженным в `main`, в
-  порядке `merged_at`, а не по номеру PR. `main`, protected branches, ветки
-  открытых PR и ветки с активным Actions-run никогда не удаляются. Старая
-  merged-ветка удаляется только если её текущий HEAD всё ещё совпадает с
-  `head.sha` смёрженного PR; ветки без PR, closed-unmerged и изменённые после
-  merge остаются `review_only`.
+- Защитное окно веток ограничено одновременно пятью последними PR, реально
+  смёрженными в `main` по `merged_at`, и семью сутками после merge. Поэтому
+  «последние пять» не могут стать вечной бронёй в спокойном репозитории. `main`,
+  protected branches, ветки открытых PR и ветки с активным Actions-run никогда
+  не удаляются. Старая merged-ветка удаляется только если её текущий HEAD всё
+  ещё совпадает с `head.sha` смёрженного PR. Closed-unmerged ветка после 14
+  суток без открытого PR может перейти в `safe_delete`, но только при точном
+  совпадении текущего HEAD с `head.sha` закрытого PR; ветки без PR и изменённые
+  после merge/закрытия остаются `review_only`.
 - CI-artifact `main-ci-<sha>` сохраняется для текущего `main`, head SHA пяти
   последних merged PR, их merge SHA и текущих head SHA открытых PR. Остальные
   однозначно superseded CI-artifacts удаляются; artifacts неоднозначных веток
@@ -244,13 +247,23 @@ Production-artifacts создаются с `retention-days: 14`, но инжен
   неопубликованная дата остаётся `review_only`, чтобы не потерять оплаченный
   recovery.
 - Workflow, которого больше нет среди файлов `.github/workflows/` в `main`,
-  отключается только когда он связан со старой merged-веткой и не имеет живого
-  run. Динамический GitHub Pages workflow отключается только при
-  `has_pages=false`. `in_progress` всегда считается живым; `queued` старше
-  14 дней считается зависшим и не защищает orphan-workflow.
-- Старые workflow runs не удаляются автоматически. Зависшие runs orphaned
-  workflows и подозрительно неиспользуемые scripts/config/prompts/specs лишь
-  попадают в отчёт. Source scanner начинает watchlist после пяти merge и
+  и не имеет живого run, больше не может зависнуть навечно из-за того, что его
+  последний запуск был на `main`: такой объект безопасно отключается как
+  удалённый из текущей default-ветки. Для workflow, чей последний запуск был на
+  другой ветке, действует классификация этой ветки и её grace/TTL. Активный
+  orphan workflow вообще без runs также безопасно отключается, поскольку его
+  файла уже нет в текущем `main`; уже отключённый объект без runs остаётся
+  только диагностической записью. Динамический GitHub Pages workflow является
+  платформенным объектом GitHub: при
+  `has_pages=false` он остаётся диагностическим `github_pages_platform_managed`
+  и не отправляется на REST disable, который GitHub для него отклоняет.
+  `in_progress` всегда считается живым; `queued` старше 14 дней считается
+  зависшим и не защищает orphan-workflow.
+- Завершённые runs workflow, уже доказанно классифицированного как orphan
+  (`safe_disable`), хранятся ещё 14 суток, после чего ежедневная hygiene удаляет
+  их с повторной проверкой workflow, статуса и возраста. Runs canonical,
+  protected и review-only workflows не затрагиваются; stale queued runs остаются
+  report-only. Source scanner начинает watchlist после пяти merge и
   отмечает `suspected_orphan` после десяти, но никогда не меняет tracked-файлы.
 - Перед destructive-фазой строится новый план, а `main` повторно проверяется
   перед удалениями. Если SHA `main` изменился, запуск завершает cleanup
