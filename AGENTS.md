@@ -68,3 +68,13 @@ sentinel. Do not let model/system calendar dates override that timestamp.
 Legacy recovery data from a cross-midnight local/UTC window must not be reused
 as final research or a terminal zero-pool stop unless it carries the current
 temporal-anchor contract version.
+
+## Editorial zero-pool stop
+
+A completed zero-pool result is a normal successful `no-publish`, not a
+production failure, but only after the current temporal-anchor contract, all
+six mandatory coverage directions, and the current recall sentinel have
+completed successfully with no publishable candidate. In that state Image API,
+commit, and deploy must remain skipped. Technical partial/error audits remain
+fail-closed and red. Recovery must reuse a proven completed editorial stop
+without repeating paid research or coverage.

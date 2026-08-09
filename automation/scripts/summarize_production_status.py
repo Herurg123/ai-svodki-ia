@@ -245,7 +245,7 @@ def stage_state(publication_date: str) -> dict[str, bool]:
 
     audit = (
         isinstance(coverage, dict)
-        and coverage.get("status") == "ok"
+        and coverage.get("status") in {"ok", "editorial_stop"}
         and coverage.get("audit_status") in {"complete", "complete_with_gaps"}
     )
     image = (
@@ -265,6 +265,21 @@ def stage_state(publication_date: str) -> dict[str, bool]:
         "image": image,
         "promoted": promoted,
     }
+
+
+def completed_editorial_stop() -> bool:
+    coverage = read_json_if_exists(REPORT_ROOT / "coverage-audit.json")
+    if not isinstance(coverage, dict):
+        return False
+    pool = coverage.get("candidate_pool_after")
+    return bool(
+        coverage.get("status") == "editorial_stop"
+        and coverage.get("editorial_stop") is True
+        and coverage.get("audit_state") == "completed_usable"
+        and coverage.get("audit_status") in {"complete", "complete_with_gaps"}
+        and isinstance(pool, dict)
+        and pool.get("total") == 0
+    )
 
 
 def markdown_bool(value: bool) -> str:
@@ -364,6 +379,30 @@ def build_summary(
 ) -> tuple[str, str | None]:
     states = stage_state(publication_date)
     success = job_status == "success"
+    editorial_stop = completed_editorial_stop()
+
+    if success and editorial_stop:
+        lines = [
+            "## ⏸️ ИИ-Сводка: редакционная остановка",
+            "",
+            f"- **Дата выпуска:** `{publication_date}`",
+            "- **Результат:** штатный успешный no-publish",
+            "- **Причина:** полный research, обязательный coverage audit и актуальный recall sentinel не нашли достойных сюжетов",
+            "- **Commit:** не создавался",
+            "- **Image API:** не запускался после редакционной остановки",
+            "- **Deploy:** не запускался",
+            f"- **Recovery run ID:** `{recovery_run_id or 'нет'}`",
+            f"- **Run:** {run_url}",
+            "",
+            "### Этапы",
+            f"- Research: {markdown_bool(states['research'])}",
+            f"- Editorial: {markdown_bool(states['editorial'])}",
+            f"- Дополнительный поиск: {markdown_bool(states['coverage_audit'])}",
+            f"- Изображение: {markdown_bool(states['image'])}",
+            f"- Promotion: {markdown_bool(states['promoted'])}",
+        ]
+        lines.extend(coverage_audit_summary_lines())
+        return "\n".join(lines) + "\n", None
 
     if success:
         title = (
@@ -471,7 +510,9 @@ def main() -> int:
         )
         report = {
             "status": (
-                "ok" if args.job_status == "success" else "error"
+                "editorial_stop"
+                if args.job_status == "success" and completed_editorial_stop()
+                else ("ok" if args.job_status == "success" else "error")
             ),
             "publication_date": args.publication_date,
             "job_status": args.job_status,
