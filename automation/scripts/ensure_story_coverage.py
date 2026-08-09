@@ -560,12 +560,58 @@ def _sync_policy_overrides() -> None:
     _base._sync_policy_overrides()
 
 
+
+def _promote_completed_zero_pool_editorial_stop(report_path: Path | None) -> bool:
+    """Convert only a proven complete zero-pool audit into a healthy no-publish stop."""
+    if report_path is None or not report_path.is_file():
+        return False
+    try:
+        payload = read_json(report_path)
+    except Exception:
+        return False
+    if not isinstance(payload, dict):
+        return False
+    pool_after = payload.get("candidate_pool_after")
+    api = payload.get("api") or {}
+    error = str(payload.get("error") or "")
+    terminal = bool(
+        payload.get("status") == "error"
+        and "После основного и дополнительного поиска не осталось ни одного достойного сюжета" in error
+        and payload.get("audit_state") == "completed_usable"
+        and not payload.get("audit_error")
+        and not payload.get("validation_error")
+        and payload.get("web_search_performed") is True
+        and isinstance(api, dict)
+        and api.get("status") == "completed"
+        and payload.get("audit_status") in {"complete", "complete_with_gaps"}
+        and set(payload.get("checked_directions") or ()) == set(AUDIT_DIRECTION_IDS)
+        and payload.get("temporal_anchor_version") == TEMPORAL_ANCHOR_VERSION
+        and _completed_sentinel_evidence(payload)
+        and isinstance(pool_after, dict)
+        and pool_after.get("total") == 0
+    )
+    if not terminal:
+        return False
+    payload["status"] = "editorial_stop"
+    payload["editorial_stop"] = True
+    payload["publication_mode"] = "none"
+    payload["mode"] = "completed_zero_pool_editorial_stop"
+    payload["editorial_stop_reason"] = (
+        "Полный research, шесть обязательных coverage-проходов и актуальный "
+        "recall sentinel не нашли ни одного достойного сюжета."
+    )
+    payload["error"] = None
+    write_json(report_path, payload)
+    return True
+
 def main() -> int:
     _set_last_recall_sentinel(None)
     _sync_policy_overrides()
     result = int(_base.main())
     # _base.main() resets and then populates the shared sentinel diagnostics.
     _set_last_recall_sentinel(_base._LAST_RECALL_SENTINEL)
+    if result != 0 and _promote_completed_zero_pool_editorial_stop(_base._report_path()):
+        return 0
     return result
 
 
