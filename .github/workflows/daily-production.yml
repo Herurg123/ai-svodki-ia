@@ -299,8 +299,13 @@ jobs:
           api = data.get("api") or {}
           pool_after = data.get("candidate_pool_after") or {}
           pool_total = pool_after.get("total") if isinstance(pool_after, dict) else None
+          temporal_anchor_current = (
+              data.get("temporal_anchor_version") == 1
+              and (data.get("recall_sentinel") or {}).get("version") == 7
+          )
           terminal = (
-              data.get("status") == "error"
+              temporal_anchor_current
+              and data.get("status") == "error"
               and data.get("web_search_performed") is True
               and api.get("status") == "completed"
               and data.get("audit_status") in {"complete", "complete_with_gaps"}
