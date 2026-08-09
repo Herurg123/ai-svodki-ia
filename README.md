@@ -256,9 +256,11 @@ Production-artifacts создаются с `retention-days: 14`, но инжен
   и не отправляется на REST disable, который GitHub для него отклоняет.
   `in_progress` всегда считается живым; `queued` старше 14 дней считается
   зависшим и не защищает orphan-workflow.
-- Старые workflow runs не удаляются автоматически. Зависшие runs orphaned
-  workflows и подозрительно неиспользуемые scripts/config/prompts/specs лишь
-  попадают в отчёт. Source scanner начинает watchlist после пяти merge и
+- Завершённые runs workflow, уже доказанно классифицированного как orphan
+  (`safe_disable`), хранятся ещё 14 суток, после чего ежедневная hygiene удаляет
+  их с повторной проверкой workflow, статуса и возраста. Runs canonical,
+  protected и review-only workflows не затрагиваются; stale queued runs остаются
+  report-only. Source scanner начинает watchlist после пяти merge и
   отмечает `suspected_orphan` после десяти, но никогда не меняет tracked-файлы.
 - Перед destructive-фазой строится новый план, а `main` повторно проверяется
   перед удалениями. Если SHA `main` изменился, запуск завершает cleanup

@@ -36,8 +36,10 @@ it.
 ## Repository hygiene operational boundary
 
 The scheduled repository hygiene workflow may mutate only explicitly classified
-ephemeral GitHub objects: old merged branch refs, safe Actions artifacts, and
-the enabled state of orphaned Actions workflows. It must not edit tracked
+ephemeral GitHub objects: old merged branch refs, safe Actions artifacts, the
+enabled state of orphaned Actions workflows, and completed runs older than 14
+days only when their workflow is independently classified `safe_disable`. It
+must not edit tracked
 project files, `main`, releases, tags, or published/editorial content. The
 five-merged-PR branch grace is also capped at 7 days, so quiet periods cannot
 protect stale refs forever. Closed-unmerged branches may age into `safe_delete`

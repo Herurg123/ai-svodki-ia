@@ -131,6 +131,23 @@ class RepositoryHygieneTests(unittest.TestCase):
         now = rh.dt.datetime(2026, 8, 8, tzinfo=rh.dt.timezone.utc)
         self.assertFalse(rh.live_run(old_queued, now))
 
+    def test_completed_orphan_workflow_runs_expire_after_retention(self):
+        now = rh.dt.datetime(2026, 8, 20, tzinfo=rh.dt.timezone.utc)
+        old_run = {"id": 100, "status": "completed", "created_at": "2026-08-01T00:00:00Z"}
+        fresh_run = {"id": 101, "status": "completed", "created_at": "2026-08-10T00:00:00Z"}
+        self.assertEqual(
+            rh.classify_orphan_workflow_run(old_run, "safe_disable", now),
+            ("safe_delete", "expired_orphan_workflow_run"),
+        )
+        self.assertEqual(
+            rh.classify_orphan_workflow_run(fresh_run, "safe_disable", now),
+            ("protected", "recent_orphan_workflow_run"),
+        )
+        self.assertEqual(
+            rh.classify_orphan_workflow_run(old_run, "protected", now),
+            ("review_only", "workflow_not_safe_to_disable"),
+        )
+
     def test_production_artifact_windows(self):
         def artifact(i, run):
             return {"id":i, "created_at":f"2026-08-0{i%9+1}T00:00:00Z", "workflow_run":{"id":run}}

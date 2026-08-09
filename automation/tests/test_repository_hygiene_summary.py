@@ -70,12 +70,16 @@ class RepositoryHygieneSummaryTests(unittest.TestCase):
             "workflows_disabled": [20],
             "artifact_skipped": [],
             "workflow_skipped": [],
+            "workflow_runs_deleted": [30],
+            "workflow_run_skipped": [],
         }
         text = render_report(report)
         self.assertIn("очистка Actions", text)
         self.assertIn("Удалено superseded artifacts: **1**", text)
         self.assertIn("`main-ci-old` (id 10)", text)
         self.assertIn("`Old patch` (id 20)", text)
+        self.assertIn("Удалено просроченных runs доказанных orphan-workflows: **1**", text)
+        self.assertIn("run id 30", text)
 
 
 if __name__ == "__main__":

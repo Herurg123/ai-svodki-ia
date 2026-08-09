@@ -106,6 +106,8 @@ def render_report(report: dict) -> str:
         disabled_ids = [int(value) for value in actions_apply.get("workflows_disabled") or []]
         artifact_skipped = list(actions_apply.get("artifact_skipped") or [])
         workflow_skipped = list(actions_apply.get("workflow_skipped") or [])
+        run_deleted_ids = [int(value) for value in actions_apply.get("workflow_runs_deleted") or []]
+        run_skipped = list(actions_apply.get("workflow_run_skipped") or [])
         artifact_names = {
             int(item["id"]): str(item.get("name") or item["id"])
             for item in plan.get("artifacts") or []
@@ -124,8 +126,10 @@ def render_report(report: dict) -> str:
                 "",
                 f"- Удалено superseded artifacts: **{len(deleted_ids)}**",
                 f"- Отключено orphaned workflows: **{len(disabled_ids)}**",
+                f"- Удалено просроченных runs доказанных orphan-workflows: **{len(run_deleted_ids)}**",
                 f"- Пропущено artifacts после повторной проверки: **{len(artifact_skipped)}**",
                 f"- Пропущено workflows после повторной проверки: **{len(workflow_skipped)}**",
+                f"- Пропущено workflow runs после повторной проверки: **{len(run_skipped)}**",
             ]
         )
         if actions_apply.get("skipped"):
@@ -140,6 +144,12 @@ def render_report(report: dict) -> str:
             _details(
                 "Отключённые workflows",
                 [f"`{workflow_names.get(item_id, item_id)}` (id {item_id})" for item_id in disabled_ids],
+            )
+        )
+        lines.extend(
+            _details(
+                "Удалённые orphan workflow runs",
+                [f"run id {item_id}" for item_id in run_deleted_ids],
             )
         )
 

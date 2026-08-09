@@ -198,8 +198,10 @@ Workflow, которого больше нет среди файлов `.github/
 не передаётся в REST disable, который GitHub для такого объекта отклоняет.
 
 `in_progress` всегда живой. `queued` старше 14 дней считается зависшим и не
-может навечно защищать orphan-workflow. Такие stale runs попадают в отчёт, но
-первая версия hygiene их не удаляет.
+может навечно защищать orphan-workflow; такие stale queued runs остаются
+report-only. Завершённый run удаляется автоматически только после 14 суток и
+только если его workflow при повторном плане всё ещё доказанно `safe_disable`.
+Canonical, protected и review-only workflows этим механизмом не затрагиваются.
 
 ### Source scan
 

@@ -8,6 +8,7 @@ from pathlib import Path
 RECENT_MERGED_PRS = 5
 RECENT_MERGED_TTL_DAYS = 7
 CLOSED_UNMERGED_TTL_DAYS = 14
+ORPHAN_WORKFLOW_RUN_RETENTION_DAYS = 14
 KEEP_FULL_PRODUCTION_DATES = 2
 KEEP_FINAL_PRODUCTION_DATES = 5
 ORPHAN_WATCH_MERGES = 5
@@ -203,6 +204,21 @@ def classify_workflow(
     if branch_class in {"protected", "review_only"}:
         return "protected", "workflow_tied_to_retained_branch"
     return "safe_disable", "orphan_workflow_from_old_branch"
+
+
+def classify_orphan_workflow_run(run, workflow_classification, now=None):
+    if workflow_classification != "safe_disable":
+        return "review_only", "workflow_not_safe_to_disable"
+    if str(run.get("status") or "") != "completed":
+        return "review_only", "workflow_run_not_completed"
+    created = iso(run.get("created_at"))
+    if not created:
+        return "review_only", "workflow_run_missing_created_at"
+    now = now or dt.datetime.now(dt.timezone.utc)
+    cutoff = now - dt.timedelta(days=ORPHAN_WORKFLOW_RUN_RETENTION_DAYS)
+    if created > cutoff:
+        return "protected", "recent_orphan_workflow_run"
+    return "safe_delete", "expired_orphan_workflow_run"
 
 
 def _text_corpus(root: Path):
