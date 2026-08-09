@@ -1,0 +1,45 @@
+name: Temporary editorial stop patch
+on:
+  push:
+    branches:
+      - fix/green-editorial-zero-stop
+permissions:
+  contents: write
+jobs:
+  apply:
+    if: github.event.head_commit.message == 'Bootstrap editorial stop patch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: fix/green-editorial-zero-stop
+          fetch-depth: 1
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Apply patch
+        run: python .tmp/apply_editorial_stop_patch.py
+      - name: Focused regression tests
+        run: |
+          python -m unittest \
+            automation.tests.test_editorial_stop_semantics.EditorialStopRuntimeTests \
+            automation.tests.test_editorial_stop_semantics.EditorialStopSummaryTests
+          python -m py_compile \
+            automation/scripts/ensure_story_coverage.py \
+            automation/scripts/summarize_production_status.py \
+            automation/tests/test_editorial_stop_semantics.py
+          git diff --check
+      - name: Commit ordinary files and patched workflow blob
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            automation/scripts/ensure_story_coverage.py \
+            automation/scripts/summarize_production_status.py \
+            automation/tests/test_editorial_stop_semantics.py \
+            README.md \
+            automation/README.md \
+            AGENTS.md \
+            .tmp/patched-daily-production.yml
+          git commit -m 'Сделать нулевую редакционную остановку штатной'
+          git push origin HEAD:fix/green-editorial-zero-stop
