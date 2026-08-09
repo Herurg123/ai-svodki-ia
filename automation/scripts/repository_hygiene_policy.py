@@ -14,6 +14,9 @@ KEEP_FINAL_PRODUCTION_DATES = 5
 ORPHAN_WATCH_MERGES = 5
 ORPHAN_SUSPECT_MERGES = 10
 STALE_QUEUED_AFTER_DAYS = 14
+PERMANENT_ARCHIVE_BRANCHES = frozenset({
+    "archive/search-baseline-pre-hybrid-2026-08-09",
+})
 PRODUCTION_RE = re.compile(r"^daily-production-(\d{4}-\d{2}-\d{2})$")
 CI_RE = re.compile(r"^main-ci-([0-9a-f]{40})$")
 SCAN_ROOTS = ("automation/scripts", "automation/config", "automation/prompts", "automation/specs")
@@ -83,6 +86,8 @@ def classify_branch(
     name = str(branch.get("name") or "")
     if name == default_branch:
         return "protected", "default_branch", None
+    if name in PERMANENT_ARCHIVE_BRANCHES:
+        return "protected", "permanent_archive_branch", None
     if branch.get("protected"):
         return "protected", "github_protected_branch", None
     if name in active_branches:
