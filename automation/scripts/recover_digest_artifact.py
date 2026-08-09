@@ -56,6 +56,12 @@ IMAGE_STAGE_FILES = (
 )
 
 TEMPORAL_ANCHOR_VERSION = 1
+EMPTY_RESEARCH_MARKERS = (
+    "не найдено ни одного",
+    "не осталось ни одного достойного",
+    "не удалось подтвердить ни одного",
+    "пул кандидатов пуст",
+)
 
 IMAGE_RECOVERY_REQUIRED = (
     "cover.png",
@@ -124,16 +130,82 @@ def _legacy_cross_midnight_research(candidates: dict[str, Any]) -> bool:
     return parsed.date() > parsed.astimezone(timezone.utc).date()
 
 
+def completed_empty_research(
+    run_info: dict[str, Any],
+    candidates: dict[str, Any],
+) -> bool:
+    if candidates.get("candidates") != []:
+        return False
+    if not isinstance(candidates.get("coverage"), list):
+        return False
+    if not isinstance(candidates.get("search_window"), dict):
+        return False
+    research = run_info.get("research")
+    if not isinstance(research, dict):
+        return False
+    response = research.get("response")
+    if not isinstance(response, dict) or response.get("response_status") != "completed":
+        return False
+    try:
+        completed_searches = int(response.get("web_search_calls", 0) or 0)
+    except (TypeError, ValueError):
+        return False
+    if completed_searches < 1:
+        return False
+    messages = " ".join(
+        str(value or "")
+        for value in (
+            candidates.get("error_message"),
+            research.get("error"),
+            run_info.get("error"),
+        )
+    ).casefold()
+    return any(marker in messages for marker in EMPTY_RESEARCH_MARKERS)
+
+
+def normalize_completed_empty_research(target_dir: Path) -> bool:
+    run_info_path = target_dir / "run-info.json"
+    candidates_path = target_dir / "candidates.json"
+    run_info = read_json(run_info_path)
+    candidates = read_json(candidates_path)
+    if not isinstance(run_info, dict) or not isinstance(candidates, dict):
+        return False
+    if not completed_empty_research(run_info, candidates):
+        return False
+    candidates["status"] = "ok"
+    candidates["error_message"] = None
+    research = run_info.get("research")
+    if not isinstance(research, dict):
+        return False
+    research["status"] = "ok"
+    research["error"] = None
+    warnings = run_info.get("warnings")
+    if not isinstance(warnings, list):
+        warnings = []
+        run_info["warnings"] = warnings
+    warning = (
+        "Восстановлен завершённый основной Web Search с нулевым пулом; "
+        "результат передан обязательному coverage audit без повторного research."
+    )
+    if warning not in warnings:
+        warnings.append(warning)
+    write_json(candidates_path, candidates)
+    write_json(run_info_path, run_info)
+    return True
+
+
 def research_is_reusable(source_dir: Path) -> tuple[bool, str | None]:
     run_info = read_json(source_dir / "run-info.json")
     candidates = read_json(source_dir / "candidates.json")
     if not isinstance(run_info, dict):
         return False, "run-info.json должен содержать объект"
-    research = run_info.get("research")
-    if not isinstance(research, dict) or research.get("status") != "ok":
-        return False, "research.status не равен ok"
     if not isinstance(candidates, dict) or not isinstance(candidates.get("candidates"), list):
         return False, "candidates.json не содержит candidates[]"
+    research = run_info.get("research")
+    if not isinstance(research, dict):
+        return False, "run-info.json не содержит research"
+    if research.get("status") != "ok" and not completed_empty_research(run_info, candidates):
+        return False, "research.status не равен ok и это не завершённый нулевой research"
     temporal_version = research.get("temporal_anchor_version")
     if (
         temporal_version != TEMPORAL_ANCHOR_VERSION
@@ -478,6 +550,7 @@ def recover(
     if target_dir.exists():
         shutil.rmtree(target_dir)
     shutil.copytree(source_dir, target_dir)
+    normalized_empty_research = normalize_completed_empty_research(target_dir)
 
     merged_research = restore_merged_coverage_research(
         recovery_root,
@@ -511,6 +584,7 @@ def recover(
         "recovery_mode": recovery_mode,
         "target_dir": str(target_dir),
         "removed_stage_files": removed,
+        "normalized_empty_research": normalized_empty_research,
         "merged_coverage_research": merged_research,
         "prior_coverage_audit": prior_coverage_audit,
         # Kept for compatibility with older recovery-report consumers.
