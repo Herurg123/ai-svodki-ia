@@ -30,12 +30,11 @@ jobs:
             automation.tests.test_gapless_research_window \
             automation.tests.test_coverage_search_upgrade \
             automation.tests.test_coverage_audit_diagnostics
-      - name: Commit patch
+      - name: Commit non-workflow patch
         run: |
           git config user.name "Herurg"
           git config user.email "77099658+Herurg123@users.noreply.github.com"
           git add \
-            .github/workflows/daily-production.yml \
             AGENTS.md README.md automation/README.md \
             automation/prompts/research_candidates.md \
             automation/prompts/coverage_audit.md \
