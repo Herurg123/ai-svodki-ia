@@ -1,0 +1,71 @@
+name: Temporary footer bootstrap
+
+on:
+  push:
+    branches:
+      - fix/footer-and-dates-2026-08-09
+    paths:
+      - ".tmp/footer.ready"
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: fix/footer-and-dates-2026-08-09
+      - name: Materialize permanent footer asset and contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .tmp/footer.part* | base64 --decode > posts/_footer-scr.png
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('automation/scripts/build_site.py')
+          text = path.read_text(encoding='utf-8')
+          text = text.replace(
+              'ATOM_NS = "http://www.w3.org/2005/Atom"\n\nRUSSIAN_MONTHS = {',
+              'ATOM_NS = "http://www.w3.org/2005/Atom"\nFOOTER_TARGET_URL = "https://dzen.ru/rybv"\nFOOTER_FILENAME = "_footer-scr.png"\n\nRUSSIAN_MONTHS = {',
+              1,
+          )
+          marker = '''def normalise_base_url(value: str) -> str:\n    return value.rstrip("/")\n\n\ndef parse_iso_datetime'''
+          replacement = '''def normalise_base_url(value: str) -> str:\n    return value.rstrip("/")\n\n\ndef render_footer_banner(config: dict[str, Any]) -> str:\n    image_url = normalise_base_url(str(config["site_base_url"])) + f"/{FOOTER_FILENAME}"\n    return (\n        '<p class="digest-footer" style="text-align:center;margin:32px 0 0;">'\n        f'<a href="{xml_attr(FOOTER_TARGET_URL)}" target="_blank" rel="noopener noreferrer">'\n        f'<img src="{xml_attr(image_url)}" alt="Подписаться на канал" '\n        'style="display:block;max-width:50%;width:auto;height:auto;margin:0 auto;">'\n        '</a></p>'\n    )\n\n\ndef parse_iso_datetime'''
+          if marker not in text:
+              raise SystemExit('normalise_base_url marker not found')
+          text = text.replace(marker, replacement, 1)
+          marker = '    image_filename = str(source["cover_filename"])\n    return f"""<!doctype html>'
+          replacement = '    image_filename = str(source["cover_filename"])\n    footer_html = render_footer_banner(config)\n    return f"""<!doctype html>'
+          if marker not in text:
+              raise SystemExit('render_article_page marker not found')
+          text = text.replace(marker, replacement, 1)
+          marker = "{source['article_html']}\n</body>"
+          replacement = "{source['article_html']}\n{footer_html}\n</body>"
+          if marker not in text:
+              raise SystemExit('article footer marker not found')
+          text = text.replace(marker, replacement, 1)
+          marker = '            "article_html": source["article_html"],'
+          replacement = '            "article_html": f"{source[\'article_html\']}\\n{render_footer_banner(config)}",'
+          if marker not in text:
+              raise SystemExit('RSS new item marker not found')
+          text = text.replace(marker, replacement, 1)
+          path.write_text(text, encoding='utf-8')
+
+          agents = Path('AGENTS.md')
+          text = agents.read_text(encoding='utf-8')
+          section = '''\n## Permanent digest footer asset\n\n`posts/_footer-scr.png` is a permanent production asset, not dated release\ncontent. Every newly rendered digest page and the RSS article content for a new\nrelease must end with a linked footer image pointing to `https://dzen.ru/rybv`;\nthe image source is `https://rybalka.one/posts/_footer-scr.png` and its displayed\nwidth must not exceed 50%.\n\nEvery FTP deployment must verify the actual remote presence of\n`_footer-scr.png` after normal synchronization and restore it if it is missing.\nThe scheduled 32-day content cleanup must never classify or delete this file.\n'''
+          if '## Permanent digest footer asset' not in text:
+              agents.write_text(text.rstrip() + '\n' + section, encoding='utf-8')
+
+          test = Path('automation/tests/test_footer_contract.py')
+          test.write_text('''from __future__ import annotations\n\nimport sys\nimport unittest\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nsys.path.insert(0, str(ROOT / "automation" / "scripts"))\n\nfrom build_site import render_article_page, render_footer_banner\nfrom cleanup_public_posts import DATE_NAME, IMAGE_NAME\n\n\nclass FooterContractTests(unittest.TestCase):\n    def config(self) -> dict:\n        return {"site_base_url": "https://rybalka.one/posts"}\n\n    def test_footer_markup_contract(self) -> None:\n        footer = render_footer_banner(self.config())\n        self.assertIn('href="https://dzen.ru/rybv"', footer)\n        self.assertIn('src="https://rybalka.one/posts/_footer-scr.png"', footer)\n        self.assertIn('max-width:50%', footer)\n\n    def test_footer_is_last_content_on_article_page(self) -> None:\n        page = render_article_page(\n            self.config(),\n            {\n                "title": "Test digest",\n                "description": "Description",\n                "cover_filename": "cover.png",\n                "article_html": "<p id=\\"article-end\\">END</p>",\n            },\n        )\n        footer_at = page.index('class="digest-footer"')\n        self.assertGreater(footer_at, page.index('id="article-end"'))\n        self.assertLess(footer_at, page.index("</body>"))\n        self.assertEqual(page.count('_footer-scr.png'), 1)\n\n    def test_footer_asset_exists_and_is_png(self) -> None:\n        asset = ROOT / "posts" / "_footer-scr.png"\n        self.assertTrue(asset.is_file())\n        self.assertEqual(asset.read_bytes()[:8], b"\\x89PNG\\r\\n\\x1a\\n")\n\n    def test_cleanup_date_classifiers_cannot_select_footer(self) -> None:\n        self.assertIsNone(DATE_NAME.fullmatch("_footer-scr.png"))\n        self.assertIsNone(IMAGE_NAME.fullmatch("_footer-scr.png"))\n\n    def test_deploy_has_remote_self_heal_contract(self) -> None:\n        workflow = (ROOT / ".github" / "workflows" / "deploy-posts.yml").read_text(encoding="utf-8")\n        self.assertIn('posts/_footer-scr.png', workflow)\n        self.assertIn('remote_url="ftp://${FTP_SERVER}:21/_footer-scr.png"', workflow)\n        self.assertIn('--upload-file "posts/_footer-scr.png"', workflow)\n\n    def test_new_rss_item_carries_footer_markup(self) -> None:\n        source = (ROOT / "automation" / "scripts" / "build_site.py").read_text(encoding="utf-8")\n        self.assertIn('"article_html": f"{source[\\\'article_html\\\']}\\\\n{render_footer_banner(config)}"', source)\n\n\nif __name__ == "__main__":\n    unittest.main()\n''', encoding='utf-8')
+          PY
+          rm -f .tmp/footer.part* .tmp/footer.ready
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add posts/_footer-scr.png automation/scripts/build_site.py automation/tests/test_footer_contract.py AGENTS.md .tmp
+          git commit -m "Add permanent digest footer asset"
+          git push origin HEAD:fix/footer-and-dates-2026-08-09
