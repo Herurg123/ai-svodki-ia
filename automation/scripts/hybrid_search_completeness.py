@@ -18,7 +18,6 @@ from ensure_story_coverage_policy import (
     AUDIT_CANDIDATE_SCHEMA,
     AUDIT_REJECTION_SCHEMA,
     build_audit_api_metadata,
-    response_to_plain,
 )
 from story_coverage import compact_archive, merge_candidates, read_json, write_json
 
@@ -80,7 +79,7 @@ CLUSTER_CATEGORIES: dict[str, frozenset[str]] = {
         {"infrastructure", "chips", "enterprise", "investment"}
     ),
     "safety_policy_regions": frozenset(
-        {"security", "regulation", "legal", "russia", "other"}
+        {"security", "regulation", "legal", "russia"}
     ),
 }
 
