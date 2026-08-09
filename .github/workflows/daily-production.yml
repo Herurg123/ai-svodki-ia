@@ -142,6 +142,7 @@ jobs:
     outputs:
       publish: ${{ steps.mode.outputs.publish }}
       commit_sha: ${{ steps.commit.outputs.commit_sha }}
+      editorial_stop: ${{ steps.coverage.outputs.editorial_stop }}
     timeout-minutes: 90
     env:
       PYTHONUNBUFFERED: "1"
@@ -305,7 +306,10 @@ jobs:
           )
           terminal = (
               temporal_anchor_current
-              and data.get("status") == "error"
+              and data.get("status") in {"error", "editorial_stop"}
+              and data.get("audit_state") == "completed_usable"
+              and not data.get("audit_error")
+              and not data.get("validation_error")
               and data.get("web_search_performed") is True
               and api.get("status") == "completed"
               and data.get("audit_status") in {"complete", "complete_with_gaps"}
@@ -523,6 +527,7 @@ jobs:
             --maximum-selected-stories "${MAXIMUM_SELECTED_STORIES}" \
             --maximum-research-web-search-calls 12
       - name: Complete mandatory coverage audit for a short digest
+        id: coverage
         if: steps.terminal_reuse.outputs.stop != 'true'
         # Runs for both fresh and recovered artifacts. Partial recovery reuses
         # completed directions and searches only missing beats. A short digest
@@ -564,8 +569,29 @@ jobs:
                   encoding="utf-8",
               )
           PY
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          path = Path("automation/preview/production-daily/coverage-audit.json")
+          report = json.loads(path.read_text(encoding="utf-8"))
+          editorial_stop = bool(
+              report.get("status") == "editorial_stop"
+              and report.get("editorial_stop") is True
+              and report.get("audit_state") == "completed_usable"
+              and report.get("audit_status") in {"complete", "complete_with_gaps"}
+              and isinstance(report.get("candidate_pool_after"), dict)
+              and report["candidate_pool_after"].get("total") == 0
+          )
+          with Path(os.environ["GITHUB_OUTPUT"]).open("a", encoding="utf-8") as stream:
+              stream.write(
+                  "editorial_stop=" + ("true" if editorial_stop else "false") + "\n"
+              )
+          if editorial_stop:
+              print("Completed zero-pool editorial stop: publication stages will be skipped.")
+          PY
       - name: Normalize and validate digest artifact
-        if: steps.terminal_reuse.outputs.stop != 'true'
+        if: steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true'
         shell: bash
         env:
           PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
@@ -579,7 +605,7 @@ jobs:
             --artifact-dir "${artifact_dir}" \
             --report "${artifact_dir}/artifact-validation.json"
       - name: Validate publishable story count and short digest marker
-        if: steps.terminal_reuse.outputs.stop != 'true'
+        if: steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true'
         shell: bash
         env:
           PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
@@ -591,7 +617,7 @@ jobs:
             --minimum-publishable 1 \
             --report automation/preview/production-daily/story-coverage-validation.json
       - name: Build runtime Image API request
-        if: steps.terminal_reuse.outputs.stop != 'true' && steps.recovery.outputs.image_recovered != 'true'
+        if: steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true' && steps.recovery.outputs.image_recovered != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -601,7 +627,7 @@ jobs:
             --request-id "${{ steps.runtime.outputs.image_request_id }}" \
             --output automation/preview/production-daily/image-request.json
       - name: Generate one production cover
-        if: steps.terminal_reuse.outputs.stop != 'true' && steps.recovery.outputs.image_recovered != 'true'
+        if: steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true' && steps.recovery.outputs.image_recovered != 'true'
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -619,7 +645,7 @@ jobs:
             --artifact-dir "${image_dir}" \
             --report "${image_dir}/cover-validation.json"
       - name: Revalidate recovered production cover
-        if: steps.terminal_reuse.outputs.stop != 'true' && steps.recovery.outputs.image_recovered == 'true'
+        if: steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true' && steps.recovery.outputs.image_recovered == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -628,7 +654,7 @@ jobs:
             --artifact-dir "${image_dir}" \
             --report "${image_dir}/cover-validation.json"
       - name: Stage accepted legacy images under canonical posts/images
-        if: steps.terminal_reuse.outputs.stop != 'true'
+        if: steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -637,7 +663,7 @@ jobs:
             --target posts/images \
             --report automation/preview/production-daily/legacy-images.json
       - name: Build and validate candidate site
-        if: steps.terminal_reuse.outputs.stop != 'true'
+        if: steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -679,7 +705,7 @@ jobs:
             --rss "${candidate_root}/posts/rss.xml" \
             --report "${candidate_root}/dzen-feed-validation.json"
       - name: Dry-run or promote candidate
-        if: steps.terminal_reuse.outputs.stop != 'true'
+        if: steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true'
         shell: bash
         env:
           PUBLISH: ${{ steps.mode.outputs.publish }}
@@ -699,7 +725,7 @@ jobs:
             --report automation/preview/production-daily/promotion.json \
             "${args[@]}"
       - name: Refresh archive after promotion
-        if: steps.mode.outputs.publish == 'true' && steps.terminal_reuse.outputs.stop != 'true'
+        if: steps.mode.outputs.publish == 'true' && steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true'
         run: |
           set -euo pipefail
           python automation/scripts/bootstrap_archive.py
@@ -713,7 +739,7 @@ jobs:
           fi
       - name: Commit production release
         id: commit
-        if: steps.mode.outputs.publish == 'true' && steps.terminal_reuse.outputs.stop != 'true'
+        if: steps.mode.outputs.publish == 'true' && steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true'
         shell: bash
         run: |
           set -euo pipefail
