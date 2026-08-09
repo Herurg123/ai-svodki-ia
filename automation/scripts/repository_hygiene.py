@@ -17,8 +17,11 @@ from repository_hygiene_policy import (
     ORPHAN_WATCH_MERGES,
     PRODUCTION_RE,
     RECENT_MERGED_PRS,
+    RECENT_MERGED_TTL_DAYS,
+    CLOSED_UNMERGED_TTL_DAYS,
     STALE_QUEUED_AFTER_DAYS,
     branch_history_class,
+    currently_protected_recent_merges,
     classify_branch,
     classify_ci,
     classify_production,
@@ -44,8 +47,9 @@ def build_plan(api: GitHub, root: Path):
     open_prs = api.prs("open")
     closed_main_prs = api.prs("closed", base=default_branch)
     all_prs = open_prs + closed_main_prs
+    now = dt.datetime.now(dt.timezone.utc)
     merged = merged_sorted(closed_main_prs)
-    recent = merged[:RECENT_MERGED_PRS]
+    recent = currently_protected_recent_merges(merged, now)
     recent_numbers = {int(pr["number"]) for pr in recent}
 
     status_runs = [run for status in ("queued", "in_progress") for run in api.runs(status)]
@@ -63,6 +67,7 @@ def build_plan(api: GitHub, root: Path):
             prs=all_prs,
             recent_numbers=recent_numbers,
             active_branches=active_branches,
+            now=now,
         )
         name = str(branch.get("name") or "")
         branch_classes[name] = cls
@@ -77,7 +82,7 @@ def build_plan(api: GitHub, root: Path):
     history_classes = {}
     history_names = {pr_branch(pr, api.repository) for pr in all_prs}
     for name in sorted(item for item in history_names if item):
-        history_classes[name] = branch_history_class(name, all_prs, api.repository, recent_numbers)
+        history_classes[name] = branch_history_class(name, all_prs, api.repository, recent_numbers, now)
 
     workflow_entries = api.contents(".github/workflows", default_branch)
     canonical_paths = {
@@ -96,6 +101,7 @@ def build_plan(api: GitHub, root: Path):
             branch_classes,
             history_classes,
             workflow_runs[int(workflow["id"])],
+            default_branch=default_branch,
         )
         workflow_items.append({
             "id": int(workflow["id"]),
@@ -157,7 +163,6 @@ def build_plan(api: GitHub, root: Path):
         })
 
     stale_runs = []
-    now = dt.datetime.now(dt.timezone.utc)
     workflow_classes = {item["id"]: item["classification"] for item in workflow_items}
     for workflow in workflows:
         workflow_id = int(workflow["id"])
@@ -184,6 +189,8 @@ def build_plan(api: GitHub, root: Path):
         "main_sha": main_sha,
         "policy": {
             "recent_merged_prs": RECENT_MERGED_PRS,
+            "recent_merged_ttl_days": RECENT_MERGED_TTL_DAYS,
+            "closed_unmerged_ttl_days": CLOSED_UNMERGED_TTL_DAYS,
             "keep_full_production_dates": KEEP_FULL_PRODUCTION_DATES,
             "keep_final_production_dates": KEEP_FINAL_PRODUCTION_DATES,
             "orphan_watch_merges": ORPHAN_WATCH_MERGES,
@@ -261,6 +268,7 @@ def apply_branches(api, root, plan):
             prs=prs,
             recent_numbers=recent_numbers,
             active_branches=active,
+            now=dt.datetime.now(dt.timezone.utc),
         )
         current_sha = str((branch.get("commit") or {}).get("sha") or "")
         expected_sha = str(item["sha"])

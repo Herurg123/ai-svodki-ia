@@ -38,7 +38,13 @@ it.
 The scheduled repository hygiene workflow may mutate only explicitly classified
 ephemeral GitHub objects: old merged branch refs, safe Actions artifacts, and
 the enabled state of orphaned Actions workflows. It must not edit tracked
-project files, `main`, releases, tags, or published/editorial content.
+project files, `main`, releases, tags, or published/editorial content. The
+five-merged-PR branch grace is also capped at 7 days, so quiet periods cannot
+protect stale refs forever. Closed-unmerged branches may age into `safe_delete`
+after 14 days only when their current HEAD still exactly matches the closed PR
+head. An orphan workflow absent from current `main` whose latest run was on the
+default branch may be disabled once it has no live run; absence from current
+`main` is the canonical proof that the workflow was removed.
 
 Source-code, test, prompt, configuration, fixture, and specification orphan
 detection is report-only. Any tracked-file cleanup still follows the normal
