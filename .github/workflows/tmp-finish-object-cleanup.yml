@@ -1,0 +1,197 @@
+name: Temporary finish one-shot object cleanup
+
+on:
+  push:
+    branches:
+      - fix/hygiene-lifecycle-2026-08-09
+
+permissions:
+  contents: write
+  actions: write
+  pull-requests: read
+
+jobs:
+  finish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: fix/hygiene-lifecycle-2026-08-09
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Mark GitHub Pages workflow as platform-managed
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new):
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{path}: expected one match, got {count}')
+              p.write_text(text.replace(old, new), encoding='utf-8')
+
+          replace_once(
+              'automation/scripts/repository_hygiene_policy.py',
+              '    if path.startswith("dynamic/pages/"):\n        return ("protected", "github_pages_enabled") if has_pages else ("safe_disable", "github_pages_disabled")\n',
+              '    if path.startswith("dynamic/pages/"):\n        return (\n            ("protected", "github_pages_enabled")\n            if has_pages\n            else ("protected", "github_pages_platform_managed")\n        )\n',
+          )
+          replace_once(
+              'automation/tests/test_repository_hygiene.py',
+              '        pages = {"id":2, "path":"dynamic/pages/pages-build-deployment"}\n        self.assertEqual(rh.classify_workflow(pages, canonical, False, {}, {}, [])[0], "safe_disable")\n',
+              '        pages = {"id":2, "path":"dynamic/pages/pages-build-deployment"}\n        self.assertEqual(\n            rh.classify_workflow(pages, canonical, False, {}, {}, []),\n            ("protected", "github_pages_platform_managed"),\n        )\n',
+          )
+          replace_once(
+              'README.md',
+              '  другой ветке, действует классификация этой ветки и её grace/TTL. Динамический\n  GitHub Pages workflow отключается только при `has_pages=false`. `in_progress`\n  всегда считается живым; `queued` старше 14 дней считается зависшим и не\n  защищает orphan-workflow.\n',
+              '  другой ветке, действует классификация этой ветки и её grace/TTL. Динамический\n  GitHub Pages workflow является платформенным объектом GitHub: при\n  `has_pages=false` он остаётся диагностическим `github_pages_platform_managed`\n  и не отправляется на REST disable, который GitHub для него отклоняет.\n  `in_progress` всегда считается живым; `queued` старше 14 дней считается\n  зависшим и не защищает orphan-workflow.\n',
+          )
+          replace_once(
+              'automation/README.md',
+              'используется отдельный gate: он может быть отключён только если репозиторий\nсообщает `has_pages=false`.\n',
+              'используется отдельная классификация: это GitHub-managed workflow, поэтому при\n`has_pages=false` он остаётся диагностическим `github_pages_platform_managed` и\nне передаётся в REST disable, который GitHub для такого объекта отклоняет.\n',
+          )
+          replace_once(
+              'AGENTS.md',
+              'default branch may be disabled once it has no live run; absence from current\n`main` is the canonical proof that the workflow was removed.\n',
+              'default branch may be disabled once it has no live run; absence from current\n`main` is the canonical proof that the workflow was removed. GitHub-managed\ndynamic Pages workflows are diagnostic objects: when Pages is disabled they\nmust not be sent to the normal workflow-disable REST endpoint, which GitHub\nrejects for this platform-managed workflow.\n',
+          )
+          PY
+
+      - name: Verify Pages guard and focused hygiene suite
+        run: |
+          python -m unittest \
+            automation.tests.test_repository_hygiene \
+            automation.tests.test_repository_hygiene_summary \
+            automation.tests.test_repository_hygiene_workflow -v
+          git diff --check
+
+      - name: Commit Pages lifecycle guard
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add automation/scripts/repository_hygiene_policy.py automation/tests/test_repository_hygiene.py README.md automation/README.md AGENTS.md
+          git commit -m 'Treat GitHub Pages workflow as platform managed'
+          git push origin HEAD:fix/hygiene-lifecycle-2026-08-09
+
+      - name: Remove exact one-shot workflow objects and abandoned PR branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.error, urllib.parse, urllib.request
+
+          token = os.environ['GH_TOKEN']
+          repo = os.environ['GH_REPO']
+          base = 'https://api.github.com'
+          headers = {
+              'Accept': 'application/vnd.github+json',
+              'Authorization': f'Bearer {token}',
+              'X-GitHub-Api-Version': '2022-11-28',
+              'User-Agent': 'ai-svodki-exact-one-shot-cleanup',
+          }
+
+          def request(method, path, expected=(200,)):
+              req = urllib.request.Request(base + path, headers=headers, method=method)
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as r:
+                      raw, status = r.read(), r.status
+              except urllib.error.HTTPError as e:
+                  raw, status = e.read(), e.code
+              if status not in expected:
+                  raise RuntimeError(f'{method} {path}: HTTP {status}: {raw[:500]!r}')
+              return json.loads(raw.decode()) if raw else None
+
+          canonical = request('GET', f'/repos/{repo}/contents/.github/workflows?ref=main')
+          canonical_paths = {item['path'] for item in canonical if item.get('type') == 'file'}
+          exact_paths = {
+              '.github/workflows/bootstrap-footer-asset.yml',
+              '.github/workflows/apply-temporal-anchor-patch.yml',
+              '.github/workflows/fix-temporal-test.yml',
+              '.github/workflows/dispatch-aug9-production.yml',
+              '.github/workflows/apply-zero-research-fix.yml',
+              '.github/workflows/dispatch-aug9-recovery.yml',
+              '.github/workflows/tmp-editorial-stop-patch.yml',
+          }
+          inventory = request('GET', f'/repos/{repo}/actions/workflows?per_page=100').get('workflows', [])
+          cleaned = []
+          skipped = []
+          for wf in inventory:
+              path = str(wf.get('path') or '')
+              if path not in exact_paths:
+                  continue
+              if path in canonical_paths:
+                  raise RuntimeError(f'refusing to clean canonical workflow {path}')
+              runs = request('GET', f'/repos/{repo}/actions/workflows/{wf["id"]}/runs?per_page=100').get('workflow_runs', [])
+              live = [run for run in runs if run.get('status') in {'queued', 'in_progress'}]
+              if live:
+                  skipped.append({'path': path, 'reason': 'live_run', 'run_ids': [r['id'] for r in live]})
+                  continue
+              if wf.get('state') == 'active':
+                  request('PUT', f'/repos/{repo}/actions/workflows/{wf["id"]}/disable', expected=(204,))
+              deleted_runs = []
+              for run in runs:
+                  if run.get('status') == 'completed':
+                      request('DELETE', f'/repos/{repo}/actions/runs/{run["id"]}', expected=(204,))
+                      deleted_runs.append(run['id'])
+              cleaned.append({'workflow_id': wf['id'], 'path': path, 'deleted_runs': deleted_runs})
+
+          branch = 'agent/allow-short-regional-digests'
+          quoted_branch = urllib.parse.quote(branch, safe='')
+          branch_data = request('GET', f'/repos/{repo}/branches/{quoted_branch}')
+          pr = request('GET', f'/repos/{repo}/pulls/18')
+          open_prs = request('GET', f'/repos/{repo}/pulls?state=open&head=Herurg123:{quoted_branch}&per_page=10')
+          runs = request('GET', f'/repos/{repo}/actions/runs?branch={quoted_branch}&per_page=100').get('workflow_runs', [])
+          branch_sha = str((branch_data.get('commit') or {}).get('sha') or '')
+          pr_sha = str((pr.get('head') or {}).get('sha') or '')
+          live = [r for r in runs if r.get('status') in {'queued', 'in_progress'}]
+          if not (
+              pr.get('state') == 'closed'
+              and pr.get('merged_at') is None
+              and (pr.get('head') or {}).get('ref') == branch
+              and branch_sha
+              and branch_sha == pr_sha
+              and not open_prs
+              and not live
+          ):
+              raise RuntimeError('closed-unmerged PR #18 branch no longer satisfies exact one-shot deletion proof')
+          ref = '/'.join(urllib.parse.quote(part, safe='') for part in ('heads', *branch.split('/')))
+          request('DELETE', f'/repos/{repo}/git/refs/{ref}', expected=(204,))
+
+          print(json.dumps({
+              'cleaned_workflows': cleaned,
+              'skipped_workflows': skipped,
+              'deleted_branch': branch,
+              'pages_workflow': 'left platform-managed by design',
+          }, ensure_ascii=False, indent=2))
+          PY
+
+      - name: Disable this finisher workflow
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.error, urllib.request
+          token = os.environ['GH_TOKEN']; repo = os.environ['GH_REPO']
+          headers = {'Accept':'application/vnd.github+json','Authorization':f'Bearer {token}','X-GitHub-Api-Version':'2022-11-28','User-Agent':'ai-svodki-self-disable'}
+          req = urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/workflows?per_page=100', headers=headers)
+          with urllib.request.urlopen(req, timeout=30) as r:
+              workflows = json.load(r).get('workflows', [])
+          target = next((w for w in workflows if w.get('path') == '.github/workflows/tmp-finish-object-cleanup.yml'), None)
+          if target and target.get('state') == 'active':
+              req = urllib.request.Request(f'https://api.github.com/repos/{repo}/actions/workflows/{target["id"]}/disable', headers=headers, method='PUT')
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as r:
+                      print('self-disabled', target['id'], r.status)
+              except urllib.error.HTTPError as e:
+                  print('self-disable warning', e.code, e.read().decode(errors='replace'))
+          PY
