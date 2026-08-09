@@ -1,0 +1,50 @@
+name: Temporary temporal test fix
+
+on:
+  push:
+    branches:
+      - fix/research-temporal-anchor-2026-08-09
+    paths:
+      - .github/workflows/fix-temporal-test.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: fix/research-temporal-anchor-2026-08-09
+          fetch-depth: 1
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Update stale sentinel regression contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('automation/tests/test_recall_sentinel.py')
+          text = path.read_text(encoding='utf-8')
+          old = '''    def test_stale_sentinel_is_removed_and_budget_restored(self) -> None:\n        plan = complete_zero_plan()\n        stale = base_attempt("general_coverage_gaps", attempt=2)\n'''
+          new = '''    def test_stale_sentinel_is_removed_and_budget_restored(self) -> None:\n        plan = complete_zero_plan()\n        plan["temporal_anchor_version"] = runtime.TEMPORAL_ANCHOR_VERSION\n        stale = base_attempt("general_coverage_gaps", attempt=2)\n'''
+          if text.count(old) != 1:
+              raise SystemExit(f'expected one stale-sentinel anchor, got {text.count(old)}')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+      - name: Run focused tests
+        run: |
+          python -m unittest \
+            automation.tests.test_recall_sentinel \
+            automation.tests.test_temporal_anchor_contract
+      - name: Commit test contract
+        run: |
+          git config user.name "Herurg"
+          git config user.email "77099658+Herurg123@users.noreply.github.com"
+          git add automation/tests/test_recall_sentinel.py
+          git diff --cached --check
+          git commit -m "Обновить sentinel regression для temporal contract"
+          git push origin HEAD:fix/research-temporal-anchor-2026-08-09
