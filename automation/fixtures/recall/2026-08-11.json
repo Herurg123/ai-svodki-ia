@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "name": "2026-08-11-primary-recall-regression",
+  "purpose": "Historical retrieval benchmark for the recall failure that produced a one-story digest on 2026-08-11. Presence here means discovery should surface the event into the raw/candidate pool; it does not require editorial inclusion.",
+  "search_window": {
+    "start_at": "2026-08-08T02:48:25+03:00",
+    "end_at": "2026-08-11T02:50:46+03:00"
+  },
+  "must_discover": [
+    {
+      "id": "openai-gpt-5-6-cyber-daybreak",
+      "organization": "OpenAI",
+      "signal_terms": ["GPT-5.6-Cyber", "Daybreak"],
+      "source_url": "https://www.axios.com/2026/08/10/openai-gpt-astra-restrictions-safety-hacking-defenders"
+    },
+    {
+      "id": "meta-muse-glimmer",
+      "organization": "Meta",
+      "signal_terms": ["Muse Glimmer", "open-weight"],
+      "source_url": "https://www.reuters.com/technology/"
+    },
+    {
+      "id": "nvidia-ai-infrastructure-financing",
+      "organization": "Nvidia",
+      "signal_terms": ["Nvidia", "500 billion", "AI infrastructure"],
+      "source_url": "https://www.reuters.com/technology/"
+    },
+    {
+      "id": "apple-alibaba-qwen-china-integration",
+      "organization": "Apple; Alibaba",
+      "signal_terms": ["Qwen", "Siri", "Writing Tools", "China"],
+      "source_url": "https://www.reuters.com/technology/"
+    }
+  ],
+  "should_discover": [
+    {
+      "id": "microsoft-maia-300",
+      "organization": "Microsoft",
+      "signal_terms": ["Maia 300", "AI chip"],
+      "source_url": "https://www.reuters.com/business/"
+    },
+    {
+      "id": "openai-anthropic-house-agent-scrutiny",
+      "organization": "OpenAI; Anthropic",
+      "signal_terms": ["House Democrats", "AI agents", "OpenAI", "Anthropic"],
+      "source_url": "https://www.reuters.com/legal/"
+    }
+  ],
+  "experiment_result": {
+    "initial_fixed_matrix": "5_of_6_control_events",
+    "refined_matrix_with_separate_china_integrations": "6_of_6_control_events",
+    "decision": "adopt_primary_recall_v2"
+  }
+}
