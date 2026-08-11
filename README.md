@@ -67,10 +67,10 @@ repository hygiene: в policy она отдельно классифицируе
 4. Primary работает по принципу **discovery-first**. На retrieval-этапе
    проверяемое потенциально важное событие можно сохранить как `consider`, если
    окончательная редакционная значимость ещё не очевидна. После каждого
-   прохода кандидаты всё равно проходят существующий `story_coverage` validator:
-   окно, freshness, verification, legal/curiosity, URL/semantic dedupe и лимит
-   пула. Финальный `independent_missing_events` получает компактный список уже
-   найденного и ищет именно крупные отсутствующие события.
+   прохода кандидаты проходят существующий `story_coverage` validator: окно,
+   freshness, verification, legal/curiosity и URL/semantic dedupe. Финальный
+   `independent_missing_events` получает компактный список уже найденного и ищет
+   именно крупные отсутствующие события.
 5. Китай/Азия намеренно разделены на два прохода. Исторический эксперимент на
    окне выпуска 2026-08-11 показал, что одна широкая China/Asia-проверка
    обнаружила 5 из 6 контрольных событий, но пропустила продуктовую интеграцию
@@ -83,13 +83,21 @@ repository hygiene: в policy она отдельно классифицируе
    Успешно выполненный pass вправе вернуть ноль кандидатов. Диагностика сохраняет
    фактические queries, consulted sources, raw candidates, model rejections и
    validator rejections каждого направления.
-7. Primary сохраняет обычный research artifact и передаёт его существующему
+7. Обычный `maximum_candidates` применяется **только после завершения всех 12
+   обязательных проходов**. До этого валидные уникальные события собираются во
+   временный расширенный discovery-pool. Финальный cap сначала сохраняет
+   сильнейший уникальный вклад каждого направления, а оставшиеся места заполняет
+   общим ранжированием. Поэтому ранние broad-поиски не могут занять все места до
+   China/Asia, Russia, security, legal или missing-events. Это fairness
+   candidate-пула, а не квота на опубликованные сюжеты; diagnostics отдельно
+   показывают полный validated pool и события, отброшенные только финальным cap.
+8. Primary сохраняет обычный research artifact и передаёт его существующему
    generator/editorial через `--research-input`, поэтому редакционная логика и
    валидаторы не дублируются. Caller-supplied `--research-input` по-прежнему
    означает recovery/editorial rerun и не оплачивает fresh primary; внутренне
    созданный Primary Recall research-input является свежим primary и после него
    разрешён один обычный hybrid completeness pass.
-8. После **свежего** primary запускается отдельный `hybrid completeness` v1. Он
+9. После **свежего** primary запускается отдельный `hybrid completeness` v1. Он
    не заменяет primary, а остаётся независимой страховкой. Три фиксированных
    прохода получают ровно по одному Web Search: (1)
    models/products/agents/research, (2) infrastructure/chips/business, (3)
@@ -98,27 +106,27 @@ repository hygiene: в policy она отдельно классифицируе
    объединённом primary + completeness пуле, разрешается **один** adaptive gap
    search. Жёсткий потолок слоя — 4 завершённых search operations, обычный
    расход — 3. API domain filter здесь намеренно отсутствует.
-9. Hybrid-кандидаты проходят тот же строгий `story_coverage` validator,
-   дедупликацию по URL/событию и лимит пула. Editorial повторяется только если
-   принят хотя бы один новый кандидат. Caller-supplied `--research-input`
-   rerun/recovery не запускает completeness рекурсивно. Если сам completeness
-   или его editorial-rerun технически ломается, baseline primary artifact
-   сохраняется или восстанавливается.
-10. Если после primary + hybrid достойных сюжетов всё ещё меньше обычной цели,
+10. Hybrid-кандидаты проходят тот же строгий `story_coverage` validator,
+    дедупликацию по URL/событию и лимит пула. Editorial повторяется только если
+    принят хотя бы один новый кандидат. Caller-supplied `--research-input`
+    rerun/recovery не запускает completeness рекурсивно. Если сам completeness
+    или его editorial-rerun технически ломается, baseline primary artifact
+    сохраняется или восстанавливается.
+11. Если после primary + hybrid достойных сюжетов всё ещё меньше обычной цели,
     выполняется прежний обязательный coverage audit: шесть отдельных
     тематических Web Search-проходов и один резервный слот. Если обязательное
     направление технически не завершено, резерв тратится на его повтор. Если
     все шесть завершены, но итоговый пригодный пул всё ещё нулевой, тот же
     седьмой слот становится `high_signal_recall_sentinel` версии 7.
-11. `gpt-image-2` создаёт одну PNG-обложку 1536×864; валидатор проверяет её
+12. `gpt-image-2` создаёт одну PNG-обложку 1536×864; валидатор проверяет её
     технический контракт.
-12. Legacy-staging исторических обложек работает как best-effort слой
+13. Legacy-staging исторических обложек работает как best-effort слой
     совместимости: его предупреждение само по себе не блокирует выпуск.
     Канонический build и последующие валидаторы всё равно обязаны подтвердить,
     что все реально используемые страницы и изображения присутствуют.
-13. Кандидат сайта получает RSS, sitemap и Schema.org и проходит офлайн-
+14. Кандидат сайта получает RSS, sitemap и Schema.org и проходит офлайн-
     валидацию.
-14. Только проверенное состояние записывается одним commit в `main`, после чего
+15. Только проверенное состояние записывается одним commit в `main`, после чего
     `deploy-posts.yml` разворачивает именно этот SHA.
 
 Primary Recall v2 имеет hard cap `12`, hybrid completeness — hard cap `4`, а
