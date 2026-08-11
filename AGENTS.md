@@ -135,6 +135,16 @@ retrieval. Strict window, source, freshness, legal/curiosity, significance and
 deduplication checks still run through the existing story-coverage validator and
 editorial stages after discovery.
 
+The configured final candidate cap must **not** be enforced incrementally in
+search order. All twelve passes first contribute to a larger validated and
+deduplicated discovery pool. Only after every mandatory pass completes may the
+normal final cap be applied globally. The selection must preserve the strongest
+unique contribution of each direction before filling remaining slots by global
+rank, so early broad searches cannot starve later China/Asia, Russia, security,
+legal, or missing-events passes. This is retrieval-pool fairness, not a quota on
+published stories. Diagnostics must record both the validated discovery-pool
+size and any events dropped only by the final cap.
+
 All twelve directions are mandatory for a fresh production run. A technical
 failure or incomplete Web Search in any direction is a red, fail-closed primary
 failure and must never be reinterpreted as a low-news day. A completed direction
