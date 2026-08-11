@@ -17,14 +17,14 @@
 Production работает только из ветки `main`, использует часовой пояс
 `Europe/Moscow` и нормализует время выпуска к 06:00 МСК. Пропущенные
 календарные дни допустимы. Окно исследования начинается с фактического
-pre-research cutoff последнего успешно опубликованного выпуска и заканчивается
+`search_cutoff_at` последнего успешно опубликованного выпуска и заканчивается
 cutoff, зафиксированным непосредственно перед текущим research; нормализованное
 `published_at` 06:00 МСК не создаёт слепую зону между запусками.
 
 | Workflow | Назначение |
 |---|---|
 | `.github/workflows/ci.yml` | Бесплатные офлайн-проверки pull request и `main`: компиляция, unit-тесты, редакционный и production-контракты, архив, RSS, sitemap и Schema.org. |
-| `.github/workflows/daily-production.yml` | Gate, primary research, независимый hybrid completeness, editorial, ограниченный coverage audit, обложка, сборка сайта, commit в `main` и вызов FTP-деплоя. |
+| `.github/workflows/daily-production.yml` | Gate, Primary Recall v2, независимый hybrid completeness, editorial, ограниченный coverage audit, обложка, сборка сайта, commit в `main` и вызов FTP-деплоя. |
 | `.github/workflows/repository-cleanup.yml` | Ежедневная очистка в 01:43 МСК: компактация архива и удаление публичных выпусков старше 32 дней. |
 | `.github/workflows/repository-hygiene.yml` | Отдельная инженерная уборка GitHub в 15:43 МСК: старые merged-ветки, безопасно классифицированные Actions artifacts и orphaned workflows; исходники и старые runs только диагностируются. |
 | `.github/workflows/deploy-posts.yml` | Синхронизация точного состояния `posts/` выбранного commit на FTP, включая контролируемое удаление исчезнувших файлов. |
@@ -56,60 +56,85 @@ repository hygiene: в policy она отдельно классифицируе
    проверка статьи и обложки на живом сайте выполняется как диагностика и при
    временной сетевой/FTP/CDN-недоступности даёт warning, но не срывает сборку
    нового независимого выпуска.
-3. Основной research сохранён без замены: он целится в пул из 12–20 кандидатов
-   и ограничен 12 Web Search calls. Discovery выполняется в заданном порядке:
-   широкий мировой проход, отдельная проверка крупных агентств, матрица
-   Китай/Азия × типы событий, матрица Россия × типы событий, тематические
-   проходы и условный last-mile, если пул остаётся короче обычной цели.
-   Матрицы описывают обязательное покрытие, но не требуют отдельного Web Search
-   для каждой клетки. Если завершённый основной Web Search вернул нулевой пул,
-   research-only artifact остаётся пригодным для продолжения. Artifact также
-   фиксирует отношение логических запросов к фактическим search operations.
-4. После **свежего** primary запускается отдельный `hybrid completeness` v1.
-   Он не заменяет найденные primary-кандидаты, а добавляет независимый второй
-   контур discovery. Три фиксированных прохода получают ровно по одному Web
-   Search: (1) models/products/agents/research, (2) infrastructure/chips/business,
-   (3) safety/security/policy/major regional gaps. После них детерминированно
+3. Свежий основной research выполняет **Primary Recall v2**. Жёсткий primary-
+   бюджет остаётся равен **12 Web Search operations**, но расходуется
+   детерминированно: Python-orchestrator запускает ровно двенадцать обязательных
+   Responses-вызовов, каждый с `max_tool_calls=1` и своей ролью:
+   `global_breaking`, `major_agencies`, `models_products_agents`,
+   `infrastructure_chips_cloud`, `business_investment_partnerships`,
+   `china_asia_models`, `china_asia_integrations`, `russia`, `developer_tools`,
+   `security_safety`, `legal_regulation`, `independent_missing_events`.
+4. Primary работает по принципу **discovery-first**. На retrieval-этапе
+   проверяемое потенциально важное событие можно сохранить как `consider`, если
+   окончательная редакционная значимость ещё не очевидна. После каждого
+   прохода кандидаты проходят существующий `story_coverage` validator: окно,
+   freshness, verification, legal/curiosity и URL/semantic dedupe. Финальный
+   `independent_missing_events` получает компактный список уже найденного и ищет
+   именно крупные отсутствующие события.
+5. Китай/Азия намеренно разделены на два прохода. Исторический эксперимент на
+   окне выпуска 2026-08-11 показал, что одна широкая China/Asia-проверка
+   обнаружила 5 из 6 контрольных событий, но пропустила продуктовую интеграцию
+   Apple/Qwen; отдельный `china_asia_integrations` поднял шестое событие без
+   увеличения 12-search primary-бюджета. Regression fixture хранится в
+   `automation/fixtures/recall/2026-08-11.json`.
+6. Все двенадцать primary-направлений обязательны. Технический сбой или
+   отсутствие ровно одного завершённого Web Search в любом слоте делает fresh
+   primary красным и **не** может быть переинтерпретировано как «новостей мало».
+   Успешно выполненный pass вправе вернуть ноль кандидатов. Диагностика сохраняет
+   фактические queries, consulted sources, raw candidates, model rejections и
+   validator rejections каждого направления.
+7. Обычный `maximum_candidates` применяется **только после завершения всех 12
+   обязательных проходов**. До этого валидные уникальные события собираются во
+   временный расширенный discovery-pool. Финальный cap сначала сохраняет
+   сильнейший уникальный вклад каждого направления, а оставшиеся места заполняет
+   общим ранжированием. Поэтому ранние broad-поиски не могут занять все места до
+   China/Asia, Russia, security, legal или missing-events. Это fairness
+   candidate-пула, а не квота на опубликованные сюжеты; diagnostics отдельно
+   показывают полный validated pool и события, отброшенные только финальным cap.
+8. Primary сохраняет обычный research artifact и передаёт его существующему
+   generator/editorial через `--research-input`, поэтому редакционная логика и
+   валидаторы не дублируются. Caller-supplied `--research-input` по-прежнему
+   означает recovery/editorial rerun и не оплачивает fresh primary; внутренне
+   созданный Primary Recall research-input является свежим primary и после него
+   разрешён один обычный hybrid completeness pass.
+9. После **свежего** primary запускается отдельный `hybrid completeness` v1. Он
+   не заменяет primary, а остаётся независимой страховкой. Три фиксированных
+   прохода получают ровно по одному Web Search: (1)
+   models/products/agents/research, (2) infrastructure/chips/business, (3)
+   safety/security/policy/major regional gaps. После них детерминированно
    считаются три тематических кластера; если хотя бы один полностью пуст в
    объединённом primary + completeness пуле, разрешается **один** adaptive gap
-   search. Жёсткий потолок слоя — 4 завершённых поисковых операции, обычный
-   расход — 3. API domain filter здесь намеренно отсутствует: retrieval широкий,
-   а качество источника и пригодность события проверяются после поиска.
-5. Completeness-кандидаты проходят тот же строгий `story_coverage` validator,
-   дедупликацию по URL/событию и лимит пула. Editorial повторяется только если
-   принят хотя бы один новый кандидат. `--research-input` rerun и recovery не
-   запускают completeness рекурсивно и не оплачивают его заново. Если сам
-   completeness или его editorial-rerun технически ломается, baseline primary
-   artifact сохраняется/восстанавливается и production не становится хуже
-   старого механизма только из-за дополнительного слоя.
-6. Если после primary + hybrid достойных сюжетов всё ещё меньше обычной цели,
-   выполняется прежний обязательный coverage audit: шесть отдельных тематических
-   Web Search-проходов и один резервный слот. Если обязательное направление
-   технически не завершено, резерв тратится на его повтор. Если все шесть
-   завершены, но итоговый пригодный пул всё ещё нулевой, тот же седьмой слот
-   становится `high_signal_recall_sentinel` версии 7. Этот аварийный zero-pool
-   probe остаётся отдельной последней страховкой и не является заменой hybrid
-   completeness.
-7. `gpt-image-2` создаёт одну PNG-обложку 1536×864; валидатор проверяет её
-   технический контракт.
-8. Legacy-staging исторических обложек работает как best-effort слой
-   совместимости: его предупреждение само по себе не блокирует выпуск.
-   Канонический build и последующие валидаторы всё равно обязаны подтвердить,
-   что все реально используемые страницы и изображения присутствуют.
-9. Кандидат сайта получает RSS, sitemap и Schema.org и проходит офлайн-
-   валидацию.
-10. Только проверенное состояние записывается одним commit в `main`, после чего
+   search. Жёсткий потолок слоя — 4 завершённых search operations, обычный
+   расход — 3. API domain filter здесь намеренно отсутствует.
+10. Hybrid-кандидаты проходят тот же строгий `story_coverage` validator,
+    дедупликацию по URL/событию и лимит пула. Editorial повторяется только если
+    принят хотя бы один новый кандидат. Caller-supplied `--research-input`
+    rerun/recovery не запускает completeness рекурсивно. Если сам completeness
+    или его editorial-rerun технически ломается, baseline primary artifact
+    сохраняется или восстанавливается.
+11. Если после primary + hybrid достойных сюжетов всё ещё меньше обычной цели,
+    выполняется прежний обязательный coverage audit: шесть отдельных
+    тематических Web Search-проходов и один резервный слот. Если обязательное
+    направление технически не завершено, резерв тратится на его повтор. Если
+    все шесть завершены, но итоговый пригодный пул всё ещё нулевой, тот же
+    седьмой слот становится `high_signal_recall_sentinel` версии 7.
+12. `gpt-image-2` создаёт одну PNG-обложку 1536×864; валидатор проверяет её
+    технический контракт.
+13. Legacy-staging исторических обложек работает как best-effort слой
+    совместимости: его предупреждение само по себе не блокирует выпуск.
+    Канонический build и последующие валидаторы всё равно обязаны подтвердить,
+    что все реально используемые страницы и изображения присутствуют.
+14. Кандидат сайта получает RSS, sitemap и Schema.org и проходит офлайн-
+    валидацию.
+15. Только проверенное состояние записывается одним commit в `main`, после чего
     `deploy-posts.yml` разворачивает именно этот SHA.
 
-Hybrid completeness имеет собственный hard cap `4`; каждый его Responses-запрос
-получает `max_tool_calls=1`. Основной research по-прежнему имеет потолок 12,
-а старый targeted coverage — до 7 только для всё ещё короткого/нулевого пула.
-Поэтому теоретический worst case теперь 23 завершённых `search` operations,
-но полный день не оплачивает тяжёлый six-direction audit после того, как primary
-+ hybrid уже дали обычный выпуск. Четвёртый hybrid-поиск также не является
-обязательным: он включается лишь при целиком пустом тематическом кластере.
-Служебные `open_page` и `find_in_page` видны в диагностике, но не считаются
-поисковыми операциями.
+Primary Recall v2 имеет hard cap `12`, hybrid completeness — hard cap `4`, а
+fallback coverage — до `7` только для всё ещё короткого/нулевого пула. Поэтому
+теоретический worst case остаётся **23 завершённых `search` operations**. Полный
+день не оплачивает тяжёлый six-direction audit после того, как primary + hybrid
+уже дали обычный выпуск. Служебные `open_page` и `find_in_page` видны в
+диагностике, но не считаются поисковыми операциями.
 
 Шесть обязательных направлений fallback coverage audit не меняются:
 
@@ -135,7 +160,7 @@ high-signal recall sentinel v7. Его адресный запрос `OpenAI cyb
 fallback-направлений. Пустой результат отдельного направления нормален и даёт
 `complete_with_gaps`; технические `partial`, `budget_exhausted` и `error`
 сохраняются в artifact и останавливают Image API, commit и deploy. Если после
-завершённого основного research, hybrid completeness, полного fallback audit и
+завершённого Primary Recall v2, hybrid completeness, полного fallback audit и
 актуального zero-pool recall sentinel итоговый пул всё ещё пуст, workflow создаёт
 переиспользуемую редакционную остановку без публикации. Такая остановка является
 штатным успешным `no-publish`: production остаётся зелёным, Image API, commit и
@@ -185,10 +210,13 @@ cron-окна больше не дублируют один и тот же gate.
   предпочитает наиболее полный результат (готовая обложка → готовый digest →
   research-only), а свежесть использует как tie-break; уже оплаченные стадии
   повторно не запускаются без необходимости;
-- fresh primary вызывает hybrid completeness только один раз; любой последующий
-  `--research-input` editorial rerun его пропускает, а recovery использует
-  сохранённые `candidates.json` и `hybrid-completeness.json` вместо повторной
-  оплаты независимого поиска;
+- fresh Primary Recall v2 вызывает hybrid completeness только один раз;
+  caller-supplied `--research-input` editorial rerun его пропускает, а recovery
+  использует сохранённые `candidates.json`, `primary-recall.json` и
+  `hybrid-completeness.json` вместо повторной оплаты независимого поиска;
+- подготовленный primary research сохраняется как
+  `primary-recall-research-YYYY-MM-DD.json`, а полная траектория двенадцати
+  слотов — как `primary-recall-YYYY-MM-DD.json` и внутри artifact выпуска;
 - если hybrid нашёл пригодные NEW-only кандидаты, объединённый research
   сохраняется как `hybrid-completeness-merged-YYYY-MM-DD.json`, а подробная
   траектория запросов, источников, кластеров и бюджета — как
@@ -198,9 +226,10 @@ cron-окна больше не дублируют один и тот же gate.
   требует `OPENAI_API_KEY`; если восстановлен готовый текст, но нужна только
   новая обложка, текстовый SDK также не устанавливается, а проверяются только
   ключ и image-модель, действительно нужные Image API;
-- завершённый research с нулевым первичным пулом остаётся пригодным для
-  продолжения: hybrid completeness получает первый независимый шанс дополнить
-  его, после чего при необходимости запускается обязательный coverage audit;
+- завершённый Primary Recall v2 с нулевым пулом остаётся пригодным для
+  продолжения только если диагностика подтверждает все 12 обязательных Web
+  Search; затем hybrid completeness получает независимый шанс дополнить пул,
+  после чего при необходимости запускается обязательный coverage audit;
 - полный coverage audit и завершённый sentinel текущей версии переиспользуются
   без новых запросов; partial audit продолжает только незавершённые
   направления;
@@ -313,10 +342,13 @@ Production-artifacts создаются с `retention-days: 14`, но инжен
 - `automation/archive/search-baselines/` — manifests постоянных retrieval-
   baseline-точек;
 - `automation/config/` — production-, editorial-, site- и image-конфигурация;
-- `automation/prompts/` — research, editorial и coverage-audit промпты;
+- `automation/prompts/` — Primary Recall v2, legacy research, editorial и
+  coverage-audit промпты;
+- `automation/fixtures/recall/` — исторические retrieval-regression окна;
 - `automation/specs/` — канонические редакционные, image- и Schema.org
   контракты;
-- `automation/scripts/` — генераторы, recovery, сборщики и валидаторы;
+- `automation/scripts/` — retrieval-orchestrators, генераторы, recovery,
+  сборщики и валидаторы;
 - `automation/tests/` — офлайн-регрессии;
 - `posts/` — публикуемый статический сайт, RSS, sitemap и обложки.
 
@@ -327,7 +359,7 @@ Production-artifacts создаются с `retention-days: 14`, но инжен
 
 Ночные запуски происходят около 02:17 МСК, когда в UTC ещё может быть предыдущий
 календарный день. Поэтому `search_window.end_at` является авторитетным текущим
-временем задачи для основного research, hybrid completeness, всех coverage-
+временем задачи для Primary Recall v2, hybrid completeness, всех coverage-
 проходов и recall sentinel. Модель обязана считать всё до этой отметки не
 будущим независимо от собственной системной даты или UTC-даты API-запуска.
 

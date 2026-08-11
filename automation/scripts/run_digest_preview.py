@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Run generate_digest_preview with resilient editorial handling.
 
-The underlying generator writes research and parsed editorial artifacts before
-its final policy validation. This wrapper keeps completed paid research
-reusable, adds a small independent hybrid completeness layer after fresh primary
-research, lets mandatory coverage audit rescue a short/empty pool, and applies
-deterministic runtime fixes before validation.
+Fresh production research is collected by primary recall v2: twelve mandatory,
+one-search discovery passes with deterministic budget allocation. The generated
+research artifact is then fed into the existing editorial generator through its
+research-input interface, so editorial policy, source normalization and artifact
+validation remain shared with recovery. A saved research-input still skips paid
+primary work. Fresh primary recall is followed by the independent hybrid
+completeness layer, and short/empty pools can continue into mandatory fallback
+coverage.
 """
 from __future__ import annotations
 
@@ -19,6 +22,8 @@ from typing import Any
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 PREVIEW_ROOT = REPOSITORY_ROOT / "automation" / "preview"
+PRODUCTION_PREVIEW_ROOT = PREVIEW_ROOT / "production-daily"
+PRIMARY_RECALL_SEARCH_CALLS = 12
 
 from editorial_policy_runtime import (
     actual_prohibited_agent_form,
@@ -60,6 +65,24 @@ def research_input_from_argv(argv: list[str]) -> str | None:
     return argv_value(argv, "--research-input")
 
 
+def without_option(argv: list[str], name: str) -> list[str]:
+    """Return argv without every `name value` pair.
+
+    Primary recall injects --research-input internally. Hybrid editorial reruns
+    must replace that path instead of appending a second competing option.
+    """
+
+    result: list[str] = []
+    index = 0
+    while index < len(argv):
+        if argv[index] == name:
+            index += 2
+            continue
+        result.append(argv[index])
+        index += 1
+    return result
+
+
 def _read_json(path: Path) -> dict[str, Any] | None:
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
@@ -69,6 +92,7 @@ def _read_json(path: Path) -> dict[str, Any] | None:
 
 
 def _write_json(path: Path, value: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         json.dumps(value, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
@@ -79,7 +103,7 @@ def normalize_completed_empty_research(output_dir: Path) -> bool:
     """Convert a completed zero-candidate response into audit-ready research.
 
     Only the editorial outcome is relaxed. Transport failures, incomplete API
-    responses, malformed artifacts and empty results without a completed Web
+    responses, malformed artifacts and empty results without completed Web
     Search remain hard failures.
     """
 
@@ -133,8 +157,8 @@ def normalize_completed_empty_research(output_dir: Path) -> bool:
         warnings = []
         run_info["warnings"] = warnings
     warning = (
-        "Основной research завершил Web Search без кандидатов; пустой пул "
-        "передан hybrid completeness и обязательному coverage audit."
+        "Primary recall v2 завершил все 12 Web Search без кандидатов; пустой "
+        "пул передан hybrid completeness и обязательному coverage audit."
     )
     if warning not in warnings:
         warnings.append(warning)
@@ -184,19 +208,126 @@ def _restore_artifact(output_dir: Path, snapshot: dict[Path, bytes]) -> None:
         target.write_bytes(content)
 
 
+def _primary_recall_model(forwarded: list[str]) -> str:
+    return (
+        argv_value(forwarded, "--model")
+        or os.getenv("OPENAI_TEXT_MODEL", "").strip()
+        or "gpt-5.6-terra"
+    )
+
+
+def _maximum_candidates(forwarded: list[str]) -> int:
+    try:
+        return int(argv_value(forwarded, "--maximum-candidates", "20") or 20)
+    except ValueError:
+        return 20
+
+
+def _run_fresh_primary_recall(
+    *, forwarded: list[str], publication_date: str
+) -> tuple[list[str], dict[str, Any]]:
+    """Run the deterministic paid primary matrix and inject its research-input."""
+
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        raise RuntimeError("OPENAI_API_KEY отсутствует для fresh primary recall v2")
+
+    from primary_recall_search import run_primary_recall_search
+
+    research_path, report = run_primary_recall_search(
+        publication_date=publication_date,
+        api_key=api_key,
+        model=_primary_recall_model(forwarded),
+        maximum_candidates=_maximum_candidates(forwarded),
+    )
+    try:
+        relative_research = research_path.resolve().relative_to(REPOSITORY_ROOT)
+    except ValueError as exc:
+        raise RuntimeError("primary recall research path escaped repository root") from exc
+
+    injected = [
+        *without_option(forwarded, "--research-input"),
+        "--research-input",
+        str(relative_research),
+    ]
+    return injected, report
+
+
+def _mark_primary_recall_artifact(
+    *,
+    output_dir: Path,
+    publication_date: str,
+    report: dict[str, Any],
+) -> None:
+    """Make internally injected research distinguishable from recovery input."""
+
+    report_path = PRODUCTION_PREVIEW_ROOT / f"primary-recall-{publication_date}.json"
+    if report_path.is_file():
+        shutil.copy2(report_path, output_dir / "primary-recall.json")
+    else:
+        _write_json(output_dir / "primary-recall.json", report)
+
+    run_info_path = output_dir / "run-info.json"
+    run_info = _read_json(run_info_path)
+    if run_info is not None:
+        research = run_info.get("research")
+        if not isinstance(research, dict):
+            research = {}
+            run_info["research"] = research
+        research["mode"] = "primary_recall_v2"
+        research["primary_recall_version"] = 2
+        research["response"] = {
+            "response_id": None,
+            "response_status": "completed",
+            "web_search_calls": PRIMARY_RECALL_SEARCH_CALLS,
+            "web_search_call_items_total": PRIMARY_RECALL_SEARCH_CALLS,
+            "actual_queries": [
+                query
+                for direction in report.get("directions", [])
+                if isinstance(direction, dict)
+                for query in (
+                    direction.get("api", {}).get("actual_queries", [])
+                    if isinstance(direction.get("api"), dict)
+                    else []
+                )
+            ],
+            "consulted_sources": [
+                source
+                for direction in report.get("directions", [])
+                if isinstance(direction, dict)
+                for source in (
+                    direction.get("api", {}).get("consulted_sources", [])
+                    if isinstance(direction.get("api"), dict)
+                    else []
+                )
+            ],
+        }
+        _write_json(run_info_path, run_info)
+
+    input_info_path = output_dir / "research-input-info.json"
+    input_info = _read_json(input_info_path) or {}
+    input_info["mode"] = "primary_recall_v2"
+    input_info["primary_recall_version"] = 2
+    input_info["completed_search_calls"] = PRIMARY_RECALL_SEARCH_CALLS
+    _write_json(input_info_path, input_info)
+
+
 def _run_hybrid_completeness(
     *,
     forwarded: list[str],
     output_dir: Path,
     publication_date: str,
+    fresh_primary_recall: bool = False,
 ) -> tuple[dict[str, Any] | None, bool]:
     """Run paid completeness only after a fresh primary research call.
 
-    A --research-input invocation is an editorial rerun/recovery path and must
-    never recursively pay for completeness again.
+    A caller-supplied --research-input invocation is an editorial rerun/recovery
+    path and never recursively pays for completeness. Primary recall v2 uses an
+    internally injected research-input, so `fresh_primary_recall=True` explicitly
+    authorizes the one normal completeness pass after that fresh paid matrix.
     """
 
-    if research_input_from_argv(forwarded):
+    if research_input_from_argv(forwarded) and not fresh_primary_recall:
         return None, False
     if not provisional_artifact_is_reusable(output_dir):
         return None, False
@@ -205,19 +336,12 @@ def _run_hybrid_completeness(
     if not api_key:
         print(
             "::warning title=Hybrid completeness skipped::"
-            "OPENAI_API_KEY отсутствует; сохранён baseline primary result."
+            "OPENAI_API_KEY отсутствует; сохранён primary result."
         )
         return None, False
 
-    model = (
-        argv_value(forwarded, "--model")
-        or os.getenv("OPENAI_TEXT_MODEL", "").strip()
-        or "gpt-5.6-terra"
-    )
-    try:
-        maximum_candidates = int(argv_value(forwarded, "--maximum-candidates", "20") or 20)
-    except ValueError:
-        maximum_candidates = 20
+    model = _primary_recall_model(forwarded)
+    maximum_candidates = _maximum_candidates(forwarded)
 
     from hybrid_search_completeness import persist_report, run_hybrid_completeness
 
@@ -234,7 +358,7 @@ def _run_hybrid_completeness(
     except Exception as exc:
         print(
             "::warning title=Hybrid completeness failed open::"
-            f"{type(exc).__name__}: {exc}. Основной research сохранён без изменений."
+            f"{type(exc).__name__}: {exc}. Primary result сохранён без изменений."
         )
         return None, False
 
@@ -257,11 +381,12 @@ def _run_hybrid_completeness(
         return report, False
 
     snapshot = _snapshot_artifact(output_dir)
+    clean_forwarded = without_option(forwarded, "--research-input")
     command = [
         sys.executable,
         str(Path(__file__).resolve()),
         "--allow-provisional-editorial",
-        *forwarded[1:],
+        *clean_forwarded[1:],
         "--research-input",
         str(relative_merged),
     ]
@@ -276,12 +401,12 @@ def _run_hybrid_completeness(
         report["editorial_rerun_performed"] = False
         report["editorial_rerun_error"] = (
             f"hybrid editorial rerun exited with code {completed.returncode}; "
-            "baseline primary artifact restored"
+            "primary artifact restored"
         )
         persist_report(output_dir, report)
         print(
             "::warning title=Hybrid editorial rerun rolled back::"
-            "Новые кандидаты сохранены в диагностике, но baseline artifact восстановлен."
+            "Новые кандидаты сохранены в диагностике, но primary artifact восстановлен."
         )
         return report, False
 
@@ -304,6 +429,30 @@ def main() -> int:
             allow_provisional = True
         else:
             forwarded.append(arg)
+
+    publication_date = publication_date_from_argv(forwarded)
+    caller_research_input = research_input_from_argv(forwarded)
+    fresh_primary_recall = False
+    primary_report: dict[str, Any] | None = None
+
+    if publication_date and caller_research_input is None:
+        try:
+            forwarded, primary_report = _run_fresh_primary_recall(
+                forwarded=forwarded,
+                publication_date=publication_date,
+            )
+            fresh_primary_recall = True
+            print(
+                "Primary recall v2 completed: 12 mandatory one-search passes; "
+                f"final candidates={primary_report.get('final_candidate_count', 0)}."
+            )
+        except Exception as exc:
+            print(
+                "::error title=Primary recall v2 incomplete::"
+                f"{type(exc).__name__}: {exc}. Fresh production research is fail-closed."
+            )
+            return 1
+
     sys.argv = forwarded
 
     patch_editorial_policy()
@@ -313,8 +462,20 @@ def main() -> int:
     patch_editorial_source_validation(generate_digest_preview)
     result = int(generate_digest_preview.main())
 
-    publication_date = publication_date_from_argv(forwarded)
     output_dir = PREVIEW_ROOT / publication_date if publication_date else None
+    if (
+        fresh_primary_recall
+        and publication_date
+        and output_dir is not None
+        and primary_report is not None
+        and output_dir.is_dir()
+    ):
+        _mark_primary_recall_artifact(
+            output_dir=output_dir,
+            publication_date=publication_date,
+            report=primary_report,
+        )
+
     empty_research_normalized = False
     if result != 0 and allow_provisional and output_dir is not None:
         empty_research_normalized = normalize_completed_empty_research(output_dir)
@@ -324,6 +485,7 @@ def main() -> int:
             forwarded=forwarded,
             output_dir=output_dir,
             publication_date=publication_date,
+            fresh_primary_recall=fresh_primary_recall,
         )
         if rerun_succeeded:
             result = 0
@@ -338,7 +500,7 @@ def main() -> int:
 
     if empty_research_normalized:
         print(
-            "Primary research completed with zero candidates; continuing to "
+            "Primary recall v2 completed with zero candidates; continuing to "
             "hybrid completeness and the mandatory six-direction coverage audit."
         )
     else:
