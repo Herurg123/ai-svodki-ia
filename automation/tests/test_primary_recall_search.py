@@ -139,6 +139,48 @@ class PrimaryRecallSearchTests(unittest.TestCase):
         self.assertEqual(len(research["candidates"]), 1)
         self.assertIn("Alpha Model", final_prompt)
 
+    def test_final_candidate_cap_cannot_starve_late_direction(self):
+        early_ids = {item["id"] for item in prs.PRIMARY_DIRECTIONS[:5]}
+
+        def request_fn(**kwargs):
+            direction = kwargs["direction_id"]
+            if direction in early_ids:
+                rows = [
+                    candidate(f"{direction} Story {index}")
+                    for index in range(1, 5)
+                ]
+            elif direction == "china_asia_integrations":
+                rows = [candidate("Qwen China Integration")]
+            else:
+                rows = []
+            return (
+                {
+                    "status": "complete" if rows else "complete_with_gaps",
+                    "error_message": None,
+                    "direction_id": direction,
+                    "candidates": rows,
+                    "rejections": [],
+                    "notes": "Checked.",
+                },
+                metadata(direction),
+            )
+
+        research, report = prs.run_primary_recall_matrix(
+            publication_date="2026-08-11",
+            search_window=search_window(),
+            archive={"items": []},
+            api_key="test-key",
+            model="test-model",
+            maximum_candidates=20,
+            search_runner=request_fn,
+        )
+        titles = {item["title"] for item in research["candidates"]}
+        self.assertEqual(report["validated_unique_candidate_count"], 21)
+        self.assertEqual(len(research["candidates"]), 20)
+        self.assertIn("Qwen China Integration", titles)
+        self.assertTrue(report["candidate_budget"]["cap_applied_after_all_passes"])
+        self.assertEqual(len(report["final_cap_dropped"]), 1)
+
     def test_mandatory_pass_failure_is_fail_closed(self):
         calls = 0
 
