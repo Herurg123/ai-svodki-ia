@@ -94,7 +94,9 @@ class PrimaryRecallSearchTests(unittest.TestCase):
         self.assertIn("discovery-first", prompt)
         self.assertIn("РОВНО ОДИН Web Search", prompt)
         self.assertIn("2026-08-11T02:50:46+03:00", prompt)
-        self.assertIn("product integrations", prs.PRIMARY_DIRECTIONS[6]["label"].lower())
+        label = prs.PRIMARY_DIRECTIONS[6]["label"].lower()
+        self.assertIn("integrations", label)
+        self.assertIn("partnerships", label)
 
     def test_all_twelve_passes_run_once_and_final_pass_sees_existing_pool(self):
         seen: list[str] = []
