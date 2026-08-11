@@ -6,7 +6,9 @@ Responses call. Primary recall v2 instead assigns every one of the twelve Web
 Search operations to a fixed editorial direction. Each direction performs
 exactly one search, returns a deliberately broad set of plausible candidates,
 and lets the existing story-coverage validator perform the strict qualification
-and deduplication after discovery.
+and deduplication after discovery. The configured candidate cap is applied only
+after all twelve directions have had a chance to contribute, so early passes
+cannot starve later regions or topics merely because of execution order.
 """
 from __future__ import annotations
 
@@ -21,7 +23,13 @@ from ensure_story_coverage_policy import (
     AUDIT_REJECTION_SCHEMA,
     build_audit_api_metadata,
 )
-from story_coverage import compact_archive, merge_candidates, read_json, write_json
+from story_coverage import (
+    candidate_fingerprint,
+    compact_archive,
+    merge_candidates,
+    read_json,
+    write_json,
+)
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 PROMPT_PATH = REPOSITORY_ROOT / "automation" / "prompts" / "primary_recall_pass.md"
@@ -32,6 +40,7 @@ PRODUCTION_PREVIEW_ROOT = PREVIEW_ROOT / "production-daily"
 
 PRIMARY_RECALL_VERSION = 2
 DEFAULT_MAXIMUM_SEARCH_CALLS = 12
+MAX_CANDIDATES_PER_PASS = 4
 
 PRIMARY_DIRECTIONS: tuple[dict[str, str], ...] = (
     {
@@ -166,7 +175,7 @@ PASS_SCHEMA: dict[str, Any] = {
         "candidates": {
             "type": "array",
             "minItems": 0,
-            "maxItems": 4,
+            "maxItems": MAX_CANDIDATES_PER_PASS,
             "items": AUDIT_CANDIDATE_SCHEMA,
         },
         "rejections": {
@@ -213,6 +222,83 @@ def _compact_candidates(candidates: list[Any], limit: int = 24) -> list[dict[str
         if len(result) >= limit:
             break
     return result
+
+
+def _candidate_rank(candidate: dict[str, Any]) -> tuple[Any, ...]:
+    return (
+        0 if candidate.get("recommendation") == "include" else 1,
+        -int(candidate.get("significance_score", 0) or 0),
+        str(candidate.get("organization") or "").casefold(),
+        str(candidate.get("title") or "").casefold(),
+    )
+
+
+def _select_final_candidates(
+    candidates: list[dict[str, Any]],
+    *,
+    origins: dict[Any, str],
+    maximum_candidates: int,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Apply the configured cap globally, after every mandatory pass completed.
+
+    First preserve the strongest unique event contributed by each direction,
+    then fill remaining slots by global editorial rank. This prevents an early
+    discovery pass from consuming the entire cap before China/Asia, Russia,
+    security, legal, or the independent missing-events sweep gets a chance to
+    contribute. It is a retrieval-pool fairness rule, not a publication quota.
+    """
+
+    if maximum_candidates < 1:
+        raise RuntimeError("maximum_candidates должен быть положительным")
+
+    ranked = sorted((dict(item) for item in candidates), key=_candidate_rank)
+    buckets: dict[str, list[dict[str, Any]]] = {key: [] for key in PRIMARY_DIRECTION_IDS}
+    for candidate in ranked:
+        origin = origins.get(candidate_fingerprint(candidate))
+        if origin in buckets:
+            buckets[origin].append(candidate)
+
+    selected: list[dict[str, Any]] = []
+    seen: set[Any] = set()
+
+    def add(candidate: dict[str, Any]) -> None:
+        fingerprint = candidate_fingerprint(candidate)
+        if fingerprint in seen or len(selected) >= maximum_candidates:
+            return
+        seen.add(fingerprint)
+        selected.append(candidate)
+
+    for direction in PRIMARY_DIRECTIONS:
+        bucket = buckets.get(direction["id"], [])
+        if bucket:
+            add(bucket[0])
+        if len(selected) >= maximum_candidates:
+            break
+
+    for candidate in ranked:
+        add(candidate)
+        if len(selected) >= maximum_candidates:
+            break
+
+    for index, candidate in enumerate(selected, start=1):
+        candidate["id"] = f"cand-{index:03d}"
+
+    dropped = [
+        {
+            "title": candidate.get("title"),
+            "organization": candidate.get("organization"),
+            "primary_url": (
+                candidate.get("primary_source", {}).get("url")
+                if isinstance(candidate.get("primary_source"), dict)
+                else None
+            ),
+            "origin_direction": origins.get(candidate_fingerprint(candidate)),
+            "reason": "global maximum_candidates cap after all primary passes",
+        }
+        for candidate in ranked
+        if candidate_fingerprint(candidate) not in seen
+    ]
+    return selected, dropped
 
 
 def build_prompt(
@@ -396,6 +482,11 @@ def run_primary_recall_matrix(
     accepted_total: list[dict[str, Any]] = []
     rejected_total: list[dict[str, Any]] = []
     raw_candidate_count = 0
+    origins: dict[Any, str] = {}
+    discovery_capacity = max(
+        maximum_candidates,
+        len(PRIMARY_DIRECTIONS) * MAX_CANDIDATES_PER_PASS,
+    )
 
     for direction in PRIMARY_DIRECTIONS:
         prompt = build_prompt(
@@ -444,8 +535,10 @@ def run_primary_recall_matrix(
         merged, accepted, rejected = merge_candidates(
             merged,
             raw_candidates,
-            maximum_candidates=maximum_candidates,
+            maximum_candidates=discovery_capacity,
         )
+        for candidate in accepted:
+            origins.setdefault(candidate_fingerprint(candidate), direction["id"])
         accepted_total.extend(accepted)
         rejected_total.extend(rejected)
         completed_calls = int(metadata.get("web_search_calls_completed", 0) or 0)
@@ -488,11 +581,20 @@ def run_primary_recall_matrix(
             },
         )
 
+    discovered_candidates = merged.get("candidates")
+    if not isinstance(discovered_candidates, list):
+        discovered_candidates = []
+    discovered_candidates = [
+        item for item in discovered_candidates if isinstance(item, dict)
+    ]
+    final_candidates, final_cap_dropped = _select_final_candidates(
+        discovered_candidates,
+        origins=origins,
+        maximum_candidates=maximum_candidates,
+    )
+    merged["candidates"] = final_candidates
     merged["coverage"] = coverage
-    final_candidates = merged.get("candidates")
-    if not isinstance(final_candidates, list):
-        final_candidates = []
-        merged["candidates"] = final_candidates
+
     if final_candidates:
         merged["status"] = "ok"
         merged["error_message"] = None
@@ -506,8 +608,9 @@ def run_primary_recall_matrix(
         )
     merged["research_notes"] = (
         "Primary recall v2: выполнены 12 фиксированных one-search проходов; "
-        f"raw candidates={raw_candidate_count}, final candidates={len(final_candidates)}. "
-        "Discovery выполнялся до строгой дедупликации/qualification; полный след "
+        f"raw candidates={raw_candidate_count}, validated unique={len(discovered_candidates)}, "
+        f"final candidates={len(final_candidates)}. Финальный candidate cap применён "
+        "только после завершения всех обязательных направлений. Полный след "
         "сохранён в primary-recall diagnostics."
     )
 
@@ -520,10 +623,17 @@ def run_primary_recall_matrix(
             "maximum_calls": DEFAULT_MAXIMUM_SEARCH_CALLS,
             "completed_calls": completed_calls,
         },
+        "candidate_budget": {
+            "configured_final_cap": maximum_candidates,
+            "temporary_discovery_capacity": discovery_capacity,
+            "cap_applied_after_all_passes": True,
+        },
         "directions": direction_reports,
         "raw_candidate_count": raw_candidate_count,
+        "validated_unique_candidate_count": len(discovered_candidates),
         "accepted_events": accepted_total,
         "validator_rejections": rejected_total,
+        "final_cap_dropped": final_cap_dropped,
         "final_candidate_count": len(final_candidates),
         "final_candidates": _compact_candidates(final_candidates),
     }
