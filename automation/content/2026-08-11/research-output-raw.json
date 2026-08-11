@@ -1,0 +1,187 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-11",
+  "search_window": {
+    "start_at": "2026-08-08T02:48:25+03:00",
+    "end_at": "2026-08-11T02:50:46+03:00",
+    "latest_archive_at": "2026-08-08T02:48:25+03:00",
+    "start_date": "2026-08-08",
+    "end_date": "2026-08-11",
+    "latest_archive_date": "2026-08-08"
+  },
+  "coverage": [
+    {
+      "area": "Широкий мировой discovery",
+      "status": "gap",
+      "notes": "Проверены широкие англоязычные поисковые запросы по AI-новостям за 8–10 августа, крупным лабораториям, релизам, инвестициям, инфраструктуре, регулированию и security. Результаты в основном вели к публикациям 5–7 августа, материалам вне окна, агрегаторам, Reddit и нерелевантным анонсам."
+    },
+    {
+      "area": "Крупные новостные агентства",
+      "status": "gap",
+      "notes": "Отдельно проверены Reuters, Associated Press и Bloomberg по AI-событиям внутри окна. Поисковая выдача не дала доступных подтверждённых новых публикаций агентств с датой в редакционном диапазоне; Bloomberg дополнительно недоступен для открытия из-за robots.txt. Старые материалы Reuters и агентские перепечатки не включались."
+    },
+    {
+      "area": "Мировые лаборатории и компании",
+      "status": "gap",
+      "notes": "Проверены OpenAI, Google DeepMind, Anthropic, Meta, Microsoft, Nvidia, xAI, Amazon, Mistral, Hugging Face, Apple и Cohere через общие и доменные запросы. Не обнаружено доступного первоисточника с новым существенным событием, опубликованным после 2026-08-08T02:48:25+03:00 и не позже дедлайна."
+    },
+    {
+      "area": "Китай и Азия",
+      "status": "gap",
+      "notes": "Проверены DeepSeek, Alibaba/Qwen, Baidu/ERNIE, Tencent/Hunyuan, ByteDance/Doubao, Moonshot AI/Kimi, Z.ai/GLM, MiniMax, SenseTime и Huawei по моделям, инвестициям, чипам, облакам, robotics, regulation и security. Выдача содержала старые обзоры, Wikipedia, Reddit и научные работы, опубликованные 7 августа, то есть до редакционного окна."
+    },
+    {
+      "area": "ИИ-кодинг и инструменты разработчиков",
+      "status": "gap",
+      "notes": "Проверены GitHub Copilot, Cursor, Claude Code, IDE, coding agents, CLI-агенты, OpenCode и Cline. Подтверждённых крупных релизов или существенных обновлений с публикацией внутри окна не найдено."
+    },
+    {
+      "area": "Исследования",
+      "status": "gap",
+      "notes": "Проверены свежие arXiv-материалы, оценки моделей, надёжность и интерпретируемость. Найдены несколько работ, датированных 2026-08-07, включая исследования безопасности multi-robot систем и доступа к экспертам MoE; они опубликованы до начала окна и не могут быть кандидатами."
+    },
+    {
+      "area": "Security — мир",
+      "status": "gap",
+      "notes": "Проверены incident reports, model security, prompt injection, sandbox escape, supply-chain, agent behaviour, model/API compromise и red teaming у лабораторий, исследователей, security-компаний и профильных медиа. Новых подтверждённых инцидентов или исправлений в окне не найдено; прежние сюжеты OpenAI, Anthropic, Meta и Hugging Face уже отражены в архиве."
+    },
+    {
+      "area": "Security — Китай и Азия",
+      "status": "gap",
+      "notes": "Проверены DeepSeek, Qwen, GLM, Huawei и азиатские robotics/LLM security-направления. В доступной выдаче были преимущественно старые справочные материалы, дискуссии Reddit и arXiv-публикации от 7 августа; новых верифицируемых событий окна нет."
+    },
+    {
+      "area": "Security — Россия",
+      "status": "gap",
+      "notes": "Проверены российские технологические и отраслевые направления: КИИ, утечки данных через LLM, уязвимости AI-продуктов, prompt injection, корпоративная безопасность, Positive Technologies, Solar, CNews и ComNews. Достойного подтверждённого нового события в пределах окна не найдено."
+    },
+    {
+      "area": "Legal, copyright и scraping",
+      "status": "gap",
+      "notes": "Проверены крупные судебные решения, регуляторные действия, copyright, licensing, training data и scraping. Не обнаружено нового решения суда, акта регулятора или иного события международного масштаба, опубликованного внутри окна."
+    },
+    {
+      "area": "Мультимодальность и генеративные медиа",
+      "status": "gap",
+      "notes": "Проверены генерация изображений, видео, аудио, речи, музыки и мультимодальные модели. Подтверждённых крупных запусков, исследований или регуляторных событий внутри окна не найдено."
+    },
+    {
+      "area": "Робототехника и автономные системы",
+      "status": "gap",
+      "notes": "Проверены physical AI, embodied systems, промышленные роботы, автономный транспорт и multi-robot research. Новые значимые корпоративные, государственные или научные события в пределах окна не подтверждены."
+    },
+    {
+      "area": "Инфраструктура, чипы и облака",
+      "status": "gap",
+      "notes": "Проверены Nvidia, AMD, облака, дата-центры, inference, память, энергетику и AI-инфраструктуру. Результаты вели к ранее опубликованным финансовым отчётам и инфраструктурным новостям, уже находящимся в архиве, либо к неактуальным материалам."
+    },
+    {
+      "area": "Регулирование и общественная политика",
+      "status": "gap",
+      "notes": "Проверены государственные документы, международные инициативы, AI Act, США, Китай и российское регулирование. Новых подтверждённых нормативных решений или существенных этапов политики с датой внутри окна не найдено."
+    },
+    {
+      "area": "Бизнес, внедрения и инвестиции",
+      "status": "gap",
+      "notes": "Проверены funding, IPO, M&A, партнёрства, корпоративные внедрения и финансовые сообщения. Новых подтверждённых сделок или внедрений достаточного масштаба внутри окна не обнаружено."
+    },
+    {
+      "area": "Россия",
+      "status": "gap",
+      "notes": "Проверены Яндекс, Сбер, VK, МТС AI, Т-Банк/Тинькофф, Газпромбанк, Ростелеком, государственные проекты, вузы, промышленность, телеком, банки, CNews и ComNews. В доступной поисковой выдаче не найдено нового достойного события в заданном окне; слабые пресс-релизы и старые перепечатки не добавлялись."
+    },
+    {
+      "area": "Курьёзы и необычные новости",
+      "status": "gap",
+      "notes": "Проверены необычные и потенциально курьёзные AI-сюжеты. Достоверного самостоятельного события, которое можно подтвердить независимыми источниками и включить без вытеснения серьёзной новости, не найдено."
+    },
+    {
+      "area": "Last-mile поиск",
+      "status": "covered",
+      "notes": "Повторно проверены Reuters, AP, Bloomberg, крупные лаборатории, Китай и Азия, Россия, а также high-signal направления: major release, funding, IPO, acquisition, partnership, robotics, chips, regulation, court decision и security incident. Дополнительных верифицируемых кандидатов внутри окна не обнаружено."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "OpenAI представила GPT-5.6-Cyber и расширила программу Daybreak для киберзащитников",
+      "organization": "OpenAI",
+      "published_date": "2026-08-10",
+      "published_at": "2026-08-10T20:00:30+03:00",
+      "time_precision": "datetime",
+      "topic": "доступ к менее ограниченной специализированной модели для авторизованной киберзащиты и расширение программы Daybreak",
+      "event_type": "product and safety-program expansion",
+      "keywords": [
+        "OpenAI",
+        "GPT-5.6-Cyber",
+        "Daybreak",
+        "cybersecurity",
+        "cyber defense",
+        "trusted access",
+        "model safeguards"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "OpenAI gives cyber defenders a less-restricted new model",
+        "publisher": "Axios",
+        "url": "https://www.axios.com/2026/08/10/openai-gpt-astra-restrictions-safety-hacking-defenders"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI представила GPT-5.6-Cyber — менее ограниченную модель для киберзащитников — и одновременно расширила Daybreak, программу доступа защитников к кибер-моделям и другим инструментам компании.",
+      "verified_facts": [
+        "Axios сообщил о представлении OpenAI модели GPT-5.6-Cyber 10 августа 2026 года.",
+        "Материал описывает GPT-5.6-Cyber как менее ограниченную модель, предназначенную для киберзащитников.",
+        "Одновременно OpenAI расширяет программу Daybreak, предоставляющую защитникам доступ к кибер-моделям и инструментам компании."
+      ],
+      "significance": "Это самостоятельное существенное изменение защитного режима: OpenAI расширяет контролируемый доступ к более permissive кибер-возможностям именно для оборонительных пользователей. Событие дополняет, но не дублирует архивную новость от 8 августа о замедлении Astra из-за рисков.",
+      "significance_score": 4,
+      "limitations": "В доступном результате поиска нет первичного релиза OpenAI и подробностей о критериях допуска, технических возможностях модели и масштабе расширения Daybreak; кандидат опирается на свежий материал Axios.",
+      "archive_status": "none",
+      "archive_reason": "Архив содержит материал о задержке Astra и усилении внутренних мер 8 августа, но не о запуске GPT-5.6-Cyber и расширении Daybreak 10 августа.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Свежая публикация авторитетного технологического СМИ Axios содержит точный timestamp и конкретно описывает запуск модели и расширение программы.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Публикация вышла 10 августа 2026 года в 20:00:30 по UTC+03:00, внутри строгого редакционного окна; описывается новый анонс продукта и программы доступа, а не перепечатка прежнего инцидента.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-категории: это практическое изменение кибербезопасностного доступа и защитной программы.",
+      "audit_direction": "recall_sentinel",
+      "id": "cand-001"
+    }
+  ],
+  "rejected_as_duplicates": [
+    {
+      "title": "Axios AM: Singularity arriving",
+      "url": "https://www.axios.com/newsletters/axios-am-e6e15a72-3b81-4056-9657-5c07f9825685",
+      "archive_item_date": "2026-08-06",
+      "matched_topic_or_url": "Перестройка Google DeepMind и обсуждение модели OpenAI Astra уже освещались в архиве; найденный материал является поздним обзором уже известных событий.",
+      "reason": "Не самостоятельное новое событие в редакционном окне; опубликованная в нём информация относится к ранее отражённым сюжетам."
+    },
+    {
+      "title": "Policy-Masked Private Experts: Auditable and Reversible Capability Access Control in Sparse MoE Models",
+      "url": "https://arxiv.org/abs/2608.06690",
+      "archive_item_date": null,
+      "matched_topic_or_url": "Новая исследовательская работа о контроле доступа к параметрам MoE.",
+      "reason": "Дата публикации arXiv: 2026-08-07, до начала окна 2026-08-08T02:48:25+03:00."
+    },
+    {
+      "title": "When Coordination Becomes a Threat: Communication Attacks in LLM-Controlled Multi-Robot Systems",
+      "url": "https://arxiv.org/abs/2608.06830",
+      "archive_item_date": null,
+      "matched_topic_or_url": "Исследование рисков коммуникации в LLM-управляемых multi-robot системах.",
+      "reason": "Дата публикации arXiv: 2026-08-07, до начала окна 2026-08-08T02:48:25+03:00."
+    },
+    {
+      "title": "Transformers Struggle to Use Their Emergent World Models: Revisiting the Tower of Hanoi, and the Illusion of Thinking",
+      "url": "https://arxiv.org/abs/2608.07077",
+      "archive_item_date": null,
+      "matched_topic_or_url": "Исследование рассуждающих моделей Qwen и DeepSeek.",
+      "reason": "Дата публикации arXiv: 2026-08-07, до начала окна 2026-08-08T02:48:25+03:00."
+    }
+  ],
+  "research_notes": "Проведены обязательные discovery-проходы: широкий мировой поиск; отдельный поиск Reuters, Associated Press и Bloomberg; поиск по мировым лабораториям; Китай и Азия; Россия; coding; research; три самостоятельных security-прохода; legal; multimodal; robotics; infrastructure; regulation; business; curiosity; затем last-mile. По доступным источникам в строгом интервале не нашлось верифицируемых событий, отвечающих редакционному порогу. Материалы до начала окна, поздние обзоры уже архивных тем, Reddit, Wikipedia, агрегаторы и анонсы мероприятий исключены. Поэтому статус error установлен в соответствии с правилом нулевого числа достойных сюжетов.\nTargeted coverage audit добавил кандидатов: 1."
+}
