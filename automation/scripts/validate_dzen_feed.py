@@ -119,7 +119,12 @@ def validate_feed(
 core.validate_article_html = validate_article_html
 core.validate_feed = validate_feed
 
-# Preserve the existing CLI and public helpers for callers/tests.
+# Backward-compatible public surface for existing validator consumers.
+ArticleInspector = core.ArticleInspector
+META_FOOTNOTE = core.META_FOOTNOTE
+normalize_space = core.normalize_space
+
+# Preserve the existing CLI for workflow callers.
 main = core.main
 parse_args = core.parse_args
 
