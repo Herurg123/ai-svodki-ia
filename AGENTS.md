@@ -100,11 +100,65 @@ that timestamp. Legacy recovery data from a cross-midnight local/UTC window must
 not be reused as final research or a terminal zero-pool stop unless it carries
 the current temporal-anchor contract version.
 
+## Primary recall v2 contract
+
+Fresh production research uses deterministic **Primary Recall v2** instead of
+letting one agentic Responses call allocate the entire 12-search budget. The
+hard primary budget remains exactly twelve completed Web Search operations, but
+each operation is assigned to one mandatory direction and each Responses call
+gets `max_tool_calls=1`:
+
+1. `global_breaking`;
+2. `major_agencies`;
+3. `models_products_agents`;
+4. `infrastructure_chips_cloud`;
+5. `business_investment_partnerships`;
+6. `china_asia_models`;
+7. `china_asia_integrations`;
+8. `russia`;
+9. `developer_tools`;
+10. `security_safety`;
+11. `legal_regulation`;
+12. `independent_missing_events`.
+
+Do not collapse the two China/Asia passes back into one broad regional search
+without a new recall experiment and explicit approval. The 2026-08-11
+regression showed that a broad China pass found the other control events but
+missed the Apple/Qwen product-integration story; a separate integrations /
+partnerships pass recovered it without increasing the 12-search primary budget.
+The historical benchmark is `automation/fixtures/recall/2026-08-11.json`.
+
+Primary is **discovery-first**. A pass should surface plausible meaningful
+fresh events into the candidate pool, using `consider` when final significance
+is uncertain, rather than performing aggressive editorial rejection during
+retrieval. Strict window, source, freshness, legal/curiosity, significance and
+deduplication checks still run through the existing story-coverage validator and
+editorial stages after discovery.
+
+All twelve directions are mandatory for a fresh production run. A technical
+failure or incomplete Web Search in any direction is a red, fail-closed primary
+failure and must never be reinterpreted as a low-news day. A completed direction
+may legitimately return zero candidates. Primary diagnostics must preserve the
+actual queries, consulted sources, raw candidates, model rejections and
+validator rejections for each direction.
+
+The final `independent_missing_events` pass receives a compact list of already
+found candidates and explicitly searches for significant events absent from the
+pool. It is a last-mile recall check, not another editorial filter.
+
+Primary Recall v2 is injected into the existing generator through its
+`--research-input` interface so editorial policy and artifact validation remain
+shared with recovery. A caller-supplied `--research-input` still means recovery
+or editorial rerun and must skip paid fresh primary. The internally generated
+primary research-input is different: it represents fresh paid primary and may
+be followed once by hybrid completeness. Recovery must not repeat already paid
+primary work.
+
 ## Hybrid search completeness contract
 
-The primary research mechanism is intentionally preserved. A fresh primary run
-is followed by a separate budget-capped completeness layer rather than being
-replaced by a broader research prompt.
+A fresh completed Primary Recall v2 run is followed by the separate
+budget-capped hybrid completeness layer as independent insurance rather than as
+a substitute for primary coverage.
 
 The completeness layer performs three fixed one-search passes:
 
@@ -120,13 +174,17 @@ is deliberately disabled, and source quality is validated after retrieval.
 
 New candidates are merged through the existing strict story-coverage validator
 and editorial is rerun only when at least one candidate is actually accepted.
-The completeness layer never runs recursively for `--research-input` editorial
-reruns or recovery, so already-paid primary/completeness work is not repeated.
-A transport or completeness-editorial failure must preserve or restore the
-baseline primary artifact and remain diagnostic rather than destroying an
-otherwise publishable old-mechanism result. Short/empty pools still proceed to
-the existing mandatory six-direction coverage audit and zero-pool recall
-sentinel.
+The completeness layer never runs recursively for caller-supplied
+`--research-input` editorial reruns or recovery, so already-paid
+primary/completeness work is not repeated. A transport or
+completeness-editorial failure must preserve or restore the completed primary
+artifact and remain diagnostic rather than destroying an otherwise publishable
+primary result. Short/empty pools still proceed to the existing mandatory
+six-direction coverage audit and zero-pool recall sentinel.
+
+The total retrieval ceilings remain **12 primary + up to 4 hybrid + up to 7
+fallback coverage = 23 completed search operations** in the theoretical worst
+case. Improving recall must not silently raise these limits.
 
 ## Editorial zero-pool stop
 
