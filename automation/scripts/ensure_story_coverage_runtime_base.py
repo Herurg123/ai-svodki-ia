@@ -35,6 +35,7 @@ RECALL_SENTINEL_DOMAINS: tuple[str, ...] = (
     "ft.com",
 )
 RECALL_SENTINEL_MINIMUM_BUDGET = 7
+COVERAGE_NAVIGATION_TOOL_ALLOWANCE = 3
 
 
 @dataclass
@@ -88,12 +89,13 @@ def run_audit_request(
         web_search_tool["filters"] = {
             "allowed_domains": list(allowed_domains),
         }
+    total_tool_calls = maximum_web_search_calls + COVERAGE_NAVIGATION_TOOL_ALLOWANCE
     response = client.responses.create(
         model=model,
         input=prompt,
         tools=[web_search_tool],
         tool_choice="required",
-        max_tool_calls=maximum_web_search_calls,
+        max_tool_calls=total_tool_calls,
         include=["web_search_call.action.sources"],
         reasoning={"effort": "medium"},
         max_output_tokens=3500,
@@ -111,6 +113,9 @@ def run_audit_request(
         response,
         maximum_web_search_calls=maximum_web_search_calls,
     )
+    metadata["configured_search_operations"] = maximum_web_search_calls
+    metadata["configured_total_tool_calls"] = total_tool_calls
+    metadata["navigation_tool_allowance"] = COVERAGE_NAVIGATION_TOOL_ALLOWANCE
     output_text = (getattr(response, "output_text", None) or "").strip()
     payload: Any = None
     validation_error: str | None = None
@@ -119,6 +124,11 @@ def run_audit_request(
         validation_error = (
             "Coverage audit не завершил ни одной поисковой операции "
             "web_search action.type=search"
+        )
+    elif metadata.get("web_search_calls_completed", 0) > maximum_web_search_calls:
+        validation_error = (
+            "Coverage audit превысил search-operation budget: "
+            f"{metadata.get('web_search_calls_completed')}>{maximum_web_search_calls}"
         )
     elif getattr(response, "status", None) != "completed":
         validation_error = (
@@ -290,9 +300,6 @@ def completed_prior_audit(payload: Any) -> bool:
     )
     if not complete:
         return False
-    # Before the sentinel existed, a six-direction audit with an empty pool was
-    # considered a terminal editorial stop. It must be resumed once so the
-    # still-free seventh slot can perform the high-signal agency recall check.
     if _pool_total(payload) == 0 and not _completed_sentinel_evidence(payload):
         return False
     return True
@@ -306,16 +313,11 @@ def _policy_audit_request(**kwargs: Any) -> AuditRequestResult:
     if result not in _LAST_AUDIT_RESULTS:
         _LAST_AUDIT_RESULTS.append(result)
     if isinstance(result.payload, dict):
-        # Compatibility for pre-plan unit doubles. Real API responses are
-        # constrained by the strict per-direction schema above.
         if result.payload.get("status") == "ok":
             result.payload["status"] = "complete"
         if result.payload.get("direction_id") not in AUDIT_DIRECTION_IDS:
             prompt = str(kwargs.get("prompt") or "")
-            inferred = next(
-                (item for item in AUDIT_DIRECTION_IDS if item in prompt),
-                None,
-            )
+            inferred = next((item for item in AUDIT_DIRECTION_IDS if item in prompt), None)
             if inferred:
                 result.payload["direction_id"] = inferred
         result.payload.setdefault("rejections", [])
@@ -376,7 +378,9 @@ def build_recall_sentinel_prompt(
 но пригодный пул всё ещё равен нулю. Выполни РОВНО ОДИН широкий Web Search
 по крупнейшим новостным агентствам, чтобы проверить, не пропущено ли явно
 значимое ИИ-событие внутри окна. Не разбивай задачу на массив независимых
-поисковых запросов и не пытайся заново исследовать весь интернет.
+поисковых запросов и не пытайся заново исследовать весь интернет. После поиска
+открой релевантные страницы, если это нужно для проверки даты и фактов; навигация
+не считается дополнительной поисковой операцией.
 
 Ищи только события высокой самостоятельной новостной ценности: новый или
 существенно обновлённый frontier-модель/продукт, крупный security/cyber risk,
@@ -430,7 +434,6 @@ def execute_audit_plan(
     archive: dict[str, Any],
     prior_plan: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Run the mandatory plan, then spend the free seventh slot on recall."""
     global _LAST_RECALL_SENTINEL
 
     plan = _BASE_EXECUTE_AUDIT_PLAN(
@@ -464,9 +467,7 @@ def execute_audit_plan(
         plan.get("audit_status") in {"complete", "complete_with_gaps"}
         and set(plan.get("checked_directions") or ()) == set(AUDIT_DIRECTION_IDS)
     )
-    final_eligible = _eligible_candidate_count(
-        existing_candidates
-    ) + _eligible_candidate_count(plan.get("candidates"))
+    final_eligible = _eligible_candidate_count(existing_candidates) + _eligible_candidate_count(plan.get("candidates"))
     remaining_calls = int(budget.get("remaining_calls", 0) or 0)
     if not (
         maximum_web_search_calls >= RECALL_SENTINEL_MINIMUM_BUDGET
@@ -492,10 +493,7 @@ def execute_audit_plan(
         )
         payload = result.payload or {}
         if payload.get("status") not in {"complete", "complete_with_gaps"}:
-            raise RuntimeError(
-                "Recall sentinel вернул непригодный status="
-                + repr(payload.get("status"))
-            )
+            raise RuntimeError("Recall sentinel вернул непригодный status=" + repr(payload.get("status")))
     except Exception as exc:
         _LAST_RECALL_SENTINEL = {
             "status": "error",
@@ -534,9 +532,7 @@ def execute_audit_plan(
         "search_strategy": RECALL_SENTINEL_STRATEGY,
         "allowed_domains": list(RECALL_SENTINEL_DOMAINS),
         "prompt": prompt,
-        "status": (
-            "checked" if payload_status == "complete" else "checked_with_gaps"
-        ),
+        "status": "checked" if payload_status == "complete" else "checked_with_gaps",
         "outcome": "candidates_found" if accepted_for_pass else "no_news_found",
         "actual_queries": list(metadata.get("actual_queries") or []),
         "sources": list(metadata.get("consulted_sources") or []),
@@ -555,10 +551,7 @@ def execute_audit_plan(
     budget["response_attempts"] = int(budget.get("response_attempts", 0) or 0) + 1
     budget["observed_call_items"] = int(budget.get("observed_call_items", 0) or 0) + observed
     budget["completed_calls"] = int(budget.get("completed_calls", 0) or 0) + completed
-    budget["remaining_calls"] = max(
-        0,
-        maximum_web_search_calls - int(budget.get("completed_calls", 0) or 0),
-    )
+    budget["remaining_calls"] = max(0, maximum_web_search_calls - int(budget.get("completed_calls", 0) or 0))
     budget["provider_overrun"] = bool(budget.get("provider_overrun")) or completed > 1
     budget["exhausted"] = False
     budget["search_budget_exhausted"] = False
@@ -566,9 +559,7 @@ def execute_audit_plan(
     budget["stop_reason"] = "recall_sentinel_completed"
     plan["api"] = _policy._aggregate_api_metadata(plan.get("attempts", []))
     _LAST_RECALL_SENTINEL = {
-        "status": (
-            "complete" if payload_status == "complete" else "complete_with_gaps"
-        ),
+        "status": "complete" if payload_status == "complete" else "complete_with_gaps",
         "search_strategy": RECALL_SENTINEL_STRATEGY,
         "allowed_domains": list(RECALL_SENTINEL_DOMAINS),
         "attempt": attempt_number,
@@ -598,13 +589,7 @@ def _read_prior_report(path: Path | None) -> dict[str, Any] | None:
 
 
 def _primary_search_diagnostics(publication_date: str) -> dict[str, Any] | None:
-    trajectory_path = (
-        REPOSITORY_ROOT
-        / "automation"
-        / "preview"
-        / publication_date
-        / "research-search-trajectory.json"
-    )
+    trajectory_path = REPOSITORY_ROOT / "automation" / "preview" / publication_date / "research-search-trajectory.json"
     if not trajectory_path.is_file():
         return None
     try:
@@ -655,11 +640,7 @@ def _audit_search_diagnostics(report: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(attempt, dict):
             continue
         api = attempt.get("api")
-        completed = (
-            int(api.get("web_search_calls_completed", 0) or 0)
-            if isinstance(api, dict)
-            else 0
-        )
+        completed = int(api.get("web_search_calls_completed", 0) or 0) if isinstance(api, dict) else 0
         queries = attempt.get("actual_queries")
         query_count = len(queries) if isinstance(queries, list) else 0
         operations += completed
@@ -721,58 +702,31 @@ def _finalize_report(
             else []
         ) + [item.metadata for item in results]
         completed_searches = sum(
-            int(
-                item.metadata.get(
-                    "web_search_calls_completed",
-                    item.metadata.get("web_search_calls", 0),
-                )
-                or 0
-            )
+            int(item.metadata.get("web_search_calls_completed", item.metadata.get("web_search_calls", 0)) or 0)
             for item in results
         )
         report["web_search_performed"] = completed_searches > 0
         prior_diagnostic_paths = (prior_report or {}).get("api_diagnostic_paths")
         diagnostic_paths: list[dict[str, str]] = (
-            copy.deepcopy(prior_diagnostic_paths)
-            if isinstance(prior_diagnostic_paths, list)
-            else []
+            copy.deepcopy(prior_diagnostic_paths) if isinstance(prior_diagnostic_paths, list) else []
         )
         index_offset = len(diagnostic_paths)
         for index, item in enumerate(results, start=1 + index_offset):
-            direction = (
-                str(item.payload.get("direction_id"))
-                if isinstance(item.payload, dict)
-                else "unknown"
-            )
+            direction = str(item.payload.get("direction_id")) if isinstance(item.payload, dict) else "unknown"
             pass_dir = report_path.parent / "coverage-audit-passes"
             pass_dir.mkdir(parents=True, exist_ok=True)
             output_path = pass_dir / f"{index:02d}-{direction}-output.txt"
             response_path = pass_dir / f"{index:02d}-{direction}-response.json"
-            output_path.write_text(
-                item.output_text + ("\n" if item.output_text else ""),
-                encoding="utf-8",
-            )
+            output_path.write_text(item.output_text + ("\n" if item.output_text else ""), encoding="utf-8")
             response_path.write_text(
-                json.dumps(
-                    item.raw_response,
-                    ensure_ascii=False,
-                    indent=2,
-                    default=str,
-                )
-                + "\n",
+                json.dumps(item.raw_response, ensure_ascii=False, indent=2, default=str) + "\n",
                 encoding="utf-8",
             )
             diagnostic_paths.append(
-                {
-                    "direction_id": direction,
-                    "api_output_path": str(output_path),
-                    "api_response_path": str(response_path),
-                }
+                {"direction_id": direction, "api_output_path": str(output_path), "api_response_path": str(response_path)}
             )
         report["api_diagnostic_paths"] = diagnostic_paths
 
-        # Preserve canonical single-response paths for recovery artifacts and
-        # compatibility with the July 31 diagnostic format.
         last_result = results[-1]
         report.update(persist_audit_diagnostics(last_result, report_path.parent))
         if len(results) == 1 and not report.get("api"):
@@ -780,14 +734,11 @@ def _finalize_report(
 
         audit_status = report.get("audit_status")
         usable_statuses = {"complete", "complete_with_gaps"}
-        validation_errors = [
-            item.validation_error for item in results if item.validation_error
-        ]
+        validation_errors = [item.validation_error for item in results if item.validation_error]
         if (
             audit_status in usable_statuses
             and not validation_errors
-            and set(report.get("checked_directions") or ())
-            == set(AUDIT_DIRECTION_IDS)
+            and set(report.get("checked_directions") or ()) == set(AUDIT_DIRECTION_IDS)
         ):
             report["audit_state"] = "completed_usable"
         else:
@@ -795,10 +746,7 @@ def _finalize_report(
             if validation_errors:
                 report["validation_error"] = "; ".join(validation_errors)
             elif audit_status == "error":
-                report["validation_error"] = (
-                    "Ни одно обязательное направление audit не было "
-                    "подтверждено фактическим поиском"
-                )
+                report["validation_error"] = "Ни одно обязательное направление audit не было подтверждено фактическим поиском"
             report["error_stage"] = "response_validation"
     elif report.get("prior_audit_reused"):
         prior_state = (prior_report or {}).get("audit_state")
@@ -813,9 +761,7 @@ def _finalize_report(
                 and not (prior_report or {}).get("audit_error")
                 and not (prior_report or {}).get("error")
             )
-            report["audit_state"] = (
-                "completed_usable" if prior_usable else "completed_unusable"
-            )
+            report["audit_state"] = "completed_usable" if prior_usable else "completed_unusable"
         for key in ("api_output_path", "api_response_path", "validation_error"):
             if (prior_report or {}).get(key) is not None:
                 report[key] = (prior_report or {}).get(key)
