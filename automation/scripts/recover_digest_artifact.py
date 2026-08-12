@@ -4,7 +4,8 @@
 A failed production run may contain completed paid research even when the
 editorial policy or coverage gate failed before canonical digest files were
 written. Recovery must preserve that work instead of forcing a second full
-research pass.
+research pass. Artifacts that already failed normalization/validation, or whose
+saved Primary Recall source health is degraded, are not reusable.
 """
 from __future__ import annotations
 
@@ -16,6 +17,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
+
+from normalize_digest_artifact import NormalizationError, validate_primary_source_health
 
 FULL_REQUIRED_FILES = (
     "run-info.json",
@@ -194,6 +197,21 @@ def normalize_completed_empty_research(target_dir: Path) -> bool:
     return True
 
 
+def _saved_stage_reports_are_reusable(source_dir: Path) -> tuple[bool, str | None]:
+    """Reject a source that already proved itself invalid in a prior run."""
+    for name in ("artifact-normalization.json", "artifact-validation.json"):
+        path = source_dir / name
+        if not path.is_file():
+            continue
+        payload = read_json(path)
+        if not isinstance(payload, dict):
+            return False, f"{name} должен содержать объект"
+        if payload.get("status") == "error":
+            detail = payload.get("error") or payload.get("errors") or "status=error"
+            return False, f"{name} уже сообщил ошибку: {detail}"
+    return True, None
+
+
 def research_is_reusable(source_dir: Path) -> tuple[bool, str | None]:
     run_info = read_json(source_dir / "run-info.json")
     candidates = read_json(source_dir / "candidates.json")
@@ -215,6 +233,14 @@ def research_is_reusable(source_dir: Path) -> tuple[bool, str | None]:
             False,
             "legacy cross-midnight research не содержит авторитетный temporal anchor",
         )
+    stage_ok, stage_reason = _saved_stage_reports_are_reusable(source_dir)
+    if not stage_ok:
+        return False, stage_reason
+    if (source_dir / "primary-recall.json").is_file():
+        try:
+            validate_primary_source_health(source_dir)
+        except NormalizationError as exc:
+            return False, f"saved Primary Recall source-health непригоден: {exc}"
     return True, None
 
 
@@ -278,13 +304,10 @@ def choose_source(
             row["status"] = "wrong-date"
             diagnostics.append(row)
             continue
-        if mode == "full":
-            usable, reason = True, None
-        else:
-            try:
-                usable, reason = research_is_reusable(source_dir)
-            except RecoveryError as exc:
-                usable, reason = False, str(exc)
+        try:
+            usable, reason = research_is_reusable(source_dir)
+        except RecoveryError as exc:
+            usable, reason = False, str(exc)
         if not usable:
             row["status"] = "unusable"
             row["error"] = reason
@@ -339,7 +362,6 @@ def validate_recovery_freshness(
     }
 
 
-
 def restore_merged_coverage_research(
     recovery_root: Path,
     target_dir: Path,
@@ -365,6 +387,7 @@ def restore_merged_coverage_research(
             "candidate_count": len(payload["candidates"]),
         }
     return None
+
 
 def coverage_audit_was_attempted(payload: dict[str, Any]) -> bool:
     api = payload.get("api")
