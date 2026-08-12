@@ -57,19 +57,19 @@ The scheduled repository hygiene workflow may mutate only explicitly classified
 ephemeral GitHub objects: old merged branch refs, safe Actions artifacts, the
 enabled state of orphaned Actions workflows, and completed runs older than 14
 days only when their workflow is independently classified `safe_disable`. It
-must not edit tracked
-project files, `main`, releases, tags, permanent archive branches, or
-published/editorial content. The five-merged-PR branch grace is also capped at
-7 days, so quiet periods cannot protect stale refs forever. Closed-unmerged
-branches may age into `safe_delete` after 14 days only when their current HEAD
-still exactly matches the closed PR head. An orphan workflow absent from current
-`main` whose latest run was on the default branch may be disabled once it has no
-live run; absence from current `main` is the canonical proof that the workflow
-was removed. An active orphan workflow with no runs may also be disabled on the
-same canonical-absence proof; already-disabled no-run workflow metadata is
-report-only. GitHub-managed dynamic Pages workflows are diagnostic objects:
-when Pages is disabled they must not be sent to the normal workflow-disable REST
-endpoint, which GitHub rejects for this platform-managed workflow.
+must not edit tracked project files, `main`, releases, tags, permanent archive
+branches, or published/editorial content. The five-merged-PR branch grace is
+also capped at 7 days, so quiet periods cannot protect stale refs forever.
+Closed-unmerged branches may age into `safe_delete` after 14 days only when their
+current HEAD still exactly matches the closed PR head. An orphan workflow absent
+from current `main` whose latest run was on the default branch may be disabled
+once it has no live run; absence from current `main` is the canonical proof that
+the workflow was removed. An active orphan workflow with no runs may also be
+disabled on the same canonical-absence proof; already-disabled no-run workflow
+metadata is report-only. GitHub-managed dynamic Pages workflows are diagnostic
+objects: when Pages is disabled they must not be sent to the normal
+workflow-disable REST endpoint, which GitHub rejects for this platform-managed
+workflow.
 
 Source-code, test, prompt, configuration, fixture, and specification orphan
 detection is report-only. Any tracked-file cleanup still follows the normal
@@ -100,13 +100,27 @@ that timestamp. Legacy recovery data from a cross-midnight local/UTC window must
 not be reused as final research or a terminal zero-pool stop unless it carries
 the current temporal-anchor contract version.
 
+The canonical continuity anchor is still the previous successfully published
+`search_cutoff_at`; it is never moved backwards in the archive. Fresh Primary
+Recall may, however, use an **effective discovery window** beginning up to 24
+hours before that anchor. This bounded healing overlap exists only to recover
+important events missed by the preceding digest. Exact source URLs already
+present in the archive must be rejected before merge, semantic archive checks
+still apply downstream, and the overlap must never become an unbounded lookback
+or a reason to republish yesterday's story.
+
+Only internally generated runtime research may carry this wider effective
+window through the legacy generator. The trusted bridge lives under the ignored
+`automation/fixtures/research/.runtime/` subtree. Arbitrary caller-supplied
+`--research-input` paths remain restricted by the existing generator guard and
+must not be allowed to request a wider window.
+
 ## Primary recall v2 contract
 
 Fresh production research uses deterministic **Primary Recall v2** instead of
 letting one agentic Responses call allocate the entire 12-search budget. The
-hard primary budget remains exactly twelve completed Web Search operations, but
-each operation is assigned to one mandatory direction and each Responses call
-gets `max_tool_calls=1`:
+hard primary budget remains exactly twelve completed Web Search **search
+operations**, each assigned to one mandatory direction:
 
 1. `global_breaking`;
 2. `major_agencies`;
@@ -121,6 +135,24 @@ gets `max_tool_calls=1`:
 11. `legal_regulation`;
 12. `independent_missing_events`.
 
+A primary pass must complete exactly **one `action.type=search` operation and
+one logical search query**. Do not use `max_tool_calls=1` as the search-budget
+mechanism: `open_page` and `find_in_page` are also hosted tool calls. Current
+passes allow up to three navigation tool actions after the one search so the
+model can verify source date and facts. Diagnostics must count search operations,
+logical queries, total web-search tool items and navigation actions separately.
+A second search action or a batched multi-query search is a contract violation.
+
+`major_agencies` is the one intentional primary domain-filtered pass and is
+limited to Reuters, AP, Bloomberg and Financial Times. Do not turn that into a
+general project-wide whitelist. Other primary directions remain broad and
+validate source quality after retrieval.
+
+Search prompts must carry the exact effective window plus explicit freshness
+hints. Retrieval date operators such as `after:`/`before:` are only search-engine
+hints; acceptance still depends on the actual source date/timestamp against the
+saved effective window.
+
 Do not collapse the two China/Asia passes back into one broad regional search
 without a new recall experiment and explicit approval. The 2026-08-11
 regression showed that a broad China pass found the other control events but
@@ -128,10 +160,17 @@ missed the Apple/Qwen product-integration story; a separate integrations /
 partnerships pass recovered it without increasing the 12-search primary budget.
 The historical benchmark is `automation/fixtures/recall/2026-08-11.json`.
 
+The 2026-08-12 production failure is a second permanent regression benchmark:
+`automation/fixtures/recall/2026-08-12.json`. It records the runtime-ingress
+failure and fresh Reuters controls including IBM/Together AI/Nvidia, Nvidia
+Nemotron/NeMo and CoreWeave, plus the bounded backfill control for Meta Muse
+Glimmer. Future retrieval changes must not silently recreate that false-zero
+class.
+
 Primary is **discovery-first**. A pass should surface plausible meaningful
 fresh events into the candidate pool, using `consider` when final significance
 is uncertain, rather than performing aggressive editorial rejection during
-retrieval. Strict window, source, freshness, legal/curiosity, significance and
+retrieval. Strict source, freshness, legal/curiosity, significance and
 deduplication checks still run through the existing story-coverage validator and
 editorial stages after discovery.
 
@@ -158,11 +197,10 @@ pool. It is a last-mile recall check, not another editorial filter.
 
 Primary Recall v2 is injected into the existing generator through its
 `--research-input` interface so editorial policy and artifact validation remain
-shared with recovery. A caller-supplied `--research-input` still means recovery
-or editorial rerun and must skip paid fresh primary. The internally generated
-primary research-input is different: it represents fresh paid primary and may
-be followed once by hybrid completeness. Recovery must not repeat already paid
-primary work.
+shared with recovery. Fresh internally generated research is staged in the
+trusted ignored `.runtime` subtree and also copied to preview diagnostics. A
+caller-supplied `--research-input` still means recovery or editorial rerun and
+must skip paid fresh primary. Recovery must not repeat already paid primary work.
 
 ## Hybrid search completeness contract
 
@@ -179,22 +217,32 @@ The completeness layer performs three fixed one-search passes:
 After those passes, deterministic cluster coverage may authorize at most one
 adaptive gap search when a whole cluster is still absent from the combined
 primary + completeness candidate pool. The hard ceiling is four completed
-Web Search operations. Each pass gets `max_tool_calls=1`; API domain filtering
-is deliberately disabled, and source quality is validated after retrieval.
+Web Search **search operations**. Each pass follows the same one-search rule as
+primary and may use limited navigation tool actions for source verification.
+API domain filtering is deliberately disabled in hybrid; source quality is
+validated after retrieval.
 
 New candidates are merged through the existing strict story-coverage validator
 and editorial is rerun only when at least one candidate is actually accepted.
 The completeness layer never runs recursively for caller-supplied
 `--research-input` editorial reruns or recovery, so already-paid
-primary/completeness work is not repeated. A transport or
+primary/completeness work is not repeated. Accepted merged research is staged
+through the same trusted `.runtime` bridge. A transport or
 completeness-editorial failure must preserve or restore the completed primary
 artifact and remain diagnostic rather than destroying an otherwise publishable
-primary result. Short/empty pools still proceed to the existing mandatory
-six-direction coverage audit and zero-pool recall sentinel.
+primary result. Short/empty pools still proceed to the mandatory six-direction
+coverage audit and zero-pool recall sentinel.
+
+Fallback coverage also distinguishes search operations from navigation tool
+items. Its production targeted passes request one search operation and may use a
+small navigation allowance to verify pages. Historical multi-search callers
+retain their old hard `max_tool_calls` cap rather than silently gaining budget.
 
 The total retrieval ceilings remain **12 primary + up to 4 hybrid + up to 7
 fallback coverage = 23 completed search operations** in the theoretical worst
-case. Improving recall must not silently raise these limits.
+case. Navigation tool actions do not raise this search-operation ceiling, though
+they do increase the total number of hosted tool calls. Improving recall must
+not silently raise the 23-search limit.
 
 ## Editorial zero-pool stop
 
