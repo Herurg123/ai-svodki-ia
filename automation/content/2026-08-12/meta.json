@@ -1,0 +1,47 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-12",
+  "slug": "2026-08-12",
+  "title": "ИИ-Сводка на 12 августа 2026",
+  "description": "Nvidia привлекает капитал для ИИ-инфраструктуры, Anthropic закрепляет мощности дата-центров, а OpenAI расширяет Daybreak в AWS и рекламу ChatGPT. Meta и Qwen представили новые модели.",
+  "published_at": "2026-08-12T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-12.png",
+  "topics": [
+    "Nvidia",
+    "финансирование ИИ-инфраструктуры",
+    "дата-центры",
+    "Anthropic",
+    "Riot Platforms",
+    "OpenAI",
+    "Daybreak",
+    "Amazon Bedrock",
+    "киберзащита",
+    "Meta",
+    "Muse Glimmer",
+    "открытые модели",
+    "ChatGPT Ads",
+    "Qwen",
+    "эмбеддинги",
+    "RAG"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-001, cand-002, cand-003, cand-005, cand-006, cand-004."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, business_investment_partnerships, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation, independent_missing_events."
+    }
+  ]
+}

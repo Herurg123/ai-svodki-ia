@@ -1,0 +1,391 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-12",
+  "search_window": {
+    "start_at": "2026-08-10T02:50:46+03:00",
+    "end_at": "2026-08-12T09:41:12+03:00",
+    "latest_archive_at": "2026-08-11T02:50:46+03:00",
+    "start_date": "2026-08-10",
+    "end_date": "2026-08-12",
+    "latest_archive_date": "2026-08-11"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=1, rejected=1."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=0, rejected=1."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Nvidia и крупнейшие инвесторы создают платформы финансирования ИИ-вычислений с целью мобилизовать свыше $500 млрд",
+      "organization": "Nvidia; Apollo; BlackRock; Blackstone; Brookfield; Goldman Sachs; KKR",
+      "published_date": "2026-08-10",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "финансирование масштабной инфраструктуры ИИ-вычислений",
+      "event_type": "infrastructure financing partnership",
+      "keywords": [
+        "Nvidia",
+        "AI compute",
+        "data centers",
+        "financing",
+        "Apollo",
+        "BlackRock",
+        "Blackstone",
+        "Brookfield",
+        "Goldman Sachs",
+        "KKR"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "Wall Street giants partner with Nvidia on $500 billion AI financing deal, FT reports",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/technology/wall-street-giants-partner-with-nvidia-500-billion-ai-financing-deal-ft-reports-2026-08-10/"
+      },
+      "supporting_sources": [
+        {
+          "title": "One-Minute Daily AI News 8/11/2026",
+          "publisher": "AI Daily News by Bush Bush",
+          "url": "https://bushaicave.com/2026/08/11/one-minute-daily-ai-news-8-11-2026/"
+        }
+      ],
+      "event_summary": "Reuters сообщил о партнёрстве Nvidia с Apollo, BlackRock, Blackstone, Brookfield, Goldman Sachs и KKR по созданию финансовых платформ для ИИ-вычислительной инфраструктуры; заявленная цель — мобилизовать более $500 млрд стороннего капитала.",
+      "verified_facts": [
+        "В доступном свежем обзоре приведена прямая ссылка на материал Reuters от 10 августа 2026 года.",
+        "Заголовок Reuters идентифицирует Nvidia и партнёрство с крупными финансовыми группами вокруг сделки по финансированию ИИ-инфраструктуры.",
+        "Сумма-ориентир, указанная в заголовке обзора, составляет более $500 млрд мобилизуемого стороннего капитала."
+      ],
+      "significance": "Это потенциально один из крупнейших сигналов о переходе финансирования ИИ-дата-центров от балансов отдельных технологических компаний к структурам с участием ведущих альтернативных управляющих активами и банков.",
+      "significance_score": 5,
+      "limitations": "Прямое открытие страницы Reuters в среде retrieval завершилось технической ошибкой; доступны URL, дата в URL и пересказ с ссылкой на Reuters. Точный timestamp, юридическая структура платформ и степень обязательности заявленных объёмов требуют последующей редакционной проверки по Reuters/FT и заявлениям участников.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет сюжета о данном партнёрстве и платформе финансирования Nvidia с финансовыми группами.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Существование конкретного материала Reuters и его датировка подтверждены прямой ссылкой, опубликованной в свежем обзоре; событие также согласуется с заголовком источника. Детали сделки требуют подтверждения в первоисточнике.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Материал Reuters датирован 10 августа 2026 года и не совпадает с архивными сюжетами о капитальных расходах Alphabet, финансировании дата-центра OpenAI или приобретении Anyscale.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие является коммерческим и инфраструктурно-финансовым партнёрством, а не судебным или регуляторным актом.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к формату curiosity: это самостоятельная инфраструктурная и финансовая новость.",
+      "id": "cand-001"
+    },
+    {
+      "title": "OpenAI вывела модели Daybreak для киберзащиты в Amazon Bedrock",
+      "organization": "OpenAI; Amazon Web Services",
+      "published_date": "2026-08-11",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "модели и агенты для авторизованной киберзащиты",
+      "event_type": "product availability expansion",
+      "keywords": [
+        "OpenAI",
+        "AWS",
+        "Amazon Bedrock",
+        "Daybreak",
+        "GPT-5.6 Sol",
+        "cybersecurity"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Daybreak models are now available on AWS",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/daybreak-models-are-now-available-on-aws/"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI сообщила, что уровни доступа Daybreak Blue и Daybreak Red стали доступны подходящим клиентам через Amazon Bedrock. Blue включает frontier-модели, в том числе GPT-5.6 Sol, с ограничениями для оборонительной работы; Red предназначен для авторизованных исследований уязвимостей, валидации эксплойтов и security-тестирования.",
+      "verified_facts": [
+        "Публикация OpenAI датирована 11 августа 2026 года.",
+        "Daybreak теперь доступен через Amazon Bedrock для одобренных участников Daybreak Access.",
+        "Daybreak Blue предоставляет frontier general-purpose модели с защитными мерами для defensive security work.",
+        "Daybreak Red предназначен для авторизованных vulnerability research, exploit validation и security testing."
+      ],
+      "significance": "Это самостоятельное расширение канала дистрибуции специализированных frontier-кибермоделей в крупное корпоративное облако. Оно дополняет уже опубликованный сюжет о Daybreak новым фактом о доступности через AWS, а не повторяет первоначальный анонс.",
+      "significance_score": 5,
+      "limitations": "Первичный источник не раскрывает число клиентов, регионы доступности или коммерческие условия. Событие связано с ранее опубликованным запуском Daybreak, поэтому в редактуре следует сохранить фокус именно на новом AWS/Bedrock-канале.",
+      "archive_status": "update",
+      "archive_reason": "Материальное обновление сюжета из выпуска 11 августа: новая подтверждённая доступность Daybreak Red и Blue через Amazon Bedrock.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Официальная страница OpenAI содержит дату, название интеграции, уровни Daybreak и условия доступа.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Публикация от 11 августа сообщает о новом способе развертывания Daybreak после ранее заархивированного объявления о программе и моделях.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-002"
+    },
+    {
+      "title": "Anthropic заключила сделку с Riot Platforms на $9,1 млрд для получения мощностей ИИ-дата-центров",
+      "organization": "Anthropic; Riot Platforms",
+      "published_date": "2026-08-11",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "закрепление мощности и площадей дата-центров для масштабирования ИИ-вычислений",
+      "event_type": "cloud capacity agreement",
+      "keywords": [
+        "Anthropic",
+        "Riot Platforms",
+        "AI data centers",
+        "cloud compute",
+        "power capacity",
+        "data center infrastructure"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "business_media",
+      "primary_source": {
+        "title": "Anthropic Strikes $9 Billion Deal With Cloud Computing Firm Riot",
+        "publisher": "Bloomberg",
+        "url": "https://www.bloomberg.com/news/articles/2026-08-11/anthropic-strikes-9-billion-deal-with-cloud-computing-firm-riot"
+      },
+      "supporting_sources": [
+        {
+          "title": "Anthropic Strikes $9 Billion Deal With Cloud Computing Firm Riot",
+          "publisher": "Reddit / r/AMD_Stock (ссылка и выдержка Bloomberg)",
+          "url": "https://www.reddit.com/r/AMD_Stock/comments/1vl4exr/anthropic_strikes_9_billion_deal_with_cloud/"
+        }
+      ],
+      "event_summary": "Bloomberg сообщил со ссылкой на знакомых с вопросом лиц, что Anthropic заключила с Riot Platforms соглашение на $9,1 млрд. Riot, ранее известная как майнинговая компания, продаёт мощности ИИ-дата-центров; сделка направлена на обеспечение Anthropic вычислительной инфраструктурой для удовлетворения спроса на Claude.",
+      "verified_facts": [
+        "Bloomberg датирует материал 11 августа 2026 года.",
+        "Согласно Bloomberg, объём сделки Anthropic и Riot Platforms составляет $9,1 млрд.",
+        "Bloomberg характеризует Riot как компанию, начавшую продавать мощности AI data center.",
+        "В сообщении целью сделки названо обеспечение Anthropic достаточными вычислительными ресурсами для спроса клиентов."
+      ],
+      "significance": "Многомиллиардный контракт frontier-разработчика с оператором площадок и энергомощностей — самостоятельный индикатор дефицита и коммерциализации AI-инфраструктуры, а также расширения рынка за пределы традиционных hyperscaler-поставщиков.",
+      "significance_score": 4,
+      "limitations": "Доступен материал Bloomberg, однако полная страница ограничена paywall; приведённые детали основаны на заголовке и доступной выдержке. Стороны на момент discovery не представлены официальным совместным релизом.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве и списке уже найденных событий нет этого соглашения Anthropic—Riot.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Событие подтверждено свежим материалом Bloomberg; независимая доступная выдержка сохраняет ключевые параметры — стороны, сумму и назначение мощности.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Основной источник опубликован 11 августа 2026 года, внутри эффективного окна; это не перепечатка и не продолжение архивного сюжета.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является судебным или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран по инфраструктурной значимости, а не как curiosity-сюжет.",
+      "id": "cand-003"
+    },
+    {
+      "title": "Qwen добавила мультиязычную векторную модель Qwen3.7-Text-Embedding",
+      "organization": "Qwen / Alibaba Cloud",
+      "published_date": "2026-08-11",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "модель эмбеддингов для поиска, кластеризации и классификации",
+      "event_type": "model release",
+      "keywords": [
+        "Qwen3.7-Text-Embedding",
+        "embeddings",
+        "retrieval",
+        "multilingual",
+        "code retrieval"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "documentation",
+      "primary_source": {
+        "title": "Model releases",
+        "publisher": "QwenCloud",
+        "url": "https://docs.qwencloud.com/changelog/models"
+      },
+      "supporting_sources": [],
+      "event_summary": "В changelog от 11 августа появилась Qwen3.7-Text-Embedding — мультиязычная векторная модель на базе Qwen3.7 для задач retrieval, кластеризации и классификации.",
+      "verified_facts": [
+        "QwenCloud датирует появление Qwen3.7-Text-Embedding 11 августа 2026 года.",
+        "Документация заявляет улучшения для многоязычного, китайско-английского и code retrieval относительно text-embedding-v4.",
+        "Модель поддерживает настраиваемую размерность векторов от 256 до 2560."
+      ],
+      "significance": "Самостоятельный свежий релиз специализированной модели Qwen, полезный разработчикам RAG и поисковых систем; однако это не новый frontier-флагман.",
+      "significance_score": 5,
+      "limitations": "Подтверждена публикация и доступность в документации QwenCloud; независимые бенчмарки и сведения о лицензии в проверенном источнике отсутствуют.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет сюжета о Qwen3.7-Text-Embedding.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата и базовые характеристики подтверждены changelog платформы; релиз находится внутри effective window.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Документация впервые фиксирует модель 11 августа 2026 года, внутри окна 2026-08-10T02:50:46+03:00 → 2026-08-12T09:41:12+03:00.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-формату.",
+      "id": "cand-004"
+    },
+    {
+      "title": "Meta AI выпустила Muse Glimmer — открытую 30B мультимодальную агентную модель для локального запуска",
+      "organization": "Meta AI",
+      "published_date": "2026-08-10",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "open-weight мультимодальная модель для локальных агентных сценариев",
+      "event_type": "model release",
+      "keywords": [
+        "Meta AI",
+        "Muse Glimmer",
+        "open weights",
+        "Apache 2.0",
+        "agents",
+        "multimodal",
+        "local inference",
+        "30B"
+      ],
+      "geography": "world",
+      "category": "open_source",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Meta AI Releases Muse Glimmer: A 30B Open-Weights Agentic Model That Runs on One Consumer GPU",
+        "publisher": "MarkTechPost",
+        "url": "https://www.marktechpost.com/2026/08/10/meta-ai-releases-muse-glimmer/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Muse Glimmer",
+          "publisher": "Meta AI Research",
+          "url": "https://research.meta.ai/"
+        }
+      ],
+      "event_summary": "MarkTechPost сообщил, что Meta AI выпустила Muse Glimmer: 30-миллиардную мультимодальную модель с открытыми весами Apache 2.0, ориентированную на локальные агентные рабочие процессы и, по заявленным характеристикам, запускаемую в квантизованном виде на одной потребительской GPU.",
+      "verified_facts": [
+        "Публикация MarkTechPost датирована 10 августа 2026 года.",
+        "Материал прямо указывает Meta AI как разработчика, размер модели около 30 млрд параметров и лицензию Apache 2.0.",
+        "В публикации приведены ссылки на страницу Meta AI Research, коллекцию весов Hugging Face и технические материалы Meta.",
+        "Материал описывает текстово-визуальный ввод, локальный запуск и 4-битные квантизованные сборки."
+      ],
+      "significance": "Если официальный релиз и доступность весов подтверждаются, это заметный выпуск в сегменте открытых моделей: крупная мультимодальная агентная модель, рассчитанная на локальное выполнение, способна снизить барьеры для приватных и on-premise агентных внедрений.",
+      "significance_score": 4,
+      "limitations": "В данном проходе официальный материал Meta и репозиторий весов не удалось открыть из-за лимита навигационных вызовов. Основной доступный текст — техническое медиа с исходящими ссылками на Meta и Hugging Face; перед публикацией следует проверить официальный анонс, дату релиза, название модели, лицензию и заявленные бенчмарки.",
+      "archive_status": "none",
+      "archive_reason": "Среди архивных сюжетов нет релиза Muse Glimmer или эквивалентной открытой модели Meta.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата, ключевые параметры и ссылки на первичные материалы подтверждены открытой публикацией профильного технологического медиа. Независимой вторичной верификации и открытия первичного анонса в этом проходе нет.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Публикация датирована 10 августа 2026 года; архив не содержит данного релиза.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это продуктовый и open-source анонс, не юридическое событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не curiosity: потенциально самостоятельный релиз крупной открытой мультимодальной модели.",
+      "id": "cand-005"
+    },
+    {
+      "title": "OpenAI расширила запуск рекламы в ChatGPT на пять новых рынков",
+      "organization": "OpenAI",
+      "published_date": "2026-08-11",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "потребительский продукт ChatGPT и монетизация",
+      "event_type": "product rollout",
+      "keywords": [
+        "OpenAI",
+        "ChatGPT",
+        "ads",
+        "advertising",
+        "United Kingdom",
+        "Mexico",
+        "Brazil",
+        "Japan",
+        "South Korea"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Testing ads in ChatGPT",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/testing-ads-in-chatgpt/"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI обновила страницу рекламного пилота: 11 августа реклама в ChatGPT запущена в Великобритании, Мексике, Бразилии, Японии и Южной Корее. Компания заявляет, что продолжит расширять программу в других странах в течение года.",
+      "verified_facts": [
+        "Обновление OpenAI датировано 11 августа 2026 года.",
+        "OpenAI указала запуск ChatGPT Ads в Великобритании, Мексике, Бразилии, Японии и Южной Корее.",
+        "Согласно заявленным принципам OpenAI, реклама должна быть визуально отделена от ответов, а рекламодателям не передаются чаты, история чатов, memories или персональные сведения пользователей.",
+        "Изначальный рекламный тест был объявлен 9 февраля 2026 года для вошедших совершеннолетних пользователей Free и Go в США."
+      ],
+      "significance": "Расширение рекламы на пять крупных рынков — заметное изменение потребительского продукта и монетизационной модели ChatGPT, потенциально влияющее на широкую международную аудиторию.",
+      "significance_score": 2,
+      "limitations": "Источник является корпоративным заявлением; он не приводит метрики охвата, список рекламодателей или независимую оценку влияния на пользователей. Это не анонс новой модели или агентной функции.",
+      "archive_status": "none",
+      "archive_reason": "В недавнем архиве нет идентичного сюжета о международном запуске рекламы ChatGPT.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Официальная страница OpenAI прямо содержит датированное обновление от 11 августа и перечень пяти новых рынков.",
+      "freshness_status": "new_event",
+      "freshness_reason": "В окне опубликован новый международный rollout, а не перепечатка исходного февральского теста.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-006"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=8, validated unique=6, final candidates=6. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений."
+}

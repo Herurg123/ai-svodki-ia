@@ -1,0 +1,190 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Nvidia и крупнейшие инвесторы создают платформы для финансирования ИИ-вычислений",
+    "organization": "Nvidia; Apollo; BlackRock; Blackstone; Brookfield; Goldman Sachs; KKR",
+    "topic": "финансирование масштабной инфраструктуры ИИ-вычислений",
+    "event_type": "infrastructure financing partnership",
+    "status": "new",
+    "summary": "Reuters сообщил о партнёрстве Nvidia с Apollo, BlackRock, Blackstone, Brookfield, Goldman Sachs и KKR по созданию финансовых платформ для ИИ-вычислительной инфраструктуры; заявленная цель — мобилизовать более $500 млрд стороннего капитала.",
+    "published_at": null,
+    "published_date": "2026-08-10",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Wall Street giants partner with Nvidia on $500 billion AI financing deal, FT reports",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/technology/wall-street-giants-partner-with-nvidia-500-billion-ai-financing-deal-ft-reports-2026-08-10/"
+      }
+    ],
+    "keywords": [
+      "Nvidia",
+      "AI compute",
+      "data centers",
+      "financing",
+      "Apollo",
+      "BlackRock",
+      "Blackstone",
+      "Brookfield",
+      "Goldman Sachs",
+      "KKR"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Обновление: OpenAI вывела модели Daybreak для киберзащиты в Amazon Bedrock",
+    "organization": "OpenAI; Amazon Web Services",
+    "topic": "модели и агенты для авторизованной киберзащиты",
+    "event_type": "product availability expansion",
+    "status": "update",
+    "summary": "OpenAI сообщила, что уровни доступа Daybreak Blue и Daybreak Red стали доступны подходящим клиентам через Amazon Bedrock. Blue включает frontier-модели, в том числе GPT-5.6 Sol, с ограничениями для оборонительной работы; Red предназначен для авторизованных исследований уязвимостей, валидации эксплойтов и security-тестирования.",
+    "published_at": null,
+    "published_date": "2026-08-11",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Daybreak models are now available on AWS",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/daybreak-models-are-now-available-on-aws/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "AWS",
+      "Amazon Bedrock",
+      "Daybreak",
+      "GPT-5.6 Sol",
+      "cybersecurity"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Anthropic заключила соглашение с Riot Platforms на 9,1 млрд долларов для ИИ-дата-центров",
+    "organization": "Anthropic; Riot Platforms",
+    "topic": "закрепление мощности и площадей дата-центров для масштабирования ИИ-вычислений",
+    "event_type": "cloud capacity agreement",
+    "status": "new",
+    "summary": "Bloomberg сообщил со ссылкой на знакомых с вопросом лиц, что Anthropic заключила с Riot Platforms соглашение на $9,1 млрд. Riot, ранее известная как майнинговая компания, продаёт мощности ИИ-дата-центров; сделка направлена на обеспечение Anthropic вычислительной инфраструктурой для удовлетворения спроса на Claude.",
+    "published_at": null,
+    "published_date": "2026-08-11",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Anthropic Strikes $9 Billion Deal With Cloud Computing Firm Riot",
+        "publisher": "Bloomberg",
+        "url": "https://www.bloomberg.com/news/articles/2026-08-11/anthropic-strikes-9-billion-deal-with-cloud-computing-firm-riot"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Riot Platforms",
+      "AI data centers",
+      "cloud compute",
+      "power capacity",
+      "data center infrastructure"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Meta представила Muse Glimmer — открытую мультимодальную модель для локальных агентных задач",
+    "organization": "Meta AI",
+    "topic": "open-weight мультимодальная модель для локальных агентных сценариев",
+    "event_type": "model release",
+    "status": "new",
+    "summary": "MarkTechPost сообщил, что Meta AI выпустила Muse Glimmer: 30-миллиардную мультимодальную модель с открытыми весами Apache 2.0, ориентированную на локальные агентные рабочие процессы и, по заявленным характеристикам, запускаемую в квантизованном виде на одной потребительской GPU.",
+    "published_at": null,
+    "published_date": "2026-08-10",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Meta AI Releases Muse Glimmer: A 30B Open-Weights Agentic Model That Runs on One Consumer GPU",
+        "publisher": "MarkTechPost",
+        "url": "https://www.marktechpost.com/2026/08/10/meta-ai-releases-muse-glimmer/"
+      }
+    ],
+    "keywords": [
+      "Meta AI",
+      "Muse Glimmer",
+      "open weights",
+      "Apache 2.0",
+      "agents",
+      "multimodal",
+      "local inference",
+      "30B"
+    ],
+    "geography": "world",
+    "category": "open_source"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "OpenAI расширила рекламу в ChatGPT на пять новых рынков",
+    "organization": "OpenAI",
+    "topic": "потребительский продукт ChatGPT и монетизация",
+    "event_type": "product rollout",
+    "status": "new",
+    "summary": "OpenAI обновила страницу рекламного пилота: 11 августа реклама в ChatGPT запущена в Великобритании, Мексике, Бразилии, Японии и Южной Корее. Компания заявляет, что продолжит расширять программу в других странах в течение года.",
+    "published_at": null,
+    "published_date": "2026-08-11",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Testing ads in ChatGPT",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/testing-ads-in-chatgpt/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ChatGPT",
+      "ads",
+      "advertising",
+      "United Kingdom",
+      "Mexico",
+      "Brazil",
+      "Japan",
+      "South Korea"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Qwen добавила мультиязычную векторную модель Qwen3.7-Text-Embedding",
+    "organization": "Qwen / Alibaba Cloud",
+    "topic": "модель эмбеддингов для поиска, кластеризации и классификации",
+    "event_type": "model release",
+    "status": "new",
+    "summary": "В changelog от 11 августа появилась Qwen3.7-Text-Embedding — мультиязычная векторная модель на базе Qwen3.7 для задач retrieval, кластеризации и классификации.",
+    "published_at": null,
+    "published_date": "2026-08-11",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Model releases",
+        "publisher": "QwenCloud",
+        "url": "https://docs.qwencloud.com/changelog/models"
+      }
+    ],
+    "keywords": [
+      "Qwen3.7-Text-Embedding",
+      "embeddings",
+      "retrieval",
+      "multilingual",
+      "code retrieval"
+    ],
+    "geography": "world",
+    "category": "models"
+  }
+]
