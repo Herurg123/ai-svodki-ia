@@ -89,7 +89,14 @@ def run_audit_request(
         web_search_tool["filters"] = {
             "allowed_domains": list(allowed_domains),
         }
-    total_tool_calls = maximum_web_search_calls + COVERAGE_NAVIGATION_TOOL_ALLOWANCE
+    # The production fallback executes one search operation per targeted pass;
+    # give those calls a small navigation allowance for open/find verification.
+    # Historical multi-search callers keep their existing hard tool-call cap.
+    total_tool_calls = (
+        maximum_web_search_calls + COVERAGE_NAVIGATION_TOOL_ALLOWANCE
+        if maximum_web_search_calls == 1
+        else maximum_web_search_calls
+    )
     response = client.responses.create(
         model=model,
         input=prompt,
@@ -115,7 +122,11 @@ def run_audit_request(
     )
     metadata["configured_search_operations"] = maximum_web_search_calls
     metadata["configured_total_tool_calls"] = total_tool_calls
-    metadata["navigation_tool_allowance"] = COVERAGE_NAVIGATION_TOOL_ALLOWANCE
+    metadata["navigation_tool_allowance"] = (
+        COVERAGE_NAVIGATION_TOOL_ALLOWANCE
+        if maximum_web_search_calls == 1
+        else 0
+    )
     output_text = (getattr(response, "output_text", None) or "").strip()
     payload: Any = None
     validation_error: str | None = None
