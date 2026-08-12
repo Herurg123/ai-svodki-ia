@@ -115,10 +115,18 @@ URL уже опубликованных сюжетов отсекаются до
 archive dedupe остаётся обязательным. События за пределами 24-часового overlap
 не воскресают бесконечно.
 
-Prompt каждого pass получает точные границы effective window и explicit
-freshness hints, включая `after:`/`before:`. Эти search operators являются
-retrieval-подсказкой; финальная свежесть всё равно проверяется по фактической
-дате/timestamp источника.
+Prompt каждого pass получает точные границы effective window. **Фактическая
+поисковая строка должна быть коротким natural-language query с календарными
+датами окна**, без `after:`/`before:`, длинных Boolean `OR`-цепочек, скобок и
+перечней из десятков компаний. Для `major_agencies` достаточно компактного
+AI/date query, потому что Reuters/AP/Bloomberg/FT уже ограничены API domain
+filter. Финальная свежесть всё равно проверяется по фактической дате/timestamp
+источника относительно сохранённого exact window.
+
+Wikipedia и Reddit не являются допустимым основным подтверждением свежего
+новостного события. ArXiv остаётся нормальным первоисточником действительно
+значимого исследования, но не должен вытеснять свежие product, infrastructure,
+business, security, legal и policy события.
 
 Primary использует **discovery-first** семантику. Потенциально значимое свежее
 и проверяемое событие сохраняется как `consider`, если его финальная
@@ -151,6 +159,25 @@ Fixture: `fixtures/recall/2026-08-11.json`.
 runtime research-input. MUST_DISCOVER-контроли включают свежие Reuters-сюжеты
 IBM/Together AI/Nvidia, Nvidia Nemotron/NeMo и CoreWeave. Там же закреплён
 bounded backfill-контроль Meta Muse Glimmer.
+
+Live run `31566813147` выявил следующий класс проблемы: все 12 primary searches,
+editorial и coverage завершились, но `major_agencies` не имел ни одного
+consulted source, а найденный пул был практически целиком low-signal
+Wikipedia/Reddit/arXiv. Поэтому перед publication normalizer выполняет
+**source-health gate**: `major_agencies` обязан иметь минимум один consulted
+source, а по всем двенадцати pass вместе требуется минимум два consulted URL вне
+Wikipedia, Reddit и arXiv. Это не новый глобальный whitelist и не квота на
+кандидатов; это минимальная защита от технически completed, но очевидно
+деградировавшего retrieval.
+
+Тот же run выявил metadata-seam доверенного runtime ingress. Legacy generator
+видит внутренний `--research-input` и изначально записывает
+`editorial_from_saved_research`, хотя search только что был выполнен Primary
+Recall. Перед artifact validation normalizer для доказанного fresh Primary
+(`research.mode=primary_recall_v2`, ровно 12 search operations) канонизирует
+`pipeline=primary_recall_v2_then_editorial` и
+`research.settings.source=trusted_runtime_primary_recall`. Caller-supplied
+recovery input этот rewrite не получает.
 
 Все 12 проходов обязательны. Если любой Responses call технически не завершил
 ровно один search operation или сформировал больше одного logical query, fresh
@@ -284,7 +311,12 @@ Recovery без явного ID предпочитает наиболее пол
   production artifact;
 - завершённый fallback audit и актуальный sentinel переиспользуются;
 - partial fallback продолжает только незавершённые направления;
-- доказанный zero-pool `editorial_stop` переиспользуется без новой оплаты.
+- доказанный zero-pool `editorial_stop` переиспользуется без новой оплаты;
+- artifact с `artifact-normalization.json.status=error` или
+  `artifact-validation.json.status=error` **не переиспользуется**;
+- сохранённый artifact с `primary-recall.json` обязан повторно пройти current
+  source-health gate; это правило действует и для `full` artifact, поэтому
+  поздний failed run не получает привилегию только за полноту файлов.
 
 ## Редакционный контракт короткого выпуска
 
