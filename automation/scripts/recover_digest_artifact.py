@@ -244,6 +244,19 @@ def research_is_reusable(source_dir: Path) -> tuple[bool, str | None]:
     return True, None
 
 
+def full_artifact_is_reusable(source_dir: Path) -> tuple[bool, str | None]:
+    """Keep legacy complete releases compatible while validating modern primary."""
+    stage_ok, stage_reason = _saved_stage_reports_are_reusable(source_dir)
+    if not stage_ok:
+        return False, stage_reason
+    if (source_dir / "primary-recall.json").is_file():
+        return research_is_reusable(source_dir)
+    # Complete legacy artifacts predate the structured research block used by
+    # modern recovery. Their canonical digest files still pass freshness later;
+    # absence of Primary Recall diagnostics must not make those releases vanish.
+    return True, None
+
+
 def classify_source(source_dir: Path) -> tuple[str | None, list[str]]:
     missing_full = [name for name in FULL_REQUIRED_FILES if not (source_dir / name).is_file()]
     if not missing_full:
@@ -305,7 +318,10 @@ def choose_source(
             diagnostics.append(row)
             continue
         try:
-            usable, reason = research_is_reusable(source_dir)
+            if mode == "full":
+                usable, reason = full_artifact_is_reusable(source_dir)
+            else:
+                usable, reason = research_is_reusable(source_dir)
         except RecoveryError as exc:
             usable, reason = False, str(exc)
         if not usable:
