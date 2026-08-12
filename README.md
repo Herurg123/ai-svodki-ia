@@ -90,9 +90,11 @@ repository hygiene: в policy она отдельно классифицируе
    найденного и ищет именно крупные отсутствующие события.
 6. `major_agencies` намеренно использует узкий API domain filter только для
    Reuters, AP, Bloomberg и Financial Times. Общего whitelist для остальных
-   направлений нет. Search query получает точные границы effective window и
-   явные freshness hints (`after:`/`before:`); операторы поиска являются лишь
-   retrieval-подсказкой, а кандидат принимается по фактической дате/timestamp.
+   направлений нет. Фактический query должен быть короткой natural-language
+   поисковой фразой с календарными датами effective window. В query запрещены
+   `after:`/`before:`, длинные Boolean `OR`-цепочки, скобки и огромные списки
+   компаний. `major_agencies` полагается на API domain filter плюс компактный
+   AI/date query; кандидат принимается по фактической дате/timestamp источника.
 7. Китай/Азия намеренно разделены на два прохода. Исторический эксперимент на
    окне выпуска 2026-08-11 показал, что одна широкая China/Asia-проверка
    обнаружила 5 из 6 контрольных событий, но пропустила продуктовую интеграцию
@@ -105,13 +107,28 @@ repository hygiene: в policy она отдельно классифицируе
    на несовместимом runtime `research_input`. Fixture закрепляет свежие Reuters-
    контроли IBM/Together AI/Nvidia, Nvidia Nemotron/NeMo и CoreWeave, а также
    bounded backfill-контроль Meta Muse Glimmer.
-9. Все двенадцать primary-направлений обязательны. Технический сбой или
-   отсутствие ровно одного завершённого search operation в любом слоте делает
-   fresh primary красным и **не** может быть переинтерпретировано как «новостей
-   мало». Успешно выполненный pass вправе вернуть ноль кандидатов. Диагностика
-   сохраняет фактические queries, consulted sources, raw candidates, model
-   rejections и validator rejections каждого направления.
-10. Обычный `maximum_candidates` применяется **только после завершения всех 12
+9. Live run `31566813147` выявил следующий класс проблемы: Primary Recall,
+   editorial и coverage завершились, но `major_agencies` не имел ни одного
+   consulted source, а candidate pool был практически целиком собран из
+   Wikipedia/Reddit/arXiv. Перед публикацией действует минимальный fail-closed
+   **source-health gate**: `major_agencies` обязан иметь хотя бы один consulted
+   source, а суммарные diagnostics двенадцати pass должны содержать минимум два
+   consulted URL вне Wikipedia, Reddit и arXiv. Это не общий whitelist и не
+   квота на кандидатов; это защита от очевидно деградировавшего retrieval.
+10. Тот же live run обнаружил metadata-seam: внутренний trusted
+    `--research-input` свежего Primary Recall legacy generator помечал как
+    `editorial_from_saved_research`, хотя diagnostics корректно содержали 12
+    свежих searches. Перед artifact validation normalizer канонизирует
+    доказанный fresh Primary в `pipeline=primary_recall_v2_then_editorial` и
+    `research.settings.source=trusted_runtime_primary_recall`. Caller-supplied
+    recovery/editorial input такого rewrite не получает.
+11. Все двенадцать primary-направлений обязательны. Технический сбой или
+    отсутствие ровно одного завершённого search operation в любом слоте делает
+    fresh primary красным и **не** может быть переинтерпретировано как «новостей
+    мало». Успешно выполненный pass вправе вернуть ноль кандидатов. Диагностика
+    сохраняет фактические queries, consulted sources, raw candidates, model
+    rejections и validator rejections каждого направления.
+12. Обычный `maximum_candidates` применяется **только после завершения всех 12
     обязательных проходов**. До этого валидные уникальные события собираются во
     временный расширенный discovery-pool. Финальный cap сначала сохраняет
     сильнейший уникальный вклад каждого направления, а оставшиеся места заполняет
@@ -119,7 +136,7 @@ repository hygiene: в policy она отдельно классифицируе
     China/Asia, Russia, security, legal или missing-events. Это fairness
     candidate-пула, а не квота на опубликованные сюжеты; diagnostics отдельно
     показывают полный validated pool и события, отброшенные только финальным cap.
-11. Primary сохраняет диагностический research artifact в preview, а рабочую
+13. Primary сохраняет диагностический research artifact в preview, а рабочую
     копию для существующего generator/editorial передаёт через доверенный
     ignored runtime ingress `automation/fixtures/research/.runtime/`. Это
     сохраняет старый security guard `--research-input`: произвольные preview-
@@ -127,7 +144,7 @@ repository hygiene: в policy она отдельно классифицируе
     effective overlap-window при sanitation/editorial validation. Caller-supplied
     `--research-input` по-прежнему означает recovery/editorial rerun и не
     оплачивает fresh primary.
-12. После **свежего** primary запускается отдельный `hybrid completeness` v1.
+14. После **свежего** primary запускается отдельный `hybrid completeness` v1.
     Он не заменяет primary, а остаётся независимой страховкой. Три фиксированных
     прохода получают ровно по одному search operation: (1)
     models/products/agents/research, (2) infrastructure/chips/business, (3)
@@ -137,14 +154,14 @@ repository hygiene: в policy она отдельно классифицируе
     search. Жёсткий потолок слоя — 4 search operations, обычный расход — 3.
     Hybrid не имеет API domain filter и тоже может использовать ограниченную
     навигацию после своего единственного search каждого прохода.
-13. Hybrid-кандидаты проходят тот же строгий `story_coverage` validator,
+15. Hybrid-кандидаты проходят тот же строгий `story_coverage` validator,
     дедупликацию по URL/событию и лимит пула. Editorial повторяется только если
     принят хотя бы один новый кандидат. Объединённый research для rerun также
     проходит через доверенный `.runtime` ingress. Caller-supplied
     `--research-input` recovery не запускает completeness рекурсивно. Если сам
     completeness или его editorial-rerun технически ломается, baseline primary
     artifact сохраняется или восстанавливается.
-14. Если после primary + hybrid достойных сюжетов всё ещё меньше обычной цели,
+16. Если после primary + hybrid достойных сюжетов всё ещё меньше обычной цели,
     выполняется прежний обязательный coverage audit: шесть отдельных
     тематических Web Search-проходов и один резервный слот. Production targeted
     passes получают одну search operation и небольшой navigation allowance для
@@ -153,15 +170,15 @@ repository hygiene: в policy она отдельно классифицируе
     тратится на его повтор. Если все шесть завершены, но итоговый пригодный пул
     всё ещё нулевой, тот же седьмой search становится
     `high_signal_recall_sentinel` версии 7.
-15. `gpt-image-2` создаёт одну PNG-обложку 1536×864; валидатор проверяет её
+17. `gpt-image-2` создаёт одну PNG-обложку 1536×864; валидатор проверяет её
     технический контракт.
-16. Legacy-staging исторических обложек работает как best-effort слой
+18. Legacy-staging исторических обложек работает как best-effort слой
     совместимости: его предупреждение само по себе не блокирует выпуск.
     Канонический build и последующие валидаторы всё равно обязаны подтвердить,
     что все реально используемые страницы и изображения присутствуют.
-17. Кандидат сайта получает RSS, sitemap и Schema.org и проходит офлайн-
+19. Кандидат сайта получает RSS, sitemap и Schema.org и проходит офлайн-
     валидацию.
-18. Только проверенное состояние записывается одним commit в `main`, после чего
+20. Только проверенное состояние записывается одним commit в `main`, после чего
     `deploy-posts.yml` разворачивает именно этот SHA.
 
 Primary Recall v2 имеет hard cap `12`, hybrid completeness — hard cap `4`, а
@@ -246,6 +263,10 @@ cron-окна больше не дублируют один и тот же gate.
   предпочитает наиболее полный результат (готовая обложка → готовый digest →
   research-only), а свежесть использует как tie-break; уже оплаченные стадии
   повторно не запускаются без необходимости;
+- artifact, который уже имеет `artifact-normalization.json.status=error` или
+  `artifact-validation.json.status=error`, не может быть выбран recovery;
+  сохранённый `primary-recall.json` дополнительно обязан повторно пройти
+  текущий source-health gate даже для `full` artifact;
 - fresh Primary Recall v2 вызывает hybrid completeness только один раз;
   caller-supplied `--research-input` editorial rerun его пропускает, а recovery
   использует сохранённые `candidates.json`, `primary-recall.json` и

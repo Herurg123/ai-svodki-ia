@@ -148,10 +148,18 @@ limited to Reuters, AP, Bloomberg and Financial Times. Do not turn that into a
 general project-wide whitelist. Other primary directions remain broad and
 validate source quality after retrieval.
 
-Search prompts must carry the exact effective window plus explicit freshness
-hints. Retrieval date operators such as `after:`/`before:` are only search-engine
-hints; acceptance still depends on the actual source date/timestamp against the
-saved effective window.
+Search prompts must carry the exact effective window. The **actual search
+query** must be a short natural-language phrase with the relevant calendar dates
+written normally. Do not copy `after:`/`before:` operators, long Boolean `OR`
+chains, parentheses, or giant company lists into the query. The saved exact
+window remains authoritative for final freshness validation. `major_agencies`
+should rely on its API domain filter plus a compact AI/date query rather than a
+Boolean mega-query.
+
+Wikipedia and Reddit must not be used as primary confirmation of a fresh news
+event. ArXiv is allowed as the primary source of a genuinely material research
+result, but it must not crowd out current product, infrastructure, corporate,
+security, legal, or policy news.
 
 Do not collapse the two China/Asia passes back into one broad regional search
 without a new recall experiment and explicit approval. The 2026-08-11
@@ -166,6 +174,25 @@ failure and fresh Reuters controls including IBM/Together AI/Nvidia, Nvidia
 Nemotron/NeMo and CoreWeave, plus the bounded backfill control for Meta Muse
 Glimmer. Future retrieval changes must not silently recreate that false-zero
 class.
+
+The later fresh production run `31566813147` is an additional live quality
+regression. It completed Primary Recall, editorial and coverage, but
+`major_agencies` had no consulted source and the selected pool was dominated by
+low-signal Wikipedia/Reddit/arXiv retrieval. It also exposed a metadata seam:
+trusted fresh Primary Recall was labelled `editorial_from_saved_research` while
+correctly recording 12 fresh search operations. Current normalisation must
+canonicalize proven fresh Primary Recall to
+`pipeline=primary_recall_v2_then_editorial` and
+`research.settings.source=trusted_runtime_primary_recall` before artifact
+validation.
+
+Fresh Primary Recall is also subject to a fail-closed source-health guard before
+publication. `major_agencies` must have at least one consulted source, and the
+combined twelve-pass diagnostics must contain at least two consulted source URLs
+outside Wikipedia, Reddit and arXiv. This guard is deliberately minimal: it does
+not impose a project-wide whitelist or require every pass to find a candidate;
+it only prevents a technically completed but obviously degraded retrieval run
+from being mistaken for a healthy low-news day.
 
 Primary is **discovery-first**. A pass should surface plausible meaningful
 fresh events into the candidate pool, using `consider` when final significance
@@ -201,6 +228,14 @@ shared with recovery. Fresh internally generated research is staged in the
 trusted ignored `.runtime` subtree and also copied to preview diagnostics. A
 caller-supplied `--research-input` still means recovery or editorial rerun and
 must skip paid fresh primary. Recovery must not repeat already paid primary work.
+
+Recovery must also not resurrect a known-bad paid artifact. Any saved source
+whose `artifact-normalization.json` or `artifact-validation.json` already has
+`status=error` is non-reusable. If a saved artifact contains
+`primary-recall.json`, recovery must repeat the same source-health guard before
+selecting it, even when all canonical digest files are present. A `full` artifact
+must never bypass research/source-health validation merely because it reached a
+late stage in an earlier failed run.
 
 ## Hybrid search completeness contract
 

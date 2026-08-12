@@ -2,8 +2,10 @@
 """Normalize deterministic digest fields before contract validation.
 
 This utility performs no network requests. It is intentionally safe to run for
-both freshly generated and recovered editorial artifacts. At present it repairs
-legacy image prompts that predate the mandatory safety/style constraints.
+both freshly generated and recovered editorial artifacts. It repairs legacy
+image prompts, corrects the legacy saved-research label for trusted fresh
+Primary Recall artifacts, and rejects obviously degraded Primary Recall source
+health before a weak digest can be published.
 """
 from __future__ import annotations
 
@@ -11,6 +13,7 @@ import argparse
 import json
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 CONSTRAINTS = (
     "без логотипов",
@@ -24,6 +27,12 @@ JSON_FILES = (
     "editorial-output-raw.json",
 )
 TEXT_FILES = ("image-prompt.txt", "image_prompt.txt")
+LOW_SIGNAL_DISCOVERY_DOMAINS = (
+    "wikipedia.org",
+    "reddit.com",
+    "arxiv.org",
+)
+FRESH_PRIMARY_PIPELINE = "primary_recall_v2_then_editorial"
 
 
 class NormalizationError(RuntimeError):
@@ -87,6 +96,121 @@ def normalize_json_prompts(payload: Any, *, path: str = "$") -> tuple[Any, list[
     return payload, changes
 
 
+def _hostname(url: str) -> str:
+    try:
+        return urlparse(url).hostname or ""
+    except ValueError:
+        return ""
+
+
+def _is_low_signal_host(host: str) -> bool:
+    host = host.casefold().strip(".")
+    return any(host == domain or host.endswith("." + domain) for domain in LOW_SIGNAL_DISCOVERY_DOMAINS)
+
+
+def normalize_fresh_primary_metadata(artifact_dir: Path, report: dict[str, Any]) -> None:
+    """Correct the legacy generator label only when Primary Recall proved freshness."""
+    run_info_path = artifact_dir / "run-info.json"
+    if not run_info_path.is_file():
+        return
+    run_info = read_json(run_info_path)
+    if not isinstance(run_info, dict):
+        raise NormalizationError("run-info.json должен содержать объект")
+    research = run_info.get("research")
+    if not isinstance(research, dict) or research.get("mode") != "primary_recall_v2":
+        return
+    response = research.get("response")
+    if not isinstance(response, dict):
+        raise NormalizationError("Primary Recall run-info не содержит research.response")
+    try:
+        search_calls = int(response.get("web_search_calls", 0) or 0)
+    except (TypeError, ValueError) as exc:
+        raise NormalizationError("Primary Recall web_search_calls должен быть целым числом") from exc
+    if search_calls != 12:
+        raise NormalizationError(
+            f"Primary Recall fresh artifact должен содержать 12 search operations, получено: {search_calls}"
+        )
+
+    changes: list[dict[str, Any]] = []
+    if run_info.get("pipeline") != FRESH_PRIMARY_PIPELINE:
+        changes.append(
+            {
+                "field": "$.pipeline",
+                "from": run_info.get("pipeline"),
+                "to": FRESH_PRIMARY_PIPELINE,
+            }
+        )
+        run_info["pipeline"] = FRESH_PRIMARY_PIPELINE
+    settings = research.get("settings")
+    if isinstance(settings, dict) and settings.get("source") == "saved_fixture":
+        settings["source"] = "trusted_runtime_primary_recall"
+        changes.append(
+            {
+                "field": "$.research.settings.source",
+                "from": "saved_fixture",
+                "to": "trusted_runtime_primary_recall",
+            }
+        )
+    if changes:
+        write_json(run_info_path, run_info)
+        if "run-info.json" not in report["changed_files"]:
+            report["changed_files"].append("run-info.json")
+        report["changes"].extend({"file": "run-info.json", **item} for item in changes)
+
+
+def validate_primary_source_health(artifact_dir: Path) -> None:
+    """Fail closed when a completed fresh primary searched mostly junk/empty sources."""
+    primary_path = artifact_dir / "primary-recall.json"
+    if not primary_path.is_file():
+        return
+    primary = read_json(primary_path)
+    if not isinstance(primary, dict):
+        raise NormalizationError("primary-recall.json должен содержать объект")
+    directions = primary.get("directions")
+    if not isinstance(directions, list):
+        raise NormalizationError("primary-recall.json не содержит directions[]")
+
+    agency = next(
+        (
+            item
+            for item in directions
+            if isinstance(item, dict) and item.get("direction_id") == "major_agencies"
+        ),
+        None,
+    )
+    if not isinstance(agency, dict):
+        raise NormalizationError("Primary Recall не содержит обязательный major_agencies pass")
+    if int(agency.get("web_search_calls_completed", 0) or 0) != 1:
+        raise NormalizationError("major_agencies не завершил обязательную search operation")
+    agency_api = agency.get("api")
+    agency_sources = (
+        agency_api.get("consulted_sources")
+        if isinstance(agency_api, dict)
+        else None
+    )
+    if not isinstance(agency_sources, list) or not agency_sources:
+        raise NormalizationError(
+            "Primary Recall source-health degraded: major_agencies завершился без единого consulted source."
+        )
+
+    all_urls: list[str] = []
+    for item in directions:
+        if not isinstance(item, dict):
+            continue
+        api = item.get("api")
+        if not isinstance(api, dict):
+            continue
+        for source in api.get("consulted_sources") or []:
+            if isinstance(source, dict) and isinstance(source.get("url"), str):
+                all_urls.append(source["url"])
+    high_signal = [url for url in all_urls if not _is_low_signal_host(_hostname(url))]
+    if len(high_signal) < 2:
+        raise NormalizationError(
+            "Primary Recall source-health degraded: после 12 searches найдено меньше двух "
+            "источников вне Wikipedia/Reddit/arXiv."
+        )
+
+
 def normalize_artifact(artifact_dir: Path, report_path: Path) -> dict[str, Any]:
     if not artifact_dir.is_dir():
         raise NormalizationError(f"Каталог artifact не найден: {artifact_dir}")
@@ -135,6 +259,9 @@ def normalize_artifact(artifact_dir: Path, report_path: Path) -> dict[str, Any]:
 
     if prompt_locations == 0:
         raise NormalizationError("В artifact не найден image_prompt")
+
+    normalize_fresh_primary_metadata(artifact_dir, report)
+    validate_primary_source_health(artifact_dir)
 
     # The old validation report hashes pre-normalized files and must never be
     # reused as an image source manifest. The validator immediately recreates it.
