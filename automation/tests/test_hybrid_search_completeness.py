@@ -33,11 +33,7 @@ def candidate(
         "geography": geography,
         "category": category,
         "source_type": "news_agency",
-        "primary_source": {
-            "title": title,
-            "publisher": "Example News",
-            "url": url,
-        },
+        "primary_source": {"title": title, "publisher": "Example News", "url": url},
         "supporting_sources": [],
         "event_summary": f"Verified event about {title}.",
         "verified_facts": ["Fact one", "Fact two"],
@@ -87,7 +83,8 @@ def metadata(query: str) -> dict:
     return {
         "status": "completed",
         "web_search_calls_completed": 1,
-        "web_search_call_items_total": 1,
+        "web_search_call_items_total": 3,
+        "web_search_navigation_items_total": 2,
         "actual_queries": [query],
         "consulted_sources": [{"url": "https://example.com"}],
     }
@@ -145,6 +142,7 @@ class HybridSearchCompletenessTests(unittest.TestCase):
         self.assertFalse(report["adaptive_needed"])
         self.assertEqual(report["search_budget"]["completed_calls"], 3)
         self.assertEqual(report["search_budget"]["maximum_calls"], 4)
+        self.assertGreater(report["search_budget"]["maximum_total_tool_calls_per_pass"], 1)
 
     def test_one_adaptive_pass_is_used_only_for_an_obvious_gap(self):
         base = [candidate("Model Alpha", "models")]
@@ -200,9 +198,14 @@ class HybridSearchCompletenessTests(unittest.TestCase):
         self.assertEqual(report["final_candidate_count"], 3)
         self.assertFalse(report["adaptive_needed"])
         self.assertTrue(report["editorial_rerun_needed"])
-        self.assertIsNotNone(report["merged_research_path"])
+        runtime_path = Path(report["merged_research_path"])
+        diagnostic_path = Path(report["diagnostic_merged_research_path"])
+        self.assertTrue(runtime_path.is_file())
+        self.assertTrue(diagnostic_path.is_file())
+        self.assertEqual(runtime_path.parent.name, ".runtime")
+        self.assertNotEqual(runtime_path, diagnostic_path)
 
-    def test_prompt_uses_authoritative_window_and_exactly_one_search(self):
+    def test_prompt_uses_authoritative_window_one_search_and_navigation(self):
         payload = research([])
         prompt = hc.build_prompt(
             publication_date="2026-08-09",
@@ -214,7 +217,10 @@ class HybridSearchCompletenessTests(unittest.TestCase):
             archive={"items": []},
         )
         self.assertIn("2026-08-09T02:00:00+03:00", prompt)
-        self.assertIn("РОВНО ОДИН Web Search", prompt)
+        self.assertIn("РОВНО ОДНУ поисковую операцию Web Search", prompt)
+        self.assertIn("open_page", prompt)
+        self.assertIn("find_in_page", prompt)
+        self.assertIn("after:", prompt)
         self.assertIn("API domain filter отсутствует", prompt)
 
     def test_generic_other_does_not_close_safety_policy_region_gap(self):

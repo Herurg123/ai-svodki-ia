@@ -128,7 +128,7 @@ class ProductionContractSyncTests(unittest.TestCase):
             "`legal_copyright_scraping`",
             "`curiosity`",
             "`general_coverage_gaps`",
-            "фактического `search_cutoff_at`",
+            "`search_cutoff_at` последнего успешно опубликованного выпуска",
             "`open_page` и `find_in_page`",
             "технически неполный audit блокирует",
             "авторитетный last-mile sweep",

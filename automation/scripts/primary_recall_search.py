@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
 """Deterministic recall-first primary discovery for daily AI digests.
 
-The legacy primary prompt delegated search-budget allocation to one agentic
-Responses call. Primary recall v2 instead assigns every one of the twelve Web
-Search operations to a fixed editorial direction. Each direction performs
-exactly one search, returns a deliberately broad set of plausible candidates,
-and lets the existing story-coverage validator perform the strict qualification
-and deduplication after discovery. The configured candidate cap is applied only
-after all twelve directions have had a chance to contribute, so early passes
-cannot starve later regions or topics merely because of execution order.
+Primary Recall v2 assigns the twelve paid search operations to fixed editorial
+beats.  One *search action* is allowed per pass, while a small separate hosted-
+tool allowance lets the model open/find pages from that search for verification.
+A controlled 24-hour overlap before the continuity anchor heals important misses
+from the preceding digest; archive-aware deduplication prevents that overlap from
+becoming a licence to republish yesterday's stories.
 """
 from __future__ import annotations
 
+import copy
 import json
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
 from zoneinfo import ZoneInfo
@@ -25,8 +24,10 @@ from ensure_story_coverage_policy import (
 )
 from story_coverage import (
     candidate_fingerprint,
+    candidate_primary_url,
     compact_archive,
     merge_candidates,
+    normalize_url,
     read_json,
     write_json,
 )
@@ -37,12 +38,22 @@ ARCHIVE_PATH = REPOSITORY_ROOT / "automation" / "archive" / "index.json"
 SITE_CONFIG_PATH = REPOSITORY_ROOT / "automation" / "config" / "site.json"
 PREVIEW_ROOT = REPOSITORY_ROOT / "automation" / "preview"
 PRODUCTION_PREVIEW_ROOT = PREVIEW_ROOT / "production-daily"
+RUNTIME_RESEARCH_ROOT = REPOSITORY_ROOT / "automation" / "fixtures" / "research" / ".runtime"
 
 PRIMARY_RECALL_VERSION = 2
 DEFAULT_MAXIMUM_SEARCH_CALLS = 12
 MAX_CANDIDATES_PER_PASS = 4
+PRIMARY_NAVIGATION_TOOL_ALLOWANCE = 3
+PRIMARY_MAX_TOOL_CALLS_PER_PASS = 1 + PRIMARY_NAVIGATION_TOOL_ALLOWANCE
+PRIMARY_LOOKBACK_HOURS = 24
+AGENCY_DOMAINS: tuple[str, ...] = (
+    "reuters.com",
+    "apnews.com",
+    "bloomberg.com",
+    "ft.com",
+)
 
-PRIMARY_DIRECTIONS: tuple[dict[str, str], ...] = (
+PRIMARY_DIRECTIONS: tuple[dict[str, Any], ...] = (
     {
         "id": "global_breaking",
         "label": "Global breaking AI news",
@@ -61,6 +72,7 @@ PRIMARY_DIRECTIONS: tuple[dict[str, str], ...] = (
             "и Financial Times. Нужны не только релизы моделей, но также чипы, "
             "инфраструктура, инвестиции, M&A, партнёрства, policy, legal и security."
         ),
+        "allowed_domains": AGENCY_DOMAINS,
     },
     {
         "id": "models_products_agents",
@@ -153,14 +165,14 @@ PRIMARY_DIRECTIONS: tuple[dict[str, str], ...] = (
         "id": "independent_missing_events",
         "label": "Independent missing-events sweep",
         "guidance": (
-            "Финальный независимый поиск: найди крупные ИИ-события редакционного "
-            "окна, которых НЕТ среди уже найденных кандидатов. Перепроверь крупные "
-            "агентства, мировых игроков, инфраструктуру, Китай/Азию, Россию, "
-            "продуктовые интеграции, security и business. Не повторяй список."
+            "Финальный независимый поиск: найди крупные ИИ-события эффективного "
+            "редакционного окна, которых НЕТ среди уже найденных кандидатов. "
+            "Перепроверь агентства, мировых игроков, инфраструктуру, Китай/Азию, "
+            "Россию, продуктовые интеграции, security и business. Не повторяй список."
         ),
     },
 )
-PRIMARY_DIRECTION_IDS = tuple(item["id"] for item in PRIMARY_DIRECTIONS)
+PRIMARY_DIRECTION_IDS = tuple(str(item["id"]) for item in PRIMARY_DIRECTIONS)
 
 PASS_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -203,6 +215,13 @@ class PrimaryRecallResponseError(RuntimeError):
         self.metadata = metadata or {}
 
 
+def _parse_aware(value: str) -> datetime:
+    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        raise ValueError("timestamp must include timezone")
+    return parsed
+
+
 def _compact_candidates(candidates: list[Any], limit: int = 24) -> list[dict[str, Any]]:
     result: list[dict[str, Any]] = []
     for raw in candidates:
@@ -233,31 +252,67 @@ def _candidate_rank(candidate: dict[str, Any]) -> tuple[Any, ...]:
     )
 
 
+def _archive_source_urls(archive: dict[str, Any]) -> set[str]:
+    result: set[str] = set()
+    for item in archive.get("items", []):
+        if not isinstance(item, dict):
+            continue
+        raw_urls: list[Any] = []
+        if isinstance(item.get("source_urls"), list):
+            raw_urls.extend(item["source_urls"])
+        for story in item.get("stories", []):
+            if not isinstance(story, dict):
+                continue
+            for source in story.get("sources", []):
+                if isinstance(source, dict):
+                    raw_urls.append(source.get("url"))
+        for raw in raw_urls:
+            if not isinstance(raw, str) or not raw.strip():
+                continue
+            try:
+                result.add(normalize_url(raw))
+            except ValueError:
+                continue
+    return result
+
+
+def _filter_archive_exact_duplicates(
+    candidates: list[Any], archive_urls: set[str]
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    kept: list[dict[str, Any]] = []
+    rejected: list[dict[str, Any]] = []
+    for raw in candidates:
+        if not isinstance(raw, dict):
+            continue
+        url = candidate_primary_url(raw)
+        if url and url in archive_urls:
+            rejected.append(
+                {
+                    "title": raw.get("title"),
+                    "primary_url": url,
+                    "audit_direction": raw.get("audit_direction"),
+                    "errors": ["primary source URL уже опубликован в архиве"],
+                }
+            )
+            continue
+        kept.append(copy.deepcopy(raw))
+    return kept, rejected
+
+
 def _select_final_candidates(
     candidates: list[dict[str, Any]],
     *,
     origins: dict[Any, str],
     maximum_candidates: int,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    """Apply the configured cap globally, after every mandatory pass completed.
-
-    First preserve the strongest unique event contributed by each direction,
-    then fill remaining slots by global editorial rank. This prevents an early
-    discovery pass from consuming the entire cap before China/Asia, Russia,
-    security, legal, or the independent missing-events sweep gets a chance to
-    contribute. It is a retrieval-pool fairness rule, not a publication quota.
-    """
-
     if maximum_candidates < 1:
         raise RuntimeError("maximum_candidates должен быть положительным")
-
     ranked = sorted((dict(item) for item in candidates), key=_candidate_rank)
     buckets: dict[str, list[dict[str, Any]]] = {key: [] for key in PRIMARY_DIRECTION_IDS}
     for candidate in ranked:
         origin = origins.get(candidate_fingerprint(candidate))
         if origin in buckets:
             buckets[origin].append(candidate)
-
     selected: list[dict[str, Any]] = []
     seen: set[Any] = set()
 
@@ -269,20 +324,17 @@ def _select_final_candidates(
         selected.append(candidate)
 
     for direction in PRIMARY_DIRECTIONS:
-        bucket = buckets.get(direction["id"], [])
+        bucket = buckets.get(str(direction["id"]), [])
         if bucket:
             add(bucket[0])
         if len(selected) >= maximum_candidates:
             break
-
     for candidate in ranked:
         add(candidate)
         if len(selected) >= maximum_candidates:
             break
-
     for index, candidate in enumerate(selected, start=1):
         candidate["id"] = f"cand-{index:03d}"
-
     dropped = [
         {
             "title": candidate.get("title"),
@@ -301,12 +353,28 @@ def _select_final_candidates(
     return selected, dropped
 
 
+def query_time_hint(search_window: dict[str, Any]) -> str:
+    start = _parse_aware(str(search_window.get("start_at") or ""))
+    end = _parse_aware(str(search_window.get("end_at") or ""))
+    after_day = (start.date() - timedelta(days=1)).isoformat()
+    before_day = (end.date() + timedelta(days=1)).isoformat()
+    return (
+        f"Точный effective window: {start.isoformat(timespec='seconds')} → "
+        f"{end.isoformat(timespec='seconds')}. Сформируй ОДИН узкий поисковый "
+        f"запрос с явной свежестью, предпочтительно добавив after:{after_day} "
+        f"before:{before_day}. Эти date operators только retrieval-подсказка: "
+        "после выдачи обязательно проверь фактическую дату/timestamp источника "
+        "против точных границ effective window. Не позволяй старым популярным "
+        "страницам вытеснять свежие публикации."
+    )
+
+
 def build_prompt(
     template: str,
     *,
     publication_date: str,
     search_window: dict[str, Any],
-    direction: dict[str, str],
+    direction: dict[str, Any],
     existing_candidates: list[Any],
     archive: dict[str, Any],
 ) -> str:
@@ -314,9 +382,15 @@ def build_prompt(
         "PUBLICATION_DATE": publication_date,
         "SEARCH_WINDOW_START_AT": str(search_window.get("start_at") or ""),
         "SEARCH_WINDOW_END_AT": str(search_window.get("end_at") or ""),
-        "DIRECTION_ID": direction["id"],
-        "DIRECTION_LABEL": direction["label"],
-        "DIRECTION_GUIDANCE": direction["guidance"],
+        "QUERY_TIME_HINT": query_time_hint(search_window),
+        "DIRECTION_ID": str(direction["id"]),
+        "DIRECTION_LABEL": str(direction["label"]),
+        "DIRECTION_GUIDANCE": str(direction["guidance"]),
+        "DIRECTION_ALLOWED_DOMAINS": (
+            ", ".join(direction.get("allowed_domains", ()))
+            if direction.get("allowed_domains")
+            else "без API domain filter"
+        ),
         "EXISTING_CANDIDATES": json.dumps(
             _compact_candidates(existing_candidates), ensure_ascii=False, indent=2
         ),
@@ -338,22 +412,24 @@ def run_search_request(
     model: str,
     prompt: str,
     direction_id: str,
+    allowed_domains: list[str] | tuple[str, ...] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     from openai import OpenAI
 
     client = OpenAI(api_key=api_key, timeout=1200.0, max_retries=2)
+    web_tool: dict[str, Any] = {
+        "type": "web_search",
+        "search_context_size": "high",
+        "return_token_budget": "default",
+    }
+    if allowed_domains:
+        web_tool["filters"] = {"allowed_domains": list(allowed_domains)}
     response = client.responses.create(
         model=model,
         input=prompt,
-        tools=[
-            {
-                "type": "web_search",
-                "search_context_size": "high",
-                "return_token_budget": "default",
-            }
-        ],
+        tools=[web_tool],
         tool_choice="required",
-        max_tool_calls=1,
+        max_tool_calls=PRIMARY_MAX_TOOL_CALLS_PER_PASS,
         include=["web_search_call.action.sources"],
         reasoning={"effort": "medium"},
         max_output_tokens=3500,
@@ -368,10 +444,21 @@ def run_search_request(
         store=False,
     )
     metadata = build_audit_api_metadata(response, maximum_web_search_calls=1)
+    metadata["configured_search_operations"] = 1
+    metadata["configured_total_tool_calls"] = PRIMARY_MAX_TOOL_CALLS_PER_PASS
+    metadata["navigation_tool_allowance"] = PRIMARY_NAVIGATION_TOOL_ALLOWANCE
+    metadata["allowed_domains"] = list(allowed_domains or ())
     completed = int(metadata.get("web_search_calls_completed", 0) or 0)
     if completed != 1:
         raise PrimaryRecallResponseError(
             f"Primary recall pass должен завершить ровно один Web Search, получено {completed}",
+            metadata,
+        )
+    actual_queries = list(metadata.get("actual_queries") or [])
+    if len(actual_queries) != 1:
+        raise PrimaryRecallResponseError(
+            "Primary recall pass должен выполнить один логический поисковый запрос; "
+            f"получено {len(actual_queries)}",
             metadata,
         )
     if getattr(response, "status", None) != "completed":
@@ -381,9 +468,7 @@ def run_search_request(
         )
     output_text = (getattr(response, "output_text", None) or "").strip()
     if not output_text:
-        raise PrimaryRecallResponseError(
-            "Primary recall pass вернул пустой output_text", metadata
-        )
+        raise PrimaryRecallResponseError("Primary recall pass вернул пустой output_text", metadata)
     try:
         payload = json.loads(output_text)
     except json.JSONDecodeError as exc:
@@ -391,13 +476,9 @@ def run_search_request(
             f"Primary recall pass вернул некорректный JSON: {exc}", metadata
         ) from exc
     if not isinstance(payload, dict):
-        raise PrimaryRecallResponseError(
-            "Primary recall pass должен вернуть JSON-объект", metadata
-        )
+        raise PrimaryRecallResponseError("Primary recall pass должен вернуть JSON-объект", metadata)
     if payload.get("direction_id") != direction_id:
-        raise PrimaryRecallResponseError(
-            "Primary recall pass вернул чужой direction_id", metadata
-        )
+        raise PrimaryRecallResponseError("Primary recall pass вернул чужой direction_id", metadata)
     if payload.get("status") not in {"complete", "complete_with_gaps"}:
         raise PrimaryRecallResponseError(
             f"Primary recall pass сообщил ошибку: {payload.get('error_message')}", metadata
@@ -411,13 +492,12 @@ def build_search_window(
     archive: dict[str, Any],
     config: dict[str, Any],
     cutoff_at: datetime,
-) -> dict[str, Any]:
-    # Reuse the canonical continuity functions rather than maintaining a second
-    # interpretation of search_cutoff_at semantics.
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Return effective overlap window plus diagnostics for the continuity anchor."""
     import generate_digest_preview as generator
 
     publication_day = date.fromisoformat(publication_date)
-    start_at, end_at = generator.expected_search_window(
+    continuity_start, end_at = generator.expected_search_window(
         publication_day,
         archive,
         config,
@@ -425,13 +505,14 @@ def build_search_window(
     )
     latest_at = generator.latest_archive_published_at(archive, config)
     local_zone = ZoneInfo(str(config["timezone"]))
-    return {
-        "start_at": start_at.isoformat(timespec="seconds"),
+    effective_start = continuity_start - timedelta(hours=PRIMARY_LOOKBACK_HOURS)
+    window = {
+        "start_at": effective_start.isoformat(timespec="seconds"),
         "end_at": end_at.isoformat(timespec="seconds"),
         "latest_archive_at": (
             latest_at.isoformat(timespec="seconds") if latest_at is not None else None
         ),
-        "start_date": start_at.astimezone(local_zone).date().isoformat(),
+        "start_date": effective_start.astimezone(local_zone).date().isoformat(),
         "end_date": end_at.astimezone(local_zone).date().isoformat(),
         "latest_archive_date": (
             latest_at.astimezone(local_zone).date().isoformat()
@@ -439,6 +520,14 @@ def build_search_window(
             else None
         ),
     }
+    diagnostics = {
+        "continuity_start_at": continuity_start.isoformat(timespec="seconds"),
+        "effective_start_at": effective_start.isoformat(timespec="seconds"),
+        "end_at": end_at.isoformat(timespec="seconds"),
+        "lookback_hours": PRIMARY_LOOKBACK_HOURS,
+        "purpose": "heal significant recall misses while archive dedupe blocks republishing",
+    }
+    return window, diagnostics
 
 
 def build_base_research(
@@ -473,20 +562,15 @@ def run_primary_recall_matrix(
     if len(PRIMARY_DIRECTIONS) != DEFAULT_MAXIMUM_SEARCH_CALLS:
         raise RuntimeError("Primary recall matrix должна содержать ровно 12 направлений")
     prompt_template = template if template is not None else PROMPT_PATH.read_text(encoding="utf-8")
-    merged = build_base_research(
-        publication_date=publication_date,
-        search_window=search_window,
-    )
+    merged = build_base_research(publication_date=publication_date, search_window=search_window)
     coverage: list[dict[str, str]] = []
     direction_reports: list[dict[str, Any]] = []
     accepted_total: list[dict[str, Any]] = []
     rejected_total: list[dict[str, Any]] = []
     raw_candidate_count = 0
     origins: dict[Any, str] = {}
-    discovery_capacity = max(
-        maximum_candidates,
-        len(PRIMARY_DIRECTIONS) * MAX_CANDIDATES_PER_PASS,
-    )
+    archive_urls = _archive_source_urls(archive)
+    discovery_capacity = max(maximum_candidates, len(PRIMARY_DIRECTIONS) * MAX_CANDIDATES_PER_PASS)
 
     for direction in PRIMARY_DIRECTIONS:
         prompt = build_prompt(
@@ -502,7 +586,8 @@ def run_primary_recall_matrix(
                 api_key=api_key,
                 model=model,
                 prompt=prompt,
-                direction_id=direction["id"],
+                direction_id=str(direction["id"]),
+                allowed_domains=direction.get("allowed_domains"),
             )
         except Exception as exc:
             metadata = getattr(exc, "metadata", {})
@@ -532,13 +617,17 @@ def run_primary_recall_matrix(
         if not isinstance(raw_candidates, list):
             raw_candidates = []
         raw_candidate_count += len(raw_candidates)
+        filtered_candidates, archive_rejections = _filter_archive_exact_duplicates(
+            raw_candidates, archive_urls
+        )
         merged, accepted, rejected = merge_candidates(
             merged,
-            raw_candidates,
+            filtered_candidates,
             maximum_candidates=discovery_capacity,
         )
+        rejected = [*archive_rejections, *rejected]
         for candidate in accepted:
-            origins.setdefault(candidate_fingerprint(candidate), direction["id"])
+            origins.setdefault(candidate_fingerprint(candidate), str(direction["id"]))
         accepted_total.extend(accepted)
         rejected_total.extend(rejected)
         completed_calls = int(metadata.get("web_search_calls_completed", 0) or 0)
@@ -548,6 +637,7 @@ def run_primary_recall_matrix(
                 "label": direction["label"],
                 "status": payload.get("status"),
                 "notes": payload.get("notes"),
+                "allowed_domains": list(direction.get("allowed_domains", ())),
                 "raw_candidates": raw_candidates,
                 "model_rejections": payload.get("rejections", []),
                 "accepted_count": len(accepted),
@@ -558,7 +648,7 @@ def run_primary_recall_matrix(
         )
         coverage.append(
             {
-                "area": direction["id"],
+                "area": str(direction["id"]),
                 "status": "covered" if accepted else "gap",
                 "notes": (
                     f"Обязательный one-search pass завершён; raw={len(raw_candidates)}, "
@@ -568,25 +658,18 @@ def run_primary_recall_matrix(
         )
 
     completed_calls = sum(
-        int(item.get("web_search_calls_completed", 0) or 0)
-        for item in direction_reports
+        int(item.get("web_search_calls_completed", 0) or 0) for item in direction_reports
     )
     if completed_calls != DEFAULT_MAXIMUM_SEARCH_CALLS:
         raise PrimaryRecallResponseError(
             f"Primary recall должен завершить 12 Web Search operations, получено {completed_calls}",
-            {
-                "version": PRIMARY_RECALL_VERSION,
-                "status": "error",
-                "directions": direction_reports,
-            },
+            {"version": PRIMARY_RECALL_VERSION, "status": "error", "directions": direction_reports},
         )
 
     discovered_candidates = merged.get("candidates")
     if not isinstance(discovered_candidates, list):
         discovered_candidates = []
-    discovered_candidates = [
-        item for item in discovered_candidates if isinstance(item, dict)
-    ]
+    discovered_candidates = [item for item in discovered_candidates if isinstance(item, dict)]
     final_candidates, final_cap_dropped = _select_final_candidates(
         discovered_candidates,
         origins=origins,
@@ -594,13 +677,10 @@ def run_primary_recall_matrix(
     )
     merged["candidates"] = final_candidates
     merged["coverage"] = coverage
-
     if final_candidates:
         merged["status"] = "ok"
         merged["error_message"] = None
     else:
-        # Preserve the legacy semantic marker so run_digest_preview can normalize
-        # a completed zero-pool result and continue to hybrid/fallback coverage.
         merged["status"] = "error"
         merged["error_message"] = (
             "После 12 обязательных primary recall проходов не найдено ни одного "
@@ -609,11 +689,11 @@ def run_primary_recall_matrix(
     merged["research_notes"] = (
         "Primary recall v2: выполнены 12 фиксированных one-search проходов; "
         f"raw candidates={raw_candidate_count}, validated unique={len(discovered_candidates)}, "
-        f"final candidates={len(final_candidates)}. Финальный candidate cap применён "
-        "только после завершения всех обязательных направлений. Полный след "
-        "сохранён в primary-recall diagnostics."
+        f"final candidates={len(final_candidates)}. Effective retrieval использует "
+        f"{PRIMARY_LOOKBACK_HOURS}h overlap до continuity anchor; точные archive URL "
+        "отсекаются до merge. Финальный candidate cap применяется только после "
+        "завершения всех обязательных направлений."
     )
-
     report = {
         "version": PRIMARY_RECALL_VERSION,
         "status": "complete" if final_candidates else "complete_with_gaps",
@@ -622,6 +702,9 @@ def run_primary_recall_matrix(
         "search_budget": {
             "maximum_calls": DEFAULT_MAXIMUM_SEARCH_CALLS,
             "completed_calls": completed_calls,
+            "search_operations_per_pass": 1,
+            "maximum_total_tool_calls_per_pass": PRIMARY_MAX_TOOL_CALLS_PER_PASS,
+            "navigation_tool_allowance_per_pass": PRIMARY_NAVIGATION_TOOL_ALLOWANCE,
         },
         "candidate_budget": {
             "configured_final_cap": maximum_candidates,
@@ -647,6 +730,17 @@ def persist_report(publication_date: str, report: dict[str, Any]) -> Path:
     return path
 
 
+def _persist_research(publication_date: str, research: dict[str, Any]) -> tuple[Path, Path]:
+    """Persist diagnostic preview and trusted runtime ingress for the old generator."""
+    PRODUCTION_PREVIEW_ROOT.mkdir(parents=True, exist_ok=True)
+    RUNTIME_RESEARCH_ROOT.mkdir(parents=True, exist_ok=True)
+    preview_path = PRODUCTION_PREVIEW_ROOT / f"primary-recall-research-{publication_date}.json"
+    runtime_path = RUNTIME_RESEARCH_ROOT / f"primary-recall-research-{publication_date}.json"
+    write_json(preview_path, research)
+    write_json(runtime_path, research)
+    return preview_path, runtime_path
+
+
 def run_primary_recall_search(
     *,
     publication_date: str,
@@ -663,7 +757,7 @@ def run_primary_recall_search(
         raise RuntimeError("automation/config/site.json должен содержать объект")
     local_zone = ZoneInfo(str(config["timezone"]))
     authoritative_cutoff = cutoff_at or datetime.now(timezone.utc).astimezone(local_zone)
-    search_window = build_search_window(
+    search_window, overlap = build_search_window(
         publication_date=publication_date,
         archive=archive,
         config=config,
@@ -684,11 +778,14 @@ def run_primary_recall_search(
         diagnostic.setdefault("status", "error")
         diagnostic.setdefault("publication_date", publication_date)
         diagnostic.setdefault("search_window", search_window)
+        diagnostic["continuity_overlap"] = overlap
         persist_report(publication_date, diagnostic)
         raise
-
-    PRODUCTION_PREVIEW_ROOT.mkdir(parents=True, exist_ok=True)
-    research_path = PRODUCTION_PREVIEW_ROOT / f"primary-recall-research-{publication_date}.json"
-    write_json(research_path, research)
+    report["continuity_overlap"] = overlap
+    preview_path, runtime_path = _persist_research(publication_date, research)
+    report["research_paths"] = {
+        "diagnostic_preview": str(preview_path),
+        "trusted_runtime_input": str(runtime_path),
+    }
     persist_report(publication_date, report)
-    return research_path, report
+    return runtime_path, report

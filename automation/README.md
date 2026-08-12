@@ -4,7 +4,8 @@
 принцип текущей retrieval-архитектуры: **fresh primary сначала максимально
 надёжно обнаруживает потенциально важные события, а строгая редакционная
 фильтрация применяется после discovery**. Для этого 12-search primary budget
-распределяется детерминированно между обязательными направлениями.
+распределяется детерминированно между обязательными направлениями, а лимит
+search operations отделён от навигационных hosted tool calls.
 
 ## Постоянный baseline старого поиска
 
@@ -32,11 +33,14 @@ Archive-ветка не используется для разработки, н
   истории/rollback, не активный путь свежего production;
 - `prompts/` — также editorial и fallback coverage prompts;
 - `fixtures/recall/` — исторические retrieval regression windows;
+- `fixtures/research/.runtime/` — ignored доверенный runtime ingress fresh
+  primary/hybrid research в существующий generator; содержимое не коммитится;
 - `specs/` — канонические редакционные и технические контракты;
 - `scripts/primary_recall_search.py` — deterministic primary orchestrator;
 - `scripts/` — production, recovery, hybrid completeness, cleanup и validators;
 - `tests/` — офлайн-регрессии;
-- `preview/` — временные результаты production/CI, в Git не входят;
+- `preview/` — временные диагностические результаты production/CI, в Git не
+  входят;
 - `recovery/` — временно восстановленные Actions artifacts, в Git не входят.
 
 Исторические `content/YYYY-MM-DD/` старше 32 дней компактируются, но
@@ -66,14 +70,21 @@ cron-job.org. Gate до платных API проверяет, нужен ли �
 
 Fresh production больше не передаёт все 12 Web Search одному агентному вызову.
 `run_digest_preview.py` запускает `primary_recall_search.py`, который выполняет
-**ровно 12 обязательных one-search Responses calls**. Каждый получает
-`max_tool_calls=1`, общий hard cap primary остаётся **12 Web Search**.
+**ровно 12 обязательных one-search Responses calls**. Каждый pass обязан
+завершить ровно одну `action.type=search` и один логический search query. Hard
+cap primary остаётся **12 search operations**.
+
+`max_tool_calls=1` больше не используется как эквивалент search-бюджета:
+`open_page` и `find_in_page` тоже являются hosted tool calls. После единственного
+search primary-pass может использовать до трёх навигационных действий для
+проверки даты и фактов найденного источника. Диагностика отдельно считает
+search operations, logical queries, total `web_search_call` items и navigation
+items. Второй search или batched multi-query считается нарушением контракта.
 
 Фиксированная матрица:
 
 1. `global_breaking` — широкий мировой discovery;
-2. `major_agencies` — Reuters, AP, Bloomberg, FT и сопоставимые агентские
-   сигналы;
+2. `major_agencies` — Reuters, AP, Bloomberg, FT;
 3. `models_products_agents` — модели, продукты, агенты, research;
 4. `infrastructure_chips_cloud` — чипы, дата-центры, cloud, energy, inference;
 5. `business_investment_partnerships` — инвестиции, M&A, financing,
@@ -90,25 +101,39 @@ Fresh production больше не передаёт все 12 Web Search одн�
 12. `independent_missing_events` — независимый last-mile поиск крупных событий,
     которых нет в уже собранном пуле.
 
-Окно начинается от фактического `search_cutoff_at` последнего успешно
-опубликованного выпуска и заканчивается новым pre-research cutoff.
-`search_window.end_at` является авторитетным текущим временем. Системная дата
-модели и UTC-дата среды исполнения не имеют права сдвигать окно.
+`major_agencies` является единственным намеренно domain-filtered primary pass:
+API разрешает `reuters.com`, `apnews.com`, `bloomberg.com`, `ft.com`. Для
+остальных primary-направлений общего whitelist нет.
+
+Каноническая continuity-точка остаётся фактическим `search_cutoff_at`
+последнего успешно опубликованного выпуска. Новый pre-research cutoff остаётся
+правой границей и авторитетным текущим временем. Fresh Primary дополнительно
+строит **effective discovery window**, начиная максимум на 24 часа раньше
+continuity anchor. Этот bounded overlap предназначен только для healing крупных
+пропусков предыдущего выпуска. Archive anchor назад не двигается, exact source
+URL уже опубликованных сюжетов отсекаются до merge, а downstream semantic
+archive dedupe остаётся обязательным. События за пределами 24-часового overlap
+не воскресают бесконечно.
+
+Prompt каждого pass получает точные границы effective window и explicit
+freshness hints, включая `after:`/`before:`. Эти search operators являются
+retrieval-подсказкой; финальная свежесть всё равно проверяется по фактической
+дате/timestamp источника.
 
 Primary использует **discovery-first** семантику. Потенциально значимое свежее
 и проверяемое событие сохраняется как `consider`, если его финальная
 редакционная значимость ещё не очевидна. Агрессивно отсекаются лишь очевидное
-вне окна, старые перепечатки без update, не-ИИ материалы, слабые/непроверяемые
-источники и явный шум. Затем все кандидаты проходят существующий
-`story_coverage.merge_candidates`: окно, freshness, verification, legal,
-curiosity и URL/semantic dedupe.
+вне effective window, уже опубликованные дубли, старые перепечатки без update,
+не-ИИ материалы, слабые/непроверяемые источники и явный шум. Затем все
+кандидаты проходят существующий `story_coverage.merge_candidates`: window,
+freshness, verification, legal, curiosity и URL/semantic dedupe.
 
 Обычный `maximum_candidates` **не применяется по мере выполнения слотов**.
-Каждый обязательный pass сначала получает место в расширенном validated
-and deduplicated discovery-pool. Только после завершения всех 12 направлений
-код применяет финальный cap глобально: сначала сохраняет сильнейший уникальный
-вклад каждого направления, затем заполняет оставшиеся места общим ранжированием.
-Это предотвращает ситуацию, когда первые широкие проходы занимают все места до
+Каждый обязательный pass сначала получает место в расширенном validated and
+deduplicated discovery-pool. Только после завершения всех 12 направлений код
+применяет финальный cap глобально: сначала сохраняет сильнейший уникальный вклад
+каждого направления, затем заполняет оставшиеся места общим ранжированием. Это
+предотвращает ситуацию, когда первые широкие проходы занимают все места до
 China/Asia, Russia, security, legal или missing-events. Это fairness retrieval-
 пула, а не квота на публикацию. Diagnostics отдельно сохраняют размер полного
 validated pool и события, отброшенные только финальным cap.
@@ -120,16 +145,26 @@ validated pool и события, отброшенные только финал
 `china_asia_integrations` pass поднял шестое событие без увеличения бюджета.
 Fixture: `fixtures/recall/2026-08-11.json`.
 
+Второй обязательный regression fixture: `fixtures/recall/2026-08-12.json`.
+Он фиксирует production run `31548550639`, где все 12 search actions завершились
+с ложным нулевым candidate pool, после чего legacy generator отверг fresh
+runtime research-input. MUST_DISCOVER-контроли включают свежие Reuters-сюжеты
+IBM/Together AI/Nvidia, Nvidia Nemotron/NeMo и CoreWeave. Там же закреплён
+bounded backfill-контроль Meta Muse Glimmer.
+
 Все 12 проходов обязательны. Если любой Responses call технически не завершил
-ровно один Web Search, fresh primary завершается красным. Такой сбой нельзя
-превращать в «low news volume». Успешно завершённый pass вправе вернуть ноль
-кандидатов. Диагностика сохраняет actual queries, consulted sources, raw
-candidates, model rejections и validator rejections каждого направления.
+ровно один search operation или сформировал больше одного logical query, fresh
+primary завершается красным. Такой сбой нельзя превращать в «low news volume».
+Успешно завершённый pass вправе вернуть ноль кандидатов. Диагностика сохраняет
+actual queries, consulted sources, raw candidates, model rejections и validator
+rejections каждого направления.
 
 Primary сохраняет:
 
-- `preview/production-daily/primary-recall-research-<DATE>.json` — канонический
-  research-input для existing generator/editorial;
+- `preview/production-daily/primary-recall-research-<DATE>.json` —
+  диагностическая копия fresh research;
+- `fixtures/research/.runtime/primary-recall-research-<DATE>.json` — ignored
+  доверенный runtime input для existing generator/editorial;
 - `preview/production-daily/primary-recall-<DATE>.json` — полная траектория
   матрицы и бюджета;
 - `preview/<DATE>/primary-recall.json` — копия diagnostics внутри release
@@ -137,7 +172,10 @@ Primary сохраняет:
 
 `run_digest_preview.py` передаёт новый research существующему
 `generate_digest_preview.py` через `--research-input`, а не дублирует editorial
-pipeline. Caller-supplied `--research-input` остаётся признаком recovery или
+pipeline. Legacy security guard не ослабляется: произвольный preview path всё
+ещё запрещён. Только internally generated ignored `.runtime` input может
+пронести сохранённый effective overlap-window через sanitation/editorial
+validation. Caller-supplied `--research-input` остаётся признаком recovery или
 editorial-only rerun и полностью пропускает fresh paid primary.
 
 ### 2. Hybrid completeness v1
@@ -147,8 +185,8 @@ editorial-only rerun и полностью пропускает fresh paid prima
 считается recovery и поэтому разрешает этот один completeness-pass; любой
 caller-supplied `--research-input` hybrid пропускает.
 
-Три фиксированных прохода выполняются всегда и получают ровно по одному Web
-Search (`max_tool_calls=1`):
+Три фиксированных прохода выполняются всегда и получают ровно по одной search
+operation и одному logical query:
 
 1. `models_products_research`;
 2. `infrastructure_business`;
@@ -157,14 +195,17 @@ Search (`max_tool_calls=1`):
 После трёх проходов код считает тематическое покрытие объединённого primary +
 completeness пула. Если целый кластер пуст, разрешается один `adaptive_gap`.
 Поэтому ordinary completeness budget равен **3 searches**, absolute hard cap —
-**4 searches**. API domain filter отсутствует намеренно; `open_page` и
-`find_in_page` остаются диагностикой и не считаются search operation.
+**4 searches**. API domain filter отсутствует намеренно. Как и primary, каждый
+hybrid pass может использовать до трёх navigation tool actions после своего
+единственного search для source verification.
 
 Все NEW-only hybrid candidates проходят те же строгие проверки. Editorial
 повторяется только если принят хотя бы один кандидат. Перед rerun primary
-artifact сохраняется снимком; если rerun падает, он восстанавливается. При этом
-внутренний Primary Recall `--research-input` заменяется merged path, а не
-дублируется в argv.
+artifact сохраняется снимком; если rerun падает, он восстанавливается.
+Diagnostic merged research остаётся в `preview/production-daily/`, а рабочая
+копия для rerun пишется в ignored trusted `fixtures/research/.runtime/`.
+Внутренний Primary Recall `--research-input` заменяется runtime merged path, а
+не дублируется в argv.
 
 ### 3. Диагностика hybrid
 
@@ -172,20 +213,27 @@ artifact сохраняется снимком; если rerun падает, о�
 
 - `preview/<DATE>/hybrid-completeness.json`;
 - `preview/production-daily/hybrid-completeness-<DATE>.json`;
-- при принятых NEW-only кандидатах:
-  `preview/production-daily/hybrid-completeness-merged-<DATE>.json`.
+- при принятых NEW-only кандидатах диагностический
+  `preview/production-daily/hybrid-completeness-merged-<DATE>.json`;
+- рабочую ignored runtime-копию merged research в
+  `fixtures/research/.runtime/`.
 
 Report фиксирует версию стратегии, фактические запросы и источники, completed
-search count, cluster counts, adaptive decision, accepted/rejected candidates и
-факт editorial rerun.
+search count, total/navigation tool items, cluster counts, adaptive decision,
+accepted/rejected candidates и факт editorial rerun.
 
 ## Fallback coverage для короткого/нулевого пула
 
 `ensure_story_coverage.py` остаётся последним тяжёлым fallback. Если после
 primary + hybrid выпуск не достигает обычной цели, запускаются шесть
-обязательных one-search направлений с общим потолком **до 7 coverage** search
-operations, где седьмой слот резервируется для retry первой технически
+обязательных one-search направлений с общим потолком **до 7 coverage search
+operations**, где седьмой слот резервируется для retry первой технически
 незавершённой проверки.
+
+Production targeted passes получают одну search operation и до трёх navigation
+tool calls для проверки найденных страниц. Это не расширяет search budget.
+Исторические multi-search callers сохраняют прежний hard `max_tool_calls` cap и
+не получают скрытого navigation allowance.
 
 Обязательные направления:
 
@@ -207,7 +255,7 @@ deploy; те же правила действуют для `partial`, `budget_ex
 
 ## Поисковый бюджет
 
-Потолки считаются по завершённым search operations:
+Потолки считаются только по завершённым `action.type=search` operations:
 
 - Primary Recall v2: ровно 12 для fresh production;
 - hybrid completeness: обычно 3, максимум 4;
@@ -215,8 +263,10 @@ deploy; те же правила действуют для `partial`, `budget_ex
   короткий/нулевой.
 
 Формула production-контракта: **12 primary + до 4 hybrid + до 7 coverage**.
-Теоретический worst case: **23** search operations. Primary v2 повышает recall
-перераспределением существующего бюджета, а не скрытым увеличением расходов.
+Теоретический worst case: **23 search operations**. Navigation tool calls
+увеличивают общее число hosted tool invocations, но не этот поисковый потолок.
+Primary v2 повышает recall перераспределением существующего search budget, а не
+скрытым увеличением поисковых расходов.
 
 ## Recovery
 
@@ -229,7 +279,7 @@ Recovery без явного ID предпочитает наиболее пол
 - готовый текст не требует повторного text API;
 - fresh Primary Recall v2 получает hybrid один раз;
 - caller-supplied `--research-input` пропускает fresh primary и hybrid;
-- internally injected primary research-input не считается recovery;
+- internally generated `.runtime` primary research-input не считается recovery;
 - primary/hybrid diagnostics и объединённый candidate pool остаются частью
   production artifact;
 - завершённый fallback audit и актуальный sentinel переиспользуются;
