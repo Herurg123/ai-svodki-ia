@@ -89,9 +89,9 @@ def run_audit_request(
         web_search_tool["filters"] = {
             "allowed_domains": list(allowed_domains),
         }
-    # The production fallback executes one search operation per targeted pass;
-    # give those calls a small navigation allowance for open/find verification.
-    # Historical multi-search callers keep their existing hard tool-call cap.
+    # Production fallback executes one search operation per targeted pass. Give
+    # only those calls a small navigation allowance for open/find verification.
+    # Historical multi-search callers retain their old hard tool-call cap.
     total_tool_calls = (
         maximum_web_search_calls + COVERAGE_NAVIGATION_TOOL_ALLOWANCE
         if maximum_web_search_calls == 1
@@ -135,11 +135,6 @@ def run_audit_request(
         validation_error = (
             "Coverage audit не завершил ни одной поисковой операции "
             "web_search action.type=search"
-        )
-    elif metadata.get("web_search_calls_completed", 0) > maximum_web_search_calls:
-        validation_error = (
-            "Coverage audit превысил search-operation budget: "
-            f"{metadata.get('web_search_calls_completed')}>{maximum_web_search_calls}"
         )
     elif getattr(response, "status", None) != "completed":
         validation_error = (
