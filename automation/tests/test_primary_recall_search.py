@@ -53,12 +53,12 @@ def candidate(title: str, category: str = "models", *, url: str | None = None) -
 
 def search_window() -> dict:
     return {
-        "start_at": "2026-08-08T02:48:25+03:00",
-        "end_at": "2026-08-11T02:50:46+03:00",
-        "latest_archive_at": "2026-08-08T06:00:00+03:00",
-        "start_date": "2026-08-08",
-        "end_date": "2026-08-11",
-        "latest_archive_date": "2026-08-08",
+        "start_at": "2026-08-10T02:50:46+03:00",
+        "end_at": "2026-08-12T02:59:49+03:00",
+        "latest_archive_at": "2026-08-11T02:50:46+03:00",
+        "start_date": "2026-08-10",
+        "end_date": "2026-08-12",
+        "latest_archive_date": "2026-08-11",
     }
 
 
@@ -66,7 +66,8 @@ def metadata(direction_id: str) -> dict:
     return {
         "status": "completed",
         "web_search_calls_completed": 1,
-        "web_search_call_items_total": 1,
+        "web_search_call_items_total": 3,
+        "web_search_navigation_items_total": 2,
         "actual_queries": [direction_id],
         "consulted_sources": [{"url": "https://example.com"}],
     }
@@ -81,35 +82,46 @@ class PrimaryRecallSearchTests(unittest.TestCase):
         self.assertIn("china_asia_models", ids)
         self.assertIn("china_asia_integrations", ids)
 
-    def test_prompt_is_discovery_first_and_one_search_only(self):
+    def test_prompt_is_discovery_first_fresh_and_navigation_aware(self):
         template = prs.PROMPT_PATH.read_text(encoding="utf-8")
         prompt = prs.build_prompt(
             template,
-            publication_date="2026-08-11",
+            publication_date="2026-08-12",
             search_window=search_window(),
             direction=prs.PRIMARY_DIRECTIONS[6],
             existing_candidates=[],
             archive={"items": []},
         )
         self.assertIn("discovery-first", prompt)
-        self.assertIn("РОВНО ОДИН Web Search", prompt)
-        self.assertIn("2026-08-11T02:50:46+03:00", prompt)
+        self.assertIn("РОВНО ОДНУ поисковую операцию Web Search", prompt)
+        self.assertIn("open_page", prompt)
+        self.assertIn("find_in_page", prompt)
+        self.assertIn("after:", prompt)
+        self.assertIn("before:", prompt)
+        self.assertIn("2026-08-12T02:59:49+03:00", prompt)
         label = prs.PRIMARY_DIRECTIONS[6]["label"].lower()
         self.assertIn("integrations", label)
         self.assertIn("partnerships", label)
 
+    def test_major_agencies_has_narrow_api_domain_filter(self):
+        direction = next(item for item in prs.PRIMARY_DIRECTIONS if item["id"] == "major_agencies")
+        self.assertEqual(tuple(direction["allowed_domains"]), prs.AGENCY_DOMAINS)
+        self.assertEqual(
+            prs.AGENCY_DOMAINS,
+            ("reuters.com", "apnews.com", "bloomberg.com", "ft.com"),
+        )
+
     def test_all_twelve_passes_run_once_and_final_pass_sees_existing_pool(self):
         seen: list[str] = []
+        seen_domains: dict[str, tuple[str, ...]] = {}
         final_prompt = ""
 
         def request_fn(**kwargs):
             nonlocal final_prompt
             direction = kwargs["direction_id"]
             seen.append(direction)
-            if direction == "global_breaking":
-                rows = [candidate("Alpha Model")]
-            else:
-                rows = []
+            seen_domains[direction] = tuple(kwargs.get("allowed_domains") or ())
+            rows = [candidate("Alpha Model")] if direction == "global_breaking" else []
             if direction == "independent_missing_events":
                 final_prompt = kwargs["prompt"]
             return (
@@ -125,7 +137,7 @@ class PrimaryRecallSearchTests(unittest.TestCase):
             )
 
         research, report = prs.run_primary_recall_matrix(
-            publication_date="2026-08-11",
+            publication_date="2026-08-12",
             search_window=search_window(),
             archive={"items": []},
             api_key="test-key",
@@ -135,9 +147,13 @@ class PrimaryRecallSearchTests(unittest.TestCase):
         )
         self.assertEqual(seen, [item["id"] for item in prs.PRIMARY_DIRECTIONS])
         self.assertEqual(report["search_budget"]["completed_calls"], 12)
+        self.assertEqual(report["search_budget"]["search_operations_per_pass"], 1)
+        self.assertGreater(report["search_budget"]["maximum_total_tool_calls_per_pass"], 1)
         self.assertEqual(len(research["coverage"]), 12)
         self.assertEqual(len(research["candidates"]), 1)
         self.assertIn("Alpha Model", final_prompt)
+        self.assertEqual(seen_domains["major_agencies"], prs.AGENCY_DOMAINS)
+        self.assertEqual(seen_domains["global_breaking"], ())
 
     def test_final_candidate_cap_cannot_starve_late_direction(self):
         early_ids = {item["id"] for item in prs.PRIMARY_DIRECTIONS[:5]}
@@ -145,10 +161,7 @@ class PrimaryRecallSearchTests(unittest.TestCase):
         def request_fn(**kwargs):
             direction = kwargs["direction_id"]
             if direction in early_ids:
-                rows = [
-                    candidate(f"{direction} Story {index}")
-                    for index in range(1, 5)
-                ]
+                rows = [candidate(f"{direction} Story {index}") for index in range(1, 5)]
             elif direction == "china_asia_integrations":
                 rows = [candidate("Qwen China Integration")]
             else:
@@ -166,7 +179,7 @@ class PrimaryRecallSearchTests(unittest.TestCase):
             )
 
         research, report = prs.run_primary_recall_matrix(
-            publication_date="2026-08-11",
+            publication_date="2026-08-12",
             search_window=search_window(),
             archive={"items": []},
             api_key="test-key",
@@ -180,6 +193,49 @@ class PrimaryRecallSearchTests(unittest.TestCase):
         self.assertIn("Qwen China Integration", titles)
         self.assertTrue(report["candidate_budget"]["cap_applied_after_all_passes"])
         self.assertEqual(len(report["final_cap_dropped"]), 1)
+
+    def test_exact_archive_source_url_is_rejected_even_inside_overlap(self):
+        already_published = "https://example.com/already-published"
+        archive = {
+            "items": [
+                {
+                    "date": "2026-08-11",
+                    "source_urls": [already_published],
+                    "stories": [],
+                }
+            ]
+        }
+
+        def request_fn(**kwargs):
+            direction = kwargs["direction_id"]
+            rows = [candidate("Already Published", url=already_published)] if direction == "global_breaking" else []
+            return (
+                {
+                    "status": "complete" if rows else "complete_with_gaps",
+                    "error_message": None,
+                    "direction_id": direction,
+                    "candidates": rows,
+                    "rejections": [],
+                    "notes": "Checked.",
+                },
+                metadata(direction),
+            )
+
+        research, report = prs.run_primary_recall_matrix(
+            publication_date="2026-08-12",
+            search_window=search_window(),
+            archive=archive,
+            api_key="test-key",
+            model="test-model",
+            search_runner=request_fn,
+        )
+        self.assertEqual(research["candidates"], [])
+        self.assertTrue(
+            any(
+                "уже опубликован" in " ".join(item.get("errors", []))
+                for item in report["validator_rejections"]
+            )
+        )
 
     def test_mandatory_pass_failure_is_fail_closed(self):
         calls = 0
@@ -203,7 +259,7 @@ class PrimaryRecallSearchTests(unittest.TestCase):
 
         with self.assertRaises(prs.PrimaryRecallResponseError) as ctx:
             prs.run_primary_recall_matrix(
-                publication_date="2026-08-11",
+                publication_date="2026-08-12",
                 search_window=search_window(),
                 archive={"items": []},
                 api_key="test-key",
@@ -225,6 +281,19 @@ class PrimaryRecallSearchTests(unittest.TestCase):
             payload["experiment_result"]["refined_matrix_with_separate_china_integrations"],
             "6_of_6_control_events",
         )
+
+    def test_august_12_fixture_captures_real_zero_pool_regression(self):
+        fixture_path = ROOT / "automation" / "fixtures" / "recall" / "2026-08-12.json"
+        payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+        must_ids = {item["id"] for item in payload["must_discover"]}
+        backfill_ids = {item["id"] for item in payload["backfill_controls"]}
+        self.assertEqual(payload["incident_run_id"], 31548550639)
+        self.assertEqual(len(must_ids), 3)
+        self.assertIn("ibm-together-ai-nvidia-inference-cluster", must_ids)
+        self.assertIn("nvidia-nemotron-35-lightning-nemo-switchyard", must_ids)
+        self.assertIn("coreweave-capex-ai-cloud-demand", must_ids)
+        self.assertIn("meta-muse-glimmer", backfill_ids)
+        self.assertEqual(payload["effective_lookback_hours"], prs.PRIMARY_LOOKBACK_HOURS)
 
 
 if __name__ == "__main__":
