@@ -1,9 +1,9 @@
 # ИИ-Сводки
 
-Репозиторий production-конвейера ежедневных аналитических выпусков об
-искусственном интеллекте. GitHub хранит редакционный архив и публикуемый
-статический сайт; успешный выпуск собирается, проверяется, фиксируется в
-`main` и только затем синхронизируется на FTP.
+Production-конвейер ежедневных аналитических выпусков об искусственном
+интеллекте. GitHub хранит редакционный архив и статический сайт; успешный выпуск
+сначала собирается и валидируется, затем фиксируется в `main` и только после
+этого синхронизируется на FTP.
 
 Публичные адреса:
 
@@ -12,432 +12,212 @@
 - [RSS для Дзена](https://rybalka.one/posts/rss.xml)
 - [sitemap](https://rybalka.one/posts/sitemap.xml)
 
-## Текущее состояние production
+## Production contract
 
-Production работает только из ветки `main`, использует часовой пояс
-`Europe/Moscow` и нормализует время выпуска к 06:00 МСК. Пропущенные
-календарные дни допустимы. Каноническая continuity-точка исследования остаётся
-`search_cutoff_at` последнего успешно опубликованного выпуска, а правой границей
-служит cutoff, зафиксированный непосредственно перед текущим research.
-Нормализованное `published_at` 06:00 МСК не создаёт слепую зону между
-запусками.
+Production запускается из `main`, использует `Europe/Moscow` и нормализует время
+выпуска к 06:00 МСК. Пропущенные календарные дни допустимы. Каноническая
+continuity-точка исследования — `search_cutoff_at` последнего успешно
+опубликованного выпуска; правой границей текущего research является cutoff,
+зафиксированный непосредственно перед поиском.
 
-Чтобы крупный материал, пропущенный предыдущим выпуском, не исчезал навсегда,
-fresh Primary Recall v2 использует **effective discovery window** с ограниченным
-24-часовым overlap перед continuity anchor. Сам архивный `search_cutoff_at` назад
-не двигается. Уже опубликованные URL и события отсекаются антидублями; overlap
-не является неограниченным backfill и не разрешает повторную публикацию старых
-сюжетов.
+Fresh Primary Recall использует bounded **24-hour healing overlap** перед
+continuity anchor, чтобы крупный материал, пропущенный вчера, не исчезал
+навсегда. Archive anchor назад не двигается, exact URL и semantic duplicates
+отсекаются, поэтому overlap не разрешает бесконечный backfill или повторную
+публикацию старых сюжетов.
 
 | Workflow | Назначение |
 |---|---|
-| `.github/workflows/ci.yml` | Бесплатные офлайн-проверки pull request и `main`: компиляция, unit-тесты, редакционный и production-контракты, архив, RSS, sitemap и Schema.org. |
-| `.github/workflows/daily-production.yml` | Gate, Primary Recall v2, независимый hybrid completeness, editorial, ограниченный coverage audit, обложка, сборка сайта, commit в `main` и вызов FTP-деплоя. |
-| `.github/workflows/repository-cleanup.yml` | Ежедневная очистка в 01:43 МСК: компактация архива и удаление публичных выпусков старше 32 дней. |
-| `.github/workflows/repository-hygiene.yml` | Отдельная инженерная уборка GitHub в 15:43 МСК: старые merged-ветки, безопасно классифицированные Actions artifacts и orphaned workflows; исходники и старые runs только диагностируются. |
-| `.github/workflows/deploy-posts.yml` | Синхронизация точного состояния `posts/` выбранного commit на FTP, включая контролируемое удаление исчезнувших файлов. |
+| `.github/workflows/ci.yml` | Бесплатные офлайн-проверки PR и `main`. |
+| `.github/workflows/daily-production.yml` | Gate → Primary Recall → Hybrid → editorial → fallback coverage → cover → site → commit → deploy. |
+| `.github/workflows/repository-cleanup.yml` | 32-дневная очистка публичного/редакционного dated content. |
+| `.github/workflows/repository-hygiene.yml` | Безопасная уборка ephemeral GitHub objects. |
+| `.github/workflows/deploy-posts.yml` | FTP-синхронизация точного `posts/` выбранного commit. |
 
-Число unit-тестов может расти; источником точного набора проверок остаётся
-[`ci.yml`](.github/workflows/ci.yml).
+Точный набор CI-команд задаётся `.github/workflows/ci.yml`.
 
 ## Постоянный baseline старого поиска
 
-Полный production-репозиторий непосредственно **до** включения hybrid
-completeness сохранён навсегда как аналитическая и rollback-точка:
+Состояние непосредственно до hybrid completeness сохранено навсегда:
 
 - branch: `archive/search-baseline-pre-hybrid-2026-08-09`;
 - commit: `d926a3abf8b9443f58f303d984ef79fdc289fc3e`;
 - manifest: `automation/archive/search-baselines/2026-08-09-pre-hybrid.md`.
 
-Commit SHA является канонической content-addressed идентичностью старой
-механики, а archive-ветка — постоянным человекочитаемым указателем. Ветка не
-используется для разработки, не двигается на новые commits и не удаляется
-repository hygiene: в policy она отдельно классифицируется как `protected` с
-причиной `permanent_archive_branch`. По этой точке можно анализировать старые
-выпуски, воспроизводить логику поиска и сравнивать будущие retrieval-изменения.
+Эта ветка является защищённой аналитической/rollback-точкой, не двигается и не
+удаляется repository hygiene.
 
-## Ежедневный производственный цикл
+## Ежедневный цикл
 
-1. Gate проверяет RSS и живую страницу до любых платных API-вызовов.
-2. Архив и временное окно проверяются относительно последнего успешного
-   выпуска. Наличие его канонических файлов в GitHub остаётся жёстким gate;
-   проверка статьи и обложки на живом сайте выполняется как диагностика и при
-   временной сетевой/FTP/CDN-недоступности даёт warning, но не срывает сборку
-   нового независимого выпуска. Каноническая continuity-точка сохраняется как
-   предыдущий `search_cutoff_at`; fresh Primary может смотреть максимум на 24
-   часа раньше неё только для healing пропусков.
-3. Свежий основной research выполняет **Primary Recall v2**. Жёсткий primary-
-   бюджет остаётся равен **12 Web Search search operations**, но расходуется
-   детерминированно: Python-orchestrator запускает ровно двенадцать обязательных
-   Responses-вызовов с ролями `global_breaking`, `major_agencies`,
-   `models_products_agents`, `infrastructure_chips_cloud`,
-   `business_investment_partnerships`, `china_asia_models`,
-   `china_asia_integrations`, `russia`, `developer_tools`, `security_safety`,
-   `legal_regulation`, `independent_missing_events`.
-4. Каждый primary-pass обязан сделать ровно **один `action.type=search` и один
-   логический search query**. Это не то же самое, что `max_tool_calls=1`:
-   `open_page` и `find_in_page` тоже являются hosted tool calls. Поэтому после
-   единственного поиска pass может использовать до трёх навигационных действий
-   для проверки даты и фактов источника. Диагностика считает search operations,
-   logical queries, total tool items и navigation items раздельно. Второй search
-   или batched multi-query считается нарушением контракта.
-5. Primary работает по принципу **discovery-first**. На retrieval-этапе
-   проверяемое потенциально важное событие можно сохранить как `consider`, если
-   окончательная редакционная значимость ещё не очевидна. После каждого
-   прохода кандидаты проходят существующий `story_coverage` validator:
-   effective window, freshness, verification, legal/curiosity и URL/semantic
-   dedupe. Финальный `independent_missing_events` получает компактный список уже
-   найденного и ищет именно крупные отсутствующие события.
-6. `major_agencies` намеренно использует узкий API domain filter только для
-   Reuters, AP, Bloomberg и Financial Times. Общего whitelist для остальных
-   направлений нет. Фактический query должен быть короткой natural-language
-   поисковой фразой с календарными датами effective window. В query запрещены
-   `after:`/`before:`, длинные Boolean `OR`-цепочки, скобки и огромные списки
-   компаний. `major_agencies` полагается на API domain filter плюс компактный
-   AI/date query; кандидат принимается по фактической дате/timestamp источника.
-7. Китай/Азия намеренно разделены на два прохода. Исторический эксперимент на
-   окне выпуска 2026-08-11 показал, что одна широкая China/Asia-проверка
-   обнаружила 5 из 6 контрольных событий, но пропустила продуктовую интеграцию
-   Apple/Qwen; отдельный `china_asia_integrations` поднял шестое событие без
-   увеличения 12-search primary-бюджета. Regression fixture хранится в
-   `automation/fixtures/recall/2026-08-11.json`.
-8. Инцидент 2026-08-12 хранится отдельным regression fixture
-   `automation/fixtures/recall/2026-08-12.json`: scheduled run `31548550639`
-   завершил все 12 search operations, получил ложный нулевой pool и затем упал
-   на несовместимом runtime `research_input`. Fixture закрепляет свежие Reuters-
-   контроли IBM/Together AI/Nvidia, Nvidia Nemotron/NeMo и CoreWeave, а также
-   bounded backfill-контроль Meta Muse Glimmer.
-9. Live run `31566813147` выявил следующий класс проблемы: Primary Recall,
-   editorial и coverage завершились, но `major_agencies` не имел ни одного
-   consulted source, а candidate pool был практически целиком собран из
-   Wikipedia/Reddit/arXiv. Перед публикацией действует минимальный fail-closed
-   **source-health gate**: `major_agencies` обязан иметь хотя бы один consulted
-   source, а суммарные diagnostics двенадцати pass должны содержать минимум два
-   consulted URL вне Wikipedia, Reddit и arXiv. Это не общий whitelist и не
-   квота на кандидатов; это защита от очевидно деградировавшего retrieval.
-10. Тот же live run обнаружил metadata-seam: внутренний trusted
-    `--research-input` свежего Primary Recall legacy generator помечал как
-    `editorial_from_saved_research`, хотя diagnostics корректно содержали 12
-    свежих searches. Перед artifact validation normalizer канонизирует
-    доказанный fresh Primary в `pipeline=primary_recall_v2_then_editorial` и
-    `research.settings.source=trusted_runtime_primary_recall`. Caller-supplied
-    recovery/editorial input такого rewrite не получает.
-11. Все двенадцать primary-направлений обязательны. Технический сбой или
-    отсутствие ровно одного завершённого search operation в любом слоте делает
-    fresh primary красным и **не** может быть переинтерпретировано как «новостей
-    мало». Успешно выполненный pass вправе вернуть ноль кандидатов. Диагностика
-    сохраняет фактические queries, consulted sources, raw candidates, model
-    rejections и validator rejections каждого направления.
-12. Обычный `maximum_candidates` применяется **только после завершения всех 12
-    обязательных проходов**. До этого валидные уникальные события собираются во
-    временный расширенный discovery-pool. Финальный cap сначала сохраняет
-    сильнейший уникальный вклад каждого направления, а оставшиеся места заполняет
-    общим ранжированием. Поэтому ранние broad-поиски не могут занять все места до
-    China/Asia, Russia, security, legal или missing-events. Это fairness
-    candidate-пула, а не квота на опубликованные сюжеты; diagnostics отдельно
-    показывают полный validated pool и события, отброшенные только финальным cap.
-13. Primary сохраняет диагностический research artifact в preview, а рабочую
-    копию для существующего generator/editorial передаёт через доверенный
-    ignored runtime ingress `automation/fixtures/research/.runtime/`. Это
-    сохраняет старый security guard `--research-input`: произвольные preview-
-    пути не разрешены. Только внутренний `.runtime` input может сохранить
-    effective overlap-window при sanitation/editorial validation. Caller-supplied
-    `--research-input` по-прежнему означает recovery/editorial rerun и не
-    оплачивает fresh primary.
-14. После **свежего** primary запускается отдельный `hybrid completeness` v1.
-    Он не заменяет primary, а остаётся независимой страховкой. Три фиксированных
-    прохода получают ровно по одному search operation: (1)
-    models/products/agents/research, (2) infrastructure/chips/business, (3)
-    safety/security/policy/major regional gaps. После них детерминированно
-    считаются три тематических кластера; если хотя бы один полностью пуст в
-    объединённом primary + completeness пуле, разрешается **один** adaptive gap
-    search. Жёсткий потолок слоя — 4 search operations, обычный расход — 3.
-    Hybrid не имеет API domain filter и тоже может использовать ограниченную
-    навигацию после своего единственного search каждого прохода.
-15. Hybrid-кандидаты проходят тот же строгий `story_coverage` validator,
-    дедупликацию по URL/событию и лимит пула. Editorial повторяется только если
-    принят хотя бы один новый кандидат. Объединённый research для rerun также
-    проходит через доверенный `.runtime` ingress. Caller-supplied
-    `--research-input` recovery не запускает completeness рекурсивно. Если сам
-    completeness или его editorial-rerun технически ломается, baseline primary
-    artifact сохраняется или восстанавливается.
-16. Если после primary + hybrid достойных сюжетов всё ещё меньше обычной цели,
-    выполняется прежний обязательный coverage audit: шесть отдельных
-    тематических Web Search-проходов и один резервный слот. Production targeted
-    passes получают одну search operation и небольшой navigation allowance для
-    проверки страниц. Исторические multi-search callers сохраняют прежний hard
-    tool-call cap. Если обязательное направление технически не завершено, резерв
-    тратится на его повтор. Если все шесть завершены, но итоговый пригодный пул
-    всё ещё нулевой, тот же седьмой search становится
-    `high_signal_recall_sentinel` версии 7.
-17. `gpt-image-2` создаёт одну PNG-обложку 1536×864; валидатор проверяет её
-    технический контракт.
-18. Legacy-staging исторических обложек работает как best-effort слой
-    совместимости: его предупреждение само по себе не блокирует выпуск.
-    Канонический build и последующие валидаторы всё равно обязаны подтвердить,
-    что все реально используемые страницы и изображения присутствуют.
-19. Кандидат сайта получает RSS, sitemap и Schema.org и проходит офлайн-
-    валидацию.
-20. Только проверенное состояние записывается одним commit в `main`, после чего
-    `deploy-posts.yml` разворачивает именно этот SHA.
+1. Gate до платных API определяет новый выпуск, no-op или FTP-redeploy.
+2. Архив и effective search window строятся от последнего успешного
+   `search_cutoff_at`; exact `search_window.end_at` является авторитетным
+   «сейчас» для всех research слоёв.
+3. Fresh **Primary Recall v2** выполняет ровно 12 обязательных one-search passes.
+4. Независимый **Hybrid Completeness v1** выполняет 3 fixed searches и при
+   очевидном пустом кластере максимум 1 adaptive search.
+5. Editorial выбирает publishable stories из validated candidate pool.
+6. Если пул остаётся коротким/нулевым, fallback coverage выполняет 6 mandatory
+   one-search passes и максимум 1 retry/sentinel slot.
+7. Technical partial/error state fail-closed. Только полностью доказанный
+   zero-pool становится успешным no-publish.
+8. Для publishable digest генерируется/валидируется cover, строятся статические
+   файлы, release фиксируется в `main`, затем выполняется FTP deployment.
 
-Primary Recall v2 имеет hard cap `12`, hybrid completeness — hard cap `4`, а
-fallback coverage — до `7` только для всё ещё короткого/нулевого пула. Поэтому
-теоретический worst case остаётся **23 завершённых `search` operations**. Полный
-день не оплачивает тяжёлый six-direction audit после того, как primary + hybrid
-уже дали обычный выпуск. Служебные `open_page` и `find_in_page` видны в
-диагностике и увеличивают общее число hosted tool calls, но **не** считаются
-поисковыми операциями и не повышают потолок 23 searches.
+## Primary Recall v2
 
-Шесть обязательных направлений fallback coverage audit не меняются:
+Жёсткий budget = **12 completed Web Search search operations**. Направления:
 
-1. `security_world`
-2. `security_russia`
-3. `security_asia`
-4. `legal_copyright_scraping`
-5. `curiosity`
-6. `general_coverage_gaps` — авторитетный last-mile sweep первоисточников,
-   агентств, судов и регуляторов с доменным фильтром API.
+1. `global_breaking`;
+2. `major_agencies`;
+3. `models_products_agents`;
+4. `infrastructure_chips_cloud`;
+5. `business_investment_partnerships`;
+6. `china_asia_models`;
+7. `china_asia_integrations`;
+8. `russia`;
+9. `developer_tools`;
+10. `security_safety`;
+11. `legal_regulation`;
+12. `independent_missing_events`.
 
-Седьмой Web Search сначала резервируется для повтора первой незавершённой
-обязательной проверки. Если повтор не нужен и после всех шести направлений
-пригодный пул равен нулю, седьмой вызов используется как source-agnostic
-high-signal recall sentinel v7. Его адресный запрос `OpenAI cybersecurity <UTC
- date>` сохранён как аварийный regression-probe подтверждённого класса security-
-пропусков. Для sentinel API-доменный фильтр не используется; пригоден любой
-надёжный первичный источник, крупное агентство либо авторитетное
-технологическое/деловое СМИ при соблюдении обычных правил окна, верификации,
-значимости и дедупликации.
+Каждый pass обязан выполнить ровно один `action.type=search` и один logical
+query. После него допускается bounded navigation (`open_page`/`find_in_page`)
+для проверки дат и фактов. Navigation не расходует search-operation budget.
 
-Короткий выпуск допускается только после фактического завершения всех шести
-fallback-направлений. Пустой результат отдельного направления нормален и даёт
-`complete_with_gaps`; технические `partial`, `budget_exhausted` и `error`
-сохраняются в artifact и останавливают Image API, commit и deploy. Если после
-завершённого Primary Recall v2, hybrid completeness, полного fallback audit и
-актуального zero-pool recall sentinel итоговый пул всё ещё пуст, workflow создаёт
-переиспользуемую редакционную остановку без публикации. Такая остановка является
-штатным успешным `no-publish`: production остаётся зелёным, Image API, commit и
-deploy не запускаются; красный статус сохраняется только для технически
-неполного или ошибочного обязательного audit.
+Primary работает **discovery-first**: потенциально значимое свежее событие можно
+сохранить как `consider`, а строгая editorial значимость решается позже. Final
+candidate cap применяется только после всех 12 passes и сохраняет fairness между
+направлениями.
 
-## Редакционный контракт
+### Query discipline и source-focused routing
 
-- обычная цель — 7–12 сюжетов, но для публикации достаточно одного достойного;
-- числовых квот для китайских и российских новостей нет;
-- пустые китайский и российский разделы не выводятся;
-- выпуск из 1–6 сюжетов получает курсивную пометку
-  «Новостей сегодня меньше, чем обычно» сразу под обложкой;
-- если не найдено ни одного достаточно подтверждённого сюжета после полного
-  обязательного поиска и актуального zero-pool recall sentinel, публикация не
-  создаётся;
-- legal-кандидат принимается только при масштабе `major`, оценке не ниже 4 и
-  надёжном источнике;
-- путь или рубрика URL источника не определяют редакционную категорию: для
-  sentinel у любого `category != legal` поля `legal_scale` и
-  `legal_scale_reason` детерминированно нормализуются к `not_applicable` и
-  пустой строке;
-- curiosity необязателен, должен быть проверяемым и может дать не более одного
-  выбранного сюжета;
-- URL, заголовок и издатель источника принадлежат исследовательскому пулу:
-  редактор может выбрать и процитировать источник, но перед валидацией
-  метаданные известного нормализованного URL программно восстанавливаются из
-  `candidates.json`; неизвестный URL по-прежнему блокирует выпуск.
+Production-инцидент 2026-08-13 показал, что один generic multi-domain agency
+query может формально завершиться, вернуть старые служебные страницы и при этом
+пропустить свежие крупные новости. Поэтому фактические search queries во всех
+retrieval слоях должны быть короткими natural-language фразами, обычно **6–18
+значимых слов**, с календарными датами обычным текстом.
 
-Канонический источник правил —
-[`automation/specs/editorial-policy.md`](automation/specs/editorial-policy.md).
+Запрещены retrieval-конструкции `after:`, `before:`, `site:`, длинные Boolean
+`OR` chains, скобки и огромные lists компаний/доменов. Точная свежесть
+проверяется после retrieval по сохранённому effective window.
 
-## Расписание, ручной запуск и recovery
+Без увеличения 12-search Primary budget три broad slots получили разные
+high-signal retrieval anchors:
 
-Основной GitHub cron ежедневного workflow задан на `23:17 UTC` предыдущего
-календарного дня — это `02:17 МСК` даты выпуска. Внешний резервный запуск через
-cron-job.org сохраняет независимую страховку, поэтому дополнительные GitHub
-cron-окна больше не дублируют один и тот же gate. GitHub Actions может
-фактически запустить schedule позднее; cron является триггером, а не гарантией
-точной минуты старта.
+- `global_breaking`: Reuters-focused business/funding/cloud/infrastructure;
+- `major_agencies`: Reuters-focused models/products/chips/infrastructure, при
+  сохранённом API filter Reuters/AP/Bloomberg/FT;
+- `independent_missing_events`: Associated Press-focused consumer AI / major
+  technology / policy gaps после просмотра уже найденного pool.
 
-- плановый запуск всегда публикует результат;
-- ручной `workflow_dispatch` по умолчанию работает как dry-run (`publish=false`);
-- `publication_date` задаёт необязательную дату `YYYY-MM-DD`;
-- `recovery_run_id` позволяет явно переиспользовать сохранённый artifact;
-- без явного ID workflow автоматически ищет пригодный artifact той же даты,
-  предпочитает наиболее полный результат (готовая обложка → готовый digest →
-  research-only), а свежесть использует как tie-break; уже оплаченные стадии
-  повторно не запускаются без необходимости;
-- artifact, который уже имеет `artifact-normalization.json.status=error` или
-  `artifact-validation.json.status=error`, не может быть выбран recovery;
-  сохранённый `primary-recall.json` дополнительно обязан повторно пройти
-  текущий source-health gate даже для `full` artifact;
-- fresh Primary Recall v2 вызывает hybrid completeness только один раз;
-  caller-supplied `--research-input` editorial rerun его пропускает, а recovery
-  использует сохранённые `candidates.json`, `primary-recall.json` и
-  `hybrid-completeness.json` вместо повторной оплаты независимого поиска;
-- свежий primary research сохраняется как диагностический
-  `automation/preview/production-daily/primary-recall-research-YYYY-MM-DD.json`
-  и как ignored trusted runtime input
-  `automation/fixtures/research/.runtime/primary-recall-research-YYYY-MM-DD.json`;
-  полная траектория двенадцати слотов сохраняется как
-  `primary-recall-YYYY-MM-DD.json` и внутри artifact выпуска;
-- если hybrid нашёл пригодные NEW-only кандидаты, диагностическая объединённая
-  копия сохраняется как `hybrid-completeness-merged-YYYY-MM-DD.json`, а рабочая
-  runtime-копия для editorial rerun проходит через тот же `.runtime` ingress;
-  подробная траектория запросов, источников, кластеров и бюджета хранится в
-  `hybrid-completeness-YYYY-MM-DD.json` и artifact выпуска;
-- если recovery восстановил полностью готовый выпуск и ни coverage/editorial,
-  ни Image API больше не нужны, workflow не устанавливает OpenAI SDK и не
-  требует `OPENAI_API_KEY`; если восстановлен готовый текст, но нужна только
-  новая обложка, текстовый SDK также не устанавливается, а проверяются только
-  ключ и image-модель, действительно нужные Image API;
-- завершённый Primary Recall v2 с нулевым пулом остаётся пригодным для
-  продолжения только если диагностика подтверждает все 12 обязательных search
-  operations; затем hybrid completeness получает независимый шанс дополнить
-  пул, после чего при необходимости запускается обязательный coverage audit;
-- полный coverage audit и завершённый sentinel текущей версии переиспользуются
-  без новых запросов; partial audit продолжает только незавершённые направления;
-- повторный резервный запуск после готового выпуска завершается бесплатным
-  no-op, а если commit уже есть, но живой URL недоступен, выполняется только
-  FTP-redeploy.
+Source anchor влияет только на ranking/discovery и не является whitelist для
+кандидатов. Остальные passes остаются тематически широкими. Крупный запуск
+consumer-device/OS/service считается релевантным для product pass, если AI-layer
+является существенной частью анонса.
 
-Production-artifacts создаются с `retention-days: 14`, но инженерный hygiene
-может удалить уже ненужные опубликованные artifacts раньше по безопасному
-окну выпусков, описанному ниже. Artifacts неопубликованной актуальной даты
-остаются защищены для recovery.
+`major_agencies` остаётся единственным primary API-domain-filtered pass. Общего
+project-wide whitelist нет.
 
-## Модели и доступы
+### Исторические recall regressions
 
-- секрет `OPENAI_API_KEY` нужен только production-этапу;
-- `OPENAI_TEXT_MODEL` по умолчанию и по текущему контракту —
-  `gpt-5.6-terra`;
-- `OPENAI_IMAGE_MODEL` — `gpt-image-2`;
-- `FTP_SERVER`, `FTP_USERNAME` и `FTP_PASSWORD` используются только
-  изолированным workflow `deploy-posts.yml`;
-- Main CI не вызывает OpenAI, Image API или платный Web Search.
+- `automation/fixtures/recall/2026-08-11.json`: отдельный China integrations
+  pass recovered Apple/Qwen и довёл benchmark до 6/6 controls.
+- `automation/fixtures/recall/2026-08-12.json`: false-zero/runtime-ingress
+  incident; controls IBM/Together, Nvidia Nemotron/NeMo, CoreWeave и Meta Muse
+  Glimmer backfill.
+- `automation/fixtures/recall/2026-08-13.json`: run `31652757802` имел ровно 4
+  raw candidates и 4 published stories, значит editorial ничего крупного не
+  отбрасывал. Независимые source-focused Reuters/AP experiments recovered Pixel
+  11/Gemini, Nebius, River AI, IBM/Together и Nvidia Nemotron controls без
+  увеличения поискового бюджета.
 
-## Правила очистки контента
+## Source-health gate
 
-Единый ночной workflow применяет одну и ту же границу хранения к GitHub,
-публичному сайту и связанным файлам:
+Технически completed search не считается автоматически здоровым. Перед
+publication fresh Primary должен доказать:
 
-- удаляются только выпуски, дата которых **строго раньше** даты
-  `сегодня − 32 дня`; сама граничная дата и всё более новое сохраняются;
-- старые `automation/content/YYYY-MM-DD/` компактируются: удаляются статья,
-  обложка, промпты, сырые ответы API и другие производственные файлы, но
-  `meta.json` и `stories.json` остаются для редакционной дедупликации;
-- из `posts/` удаляются просроченные страницы и связанные изображения,
-  включая исторический пакет `dzen-test`;
-- из одного набора актуальных выпусков пересобираются `posts/rss.xml`,
-  `posts/dzen-test/rss.xml`, оба `index.html` и `posts/sitemap.xml`;
-- перед commit проверяются RSS, даты, страницы, изображения, индексы и
-  sitemap; расхождение или попытка затронуть свежий выпуск останавливает
-  workflow без изменения `main`;
-- плановый запуск применяет очистку автоматически, ручной по умолчанию
-  работает как dry-run, а срок хранения нельзя уменьшить ниже 32 дней;
-- после успешного commit FTP синхронизируется с точным созданным SHA.
+- `major_agencies` завершил search и имеет хотя бы один consulted source;
+- по всем 12 passes есть минимум два consulted URL вне Wikipedia/Reddit/arXiv;
+- modern diagnostics с `search_window` содержат хотя бы одно **свежее agency
+  evidence внутри effective window** среди broad source-anchor passes.
 
-Эта 32-дневная механика не используется для инженерной уборки GitHub и не
-изменяется `repository-hygiene.yml`.
+Dated Reuters/Bloomberg/FT URL либо verified in-window Reuters/AP/Bloomberg/FT
+raw candidate считается evidence. Старые author/newsletter/event/document pages
+не считаются. Это health check, не квота на агентские stories.
 
-## Правила инженерной уборки GitHub
+Normalizer также канонизирует доказанный fresh Primary до
+`pipeline=primary_recall_v2_then_editorial` и
+`research.settings.source=trusted_runtime_primary_recall`. Caller-supplied
+recovery input не получает такой rewrite.
 
-`repository-hygiene.yml` работает отдельно от очистки выпусков. Плановый запуск
-в 15:43 МСК применяет только доказуемо безопасные операции; ручной
-`workflow_dispatch` по умолчанию является audit-only и требует `apply=true`
-для destructive-фазы.
+## Hybrid Completeness
 
-Результат каждого этапа выводится в понятный GitHub Actions Summary. Смотреть:
-`Actions → Repository hygiene → последний запуск → Summary`. Там показываются
-счётчики защищённых, удаляемых и требующих внимания объектов, фактически
-удалённые ветки/artifacts, отключённые workflows и причины безопасных пропусков.
-Полный JSON каждого этапа прикладывается к запуску как Actions artifact с
-`retention: 2 дня`, после чего GitHub удаляет его автоматически.
+Hybrid выполняет:
 
-- `archive/search-baseline-pre-hybrid-2026-08-09` является отдельным постоянным
-  исключением из branch lifecycle и всегда `protected` как
-  `permanent_archive_branch`;
-- защитное окно остальных веток ограничено одновременно пятью последними PR,
-  реально смёрженными в `main` по `merged_at`, и семью сутками после merge.
-  `main`, protected branches, ветки открытых PR и ветки с активным Actions-run
-  никогда не удаляются. Старая merged-ветка удаляется только если её текущий
-  HEAD всё ещё совпадает с `head.sha` смёрженного PR. Closed-unmerged ветка
-  после 14 суток без открытого PR может перейти в `safe_delete`, но только при
-  точном совпадении текущего HEAD с `head.sha` закрытого PR; ветки без PR и
-  изменённые после merge/закрытия остаются `review_only`.
-- CI-artifact `main-ci-<sha>` сохраняется для текущего `main`, head SHA пяти
-  последних merged PR, их merge SHA и текущих head SHA открытых PR. Остальные
-  однозначно superseded CI-artifacts удаляются; artifacts неоднозначных веток
-  остаются `review_only`.
-- Для production-artifacts полностью сохраняется цепочка двух последних
-  опубликованных дат. Для опубликованных дат №3–5 сохраняется только artifact
-  run, где успешно завершился `Commit production release`; остальные варианты
-  этой даты удаляются. Artifacts более старых опубликованных дат удаляются.
-  Актуальная/будущая неопубликованная дата защищена, а историческая
-  неопубликованная дата остаётся `review_only`, чтобы не потерять оплаченный
-  recovery.
-- Workflow, которого больше нет среди файлов `.github/workflows/` в `main`,
-  и не имеет живого run, безопасно отключается по правилам canonical absence.
-  Динамический GitHub Pages workflow является платформенным объектом и при
-  `has_pages=false` остаётся диагностическим `github_pages_platform_managed`.
-- Завершённые runs workflow, уже доказанно классифицированного как orphan
-  (`safe_disable`), хранятся ещё 14 суток, после чего ежедневная hygiene удаляет
-  их с повторной проверкой workflow, статуса и возраста. Runs canonical,
-  protected и review-only workflows не затрагиваются; stale queued runs остаются
-  report-only. Source scanner начинает watchlist после пяти merge и отмечает
-  `suspected_orphan` после десяти, но никогда не меняет tracked-файлы.
-- Перед destructive-фазой строится новый план, а `main` повторно проверяется
-  перед удалениями. Если SHA `main` изменился, запуск завершает cleanup
-  безопасной ошибкой. При активном production-run вся Actions-уборка
-  пропускается.
-- Права разделены по jobs: audit имеет только read-доступ, branch-pruner не
-  получает `actions: write`, а Actions-pruner не получает `contents: write`.
-  Releases, tags, permanent archive branches, published/editorial content и
-  tracked-файлы этим workflow не изменяются.
+1. models/products/agents/research;
+2. infrastructure/chips/business;
+3. safety/security/policy/major regional gaps;
+4. optional `adaptive_gap` для полностью пустого кластера.
 
-Канонический алгоритм классификации находится в
-`automation/scripts/repository_hygiene_policy.py`, GitHub runtime — в
-`automation/scripts/repository_hygiene.py`.
+Ordinary budget = **3 searches**, hard cap = **4**. Каждый pass имеет один search
+и bounded navigation. После 2026-08-13 Hybrid использует ту же natural-language
+query discipline и больше не подталкивает модель к `after:/before:`.
 
-## Основные каталоги
+Hybrid candidates проходят общий validator/dedupe; editorial rerun происходит
+только при реально принятом новом candidate.
 
-- `automation/content/YYYY-MM-DD/` — структурированные материалы выпусков;
-- `automation/archive/index.json` — архив для антидублей и обновлений;
-- `automation/archive/search-baselines/` — manifests постоянных retrieval-
-  baseline-точек;
-- `automation/config/` — production-, editorial-, site- и image-конфигурация;
-- `automation/prompts/` — Primary Recall v2, legacy research, editorial и
-  coverage-audit промпты;
-- `automation/fixtures/recall/` — исторические retrieval-regression окна;
-- `automation/fixtures/research/.runtime/` — ignored доверенный временный ingress
-  fresh primary/hybrid research в существующий generator; содержимое не
-  коммитится и не является пользовательским fixture;
-- `automation/specs/` — канонические редакционные, image- и Schema.org
-  контракты;
-- `automation/scripts/` — retrieval-orchestrators, генераторы, recovery,
-  сборщики и валидаторы;
-- `automation/tests/` — офлайн-регрессии;
-- `posts/` — публикуемый статический сайт, RSS, sitemap и обложки.
+## Fallback coverage
 
-Команды локальной проверки и подробности артефактов описаны в
-[`automation/README.md`](automation/README.md).
+Если после Primary + Hybrid достойных сюжетов мало, fallback проверяет:
 
-## Временной контракт research и recovery
+1. `security_world`;
+2. `security_russia`;
+3. `security_asia`;
+4. `legal_copyright_scraping`;
+5. `curiosity`;
+6. `general_coverage_gaps`.
 
-Ночные запуски происходят около 02:17 МСК, когда в UTC ещё может быть предыдущий
-календарный день. Поэтому `search_window.end_at` является авторитетным текущим
-временем задачи для Primary Recall v2, hybrid completeness, всех coverage-
-проходов и recall sentinel. Модель обязана считать всё до этой отметки не
-будущим независимо от собственной системной даты или UTC-даты API-запуска.
+Максимум = **7 completed search operations**, включая один retry. Coverage prompt
+также запрещает `after:`, `before:`, `site:` и huge OR chains. Для
+`general_coverage_gaps` уже существует authoritative API domain filter, поэтому
+он не должен вручную строить `site:foo OR site:bar ...`.
 
-Канонический continuity anchor остаётся `search_cutoff_at` последнего успешного
-выпуска. Fresh Primary Recall строит effective discovery start не более чем на
-24 часа раньше anchor, чтобы восстановить существенные пропуски предыдущего
-дня. Exact archive URL отсекаются до merge, а обычная semantic/archive
-дедупликация остаётся обязательной. Например, старый пропуск внутри 24 часов
-может вернуться, но событие за пределами overlap не воскресает бесконечно.
+## Search budget
 
-Контракт версионируется. Recovery не переиспользует legacy research без текущей
-версии temporal anchor, если локальная дата конца окна уже опережает UTC-дату.
-Для такого кросс-полуночного legacy artifact основной research выполняется
-заново. Coverage audit версии до temporal anchor также не считается
-окончательной нулевой остановкой в таком окне; обязательные проходы выполняются
-заново, а recall sentinel использует текущую версию 7. Это сознательно допускает
-повторную оплату только для доказанно ненадёжного временного класса artifact,
-сохраняя обычный recovery для остальных случаев.
+Worst-case invariant не изменился:
+
+- Primary: 12;
+- Hybrid: до 4;
+- Coverage: до 7.
+
+Итого максимум **23 completed search operations**. Navigation calls не меняют
+этот потолок. Recall улучшается маршрутизацией/ranking существующих searches, а
+не скрытым ростом расходов.
+
+## Recovery и fail-closed
+
+Recovery не должен повторно оплачивать уже завершённые стадии и не должен
+воскрешать известный плохой artifact.
+
+- caller-supplied `--research-input` означает recovery/editorial rerun и
+  пропускает fresh Primary/Hybrid;
+- internally generated `.runtime` research-input recovery не считается;
+- artifacts с `artifact-normalization.json.status=error` или
+  `artifact-validation.json.status=error` не переиспользуются;
+- saved artifact с `primary-recall.json` повторно проходит current source-health;
+- completed coverage/sentinel и доказанный zero-pool `editorial_stop` могут
+  переиспользоваться без повторной оплаты.
+
+Technical search/audit partial/error state блокирует публикацию. Нулевой pool
+считается нормальным no-publish только после полного доказанного search contract.
+
+## Публикация, retention и footer
+
+Исторический публичный/структурированный dated content хранится по 32-дневному
+контракту. `posts/_footer-scr.png` является постоянным asset и не удаляется
+cleanup. Новые страницы и RSS заканчиваются linked footer image на Дзен; FTP
+проверяет remote presence и восстанавливает asset при необходимости.
+
+Подробные machine-facing правила находятся в `AGENTS.md`, а automation-specific
+операционные детали и локальные проверки — в `automation/README.md`.
