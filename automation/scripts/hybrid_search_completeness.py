@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import copy
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable
 
@@ -172,15 +172,19 @@ def _time_hint(search_window: dict[str, Any]) -> str:
     try:
         start = datetime.fromisoformat(str(search_window.get("start_at") or "").replace("Z", "+00:00"))
         end = datetime.fromisoformat(str(search_window.get("end_at") or "").replace("Z", "+00:00"))
-        after_day = (start.date() - timedelta(days=1)).isoformat()
-        before_day = (end.date() + timedelta(days=1)).isoformat()
         return (
-            f"Для единственного search query явно приоритизируй свежесть effective window; "
-            f"предпочтительная retrieval-подсказка: after:{after_day} before:{before_day}. "
-            "После выдачи проверь фактический timestamp против точных границ окна."
+            "Для единственного search query используй короткую natural-language фразу "
+            f"примерно на 6–18 значимых слов и обычные календарные даты {start.date()} "
+            f"и {end.date()}. Не используй after:, before:, site:, скобки или длинные "
+            "OR-цепочки. После выдачи проверь фактический timestamp против точных "
+            "границ effective window."
         )
     except ValueError:
-        return "В поисковом запросе явно укажи календарные даты effective window и проверь timestamp источника."
+        return (
+            "В поисковом запросе явно укажи календарные даты effective window обычным "
+            "текстом; не используй after:, before:, site: или длинные OR-цепочки и "
+            "проверь timestamp источника."
+        )
 
 
 def build_prompt(

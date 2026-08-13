@@ -1,0 +1,65 @@
+{
+  "publication_date": "2026-08-13",
+  "incident_run_id": 31652757802,
+  "effective_window": {
+    "start_at": "2026-08-11T09:41:12+03:00",
+    "end_at": "2026-08-13T02:58:08+03:00"
+  },
+  "production_baseline": {
+    "raw_candidate_count": 4,
+    "published_story_count": 4,
+    "diagnosis": "editorial selected the complete candidate pool; the recall loss occurred before editorial",
+    "major_agencies_candidate_count": 0,
+    "major_agencies_source_health_problem": "consulted sources were dominated by stale Bloomberg author/newsletter/event pages and old FT documents"
+  },
+  "must_discover": [
+    {
+      "id": "google-pixel-11-ai-gemini",
+      "publisher": "Associated Press",
+      "published_date": "2026-08-12",
+      "reason": "major consumer AI product launch"
+    },
+    {
+      "id": "nebius-q2-ai-cloud-growth",
+      "publisher": "Reuters",
+      "published_date": "2026-08-12",
+      "reason": "major AI-cloud earnings, contracts and capacity signal"
+    },
+    {
+      "id": "river-ai-1-1b-funding",
+      "publisher": "Reuters",
+      "published_date": "2026-08-11",
+      "reason": "large AI startup funding round inside healing overlap"
+    },
+    {
+      "id": "ibm-together-ai-nvidia-inference-cluster",
+      "publisher": "Reuters",
+      "published_date": "2026-08-11",
+      "reason": "240 million dollar AI inference infrastructure agreement"
+    },
+    {
+      "id": "nvidia-nemotron-4-35-switchyard",
+      "publisher": "Reuters",
+      "published_date": "2026-08-11",
+      "reason": "major open-model and routing product development"
+    }
+  ],
+  "experiment_result": {
+    "baseline_multi_domain_agency_query": "0 control events from the production major_agencies pass",
+    "reuters_business_focused_query": [
+      "nebius-q2-ai-cloud-growth",
+      "ibm-together-ai-nvidia-inference-cluster"
+    ],
+    "reuters_models_infrastructure_focused_query": [
+      "ibm-together-ai-nvidia-inference-cluster",
+      "nvidia-nemotron-4-35-switchyard"
+    ],
+    "reuters_funding_focused_query": [
+      "river-ai-1-1b-funding"
+    ],
+    "ap_consumer_product_focused_query": [
+      "google-pixel-11-ai-gemini"
+    ],
+    "conclusion": "source-focused natural-language queries materially improved recall without increasing the 12-search primary budget"
+  }
+}

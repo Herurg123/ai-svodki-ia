@@ -11,6 +11,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -32,6 +34,18 @@ LOW_SIGNAL_DISCOVERY_DOMAINS = (
     "reddit.com",
     "arxiv.org",
 )
+AGENCY_DISCOVERY_DOMAINS = (
+    "reuters.com",
+    "apnews.com",
+    "bloomberg.com",
+    "ft.com",
+)
+SOURCE_ANCHOR_DIRECTIONS = (
+    "global_breaking",
+    "major_agencies",
+    "independent_missing_events",
+)
+URL_DATE_PATTERN = re.compile(r"(20\d{2})-(\d{2})-(\d{2})(?:/|$)")
 FRESH_PRIMARY_PIPELINE = "primary_recall_v2_then_editorial"
 
 
@@ -103,9 +117,88 @@ def _hostname(url: str) -> str:
         return ""
 
 
-def _is_low_signal_host(host: str) -> bool:
+def _host_matches(host: str, domains: tuple[str, ...]) -> bool:
     host = host.casefold().strip(".")
-    return any(host == domain or host.endswith("." + domain) for domain in LOW_SIGNAL_DISCOVERY_DOMAINS)
+    return any(host == domain or host.endswith("." + domain) for domain in domains)
+
+
+def _is_low_signal_host(host: str) -> bool:
+    return _host_matches(host, LOW_SIGNAL_DISCOVERY_DOMAINS)
+
+
+def _parse_date(value: Any) -> date | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    try:
+        return date.fromisoformat(value.strip())
+    except ValueError:
+        return None
+
+
+def _primary_window_dates(primary: dict[str, Any]) -> tuple[date, date] | None:
+    window = primary.get("search_window")
+    if not isinstance(window, dict):
+        return None
+    try:
+        start = datetime.fromisoformat(str(window.get("start_at") or "").replace("Z", "+00:00"))
+        end = datetime.fromisoformat(str(window.get("end_at") or "").replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if start.tzinfo is None or end.tzinfo is None or end < start:
+        return None
+    return start.date(), end.date()
+
+
+def _url_embedded_date(url: str) -> date | None:
+    try:
+        path = urlparse(url).path
+    except ValueError:
+        return None
+    match = URL_DATE_PATTERN.search(path)
+    if not match:
+        return None
+    try:
+        return date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
+    except ValueError:
+        return None
+
+
+def _candidate_has_fresh_agency_evidence(
+    candidate: Any, *, start_day: date, end_day: date
+) -> bool:
+    if not isinstance(candidate, dict):
+        return False
+    published_day = _parse_date(candidate.get("published_date"))
+    if published_day is None or not (start_day <= published_day <= end_day):
+        return False
+    source = candidate.get("primary_source")
+    if not isinstance(source, dict) or not isinstance(source.get("url"), str):
+        return False
+    return _host_matches(_hostname(source["url"]), AGENCY_DISCOVERY_DOMAINS)
+
+
+def _direction_has_fresh_agency_evidence(
+    direction: dict[str, Any], *, start_day: date, end_day: date
+) -> bool:
+    for candidate in direction.get("raw_candidates") or []:
+        if _candidate_has_fresh_agency_evidence(
+            candidate, start_day=start_day, end_day=end_day
+        ):
+            return True
+
+    api = direction.get("api")
+    if not isinstance(api, dict):
+        return False
+    for source in api.get("consulted_sources") or []:
+        if not isinstance(source, dict) or not isinstance(source.get("url"), str):
+            continue
+        url = source["url"]
+        if not _host_matches(_hostname(url), AGENCY_DISCOVERY_DOMAINS):
+            continue
+        embedded_day = _url_embedded_date(url)
+        if embedded_day is not None and start_day <= embedded_day <= end_day:
+            return True
+    return False
 
 
 def normalize_fresh_primary_metadata(artifact_dir: Path, report: dict[str, Any]) -> None:
@@ -209,6 +302,36 @@ def validate_primary_source_health(artifact_dir: Path) -> None:
             "Primary Recall source-health degraded: после 12 searches найдено меньше двух "
             "источников вне Wikipedia/Reddit/arXiv."
         )
+
+    # Starting with the 2026-08-13 incident, merely consulting a Bloomberg author
+    # page or an old newsletter is no longer sufficient evidence that the broad
+    # news layer is healthy. When modern diagnostics contain an effective window,
+    # require at least one source-anchor pass to show an in-window agency article.
+    # Reuters/Bloomberg/FT usually expose YYYY-MM-DD in the URL; AP can satisfy
+    # the same check through a verified raw candidate whose published_date is in
+    # the window. Legacy Primary artifacts without search_window keep their older
+    # compatibility behavior.
+    window_days = _primary_window_dates(primary)
+    if window_days is not None:
+        start_day, end_day = window_days
+        anchor_directions = [
+            item
+            for item in directions
+            if isinstance(item, dict)
+            and item.get("direction_id") in SOURCE_ANCHOR_DIRECTIONS
+        ]
+        if not any(
+            _direction_has_fresh_agency_evidence(
+                item, start_day=start_day, end_day=end_day
+            )
+            for item in anchor_directions
+        ):
+            raise NormalizationError(
+                "Primary Recall source-health degraded: broad source-anchor passes "
+                "не подтвердили ни одного свежего Reuters/AP/Bloomberg/FT материала "
+                "в effective window; служебные, author и старые newsletter URL не "
+                "считаются доказательством свежего agency retrieval."
+            )
 
 
 def normalize_artifact(artifact_dir: Path, report_path: Path) -> dict[str, Any]:

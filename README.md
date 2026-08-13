@@ -441,3 +441,38 @@ Production-artifacts создаются с `retention-days: 14`, но инжен
 заново, а recall sentinel использует текущую версию 7. Это сознательно допускает
 повторную оплату только для доказанно ненадёжного временного класса artifact,
 сохраняя обычный recovery для остальных случаев.
+
+## Обновление retrieval после эксперимента 2026-08-13
+
+Production run `31652757802` дал ровно четыре raw candidates, editorial выбрал
+все четыре и все четыре были опубликованы. Значит крупные пропуски этого выпуска
+возникли до editorial. Regression fixture
+`automation/fixtures/recall/2026-08-13.json` закрепляет пять high-signal controls:
+Pixel 11/Gemini (AP), Nebius, River AI, IBM/Together AI и Nvidia Nemotron
+(Reuters). Source-focused natural-language searches по тому же effective window
+в совокупности восстановили все пять controls без увеличения бюджета.
+
+Primary сохраняет 12 search operations, но три broad slots получают разные
+retrieval anchors: `global_breaking` ищет Reuters business/funding/cloud/
+infrastructure, `major_agencies` ищет Reuters models/products/chips/
+infrastructure при прежнем Reuters/AP/Bloomberg/FT API filter, а
+`independent_missing_events` делает независимый Associated Press consumer-AI /
+major technology / policy sweep после просмотра уже найденного пула. Это routing
+для поискового ranking, а не whitelist кандидатов. Product-pass также обязан
+учитывать крупные consumer-device/OS/service launches, когда AI является
+существенной частью анонса.
+
+Во всех трёх retrieval-слоях поисковые строки должны быть короткими
+natural-language queries, ориентир 6–18 значимых слов, с календарными датами
+обычным текстом. `after:`, `before:`, `site:`, длинные `OR`-цепочки, скобки и
+огромные перечни доменов/компаний запрещены. Hybrid больше не рекомендует
+`after:/before:`, а `general_coverage_gaps` использует свой API domain filter
+вместо ручной `site:foo OR site:bar ...` конструкции.
+
+Source-health для modern `primary-recall.json` с `search_window` теперь требует
+хотя бы одно свежее Reuters/AP/Bloomberg/FT evidence внутри effective window
+среди broad source-anchor passes. Dated Reuters/Bloomberg/FT URL либо verified
+in-window agency raw candidate считается evidence; stale author, newsletter,
+event и старые document pages не считаются. Это fail-closed health check, а не
+квота на агентские сюжеты. Worst-case search ceiling остаётся 23 operations:
+12 Primary + до 4 Hybrid + до 7 Coverage.

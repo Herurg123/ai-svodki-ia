@@ -358,3 +358,35 @@ python automation/scripts/validate_archive.py
 Main CI дополнительно проверяет production workflow contract, committed archive,
 RSS, sitemap, Schema.org и отсутствие изменений защищённых путей. Точный
 актуальный набор команд задаётся `.github/workflows/ci.yml`.
+
+## Source-focused recall после production 2026-08-13
+
+Regression fixture `fixtures/recall/2026-08-13.json` фиксирует run
+`31652757802`: candidate pool содержал 4 события и editorial опубликовал все 4,
+поэтому пропуски локализованы в discovery. Независимые source-focused запросы по
+тому же effective window восстановили пять controls: Pixel 11/Gemini, Nebius,
+River AI, IBM/Together AI и Nvidia Nemotron.
+
+Primary search budget остаётся 12. Три broad slots теперь имеют разные
+retrieval anchors: `global_breaking` использует Reuters business/funding/cloud/
+infrastructure, `major_agencies` использует Reuters models/products/chips/
+infrastructure при сохранённом Reuters/AP/Bloomberg/FT API filter,
+`independent_missing_events` делает Associated Press consumer-AI / major
+technology / policy sweep после просмотра существующего pool. Это source routing
+для ranking, не whitelist кандидатов. `models_products_agents` также учитывает
+крупные consumer-device/OS/service launches, если AI materially part of launch.
+
+Primary, Hybrid и fallback Coverage используют одинаковую query discipline:
+короткий natural-language query, ориентир 6–18 значимых слов, календарные даты
+обычным текстом, без `after:`, `before:`, `site:`, длинных `OR`-цепочек, скобок
+и огромных entity/domain lists. Hybrid больше не формирует `after:/before:`
+hints. `general_coverage_gaps` использует существующий API domain filter вместо
+ручного `site:`-мегазапроса.
+
+Для modern `primary-recall.json` с `search_window` source-health дополнительно
+требует хотя бы одно свежее in-window Reuters/AP/Bloomberg/FT evidence среди
+`global_breaking`, `major_agencies`, `independent_missing_events`. Dated agency
+URL или verified in-window agency candidate считается evidence; stale author,
+newsletter, event или old document page не считается. Legacy diagnostics без
+`search_window` сохраняют backward compatibility. Search ceiling не меняется:
+12 Primary + до 4 Hybrid + до 7 Coverage = максимум 23 operations.

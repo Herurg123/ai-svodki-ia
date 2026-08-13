@@ -288,3 +288,39 @@ completed successfully with no publishable candidate. In that state Image API,
 commit, and deploy must remain skipped. Technical partial/error audits remain
 fail-closed and red. Recovery must reuse a proven completed editorial stop
 without repeating paid research or coverage.
+
+## Source-focused recall contract after 2026-08-13
+
+Production run `31652757802` is a permanent retrieval-quality regression: its
+candidate pool contained exactly four events, editorial selected all four and
+all four were published. The failure was therefore upstream of editorial.
+`automation/fixtures/recall/2026-08-13.json` records five high-signal controls
+that independent source-focused searches recovered in the same effective
+window: Pixel 11/Gemini, Nebius, River AI, IBM/Together AI and Nvidia Nemotron.
+
+Do not increase the 12-search Primary budget to solve this class. Instead, keep
+three broad slots source-focused and independent:
+
+- `global_breaking`: Reuters-focused business/funding/cloud/infrastructure;
+- `major_agencies`: Reuters-focused models/products/chips/infrastructure while
+  retaining its Reuters/AP/Bloomberg/FT API domain filter;
+- `independent_missing_events`: Associated Press-focused consumer-AI / major
+  technology / policy gap sweep after seeing the current candidate pool.
+
+These source names are retrieval anchors for ranking, not a candidate whitelist.
+`models_products_agents` must also treat a major device, OS or mass-market
+service launch as relevant when the AI layer is materially part of the launch.
+
+Across Primary, Hybrid and fallback Coverage, actual search strings must use
+short natural-language date queries, roughly 6–18 meaningful words. Do not use
+`after:`, `before:`, `site:`, long Boolean `OR` chains, parentheses or huge
+entity/domain lists. In particular, `general_coverage_gaps` already has its own
+API domain filter and must not recreate it as a giant `site:` query.
+
+For modern Primary diagnostics that contain `search_window`, source-health must
+also prove at least one fresh in-window Reuters/AP/Bloomberg/FT evidence among
+`global_breaking`, `major_agencies` and `independent_missing_events`. A dated
+Reuters/Bloomberg/FT consulted URL or a verified agency raw candidate whose
+`published_date` is in the effective window counts. Stale author, newsletter,
+event or old document pages do not count. This is a fail-closed technical health
+check, not a quota requiring an agency story in every published digest.
