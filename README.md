@@ -34,6 +34,11 @@ continuity anchor, чтобы крупный материал, пропущен�
 | `.github/workflows/repository-hygiene.yml` | Безопасная уборка ephemeral GitHub objects. |
 | `.github/workflows/deploy-posts.yml` | FTP-синхронизация точного `posts/` выбранного commit. |
 
+Основной production cron: `23:17 UTC` предыдущего календарного дня, то есть
+`02:17 Europe/Moscow` даты выпуска. Внешний резервный запуск остаётся в
+cron-job.org. Gate выполняется до платных API и различает новый выпуск, no-op и
+FTP-redeploy.
+
 Точный набор CI-команд задаётся `.github/workflows/ci.yml`.
 
 ## Постоянный baseline старого поиска
@@ -66,7 +71,8 @@ continuity anchor, чтобы крупный материал, пропущен�
 
 ## Primary Recall v2
 
-Жёсткий budget = **12 completed Web Search search operations**. Направления:
+Жёсткий budget = **12 Web Search operations**, то есть ровно 12 completed Web
+Search search operations. Направления:
 
 1. `global_breaking`;
 2. `major_agencies`;
@@ -82,7 +88,7 @@ continuity anchor, чтобы крупный материал, пропущен�
 12. `independent_missing_events`.
 
 Каждый pass обязан выполнить ровно один `action.type=search` и один logical
-query. После него допускается bounded navigation (`open_page`/`find_in_page`)
+query. После него допускается bounded navigation: `open_page` и `find_in_page`
 для проверки дат и фактов. Navigation не расходует search-operation budget.
 
 Primary работает **discovery-first**: потенциально значимое свежее событие можно
@@ -178,10 +184,16 @@ Hybrid candidates проходят общий validator/dedupe; editorial rerun 
 5. `curiosity`;
 6. `general_coverage_gaps`.
 
-Максимум = **7 completed search operations**, включая один retry. Coverage prompt
-также запрещает `after:`, `before:`, `site:` и huge OR chains. Для
-`general_coverage_gaps` уже существует authoritative API domain filter, поэтому
-он не должен вручную строить `site:foo OR site:bar ...`.
+Fallback выполняет до 7 coverage Web Search operations, включая максимум один
+retry. Coverage prompt также запрещает `after:`, `before:`, `site:` и huge OR
+chains. Для `general_coverage_gaps` уже существует authoritative API domain
+filter: это авторитетный last-mile sweep, поэтому он не должен вручную строить
+`site:foo OR site:bar ...`.
+
+Технически неполный audit блокирует Image API, commit и deploy. Полностью
+доказанный zero-pool является штатным успешным `no-publish`, а не ошибкой.
+Technical partial/error audits remain red and fail closed. `recall sentinel v7`
+остаётся частью доказательства полного zero-pool.
 
 ## Search budget
 
@@ -195,10 +207,12 @@ Worst-case invariant не изменился:
 этот потолок. Recall улучшается маршрутизацией/ranking существующих searches, а
 не скрытым ростом расходов.
 
-## Recovery и fail-closed
+## Recovery и ручной production
 
-Recovery не должен повторно оплачивать уже завершённые стадии и не должен
-воскрешать известный плохой artifact.
+Recovery предпочитает наиболее полный пригодный artifact той же даты и не должен
+повторно оплачивать уже завершённые стадии или воскрешать известный плохой
+artifact. Для `workflow_dispatch`: `publish` — по умолчанию `false`, а
+`recovery_run_id` опционален.
 
 - caller-supplied `--research-input` означает recovery/editorial rerun и
   пропускает fresh Primary/Hybrid;
@@ -209,8 +223,15 @@ Recovery не должен повторно оплачивать уже заве
 - completed coverage/sentinel и доказанный zero-pool `editorial_stop` могут
   переиспользоваться без повторной оплаты.
 
-Technical search/audit partial/error state блокирует публикацию. Нулевой pool
-считается нормальным no-publish только после полного доказанного search contract.
+Production text model: `gpt-5.6-terra`. Production cover model: `gpt-image-2`.
+
+## Правила инженерной уборки GitHub
+
+Workflow `repository-hygiene.yml` убирает только явно классифицированные
+временные GitHub-объекты и не редактирует tracked project files. Ручной запуск:
+`Actions → Repository hygiene`. Диагностические hygiene artifacts имеют
+`retention: 2 дня`. Постоянная archive-ветка baseline, `main`, releases, tags и
+редакционный контент защищены от этой уборки.
 
 ## Публикация, retention и footer
 
@@ -218,6 +239,8 @@ Technical search/audit partial/error state блокирует публикаци
 контракту. `posts/_footer-scr.png` является постоянным asset и не удаляется
 cleanup. Новые страницы и RSS заканчиваются linked footer image на Дзен; FTP
 проверяет remote presence и восстанавливает asset при необходимости.
+
+Для 1–6 сюжетов используется пометка «Новостей сегодня меньше, чем обычно».
 
 Подробные machine-facing правила находятся в `AGENTS.md`, а automation-specific
 операционные детали и локальные проверки — в `automation/README.md`.
