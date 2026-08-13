@@ -220,7 +220,9 @@ class HybridSearchCompletenessTests(unittest.TestCase):
         self.assertIn("РОВНО ОДНУ поисковую операцию Web Search", prompt)
         self.assertIn("open_page", prompt)
         self.assertIn("find_in_page", prompt)
-        self.assertIn("after:", prompt)
+        self.assertIn("6–18 значимых слов", prompt)
+        self.assertIn("Не используй after:, before:, site:", prompt)
+        self.assertNotIn("предпочтительная retrieval-подсказка: after:", prompt)
         self.assertIn("API domain filter отсутствует", prompt)
 
     def test_generic_other_does_not_close_safety_policy_region_gap(self):
