@@ -190,7 +190,7 @@ chains. Для `general_coverage_gaps` уже существует authoritative
 filter: это авторитетный last-mile sweep, поэтому он не должен вручную строить
 `site:foo OR site:bar ...`.
 
-Технически неполный audit блокирует Image API, commit и deploy. Полностью
+Любой технически неполный audit блокирует Image API, commit и deploy. Полностью
 доказанный zero-pool является штатным успешным `no-publish`, а не ошибкой.
 Technical partial/error audits remain red and fail closed. `recall sentinel v7`
 остаётся частью доказательства полного zero-pool.
