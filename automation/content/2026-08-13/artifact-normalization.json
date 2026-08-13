@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "artifact_dir": "automation/preview/2026-08-13",
+  "changed_files": [
+    "run-info.json"
+  ],
+  "changes": [
+    {
+      "file": "run-info.json",
+      "field": "$.pipeline",
+      "from": "editorial_from_saved_research",
+      "to": "primary_recall_v2_then_editorial"
+    },
+    {
+      "file": "run-info.json",
+      "field": "$.research.settings.source",
+      "from": "saved_fixture",
+      "to": "trusted_runtime_primary_recall"
+    }
+  ],
+  "removed_stale_validation": false
+}

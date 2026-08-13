@@ -1,0 +1,279 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-13",
+  "search_window": {
+    "start_at": "2026-08-11T09:41:12+03:00",
+    "end_at": "2026-08-13T02:58:08+03:00",
+    "latest_archive_at": "2026-08-12T09:41:12+03:00",
+    "start_date": "2026-08-11",
+    "end_date": "2026-08-13",
+    "latest_archive_date": "2026-08-12"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Mindgard привлекла $30 млн в раунде Series A для защиты ИИ-систем",
+      "organization": "Mindgard",
+      "published_date": "2026-08-12",
+      "published_at": "2026-08-12T09:24:00-04:00",
+      "time_precision": "datetime",
+      "topic": "AI security и автоматизированный red teaming моделей, агентов и ИИ-приложений",
+      "event_type": "funding",
+      "keywords": [
+        "Mindgard",
+        "Series A",
+        "AI security",
+        "red teaming",
+        "AI agents",
+        "runtime protection"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "Mindgard Raises $30 Million to Protect AI Systems",
+        "publisher": "SecurityWeek",
+        "url": "https://www.securityweek.com/mindgard-raises-30-million-to-protect-ai-systems/"
+      },
+      "supporting_sources": [],
+      "event_summary": "AI-security стартап Mindgard объявил о привлечении $30 млн в Series A. Компания развивает автоматизированную платформу для выявления и отработки рисков в ИИ-моделях, агентах и приложениях; средства направят на масштабирование продукта и команд.",
+      "verified_facts": [
+        "SecurityWeek датирует публикацию 12 августа 2026 года, 9:24 AM ET.",
+        "Mindgard сообщил о Series A на $30 млн; лид-инвестор — Album VC.",
+        "Компания описывает продукт как платформу автоматизированной оценки безопасности и red teaming ИИ-систем.",
+        "Mindgard заявляет, что ранее обнаружил более 150 уязвимостей в популярных ИИ-продуктах; это утверждение компании, а не независимо подтверждённая оценка."
+      ],
+      "significance": "Заметный раунд в быстро формирующемся сегменте защиты агентных и генеративных ИИ-систем. Сам по себе размер финансирования умеренный для глобальной ИИ-повестки, но событие поддерживает самостоятельный тренд коммерциализации инструментов AI security.",
+      "significance_score": 5,
+      "limitations": "Подтверждение в текущем проходе основано на одном отраслевом источнике; технические заявления компании о числе найденных уязвимостей не проверялись по первичным disclosure-материалам.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет сюжета о Mindgard или данном раунде.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата, сумма, инвесторы и назначение финансирования прямо указаны в открытом материале SecurityWeek; публикация попадает в effective window.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Публикация и объявление датированы 12 августа 2026 года и не найдены среди архивных сюжетов.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является судебным или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-кандидатам.",
+      "id": "cand-001"
+    },
+    {
+      "title": "CoreWeave сообщила о выручке выше ожиданий и более умеренном убытке на фоне ускорения спроса на AI-cloud",
+      "organization": "CoreWeave",
+      "published_date": "2026-08-12",
+      "published_at": "2026-08-12T05:20:56+00:00",
+      "time_precision": "datetime",
+      "topic": "финансовые результаты AI-cloud-провайдера и спрос на вычислительную инфраструктуру Nvidia",
+      "event_type": "quarterly earnings",
+      "keywords": [
+        "CoreWeave",
+        "AI cloud",
+        "Nvidia GPUs",
+        "data centers",
+        "earnings",
+        "inference and training compute"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "Wall Street rises near a record as AI stocks climb and worries about inflation ease a bit",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/stocks-markets-rates-trump-iran-chips-db541ced9f928f993bd3a17958a3deaa"
+      },
+      "supporting_sources": [],
+      "event_summary": "CoreWeave отчиталась о выручке за последний квартал выше ожиданий аналитиков и о менее значительном убытке; CEO Майкл Интратор заявил об ускорении спроса со стороны крупных компаний, внедряющих ИИ. После отчёта акции компании выросли на 19,3%.",
+      "verified_facts": [
+        "AP сообщило, что CoreWeave превзошла ожидания аналитиков по квартальной выручке.",
+        "AP сообщило о менее значительном квартальном убытке CoreWeave, чем ожидалось.",
+        "По данным AP, CEO Майкл Интратор связал динамику со ускорением спроса на ИИ со стороны крупных компаний.",
+        "CoreWeave предоставляет клиентам облачный доступ к AI-чипам Nvidia."
+      ],
+      "significance": "Это свежий независимый индикатор коммерческого спроса на GPU-облака и окупаемости инфраструктуры ИИ у одного из заметных специализированных провайдеров. Событие дополняет, а не дублирует уже опубликованные новости о финансировании Nvidia и сделке Anthropic—Riot.",
+      "significance_score": 5,
+      "limitations": "Первичный доступный материал AP приводит относительную характеристику результатов и реакцию рынка, но не содержит точных показателей выручки, убытка и прогноза CoreWeave; перед публикацией стоит сверить их с отчётом компании.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном недавнем архиве нет отдельной опубликованной истории о квартальном отчёте CoreWeave.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Независимый источник AP опубликован внутри эффективного окна и прямо связывает квартальный отчёт CoreWeave с превышением ожиданий, сокращением убытка и ростом спроса на AI-cloud.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Квартальный отчёт и рыночная реакция относятся к 12 августа 2026 года и не являются повторной публикацией архивного сюжета.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Юридического или регуляторного события нет.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity: это деловое инфраструктурное событие.",
+      "id": "cand-002"
+    },
+    {
+      "title": "Babylon Bee оспорила в суде Нью-Мексико требования маркировать ИИ-сгенерированную политическую сатиру",
+      "organization": "The Babylon Bee; New Mexico State Ethics Commission",
+      "published_date": "2026-08-11",
+      "published_at": "2026-08-11T18:58:00Z",
+      "time_precision": "datetime",
+      "topic": "конституционность обязательной маркировки AI-generated deceptive media в политической рекламе",
+      "event_type": "lawsuit filed",
+      "keywords": [
+        "AI deepfakes",
+        "political satire",
+        "disclosure requirement",
+        "First Amendment",
+        "New Mexico",
+        "election law"
+      ],
+      "geography": "world",
+      "category": "legal",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "Babylon Bee Sues to Stop New Mexico’s AI Political Satire Law",
+        "publisher": "Bloomberg Law",
+        "url": "https://news.bloomberglaw.com/litigation/babylon-bee-sues-to-stop-new-mexicos-ai-political-satire-law"
+      },
+      "supporting_sources": [],
+      "event_summary": "The Babylon Bee 11 августа подала в федеральный суд Нью-Мексико иск с требованием заблокировать применение нормы штата, обязывающей сопровождать политические сообщения с «существенно вводящими в заблуждение» манипулированными или сгенерированными ИИ материалами дисклеймером. Истец утверждает, что применение требования к политической пародии и сатире нарушает Первую поправку.",
+      "verified_facts": [
+        "Bloomberg Law указывает, что жалоба подана 11 августа 2026 года в Окружной суд США по округу Нью-Мексико.",
+        "Дело обозначено как The Babylon Bee LLC v. Castillo, D.N.M., No. 26-cv-2628.",
+        "Оспариваемая норма Нью-Мексико требует, чтобы охватываемое сообщение содержало указание, что оно было манипулировано или сгенерировано искусственным интеллектом.",
+        "Представитель комиссии заявил Bloomberg Law, что комиссия ранее не предпринимала действий по принудительному применению требования в отношении политической пародии или сатиры."
+      ],
+      "significance": "Это потенциально значимый тест конституционности региональных правил маркировки AI/deepfake-контента в избирательной коммуникации. Исход может влиять на реализуемость аналогичных disclosure-режимов, особенно учитывая упомянутый Bloomberg Law январский успех Babylon Bee в споре с гавайским законом о предвыборных deepfake.",
+      "significance_score": 4,
+      "limitations": "Это старт судебного спора, а не судебное решение; факты и правовые доводы изложены по сообщению Bloomberg Law и позиции сторон. Масштаб воздействия зависит от дальнейших процессуальных решений.",
+      "archive_status": "none",
+      "archive_reason": "В доступном недавнем архиве нет сюжета об этом иске или о новом судебном оспаривании закона Нью-Мексико о маркировке ИИ-материалов.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Первичный материал Bloomberg Law опубликован в пределах окна и содержит точный timestamp, номер дела, дату жалобы, предмет требования и позицию регулятора.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Иск подан и опубликован 11 августа 2026 года, в пределах эффективного редакционного окна; это не перепечатка архивного сюжета.",
+      "legal_scale": "major",
+      "legal_scale_reason": "Иск непосредственно проверяет допустимость обязательной маркировки AI-generated политического контента по Первой поправке и может создать важный прецедент для регулирования election deepfakes.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не является curiosity-сюжетом: кандидат относится к основной тематике правового регулирования ИИ.",
+      "id": "cand-003"
+    },
+    {
+      "title": "CloudSEK оценила последствия supply-chain атаки на LiteLLM: затронуты более 2 500 организаций и 430 000 CI/CD-пайплайнов",
+      "organization": "LiteLLM; CloudSEK; Aqua Security / Trivy",
+      "published_date": "2026-08-12",
+      "published_at": "2026-08-12T05:55:00-04:00",
+      "time_precision": "datetime",
+      "topic": "безопасность цепочки поставок ИИ-инфраструктуры и компрометация ключей доступа",
+      "event_type": "material impact assessment",
+      "keywords": [
+        "LiteLLM",
+        "supply chain",
+        "Trivy",
+        "CI/CD",
+        "AI provider keys",
+        "CloudSEK",
+        "malware",
+        "credentials"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "Over 2,500 Organizations Impacted by LiteLLM Supply Chain Attack",
+        "publisher": "SecurityWeek",
+        "url": "https://www.securityweek.com/over-2500-organizations-impacted-by-litellm-supply-chain-attack/"
+      },
+      "supporting_sources": [
+        {
+          "title": "CloudSEK exposure list and reconstructed exposure assessment",
+          "publisher": "CloudSEK",
+          "url": "https://exposure.cloudsek.com/"
+        }
+      ],
+      "event_summary": "SecurityWeek со ссылкой на исследование CloudSEK сообщила новую оценку масштаба ранее раскрытой цепочной атаки: скомпрометированные версии LiteLLM попали в PyPI после компрометации Trivy и, по реконструкции исследователей, могли затронуть более 2 500 организаций и около 434 000 CI/CD-пайплайнов.",
+      "verified_facts": [
+        "Материал SecurityWeek опубликован 12 августа 2026 года в 05:55 ET, то есть внутри эффективного редакционного окна.",
+        "По данным CloudSEK, скомпрометированными были версии LiteLLM 1.82.7 и 1.82.8, выпущенные после автоматической установки заражённой версии Trivy в CI-пайплайне LiteLLM.",
+        "SecurityWeek сообщает, что вредоносный код выполнялся при каждом запуске Python на системах с установленными пакетами и мог получить доступ к секретам, затронутым LiteLLM.",
+        "Оценка 2 500+ организаций и 434 000 пайплайнов описывает реконструированную экспозицию, а не подтверждённую компрометацию каждой организации."
+      ],
+      "significance": "Это заметное уточнение масштаба атаки на широко используемый прокси и библиотеку для доступа к LLM: инцидент связывает компрометацию AI-интеграционного слоя с рисками утечки облачных ключей, токенов, секретов CI/CD и ключей AI-провайдеров в крупных организациях.",
+      "significance_score": 5,
+      "limitations": "Оценка воздействия основана на реконструкции CloudSEK; сам источник прямо предупреждает, что она не доказывает успешную компрометацию или кражу секретов у каждой организации из списка. Первичная атака произошла ранее, а в окне опубликована новая оценка её охвата.",
+      "archive_status": "update",
+      "archive_reason": "В архиве нет отдельного сюжета о LiteLLM/Trivy. Это не новый факт о самой первоначальной атаке, а существенное новое количественное уточнение её масштаба и возможных последствий для AI-инфраструктуры.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Дата, время публикации, механизм компрометации, версии пакетов и оговорка о характере оценок подтверждены открытым материалом SecurityWeek; источник ссылается на расчёты CloudSEK.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Публикация в окне содержит новый самостоятельно значимый масштабный анализ ранее известной атаки, включая количественную оценку числа организаций и CI/CD-пайплайнов.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Судебного или регуляторного события нет.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity: это практический security-инцидент с потенциально широкими последствиями для корпоративных AI- и DevOps-систем.",
+      "id": "cand-004"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=4, validated unique=4, final candidates=4. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений."
+}

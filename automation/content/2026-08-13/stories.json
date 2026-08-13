@@ -1,0 +1,124 @@
+[
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Обновление: CloudSEK оценила последствия supply-chain атаки на LiteLLM в более чем 2 500 организациях",
+    "organization": "LiteLLM; CloudSEK; Aqua Security / Trivy",
+    "topic": "безопасность цепочки поставок ИИ-инфраструктуры и компрометация ключей доступа",
+    "event_type": "material impact assessment",
+    "status": "update",
+    "summary": "SecurityWeek со ссылкой на исследование CloudSEK сообщила новую оценку масштаба ранее раскрытой цепочной атаки: скомпрометированные версии LiteLLM попали в PyPI после компрометации Trivy и, по реконструкции исследователей, могли затронуть более 2 500 организаций и около 434 000 CI/CD-пайплайнов.",
+    "published_at": "2026-08-12T05:55:00-04:00",
+    "published_date": "2026-08-12",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Over 2,500 Organizations Impacted by LiteLLM Supply Chain Attack",
+        "publisher": "SecurityWeek",
+        "url": "https://www.securityweek.com/over-2500-organizations-impacted-by-litellm-supply-chain-attack/"
+      }
+    ],
+    "keywords": [
+      "LiteLLM",
+      "supply chain",
+      "Trivy",
+      "CI/CD",
+      "AI provider keys",
+      "CloudSEK",
+      "malware",
+      "credentials"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Mindgard привлекла $30 млн на защиту моделей, агентов и ИИ-приложений",
+    "organization": "Mindgard",
+    "topic": "AI security и автоматизированный red teaming моделей, агентов и ИИ-приложений",
+    "event_type": "funding",
+    "status": "new",
+    "summary": "AI-security стартап Mindgard объявил о привлечении $30 млн в Series A. Компания развивает автоматизированную платформу для выявления и отработки рисков в ИИ-моделях, агентах и приложениях; средства направят на масштабирование продукта и команд.",
+    "published_at": "2026-08-12T09:24:00-04:00",
+    "published_date": "2026-08-12",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Mindgard Raises $30 Million to Protect AI Systems",
+        "publisher": "SecurityWeek",
+        "url": "https://www.securityweek.com/mindgard-raises-30-million-to-protect-ai-systems/"
+      }
+    ],
+    "keywords": [
+      "Mindgard",
+      "Series A",
+      "AI security",
+      "red teaming",
+      "AI agents",
+      "runtime protection"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "CoreWeave сообщила о результатах выше ожиданий на фоне спроса на ИИ-облака",
+    "organization": "CoreWeave",
+    "topic": "финансовые результаты AI-cloud-провайдера и спрос на вычислительную инфраструктуру Nvidia",
+    "event_type": "quarterly earnings",
+    "status": "new",
+    "summary": "CoreWeave отчиталась о выручке за последний квартал выше ожиданий аналитиков и о менее значительном убытке; CEO Майкл Интратор заявил об ускорении спроса со стороны крупных компаний, внедряющих ИИ. После отчёта акции компании выросли на 19,3%.",
+    "published_at": "2026-08-12T05:20:56+00:00",
+    "published_date": "2026-08-12",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Wall Street rises near a record as AI stocks climb and worries about inflation ease a bit",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/stocks-markets-rates-trump-iran-chips-db541ced9f928f993bd3a17958a3deaa"
+      }
+    ],
+    "keywords": [
+      "CoreWeave",
+      "AI cloud",
+      "Nvidia GPUs",
+      "data centers",
+      "earnings",
+      "inference and training compute"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Babylon Bee оспорила закон Нью-Мексико о маркировке ИИ-политической сатиры",
+    "organization": "The Babylon Bee; New Mexico State Ethics Commission",
+    "topic": "конституционность обязательной маркировки AI-generated deceptive media в политической рекламе",
+    "event_type": "lawsuit filed",
+    "status": "new",
+    "summary": "The Babylon Bee 11 августа подала в федеральный суд Нью-Мексико иск с требованием заблокировать применение нормы штата, обязывающей сопровождать политические сообщения с «существенно вводящими в заблуждение» манипулированными или сгенерированными ИИ материалами дисклеймером. Истец утверждает, что применение требования к политической пародии и сатире нарушает Первую поправку.",
+    "published_at": "2026-08-11T18:58:00+00:00",
+    "published_date": "2026-08-11",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Babylon Bee Sues to Stop New Mexico’s AI Political Satire Law",
+        "publisher": "Bloomberg Law",
+        "url": "https://news.bloomberglaw.com/litigation/babylon-bee-sues-to-stop-new-mexicos-ai-political-satire-law"
+      }
+    ],
+    "keywords": [
+      "AI deepfakes",
+      "political satire",
+      "disclosure requirement",
+      "First Amendment",
+      "New Mexico",
+      "election law"
+    ],
+    "geography": "world",
+    "category": "legal"
+  }
+]
