@@ -26,7 +26,14 @@ def write_json(path: Path, payload: object) -> None:
 
 
 class FreshPrimaryArtifactNormalizationTests(unittest.TestCase):
-    def make_artifact(self, root: Path, *, agency_sources: list[str], other_sources: list[str] | None = None) -> Path:
+    def make_artifact(
+        self,
+        root: Path,
+        *,
+        agency_sources: list[str],
+        other_sources: list[str] | None = None,
+        with_search_window: bool = False,
+    ) -> Path:
         artifact = root / "artifact"
         artifact.mkdir()
         write_json(artifact / "digest.json", {"image_prompt": SAFE_PROMPT})
@@ -48,15 +55,23 @@ class FreshPrimaryArtifactNormalizationTests(unittest.TestCase):
             {
                 "direction_id": "major_agencies",
                 "web_search_calls_completed": 1,
+                "raw_candidates": [],
                 "api": {"consulted_sources": [{"url": url} for url in agency_sources]},
             },
             {
                 "direction_id": "global_breaking",
                 "web_search_calls_completed": 1,
+                "raw_candidates": [],
                 "api": {"consulted_sources": [{"url": url} for url in (other_sources or [])]},
             },
         ]
-        write_json(artifact / "primary-recall.json", {"directions": directions})
+        primary: dict[str, object] = {"directions": directions}
+        if with_search_window:
+            primary["search_window"] = {
+                "start_at": "2026-08-11T09:41:12+03:00",
+                "end_at": "2026-08-13T02:58:08+03:00",
+            }
+        write_json(artifact / "primary-recall.json", primary)
         return artifact
 
     def test_fresh_primary_metadata_is_not_left_as_saved_research(self):
@@ -99,6 +114,33 @@ class FreshPrimaryArtifactNormalizationTests(unittest.TestCase):
             with self.assertRaises(normalizer.NormalizationError) as ctx:
                 normalizer.normalize_artifact(artifact, artifact / "artifact-normalization.json")
             self.assertIn("меньше двух", str(ctx.exception))
+
+    def test_stale_agency_pages_do_not_count_as_fresh_source_health(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            artifact = self.make_artifact(
+                Path(tmp),
+                agency_sources=[
+                    "https://www.bloomberg.com/authors/EXAMPLE/example-author",
+                    "https://www.bloomberg.com/news/newsletters/2026-04-09/old-ai-newsletter",
+                ],
+                other_sources=["https://openai.com/index/example", "https://nvidia.com/example"],
+                with_search_window=True,
+            )
+            with self.assertRaises(normalizer.NormalizationError) as ctx:
+                normalizer.normalize_artifact(artifact, artifact / "artifact-normalization.json")
+            self.assertIn("свежего Reuters/AP/Bloomberg/FT", str(ctx.exception))
+
+    def test_current_dated_reuters_article_is_fresh_source_health_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            artifact = self.make_artifact(
+                Path(tmp),
+                agency_sources=[
+                    "https://www.reuters.com/technology/example-ai-story-2026-08-12/"
+                ],
+                other_sources=["https://openai.com/index/example"],
+                with_search_window=True,
+            )
+            normalizer.normalize_artifact(artifact, artifact / "artifact-normalization.json")
 
     def test_recovery_artifact_without_primary_report_keeps_saved_mode(self):
         with tempfile.TemporaryDirectory() as tmp:
