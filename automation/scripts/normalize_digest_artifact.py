@@ -45,7 +45,7 @@ SOURCE_ANCHOR_DIRECTIONS = (
     "major_agencies",
     "independent_missing_events",
 )
-URL_DATE_PATTERN = re.compile(r"/(20\d{2})-(\d{2})-(\d{2})(?:/|$)")
+URL_DATE_PATTERN = re.compile(r"(20\d{2})-(\d{2})-(\d{2})(?:/|$)")
 FRESH_PRIMARY_PIPELINE = "primary_recall_v2_then_editorial"
 
 
