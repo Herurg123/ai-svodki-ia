@@ -36,12 +36,17 @@ for _name in dir(_base):
 _policy = _base._policy
 _BASE_EXECUTE_AUDIT_PLAN = _base._BASE_EXECUTE_AUDIT_PLAN
 _LAST_RECALL_SENTINEL: dict[str, Any] | None = None
+_LAST_AGENCY_RESCUE: dict[str, Any] | None = None
 
 RECALL_SENTINEL_STRATEGY = "high_signal_recall_sentinel"
 TEMPORAL_ANCHOR_VERSION = 1
 RECALL_SENTINEL_VERSION = 8
 RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ()
 RECALL_SENTINEL_MINIMUM_BUDGET = 7
+AGENCY_RESCUE_STRATEGY = "fresh_agency_rescue"
+AGENCY_RESCUE_VERSION = 1
+AGENCY_RESCUE_DOMAINS: tuple[str, ...] = ("reuters.com", "apnews.com")
+SOURCE_HEALTH_CONTRACT_VERSION = 1
 
 # Transport remains implemented by the preserved runtime base. Keep this
 # literal here because the repository contract verifies transient retries at
@@ -52,6 +57,11 @@ def _set_last_recall_sentinel(value: dict[str, Any] | None) -> None:
     global _LAST_RECALL_SENTINEL
     _LAST_RECALL_SENTINEL = value
     _base._LAST_RECALL_SENTINEL = value
+
+
+def _set_last_agency_rescue(value: dict[str, Any] | None) -> None:
+    global _LAST_AGENCY_RESCUE
+    _LAST_AGENCY_RESCUE = value
 
 
 def _pool_total(payload: dict[str, Any]) -> int | None:
@@ -120,7 +130,15 @@ def completed_prior_audit(payload: Any) -> bool:
     )
     if not complete:
         return False
-    if _pool_total(payload) == 0 and not _completed_sentinel_evidence(payload):
+    pool_total = _pool_total(payload)
+    if pool_total == 0 and not _completed_sentinel_evidence(payload):
+        return False
+    if (
+        isinstance(pool_total, int)
+        and pool_total > 0
+        and payload.get("source_health_contract_version")
+        != SOURCE_HEALTH_CONTRACT_VERSION
+    ):
         return False
     return True
 
@@ -133,6 +151,14 @@ def _is_stale_sentinel_attempt(item: Any) -> bool:
     )
 
 
+def _is_supplemental_attempt(item: Any) -> bool:
+    return bool(
+        isinstance(item, dict)
+        and item.get("search_strategy")
+        in {RECALL_SENTINEL_STRATEGY, AGENCY_RESCUE_STRATEGY}
+    )
+
+
 def _rebuild_directions(
     prior_directions: Any,
     attempts: list[dict[str, Any]],
@@ -140,7 +166,7 @@ def _rebuild_directions(
     latest: dict[str, dict[str, Any]] = {}
     for item in attempts:
         direction_id = item.get("direction_id")
-        if direction_id not in AUDIT_DIRECTION_IDS:
+        if direction_id not in AUDIT_DIRECTION_IDS or _is_supplemental_attempt(item):
             continue
         previous = latest.get(str(direction_id))
         if previous is None or int(item.get("attempt", 0) or 0) >= int(
@@ -155,6 +181,7 @@ def _rebuild_directions(
                 isinstance(item, dict)
                 and item.get("direction_id") in AUDIT_DIRECTION_IDS
                 and not _is_stale_sentinel_attempt(item)
+                and not _is_supplemental_attempt(item)
             ):
                 fallback[str(item["direction_id"])] = copy.deepcopy(item)
 
@@ -317,6 +344,203 @@ verification_status=verified и freshness_status new_event/material_update. Ес
 должен быть строго `general_coverage_gaps`. Верни только JSON по схеме."""
 
 
+
+def build_agency_rescue_prompt(
+    *,
+    search_window: dict[str, Any],
+    existing_candidates: list[Any],
+    archive: dict[str, Any],
+) -> str:
+    existing = [
+        {
+            "title": item.get("title"),
+            "organization": item.get("organization"),
+            "primary_url": (
+                item.get("primary_source", {}).get("url")
+                if isinstance(item.get("primary_source"), dict)
+                else None
+            ),
+        }
+        for item in existing_candidates
+        if isinstance(item, dict)
+    ]
+    start_at = str(search_window.get("start_at") or "")
+    end_at = str(search_window.get("end_at") or "")
+    required_query = "latest major artificial intelligence news"
+    return f"""Ты — дополнительный fresh-agency rescue редакции «ИИ-сводки».
+
+Строгое редакционное окно: {start_at} → {end_at}
+Авторитетное текущее время: {end_at}.
+Идентификатор направления: general_coverage_gaps
+Версия rescue: {AGENCY_RESCUE_VERSION}
+
+Primary, Hybrid и шесть обязательных Coverage-проходов уже дали ненулевой пул,
+но среди текущих валидных кандидатов нет свежего Reuters/AP/Bloomberg/FT
+материала. Свободен ровно один, седьмой Coverage search operation. Его задача —
+не переписать существующие сюжеты, а найти до трёх самостоятельных крупных
+ИИ-событий из Reuters/AP, которых НЕТ в текущем пуле. API domain filter уже
+ограничен Reuters и AP.
+
+Выполни РОВНО ОДИН Web Search. Фактический query должен быть точно:
+`{required_query}`
+
+Query намеренно date-free; свежесть доказывается только фактической датой
+источника внутри editorial window. Не возвращай уже имеющийся сюжет только ради
+второго подтверждения: downstream dedupe его отвергнет и source-health не будет
+починен. Ищи другое крупное событие: модель/продукт, M&A/funding, chips/cloud/data
+centers, security/safety, regulation/legal, Китай/Азия, Россия, research или
+robotics. Для include/consider обязательны verified и freshness_status
+new_event/material_update. Не добивай количество слабым материалом.
+
+Текущий пул:
+{json.dumps(existing, ensure_ascii=False, indent=2)}
+
+Недавний архив:
+{json.dumps(_base._compact_recent_archive(archive), ensure_ascii=False, indent=2)}
+
+Если нового достойного события нет, верни пустой `candidates` и
+status=complete_with_gaps. `direction_id` строго `general_coverage_gaps`. Верни
+только JSON по схеме."""
+
+
+def _existing_agency_rescue(plan: dict[str, Any]) -> dict[str, Any] | None:
+    attempts = plan.get("attempts")
+    if not isinstance(attempts, list):
+        return None
+    return next(
+        (
+            item
+            for item in reversed(attempts)
+            if isinstance(item, dict)
+            and item.get("search_strategy") == AGENCY_RESCUE_STRATEGY
+            and int(item.get("agency_rescue_version", 0) or 0) == AGENCY_RESCUE_VERSION
+            and item.get("status") in {"checked", "checked_with_gaps"}
+        ),
+        None,
+    )
+
+
+def _normalize_agency_rescue_candidate(candidate: dict[str, Any]) -> dict[str, Any]:
+    normalized = copy.deepcopy(candidate)
+    normalized["audit_direction"] = "agency_rescue"
+    if normalized.get("category") != "legal":
+        normalized["legal_scale"] = "not_applicable"
+        normalized["legal_scale_reason"] = ""
+    return normalized
+
+
+def _run_agency_rescue(
+    *,
+    plan: dict[str, Any],
+    budget: dict[str, Any],
+    api_key: str,
+    model: str,
+    search_window: dict[str, Any],
+    existing_candidates: list[Any],
+    archive: dict[str, Any],
+    maximum_web_search_calls: int,
+) -> dict[str, Any]:
+    prompt = build_agency_rescue_prompt(
+        search_window=search_window,
+        existing_candidates=existing_candidates,
+        archive=archive,
+    )
+    try:
+        _base.run_audit_request = globals()["run_audit_request"]
+        result = _base._policy_audit_request(
+            api_key=api_key,
+            model=model,
+            prompt=prompt,
+            maximum_web_search_calls=1,
+            allowed_domains=AGENCY_RESCUE_DOMAINS,
+        )
+        payload = result.payload or {}
+        if payload.get("status") not in {"complete", "complete_with_gaps"}:
+            raise RuntimeError(
+                "Fresh-agency rescue вернул непригодный status="
+                + repr(payload.get("status"))
+            )
+    except Exception as exc:
+        _set_last_agency_rescue(
+            {
+                "status": "error",
+                "version": AGENCY_RESCUE_VERSION,
+                "search_strategy": AGENCY_RESCUE_STRATEGY,
+                "allowed_domains": list(AGENCY_RESCUE_DOMAINS),
+                "error": f"{type(exc).__name__}: {exc}",
+            }
+        )
+        plan["audit_status"] = "partial"
+        budget["stop_reason"] = "agency_rescue_incomplete"
+        return plan
+
+    metadata = result.metadata
+    raw_candidates = payload.get("candidates")
+    accepted_for_pass = [
+        _normalize_agency_rescue_candidate(item)
+        for item in raw_candidates
+        if isinstance(item, dict)
+    ] if isinstance(raw_candidates, list) else []
+    prior_general_attempts = [
+        int(item.get("attempt", 0) or 0)
+        for item in plan.get("attempts", [])
+        if isinstance(item, dict)
+        and item.get("direction_id") == "general_coverage_gaps"
+    ]
+    attempt_number = max(prior_general_attempts or [0]) + 1
+    payload_status = str(payload.get("status"))
+    record = {
+        "direction_id": "general_coverage_gaps",
+        "label": "Fresh Reuters/AP source-health rescue v1",
+        "required": True,
+        "attempt": attempt_number,
+        "search_strategy": AGENCY_RESCUE_STRATEGY,
+        "agency_rescue_version": AGENCY_RESCUE_VERSION,
+        "allowed_domains": list(AGENCY_RESCUE_DOMAINS),
+        "prompt": prompt,
+        "status": "checked" if payload_status == "complete" else "checked_with_gaps",
+        "outcome": "candidates_found" if accepted_for_pass else "no_news_found",
+        "actual_queries": list(metadata.get("actual_queries") or []),
+        "sources": list(metadata.get("consulted_sources") or []),
+        "candidate_count": len(accepted_for_pass),
+        "candidates": accepted_for_pass,
+        "rejections": list(payload.get("rejections") or []),
+        "notes": payload.get("notes"),
+        "api": metadata,
+        "error": None,
+    }
+    plan.setdefault("attempts", []).append(record)
+    plan.setdefault("candidates", []).extend(copy.deepcopy(accepted_for_pass))
+
+    completed = int(metadata.get("web_search_calls_completed", 0) or 0)
+    observed = int(metadata.get("web_search_call_items_total", 0) or 0)
+    budget["response_attempts"] = int(budget.get("response_attempts", 0) or 0) + 1
+    budget["observed_call_items"] = int(budget.get("observed_call_items", 0) or 0) + observed
+    budget["completed_calls"] = int(budget.get("completed_calls", 0) or 0) + completed
+    budget["remaining_calls"] = max(
+        0, maximum_web_search_calls - int(budget.get("completed_calls", 0) or 0)
+    )
+    budget["provider_overrun"] = bool(budget.get("provider_overrun")) or completed > 1
+    budget["exhausted"] = False
+    budget["search_budget_exhausted"] = False
+    budget["response_attempt_limit_exhausted"] = False
+    budget["stop_reason"] = "agency_rescue_completed"
+    plan["api"] = _policy._aggregate_api_metadata(plan.get("attempts", []))
+    _set_last_agency_rescue(
+        {
+            "status": "complete" if payload_status == "complete" else "complete_with_gaps",
+            "version": AGENCY_RESCUE_VERSION,
+            "search_strategy": AGENCY_RESCUE_STRATEGY,
+            "allowed_domains": list(AGENCY_RESCUE_DOMAINS),
+            "attempt": attempt_number,
+            "actual_queries": record["actual_queries"],
+            "candidate_count": len(accepted_for_pass),
+            "sources": record["sources"],
+        }
+    )
+    return plan
+
+
 def _existing_recall_sentinel(plan: dict[str, Any]) -> dict[str, Any] | None:
     attempts = plan.get("attempts")
     if not isinstance(attempts, list):
@@ -384,6 +608,21 @@ def execute_audit_plan(
         )
         return plan
 
+    existing_rescue = _existing_agency_rescue(plan)
+    if existing_rescue is not None:
+        _set_last_agency_rescue(
+            {
+                "status": "reused",
+                "version": AGENCY_RESCUE_VERSION,
+                "search_strategy": AGENCY_RESCUE_STRATEGY,
+                "allowed_domains": list(AGENCY_RESCUE_DOMAINS),
+                "attempt": existing_rescue.get("attempt"),
+                "actual_queries": existing_rescue.get("actual_queries", []),
+                "candidate_count": existing_rescue.get("candidate_count", 0),
+            }
+        )
+        return plan
+
     budget = plan.get("search_budget")
     if not isinstance(budget, dict):
         return plan
@@ -395,6 +634,30 @@ def execute_audit_plan(
         existing_candidates
     ) + _base._eligible_candidate_count(plan.get("candidates"))
     remaining_calls = int(budget.get("remaining_calls", 0) or 0)
+    combined_candidates = list(existing_candidates) + list(plan.get("candidates") or [])
+    agency_rescue_needed = bool(
+        final_eligible > 0
+        and not _policy._candidates_have_fresh_agency_source(
+            combined_candidates, search_window
+        )
+    )
+    if (
+        maximum_web_search_calls >= RECALL_SENTINEL_MINIMUM_BUDGET
+        and mandatory_complete
+        and agency_rescue_needed
+        and remaining_calls >= 1
+    ):
+        return _run_agency_rescue(
+            plan=plan,
+            budget=budget,
+            api_key=api_key,
+            model=model,
+            search_window=search_window,
+            existing_candidates=combined_candidates,
+            archive=archive,
+            maximum_web_search_calls=maximum_web_search_calls,
+        )
+
     if not (
         maximum_web_search_calls >= RECALL_SENTINEL_MINIMUM_BUDGET
         and mandatory_complete
@@ -585,12 +848,38 @@ def _promote_completed_zero_pool_editorial_stop(report_path: Path | None) -> boo
     write_json(report_path, payload)
     return True
 
+def _finalize_source_health_report(report_path: Path | None) -> None:
+    if report_path is None or not report_path.is_file():
+        return
+    payload = read_json(report_path)
+    if not isinstance(payload, dict):
+        return
+    payload["source_health_contract_version"] = SOURCE_HEALTH_CONTRACT_VERSION
+    if _LAST_AGENCY_RESCUE is not None:
+        payload["agency_rescue"] = copy.deepcopy(_LAST_AGENCY_RESCUE)
+        status = str(_LAST_AGENCY_RESCUE.get("status") or "")
+        if status in {"complete", "complete_with_gaps", "reused"}:
+            payload["audit_notes"] = (
+                "Шесть обязательных Coverage-проходов завершены; свободный "
+                "седьмой search operation использован как Reuters/AP fresh-agency "
+                "rescue для ненулевого пула без свежего agency-кандидата."
+            )
+        elif status == "error":
+            payload["audit_notes"] = (
+                "Шесть обязательных Coverage-проходов завершены, но требуемый "
+                "fresh-agency rescue технически не завершён; публикация заблокирована."
+            )
+    write_json(report_path, payload)
+
+
 def main() -> int:
     _set_last_recall_sentinel(None)
+    _set_last_agency_rescue(None)
     _sync_policy_overrides()
     result = int(_base.main())
     # _base.main() resets and then populates the shared sentinel diagnostics.
     _set_last_recall_sentinel(_base._LAST_RECALL_SENTINEL)
+    _finalize_source_health_report(_base._report_path())
     if result != 0 and _promote_completed_zero_pool_editorial_stop(_base._report_path()):
         return 0
     return result

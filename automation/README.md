@@ -86,7 +86,7 @@ Responses-output ceiling для каждого Primary pass равен **6000 to
 Фиксированная матрица:
 
 1. `global_breaking` — широкий мировой discovery;
-2. `major_agencies` — Reuters, AP, Bloomberg, FT;
+2. `major_agencies` — дополнительный high-signal sweep по Bloomberg и Financial Times;
 3. `models_products_agents` — модели, продукты, агенты, research;
 4. `infrastructure_chips_cloud` — чипы, дата-центры, cloud, energy, inference;
 5. `business_investment_partnerships` — инвестиции, M&A, financing,
@@ -440,3 +440,23 @@ ranking hint: фактическая дата/timestamp источника по-
 
 
 Source-health после перехода на source-neutral routing проверяет свежую Reuters/AP/Bloomberg/FT evidence по **всей 12-pass Primary matrix**, а не только в `global_breaking`/`major_agencies`/`independent_missing_events`: тематический pass вправе первым обнаружить сильный agency-материал. При этом `major_agencies` всё равно обязан завершить свою search operation и иметь хотя бы один consulted source, а общий anti-junk gate по источникам не ослабляется.
+
+### Fresh-agency source-health rescue
+
+Ненулевой candidate pool не считается автоматически здоровым только потому, что
+он содержит достаточно сюжетов. Если после Primary/Hybrid и шести обязательных
+Coverage-направлений в текущем валидном пуле нет ни одного свежего
+Reuters/AP/Bloomberg/FT-кандидата, свободный **седьмой** Coverage search operation
+используется как bounded `fresh_agency_rescue`: один date-free запрос
+`latest major artificial intelligence news` с API domain filter только на
+Reuters + AP. Bloomberg/FT уже имеют отдельный `major_agencies` шанс в Primary.
+Rescue ищет новое самостоятельное событие, отсутствующее в текущем пуле; простой
+дубликат существующего сюжета не считается исправлением source-health.
+
+Для нулевого пула тот же седьмой слот по-прежнему занят source-neutral recall
+sentinel v8. Эти два режима взаимоисключающие, поэтому общий worst-case бюджет не
+растёт: **12 Primary + до 4 Hybrid + до 7 Coverage = максимум 23 search
+operations**. Технический сбой обязательного rescue остаётся fail-closed.
+Normalizer принимает свежую agency evidence либо из Primary diagnostics, либо из
+финального validated candidate pool после mandatory Coverage; он не требует,
+чтобы найденный агентский материал возник именно в Primary-слое.

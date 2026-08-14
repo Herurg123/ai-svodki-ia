@@ -8,6 +8,7 @@ import re
 import shutil
 import subprocess
 import sys
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
@@ -278,6 +279,73 @@ AUDIT_DIRECTIONS: tuple[dict[str, Any], ...] = (
 AUDIT_DIRECTION_IDS = tuple(item["id"] for item in AUDIT_DIRECTIONS)
 MINIMUM_REQUIRED_AUDIT_CALLS = len(AUDIT_DIRECTIONS)
 DEFAULT_MAXIMUM_AUDIT_CALLS = 7
+
+AGENCY_SOURCE_HEALTH_DOMAINS: tuple[str, ...] = (
+    "reuters.com",
+    "apnews.com",
+    "bloomberg.com",
+    "ft.com",
+)
+
+
+def _host_matches_domain(url: str, domains: tuple[str, ...]) -> bool:
+    try:
+        host = (urlsplit(url).hostname or "").casefold().strip(".")
+    except ValueError:
+        return False
+    return any(host == domain or host.endswith("." + domain) for domain in domains)
+
+
+def _search_window_days(search_window: dict[str, Any]) -> tuple[date, date] | None:
+    try:
+        start = datetime.fromisoformat(
+            str(search_window.get("start_at") or "").replace("Z", "+00:00")
+        )
+        end = datetime.fromisoformat(
+            str(search_window.get("end_at") or "").replace("Z", "+00:00")
+        )
+    except ValueError:
+        return None
+    if start.tzinfo is None or end.tzinfo is None or end < start:
+        return None
+    return start.date(), end.date()
+
+
+def _candidate_has_fresh_agency_source(
+    candidate: Any, search_window: dict[str, Any]
+) -> bool:
+    if not isinstance(candidate, dict):
+        return False
+    if candidate.get("recommendation") == "exclude":
+        return False
+    window = _search_window_days(search_window)
+    if window is None:
+        return False
+    try:
+        published = date.fromisoformat(str(candidate.get("published_date") or ""))
+    except ValueError:
+        return False
+    if not (window[0] <= published <= window[1]):
+        return False
+    source = candidate.get("primary_source")
+    return bool(
+        isinstance(source, dict)
+        and isinstance(source.get("url"), str)
+        and _host_matches_domain(source["url"], AGENCY_SOURCE_HEALTH_DOMAINS)
+    )
+
+
+def _candidates_have_fresh_agency_source(
+    candidates: Any, search_window: dict[str, Any]
+) -> bool:
+    return bool(
+        isinstance(candidates, list)
+        and any(
+            _candidate_has_fresh_agency_source(item, search_window)
+            for item in candidates
+        )
+    )
+
 
 AUDIT_REJECTION_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -1488,10 +1556,22 @@ def main() -> int:
         )
         candidate_pool = report["candidate_pool_before"]
 
+        search_window = research.get("search_window")
+        if not isinstance(search_window, dict):
+            raise RuntimeError("candidates.json не содержит search_window")
+        source_health_rescue_needed = bool(
+            candidate_pool["total"] > 0
+            and not _candidates_have_fresh_agency_source(
+                research["candidates"], search_window
+            )
+        )
+        report["source_health_rescue_needed"] = source_health_rescue_needed
+
         if (
             artifact_mode == "complete"
             and before["publication_allowed"]
             and before["usual_target_met"]
+            and not source_health_rescue_needed
         ):
             apply_short_edition_marker(args.artifact_dir, short_edition=False)
             report["status"] = "ok"
@@ -1506,6 +1586,7 @@ def main() -> int:
         report["audit_needed"] = (
             not before["usual_target_met"]
             or candidate_pool["total"] < args.usual_total
+            or source_health_rescue_needed
         )
         additional_candidates: list[Any] = []
         prior_attempted = prior_audit_attempted(prior_report)

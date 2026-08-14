@@ -172,6 +172,24 @@ def _candidate_has_fresh_agency_evidence(
     return _host_matches(_hostname(source["url"]), AGENCY_DISCOVERY_DOMAINS)
 
 
+def _artifact_has_fresh_agency_evidence(
+    artifact_dir: Path, *, start_day: date, end_day: date
+) -> bool:
+    candidates_path = artifact_dir / "candidates.json"
+    if not candidates_path.is_file():
+        return False
+    payload = read_json(candidates_path)
+    candidates = payload.get("candidates") if isinstance(payload, dict) else payload
+    if not isinstance(candidates, list):
+        return False
+    return any(
+        _candidate_has_fresh_agency_evidence(
+            candidate, start_day=start_day, end_day=end_day
+        )
+        for candidate in candidates
+    )
+
+
 def _direction_has_fresh_agency_evidence(
     direction: dict[str, Any], *, start_day: date, end_day: date
 ) -> bool:
@@ -310,16 +328,21 @@ def validate_primary_source_health(artifact_dir: Path) -> None:
     window_days = _primary_window_dates(primary)
     if window_days is not None:
         start_day, end_day = window_days
-        if not any(
+        primary_has_fresh_agency = any(
             _direction_has_fresh_agency_evidence(
                 item, start_day=start_day, end_day=end_day
             )
             for item in directions
             if isinstance(item, dict)
-        ):
+        )
+        final_pool_has_fresh_agency = _artifact_has_fresh_agency_evidence(
+            artifact_dir, start_day=start_day, end_day=end_day
+        )
+        if not (primary_has_fresh_agency or final_pool_has_fresh_agency):
             raise NormalizationError(
-                "Primary Recall source-health degraded: ни одно из 12 Primary-направлений "
-                "не подтвердило свежий Reuters/AP/Bloomberg/FT материал в effective "
+                "Primary Recall source-health degraded: ни Primary diagnostics, ни "
+                "финальный validated candidate pool после mandatory Coverage не "
+                "подтвердили свежий Reuters/AP/Bloomberg/FT материал в effective "
                 "window; служебные, author и старые newsletter URL не считаются "
                 "доказательством свежего agency retrieval."
             )

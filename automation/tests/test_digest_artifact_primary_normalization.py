@@ -162,6 +162,34 @@ class FreshPrimaryArtifactNormalizationTests(unittest.TestCase):
                 artifact, artifact / "artifact-normalization.json"
             )
 
+    def test_final_coverage_pool_can_supply_fresh_agency_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            artifact = self.make_artifact(
+                Path(tmp),
+                agency_sources=[
+                    "https://www.bloomberg.com/authors/EXAMPLE/example-author",
+                    "https://www.bloomberg.com/news/newsletters/2026-04-09/old-ai-newsletter",
+                ],
+                other_sources=["https://openai.com/index/example", "https://nvidia.com/example"],
+                with_search_window=True,
+            )
+            write_json(
+                artifact / "candidates.json",
+                {
+                    "candidates": [
+                        {
+                            "published_date": "2026-08-12",
+                            "primary_source": {
+                                "url": "https://www.reuters.com/technology/fresh-coverage-rescue-2026-08-12/"
+                            },
+                        }
+                    ]
+                },
+            )
+            normalizer.normalize_artifact(
+                artifact, artifact / "artifact-normalization.json"
+            )
+
     def test_current_dated_reuters_article_is_fresh_source_health_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:
             artifact = self.make_artifact(
