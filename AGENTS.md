@@ -431,4 +431,4 @@ primary URL Reuters/AP/Bloomberg/FT, находиться внутри effective
 Для нулевого пула тот же седьмой слот по-прежнему занят source-neutral recall
 sentinel v8. Режимы взаимоисключающие, поэтому общий worst-case budget не растёт:
 **12 Primary + до 4 Hybrid + до 7 Coverage = максимум 23 search operations**.
-Legacy-выпуски без `primary-recall.json` сохраняют прежнюю recovery-совместимость.
+Legacy-выпуски без `primary-recall.json` сохраняют прежнюю recovery-совместимость. Исполнитель Coverage получает явный `source_health_rescue_needed` от policy-layer; сам по себе ненулевой legacy/fixture pool никогда не активирует targeted corroboration.

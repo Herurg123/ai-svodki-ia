@@ -701,6 +701,7 @@ def execute_audit_plan(
     existing_candidates: list[Any],
     archive: dict[str, Any],
     prior_plan: dict[str, Any] | None = None,
+    source_health_rescue_needed: bool = False,
 ) -> dict[str, Any]:
     """Run mandatory coverage, then one versioned source-agnostic recall operation."""
     prepared_prior = _prepare_prior_plan(prior_plan, search_window)
@@ -769,6 +770,7 @@ def execute_audit_plan(
     if (
         maximum_web_search_calls >= RECALL_SENTINEL_MINIMUM_BUDGET
         and mandatory_complete
+        and source_health_rescue_needed
         and agency_rescue_needed
         and remaining_calls >= 1
     ):

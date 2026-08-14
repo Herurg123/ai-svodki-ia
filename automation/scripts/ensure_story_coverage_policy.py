@@ -1712,6 +1712,7 @@ def main() -> int:
                         existing_candidates=research["candidates"],
                         archive=archive,
                         prior_plan=prior_report if prior_attempted else None,
+                        source_health_rescue_needed=source_health_rescue_needed,
                     )
                 except Exception as exc:
                     report["audit_error"] = (
