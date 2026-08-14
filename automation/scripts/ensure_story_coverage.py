@@ -270,7 +270,6 @@ def _prepare_prior_plan(
     return prepared
 
 
-
 def build_recall_sentinel_prompt(
     *,
     publication_date: str,
@@ -335,7 +334,6 @@ verification_status=verified и freshness_status new_event/material_update. Ес
 Если достойные события найдены, верни до 3 кандидатов по заданной JSON-схеме.
 Если нет, верни пустой `candidates` и status=complete_with_gaps. `direction_id`
 должен быть строго `general_coverage_gaps`. Верни только JSON по схеме."""
-
 
 
 def _candidate_id(candidate: Any) -> str | None:
@@ -545,15 +543,6 @@ def _existing_agency_rescue(plan: dict[str, Any]) -> dict[str, Any] | None:
     )
 
 
-def _normalize_agency_rescue_candidate(candidate: dict[str, Any]) -> dict[str, Any]:
-    normalized = copy.deepcopy(candidate)
-    normalized["audit_direction"] = "agency_rescue"
-    if normalized.get("category") != "legal":
-        normalized["legal_scale"] = "not_applicable"
-        normalized["legal_scale_reason"] = ""
-    return normalized
-
-
 def _run_agency_rescue(
     *,
     plan: dict[str, Any],
@@ -636,7 +625,7 @@ def _run_agency_rescue(
     payload_status = str(payload.get("status"))
     record = {
         "direction_id": "general_coverage_gaps",
-        "label": "Targeted fresh-agency corroboration v5",
+        "label": "Targeted fresh-agency corroboration v7",
         "required": True,
         "attempt": attempt_number,
         "search_strategy": AGENCY_RESCUE_STRATEGY,
@@ -957,7 +946,6 @@ def _sync_policy_overrides() -> None:
     _base._sync_policy_overrides()
 
 
-
 def _promote_completed_zero_pool_editorial_stop(report_path: Path | None) -> bool:
     """Convert only a proven complete zero-pool audit into a healthy no-publish stop."""
     if report_path is None or not report_path.is_file():
@@ -1000,6 +988,7 @@ def _promote_completed_zero_pool_editorial_stop(report_path: Path | None) -> boo
     payload["error"] = None
     write_json(report_path, payload)
     return True
+
 
 def _finalize_source_health_report(report_path: Path | None) -> None:
     if report_path is None or not report_path.is_file():
