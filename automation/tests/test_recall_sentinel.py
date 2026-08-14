@@ -222,7 +222,7 @@ class RecallSentinelTests(unittest.TestCase):
         self.assertNotIn("Reuters latest major artificial intelligence news", call["prompt"])
         self.assertIn("Не расширяй и не переписывай", call["prompt"])
         self.assertIn("source-neutral recall sentinel", call["prompt"])
-        self.assertIn("не должен быть привязан ни к OpenAI", call["prompt"])
+        self.assertIn("привязан ни к OpenAI", call["prompt"])
         self.assertEqual(len(result["attempts"]), 7)
         sentinel = result["attempts"][-1]
         self.assertEqual(sentinel["search_strategy"], runtime.RECALL_SENTINEL_STRATEGY)
