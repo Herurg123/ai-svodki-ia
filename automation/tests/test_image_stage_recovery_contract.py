@@ -22,9 +22,11 @@ class ImageStageRecoveryContractTests(unittest.TestCase):
             'elif any($steps[]; (.name == "Validate publishable story count and short digest marker" and .conclusion == "success")) then 2',
             text,
         )
-        self.assertIn("uses: actions/upload-artifact@v7", text)
-        upload = text.index("uses: actions/upload-artifact@v7")
-        self.assertIn("if: always()", text[max(0, upload - 160):upload])
+        self.assertIn(
+            "      - uses: actions/upload-artifact@v7\n"
+            "        if: always()\n",
+            text,
+        )
 
     def test_recovered_cover_skips_another_image_call(self) -> None:
         text = WORKFLOW.read_text(encoding="utf-8")
