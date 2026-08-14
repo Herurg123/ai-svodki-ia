@@ -31,32 +31,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  apply-primary-output-headroom:
-    name: Apply Primary output-headroom fix
-    if: github.event_name == 'pull_request' && github.head_ref == 'agent/relative-freshness-retrieval'
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Check out PR head
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 0
-      - name: Apply correction and restore canonical CI workflow
-        shell: bash
-        run: |
-          set -euo pipefail
-          python .github/_tmp_fix_primary_output_headroom.py
-          git show origin/main:.github/workflows/ci.yml > .github/workflows/ci.yml
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add -A
-          git diff --cached --check
-          git commit -m 'Add Primary structured-output headroom after live smoke'
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
-
   validate:
     name: Offline production checks
     runs-on: ubuntu-latest

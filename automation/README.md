@@ -81,6 +81,8 @@ search primary-pass может использовать до трёх навиг
 search operations, logical queries, total `web_search_call` items и navigation
 items. Второй search или batched multi-query считается нарушением контракта.
 
+Responses-output ceiling для каждого Primary pass равен **6000 tokens**. Это запас для reasoning и завершения строгого JSON после search/navigation, а не дополнительный search-бюджет; лимит остаётся ровно один search operation на pass. Старый потолок 3500 был повышен после live-smoke 2026-08-14, где финальный broad pass успел выполнить search и три navigation action, но API завершил ответ как `incomplete / max_output_tokens`.
+
 Фиксированная матрица:
 
 1. `global_breaking` — широкий мировой discovery;

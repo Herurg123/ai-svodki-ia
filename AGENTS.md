@@ -151,6 +151,8 @@ model can verify source date and facts. Diagnostics must count search operations
 logical queries, total web-search tool items and navigation actions separately.
 A second search action or a batched multi-query search is a contract violation.
 
+Each Primary Responses pass has `max_output_tokens=6000`. This is structured-output/reasoning headroom, not additional Web Search budget: the pass still must complete exactly one search operation. The 2026-08-14 live relative-freshness smoke showed the final `independent_missing_events` search and all three navigation actions completing successfully, but the response becoming `incomplete` solely at the former 3500-token ceiling.
+
 Broad safety nets are source-neutral: `global_breaking` and
 `independent_missing_events` have no API domain filter. `major_agencies` remains
 an extra Bloomberg/FT high-signal route. Do not turn this source route into a

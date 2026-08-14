@@ -85,6 +85,7 @@ repository hygiene: в policy она отдельно классифицируе
    для проверки даты и фактов источника. Диагностика считает search operations,
    logical queries, total tool items и navigation items раздельно. Второй search
    или batched multi-query считается нарушением контракта.
+   Responses-output ceiling одного Primary pass — 6000 tokens; это headroom для reasoning/JSON после уже выполненного поиска и не увеличивает 12-search budget.
 5. Primary работает по принципу **discovery-first**. На retrieval-этапе
    проверяемое потенциально важное событие можно сохранить как `consider`, если
    окончательная редакционная значимость ещё не очевидна. После каждого

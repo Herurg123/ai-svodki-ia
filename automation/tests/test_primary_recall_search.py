@@ -244,6 +244,12 @@ class PrimaryRecallSearchTests(unittest.TestCase):
             )
         )
 
+    def test_primary_pass_has_structured_output_headroom_for_broad_last_mile(self):
+        self.assertEqual(prs.PRIMARY_MAX_OUTPUT_TOKENS_PER_PASS, 6000)
+        source = (SCRIPT_DIR / "primary_recall_search.py").read_text(encoding="utf-8")
+        self.assertIn("max_output_tokens=PRIMARY_MAX_OUTPUT_TOKENS_PER_PASS", source)
+        self.assertIn('metadata["configured_max_output_tokens"]', source)
+
     def test_mandatory_pass_failure_is_fail_closed(self):
         calls = 0
 

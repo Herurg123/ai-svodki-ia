@@ -45,6 +45,7 @@ DEFAULT_MAXIMUM_SEARCH_CALLS = 12
 MAX_CANDIDATES_PER_PASS = 4
 PRIMARY_NAVIGATION_TOOL_ALLOWANCE = 3
 PRIMARY_MAX_TOOL_CALLS_PER_PASS = 1 + PRIMARY_NAVIGATION_TOOL_ALLOWANCE
+PRIMARY_MAX_OUTPUT_TOKENS_PER_PASS = 6000
 PRIMARY_LOOKBACK_HOURS = 24
 REUTERS_DOMAINS: tuple[str, ...] = ("reuters.com",)
 BLOOMBERG_FT_DOMAINS: tuple[str, ...] = ("bloomberg.com", "ft.com")
@@ -433,7 +434,7 @@ def run_search_request(
         max_tool_calls=PRIMARY_MAX_TOOL_CALLS_PER_PASS,
         include=["web_search_call.action.sources"],
         reasoning={"effort": "medium"},
-        max_output_tokens=3500,
+        max_output_tokens=PRIMARY_MAX_OUTPUT_TOKENS_PER_PASS,
         text={
             "format": {
                 "type": "json_schema",
@@ -448,6 +449,7 @@ def run_search_request(
     metadata["configured_search_operations"] = 1
     metadata["configured_total_tool_calls"] = PRIMARY_MAX_TOOL_CALLS_PER_PASS
     metadata["navigation_tool_allowance"] = PRIMARY_NAVIGATION_TOOL_ALLOWANCE
+    metadata["configured_max_output_tokens"] = PRIMARY_MAX_OUTPUT_TOKENS_PER_PASS
     metadata["allowed_domains"] = list(allowed_domains or ())
     completed = int(metadata.get("web_search_calls_completed", 0) or 0)
     if completed != 1:
