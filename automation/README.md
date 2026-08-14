@@ -116,30 +116,19 @@ URL уже опубликованных сюжетов отсекаются до
 archive dedupe остаётся обязательным. События за пределами 24-часового overlap
 не воскресают бесконечно.
 
-Effective window теперь имеет две разные роли. Первые 24 часа от effective start
-до continuity anchor являются **healing overlap**. Основной continuity-период
-идёт от anchor до текущего cutoff. Полное effective window остаётся допустимой
-границей кандидатов, но search query в Primary, Hybrid и Coverage должен прежде
-всего ранжировать основной continuity-период, чтобы overlap не забивал свежую
-выдачу предыдущими сутками.
+Effective window имеет две роли. Первые 24 часа от effective start до continuity
+anchor являются **healing overlap**, а весь window остаётся допустимой границей
+кандидатов. Но Web Search ranking больше не пытается кодировать эти границы
+календарными датами. Primary, Hybrid и Coverage используют короткие date-free
+relative-freshness queries (`latest`/`recent`/`current`/`breaking`), после чего
+фактическая дата/timestamp источника строго валидируется против полного effective
+window. Так overlap остаётся доступен для healing, а слово `latest` не получает
+ложный статус редакционного фильтра.
 
-Prompt каждого Primary pass получает точные границы effective window.
-**Фактическая поисковая строка должна быть коротким natural-language query с
-календарными датами основного continuity-периода после healing overlap**, без
-`after:`/`before:`, длинных Boolean `OR`-цепочек, скобок и перечней из десятков
-компаний. Для `major_agencies` достаточно source-neutral компактного AI/date
-query, потому что Reuters/AP/Bloomberg/FT уже ограничены API domain filter.
-Финальная свежесть всё равно проверяется по фактической дате/timestamp источника
-относительно полного сохранённого effective window.
-
-High-signal source routing не дублирует один издатель в нескольких broad slots:
-`global_breaking` использует source-neutral funding/acquisition/M&A/major
-business query внутри `reuters.com` filter; `major_agencies` использует
-source-neutral major-AI query внутри `bloomberg.com` + `ft.com` filter;
-`independent_missing_events` выполняет source-neutral consumer/major-technology/
-policy sweep внутри `apnews.com` + `ap.org` filter. Это независимые
-ranking-шансы, а не whitelist кандидатов или региональная/издательская квота.
-Остальные Primary directions по-прежнему ищут широко.
+Broad safety nets `global_breaking` и `independent_missing_events` не имеют API
+domain filter. `major_agencies` остаётся отдельным дополнительным sweep по
+`bloomberg.com` + `ft.com`. Это ranking-шансы, а не whitelist кандидатов или
+издательская квота; остальные Primary directions также остаются широкими.
 
 Wikipedia и Reddit не являются допустимым основным подтверждением свежего
 новостного события. ArXiv остаётся нормальным первоисточником действительно

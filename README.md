@@ -92,18 +92,15 @@ repository hygiene: в policy она отдельно классифицируе
    effective window, freshness, verification, legal/curiosity и URL/semantic
    dedupe. Финальный `independent_missing_events` получает компактный список уже
    найденного и ищет именно крупные отсутствующие события.
-6. `major_agencies` намеренно использует узкий API domain filter только для
-   Reuters, AP, Bloomberg и Financial Times. Общего whitelist для остальных
-   направлений нет. Фактический query должен быть короткой date-free natural-language
-   поисковой фразой с relative-freshness cue (`latest`/`recent`/`current`/`breaking`),
-   а полное effective window остаётся строгой границей допустимости кандидата. В query запрещены `after:`/`before:`, длинные Boolean
-   `OR`-цепочки, скобки и огромные списки компаний. High-signal routing разделён:
-   `global_breaking` использует source-neutral funding/M&A/business query внутри
-   `reuters.com` filter; `major_agencies` использует source-neutral AI/date query
-   внутри `bloomberg.com` + `ft.com` filter; `independent_missing_events` делает
-   source-neutral consumer/major-tech/policy sweep внутри `apnews.com` + `ap.org`
-   filter. Это routing
-   ranking, а не whitelist кандидатов или квота на публикацию.
+6. Broad safety nets `global_breaking` и `independent_missing_events` работают
+   без API domain filter. `major_agencies` остаётся дополнительным high-signal
+   проходом только по `bloomberg.com` + `ft.com`. Фактический query во всех
+   Primary-направлениях должен быть короткой date-free natural-language фразой
+   с relative-freshness cue (`latest`/`recent`/`current`/`breaking`). Календарные
+   даты, годы, названия месяцев, `after:`/`before:`, длинные Boolean `OR`-цепочки,
+   скобки и огромные списки компаний в query запрещены. Полное effective window
+   остаётся строгой post-retrieval границей допустимости кандидата; `latest` сам
+   по себе не считается доказательством свежести.
 7. Китай/Азия намеренно разделены на два прохода. Исторический эксперимент на
    окне выпуска 2026-08-11 показал, что одна широкая China/Asia-проверка
    обнаружила 5 из 6 контрольных событий, но пропустила продуктовую интеграцию

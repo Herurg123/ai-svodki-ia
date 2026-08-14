@@ -70,9 +70,9 @@ PRIMARY_DIRECTIONS: tuple[dict[str, Any], ...] = (
         "id": "major_agencies",
         "label": "Major news agencies",
         "guidance": (
-            "Отдельно ищи свежие ИИ-события у Reuters, Associated Press, Bloomberg "
-            "и Financial Times. Нужны не только релизы моделей, но также чипы, "
-            "инфраструктура, инвестиции, M&A, партнёрства, policy, legal и security."
+            "Отдельный high-signal sweep Bloomberg и Financial Times: модели, "
+            "чипы, инфраструктура, инвестиции, M&A, партнёрства, policy, legal "
+            "и security. Это дополнительный publisher route, не мировой catch-all."
         ),
         "allowed_domains": BLOOMBERG_FT_DOMAINS,
     },

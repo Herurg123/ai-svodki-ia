@@ -163,20 +163,19 @@ natural-language relative-freshness cue such as `latest`, `recent`, `current` or
 other explicit temporal boundaries into the query. The full saved effective
 window remains authoritative for final freshness validation.
 
-High-signal routing must stay source-diverse without increasing the 12-search
+High-signal routing stays source-diverse without increasing the 12-search
 budget:
 
-- `global_breaking` uses a source-neutral funding/acquisition/M&A/major-business
-  query inside a `reuters.com` API filter;
-- `major_agencies` uses a source-neutral compact major-AI/date query inside a
-  `bloomberg.com` + `ft.com` API filter;
-- `independent_missing_events` uses a source-neutral consumer-AI /
-  major-technology / policy sweep inside an `apnews.com` + `ap.org` API filter
+- `global_breaking` is a source-neutral broad current-AI catch-all without an API
+  domain filter;
+- `major_agencies` is an additional date-free `bloomberg.com` + `ft.com` sweep;
+- `independent_missing_events` is a source-neutral broad missing-events sweep
   after seeing the current candidate pool.
 
 These are ranking routes, not a candidate whitelist. A stronger official primary
 source or other authoritative source may still be the final source of a
-candidate. The remaining Primary directions stay broad.
+candidate. All non-`major_agencies` Primary directions remain without API domain
+filters.
 
 Wikipedia and Reddit must not be used as primary confirmation of a fresh news
 event. ArXiv is allowed as the primary source of a genuinely material research
