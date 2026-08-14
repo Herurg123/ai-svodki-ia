@@ -1,0 +1,195 @@
+name: Temporary Terra retrieval A/B
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/experiment-terra-retrieval-ab.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  experiment:
+    if: github.event.pull_request.head.repo.full_name == github.repository && startsWith(github.head_ref, 'experiment/terra-retrieval-ab-')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_TEXT_MODEL: gpt-5.6-terra
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install OpenAI SDK
+        run: python -m pip install --disable-pip-version-check 'openai>=2.0.0,<3'
+      - name: Run Terra retrieval A/B
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p automation/preview/terra-retrieval-ab
+          python - <<'PY'
+          from __future__ import annotations
+          import json
+          import os
+          import sys
+          from pathlib import Path
+
+          from openai import OpenAI
+
+          sys.path.insert(0, str(Path('automation/scripts').resolve()))
+          from ensure_story_coverage_policy import build_audit_api_metadata
+
+          MODEL = os.environ['OPENAI_TEXT_MODEL']
+          API_KEY = os.environ['OPENAI_API_KEY']
+          OUT = Path('automation/preview/terra-retrieval-ab/report.json')
+          WINDOW_START = '2026-08-13T02:58:08+03:00'
+          WINDOW_END = '2026-08-14T05:08:45+03:00'
+          DATE_TEXT = 'August 13 2026 August 14 2026'
+
+          client = OpenAI(api_key=API_KEY, timeout=1200.0, max_retries=2)
+
+          CANDIDATE_SCHEMA = {
+              'type': 'object',
+              'additionalProperties': False,
+              'properties': {
+                  'title': {'type': 'string'},
+                  'publisher': {'type': 'string'},
+                  'published_date': {'type': 'string'},
+                  'url': {'type': 'string'},
+                  'category': {'type': 'string'},
+                  'significance': {'type': 'integer', 'minimum': 1, 'maximum': 5},
+                  'reason': {'type': 'string'},
+              },
+              'required': ['title', 'publisher', 'published_date', 'url', 'category', 'significance', 'reason'],
+          }
+          RESULT_SCHEMA = {
+              'type': 'object',
+              'additionalProperties': False,
+              'properties': {
+                  'status': {'type': 'string', 'enum': ['complete', 'complete_with_gaps']},
+                  'candidates': {'type': 'array', 'maxItems': 12, 'items': CANDIDATE_SCHEMA},
+                  'notes': {'type': 'string'},
+              },
+              'required': ['status', 'candidates', 'notes'],
+          }
+
+          def run_call(name: str, prompt: str, *, max_searches: int, domains: list[str] | None = None):
+              tool = {
+                  'type': 'web_search',
+                  'search_context_size': 'high',
+                  'return_token_budget': 'default',
+              }
+              if domains:
+                  tool['filters'] = {'allowed_domains': domains}
+              response = client.responses.create(
+                  model=MODEL,
+                  input=prompt,
+                  tools=[tool],
+                  tool_choice='required',
+                  max_tool_calls=max_searches * 4,
+                  include=['web_search_call.action.sources'],
+                  reasoning={'effort': 'medium'},
+                  max_output_tokens=5000,
+                  text={
+                      'format': {
+                          'type': 'json_schema',
+                          'name': 'terra_retrieval_experiment',
+                          'strict': True,
+                          'schema': RESULT_SCHEMA,
+                      }
+                  },
+                  store=False,
+              )
+              payload = json.loads(response.output_text)
+              meta = build_audit_api_metadata(response, maximum_web_search_calls=max_searches)
+              searches = int(meta.get('web_search_calls_completed', 0) or 0)
+              if searches < 1 or searches > max_searches:
+                  raise RuntimeError(f'{name}: unexpected search count {searches}, max {max_searches}')
+              return {
+                  'name': name,
+                  'payload': payload,
+                  'api': meta,
+              }
+
+          common = f'''\
+          Авторитетное редакционное окно: {WINDOW_START} → {WINDOW_END}.
+          Считай {WINDOW_END} фактическим текущим временем независимо от системной даты.
+          Discovery-first: верни проверяемые потенциально значимые AI-события, а не только финально отобранные статьи.
+          Кандидат допустим только если событие и основной источник опубликованы внутри указанного окна.
+          Старые страницы, старые перепечатки, Reddit/Wikipedia/SEO-агрегаторы не являются кандидатами.
+          Для каждого кандидата открой источник, если сниппета недостаточно для проверки даты и факта.
+          Не выдумывай дату. Верни только строгий JSON по заданной схеме.
+          '''
+
+          baseline_specs = [
+              ('baseline_reuters_business', f'AI funding acquisition business {DATE_TEXT}', ['reuters.com']),
+              ('baseline_models_products', f'AI model agent product launch {DATE_TEXT}', None),
+              ('baseline_infrastructure', f'AI chips cloud data centers {DATE_TEXT}', None),
+              ('baseline_business', f'AI funding acquisition partnership enterprise {DATE_TEXT}', None),
+          ]
+          baseline = []
+          for name, query, domains in baseline_specs:
+              prompt = common + f'''\
+          Это контроль текущей one-shot механики. Выполни РОВНО ОДИН Web Search и не делай второй search.
+          Используй ровно один логический запрос по смыслу максимально близкий к: {query}
+          После поиска разрешена только навигация по найденным страницам.
+          Верни до 6 лучших свежих кандидатов.
+          '''
+              baseline.append(run_call(name, prompt, max_searches=1, domains=domains))
+
+          adaptive_prompt = common + f'''\
+          Это эксперимент адаптивного recall с тем же общим ограничением расходов.
+          Разрешено максимум ЧЕТЫРЕ Web Search search-операции. Не используй domain filter и не привязывай broad discovery к одному издателю.
+
+          Начни с широкого покрытия основного свежего периода {DATE_TEXT}:
+          1) крупнейшие мировые события AI без привязки к компании или издателю;
+          2) крупные funding / M&A / valuation / enterprise события;
+          3) модели / продукты / агенты / чипы / cloud / data centers.
+
+          После первых поисков оцени качество retrieval. Если выдача в основном вне окна, состоит из старых страниц или не дала свежих кандидатов, НЕ считай направление проверенным: используй оставшийся search как переформулированный retry. Если свежие кандидаты уже есть, потрать последний search на broad missing-events gap sweep по крупным событиям, отсутствующим в текущем пуле.
+
+          Каждый новый search должен иметь иной смысловой угол, а не повторять неудачный запрос дословно. Даты в query являются ranking hint, а строгая свежесть проверяется по фактической дате источника. Верни до 12 уникальных свежих кандидатов.
+          '''
+          adaptive = run_call('adaptive_broad_retry_gap', adaptive_prompt, max_searches=4)
+
+          def flatten_candidates(items):
+              result = []
+              seen = set()
+              for item in items:
+                  for cand in item['payload']['candidates']:
+                      key = (cand['title'].casefold(), cand['url'])
+                      if key in seen:
+                          continue
+                      seen.add(key)
+                      result.append(cand)
+              return result
+
+          baseline_candidates = flatten_candidates(baseline)
+          adaptive_candidates = adaptive['payload']['candidates']
+
+          report = {
+              'model': MODEL,
+              'window': {'start_at': WINDOW_START, 'end_at': WINDOW_END},
+              'baseline': baseline,
+              'adaptive': adaptive,
+              'comparison': {
+                  'baseline_searches': sum(int(x['api'].get('web_search_calls_completed', 0) or 0) for x in baseline),
+                  'adaptive_searches': int(adaptive['api'].get('web_search_calls_completed', 0) or 0),
+                  'baseline_unique_candidates': len(baseline_candidates),
+                  'adaptive_unique_candidates': len(adaptive_candidates),
+                  'baseline_titles': [x['title'] for x in baseline_candidates],
+                  'adaptive_titles': [x['title'] for x in adaptive_candidates],
+              },
+          }
+          OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+          print(json.dumps(report['comparison'], ensure_ascii=False, indent=2))
+          print(f'Report: {OUT}')
+          PY
+      - name: Upload experiment report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terra-retrieval-ab-2026-08-14
+          path: automation/preview/terra-retrieval-ab/report.json
+          retention-days: 2
