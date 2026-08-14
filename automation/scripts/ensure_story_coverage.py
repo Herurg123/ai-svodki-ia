@@ -44,8 +44,8 @@ RECALL_SENTINEL_VERSION = 8
 RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ()
 RECALL_SENTINEL_MINIMUM_BUDGET = 7
 AGENCY_RESCUE_STRATEGY = "fresh_agency_rescue"
-AGENCY_RESCUE_VERSION = 2
-AGENCY_RESCUE_DOMAINS: tuple[str, ...] = ("reuters.com", "apnews.com")
+AGENCY_RESCUE_VERSION = 3
+AGENCY_RESCUE_DOMAINS: tuple[str, ...] = ("reuters.com",)
 SOURCE_HEALTH_CONTRACT_VERSION = _policy.SOURCE_HEALTH_CONTRACT_VERSION
 
 # Transport remains implemented by the preserved runtime base. Keep this
@@ -371,8 +371,8 @@ Primary, Hybrid и шесть обязательных Coverage-проходов
 но среди текущих валидных кандидатов нет свежего Reuters/AP/Bloomberg/FT
 материала. Свободен ровно один, седьмой Coverage search operation. Его задача —
 не переписать существующие сюжеты, а найти до трёх самостоятельных крупных
-ИИ-событий из Reuters/AP, которых НЕТ в текущем пуле. API domain filter уже
-ограничен Reuters и AP.
+ИИ-событий из Reuters, которых НЕТ в текущем пуле. API domain filter уже
+ограничен Reuters.
 
 Выполни РОВНО ОДИН Web Search. Фактический query должен быть точно:
 `{required_query}`
@@ -484,7 +484,7 @@ def _run_agency_rescue(
     payload_status = str(payload.get("status"))
     record = {
         "direction_id": "general_coverage_gaps",
-        "label": "Fresh Reuters/AP source-health rescue v2",
+        "label": "Fresh Reuters source-health rescue v3",
         "required": True,
         "attempt": attempt_number,
         "search_strategy": AGENCY_RESCUE_STRATEGY,

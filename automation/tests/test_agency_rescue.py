@@ -182,7 +182,7 @@ class AgencyRescueTests(unittest.TestCase):
 
         self.assertEqual(request.call_count, 1)
         call = request.call_args.kwargs
-        self.assertEqual(tuple(call["allowed_domains"]), runtime.AGENCY_RESCUE_DOMAINS)
+        self.assertEqual(tuple(call["allowed_domains"]), ("reuters.com",))
         self.assertEqual(call["maximum_web_search_calls"], 1)
         self.assertIn("latest artificial intelligence funding acquisition models chips data centers cybersecurity", call["prompt"])
         self.assertIn("НЕТ в текущем пуле", call["prompt"])

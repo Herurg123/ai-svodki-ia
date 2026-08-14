@@ -449,7 +449,7 @@ Coverage-направлений в текущем валидном пуле не
 Reuters/AP/Bloomberg/FT-кандидата, свободный **седьмой** Coverage search operation
 используется как bounded `fresh_agency_rescue`: один date-free запрос
 `latest artificial intelligence funding acquisition models chips data centers cybersecurity` с API domain filter только на
-Reuters + AP. Bloomberg/FT уже имеют отдельный `major_agencies` шанс в Primary.
+Reuters. AP остаётся допустимой agency evidence, если её находят другие research-слои; Bloomberg/FT уже имеют отдельный `major_agencies` шанс в Primary.
 Rescue ищет новое самостоятельное событие, отсутствующее в текущем пуле; простой
 дубликат существующего сюжета не считается исправлением source-health.
 
