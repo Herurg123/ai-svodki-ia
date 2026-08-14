@@ -5,98 +5,23 @@ on:
 permissions:
   contents: read
 jobs:
-  live-reuters-rescue-smoke:
+  apply-domain-unlocked-rescue:
     if: github.event_name == 'pull_request' && github.head_ref == 'fix/agency-rescue-after-source-monopoly'
     permissions:
-      actions: read
-      contents: read
+      contents: write
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-          persist-credentials: false
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-      - run: python -m pip install --disable-pip-version-check --no-input 'openai==2.21.0'
-      - uses: actions/download-artifact@v8
-        with:
-          name: daily-production-2026-08-14
-          path: automation/preview/recovery-source
-          run-id: 31771774225
-          github-token: ${{ github.token }}
-      - name: Stage failed production recovery
-        run: |
+          fetch-depth: 0
+      - run: |
           set -euo pipefail
-          rm -rf automation/preview/2026-08-14 automation/preview/production-daily
-          cp -a automation/preview/recovery-source/2026-08-14 automation/preview/2026-08-14
-          mkdir -p automation/preview/production-daily
-          cp automation/preview/recovery-source/production-daily/coverage-audit.json automation/preview/production-daily/coverage-audit.json
-      - name: Run seventh-slot rescue
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
-        run: |
-          set -euo pipefail
-          python automation/scripts/ensure_story_coverage.py \
-            --artifact-dir automation/preview/2026-08-14 \
-            --archive automation/archive/index.json \
-            --publication-date 2026-08-14 \
-            --model "${OPENAI_TEXT_MODEL}" \
-            --usual-total 7 --minimum-publishable 1 \
-            --maximum-audit-web-search-calls 7 \
-            --maximum-candidates 20 --maximum-selected-stories 12 \
-            --report automation/preview/production-daily/coverage-audit.json
-      - name: Assert Reuters rescue and validate artifact
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          p=Path('automation/preview/production-daily/coverage-audit.json')
-          d=json.loads(p.read_text(encoding='utf-8'))
-          attempts=d.get('attempts') or []
-          r=[x for x in attempts if isinstance(x,dict) and x.get('search_strategy')=='fresh_agency_rescue']
-          ordinary=[x for x in attempts if isinstance(x,dict) and x.get('search_strategy')!='fresh_agency_rescue']
-          assert len(ordinary)==6, len(ordinary)
-          assert len(r)==1, r
-          r=r[0]
-          assert r.get('agency_rescue_version')==3, r.get('agency_rescue_version')
-          assert r.get('allowed_domains')==['reuters.com'], r.get('allowed_domains')
-          assert (r.get('api') or {}).get('web_search_calls_completed')==1, r.get('api')
-          assert r.get('candidate_count',0)>=1, r
-          assert d.get('source_health_contract_version')==3, d.get('source_health_contract_version')
-          assert (d.get('search_budget') or {}).get('completed_calls')==7, d.get('search_budget')
-          print(json.dumps({'query':r.get('actual_queries'),'candidate_count':r.get('candidate_count'),'titles':[c.get('title') for c in r.get('candidates') or []]},ensure_ascii=False,indent=2))
-          PY
-          python automation/scripts/normalize_digest_artifact.py --artifact-dir automation/preview/2026-08-14 --report automation/preview/2026-08-14/artifact-normalization.json
-          python automation/scripts/validate_digest_artifact.py --artifact-dir automation/preview/2026-08-14 --report automation/preview/2026-08-14/artifact-validation.json
-          python automation/scripts/validate_story_coverage.py --artifact-dir automation/preview/2026-08-14 --usual-total 7 --minimum-publishable 1 --report automation/preview/production-daily/story-coverage-validation.json
-      - name: Summarize selected domains
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          from urllib.parse import urlparse
-          root=Path('automation/preview/2026-08-14')
-          cs=json.loads((root/'candidates.json').read_text(encoding='utf-8')).get('candidates') or []
-          by={str(c.get('candidate_id') or c.get('id')):c for c in cs}
-          ss=json.loads((root/'stories.json').read_text(encoding='utf-8')).get('stories') or []
-          out=[]
-          for s in ss:
-            c=by.get(str(s.get('candidate_id'))) or {}
-            u=(c.get('primary_source') or {}).get('url') or ''
-            out.append({'title':s.get('title') or s.get('headline'),'domain':urlparse(u).hostname})
-          print(json.dumps(out,ensure_ascii=False,indent=2))
-          PY
-      - if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: reuters-rescue-recovery-smoke-2026-08-14
-          path: |
-            automation/preview/2026-08-14/
-            automation/preview/production-daily/coverage-audit.json
-            automation/preview/production-daily/story-coverage-validation.json
-          retention-days: 7
+          python .github/_tmp_remove_reuters_domain_lock.py
+          git show origin/main:.github/workflows/ci.yml > .github/workflows/ci.yml
+          python -m compileall -q automation/scripts automation/tests
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Remove blind Reuters domain lock from rescue'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
