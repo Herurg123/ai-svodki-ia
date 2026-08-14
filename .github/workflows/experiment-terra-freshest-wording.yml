@@ -2,6 +2,7 @@ name: Temporary Terra freshest-wording experiment
 
 on:
   pull_request:
+    types: [opened, reopened, synchronize]
     paths:
       - ".github/workflows/experiment-terra-freshest-wording.yml"
 
@@ -23,138 +24,80 @@ jobs:
           python-version: "3.12"
       - name: Install OpenAI SDK
         run: python -m pip install --disable-pip-version-check 'openai>=2.0.0,<3'
-      - name: Run repeated freshest-wording retrieval
+      - name: Run production-shaped relative-freshness repeats
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p automation/preview/terra-freshest-wording
+          mkdir -p automation/preview/terra-freshest-oneshot
           python - <<'PY'
           from __future__ import annotations
-          import json
-          import os
-          import sys
-          from collections import Counter
+          import json, os, sys
           from pathlib import Path
-
           from openai import OpenAI
 
           sys.path.insert(0, str(Path('automation/scripts').resolve()))
           from ensure_story_coverage_policy import build_audit_api_metadata
 
-          MODEL = os.environ['OPENAI_TEXT_MODEL']
-          client = OpenAI(api_key=os.environ['OPENAI_API_KEY'], timeout=1200.0, max_retries=2)
-          OUT = Path('automation/preview/terra-freshest-wording/report.json')
+          MODEL=os.environ['OPENAI_TEXT_MODEL']
+          client=OpenAI(api_key=os.environ['OPENAI_API_KEY'], timeout=1200.0, max_retries=2)
+          OUT=Path('automation/preview/terra-freshest-oneshot/report.json')
 
-          CANDIDATE_SCHEMA = {
-              'type': 'object',
-              'additionalProperties': False,
-              'properties': {
-                  'title': {'type': 'string'},
-                  'publisher': {'type': 'string'},
-                  'published_date': {'type': 'string'},
-                  'url': {'type': 'string'},
-                  'category': {'type': 'string'},
-                  'significance': {'type': 'integer', 'minimum': 1, 'maximum': 5},
-                  'reason': {'type': 'string'},
-              },
-              'required': ['title','publisher','published_date','url','category','significance','reason'],
-          }
-          RESULT_SCHEMA = {
-              'type': 'object',
-              'additionalProperties': False,
-              'properties': {
-                  'status': {'type': 'string', 'enum': ['complete','complete_with_gaps']},
-                  'candidates': {'type': 'array', 'maxItems': 12, 'items': CANDIDATE_SCHEMA},
-                  'notes': {'type': 'string'},
-              },
-              'required': ['status','candidates','notes'],
-          }
+          cand_schema={'type':'object','additionalProperties':False,'properties':{
+              'title':{'type':'string'},'publisher':{'type':'string'},'published_date':{'type':'string'},
+              'url':{'type':'string'},'category':{'type':'string'},
+              'significance':{'type':'integer','minimum':1,'maximum':5},'reason':{'type':'string'}},
+              'required':['title','publisher','published_date','url','category','significance','reason']}
+          result_schema={'type':'object','additionalProperties':False,'properties':{
+              'status':{'type':'string','enum':['complete','complete_with_gaps']},
+              'candidates':{'type':'array','maxItems':6,'items':cand_schema},'notes':{'type':'string'}},
+              'required':['status','candidates','notes']}
 
-          prompt = '''Это эксперимент retrieval для ежедневной ИИ-сводки.
-          Ищи САМЫЕ СВЕЖИЕ значимые новости об искусственном интеллекте на текущий момент. Приоритет — материалы и события, опубликованные совсем недавно.
-          Не используй в поисковых запросах календарные даты, диапазоны дат, after:/before: или другие явные временные границы. Вместо этого формулируй запросы естественно через latest / recent / breaking / current AI news или эквивалентные фразы, когда это уместно.
+          specs=[
+              ('reuters_business','latest AI funding acquisition business news',['reuters.com']),
+              ('models_products','latest AI model agent product launch news',None),
+              ('infrastructure','latest AI chips cloud data centers news',None),
+              ('business','latest AI funding acquisition partnership enterprise news',None),
+          ]
 
-          Discovery-first: верни проверяемые потенциально значимые AI-события, а не только финально отобранные статьи.
-          Старые страницы, старые перепечатки без нового события, Reddit/Wikipedia/SEO-агрегаторы не являются кандидатами.
-          Для каждого кандидата открой источник, если сниппета недостаточно для проверки фактической даты публикации и сути события. Не выдумывай дату.
+          common='''Ищи самые свежие значимые новости об искусственном интеллекте на текущий момент. Приоритет — материалы и события, опубликованные совсем недавно.
+          Не используй календарные даты, годы, названия месяцев, диапазоны дат, after:/before: или другие явные временные границы в фактическом search query.
+          Discovery-first: сохрани проверяемые потенциально значимые события. Старые страницы, старые перепечатки без нового события, Reddit/Wikipedia/SEO-агрегаторы не являются кандидатами.
+          Для кандидата проверь фактическую дату публикации и источник; не выдумывай дату или URL.'''
 
-          Разрешено максимум ЧЕТЫРЕ Web Search search-операции. Не используй domain filter и не привязывай broad discovery к одному издателю.
-          Начни с широкого покрытия:
-          1) крупнейшие мировые события AI без привязки к компании или издателю;
-          2) крупные funding / M&A / valuation / enterprise события;
-          3) модели / продукты / агенты / чипы / cloud / data centers.
+          def run_pass(round_no,name,query,domains):
+              tool={'type':'web_search','search_context_size':'high','return_token_budget':'default'}
+              if domains:
+                  tool['filters']={'allowed_domains':domains}
+              prompt=common+f'''\nЭто production-shaped one-shot контроль. Выполни РОВНО ОДИН Web Search search-operation и ровно один логический query, по смыслу максимально близкий к: {query}
+              После поиска разрешена только навигация по найденным страницам. Не делай второй search. Верни до 6 лучших свежих кандидатов. Верни только JSON.'''
+              resp=client.responses.create(model=MODEL,input=prompt,tools=[tool],tool_choice='required',max_tool_calls=4,
+                  include=['web_search_call.action.sources'],reasoning={'effort':'medium'},max_output_tokens=3500,
+                  text={'format':{'type':'json_schema','name':'terra_freshest_oneshot','strict':True,'schema':result_schema}},store=False)
+              payload=json.loads(resp.output_text)
+              meta=build_audit_api_metadata(resp,maximum_web_search_calls=1)
+              searches=int(meta.get('web_search_search_operations_performed',0) or 0)
+              logical=len(meta.get('actual_queries') or [])
+              if searches != 1 or logical != 1:
+                  raise RuntimeError(f'round {round_no} {name}: searches={searches} logical={logical}')
+              return {'round':round_no,'name':name,'requested_query':query,'payload':payload,'api':meta}
 
-          После первых поисков оцени качество retrieval. Если выдача в основном старая, состоит из нерелевантных страниц или не дала свежих кандидатов, НЕ считай направление проверенным: используй оставшийся search как переформулированный retry. Если свежие кандидаты уже есть, потрать последний search на broad missing-events gap sweep по крупным событиям, отсутствующим в текущем пуле.
-          Каждый новый search должен иметь иной смысловой угол, а не повторять неудачный запрос дословно. Верни до 12 уникальных свежих кандидатов. Верни только строгий JSON.'''
+          rounds=[]
+          for round_no in range(1,4):
+              passes=[run_pass(round_no,*spec) for spec in specs]
+              rounds.append({'round':round_no,'passes':passes})
 
-          def run_once(round_no: int):
-              response = client.responses.create(
-                  model=MODEL,
-                  input=prompt,
-                  tools=[{
-                      'type':'web_search',
-                      'search_context_size':'high',
-                      'return_token_budget':'default',
-                  }],
-                  tool_choice='required',
-                  max_tool_calls=16,
-                  include=['web_search_call.action.sources'],
-                  reasoning={'effort':'medium'},
-                  max_output_tokens=5000,
-                  text={'format':{
-                      'type':'json_schema',
-                      'name':'terra_freshest_wording',
-                      'strict':True,
-                      'schema':RESULT_SCHEMA,
-                  }},
-                  store=False,
-              )
-              payload = json.loads(response.output_text)
-              meta = build_audit_api_metadata(response, maximum_web_search_calls=4)
-              searches = int(meta.get('web_search_calls_completed', 0) or 0)
-              if searches < 1 or searches > 4:
-                  raise RuntimeError(f'round {round_no}: unexpected search count {searches}')
-              return {'round': round_no, 'payload': payload, 'api': meta}
-
-          rounds = [run_once(i) for i in range(1, 4)]
-
-          def norm_title(title: str) -> str:
-              return ' '.join(title.casefold().split())
-
-          occurrence = Counter()
-          by_title = {}
-          for item in rounds:
-              seen_round = set()
-              for cand in item['payload']['candidates']:
-                  key = norm_title(cand['title'])
-                  if key not in seen_round:
-                      occurrence[key] += 1
-                      seen_round.add(key)
-                  by_title.setdefault(key, cand['title'])
-
-          report = {
-              'model': MODEL,
-              'prompt_mode': 'relative_freshest_no_explicit_dates',
-              'rounds': rounds,
-              'summary': {
-                  'round_count': len(rounds),
-                  'searches_per_round': [int(x['api'].get('web_search_calls_completed',0) or 0) for x in rounds],
-                  'candidate_counts': [len(x['payload']['candidates']) for x in rounds],
-                  'titles_by_round': [[c['title'] for c in x['payload']['candidates']] for x in rounds],
-                  'repeated_exact_titles': [
-                      {'title': by_title[key], 'rounds_found': count}
-                      for key, count in occurrence.most_common()
-                      if count >= 2
-                  ],
-              },
-          }
-          OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
-          print(json.dumps(report['summary'], ensure_ascii=False, indent=2))
+          report={'model':MODEL,'prompt_mode':'production_shaped_relative_freshest_no_dates','rounds':rounds,
+              'summary':{'candidate_counts_by_round':[
+                  sum(len(p['payload']['candidates']) for p in r['passes']) for r in rounds],
+                  'titles_by_round':[[c['title'] for p in r['passes'] for c in p['payload']['candidates']] for r in rounds],
+                  'queries_by_round':[[q for p in r['passes'] for q in (p['api'].get('actual_queries') or [])] for r in rounds]}}
+          OUT.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(report['summary'],ensure_ascii=False,indent=2))
           PY
       - name: Upload experiment report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: terra-freshest-wording-2026-08-14
-          path: automation/preview/terra-freshest-wording/report.json
+          name: terra-freshest-oneshot-2026-08-14
+          path: automation/preview/terra-freshest-oneshot/report.json
           retention-days: 2
