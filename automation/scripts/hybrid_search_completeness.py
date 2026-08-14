@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import copy
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Callable
 
@@ -170,20 +170,30 @@ def _compact_archive(archive: dict[str, Any]) -> list[dict[str, Any]]:
 
 def _time_hint(search_window: dict[str, Any]) -> str:
     try:
-        start = datetime.fromisoformat(str(search_window.get("start_at") or "").replace("Z", "+00:00"))
-        end = datetime.fromisoformat(str(search_window.get("end_at") or "").replace("Z", "+00:00"))
+        effective_start = datetime.fromisoformat(
+            str(search_window.get("start_at") or "").replace("Z", "+00:00")
+        )
+        end = datetime.fromisoformat(
+            str(search_window.get("end_at") or "").replace("Z", "+00:00")
+        )
+        continuity_start = min(effective_start + timedelta(hours=24), end)
         return (
-            "Для единственного search query используй короткую natural-language фразу "
-            f"примерно на 6–18 значимых слов и обычные календарные даты {start.date()} "
-            f"и {end.date()}. Не используй after:, before:, site:, скобки или длинные "
-            "OR-цепочки. После выдачи проверь фактический timestamp против точных "
-            "границ effective window."
+            "Первые 24 часа effective window являются healing overlap. Для единственного "
+            "search query приоритетен основной continuity-период "
+            f"{continuity_start.isoformat(timespec='seconds')} → {end.isoformat(timespec='seconds')}. "
+            "Используй короткую natural-language фразу примерно на 6–18 значимых слов "
+            f"и обычные календарные даты {continuity_start.date()} и {end.date()}. "
+            "Не используй after:, before:, site:, скобки или длинные OR-цепочки. "
+            "Overlap остаётся допустим для случайно найденного крупного пропуска, но не "
+            "должен вытеснять свежие события continuity-периода. После выдачи проверь "
+            "фактический timestamp против полного effective window."
         )
     except ValueError:
         return (
-            "В поисковом запросе явно укажи календарные даты effective window обычным "
-            "текстом; не используй after:, before:, site: или длинные OR-цепочки и "
-            "проверь timestamp источника."
+            "В поисковом запросе приоритизируй основной continuity-период после первых "
+            "24 часов healing overlap, укажи его календарные даты обычным текстом; не "
+            "используй after:, before:, site: или длинные OR-цепочки и проверь timestamp "
+            "источника против полного effective window."
         )
 
 
