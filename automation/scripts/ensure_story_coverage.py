@@ -250,7 +250,7 @@ def _prepare_prior_plan(
     return prepared
 
 
-\
+
 def build_recall_sentinel_prompt(
     *,
     publication_date: str,
@@ -280,7 +280,7 @@ def build_recall_sentinel_prompt(
     return f"""Ты — финальный source-neutral recall sentinel редакции «ИИ-сводки».
 
 Строгое редакционное окно для проверки кандидатов: {start_at} → {end_at}
-Авторитетное текущее время этого sentinel-прохода: {end_at}.
+Авторитетное текущее время этого sentinel-прохода: {end_at}. Всё, что опубликовано не позже этого timestamp, не является будущим только из-за системной даты модели.
 Идентификатор направления: general_coverage_gaps
 Версия sentinel: {RECALL_SENTINEL_VERSION}
 
