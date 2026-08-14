@@ -31,47 +31,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  apply-relative-freshness-patch:
-    name: Apply relative-freshness patch
-    if: github.event_name == 'pull_request' && github.head_ref == 'agent/relative-freshness-retrieval'
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Check out PR head
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 0
-      - name: Execute temporary patcher and restore CI workflow
-        shell: bash
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          from pathlib import Path
-          import textwrap
-
-          path = Path('.github/workflows/_tmp_apply_relative_freshness_patch.yml')
-          text = path.read_text(encoding='utf-8')
-          marker = "python - <<'PY'\n"
-          if marker not in text:
-              raise SystemExit('temporary patcher marker missing')
-          body = text.split(marker, 1)[1]
-          end_marker = "\n          PY\n"
-          if end_marker not in body:
-              raise SystemExit('temporary patcher end marker missing')
-          script = textwrap.dedent(body.split(end_marker, 1)[0])
-          exec(compile(script, str(path), 'exec'), {'__name__': '__main__'})
-          PY
-          git show origin/main:.github/workflows/ci.yml > .github/workflows/ci.yml
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add -A
-          git diff --cached --check
-          git commit -m 'Use relative-freshness retrieval and preserve hybrid handoff'
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
-
   validate:
     name: Offline production checks
     runs-on: ubuntu-latest

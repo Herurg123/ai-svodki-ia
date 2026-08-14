@@ -94,10 +94,9 @@ repository hygiene: в policy она отдельно классифицируе
    найденного и ищет именно крупные отсутствующие события.
 6. `major_agencies` намеренно использует узкий API domain filter только для
    Reuters, AP, Bloomberg и Financial Times. Общего whitelist для остальных
-   направлений нет. Фактический query должен быть короткой natural-language
-   поисковой фразой с календарными датами **основного continuity-периода после
-   24-часового healing overlap**, а полное effective window остаётся границей
-   допустимости кандидата. В query запрещены `after:`/`before:`, длинные Boolean
+   направлений нет. Фактический query должен быть короткой date-free natural-language
+   поисковой фразой с relative-freshness cue (`latest`/`recent`/`current`/`breaking`),
+   а полное effective window остаётся строгой границей допустимости кандидата. В query запрещены `after:`/`before:`, длинные Boolean
    `OR`-цепочки, скобки и огромные списки компаний. High-signal routing разделён:
    `global_breaking` использует source-neutral funding/M&A/business query внутри
    `reuters.com` filter; `major_agencies` использует source-neutral AI/date query
@@ -520,3 +519,15 @@ agency raw candidate считается evidence; stale author, newsletter, even
 ## Hygiene search diagnostics
 
 Перед сохранением Primary, Hybrid и Coverage diagnostics URL, возвращённые search provider, очищаются от временных credential/token/signature query-параметров, включая AWS signed URL. Домен, путь и несекретные параметры сохраняются. Artifact secret-scanner остаётся fail-closed и не получает исключений для подписанных URL.
+
+
+### Проверенный relative-freshness retrieval
+
+Эксперимент 2026-08-14 на production-модели `gpt-5.6-terra` показал: явные
+календарные даты в Web Search query ухудшают ranking и могут приводить к
+false-zero. Поэтому Primary, Hybrid, Coverage и финальный zero-pool sentinel
+используют date-free `latest`/`recent`/`current`/`breaking` запросы. Это только
+ranking hint: фактическая дата/timestamp источника по-прежнему строго проверяется
+против полного effective window. Broad safety nets не привязаны к одному
+издателю. Если Hybrid добавил валидный candidate, но immediate editorial rerun
+упал, объединённый pool всё равно передаётся Coverage.

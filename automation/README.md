@@ -101,10 +101,10 @@ items. Второй search или batched multi-query считается нар�
 12. `independent_missing_events` — независимый last-mile поиск крупных событий,
     которых нет в уже собранном пуле.
 
-Три high-signal Primary pass намеренно используют раздельные API domain filters:
-`global_breaking` — `reuters.com`, `major_agencies` — `bloomberg.com` + `ft.com`,
-`independent_missing_events` — `apnews.com` + `ap.org`. Остальные девять
-primary-направлений не имеют общего whitelist и остаются широкими.
+`global_breaking` и `independent_missing_events` являются source-neutral broad
+catch-all проходами без API domain filter. `major_agencies` сохраняет отдельный
+`bloomberg.com` + `ft.com` high-signal filter; остальные направления также
+остаются широкими.
 
 Каноническая continuity-точка остаётся фактическим `search_cutoff_at`
 последнего успешно опубликованного выпуска. Новый pre-research cutoff остаётся
@@ -434,3 +434,15 @@ newsletter, event или old document page не считается. Legacy diagn
 ## Hygiene search diagnostics
 
 Перед сохранением Primary, Hybrid и Coverage diagnostics URL, возвращённые search provider, очищаются от временных credential/token/signature query-параметров, включая AWS signed URL. Домен, путь и несекретные параметры сохраняются. Artifact secret-scanner остаётся fail-closed и не получает исключений для подписанных URL.
+
+
+### Проверенный relative-freshness retrieval
+
+Эксперимент 2026-08-14 на production-модели `gpt-5.6-terra` показал: явные
+календарные даты в Web Search query ухудшают ranking и могут приводить к
+false-zero. Поэтому Primary, Hybrid, Coverage и финальный zero-pool sentinel
+используют date-free `latest`/`recent`/`current`/`breaking` запросы. Это только
+ranking hint: фактическая дата/timestamp источника по-прежнему строго проверяется
+против полного effective window. Broad safety nets не привязаны к одному
+издателю. Если Hybrid добавил валидный candidate, но immediate editorial rerun
+упал, объединённый pool всё равно передаётся Coverage.

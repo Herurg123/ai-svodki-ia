@@ -65,7 +65,6 @@ PRIMARY_DIRECTIONS: tuple[dict[str, Any], ...] = (
             "инфраструктура, бизнес, regulation и security. Не концентрируйся на "
             "одной компании или одном типе событий."
         ),
-        "allowed_domains": REUTERS_DOMAINS,
     },
     {
         "id": "major_agencies",
@@ -173,7 +172,6 @@ PRIMARY_DIRECTIONS: tuple[dict[str, Any], ...] = (
             "Перепроверь агентства, мировых игроков, инфраструктуру, Китай/Азию, "
             "Россию, продуктовые интеграции, security и business. Не повторяй список."
         ),
-        "allowed_domains": AP_DOMAINS,
     },
 )
 PRIMARY_DIRECTION_IDS = tuple(str(item["id"]) for item in PRIMARY_DIRECTIONS)
@@ -360,16 +358,15 @@ def _select_final_candidates(
 def query_time_hint(search_window: dict[str, Any]) -> str:
     start = _parse_aware(str(search_window.get("start_at") or ""))
     end = _parse_aware(str(search_window.get("end_at") or ""))
-    after_day = (start.date() - timedelta(days=1)).isoformat()
-    before_day = (end.date() + timedelta(days=1)).isoformat()
     return (
-        f"Точный effective window: {start.isoformat(timespec='seconds')} → "
-        f"{end.isoformat(timespec='seconds')}. Сформируй ОДИН узкий поисковый "
-        f"запрос с явной свежестью, предпочтительно добавив after:{after_day} "
-        f"before:{before_day}. Эти date operators только retrieval-подсказка: "
-        "после выдачи обязательно проверь фактическую дату/timestamp источника "
-        "против точных границ effective window. Не позволяй старым популярным "
-        "страницам вытеснять свежие публикации."
+        f"Точный effective window для ПОСЛЕДУЮЩЕЙ проверки кандидатов: "
+        f"{start.isoformat(timespec='seconds')} → {end.isoformat(timespec='seconds')}. "
+        "Сам search query должен быть date-free: не копируй в него календарные "
+        "даты, годы, названия месяцев, after:/before: или иные явные временные "
+        "границы. Для ranking используй естественный relative-freshness cue: "
+        "latest / recent / current / breaking или эквивалент. После retrieval "
+        "обязательно проверь фактическую дату/timestamp источника против полного "
+        "effective window; relative wording не является freshness-фильтром."
     )
 
 

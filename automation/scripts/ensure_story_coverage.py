@@ -39,7 +39,7 @@ _LAST_RECALL_SENTINEL: dict[str, Any] | None = None
 
 RECALL_SENTINEL_STRATEGY = "high_signal_recall_sentinel"
 TEMPORAL_ANCHOR_VERSION = 1
-RECALL_SENTINEL_VERSION = 7
+RECALL_SENTINEL_VERSION = 8
 RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ()
 RECALL_SENTINEL_MINIMUM_BUDGET = 7
 
@@ -275,55 +275,36 @@ def build_recall_sentinel_prompt(
     recent_archive = _base._compact_recent_archive(archive)
     start_at = str(search_window.get("start_at") or "")
     end_at = str(search_window.get("end_at") or "")
-    try:
-        end_utc = datetime.fromisoformat(
-            end_at.replace("Z", "+00:00")
-        ).astimezone(timezone.utc)
-        query_date = f"{end_utc.strftime('%B')} {end_utc.day} {end_utc.year}"
-    except ValueError:
-        query_date = str(search_window.get("start_date") or "")
-    required_query = f"OpenAI cybersecurity {query_date}"
+    required_query = "latest major artificial intelligence news"
 
-    return f"""Ты — финальный OpenAI security recall sentinel редакции «ИИ-сводки».
+    return f"""Ты — финальный source-neutral recall sentinel редакции «ИИ-сводки».
 
-Строгое редакционное окно: {start_at} → {end_at}
+Строгое редакционное окно для проверки кандидатов: {start_at} → {end_at}
 Авторитетное текущее время этого sentinel-прохода: {end_at}.
-Считай эту отметку фактическим «сейчас» независимо от системной даты модели,
-UTC-даты запуска API или календарной даты среды исполнения. Любой timestamp,
-который не позже {end_at}, не является будущим. Не ищи события позже этой границы.
 Идентификатор направления: general_coverage_gaps
 Версия sentinel: {RECALL_SENTINEL_VERSION}
 
 Основной research и шесть обязательных coverage-проходов уже завершились, но
-пригодный пул всё ещё равен нулю. API-доменный фильтр отключён: production показал,
-что привязка rescue-прохода к одному издателю создаёт false-zero и может заставить
-модель отклонить уже найденный свежий материал только из-за домена источника.
+пригодный пул всё ещё равен нулю. Это последний broad safety net, поэтому он не
+должен быть привязан ни к OpenAI, ни к security, ни к одному издателю. API
+domain filter отключён.
+
 Выполни РОВНО ОДИН Web Search. Не расширяй и не переписывай поисковую строку.
 Фактический поисковый запрос должен быть точно:
 `{required_query}`
 
-Это намеренно адресный safety/security probe для подтверждённого класса
-пропусков вокруг OpenAI. После поиска открой все релевантные свежие страницы из
-результатов и проверь их против строгого окна. Reuters не обязателен: пригоден
-любой надёжный первичный источник, крупное информационное агентство либо
-авторитетное технологическое/деловое СМИ, если событие проверяемо и проходит
-обычные редакционные правила. Не отклоняй материал только потому, что издатель
-не Reuters.
+В query намеренно нет календарных дат: relative freshness нужна только для
+ranking. После поиска открой релевантные страницы и строго проверь фактическую
+дату/timestamp каждого события против editorial window. Ищи любое крупное
+самостоятельное ИИ-событие: модели и продукты, агенты/coding, chips/cloud/data
+centers, business/funding/M&A, security/safety, policy/legal, Китай/Азия, Россия,
+research/robotics. Предпочитай официальный первоисточник, Reuters/AP/Bloomberg/FT
+или другое авторитетное деловое/технологическое/отраслевое СМИ.
 
-Пригодны самостоятельные ИИ-события высокой новостной ценности, связанные с
-cybersecurity, безопасностью frontier-моделей, sandbox escape, jailbreak,
-несанкционированными действиями агентов, эксплуатацией уязвимостей или
-существенным изменением защитных мер. Путь URL и рубрика источника не определяют
-редакционную категорию: событие о киберриске остаётся `category=security`, даже
-если URL расположен в `/legal/` или `/litigation/`. `legal` используй только
-для реального суда, иска, copyright/scraping или регуляторно-правового события.
-
-Событие и основной источник обязаны попадать в окно. Старую перепечатку без
-нового развития отклоняй. Для include/consider нужны
-`verification_status=verified` и `freshness_status` new_event/material_update.
-Если точного времени публикации нет, ставь `published_at=null` и
-`time_precision=date`; время не выдумывай. Не добивай количество слабым
-материалом.
+Старую перепечатку без нового развития отклоняй. Для include/consider нужны
+verification_status=verified и freshness_status new_event/material_update. Если
+точного времени публикации нет, ставь published_at=null и time_precision=date;
+время не выдумывай. Не добивай количество слабым материалом.
 
 Уже найденные кандидаты:
 {json.dumps(existing, ensure_ascii=False, indent=2)}

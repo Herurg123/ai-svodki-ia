@@ -387,12 +387,33 @@ def _run_hybrid_completeness(
     completed = subprocess.run(command, cwd=REPOSITORY_ROOT, env=os.environ.copy(), check=False)
     if completed.returncode != 0:
         _restore_artifact(output_dir, snapshot)
+        merged_payload = _read_json(merged_path)
+        coverage_handoff_preserved = bool(
+            isinstance(merged_payload, dict)
+            and isinstance(merged_payload.get("candidates"), list)
+        )
+        if coverage_handoff_preserved:
+            _write_json(output_dir / "candidates.json", merged_payload)
         report["editorial_rerun_performed"] = False
+        report["coverage_handoff_preserved"] = coverage_handoff_preserved
         report["editorial_rerun_error"] = (
-            f"hybrid editorial rerun exited with code {completed.returncode}; primary artifact restored"
+            f"hybrid editorial rerun exited with code {completed.returncode}; "
+            "primary editorial artifact restored, merged candidates preserved for coverage"
+            if coverage_handoff_preserved
+            else f"hybrid editorial rerun exited with code {completed.returncode}; primary artifact restored"
         )
         persist_report(output_dir, report)
-        print("::warning title=Hybrid editorial rerun rolled back::Новые кандидаты сохранены в диагностике, но primary artifact восстановлен.")
+        if coverage_handoff_preserved:
+            print(
+                "::warning title=Hybrid editorial rerun rolled back::"
+                "Редакционный artifact восстановлен; валидный merged candidate pool "
+                "сохранён в candidates.json для обязательного Coverage."
+            )
+        else:
+            print(
+                "::warning title=Hybrid editorial rerun rolled back::"
+                "Primary artifact restored; merged handoff unavailable."
+            )
         return report, False
     report["editorial_rerun_performed"] = True
     report["editorial_rerun_error"] = None

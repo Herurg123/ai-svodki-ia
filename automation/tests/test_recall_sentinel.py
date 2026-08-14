@@ -153,7 +153,7 @@ def current_sentinel_attempt() -> dict[str, object]:
     sentinel = base_attempt("general_coverage_gaps", attempt=2)
     sentinel.update(
         {
-            "label": "Source-agnostic OpenAI recall sentinel v6",
+            "label": "Source-neutral broad recall sentinel v8",
             "search_strategy": runtime.RECALL_SENTINEL_STRATEGY,
             "recall_sentinel_version": runtime.RECALL_SENTINEL_VERSION,
             "allowed_domains": [],
@@ -195,16 +195,16 @@ class RecallSentinelTests(unittest.TestCase):
             self.assertEqual(tuple(kwargs["allowed_domains"]), ())
             self.assertIn("РОВНО ОДИН Web Search", kwargs["prompt"])
             self.assertIn(
-                "OpenAI cybersecurity August 7 2026",
+                "latest major artificial intelligence news",
                 kwargs["prompt"],
             )
             self.assertNotIn(
-                "OpenAI cybersecurity Reuters August 7 2026",
+                "Reuters latest major artificial intelligence news",
                 kwargs["prompt"],
             )
             self.assertIn("Не расширяй и не переписывай", kwargs["prompt"])
-            self.assertIn("Reuters не обязателен", kwargs["prompt"])
-            self.assertIn("издатель\nне Reuters", kwargs["prompt"])
+            self.assertIn("source-neutral recall sentinel", kwargs["prompt"])
+            self.assertIn("не должен быть привязан ни к OpenAI", kwargs["prompt"])
             story = candidate(legal_scale="major")
             story["source_type"] = "technology_media"
             story["primary_source"] = {
@@ -220,9 +220,9 @@ class RecallSentinelTests(unittest.TestCase):
                     "direction_id": "general_coverage_gaps",
                     "candidates": [story],
                     "rejections": [],
-                    "notes": "High-signal non-Reuters story found.",
+                    "notes": "High-signal source-neutral story found.",
                 },
-                api_metadata("OpenAI cybersecurity August 7 2026"),
+                api_metadata("latest major artificial intelligence news"),
             )
 
         result, request = self.run_plan(complete_zero_plan(), fake_request)
@@ -277,9 +277,9 @@ class RecallSentinelTests(unittest.TestCase):
                     "direction_id": "general_coverage_gaps",
                     "candidates": [],
                     "rejections": [],
-                    "notes": "No high-signal source-agnostic story found.",
+                    "notes": "No high-signal source-neutral story found.",
                 },
-                api_metadata("OpenAI cybersecurity August 7 2026"),
+                api_metadata("latest major artificial intelligence news"),
             )
 
         result, request = self.run_plan(complete_zero_plan(), fake_request)
@@ -370,9 +370,9 @@ class RecallSentinelTests(unittest.TestCase):
                     "direction_id": "general_coverage_gaps",
                     "candidates": [],
                     "rejections": [],
-                    "notes": "checked by v6",
+                    "notes": "checked by v8",
                 },
-                api_metadata("OpenAI cybersecurity August 7 2026"),
+                api_metadata("latest major artificial intelligence news"),
             )
 
         with (
