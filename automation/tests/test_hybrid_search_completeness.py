@@ -221,7 +221,9 @@ class HybridSearchCompletenessTests(unittest.TestCase):
         self.assertIn("open_page", prompt)
         self.assertIn("find_in_page", prompt)
         self.assertIn("6–18 значимых слов", prompt)
-        self.assertIn("Не используй after:, before:, site:", prompt)
+        self.assertIn("date-free natural-language", prompt)
+        self.assertIn("latest / recent / current / breaking", prompt)
+        self.assertIn("Не добавляй в query календарные даты", prompt)
         self.assertNotIn("предпочтительная retrieval-подсказка: after:", prompt)
         self.assertIn("API domain filter отсутствует", prompt)
 

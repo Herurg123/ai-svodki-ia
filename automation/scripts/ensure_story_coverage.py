@@ -458,7 +458,7 @@ def execute_audit_plan(
     payload_status = str(payload.get("status"))
     record = {
         "direction_id": "general_coverage_gaps",
-        "label": "Source-agnostic OpenAI recall sentinel v6",
+        "label": "Source-neutral broad recall sentinel v8",
         "required": True,
         "attempt": attempt_number,
         "search_strategy": RECALL_SENTINEL_STRATEGY,

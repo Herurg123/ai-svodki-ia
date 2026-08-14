@@ -191,20 +191,6 @@ class RecallSentinelTests(unittest.TestCase):
 
     def test_seventh_slot_is_one_source_agnostic_search(self) -> None:
         def fake_request(**kwargs):
-            self.assertEqual(kwargs["maximum_web_search_calls"], 1)
-            self.assertEqual(tuple(kwargs["allowed_domains"]), ())
-            self.assertIn("РОВНО ОДИН Web Search", kwargs["prompt"])
-            self.assertIn(
-                "latest major artificial intelligence news",
-                kwargs["prompt"],
-            )
-            self.assertNotIn(
-                "Reuters latest major artificial intelligence news",
-                kwargs["prompt"],
-            )
-            self.assertIn("Не расширяй и не переписывай", kwargs["prompt"])
-            self.assertIn("source-neutral recall sentinel", kwargs["prompt"])
-            self.assertIn("не должен быть привязан ни к OpenAI", kwargs["prompt"])
             story = candidate(legal_scale="major")
             story["source_type"] = "technology_media"
             story["primary_source"] = {
@@ -228,6 +214,15 @@ class RecallSentinelTests(unittest.TestCase):
         result, request = self.run_plan(complete_zero_plan(), fake_request)
 
         self.assertEqual(request.call_count, 1)
+        call = request.call_args.kwargs
+        self.assertEqual(call["maximum_web_search_calls"], 1)
+        self.assertEqual(tuple(call["allowed_domains"]), ())
+        self.assertIn("РОВНО ОДИН Web Search", call["prompt"])
+        self.assertIn("latest major artificial intelligence news", call["prompt"])
+        self.assertNotIn("Reuters latest major artificial intelligence news", call["prompt"])
+        self.assertIn("Не расширяй и не переписывай", call["prompt"])
+        self.assertIn("source-neutral recall sentinel", call["prompt"])
+        self.assertIn("не должен быть привязан ни к OpenAI", call["prompt"])
         self.assertEqual(len(result["attempts"]), 7)
         sentinel = result["attempts"][-1]
         self.assertEqual(sentinel["search_strategy"], runtime.RECALL_SENTINEL_STRATEGY)
