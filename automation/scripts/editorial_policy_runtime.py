@@ -3,9 +3,10 @@
 
 Production entry points import this module before calling the shared editorial
 validator.  The corrections are deliberately narrow: preserve every unrelated
-policy error, accept only the explicitly allowed Russian wording, and restore
-source metadata from the paid research pool instead of asking the model to copy
-URLs perfectly.
+policy error, accept only the explicitly allowed Russian wording, restore source
+metadata from the paid research pool instead of asking the model to copy URLs
+perfectly, and repair the one mandatory world-section heading when the model
+omits it from an otherwise structurally valid short digest.
 """
 from __future__ import annotations
 
@@ -15,6 +16,7 @@ import re
 from typing import Any, Callable
 
 AGENT_ERROR = "Используй «агент ИИ», а не AI agent или AI-агент."
+WORLD_HEADING = "Мировые лидеры ИИ"
 Validator = Callable[..., tuple[list[str], list[str], dict[str, Any]]]
 EditorialValidator = Callable[..., Any]
 UrlNormalizer = Callable[[str], str]
@@ -144,6 +146,53 @@ def _normalize_article_source_links(
     return pattern.sub(replace, article_html), changes
 
 
+def normalize_editorial_structure(editorial: dict[str, Any]) -> list[dict[str, Any]]:
+    """Restore the mandatory world heading without weakening validation.
+
+    The editorial contract has always required ``Мировые лидеры ИИ`` exactly
+    once, including a Russia-only short digest.  The model can reasonably omit
+    an empty world section when every selected story is Russian, which used to
+    make all downstream validators reject an otherwise publishable digest.
+
+    Repair only the single missing heading.  Duplicates, missing story blocks,
+    malformed HTML and every other structural problem remain validator errors.
+    """
+
+    digest = editorial.get("digest")
+    if not isinstance(digest, dict):
+        return []
+    article_html = digest.get("article_html")
+    if not isinstance(article_html, str) or not article_html.strip():
+        return []
+
+    try:
+        import editorial_policy
+
+        h2_texts = editorial_policy.parse_article(article_html).h2_texts
+    except Exception:
+        h2_texts = []
+    if WORLD_HEADING in h2_texts:
+        return []
+
+    first_h2 = re.search(r"<h2\b[^>]*>", article_html, flags=re.IGNORECASE)
+    if first_h2 is None:
+        return []
+
+    insertion = f"<h2>{WORLD_HEADING}</h2>"
+    digest["article_html"] = (
+        article_html[: first_h2.start()]
+        + insertion
+        + article_html[first_h2.start() :]
+    )
+    return [
+        {
+            "field": "digest.article_html.world_heading",
+            "model_value": None,
+            "normalized_value": insertion,
+        }
+    ]
+
+
 def normalize_editorial_sources(
     editorial: dict[str, Any],
     research: dict[str, Any],
@@ -204,7 +253,7 @@ def wrap_editorial_validator(
     original: EditorialValidator,
     normalize_url: UrlNormalizer,
 ) -> EditorialValidator:
-    """Normalize known source metadata immediately before validation."""
+    """Normalize deterministic structure/source seams immediately before validation."""
 
     if getattr(original, "_ai_svodki_source_metadata_fixed", False):
         return original
@@ -216,6 +265,7 @@ def wrap_editorial_validator(
         **kwargs: Any,
     ) -> Any:
         if isinstance(editorial, dict) and isinstance(research, dict):
+            normalize_editorial_structure(editorial)
             normalize_editorial_sources(editorial, research, normalize_url)
         return original(editorial, research, *args, **kwargs)
 
