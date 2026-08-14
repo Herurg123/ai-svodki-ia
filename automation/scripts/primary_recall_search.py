@@ -45,6 +45,7 @@ DEFAULT_MAXIMUM_SEARCH_CALLS = 12
 MAX_CANDIDATES_PER_PASS = 4
 PRIMARY_NAVIGATION_TOOL_ALLOWANCE = 3
 PRIMARY_MAX_TOOL_CALLS_PER_PASS = 1 + PRIMARY_NAVIGATION_TOOL_ALLOWANCE
+PRIMARY_MAX_OUTPUT_TOKENS_PER_PASS = 6000
 PRIMARY_LOOKBACK_HOURS = 24
 REUTERS_DOMAINS: tuple[str, ...] = ("reuters.com",)
 BLOOMBERG_FT_DOMAINS: tuple[str, ...] = ("bloomberg.com", "ft.com")
@@ -65,15 +66,14 @@ PRIMARY_DIRECTIONS: tuple[dict[str, Any], ...] = (
             "инфраструктура, бизнес, regulation и security. Не концентрируйся на "
             "одной компании или одном типе событий."
         ),
-        "allowed_domains": REUTERS_DOMAINS,
     },
     {
         "id": "major_agencies",
         "label": "Major news agencies",
         "guidance": (
-            "Отдельно ищи свежие ИИ-события у Reuters, Associated Press, Bloomberg "
-            "и Financial Times. Нужны не только релизы моделей, но также чипы, "
-            "инфраструктура, инвестиции, M&A, партнёрства, policy, legal и security."
+            "Отдельный high-signal sweep Bloomberg и Financial Times: модели, "
+            "чипы, инфраструктура, инвестиции, M&A, партнёрства, policy, legal "
+            "и security. Это дополнительный publisher route, не мировой catch-all."
         ),
         "allowed_domains": BLOOMBERG_FT_DOMAINS,
     },
@@ -173,7 +173,6 @@ PRIMARY_DIRECTIONS: tuple[dict[str, Any], ...] = (
             "Перепроверь агентства, мировых игроков, инфраструктуру, Китай/Азию, "
             "Россию, продуктовые интеграции, security и business. Не повторяй список."
         ),
-        "allowed_domains": AP_DOMAINS,
     },
 )
 PRIMARY_DIRECTION_IDS = tuple(str(item["id"]) for item in PRIMARY_DIRECTIONS)
@@ -360,16 +359,15 @@ def _select_final_candidates(
 def query_time_hint(search_window: dict[str, Any]) -> str:
     start = _parse_aware(str(search_window.get("start_at") or ""))
     end = _parse_aware(str(search_window.get("end_at") or ""))
-    after_day = (start.date() - timedelta(days=1)).isoformat()
-    before_day = (end.date() + timedelta(days=1)).isoformat()
     return (
-        f"Точный effective window: {start.isoformat(timespec='seconds')} → "
-        f"{end.isoformat(timespec='seconds')}. Сформируй ОДИН узкий поисковый "
-        f"запрос с явной свежестью, предпочтительно добавив after:{after_day} "
-        f"before:{before_day}. Эти date operators только retrieval-подсказка: "
-        "после выдачи обязательно проверь фактическую дату/timestamp источника "
-        "против точных границ effective window. Не позволяй старым популярным "
-        "страницам вытеснять свежие публикации."
+        f"Точный effective window для ПОСЛЕДУЮЩЕЙ проверки кандидатов: "
+        f"{start.isoformat(timespec='seconds')} → {end.isoformat(timespec='seconds')}. "
+        "Сам search query должен быть date-free: не копируй в него календарные "
+        "даты, годы, названия месяцев, after:/before: или иные явные временные "
+        "границы. Для ranking используй естественный relative-freshness cue: "
+        "latest / recent / current / breaking или эквивалент. После retrieval "
+        "обязательно проверь фактическую дату/timestamp источника против полного "
+        "effective window; relative wording не является freshness-фильтром."
     )
 
 
@@ -436,7 +434,7 @@ def run_search_request(
         max_tool_calls=PRIMARY_MAX_TOOL_CALLS_PER_PASS,
         include=["web_search_call.action.sources"],
         reasoning={"effort": "medium"},
-        max_output_tokens=3500,
+        max_output_tokens=PRIMARY_MAX_OUTPUT_TOKENS_PER_PASS,
         text={
             "format": {
                 "type": "json_schema",
@@ -451,6 +449,7 @@ def run_search_request(
     metadata["configured_search_operations"] = 1
     metadata["configured_total_tool_calls"] = PRIMARY_MAX_TOOL_CALLS_PER_PASS
     metadata["navigation_tool_allowance"] = PRIMARY_NAVIGATION_TOOL_ALLOWANCE
+    metadata["configured_max_output_tokens"] = PRIMARY_MAX_OUTPUT_TOKENS_PER_PASS
     metadata["allowed_domains"] = list(allowed_domains or ())
     completed = int(metadata.get("web_search_calls_completed", 0) or 0)
     if completed != 1:

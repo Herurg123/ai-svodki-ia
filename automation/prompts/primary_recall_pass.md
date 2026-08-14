@@ -26,58 +26,47 @@ API domain filter этого прохода: {{DIRECTION_ALLOWED_DOMAINS}}
 навигационного вызова.
 
 Точные `SEARCH_WINDOW_START_AT` и `SEARCH_WINDOW_END_AT` выше являются
-авторитетными границами допустимой свежести. Первые 24 часа effective window до
-continuity anchor являются **healing overlap**, а не равноправным поисковым
-приоритетом. Для фактического search query сначала вычисли основной continuity-
-период: он начинается ровно через 24 часа после `SEARCH_WINDOW_START_AT` и
-заканчивается в `SEARCH_WINDOW_END_AT`. Именно календарные даты этого основного
-периода используй в query. Материал из первых 24 часов overlap всё ещё допустим,
-если он случайно обнаружен и является важным пропуском прошлого выпуска, но
-старый overlap не должен вытеснять свежие события основного периода.
-Окончательное принятие кандидата всё равно проверяется по реальной
-дате/timestamp источника против полного effective window.
+авторитетными границами **только для проверки пригодности найденного события**.
+Первые 24 часа effective window до continuity anchor остаются healing overlap.
+Search ranking больше не кодирует это окно календарными датами: production-
+эксперимент на `gpt-5.6-terra` показал, что явные даты в query систематически
+поднимают старые и нерелевантные страницы и могут давать false-zero.
 
 ### Retrieval query discipline
 
-Фактический query должен быть короткой обычной поисковой фразой, ориентированной
-на свежие новости **основного continuity-периода после healing overlap**.
-**Не используй в поисковой строке `after:`, `before:`, длинные цепочки `OR`,
-`site:`, скобки или перечень из десятков сущностей.** Укажи релевантные
-календарные даты основного периода естественным языком, например
-`August 13 2026 August 14 2026`, и добавь только несколько самых сильных
-тематических терминов этого прохода.
+Фактический query должен быть короткой обычной поисковой фразой примерно на
+6–18 значимых слов и явно просить **самые свежие** материалы через relative-freshness cue: `latest`, `recent`, `current`, `breaking` или естественный
+эквивалент. **Не используй в поисковой строке календарные даты, годы, названия
+месяцев, `after:`, `before:`, `site:`, длинные цепочки `OR`, скобки или перечень
+из десятков сущностей.**
 
-Ориентир: один query примерно на 6–18 значимых слов. Для тематических проходов
-выбирай несколько высокосигнальных терминов, а не булеву мегаконструкцию.
+Relative wording улучшает ranking, но не определяет редакционную свежесть. После
+retrieval обязательно проверь фактическую дату/timestamp каждого кандидата
+против полного effective window. Материал из healing overlap допустим только как
+важный ранее пропущенный сюжет и всё равно проходит архивный dedupe.
 
 ### High-signal source routing
 
-Production-инциденты 2026-08-13 и 2026-08-14 показали, что текстовое упоминание
-издателя в query не гарантирует свежий поток: Reuters-focused запрос способен
-вернуть старые Reuters-зеркала, а общий четырехдоменный pass — старые hub/video
-страницы. Поэтому три high-signal прохода теперь разделены **API domain filters**
-без изменения общего бюджета в 12 searches:
+`global_breaking` теперь снова является **source-neutral broad discovery** без
+API domain filter. Используй короткий запрос уровня `latest major AI news models
+products business infrastructure`, не привязываясь к компании или издателю.
+Это основной catch-all, который не должен ослепнуть из-за проблем одного домена.
 
-- если `direction_id=global_breaking`, API filter ограничен `reuters.com`.
-  Сформируй короткий source-neutral query про **AI funding / acquisition / M&A /
-  major business** и даты основного continuity-периода, например
-  `AI funding acquisition business August 13 2026 August 14 2026`. Не добавляй
-  `Reuters` в query: источник уже задан API filter;
-- если `direction_id=major_agencies`, API filter ограничен `bloomberg.com` и
-  `ft.com`. Используй короткий source-neutral query про **major AI news / models /
-  products / chips / infrastructure / business** и даты основного
-  continuity-периода. Это независимый Bloomberg/FT high-signal канал;
-- если `direction_id=independent_missing_events`, API filter ограничен
-  `apnews.com` и `ap.org`. Сделай независимый source-neutral sweep по **AI
-  consumer products / major technology / policy** и датам основного
-  continuity-периода, учитывая уже найденный pool.
+`major_agencies` остаётся отдельным дополнительным high-signal каналом с API
+filter `bloomberg.com` + `ft.com`; query при этом source-neutral и date-free,
+например `latest major artificial intelligence news`. Это дополнительный шанс
+ranking, а не доказательство отсутствия события вне этих издателей.
 
-Это routing поискового ranking, а не whitelist всего проекта. Остальные девять
-Primary directions остаются широкими без API domain filter и могут использовать
-официальные первоисточники и любые авторитетные технологические, деловые,
-отраслевые, регуляторные или исследовательские источники. После retrieval
-кандидат по-прежнему может использовать более сильный первоисточник, если он
-проверен обычными правилами.
+`independent_missing_events` становится source-neutral адаптивным last-mile
+поиском без API domain filter. Учитывая уже найденный pool, найди крупнейшие
+свежие ИИ-события, которых в нём нет, независимо от темы и издателя. Query должен
+оставаться broad и date-free, например `latest major artificial intelligence
+news missing events`.
+
+Остальные девять тематических направлений также остаются широкими. Domain
+filters не являются проектным whitelist: финальный кандидат может использовать
+любой более сильный официальный или авторитетный источник, прошедший обычные
+правила проверки.
 
 Для `models_products_agents` отдельно не забывай consumer-AI: крупный запуск
 телефона, устройства, ОС или массового сервиса является релевантным, если ИИ

@@ -36,7 +36,7 @@ class TemporalAnchorContractTests(unittest.TestCase):
 
     def test_versions_are_current(self) -> None:
         self.assertEqual(coverage.TEMPORAL_ANCHOR_VERSION, 1)
-        self.assertEqual(coverage.RECALL_SENTINEL_VERSION, 7)
+        self.assertEqual(coverage.RECALL_SENTINEL_VERSION, 8)
         self.assertEqual(recovery.TEMPORAL_ANCHOR_VERSION, 1)
 
     def _write_research(self, root: Path, *, version: int | None, window: dict) -> None:
@@ -100,7 +100,7 @@ class TemporalAnchorContractTests(unittest.TestCase):
     def test_workflow_refuses_legacy_terminal_stop(self) -> None:
         workflow = (ROOT / ".github/workflows/daily-production.yml").read_text(encoding="utf-8")
         self.assertIn('data.get("temporal_anchor_version") == 1', workflow)
-        self.assertIn('(data.get("recall_sentinel") or {}).get("version") == 7', workflow)
+        self.assertIn('(data.get("recall_sentinel") or {}).get("version") == 8', workflow)
 
     def test_main_research_persists_temporal_version(self) -> None:
         source = (ROOT / "automation/scripts/generate_digest_preview.py").read_text(encoding="utf-8")

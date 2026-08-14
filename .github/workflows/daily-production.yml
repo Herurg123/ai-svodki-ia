@@ -302,7 +302,7 @@ jobs:
           pool_total = pool_after.get("total") if isinstance(pool_after, dict) else None
           temporal_anchor_current = (
               data.get("temporal_anchor_version") == 1
-              and (data.get("recall_sentinel") or {}).get("version") == 7
+              and (data.get("recall_sentinel") or {}).get("version") == 8
           )
           terminal = (
               temporal_anchor_current

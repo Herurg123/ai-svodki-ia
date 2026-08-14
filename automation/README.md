@@ -81,6 +81,8 @@ search primary-pass может использовать до трёх навиг
 search operations, logical queries, total `web_search_call` items и navigation
 items. Второй search или batched multi-query считается нарушением контракта.
 
+Responses-output ceiling для каждого Primary pass равен **6000 tokens**. Это запас для reasoning и завершения строгого JSON после search/navigation, а не дополнительный search-бюджет; лимит остаётся ровно один search operation на pass. Старый потолок 3500 был повышен после live-smoke 2026-08-14, где финальный broad pass успел выполнить search и три navigation action, но API завершил ответ как `incomplete / max_output_tokens`.
+
 Фиксированная матрица:
 
 1. `global_breaking` — широкий мировой discovery;
@@ -101,10 +103,10 @@ items. Второй search или batched multi-query считается нар�
 12. `independent_missing_events` — независимый last-mile поиск крупных событий,
     которых нет в уже собранном пуле.
 
-Три high-signal Primary pass намеренно используют раздельные API domain filters:
-`global_breaking` — `reuters.com`, `major_agencies` — `bloomberg.com` + `ft.com`,
-`independent_missing_events` — `apnews.com` + `ap.org`. Остальные девять
-primary-направлений не имеют общего whitelist и остаются широкими.
+`global_breaking` и `independent_missing_events` являются source-neutral broad
+catch-all проходами без API domain filter. `major_agencies` сохраняет отдельный
+`bloomberg.com` + `ft.com` high-signal filter; остальные направления также
+остаются широкими.
 
 Каноническая continuity-точка остаётся фактическим `search_cutoff_at`
 последнего успешно опубликованного выпуска. Новый pre-research cutoff остаётся
@@ -116,30 +118,19 @@ URL уже опубликованных сюжетов отсекаются до
 archive dedupe остаётся обязательным. События за пределами 24-часового overlap
 не воскресают бесконечно.
 
-Effective window теперь имеет две разные роли. Первые 24 часа от effective start
-до continuity anchor являются **healing overlap**. Основной continuity-период
-идёт от anchor до текущего cutoff. Полное effective window остаётся допустимой
-границей кандидатов, но search query в Primary, Hybrid и Coverage должен прежде
-всего ранжировать основной continuity-период, чтобы overlap не забивал свежую
-выдачу предыдущими сутками.
+Effective window имеет две роли. Первые 24 часа от effective start до continuity
+anchor являются **healing overlap**, а весь window остаётся допустимой границей
+кандидатов. Но Web Search ranking больше не пытается кодировать эти границы
+календарными датами. Primary, Hybrid и Coverage используют короткие date-free
+relative-freshness queries (`latest`/`recent`/`current`/`breaking`), после чего
+фактическая дата/timestamp источника строго валидируется против полного effective
+window. Так overlap остаётся доступен для healing, а слово `latest` не получает
+ложный статус редакционного фильтра.
 
-Prompt каждого Primary pass получает точные границы effective window.
-**Фактическая поисковая строка должна быть коротким natural-language query с
-календарными датами основного continuity-периода после healing overlap**, без
-`after:`/`before:`, длинных Boolean `OR`-цепочек, скобок и перечней из десятков
-компаний. Для `major_agencies` достаточно source-neutral компактного AI/date
-query, потому что Reuters/AP/Bloomberg/FT уже ограничены API domain filter.
-Финальная свежесть всё равно проверяется по фактической дате/timestamp источника
-относительно полного сохранённого effective window.
-
-High-signal source routing не дублирует один издатель в нескольких broad slots:
-`global_breaking` использует source-neutral funding/acquisition/M&A/major
-business query внутри `reuters.com` filter; `major_agencies` использует
-source-neutral major-AI query внутри `bloomberg.com` + `ft.com` filter;
-`independent_missing_events` выполняет source-neutral consumer/major-technology/
-policy sweep внутри `apnews.com` + `ap.org` filter. Это независимые
-ranking-шансы, а не whitelist кандидатов или региональная/издательская квота.
-Остальные Primary directions по-прежнему ищут широко.
+Broad safety nets `global_breaking` и `independent_missing_events` не имеют API
+domain filter. `major_agencies` остаётся отдельным дополнительным sweep по
+`bloomberg.com` + `ft.com`. Это ranking-шансы, а не whitelist кандидатов или
+издательская квота; остальные Primary directions также остаются широкими.
 
 Wikipedia и Reddit не являются допустимым основным подтверждением свежего
 новостного события. ArXiv остаётся нормальным первоисточником действительно
@@ -434,3 +425,18 @@ newsletter, event или old document page не считается. Legacy diagn
 ## Hygiene search diagnostics
 
 Перед сохранением Primary, Hybrid и Coverage diagnostics URL, возвращённые search provider, очищаются от временных credential/token/signature query-параметров, включая AWS signed URL. Домен, путь и несекретные параметры сохраняются. Artifact secret-scanner остаётся fail-closed и не получает исключений для подписанных URL.
+
+
+### Проверенный relative-freshness retrieval
+
+Эксперимент 2026-08-14 на production-модели `gpt-5.6-terra` показал: явные
+календарные даты в Web Search query ухудшают ranking и могут приводить к
+false-zero. Поэтому Primary, Hybrid, Coverage и финальный zero-pool sentinel
+используют date-free `latest`/`recent`/`current`/`breaking` запросы. Это только
+ranking hint: фактическая дата/timestamp источника по-прежнему строго проверяется
+против полного effective window. Broad safety nets не привязаны к одному
+издателю. Если Hybrid добавил валидный candidate, но immediate editorial rerun
+упал, объединённый pool всё равно передаётся Coverage.
+
+
+Source-health после перехода на source-neutral routing проверяет свежую Reuters/AP/Bloomberg/FT evidence по **всей 12-pass Primary matrix**, а не только в `global_breaking`/`major_agencies`/`independent_missing_events`: тематический pass вправе первым обнаружить сильный agency-материал. При этом `major_agencies` всё равно обязан завершить свою search operation и иметь хотя бы один consulted source, а общий anti-junk gate по источникам не ослабляется.

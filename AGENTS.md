@@ -151,34 +151,33 @@ model can verify source date and facts. Diagnostics must count search operations
 logical queries, total web-search tool items and navigation actions separately.
 A second search action or a batched multi-query search is a contract violation.
 
-Three high-signal Primary passes intentionally use disjoint API domain filters:
-`global_breaking` is limited to `reuters.com`, `major_agencies` to
-`bloomberg.com` + `ft.com`, and `independent_missing_events` to `apnews.com` +
-`ap.org`. The other nine Primary directions remain broad. Do not turn these
-source routes into a project-wide whitelist; source quality is still validated
-after retrieval.
+Each Primary Responses pass has `max_output_tokens=6000`. This is structured-output/reasoning headroom, not additional Web Search budget: the pass still must complete exactly one search operation. The 2026-08-14 live relative-freshness smoke showed the final `independent_missing_events` search and all three navigation actions completing successfully, but the response becoming `incomplete` solely at the former 3500-token ceiling.
 
-Search prompts must carry the exact effective window. The **actual search
-query** must be a short natural-language phrase with calendar dates of the main
-continuity period after the 24-hour healing overlap written normally. Do not
-copy `after:`/`before:` operators, long Boolean `OR` chains, parentheses, or
-giant company lists into the query. The full saved effective window remains
-authoritative for final freshness validation.
+Broad safety nets are source-neutral: `global_breaking` and
+`independent_missing_events` have no API domain filter. `major_agencies` remains
+an extra Bloomberg/FT high-signal route. Do not turn this source route into a
+project-wide whitelist; source quality is still validated after retrieval.
 
-High-signal routing must stay source-diverse without increasing the 12-search
+Search prompts carry the exact effective window only as the authoritative
+eligibility boundary. The **actual search query is date-free**: use a short
+natural-language relative-freshness cue such as `latest`, `recent`, `current` or
+`breaking`; do not copy calendar dates, years, month names, `after:`/`before:` or
+other explicit temporal boundaries into the query. The full saved effective
+window remains authoritative for final freshness validation.
+
+High-signal routing stays source-diverse without increasing the 12-search
 budget:
 
-- `global_breaking` uses a source-neutral funding/acquisition/M&A/major-business
-  query inside a `reuters.com` API filter;
-- `major_agencies` uses a source-neutral compact major-AI/date query inside a
-  `bloomberg.com` + `ft.com` API filter;
-- `independent_missing_events` uses a source-neutral consumer-AI /
-  major-technology / policy sweep inside an `apnews.com` + `ap.org` API filter
+- `global_breaking` is a source-neutral broad current-AI catch-all without an API
+  domain filter;
+- `major_agencies` is an additional date-free `bloomberg.com` + `ft.com` sweep;
+- `independent_missing_events` is a source-neutral broad missing-events sweep
   after seeing the current candidate pool.
 
 These are ranking routes, not a candidate whitelist. A stronger official primary
 source or other authoritative source may still be the final source of a
-candidate. The remaining Primary directions stay broad.
+candidate. All non-`major_agencies` Primary directions remain without API domain
+filters.
 
 Wikipedia and Reddit must not be used as primary confirmation of a fresh news
 event. ArXiv is allowed as the primary source of a genuinely material research
@@ -387,3 +386,19 @@ check, not a quota requiring an agency story in every published digest.
 ## Search diagnostic secret hygiene
 
 Provider-returned URLs may contain temporary signed credentials. Before persisting Primary, Hybrid or Coverage diagnostics, strip credential/token/signature query parameters while preserving source identity. Never weaken the artifact secret scanner to permit signed credentials.
+
+
+## 2026-08-14 relative-freshness retrieval regression
+
+A live `gpt-5.6-terra` A/B showed that explicit calendar dates in Web Search
+queries can degrade ranking and create false-zero retrieval. Production uses
+date-free relative-freshness queries for Primary, Hybrid, Coverage and the final
+broad zero-pool sentinel, while the exact effective window remains a strict
+post-retrieval validator. `global_breaking`, `independent_missing_events` and the
+sentinel are source-neutral catch-alls. If Hybrid finds valid candidates but its
+immediate editorial rerun fails, the merged candidate pool must still be handed
+to Coverage instead of being lost when the primary editorial artifact is
+restored.
+
+
+Source-health после перехода на source-neutral routing проверяет свежую Reuters/AP/Bloomberg/FT evidence по **всей 12-pass Primary matrix**, а не только в `global_breaking`/`major_agencies`/`independent_missing_events`: тематический pass вправе первым обнаружить сильный agency-материал. При этом `major_agencies` всё равно обязан завершить свою search operation и иметь хотя бы один consulted source, а общий anti-junk gate по источникам не ослабляется.

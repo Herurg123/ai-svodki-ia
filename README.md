@@ -85,6 +85,7 @@ repository hygiene: в policy она отдельно классифицируе
    для проверки даты и фактов источника. Диагностика считает search operations,
    logical queries, total tool items и navigation items раздельно. Второй search
    или batched multi-query считается нарушением контракта.
+   Responses-output ceiling одного Primary pass — 6000 tokens; это headroom для reasoning/JSON после уже выполненного поиска и не увеличивает 12-search budget.
 5. Primary работает по принципу **discovery-first**. На retrieval-этапе
    проверяемое потенциально важное событие можно сохранить как `consider`, если
    окончательная редакционная значимость ещё не очевидна. После каждого
@@ -92,19 +93,15 @@ repository hygiene: в policy она отдельно классифицируе
    effective window, freshness, verification, legal/curiosity и URL/semantic
    dedupe. Финальный `independent_missing_events` получает компактный список уже
    найденного и ищет именно крупные отсутствующие события.
-6. `major_agencies` намеренно использует узкий API domain filter только для
-   Reuters, AP, Bloomberg и Financial Times. Общего whitelist для остальных
-   направлений нет. Фактический query должен быть короткой natural-language
-   поисковой фразой с календарными датами **основного continuity-периода после
-   24-часового healing overlap**, а полное effective window остаётся границей
-   допустимости кандидата. В query запрещены `after:`/`before:`, длинные Boolean
-   `OR`-цепочки, скобки и огромные списки компаний. High-signal routing разделён:
-   `global_breaking` использует source-neutral funding/M&A/business query внутри
-   `reuters.com` filter; `major_agencies` использует source-neutral AI/date query
-   внутри `bloomberg.com` + `ft.com` filter; `independent_missing_events` делает
-   source-neutral consumer/major-tech/policy sweep внутри `apnews.com` + `ap.org`
-   filter. Это routing
-   ranking, а не whitelist кандидатов или квота на публикацию.
+6. Broad safety nets `global_breaking` и `independent_missing_events` работают
+   без API domain filter. `major_agencies` остаётся дополнительным high-signal
+   проходом только по `bloomberg.com` + `ft.com`. Фактический query во всех
+   Primary-направлениях должен быть короткой date-free natural-language фразой
+   с relative-freshness cue (`latest`/`recent`/`current`/`breaking`). Календарные
+   даты, годы, названия месяцев, `after:`/`before:`, длинные Boolean `OR`-цепочки,
+   скобки и огромные списки компаний в query запрещены. Полное effective window
+   остаётся строгой post-retrieval границей допустимости кандидата; `latest` сам
+   по себе не считается доказательством свежести.
 7. Китай/Азия намеренно разделены на два прохода. Исторический эксперимент на
    окне выпуска 2026-08-11 показал, что одна широкая China/Asia-проверка
    обнаружила 5 из 6 контрольных событий, но пропустила продуктовую интеграцию
@@ -520,3 +517,18 @@ agency raw candidate считается evidence; stale author, newsletter, even
 ## Hygiene search diagnostics
 
 Перед сохранением Primary, Hybrid и Coverage diagnostics URL, возвращённые search provider, очищаются от временных credential/token/signature query-параметров, включая AWS signed URL. Домен, путь и несекретные параметры сохраняются. Artifact secret-scanner остаётся fail-closed и не получает исключений для подписанных URL.
+
+
+### Проверенный relative-freshness retrieval
+
+Эксперимент 2026-08-14 на production-модели `gpt-5.6-terra` показал: явные
+календарные даты в Web Search query ухудшают ranking и могут приводить к
+false-zero. Поэтому Primary, Hybrid, Coverage и финальный zero-pool sentinel
+используют date-free `latest`/`recent`/`current`/`breaking` запросы. Это только
+ranking hint: фактическая дата/timestamp источника по-прежнему строго проверяется
+против полного effective window. Broad safety nets не привязаны к одному
+издателю. Если Hybrid добавил валидный candidate, но immediate editorial rerun
+упал, объединённый pool всё равно передаётся Coverage.
+
+
+Source-health после перехода на source-neutral routing проверяет свежую Reuters/AP/Bloomberg/FT evidence по **всей 12-pass Primary matrix**, а не только в `global_breaking`/`major_agencies`/`independent_missing_events`: тематический pass вправе первым обнаружить сильный agency-материал. При этом `major_agencies` всё равно обязан завершить свою search operation и иметь хотя бы один consulted source, а общий anti-junk gate по источникам не ослабляется.

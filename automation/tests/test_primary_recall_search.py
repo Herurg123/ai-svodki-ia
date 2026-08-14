@@ -103,20 +103,14 @@ class PrimaryRecallSearchTests(unittest.TestCase):
         self.assertIn("integrations", label)
         self.assertIn("partnerships", label)
 
-    def test_high_signal_passes_have_disjoint_api_domain_filters(self):
+    def test_broad_safety_nets_are_source_neutral_and_agency_route_is_additive(self):
         directions = {item["id"]: item for item in prs.PRIMARY_DIRECTIONS}
+        self.assertEqual(tuple(directions["global_breaking"].get("allowed_domains") or ()), ())
         self.assertEqual(
-            tuple(directions["global_breaking"]["allowed_domains"]),
-            prs.REUTERS_DOMAINS,
-        )
-        self.assertEqual(
-            tuple(directions["major_agencies"]["allowed_domains"]),
+            tuple(directions["major_agencies"].get("allowed_domains") or ()),
             prs.BLOOMBERG_FT_DOMAINS,
         )
-        self.assertEqual(
-            tuple(directions["independent_missing_events"]["allowed_domains"]),
-            prs.AP_DOMAINS,
-        )
+        self.assertEqual(tuple(directions["independent_missing_events"].get("allowed_domains") or ()), ())
         self.assertEqual(
             set(prs.AGENCY_DOMAINS),
             set(prs.REUTERS_DOMAINS + prs.BLOOMBERG_FT_DOMAINS + prs.AP_DOMAINS),
@@ -163,9 +157,9 @@ class PrimaryRecallSearchTests(unittest.TestCase):
         self.assertEqual(len(research["coverage"]), 12)
         self.assertEqual(len(research["candidates"]), 1)
         self.assertIn("Alpha Model", final_prompt)
-        self.assertEqual(seen_domains["global_breaking"], prs.REUTERS_DOMAINS)
+        self.assertEqual(seen_domains["global_breaking"], ())
         self.assertEqual(seen_domains["major_agencies"], prs.BLOOMBERG_FT_DOMAINS)
-        self.assertEqual(seen_domains["independent_missing_events"], prs.AP_DOMAINS)
+        self.assertEqual(seen_domains["independent_missing_events"], ())
         self.assertEqual(seen_domains["models_products_agents"], ())
 
     def test_final_candidate_cap_cannot_starve_late_direction(self):
@@ -249,6 +243,12 @@ class PrimaryRecallSearchTests(unittest.TestCase):
                 for item in report["validator_rejections"]
             )
         )
+
+    def test_primary_pass_has_structured_output_headroom_for_broad_last_mile(self):
+        self.assertEqual(prs.PRIMARY_MAX_OUTPUT_TOKENS_PER_PASS, 6000)
+        source = (SCRIPT_DIR / "primary_recall_search.py").read_text(encoding="utf-8")
+        self.assertIn("max_output_tokens=PRIMARY_MAX_OUTPUT_TOKENS_PER_PASS", source)
+        self.assertIn('metadata["configured_max_output_tokens"]', source)
 
     def test_mandatory_pass_failure_is_fail_closed(self):
         calls = 0

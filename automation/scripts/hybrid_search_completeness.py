@@ -169,32 +169,18 @@ def _compact_archive(archive: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def _time_hint(search_window: dict[str, Any]) -> str:
-    try:
-        effective_start = datetime.fromisoformat(
-            str(search_window.get("start_at") or "").replace("Z", "+00:00")
-        )
-        end = datetime.fromisoformat(
-            str(search_window.get("end_at") or "").replace("Z", "+00:00")
-        )
-        continuity_start = min(effective_start + timedelta(hours=24), end)
-        return (
-            "Первые 24 часа effective window являются healing overlap. Для единственного "
-            "search query приоритетен основной continuity-период "
-            f"{continuity_start.isoformat(timespec='seconds')} → {end.isoformat(timespec='seconds')}. "
-            "Используй короткую natural-language фразу примерно на 6–18 значимых слов "
-            f"и обычные календарные даты {continuity_start.date()} и {end.date()}. "
-            "Не используй after:, before:, site:, скобки или длинные OR-цепочки. "
-            "Overlap остаётся допустим для случайно найденного крупного пропуска, но не "
-            "должен вытеснять свежие события continuity-периода. После выдачи проверь "
-            "фактический timestamp против полного effective window."
-        )
-    except ValueError:
-        return (
-            "В поисковом запросе приоритизируй основной continuity-период после первых "
-            "24 часов healing overlap, укажи его календарные даты обычным текстом; не "
-            "используй after:, before:, site: или длинные OR-цепочки и проверь timestamp "
-            "источника против полного effective window."
-        )
+    start = str(search_window.get("start_at") or "")
+    end = str(search_window.get("end_at") or "")
+    return (
+        f"Полное effective window для проверки кандидатов: {start} → {end}. "
+        "Фактический search query должен быть короткой date-free natural-language "
+        "фразой примерно на 6–18 значимых слов и использовать relative freshness: "
+        "latest / recent / current / breaking или эквивалент. Не добавляй в query "
+        "календарные даты, годы, названия месяцев, after:, before:, site:, скобки "
+        "или длинные OR-цепочки. Relative wording влияет только на ranking; после "
+        "выдачи фактическую дату/timestamp источника строго проверяй против полного "
+        "effective window, включая bounded healing overlap."
+    )
 
 
 def build_prompt(
