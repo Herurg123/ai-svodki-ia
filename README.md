@@ -532,3 +532,19 @@ ranking hint: фактическая дата/timestamp источника по-
 
 
 Source-health после перехода на source-neutral routing проверяет свежую Reuters/AP/Bloomberg/FT evidence по **всей 12-pass Primary matrix**, а не только в `global_breaking`/`major_agencies`/`independent_missing_events`: тематический pass вправе первым обнаружить сильный agency-материал. При этом `major_agencies` всё равно обязан завершить свою search operation и иметь хотя бы один consulted source, а общий anti-junk gate по источникам не ослабляется.
+
+## Возобновляемые платные стадии
+
+Production рассматривает успешно провалидированный текст выпуска как отдельный
+checkpoint. Если после него ломается обложка, сборка сайта, commit или FTP,
+следующий recovery-run переиспользует готовый artifact и не оплачивает заново
+Primary Recall, Hybrid, Coverage и редактуру. Успешная обложка является следующим
+checkpoint, а уже закоммиченный выпуск при проблеме FTP только redeploy-ится.
+
+Для обложки обязательным идентификатором является отдельный `image_request_id`.
+Исходный `source_editorial_request_id` хранится только как provenance и может
+отсутствовать у корректного recovery-артефакта; его отсутствие не должно
+останавливать Image API. Диагностика различает локальный image-preflight,
+сетевой/HTTP сбой Images API и некорректный API response, а при доступности
+сохраняет `x-request-id`. Обычная генерация обложки остаётся one-shot без
+автоматического retry.

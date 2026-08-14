@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import base64
 import importlib.util
+import io
 import json
 import shutil
 import sys
 import tempfile
 import unittest
+import urllib.error
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "automation" / "scripts"
@@ -121,7 +124,7 @@ class ImageGenerationTests(unittest.TestCase):
         def invalid_transport(**kwargs):
             return {"data": [{"b64_json": "***not-base64***"}]}
 
-        with self.assertRaisesRegex(generator.ImageGenerationError, "base64"):
+        with self.assertRaisesRegex(generator.ImageApiResponseError, "base64"):
             generator.generate_image_artifact(
                 source_dir=self.source,
                 output_dir=self.output,
@@ -131,6 +134,86 @@ class ImageGenerationTests(unittest.TestCase):
                 model="gpt-image-2",
                 transport=invalid_transport,
             )
+
+    def test_missing_editorial_request_id_does_not_block_image_call(self) -> None:
+        for name in ("image-source.json", "run-info.json", "digest.json"):
+            path = self.source / name
+            if not path.exists():
+                continue
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            payload.pop("request_id", None)
+            payload.pop("editorial_request_id", None)
+            path.write_text(
+                json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+
+        result = generator.generate_image_artifact(
+            source_dir=self.source,
+            output_dir=self.output,
+            request_path=self.request_path,
+            config_path=CONFIG,
+            api_key="test-key-not-sent",
+            model="gpt-image-2",
+            transport=self.fake_transport,
+        )
+        self.assertEqual(result["status"], "ok")
+        self.assertIsNotNone(self.captured_request)
+        metadata = json.loads(
+            (self.output / "image-request.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(metadata["image_request_id"], "image-preview-test-001")
+        self.assertIsNone(metadata["source_editorial_request_id"])
+
+    def test_missing_image_request_id_still_fails_before_transport(self) -> None:
+        payload = json.loads(self.request_path.read_text(encoding="utf-8"))
+        payload["request_id"] = ""
+        self.request_path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        with self.assertRaisesRegex(generator.ImagePreflightError, "request_id"):
+            generator.generate_image_artifact(
+                source_dir=self.source,
+                output_dir=self.output,
+                request_path=self.request_path,
+                config_path=CONFIG,
+                api_key="test-key-not-sent",
+                model="gpt-image-2",
+                transport=self.fake_transport,
+            )
+        self.assertIsNone(self.captured_request)
+
+    def test_http_error_preserves_openai_request_id_and_error_code(self) -> None:
+        body = json.dumps(
+            {
+                "error": {
+                    "message": "quota exhausted",
+                    "type": "insufficient_quota",
+                    "code": "insufficient_quota",
+                }
+            }
+        ).encode("utf-8")
+        http_error = urllib.error.HTTPError(
+            "https://api.openai.com/v1/images/generations",
+            429,
+            "Too Many Requests",
+            {"x-request-id": "req_image_123"},
+            io.BytesIO(body),
+        )
+        with mock.patch.object(
+            generator.urllib.request, "urlopen", side_effect=http_error
+        ):
+            with self.assertRaises(generator.ImageApiHttpError) as caught:
+                generator.default_transport(
+                    api_url="https://api.openai.com/v1/images/generations",
+                    api_key="test-key-not-sent",
+                    request_payload={"model": "gpt-image-2", "prompt": "test"},
+                    timeout_seconds=10,
+                )
+        self.assertEqual(caught.exception.http_status, 429)
+        self.assertEqual(caught.exception.openai_request_id, "req_image_123")
+        self.assertEqual(caught.exception.api_error_code, "insufficient_quota")
 
 
 if __name__ == "__main__":
