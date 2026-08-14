@@ -146,5 +146,41 @@ class AgencyCorroborationTests(unittest.TestCase):
         self.assertEqual(remaining, [ordinary])
 
 
+    def test_post_cutoff_same_day_agency_candidate_fails_closed(self):
+        item = candidate("cand-003", "Databricks", "funding", 5)
+        item["published_date"] = "2026-08-14"
+        item["published_at"] = "2026-08-14T12:00:00+03:00"
+        item["time_precision"] = "datetime"
+        item["primary_source"] = {
+            "title": "Reuters confirmation",
+            "publisher": "Reuters",
+            "url": "https://www.reuters.com/technology/databricks-2026-08-14/",
+        }
+        window = {
+            "start_at": "2026-08-12T02:58:08+03:00",
+            "end_at": "2026-08-14T07:36:56+03:00",
+        }
+        self.assertFalse(policy._candidate_has_fresh_agency_source(item, window))
+        item["published_at"] = "2026-08-14T06:00:00+03:00"
+        self.assertTrue(policy._candidate_has_fresh_agency_source(item, window))
+
+    def test_cutoff_day_date_only_agency_candidate_fails_closed(self):
+        item = candidate("cand-003", "Databricks", "funding", 5)
+        item["primary_source"] = {
+            "title": "Reuters confirmation",
+            "publisher": "Reuters",
+            "url": "https://www.reuters.com/technology/databricks-2026-08-14/",
+        }
+        item["time_precision"] = "date"
+        item["published_at"] = None
+        window = {
+            "start_at": "2026-08-12T02:58:08+03:00",
+            "end_at": "2026-08-14T07:36:56+03:00",
+        }
+        item["published_date"] = "2026-08-14"
+        self.assertFalse(policy._candidate_has_fresh_agency_source(item, window))
+        item["published_date"] = "2026-08-12"
+        self.assertTrue(policy._candidate_has_fresh_agency_source(item, window))
+
 if __name__ == "__main__":
     unittest.main()

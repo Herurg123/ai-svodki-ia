@@ -488,3 +488,12 @@ Coverage-проходов и потратить только новый rescue s
 12 + до 4 + до 7 = 23 search operations. Live Web Search smoke допустим как
 диагностика retrieval, но не как обязательный детерминированный CI assert на
 наличие конкретной внешней статьи.
+
+## Exact-cutoff agency validation
+
+Agency source-health и post-Coverage rescue проверяют точный saved cutoff.
+Timezone-aware `published_at` сравнивается непосредственно с `start_at/end_at`.
+Если точного времени нет, публикация с `published_date == end_at.date()` не
+может подтвердить source-health: same-day recovery обязан fail-closed, потому что
+по одной дате нельзя доказать, что материал существовал до исходного cutoff.
+Стартовый date-only день остаётся допустимым для bounded healing overlap.

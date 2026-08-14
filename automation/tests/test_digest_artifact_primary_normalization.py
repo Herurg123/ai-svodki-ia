@@ -226,5 +226,60 @@ class FreshPrimaryArtifactNormalizationTests(unittest.TestCase):
             self.assertEqual(run_info["research"]["settings"]["source"], "saved_fixture")
 
 
+    def test_final_pool_post_cutoff_same_day_agency_evidence_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            artifact = self.make_artifact(
+                Path(tmp),
+                agency_sources=["https://www.bloomberg.com/authors/EXAMPLE/example-author"],
+                other_sources=["https://openai.com/index/example", "https://nvidia.com/example"],
+                with_search_window=True,
+            )
+            write_json(
+                artifact / "candidates.json",
+                {
+                    "candidates": [
+                        {
+                            "published_date": "2026-08-13",
+                            "published_at": "2026-08-13T12:00:00+03:00",
+                            "time_precision": "datetime",
+                            "primary_source": {
+                                "url": "https://www.reuters.com/technology/post-cutoff-2026-08-13/"
+                            },
+                        }
+                    ]
+                },
+            )
+            with self.assertRaises(normalizer.NormalizationError):
+                normalizer.normalize_artifact(
+                    artifact, artifact / "artifact-normalization.json"
+                )
+
+    def test_final_pool_exact_pre_cutoff_agency_evidence_is_accepted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            artifact = self.make_artifact(
+                Path(tmp),
+                agency_sources=["https://www.bloomberg.com/authors/EXAMPLE/example-author"],
+                other_sources=["https://openai.com/index/example", "https://nvidia.com/example"],
+                with_search_window=True,
+            )
+            write_json(
+                artifact / "candidates.json",
+                {
+                    "candidates": [
+                        {
+                            "published_date": "2026-08-13",
+                            "published_at": "2026-08-13T02:00:00+03:00",
+                            "time_precision": "datetime",
+                            "primary_source": {
+                                "url": "https://www.reuters.com/technology/pre-cutoff-2026-08-13/"
+                            },
+                        }
+                    ]
+                },
+            )
+            normalizer.normalize_artifact(
+                artifact, artifact / "artifact-normalization.json"
+            )
+
 if __name__ == "__main__":
     unittest.main()

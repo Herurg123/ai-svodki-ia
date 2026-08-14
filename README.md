@@ -576,3 +576,14 @@ contract: уже оплаченные шесть обязательных про
 operations**. Live-наличие конкретной статьи во внешнем поисковом индексе не
 является детерминированным CI-gate; production acceptance при отсутствии
 валидного agency corroboration остаётся закрытым.
+
+## Exact cutoff для fresh-agency evidence
+
+Fresh-agency source-health использует сохранённый точный `search_window.end_at`, а
+не только календарную дату. Если у Reuters/AP/Bloomberg/FT evidence есть
+timezone-aware `published_at`, он обязан лежать внутри точного effective window.
+Date-only evidence на календарном дне cutoff не считается достаточным
+доказательством свежести: поздний same-day recovery уже может видеть статью,
+опубликованную после исходного cutoff. Date-only evidence на стартовом дне
+сохраняет совместимость с bounded healing overlap; точный timestamp, если он
+есть, всегда проверяется строго.
