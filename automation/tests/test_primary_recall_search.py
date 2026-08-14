@@ -103,12 +103,23 @@ class PrimaryRecallSearchTests(unittest.TestCase):
         self.assertIn("integrations", label)
         self.assertIn("partnerships", label)
 
-    def test_major_agencies_has_narrow_api_domain_filter(self):
-        direction = next(item for item in prs.PRIMARY_DIRECTIONS if item["id"] == "major_agencies")
-        self.assertEqual(tuple(direction["allowed_domains"]), prs.AGENCY_DOMAINS)
+    def test_high_signal_passes_have_disjoint_api_domain_filters(self):
+        directions = {item["id"]: item for item in prs.PRIMARY_DIRECTIONS}
         self.assertEqual(
-            prs.AGENCY_DOMAINS,
-            ("reuters.com", "apnews.com", "bloomberg.com", "ft.com"),
+            tuple(directions["global_breaking"]["allowed_domains"]),
+            prs.REUTERS_DOMAINS,
+        )
+        self.assertEqual(
+            tuple(directions["major_agencies"]["allowed_domains"]),
+            prs.BLOOMBERG_FT_DOMAINS,
+        )
+        self.assertEqual(
+            tuple(directions["independent_missing_events"]["allowed_domains"]),
+            prs.AP_DOMAINS,
+        )
+        self.assertEqual(
+            set(prs.AGENCY_DOMAINS),
+            set(prs.REUTERS_DOMAINS + prs.BLOOMBERG_FT_DOMAINS + prs.AP_DOMAINS),
         )
 
     def test_all_twelve_passes_run_once_and_final_pass_sees_existing_pool(self):
@@ -152,8 +163,10 @@ class PrimaryRecallSearchTests(unittest.TestCase):
         self.assertEqual(len(research["coverage"]), 12)
         self.assertEqual(len(research["candidates"]), 1)
         self.assertIn("Alpha Model", final_prompt)
-        self.assertEqual(seen_domains["major_agencies"], prs.AGENCY_DOMAINS)
-        self.assertEqual(seen_domains["global_breaking"], ())
+        self.assertEqual(seen_domains["global_breaking"], prs.REUTERS_DOMAINS)
+        self.assertEqual(seen_domains["major_agencies"], prs.BLOOMBERG_FT_DOMAINS)
+        self.assertEqual(seen_domains["independent_missing_events"], prs.AP_DOMAINS)
+        self.assertEqual(seen_domains["models_products_agents"], ())
 
     def test_final_candidate_cap_cannot_starve_late_direction(self):
         early_ids = {item["id"] for item in prs.PRIMARY_DIRECTIONS[:5]}
