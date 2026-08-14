@@ -447,3 +447,13 @@ passes and spend only the new rescue call when needed. Do not make the presence
 of one specific external article in a live search index a deterministic CI gate;
 keep live Terra/Web Search checks as retrieval diagnostics while production
 acceptance itself remains fail-closed.
+
+## Exact agency cutoff
+
+Fresh-agency evidence must respect the exact saved temporal boundary during
+recovery. When a candidate has a timezone-aware `published_at`, compare it
+directly with `search_window.start_at/end_at`. A date-only agency source on the
+cutoff calendar day is not proof that the article existed before the saved
+cutoff and must fail closed. Keep start-day date-only compatibility for the
+bounded healing overlap, but never let a later same-day recovery import
+post-cutoff agency evidence.

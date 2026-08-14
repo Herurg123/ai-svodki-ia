@@ -297,19 +297,39 @@ def _host_matches_domain(url: str, domains: tuple[str, ...]) -> bool:
     return any(host == domain or host.endswith("." + domain) for domain in domains)
 
 
-def _search_window_days(search_window: dict[str, Any]) -> tuple[date, date] | None:
+def _parse_aware_datetime(value: Any) -> datetime | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
     try:
-        start = datetime.fromisoformat(
-            str(search_window.get("start_at") or "").replace("Z", "+00:00")
-        )
-        end = datetime.fromisoformat(
-            str(search_window.get("end_at") or "").replace("Z", "+00:00")
-        )
+        parsed = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
     except ValueError:
         return None
-    if start.tzinfo is None or end.tzinfo is None or end < start:
+    return parsed if parsed.tzinfo is not None else None
+
+
+def _search_window_bounds(
+    search_window: dict[str, Any],
+) -> tuple[datetime, datetime] | None:
+    start = _parse_aware_datetime(search_window.get("start_at"))
+    end = _parse_aware_datetime(search_window.get("end_at"))
+    if start is None or end is None or end < start:
         return None
-    return start.date(), end.date()
+    return start, end
+
+
+def _date_only_is_fresh_in_window(
+    published: date, *, start_at: datetime, end_at: datetime
+) -> bool:
+    if not (start_at.date() <= published <= end_at.date()):
+        return False
+    # A date-only source on the cutoff day is ambiguous: after a later same-day
+    # recovery starts, external search can see material published after the
+    # original saved cutoff. Fail closed unless an exact published_at proves it
+    # was already available. The start day remains compatible with the bounded
+    # healing-overlap contract; exact timestamps, when present, are still strict.
+    if published == end_at.date():
+        return False
+    return True
 
 
 def _candidate_has_fresh_agency_source(
@@ -319,15 +339,25 @@ def _candidate_has_fresh_agency_source(
         return False
     if candidate.get("recommendation") == "exclude":
         return False
-    window = _search_window_days(search_window)
-    if window is None:
+    bounds = _search_window_bounds(search_window)
+    if bounds is None:
         return False
-    try:
-        published = date.fromisoformat(str(candidate.get("published_date") or ""))
-    except ValueError:
-        return False
-    if not (window[0] <= published <= window[1]):
-        return False
+    start_at, end_at = bounds
+    published_at = _parse_aware_datetime(candidate.get("published_at"))
+    if published_at is not None:
+        if not (start_at <= published_at <= end_at):
+            return False
+    else:
+        if str(candidate.get("time_precision") or "") == "datetime":
+            return False
+        try:
+            published = date.fromisoformat(str(candidate.get("published_date") or ""))
+        except ValueError:
+            return False
+        if not _date_only_is_fresh_in_window(
+            published, start_at=start_at, end_at=end_at
+        ):
+            return False
     source = candidate.get("primary_source")
     return bool(
         isinstance(source, dict)

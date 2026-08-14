@@ -130,18 +130,41 @@ def _parse_date(value: Any) -> date | None:
         return None
 
 
-def _primary_window_dates(primary: dict[str, Any]) -> tuple[date, date] | None:
+def _parse_aware_datetime(value: Any) -> datetime | None:
+    if not isinstance(value, str) or not value.strip():
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return parsed if parsed.tzinfo is not None else None
+
+
+def _primary_window_bounds(
+    primary: dict[str, Any],
+) -> tuple[datetime, datetime] | None:
     window = primary.get("search_window")
     if not isinstance(window, dict):
         return None
-    try:
-        start = datetime.fromisoformat(str(window.get("start_at") or "").replace("Z", "+00:00"))
-        end = datetime.fromisoformat(str(window.get("end_at") or "").replace("Z", "+00:00"))
-    except ValueError:
+    start = _parse_aware_datetime(window.get("start_at"))
+    end = _parse_aware_datetime(window.get("end_at"))
+    if start is None or end is None or end < start:
         return None
-    if start.tzinfo is None or end.tzinfo is None or end < start:
-        return None
-    return start.date(), end.date()
+    return start, end
+
+
+def _date_only_is_fresh_in_window(
+    published: date, *, start_at: datetime, end_at: datetime
+) -> bool:
+    if not (start_at.date() <= published <= end_at.date()):
+        return False
+    # Date-only evidence on the cutoff day cannot prove it existed before the
+    # saved exact cutoff. Reject it so same-day recovery cannot import future
+    # agency evidence. Start-day date-only evidence stays compatible with the
+    # bounded healing-overlap contract.
+    if published == end_at.date():
+        return False
+    return True
 
 
 def _url_embedded_date(url: str) -> date | None:
@@ -159,21 +182,32 @@ def _url_embedded_date(url: str) -> date | None:
 
 
 def _candidate_has_fresh_agency_evidence(
-    candidate: Any, *, start_day: date, end_day: date
+    candidate: Any, *, start_at: datetime, end_at: datetime
 ) -> bool:
     if not isinstance(candidate, dict):
-        return False
-    published_day = _parse_date(candidate.get("published_date"))
-    if published_day is None or not (start_day <= published_day <= end_day):
         return False
     source = candidate.get("primary_source")
     if not isinstance(source, dict) or not isinstance(source.get("url"), str):
         return False
-    return _host_matches(_hostname(source["url"]), AGENCY_DISCOVERY_DOMAINS)
+    if not _host_matches(_hostname(source["url"]), AGENCY_DISCOVERY_DOMAINS):
+        return False
+
+    published_at = _parse_aware_datetime(candidate.get("published_at"))
+    if published_at is not None:
+        return start_at <= published_at <= end_at
+    if str(candidate.get("time_precision") or "") == "datetime":
+        return False
+    published_day = _parse_date(candidate.get("published_date"))
+    return bool(
+        published_day is not None
+        and _date_only_is_fresh_in_window(
+            published_day, start_at=start_at, end_at=end_at
+        )
+    )
 
 
 def _artifact_has_fresh_agency_evidence(
-    artifact_dir: Path, *, start_day: date, end_day: date
+    artifact_dir: Path, *, start_at: datetime, end_at: datetime
 ) -> bool:
     candidates_path = artifact_dir / "candidates.json"
     if not candidates_path.is_file():
@@ -184,18 +218,18 @@ def _artifact_has_fresh_agency_evidence(
         return False
     return any(
         _candidate_has_fresh_agency_evidence(
-            candidate, start_day=start_day, end_day=end_day
+            candidate, start_at=start_at, end_at=end_at
         )
         for candidate in candidates
     )
 
 
 def _direction_has_fresh_agency_evidence(
-    direction: dict[str, Any], *, start_day: date, end_day: date
+    direction: dict[str, Any], *, start_at: datetime, end_at: datetime
 ) -> bool:
     for candidate in direction.get("raw_candidates") or []:
         if _candidate_has_fresh_agency_evidence(
-            candidate, start_day=start_day, end_day=end_day
+            candidate, start_at=start_at, end_at=end_at
         ):
             return True
 
@@ -209,7 +243,12 @@ def _direction_has_fresh_agency_evidence(
         if not _host_matches(_hostname(url), AGENCY_DISCOVERY_DOMAINS):
             continue
         embedded_day = _url_embedded_date(url)
-        if embedded_day is not None and start_day <= embedded_day <= end_day:
+        if (
+            embedded_day is not None
+            and _date_only_is_fresh_in_window(
+                embedded_day, start_at=start_at, end_at=end_at
+            )
+        ):
             return True
     return False
 
@@ -325,18 +364,18 @@ def validate_primary_source_health(artifact_dir: Path) -> None:
     # Therefore modern diagnostics require fresh agency evidence anywhere in the
     # completed 12-pass Primary matrix, not specifically in former anchor slots.
     # Legacy Primary artifacts without search_window keep compatibility behavior.
-    window_days = _primary_window_dates(primary)
-    if window_days is not None:
-        start_day, end_day = window_days
+    window_bounds = _primary_window_bounds(primary)
+    if window_bounds is not None:
+        start_at, end_at = window_bounds
         primary_has_fresh_agency = any(
             _direction_has_fresh_agency_evidence(
-                item, start_day=start_day, end_day=end_day
+                item, start_at=start_at, end_at=end_at
             )
             for item in directions
             if isinstance(item, dict)
         )
         final_pool_has_fresh_agency = _artifact_has_fresh_agency_evidence(
-            artifact_dir, start_day=start_day, end_day=end_day
+            artifact_dir, start_at=start_at, end_at=end_at
         )
         if not (primary_has_fresh_agency or final_pool_has_fresh_agency):
             raise NormalizationError(
