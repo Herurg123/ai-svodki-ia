@@ -59,6 +59,15 @@ text = text.replace('        self.assertEqual(seen_domains["global_breaking"], p
 text = text.replace('        self.assertEqual(seen_domains["independent_missing_events"], prs.AP_DOMAINS)\n', '        self.assertEqual(seen_domains["independent_missing_events"], ())\n', 1)
 p.write_text(text, encoding='utf-8')
 
+# Sentinel runtime diagnostic label must match the v8 source-neutral contract.
+p = Path('automation/scripts/ensure_story_coverage.py')
+text = p.read_text(encoding='utf-8')
+old = '"label": "Source-agnostic OpenAI recall sentinel v6",'
+if old not in text:
+    raise SystemExit('stale sentinel runtime label not found')
+text = text.replace(old, '"label": "Source-neutral broad recall sentinel v8",', 1)
+p.write_text(text, encoding='utf-8')
+
 # Sentinel test: assertions inside the mocked transport are swallowed by the
 # production fail-closed path. Assert transport arguments after the call instead.
 p = Path('automation/tests/test_recall_sentinel.py')
