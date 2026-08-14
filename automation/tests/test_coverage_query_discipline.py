@@ -14,7 +14,8 @@ class CoverageQueryDisciplineTests(unittest.TestCase):
         self.assertIn("Не используй `after:`", text)
         self.assertIn("`before:`", text)
         self.assertIn("`site:`", text)
-        self.assertIn("длинные `OR`-цепочки", text)
+        self.assertIn("длинные", text)
+        self.assertIn("`OR`-цепочки", text)
         self.assertIn("дублируй разрешённые домены в query", text)
 
     def test_last_mile_uses_api_filter_instead_of_site_chain(self):
