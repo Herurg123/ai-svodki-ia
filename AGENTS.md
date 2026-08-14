@@ -109,6 +109,14 @@ present in the archive must be rejected before merge, semantic archive checks
 still apply downstream, and the overlap must never become an unbounded lookback
 or a reason to republish yesterday's story.
 
+The effective window has two distinct retrieval roles. The first 24 hours from
+effective start to the continuity anchor are **healing overlap**. The main
+continuity period starts at the anchor and ends at `search_window.end_at`.
+Primary, Hybrid and fallback Coverage search queries must prioritize calendar
+dates of that main continuity period; the overlap remains valid for an
+incidentally discovered major miss but must not dominate fresh ranking. Candidate
+freshness validation still uses the full effective window.
+
 Only internally generated runtime research may carry this wider effective
 window through the legacy generator. The trusted bridge lives under the ignored
 `automation/fixtures/research/.runtime/` subtree. Arbitrary caller-supplied
@@ -149,12 +157,26 @@ general project-wide whitelist. Other primary directions remain broad and
 validate source quality after retrieval.
 
 Search prompts must carry the exact effective window. The **actual search
-query** must be a short natural-language phrase with the relevant calendar dates
-written normally. Do not copy `after:`/`before:` operators, long Boolean `OR`
-chains, parentheses, or giant company lists into the query. The saved exact
-window remains authoritative for final freshness validation. `major_agencies`
-should rely on its API domain filter plus a compact AI/date query rather than a
-Boolean mega-query.
+query** must be a short natural-language phrase with calendar dates of the main
+continuity period after the 24-hour healing overlap written normally. Do not
+copy `after:`/`before:` operators, long Boolean `OR` chains, parentheses, or
+giant company lists into the query. The full saved effective window remains
+authoritative for final freshness validation.
+
+High-signal routing must stay source-diverse without increasing the 12-search
+budget:
+
+- `global_breaking` uses a Reuters-focused funding/acquisition/M&A/major-business
+  query;
+- `major_agencies` uses a **source-neutral** compact major-AI/date query inside
+  the existing Reuters/AP/Bloomberg/FT API domain filter; do not re-anchor it on
+  Reuters or any other single publisher;
+- `independent_missing_events` uses an Associated Press-focused consumer-AI /
+  major-technology / policy sweep after seeing the current candidate pool.
+
+These are ranking routes, not a candidate whitelist. A stronger official primary
+source or other authoritative source may still be the final source of a
+candidate. The remaining Primary directions stay broad.
 
 Wikipedia and Reddit must not be used as primary confirmation of a fresh news
 event. ArXiv is allowed as the primary source of a genuinely material research
@@ -185,6 +207,17 @@ canonicalize proven fresh Primary Recall to
 `pipeline=primary_recall_v2_then_editorial` and
 `research.settings.source=trusted_runtime_primary_recall` before artifact
 validation.
+
+The 2026-08-14 production run is a separate recall-quality regression class. It
+completed all 12 Primary searches, four Hybrid searches and six Coverage
+searches, yet most actual queries used dates spanning the healing overlap plus
+the main continuity period. The expanded date range surfaced stale/overlap
+material while fresh high-signal continuity-period events were absent from the
+candidate pool. Future query changes must keep the full effective window for
+validation but must not restore equal ranking priority to the first 24-hour
+healing segment. The same run also demonstrated that two Reuters-focused broad
+slots are not meaningfully independent source coverage, hence the source-neutral
+`major_agencies` rule above.
 
 Fresh Primary Recall is also subject to a fail-closed source-health guard before
 publication. `major_agencies` must have at least one consulted source, and the
@@ -257,6 +290,12 @@ primary and may use limited navigation tool actions for source verification.
 API domain filtering is deliberately disabled in hybrid; source quality is
 validated after retrieval.
 
+Hybrid query planning must follow the same continuity-first temporal contract.
+Its `_time_hint` shifts the query start by 24 hours from effective start back to
+the continuity anchor, while full effective-window validation remains intact.
+Do not revert Hybrid to using the healing-overlap start date as an equal query
+boundary.
+
 New candidates are merged through the existing strict story-coverage validator
 and editorial is rerun only when at least one candidate is actually accepted.
 The completeness layer never runs recursively for caller-supplied
@@ -272,6 +311,9 @@ Fallback coverage also distinguishes search operations from navigation tool
 items. Its production targeted passes request one search operation and may use a
 small navigation allowance to verify pages. Historical multi-search callers
 retain their old hard `max_tool_calls` cap rather than silently gaining budget.
+Coverage query text must also prioritize the main continuity period after the
+24-hour healing overlap, while candidate validation remains against the full
+effective window.
 
 The total retrieval ceilings remain **12 primary + up to 4 hybrid + up to 7
 fallback coverage = 23 completed search operations** in the theoretical worst
@@ -289,7 +331,7 @@ commit, and deploy must remain skipped. Technical partial/error audits remain
 fail-closed and red. Recovery must reuse a proven completed editorial stop
 without repeating paid research or coverage.
 
-## Source-focused recall contract after 2026-08-13
+## Source-focused recall contract after 2026-08-13 and 2026-08-14
 
 Production run `31652757802` is a permanent retrieval-quality regression: its
 candidate pool contained exactly four events, editorial selected all four and
@@ -298,24 +340,30 @@ all four were published. The failure was therefore upstream of editorial.
 that independent source-focused searches recovered in the same effective
 window: Pixel 11/Gemini, Nebius, River AI, IBM/Together AI and Nvidia Nemotron.
 
-Do not increase the 12-search Primary budget to solve this class. Instead, keep
-three broad slots source-focused and independent:
+The following fresh production on 2026-08-14 showed that source-focused routing
+alone is insufficient if query dates still give equal ranking weight to the
+healing overlap. It also showed that duplicating Reuters anchors across two
+broad slots is not independent source coverage.
 
-- `global_breaking`: Reuters-focused business/funding/cloud/infrastructure;
-- `major_agencies`: Reuters-focused models/products/chips/infrastructure while
-  retaining its Reuters/AP/Bloomberg/FT API domain filter;
+Do not increase the 12-search Primary budget to solve this class. Keep the
+source-diverse routing and continuity-first query contract:
+
+- `global_breaking`: Reuters-focused funding/acquisition/M&A/major business;
+- `major_agencies`: source-neutral major-AI query inside the existing
+  Reuters/AP/Bloomberg/FT API domain filter;
 - `independent_missing_events`: Associated Press-focused consumer-AI / major
   technology / policy gap sweep after seeing the current candidate pool.
 
-These source names are retrieval anchors for ranking, not a candidate whitelist.
+These source names are retrieval routing for ranking, not a candidate whitelist.
 `models_products_agents` must also treat a major device, OS or mass-market
 service launch as relevant when the AI layer is materially part of the launch.
 
 Across Primary, Hybrid and fallback Coverage, actual search strings must use
-short natural-language date queries, roughly 6–18 meaningful words. Do not use
-`after:`, `before:`, `site:`, long Boolean `OR` chains, parentheses or huge
-entity/domain lists. In particular, `general_coverage_gaps` already has its own
-API domain filter and must not recreate it as a giant `site:` query.
+short natural-language queries, roughly 6–18 meaningful words, with calendar
+dates of the main continuity period after the first 24-hour healing overlap. Do
+not use `after:`, `before:`, `site:`, long Boolean `OR` chains, parentheses or
+huge entity/domain lists. `general_coverage_gaps` already has its own API domain
+filter and must not recreate it as a giant `site:` query.
 
 For modern Primary diagnostics that contain `search_window`, source-health must
 also prove at least one fresh in-window Reuters/AP/Bloomberg/FT evidence among
