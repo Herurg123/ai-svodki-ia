@@ -20,7 +20,8 @@ class FreshSourceRoutingContractTests(unittest.TestCase):
         self.assertIn("Reuters-focused query", text)
         self.assertIn("direction_id=major_agencies", text)
         self.assertIn("не якори query на Reuters", text)
-        self.assertIn("Reuters, Associated Press,\n  Bloomberg и Financial Times", text)
+        self.assertIn("Reuters, Associated Press", text)
+        self.assertIn("Bloomberg и Financial Times", text)
         self.assertIn("Associated Press-focused sweep", text)
 
     def test_coverage_prompt_prioritizes_continuity_period_not_healing_overlap(self) -> None:
