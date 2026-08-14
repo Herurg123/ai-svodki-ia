@@ -5,7 +5,8 @@ p = Path('automation/scripts/ensure_story_coverage.py')
 text = p.read_text(encoding='utf-8')
 text = text.replace('\n\\\ndef build_recall_sentinel_prompt(', '\n\ndef build_recall_sentinel_prompt(', 1)
 old = 'Авторитетное текущее время этого sentinel-прохода: {end_at}.\nИдентификатор направления:'
-new = ('Авторитетное текущее время этого sentinel-прохода: {end_at}. Всё, что опубликовано '\n       'не позже этого timestamp, не является будущим только из-за системной даты модели.\nИдентификатор направления:')
+new = '''Авторитетное текущее время этого sentinel-прохода: {end_at}. Всё, что опубликовано не позже этого timestamp, не является будущим только из-за системной даты модели.
+Идентификатор направления:'''
 if old not in text:
     raise SystemExit('sentinel authoritative-now insertion point not found')
 text = text.replace(old, new, 1)
