@@ -46,7 +46,7 @@ RECALL_SENTINEL_MINIMUM_BUDGET = 7
 AGENCY_RESCUE_STRATEGY = "fresh_agency_rescue"
 AGENCY_RESCUE_VERSION = 1
 AGENCY_RESCUE_DOMAINS: tuple[str, ...] = ("reuters.com", "apnews.com")
-SOURCE_HEALTH_CONTRACT_VERSION = 1
+SOURCE_HEALTH_CONTRACT_VERSION = _policy.SOURCE_HEALTH_CONTRACT_VERSION
 
 # Transport remains implemented by the preserved runtime base. Keep this
 # literal here because the repository contract verifies transient retries at
@@ -132,13 +132,6 @@ def completed_prior_audit(payload: Any) -> bool:
         return False
     pool_total = _pool_total(payload)
     if pool_total == 0 and not _completed_sentinel_evidence(payload):
-        return False
-    if (
-        isinstance(pool_total, int)
-        and pool_total > 0
-        and payload.get("source_health_contract_version")
-        != SOURCE_HEALTH_CONTRACT_VERSION
-    ):
         return False
     return True
 

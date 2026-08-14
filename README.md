@@ -552,3 +552,4 @@ operations**. Технический сбой обязательного rescue 
 Normalizer принимает свежую agency evidence либо из Primary diagnostics, либо из
 финального validated candidate pool после mandatory Coverage; он не требует,
 чтобы найденный агентский материал возник именно в Primary-слое.
+Этот rescue-контракт применяется только к modern Primary artifacts с `primary-recall.json`; legacy-выпуски без Primary diagnostics сохраняют прежнюю recovery-совместимость и не требуют нового платного поиска.

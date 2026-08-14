@@ -286,6 +286,7 @@ AGENCY_SOURCE_HEALTH_DOMAINS: tuple[str, ...] = (
     "bloomberg.com",
     "ft.com",
 )
+SOURCE_HEALTH_CONTRACT_VERSION = 1
 
 
 def _host_matches_domain(url: str, domains: tuple[str, ...]) -> bool:
@@ -1323,6 +1324,21 @@ def completed_prior_audit(payload: Any) -> bool:
     )
 
 
+def completed_prior_audit_for_source_health(
+    payload: Any, *, source_health_rescue_needed: bool
+) -> bool:
+    """Reuse legacy audits normally; version them only for modern source-health rescue."""
+    if not completed_prior_audit(payload):
+        return False
+    if not source_health_rescue_needed:
+        return True
+    return bool(
+        isinstance(payload, dict)
+        and payload.get("source_health_contract_version")
+        == SOURCE_HEALTH_CONTRACT_VERSION
+    )
+
+
 def _remove_short_notices(article_html: str) -> str:
     value = article_html
     for notice in (SHORT_NOTICE, LEGACY_SHORT_NOTICE):
@@ -1559,12 +1575,15 @@ def main() -> int:
         search_window = research.get("search_window")
         if not isinstance(search_window, dict):
             raise RuntimeError("candidates.json не содержит search_window")
+        modern_primary_artifact = (args.artifact_dir / "primary-recall.json").is_file()
         source_health_rescue_needed = bool(
-            candidate_pool["total"] > 0
+            modern_primary_artifact
+            and candidate_pool["total"] > 0
             and not _candidates_have_fresh_agency_source(
                 research["candidates"], search_window
             )
         )
+        report["source_health_contract_required"] = modern_primary_artifact
         report["source_health_rescue_needed"] = source_health_rescue_needed
 
         if (
@@ -1590,7 +1609,9 @@ def main() -> int:
         )
         additional_candidates: list[Any] = []
         prior_attempted = prior_audit_attempted(prior_report)
-        prior_complete = completed_prior_audit(prior_report)
+        prior_complete = completed_prior_audit_for_source_health(
+            prior_report, source_health_rescue_needed=source_health_rescue_needed
+        )
         if report["audit_needed"] and not prior_complete:
             api_key = os.getenv("OPENAI_API_KEY", "").strip()
             if not api_key:

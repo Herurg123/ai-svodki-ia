@@ -9,6 +9,7 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "automation" / "scripts"
+sys.path.insert(0, str(SCRIPTS))
 
 
 def load_module(name: str, path: Path):
@@ -229,9 +230,18 @@ class AgencyRescueTests(unittest.TestCase):
                 "candidate_pool_after": {"total": 7},
             }
         )
-        self.assertFalse(runtime.completed_prior_audit(report))
-        report["source_health_contract_version"] = runtime.SOURCE_HEALTH_CONTRACT_VERSION
         self.assertTrue(runtime.completed_prior_audit(report))
+        self.assertFalse(
+            runtime._policy.completed_prior_audit_for_source_health(
+                report, source_health_rescue_needed=True
+            )
+        )
+        report["source_health_contract_version"] = runtime.SOURCE_HEALTH_CONTRACT_VERSION
+        self.assertTrue(
+            runtime._policy.completed_prior_audit_for_source_health(
+                report, source_health_rescue_needed=True
+            )
+        )
 
 
 if __name__ == "__main__":
