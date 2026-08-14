@@ -1,0 +1,164 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "OpenAI назначила Дали Райича Chief Revenue Officer и расширяет go-to-market-функцию",
+    "organization": "OpenAI; Dali Rajic; Chad Peets; RPT Partners",
+    "topic": "коммерческое масштабирование и корпоративные продажи ИИ",
+    "event_type": "executive appointment and strategic go-to-market partnership",
+    "status": "new",
+    "summary": "OpenAI сообщила о назначении Дали Райича, ранее COO Wiz, на должность Chief Revenue Officer. Компания также заявила о стратегическом партнёрстве с Чадом Питсом и RPT Partners для построения глобальной go-to-market-команды.",
+    "published_at": null,
+    "published_date": "2026-08-13",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "OpenAI appoints Dali Rajic as Chief Revenue Officer",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/dali-rajic-chief-revenue-officer/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Dali Rajic",
+      "Chief Revenue Officer",
+      "enterprise AI",
+      "go-to-market",
+      "RPT Partners"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "FT: связанные с Китаем операторы применили агентную платформу при кибератаке на структуры Тайваня",
+    "organization": "Dream; неустановленные операторы с предполагаемой связью с Китаем; государственные структуры Тайваня",
+    "topic": "автономное применение AI-агентов в кибератаке на государственные системы",
+    "event_type": "cyber incident / AI-enabled autonomous attack",
+    "status": "new",
+    "summary": "Financial Times сообщила о расследовании израильской компании Dream: операторы с вероятной связью с Китаем использовали собранную из открытых агентных компонентов платформу для автономной многошаговой кибератаки на тайваньские государственные системы. По пересказу FT в Tom's Hardware, кампания работала несколько дней, одновременно задействовала до восьми агентов, скомпрометировала не менее 85 учётных записей и привела к хищению более 2 500 кадровых записей.",
+    "published_at": null,
+    "published_date": "2026-08-12",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "China-linked hackers hit Taiwan in unprecedented ‘autonomous’ AI cyber attack",
+        "publisher": "Financial Times",
+        "url": "https://www.ft.com/content/7d2ab3e0-9085-48f6-b38a-d90260d58795"
+      },
+      {
+        "title": "Suspected China-linked hackers used AI to run the first-ever end-to-end autonomous cyberattack on Taiwan's government, Israeli firm says",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/tech-industry/cyber-security/suspected-china-linked-hackers-used-ai-to-run-the-first-ever-end-to-end-autonomous-cyberattack-on-taiwans-government-israeli-firm-says-open-source-built-tool-continuously-devised-effective-hack-strategies-in-real-time"
+      }
+    ],
+    "keywords": [
+      "AI agents",
+      "autonomous cyberattack",
+      "Taiwan",
+      "Dream",
+      "OpenClaw",
+      "Hermes",
+      "cybersecurity",
+      "data exfiltration"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Databricks привлекла $5 млрд при оценке $190 млрд",
+    "organization": "Databricks; Coatue; Blackstone; MGX; T. Rowe Price; Sixth Street Growth",
+    "topic": "крупное финансирование платформы данных и ИИ для агентов",
+    "event_type": "investment",
+    "status": "new",
+    "summary": "Databricks раскрыла объём нового раунда в $5 млрд и оценку в $190 млрд. Компания заявила, что капитал пойдёт, в частности, на дорогостоящие ИИ-исследования, обязательства перед тремя крупнейшими облачными провайдерами и сделки M&A; среди участников названы Coatue, Blackstone, MGX, структуры T. Rowe Price и Sixth Street Growth.",
+    "published_at": "2026-08-13T13:14:00-07:00",
+    "published_date": "2026-08-13",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Databricks wanted to raise $1B, investors wanted $15B. It settled on $5B at a $190B valuation.",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/13/databricks-wanted-to-raise-1b-investors-wanted-15b-it-settled-on-5b-at-a-190b-valuation/"
+      }
+    ],
+    "keywords": [
+      "Databricks",
+      "funding",
+      "$5 billion",
+      "$190 billion valuation",
+      "AI agents",
+      "Lakebase",
+      "Genie"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "IBM и OpenAI договорились о внедрении GPT-5.6, Codex и ChatGPT Work в корпорациях",
+    "organization": "IBM; OpenAI",
+    "topic": "корпоративное внедрение моделей OpenAI через IBM Consulting и watsonx",
+    "event_type": "partnership",
+    "status": "new",
+    "summary": "IBM объявила о партнёрстве с OpenAI: компании будут совместно выводить ИИ-решения на корпоративный рынок и разрабатывать отраслевые предложения для финансового сектора, государства, телекомов и ритейла. IBM создаст выделенную практику OpenAI в IBM Consulting и будет обучать и сертифицировать десятки тысяч консультантов.",
+    "published_at": "2026-08-13T12:19:00-07:00",
+    "published_date": "2026-08-13",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "IBM partners with OpenAI to bolster enterprise AI push",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/13/ibm-partners-with-openai-to-bolster-enterprise-ai-push/"
+      }
+    ],
+    "keywords": [
+      "IBM",
+      "OpenAI",
+      "IBM Consulting",
+      "GPT-5.6",
+      "Codex",
+      "ChatGPT Work",
+      "enterprise AI"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "russia",
+    "headline": "«Билайн» раскрыл масштаб корпоративной ИИ-среды «Экзоинтеллект»",
+    "organization": "ПАО «ВымпелКом» / «Билайн»",
+    "topic": "Корпоративная платформа доступа к нескольким LLM, кастомным ассистентам и будущим внутренним агентам",
+    "event_type": "product launch / enterprise deployment",
+    "status": "new",
+    "summary": "«Билайн» сообщил о запуске «Экзоинтеллекта» — единой корпоративной среды для работы с внутренними GLM и Qwen на корпоративных данных, а также с внешними моделями для открытых данных, включая ChatGPT, Claude, GigaChat Max, YandexGPT, Gemini и DeepSeek. Компания заявляет, что с апреля к среде подключились около 10 тыс. сотрудников, создавшие более 600 кастомных ассистентов; далее планируются интеграции с рабочими системами и ИИ-агенты.",
+    "published_at": "2026-08-12T12:40:00+03:00",
+    "published_date": "2026-08-12",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "«Билайн» расширяет возможности своих сотрудников с помощью «Экзоинтеллекта»",
+        "publisher": "Коммерсантъ / ПАО «ВымпелКом»",
+        "url": "https://www.kommersant.ru/doc/8877842"
+      }
+    ],
+    "keywords": [
+      "Билайн",
+      "Экзоинтеллект",
+      "LLM",
+      "Qwen",
+      "GLM",
+      "GigaChat",
+      "YandexGPT",
+      "корпоративный ИИ",
+      "ИИ-агенты"
+    ],
+    "geography": "russia",
+    "category": "enterprise"
+  }
+]

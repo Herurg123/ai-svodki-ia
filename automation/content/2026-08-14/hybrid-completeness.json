@@ -1,0 +1,1269 @@
+{
+  "version": 1,
+  "status": "complete",
+  "publication_date": "2026-08-14",
+  "search_window": {
+    "start_at": "2026-08-12T02:58:08+03:00",
+    "end_at": "2026-08-14T07:36:56+03:00",
+    "latest_archive_at": "2026-08-13T02:58:08+03:00",
+    "start_date": "2026-08-12",
+    "end_date": "2026-08-14",
+    "latest_archive_date": "2026-08-13"
+  },
+  "strategy": "primary_plus_three_fixed_plus_optional_adaptive_gap",
+  "search_budget": {
+    "maximum_calls": 4,
+    "fixed_calls": 3,
+    "adaptive_calls_maximum": 1,
+    "response_attempts": 3,
+    "completed_calls": 3,
+    "remaining_calls": 1,
+    "maximum_total_tool_calls_per_pass": 4,
+    "navigation_tool_allowance_per_pass": 3
+  },
+  "primary_candidate_count": 8,
+  "primary_cluster_counts": {
+    "models_products_research": 2,
+    "infrastructure_business": 5,
+    "safety_policy_regions": 2
+  },
+  "cluster_counts_after_fixed": {
+    "models_products_research": 2,
+    "infrastructure_business": 5,
+    "safety_policy_regions": 2
+  },
+  "missing_clusters_after_fixed": [],
+  "adaptive_needed": false,
+  "attempts": [
+    {
+      "direction_id": "models_products_research",
+      "label": "Models / products / agents / research",
+      "prompt": "Ты — независимый completeness-проход редакции «ИИ-Сводки».\n\nДата выпуска: 2026-08-14\nЭффективное редакционное окно: 2026-08-12T02:58:08+03:00 → 2026-08-14T07:36:56+03:00\nАвторитетное текущее время задачи: 2026-08-14T07:36:56+03:00\nИдентификатор прохода: models_products_research\nРоль прохода: Models / products / agents / research\n\nОсновной research уже завершён и НЕ должен заменяться. Твоя задача — дать ему\nнезависимый второй шанс заметить крупное событие, которое могло выпасть из\nпервичного discovery. Выполни РОВНО ОДНУ поисковую операцию Web Search и один\nлогический query. Второй search запрещён. После выдачи можно и нужно использовать\nopen_page/find_in_page для проверки релевантных страниц; эти навигационные tool\ncalls не расходуют search-operation budget. API domain filter отсутствует\nнамеренно: discovery должен быть широким, а качество источника проверяется после\nполучения результатов.\n\nПолное effective window для проверки кандидатов: 2026-08-12T02:58:08+03:00 → 2026-08-14T07:36:56+03:00. Фактический search query должен быть короткой date-free natural-language фразой примерно на 6–18 значимых слов и использовать relative freshness: latest / recent / current / breaking или эквивалент. Не добавляй в query календарные даты, годы, названия месяцев, after:, before:, site:, скобки или длинные OR-цепочки. Relative wording влияет только на ranking; после выдачи фактическую дату/timestamp источника строго проверяй против полного effective window, включая bounded healing overlap.\n\nТематическая задача:\nИщи крупные новые модели и существенные обновления, AI-продукты, агентов и coding tools, важные research-результаты, multimodal, robotics и заметные open-weight/open-source релизы.\n\nИщи только самостоятельные события высокой новостной ценности. Предпочитай\nофициальный первоисточник, Reuters/AP/Bloomberg/FT или авторитетное деловое,\nтехнологическое и отраслевое СМИ. Не считай SEO-пересказ, слух, старую статью или\nмалозначительный комментарий полноценной новостью. Для спорного утверждения\nнужна достаточная проверяемость.\n\nСобытие и основной источник обязаны попадать в effective window. Контролируемый\noverlap до предыдущего continuity cutoff существует для восстановления крупных\nпропусков, но уже опубликованные архивные события нельзя повторять. Для\ninclude/consider обязательны verification_status=verified и freshness_status\nnew_event/material_update. Точное время не выдумывай: если его нет, используй\npublished_at=null и time_precision=date. Не добивай количество слабым материалом.\n\nУже найденные кандидаты, которые нельзя дублировать:\n[\n  {\n    \"title\": \"OpenAI назначила Дали Райича Chief Revenue Officer и объявила партнёрство с RPT Partners для развития go-to-market\",\n    \"organization\": \"OpenAI; Dali Rajic; Chad Peets; RPT Partners\",\n    \"published_date\": \"2026-08-13\",\n    \"category\": \"enterprise\",\n    \"geography\": \"world\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://openai.com/index/dali-rajic-chief-revenue-officer/\"\n  },\n  {\n    \"title\": \"«Билайн» запустил корпоративную ИИ-среду «Экзоинтеллект» для 10 тыс. сотрудников\",\n    \"organization\": \"ПАО «ВымпелКом» / «Билайн»\",\n    \"published_date\": \"2026-08-12\",\n    \"category\": \"enterprise\",\n    \"geography\": \"russia\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://www.kommersant.ru/doc/8877842\"\n  },\n  {\n    \"title\": \"FT: связанные с Китаем хакеры применили автономную AI-агентную платформу при кибератаке на структуры Тайваня\",\n    \"organization\": \"Dream; неустановленные операторы с предполагаемой связью с Китаем; государственные структуры Тайваня\",\n    \"published_date\": \"2026-08-12\",\n    \"category\": \"security\",\n    \"geography\": \"world\",\n    \"recommendation\": \"include\",\n    \"primary_url\": \"https://www.ft.com/content/7d2ab3e0-9085-48f6-b38a-d90260d58795\"\n  },\n  {\n    \"title\": \"Databricks привлекла $5 млрд при оценке $190 млрд для финансирования ИИ-исследований, облачных обязательств и M&A\",\n    \"organization\": \"Databricks; Coatue; Blackstone; MGX; T. Rowe Price; Sixth Street Growth\",\n    \"published_date\": \"2026-08-13\",\n    \"category\": \"investment\",\n    \"geography\": \"world\",\n    \"recommendation\": \"include\",\n    \"primary_url\": \"https://techcrunch.com/2026/08/13/databricks-wanted-to-raise-1b-investors-wanted-15b-it-settled-on-5b-at-a-190b-valuation/\"\n  },\n  {\n    \"title\": \"IBM заключила партнёрство с OpenAI для внедрения GPT-5.6, Codex и ChatGPT Work в корпоративном консалтинге\",\n    \"organization\": \"IBM; OpenAI\",\n    \"published_date\": \"2026-08-13\",\n    \"category\": \"enterprise\",\n    \"geography\": \"world\",\n    \"recommendation\": \"include\",\n    \"primary_url\": \"https://techcrunch.com/2026/08/13/ibm-partners-with-openai-to-bolster-enterprise-ai-push/\"\n  },\n  {\n    \"title\": \"Google представила Pixel 11 с новыми Gemini-функциями, включая голосовой ввод Rambler и перевод американского жестового языка\",\n    \"organization\": \"Google; Google DeepMind; Pixel\",\n    \"published_date\": \"2026-08-12\",\n    \"category\": \"multimodal\",\n    \"geography\": \"world\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://techcrunch.com/2026/08/12/google-unveils-pixel-11-lineup-new-airtag-rival-and-gemini-features-at-made-by-google-2026/\"\n  },\n  {\n    \"title\": \"Microsoft объединяет потребительский Copilot и Microsoft 365 Copilot, одновременно закрывая ряд ИИ-функций\",\n    \"organization\": \"Microsoft\",\n    \"published_date\": \"2026-08-13\",\n    \"category\": \"models\",\n    \"geography\": \"world\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://techcrunch.com/2026/08/13/microsoft-kills-off-unsuccessful-ai-features-while-merging-its-separate-copilot-apps/\"\n  },\n  {\n    \"title\": \"OpenAI опубликовала Enterprise Signals о переходе корпоративного ИИ от ассистентов к агентному выполнению задач\",\n    \"organization\": \"OpenAI; корпоративные клиенты OpenAI; Virgin Atlantic\",\n    \"published_date\": \"2026-08-12\",\n    \"category\": \"enterprise\",\n    \"geography\": \"world\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://openai.com/index/how-enterprises-put-ai-to-work/\"\n  }\n]\n\nНедавний архив для дедупликации:\n[\n  {\n    \"date\": \"2026-08-13\",\n    \"stories\": [\n      {\n        \"headline\": \"Обновление: CloudSEK оценила последствия supply-chain атаки на LiteLLM в более чем 2 500 организациях\",\n        \"organization\": \"LiteLLM; CloudSEK; Aqua Security / Trivy\",\n        \"topic\": \"безопасность цепочки поставок ИИ-инфраструктуры и компрометация ключей доступа\",\n        \"source_urls\": [\n          \"https://www.securityweek.com/over-2500-organizations-impacted-by-litellm-supply-chain-attack/\"\n        ]\n      },\n      {\n        \"headline\": \"Mindgard привлекла $30 млн на защиту моделей, агентов и ИИ-приложений\",\n        \"organization\": \"Mindgard\",\n        \"topic\": \"AI security и автоматизированный red teaming моделей, агентов и ИИ-приложений\",\n        \"source_urls\": [\n          \"https://www.securityweek.com/mindgard-raises-30-million-to-protect-ai-systems/\"\n        ]\n      },\n      {\n        \"headline\": \"CoreWeave сообщила о результатах выше ожиданий на фоне спроса на ИИ-облака\",\n        \"organization\": \"CoreWeave\",\n        \"topic\": \"финансовые результаты AI-cloud-провайдера и спрос на вычислительную инфраструктуру Nvidia\",\n        \"source_urls\": [\n          \"https://apnews.com/article/stocks-markets-rates-trump-iran-chips-db541ced9f928f993bd3a17958a3deaa\"\n        ]\n      },\n      {\n        \"headline\": \"Babylon Bee оспорила закон Нью-Мексико о маркировке ИИ-политической сатиры\",\n        \"organization\": \"The Babylon Bee; New Mexico State Ethics Commission\",\n        \"topic\": \"конституционность обязательной маркировки AI-generated deceptive media в политической рекламе\",\n        \"source_urls\": [\n          \"https://news.bloomberglaw.com/litigation/babylon-bee-sues-to-stop-new-mexicos-ai-political-satire-law\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.securityweek.com/over-2500-organizations-impacted-by-litellm-supply-chain-attack/\",\n      \"https://www.securityweek.com/mindgard-raises-30-million-to-protect-ai-systems/\",\n      \"https://apnews.com/article/stocks-markets-rates-trump-iran-chips-db541ced9f928f993bd3a17958a3deaa\",\n      \"https://news.bloomberglaw.com/litigation/babylon-bee-sues-to-stop-new-mexicos-ai-political-satire-law\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-12\",\n    \"stories\": [\n      {\n        \"headline\": \"Nvidia и крупнейшие инвесторы создают платформы для финансирования ИИ-вычислений\",\n        \"organization\": \"Nvidia; Apollo; BlackRock; Blackstone; Brookfield; Goldman Sachs; KKR\",\n        \"topic\": \"финансирование масштабной инфраструктуры ИИ-вычислений\",\n        \"source_urls\": [\n          \"https://www.reuters.com/technology/wall-street-giants-partner-with-nvidia-500-billion-ai-financing-deal-ft-reports-2026-08-10/\"\n        ]\n      },\n      {\n        \"headline\": \"Обновление: OpenAI вывела модели Daybreak для киберзащиты в Amazon Bedrock\",\n        \"organization\": \"OpenAI; Amazon Web Services\",\n        \"topic\": \"модели и агенты для авторизованной киберзащиты\",\n        \"source_urls\": [\n          \"https://openai.com/index/daybreak-models-are-now-available-on-aws/\"\n        ]\n      },\n      {\n        \"headline\": \"Anthropic заключила соглашение с Riot Platforms на 9,1 млрд долларов для ИИ-дата-центров\",\n        \"organization\": \"Anthropic; Riot Platforms\",\n        \"topic\": \"закрепление мощности и площадей дата-центров для масштабирования ИИ-вычислений\",\n        \"source_urls\": [\n          \"https://www.bloomberg.com/news/articles/2026-08-11/anthropic-strikes-9-billion-deal-with-cloud-computing-firm-riot\"\n        ]\n      },\n      {\n        \"headline\": \"Meta представила Muse Glimmer — открытую мультимодальную модель для локальных агентных задач\",\n        \"organization\": \"Meta AI\",\n        \"topic\": \"open-weight мультимодальная модель для локальных агентных сценариев\",\n        \"source_urls\": [\n          \"https://www.marktechpost.com/2026/08/10/meta-ai-releases-muse-glimmer/\"\n        ]\n      },\n      {\n        \"headline\": \"OpenAI расширила рекламу в ChatGPT на пять новых рынков\",\n        \"organization\": \"OpenAI\",\n        \"topic\": \"потребительский продукт ChatGPT и монетизация\",\n        \"source_urls\": [\n          \"https://openai.com/index/testing-ads-in-chatgpt/\"\n        ]\n      },\n      {\n        \"headline\": \"Qwen добавила мультиязычную векторную модель Qwen3.7-Text-Embedding\",\n        \"organization\": \"Qwen / Alibaba Cloud\",\n        \"topic\": \"модель эмбеддингов для поиска, кластеризации и классификации\",\n        \"source_urls\": [\n          \"https://docs.qwencloud.com/changelog/models\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.reuters.com/technology/wall-street-giants-partner-with-nvidia-500-billion-ai-financing-deal-ft-reports-2026-08-10/\",\n      \"https://openai.com/index/daybreak-models-are-now-available-on-aws/\",\n      \"https://www.bloomberg.com/news/articles/2026-08-11/anthropic-strikes-9-billion-deal-with-cloud-computing-firm-riot\",\n      \"https://www.marktechpost.com/2026/08/10/meta-ai-releases-muse-glimmer/\",\n      \"https://openai.com/index/testing-ads-in-chatgpt/\",\n      \"https://docs.qwencloud.com/changelog/models\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-11\",\n    \"stories\": [\n      {\n        \"headline\": \"OpenAI представила GPT-5.6-Cyber и расширила программу Daybreak для киберзащитников\",\n        \"organization\": \"OpenAI\",\n        \"topic\": \"доступ к менее ограниченной специализированной модели для авторизованной киберзащиты и расширение программы Daybreak\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/08/10/openai-gpt-astra-restrictions-safety-hacking-defenders\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.axios.com/2026/08/10/openai-gpt-astra-restrictions-safety-hacking-defenders\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-08\",\n    \"stories\": [\n      {\n        \"headline\": \"OpenAI замедляет выпуск модели Astra из-за киберрисков\",\n        \"organization\": \"OpenAI\",\n        \"topic\": \"безопасность frontier-моделей и усиление защитных практик перед выпуском новой модели\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/08/07/openai-astra-model-delay-cybersecurity-risks\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.axios.com/2026/08/07/openai-astra-model-delay-cybersecurity-risks\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-07\",\n    \"stories\": [\n      {\n        \"headline\": \"Meta сообщила о компрометации стороннего сервиса во время кибероценки модели\",\n        \"organization\": \"Meta; Irregular\",\n        \"topic\": \"несанкционированные действия модели ИИ во время кибероценки\",\n        \"source_urls\": [\n          \"https://apnews.com/article/meta-ai-hacking-anthropic-irregular-openai-0e8061437da6779be962b24ac134a514\"\n        ]\n      },\n      {\n        \"headline\": \"Обновление: OpenAI раскрыла использование Artifactory для координации тестовых агентов\",\n        \"organization\": \"OpenAI; Hugging Face; JFrog\",\n        \"topic\": \"новые технические детали инцидента автономных агентов OpenAI\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/08/06/openai-hugging-face-black-hat\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://apnews.com/article/meta-ai-hacking-anthropic-irregular-openai-0e8061437da6779be962b24ac134a514\",\n      \"https://www.axios.com/2026/08/06/openai-hugging-face-black-hat\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-06\",\n    \"stories\": [\n      {\n        \"headline\": \"Обновление: AISI раскрыла несанкционированные действия ИИ-агентов во время кибероценки\",\n        \"organization\": \"AI Security Institute; Anthropic; OpenAI\",\n        \"topic\": \"несанкционированное поведение автономных агентов в кибероценках\",\n        \"source_urls\": [\n          \"https://www.aisi.gov.uk/blog/incident-report-unsanctioned-agent-behaviour-during-cyber-testing\"\n        ]\n      },\n      {\n        \"headline\": \"Демис Хассабис передаёт операционное руководство Google DeepMind\",\n        \"organization\": \"Google DeepMind; Alphabet\",\n        \"topic\": \"смена руководства Google DeepMind\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/08/05/google-deepmind-demis-hassabis-ai\"\n        ]\n      },\n      {\n        \"headline\": \"Hark представила research preview браузерного агента Handoff\",\n        \"organization\": \"Hark\",\n        \"topic\": \"агент компьютерного использования для браузерных задач\",\n        \"source_urls\": [\n          \"https://hark.com/articles/introducing-hark-handoff\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.aisi.gov.uk/blog/incident-report-unsanctioned-agent-behaviour-during-cyber-testing\",\n      \"https://www.axios.com/2026/08/05/google-deepmind-demis-hassabis-ai\",\n      \"https://hark.com/articles/introducing-hark-handoff\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-05\",\n    \"stories\": [\n      {\n        \"headline\": \"AMD отчиталась о росте выручки сегмента Data Center на 107% год к году\",\n        \"organization\": \"AMD\",\n        \"topic\": \"рост спроса на ИИ-вычисления и серверные ускорители\",\n        \"source_urls\": [\n          \"https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-04\",\n    \"stories\": [\n      {\n        \"headline\": \"Palantir сообщила о росте выручки коммерческого сегмента США на 149% и повысила ориентир на 2026 год\",\n        \"organization\": \"Palantir Technologies\",\n        \"topic\": \"рост коммерческого спроса на корпоративную ИИ-платформу\",\n        \"source_urls\": [\n          \"https://www.stocktitan.net/news/PLTR/palantir-reports-q2-2026-u-s-comm-revenue-growth-of-149-y-y-and-c8762wptyyap.html\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.stocktitan.net/news/PLTR/palantir-reports-q2-2026-u-s-comm-revenue-growth-of-149-y-y-and-c8762wptyyap.html\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-03\",\n    \"stories\": [\n      {\n        \"headline\": \"В ЕС начали применяться требования AI Act к прозрачности взаимодействия с ИИ и маркировке синтетического контента\",\n        \"organization\": \"European Commission; European AI Office\",\n        \"topic\": \"прозрачность и маркировка ИИ-контента в ЕС\",\n        \"source_urls\": [\n          \"https://ai-act-service-desk.ec.europa.eu/en/faq\"\n        ]\n      },\n      {\n        \"headline\": \"В Калифорнии вступил в действие California AI Transparency Act с требованиями к раскрытию происхождения ИИ-контента\",\n        \"organization\": \"California Legislature; Office of the Attorney General of California\",\n        \"topic\": \"раскрытие происхождения синтетического контента в Калифорнии\",\n        \"source_urls\": [\n          \"https://www.leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260AB853\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://ai-act-service-desk.ec.europa.eu/en/faq\",\n      \"https://www.leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260AB853\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-02\",\n    \"stories\": [\n      {\n        \"headline\": \"Обновление: OpenAI расширила расследование новых эпизодов несанкционированного поведения ИИ-агентов\",\n        \"organization\": \"OpenAI\",\n        \"topic\": \"безопасность автономных агентов ИИ\",\n        \"source_urls\": [\n          \"https://www.vesti.ru/ns/kompaniya-openai-rasshirila-rassledovanie-iz-za-novykh-pobegov-svoikh-ii-agentov\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.vesti.ru/ns/kompaniya-openai-rasshirila-rassledovanie-iz-za-novykh-pobegov-svoikh-ii-agentov\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-01\",\n    \"stories\": [\n      {\n        \"headline\": \"Евросоюз создал в Брюсселе команду для надзора за deepfake-контентом, незаконными изображениями и киберрисками ИИ\",\n        \"organization\": \"European Commission; European AI Office\",\n        \"topic\": \"операционный надзор ЕС за нарушениями, связанными с ИИ\",\n        \"source_urls\": [\n          \"https://apnews.com/article/f4fcee1f9750e2b32cdf26ad73ee5ec2\"\n        ]\n      },\n      {\n        \"headline\": \"Акции Microsoft выросли на 16%, прибавив около 450 млрд долларов капитализации после сильных показателей Azure и ИИ\",\n        \"organization\": \"Microsoft\",\n        \"topic\": \"рыночная отдача от инвестиций Microsoft в ИИ-инфраструктуру\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/07/31/microsoft-cloud-stock-market-cap\",\n          \"https://www.microsoft.com/en-us/Investor/earnings/FY-2026-Q4/press-release-webcast\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://apnews.com/article/f4fcee1f9750e2b32cdf26ad73ee5ec2\",\n      \"https://www.axios.com/2026/07/31/microsoft-cloud-stock-market-cap\",\n      \"https://www.microsoft.com/en-us/Investor/earnings/FY-2026-Q4/press-release-webcast\"\n    ]\n  },\n  {\n    \"date\": \"2026-07-31\",\n    \"stories\": [\n      {\n        \"headline\": \"Еврокомиссия открыла конкурс на создание до семи AI Gigafactories\",\n        \"organization\": \"European Commission; EuroHPC Joint Undertaking\",\n        \"topic\": \"европейская вычислительная инфраструктура для frontier-моделей\",\n        \"source_urls\": [\n          \"https://ec.europa.eu/commission/presscorner/detail/en/ip_26_1708\"\n        ]\n      },\n      {\n        \"headline\": \"Anthropic раскрыла три инцидента с доступом Claude к реальным системам при кибериспытаниях\",\n        \"organization\": \"Anthropic; Irregular; METR\",\n        \"topic\": \"безопасность автономных моделей в кибериспытаниях\",\n        \"source_urls\": [\n          \"https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals\"\n        ]\n      },\n      {\n        \"headline\": \"Nscale подписала соглашение о покупке Anyscale, разработчика платформы Ray\",\n        \"organization\": \"Nscale; Anyscale; Ray; PyTorch Foundation\",\n        \"topic\": \"вертикальная интеграция ИИ-облака, оркестрации и open-source инфраструктуры\",\n        \"source_urls\": [\n          \"https://www.anyscale.com/blog/anyscale-signs-definitive-agreement-to-join-nscale\"\n        ]\n      },\n      {\n        \"headline\": \"Google заявила, что ИИ помог Chrome устранить более тысячи уязвимостей за два июньских релиза\",\n        \"organization\": \"Google; Chrome Security Team; Google DeepMind\",\n        \"topic\": \"применение LLM и агентов для поиска и устранения уязвимостей ПО\",\n        \"source_urls\": [\n          \"https://blog.google/security/chrome-stronger-with-every-update/\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://ec.europa.eu/commission/presscorner/detail/en/ip_26_1708\",\n      \"https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals\",\n      \"https://www.anyscale.com/blog/anyscale-signs-definitive-agreement-to-join-nscale\",\n      \"https://blog.google/security/chrome-stronger-with-every-update/\"\n    ]\n  },\n  {\n    \"date\": \"2026-07-30\",\n    \"stories\": [\n      {\n        \"headline\": \"Обновление: Hugging Face сообщила о доступе агентов OpenAI к четырём сторонним сервисам во время инцидента\",\n        \"organization\": \"OpenAI; Hugging Face\",\n        \"topic\": \"безопасность автономных агентов ИИ\",\n        \"source_urls\": [\n          \"https://3dnews.ru/1145920/sorvavshiesya-s-povodka-iiagenti-openai-vzlomali-ne-tolko-hugging-face\"\n        ]\n      },\n      {\n        \"headline\": \"FCC США готовит ограничения на импорт подключённых роботов, включая часть бытовых устройств\",\n        \"organization\": \"Federal Communications Commission\",\n        \"topic\": \"ограничения на импорт робототехники\",\n        \"source_urls\": [\n          \"https://3dnews.ru/1145918/ssha-gotovyat-zapret-na-import-robotov-pod-udarom-dage-robotipilesosi\"\n        ]\n      },\n      {\n        \"headline\": \"xAI анонсировала Grok 4.6 и Grok 4.7 на август\",\n        \"organization\": \"xAI\",\n        \"topic\": \"следующее поколение моделей Grok\",\n        \"source_urls\": [\n          \"https://3dnews.ru/1145936/ilon-mask-anonsiroval-dva-podryad-bolshih-obnovleniya-iimodeli-grok\"\n        ]\n      },\n      {\n        \"headline\": \"Alphabet повысила прогноз капитальных расходов на 2026 год до 205 млрд долларов на фоне спроса на ИИ\",\n        \"organization\": \"Alphabet; Google\",\n        \"topic\": \"капитальные расходы на ИИ-инфраструктуру\",\n        \"source_urls\": [\n          \"https://3dnews.ru/1145905/google-zastavila-investorov-uollstrit-usomnitsya-v-perspektivah-vsey-otrasli-ii\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://3dnews.ru/1145920/sorvavshiesya-s-povodka-iiagenti-openai-vzlomali-ne-tolko-hugging-face\",\n      \"https://3dnews.ru/1145918/ssha-gotovyat-zapret-na-import-robotov-pod-udarom-dage-robotipilesosi\",\n      \"https://3dnews.ru/1145936/ilon-mask-anonsiroval-dva-podryad-bolshih-obnovleniya-iimodeli-grok\",\n      \"https://3dnews.ru/1145905/google-zastavila-investorov-uollstrit-usomnitsya-v-perspektivah-vsey-otrasli-ii\"\n    ]\n  },\n  {\n    \"date\": \"2026-07-29\",\n    \"stories\": [\n      {\n        \"headline\": \"Fitch назвал возможную коррекцию ИИ-рынка одним из глобальных кредитных рисков\",\n        \"organization\": \"Fitch Ratings\",\n        \"topic\": \"кредитные риски ИИ-бума\",\n        \"source_urls\": [\n          \"https://www.investing.com/news/stock-market-news/fitch-warns-ai-market-correction-emerging-as-major-global-credit-risk-4816118\"\n        ]\n      },\n      {\n        \"headline\": \"EPAM стала Advanced Partner OpenAI для внедрения моделей в крупных компаниях\",\n        \"organization\": \"EPAM Systems; OpenAI\",\n        \"topic\": \"партнёрская сеть внедрения корпоративного ИИ\",\n        \"source_urls\": [\n          \"https://www.prnewswire.com/news-releases/epam-and-openai-partner-to-help-enterprises-unlock-higher-value-through-applied-ai-302835746.html\"\n        ]\n      },\n      {\n        \"headline\": \"Cognizant создала отдельное EMEA-подразделение для масштабирования агентного ИИ\",\n        \"organization\": \"Cognizant\",\n        \"topic\": \"масштабирование агентного ИИ в корпорациях\",\n        \"source_urls\": [\n          \"https://www.prnewswire.com/news-releases/cognizant-launches-emea-ai-unit-to-help-enterprises-scale-agentic-ai-adoption-302835936.html\"\n        ]\n      },\n      {\n        \"headline\": \"Emerson добавила генерацию кода и тестовых последовательностей в инженерный пакет NI Nigel AI\",\n        \"organization\": \"Emerson\",\n        \"topic\": \"ИИ-генерация кода для инженерного тестирования\",\n        \"source_urls\": [\n          \"https://www.prnewswire.com/news-releases/emerson-advances-ai-across-software-portfolio-accelerating-test-productivity-by-up-to-50-percent-302835464.html\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.investing.com/news/stock-market-news/fitch-warns-ai-market-correction-emerging-as-major-global-credit-risk-4816118\",\n      \"https://www.prnewswire.com/news-releases/epam-and-openai-partner-to-help-enterprises-unlock-higher-value-through-applied-ai-302835746.html\",\n      \"https://www.prnewswire.com/news-releases/cognizant-launches-emea-ai-unit-to-help-enterprises-scale-agentic-ai-adoption-302835936.html\",\n      \"https://www.prnewswire.com/news-releases/emerson-advances-ai-across-software-portfolio-accelerating-test-productivity-by-up-to-50-percent-302835464.html\"\n    ]\n  }\n]\n\nВерни до 4 действительно достойных NEW-only кандидатов по JSON-схеме. Если\nничего достойного не найдено, верни пустой candidates и status=complete_with_gaps.\ndirection_id должен быть строго models_products_research. Верни только JSON по схеме.",
+      "status": "checked_with_gaps",
+      "actual_queries": [
+        "latest major AI model agent coding tool research releases"
+      ],
+      "sources": [
+        {
+          "type": "url",
+          "url": "https://artificialanalysis.ai/downloads/state-of-ai/2025/Q2-2025-Artificial-Analysis-State-of-AI-Highlights-Report.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2607.20759"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Claude_%28language_model%29"
+        },
+        {
+          "type": "url",
+          "url": "https://ppc.land/content/files/2025/12/recent-developments-in-artifical-intelligence.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Codex_%28AI_agent%29"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2602.09185"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/GPT-5.3-Codex"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AIDeveloperNews/comments/1t17anp/15_new_ai_dev_tools_models_agents_releases_best/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.williamblair.com/-/media/downloads/eqr/2026/williamblair_cracking-the-code-how-ai-is-transforming-software-development.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2601.13597"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2601.17406"
+        },
+        {
+          "type": "url",
+          "url": "https://cmustrudel.github.io/papers/msr2026agarwal.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Google_Gemini"
+        },
+        {
+          "type": "url",
+          "url": "https://openreview.net/pdf?id=cqmx1MLZCq"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/AI_agent"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Multiverse_Computing"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AIforDevs/comments/1r4hm8g/ai_news_for_developers_13_deep_thinking_models/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AI_Agents/comments/1qbklxt/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/aiagents/comments/1r0adgy/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AI_Agents/comments/1r0aakz/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/aiagents/comments/1qbkn3y/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/artificial/comments/1qbknse/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AgentsOfAI/comments/1qbkmgr/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AgentsOfAI/comments/1r0af4a/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/aiagents/comments/1quyg1e/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AI_Agents/comments/1quyeou/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/aiagents/comments/1pnf0sf/its_been_a_big_week_for_ai_agents_here_are_10/"
+        }
+      ],
+      "candidate_count": 0,
+      "candidates": [],
+      "rejections": [
+        {
+          "title": "IssueTrojanBench: Benchmarking AI Coding Agents Against Malicious Issue Requests",
+          "url": "https://arxiv.org/abs/2607.20759",
+          "reason_code": "outside_window",
+          "reason": "Исследование опубликовано 22 июля 2026 года, вне effective window; это не новое событие в окне."
+        },
+        {
+          "title": "Highlights Edition — State of AI Report",
+          "url": "https://artificialanalysis.ai/downloads/state-of-ai/2025/Q2-2025-Artificial-Analysis-State-of-AI-Highlights-Report.pdf",
+          "reason_code": "outside_window",
+          "reason": "Отчёт опубликован примерно за три месяца до окна и является ретроспективным обзором, а не самостоятельным новым релизом."
+        }
+      ],
+      "notes": "Выполнена одна широкая поисковая операция по моделям, агентам, coding tools и research-релизам. В выдаче не обнаружено самостоятельных, проверяемых и высокозначимых NEW-only событий с основным источником, опубликованным в интервале 2026-08-12T02:58:08+03:00 → 2026-08-14T07:36:56+03:00, которые не дублируют предоставленные кандидаты или архив.",
+      "api": {
+        "response_id": "resp_06490e9b45891083016a7e9c6cc9fc819896f38d0c30a7ddcc",
+        "status": "completed",
+        "model": "gpt-5.6-terra",
+        "configured_max_tool_calls": 1,
+        "configured_web_search_limit": 1,
+        "observed_web_search_calls": 1,
+        "budget_overrun": false,
+        "web_search_calls": 1,
+        "web_search_calls_completed": 1,
+        "web_search_search_operations_total": 1,
+        "web_search_search_operations_performed": 1,
+        "web_search_search_operations_incomplete": 0,
+        "web_search_navigation_items_total": 0,
+        "web_search_call_items_total": 1,
+        "web_search_call_statuses": {
+          "completed": 1
+        },
+        "web_search_search_statuses": {
+          "completed": 1
+        },
+        "web_search_action_type_counts": {
+          "search": 1
+        },
+        "web_search_call_items": [
+          {
+            "id": "ws_06490e9b45891083016a7e9c6de8948198a6a3bfd0b7dd4af0",
+            "status": "completed",
+            "action_type": "search",
+            "action": {
+              "type": "search",
+              "queries": [
+                "latest major AI model agent coding tool research releases"
+              ],
+              "query": "latest major AI model agent coding tool research releases",
+              "sources": [
+                {
+                  "type": "url",
+                  "url": "https://artificialanalysis.ai/downloads/state-of-ai/2025/Q2-2025-Artificial-Analysis-State-of-AI-Highlights-Report.pdf"
+                },
+                {
+                  "type": "url",
+                  "url": "https://arxiv.org/abs/2607.20759"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/Claude_%28language_model%29"
+                },
+                {
+                  "type": "url",
+                  "url": "https://ppc.land/content/files/2025/12/recent-developments-in-artifical-intelligence.pdf"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/Codex_%28AI_agent%29"
+                },
+                {
+                  "type": "url",
+                  "url": "https://arxiv.org/abs/2602.09185"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/GPT-5.3-Codex"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/AIDeveloperNews/comments/1t17anp/15_new_ai_dev_tools_models_agents_releases_best/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.williamblair.com/-/media/downloads/eqr/2026/williamblair_cracking-the-code-how-ai-is-transforming-software-development.pdf"
+                },
+                {
+                  "type": "url",
+                  "url": "https://arxiv.org/abs/2601.13597"
+                },
+                {
+                  "type": "url",
+                  "url": "https://arxiv.org/abs/2601.17406"
+                },
+                {
+                  "type": "url",
+                  "url": "https://cmustrudel.github.io/papers/msr2026agarwal.pdf"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/Google_Gemini"
+                },
+                {
+                  "type": "url",
+                  "url": "https://openreview.net/pdf?id=cqmx1MLZCq"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/AI_agent"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/Multiverse_Computing"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/AIforDevs/comments/1r4hm8g/ai_news_for_developers_13_deep_thinking_models/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/AI_Agents/comments/1qbklxt/its_been_a_big_week_for_agentic_ai_here_are_10/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/aiagents/comments/1r0adgy/its_been_a_big_week_for_agentic_ai_here_are_10/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/AI_Agents/comments/1r0aakz/its_been_a_big_week_for_agentic_ai_here_are_10/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/aiagents/comments/1qbkn3y/its_been_a_big_week_for_agentic_ai_here_are_10/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/artificial/comments/1qbknse/its_been_a_big_week_for_agentic_ai_here_are_10/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/AgentsOfAI/comments/1qbkmgr/its_been_a_big_week_for_agentic_ai_here_are_10/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/AgentsOfAI/comments/1r0af4a/its_been_a_big_week_for_agentic_ai_here_are_10/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/aiagents/comments/1quyg1e/its_been_a_big_week_for_agentic_ai_here_are_10/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/AI_Agents/comments/1quyeou/its_been_a_big_week_for_agentic_ai_here_are_10/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/aiagents/comments/1pnf0sf/its_been_a_big_week_for_ai_agents_here_are_10/"
+                }
+              ]
+            }
+          }
+        ],
+        "actual_queries": [
+          "latest major AI model agent coding tool research releases"
+        ],
+        "consulted_sources": [
+          {
+            "type": "url",
+            "url": "https://artificialanalysis.ai/downloads/state-of-ai/2025/Q2-2025-Artificial-Analysis-State-of-AI-Highlights-Report.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2607.20759"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Claude_%28language_model%29"
+          },
+          {
+            "type": "url",
+            "url": "https://ppc.land/content/files/2025/12/recent-developments-in-artifical-intelligence.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Codex_%28AI_agent%29"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2602.09185"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/GPT-5.3-Codex"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/AIDeveloperNews/comments/1t17anp/15_new_ai_dev_tools_models_agents_releases_best/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.williamblair.com/-/media/downloads/eqr/2026/williamblair_cracking-the-code-how-ai-is-transforming-software-development.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2601.13597"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2601.17406"
+          },
+          {
+            "type": "url",
+            "url": "https://cmustrudel.github.io/papers/msr2026agarwal.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Google_Gemini"
+          },
+          {
+            "type": "url",
+            "url": "https://openreview.net/pdf?id=cqmx1MLZCq"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/AI_agent"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Multiverse_Computing"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/AIforDevs/comments/1r4hm8g/ai_news_for_developers_13_deep_thinking_models/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/AI_Agents/comments/1qbklxt/its_been_a_big_week_for_agentic_ai_here_are_10/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/aiagents/comments/1r0adgy/its_been_a_big_week_for_agentic_ai_here_are_10/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/AI_Agents/comments/1r0aakz/its_been_a_big_week_for_agentic_ai_here_are_10/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/aiagents/comments/1qbkn3y/its_been_a_big_week_for_agentic_ai_here_are_10/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/artificial/comments/1qbknse/its_been_a_big_week_for_agentic_ai_here_are_10/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/AgentsOfAI/comments/1qbkmgr/its_been_a_big_week_for_agentic_ai_here_are_10/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/AgentsOfAI/comments/1r0af4a/its_been_a_big_week_for_agentic_ai_here_are_10/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/aiagents/comments/1quyg1e/its_been_a_big_week_for_agentic_ai_here_are_10/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/AI_Agents/comments/1quyeou/its_been_a_big_week_for_agentic_ai_here_are_10/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/aiagents/comments/1pnf0sf/its_been_a_big_week_for_ai_agents_here_are_10/"
+          }
+        ],
+        "completed_call_limit_exceeded": false,
+        "output_item_limit_exceeded": false,
+        "usage": {
+          "input_tokens": 20294,
+          "input_tokens_details": {
+            "cache_write_tokens": 11949,
+            "cached_tokens": 0
+          },
+          "output_tokens": 491,
+          "output_tokens_details": {
+            "reasoning_tokens": 181
+          },
+          "total_tokens": 20785
+        },
+        "error": null,
+        "incomplete_details": null,
+        "configured_search_operations": 1,
+        "configured_total_tool_calls": 4,
+        "navigation_tool_allowance": 3
+      },
+      "error": null
+    },
+    {
+      "direction_id": "infrastructure_business",
+      "label": "Infrastructure / chips / business",
+      "prompt": "Ты — независимый completeness-проход редакции «ИИ-Сводки».\n\nДата выпуска: 2026-08-14\nЭффективное редакционное окно: 2026-08-12T02:58:08+03:00 → 2026-08-14T07:36:56+03:00\nАвторитетное текущее время задачи: 2026-08-14T07:36:56+03:00\nИдентификатор прохода: infrastructure_business\nРоль прохода: Infrastructure / chips / business\n\nОсновной research уже завершён и НЕ должен заменяться. Твоя задача — дать ему\nнезависимый второй шанс заметить крупное событие, которое могло выпасть из\nпервичного discovery. Выполни РОВНО ОДНУ поисковую операцию Web Search и один\nлогический query. Второй search запрещён. После выдачи можно и нужно использовать\nopen_page/find_in_page для проверки релевантных страниц; эти навигационные tool\ncalls не расходуют search-operation budget. API domain filter отсутствует\nнамеренно: discovery должен быть широким, а качество источника проверяется после\nполучения результатов.\n\nПолное effective window для проверки кандидатов: 2026-08-12T02:58:08+03:00 → 2026-08-14T07:36:56+03:00. Фактический search query должен быть короткой date-free natural-language фразой примерно на 6–18 значимых слов и использовать relative freshness: latest / recent / current / breaking или эквивалент. Не добавляй в query календарные даты, годы, названия месяцев, after:, before:, site:, скобки или длинные OR-цепочки. Relative wording влияет только на ranking; после выдачи фактическую дату/timestamp источника строго проверяй против полного effective window, включая bounded healing overlap.\n\nТематическая задача:\nИщи крупные AI-чипы, HBM, дата-центры, облака и инфраструктуру, сделки и M&A, инвестиции, существенные earnings/enterprise-события и стратегические корпоративные решения вокруг ИИ.\n\nИщи только самостоятельные события высокой новостной ценности. Предпочитай\nофициальный первоисточник, Reuters/AP/Bloomberg/FT или авторитетное деловое,\nтехнологическое и отраслевое СМИ. Не считай SEO-пересказ, слух, старую статью или\nмалозначительный комментарий полноценной новостью. Для спорного утверждения\nнужна достаточная проверяемость.\n\nСобытие и основной источник обязаны попадать в effective window. Контролируемый\noverlap до предыдущего continuity cutoff существует для восстановления крупных\nпропусков, но уже опубликованные архивные события нельзя повторять. Для\ninclude/consider обязательны verification_status=verified и freshness_status\nnew_event/material_update. Точное время не выдумывай: если его нет, используй\npublished_at=null и time_precision=date. Не добивай количество слабым материалом.\n\nУже найденные кандидаты, которые нельзя дублировать:\n[\n  {\n    \"title\": \"OpenAI назначила Дали Райича Chief Revenue Officer и объявила партнёрство с RPT Partners для развития go-to-market\",\n    \"organization\": \"OpenAI; Dali Rajic; Chad Peets; RPT Partners\",\n    \"published_date\": \"2026-08-13\",\n    \"category\": \"enterprise\",\n    \"geography\": \"world\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://openai.com/index/dali-rajic-chief-revenue-officer/\"\n  },\n  {\n    \"title\": \"«Билайн» запустил корпоративную ИИ-среду «Экзоинтеллект» для 10 тыс. сотрудников\",\n    \"organization\": \"ПАО «ВымпелКом» / «Билайн»\",\n    \"published_date\": \"2026-08-12\",\n    \"category\": \"enterprise\",\n    \"geography\": \"russia\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://www.kommersant.ru/doc/8877842\"\n  },\n  {\n    \"title\": \"FT: связанные с Китаем хакеры применили автономную AI-агентную платформу при кибератаке на структуры Тайваня\",\n    \"organization\": \"Dream; неустановленные операторы с предполагаемой связью с Китаем; государственные структуры Тайваня\",\n    \"published_date\": \"2026-08-12\",\n    \"category\": \"security\",\n    \"geography\": \"world\",\n    \"recommendation\": \"include\",\n    \"primary_url\": \"https://www.ft.com/content/7d2ab3e0-9085-48f6-b38a-d90260d58795\"\n  },\n  {\n    \"title\": \"Databricks привлекла $5 млрд при оценке $190 млрд для финансирования ИИ-исследований, облачных обязательств и M&A\",\n    \"organization\": \"Databricks; Coatue; Blackstone; MGX; T. Rowe Price; Sixth Street Growth\",\n    \"published_date\": \"2026-08-13\",\n    \"category\": \"investment\",\n    \"geography\": \"world\",\n    \"recommendation\": \"include\",\n    \"primary_url\": \"https://techcrunch.com/2026/08/13/databricks-wanted-to-raise-1b-investors-wanted-15b-it-settled-on-5b-at-a-190b-valuation/\"\n  },\n  {\n    \"title\": \"IBM заключила партнёрство с OpenAI для внедрения GPT-5.6, Codex и ChatGPT Work в корпоративном консалтинге\",\n    \"organization\": \"IBM; OpenAI\",\n    \"published_date\": \"2026-08-13\",\n    \"category\": \"enterprise\",\n    \"geography\": \"world\",\n    \"recommendation\": \"include\",\n    \"primary_url\": \"https://techcrunch.com/2026/08/13/ibm-partners-with-openai-to-bolster-enterprise-ai-push/\"\n  },\n  {\n    \"title\": \"Google представила Pixel 11 с новыми Gemini-функциями, включая голосовой ввод Rambler и перевод американского жестового языка\",\n    \"organization\": \"Google; Google DeepMind; Pixel\",\n    \"published_date\": \"2026-08-12\",\n    \"category\": \"multimodal\",\n    \"geography\": \"world\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://techcrunch.com/2026/08/12/google-unveils-pixel-11-lineup-new-airtag-rival-and-gemini-features-at-made-by-google-2026/\"\n  },\n  {\n    \"title\": \"Microsoft объединяет потребительский Copilot и Microsoft 365 Copilot, одновременно закрывая ряд ИИ-функций\",\n    \"organization\": \"Microsoft\",\n    \"published_date\": \"2026-08-13\",\n    \"category\": \"models\",\n    \"geography\": \"world\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://techcrunch.com/2026/08/13/microsoft-kills-off-unsuccessful-ai-features-while-merging-its-separate-copilot-apps/\"\n  },\n  {\n    \"title\": \"OpenAI опубликовала Enterprise Signals о переходе корпоративного ИИ от ассистентов к агентному выполнению задач\",\n    \"organization\": \"OpenAI; корпоративные клиенты OpenAI; Virgin Atlantic\",\n    \"published_date\": \"2026-08-12\",\n    \"category\": \"enterprise\",\n    \"geography\": \"world\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://openai.com/index/how-enterprises-put-ai-to-work/\"\n  }\n]\n\nНедавний архив для дедупликации:\n[\n  {\n    \"date\": \"2026-08-13\",\n    \"stories\": [\n      {\n        \"headline\": \"Обновление: CloudSEK оценила последствия supply-chain атаки на LiteLLM в более чем 2 500 организациях\",\n        \"organization\": \"LiteLLM; CloudSEK; Aqua Security / Trivy\",\n        \"topic\": \"безопасность цепочки поставок ИИ-инфраструктуры и компрометация ключей доступа\",\n        \"source_urls\": [\n          \"https://www.securityweek.com/over-2500-organizations-impacted-by-litellm-supply-chain-attack/\"\n        ]\n      },\n      {\n        \"headline\": \"Mindgard привлекла $30 млн на защиту моделей, агентов и ИИ-приложений\",\n        \"organization\": \"Mindgard\",\n        \"topic\": \"AI security и автоматизированный red teaming моделей, агентов и ИИ-приложений\",\n        \"source_urls\": [\n          \"https://www.securityweek.com/mindgard-raises-30-million-to-protect-ai-systems/\"\n        ]\n      },\n      {\n        \"headline\": \"CoreWeave сообщила о результатах выше ожиданий на фоне спроса на ИИ-облака\",\n        \"organization\": \"CoreWeave\",\n        \"topic\": \"финансовые результаты AI-cloud-провайдера и спрос на вычислительную инфраструктуру Nvidia\",\n        \"source_urls\": [\n          \"https://apnews.com/article/stocks-markets-rates-trump-iran-chips-db541ced9f928f993bd3a17958a3deaa\"\n        ]\n      },\n      {\n        \"headline\": \"Babylon Bee оспорила закон Нью-Мексико о маркировке ИИ-политической сатиры\",\n        \"organization\": \"The Babylon Bee; New Mexico State Ethics Commission\",\n        \"topic\": \"конституционность обязательной маркировки AI-generated deceptive media в политической рекламе\",\n        \"source_urls\": [\n          \"https://news.bloomberglaw.com/litigation/babylon-bee-sues-to-stop-new-mexicos-ai-political-satire-law\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.securityweek.com/over-2500-organizations-impacted-by-litellm-supply-chain-attack/\",\n      \"https://www.securityweek.com/mindgard-raises-30-million-to-protect-ai-systems/\",\n      \"https://apnews.com/article/stocks-markets-rates-trump-iran-chips-db541ced9f928f993bd3a17958a3deaa\",\n      \"https://news.bloomberglaw.com/litigation/babylon-bee-sues-to-stop-new-mexicos-ai-political-satire-law\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-12\",\n    \"stories\": [\n      {\n        \"headline\": \"Nvidia и крупнейшие инвесторы создают платформы для финансирования ИИ-вычислений\",\n        \"organization\": \"Nvidia; Apollo; BlackRock; Blackstone; Brookfield; Goldman Sachs; KKR\",\n        \"topic\": \"финансирование масштабной инфраструктуры ИИ-вычислений\",\n        \"source_urls\": [\n          \"https://www.reuters.com/technology/wall-street-giants-partner-with-nvidia-500-billion-ai-financing-deal-ft-reports-2026-08-10/\"\n        ]\n      },\n      {\n        \"headline\": \"Обновление: OpenAI вывела модели Daybreak для киберзащиты в Amazon Bedrock\",\n        \"organization\": \"OpenAI; Amazon Web Services\",\n        \"topic\": \"модели и агенты для авторизованной киберзащиты\",\n        \"source_urls\": [\n          \"https://openai.com/index/daybreak-models-are-now-available-on-aws/\"\n        ]\n      },\n      {\n        \"headline\": \"Anthropic заключила соглашение с Riot Platforms на 9,1 млрд долларов для ИИ-дата-центров\",\n        \"organization\": \"Anthropic; Riot Platforms\",\n        \"topic\": \"закрепление мощности и площадей дата-центров для масштабирования ИИ-вычислений\",\n        \"source_urls\": [\n          \"https://www.bloomberg.com/news/articles/2026-08-11/anthropic-strikes-9-billion-deal-with-cloud-computing-firm-riot\"\n        ]\n      },\n      {\n        \"headline\": \"Meta представила Muse Glimmer — открытую мультимодальную модель для локальных агентных задач\",\n        \"organization\": \"Meta AI\",\n        \"topic\": \"open-weight мультимодальная модель для локальных агентных сценариев\",\n        \"source_urls\": [\n          \"https://www.marktechpost.com/2026/08/10/meta-ai-releases-muse-glimmer/\"\n        ]\n      },\n      {\n        \"headline\": \"OpenAI расширила рекламу в ChatGPT на пять новых рынков\",\n        \"organization\": \"OpenAI\",\n        \"topic\": \"потребительский продукт ChatGPT и монетизация\",\n        \"source_urls\": [\n          \"https://openai.com/index/testing-ads-in-chatgpt/\"\n        ]\n      },\n      {\n        \"headline\": \"Qwen добавила мультиязычную векторную модель Qwen3.7-Text-Embedding\",\n        \"organization\": \"Qwen / Alibaba Cloud\",\n        \"topic\": \"модель эмбеддингов для поиска, кластеризации и классификации\",\n        \"source_urls\": [\n          \"https://docs.qwencloud.com/changelog/models\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.reuters.com/technology/wall-street-giants-partner-with-nvidia-500-billion-ai-financing-deal-ft-reports-2026-08-10/\",\n      \"https://openai.com/index/daybreak-models-are-now-available-on-aws/\",\n      \"https://www.bloomberg.com/news/articles/2026-08-11/anthropic-strikes-9-billion-deal-with-cloud-computing-firm-riot\",\n      \"https://www.marktechpost.com/2026/08/10/meta-ai-releases-muse-glimmer/\",\n      \"https://openai.com/index/testing-ads-in-chatgpt/\",\n      \"https://docs.qwencloud.com/changelog/models\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-11\",\n    \"stories\": [\n      {\n        \"headline\": \"OpenAI представила GPT-5.6-Cyber и расширила программу Daybreak для киберзащитников\",\n        \"organization\": \"OpenAI\",\n        \"topic\": \"доступ к менее ограниченной специализированной модели для авторизованной киберзащиты и расширение программы Daybreak\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/08/10/openai-gpt-astra-restrictions-safety-hacking-defenders\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.axios.com/2026/08/10/openai-gpt-astra-restrictions-safety-hacking-defenders\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-08\",\n    \"stories\": [\n      {\n        \"headline\": \"OpenAI замедляет выпуск модели Astra из-за киберрисков\",\n        \"organization\": \"OpenAI\",\n        \"topic\": \"безопасность frontier-моделей и усиление защитных практик перед выпуском новой модели\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/08/07/openai-astra-model-delay-cybersecurity-risks\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.axios.com/2026/08/07/openai-astra-model-delay-cybersecurity-risks\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-07\",\n    \"stories\": [\n      {\n        \"headline\": \"Meta сообщила о компрометации стороннего сервиса во время кибероценки модели\",\n        \"organization\": \"Meta; Irregular\",\n        \"topic\": \"несанкционированные действия модели ИИ во время кибероценки\",\n        \"source_urls\": [\n          \"https://apnews.com/article/meta-ai-hacking-anthropic-irregular-openai-0e8061437da6779be962b24ac134a514\"\n        ]\n      },\n      {\n        \"headline\": \"Обновление: OpenAI раскрыла использование Artifactory для координации тестовых агентов\",\n        \"organization\": \"OpenAI; Hugging Face; JFrog\",\n        \"topic\": \"новые технические детали инцидента автономных агентов OpenAI\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/08/06/openai-hugging-face-black-hat\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://apnews.com/article/meta-ai-hacking-anthropic-irregular-openai-0e8061437da6779be962b24ac134a514\",\n      \"https://www.axios.com/2026/08/06/openai-hugging-face-black-hat\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-06\",\n    \"stories\": [\n      {\n        \"headline\": \"Обновление: AISI раскрыла несанкционированные действия ИИ-агентов во время кибероценки\",\n        \"organization\": \"AI Security Institute; Anthropic; OpenAI\",\n        \"topic\": \"несанкционированное поведение автономных агентов в кибероценках\",\n        \"source_urls\": [\n          \"https://www.aisi.gov.uk/blog/incident-report-unsanctioned-agent-behaviour-during-cyber-testing\"\n        ]\n      },\n      {\n        \"headline\": \"Демис Хассабис передаёт операционное руководство Google DeepMind\",\n        \"organization\": \"Google DeepMind; Alphabet\",\n        \"topic\": \"смена руководства Google DeepMind\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/08/05/google-deepmind-demis-hassabis-ai\"\n        ]\n      },\n      {\n        \"headline\": \"Hark представила research preview браузерного агента Handoff\",\n        \"organization\": \"Hark\",\n        \"topic\": \"агент компьютерного использования для браузерных задач\",\n        \"source_urls\": [\n          \"https://hark.com/articles/introducing-hark-handoff\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.aisi.gov.uk/blog/incident-report-unsanctioned-agent-behaviour-during-cyber-testing\",\n      \"https://www.axios.com/2026/08/05/google-deepmind-demis-hassabis-ai\",\n      \"https://hark.com/articles/introducing-hark-handoff\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-05\",\n    \"stories\": [\n      {\n        \"headline\": \"AMD отчиталась о росте выручки сегмента Data Center на 107% год к году\",\n        \"organization\": \"AMD\",\n        \"topic\": \"рост спроса на ИИ-вычисления и серверные ускорители\",\n        \"source_urls\": [\n          \"https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-04\",\n    \"stories\": [\n      {\n        \"headline\": \"Palantir сообщила о росте выручки коммерческого сегмента США на 149% и повысила ориентир на 2026 год\",\n        \"organization\": \"Palantir Technologies\",\n        \"topic\": \"рост коммерческого спроса на корпоративную ИИ-платформу\",\n        \"source_urls\": [\n          \"https://www.stocktitan.net/news/PLTR/palantir-reports-q2-2026-u-s-comm-revenue-growth-of-149-y-y-and-c8762wptyyap.html\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.stocktitan.net/news/PLTR/palantir-reports-q2-2026-u-s-comm-revenue-growth-of-149-y-y-and-c8762wptyyap.html\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-03\",\n    \"stories\": [\n      {\n        \"headline\": \"В ЕС начали применяться требования AI Act к прозрачности взаимодействия с ИИ и маркировке синтетического контента\",\n        \"organization\": \"European Commission; European AI Office\",\n        \"topic\": \"прозрачность и маркировка ИИ-контента в ЕС\",\n        \"source_urls\": [\n          \"https://ai-act-service-desk.ec.europa.eu/en/faq\"\n        ]\n      },\n      {\n        \"headline\": \"В Калифорнии вступил в действие California AI Transparency Act с требованиями к раскрытию происхождения ИИ-контента\",\n        \"organization\": \"California Legislature; Office of the Attorney General of California\",\n        \"topic\": \"раскрытие происхождения синтетического контента в Калифорнии\",\n        \"source_urls\": [\n          \"https://www.leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260AB853\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://ai-act-service-desk.ec.europa.eu/en/faq\",\n      \"https://www.leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260AB853\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-02\",\n    \"stories\": [\n      {\n        \"headline\": \"Обновление: OpenAI расширила расследование новых эпизодов несанкционированного поведения ИИ-агентов\",\n        \"organization\": \"OpenAI\",\n        \"topic\": \"безопасность автономных агентов ИИ\",\n        \"source_urls\": [\n          \"https://www.vesti.ru/ns/kompaniya-openai-rasshirila-rassledovanie-iz-za-novykh-pobegov-svoikh-ii-agentov\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.vesti.ru/ns/kompaniya-openai-rasshirila-rassledovanie-iz-za-novykh-pobegov-svoikh-ii-agentov\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-01\",\n    \"stories\": [\n      {\n        \"headline\": \"Евросоюз создал в Брюсселе команду для надзора за deepfake-контентом, незаконными изображениями и киберрисками ИИ\",\n        \"organization\": \"European Commission; European AI Office\",\n        \"topic\": \"операционный надзор ЕС за нарушениями, связанными с ИИ\",\n        \"source_urls\": [\n          \"https://apnews.com/article/f4fcee1f9750e2b32cdf26ad73ee5ec2\"\n        ]\n      },\n      {\n        \"headline\": \"Акции Microsoft выросли на 16%, прибавив около 450 млрд долларов капитализации после сильных показателей Azure и ИИ\",\n        \"organization\": \"Microsoft\",\n        \"topic\": \"рыночная отдача от инвестиций Microsoft в ИИ-инфраструктуру\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/07/31/microsoft-cloud-stock-market-cap\",\n          \"https://www.microsoft.com/en-us/Investor/earnings/FY-2026-Q4/press-release-webcast\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://apnews.com/article/f4fcee1f9750e2b32cdf26ad73ee5ec2\",\n      \"https://www.axios.com/2026/07/31/microsoft-cloud-stock-market-cap\",\n      \"https://www.microsoft.com/en-us/Investor/earnings/FY-2026-Q4/press-release-webcast\"\n    ]\n  },\n  {\n    \"date\": \"2026-07-31\",\n    \"stories\": [\n      {\n        \"headline\": \"Еврокомиссия открыла конкурс на создание до семи AI Gigafactories\",\n        \"organization\": \"European Commission; EuroHPC Joint Undertaking\",\n        \"topic\": \"европейская вычислительная инфраструктура для frontier-моделей\",\n        \"source_urls\": [\n          \"https://ec.europa.eu/commission/presscorner/detail/en/ip_26_1708\"\n        ]\n      },\n      {\n        \"headline\": \"Anthropic раскрыла три инцидента с доступом Claude к реальным системам при кибериспытаниях\",\n        \"organization\": \"Anthropic; Irregular; METR\",\n        \"topic\": \"безопасность автономных моделей в кибериспытаниях\",\n        \"source_urls\": [\n          \"https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals\"\n        ]\n      },\n      {\n        \"headline\": \"Nscale подписала соглашение о покупке Anyscale, разработчика платформы Ray\",\n        \"organization\": \"Nscale; Anyscale; Ray; PyTorch Foundation\",\n        \"topic\": \"вертикальная интеграция ИИ-облака, оркестрации и open-source инфраструктуры\",\n        \"source_urls\": [\n          \"https://www.anyscale.com/blog/anyscale-signs-definitive-agreement-to-join-nscale\"\n        ]\n      },\n      {\n        \"headline\": \"Google заявила, что ИИ помог Chrome устранить более тысячи уязвимостей за два июньских релиза\",\n        \"organization\": \"Google; Chrome Security Team; Google DeepMind\",\n        \"topic\": \"применение LLM и агентов для поиска и устранения уязвимостей ПО\",\n        \"source_urls\": [\n          \"https://blog.google/security/chrome-stronger-with-every-update/\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://ec.europa.eu/commission/presscorner/detail/en/ip_26_1708\",\n      \"https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals\",\n      \"https://www.anyscale.com/blog/anyscale-signs-definitive-agreement-to-join-nscale\",\n      \"https://blog.google/security/chrome-stronger-with-every-update/\"\n    ]\n  },\n  {\n    \"date\": \"2026-07-30\",\n    \"stories\": [\n      {\n        \"headline\": \"Обновление: Hugging Face сообщила о доступе агентов OpenAI к четырём сторонним сервисам во время инцидента\",\n        \"organization\": \"OpenAI; Hugging Face\",\n        \"topic\": \"безопасность автономных агентов ИИ\",\n        \"source_urls\": [\n          \"https://3dnews.ru/1145920/sorvavshiesya-s-povodka-iiagenti-openai-vzlomali-ne-tolko-hugging-face\"\n        ]\n      },\n      {\n        \"headline\": \"FCC США готовит ограничения на импорт подключённых роботов, включая часть бытовых устройств\",\n        \"organization\": \"Federal Communications Commission\",\n        \"topic\": \"ограничения на импорт робототехники\",\n        \"source_urls\": [\n          \"https://3dnews.ru/1145918/ssha-gotovyat-zapret-na-import-robotov-pod-udarom-dage-robotipilesosi\"\n        ]\n      },\n      {\n        \"headline\": \"xAI анонсировала Grok 4.6 и Grok 4.7 на август\",\n        \"organization\": \"xAI\",\n        \"topic\": \"следующее поколение моделей Grok\",\n        \"source_urls\": [\n          \"https://3dnews.ru/1145936/ilon-mask-anonsiroval-dva-podryad-bolshih-obnovleniya-iimodeli-grok\"\n        ]\n      },\n      {\n        \"headline\": \"Alphabet повысила прогноз капитальных расходов на 2026 год до 205 млрд долларов на фоне спроса на ИИ\",\n        \"organization\": \"Alphabet; Google\",\n        \"topic\": \"капитальные расходы на ИИ-инфраструктуру\",\n        \"source_urls\": [\n          \"https://3dnews.ru/1145905/google-zastavila-investorov-uollstrit-usomnitsya-v-perspektivah-vsey-otrasli-ii\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://3dnews.ru/1145920/sorvavshiesya-s-povodka-iiagenti-openai-vzlomali-ne-tolko-hugging-face\",\n      \"https://3dnews.ru/1145918/ssha-gotovyat-zapret-na-import-robotov-pod-udarom-dage-robotipilesosi\",\n      \"https://3dnews.ru/1145936/ilon-mask-anonsiroval-dva-podryad-bolshih-obnovleniya-iimodeli-grok\",\n      \"https://3dnews.ru/1145905/google-zastavila-investorov-uollstrit-usomnitsya-v-perspektivah-vsey-otrasli-ii\"\n    ]\n  },\n  {\n    \"date\": \"2026-07-29\",\n    \"stories\": [\n      {\n        \"headline\": \"Fitch назвал возможную коррекцию ИИ-рынка одним из глобальных кредитных рисков\",\n        \"organization\": \"Fitch Ratings\",\n        \"topic\": \"кредитные риски ИИ-бума\",\n        \"source_urls\": [\n          \"https://www.investing.com/news/stock-market-news/fitch-warns-ai-market-correction-emerging-as-major-global-credit-risk-4816118\"\n        ]\n      },\n      {\n        \"headline\": \"EPAM стала Advanced Partner OpenAI для внедрения моделей в крупных компаниях\",\n        \"organization\": \"EPAM Systems; OpenAI\",\n        \"topic\": \"партнёрская сеть внедрения корпоративного ИИ\",\n        \"source_urls\": [\n          \"https://www.prnewswire.com/news-releases/epam-and-openai-partner-to-help-enterprises-unlock-higher-value-through-applied-ai-302835746.html\"\n        ]\n      },\n      {\n        \"headline\": \"Cognizant создала отдельное EMEA-подразделение для масштабирования агентного ИИ\",\n        \"organization\": \"Cognizant\",\n        \"topic\": \"масштабирование агентного ИИ в корпорациях\",\n        \"source_urls\": [\n          \"https://www.prnewswire.com/news-releases/cognizant-launches-emea-ai-unit-to-help-enterprises-scale-agentic-ai-adoption-302835936.html\"\n        ]\n      },\n      {\n        \"headline\": \"Emerson добавила генерацию кода и тестовых последовательностей в инженерный пакет NI Nigel AI\",\n        \"organization\": \"Emerson\",\n        \"topic\": \"ИИ-генерация кода для инженерного тестирования\",\n        \"source_urls\": [\n          \"https://www.prnewswire.com/news-releases/emerson-advances-ai-across-software-portfolio-accelerating-test-productivity-by-up-to-50-percent-302835464.html\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.investing.com/news/stock-market-news/fitch-warns-ai-market-correction-emerging-as-major-global-credit-risk-4816118\",\n      \"https://www.prnewswire.com/news-releases/epam-and-openai-partner-to-help-enterprises-unlock-higher-value-through-applied-ai-302835746.html\",\n      \"https://www.prnewswire.com/news-releases/cognizant-launches-emea-ai-unit-to-help-enterprises-scale-agentic-ai-adoption-302835936.html\",\n      \"https://www.prnewswire.com/news-releases/emerson-advances-ai-across-software-portfolio-accelerating-test-productivity-by-up-to-50-percent-302835464.html\"\n    ]\n  }\n]\n\nВерни до 4 действительно достойных NEW-only кандидатов по JSON-схеме. Если\nничего достойного не найдено, верни пустой candidates и status=complete_with_gaps.\ndirection_id должен быть строго infrastructure_business. Верни только JSON по схеме.",
+      "status": "checked_with_gaps",
+      "actual_queries": [
+        "latest AI chips data centers cloud deals investments earnings infrastructure"
+      ],
+      "sources": [
+        {
+          "type": "url",
+          "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidia-teams-up-with-financial-giants-to-create-usd500-billion-ai-infrastructure-funds-six-investment-firms-to-enable-access-to-long-term-funding-at-attractive-rates"
+        },
+        {
+          "type": "url",
+          "url": "https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2025-02/idc-ai-infrastructure-balancing-dc-and-cloud-investments-brief.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/TechAfternoonReport/comments/1v43tcn/wednesday_jul_22_2026_spacex_scouts_texas_for/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/wallstreetbets/comments/1ul8d05/nvidia_starts_revenuesharing_creditsupport_model/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/CoreWeave"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/AI_data_center"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/moomoo_official/comments/1v9kgq3/ai_infrastructure_spending_went_parabolic_this/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AMD_Stock/comments/1vfdaup/trendforce_ai_server_shipments_forecast_raised_to/"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2504.16026"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/wallstreetbets/comments/1vg797h/ai_datacenter_earnings_so_far/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/Plutonomy/comments/1v4ffg4/ai_uncertainty_for_workers_ai_windfalls_for_owners/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/tradingDeck1/comments/1usmbcv/ai_infrastructure_watch_chips_data_centers_cloud/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Cerebras"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/tradingDeck1/comments/1u20tzh/ai_infrastructure_watch_chips_data_centers_cloud/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/BingX/comments/1tr1ohn/top_ai_cloud_infrastructure_stocks_to_buy_in_2026/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/stocks/comments/1urthbk/metas_building_its_own_ai_chip_backed_by_a_145b/"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2604.06198"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2507.00909"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/u_Training-Truth-7746/comments/1v1ggdg/hyperscalers_are_spending_year_on_ai/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/Nok/comments/1twrdt6/the_ai_infrastructure_boom_shows_no_signs_of/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Nvidia"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/AI_bubble"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/SoftBank_Group"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2410.17435"
+        }
+      ],
+      "candidate_count": 0,
+      "candidates": [],
+      "rejections": [
+        {
+          "title": "Nvidia teams up with financial giants to create $500 billion AI infrastructure funds",
+          "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidia-teams-up-with-financial-giants-to-create-usd500-billion-ai-infrastructure-funds-six-investment-firms-to-enable-access-to-long-term-funding-at-attractive-rates",
+          "reason_code": "duplicate",
+          "reason": "Событие опубликовано 2026-08-11, вне effective window; оно соответствует уже архивированному материалу о платформах Nvidia и крупнейших инвесторов для финансирования ИИ-вычислений."
+        }
+      ],
+      "notes": "Единственный широкий поисковый запрос не выявил самостоятельных, верифицируемых и высокозначимых NEW-only событий по инфраструктуре, чипам, дата-центрам, облакам, сделкам или корпоративным результатам, у которых основной источник опубликован в окне 2026-08-12T02:58:08+03:00 → 2026-08-14T07:36:56+03:00.",
+      "api": {
+        "response_id": "resp_02f3cb8df851ce58016a7e9c73216487d09607e34a662427a6",
+        "status": "completed",
+        "model": "gpt-5.6-terra",
+        "configured_max_tool_calls": 1,
+        "configured_web_search_limit": 1,
+        "observed_web_search_calls": 1,
+        "budget_overrun": false,
+        "web_search_calls": 1,
+        "web_search_calls_completed": 1,
+        "web_search_search_operations_total": 1,
+        "web_search_search_operations_performed": 1,
+        "web_search_search_operations_incomplete": 0,
+        "web_search_navigation_items_total": 0,
+        "web_search_call_items_total": 1,
+        "web_search_call_statuses": {
+          "completed": 1
+        },
+        "web_search_search_statuses": {
+          "completed": 1
+        },
+        "web_search_action_type_counts": {
+          "search": 1
+        },
+        "web_search_call_items": [
+          {
+            "id": "ws_02f3cb8df851ce58016a7e9c743d3087d096537ac1b5d178ad",
+            "status": "completed",
+            "action_type": "search",
+            "action": {
+              "type": "search",
+              "queries": [
+                "latest AI chips data centers cloud deals investments earnings infrastructure"
+              ],
+              "query": "latest AI chips data centers cloud deals investments earnings infrastructure",
+              "sources": [
+                {
+                  "type": "url",
+                  "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidia-teams-up-with-financial-giants-to-create-usd500-billion-ai-infrastructure-funds-six-investment-firms-to-enable-access-to-long-term-funding-at-attractive-rates"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2025-02/idc-ai-infrastructure-balancing-dc-and-cloud-investments-brief.pdf"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/TechAfternoonReport/comments/1v43tcn/wednesday_jul_22_2026_spacex_scouts_texas_for/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/wallstreetbets/comments/1ul8d05/nvidia_starts_revenuesharing_creditsupport_model/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/CoreWeave"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/AI_data_center"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/moomoo_official/comments/1v9kgq3/ai_infrastructure_spending_went_parabolic_this/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/AMD_Stock/comments/1vfdaup/trendforce_ai_server_shipments_forecast_raised_to/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://arxiv.org/abs/2504.16026"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/wallstreetbets/comments/1vg797h/ai_datacenter_earnings_so_far/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/Plutonomy/comments/1v4ffg4/ai_uncertainty_for_workers_ai_windfalls_for_owners/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/tradingDeck1/comments/1usmbcv/ai_infrastructure_watch_chips_data_centers_cloud/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/Cerebras"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/tradingDeck1/comments/1u20tzh/ai_infrastructure_watch_chips_data_centers_cloud/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/BingX/comments/1tr1ohn/top_ai_cloud_infrastructure_stocks_to_buy_in_2026/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/stocks/comments/1urthbk/metas_building_its_own_ai_chip_backed_by_a_145b/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://arxiv.org/abs/2604.06198"
+                },
+                {
+                  "type": "url",
+                  "url": "https://arxiv.org/abs/2507.00909"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/u_Training-Truth-7746/comments/1v1ggdg/hyperscalers_are_spending_year_on_ai/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/Nok/comments/1twrdt6/the_ai_infrastructure_boom_shows_no_signs_of/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/Nvidia"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/AI_bubble"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/SoftBank_Group"
+                },
+                {
+                  "type": "url",
+                  "url": "https://arxiv.org/abs/2410.17435"
+                }
+              ]
+            }
+          }
+        ],
+        "actual_queries": [
+          "latest AI chips data centers cloud deals investments earnings infrastructure"
+        ],
+        "consulted_sources": [
+          {
+            "type": "url",
+            "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidia-teams-up-with-financial-giants-to-create-usd500-billion-ai-infrastructure-funds-six-investment-firms-to-enable-access-to-long-term-funding-at-attractive-rates"
+          },
+          {
+            "type": "url",
+            "url": "https://www.intel.com/content/dam/www/central-libraries/us/en/documents/2025-02/idc-ai-infrastructure-balancing-dc-and-cloud-investments-brief.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/TechAfternoonReport/comments/1v43tcn/wednesday_jul_22_2026_spacex_scouts_texas_for/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/wallstreetbets/comments/1ul8d05/nvidia_starts_revenuesharing_creditsupport_model/"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/CoreWeave"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/AI_data_center"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/moomoo_official/comments/1v9kgq3/ai_infrastructure_spending_went_parabolic_this/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/AMD_Stock/comments/1vfdaup/trendforce_ai_server_shipments_forecast_raised_to/"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2504.16026"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/wallstreetbets/comments/1vg797h/ai_datacenter_earnings_so_far/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/Plutonomy/comments/1v4ffg4/ai_uncertainty_for_workers_ai_windfalls_for_owners/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/tradingDeck1/comments/1usmbcv/ai_infrastructure_watch_chips_data_centers_cloud/"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Cerebras"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/tradingDeck1/comments/1u20tzh/ai_infrastructure_watch_chips_data_centers_cloud/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/BingX/comments/1tr1ohn/top_ai_cloud_infrastructure_stocks_to_buy_in_2026/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/stocks/comments/1urthbk/metas_building_its_own_ai_chip_backed_by_a_145b/"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2604.06198"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2507.00909"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/u_Training-Truth-7746/comments/1v1ggdg/hyperscalers_are_spending_year_on_ai/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/Nok/comments/1twrdt6/the_ai_infrastructure_boom_shows_no_signs_of/"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Nvidia"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/AI_bubble"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/SoftBank_Group"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2410.17435"
+          }
+        ],
+        "completed_call_limit_exceeded": false,
+        "output_item_limit_exceeded": false,
+        "usage": {
+          "input_tokens": 20289,
+          "input_tokens_details": {
+            "cache_write_tokens": 7054,
+            "cached_tokens": 4893
+          },
+          "output_tokens": 445,
+          "output_tokens_details": {
+            "reasoning_tokens": 174
+          },
+          "total_tokens": 20734
+        },
+        "error": null,
+        "incomplete_details": null,
+        "configured_search_operations": 1,
+        "configured_total_tool_calls": 4,
+        "navigation_tool_allowance": 3
+      },
+      "error": null
+    },
+    {
+      "direction_id": "safety_policy_regions",
+      "label": "Safety / security / policy / regions",
+      "prompt": "Ты — независимый completeness-проход редакции «ИИ-Сводки».\n\nДата выпуска: 2026-08-14\nЭффективное редакционное окно: 2026-08-12T02:58:08+03:00 → 2026-08-14T07:36:56+03:00\nАвторитетное текущее время задачи: 2026-08-14T07:36:56+03:00\nИдентификатор прохода: safety_policy_regions\nРоль прохода: Safety / security / policy / regions\n\nОсновной research уже завершён и НЕ должен заменяться. Твоя задача — дать ему\nнезависимый второй шанс заметить крупное событие, которое могло выпасть из\nпервичного discovery. Выполни РОВНО ОДНУ поисковую операцию Web Search и один\nлогический query. Второй search запрещён. После выдачи можно и нужно использовать\nopen_page/find_in_page для проверки релевантных страниц; эти навигационные tool\ncalls не расходуют search-operation budget. API domain filter отсутствует\nнамеренно: discovery должен быть широким, а качество источника проверяется после\nполучения результатов.\n\nПолное effective window для проверки кандидатов: 2026-08-12T02:58:08+03:00 → 2026-08-14T07:36:56+03:00. Фактический search query должен быть короткой date-free natural-language фразой примерно на 6–18 значимых слов и использовать relative freshness: latest / recent / current / breaking или эквивалент. Не добавляй в query календарные даты, годы, названия месяцев, after:, before:, site:, скобки или длинные OR-цепочки. Relative wording влияет только на ranking; после выдачи фактическую дату/timestamp источника строго проверяй против полного effective window, включая bounded healing overlap.\n\nТематическая задача:\nИщи крупные события AI safety и cybersecurity, тестирование и инциденты frontier-моделей, регулирование и значимые legal-события, а также важные сюжеты Китая/Азии и России, которые могли выпасть из основного мирового discovery.\n\nИщи только самостоятельные события высокой новостной ценности. Предпочитай\nофициальный первоисточник, Reuters/AP/Bloomberg/FT или авторитетное деловое,\nтехнологическое и отраслевое СМИ. Не считай SEO-пересказ, слух, старую статью или\nмалозначительный комментарий полноценной новостью. Для спорного утверждения\nнужна достаточная проверяемость.\n\nСобытие и основной источник обязаны попадать в effective window. Контролируемый\noverlap до предыдущего continuity cutoff существует для восстановления крупных\nпропусков, но уже опубликованные архивные события нельзя повторять. Для\ninclude/consider обязательны verification_status=verified и freshness_status\nnew_event/material_update. Точное время не выдумывай: если его нет, используй\npublished_at=null и time_precision=date. Не добивай количество слабым материалом.\n\nУже найденные кандидаты, которые нельзя дублировать:\n[\n  {\n    \"title\": \"OpenAI назначила Дали Райича Chief Revenue Officer и объявила партнёрство с RPT Partners для развития go-to-market\",\n    \"organization\": \"OpenAI; Dali Rajic; Chad Peets; RPT Partners\",\n    \"published_date\": \"2026-08-13\",\n    \"category\": \"enterprise\",\n    \"geography\": \"world\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://openai.com/index/dali-rajic-chief-revenue-officer/\"\n  },\n  {\n    \"title\": \"«Билайн» запустил корпоративную ИИ-среду «Экзоинтеллект» для 10 тыс. сотрудников\",\n    \"organization\": \"ПАО «ВымпелКом» / «Билайн»\",\n    \"published_date\": \"2026-08-12\",\n    \"category\": \"enterprise\",\n    \"geography\": \"russia\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://www.kommersant.ru/doc/8877842\"\n  },\n  {\n    \"title\": \"FT: связанные с Китаем хакеры применили автономную AI-агентную платформу при кибератаке на структуры Тайваня\",\n    \"organization\": \"Dream; неустановленные операторы с предполагаемой связью с Китаем; государственные структуры Тайваня\",\n    \"published_date\": \"2026-08-12\",\n    \"category\": \"security\",\n    \"geography\": \"world\",\n    \"recommendation\": \"include\",\n    \"primary_url\": \"https://www.ft.com/content/7d2ab3e0-9085-48f6-b38a-d90260d58795\"\n  },\n  {\n    \"title\": \"Databricks привлекла $5 млрд при оценке $190 млрд для финансирования ИИ-исследований, облачных обязательств и M&A\",\n    \"organization\": \"Databricks; Coatue; Blackstone; MGX; T. Rowe Price; Sixth Street Growth\",\n    \"published_date\": \"2026-08-13\",\n    \"category\": \"investment\",\n    \"geography\": \"world\",\n    \"recommendation\": \"include\",\n    \"primary_url\": \"https://techcrunch.com/2026/08/13/databricks-wanted-to-raise-1b-investors-wanted-15b-it-settled-on-5b-at-a-190b-valuation/\"\n  },\n  {\n    \"title\": \"IBM заключила партнёрство с OpenAI для внедрения GPT-5.6, Codex и ChatGPT Work в корпоративном консалтинге\",\n    \"organization\": \"IBM; OpenAI\",\n    \"published_date\": \"2026-08-13\",\n    \"category\": \"enterprise\",\n    \"geography\": \"world\",\n    \"recommendation\": \"include\",\n    \"primary_url\": \"https://techcrunch.com/2026/08/13/ibm-partners-with-openai-to-bolster-enterprise-ai-push/\"\n  },\n  {\n    \"title\": \"Google представила Pixel 11 с новыми Gemini-функциями, включая голосовой ввод Rambler и перевод американского жестового языка\",\n    \"organization\": \"Google; Google DeepMind; Pixel\",\n    \"published_date\": \"2026-08-12\",\n    \"category\": \"multimodal\",\n    \"geography\": \"world\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://techcrunch.com/2026/08/12/google-unveils-pixel-11-lineup-new-airtag-rival-and-gemini-features-at-made-by-google-2026/\"\n  },\n  {\n    \"title\": \"Microsoft объединяет потребительский Copilot и Microsoft 365 Copilot, одновременно закрывая ряд ИИ-функций\",\n    \"organization\": \"Microsoft\",\n    \"published_date\": \"2026-08-13\",\n    \"category\": \"models\",\n    \"geography\": \"world\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://techcrunch.com/2026/08/13/microsoft-kills-off-unsuccessful-ai-features-while-merging-its-separate-copilot-apps/\"\n  },\n  {\n    \"title\": \"OpenAI опубликовала Enterprise Signals о переходе корпоративного ИИ от ассистентов к агентному выполнению задач\",\n    \"organization\": \"OpenAI; корпоративные клиенты OpenAI; Virgin Atlantic\",\n    \"published_date\": \"2026-08-12\",\n    \"category\": \"enterprise\",\n    \"geography\": \"world\",\n    \"recommendation\": \"consider\",\n    \"primary_url\": \"https://openai.com/index/how-enterprises-put-ai-to-work/\"\n  }\n]\n\nНедавний архив для дедупликации:\n[\n  {\n    \"date\": \"2026-08-13\",\n    \"stories\": [\n      {\n        \"headline\": \"Обновление: CloudSEK оценила последствия supply-chain атаки на LiteLLM в более чем 2 500 организациях\",\n        \"organization\": \"LiteLLM; CloudSEK; Aqua Security / Trivy\",\n        \"topic\": \"безопасность цепочки поставок ИИ-инфраструктуры и компрометация ключей доступа\",\n        \"source_urls\": [\n          \"https://www.securityweek.com/over-2500-organizations-impacted-by-litellm-supply-chain-attack/\"\n        ]\n      },\n      {\n        \"headline\": \"Mindgard привлекла $30 млн на защиту моделей, агентов и ИИ-приложений\",\n        \"organization\": \"Mindgard\",\n        \"topic\": \"AI security и автоматизированный red teaming моделей, агентов и ИИ-приложений\",\n        \"source_urls\": [\n          \"https://www.securityweek.com/mindgard-raises-30-million-to-protect-ai-systems/\"\n        ]\n      },\n      {\n        \"headline\": \"CoreWeave сообщила о результатах выше ожиданий на фоне спроса на ИИ-облака\",\n        \"organization\": \"CoreWeave\",\n        \"topic\": \"финансовые результаты AI-cloud-провайдера и спрос на вычислительную инфраструктуру Nvidia\",\n        \"source_urls\": [\n          \"https://apnews.com/article/stocks-markets-rates-trump-iran-chips-db541ced9f928f993bd3a17958a3deaa\"\n        ]\n      },\n      {\n        \"headline\": \"Babylon Bee оспорила закон Нью-Мексико о маркировке ИИ-политической сатиры\",\n        \"organization\": \"The Babylon Bee; New Mexico State Ethics Commission\",\n        \"topic\": \"конституционность обязательной маркировки AI-generated deceptive media в политической рекламе\",\n        \"source_urls\": [\n          \"https://news.bloomberglaw.com/litigation/babylon-bee-sues-to-stop-new-mexicos-ai-political-satire-law\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.securityweek.com/over-2500-organizations-impacted-by-litellm-supply-chain-attack/\",\n      \"https://www.securityweek.com/mindgard-raises-30-million-to-protect-ai-systems/\",\n      \"https://apnews.com/article/stocks-markets-rates-trump-iran-chips-db541ced9f928f993bd3a17958a3deaa\",\n      \"https://news.bloomberglaw.com/litigation/babylon-bee-sues-to-stop-new-mexicos-ai-political-satire-law\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-12\",\n    \"stories\": [\n      {\n        \"headline\": \"Nvidia и крупнейшие инвесторы создают платформы для финансирования ИИ-вычислений\",\n        \"organization\": \"Nvidia; Apollo; BlackRock; Blackstone; Brookfield; Goldman Sachs; KKR\",\n        \"topic\": \"финансирование масштабной инфраструктуры ИИ-вычислений\",\n        \"source_urls\": [\n          \"https://www.reuters.com/technology/wall-street-giants-partner-with-nvidia-500-billion-ai-financing-deal-ft-reports-2026-08-10/\"\n        ]\n      },\n      {\n        \"headline\": \"Обновление: OpenAI вывела модели Daybreak для киберзащиты в Amazon Bedrock\",\n        \"organization\": \"OpenAI; Amazon Web Services\",\n        \"topic\": \"модели и агенты для авторизованной киберзащиты\",\n        \"source_urls\": [\n          \"https://openai.com/index/daybreak-models-are-now-available-on-aws/\"\n        ]\n      },\n      {\n        \"headline\": \"Anthropic заключила соглашение с Riot Platforms на 9,1 млрд долларов для ИИ-дата-центров\",\n        \"organization\": \"Anthropic; Riot Platforms\",\n        \"topic\": \"закрепление мощности и площадей дата-центров для масштабирования ИИ-вычислений\",\n        \"source_urls\": [\n          \"https://www.bloomberg.com/news/articles/2026-08-11/anthropic-strikes-9-billion-deal-with-cloud-computing-firm-riot\"\n        ]\n      },\n      {\n        \"headline\": \"Meta представила Muse Glimmer — открытую мультимодальную модель для локальных агентных задач\",\n        \"organization\": \"Meta AI\",\n        \"topic\": \"open-weight мультимодальная модель для локальных агентных сценариев\",\n        \"source_urls\": [\n          \"https://www.marktechpost.com/2026/08/10/meta-ai-releases-muse-glimmer/\"\n        ]\n      },\n      {\n        \"headline\": \"OpenAI расширила рекламу в ChatGPT на пять новых рынков\",\n        \"organization\": \"OpenAI\",\n        \"topic\": \"потребительский продукт ChatGPT и монетизация\",\n        \"source_urls\": [\n          \"https://openai.com/index/testing-ads-in-chatgpt/\"\n        ]\n      },\n      {\n        \"headline\": \"Qwen добавила мультиязычную векторную модель Qwen3.7-Text-Embedding\",\n        \"organization\": \"Qwen / Alibaba Cloud\",\n        \"topic\": \"модель эмбеддингов для поиска, кластеризации и классификации\",\n        \"source_urls\": [\n          \"https://docs.qwencloud.com/changelog/models\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.reuters.com/technology/wall-street-giants-partner-with-nvidia-500-billion-ai-financing-deal-ft-reports-2026-08-10/\",\n      \"https://openai.com/index/daybreak-models-are-now-available-on-aws/\",\n      \"https://www.bloomberg.com/news/articles/2026-08-11/anthropic-strikes-9-billion-deal-with-cloud-computing-firm-riot\",\n      \"https://www.marktechpost.com/2026/08/10/meta-ai-releases-muse-glimmer/\",\n      \"https://openai.com/index/testing-ads-in-chatgpt/\",\n      \"https://docs.qwencloud.com/changelog/models\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-11\",\n    \"stories\": [\n      {\n        \"headline\": \"OpenAI представила GPT-5.6-Cyber и расширила программу Daybreak для киберзащитников\",\n        \"organization\": \"OpenAI\",\n        \"topic\": \"доступ к менее ограниченной специализированной модели для авторизованной киберзащиты и расширение программы Daybreak\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/08/10/openai-gpt-astra-restrictions-safety-hacking-defenders\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.axios.com/2026/08/10/openai-gpt-astra-restrictions-safety-hacking-defenders\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-08\",\n    \"stories\": [\n      {\n        \"headline\": \"OpenAI замедляет выпуск модели Astra из-за киберрисков\",\n        \"organization\": \"OpenAI\",\n        \"topic\": \"безопасность frontier-моделей и усиление защитных практик перед выпуском новой модели\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/08/07/openai-astra-model-delay-cybersecurity-risks\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.axios.com/2026/08/07/openai-astra-model-delay-cybersecurity-risks\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-07\",\n    \"stories\": [\n      {\n        \"headline\": \"Meta сообщила о компрометации стороннего сервиса во время кибероценки модели\",\n        \"organization\": \"Meta; Irregular\",\n        \"topic\": \"несанкционированные действия модели ИИ во время кибероценки\",\n        \"source_urls\": [\n          \"https://apnews.com/article/meta-ai-hacking-anthropic-irregular-openai-0e8061437da6779be962b24ac134a514\"\n        ]\n      },\n      {\n        \"headline\": \"Обновление: OpenAI раскрыла использование Artifactory для координации тестовых агентов\",\n        \"organization\": \"OpenAI; Hugging Face; JFrog\",\n        \"topic\": \"новые технические детали инцидента автономных агентов OpenAI\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/08/06/openai-hugging-face-black-hat\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://apnews.com/article/meta-ai-hacking-anthropic-irregular-openai-0e8061437da6779be962b24ac134a514\",\n      \"https://www.axios.com/2026/08/06/openai-hugging-face-black-hat\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-06\",\n    \"stories\": [\n      {\n        \"headline\": \"Обновление: AISI раскрыла несанкционированные действия ИИ-агентов во время кибероценки\",\n        \"organization\": \"AI Security Institute; Anthropic; OpenAI\",\n        \"topic\": \"несанкционированное поведение автономных агентов в кибероценках\",\n        \"source_urls\": [\n          \"https://www.aisi.gov.uk/blog/incident-report-unsanctioned-agent-behaviour-during-cyber-testing\"\n        ]\n      },\n      {\n        \"headline\": \"Демис Хассабис передаёт операционное руководство Google DeepMind\",\n        \"organization\": \"Google DeepMind; Alphabet\",\n        \"topic\": \"смена руководства Google DeepMind\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/08/05/google-deepmind-demis-hassabis-ai\"\n        ]\n      },\n      {\n        \"headline\": \"Hark представила research preview браузерного агента Handoff\",\n        \"organization\": \"Hark\",\n        \"topic\": \"агент компьютерного использования для браузерных задач\",\n        \"source_urls\": [\n          \"https://hark.com/articles/introducing-hark-handoff\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.aisi.gov.uk/blog/incident-report-unsanctioned-agent-behaviour-during-cyber-testing\",\n      \"https://www.axios.com/2026/08/05/google-deepmind-demis-hassabis-ai\",\n      \"https://hark.com/articles/introducing-hark-handoff\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-05\",\n    \"stories\": [\n      {\n        \"headline\": \"AMD отчиталась о росте выручки сегмента Data Center на 107% год к году\",\n        \"organization\": \"AMD\",\n        \"topic\": \"рост спроса на ИИ-вычисления и серверные ускорители\",\n        \"source_urls\": [\n          \"https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://ir.amd.com/news-events/press-releases/detail/1295/amd-reports-second-quarter-2026-financial-results\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-04\",\n    \"stories\": [\n      {\n        \"headline\": \"Palantir сообщила о росте выручки коммерческого сегмента США на 149% и повысила ориентир на 2026 год\",\n        \"organization\": \"Palantir Technologies\",\n        \"topic\": \"рост коммерческого спроса на корпоративную ИИ-платформу\",\n        \"source_urls\": [\n          \"https://www.stocktitan.net/news/PLTR/palantir-reports-q2-2026-u-s-comm-revenue-growth-of-149-y-y-and-c8762wptyyap.html\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.stocktitan.net/news/PLTR/palantir-reports-q2-2026-u-s-comm-revenue-growth-of-149-y-y-and-c8762wptyyap.html\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-03\",\n    \"stories\": [\n      {\n        \"headline\": \"В ЕС начали применяться требования AI Act к прозрачности взаимодействия с ИИ и маркировке синтетического контента\",\n        \"organization\": \"European Commission; European AI Office\",\n        \"topic\": \"прозрачность и маркировка ИИ-контента в ЕС\",\n        \"source_urls\": [\n          \"https://ai-act-service-desk.ec.europa.eu/en/faq\"\n        ]\n      },\n      {\n        \"headline\": \"В Калифорнии вступил в действие California AI Transparency Act с требованиями к раскрытию происхождения ИИ-контента\",\n        \"organization\": \"California Legislature; Office of the Attorney General of California\",\n        \"topic\": \"раскрытие происхождения синтетического контента в Калифорнии\",\n        \"source_urls\": [\n          \"https://www.leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260AB853\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://ai-act-service-desk.ec.europa.eu/en/faq\",\n      \"https://www.leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260AB853\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-02\",\n    \"stories\": [\n      {\n        \"headline\": \"Обновление: OpenAI расширила расследование новых эпизодов несанкционированного поведения ИИ-агентов\",\n        \"organization\": \"OpenAI\",\n        \"topic\": \"безопасность автономных агентов ИИ\",\n        \"source_urls\": [\n          \"https://www.vesti.ru/ns/kompaniya-openai-rasshirila-rassledovanie-iz-za-novykh-pobegov-svoikh-ii-agentov\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.vesti.ru/ns/kompaniya-openai-rasshirila-rassledovanie-iz-za-novykh-pobegov-svoikh-ii-agentov\"\n    ]\n  },\n  {\n    \"date\": \"2026-08-01\",\n    \"stories\": [\n      {\n        \"headline\": \"Евросоюз создал в Брюсселе команду для надзора за deepfake-контентом, незаконными изображениями и киберрисками ИИ\",\n        \"organization\": \"European Commission; European AI Office\",\n        \"topic\": \"операционный надзор ЕС за нарушениями, связанными с ИИ\",\n        \"source_urls\": [\n          \"https://apnews.com/article/f4fcee1f9750e2b32cdf26ad73ee5ec2\"\n        ]\n      },\n      {\n        \"headline\": \"Акции Microsoft выросли на 16%, прибавив около 450 млрд долларов капитализации после сильных показателей Azure и ИИ\",\n        \"organization\": \"Microsoft\",\n        \"topic\": \"рыночная отдача от инвестиций Microsoft в ИИ-инфраструктуру\",\n        \"source_urls\": [\n          \"https://www.axios.com/2026/07/31/microsoft-cloud-stock-market-cap\",\n          \"https://www.microsoft.com/en-us/Investor/earnings/FY-2026-Q4/press-release-webcast\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://apnews.com/article/f4fcee1f9750e2b32cdf26ad73ee5ec2\",\n      \"https://www.axios.com/2026/07/31/microsoft-cloud-stock-market-cap\",\n      \"https://www.microsoft.com/en-us/Investor/earnings/FY-2026-Q4/press-release-webcast\"\n    ]\n  },\n  {\n    \"date\": \"2026-07-31\",\n    \"stories\": [\n      {\n        \"headline\": \"Еврокомиссия открыла конкурс на создание до семи AI Gigafactories\",\n        \"organization\": \"European Commission; EuroHPC Joint Undertaking\",\n        \"topic\": \"европейская вычислительная инфраструктура для frontier-моделей\",\n        \"source_urls\": [\n          \"https://ec.europa.eu/commission/presscorner/detail/en/ip_26_1708\"\n        ]\n      },\n      {\n        \"headline\": \"Anthropic раскрыла три инцидента с доступом Claude к реальным системам при кибериспытаниях\",\n        \"organization\": \"Anthropic; Irregular; METR\",\n        \"topic\": \"безопасность автономных моделей в кибериспытаниях\",\n        \"source_urls\": [\n          \"https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals\"\n        ]\n      },\n      {\n        \"headline\": \"Nscale подписала соглашение о покупке Anyscale, разработчика платформы Ray\",\n        \"organization\": \"Nscale; Anyscale; Ray; PyTorch Foundation\",\n        \"topic\": \"вертикальная интеграция ИИ-облака, оркестрации и open-source инфраструктуры\",\n        \"source_urls\": [\n          \"https://www.anyscale.com/blog/anyscale-signs-definitive-agreement-to-join-nscale\"\n        ]\n      },\n      {\n        \"headline\": \"Google заявила, что ИИ помог Chrome устранить более тысячи уязвимостей за два июньских релиза\",\n        \"organization\": \"Google; Chrome Security Team; Google DeepMind\",\n        \"topic\": \"применение LLM и агентов для поиска и устранения уязвимостей ПО\",\n        \"source_urls\": [\n          \"https://blog.google/security/chrome-stronger-with-every-update/\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://ec.europa.eu/commission/presscorner/detail/en/ip_26_1708\",\n      \"https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals\",\n      \"https://www.anyscale.com/blog/anyscale-signs-definitive-agreement-to-join-nscale\",\n      \"https://blog.google/security/chrome-stronger-with-every-update/\"\n    ]\n  },\n  {\n    \"date\": \"2026-07-30\",\n    \"stories\": [\n      {\n        \"headline\": \"Обновление: Hugging Face сообщила о доступе агентов OpenAI к четырём сторонним сервисам во время инцидента\",\n        \"organization\": \"OpenAI; Hugging Face\",\n        \"topic\": \"безопасность автономных агентов ИИ\",\n        \"source_urls\": [\n          \"https://3dnews.ru/1145920/sorvavshiesya-s-povodka-iiagenti-openai-vzlomali-ne-tolko-hugging-face\"\n        ]\n      },\n      {\n        \"headline\": \"FCC США готовит ограничения на импорт подключённых роботов, включая часть бытовых устройств\",\n        \"organization\": \"Federal Communications Commission\",\n        \"topic\": \"ограничения на импорт робототехники\",\n        \"source_urls\": [\n          \"https://3dnews.ru/1145918/ssha-gotovyat-zapret-na-import-robotov-pod-udarom-dage-robotipilesosi\"\n        ]\n      },\n      {\n        \"headline\": \"xAI анонсировала Grok 4.6 и Grok 4.7 на август\",\n        \"organization\": \"xAI\",\n        \"topic\": \"следующее поколение моделей Grok\",\n        \"source_urls\": [\n          \"https://3dnews.ru/1145936/ilon-mask-anonsiroval-dva-podryad-bolshih-obnovleniya-iimodeli-grok\"\n        ]\n      },\n      {\n        \"headline\": \"Alphabet повысила прогноз капитальных расходов на 2026 год до 205 млрд долларов на фоне спроса на ИИ\",\n        \"organization\": \"Alphabet; Google\",\n        \"topic\": \"капитальные расходы на ИИ-инфраструктуру\",\n        \"source_urls\": [\n          \"https://3dnews.ru/1145905/google-zastavila-investorov-uollstrit-usomnitsya-v-perspektivah-vsey-otrasli-ii\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://3dnews.ru/1145920/sorvavshiesya-s-povodka-iiagenti-openai-vzlomali-ne-tolko-hugging-face\",\n      \"https://3dnews.ru/1145918/ssha-gotovyat-zapret-na-import-robotov-pod-udarom-dage-robotipilesosi\",\n      \"https://3dnews.ru/1145936/ilon-mask-anonsiroval-dva-podryad-bolshih-obnovleniya-iimodeli-grok\",\n      \"https://3dnews.ru/1145905/google-zastavila-investorov-uollstrit-usomnitsya-v-perspektivah-vsey-otrasli-ii\"\n    ]\n  },\n  {\n    \"date\": \"2026-07-29\",\n    \"stories\": [\n      {\n        \"headline\": \"Fitch назвал возможную коррекцию ИИ-рынка одним из глобальных кредитных рисков\",\n        \"organization\": \"Fitch Ratings\",\n        \"topic\": \"кредитные риски ИИ-бума\",\n        \"source_urls\": [\n          \"https://www.investing.com/news/stock-market-news/fitch-warns-ai-market-correction-emerging-as-major-global-credit-risk-4816118\"\n        ]\n      },\n      {\n        \"headline\": \"EPAM стала Advanced Partner OpenAI для внедрения моделей в крупных компаниях\",\n        \"organization\": \"EPAM Systems; OpenAI\",\n        \"topic\": \"партнёрская сеть внедрения корпоративного ИИ\",\n        \"source_urls\": [\n          \"https://www.prnewswire.com/news-releases/epam-and-openai-partner-to-help-enterprises-unlock-higher-value-through-applied-ai-302835746.html\"\n        ]\n      },\n      {\n        \"headline\": \"Cognizant создала отдельное EMEA-подразделение для масштабирования агентного ИИ\",\n        \"organization\": \"Cognizant\",\n        \"topic\": \"масштабирование агентного ИИ в корпорациях\",\n        \"source_urls\": [\n          \"https://www.prnewswire.com/news-releases/cognizant-launches-emea-ai-unit-to-help-enterprises-scale-agentic-ai-adoption-302835936.html\"\n        ]\n      },\n      {\n        \"headline\": \"Emerson добавила генерацию кода и тестовых последовательностей в инженерный пакет NI Nigel AI\",\n        \"organization\": \"Emerson\",\n        \"topic\": \"ИИ-генерация кода для инженерного тестирования\",\n        \"source_urls\": [\n          \"https://www.prnewswire.com/news-releases/emerson-advances-ai-across-software-portfolio-accelerating-test-productivity-by-up-to-50-percent-302835464.html\"\n        ]\n      }\n    ],\n    \"source_urls\": [\n      \"https://www.investing.com/news/stock-market-news/fitch-warns-ai-market-correction-emerging-as-major-global-credit-risk-4816118\",\n      \"https://www.prnewswire.com/news-releases/epam-and-openai-partner-to-help-enterprises-unlock-higher-value-through-applied-ai-302835746.html\",\n      \"https://www.prnewswire.com/news-releases/cognizant-launches-emea-ai-unit-to-help-enterprises-scale-agentic-ai-adoption-302835936.html\",\n      \"https://www.prnewswire.com/news-releases/emerson-advances-ai-across-software-portfolio-accelerating-test-productivity-by-up-to-50-percent-302835464.html\"\n    ]\n  }\n]\n\nВерни до 4 действительно достойных NEW-only кандидатов по JSON-схеме. Если\nничего достойного не найдено, верни пустой candidates и status=complete_with_gaps.\ndirection_id должен быть строго safety_policy_regions. Верни только JSON по схеме.",
+      "status": "checked_with_gaps",
+      "actual_queries": [
+        "latest AI safety cybersecurity regulation China Russia frontier model incident"
+      ],
+      "sources": [
+        {
+          "type": "url",
+          "url": "https://www.techradar.com/pro/security/why-are-so-many-ai-models-going-rogue-the-experts-weigh-in"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AINewsMinute/comments/1v1dc3t/hugging_face_got_hacked_by_an_ai_last_week_when/"
+        },
+        {
+          "type": "url",
+          "url": "https://futureoflife.org/wp-content/uploads/2026/07/AI-Safety-Index-Summer-2026-Digital.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/WhatTrumpHasDone/comments/1vanwq2/the_white_house_is_dictating_access_to_frontier/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.congress.gov/119/meeting/house/118711/documents/HHRG-119-IF03-20251202-SD73885.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/hackerworkspace/comments/1vhy0g7/security_incident_inc2026072801/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.aigl.blog/content/files/2025/09/State-of-AI-Safety-in-China.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://lawreforminstitute.org/DOJFTC041526.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/ArtificialInteligence/comments/1v2l84s/hugging_face_says_it_resorted_to_a_chinese_ai/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/Destiny/comments/1v3eqk6/in_case_you_missed_it_a_rogue_us_ai_hacked_a_us/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/singularity/comments/1vfnhoj/aisi_caught_mythos_5_trying_to_insert_malicious/"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2511.05526"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2307.03718"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/LocalLLM/comments/1uw5pk7/one_scenario/"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2606.28929"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/5_9_14/comments/1v53dw2/the_great_escape_openai_models_go_rogue_and_china/"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2503.19887"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/Sino/comments/1uf6o53/chinese_cybersecurity_firm_360_security/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/OpenAI/comments/1v33uux/hugging_face_ceo_suspected_the_sophisticated/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Responsible_AI_Safety_and_Education_Act"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/singularity/comments/1v7qu19/china_state_media_says_support_for_open_ai_models/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/singularity/comments/1v4kned/kimi_k3_performs_significantly_below_the_most/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Artificial_intelligence_industry_in_China"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Anthropic%27s_Responsible_Scaling_Policy"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Regulation_of_artificial_intelligence"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Interim_Measures_for_the_Management_of_Anthropomorphic_AI_Interactive_Services"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Cyberspace_Administration_of_China"
+        }
+      ],
+      "candidate_count": 0,
+      "candidates": [],
+      "rejections": [
+        {
+          "title": "Why are so many AI models going ‘rogue’? The experts weigh in",
+          "url": "https://www.techradar.com/pro/security/why-are-so-many-ai-models-going-rogue-the-experts-weigh-in",
+          "reason_code": "outside_window",
+          "reason": "Материал опубликован примерно за пять дней до авторитетного времени задачи и находится вне effective window; также это обзор уже известных инцидентов, а не самостоятельное новое событие."
+        },
+        {
+          "title": "Security Incident INC-2026-07-28-01",
+          "url": null,
+          "reason_code": "duplicate",
+          "reason": "Относится к инциденту AISI с несанкционированным поведением агентов в кибероценке; он уже есть в архиве выпуска от 2026-08-06."
+        },
+        {
+          "title": "China State Media Says Support for Open AI Models Has Limits",
+          "url": null,
+          "reason_code": "outside_window",
+          "reason": "Доступный результат указывает на публикацию около двух недель до текущего выпуска; это вне effective window и не даёт нового проверяемого обновления в окне."
+        }
+      ],
+      "notes": "Единственный широкий поисковый запрос не выявил самостоятельного, высокозначимого и проверяемого NEW-only события по safety, security, policy, Китаю/Азии или России, у которого основной источник опубликован в окне 2026-08-12T02:58:08+03:00—2026-08-14T07:36:56+03:00. Результаты были преимущественно старыми обзорами, обсуждениями либо повторяли уже архивированные инциденты.",
+      "api": {
+        "response_id": "resp_0c0b453277ec428a016a7e9c790b14819a8105264a9abefe96",
+        "status": "completed",
+        "model": "gpt-5.6-terra",
+        "configured_max_tool_calls": 1,
+        "configured_web_search_limit": 1,
+        "observed_web_search_calls": 1,
+        "budget_overrun": false,
+        "web_search_calls": 1,
+        "web_search_calls_completed": 1,
+        "web_search_search_operations_total": 1,
+        "web_search_search_operations_performed": 1,
+        "web_search_search_operations_incomplete": 0,
+        "web_search_navigation_items_total": 0,
+        "web_search_call_items_total": 1,
+        "web_search_call_statuses": {
+          "completed": 1
+        },
+        "web_search_search_statuses": {
+          "completed": 1
+        },
+        "web_search_action_type_counts": {
+          "search": 1
+        },
+        "web_search_call_items": [
+          {
+            "id": "ws_0c0b453277ec428a016a7e9c7bf2e8819aabbaeacb345b8e91",
+            "status": "completed",
+            "action_type": "search",
+            "action": {
+              "type": "search",
+              "queries": [
+                "latest AI safety cybersecurity regulation China Russia frontier model incident"
+              ],
+              "query": "latest AI safety cybersecurity regulation China Russia frontier model incident",
+              "sources": [
+                {
+                  "type": "url",
+                  "url": "https://www.techradar.com/pro/security/why-are-so-many-ai-models-going-rogue-the-experts-weigh-in"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/AINewsMinute/comments/1v1dc3t/hugging_face_got_hacked_by_an_ai_last_week_when/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://futureoflife.org/wp-content/uploads/2026/07/AI-Safety-Index-Summer-2026-Digital.pdf"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/WhatTrumpHasDone/comments/1vanwq2/the_white_house_is_dictating_access_to_frontier/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.congress.gov/119/meeting/house/118711/documents/HHRG-119-IF03-20251202-SD73885.pdf"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/hackerworkspace/comments/1vhy0g7/security_incident_inc2026072801/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.aigl.blog/content/files/2025/09/State-of-AI-Safety-in-China.pdf"
+                },
+                {
+                  "type": "url",
+                  "url": "https://lawreforminstitute.org/DOJFTC041526.pdf"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/ArtificialInteligence/comments/1v2l84s/hugging_face_says_it_resorted_to_a_chinese_ai/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/Destiny/comments/1v3eqk6/in_case_you_missed_it_a_rogue_us_ai_hacked_a_us/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/singularity/comments/1vfnhoj/aisi_caught_mythos_5_trying_to_insert_malicious/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://arxiv.org/abs/2511.05526"
+                },
+                {
+                  "type": "url",
+                  "url": "https://arxiv.org/abs/2307.03718"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/LocalLLM/comments/1uw5pk7/one_scenario/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://arxiv.org/abs/2606.28929"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/5_9_14/comments/1v53dw2/the_great_escape_openai_models_go_rogue_and_china/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://arxiv.org/abs/2503.19887"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/Sino/comments/1uf6o53/chinese_cybersecurity_firm_360_security/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/OpenAI/comments/1v33uux/hugging_face_ceo_suspected_the_sophisticated/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/Responsible_AI_Safety_and_Education_Act"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/singularity/comments/1v7qu19/china_state_media_says_support_for_open_ai_models/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://www.reddit.com/r/singularity/comments/1v4kned/kimi_k3_performs_significantly_below_the_most/"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/Artificial_intelligence_industry_in_China"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/Anthropic%27s_Responsible_Scaling_Policy"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/Regulation_of_artificial_intelligence"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/Interim_Measures_for_the_Management_of_Anthropomorphic_AI_Interactive_Services"
+                },
+                {
+                  "type": "url",
+                  "url": "https://en.wikipedia.org/wiki/Cyberspace_Administration_of_China"
+                }
+              ]
+            }
+          }
+        ],
+        "actual_queries": [
+          "latest AI safety cybersecurity regulation China Russia frontier model incident"
+        ],
+        "consulted_sources": [
+          {
+            "type": "url",
+            "url": "https://www.techradar.com/pro/security/why-are-so-many-ai-models-going-rogue-the-experts-weigh-in"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/AINewsMinute/comments/1v1dc3t/hugging_face_got_hacked_by_an_ai_last_week_when/"
+          },
+          {
+            "type": "url",
+            "url": "https://futureoflife.org/wp-content/uploads/2026/07/AI-Safety-Index-Summer-2026-Digital.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/WhatTrumpHasDone/comments/1vanwq2/the_white_house_is_dictating_access_to_frontier/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.congress.gov/119/meeting/house/118711/documents/HHRG-119-IF03-20251202-SD73885.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/hackerworkspace/comments/1vhy0g7/security_incident_inc2026072801/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.aigl.blog/content/files/2025/09/State-of-AI-Safety-in-China.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://lawreforminstitute.org/DOJFTC041526.pdf"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/ArtificialInteligence/comments/1v2l84s/hugging_face_says_it_resorted_to_a_chinese_ai/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/Destiny/comments/1v3eqk6/in_case_you_missed_it_a_rogue_us_ai_hacked_a_us/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/singularity/comments/1vfnhoj/aisi_caught_mythos_5_trying_to_insert_malicious/"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2511.05526"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2307.03718"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/LocalLLM/comments/1uw5pk7/one_scenario/"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2606.28929"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/5_9_14/comments/1v53dw2/the_great_escape_openai_models_go_rogue_and_china/"
+          },
+          {
+            "type": "url",
+            "url": "https://arxiv.org/abs/2503.19887"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/Sino/comments/1uf6o53/chinese_cybersecurity_firm_360_security/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/OpenAI/comments/1v33uux/hugging_face_ceo_suspected_the_sophisticated/"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Responsible_AI_Safety_and_Education_Act"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/singularity/comments/1v7qu19/china_state_media_says_support_for_open_ai_models/"
+          },
+          {
+            "type": "url",
+            "url": "https://www.reddit.com/r/singularity/comments/1v4kned/kimi_k3_performs_significantly_below_the_most/"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Artificial_intelligence_industry_in_China"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Anthropic%27s_Responsible_Scaling_Policy"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Regulation_of_artificial_intelligence"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Interim_Measures_for_the_Management_of_Anthropomorphic_AI_Interactive_Services"
+          },
+          {
+            "type": "url",
+            "url": "https://en.wikipedia.org/wiki/Cyberspace_Administration_of_China"
+          }
+        ],
+        "completed_call_limit_exceeded": false,
+        "output_item_limit_exceeded": false,
+        "usage": {
+          "input_tokens": 20464,
+          "input_tokens_details": {
+            "cache_write_tokens": 7066,
+            "cached_tokens": 4893
+          },
+          "output_tokens": 663,
+          "output_tokens_details": {
+            "reasoning_tokens": 276
+          },
+          "total_tokens": 21127
+        },
+        "error": null,
+        "incomplete_details": null,
+        "configured_search_operations": 1,
+        "configured_total_tool_calls": 4,
+        "navigation_tool_allowance": 3
+      },
+      "error": null
+    }
+  ],
+  "additional_candidates_returned": 0,
+  "accepted_candidates": [],
+  "rejected_candidates": [],
+  "final_candidate_count": 8,
+  "final_cluster_counts": {
+    "models_products_research": 2,
+    "infrastructure_business": 5,
+    "safety_policy_regions": 2
+  },
+  "editorial_rerun_needed": false,
+  "merged_research_path": null,
+  "diagnostic_merged_research_path": null
+}

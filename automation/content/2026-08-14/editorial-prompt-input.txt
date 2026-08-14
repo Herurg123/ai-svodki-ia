@@ -1,202 +1,16 @@
+Ты — редактор ежедневного аналитического выпуска «ИИ-сводка».
+
+Дата выпуска: 2026-08-14
+Обычная цель минимального числа сюжетов: 7
+Максимальное число сюжетов: 12
+
+Контекст предыдущих выпусков для проверки повторов:
+=== ARCHIVE_CONTEXT_BEGIN ===
 {
   "version": 2,
-  "generated_at": "2026-08-14T08:13:44+00:00",
+  "generated_at": "2026-08-14T04:36:56+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
-    {
-      "date": "2026-08-14",
-      "published_at": "2026-08-14T06:00:00+03:00",
-      "search_cutoff_at": "2026-08-14T07:36:56+03:00",
-      "title": "ИИ-Сводка на 14 августа 2026",
-      "link": "https://rybalka.one/posts/2026-08-14/",
-      "summary": "Главные новости искусственного интеллекта за 14 августа 2026 года Новостей сегодня меньше, чем обычно Повестка дня показывает, как ИИ одновременно становится инструментом реальных киберопераций и базовым слоем корпоративной инфраструктуры. Наиболее заметные новости — от сообщения об автономной атаке на тайваньские государственные системы до многомиллиардного финансирования платформы данных Databricks и новых каналов внедрения продуктов OpenAI. В России важный сигнал пришёл из корпоративного сект",
-      "topics": [
-        "кибербезопасность ИИ",
-        "агенты ИИ",
-        "Тайвань",
-        "Databricks",
-        "финансирование ИИ",
-        "корпоративный ИИ",
-        "OpenAI",
-        "IBM Consulting",
-        "корпоративные продажи",
-        "Билайн",
-        "Экзоинтеллект",
-        "LLM"
-      ],
-      "source_urls": [
-        "https://openai.com/index/dali-rajic-chief-revenue-officer/",
-        "https://www.ft.com/content/7d2ab3e0-9085-48f6-b38a-d90260d58795",
-        "https://www.tomshardware.com/tech-industry/cyber-security/suspected-china-linked-hackers-used-ai-to-run-the-first-ever-end-to-end-autonomous-cyberattack-on-taiwans-government-israeli-firm-says-open-source-built-tool-continuously-devised-effective-hack-strategies-in-real-time",
-        "https://techcrunch.com/2026/08/13/databricks-wanted-to-raise-1b-investors-wanted-15b-it-settled-on-5b-at-a-190b-valuation/",
-        "https://techcrunch.com/2026/08/13/ibm-partners-with-openai-to-bolster-enterprise-ai-push/",
-        "https://www.kommersant.ru/doc/8877842"
-      ],
-      "stories": [
-        {
-          "candidate_id": "cand-001",
-          "section": "world",
-          "headline": "OpenAI назначила Дали Райича Chief Revenue Officer и расширяет go-to-market-функцию",
-          "organization": "OpenAI; Dali Rajic; Chad Peets; RPT Partners",
-          "topic": "коммерческое масштабирование и корпоративные продажи ИИ",
-          "event_type": "executive appointment and strategic go-to-market partnership",
-          "status": "new",
-          "summary": "OpenAI сообщила о назначении Дали Райича, ранее COO Wiz, на должность Chief Revenue Officer. Компания также заявила о стратегическом партнёрстве с Чадом Питсом и RPT Partners для построения глобальной go-to-market-команды.",
-          "published_at": null,
-          "published_date": "2026-08-13",
-          "time_precision": "date",
-          "sources": [
-            {
-              "title": "OpenAI appoints Dali Rajic as Chief Revenue Officer",
-              "publisher": "OpenAI",
-              "url": "https://openai.com/index/dali-rajic-chief-revenue-officer/"
-            }
-          ],
-          "keywords": [
-            "OpenAI",
-            "Dali Rajic",
-            "Chief Revenue Officer",
-            "enterprise AI",
-            "go-to-market",
-            "RPT Partners"
-          ],
-          "geography": "world",
-          "category": "enterprise"
-        },
-        {
-          "candidate_id": "cand-003",
-          "section": "world",
-          "headline": "FT: связанные с Китаем операторы применили агентную платформу при кибератаке на структуры Тайваня",
-          "organization": "Dream; неустановленные операторы с предполагаемой связью с Китаем; государственные структуры Тайваня",
-          "topic": "автономное применение AI-агентов в кибератаке на государственные системы",
-          "event_type": "cyber incident / AI-enabled autonomous attack",
-          "status": "new",
-          "summary": "Financial Times сообщила о расследовании израильской компании Dream: операторы с вероятной связью с Китаем использовали собранную из открытых агентных компонентов платформу для автономной многошаговой кибератаки на тайваньские государственные системы. По пересказу FT в Tom's Hardware, кампания работала несколько дней, одновременно задействовала до восьми агентов, скомпрометировала не менее 85 учётных записей и привела к хищению более 2 500 кадровых записей.",
-          "published_at": null,
-          "published_date": "2026-08-12",
-          "time_precision": "date",
-          "sources": [
-            {
-              "title": "China-linked hackers hit Taiwan in unprecedented ‘autonomous’ AI cyber attack",
-              "publisher": "Financial Times",
-              "url": "https://www.ft.com/content/7d2ab3e0-9085-48f6-b38a-d90260d58795"
-            },
-            {
-              "title": "Suspected China-linked hackers used AI to run the first-ever end-to-end autonomous cyberattack on Taiwan's government, Israeli firm says",
-              "publisher": "Tom's Hardware",
-              "url": "https://www.tomshardware.com/tech-industry/cyber-security/suspected-china-linked-hackers-used-ai-to-run-the-first-ever-end-to-end-autonomous-cyberattack-on-taiwans-government-israeli-firm-says-open-source-built-tool-continuously-devised-effective-hack-strategies-in-real-time"
-            }
-          ],
-          "keywords": [
-            "AI agents",
-            "autonomous cyberattack",
-            "Taiwan",
-            "Dream",
-            "OpenClaw",
-            "Hermes",
-            "cybersecurity",
-            "data exfiltration"
-          ],
-          "geography": "world",
-          "category": "security"
-        },
-        {
-          "candidate_id": "cand-004",
-          "section": "world",
-          "headline": "Databricks привлекла $5 млрд при оценке $190 млрд",
-          "organization": "Databricks; Coatue; Blackstone; MGX; T. Rowe Price; Sixth Street Growth",
-          "topic": "крупное финансирование платформы данных и ИИ для агентов",
-          "event_type": "investment",
-          "status": "new",
-          "summary": "Databricks раскрыла объём нового раунда в $5 млрд и оценку в $190 млрд. Компания заявила, что капитал пойдёт, в частности, на дорогостоящие ИИ-исследования, обязательства перед тремя крупнейшими облачными провайдерами и сделки M&A; среди участников названы Coatue, Blackstone, MGX, структуры T. Rowe Price и Sixth Street Growth.",
-          "published_at": "2026-08-13T13:14:00-07:00",
-          "published_date": "2026-08-13",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Databricks wanted to raise $1B, investors wanted $15B. It settled on $5B at a $190B valuation.",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/08/13/databricks-wanted-to-raise-1b-investors-wanted-15b-it-settled-on-5b-at-a-190b-valuation/"
-            }
-          ],
-          "keywords": [
-            "Databricks",
-            "funding",
-            "$5 billion",
-            "$190 billion valuation",
-            "AI agents",
-            "Lakebase",
-            "Genie"
-          ],
-          "geography": "world",
-          "category": "investment"
-        },
-        {
-          "candidate_id": "cand-005",
-          "section": "world",
-          "headline": "IBM и OpenAI договорились о внедрении GPT-5.6, Codex и ChatGPT Work в корпорациях",
-          "organization": "IBM; OpenAI",
-          "topic": "корпоративное внедрение моделей OpenAI через IBM Consulting и watsonx",
-          "event_type": "partnership",
-          "status": "new",
-          "summary": "IBM объявила о партнёрстве с OpenAI: компании будут совместно выводить ИИ-решения на корпоративный рынок и разрабатывать отраслевые предложения для финансового сектора, государства, телекомов и ритейла. IBM создаст выделенную практику OpenAI в IBM Consulting и будет обучать и сертифицировать десятки тысяч консультантов.",
-          "published_at": "2026-08-13T12:19:00-07:00",
-          "published_date": "2026-08-13",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "IBM partners with OpenAI to bolster enterprise AI push",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/08/13/ibm-partners-with-openai-to-bolster-enterprise-ai-push/"
-            }
-          ],
-          "keywords": [
-            "IBM",
-            "OpenAI",
-            "IBM Consulting",
-            "GPT-5.6",
-            "Codex",
-            "ChatGPT Work",
-            "enterprise AI"
-          ],
-          "geography": "world",
-          "category": "enterprise"
-        },
-        {
-          "candidate_id": "cand-002",
-          "section": "russia",
-          "headline": "«Билайн» раскрыл масштаб корпоративной ИИ-среды «Экзоинтеллект»",
-          "organization": "ПАО «ВымпелКом» / «Билайн»",
-          "topic": "Корпоративная платформа доступа к нескольким LLM, кастомным ассистентам и будущим внутренним агентам",
-          "event_type": "product launch / enterprise deployment",
-          "status": "new",
-          "summary": "«Билайн» сообщил о запуске «Экзоинтеллекта» — единой корпоративной среды для работы с внутренними GLM и Qwen на корпоративных данных, а также с внешними моделями для открытых данных, включая ChatGPT, Claude, GigaChat Max, YandexGPT, Gemini и DeepSeek. Компания заявляет, что с апреля к среде подключились около 10 тыс. сотрудников, создавшие более 600 кастомных ассистентов; далее планируются интеграции с рабочими системами и ИИ-агенты.",
-          "published_at": "2026-08-12T12:40:00+03:00",
-          "published_date": "2026-08-12",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "«Билайн» расширяет возможности своих сотрудников с помощью «Экзоинтеллекта»",
-              "publisher": "Коммерсантъ / ПАО «ВымпелКом»",
-              "url": "https://www.kommersant.ru/doc/8877842"
-            }
-          ],
-          "keywords": [
-            "Билайн",
-            "Экзоинтеллект",
-            "LLM",
-            "Qwen",
-            "GLM",
-            "GigaChat",
-            "YandexGPT",
-            "корпоративный ИИ",
-            "ИИ-агенты"
-          ],
-          "geography": "russia",
-          "category": "enterprise"
-        }
-      ]
-    },
     {
       "date": "2026-08-13",
       "published_at": "2026-08-13T06:00:00+03:00",
@@ -5777,3 +5591,962 @@
     }
   ]
 }
+=== ARCHIVE_CONTEXT_END ===
+
+Проверенный исследовательский пул:
+=== CANDIDATES_CONTEXT_BEGIN ===
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-14",
+  "search_window": {
+    "start_at": "2026-08-12T02:58:08+03:00",
+    "end_at": "2026-08-14T07:36:56+03:00",
+    "latest_archive_at": "2026-08-13T02:58:08+03:00",
+    "start_date": "2026-08-12",
+    "end_date": "2026-08-14",
+    "latest_archive_date": "2026-08-13"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=4, accepted=4, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "OpenAI назначила Дали Райича Chief Revenue Officer и объявила партнёрство с RPT Partners для развития go-to-market",
+      "organization": "OpenAI; Dali Rajic; Chad Peets; RPT Partners",
+      "published_date": "2026-08-13",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "коммерческое масштабирование и корпоративные продажи ИИ",
+      "event_type": "executive appointment and strategic go-to-market partnership",
+      "keywords": [
+        "OpenAI",
+        "Dali Rajic",
+        "Chief Revenue Officer",
+        "enterprise AI",
+        "go-to-market",
+        "RPT Partners"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "official",
+      "primary_source": {
+        "title": "OpenAI appoints Dali Rajic as Chief Revenue Officer",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/dali-rajic-chief-revenue-officer/"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI сообщила о назначении Дали Райича, ранее COO Wiz, на должность Chief Revenue Officer. Компания также заявила о стратегическом партнёрстве с Чадом Питсом и RPT Partners для построения глобальной go-to-market-команды.",
+      "verified_facts": [
+        "Публикация OpenAI датирована 13 августа 2026 года.",
+        "Райич возглавит глобальную revenue-организацию OpenAI.",
+        "До перехода в OpenAI он был президентом и COO Wiz; ранее занимал руководящие коммерческие должности в Zscaler и AppDynamics.",
+        "OpenAI отдельно сообщила о стратегическом партнёрстве с Chad Peets и RPT Partners для поддержки развития go-to-market-функции.",
+        "OpenAI заявила, что её продукты используются более чем 1 млрд еженедельных активных пользователей и более чем 2 млн бизнесов."
+      ],
+      "significance": "Это заметный коммерческий кадровый и партнёрский шаг одного из ключевых разработчиков frontier-моделей: OpenAI усиливает корпоративные продажи и систему внедрения на этапе быстрого роста enterprise-направления.",
+      "significance_score": 3,
+      "limitations": "Компания не раскрыла финансовые условия партнёрства с RPT Partners; основной источник является корпоративным сообщением, а не независимым подтверждением.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет отдельного сюжета о назначении Райича или партнёрстве OpenAI с RPT Partners.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата и ключевые факты проверены по официальной публикации OpenAI.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Событие опубликовано 13 августа 2026 года и попадает в effective editorial window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Судебного или регуляторного события нет.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не является curiosity-сюжетом; относится к коммерческой организации и масштабированию enterprise AI.",
+      "id": "cand-001"
+    },
+    {
+      "title": "«Билайн» запустил корпоративную ИИ-среду «Экзоинтеллект» для 10 тыс. сотрудников",
+      "organization": "ПАО «ВымпелКом» / «Билайн»",
+      "published_date": "2026-08-12",
+      "published_at": "2026-08-12T12:40:00+03:00",
+      "time_precision": "datetime",
+      "topic": "Корпоративная платформа доступа к нескольким LLM, кастомным ассистентам и будущим внутренним агентам",
+      "event_type": "product launch / enterprise deployment",
+      "keywords": [
+        "Билайн",
+        "Экзоинтеллект",
+        "LLM",
+        "Qwen",
+        "GLM",
+        "GigaChat",
+        "YandexGPT",
+        "корпоративный ИИ",
+        "ИИ-агенты"
+      ],
+      "geography": "russia",
+      "category": "enterprise",
+      "source_type": "business_media",
+      "primary_source": {
+        "title": "«Билайн» расширяет возможности своих сотрудников с помощью «Экзоинтеллекта»",
+        "publisher": "Коммерсантъ / ПАО «ВымпелКом»",
+        "url": "https://www.kommersant.ru/doc/8877842"
+      },
+      "supporting_sources": [],
+      "event_summary": "«Билайн» сообщил о запуске «Экзоинтеллекта» — единой корпоративной среды для работы с внутренними GLM и Qwen на корпоративных данных, а также с внешними моделями для открытых данных, включая ChatGPT, Claude, GigaChat Max, YandexGPT, Gemini и DeepSeek. Компания заявляет, что с апреля к среде подключились около 10 тыс. сотрудников, создавшие более 600 кастомных ассистентов; далее планируются интеграции с рабочими системами и ИИ-агенты.",
+      "verified_facts": [
+        "Материал опубликован 12 августа 2026 года в 12:40, то есть находится внутри effective editorial window.",
+        "В публикации указано, что «Экзоинтеллект» объединяет внутренние GLM и Qwen для корпоративной информации и ряд внешних моделей для открытых данных.",
+        "Компания сообщает о подключении почти половины сотрудников — 10 тыс. человек — и создании более 600 кастомных ассистентов.",
+        "В дорожной карте названы интеграции с офисными коммуникационными системами и запуск ИИ-агентов для рабочих сервисов."
+      ],
+      "significance": "Это заметное внедрение multi-model AI-рабочего места внутри одного из крупнейших российских операторов: заявленный масштаб пользователей и число созданных ассистентов делают событие индикатором перехода от пилотов к корпоративной эксплуатации. Независимая оценка заявленных метрик отсутствует, поэтому предпочтителен статус consider.",
+      "significance_score": 5,
+      "limitations": "Единственный доступный источник — маркированная как рекламная публикация/сообщение компании; метрики и характеристики платформы не получили независимого подтверждения. Запуск начался в апреле, а публикация в окне скорее раскрывает масштаб внедрения и планы, чем фиксирует первоначальный анонс.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет сюжета о «Экзоинтеллекте» «Билайна» или о данной публикации.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата, точное время, перечень моделей, масштаб использования и планы по агентам прямо приведены в открытом материале. Проверка подтверждает, что публикация носит характер сообщения компании.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Платформа, по данным источника, была запущена в апреле, однако в окне 12 августа опубликованы новые конкретные показатели внедрения — около 10 тыс. пользователей, 600+ ассистентов — и расширенная дорожная карта интеграций и агентов.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие не связано с судебным или регуляторным решением.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не является curiosity-кандидатом; релевантность основана на корпоративном внедрении ИИ.",
+      "id": "cand-002"
+    },
+    {
+      "title": "FT: связанные с Китаем хакеры применили автономную AI-агентную платформу при кибератаке на структуры Тайваня",
+      "organization": "Dream; неустановленные операторы с предполагаемой связью с Китаем; государственные структуры Тайваня",
+      "published_date": "2026-08-12",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "автономное применение AI-агентов в кибератаке на государственные системы",
+      "event_type": "cyber incident / AI-enabled autonomous attack",
+      "keywords": [
+        "AI agents",
+        "autonomous cyberattack",
+        "Taiwan",
+        "Dream",
+        "OpenClaw",
+        "Hermes",
+        "cybersecurity",
+        "data exfiltration"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "business_media",
+      "primary_source": {
+        "title": "China-linked hackers hit Taiwan in unprecedented ‘autonomous’ AI cyber attack",
+        "publisher": "Financial Times",
+        "url": "https://www.ft.com/content/7d2ab3e0-9085-48f6-b38a-d90260d58795"
+      },
+      "supporting_sources": [
+        {
+          "title": "Suspected China-linked hackers used AI to run the first-ever end-to-end autonomous cyberattack on Taiwan's government, Israeli firm says",
+          "publisher": "Tom's Hardware",
+          "url": "https://www.tomshardware.com/tech-industry/cyber-security/suspected-china-linked-hackers-used-ai-to-run-the-first-ever-end-to-end-autonomous-cyberattack-on-taiwans-government-israeli-firm-says-open-source-built-tool-continuously-devised-effective-hack-strategies-in-real-time"
+        }
+      ],
+      "event_summary": "Financial Times сообщила о расследовании израильской компании Dream: операторы с вероятной связью с Китаем использовали собранную из открытых агентных компонентов платформу для автономной многошаговой кибератаки на тайваньские государственные системы. По пересказу FT в Tom's Hardware, кампания работала несколько дней, одновременно задействовала до восьми агентов, скомпрометировала не менее 85 учётных записей и привела к хищению более 2 500 кадровых записей.",
+      "verified_facts": [
+        "Основной материал Financial Times датирован 2026-08-12 и озаглавлен как расследование беспрецедентной «автономной» AI-кибератаки на Тайвань.",
+        "Tom's Hardware указывает, что FT опиралась на исследователей Dream и описывает применение открытых агентных систем Hermes и OpenClaw.",
+        "В пересказе сообщается о компрометации как минимум 85 учётных записей и хищении свыше 2 500 записей персонала.",
+        "Атрибуция не является окончательной: Dream не назвала конкретную группу, а связь операторов с Китаем основана на исследовательских признаках, включая коммуникации на упрощённом китайском."
+      ],
+      "significance": "Это потенциально один из наиболее серьёзных подтверждённых примеров использования автономной многоагентной системы в реальной атаке на государственные цели: он переводит риск AI-агентов из рамок лабораторных eval-инцидентов в контекст практической offensive-операции против публичной инфраструктуры.",
+      "significance_score": 5,
+      "limitations": "Публичная первичная доказательная база ограничена сообщениями Dream через FT; FT-страница доступна только с заголовком, а подробности кампании и атрибуция пересказаны вторичным авторитетным изданием. Формулировки «первый» и связь с Китаем следует подавать как заявления исследователей, а не установленный факт.",
+      "archive_status": "none",
+      "archive_reason": "Сюжет не совпадает с архивными историями о несанкционированном поведении агентов в eval-средах, инциденте Hugging Face или supply-chain атаке на LiteLLM; это отдельная внешняя кибероперация.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Дата и заголовок подтверждены на странице Financial Times; ключевые операционные детали согласованно приведены в свежем материале Tom's Hardware, прямо ссылающемся на FT и Dream.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Публикация основного источника датирована 2026-08-12, то есть находится в effective editorial window; в предоставленном архиве этого инцидента нет.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это сообщение о киберинциденте, а не самостоятельное крупное судебное или регуляторное действие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран по критериям существенного AI-security инцидента.",
+      "id": "cand-003"
+    },
+    {
+      "title": "Databricks привлекла $5 млрд при оценке $190 млрд для финансирования ИИ-исследований, облачных обязательств и M&A",
+      "organization": "Databricks; Coatue; Blackstone; MGX; T. Rowe Price; Sixth Street Growth",
+      "published_date": "2026-08-13",
+      "published_at": "2026-08-13T13:14:00-07:00",
+      "time_precision": "datetime",
+      "topic": "крупное финансирование платформы данных и ИИ для агентов",
+      "event_type": "investment",
+      "keywords": [
+        "Databricks",
+        "funding",
+        "$5 billion",
+        "$190 billion valuation",
+        "AI agents",
+        "Lakebase",
+        "Genie"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Databricks wanted to raise $1B, investors wanted $15B. It settled on $5B at a $190B valuation.",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/13/databricks-wanted-to-raise-1b-investors-wanted-15b-it-settled-on-5b-at-a-190b-valuation/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Databricks раскрыла объём нового раунда в $5 млрд и оценку в $190 млрд. Компания заявила, что капитал пойдёт, в частности, на дорогостоящие ИИ-исследования, обязательства перед тремя крупнейшими облачными провайдерами и сделки M&A; среди участников названы Coatue, Blackstone, MGX, структуры T. Rowe Price и Sixth Street Growth.",
+      "verified_facts": [
+        "Databricks сообщила о привлечении $5 млрд при оценке $190 млрд.",
+        "Раунд возглавила Coatue; среди инвесторов названы Blackstone, MGX, T. Rowe Price и Sixth Street Growth.",
+        "По словам CEO Али Годси, у компании $7 млрд annualized run-rate revenue, рост около 80% и положительный cash flow.",
+        "Databricks указывает на высокую стоимость ИИ-исследований и многомиллиардные облачные обязательства как на причины привлечения средств."
+      ],
+      "significance": "Один из крупнейших раундов в экосистеме enterprise AI/data за окно; он демонстрирует масштаб капиталоёмкости агентных и модельных продуктов за пределами frontier-лабораторий.",
+      "significance_score": 5,
+      "limitations": "Финансовые и операционные показатели переданы через интервью CEO и не сопровождаются полной финансовой отчётностью; оценка частной компании.",
+      "archive_status": "none",
+      "archive_reason": "В архиве отсутствует сюжет о новом раунде Databricks; он не пересекается с уже опубликованными инфраструктурными сделками Nvidia, Anthropic и Riot.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Материал опубликован внутри окна, содержит прямые заявления CEO и ссылку на объявление Databricks о раунде.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Раскрытие суммы нового раунда и обновлённой оценки произошло 13 августа 2026 года.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является legal-событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-004"
+    },
+    {
+      "title": "IBM заключила партнёрство с OpenAI для внедрения GPT-5.6, Codex и ChatGPT Work в корпоративном консалтинге",
+      "organization": "IBM; OpenAI",
+      "published_date": "2026-08-13",
+      "published_at": "2026-08-13T12:19:00-07:00",
+      "time_precision": "datetime",
+      "topic": "корпоративное внедрение моделей OpenAI через IBM Consulting и watsonx",
+      "event_type": "partnership",
+      "keywords": [
+        "IBM",
+        "OpenAI",
+        "IBM Consulting",
+        "GPT-5.6",
+        "Codex",
+        "ChatGPT Work",
+        "enterprise AI"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "IBM partners with OpenAI to bolster enterprise AI push",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/13/ibm-partners-with-openai-to-bolster-enterprise-ai-push/"
+      },
+      "supporting_sources": [],
+      "event_summary": "IBM объявила о партнёрстве с OpenAI: компании будут совместно выводить ИИ-решения на корпоративный рынок и разрабатывать отраслевые предложения для финансового сектора, государства, телекомов и ритейла. IBM создаст выделенную практику OpenAI в IBM Consulting и будет обучать и сертифицировать десятки тысяч консультантов.",
+      "verified_facts": [
+        "IBM и OpenAI объявили о партнёрстве 13 августа.",
+        "IBM намерена интегрировать GPT-5.6, Codex и ChatGPT Work в IBM Consulting Advantage.",
+        "IBM создаст выделенную практику OpenAI в IBM Consulting.",
+        "Заявлены совместные отраслевые решения для финансовых услуг, госсектора, телекомов и ритейла."
+      ],
+      "significance": "Крупный глобальный системный интегратор становится каналом массового внедрения продуктов OpenAI в регулируемых и крупных корпоративных заказчиках; это самостоятельное расширение enterprise go-to-market OpenAI.",
+      "significance_score": 4,
+      "limitations": "Детали коммерческих условий и объёмы выручки не раскрыты; доступное подтверждение — технологическое медиа со ссылкой на заявление IBM.",
+      "archive_status": "none",
+      "archive_reason": "В архиве нет отдельного сюжета о партнёрстве IBM и OpenAI; это не дубль назначения CRO OpenAI или Enterprise Signals.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Источник опубликован внутри effective window и приводит конкретные условия интеграции и подготовки консультантов.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Партнёрство объявлено 13 августа 2026 года и отсутствует в текущем пуле и предоставленном архиве.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является legal-событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-005"
+    },
+    {
+      "title": "Google представила Pixel 11 с новыми Gemini-функциями, включая голосовой ввод Rambler и перевод американского жестового языка",
+      "organization": "Google; Google DeepMind; Pixel",
+      "published_date": "2026-08-12",
+      "published_at": "2026-08-12T07:20:00-07:00",
+      "time_precision": "datetime",
+      "topic": "потребительские устройства и интеграция Gemini в смартфоны Pixel",
+      "event_type": "product_launch",
+      "keywords": [
+        "Google",
+        "Pixel 11",
+        "Gemini",
+        "Rambler",
+        "Live Transcribe",
+        "American Sign Language",
+        "consumer AI"
+      ],
+      "geography": "world",
+      "category": "multimodal",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Everything announced at Made by Google ’26: Pixel 11, Pixel Watch 5, Pixel Tag, and tons of Gemini features",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/12/google-unveils-pixel-11-lineup-new-airtag-rival-and-gemini-features-at-made-by-google-2026/"
+      },
+      "supporting_sources": [],
+      "event_summary": "На Made by Google 2026 компания представила линейку Pixel 11 и новые функции Gemini. Среди заметных ИИ-возможностей — расширение Live Transcribe на перевод американского жестового языка с использованием камеры Pixel и Rambler, голосовой ввод, рассчитанный на неструктурированную речь.",
+      "verified_facts": [
+        "Google представила Pixel 11 на мероприятии Made by Google 2026.",
+        "Компания показала новые Gemini- и AI-функции для устройств Pixel.",
+        "Live Transcribe расширяется на перевод американского жестового языка в текст с использованием камеры Pixel.",
+        "Rambler предназначен для обработки длинной и неструктурированной голосовой речи."
+      ],
+      "significance": "Крупный consumer-AI запуск: Gemini выступает не второстепенной маркетинговой опцией, а заметным слоем взаимодействия и accessibility-функций в массовом смартфоне Google.",
+      "significance_score": 3,
+      "limitations": "Подробные сроки доступности отдельных функций и география запуска в доступном материале раскрыты неполно.",
+      "archive_status": "none",
+      "archive_reason": "В текущем пуле и архиве нет анонса Pixel 11 или этих Gemini-интеграций.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Источник опубликован внутри окна и описывает конкретные функции, показанные Google на мероприятии.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Анонс Made by Google состоялся 12 августа 2026 года, после начала effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является legal-событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-006"
+    },
+    {
+      "title": "Microsoft объединяет потребительский Copilot и Microsoft 365 Copilot, одновременно закрывая ряд ИИ-функций",
+      "organization": "Microsoft",
+      "published_date": "2026-08-13",
+      "published_at": "2026-08-13T08:30:00-07:00",
+      "time_precision": "datetime",
+      "topic": "консолидация потребительского и корпоративного продукта Copilot",
+      "event_type": "product_update",
+      "keywords": [
+        "Microsoft",
+        "Copilot",
+        "Microsoft 365 Copilot",
+        "AI apps",
+        "product consolidation",
+        "Deep Research"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Microsoft kills off unsuccessful AI features while merging its separate Copilot apps",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/13/microsoft-kills-off-unsuccessful-ai-features-while-merging-its-separate-copilot-apps/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Microsoft объединяет потребительское приложение Copilot и ориентированный на работу Microsoft 365 Copilot. В ходе перехода компания прекращает ряд функций, включая Group Chats, AI-generated podcasts, Copilot Labs и Deep Research; для платных профессиональных пользователей Researcher должен стать заменой последней функции.",
+      "verified_facts": [
+        "Microsoft объединяет функциональность потребительского Copilot и Microsoft 365 Copilot.",
+        "Компания прекращает поддержку Group Chats, AI-generated podcasts, Copilot Labs и Deep Research в Copilot.",
+        "Microsoft указывает 18 августа 2026 года как дату прекращения доступа к части функций.",
+        "Для профессиональных платных пользователей Researcher должен заменить Deep Research."
+      ],
+      "significance": "Решение крупного поставщика корпоративного ПО упрощает продуктовую архитектуру Copilot и одновременно показывает корректировку стратегии после слабого принятия части consumer-AI функций.",
+      "significance_score": 3,
+      "limitations": "Доступное подтверждение опирается на публикацию TechCrunch, ссылающуюся на поддержку Microsoft; полный план миграции и международные детали могут меняться.",
+      "archive_status": "none",
+      "archive_reason": "Сюжет о консолидации Copilot отсутствует в текущем пуле и предоставленном архиве.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Источник опубликован внутри окна и ссылается на документацию поддержки Microsoft о объединении и закрываемых функциях.",
+      "freshness_status": "new_event",
+      "freshness_reason": "О консолидации и прекращении функций сообщено 13 августа 2026 года.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является legal-событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-007"
+    },
+    {
+      "title": "OpenAI опубликовала Enterprise Signals о переходе корпоративного ИИ от ассистентов к агентному выполнению задач",
+      "organization": "OpenAI; корпоративные клиенты OpenAI; Virgin Atlantic",
+      "published_date": "2026-08-12",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "масштабирование агентного ИИ в корпоративных рабочих процессах",
+      "event_type": "enterprise deployment report and customer-adoption update",
+      "keywords": [
+        "OpenAI",
+        "Enterprise Signals",
+        "Codex",
+        "ChatGPT Work",
+        "AI agents",
+        "enterprise deployment",
+        "Virgin Atlantic"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "official",
+      "primary_source": {
+        "title": "From assistance to execution: How enterprises put AI to work",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/how-enterprises-put-ai-to-work/"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI выпустила два исследования об использовании ИИ в организациях. Компания утверждает, что корпоративное применение смещается от помощи к выполнению многошаговых задач агентами; одновременно она приводит данные о росте использования Codex в юридических, sales-, recruiting- и marketing-функциях и пример внедрения у Virgin Atlantic.",
+      "verified_facts": [
+        "Публикация OpenAI датирована 12 августа 2026 года.",
+        "OpenAI сообщила, что среди enterprise-клиентов Codex в июне генерировал 64% совокупного объёма output tokens Codex и ChatGPT.",
+        "По данным компании, организации из верхних 10% по tokens per active user генерировали в 8,3 раза больше токенов на пользователя, чем типичные организации, против 2,6 раза в январе.",
+        "OpenAI заявила о росте еженедельного числа enterprise-пользователей Codex с февраля в legal в 108 раз, в sales и recruiting — в 41 раз, в marketing — в 26 раз.",
+        "В качестве кейса Virgin Atlantic OpenAI сообщила, что инженеры используют Codex для рефакторинга legacy-кода, а product-команды — ChatGPT Work для исследований."
+      ],
+      "significance": "Хотя это не сделка и не инвестиционный раунд, публикация даёт свежий крупный индикатор корпоративного внедрения агентного ИИ у OpenAI и конкретные метрики перехода от пилотов к рабочим процессам. Может быть полезна как бизнес-сюжет при отсутствии более крупных новых сделок в окне.",
+      "significance_score": 2,
+      "limitations": "Это исследование и показатели, подготовленные самим поставщиком ИИ; методология и исходные данные не являются независимым отраслевым аудитом. Публикация не анонсирует новый контракт или финансирование.",
+      "archive_status": "none",
+      "archive_reason": "В архиве нет отдельной истории о публикации Enterprise Signals от 12 августа 2026 года.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата, количественные показатели и описанный enterprise-кейс проверены по официальной публикации OpenAI.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Публикация датирована 12 августа 2026 года и является новым самостоятельным материалом в effective editorial window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Судебного или регуляторного события нет.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не является curiosity-сюжетом; материал напрямую относится к enterprise-внедрению ИИ.",
+      "id": "cand-008"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=8, validated unique=8, final candidates=8. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений."
+}
+=== CANDIDATES_CONTEXT_END ===
+
+Утверждённая машиночитаемая редакционная политика:
+=== EDITORIAL_POLICY_BEGIN ===
+{
+  "spec_version": "2026-08-05",
+  "language": "ru",
+  "timezone": "Europe/Moscow",
+  "story_counts": {
+    "total_target_minimum": 7,
+    "total_target_maximum": 12,
+    "short_digest_minimum": 1,
+    "zero_stories_status": "error",
+    "regional_story_quotas_enabled": false,
+    "short_digest_notice": "Новостей сегодня меньше, чем обычно",
+    "short_digest_notice_html": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+  },
+  "diversity": {
+    "max_selected_per_publisher_soft": 2,
+    "max_selected_per_organization_soft": 2,
+    "override_requires_reason": true
+  },
+  "candidate_selection": {
+    "verification_required_for_selection": "verified",
+    "allowed_freshness_for_selection": [
+      "new_event",
+      "material_update"
+    ],
+    "legal_category": "legal",
+    "legal_scale_required_for_selection": "major",
+    "legal_minimum_significance_score": 4,
+    "curiosity_category": "curiosity",
+    "curiosity_optional": true,
+    "maximum_selected_curiosity_stories": 1,
+    "curiosity_requires_explicit_verification": true
+  },
+  "what_it_means": {
+    "required": true,
+    "minimum_items": 4,
+    "maximum_items": 6,
+    "html_heading": "<h2>Что это значит</h2>",
+    "list_tag": "ol"
+  },
+  "dzen": {
+    "required": true,
+    "heading": "Все ИИ-Сводки",
+    "url": "https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1",
+    "anchor_text": "Архив ИИ-Сводок",
+    "html": "<h2>Все ИИ-Сводки</h2><p><a href=\"https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1\">Архив ИИ-Сводок</a></p>"
+  },
+  "meta_marking": {
+    "enabled": true,
+    "visible_name": "Meta",
+    "first_visible_form": "Meta*",
+    "subsequent_visible_form": "Meta",
+    "footnote_html": "<p><em>*Meta и ее сервисы - в России запрещены</em></p>",
+    "footnote_position": "after_dzen_block",
+    "service_fields_use_asterisk": false
+  },
+  "updates": {
+    "headline_prefix": "Обновление: ",
+    "required_for_archive_status": "update",
+    "forbidden_for_archive_status": "new"
+  },
+  "article": {
+    "introduction_sentences_minimum": 2,
+    "introduction_sentences_maximum": 4,
+    "paragraphs_per_story_minimum": 2,
+    "paragraphs_per_story_maximum": 3,
+    "world_heading": "Мировые лидеры ИИ",
+    "russian_heading": "Российские лидеры ИИ",
+    "allow_missing_russian_section": true,
+    "forbidden_tags": [
+      "h1",
+      "img",
+      "html",
+      "head",
+      "body",
+      "script",
+      "style",
+      "iframe"
+    ],
+    "china_heading": "Китайские лидеры ИИ",
+    "allow_missing_china_section": true
+  },
+  "terminology": {
+    "prefer": {
+      "AI": "ИИ",
+      "AI agent": "агент ИИ"
+    },
+    "keep_untranslated": [
+      "LLM"
+    ],
+    "preserve_company_and_product_names": true,
+    "allow_ai_in_official_names": true
+  },
+  "style": [
+    "ясно",
+    "делово",
+    "живо",
+    "без воды",
+    "без чрезмерного хайпа"
+  ],
+  "tracked_world_organizations": [
+    "OpenAI",
+    "Google DeepMind",
+    "Anthropic",
+    "Meta AI",
+    "Microsoft",
+    "Nvidia",
+    "xAI",
+    "Amazon",
+    "Mistral",
+    "Hugging Face",
+    "Apple",
+    "Cohere"
+  ],
+  "tracked_asia_organizations": [
+    "DeepSeek",
+    "Alibaba",
+    "Qwen",
+    "Baidu",
+    "ERNIE",
+    "Tencent",
+    "Hunyuan",
+    "ByteDance",
+    "Doubao",
+    "Moonshot AI",
+    "Kimi",
+    "Z.ai",
+    "Zhipu AI",
+    "GLM",
+    "MiniMax",
+    "01.AI",
+    "SenseTime",
+    "Huawei"
+  ],
+  "tracked_developer_tools": [
+    "IDE",
+    "coding agents",
+    "agentic development environments",
+    "CLI-агенты",
+    "Claude Code",
+    "Cursor",
+    "GitHub Copilot",
+    "OpenCode",
+    "Cline",
+    "GLM",
+    "Qwen",
+    "DeepSeek",
+    "Kimi",
+    "Claude",
+    "GPT",
+    "Gemini"
+  ],
+  "tracked_russian_organizations": [
+    "Яндекс",
+    "Сбер",
+    "VK",
+    "МТС AI",
+    "Т-Банк",
+    "Тинькофф",
+    "Газпромбанк",
+    "Ростелеком"
+  ],
+  "editorial_notes": {
+    "publish_in_article": false,
+    "publish_in_rss": false,
+    "allowed_types": [
+      "source_gap",
+      "low_news_volume",
+      "time_precision",
+      "diversity_override"
+    ]
+  },
+  "stories_file": {
+    "enabled": true,
+    "filename": "stories.json"
+  },
+  "image": {
+    "aspect_ratio": "16:9",
+    "title_template": "ИИ-Сводка на {human_date}",
+    "direct_prompt_to_image_api": true,
+    "restrictions": [
+      "без логотипов компаний",
+      "без дополнительного текста, кроме точного заголовка",
+      "без водяных знаков",
+      "без мелких интерфейсных надписей",
+      "без пустой половины кадра",
+      "без стокового корпоративного клипарта",
+      "без узнаваемых лиц реальных людей",
+      "нейтральные силуэты без идентифицируемых черт допустимы"
+    ]
+  }
+}
+=== EDITORIAL_POLICY_END ===
+
+## 1. Источники данных
+
+Используй только сведения и URL из `CANDIDATES_CONTEXT`. На этом этапе не ищи новые материалы и не добавляй факты по памяти.
+
+Не выбирай кандидатов с `recommendation: exclude`. Не выбирай полноценные дубли.
+Не выбирай include/consider без `verification_status: verified`.
+Не выбирай `freshness_status: old_reprint`: текущая дата перепечатки без нового
+события не делает старый материал новой новостью.
+
+Кандидат с `archive_status: update` допустим только тогда, когда в статье ясно описано существенное новое развитие, а его заголовок начинается с `Обновление:`.
+
+## 2. Отбор
+
+Выбери лучшие подтверждённые сюжеты, но не заполняй выпуск слабыми или старыми материалами ради количества.
+
+Редакционные цели:
+
+- 7–12 сюжетов всего;
+- выбрать все действительно важные сюжеты, которые подтверждены пулом;
+- не добавлять слабые или старые материалы ради объёма.
+
+Legal-кандидат допустим только с `category: legal`, `legal_scale: major`,
+конкретным объяснением масштаба и `significance_score` не ниже 4. Мелкий
+бытовой или локальный спор не выбирай. Из кандидатов `category: curiosity`
+можно выбрать не более одного: только проверяемый, самостоятельно значимый и
+не вытесняющий более важную серьёзную новость.
+
+Числовых квот для китайских и российских новостей нет. Если в
+`CANDIDATES_CONTEXT` есть достойные сюжеты этих направлений, включи столько
+значимых сюжетов, сколько действительно есть. Если подходящих сюжетов нет,
+не создавай соответствующий раздел.
+
+Если исследовательский пул не позволяет собрать обычный объём, выбери всё
+действительно важное. Автоматизация может выполнить ограниченный coverage
+audit, но отсутствие дополнений не является ошибкой и не должно мешать
+публикации короткого выпуска.
+
+Если найдено от 1 до 6 достойных сюжетов:
+
+- верни `status: ok`;
+- поставь `digest.short_digest: true`;
+- первым элементом `article_html` поставь точный абзац:
+
+```html
+<p><em>Новостей сегодня меньше, чем обычно</em></p>
+```
+
+- добавь в `editorial_notes` запись `low_news_volume`.
+
+Если не найдено ни одного достойного сюжета, верни `status: error` и ясную причину.
+
+Не добавляй фразы вида «по компании новостей нет».
+
+## 3. Разнообразие
+
+Мягкие цели:
+
+- не более двух выбранных сюжетов от одного издателя;
+- не более двух выбранных сюжетов одной компании или организации.
+
+Превышение допустимо только для независимых событий высокой значимости. В таком случае добавь объект в `diversity_overrides`:
+
+- `type`: `publisher` или `organization`;
+- `value`: точное название;
+- `reason`: конкретное объяснение.
+
+Без причины превышение недопустимо.
+
+Если в пуле есть достойные российские или китайские кандидаты, не исключай их
+ради упрощения структуры. Выбирай по значимости и качеству без числовой квоты.
+Если подходящих кандидатов направления нет, соответствующий раздел не нужен.
+
+## 4. Структура article_html
+
+`article_html` содержит полный готовый текст статьи в чистом HTML.
+
+Разрешены только теги:
+
+- `p`;
+- `h2`;
+- `h3`;
+- `ul`;
+- `ol`;
+- `li`;
+- `strong`;
+- `em`;
+- `a`;
+- `blockquote`.
+
+У тега `a` разрешён только атрибут `href`.
+
+Не добавляй:
+
+- `h1`;
+- обложку;
+- `html`, `head` или `body`;
+- `script`, `style` или `iframe`;
+- Markdown;
+- служебные комментарии;
+- упоминания GitHub, RSS, Blogger, автоматизации или внутреннего архива;
+- отдельный раздел со списком источников.
+
+Обычный выпуск начинается с 2–4 предложений вступления.
+
+Короткий выпуск сначала содержит точную курсивную пометку о меньшем числе новостей, затем обычное вступление.
+
+Далее:
+
+1. `<h2>Мировые лидеры ИИ</h2>`;
+2. мировые сюжеты, не относящиеся к китайским компаниям;
+3. `<h2>Китайские лидеры ИИ</h2>`, только если выбраны сюжеты о китайских компаниях или моделях;
+4. китайские сюжеты;
+5. `<h2>Российские лидеры ИИ</h2>`, только если выбраны российские сюжеты;
+6. российские сюжеты;
+7. `<h2>Что это значит</h2>`;
+8. `<ol>` с 4–6 выводами;
+9. точный блок Дзена, указанный ниже;
+10. сноска Meta, если она требуется.
+
+Не создавай пустые разделы «Китайские лидеры ИИ» и «Российские лидеры ИИ».
+
+## 5. Структура каждой новости
+
+Каждый сюжет содержит:
+
+```html
+<h3>Заголовок новости</h3>
+<p>Первый содержательный абзац.</p>
+<p>Второй содержательный абзац.</p>
+```
+
+Допускается третий содержательный абзац. Итого 2–3 абзаца на сюжет.
+
+Для каждой новости объясни:
+
+- что произошло;
+- что подтверждено;
+- почему это важно;
+- ограничения и неопределённости;
+- применимые последствия для рынка, продуктов, исследований, бизнеса, автоматизации, маркетинга, разработки и создателей ИИ-контента.
+
+Не нужно искусственно затрагивать все направления в каждом сюжете.
+
+Каждая новость должна содержать хотя бы одну ссылку вида:
+
+```html
+<a href="https://точный-url-из-кандидата">Название источника</a>
+```
+
+Не изменяй URL и не добавляй URL, которых нет в `CANDIDATES_CONTEXT`.
+
+Если утверждение подтверждено только лендингом, пресс-релизом или соцсетями, называй его продуктовым анонсом или заявлением компании, а не независимой оценкой.
+
+## 6. Раздел «Что это значит»
+
+Используй точную структуру:
+
+```html
+<h2>Что это значит</h2>
+<ol>
+  <li>...</li>
+</ol>
+```
+
+Количество выводов: 4–6. Они должны вытекать из выбранных сюжетов.
+
+## 7. Блок Дзена
+
+В конце статьи обязателен точный блок:
+
+```html
+<h2>Все ИИ-Сводки</h2>
+<p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>
+```
+
+Заголовок `<h2>Все ИИ-Сводки</h2>` не изменяй. Текст ссылки должен быть `Архив ИИ-Сводок`.
+
+Ссылка Дзена является навигационной и не включается в массив `sources`.
+
+## 8. Маркировка Meta
+
+Правило применяется только к видимому тексту `article_html`:
+
+- первое видимое упоминание должно быть `Meta*`;
+- все последующие видимые упоминания должны быть `Meta` без звёздочки;
+- после блока Дзена добавь ровно одну сноску:
+
+```html
+<p><em>*Meta и ее сервисы - в России запрещены</em></p>
+```
+
+Если Meta в статье отсутствует, сноску не добавляй.
+
+В `sources`, `topics`, служебных полях, URL и названиях организаций пиши `Meta` без звёздочки.
+
+## 9. Обновления
+
+Если выбранный кандидат имеет `archive_status: update`, соответствующий `<h3>` обязан начинаться с:
+
+```text
+Обновление:
+```
+
+Для кандидата с `archive_status: none` такой префикс запрещён.
+
+Порядок `<h3>` должен точно совпадать с порядком `selected_candidate_ids`.
+
+## 10. Стиль и терминология
+
+Пиши на русском языке: ясно, делово, живо, без воды и чрезмерного хайпа.
+
+Пиши:
+
+- `ИИ`, а не `AI`;
+- `агент ИИ`, а не `AI agent` или `AI-агент`;
+- `LLM` без перевода.
+
+Названия компаний и продуктов не переводи. `AI` допустимо внутри официального названия, например `Mistral AI`.
+
+Не представляй заявление компании как независимо доказанный факт. Не копируй длинные фрагменты источников.
+
+## 11. Описание, темы и заметки
+
+`description`:
+
+- от 150 до 300 символов;
+- без HTML и ссылок;
+- отражает главные темы выпуска.
+
+`topics`:
+
+- от 5 до 20 коротких тем;
+- без дублей;
+- только по выбранным сюжетам;
+- без `Meta*`.
+
+`sources`:
+
+- содержит каждый новостной URL из `article_html`;
+- не содержит ссылку Дзена;
+- не содержит URL, отсутствующих в статье;
+- использует точные `title`, `publisher` и `url` из исследовательского пула.
+
+`editorial_notes` — внутренний массив. Он не публикуется в статье и RSS. Используй объекты с полями `type`, `area`, `message`.
+
+## 12. Промпт обложки
+
+`image_prompt` должен быть полноценным самостоятельным заданием для прямой генерации изображения.
+
+Он обязан иметь четыре смысловых абзаца в таком порядке:
+
+1. `Изображение 16:9: ...` — назначение и точный единственный читаемый заголовок `ИИ-Сводка на D месяца YYYY`;
+2. `Главные визуальные темы: ...` — конкретные сцены из выбранных новостей;
+3. `Композиция: ...` — центральный фокус, окружающие сцены и нижняя зона;
+4. `Стиль: ...` — палитра, детализация и запреты.
+
+Постоянные требования:
+
+- современная футуристическая редакционная обложка;
+- крупный и единственный читаемый текст — точный заголовок выпуска;
+- число визуальных мотивов соответствует реальному числу сюжетов;
+- без логотипов компаний;
+- без дополнительного текста;
+- без водяных знаков;
+- без мелких интерфейсных надписей;
+- без технического имени файла;
+- без пустой половины кадра;
+- без стокового корпоративного клипарта;
+- без узнаваемых лиц реальных людей;
+- нейтральные силуэты без идентифицируемых черт допустимы.
+
+## 13. Технические метаданные
+
+Поля `date`, `slug`, `title`, `published_at`, `author` и `cover_filename` всё равно будут принудительно нормализованы кодом. Заполни их по схеме, но не меняй редакционную дату и название выпуска.
+
+## 14. Результат
+
+Верни только строгий JSON по переданной схеме. Никакого Markdown, пояснений до JSON или текста после JSON.

@@ -1,0 +1,43 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-14",
+  "slug": "2026-08-14",
+  "title": "ИИ-Сводка на 14 августа 2026",
+  "description": "Кибератака на Тайвань с автономными агентами ИИ, раунд Databricks на $5 млрд, партнёрство IBM и OpenAI, перестройка корпоративных продаж OpenAI и внедрение multi-model среды в «Билайне».",
+  "published_at": "2026-08-14T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-14.png",
+  "topics": [
+    "кибербезопасность ИИ",
+    "агенты ИИ",
+    "Тайвань",
+    "Databricks",
+    "финансирование ИИ",
+    "корпоративный ИИ",
+    "OpenAI",
+    "IBM Consulting",
+    "корпоративные продажи",
+    "Билайн",
+    "Экзоинтеллект",
+    "LLM"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-001, cand-003."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: global_breaking, major_agencies, models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, developer_tools, legal_regulation."
+    }
+  ]
+}
