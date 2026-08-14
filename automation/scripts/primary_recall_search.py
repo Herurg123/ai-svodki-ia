@@ -46,11 +46,13 @@ MAX_CANDIDATES_PER_PASS = 4
 PRIMARY_NAVIGATION_TOOL_ALLOWANCE = 3
 PRIMARY_MAX_TOOL_CALLS_PER_PASS = 1 + PRIMARY_NAVIGATION_TOOL_ALLOWANCE
 PRIMARY_LOOKBACK_HOURS = 24
+REUTERS_DOMAINS: tuple[str, ...] = ("reuters.com",)
+BLOOMBERG_FT_DOMAINS: tuple[str, ...] = ("bloomberg.com", "ft.com")
+AP_DOMAINS: tuple[str, ...] = ("apnews.com", "ap.org")
 AGENCY_DOMAINS: tuple[str, ...] = (
-    "reuters.com",
-    "apnews.com",
-    "bloomberg.com",
-    "ft.com",
+    *REUTERS_DOMAINS,
+    *BLOOMBERG_FT_DOMAINS,
+    *AP_DOMAINS,
 )
 
 PRIMARY_DIRECTIONS: tuple[dict[str, Any], ...] = (
@@ -63,6 +65,7 @@ PRIMARY_DIRECTIONS: tuple[dict[str, Any], ...] = (
             "инфраструктура, бизнес, regulation и security. Не концентрируйся на "
             "одной компании или одном типе событий."
         ),
+        "allowed_domains": REUTERS_DOMAINS,
     },
     {
         "id": "major_agencies",
@@ -72,7 +75,7 @@ PRIMARY_DIRECTIONS: tuple[dict[str, Any], ...] = (
             "и Financial Times. Нужны не только релизы моделей, но также чипы, "
             "инфраструктура, инвестиции, M&A, партнёрства, policy, legal и security."
         ),
-        "allowed_domains": AGENCY_DOMAINS,
+        "allowed_domains": BLOOMBERG_FT_DOMAINS,
     },
     {
         "id": "models_products_agents",
@@ -170,6 +173,7 @@ PRIMARY_DIRECTIONS: tuple[dict[str, Any], ...] = (
             "Перепроверь агентства, мировых игроков, инфраструктуру, Китай/Азию, "
             "Россию, продуктовые интеграции, security и business. Не повторяй список."
         ),
+        "allowed_domains": AP_DOMAINS,
     },
 )
 PRIMARY_DIRECTION_IDS = tuple(str(item["id"]) for item in PRIMARY_DIRECTIONS)

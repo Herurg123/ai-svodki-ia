@@ -151,10 +151,12 @@ model can verify source date and facts. Diagnostics must count search operations
 logical queries, total web-search tool items and navigation actions separately.
 A second search action or a batched multi-query search is a contract violation.
 
-`major_agencies` is the one intentional primary domain-filtered pass and is
-limited to Reuters, AP, Bloomberg and Financial Times. Do not turn that into a
-general project-wide whitelist. Other primary directions remain broad and
-validate source quality after retrieval.
+Three high-signal Primary passes intentionally use disjoint API domain filters:
+`global_breaking` is limited to `reuters.com`, `major_agencies` to
+`bloomberg.com` + `ft.com`, and `independent_missing_events` to `apnews.com` +
+`ap.org`. The other nine Primary directions remain broad. Do not turn these
+source routes into a project-wide whitelist; source quality is still validated
+after retrieval.
 
 Search prompts must carry the exact effective window. The **actual search
 query** must be a short natural-language phrase with calendar dates of the main
@@ -166,13 +168,13 @@ authoritative for final freshness validation.
 High-signal routing must stay source-diverse without increasing the 12-search
 budget:
 
-- `global_breaking` uses a Reuters-focused funding/acquisition/M&A/major-business
-  query;
-- `major_agencies` uses a **source-neutral** compact major-AI/date query inside
-  the existing Reuters/AP/Bloomberg/FT API domain filter; do not re-anchor it on
-  Reuters or any other single publisher;
-- `independent_missing_events` uses an Associated Press-focused consumer-AI /
-  major-technology / policy sweep after seeing the current candidate pool.
+- `global_breaking` uses a source-neutral funding/acquisition/M&A/major-business
+  query inside a `reuters.com` API filter;
+- `major_agencies` uses a source-neutral compact major-AI/date query inside a
+  `bloomberg.com` + `ft.com` API filter;
+- `independent_missing_events` uses a source-neutral consumer-AI /
+  major-technology / policy sweep inside an `apnews.com` + `ap.org` API filter
+  after seeing the current candidate pool.
 
 These are ranking routes, not a candidate whitelist. A stronger official primary
 source or other authoritative source may still be the final source of a
@@ -218,6 +220,14 @@ validation but must not restore equal ranking priority to the first 24-hour
 healing segment. The same run also demonstrated that two Reuters-focused broad
 slots are not meaningfully independent source coverage, hence the source-neutral
 `major_agencies` rule above.
+
+
+A fresh 2026-08-14 recovery attempt after continuity-first routing exposed a further
+source-ranking failure: the Reuters text-anchored pass returned old Reuters mirrors,
+while the four-domain agency pass returned stale Bloomberg hub/video pages and failed
+fresh agency source-health. The regression rule is therefore stronger: high-signal
+source diversity must be enforced by disjoint API domain filters, not merely publisher
+names in query text. Do not remove these filters without a new live recall experiment.
 
 Fresh Primary Recall is also subject to a fail-closed source-health guard before
 publication. `major_agencies` must have at least one consulted source, and the

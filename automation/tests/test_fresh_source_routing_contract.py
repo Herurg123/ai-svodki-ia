@@ -17,12 +17,12 @@ class FreshSourceRoutingContractTests(unittest.TestCase):
 
         self.assertIn("healing overlap", text)
         self.assertIn("начинается ровно через 24 часа", text)
-        self.assertIn("Reuters-focused query", text)
+        self.assertIn("API domain filters", text)
         self.assertIn("direction_id=major_agencies", text)
-        self.assertIn("не якори query на Reuters", text)
-        self.assertIn("Reuters, Associated Press", text)
-        self.assertIn("Bloomberg и Financial Times", text)
-        self.assertIn("Associated Press-focused sweep", text)
+        self.assertIn("`bloomberg.com` и", text)
+        self.assertIn("`ft.com`", text)
+        self.assertIn("`reuters.com`", text)
+        self.assertIn("`apnews.com` и `ap.org`", text)
 
     def test_coverage_prompt_prioritizes_continuity_period_not_healing_overlap(self) -> None:
         text = (AUTOMATION / "prompts" / "coverage_audit.md").read_text(encoding="utf-8")
