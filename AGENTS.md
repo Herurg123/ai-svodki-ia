@@ -382,3 +382,8 @@ Reuters/Bloomberg/FT consulted URL or a verified agency raw candidate whose
 `published_date` is in the effective window counts. Stale author, newsletter,
 event or old document pages do not count. This is a fail-closed technical health
 check, not a quota requiring an agency story in every published digest.
+
+
+## Search diagnostic secret hygiene
+
+Provider-returned URLs may contain temporary signed credentials. Before persisting Primary, Hybrid or Coverage diagnostics, strip credential/token/signature query parameters while preserving source identity. Never weaken the artifact secret scanner to permit signed credentials.

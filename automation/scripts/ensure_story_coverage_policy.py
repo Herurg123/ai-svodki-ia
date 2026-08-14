@@ -10,6 +10,7 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from story_coverage import (
     compact_archive,
@@ -387,17 +388,43 @@ def build_prompt(
     return prompt
 
 
+SENSITIVE_URL_QUERY_KEYS = frozenset({"access_token", "api_key", "apikey", "key", "password", "secret", "sig", "signature", "token", "x-amz-credential", "x-amz-security-token", "x-amz-signature"})
+
+def sanitize_diagnostic_url(value: str) -> str:
+    """Remove credentials from provider-returned URLs before persisting diagnostics."""
+    try:
+        parsed = urlsplit(value)
+    except ValueError:
+        return value
+    if parsed.scheme not in {"http", "https"} or not parsed.query:
+        return value
+    pairs = parse_qsl(parsed.query, keep_blank_values=True)
+    safe_pairs = [(key, item) for key, item in pairs if key.casefold() not in SENSITIVE_URL_QUERY_KEYS]
+    if len(safe_pairs) == len(pairs):
+        return value
+    return urlunsplit((parsed.scheme, parsed.netloc, parsed.path, urlencode(safe_pairs, doseq=True), parsed.fragment))
+
+def sanitize_diagnostic_value(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {key: sanitize_diagnostic_value(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [sanitize_diagnostic_value(item) for item in value]
+    if isinstance(value, str):
+        return sanitize_diagnostic_url(value)
+    return value
+
 def response_to_plain(value: Any) -> Any:
     if value is None:
-        return None
-    if hasattr(value, "model_dump"):
-        return value.model_dump()
-    if hasattr(value, "to_dict"):
-        return value.to_dict()
-    if isinstance(value, (dict, list, str, int, float, bool)):
-        return value
-    return str(value)
-
+        plain: Any = None
+    elif hasattr(value, "model_dump"):
+        plain = value.model_dump()
+    elif hasattr(value, "to_dict"):
+        plain = value.to_dict()
+    elif isinstance(value, (dict, list, str, int, float, bool)):
+        plain = value
+    else:
+        plain = str(value)
+    return sanitize_diagnostic_value(plain)
 
 class CoverageAuditResponseError(RuntimeError):
     def __init__(self, message: str, metadata: dict[str, Any]) -> None:

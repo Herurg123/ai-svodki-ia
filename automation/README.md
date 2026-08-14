@@ -429,3 +429,8 @@ URL или verified in-window agency candidate считается evidence; stal
 newsletter, event или old document page не считается. Legacy diagnostics без
 `search_window` сохраняют backward compatibility. Search ceiling не меняется:
 12 Primary + до 4 Hybrid + до 7 Coverage = максимум 23 operations.
+
+
+## Hygiene search diagnostics
+
+Перед сохранением Primary, Hybrid и Coverage diagnostics URL, возвращённые search provider, очищаются от временных credential/token/signature query-параметров, включая AWS signed URL. Домен, путь и несекретные параметры сохраняются. Artifact secret-scanner остаётся fail-closed и не получает исключений для подписанных URL.

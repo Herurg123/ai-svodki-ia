@@ -515,3 +515,8 @@ agency raw candidate считается evidence; stale author, newsletter, even
 старые document pages не считаются. Это fail-closed health check, а не квота на
 агентские сюжеты. Worst-case search ceiling остаётся 23 operations: 12 Primary +
 до 4 Hybrid + до 7 Coverage.
+
+
+## Hygiene search diagnostics
+
+Перед сохранением Primary, Hybrid и Coverage diagnostics URL, возвращённые search provider, очищаются от временных credential/token/signature query-параметров, включая AWS signed URL. Домен, путь и несекретные параметры сохраняются. Artifact secret-scanner остаётся fail-closed и не получает исключений для подписанных URL.
