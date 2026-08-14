@@ -286,7 +286,7 @@ AGENCY_SOURCE_HEALTH_DOMAINS: tuple[str, ...] = (
     "bloomberg.com",
     "ft.com",
 )
-SOURCE_HEALTH_CONTRACT_VERSION = 4
+SOURCE_HEALTH_CONTRACT_VERSION = 5
 
 
 def _host_matches_domain(url: str, domains: tuple[str, ...]) -> bool:
@@ -1210,6 +1210,76 @@ def execute_audit_plan(
     }
 
 
+def apply_agency_corroborations(
+    research: dict[str, Any],
+    additional_candidates: list[Any],
+) -> tuple[dict[str, Any], list[dict[str, Any]], list[Any]]:
+    """Promote agency evidence onto an existing event without duplicating it."""
+    merged = copy.deepcopy(research)
+    candidates = merged.get("candidates")
+    if not isinstance(candidates, list):
+        raise RuntimeError("candidates.json: candidates должен быть массивом")
+    by_id = {
+        str(item.get("id")): item
+        for item in candidates
+        if isinstance(item, dict) and item.get("id") is not None
+    }
+    details: list[dict[str, Any]] = []
+    remaining: list[Any] = []
+    for raw in additional_candidates:
+        if not isinstance(raw, dict) or not raw.get("corroboration_target_id"):
+            remaining.append(raw)
+            continue
+        target_id = str(raw.get("corroboration_target_id"))
+        target = by_id.get(target_id)
+        if not isinstance(target, dict):
+            remaining.append(raw)
+            continue
+        agency_primary = raw.get("primary_source")
+        old_primary = target.get("primary_source")
+        if not isinstance(agency_primary, dict) or not isinstance(old_primary, dict):
+            remaining.append(raw)
+            continue
+        agency_url = str(agency_primary.get("url") or "")
+        old_url = str(old_primary.get("url") or "")
+        if not agency_url:
+            remaining.append(raw)
+            continue
+        supporting = [
+            copy.deepcopy(item)
+            for item in target.get("supporting_sources") or []
+            if isinstance(item, dict)
+        ]
+        known_urls = {str(item.get("url") or "") for item in supporting}
+        if old_url and old_url != agency_url and old_url not in known_urls:
+            supporting.insert(0, copy.deepcopy(old_primary))
+        for item in raw.get("supporting_sources") or []:
+            if not isinstance(item, dict):
+                continue
+            url = str(item.get("url") or "")
+            if url and url != agency_url and url not in {str(x.get("url") or "") for x in supporting}:
+                supporting.append(copy.deepcopy(item))
+        target["primary_source"] = copy.deepcopy(agency_primary)
+        target["supporting_sources"] = supporting[:2]
+        target["source_type"] = str(raw.get("source_type") or "news_agency")
+        original_notes = str(target.get("verification_notes") or "").strip()
+        agency_publisher = str(agency_primary.get("publisher") or "agency")
+        suffix = f"Fresh-agency corroboration: {agency_publisher}."
+        target["verification_notes"] = (
+            f"{original_notes} {suffix}".strip() if original_notes else suffix
+        )
+        details.append(
+            {
+                "target_id": target_id,
+                "target_title": target.get("title"),
+                "old_primary_source": copy.deepcopy(old_primary),
+                "new_primary_source": copy.deepcopy(agency_primary),
+                "audit_direction": raw.get("audit_direction"),
+            }
+        )
+    return merged, details, remaining
+
+
 def rerun_editorial(
     *,
     publication_date: str,
@@ -1515,6 +1585,8 @@ def main() -> int:
         "accepted_candidates": [],
         "rejected_candidates": [],
         "audit_added_candidates": 0,
+        "source_corroboration_count": 0,
+        "source_corroborations": [],
         "editorial_rerun_required": False,
         "editorial_rerun_performed": False,
         "editorial_completion_required": False,
@@ -1801,14 +1873,19 @@ def main() -> int:
                 + " Публикация, генерация изображения и deploy заблокированы."
             )
 
-        if additional_candidates:
+        corroborated_research, source_corroborations, remaining_candidates = (
+            apply_agency_corroborations(research, additional_candidates)
+        )
+        report["source_corroborations"] = source_corroborations
+        report["source_corroboration_count"] = len(source_corroborations)
+        if remaining_candidates:
             merged, accepted, rejected = merge_candidates(
-                research,
-                additional_candidates,
+                corroborated_research,
+                remaining_candidates,
                 maximum_candidates=args.maximum_candidates,
             )
         else:
-            merged = copy.deepcopy(research)
+            merged = copy.deepcopy(corroborated_research)
             accepted = []
             rejected = []
         report["accepted_candidates"] = [
@@ -1825,7 +1902,7 @@ def main() -> int:
         ]
         report["rejected_candidates"] = rejected
         report["audit_added_candidates"] = len(accepted)
-        report["editorial_rerun_required"] = bool(accepted)
+        report["editorial_rerun_required"] = bool(accepted or source_corroborations)
         report["editorial_completion_required"] = artifact_mode != "complete"
         report["candidate_pool_after"] = eligible_candidate_summary(merged["candidates"])
         pool_after = report["candidate_pool_after"]
@@ -1842,6 +1919,7 @@ def main() -> int:
             artifact_mode == "complete"
             and before["publication_allowed"]
             and not accepted
+            and not source_corroborations
         ):
             short_edition = bool(before["short_digest"])
             apply_short_edition_marker(
@@ -1882,7 +1960,7 @@ def main() -> int:
                 maximum_selected_stories=args.maximum_selected_stories,
             )
         except Exception as exc:
-            if initial_snapshot and before["publication_allowed"]:
+            if initial_snapshot and before["publication_allowed"] and not source_corroborations:
                 restore_artifact(args.artifact_dir, initial_snapshot)
                 short_edition = bool(before["short_digest"])
                 apply_short_edition_marker(
@@ -1904,7 +1982,7 @@ def main() -> int:
                 print(json.dumps(report, ensure_ascii=False, indent=2))
                 return 0
             raise
-        report["editorial_rerun_performed"] = bool(accepted)
+        report["editorial_rerun_performed"] = bool(accepted or source_corroborations)
         report["editorial_completion_performed"] = artifact_mode != "complete"
         rerun_stories = read_json(args.artifact_dir / "stories.json")
         if not isinstance(rerun_stories, list):
@@ -1916,7 +1994,7 @@ def main() -> int:
         )
         report["after"] = after
         if not after["publication_allowed"]:
-            if initial_snapshot and before["publication_allowed"]:
+            if initial_snapshot and before["publication_allowed"] and not source_corroborations:
                 restore_artifact(args.artifact_dir, initial_snapshot)
                 apply_short_edition_marker(
                     args.artifact_dir,

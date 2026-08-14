@@ -44,7 +44,7 @@ RECALL_SENTINEL_VERSION = 8
 RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ()
 RECALL_SENTINEL_MINIMUM_BUDGET = 7
 AGENCY_RESCUE_STRATEGY = "fresh_agency_rescue"
-AGENCY_RESCUE_VERSION = 4
+AGENCY_RESCUE_VERSION = 5
 AGENCY_RESCUE_DOMAINS: tuple[str, ...] = ()
 SOURCE_HEALTH_CONTRACT_VERSION = _policy.SOURCE_HEALTH_CONTRACT_VERSION
 
@@ -338,29 +338,123 @@ verification_status=verified и freshness_status new_event/material_update. Ес
 
 
 
+def _candidate_id(candidate: Any) -> str | None:
+    if not isinstance(candidate, dict):
+        return None
+    value = candidate.get("id", candidate.get("candidate_id"))
+    return str(value) if value is not None else None
+
+
+def _select_agency_corroboration_target(
+    candidates: list[Any],
+) -> dict[str, Any] | None:
+    """Choose one strong, agency-likely current event for last-mile corroboration."""
+    event_priority = {
+        "funding": 0,
+        "funding_round": 0,
+        "acquisition": 0,
+        "merger": 0,
+        "m&a": 0,
+        "investment": 1,
+        "data_center": 1,
+        "infrastructure": 1,
+        "partnership": 2,
+    }
+    eligible: list[dict[str, Any]] = []
+    for raw in candidates:
+        if not isinstance(raw, dict):
+            continue
+        if raw.get("recommendation") not in {"include", "consider"}:
+            continue
+        if _candidate_id(raw) is None:
+            continue
+        event_type = str(raw.get("event_type") or "").casefold().strip()
+        category = str(raw.get("category") or "").casefold().strip()
+        priority = event_priority.get(event_type)
+        if priority is None and category in {"investment", "infrastructure", "chips"}:
+            priority = 1
+        if priority is None:
+            continue
+        item = copy.deepcopy(raw)
+        item["_agency_target_priority"] = priority
+        eligible.append(item)
+    if not eligible:
+        return None
+    eligible.sort(
+        key=lambda item: (
+            int(item.get("_agency_target_priority", 99)),
+            0 if item.get("recommendation") == "include" else 1,
+            -int(item.get("significance_score", 0) or 0),
+            str(item.get("published_date") or ""),
+            str(item.get("title") or ""),
+        )
+    )
+    target = eligible[0]
+    target.pop("_agency_target_priority", None)
+    return target
+
+
+def _agency_corroboration_query(target: dict[str, Any]) -> str:
+    organization = str(target.get("organization") or "").split(";", 1)[0].strip()
+    organization = " ".join(organization.split())
+    event_type = " ".join(str(target.get("event_type") or "").split())
+    organization_cf = organization.casefold()
+    event_cf = event_type.casefold()
+    keyword = ""
+    for raw_keyword in target.get("keywords") or []:
+        candidate = " ".join(str(raw_keyword).split())
+        if not candidate:
+            continue
+        candidate_cf = candidate.casefold()
+        if candidate_cf == organization_cf or candidate_cf == event_cf:
+            continue
+        if candidate_cf in organization_cf or candidate_cf in event_cf:
+            continue
+        keyword = candidate
+        break
+    parts = ["Reuters", organization, event_type]
+    if keyword:
+        parts.append(keyword)
+    parts.append("latest")
+    return " ".join(part for part in parts if part).strip()
+
+
+def _same_event_for_corroboration(
+    target: dict[str, Any], candidate: dict[str, Any]
+) -> bool:
+    """Deterministic guard against attaching an agency story to a different event."""
+    return bool(
+        str(candidate.get("organization") or "").casefold().strip()
+        == str(target.get("organization") or "").casefold().strip()
+        and str(candidate.get("event_type") or "").casefold().strip()
+        == str(target.get("event_type") or "").casefold().strip()
+        and str(candidate.get("published_date") or "")
+        == str(target.get("published_date") or "")
+    )
+
+
 def build_agency_rescue_prompt(
     *,
     search_window: dict[str, Any],
-    existing_candidates: list[Any],
+    target: dict[str, Any],
     archive: dict[str, Any],
 ) -> str:
-    existing = [
-        {
-            "title": item.get("title"),
-            "organization": item.get("organization"),
-            "primary_url": (
-                item.get("primary_source", {}).get("url")
-                if isinstance(item.get("primary_source"), dict)
-                else None
-            ),
-        }
-        for item in existing_candidates
-        if isinstance(item, dict)
-    ]
     start_at = str(search_window.get("start_at") or "")
     end_at = str(search_window.get("end_at") or "")
-    required_query = "Reuters latest artificial intelligence funding acquisition models chips data centers cybersecurity"
-    return f"""Ты — дополнительный fresh-agency rescue редакции «ИИ-сводки».
+    required_query = _agency_corroboration_query(target)
+    compact_target = {
+        "id": _candidate_id(target),
+        "title": target.get("title"),
+        "organization": target.get("organization"),
+        "published_date": target.get("published_date"),
+        "published_at": target.get("published_at"),
+        "event_type": target.get("event_type"),
+        "category": target.get("category"),
+        "keywords": target.get("keywords"),
+        "event_summary": target.get("event_summary"),
+        "primary_source": target.get("primary_source"),
+    }
+    return f"""Ты — last-mile agency corroboration редакции «ИИ-сводки».
 
 Строгое редакционное окно: {start_at} → {end_at}
 Авторитетное текущее время: {end_at}.
@@ -368,31 +462,44 @@ def build_agency_rescue_prompt(
 Версия rescue: {AGENCY_RESCUE_VERSION}
 
 Primary, Hybrid и шесть обязательных Coverage-проходов уже дали ненулевой пул,
-но среди текущих валидных кандидатов нет свежего Reuters/AP/Bloomberg/FT
-материала. Свободен ровно один, седьмой Coverage search operation. Его задача —
-не переписать существующие сюжеты, а найти до трёх самостоятельных крупных
-ИИ-событий из Reuters или другого допустимого high-signal agency-домена, которых НЕТ в текущем пуле. API domain filter намеренно отключён: слово Reuters используется как ranking hint, а домен и свежесть проверяются кодом после retrieval.
+но в нём нет свежего Reuters/AP/Bloomberg/FT primary source. Свободен ровно один,
+седьмой Coverage search operation. НЕ ищи новое произвольное событие. Твоя
+задача — независимо подтвердить РОВНО ЭТО уже найденное событие сильным agency
+источником, предпочтительно Reuters.
 
-Выполни РОВНО ОДИН Web Search. Фактический query должен быть точно:
+Выполни РОВНО ОДИН Web Search. API domain filter намеренно отключён, потому что
+live-smoke показал слепоту Reuters allowed_domains. Фактический query должен быть
+точно:
 `{required_query}`
 
-Query намеренно date-free; свежесть доказывается только фактической датой
-источника внутри editorial window. Не возвращай уже имеющийся сюжет только ради
-второго подтверждения: downstream dedupe его отвергнет и source-health не будет
-починен. Ищи другое крупное событие: модель/продукт, M&A/funding, chips/cloud/data
-centers, security/safety, regulation/legal, Китай/Азия, Россия, research или
-robotics. Для include/consider обязательны verified и freshness_status
-new_event/material_update. Не добивай количество слабым материалом.
+Верни не больше ОДНОГО кандидата. Он должен описывать то же событие, что target,
+а поля `organization`, `event_type` и `published_date` должны ТОЧНО совпадать с
+target. `primary_source.url` обязан вести непосредственно на Reuters/AP/
+Bloomberg/FT, не на синдикацию, агрегатор или вторичное СМИ. Источник должен быть
+внутри editorial window. Если такого подтверждения нет, верни пустой candidates
+и status=complete_with_gaps. Не придумывай timestamp или факты.
 
-Текущий пул:
-{json.dumps(existing, ensure_ascii=False, indent=2)}
+Target для подтверждения:
+{json.dumps(compact_target, ensure_ascii=False, indent=2)}
 
-Недавний архив:
+Недавний архив для контекста:
 {json.dumps(_base._compact_recent_archive(archive), ensure_ascii=False, indent=2)}
 
-Если нового достойного события нет, верни пустой `candidates` и
-status=complete_with_gaps. `direction_id` строго `general_coverage_gaps`. Верни
-только JSON по схеме."""
+Для include/consider обязательны verification_status=verified и
+freshness_status=new_event/material_update. `direction_id` строго
+`general_coverage_gaps`. Верни только JSON по схеме."""
+
+
+def _normalize_agency_rescue_candidate(
+    candidate: dict[str, Any], *, target_id: str
+) -> dict[str, Any]:
+    normalized = copy.deepcopy(candidate)
+    normalized["audit_direction"] = "agency_rescue"
+    normalized["corroboration_target_id"] = target_id
+    if normalized.get("category") != "legal":
+        normalized["legal_scale"] = "not_applicable"
+        normalized["legal_scale_reason"] = ""
+    return normalized
 
 
 def _existing_agency_rescue(plan: dict[str, Any]) -> dict[str, Any] | None:
@@ -432,9 +539,25 @@ def _run_agency_rescue(
     archive: dict[str, Any],
     maximum_web_search_calls: int,
 ) -> dict[str, Any]:
+    target = _select_agency_corroboration_target(existing_candidates)
+    if target is None:
+        _set_last_agency_rescue(
+            {
+                "status": "error",
+                "version": AGENCY_RESCUE_VERSION,
+                "search_strategy": AGENCY_RESCUE_STRATEGY,
+                "error": "no suitable corroboration target in current pool",
+            }
+        )
+        plan["audit_status"] = "partial"
+        budget["stop_reason"] = "agency_corroboration_target_missing"
+        return plan
+    target_id = _candidate_id(target)
+    assert target_id is not None
+    required_query = _agency_corroboration_query(target)
     prompt = build_agency_rescue_prompt(
         search_window=search_window,
-        existing_candidates=existing_candidates,
+        target=target,
         archive=archive,
     )
     try:
@@ -469,11 +592,14 @@ def _run_agency_rescue(
     metadata = result.metadata
     raw_candidates = payload.get("candidates")
     accepted_for_pass = [
-        _normalize_agency_rescue_candidate(item)
+        _normalize_agency_rescue_candidate(item, target_id=target_id)
         for item in raw_candidates
         if isinstance(item, dict)
         and _policy._candidate_has_fresh_agency_source(item, search_window)
+        and _same_event_for_corroboration(target, item)
     ] if isinstance(raw_candidates, list) else []
+    if len(accepted_for_pass) > 1:
+        accepted_for_pass = accepted_for_pass[:1]
     prior_general_attempts = [
         int(item.get("attempt", 0) or 0)
         for item in plan.get("attempts", [])
@@ -484,12 +610,15 @@ def _run_agency_rescue(
     payload_status = str(payload.get("status"))
     record = {
         "direction_id": "general_coverage_gaps",
-        "label": "Fresh agency source-health rescue v4",
+        "label": "Targeted fresh-agency corroboration v5",
         "required": True,
         "attempt": attempt_number,
         "search_strategy": AGENCY_RESCUE_STRATEGY,
         "agency_rescue_version": AGENCY_RESCUE_VERSION,
         "allowed_domains": list(AGENCY_RESCUE_DOMAINS),
+        "corroboration_target_id": target_id,
+        "corroboration_target_title": target.get("title"),
+        "required_query": required_query,
         "prompt": prompt,
         "status": "checked" if payload_status == "complete" else "checked_with_gaps",
         "outcome": "candidates_found" if accepted_for_pass else "no_news_found",
@@ -526,6 +655,9 @@ def _run_agency_rescue(
             "search_strategy": AGENCY_RESCUE_STRATEGY,
             "allowed_domains": list(AGENCY_RESCUE_DOMAINS),
             "attempt": attempt_number,
+            "corroboration_target_id": target_id,
+            "corroboration_target_title": target.get("title"),
+            "required_query": required_query,
             "actual_queries": record["actual_queries"],
             "candidate_count": len(accepted_for_pass),
             "sources": record["sources"],
