@@ -159,7 +159,7 @@ class AgencyRescueTests(unittest.TestCase):
                     "rejections": [],
                     "notes": "Found independent missing event.",
                 },
-                metadata("latest major artificial intelligence news"),
+                metadata("latest artificial intelligence funding acquisition models chips data centers cybersecurity"),
             )
 
         with (
@@ -184,7 +184,7 @@ class AgencyRescueTests(unittest.TestCase):
         call = request.call_args.kwargs
         self.assertEqual(tuple(call["allowed_domains"]), runtime.AGENCY_RESCUE_DOMAINS)
         self.assertEqual(call["maximum_web_search_calls"], 1)
-        self.assertIn("latest major artificial intelligence news", call["prompt"])
+        self.assertIn("latest artificial intelligence funding acquisition models chips data centers cybersecurity", call["prompt"])
         self.assertIn("НЕТ в текущем пуле", call["prompt"])
         rescue = result["attempts"][-1]
         self.assertEqual(rescue["search_strategy"], runtime.AGENCY_RESCUE_STRATEGY)

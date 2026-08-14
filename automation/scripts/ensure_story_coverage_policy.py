@@ -286,7 +286,7 @@ AGENCY_SOURCE_HEALTH_DOMAINS: tuple[str, ...] = (
     "bloomberg.com",
     "ft.com",
 )
-SOURCE_HEALTH_CONTRACT_VERSION = 1
+SOURCE_HEALTH_CONTRACT_VERSION = 2
 
 
 def _host_matches_domain(url: str, domains: tuple[str, ...]) -> bool:

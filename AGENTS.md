@@ -410,7 +410,7 @@ Source-health после перехода на source-neutral routing прове
 Coverage-направлений в текущем валидном пуле нет ни одного свежего
 Reuters/AP/Bloomberg/FT-кандидата, свободный **седьмой** Coverage search operation
 используется как bounded `fresh_agency_rescue`: один date-free запрос
-`latest major artificial intelligence news` с API domain filter только на
+`latest artificial intelligence funding acquisition models chips data centers cybersecurity` с API domain filter только на
 Reuters + AP. Bloomberg/FT уже имеют отдельный `major_agencies` шанс в Primary.
 Rescue ищет новое самостоятельное событие, отсутствующее в текущем пуле; простой
 дубликат существующего сюжета не считается исправлением source-health.

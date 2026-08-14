@@ -44,7 +44,7 @@ RECALL_SENTINEL_VERSION = 8
 RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ()
 RECALL_SENTINEL_MINIMUM_BUDGET = 7
 AGENCY_RESCUE_STRATEGY = "fresh_agency_rescue"
-AGENCY_RESCUE_VERSION = 1
+AGENCY_RESCUE_VERSION = 2
 AGENCY_RESCUE_DOMAINS: tuple[str, ...] = ("reuters.com", "apnews.com")
 SOURCE_HEALTH_CONTRACT_VERSION = _policy.SOURCE_HEALTH_CONTRACT_VERSION
 
@@ -359,7 +359,7 @@ def build_agency_rescue_prompt(
     ]
     start_at = str(search_window.get("start_at") or "")
     end_at = str(search_window.get("end_at") or "")
-    required_query = "latest major artificial intelligence news"
+    required_query = "latest artificial intelligence funding acquisition models chips data centers cybersecurity"
     return f"""Ты — дополнительный fresh-agency rescue редакции «ИИ-сводки».
 
 Строгое редакционное окно: {start_at} → {end_at}
@@ -484,7 +484,7 @@ def _run_agency_rescue(
     payload_status = str(payload.get("status"))
     record = {
         "direction_id": "general_coverage_gaps",
-        "label": "Fresh Reuters/AP source-health rescue v1",
+        "label": "Fresh Reuters/AP source-health rescue v2",
         "required": True,
         "attempt": attempt_number,
         "search_strategy": AGENCY_RESCUE_STRATEGY,
