@@ -422,3 +422,28 @@ be classified as local preflight, transport/HTTP, or response/contract failures
 so operators can distinguish a zero-cost metadata failure from a billable API
 attempt. Automatic image retries remain disabled; one production cover means at
 most one Images API call unless an operator explicitly starts a new recovery run.
+
+## Fresh-agency coverage rescue
+
+For modern production artifacts with a non-zero candidate pool, source-health
+may require one bounded last-mile agency corroboration after all six mandatory
+Coverage directions complete. Use only the otherwise free seventh Coverage
+search slot. Zero-pool recall sentinel v8 and non-zero `fresh_agency_rescue` v7
+are mutually exclusive, so the worst-case retrieval ceiling remains 12 Primary
++ up to 4 Hybrid + up to 7 Coverage = 23 completed search operations.
+
+The rescue must target one existing high-significance agency-likely event, not
+open a new broad discovery stream. Prefer distinctive publisher-neutral factual
+anchors for monetary events. It performs exactly one Web Search without an API
+domain filter, but acceptance remains strict and fail-closed: the primary URL
+must be direct Reuters/AP/Bloomberg/FT, fresh inside the effective window, and
+match the target exactly by `organization`, `event_type`, and `published_date`.
+A successful corroboration updates the existing candidate primary source,
+moves the former primary into supporting sources, and triggers editorial rerun;
+it must never create a duplicate story.
+
+Versioned source-health recovery must reuse already-paid mandatory Coverage
+passes and spend only the new rescue call when needed. Do not make the presence
+of one specific external article in a live search index a deterministic CI gate;
+keep live Terra/Web Search checks as retrieval diagnostics while production
+acceptance itself remains fail-closed.

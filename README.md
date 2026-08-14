@@ -548,3 +548,31 @@ checkpoint, а уже закоммиченный выпуск при пробл�
 сетевой/HTTP сбой Images API и некорректный API response, а при доступности
 сохраняет `x-request-id`. Обычная генерация обложки остаётся one-shot без
 автоматического retry.
+
+## Fresh-agency rescue после Coverage
+
+Для modern production с ненулевым candidate pool source-health не считается
+здоровым только по количеству сюжетов. Если после Primary, Hybrid и шести
+обязательных Coverage-направлений в validated pool всё ещё нет свежего
+Reuters/AP/Bloomberg/FT primary source, свободный **седьмой** Coverage search
+operation используется как bounded `fresh_agency_rescue` версии 7 для
+подтверждения уже найденного сильного события. Для нулевого пула этот же слот
+остаётся source-neutral `high_signal_recall_sentinel` версии 8; режимы
+взаимоисключающие.
+
+Rescue делает ровно один Web Search. Для денежных событий query строится из
+отличительных фактических anchors (`organization + сумма + valuation`) без
+календарной даты, publisher-hint и API domain filter. Acceptance остаётся
+fail-closed: нужен прямой URL Reuters/AP/Bloomberg/FT внутри effective window и
+точное совпадение `organization`, `event_type` и `published_date` с target.
+Успешное подтверждение не создаёт новый сюжет: agency source становится primary
+существующего candidate, прежний primary переносится в supporting sources, после
+чего editorial rerun обновляет ссылки.
+
+Recovery старого ненулевого Coverage report версионируется по source-health
+contract: уже оплаченные шесть обязательных проходов переиспользуются, а при
+необходимости расходуется только новый rescue search. Worst-case search budget
+не меняется: **12 Primary + до 4 Hybrid + до 7 Coverage = максимум 23 search
+operations**. Live-наличие конкретной статьи во внешнем поисковом индексе не
+является детерминированным CI-gate; production acceptance при отсутствии
+валидного agency corroboration остаётся закрытым.

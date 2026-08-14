@@ -241,7 +241,7 @@ class RecallSentinelTests(unittest.TestCase):
         self.assertEqual(result["search_budget"]["remaining_calls"], 0)
 
     def test_sentinel_is_not_used_when_pool_is_nonzero(self) -> None:
-        existing = [{"recommendation": "include"}]
+        existing = [candidate()]
         result, request = self.run_plan(
             complete_zero_plan(),
             lambda **kwargs: self.fail("sentinel must not run"),
