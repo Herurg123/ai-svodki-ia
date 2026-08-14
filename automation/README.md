@@ -101,9 +101,10 @@ items. Второй search или batched multi-query считается нар�
 12. `independent_missing_events` — независимый last-mile поиск крупных событий,
     которых нет в уже собранном пуле.
 
-`major_agencies` является единственным намеренно domain-filtered primary pass:
-API разрешает `reuters.com`, `apnews.com`, `bloomberg.com`, `ft.com`. Для
-остальных primary-направлений общего whitelist нет.
+Три high-signal Primary pass намеренно используют раздельные API domain filters:
+`global_breaking` — `reuters.com`, `major_agencies` — `bloomberg.com` + `ft.com`,
+`independent_missing_events` — `apnews.com` + `ap.org`. Остальные девять
+primary-направлений не имеют общего whitelist и остаются широкими.
 
 Каноническая continuity-точка остаётся фактическим `search_cutoff_at`
 последнего успешно опубликованного выпуска. Новый pre-research cutoff остаётся
@@ -132,10 +133,11 @@ query, потому что Reuters/AP/Bloomberg/FT уже ограничены A
 относительно полного сохранённого effective window.
 
 High-signal source routing не дублирует один издатель в нескольких broad slots:
-`global_breaking` использует Reuters-focused funding/acquisition/M&A/major
-business query; `major_agencies` остаётся source-neutral внутри
-Reuters/AP/Bloomberg/FT filter; `independent_missing_events` выполняет отдельный
-Associated Press-focused consumer/major-technology/policy sweep. Это независимые
+`global_breaking` использует source-neutral funding/acquisition/M&A/major
+business query внутри `reuters.com` filter; `major_agencies` использует
+source-neutral major-AI query внутри `bloomberg.com` + `ft.com` filter;
+`independent_missing_events` выполняет source-neutral consumer/major-technology/
+policy sweep внутри `apnews.com` + `ap.org` filter. Это независимые
 ranking-шансы, а не whitelist кандидатов или региональная/издательская квота.
 Остальные Primary directions по-прежнему ищут широко.
 
@@ -401,10 +403,11 @@ Hybrid и шесть Coverage searches технически завершилис
 high-signal slots частично повторяли один source-ranking bias.
 
 Primary search budget остаётся 12, но routing теперь разделён без дублирования:
-`global_breaking` использует Reuters funding/acquisition/M&A/major-business,
-`major_agencies` использует source-neutral major-AI query при сохранённом
-Reuters/AP/Bloomberg/FT API filter, `independent_missing_events` делает
-Associated Press consumer-AI / major technology / policy sweep после просмотра
+`global_breaking` использует source-neutral funding/acquisition/M&A/major-business
+query внутри `reuters.com` API filter, `major_agencies` использует source-neutral
+major-AI query внутри `bloomberg.com` + `ft.com` filter,
+`independent_missing_events` делает source-neutral consumer-AI / major technology
+/ policy sweep внутри `apnews.com` + `ap.org` filter после просмотра
 существующего pool. Это source routing для ranking, не whitelist кандидатов.
 `models_products_agents` также учитывает крупные consumer-device/OS/service
 launches, если AI materially part of launch.

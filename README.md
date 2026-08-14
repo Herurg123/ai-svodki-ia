@@ -99,10 +99,11 @@ repository hygiene: в policy она отдельно классифицируе
    24-часового healing overlap**, а полное effective window остаётся границей
    допустимости кандидата. В query запрещены `after:`/`before:`, длинные Boolean
    `OR`-цепочки, скобки и огромные списки компаний. High-signal routing разделён:
-   `global_breaking` даёт Reuters-focused шанс крупным funding/M&A/business
-   событиям; `major_agencies` использует source-neutral AI/date query внутри
-   своего Reuters/AP/Bloomberg/FT domain filter; `independent_missing_events`
-   делает независимый AP-focused consumer/major-tech/policy sweep. Это routing
+   `global_breaking` использует source-neutral funding/M&A/business query внутри
+   `reuters.com` filter; `major_agencies` использует source-neutral AI/date query
+   внутри `bloomberg.com` + `ft.com` filter; `independent_missing_events` делает
+   source-neutral consumer/major-tech/policy sweep внутри `apnews.com` + `ap.org`
+   filter. Это routing
    ranking, а не whitelist кандидатов или квота на публикацию.
 7. Китай/Азия намеренно разделены на два прохода. Исторический эксперимент на
    окне выпуска 2026-08-11 показал, что одна широкая China/Asia-проверка

@@ -52,34 +52,32 @@ continuity anchor являются **healing overlap**, а не равнопра
 
 ### High-signal source routing
 
-Production-инциденты 2026-08-13 и 2026-08-14 показали две разные проблемы:
-общий agency-query может утонуть в старых служебных страницах, а несколько
-одинаково Reuters-якоренных проходов всё равно не гарантируют независимый
-source coverage. Поэтому три широких прохода выполняют **разные high-signal
-роли**, не меняя общий бюджет в 12 searches:
+Production-инциденты 2026-08-13 и 2026-08-14 показали, что текстовое упоминание
+издателя в query не гарантирует свежий поток: Reuters-focused запрос способен
+вернуть старые Reuters-зеркала, а общий четырехдоменный pass — старые hub/video
+страницы. Поэтому три high-signal прохода теперь разделены **API domain filters**
+без изменения общего бюджета в 12 searches:
 
-- если `direction_id=global_breaking`, сформируй короткий Reuters-focused query
-  про **AI funding / acquisition / M&A / major business** и даты основного
-  continuity-периода. Reuters укажи обычным словом в query, например по форме
-  `Reuters AI funding acquisition business August 13 2026 August 14 2026`; не
-  используй `site:`. Этот проход даёт отдельный high-signal шанс крупным сделкам,
-  финансированию и корпоративным событиям;
-- если `direction_id=major_agencies`, **не якори query на Reuters или одном
-  издателе**. API domain filter уже ограничивает выдачу Reuters, Associated Press,
-  Bloomberg и Financial Times. Используй короткий source-neutral query про
-  **major AI news / models / products / chips / infrastructure / business** и
-  даты основного continuity-периода. Цель этого прохода — дать четырём
-  разрешённым high-signal семействам независимый шанс попасть в ranking, а не
-  превратить их в ещё один Reuters-поиск;
-- если `direction_id=independent_missing_events`, сделай независимый
-  Associated Press-focused sweep по **AI consumer products / major technology /
-  policy** и датам основного continuity-периода. Сначала учти уже найденный pool
-  и ищи только крупные отсутствующие события. Укажи `Associated Press` обычными
-  словами, без `site:`.
+- если `direction_id=global_breaking`, API filter ограничен `reuters.com`.
+  Сформируй короткий source-neutral query про **AI funding / acquisition / M&A /
+  major business** и даты основного continuity-периода, например
+  `AI funding acquisition business August 13 2026 August 14 2026`. Не добавляй
+  `Reuters` в query: источник уже задан API filter;
+- если `direction_id=major_agencies`, API filter ограничен `bloomberg.com` и
+  `ft.com`. Используй короткий source-neutral query про **major AI news / models /
+  products / chips / infrastructure / business** и даты основного
+  continuity-периода. Это независимый Bloomberg/FT high-signal канал;
+- если `direction_id=independent_missing_events`, API filter ограничен
+  `apnews.com` и `ap.org`. Сделай независимый source-neutral sweep по **AI
+  consumer products / major technology / policy** и датам основного
+  continuity-периода, учитывая уже найденный pool.
 
-Это не whitelist кандидатов: после retrieval по-прежнему можно использовать
-другой более сильный первоисточник. Source-focused routing нужен именно для
-того, чтобы разные поисковые проходы не повторяли один и тот же ranking bias.
+Это routing поискового ranking, а не whitelist всего проекта. Остальные девять
+Primary directions остаются широкими без API domain filter и могут использовать
+официальные первоисточники и любые авторитетные технологические, деловые,
+отраслевые, регуляторные или исследовательские источники. После retrieval
+кандидат по-прежнему может использовать более сильный первоисточник, если он
+проверен обычными правилами.
 
 Для `models_products_agents` отдельно не забывай consumer-AI: крупный запуск
 телефона, устройства, ОС или массового сервиса является релевантным, если ИИ

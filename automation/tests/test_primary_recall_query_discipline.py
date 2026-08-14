@@ -19,14 +19,13 @@ class PrimaryRecallQueryDisciplineTests(unittest.TestCase):
     def test_broad_passes_have_distinct_source_focused_recipes(self):
         text = PROMPT.read_text(encoding="utf-8")
         self.assertIn("direction_id=global_breaking", text)
-        self.assertIn("Reuters AI funding acquisition business", text)
+        self.assertIn("API filter ограничен `reuters.com`", text)
+        self.assertIn("AI funding acquisition business", text)
         self.assertIn("direction_id=major_agencies", text)
-        self.assertIn("не якори query на Reuters", text)
-        self.assertIn("source-neutral query", text)
-        self.assertIn("Reuters, Associated Press", text)
-        self.assertIn("Bloomberg и Financial Times", text)
+        self.assertIn("API filter ограничен `bloomberg.com`", text)
+        self.assertIn("`ft.com`", text)
         self.assertIn("direction_id=independent_missing_events", text)
-        self.assertIn("Associated Press-focused", text)
+        self.assertIn("`apnews.com` и `ap.org`", text)
         self.assertIn("AI consumer products / major technology", text)
 
 
