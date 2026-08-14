@@ -35,41 +35,23 @@ jobs:
     name: Offline production checks
     runs-on: ubuntu-latest
     timeout-minutes: 20
-
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-
       - name: Compile Python sources
-        run: |
-          set -euo pipefail
-          python -m compileall -q automation/scripts automation/tests
-
+        run: python -m compileall -q automation/scripts automation/tests
       - name: Run unit tests
-        run: |
-          set -euo pipefail
-          python -m unittest discover -s automation/tests -v
-
+        run: python -m unittest discover -s automation/tests -v
       - name: Validate editorial contract
-        run: |
-          set -euo pipefail
-          python automation/scripts/validate_editorial_contract.py
-
+        run: python automation/scripts/validate_editorial_contract.py
       - name: Validate committed archive
-        run: |
-          set -euo pipefail
-          python automation/scripts/validate_archive.py
-
+        run: python automation/scripts/validate_archive.py
       - name: Validate production workflow contract
         run: |
-          set -euo pipefail
           mkdir -p automation/preview/ci
           python automation/scripts/validate_production_daily_contract.py \
             --config automation/config/production-daily.json \
@@ -77,35 +59,17 @@ jobs:
             --workflow .github/workflows/daily-production.yml \
             --rss posts/rss.xml \
             --report automation/preview/ci/production-contract.json
-
       - name: Validate RSS, sitemap and structured data
         run: |
-          set -euo pipefail
           mkdir -p automation/preview/ci
-          python automation/scripts/validate_dzen_feed.py \
-            --rss posts/rss.xml \
-            --site-base-url https://rybalka.one/posts \
-            --report automation/preview/ci/dzen-feed.json
-          python automation/scripts/validate_posts_sitemap.py \
-            --sitemap posts/sitemap.xml \
-            --rss posts/rss.xml \
-            --report automation/preview/ci/posts-sitemap.json
+          python automation/scripts/validate_dzen_feed.py --rss posts/rss.xml --site-base-url https://rybalka.one/posts --report automation/preview/ci/dzen-feed.json
+          python automation/scripts/validate_posts_sitemap.py --sitemap posts/sitemap.xml --rss posts/rss.xml --report automation/preview/ci/posts-sitemap.json
           latest_content_dir="$(find automation/content -mindepth 1 -maxdepth 1 -type d -name '????-??-??' | sort | tail -n 1)"
           test -n "${latest_content_dir}"
-          python automation/scripts/validate_structured_data.py \
-            --source-dir "${latest_content_dir}" \
-            --posts-root posts \
-            --report automation/preview/ci/structured-data.json
-
+          python automation/scripts/validate_structured_data.py --source-dir "${latest_content_dir}" --posts-root posts --report automation/preview/ci/structured-data.json
       - name: Verify offline checks did not modify protected paths
         run: |
-          set -euo pipefail
-          if [[ -n "$(git status --porcelain -- posts/)" ]]; then
-            echo "Offline CI modified protected paths." >&2
-            git status --short -- posts/
-            exit 1
-          fi
-
+          test -z "$(git status --porcelain -- posts/)"
       - name: Upload validation reports
         if: always()
         uses: actions/upload-artifact@v7
@@ -114,3 +78,124 @@ jobs:
           path: automation/preview/ci/
           if-no-files-found: warn
           retention-days: 14
+
+  terra-today-preview:
+    name: Terra today digest preview after headroom fix
+    if: github.event_name == 'pull_request' && github.head_ref == 'agent/relative-freshness-retrieval'
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_TEXT_MODEL: gpt-5.6-terra
+      PUBLICATION_DATE: '2026-08-14'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install production OpenAI SDK
+        run: python -m pip install --disable-pip-version-check 'openai==2.45.0'
+      - name: Prepare non-publishing production-equivalent context
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ -n "${OPENAI_API_KEY}" ]]
+          cp automation/config/site.json /tmp/site.json.original
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('automation/config/site.json'); d=json.loads(p.read_text(encoding='utf-8')); d['publication_hour']=6; p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          PY
+          python automation/scripts/validate_editorial_contract.py
+          python automation/scripts/bootstrap_archive.py
+          python automation/scripts/validate_archive.py
+      - name: Run fresh Primary + Hybrid editorial preview on Terra
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/run_digest_preview.py \
+            --allow-provisional-editorial \
+            --publication-date "${PUBLICATION_DATE}" \
+            --minimum-candidates 12 \
+            --maximum-candidates 20 \
+            --minimum-selected-stories 7 \
+            --maximum-selected-stories 12 \
+            --maximum-research-web-search-calls 12
+      - name: Run mandatory Coverage on Terra
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p automation/preview/production-daily
+          python automation/scripts/ensure_story_coverage.py \
+            --artifact-dir "automation/preview/${PUBLICATION_DATE}" \
+            --archive automation/archive/index.json \
+            --publication-date "${PUBLICATION_DATE}" \
+            --model "${OPENAI_TEXT_MODEL}" \
+            --usual-total 7 \
+            --minimum-publishable 1 \
+            --maximum-audit-web-search-calls 7 \
+            --maximum-candidates 20 \
+            --maximum-selected-stories 12 \
+            --report automation/preview/production-daily/coverage-audit.json
+      - name: Normalize and validate generated text artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          if python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('automation/preview/production-daily/coverage-audit.json').read_text(encoding='utf-8'))
+          raise SystemExit(0 if d.get('editorial_stop') is True else 1)
+          PY
+          then
+            echo 'Completed editorial stop; no publishable text artifact.'
+          else
+            artifact_dir="automation/preview/${PUBLICATION_DATE}"
+            python automation/scripts/normalize_digest_artifact.py --artifact-dir "${artifact_dir}" --report "${artifact_dir}/artifact-normalization.json"
+            python automation/scripts/validate_digest_artifact.py --artifact-dir "${artifact_dir}" --report "${artifact_dir}/artifact-validation.json"
+            python automation/scripts/validate_story_coverage.py --artifact-dir "${artifact_dir}" --usual-total 7 --minimum-publishable 1 --report automation/preview/production-daily/story-coverage-validation.json
+          fi
+      - name: Audit actual query discipline
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,re
+          from pathlib import Path
+          qs=[]
+          for root in [Path('automation/preview/production-daily'),Path('automation/preview/2026-08-14')]:
+            if not root.exists(): continue
+            for p in root.rglob('*.json'):
+              try: data=json.loads(p.read_text(encoding='utf-8'))
+              except Exception: continue
+              stack=[data]
+              while stack:
+                o=stack.pop()
+                if isinstance(o,dict):
+                  if isinstance(o.get('actual_queries'),list): qs += [str(q) for q in o['actual_queries'] if q]
+                  stack += list(o.values())
+                elif isinstance(o,list): stack += o
+          unique=list(dict.fromkeys(qs))
+          dated=[q for q in unique if re.search(r'\b20\d{2}\b|\b(?:january|february|march|april|may|june|july|august|september|october|november|december)\b',q,re.I)]
+          out=Path('automation/preview/production-daily/query-discipline.json'); out.parent.mkdir(parents=True,exist_ok=True); out.write_text(json.dumps({'queries':unique,'explicit_date_queries':dated,'query_count':len(unique)},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print(json.dumps({'queries':unique,'explicit_date_queries':dated,'query_count':len(unique)},ensure_ascii=False,indent=2))
+          if dated: raise SystemExit('Explicit date leaked into actual query')
+          PY
+      - name: Restore repository config
+        if: always()
+        run: |
+          if [[ -f /tmp/site.json.original ]]; then cp /tmp/site.json.original automation/config/site.json; fi
+      - name: Upload Terra digest preview
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: terra-today-preview-headroom-2026-08-14
+          path: |
+            automation/preview/production-daily/
+            automation/preview/2026-08-14/
+          if-no-files-found: warn
+          retention-days: 3
