@@ -159,7 +159,7 @@ class AgencyRescueTests(unittest.TestCase):
                     "rejections": [],
                     "notes": "Found independent missing event.",
                 },
-                metadata("latest artificial intelligence funding acquisition models chips data centers cybersecurity"),
+                metadata("Reuters latest artificial intelligence funding acquisition models chips data centers cybersecurity"),
             )
 
         with (
@@ -182,9 +182,9 @@ class AgencyRescueTests(unittest.TestCase):
 
         self.assertEqual(request.call_count, 1)
         call = request.call_args.kwargs
-        self.assertEqual(tuple(call["allowed_domains"]), ("reuters.com",))
+        self.assertEqual(tuple(call["allowed_domains"]), ())
         self.assertEqual(call["maximum_web_search_calls"], 1)
-        self.assertIn("latest artificial intelligence funding acquisition models chips data centers cybersecurity", call["prompt"])
+        self.assertIn("Reuters latest artificial intelligence funding acquisition models chips data centers cybersecurity", call["prompt"])
         self.assertIn("НЕТ в текущем пуле", call["prompt"])
         rescue = result["attempts"][-1]
         self.assertEqual(rescue["search_strategy"], runtime.AGENCY_RESCUE_STRATEGY)
@@ -193,6 +193,16 @@ class AgencyRescueTests(unittest.TestCase):
         self.assertEqual(result["candidates"][-1]["audit_direction"], "agency_rescue")
         self.assertEqual(result["search_budget"]["completed_calls"], 7)
         self.assertEqual(result["search_budget"]["remaining_calls"], 0)
+
+    def test_unfiltered_rescue_drops_non_agency_candidate(self):
+        existing = [candidate(publisher="TechCrunch", url="https://techcrunch.com/2026/08/13/existing/")]
+        non_agency = candidate(publisher="Example", url="https://example.com/fresh-ai-story")
+        def fake_request(**kwargs):
+            return ({"status":"complete","error_message":None,"direction_id":"general_coverage_gaps","candidates":[non_agency],"rejections":[],"notes":"test"}, metadata("Reuters latest artificial intelligence funding acquisition models chips data centers cybersecurity"))
+        with mock.patch.object(runtime, "_BASE_EXECUTE_AUDIT_PLAN", return_value=complete_plan()), mock.patch.object(runtime, "run_audit_request", side_effect=fake_request):
+            result = runtime.execute_audit_plan(api_key="secret", model="gpt-5.6-terra", template="unused", publication_date="2026-08-14", search_window=SEARCH_WINDOW, missing_total=0, maximum_web_search_calls=7, existing_candidates=existing, archive={"items": []})
+        rescue=result["attempts"][-1]
+        self.assertEqual(rescue["candidate_count"],0)
 
     def test_fresh_agency_candidate_does_not_spend_seventh_slot(self):
         existing = [

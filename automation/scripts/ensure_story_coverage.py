@@ -44,8 +44,8 @@ RECALL_SENTINEL_VERSION = 8
 RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ()
 RECALL_SENTINEL_MINIMUM_BUDGET = 7
 AGENCY_RESCUE_STRATEGY = "fresh_agency_rescue"
-AGENCY_RESCUE_VERSION = 3
-AGENCY_RESCUE_DOMAINS: tuple[str, ...] = ("reuters.com",)
+AGENCY_RESCUE_VERSION = 4
+AGENCY_RESCUE_DOMAINS: tuple[str, ...] = ()
 SOURCE_HEALTH_CONTRACT_VERSION = _policy.SOURCE_HEALTH_CONTRACT_VERSION
 
 # Transport remains implemented by the preserved runtime base. Keep this
@@ -359,7 +359,7 @@ def build_agency_rescue_prompt(
     ]
     start_at = str(search_window.get("start_at") or "")
     end_at = str(search_window.get("end_at") or "")
-    required_query = "latest artificial intelligence funding acquisition models chips data centers cybersecurity"
+    required_query = "Reuters latest artificial intelligence funding acquisition models chips data centers cybersecurity"
     return f"""Ты — дополнительный fresh-agency rescue редакции «ИИ-сводки».
 
 Строгое редакционное окно: {start_at} → {end_at}
@@ -371,8 +371,7 @@ Primary, Hybrid и шесть обязательных Coverage-проходов
 но среди текущих валидных кандидатов нет свежего Reuters/AP/Bloomberg/FT
 материала. Свободен ровно один, седьмой Coverage search operation. Его задача —
 не переписать существующие сюжеты, а найти до трёх самостоятельных крупных
-ИИ-событий из Reuters, которых НЕТ в текущем пуле. API domain filter уже
-ограничен Reuters.
+ИИ-событий из Reuters или другого допустимого high-signal agency-домена, которых НЕТ в текущем пуле. API domain filter намеренно отключён: слово Reuters используется как ranking hint, а домен и свежесть проверяются кодом после retrieval.
 
 Выполни РОВНО ОДИН Web Search. Фактический query должен быть точно:
 `{required_query}`
@@ -473,6 +472,7 @@ def _run_agency_rescue(
         _normalize_agency_rescue_candidate(item)
         for item in raw_candidates
         if isinstance(item, dict)
+        and _policy._candidate_has_fresh_agency_source(item, search_window)
     ] if isinstance(raw_candidates, list) else []
     prior_general_attempts = [
         int(item.get("attempt", 0) or 0)
@@ -484,7 +484,7 @@ def _run_agency_rescue(
     payload_status = str(payload.get("status"))
     record = {
         "direction_id": "general_coverage_gaps",
-        "label": "Fresh Reuters source-health rescue v3",
+        "label": "Fresh agency source-health rescue v4",
         "required": True,
         "attempt": attempt_number,
         "search_strategy": AGENCY_RESCUE_STRATEGY,
