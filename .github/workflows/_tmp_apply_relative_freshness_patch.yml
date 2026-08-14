@@ -1,0 +1,139 @@
+name: Temporary apply relative-freshness patch
+
+on:
+  pull_request:
+    types: [opened]
+    paths:
+      - '.github/workflows/_tmp_apply_relative_freshness_patch.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'agent/relative-freshness-retrieval'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - name: Apply retrieval patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          # Primary: restore source-neutral broad discovery and source-neutral final gap sweep.
+          p = Path('automation/scripts/primary_recall_search.py')
+          text = p.read_text(encoding='utf-8')
+          if text.count('        "allowed_domains": REUTERS_DOMAINS,\n') != 1:
+              raise SystemExit('unexpected Reuters route count')
+          if text.count('        "allowed_domains": AP_DOMAINS,\n') != 1:
+              raise SystemExit('unexpected AP route count')
+          text = text.replace('        "allowed_domains": REUTERS_DOMAINS,\n', '', 1)
+          text = text.replace('        "allowed_domains": AP_DOMAINS,\n', '', 1)
+          start = text.index('def query_time_hint(search_window: dict[str, Any]) -> str:')
+          end = text.index('\n\ndef build_prompt(', start)
+          block = '''def query_time_hint(search_window: dict[str, Any]) -> str:\n    start = _parse_aware(str(search_window.get("start_at") or ""))\n    end = _parse_aware(str(search_window.get("end_at") or ""))\n    return (\n        f"Точный effective window для ПОСЛЕДУЮЩЕЙ проверки кандидатов: "\n        f"{start.isoformat(timespec='seconds')} → {end.isoformat(timespec='seconds')}. "\n        "Сам search query должен быть date-free: не копируй в него календарные "\n        "даты, годы, названия месяцев, after:/before: или иные явные временные "\n        "границы. Для ranking используй естественный relative-freshness cue: "\n        "latest / recent / current / breaking или эквивалент. После retrieval "\n        "обязательно проверь фактическую дату/timestamp источника против полного "\n        "effective window; relative wording не является freshness-фильтром."\n    )\n'''
+          p.write_text(text[:start] + block + text[end:], encoding='utf-8')
+
+          # Primary prompt: dates remain eligibility context, never query terms.
+          p = Path('automation/prompts/primary_recall_pass.md')
+          text = p.read_text(encoding='utf-8')
+          start = text.index('Точные `SEARCH_WINDOW_START_AT`')
+          end = text.index('Для `models_products_agents` отдельно', start)
+          block = '''Точные `SEARCH_WINDOW_START_AT` и `SEARCH_WINDOW_END_AT` выше являются\nавторитетными границами **только для проверки пригодности найденного события**.\nПервые 24 часа effective window до continuity anchor остаются healing overlap.\nSearch ranking больше не кодирует это окно календарными датами: production-\nэксперимент на `gpt-5.6-terra` показал, что явные даты в query систематически\nподнимают старые и нерелевантные страницы и могут давать false-zero.\n\n### Retrieval query discipline\n\nФактический query должен быть короткой обычной поисковой фразой примерно на\n6–18 значимых слов и явно просить **самые свежие** материалы через relative-\nfreshness cue: `latest`, `recent`, `current`, `breaking` или естественный\nэквивалент. **Не используй в поисковой строке календарные даты, годы, названия\nмесяцев, `after:`, `before:`, `site:`, длинные цепочки `OR`, скобки или перечень\nиз десятков сущностей.**\n\nRelative wording улучшает ranking, но не определяет редакционную свежесть. После\nretrieval обязательно проверь фактическую дату/timestamp каждого кандидата\nпротив полного effective window. Материал из healing overlap допустим только как\nважный ранее пропущенный сюжет и всё равно проходит архивный dedupe.\n\n### High-signal source routing\n\n`global_breaking` теперь снова является **source-neutral broad discovery** без\nAPI domain filter. Используй короткий запрос уровня `latest major AI news models\nproducts business infrastructure`, не привязываясь к компании или издателю.\nЭто основной catch-all, который не должен ослепнуть из-за проблем одного домена.\n\n`major_agencies` остаётся отдельным дополнительным high-signal каналом с API\nfilter `bloomberg.com` + `ft.com`; query при этом source-neutral и date-free,\nнапример `latest major artificial intelligence news`. Это дополнительный шанс\nranking, а не доказательство отсутствия события вне этих издателей.\n\n`independent_missing_events` становится source-neutral адаптивным last-mile\nпоиском без API domain filter. Учитывая уже найденный pool, найди крупнейшие\nсвежие ИИ-события, которых в нём нет, независимо от темы и издателя. Query должен\nоставаться broad и date-free, например `latest major artificial intelligence\nnews missing events`.\n\nОстальные девять тематических направлений также остаются широкими. Domain\nfilters не являются проектным whitelist: финальный кандидат может использовать\nлюбой более сильный официальный или авторитетный источник, прошедший обычные\nправила проверки.\n\n'''
+          p.write_text(text[:start] + block + text[end:], encoding='utf-8')
+
+          # Hybrid: date-free relative freshness, strict window remains eligibility validator.
+          p = Path('automation/scripts/hybrid_search_completeness.py')
+          text = p.read_text(encoding='utf-8')
+          start = text.index('def _time_hint(search_window: dict[str, Any]) -> str:')
+          end = text.index('\n\ndef build_prompt(', start)
+          block = '''def _time_hint(search_window: dict[str, Any]) -> str:\n    start = str(search_window.get("start_at") or "")\n    end = str(search_window.get("end_at") or "")\n    return (\n        f"Полное effective window для проверки кандидатов: {start} → {end}. "\n        "Фактический search query должен быть короткой date-free natural-language "\n        "фразой примерно на 6–18 значимых слов и использовать relative freshness: "\n        "latest / recent / current / breaking или эквивалент. Не добавляй в query "\n        "календарные даты, годы, названия месяцев, after:, before:, site:, скобки "\n        "или длинные OR-цепочки. Relative wording влияет только на ranking; после "\n        "выдачи фактическую дату/timestamp источника строго проверяй против полного "\n        "effective window, включая bounded healing overlap."\n    )\n'''
+          p.write_text(text[:start] + block + text[end:], encoding='utf-8')
+
+          # Coverage prompt: same date-free retrieval contract.
+          p = Path('automation/prompts/coverage_audit.md')
+          text = p.read_text(encoding='utf-8')
+          start = text.index('2. Первые 24 часа effective window')
+          end = text.index('5. Открой подходящие страницы', start)
+          block = '''2. Первые 24 часа effective window являются healing overlap предыдущего выпуска,\n   но точные границы окна используются **после retrieval** для проверки кандидата,\n   а не как текст поискового запроса. Relative-freshness ranking не заменяет эту\n   строгую проверку.\n3. Фактический search query должен быть короткой natural-language фразой, обычно\n   6–18 значимых слов, и использовать `latest`, `recent`, `current`, `breaking`\n   или естественный эквивалент. **Не используй календарные даты, годы, названия\n   месяцев, `after:`, `before:`, `site:`, длинные `OR`-цепочки, скобки и\n   перечисление десятков доменов или компаний.** Если для прохода уже задан API\n   domain filter, не дублируй разрешённые домены в query.\n4. Для `general_coverage_gaps` не пытайся вручную превратить весь список\n   `DIRECTION_ALLOWED_DOMAINS` в `site:foo OR site:bar ...`. Используй короткий\n   source-neutral запрос вида `latest major AI news products business\n   infrastructure`; API сам ограничит выдачу авторитетными last-mile доменами.\n'''
+          p.write_text(text[:start] + block + text[end:], encoding='utf-8')
+
+          # Recall sentinel: broad, source/topic-neutral, date-free final safety net.
+          p = Path('automation/scripts/ensure_story_coverage.py')
+          text = p.read_text(encoding='utf-8')
+          if 'RECALL_SENTINEL_VERSION = 7' not in text:
+              raise SystemExit('sentinel version not found')
+          text = text.replace('RECALL_SENTINEL_VERSION = 7', 'RECALL_SENTINEL_VERSION = 8', 1)
+          start = text.index('def build_recall_sentinel_prompt(')
+          end = text.index('\n\ndef _existing_recall_sentinel(', start)
+          block = '''def build_recall_sentinel_prompt(\n    *,\n    publication_date: str,\n    search_window: dict[str, Any],\n    existing_candidates: list[Any],\n    archive: dict[str, Any],\n) -> str:\n    del publication_date\n    existing = [\n        {\n            "title": item.get("title"),\n            "organization": item.get("organization"),\n            "primary_url": (\n                item.get("primary_source", {}).get("url")\n                if isinstance(item.get("primary_source"), dict)\n                else None\n            ),\n        }\n        for item in existing_candidates\n        if isinstance(item, dict)\n    ]\n    recent_archive = _base._compact_recent_archive(archive)\n    start_at = str(search_window.get("start_at") or "")\n    end_at = str(search_window.get("end_at") or "")\n    required_query = "latest major artificial intelligence news"\n\n    return f"""Ты — финальный source-neutral recall sentinel редакции «ИИ-сводки».\n\nСтрогое редакционное окно для проверки кандидатов: {start_at} → {end_at}\nАвторитетное текущее время этого sentinel-прохода: {end_at}.\nИдентификатор направления: general_coverage_gaps\nВерсия sentinel: {RECALL_SENTINEL_VERSION}\n\nОсновной research и шесть обязательных coverage-проходов уже завершились, но\nпригодный пул всё ещё равен нулю. Это последний broad safety net, поэтому он не\nдолжен быть привязан ни к OpenAI, ни к security, ни к одному издателю. API\ndomain filter отключён.\n\nВыполни РОВНО ОДИН Web Search. Не расширяй и не переписывай поисковую строку.\nФактический поисковый запрос должен быть точно:\n`{required_query}`\n\nВ query намеренно нет календарных дат: relative freshness нужна только для\nranking. После поиска открой релевантные страницы и строго проверь фактическую\nдату/timestamp каждого события против editorial window. Ищи любое крупное\nсамостоятельное ИИ-событие: модели и продукты, агенты/coding, chips/cloud/data\ncenters, business/funding/M&A, security/safety, policy/legal, Китай/Азия, Россия,\nresearch/robotics. Предпочитай официальный первоисточник, Reuters/AP/Bloomberg/FT\nили другое авторитетное деловое/технологическое/отраслевое СМИ.\n\nСтарую перепечатку без нового развития отклоняй. Для include/consider нужны\nverification_status=verified и freshness_status new_event/material_update. Если\nточного времени публикации нет, ставь published_at=null и time_precision=date;\nвремя не выдумывай. Не добивай количество слабым материалом.\n\nУже найденные кандидаты:\n{json.dumps(existing, ensure_ascii=False, indent=2)}\n\nНедавний архив для дедупликации:\n{json.dumps(recent_archive, ensure_ascii=False, indent=2)}\n\nЕсли достойные события найдены, верни до 3 кандидатов по заданной JSON-схеме.\nЕсли нет, верни пустой `candidates` и status=complete_with_gaps. `direction_id`\nдолжен быть строго `general_coverage_gaps`. Верни только JSON по схеме."""\n'''
+          p.write_text(text[:start] + block + text[end:], encoding='utf-8')
+
+          # Hybrid handoff: preserve merged candidate pool for Coverage even if editorial rerun fails.
+          p = Path('automation/scripts/run_digest_preview.py')
+          text = p.read_text(encoding='utf-8')
+          old = '''    if completed.returncode != 0:\n        _restore_artifact(output_dir, snapshot)\n        report["editorial_rerun_performed"] = False\n        report["editorial_rerun_error"] = (\n            f"hybrid editorial rerun exited with code {completed.returncode}; primary artifact restored"\n        )\n        persist_report(output_dir, report)\n        print("::warning title=Hybrid editorial rerun rolled back::Новые кандидаты сохранены в диагностике, но primary artifact восстановлен.")\n        return report, False\n'''
+          if old not in text:
+              raise SystemExit('hybrid rollback block not found')
+          new = '''    if completed.returncode != 0:\n        _restore_artifact(output_dir, snapshot)\n        merged_payload = _read_json(merged_path)\n        coverage_handoff_preserved = bool(\n            isinstance(merged_payload, dict)\n            and isinstance(merged_payload.get("candidates"), list)\n        )\n        if coverage_handoff_preserved:\n            _write_json(output_dir / "candidates.json", merged_payload)\n        report["editorial_rerun_performed"] = False\n        report["coverage_handoff_preserved"] = coverage_handoff_preserved\n        report["editorial_rerun_error"] = (\n            f"hybrid editorial rerun exited with code {completed.returncode}; "\n            "primary editorial artifact restored, merged candidates preserved for coverage"\n            if coverage_handoff_preserved\n            else f"hybrid editorial rerun exited with code {completed.returncode}; primary artifact restored"\n        )\n        persist_report(output_dir, report)\n        if coverage_handoff_preserved:\n            print(\n                "::warning title=Hybrid editorial rerun rolled back::"\n                "Редакционный artifact восстановлен; валидный merged candidate pool "\n                "сохранён в candidates.json для обязательного Coverage."\n            )\n        else:\n            print(\n                "::warning title=Hybrid editorial rerun rolled back::"\n                "Primary artifact restored; merged handoff unavailable."\n            )\n        return report, False\n'''
+          p.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          # Focused tests.
+          Path('automation/tests/test_primary_recall_query_discipline.py').write_text('''from __future__ import annotations\n\nimport unittest\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nPROMPT = ROOT / "automation" / "prompts" / "primary_recall_pass.md"\n\n\nclass PrimaryRecallQueryDisciplineTests(unittest.TestCase):\n    def test_prompt_uses_relative_freshness_without_calendar_dates_in_query(self):\n        text = PROMPT.read_text(encoding="utf-8")\n        self.assertIn("latest", text)\n        self.assertIn("recent", text)\n        self.assertIn("Не используй в поисковой строке календарные даты", text)\n        self.assertIn("6–18 значимых слов", text)\n        self.assertIn("relative-freshness", text)\n        self.assertIn("Wikipedia/Reddit не могут", text)\n\n    def test_broad_safety_nets_are_source_neutral(self):\n        text = PROMPT.read_text(encoding="utf-8")\n        self.assertIn("`global_breaking` теперь снова является **source-neutral broad discovery**", text)\n        self.assertIn("`major_agencies` остаётся", text)\n        self.assertIn("`bloomberg.com` + `ft.com`", text)\n        self.assertIn("`independent_missing_events` становится source-neutral", text)\n        self.assertIn("latest major artificial intelligence", text)\n\n\nif __name__ == "__main__":\n    unittest.main()\n''', encoding='utf-8')
+
+          Path('automation/tests/test_primary_recall_source_routes.py').write_text('''from __future__ import annotations\n\nimport sys\nimport unittest\nfrom pathlib import Path\n\nSCRIPTS = Path(__file__).resolve().parents[1] / "scripts"\nsys.path.insert(0, str(SCRIPTS))\n\nimport primary_recall_search as primary  # noqa: E402\n\n\nclass PrimaryRecallSourceRouteTests(unittest.TestCase):\n    def test_broad_and_gap_passes_are_source_neutral(self) -> None:\n        routes = {str(item["id"]): tuple(item.get("allowed_domains", ())) for item in primary.PRIMARY_DIRECTIONS}\n        self.assertEqual(routes["global_breaking"], ())\n        self.assertEqual(routes["major_agencies"], ("bloomberg.com", "ft.com"))\n        self.assertEqual(routes["independent_missing_events"], ())\n        for direction_id, domains in routes.items():\n            if direction_id != "major_agencies":\n                self.assertEqual(domains, (), direction_id)\n\n    def test_agency_health_domain_set_remains_available_for_diagnostics(self) -> None:\n        self.assertEqual(set(primary.AGENCY_DOMAINS), {"reuters.com", "bloomberg.com", "ft.com", "apnews.com", "ap.org"})\n\n\nif __name__ == "__main__":\n    unittest.main()\n''', encoding='utf-8')
+
+          Path('automation/tests/test_coverage_query_discipline.py').write_text('''from __future__ import annotations\n\nimport unittest\nfrom pathlib import Path\n\nROOT = Path(__file__).resolve().parents[2]\nPROMPT = ROOT / "automation" / "prompts" / "coverage_audit.md"\n\n\nclass CoverageQueryDisciplineTests(unittest.TestCase):\n    def test_coverage_prompt_uses_relative_freshness_and_forbids_date_terms(self):\n        text = PROMPT.read_text(encoding="utf-8")\n        self.assertIn("6–18 значимых", text)\n        self.assertIn("`latest`, `recent`, `current`, `breaking`", text)\n        self.assertIn("Не используй календарные даты, годы, названия", text)\n        self.assertIn("`after:`", text)\n        self.assertIn("`before:`", text)\n        self.assertIn("`site:`", text)\n        self.assertIn("`OR`-цепочки", text)\n\n    def test_last_mile_uses_relative_source_neutral_query(self):\n        text = PROMPT.read_text(encoding="utf-8")\n        self.assertIn("general_coverage_gaps", text)\n        self.assertIn("latest major AI news products business", text)\n        self.assertIn("API сам ограничит выдачу", text)\n\n\nif __name__ == "__main__":\n    unittest.main()\n''', encoding='utf-8')
+
+          p = Path('automation/tests/test_recall_sentinel.py')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace('Source-agnostic OpenAI recall sentinel v6', 'Source-neutral broad recall sentinel v8')
+          text = text.replace('OpenAI cybersecurity August 7 2026', 'latest major artificial intelligence news')
+          text = text.replace('OpenAI cybersecurity Reuters August 7 2026', 'Reuters latest major artificial intelligence news')
+          text = text.replace('Reuters не обязателен', 'source-neutral recall sentinel')
+          text = text.replace('издатель\\nне Reuters', 'не должен быть привязан ни к OpenAI')
+          text = text.replace('High-signal non-Reuters story found.', 'High-signal source-neutral story found.')
+          text = text.replace('No high-signal source-agnostic story found.', 'No high-signal source-neutral story found.')
+          text = text.replace('checked by v6', 'checked by v8')
+          p.write_text(text, encoding='utf-8')
+
+          p = Path('automation/tests/test_run_digest_preview_hybrid.py')
+          text = p.read_text(encoding='utf-8')
+          insert = '''\n    def test_hybrid_rollback_code_preserves_merged_candidates_for_coverage(self):\n        source = (SCRIPT_DIR / "run_digest_preview.py").read_text(encoding="utf-8")\n        self.assertIn('coverage_handoff_preserved', source)\n        self.assertIn('_write_json(output_dir / "candidates.json", merged_payload)', source)\n        self.assertIn('merged candidates preserved for coverage', source)\n'''
+          text = text.replace('\n\nif __name__ == "__main__":', insert + '\n\nif __name__ == "__main__":')
+          p.write_text(text, encoding='utf-8')
+
+          # Docs: targeted substitutions plus a regression note in all maintained contracts.
+          p = Path('AGENTS.md')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace('Three high-signal Primary passes intentionally use disjoint API domain filters:\n`global_breaking` is limited to `reuters.com`, `major_agencies` to\n`bloomberg.com` + `ft.com`, and `independent_missing_events` to `apnews.com` +\n`ap.org`. The other nine Primary directions remain broad. Do not turn these\nsource routes into a project-wide whitelist; source quality is still validated\nafter retrieval.', 'Broad safety nets are source-neutral: `global_breaking` and\n`independent_missing_events` have no API domain filter. `major_agencies` remains\nan extra Bloomberg/FT high-signal route. Do not turn this source route into a\nproject-wide whitelist; source quality is still validated after retrieval.')
+          old = '''Search prompts must carry the exact effective window. The **actual search\nquery** must be a short natural-language phrase with calendar dates of the main\ncontinuity period after the 24-hour healing overlap written normally. Do not\ncopy `after:`/`before:` operators, long Boolean `OR` chains, parentheses, or\ngiant company lists into the query. The full saved effective window remains\nauthoritative for final freshness validation.'''
+          new = '''Search prompts carry the exact effective window only as the authoritative\neligibility boundary. The **actual search query is date-free**: use a short\nnatural-language relative-freshness cue such as `latest`, `recent`, `current` or\n`breaking`; do not copy calendar dates, years, month names, `after:`/`before:` or\nother explicit temporal boundaries into the query. The full saved effective\nwindow remains authoritative for final freshness validation.'''
+          if old not in text:
+              raise SystemExit('AGENTS dated query contract not found')
+          text = text.replace(old, new, 1)
+          text += '''\n\n## 2026-08-14 relative-freshness retrieval regression\n\nA live `gpt-5.6-terra` A/B showed that explicit calendar dates in Web Search\nqueries can degrade ranking and create false-zero retrieval. Production uses\ndate-free relative-freshness queries for Primary, Hybrid, Coverage and the final\nbroad zero-pool sentinel, while the exact effective window remains a strict\npost-retrieval validator. `global_breaking`, `independent_missing_events` and the\nsentinel are source-neutral catch-alls. If Hybrid finds valid candidates but its\nimmediate editorial rerun fails, the merged candidate pool must still be handed\nto Coverage instead of being lost when the primary editorial artifact is\nrestored.\n'''
+          p.write_text(text, encoding='utf-8')
+
+          for path in ['README.md', 'automation/README.md']:
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              text = text.replace('Фактический query должен быть короткой natural-language\n   поисковой фразой с календарными датами **основного continuity-периода после\n   24-часового healing overlap**, а полное effective window остаётся границей\n   допустимости кандидата.', 'Фактический query должен быть короткой date-free natural-language\n   поисковой фразой с relative-freshness cue (`latest`/`recent`/`current`/`breaking`),\n   а полное effective window остаётся строгой границей допустимости кандидата.')
+              text = text.replace('Три high-signal Primary pass намеренно используют раздельные API domain filters:\n`global_breaking` — `reuters.com`, `major_agencies` — `bloomberg.com` + `ft.com`,\n`independent_missing_events` — `apnews.com` + `ap.org`. Остальные девять\nprimary-направлений не имеют общего whitelist и остаются широкими.', '`global_breaking` и `independent_missing_events` являются source-neutral broad\ncatch-all проходами без API domain filter. `major_agencies` сохраняет отдельный\n`bloomberg.com` + `ft.com` high-signal filter; остальные направления также\nостаются широкими.')
+              text += '''\n\n### Проверенный relative-freshness retrieval\n\nЭксперимент 2026-08-14 на production-модели `gpt-5.6-terra` показал: явные\nкалендарные даты в Web Search query ухудшают ranking и могут приводить к\nfalse-zero. Поэтому Primary, Hybrid, Coverage и финальный zero-pool sentinel\nиспользуют date-free `latest`/`recent`/`current`/`breaking` запросы. Это только\nranking hint: фактическая дата/timestamp источника по-прежнему строго проверяется\nпротив полного effective window. Broad safety nets не привязаны к одному\nиздателю. Если Hybrid добавил валидный candidate, но immediate editorial rerun\nупал, объединённый pool всё равно передаётся Coverage.\n'''
+              p.write_text(text, encoding='utf-8')
+
+          Path('.github/workflows/_tmp_apply_relative_freshness_patch.yml').unlink()
+          PY
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git diff --cached --check
+          git commit -m 'Use relative-freshness retrieval and preserve hybrid handoff'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
