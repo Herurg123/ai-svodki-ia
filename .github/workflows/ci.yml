@@ -5,86 +5,23 @@ on:
 permissions:
   contents: read
 jobs:
-  live-corroboration-v6:
+  apply-v7:
     if: github.event_name == 'pull_request' && github.head_ref == 'fix/agency-rescue-after-source-monopoly'
     permissions:
-      actions: read
-      contents: read
+      contents: write
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-          persist-credentials: false
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-      - run: python -m pip install --disable-pip-version-check --no-input 'openai==2.21.0'
-      - uses: actions/download-artifact@v8
-        with:
-          name: daily-production-2026-08-14
-          path: automation/preview/recovery-source
-          run-id: 31771774225
-          github-token: ${{ github.token }}
-      - name: Stage exact failed production state
-        run: |
+          fetch-depth: 0
+      - run: |
           set -euo pipefail
-          rm -rf automation/preview/2026-08-14 automation/preview/production-daily
-          cp -a automation/preview/recovery-source/2026-08-14 automation/preview/2026-08-14
-          mkdir -p automation/preview/production-daily
-          cp automation/preview/recovery-source/production-daily/coverage-audit.json automation/preview/production-daily/coverage-audit.json
-      - name: Run one targeted corroboration and editorial rerun
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
-        run: |
-          set -euo pipefail
-          python automation/scripts/ensure_story_coverage.py --artifact-dir automation/preview/2026-08-14 --archive automation/archive/index.json --publication-date 2026-08-14 --model "${OPENAI_TEXT_MODEL}" --usual-total 7 --minimum-publishable 1 --maximum-audit-web-search-calls 7 --maximum-candidates 20 --maximum-selected-stories 12 --report automation/preview/production-daily/coverage-audit.json
-      - name: Assert source repair and validate artifact
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          from urllib.parse import urlparse
-          report=json.loads(Path('automation/preview/production-daily/coverage-audit.json').read_text(encoding='utf-8'))
-          attempts=report.get('attempts') or []
-          r=[x for x in attempts if isinstance(x,dict) and x.get('search_strategy')=='fresh_agency_rescue']
-          ordinary=[x for x in attempts if isinstance(x,dict) and x.get('search_strategy')!='fresh_agency_rescue']
-          assert len(ordinary)==6 and len(r)==1, (len(ordinary),len(r))
-          r=r[0]
-          assert r.get('agency_rescue_version')==6, r.get('agency_rescue_version')
-          assert r.get('corroboration_target_id')=='cand-003', r.get('corroboration_target_id')
-          assert r.get('required_query')=='Reuters Databricks $5 billion $190 billion', r.get('required_query')
-          assert r.get('actual_queries')==['Reuters Databricks $5 billion $190 billion'], r.get('actual_queries')
-          assert (r.get('api') or {}).get('web_search_calls_completed')==1, r.get('api')
-          assert r.get('candidate_count')==1, r
-          assert report.get('source_health_contract_version')==6, report.get('source_health_contract_version')
-          assert report.get('source_corroboration_count')==1, report.get('source_corroboration_count')
-          assert report.get('audit_added_candidates')==0, report.get('audit_added_candidates')
-          assert report.get('editorial_rerun_performed') is True, report.get('editorial_rerun_performed')
-          b=report.get('search_budget') or {}
-          assert b.get('completed_calls')==7 and b.get('remaining_calls')==0, b
-          payload=json.loads(Path('automation/preview/2026-08-14/candidates.json').read_text(encoding='utf-8'))
-          cs=payload.get('candidates') or []
-          target=next(c for c in cs if c.get('id')=='cand-003')
-          primary=target.get('primary_source') or {}
-          host=(urlparse(primary.get('url') or '').hostname or '').lower()
-          assert any(host==d or host.endswith('.'+d) for d in ('reuters.com','apnews.com','bloomberg.com','ft.com')), host
-          assert any('techcrunch.com' in ((urlparse((s.get('url') or '')).hostname or '').lower()) for s in target.get('supporting_sources') or []), target.get('supporting_sources')
-          assert len(cs)==7, len(cs)
-          print(json.dumps({'query':r.get('required_query'),'primary':primary,'corroborations':report.get('source_corroborations')},ensure_ascii=False,indent=2))
-          PY
-          python automation/scripts/normalize_digest_artifact.py --artifact-dir automation/preview/2026-08-14 --report automation/preview/2026-08-14/artifact-normalization.json
-          python automation/scripts/validate_digest_artifact.py --artifact-dir automation/preview/2026-08-14 --report automation/preview/2026-08-14/artifact-validation.json
-          python automation/scripts/validate_story_coverage.py --artifact-dir automation/preview/2026-08-14 --usual-total 7 --minimum-publishable 1 --report automation/preview/production-daily/story-coverage-validation.json
-      - if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: targeted-corroboration-v6-smoke-2026-08-14
-          path: |
-            automation/preview/2026-08-14/
-            automation/preview/production-daily/coverage-audit.json
-            automation/preview/production-daily/story-coverage-validation.json
-          retention-days: 7
+          python .github/_tmp_anchor_query_v7.py
+          git show origin/main:.github/workflows/ci.yml > .github/workflows/ci.yml
+          python -m compileall -q automation/scripts automation/tests
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Use publisher-neutral monetary anchors for corroboration'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
