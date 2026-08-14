@@ -539,12 +539,12 @@ Source-health после перехода на source-neutral routing прове
 он содержит достаточно сюжетов. Если после Primary/Hybrid и шести обязательных
 Coverage-направлений в current validated pool нет ни одного свежего
 Reuters/AP/Bloomberg/FT primary source, свободный **седьмой** Coverage search
-operation используется как bounded `fresh_agency_rescue` **v6** для targeted
+operation используется как bounded `fresh_agency_rescue` **v7** для targeted
 corroboration уже найденного сильного события.
 
 Rescue детерминированно выбирает наиболее agency-likely high-significance
 кандидат (сначала funding/M&A, затем investment/infrastructure, затем
-partnership), строит короткий date-free query с `Reuters` как ranking hint; для денежных событий он прежде всего использует отличительные monetary anchors прямо из заголовка (`organization + сумма + valuation`), а при их отсутствии откатывается к `organization + event_type + keyword` и выполняет ровно один Web Search **без API
+partnership), строит короткий date-free query; для денежных событий он прежде всего использует отличительные monetary anchors прямо из заголовка (`organization + сумма + valuation`) без publisher-hint, а при их отсутствии откатывается к `Reuters + organization + event_type + keyword`. Прямой agency-домен всё равно обязателен на acceptance-этапе и выполняет ровно один Web Search **без API
 domain filter**. Отказ от `allowed_domains` здесь намеренный: live recovery-smoke
 14 августа показал, что Reuters domain-lock способен вернуть пустую выдачу, хотя
 тот же индекс без lock видит актуальный Reuters материал.

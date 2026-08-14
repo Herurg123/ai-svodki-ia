@@ -92,7 +92,7 @@ class AgencyCorroborationTests(unittest.TestCase):
         self.assertEqual(runtime._money_anchors(target), ["$5 billion", "$190 billion"])
         self.assertEqual(
             runtime._agency_corroboration_query(target),
-            "Reuters Databricks $5 billion $190 billion",
+            "Databricks $5 billion $190 billion",
         )
         self.assertNotIn("2026", runtime._agency_corroboration_query(target))
 

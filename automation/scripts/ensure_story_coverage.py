@@ -44,7 +44,7 @@ RECALL_SENTINEL_VERSION = 8
 RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ()
 RECALL_SENTINEL_MINIMUM_BUDGET = 7
 AGENCY_RESCUE_STRATEGY = "fresh_agency_rescue"
-AGENCY_RESCUE_VERSION = 6
+AGENCY_RESCUE_VERSION = 7
 AGENCY_RESCUE_DOMAINS: tuple[str, ...] = ()
 SOURCE_HEALTH_CONTRACT_VERSION = _policy.SOURCE_HEALTH_CONTRACT_VERSION
 
@@ -418,7 +418,10 @@ def _agency_corroboration_query(target: dict[str, Any]) -> str:
     organization = " ".join(organization.split())
     anchors = _money_anchors(target)
     if anchors:
-        return " ".join(["Reuters", organization, *anchors]).strip()
+        # Exact monetary anchors are stronger retrieval signals than a publisher
+        # name; live Aug-14 recovery showed that the Reuters hint biased ranking
+        # toward an older syndicated $188B story. Acceptance remains agency-only.
+        return " ".join([organization, *anchors]).strip()
 
     event_type = " ".join(str(target.get("event_type") or "").split())
     organization_cf = organization.casefold()
