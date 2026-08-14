@@ -17,143 +17,28 @@ permissions:
   contents: read
 
 jobs:
-  live-agency-rescue-smoke:
-    name: Live Aug 14 agency rescue recovery smoke
+  apply-agency-rescue-query-tuning:
+    name: Apply agency rescue query tuning
     if: github.event_name == 'pull_request' && github.head_ref == 'fix/agency-rescue-after-source-monopoly'
     permissions:
-      actions: read
-      contents: read
+      contents: write
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     steps:
-      - name: Check out PR branch
+      - name: Check out branch
         uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-          persist-credentials: false
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-      - name: Install OpenAI SDK
-        run: python -m pip install --disable-pip-version-check --no-input 'openai==2.21.0'
-      - name: Download failed production artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: daily-production-2026-08-14
-          path: automation/preview/recovery-smoke-source
-          run-id: 31771774225
-          github-token: ${{ github.token }}
-      - name: Stage exact production recovery inputs
+          fetch-depth: 0
+      - name: Apply tuning and restore canonical CI
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf automation/preview/2026-08-14 automation/preview/production-daily
-          cp -a automation/preview/recovery-smoke-source/2026-08-14 automation/preview/2026-08-14
-          mkdir -p automation/preview/production-daily
-          cp -a automation/preview/recovery-smoke-source/production-daily/coverage-audit.json automation/preview/production-daily/coverage-audit.json
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          report=json.loads(Path('automation/preview/production-daily/coverage-audit.json').read_text(encoding='utf-8'))
-          budget=report.get('search_budget') or {}
-          assert budget.get('completed_calls') == 6, budget
-          assert budget.get('remaining_calls') == 1, budget
-          assert len(report.get('attempts') or []) == 6, len(report.get('attempts') or [])
-          assert report.get('source_health_contract_version') is None
-          print('Recovered exact failed production audit: six completed calls + one free slot.')
-          PY
-      - name: Run one bounded recovery Coverage pass
-        shell: bash
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
-        run: |
-          set -euo pipefail
-          python automation/scripts/ensure_story_coverage.py \
-            --artifact-dir automation/preview/2026-08-14 \
-            --archive automation/archive/index.json \
-            --publication-date 2026-08-14 \
-            --model "${OPENAI_TEXT_MODEL}" \
-            --usual-total 7 \
-            --minimum-publishable 1 \
-            --maximum-audit-web-search-calls 7 \
-            --maximum-candidates 20 \
-            --maximum-selected-stories 12 \
-            --report automation/preview/production-daily/coverage-audit.json
-      - name: Assert only the seventh rescue search was added
-        shell: bash
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          report=json.loads(Path('automation/preview/production-daily/coverage-audit.json').read_text(encoding='utf-8'))
-          attempts=report.get('attempts') or []
-          rescue=[a for a in attempts if isinstance(a,dict) and a.get('search_strategy') == 'fresh_agency_rescue']
-          ordinary=[a for a in attempts if isinstance(a,dict) and a.get('search_strategy') != 'fresh_agency_rescue']
-          assert len(rescue) == 1, rescue
-          assert len(ordinary) == 6, len(ordinary)
-          api=rescue[0].get('api') or {}
-          assert api.get('web_search_calls_completed') == 1, api
-          assert rescue[0].get('allowed_domains') == ['reuters.com','apnews.com'], rescue[0].get('allowed_domains')
-          budget=report.get('search_budget') or {}
-          assert budget.get('completed_calls') == 7, budget
-          assert budget.get('remaining_calls') == 0, budget
-          assert report.get('source_health_contract_version') == 1, report.get('source_health_contract_version')
-          print(json.dumps({
-            'rescue_status': (report.get('agency_rescue') or {}).get('status'),
-            'rescue_actual_queries': rescue[0].get('actual_queries'),
-            'rescue_candidate_count': rescue[0].get('candidate_count'),
-            'audit_added_candidates': report.get('audit_added_candidates'),
-            'candidate_pool_after': report.get('candidate_pool_after'),
-          }, ensure_ascii=False, indent=2))
-          PY
-      - name: Normalize and validate recovered digest
-        shell: bash
-        run: |
-          set -euo pipefail
-          python automation/scripts/normalize_digest_artifact.py \
-            --artifact-dir automation/preview/2026-08-14 \
-            --report automation/preview/2026-08-14/artifact-normalization.json
-          python automation/scripts/validate_digest_artifact.py \
-            --artifact-dir automation/preview/2026-08-14 \
-            --report automation/preview/2026-08-14/artifact-validation.json
-          python automation/scripts/validate_story_coverage.py \
-            --artifact-dir automation/preview/2026-08-14 \
-            --usual-total 7 \
-            --minimum-publishable 1 \
-            --report automation/preview/production-daily/story-coverage-validation.json
-      - name: Summarize recovered source diversity
-        shell: bash
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          root=Path('automation/preview/2026-08-14')
-          payload=json.loads((root/'candidates.json').read_text(encoding='utf-8'))
-          candidates=payload.get('candidates') or []
-          domains=[]
-          for item in candidates:
-            src=item.get('primary_source') or {}
-            url=src.get('url') or ''
-            domains.append(url.split('/')[2].lower() if url.startswith('https://') else url)
-          stories=json.loads((root/'stories.json').read_text(encoding='utf-8')).get('stories') or []
-          print(json.dumps({
-            'candidate_count': len(candidates),
-            'primary_domains': sorted(set(domains)),
-            'story_count': len(stories),
-            'story_titles': [s.get('title') or s.get('headline') for s in stories],
-          }, ensure_ascii=False, indent=2))
-          PY
-      - name: Upload recovery smoke artifact
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: agency-rescue-recovery-smoke-2026-08-14
-          path: |
-            automation/preview/2026-08-14/
-            automation/preview/production-daily/coverage-audit.json
-            automation/preview/production-daily/story-coverage-validation.json
-          if-no-files-found: warn
-          retention-days: 7
+          python .github/_tmp_tune_agency_rescue_query.py
+          git show origin/main:.github/workflows/ci.yml > .github/workflows/ci.yml
+          python -m compileall -q automation/scripts automation/tests
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Tune bounded fresh-agency rescue query'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
