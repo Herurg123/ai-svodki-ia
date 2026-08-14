@@ -23,11 +23,11 @@ jobs:
           python-version: "3.12"
       - name: Install OpenAI SDK
         run: python -m pip install --disable-pip-version-check 'openai>=2.0.0,<3'
-      - name: Run exact-known-event retrieval control
+      - name: Run no-date retrieval variants
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p automation/preview/terra-retrieval-exact
+          mkdir -p automation/preview/terra-retrieval-nodate
           python - <<'PY'
           from __future__ import annotations
           import json, os, sys
@@ -37,59 +37,44 @@ jobs:
           sys.path.insert(0, str(Path('automation/scripts').resolve()))
           from ensure_story_coverage_policy import build_audit_api_metadata
 
-          model = os.environ['OPENAI_TEXT_MODEL']
-          client = OpenAI(api_key=os.environ['OPENAI_API_KEY'], timeout=1200.0, max_retries=2)
-          window = '2026-08-13T02:58:08+03:00 → 2026-08-14T05:08:45+03:00'
-          controls = [
-              ('databricks', 'Databricks raises 5 billion 190 billion valuation August 13 2026 Reuters'),
-              ('anthropic_decart', 'Anthropic Decart acquisition August 13 2026 Reuters'),
-              ('gemini_flash', 'Google Gemini 3.7 Flash coding agent workflows August 13 2026 Reuters'),
-              ('lt_together', 'Larsen Toubro Together AI factory Nvidia August 13 2026 Reuters'),
+          model=os.environ['OPENAI_TEXT_MODEL']
+          client=OpenAI(api_key=os.environ['OPENAI_API_KEY'], timeout=1200.0, max_retries=2)
+          variants=[
+              ('gemini_plain','Google Gemini 3.7 Flash coding agent workflows'),
+              ('gemini_reuters','Google Gemini 3.7 Flash Reuters'),
+              ('lt_plain','Larsen Toubro Together AI factory Nvidia'),
+              ('lt_reuters','Larsen Toubro Together AI Reuters'),
           ]
-          schema = {
-              'type':'object','additionalProperties':False,
-              'properties':{
-                  'found':{'type':'boolean'},
-                  'title':{'type':['string','null']},
-                  'publisher':{'type':['string','null']},
-                  'published_date':{'type':['string','null']},
-                  'url':{'type':['string','null']},
-                  'notes':{'type':'string'},
-              },
-              'required':['found','title','publisher','published_date','url','notes'],
-          }
+          schema={'type':'object','additionalProperties':False,'properties':{
+              'found':{'type':'boolean'},'title':{'type':['string','null']},
+              'publisher':{'type':['string','null']},'published_date':{'type':['string','null']},
+              'url':{'type':['string','null']},'notes':{'type':'string'}},
+              'required':['found','title','publisher','published_date','url','notes']}
           results=[]
-          for control_id, query in controls:
-              prompt=f'''Авторитетное редакционное окно: {window}.
-          Это DIAGNOSTIC KNOWN-EVENT lookup, не discovery. Известно, что проверяемое событие может существовать.
-          Выполни РОВНО ОДИН Web Search по смыслу максимально близкий к строке: {query}
-          Не делай второй search. Разрешена навигация по найденным страницам.
-          Цель: найти основной новостной источник, проверить фактическую дату публикации и вернуть found=true только если источник действительно подтверждает событие и попадает в окно.
-          Reddit/Wikipedia/агрегатор не считаются основным источником. Не выдумывай URL или дату. Верни только JSON.'''
-              response=client.responses.create(
-                  model=model,input=prompt,
+          for vid,query in variants:
+              prompt=f'''Это диагностический exact-event lookup. Авторитетное текущее время: 2026-08-14T05:08:45+03:00.
+          Выполни РОВНО ОДИН Web Search по смыслу максимально близкий к: {query}
+          Не добавляй календарную дату в search query. Не делай второй search. Разрешена навигация.
+          Найди основной новостной/официальный источник именно указанного события и сообщи его фактическую дату публикации. Reddit/Wikipedia/агрегатор не являются основным источником. Не выдумывай URL или дату. Верни только JSON.'''
+              response=client.responses.create(model=model,input=prompt,
                   tools=[{'type':'web_search','search_context_size':'high','return_token_budget':'default'}],
-                  tool_choice='required',max_tool_calls=4,
-                  include=['web_search_call.action.sources'],
+                  tool_choice='required',max_tool_calls=4,include=['web_search_call.action.sources'],
                   reasoning={'effort':'medium'},max_output_tokens=2000,
-                  text={'format':{'type':'json_schema','name':'known_event_lookup','strict':True,'schema':schema}},
-                  store=False,
-              )
+                  text={'format':{'type':'json_schema','name':'nodate_lookup','strict':True,'schema':schema}},store=False)
               payload=json.loads(response.output_text)
               meta=build_audit_api_metadata(response, maximum_web_search_calls=1)
-              results.append({'id':control_id,'requested_query':query,'payload':payload,'api':meta})
-          report={'model':model,'window':window,'results':results,
-                  'summary':{'found':sum(1 for x in results if x['payload']['found']),
-                             'total':len(results),
-                             'found_ids':[x['id'] for x in results if x['payload']['found']]}}
-          out=Path('automation/preview/terra-retrieval-exact/report.json')
+              results.append({'id':vid,'requested_query':query,'payload':payload,'api':meta})
+          report={'model':model,'results':results,'summary':{
+              'found':sum(1 for x in results if x['payload']['found']),
+              'total':len(results),'found_ids':[x['id'] for x in results if x['payload']['found']]}}
+          out=Path('automation/preview/terra-retrieval-nodate/report.json')
           out.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
           print(json.dumps(report['summary'],ensure_ascii=False,indent=2))
           PY
-      - name: Upload exact-control report
+      - name: Upload no-date report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: terra-retrieval-exact-2026-08-14
-          path: automation/preview/terra-retrieval-exact/report.json
+          name: terra-retrieval-nodate-2026-08-14
+          path: automation/preview/terra-retrieval-nodate/report.json
           retention-days: 2
