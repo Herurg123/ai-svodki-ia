@@ -44,7 +44,7 @@ RECALL_SENTINEL_VERSION = 8
 RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ()
 RECALL_SENTINEL_MINIMUM_BUDGET = 7
 AGENCY_RESCUE_STRATEGY = "fresh_agency_rescue"
-AGENCY_RESCUE_VERSION = 5
+AGENCY_RESCUE_VERSION = 6
 AGENCY_RESCUE_DOMAINS: tuple[str, ...] = ()
 SOURCE_HEALTH_CONTRACT_VERSION = _policy.SOURCE_HEALTH_CONTRACT_VERSION
 
@@ -394,9 +394,32 @@ def _select_agency_corroboration_target(
     return target
 
 
+def _money_anchors(target: dict[str, Any]) -> list[str]:
+    """Extract distinctive monetary facts from the event title before generic terms."""
+    title = str(target.get("title") or "")
+    anchors: list[str] = []
+    patterns = (
+        (r"\$\s*([0-9]+(?:[.,][0-9]+)?)\s*(?:млрд|billion)\b", "billion"),
+        (r"\$\s*([0-9]+(?:[.,][0-9]+)?)\s*(?:млн|million)\b", "million"),
+        (r"\$\s*([0-9]+(?:[.,][0-9]+)?)\s*B\b", "billion"),
+        (r"\$\s*([0-9]+(?:[.,][0-9]+)?)\s*M\b", "million"),
+    )
+    for pattern, unit in patterns:
+        for match in re.finditer(pattern, title, flags=re.IGNORECASE):
+            value = match.group(1).replace(",", ".")
+            rendered = f"${value} {unit}"
+            if rendered not in anchors:
+                anchors.append(rendered)
+    return anchors[:2]
+
+
 def _agency_corroboration_query(target: dict[str, Any]) -> str:
     organization = str(target.get("organization") or "").split(";", 1)[0].strip()
     organization = " ".join(organization.split())
+    anchors = _money_anchors(target)
+    if anchors:
+        return " ".join(["Reuters", organization, *anchors]).strip()
+
     event_type = " ".join(str(target.get("event_type") or "").split())
     organization_cf = organization.casefold()
     event_cf = event_type.casefold()

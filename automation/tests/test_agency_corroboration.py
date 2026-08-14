@@ -88,9 +88,11 @@ class AgencyCorroborationTests(unittest.TestCase):
             5,
             keywords=["Databricks", "funding", "valuation", "enterprise AI"],
         )
+        target["title"] = "Databricks раскрыла раунд на $5 млрд при оценке $190 млрд"
+        self.assertEqual(runtime._money_anchors(target), ["$5 billion", "$190 billion"])
         self.assertEqual(
             runtime._agency_corroboration_query(target),
-            "Reuters Databricks funding valuation latest",
+            "Reuters Databricks $5 billion $190 billion",
         )
         self.assertNotIn("2026", runtime._agency_corroboration_query(target))
 
