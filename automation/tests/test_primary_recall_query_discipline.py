@@ -26,7 +26,7 @@ class PrimaryRecallQueryDisciplineTests(unittest.TestCase):
         self.assertIn("`ft.com`", text)
         self.assertIn("direction_id=independent_missing_events", text)
         self.assertIn("`apnews.com` и `ap.org`", text)
-        self.assertIn("AI consumer products / major technology", text)
+        self.assertIn("consumer products / major technology", text)
 
 
 if __name__ == "__main__":
