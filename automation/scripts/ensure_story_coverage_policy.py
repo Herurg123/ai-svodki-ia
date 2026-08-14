@@ -8,6 +8,7 @@ import re
 import shutil
 import subprocess
 import sys
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
@@ -278,6 +279,74 @@ AUDIT_DIRECTIONS: tuple[dict[str, Any], ...] = (
 AUDIT_DIRECTION_IDS = tuple(item["id"] for item in AUDIT_DIRECTIONS)
 MINIMUM_REQUIRED_AUDIT_CALLS = len(AUDIT_DIRECTIONS)
 DEFAULT_MAXIMUM_AUDIT_CALLS = 7
+
+AGENCY_SOURCE_HEALTH_DOMAINS: tuple[str, ...] = (
+    "reuters.com",
+    "apnews.com",
+    "bloomberg.com",
+    "ft.com",
+)
+SOURCE_HEALTH_CONTRACT_VERSION = 7
+
+
+def _host_matches_domain(url: str, domains: tuple[str, ...]) -> bool:
+    try:
+        host = (urlsplit(url).hostname or "").casefold().strip(".")
+    except ValueError:
+        return False
+    return any(host == domain or host.endswith("." + domain) for domain in domains)
+
+
+def _search_window_days(search_window: dict[str, Any]) -> tuple[date, date] | None:
+    try:
+        start = datetime.fromisoformat(
+            str(search_window.get("start_at") or "").replace("Z", "+00:00")
+        )
+        end = datetime.fromisoformat(
+            str(search_window.get("end_at") or "").replace("Z", "+00:00")
+        )
+    except ValueError:
+        return None
+    if start.tzinfo is None or end.tzinfo is None or end < start:
+        return None
+    return start.date(), end.date()
+
+
+def _candidate_has_fresh_agency_source(
+    candidate: Any, search_window: dict[str, Any]
+) -> bool:
+    if not isinstance(candidate, dict):
+        return False
+    if candidate.get("recommendation") == "exclude":
+        return False
+    window = _search_window_days(search_window)
+    if window is None:
+        return False
+    try:
+        published = date.fromisoformat(str(candidate.get("published_date") or ""))
+    except ValueError:
+        return False
+    if not (window[0] <= published <= window[1]):
+        return False
+    source = candidate.get("primary_source")
+    return bool(
+        isinstance(source, dict)
+        and isinstance(source.get("url"), str)
+        and _host_matches_domain(source["url"], AGENCY_SOURCE_HEALTH_DOMAINS)
+    )
+
+
+def _candidates_have_fresh_agency_source(
+    candidates: Any, search_window: dict[str, Any]
+) -> bool:
+    return bool(
+        isinstance(candidates, list)
+        and any(
+            _candidate_has_fresh_agency_source(item, search_window)
+            for item in candidates
+        )
+    )
+
 
 AUDIT_REJECTION_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -1141,6 +1210,76 @@ def execute_audit_plan(
     }
 
 
+def apply_agency_corroborations(
+    research: dict[str, Any],
+    additional_candidates: list[Any],
+) -> tuple[dict[str, Any], list[dict[str, Any]], list[Any]]:
+    """Promote agency evidence onto an existing event without duplicating it."""
+    merged = copy.deepcopy(research)
+    candidates = merged.get("candidates")
+    if not isinstance(candidates, list):
+        raise RuntimeError("candidates.json: candidates должен быть массивом")
+    by_id = {
+        str(item.get("id")): item
+        for item in candidates
+        if isinstance(item, dict) and item.get("id") is not None
+    }
+    details: list[dict[str, Any]] = []
+    remaining: list[Any] = []
+    for raw in additional_candidates:
+        if not isinstance(raw, dict) or not raw.get("corroboration_target_id"):
+            remaining.append(raw)
+            continue
+        target_id = str(raw.get("corroboration_target_id"))
+        target = by_id.get(target_id)
+        if not isinstance(target, dict):
+            remaining.append(raw)
+            continue
+        agency_primary = raw.get("primary_source")
+        old_primary = target.get("primary_source")
+        if not isinstance(agency_primary, dict) or not isinstance(old_primary, dict):
+            remaining.append(raw)
+            continue
+        agency_url = str(agency_primary.get("url") or "")
+        old_url = str(old_primary.get("url") or "")
+        if not agency_url:
+            remaining.append(raw)
+            continue
+        supporting = [
+            copy.deepcopy(item)
+            for item in target.get("supporting_sources") or []
+            if isinstance(item, dict)
+        ]
+        known_urls = {str(item.get("url") or "") for item in supporting}
+        if old_url and old_url != agency_url and old_url not in known_urls:
+            supporting.insert(0, copy.deepcopy(old_primary))
+        for item in raw.get("supporting_sources") or []:
+            if not isinstance(item, dict):
+                continue
+            url = str(item.get("url") or "")
+            if url and url != agency_url and url not in {str(x.get("url") or "") for x in supporting}:
+                supporting.append(copy.deepcopy(item))
+        target["primary_source"] = copy.deepcopy(agency_primary)
+        target["supporting_sources"] = supporting[:2]
+        target["source_type"] = str(raw.get("source_type") or "news_agency")
+        original_notes = str(target.get("verification_notes") or "").strip()
+        agency_publisher = str(agency_primary.get("publisher") or "agency")
+        suffix = f"Fresh-agency corroboration: {agency_publisher}."
+        target["verification_notes"] = (
+            f"{original_notes} {suffix}".strip() if original_notes else suffix
+        )
+        details.append(
+            {
+                "target_id": target_id,
+                "target_title": target.get("title"),
+                "old_primary_source": copy.deepcopy(old_primary),
+                "new_primary_source": copy.deepcopy(agency_primary),
+                "audit_direction": raw.get("audit_direction"),
+            }
+        )
+    return merged, details, remaining
+
+
 def rerun_editorial(
     *,
     publication_date: str,
@@ -1252,6 +1391,21 @@ def completed_prior_audit(payload: Any) -> bool:
         == set(AUDIT_DIRECTION_IDS)
         and isinstance(api, dict)
         and api.get("status") == "completed"
+    )
+
+
+def completed_prior_audit_for_source_health(
+    payload: Any, *, source_health_rescue_needed: bool
+) -> bool:
+    """Reuse legacy audits normally; version them only for modern source-health rescue."""
+    if not completed_prior_audit(payload):
+        return False
+    if not source_health_rescue_needed:
+        return True
+    return bool(
+        isinstance(payload, dict)
+        and payload.get("source_health_contract_version")
+        == SOURCE_HEALTH_CONTRACT_VERSION
     )
 
 
@@ -1431,6 +1585,8 @@ def main() -> int:
         "accepted_candidates": [],
         "rejected_candidates": [],
         "audit_added_candidates": 0,
+        "source_corroboration_count": 0,
+        "source_corroborations": [],
         "editorial_rerun_required": False,
         "editorial_rerun_performed": False,
         "editorial_completion_required": False,
@@ -1488,10 +1644,25 @@ def main() -> int:
         )
         candidate_pool = report["candidate_pool_before"]
 
+        search_window = research.get("search_window")
+        if not isinstance(search_window, dict):
+            raise RuntimeError("candidates.json не содержит search_window")
+        modern_primary_artifact = (args.artifact_dir / "primary-recall.json").is_file()
+        source_health_rescue_needed = bool(
+            modern_primary_artifact
+            and candidate_pool["total"] > 0
+            and not _candidates_have_fresh_agency_source(
+                research["candidates"], search_window
+            )
+        )
+        report["source_health_contract_required"] = modern_primary_artifact
+        report["source_health_rescue_needed"] = source_health_rescue_needed
+
         if (
             artifact_mode == "complete"
             and before["publication_allowed"]
             and before["usual_target_met"]
+            and not source_health_rescue_needed
         ):
             apply_short_edition_marker(args.artifact_dir, short_edition=False)
             report["status"] = "ok"
@@ -1506,10 +1677,13 @@ def main() -> int:
         report["audit_needed"] = (
             not before["usual_target_met"]
             or candidate_pool["total"] < args.usual_total
+            or source_health_rescue_needed
         )
         additional_candidates: list[Any] = []
         prior_attempted = prior_audit_attempted(prior_report)
-        prior_complete = completed_prior_audit(prior_report)
+        prior_complete = completed_prior_audit_for_source_health(
+            prior_report, source_health_rescue_needed=source_health_rescue_needed
+        )
         if report["audit_needed"] and not prior_complete:
             api_key = os.getenv("OPENAI_API_KEY", "").strip()
             if not api_key:
@@ -1538,6 +1712,7 @@ def main() -> int:
                         existing_candidates=research["candidates"],
                         archive=archive,
                         prior_plan=prior_report if prior_attempted else None,
+                        source_health_rescue_needed=source_health_rescue_needed,
                     )
                 except Exception as exc:
                     report["audit_error"] = (
@@ -1699,14 +1874,19 @@ def main() -> int:
                 + " Публикация, генерация изображения и deploy заблокированы."
             )
 
-        if additional_candidates:
+        corroborated_research, source_corroborations, remaining_candidates = (
+            apply_agency_corroborations(research, additional_candidates)
+        )
+        report["source_corroborations"] = source_corroborations
+        report["source_corroboration_count"] = len(source_corroborations)
+        if remaining_candidates:
             merged, accepted, rejected = merge_candidates(
-                research,
-                additional_candidates,
+                corroborated_research,
+                remaining_candidates,
                 maximum_candidates=args.maximum_candidates,
             )
         else:
-            merged = copy.deepcopy(research)
+            merged = copy.deepcopy(corroborated_research)
             accepted = []
             rejected = []
         report["accepted_candidates"] = [
@@ -1723,7 +1903,7 @@ def main() -> int:
         ]
         report["rejected_candidates"] = rejected
         report["audit_added_candidates"] = len(accepted)
-        report["editorial_rerun_required"] = bool(accepted)
+        report["editorial_rerun_required"] = bool(accepted or source_corroborations)
         report["editorial_completion_required"] = artifact_mode != "complete"
         report["candidate_pool_after"] = eligible_candidate_summary(merged["candidates"])
         pool_after = report["candidate_pool_after"]
@@ -1740,6 +1920,7 @@ def main() -> int:
             artifact_mode == "complete"
             and before["publication_allowed"]
             and not accepted
+            and not source_corroborations
         ):
             short_edition = bool(before["short_digest"])
             apply_short_edition_marker(
@@ -1780,7 +1961,7 @@ def main() -> int:
                 maximum_selected_stories=args.maximum_selected_stories,
             )
         except Exception as exc:
-            if initial_snapshot and before["publication_allowed"]:
+            if initial_snapshot and before["publication_allowed"] and not source_corroborations:
                 restore_artifact(args.artifact_dir, initial_snapshot)
                 short_edition = bool(before["short_digest"])
                 apply_short_edition_marker(
@@ -1802,7 +1983,7 @@ def main() -> int:
                 print(json.dumps(report, ensure_ascii=False, indent=2))
                 return 0
             raise
-        report["editorial_rerun_performed"] = bool(accepted)
+        report["editorial_rerun_performed"] = bool(accepted or source_corroborations)
         report["editorial_completion_performed"] = artifact_mode != "complete"
         rerun_stories = read_json(args.artifact_dir / "stories.json")
         if not isinstance(rerun_stories, list):
@@ -1814,7 +1995,7 @@ def main() -> int:
         )
         report["after"] = after
         if not after["publication_allowed"]:
-            if initial_snapshot and before["publication_allowed"]:
+            if initial_snapshot and before["publication_allowed"] and not source_corroborations:
                 restore_artifact(args.artifact_dir, initial_snapshot)
                 apply_short_edition_marker(
                     args.artifact_dir,

@@ -458,3 +458,33 @@ recovery-артефакта является допустимым provenance gap
 ошибкой. Настоящие сбои классифицируются как `image_preflight`,
 `image_api_transport`, `image_api_http` или `image_api_response`. Один запуск
 обложки делает максимум один Images API POST и не имеет внутреннего retry-loop.
+
+## Fresh-agency source-health rescue
+
+После шести обязательных Coverage-направлений седьмой слот имеет два строго
+взаимоисключающих назначения. При нулевом пригодном пуле выполняется текущий
+source-neutral recall sentinel v8. При ненулевом modern pool, если policy-layer
+явно установил `source_health_rescue_needed` и в validated candidate pool нет
+свежего Reuters/AP/Bloomberg/FT primary source, тот же слот выполняет один
+`fresh_agency_rescue` v7.
+
+Target выбирается детерминированно из уже найденных include/consider событий с
+высокой вероятностью агентского покрытия: сначала funding/M&A, затем
+investment/infrastructure, затем partnership. Денежный query прежде всего
+использует фактические anchors из заголовка, например
+`Databricks $5 billion $190 billion`; fallback остаётся коротким date-free
+natural-language query. Rescue выполняет ровно один Web Search без
+`allowed_domains`. Отсутствие domain filter относится только к retrieval ranking:
+acceptance требует прямой `reuters.com`, `apnews.com`, `bloomberg.com` или
+`ft.com` URL, fresh in-window date и точное совпадение target по
+`organization`, `event_type`, `published_date`.
+
+Принятое corroboration не проходит normal merge как отдельная новость. Оно
+повышает agency source до `primary_source` исходного candidate, переносит прежний
+primary в `supporting_sources` и требует editorial rerun. Если подтверждение не
+найдено или технически не завершено, source-health остаётся fail-closed.
+Versioned source-health recovery может переиспользовать шесть уже оплаченных
+Coverage-проходов и потратить только новый rescue slot. Общий предел остаётся
+12 + до 4 + до 7 = 23 search operations. Live Web Search smoke допустим как
+диагностика retrieval, но не как обязательный детерминированный CI assert на
+наличие конкретной внешней статьи.
