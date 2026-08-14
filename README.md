@@ -27,7 +27,11 @@ fresh Primary Recall v2 использует **effective discovery window** с �
 24-часовым overlap перед continuity anchor. Сам архивный `search_cutoff_at` назад
 не двигается. Уже опубликованные URL и события отсекаются антидублями; overlap
 не является неограниченным backfill и не разрешает повторную публикацию старых
-сюжетов.
+сюжетов. При этом search query теперь **continuity-first**: первые 24 часа
+расширенного effective window остаются допустимым healing overlap, но даты
+поисковой строки и ranking в первую очередь ориентируются на основной период от
+continuity anchor до текущего cutoff. Так overlap лечит старые пропуски, не
+вытесняя свежие события нового выпуска.
 
 | Workflow | Назначение |
 |---|---|
@@ -91,10 +95,15 @@ repository hygiene: в policy она отдельно классифицируе
 6. `major_agencies` намеренно использует узкий API domain filter только для
    Reuters, AP, Bloomberg и Financial Times. Общего whitelist для остальных
    направлений нет. Фактический query должен быть короткой natural-language
-   поисковой фразой с календарными датами effective window. В query запрещены
-   `after:`/`before:`, длинные Boolean `OR`-цепочки, скобки и огромные списки
-   компаний. `major_agencies` полагается на API domain filter плюс компактный
-   AI/date query; кандидат принимается по фактической дате/timestamp источника.
+   поисковой фразой с календарными датами **основного continuity-периода после
+   24-часового healing overlap**, а полное effective window остаётся границей
+   допустимости кандидата. В query запрещены `after:`/`before:`, длинные Boolean
+   `OR`-цепочки, скобки и огромные списки компаний. High-signal routing разделён:
+   `global_breaking` даёт Reuters-focused шанс крупным funding/M&A/business
+   событиям; `major_agencies` использует source-neutral AI/date query внутри
+   своего Reuters/AP/Bloomberg/FT domain filter; `independent_missing_events`
+   делает независимый AP-focused consumer/major-tech/policy sweep. Это routing
+   ranking, а не whitelist кандидатов или квота на публикацию.
 7. Китай/Азия намеренно разделены на два прохода. Исторический эксперимент на
    окне выпуска 2026-08-11 показал, что одна широкая China/Asia-проверка
    обнаружила 5 из 6 контрольных событий, но пропустила продуктовую интеграцию
@@ -153,7 +162,10 @@ repository hygiene: в policy она отдельно классифицируе
     объединённом primary + completeness пуле, разрешается **один** adaptive gap
     search. Жёсткий потолок слоя — 4 search operations, обычный расход — 3.
     Hybrid не имеет API domain filter и тоже может использовать ограниченную
-    навигацию после своего единственного search каждого прохода.
+    навигацию после своего единственного search каждого прохода. Его query
+    discipline теперь также continuity-first: даты берутся от начала основного
+    периода после 24-часового healing overlap до текущего cutoff, при этом
+    обнаруженный overlap-кандидат всё ещё может пройти обычную проверку.
 15. Hybrid-кандидаты проходят тот же строгий `story_coverage` validator,
     дедупликацию по URL/событию и лимит пула. Editorial повторяется только если
     принят хотя бы один новый кандидат. Объединённый research для rerun также
@@ -166,10 +178,12 @@ repository hygiene: в policy она отдельно классифицируе
     тематических Web Search-проходов и один резервный слот. Production targeted
     passes получают одну search operation и небольшой navigation allowance для
     проверки страниц. Исторические multi-search callers сохраняют прежний hard
-    tool-call cap. Если обязательное направление технически не завершено, резерв
-    тратится на его повтор. Если все шесть завершены, но итоговый пригодный пул
-    всё ещё нулевой, тот же седьмой search становится
-    `high_signal_recall_sentinel` версии 7.
+    tool-call cap. Coverage query discipline совпадает с Primary/Hybrid:
+    основной continuity-период имеет поисковый приоритет, первые 24 часа
+    effective window остаются только healing overlap. Если обязательное
+    направление технически не завершено, резерв тратится на его повтор. Если
+    все шесть завершены, но итоговый пригодный пул всё ещё нулевой, тот же
+    седьмой search становится `high_signal_recall_sentinel` версии 7.
 17. `gpt-image-2` создаёт одну PNG-обложку 1536×864; валидатор проверяет её
     технический контракт.
 18. Legacy-staging исторических обложек работает как best-effort слой
@@ -433,6 +447,14 @@ Production-artifacts создаются с `retention-days: 14`, но инжен
 дедупликация остаётся обязательной. Например, старый пропуск внутри 24 часов
 может вернуться, но событие за пределами overlap не воскресает бесконечно.
 
+Для query planning это окно теперь делится на две роли. Первые 24 часа от
+effective start до continuity anchor являются healing overlap. Основной
+continuity-период начинается после них и продолжается до `search_window.end_at`;
+именно его календарные даты обязаны иметь приоритет в Primary, Hybrid и
+Coverage search queries. Полное effective window остаётся авторитетной границей
+валидации кандидатов, поэтому сильный пропуск из overlap по-прежнему может быть
+восстановлен.
+
 Контракт версионируется. Recovery не переиспользует legacy research без текущей
 версии temporal anchor, если локальная дата конца окна уже опережает UTC-дату.
 Для такого кросс-полуночного legacy artifact основной research выполняется
@@ -442,37 +464,53 @@ Production-artifacts создаются с `retention-days: 14`, но инжен
 повторную оплату только для доказанно ненадёжного временного класса artifact,
 сохраняя обычный recovery для остальных случаев.
 
-## Обновление retrieval после эксперимента 2026-08-13
+## Обновление retrieval после экспериментов 2026-08-13 и production 2026-08-14
 
-Production run `31652757802` дал ровно четыре raw candidates, editorial выбрал
-все четыре и все четыре были опубликованы. Значит крупные пропуски этого выпуска
-возникли до editorial. Regression fixture
+Production run `31652757802` за 13 августа дал ровно четыре raw candidates,
+editorial выбрал все четыре и все четыре были опубликованы. Значит крупные
+пропуски этого выпуска возникли до editorial. Regression fixture
 `automation/fixtures/recall/2026-08-13.json` закрепляет пять high-signal controls:
 Pixel 11/Gemini (AP), Nebius, River AI, IBM/Together AI и Nvidia Nemotron
 (Reuters). Source-focused natural-language searches по тому же effective window
 в совокупности восстановили все пять controls без увеличения бюджета.
 
-Primary сохраняет 12 search operations, но три broad slots получают разные
-retrieval anchors: `global_breaking` ищет Reuters business/funding/cloud/
-infrastructure, `major_agencies` ищет Reuters models/products/chips/
-infrastructure при прежнем Reuters/AP/Bloomberg/FT API filter, а
-`independent_missing_events` делает независимый Associated Press consumer-AI /
-major technology / policy sweep после просмотра уже найденного пула. Это routing
-для поискового ranking, а не whitelist кандидатов. Product-pass также обязан
-учитывать крупные consumer-device/OS/service launches, когда AI является
-существенной частью анонса.
+Следующий свежий production 14 августа показал новую деградацию: Primary,
+Hybrid и Coverage технически завершили свои search operations, но поисковые
+строки в основном использовали даты всего расширенного effective window вместе
+с healing overlap. В результате ranking систематически поднимал старые материалы,
+а несколько свежих high-signal событий continuity-периода не попали в candidate
+pool. Одновременно два broad Primary slots были Reuters-focused, то есть
+source-routing оказался недостаточно независимым даже при формально разных
+темах.
 
-Во всех трёх retrieval-слоях поисковые строки должны быть короткими
-natural-language queries, ориентир 6–18 значимых слов, с календарными датами
-обычным текстом. `after:`, `before:`, `site:`, длинные `OR`-цепочки, скобки и
-огромные перечни доменов/компаний запрещены. Hybrid больше не рекомендует
-`after:/before:`, а `general_coverage_gaps` использует свой API domain filter
-вместо ручной `site:foo OR site:bar ...` конструкции.
+После этого search budget не увеличивается, но query discipline уточнена.
+Primary, Hybrid и Coverage по-прежнему принимают кандидатов из полного effective
+window, однако поисковая строка в первую очередь использует календарные даты
+основного continuity-периода, начинающегося ровно через 24 часа после effective
+start. Healing overlap остаётся вторичной областью восстановления и не должен
+вытеснять свежие новости нового выпуска.
 
-Source-health для modern `primary-recall.json` с `search_window` теперь требует
-хотя бы одно свежее Reuters/AP/Bloomberg/FT evidence внутри effective window
-среди broad source-anchor passes. Dated Reuters/Bloomberg/FT URL либо verified
-in-window agency raw candidate считается evidence; stale author, newsletter,
-event и старые document pages не считаются. Это fail-closed health check, а не
-квота на агентские сюжеты. Worst-case search ceiling остаётся 23 operations:
-12 Primary + до 4 Hybrid + до 7 Coverage.
+High-signal routing Primary также разделён без новых search slots:
+`global_breaking` остаётся Reuters-focused для funding/acquisition/M&A/major
+business; `major_agencies` становится source-neutral внутри существующего
+Reuters/AP/Bloomberg/FT API filter и проверяет major AI news по моделям,
+продуктам, чипам, инфраструктуре и бизнесу; `independent_missing_events`
+остаётся независимым Associated Press-focused consumer-AI / major technology /
+policy sweep. Это routing поискового ranking, а не whitelist кандидатов.
+Остальные Primary directions остаются широкими и могут использовать официальные
+первоисточники, авторитетные технологические/деловые/отраслевые СМИ,
+регуляторов и исследовательские источники согласно обычным правилам качества.
+
+Во всех трёх retrieval-слоях поисковые строки остаются короткими
+natural-language queries, ориентир 6–18 значимых слов. `after:`, `before:`,
+`site:`, длинные `OR`-цепочки, скобки и огромные перечни доменов/компаний
+запрещены. `general_coverage_gaps` использует свой API domain filter вместо
+ручной `site:foo OR site:bar ...` конструкции.
+
+Source-health для modern `primary-recall.json` с `search_window` требует хотя бы
+одно свежее Reuters/AP/Bloomberg/FT evidence внутри effective window среди broad
+source-anchor passes. Dated Reuters/Bloomberg/FT URL либо verified in-window
+agency raw candidate считается evidence; stale author, newsletter, event и
+старые document pages не считаются. Это fail-closed health check, а не квота на
+агентские сюжеты. Worst-case search ceiling остаётся 23 operations: 12 Primary +
+до 4 Hybrid + до 7 Coverage.
