@@ -86,7 +86,7 @@ Responses-output ceiling для каждого Primary pass равен **6000 to
 Фиксированная матрица:
 
 1. `global_breaking` — широкий мировой discovery;
-2. `major_agencies` — Reuters, AP, Bloomberg, FT;
+2. `major_agencies` — дополнительный high-signal route по Bloomberg и FT;
 3. `models_products_agents` — модели, продукты, агенты, research;
 4. `infrastructure_chips_cloud` — чипы, дата-центры, cloud, energy, inference;
 5. `business_investment_partnerships` — инвестиции, M&A, financing,
@@ -440,3 +440,21 @@ ranking hint: фактическая дата/timestamp источника по-
 
 
 Source-health после перехода на source-neutral routing проверяет свежую Reuters/AP/Bloomberg/FT evidence по **всей 12-pass Primary matrix**, а не только в `global_breaking`/`major_agencies`/`independent_missing_events`: тематический pass вправе первым обнаружить сильный agency-материал. При этом `major_agencies` всё равно обязан завершить свою search operation и иметь хотя бы один consulted source, а общий anti-junk gate по источникам не ослабляется.
+
+## Recovery платных стадий и обложки
+
+Успешный `Validate publishable story count and short digest marker` фиксирует
+текстовый paid checkpoint. Ошибка на обложке или любом более позднем шаге не
+разрешает автоматически повторять Primary/Hybrid/Coverage/editorial: следующий
+run должен выбрать сохранённый artifact completeness rank 2 и продолжить с
+Image API. После валидной обложки recovery использует image-complete artifact и
+тоже не вызывает Images API заново. Artifact upload выполняется `if: always()`,
+поэтому поздняя красная стадия не уничтожает уже оплаченный результат.
+
+`generate_image_preview.py` разделяет идентификаторы: обязательный
+`image_request_id`, опциональный `source_editorial_request_id` и provider
+`openai_request_id` (`x-request-id`, если он есть). Отсутствующий editorial ID у
+recovery-артефакта является допустимым provenance gap, а не image-preflight
+ошибкой. Настоящие сбои классифицируются как `image_preflight`,
+`image_api_transport`, `image_api_http` или `image_api_response`. Один запуск
+обложки делает максимум один Images API POST и не имеет внутреннего retry-loop.

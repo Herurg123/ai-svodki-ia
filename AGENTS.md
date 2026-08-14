@@ -402,3 +402,23 @@ restored.
 
 
 Source-health после перехода на source-neutral routing проверяет свежую Reuters/AP/Bloomberg/FT evidence по **всей 12-pass Primary matrix**, а не только в `global_breaking`/`major_agencies`/`independent_missing_events`: тематический pass вправе первым обнаружить сильный agency-материал. При этом `major_agencies` всё равно обязан завершить свою search operation и иметь хотя бы один consulted source, а общий anti-junk gate по источникам не ослабляется.
+
+## Paid-stage recovery and image provenance
+
+A validated digest is a paid-stage checkpoint. Once `Validate publishable story
+count and short digest marker` has succeeded for a publication date, a later
+cover/build/commit/deploy failure must not cause Primary, Hybrid, Coverage or
+editorial to be repaid automatically. Recovery must reuse the highest-completeness
+non-expired artifact and resume from the first incomplete stage. A successfully
+validated cover is a still later checkpoint; FTP-only failure must reuse the
+committed release instead of regenerating research or the cover.
+
+Image provenance uses separate identities. `image_request_id` is mandatory for
+the image operation. `source_editorial_request_id` is optional provenance and
+must never block an otherwise valid recovered digest from reaching the Images
+API. Never fabricate an editorial ID from an image ID. A real Images API call
+should preserve the provider `x-request-id` when available. Image failures must
+be classified as local preflight, transport/HTTP, or response/contract failures
+so operators can distinguish a zero-cost metadata failure from a billable API
+attempt. Automatic image retries remain disabled; one production cover means at
+most one Images API call unless an operator explicitly starts a new recovery run.

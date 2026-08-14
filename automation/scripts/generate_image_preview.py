@@ -37,6 +37,47 @@ OUTPUT_FILES = {
 class ImageGenerationError(RuntimeError):
     """A safe error from the one-shot image generation stage."""
 
+    stage = "image_generation"
+
+
+class ImagePreflightError(ImageGenerationError):
+    """The local artifact/request contract failed before any Images API call."""
+
+    stage = "image_preflight"
+
+
+class ImageApiTransportError(ImageGenerationError):
+    """The Images API could not be reached."""
+
+    stage = "image_api_transport"
+
+
+class ImageApiHttpError(ImageGenerationError):
+    """The Images API returned an HTTP error."""
+
+    stage = "image_api_http"
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        http_status: int | None = None,
+        openai_request_id: str | None = None,
+        api_error_type: str | None = None,
+        api_error_code: str | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.http_status = http_status
+        self.openai_request_id = openai_request_id
+        self.api_error_type = api_error_type
+        self.api_error_code = api_error_code
+
+
+class ImageApiResponseError(ImageGenerationError):
+    """The Images API returned an unusable successful response."""
+
+    stage = "image_api_response"
+
 
 def load_json(path: Path, label: str) -> dict[str, Any]:
     try:
@@ -97,16 +138,16 @@ def safe_copy_source(source_dir: Path, output_dir: Path) -> list[str]:
 def parse_response_payload(payload: dict[str, Any]) -> tuple[bytes, dict[str, Any]]:
     data = payload.get("data")
     if not isinstance(data, list) or len(data) != 1 or not isinstance(data[0], dict):
-        raise ImageGenerationError("Images API должен вернуть ровно один data[] item")
+        raise ImageApiResponseError("Images API должен вернуть ровно один data[] item")
     encoded = data[0].get("b64_json")
     if not isinstance(encoded, str) or not encoded:
-        raise ImageGenerationError("Images API не вернул data[0].b64_json")
+        raise ImageApiResponseError("Images API не вернул data[0].b64_json")
     try:
         image_bytes = base64.b64decode(encoded, validate=True)
     except (ValueError, base64.binascii.Error) as exc:
-        raise ImageGenerationError("Images API вернул некорректный base64") from exc
+        raise ImageApiResponseError("Images API вернул некорректный base64") from exc
     if not image_bytes.startswith(b"\x89PNG\r\n\x1a\n"):
-        raise ImageGenerationError("Images API вернул данные без сигнатуры PNG")
+        raise ImageApiResponseError("Images API вернул данные без сигнатуры PNG")
     item = data[0]
     safe_metadata = {
         "created": payload.get("created"),
@@ -136,27 +177,52 @@ def default_transport(
         headers={
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
-            "User-Agent": "ai-svodki-image-preview/1.0",
+            "User-Agent": "ai-svodki-image-preview/1.1",
         },
     )
     try:
         with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
             response_body = response.read()
+            http_status = getattr(response, "status", None)
+            openai_request_id = str(response.headers.get("x-request-id") or "").strip() or None
     except urllib.error.HTTPError as exc:
         error_body = exc.read().decode("utf-8", errors="replace")[:4000]
-        raise ImageGenerationError(
-            f"Images API HTTP {exc.code}: {error_body}"
+        openai_request_id = str(
+            (exc.headers.get("x-request-id") if exc.headers is not None else "") or ""
+        ).strip() or None
+        api_error_type = None
+        api_error_code = None
+        api_message = error_body
+        try:
+            error_payload = json.loads(error_body)
+            error_object = error_payload.get("error") if isinstance(error_payload, dict) else None
+            if isinstance(error_object, dict):
+                api_message = str(error_object.get("message") or error_body)
+                api_error_type = str(error_object.get("type") or "").strip() or None
+                api_error_code = str(error_object.get("code") or "").strip() or None
+        except json.JSONDecodeError:
+            pass
+        raise ImageApiHttpError(
+            f"Images API HTTP {exc.code}: {api_message}",
+            http_status=exc.code,
+            openai_request_id=openai_request_id,
+            api_error_type=api_error_type,
+            api_error_code=api_error_code,
         ) from exc
     except urllib.error.URLError as exc:
-        raise ImageGenerationError(
+        raise ImageApiTransportError(
             f"Images API network error: {exc.reason}"
         ) from exc
     try:
         payload = json.loads(response_body.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise ImageGenerationError("Images API вернул некорректный JSON") from exc
+        raise ImageApiResponseError("Images API вернул некорректный JSON") from exc
     if not isinstance(payload, dict):
-        raise ImageGenerationError("Images API response должен быть JSON-объектом")
+        raise ImageApiResponseError("Images API response должен быть JSON-объектом")
+    payload["_transport"] = {
+        "http_status": http_status,
+        "openai_request_id": openai_request_id,
+    }
     return payload
 
 
@@ -180,7 +246,7 @@ def resolve_editorial_request_id(
     source_manifest: dict[str, Any],
     output_dir: Path,
     digest: dict[str, Any],
-) -> str:
+) -> str | None:
     value = str(source_manifest.get("editorial_request_id") or "").strip()
     if value:
         return value
@@ -199,7 +265,7 @@ def resolve_editorial_request_id(
     ).strip()
     if value:
         return value
-    raise ImageGenerationError("Не удалось определить editorial request ID")
+    return None
 
 
 def generate_image_artifact(
@@ -217,13 +283,13 @@ def generate_image_artifact(
     config = load_json(config_path, config_path.as_posix())
     request = load_json(request_path, request_path.as_posix())
     if request.get("enabled") is not True or request.get("mode") != "image_api_preview":
-        raise ImageGenerationError("Image request не активен или имеет неверный mode")
+        raise ImagePreflightError("Image request не активен или имеет неверный mode")
     if not api_key:
-        raise ImageGenerationError("OPENAI_API_KEY отсутствует")
+        raise ImagePreflightError("OPENAI_API_KEY отсутствует")
 
     target_model = str(config.get("target_model", "")).strip()
     if model != target_model:
-        raise ImageGenerationError(
+        raise ImagePreflightError(
             f"OPENAI_IMAGE_MODEL не совпадает с config: {model!r} != {target_model!r}"
         )
 
@@ -262,7 +328,7 @@ def generate_image_artifact(
     )
     request_id = str(request.get("request_id", "")).strip()
     if not request_id:
-        raise ImageGenerationError("Image request_id отсутствует")
+        raise ImagePreflightError("Image request_id отсутствует")
 
     api_request = {
         "model": model,
@@ -274,12 +340,16 @@ def generate_image_artifact(
         "background": "opaque",
     }
     started_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    print("Image preflight: ok; calling Images API once.")
     response_payload = transport(
         api_url=api_url,
         api_key=api_key,
         request_payload=api_request,
         timeout_seconds=timeout_seconds,
     )
+    transport_metadata = response_payload.get("_transport")
+    if not isinstance(transport_metadata, dict):
+        transport_metadata = {}
     image_bytes, safe_response = parse_response_payload(response_payload)
     finished_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
 
@@ -293,6 +363,7 @@ def generate_image_artifact(
         "status": "ok",
         "mode": "image_api_preview",
         "request_id": request_id,
+        "image_request_id": request_id,
         "target_model": target_model,
         "requested_size": size,
         "quality": quality,
@@ -307,6 +378,7 @@ def generate_image_artifact(
         "source_manifest": manifest_name,
         "source_manifest_sha256": source_manifest_sha256,
         "editorial_request_id": editorial_request_id,
+        "source_editorial_request_id": editorial_request_id,
         "network_used": True,
         "openai_used": True,
         "retry_count": 0,
@@ -317,6 +389,8 @@ def generate_image_artifact(
         "status": "ok",
         "mode": "image_api_preview",
         "request_id": request_id,
+        "image_request_id": request_id,
+        "source_editorial_request_id": editorial_request_id,
         "source": "openai_images_api",
         "endpoint": "/v1/images/generations",
         "artifact_filename": artifact_filename,
@@ -341,6 +415,9 @@ def generate_image_artifact(
         "request_id": request_id,
         "model": model,
         "endpoint": "/v1/images/generations",
+        "http_status": transport_metadata.get("http_status"),
+        "openai_request_id": transport_metadata.get("openai_request_id"),
+        "source_editorial_request_id": editorial_request_id,
         "request": {
             "size": size,
             "quality": quality,
@@ -406,11 +483,17 @@ def main() -> int:
         print("API calls: 1; retries: 0")
         return 0
     except Exception as exc:
+        stage = str(getattr(exc, "stage", "image_generation"))
         error = {
             "status": "error",
-            "stage": "image_api_preview",
+            "stage": stage,
             "error_type": type(exc).__name__,
             "message": str(exc),
+            "api_attempted": stage.startswith("image_api_"),
+            "http_status": getattr(exc, "http_status", None),
+            "openai_request_id": getattr(exc, "openai_request_id", None),
+            "api_error_type": getattr(exc, "api_error_type", None),
+            "api_error_code": getattr(exc, "api_error_code", None),
             "api_key_stored": False,
             "failed_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         }
@@ -418,7 +501,7 @@ def main() -> int:
             write_json(output_dir / "image-api-error.json", error)
         except OSError:
             pass
-        print(f"Image API preview failed: {exc}", file=sys.stderr)
+        print(f"Image stage failed [{stage}]: {exc}", file=sys.stderr)
         return 1
 
 
