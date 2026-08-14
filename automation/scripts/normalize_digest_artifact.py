@@ -40,11 +40,6 @@ AGENCY_DISCOVERY_DOMAINS = (
     "bloomberg.com",
     "ft.com",
 )
-SOURCE_ANCHOR_DIRECTIONS = (
-    "global_breaking",
-    "major_agencies",
-    "independent_missing_events",
-)
 URL_DATE_PATTERN = re.compile(r"(20\d{2})-(\d{2})-(\d{2})(?:/|$)")
 FRESH_PRIMARY_PIPELINE = "primary_recall_v2_then_editorial"
 
@@ -303,34 +298,30 @@ def validate_primary_source_health(artifact_dir: Path) -> None:
             "источников вне Wikipedia/Reddit/arXiv."
         )
 
-    # Starting with the 2026-08-13 incident, merely consulting a Bloomberg author
-    # page or an old newsletter is no longer sufficient evidence that the broad
-    # news layer is healthy. When modern diagnostics contain an effective window,
-    # require at least one source-anchor pass to show an in-window agency article.
-    # Reuters/Bloomberg/FT usually expose YYYY-MM-DD in the URL; AP can satisfy
-    # the same check through a verified raw candidate whose published_date is in
-    # the window. Legacy Primary artifacts without search_window keep their older
-    # compatibility behavior.
+    # Merely consulting a Bloomberg author page or an old newsletter is not
+    # sufficient evidence that current-news retrieval is healthy. With the
+    # source-neutral routing introduced after the 2026-08-14 live experiment,
+    # publisher placement is no longer an invariant: a fresh Reuters/AP/
+    # Bloomberg/FT candidate may legitimately be discovered by security,
+    # business, regional, developer or another thematic Primary direction.
+    # Therefore modern diagnostics require fresh agency evidence anywhere in the
+    # completed 12-pass Primary matrix, not specifically in former anchor slots.
+    # Legacy Primary artifacts without search_window keep compatibility behavior.
     window_days = _primary_window_dates(primary)
     if window_days is not None:
         start_day, end_day = window_days
-        anchor_directions = [
-            item
-            for item in directions
-            if isinstance(item, dict)
-            and item.get("direction_id") in SOURCE_ANCHOR_DIRECTIONS
-        ]
         if not any(
             _direction_has_fresh_agency_evidence(
                 item, start_day=start_day, end_day=end_day
             )
-            for item in anchor_directions
+            for item in directions
+            if isinstance(item, dict)
         ):
             raise NormalizationError(
-                "Primary Recall source-health degraded: broad source-anchor passes "
-                "не подтвердили ни одного свежего Reuters/AP/Bloomberg/FT материала "
-                "в effective window; служебные, author и старые newsletter URL не "
-                "считаются доказательством свежего agency retrieval."
+                "Primary Recall source-health degraded: ни одно из 12 Primary-направлений "
+                "не подтвердило свежий Reuters/AP/Bloomberg/FT материал в effective "
+                "window; служебные, author и старые newsletter URL не считаются "
+                "доказательством свежего agency retrieval."
             )
 
 

@@ -399,3 +399,6 @@ sentinel are source-neutral catch-alls. If Hybrid finds valid candidates but its
 immediate editorial rerun fails, the merged candidate pool must still be handed
 to Coverage instead of being lost when the primary editorial artifact is
 restored.
+
+
+Source-health после перехода на source-neutral routing проверяет свежую Reuters/AP/Bloomberg/FT evidence по **всей 12-pass Primary matrix**, а не только в `global_breaking`/`major_agencies`/`independent_missing_events`: тематический pass вправе первым обнаружить сильный agency-материал. При этом `major_agencies` всё равно обязан завершить свою search operation и иметь хотя бы один consulted source, а общий anti-junk gate по источникам не ослабляется.

@@ -128,7 +128,39 @@ class FreshPrimaryArtifactNormalizationTests(unittest.TestCase):
             )
             with self.assertRaises(normalizer.NormalizationError) as ctx:
                 normalizer.normalize_artifact(artifact, artifact / "artifact-normalization.json")
-            self.assertIn("свежего Reuters/AP/Bloomberg/FT", str(ctx.exception))
+            self.assertIn("Reuters/AP/Bloomberg/FT", str(ctx.exception))
+
+    def test_fresh_agency_candidate_in_thematic_direction_is_source_health_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            artifact = self.make_artifact(
+                Path(tmp),
+                agency_sources=[
+                    "https://www.bloomberg.com/authors/EXAMPLE/example-author",
+                ],
+                other_sources=["https://openai.com/index/example"],
+                with_search_window=True,
+            )
+            primary_path = artifact / "primary-recall.json"
+            primary = json.loads(primary_path.read_text(encoding="utf-8"))
+            primary["directions"].append(
+                {
+                    "direction_id": "security_safety",
+                    "web_search_calls_completed": 1,
+                    "raw_candidates": [
+                        {
+                            "published_date": "2026-08-12",
+                            "primary_source": {
+                                "url": "https://www.ft.com/content/fresh-security-story"
+                            },
+                        }
+                    ],
+                    "api": {"consulted_sources": []},
+                }
+            )
+            write_json(primary_path, primary)
+            normalizer.normalize_artifact(
+                artifact, artifact / "artifact-normalization.json"
+            )
 
     def test_current_dated_reuters_article_is_fresh_source_health_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:

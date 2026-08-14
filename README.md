@@ -529,3 +529,6 @@ ranking hint: фактическая дата/timestamp источника по-
 против полного effective window. Broad safety nets не привязаны к одному
 издателю. Если Hybrid добавил валидный candidate, но immediate editorial rerun
 упал, объединённый pool всё равно передаётся Coverage.
+
+
+Source-health после перехода на source-neutral routing проверяет свежую Reuters/AP/Bloomberg/FT evidence по **всей 12-pass Primary matrix**, а не только в `global_breaking`/`major_agencies`/`independent_missing_events`: тематический pass вправе первым обнаружить сильный agency-материал. При этом `major_agencies` всё равно обязан завершить свою search operation и иметь хотя бы один consulted source, а общий anti-junk gate по источникам не ослабляется.
