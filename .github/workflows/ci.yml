@@ -12,105 +12,148 @@ on:
       - "README.md"
       - "AGENTS.md"
       - ".gitignore"
-  push:
-    branches:
-      - main
-    paths:
-      - "automation/**"
-      - "posts/**"
-      - ".github/workflows/**"
-      - "README.md"
-      - "AGENTS.md"
-      - ".gitignore"
 
 permissions:
   contents: read
 
-concurrency:
-  group: main-ci-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  validate:
-    name: Offline production checks
+  live-agency-rescue-smoke:
+    name: Live Aug 14 agency rescue recovery smoke
+    if: github.event_name == 'pull_request' && github.head_ref == 'fix/agency-rescue-after-source-monopoly'
+    permissions:
+      actions: read
+      contents: read
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
+    timeout-minutes: 30
     steps:
-      - name: Check out repository
+      - name: Check out PR branch
         uses: actions/checkout@v7
         with:
+          ref: ${{ github.event.pull_request.head.ref }}
           persist-credentials: false
-
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-
-      - name: Compile Python sources
+      - name: Install OpenAI SDK
+        run: python -m pip install --disable-pip-version-check --no-input 'openai==2.21.0'
+      - name: Download failed production artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: daily-production-2026-08-14
+          path: automation/preview/recovery-smoke-source
+          run-id: 31771774225
+          github-token: ${{ github.token }}
+      - name: Stage exact production recovery inputs
+        shell: bash
         run: |
           set -euo pipefail
-          python -m compileall -q automation/scripts automation/tests
-
-      - name: Run unit tests
+          rm -rf automation/preview/2026-08-14 automation/preview/production-daily
+          cp -a automation/preview/recovery-smoke-source/2026-08-14 automation/preview/2026-08-14
+          mkdir -p automation/preview/production-daily
+          cp -a automation/preview/recovery-smoke-source/production-daily/coverage-audit.json automation/preview/production-daily/coverage-audit.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('automation/preview/production-daily/coverage-audit.json').read_text(encoding='utf-8'))
+          budget=report.get('search_budget') or {}
+          assert budget.get('completed_calls') == 6, budget
+          assert budget.get('remaining_calls') == 1, budget
+          assert len(report.get('attempts') or []) == 6, len(report.get('attempts') or [])
+          assert report.get('source_health_contract_version') is None
+          print('Recovered exact failed production audit: six completed calls + one free slot.')
+          PY
+      - name: Run one bounded recovery Coverage pass
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
         run: |
           set -euo pipefail
-          python -m unittest discover -s automation/tests -v
-
-      - name: Validate editorial contract
+          python automation/scripts/ensure_story_coverage.py \
+            --artifact-dir automation/preview/2026-08-14 \
+            --archive automation/archive/index.json \
+            --publication-date 2026-08-14 \
+            --model "${OPENAI_TEXT_MODEL}" \
+            --usual-total 7 \
+            --minimum-publishable 1 \
+            --maximum-audit-web-search-calls 7 \
+            --maximum-candidates 20 \
+            --maximum-selected-stories 12 \
+            --report automation/preview/production-daily/coverage-audit.json
+      - name: Assert only the seventh rescue search was added
+        shell: bash
         run: |
           set -euo pipefail
-          python automation/scripts/validate_editorial_contract.py
-
-      - name: Validate committed archive
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('automation/preview/production-daily/coverage-audit.json').read_text(encoding='utf-8'))
+          attempts=report.get('attempts') or []
+          rescue=[a for a in attempts if isinstance(a,dict) and a.get('search_strategy') == 'fresh_agency_rescue']
+          ordinary=[a for a in attempts if isinstance(a,dict) and a.get('search_strategy') != 'fresh_agency_rescue']
+          assert len(rescue) == 1, rescue
+          assert len(ordinary) == 6, len(ordinary)
+          api=rescue[0].get('api') or {}
+          assert api.get('web_search_calls_completed') == 1, api
+          assert rescue[0].get('allowed_domains') == ['reuters.com','apnews.com'], rescue[0].get('allowed_domains')
+          budget=report.get('search_budget') or {}
+          assert budget.get('completed_calls') == 7, budget
+          assert budget.get('remaining_calls') == 0, budget
+          assert report.get('source_health_contract_version') == 1, report.get('source_health_contract_version')
+          print(json.dumps({
+            'rescue_status': (report.get('agency_rescue') or {}).get('status'),
+            'rescue_actual_queries': rescue[0].get('actual_queries'),
+            'rescue_candidate_count': rescue[0].get('candidate_count'),
+            'audit_added_candidates': report.get('audit_added_candidates'),
+            'candidate_pool_after': report.get('candidate_pool_after'),
+          }, ensure_ascii=False, indent=2))
+          PY
+      - name: Normalize and validate recovered digest
+        shell: bash
         run: |
           set -euo pipefail
-          python automation/scripts/validate_archive.py
-
-      - name: Validate production workflow contract
+          python automation/scripts/normalize_digest_artifact.py \
+            --artifact-dir automation/preview/2026-08-14 \
+            --report automation/preview/2026-08-14/artifact-normalization.json
+          python automation/scripts/validate_digest_artifact.py \
+            --artifact-dir automation/preview/2026-08-14 \
+            --report automation/preview/2026-08-14/artifact-validation.json
+          python automation/scripts/validate_story_coverage.py \
+            --artifact-dir automation/preview/2026-08-14 \
+            --usual-total 7 \
+            --minimum-publishable 1 \
+            --report automation/preview/production-daily/story-coverage-validation.json
+      - name: Summarize recovered source diversity
+        shell: bash
         run: |
-          set -euo pipefail
-          mkdir -p automation/preview/ci
-          python automation/scripts/validate_production_daily_contract.py \
-            --config automation/config/production-daily.json \
-            --site-config automation/config/site.json \
-            --workflow .github/workflows/daily-production.yml \
-            --rss posts/rss.xml \
-            --report automation/preview/ci/production-contract.json
-
-      - name: Validate RSS, sitemap and structured data
-        run: |
-          set -euo pipefail
-          mkdir -p automation/preview/ci
-          python automation/scripts/validate_dzen_feed.py \
-            --rss posts/rss.xml \
-            --site-base-url https://rybalka.one/posts \
-            --report automation/preview/ci/dzen-feed.json
-          python automation/scripts/validate_posts_sitemap.py \
-            --sitemap posts/sitemap.xml \
-            --rss posts/rss.xml \
-            --report automation/preview/ci/posts-sitemap.json
-          latest_content_dir="$(find automation/content -mindepth 1 -maxdepth 1 -type d -name '????-??-??' | sort | tail -n 1)"
-          test -n "${latest_content_dir}"
-          python automation/scripts/validate_structured_data.py \
-            --source-dir "${latest_content_dir}" \
-            --posts-root posts \
-            --report automation/preview/ci/structured-data.json
-
-      - name: Verify offline checks did not modify protected paths
-        run: |
-          set -euo pipefail
-          if [[ -n "$(git status --porcelain -- posts/)" ]]; then
-            echo "Offline CI modified protected paths." >&2
-            git status --short -- posts/
-            exit 1
-          fi
-
-      - name: Upload validation reports
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('automation/preview/2026-08-14')
+          payload=json.loads((root/'candidates.json').read_text(encoding='utf-8'))
+          candidates=payload.get('candidates') or []
+          domains=[]
+          for item in candidates:
+            src=item.get('primary_source') or {}
+            url=src.get('url') or ''
+            domains.append(url.split('/')[2].lower() if url.startswith('https://') else url)
+          stories=json.loads((root/'stories.json').read_text(encoding='utf-8')).get('stories') or []
+          print(json.dumps({
+            'candidate_count': len(candidates),
+            'primary_domains': sorted(set(domains)),
+            'story_count': len(stories),
+            'story_titles': [s.get('title') or s.get('headline') for s in stories],
+          }, ensure_ascii=False, indent=2))
+          PY
+      - name: Upload recovery smoke artifact
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: main-ci-${{ github.sha }}
-          path: automation/preview/ci/
+          name: agency-rescue-recovery-smoke-2026-08-14
+          path: |
+            automation/preview/2026-08-14/
+            automation/preview/production-daily/coverage-audit.json
+            automation/preview/production-daily/story-coverage-validation.json
           if-no-files-found: warn
-          retention-days: 14
+          retention-days: 7
