@@ -38,8 +38,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          rm -rf /tmp/aug15-repair /tmp/aug15-repair.zip
-          mkdir -p /tmp/aug15-repair
+          rm -rf /tmp/aug15-repair /tmp/aug15-repair.zip automation/preview/repair-replay
+          mkdir -p /tmp/aug15-repair automation/preview/repair-replay/candidate automation/preview/repair-replay/image
           curl -L --fail --silent --show-error \
             -H "Authorization: Bearer ${GH_TOKEN}" \
             -H "Accept: application/vnd.github+json" \
@@ -60,6 +60,8 @@ jobs:
           assert cover_validation['status'] == 'ok'
           print('Validated repair artifact: 4 stories, site ok, cover ok.')
           PY
+          cp -a /tmp/aug15-repair/production-daily/candidate/posts automation/preview/repair-replay/candidate/posts
+          cp -a /tmp/aug15-repair/production-daily/image/2026-08-15 automation/preview/repair-replay/image/2026-08-15
 
       - name: Remove only current broken latest release in ephemeral checkout
         shell: bash
@@ -108,12 +110,12 @@ jobs:
           set -euo pipefail
           python automation/scripts/promote_production_site.py \
             --config automation/config/production-daily.json \
-            --candidate-posts /tmp/aug15-repair/production-daily/candidate/posts \
+            --candidate-posts automation/preview/repair-replay/candidate/posts \
             --live-posts posts \
-            --source-dir /tmp/aug15-repair/production-daily/image/2026-08-15 \
+            --source-dir automation/preview/repair-replay/image/2026-08-15 \
             --content-root automation/content \
             --publication-date "${PUBLICATION_DATE}" \
-            --report /tmp/aug15-repair/promotion-replay.json
+            --report automation/preview/repair-replay/promotion-replay.json
 
       - name: Rebuild archive from replacement
         run: python automation/scripts/bootstrap_archive.py
@@ -128,7 +130,7 @@ jobs:
           python automation/scripts/validate_rss.py --rss posts/rss.xml
           python automation/scripts/validate_dzen_feed.py \
             --rss posts/rss.xml \
-            --report /tmp/aug15-repair/final-dzen-feed-validation.json
+            --report automation/preview/repair-replay/final-dzen-feed-validation.json
 
       - name: Stage only canonical replacement paths
         shell: bash
@@ -136,7 +138,7 @@ jobs:
           set -euo pipefail
           python automation/scripts/validate_publish_changes.py \
             --publication-date "${PUBLICATION_DATE}" \
-            --report /tmp/aug15-repair/publish-changes.json
+            --report automation/preview/repair-replay/publish-changes.json
           git diff --cached --stat
 
       - name: Commit validated replacement to PR branch only
