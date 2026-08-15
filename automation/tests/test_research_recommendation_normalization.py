@@ -12,6 +12,7 @@ if str(SCRIPTS) not in sys.path:
 
 from editorial_policy_runtime import (  # noqa: E402
     normalize_research_recommendations,
+    patch_editorial_source_validation,
     wrap_research_sanitizer,
 )
 
@@ -99,6 +100,38 @@ class ResearchRecommendationNormalizationTests(unittest.TestCase):
             and item["significance_score"] < 3
         ]
         self.assertEqual(violations, [])
+
+    def test_production_patch_seam_wraps_research_sanitizer(self) -> None:
+        class FakeGenerator:
+            @staticmethod
+            def normalize_url(value: str) -> str:
+                return value
+
+            @staticmethod
+            def sanitize_research_candidates(research: dict, *args, **kwargs):
+                del args, kwargs
+                return copy.deepcopy(research), [], []
+
+            @staticmethod
+            def validate_editorial(editorial: dict, research: dict, *args, **kwargs):
+                del editorial, research, args, kwargs
+                return [], []
+
+        generator = FakeGenerator()
+        patch_editorial_source_validation(generator)
+        sanitized, _filtered, warnings = generator.sanitize_research_candidates(
+            {
+                "candidates": [
+                    {
+                        "id": "cand-001",
+                        "significance_score": 1,
+                        "recommendation": "include",
+                    }
+                ]
+            }
+        )
+        self.assertEqual(sanitized["candidates"][0]["recommendation"], "consider")
+        self.assertTrue(any("include→consider" in warning for warning in warnings))
 
     def test_wrapper_preserves_unrelated_validator_failures(self) -> None:
         research = {
