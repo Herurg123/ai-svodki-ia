@@ -4,18 +4,25 @@
   "date": "2026-08-15",
   "slug": "2026-08-15",
   "title": "ИИ-Сводка на 15 августа 2026",
-  "description": "Google разрешит отключать видимые водяные знаки на ИИ-генерациях в Gemini и Flow, сохраняя SynthID и метаданные происхождения. Изменение меняет баланс между удобством публикации и прозрачностью синтетического контента.",
+  "description": "OpenAI ускоряет GPT-5.6 Sol вместе с Cerebras, Microsoft объединяет Copilot, Writer снижает стоимость агентных систем, а Nvidia участвует в развитии оптоволоконных ИИ-коридоров.",
   "published_at": "2026-08-15T06:00:00+03:00",
   "author": "ИИ-сводки",
   "cover_filename": "ai-svodka-2026-08-15.png",
   "topics": [
-    "Google",
-    "Gemini",
-    "Flow",
-    "SynthID",
-    "C2PA",
-    "маркировка ИИ-контента",
-    "происхождение медиа"
+    "OpenAI",
+    "GPT-5.6 Sol",
+    "Ultrafast",
+    "Cerebras",
+    "Microsoft Copilot",
+    "Writer",
+    "Palmyra X6",
+    "Z.ai",
+    "агенты ИИ",
+    "инференс",
+    "оптоволоконная инфраструктура",
+    "Zayo",
+    "Nvidia",
+    "дата-центры"
   ],
   "short_digest": true,
   "editorial_notes": [
@@ -25,9 +32,19 @@
       "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
     },
     {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-005."
+    },
+    {
       "type": "source_gap",
       "area": "research",
       "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Три выбранных материала TechCrunch описывают независимые значимые продуктовые события разных компаний — OpenAI, Microsoft и Writer; в пуле нет сопоставимых альтернативных публикаций с подтверждёнными деталями."
     }
   ]
 }

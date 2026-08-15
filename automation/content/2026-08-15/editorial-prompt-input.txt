@@ -8,7 +8,7 @@
 === ARCHIVE_CONTEXT_BEGIN ===
 {
   "version": 2,
-  "generated_at": "2026-08-15T03:48:31+00:00",
+  "generated_at": "2026-08-15T04:32:51+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
     {
@@ -5794,10 +5794,10 @@
   "error_message": null,
   "publication_date": "2026-08-15",
   "search_window": {
-    "start_at": "2026-08-14T07:36:56+03:00",
+    "start_at": "2026-08-13T07:36:56+03:00",
     "end_at": "2026-08-15T06:48:32+03:00",
     "latest_archive_at": "2026-08-14T07:36:56+03:00",
-    "start_date": "2026-08-14",
+    "start_date": "2026-08-13",
     "end_date": "2026-08-15",
     "latest_archive_date": "2026-08-14"
   },
@@ -5865,6 +5865,157 @@
   ],
   "candidates": [
     {
+      "title": "OpenAI представила preview-режим Ultrafast для GPT-5.6 Sol",
+      "organization": "OpenAI; Cerebras",
+      "published_date": "2026-08-13",
+      "published_at": "2026-08-13T12:22:00-07:00",
+      "time_precision": "datetime",
+      "topic": "ускоренный inference frontier-модели для корпоративных и агентных сценариев",
+      "event_type": "product_launch",
+      "keywords": [
+        "OpenAI",
+        "GPT-5.6 Sol",
+        "Ultrafast",
+        "Cerebras",
+        "inference",
+        "enterprise AI"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "OpenAI introduces ‘Ultrafast,’ a new mode that makes GPT-5.6 Sol work at 14x the speed",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/13/openai-introduces-ultrafast-a-new-mode-that-makes-gpt-5-6-sol-work-at-14x-the-speed/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Ultrafast",
+          "publisher": "OpenAI",
+          "url": "https://openai.com/"
+        }
+      ],
+      "event_summary": "OpenAI начала ограниченный preview режима Ultrafast для GPT-5.6 Sol. Компания заявляет скорость до 750 выходных токенов в секунду, или до 14 раз выше стандартной обработки; режим работает на инфраструктуре партнёра Cerebras и пока доступен небольшой группе клиентов.",
+      "verified_facts": [
+        "TechCrunch указал время публикации: 13 августа 2026 года, 12:22 PDT, что попадает в effective window.",
+        "Ultrafast выпущен в preview и предназначен для ускорения работы GPT-5.6 Sol.",
+        "Заявленная скорость составляет до 750 output tokens в секунду и до 14x относительно стандартной обработки.",
+        "Preview обеспечивается партнёрством OpenAI с Cerebras и расширяется по мере роста доступной мощности."
+      ],
+      "significance": "Это самостоятельное продуктовое и инфраструктурное событие: ускорение frontier-модели может существенно менять применимость модели в интерактивных агентных и корпоративных процессах, а также подчёркивает роль специализированной inference-инфраструктуры Cerebras.",
+      "significance_score": 3,
+      "limitations": "Числа о скорости являются заявлениями OpenAI; preview пока ограничен небольшим числом клиентов, а независимых сравнительных тестов в источнике нет.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве есть сюжеты о GPT-5.6/Daybreak и партнёрстве IBM—OpenAI, но нет режима Ultrafast или его интеграции с Cerebras.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверены точный timestamp, статус preview, заявленные характеристики и роль Cerebras по материалу TechCrunch, ссылающемуся на анонс OpenAI.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Отдельный анонс продукта опубликован внутри effective window; в архиве не обнаружен как ранее опубликованный сюжет.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не относится к судебному или регуляторному событию.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не является curiosity-кандидатом.",
+      "id": "cand-001"
+    },
+    {
+      "title": "Microsoft объединяет потребительский Copilot и Microsoft 365 Copilot, закрывая ряд ИИ-функций",
+      "organization": "Microsoft",
+      "published_date": "2026-08-13",
+      "published_at": "2026-08-13T08:30:00-07:00",
+      "time_precision": "datetime",
+      "topic": "консолидация потребительского и корпоративного Copilot и сокращение продуктовых функций",
+      "event_type": "product integration",
+      "keywords": [
+        "Microsoft",
+        "Copilot",
+        "Microsoft 365 Copilot",
+        "consumer AI",
+        "enterprise AI",
+        "Deep Research"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Microsoft kills off unsuccessful AI features while merging its separate Copilot apps",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/13/microsoft-kills-off-unsuccessful-ai-features-while-merging-its-separate-copilot-apps/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Microsoft объединяет функциональность отдельного потребительского Copilot и Microsoft 365 Copilot в единый опыт. Одновременно компания прекращает или убирает часть функций, включая Group Chats, AI-generated podcasts, Copilot Labs и Deep Research; для профессиональных пользователей Researcher должен заменить последнюю функцию.",
+      "verified_facts": [
+        "TechCrunch опубликовал материал 13 августа 2026 года в 08:30 PDT, что попадает в effective editorial window.",
+        "Изменение основано на документации поддержки Microsoft, на которую ссылается материал.",
+        "Microsoft планирует прекратить доступ к ряду функций к 18 августа 2026 года.",
+        "Файлы из отдельного приложения Copilot будут перенесены в OneDrive в ходе перехода."
+      ],
+      "significance": "Это заметная продуктовая перестройка одного из крупнейших массовых и корпоративных ИИ-сервисов: Microsoft упрощает архитектуру Copilot и отказывается от нескольких публичных AI-функций.",
+      "significance_score": 4,
+      "limitations": "Публикация описывает планы и переходный период; полный перечень функций и региональная доступность могут меняться по документации Microsoft.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве и текущем пуле нет сюжета о слиянии приложений Copilot и закрытии этих функций.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверены точный timestamp и конкретные изменения в материале TechCrunch; он ссылается на документацию Microsoft.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Новое объявление о консолидации продуктов и прекращении функций, опубликованное внутри окна.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-формату.",
+      "id": "cand-002"
+    },
+    {
+      "title": "Writer представила Palmyra X6 и обновлённый агентный harness для снижения token-costs",
+      "organization": "Writer; Z.ai",
+      "published_date": "2026-08-13",
+      "published_at": "2026-08-13T14:13:00-07:00",
+      "time_precision": "datetime",
+      "topic": "корпоративная модель и оптимизация agentic-инфраструктуры для снижения стоимости инференса",
+      "event_type": "model launch",
+      "keywords": [
+        "Writer",
+        "Palmyra X6",
+        "Z.ai",
+        "GLM-5.2",
+        "agentic harness",
+        "enterprise AI",
+        "inference cost"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Writer introduces new AI model and upgraded harness to contain token costs",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/13/writer-introduces-new-ai-model-and-upgraded-harness-to-contain-token-costs/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Writer выпустила флагманскую модель Palmyra X6, построенную как post-training-вариация open-source GLM-5.2 от Z.ai, и существенно обновила свой агентный harness. Компания заявляет, что сочетание модели и инфраструктурных изменений может снизить затраты клиентов на базовые задачи до 50%.",
+      "verified_facts": [
+        "TechCrunch датирует материал 13 августа 2026 года, 14:13 PDT, внутри effective window.",
+        "По данным материала, Palmyra X6 предназначена для enterprise-задач и доступна клиентам с четверга после публикации.",
+        "Writer характеризует Palmyra X6 как post-training-вариацию GLM-5.2 от Z.ai.",
+        "Одновременно обновлён стандартный agentic harness Writer."
+      ],
+      "significance": "Сюжет отражает сдвиг enterprise AI от гонки бенчмарков к снижению стоимости агентных развёртываний; однако масштабы реального эффекта пока являются заявлением компании.",
+      "significance_score": 3,
+      "limitations": "Заявленное снижение стоимости до 50% не подтверждено независимым бенчмарком в проверенном материале; значимость релиза ниже, чем у обновлений крупнейших frontier-лабораторий.",
+      "archive_status": "none",
+      "archive_reason": "Ни Palmyra X6, ни обновление harness Writer не упоминаются в архиве или уже найденных кандидатах.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверены timestamp, название модели, происхождение на базе GLM-5.2 и заявленные изменения harness в первичном новостном материале.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Новый запуск модели и обновлённой инфраструктуры, опубликованный внутри окна.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-формату.",
+      "id": "cand-003"
+    },
+    {
       "title": "Google сделала видимые водяные знаки в AI-генерациях опциональными",
       "organization": "Google; Gemini; Flow",
       "published_date": "2026-08-14",
@@ -5917,7 +6068,57 @@
       "legal_scale_reason": "Это изменение продуктовой политики и маркировки, а не самостоятельное крупное судебное или регуляторное событие.",
       "curiosity_eligible": false,
       "curiosity_verification": "Не является curiosity-кандидатом.",
-      "id": "cand-001"
+      "id": "cand-004"
+    },
+    {
+      "title": "Zayo строит более 8 000 миль магистрального оптоволокна для ИИ-коридоров с Nvidia как якорным клиентом",
+      "organization": "Zayo; Nvidia",
+      "published_date": "2026-08-13",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "магистральная сетевая инфраструктура и межсоединения распределённых ИИ-дата-центров",
+      "event_type": "инфраструктурное расширение и коммерческое соглашение",
+      "keywords": [
+        "Zayo",
+        "Nvidia",
+        "fiber",
+        "AI infrastructure",
+        "data center interconnect",
+        "networking",
+        "long-haul routes"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "Zayo, Nvidia Target Fiber Capacity as AI Infrastructure Spreads",
+        "publisher": "Data Center Knowledge",
+        "url": "https://www.datacenterknowledge.com/networking/zayo-nvidia-target-fiber-capacity-as-ai-infrastructure-spreads"
+      },
+      "supporting_sources": [],
+      "event_summary": "Zayo сообщила о строительстве более 8 000 миль новых магистральных волоконно-оптических линий в формирующихся ИИ-коридорах Северной Америки. Nvidia станет якорным клиентом и получит существенный доступ к ёмкости новых маршрутов; Zayo будет владеть и эксплуатировать сеть, предлагая оставшуюся ёмкость другим заказчикам.",
+      "verified_facts": [
+        "Публикация Data Center Knowledge датирована 13 августа 2026 года.",
+        "Zayo планирует построить шесть новых магистральных маршрутов и расширить ёмкость в десяти рынках повышенного спроса.",
+        "Программа Zayo охватывает более 15 000 route miles в Северной Америке.",
+        "Nvidia получит значительный доступ к ёмкости на новых маршрутах, при этом Zayo сохранит владение и эксплуатацию сети."
+      ],
+      "significance": "Это самостоятельное развитие физической ИИ-инфраструктуры за пределами GPU и дата-центров: сделка указывает на переход к планированию междата-центровых оптических сетей как ограничения для распределённых ИИ-кластеров. Масштаб строительства и участие Nvidia делают сюжет заметным для кластера infrastructure_business.",
+      "significance_score": 3,
+      "limitations": "Доступный источник не раскрывает финансовые условия, точную долю зарезервированной Nvidia ёмкости, географию всех маршрутов и точный час публикации. Независимый официальный релиз в рамках данного прохода не был найден.",
+      "archive_status": "none",
+      "archive_reason": "Сюжет о расширении волоконной сети Zayo с Nvidia как якорным клиентом отсутствует среди предоставленных кандидатов и недавнего архива.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Ключевые параметры строительства, роль Nvidia и дата публикации прямо изложены в профильном отраслевом материале. Событие не основано на слухе или предварительных переговорах.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Сообщение опубликовано 13 августа 2026 года и описывает новое расширение сети и новую роль Nvidia как якорного клиента; совпадений с архивом не обнаружено.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: это отраслевое инфраструктурное событие, а не сюжет категории curiosity.",
+      "audit_direction": "hybrid_adaptive_gap",
+      "id": "cand-005"
     }
   ],
   "rejected_as_duplicates": [],

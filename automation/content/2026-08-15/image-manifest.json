@@ -11,15 +11,15 @@
   "format": "png",
   "width": 1536,
   "height": 864,
-  "bytes": 2096340,
-  "sha256": "b721fee587a02dfb396d9cf8237e2758d59169304744c7551bc9e9259d2027d1",
-  "prompt_sha256": "bc58997ded64ea838609b931b52cf64e531b50fe736c36f2f10e18da71c323e8",
+  "bytes": 2246556,
+  "sha256": "15e56e4f7fe643f6ee502d266c716fcede53c40d9e7aac74f63ae3a00f5c9128",
+  "prompt_sha256": "cb2fad3c5e01775c9027fb2cd67882dbde5be6e1bfb0c5265e9fb9c214e9b052",
   "source_manifest": "artifact-validation.json",
-  "source_manifest_sha256": "91bdc3b5ac62eae8e86dabf43a3a5b37bc8252c7805f46f4b1fe58d68591db03",
+  "source_manifest_sha256": "e1bd7caec7e6821ebc71ef908bc921c12af630e0450182c11e7bd0fe799e05f0",
   "network_used": true,
   "openai_used": true,
   "visual_semantics_validated": false,
   "rendered_title_validated": false,
   "retry_count": 0,
-  "created_at": "2026-08-15T03:55:49+00:00"
+  "created_at": "2026-08-15T04:34:53+00:00"
 }
