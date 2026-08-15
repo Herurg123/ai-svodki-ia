@@ -4,7 +4,7 @@ import json
 import sys
 import tempfile
 import unittest
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -12,6 +12,7 @@ SCRIPTS = ROOT / "automation" / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
+import generate_digest_preview as generator  # noqa: E402
 import run_digest_preview as runner  # noqa: E402
 from editorial_policy_runtime import (  # noqa: E402
     primary_subject_is_asia,
@@ -23,6 +24,49 @@ SAVED_WINDOW = {
     "end_at": "2026-08-15T06:48:32+03:00",
     "latest_archive_at": "2026-08-14T07:36:56+03:00",
 }
+
+AUG15_CANDIDATES = [
+    {
+        "id": "cand-001",
+        "title": "OpenAI представила preview-режим Ultrafast для GPT-5.6 Sol",
+        "organization": "OpenAI; Cerebras",
+        "published_date": "2026-08-13",
+        "published_at": "2026-08-13T12:22:00-07:00",
+        "time_precision": "datetime",
+    },
+    {
+        "id": "cand-002",
+        "title": "Microsoft объединяет потребительский Copilot и Microsoft 365 Copilot",
+        "organization": "Microsoft",
+        "published_date": "2026-08-13",
+        "published_at": "2026-08-13T08:30:00-07:00",
+        "time_precision": "datetime",
+    },
+    {
+        "id": "cand-003",
+        "title": "Writer представила Palmyra X6 и обновлённый агентный harness",
+        "organization": "Writer; Z.ai",
+        "published_date": "2026-08-13",
+        "published_at": "2026-08-13T14:13:00-07:00",
+        "time_precision": "datetime",
+    },
+    {
+        "id": "cand-004",
+        "title": "Google сделала видимые водяные знаки в AI-генерациях опциональными",
+        "organization": "Google; Gemini; Flow",
+        "published_date": "2026-08-14",
+        "published_at": "2026-08-14T09:13:00-07:00",
+        "time_precision": "datetime",
+    },
+    {
+        "id": "cand-005",
+        "title": "Zayo строит более 8 000 миль магистрального оптоволокна",
+        "organization": "Zayo; Nvidia",
+        "published_date": "2026-08-13",
+        "published_at": None,
+        "time_precision": "date",
+    },
+]
 
 
 class FakeGenerator:
@@ -66,13 +110,54 @@ class Aug15RetryWindowRegressionTests(unittest.TestCase):
                 encoding="utf-8",
             )
             relative = handoff.relative_to(Path(temp))
-            generator = FakeGenerator()
+            fake_generator = FakeGenerator()
 
-            self.assertTrue(runner.patch_trusted_runtime_window(generator, str(relative)))
-            start_at, end_at = generator.expected_search_window(None, {}, {})
+            self.assertTrue(runner.patch_trusted_runtime_window(fake_generator, str(relative)))
+            start_at, end_at = fake_generator.expected_search_window(None, {}, {})
 
             self.assertEqual(start_at.isoformat(), SAVED_WINDOW["start_at"])
             self.assertEqual(end_at.isoformat(), SAVED_WINDOW["end_at"])
+
+    def test_real_aug15_five_candidate_pool_survives_retry_sanitation(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            fixture_root = self.configure_temp_repo(temp)
+            handoff = fixture_root / ".coverage-audit-2026-08-15.json"
+            research = {
+                "search_window": SAVED_WINDOW,
+                "candidates": AUG15_CANDIDATES,
+            }
+            handoff.write_text(json.dumps(research), encoding="utf-8")
+            relative = handoff.relative_to(Path(temp))
+            previous_expected_window = generator.expected_search_window
+            try:
+                self.assertTrue(
+                    runner.patch_trusted_runtime_window(generator, str(relative))
+                )
+                sanitized, filtered, _warnings = generator.sanitize_research_candidates(
+                    research,
+                    date(2026, 8, 15),
+                    {
+                        "items": [
+                            {
+                                "date": "2026-08-14",
+                                "published_at": "2026-08-14T06:00:00+03:00",
+                                "search_cutoff_at": "2026-08-14T07:36:56+03:00",
+                            }
+                        ]
+                    },
+                    {"timezone": "Europe/Moscow", "publication_hour": 6},
+                    cutoff_at=datetime.fromisoformat(SAVED_WINDOW["end_at"]),
+                )
+            finally:
+                generator.expected_search_window = previous_expected_window
+
+            self.assertEqual(filtered, [])
+            self.assertEqual(
+                [item["id"] for item in sanitized["candidates"]],
+                ["cand-001", "cand-002", "cand-003", "cand-004", "cand-005"],
+            )
+            self.assertEqual(sanitized["search_window"]["start_at"], SAVED_WINDOW["start_at"])
+            self.assertEqual(sanitized["search_window"]["end_at"], SAVED_WINDOW["end_at"])
 
     def test_arbitrary_fixture_cannot_override_continuity_window(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
