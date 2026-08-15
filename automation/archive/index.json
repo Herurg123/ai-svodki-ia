@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generated_at": "2026-08-15T03:55:50+00:00",
+  "generated_at": "2026-08-15T04:42:43+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
     {
@@ -9,50 +9,151 @@
       "search_cutoff_at": "2026-08-15T06:48:32+03:00",
       "title": "ИИ-Сводка на 15 августа 2026",
       "link": "https://rybalka.one/posts/2026-08-15/",
-      "summary": "Главные новости искусственного интеллекта за 15 августа 2026 года Новостей сегодня меньше, чем обычно Главный подтверждённый сюжет выпуска касается маркировки синтетического контента в продуктах Google. Компания делает видимый водяной знак отключаемым, но заявляет о сохранении скрытых и машиночитаемых сигналов происхождения медиа. Мировые лидеры ИИ Google сделала видимые водяные знаки в ИИ-генерациях опциональными Google объявила, что пользователи смогут отключать видимый watermark у изображений",
+      "summary": "Главные новости искусственного интеллекта за 15 августа 2026 года Новостей сегодня меньше, чем обычно Повестка дня сосредоточена на практической экономике ИИ: скорости вывода, стоимости агентных задач и физической связности дата-центров. Одновременно Microsoft упрощает линейку Copilot, отказываясь от части отдельных функций и приложений. Главный общий сигнал — конкуренция всё заметнее разворачивается не только вокруг самих моделей, но и вокруг инфраструктуры, интерфейсов и стоимости их использов",
       "topics": [
-        "Google",
-        "Gemini",
-        "Flow",
-        "SynthID",
-        "C2PA",
-        "маркировка ИИ-контента",
-        "происхождение медиа"
+        "OpenAI",
+        "GPT-5.6 Sol",
+        "Ultrafast",
+        "Cerebras",
+        "Microsoft Copilot",
+        "Writer",
+        "Palmyra X6",
+        "Z.ai",
+        "агенты ИИ",
+        "инференс",
+        "оптоволоконная инфраструктура",
+        "Zayo",
+        "Nvidia",
+        "дата-центры"
       ],
       "source_urls": [
-        "https://techcrunch.com/2026/08/14/google-will-now-allow-users-to-remove-visible-watermark-from-its-ai-generations/"
+        "https://techcrunch.com/2026/08/13/openai-introduces-ultrafast-a-new-mode-that-makes-gpt-5-6-sol-work-at-14x-the-speed/",
+        "https://techcrunch.com/2026/08/13/microsoft-kills-off-unsuccessful-ai-features-while-merging-its-separate-copilot-apps/",
+        "https://techcrunch.com/2026/08/13/writer-introduces-new-ai-model-and-upgraded-harness-to-contain-token-costs/",
+        "https://www.datacenterknowledge.com/networking/zayo-nvidia-target-fiber-capacity-as-ai-infrastructure-spreads"
       ],
       "stories": [
         {
           "candidate_id": "cand-001",
           "section": "world",
-          "headline": "Google сделала видимые водяные знаки в ИИ-генерациях опциональными",
-          "organization": "Google; Gemini; Flow",
-          "topic": "маркировка и происхождение AI-сгенерированных изображений, видео и аудио",
-          "event_type": "product_policy_update",
+          "headline": "OpenAI представила preview-режим Ultrafast для GPT-5.6 Sol",
+          "organization": "OpenAI; Cerebras",
+          "topic": "ускоренный inference frontier-модели для корпоративных и агентных сценариев",
+          "event_type": "product_launch",
           "status": "new",
-          "summary": "Google объявила, что пользователи смогут отключать видимый watermark у генерируемых ИИ изображений, видео и музыки в Gemini и Flow для моделей Nano Banana, Omni и Lyria. Невидимая маркировка SynthID и связанные с C2PA метаданные сохраняются; одновременно Google открывает библиотеку Credentio для локальной валидации учётных данных медиа.",
-          "published_at": "2026-08-14T09:13:00-07:00",
-          "published_date": "2026-08-14",
+          "summary": "OpenAI начала ограниченный preview режима Ultrafast для GPT-5.6 Sol. Компания заявляет скорость до 750 выходных токенов в секунду, или до 14 раз выше стандартной обработки; режим работает на инфраструктуре партнёра Cerebras и пока доступен небольшой группе клиентов.",
+          "published_at": "2026-08-13T12:22:00-07:00",
+          "published_date": "2026-08-13",
           "time_precision": "datetime",
           "sources": [
             {
-              "title": "Google will now allow users to remove visible watermark from its AI generations",
+              "title": "OpenAI introduces ‘Ultrafast,’ a new mode that makes GPT-5.6 Sol work at 14x the speed",
               "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/08/14/google-will-now-allow-users-to-remove-visible-watermark-from-its-ai-generations/"
+              "url": "https://techcrunch.com/2026/08/13/openai-introduces-ultrafast-a-new-mode-that-makes-gpt-5-6-sol-work-at-14x-the-speed/"
             }
           ],
           "keywords": [
-            "Google",
-            "Gemini",
-            "Flow",
-            "SynthID",
-            "C2PA",
-            "watermark",
-            "AI-generated media"
+            "OpenAI",
+            "GPT-5.6 Sol",
+            "Ultrafast",
+            "Cerebras",
+            "inference",
+            "enterprise AI"
           ],
           "geography": "world",
-          "category": "security"
+          "category": "models"
+        },
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "Microsoft объединяет потребительский Copilot и Microsoft 365 Copilot",
+          "organization": "Microsoft",
+          "topic": "консолидация потребительского и корпоративного Copilot и сокращение продуктовых функций",
+          "event_type": "product integration",
+          "status": "new",
+          "summary": "Microsoft объединяет функциональность отдельного потребительского Copilot и Microsoft 365 Copilot в единый опыт. Одновременно компания прекращает или убирает часть функций, включая Group Chats, AI-generated podcasts, Copilot Labs и Deep Research; для профессиональных пользователей Researcher должен заменить последнюю функцию.",
+          "published_at": "2026-08-13T08:30:00-07:00",
+          "published_date": "2026-08-13",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Microsoft kills off unsuccessful AI features while merging its separate Copilot apps",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/08/13/microsoft-kills-off-unsuccessful-ai-features-while-merging-its-separate-copilot-apps/"
+            }
+          ],
+          "keywords": [
+            "Microsoft",
+            "Copilot",
+            "Microsoft 365 Copilot",
+            "consumer AI",
+            "enterprise AI",
+            "Deep Research"
+          ],
+          "geography": "world",
+          "category": "agents"
+        },
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "Writer представила Palmyra X6 и обновлённый агентный harness",
+          "organization": "Writer; Z.ai",
+          "topic": "корпоративная модель и оптимизация agentic-инфраструктуры для снижения стоимости инференса",
+          "event_type": "model launch",
+          "status": "new",
+          "summary": "Writer выпустила флагманскую модель Palmyra X6, построенную как post-training-вариация open-source GLM-5.2 от Z.ai, и существенно обновила свой агентный harness. Компания заявляет, что сочетание модели и инфраструктурных изменений может снизить затраты клиентов на базовые задачи до 50%.",
+          "published_at": "2026-08-13T14:13:00-07:00",
+          "published_date": "2026-08-13",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Writer introduces new AI model and upgraded harness to contain token costs",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/08/13/writer-introduces-new-ai-model-and-upgraded-harness-to-contain-token-costs/"
+            }
+          ],
+          "keywords": [
+            "Writer",
+            "Palmyra X6",
+            "Z.ai",
+            "GLM-5.2",
+            "agentic harness",
+            "enterprise AI",
+            "inference cost"
+          ],
+          "geography": "world",
+          "category": "models"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "Zayo строит новые оптоволоконные маршруты для ИИ-коридоров с Nvidia как якорным клиентом",
+          "organization": "Zayo; Nvidia",
+          "topic": "магистральная сетевая инфраструктура и межсоединения распределённых ИИ-дата-центров",
+          "event_type": "инфраструктурное расширение и коммерческое соглашение",
+          "status": "new",
+          "summary": "Zayo сообщила о строительстве более 8 000 миль новых магистральных волоконно-оптических линий в формирующихся ИИ-коридорах Северной Америки. Nvidia станет якорным клиентом и получит существенный доступ к ёмкости новых маршрутов; Zayo будет владеть и эксплуатировать сеть, предлагая оставшуюся ёмкость другим заказчикам.",
+          "published_at": null,
+          "published_date": "2026-08-13",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Zayo, Nvidia Target Fiber Capacity as AI Infrastructure Spreads",
+              "publisher": "Data Center Knowledge",
+              "url": "https://www.datacenterknowledge.com/networking/zayo-nvidia-target-fiber-capacity-as-ai-infrastructure-spreads"
+            }
+          ],
+          "keywords": [
+            "Zayo",
+            "Nvidia",
+            "fiber",
+            "AI infrastructure",
+            "data center interconnect",
+            "networking",
+            "long-haul routes"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
         }
       ]
     },

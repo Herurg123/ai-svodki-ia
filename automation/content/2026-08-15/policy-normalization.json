@@ -13,12 +13,22 @@
     {
       "type": "low_news_volume",
       "area": "total",
-      "message": "После проверки свежести и значимости выбрано 1 сюжетов."
+      "message": "После проверки свежести и значимости выбрано 4 сюжетов."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-005."
     },
     {
       "type": "source_gap",
       "area": "research",
       "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Три выбранных материала TechCrunch описывают независимые значимые продуктовые события разных компаний — OpenAI, Microsoft и Writer; в пуле нет сопоставимых альтернативных публикаций с подтверждёнными деталями."
     }
   ]
 }

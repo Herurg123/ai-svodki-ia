@@ -2,23 +2,23 @@
   "status": "ok",
   "pipeline": "editorial_from_saved_research",
   "request_id": "production-digest-2026-08-15",
-  "research_input": "automation/fixtures/research/.coverage-audit-2026-08-15.json",
+  "research_input": "automation/fixtures/research/.runtime/aug15-republish.json",
   "warnings": [
     "cand-005: источник показывает дату без точного времени.",
-    "Нормализованы внутренние id кандидатов: cand-004->cand-001.",
-    "Отфильтровано кандидатов вне временного окна: 4.",
-    "Целевой пул — 7 кандидатов, но после проверки свежести осталось 1.",
+    "Целевой пул — 12 кандидатов, но после проверки свежести осталось 5.",
     "Кандидатов меньше обычной цели выпуска (7); разрешён короткий выпуск.",
-    "Выбрано 1 сюжетов при обычной цели 7; формируется короткий выпуск."
+    "Исследовательский пул перегружен одним издателем: techcrunch (4)",
+    "Выбрано 4 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Игнорировано ложное требование китайского раздела: азиатский бренд присутствует только как вторичная организация, а не основной субъект выбранного сюжета."
   ],
   "publication_date": "2026-08-15",
-  "started_at": "2026-08-15T03:54:05+00:00",
-  "finished_at": "2026-08-15T03:54:19+00:00",
+  "started_at": "2026-08-15T04:32:53+00:00",
+  "finished_at": "2026-08-15T04:33:22+00:00",
   "model_requested": "gpt-5.6-terra",
   "openai_sdk_version": "2.45.0",
   "archive_items": 29,
   "limits": {
-    "minimum_candidates": 7,
+    "minimum_candidates": 12,
     "maximum_candidates": 20,
     "minimum_selected_stories": 7,
     "maximum_selected_stories": 12,
@@ -26,8 +26,8 @@
   },
   "research": {
     "status": "ok",
-    "prompt_sha256": "58c8f7fca34564da3e0912c70ebcbe814277e5b94de81fbf04272dcb89fdd343",
-    "candidates_sha256": "0a4ef5ea260f2a1ae7a602f458a717c397c20d102a987f56ed2d5fe71e5ba49d",
+    "prompt_sha256": "94fe155bb73b54046368480feae3a86c15f6b2e077449c3525dc3c8197f2334c",
+    "candidates_sha256": "14c014e7adcc14d47d9d7c29c94e0dfdc31b2cd0643e8d7ac1d3a8106dcd677e",
     "settings": {
       "source": "saved_fixture",
       "max_retries": 2,
@@ -48,19 +48,19 @@
     "error": null,
     "temporal_anchor_version": 1,
     "search_window": {
-      "start_at": "2026-08-14T07:36:56+03:00",
+      "start_at": "2026-08-13T07:36:56+03:00",
       "end_at": "2026-08-15T06:48:32+03:00",
       "latest_archive_at": "2026-08-14T07:36:56+03:00",
-      "start_date": "2026-08-14",
+      "start_date": "2026-08-13",
       "end_date": "2026-08-15",
       "latest_archive_date": "2026-08-14"
     }
   },
   "editorial": {
     "status": "ok",
-    "prompt_sha256": "1323f015159ba0bea7c02c09312aa242bbabd5ca4a3492d6ff7ed2f6326508b0",
-    "editorial_sha256": "316dbde83a0ac9cb78dbc5c056aa06b50fc33f79830b5c2c6c75c526fe93af66",
-    "digest_sha256": "840e1e3c77630c92d6c44b93d1c0ca048aa33b4a14f591c9b833d552108060aa",
+    "prompt_sha256": "2127026c5f7cf892cfb596314105d19ec0018d7946b2426a5350d6a1724299f1",
+    "editorial_sha256": "b8d5b849c8d68e5b242300bf99970cfc80eed39122ffdb0d9e1db45a983491e0",
+    "digest_sha256": "f9c7a8020e60404e817302f3a7af50cdeb9220e6b8395e85f5530ceb848a63b7",
     "metadata_normalization": {
       "status": "applied",
       "changed_fields": [
@@ -71,7 +71,7 @@
         },
         {
           "field": "cover_filename",
-          "model_value": "2026-08-15.png",
+          "model_value": "2026-08-15-cover.png",
           "normalized_value": "ai-svodka-2026-08-15.png"
         }
       ],
@@ -92,12 +92,22 @@
         {
           "type": "low_news_volume",
           "area": "total",
-          "message": "После проверки свежести и значимости выбрано 1 сюжетов."
+          "message": "После проверки свежести и значимости выбрано 4 сюжетов."
+        },
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-005."
         },
         {
           "type": "source_gap",
           "area": "research",
           "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Три выбранных материала TechCrunch описывают независимые значимые продуктовые события разных компаний — OpenAI, Microsoft и Writer; в пуле нет сопоставимых альтернативных публикаций с подтверждёнными деталями."
         }
       ]
     },
@@ -109,36 +119,36 @@
       "store": false
     },
     "response": {
-      "response_id": "resp_0f6dc82f27e666e9016a7fe2dddbf881989705240946afa53d",
+      "response_id": "resp_09ad625bffc0e145016a7febf688a081a1b3a0725098121f00",
       "response_status": "completed",
       "model_returned": "gpt-5.6-terra",
       "web_search_calls": 0,
       "usage": {
-        "input_tokens": 72527,
+        "input_tokens": 75711,
         "input_tokens_details": {
-          "cache_write_tokens": 72524,
+          "cache_write_tokens": 75708,
           "cached_tokens": 0
         },
-        "output_tokens": 1577,
+        "output_tokens": 3108,
         "output_tokens_details": {
-          "reasoning_tokens": 274
+          "reasoning_tokens": 588
         },
-        "total_tokens": 74104
+        "total_tokens": 78819
       }
     },
     "error": null
   },
   "total_usage": {
-    "input_tokens": 72527,
-    "output_tokens": 1577,
-    "total_tokens": 74104,
+    "input_tokens": 75711,
+    "output_tokens": 3108,
+    "total_tokens": 78819,
     "web_search_calls": 0
   },
   "github": {
     "repository": "Herurg123/ai-svodki-ia",
-    "ref": "refs/heads/main",
-    "sha": "b10e071a8e26d13bd1ba0b32626b4a1981d7145b",
-    "run_id": "31862760019",
+    "ref": "refs/heads/fix/aug15-editorial-retry-window",
+    "sha": "81f12a80b2151af3b5e604ca17afe3d03d8ab73d",
+    "run_id": "31864683578",
     "run_attempt": "1",
     "actor": "Herurg123"
   },
