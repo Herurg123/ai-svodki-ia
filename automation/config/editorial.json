@@ -14,7 +14,8 @@
   "diversity": {
     "max_selected_per_publisher_soft": 2,
     "max_selected_per_organization_soft": 2,
-    "override_requires_reason": true
+    "override_requires_reason": true,
+    "short_pool_soft_limits_may_reduce_selection": false
   },
   "candidate_selection": {
     "verification_required_for_selection": "verified",
