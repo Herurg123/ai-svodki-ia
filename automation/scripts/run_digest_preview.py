@@ -5,8 +5,8 @@ Fresh production research is collected by Primary Recall v2: twelve mandatory,
 one-search discovery passes with deterministic budget allocation. Generated
 research is staged below automation/fixtures/research/.runtime so the legacy
 generator's caller-input guard stays intact. Internal runtime research may carry
-a controlled healing overlap; only that trusted ignored subtree can override the
-legacy generator's canonical continuity start for sanitation/validation.
+a controlled healing overlap; only trusted ignored runtime artifacts can override
+the legacy generator's canonical continuity start for sanitation/validation.
 """
 from __future__ import annotations
 
@@ -95,20 +95,33 @@ def _trusted_runtime_research_path(value: str | None) -> Path | None:
     if value is None or not value.strip():
         return None
     candidate = (REPOSITORY_ROOT / value).resolve()
-    root = TRUSTED_RUNTIME_RESEARCH_ROOT.resolve()
+    runtime_root = TRUSTED_RUNTIME_RESEARCH_ROOT.resolve()
+    fixture_root = runtime_root.parent
+    trusted = False
     try:
-        candidate.relative_to(root)
+        candidate.relative_to(runtime_root)
+        trusted = True
     except ValueError:
-        return None
-    return candidate if candidate.is_file() else None
+        # Coverage historically stages its transient rerun artifact directly
+        # below automation/fixtures/research as a hidden .coverage-audit-*.json
+        # file. It is workflow-generated and removed after the rerun, so accept
+        # only that exact hidden-file shape; arbitrary caller fixtures remain
+        # subject to the canonical archive continuity window.
+        trusted = bool(
+            candidate.parent == fixture_root
+            and candidate.name.startswith(".coverage-audit-")
+            and candidate.suffix == ".json"
+        )
+    return candidate if trusted and candidate.is_file() else None
 
 
 def patch_trusted_runtime_window(generator: Any, research_input: str | None) -> bool:
-    """Use saved effective window only for internally generated ignored inputs.
+    """Use the saved effective window only for internally generated inputs.
 
     Caller-supplied fixtures keep the generator's historical strict continuity
-    semantics. This bridge is intentionally path-scoped to .runtime so widening
-    the effective window cannot be requested through an arbitrary file path.
+    semantics. Trusted Primary/Hybrid ``.runtime`` inputs and the Coverage
+    ``.coverage-audit-*.json`` handoff preserve both saved window boundaries so
+    a retry cannot silently discard healing-overlap candidates.
     """
     path = _trusted_runtime_research_path(research_input)
     if path is None:
