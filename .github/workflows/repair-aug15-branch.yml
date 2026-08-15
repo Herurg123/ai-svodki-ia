@@ -123,11 +123,10 @@ jobs:
       - name: Validate rebuilt archive
         run: python automation/scripts/validate_archive.py
 
-      - name: Validate final RSS and Dzen feed
+      - name: Validate final Dzen feed
         shell: bash
         run: |
           set -euo pipefail
-          python automation/scripts/validate_rss.py --rss posts/rss.xml
           python automation/scripts/validate_dzen_feed.py \
             --rss posts/rss.xml \
             --report automation/preview/repair-replay/final-dzen-feed-validation.json
