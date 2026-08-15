@@ -71,7 +71,8 @@ class RepositoryHygieneTests(unittest.TestCase):
         self.assertEqual(cls, "protected")
         cls, _, _ = rh.classify_branch(
             {"name":"agent/abandoned", "protected":False, "commit":{"sha":"3"*40}},
-            repository=REPO, default_branch="main", prs=all_prs, recent_numbers={20}
+            repository=REPO, default_branch="main", prs=all_prs, recent_numbers={20},
+            now=rh.dt.datetime(2026, 8, 10, tzinfo=rh.dt.timezone.utc),
         )
         self.assertEqual(cls, "review_only")
         cls, reason, _ = rh.classify_branch(

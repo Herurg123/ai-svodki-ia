@@ -2,11 +2,12 @@
 """Runtime corrections for deterministic editorial validation.
 
 Production entry points import this module before calling the shared editorial
-validator.  The corrections are deliberately narrow: preserve every unrelated
-policy error, accept only the explicitly allowed Russian wording, restore source
-metadata from the paid research pool instead of asking the model to copy URLs
-perfectly, and repair the one mandatory world-section heading when the model
-omits it from an otherwise structurally valid short digest.
+validator. The corrections are deliberately narrow: preserve every unrelated
+policy error, accept only the explicitly allowed Russian wording, normalize one
+safe research-ranking metadata contradiction, restore source metadata from the
+paid research pool instead of asking the model to copy URLs perfectly, and
+repair the one mandatory world-section heading when the model omits it from an
+otherwise structurally valid short digest.
 """
 from __future__ import annotations
 
@@ -19,6 +20,7 @@ AGENT_ERROR = "Используй «агент ИИ», а не AI agent или A
 WORLD_HEADING = "Мировые лидеры ИИ"
 Validator = Callable[..., tuple[list[str], list[str], dict[str, Any]]]
 EditorialValidator = Callable[..., Any]
+ResearchSanitizer = Callable[..., Any]
 UrlNormalizer = Callable[[str], str]
 
 
@@ -150,11 +152,11 @@ def normalize_editorial_structure(editorial: dict[str, Any]) -> list[dict[str, A
     """Restore the mandatory world heading without weakening validation.
 
     The editorial contract has always required ``Мировые лидеры ИИ`` exactly
-    once, including a Russia-only short digest.  The model can reasonably omit
+    once, including a Russia-only short digest. The model can reasonably omit
     an empty world section when every selected story is Russian, which used to
     make all downstream validators reject an otherwise publishable digest.
 
-    Repair only the single missing heading.  Duplicates, missing story blocks,
+    Repair only the single missing heading. Duplicates, missing story blocks,
     malformed HTML and every other structural problem remain validator errors.
     """
 
@@ -274,6 +276,87 @@ def wrap_editorial_validator(
     return corrected
 
 
+def normalize_research_recommendations(
+    research: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Repair the deterministic ``include``/score contradiction before validation.
+
+    The downstream validator already requires ``include`` to have
+    ``significance_score >= 3``. Structured Output validates those two fields
+    independently, so a model can still emit an otherwise valid candidate with
+    ``include`` and score 1-2. Preserve the score and every factual/source field,
+    but downgrade only that contradictory recommendation to ``consider``.
+    """
+
+    candidates = research.get("candidates")
+    if not isinstance(candidates, list):
+        return []
+
+    changes: list[dict[str, Any]] = []
+    for index, candidate in enumerate(candidates, start=1):
+        if not isinstance(candidate, dict):
+            continue
+        score = candidate.get("significance_score")
+        if (
+            candidate.get("recommendation") == "include"
+            and isinstance(score, int)
+            and score < 3
+        ):
+            candidate["recommendation"] = "consider"
+            changes.append(
+                {
+                    "candidate_id": str(candidate.get("id") or f"candidate-{index}"),
+                    "significance_score": score,
+                    "from": "include",
+                    "to": "consider",
+                }
+            )
+    return changes
+
+
+def wrap_research_sanitizer(original: ResearchSanitizer) -> ResearchSanitizer:
+    """Normalize safe ranking metadata after sanitation and before validation."""
+
+    if getattr(original, "_ai_svodki_recommendation_contract_fixed", False):
+        return original
+
+    def corrected(research: dict[str, Any], *args: Any, **kwargs: Any) -> Any:
+        result = original(research, *args, **kwargs)
+        if not isinstance(result, tuple) or len(result) != 3:
+            return result
+        sanitized, filtered, warnings = result
+        if not isinstance(sanitized, dict):
+            return result
+        changes = normalize_research_recommendations(sanitized)
+        if not changes:
+            return result
+        updated_warnings = list(warnings) if isinstance(warnings, list) else []
+        details = ", ".join(
+            f"{item['candidate_id']}:{item['significance_score']}"
+            for item in changes
+        )
+        updated_warnings.append(
+            "Нормализованы противоречивые research-рекомендации "
+            f"include→consider без изменения significance_score: {details}."
+        )
+        return sanitized, filtered, updated_warnings
+
+    setattr(corrected, "_ai_svodki_recommendation_contract_fixed", True)
+    setattr(corrected, "__wrapped__", original)
+    return corrected
+
+
+def patch_research_validation(module: Any) -> ResearchSanitizer | None:
+    """Patch one generator research sanitizer when that seam is available."""
+
+    original = getattr(module, "sanitize_research_candidates", None)
+    if original is None:
+        return None
+    corrected = wrap_research_sanitizer(original)
+    module.sanitize_research_candidates = corrected
+    return corrected
+
+
 def patch_editorial_policy(*consumer_modules: Any) -> Validator:
     """Patch the shared article validator and direct-import consumer bindings."""
 
@@ -288,8 +371,9 @@ def patch_editorial_policy(*consumer_modules: Any) -> Validator:
 
 
 def patch_editorial_source_validation(module: Any) -> EditorialValidator:
-    """Patch one generator module without changing its public data contract."""
+    """Patch deterministic research/editorial seams without weakening validation."""
 
+    patch_research_validation(module)
     if not hasattr(module, "validate_editorial") or not hasattr(module, "normalize_url"):
         raise RuntimeError("Generator module lacks editorial validation helpers")
     corrected = wrap_editorial_validator(
