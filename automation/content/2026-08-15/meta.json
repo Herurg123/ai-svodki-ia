@@ -1,0 +1,33 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-15",
+  "slug": "2026-08-15",
+  "title": "ИИ-Сводка на 15 августа 2026",
+  "description": "Google разрешит отключать видимые водяные знаки на ИИ-генерациях в Gemini и Flow, сохраняя SynthID и метаданные происхождения. Изменение меняет баланс между удобством публикации и прозрачностью синтетического контента.",
+  "published_at": "2026-08-15T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-15.png",
+  "topics": [
+    "Google",
+    "Gemini",
+    "Flow",
+    "SynthID",
+    "C2PA",
+    "маркировка ИИ-контента",
+    "происхождение медиа"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    }
+  ]
+}

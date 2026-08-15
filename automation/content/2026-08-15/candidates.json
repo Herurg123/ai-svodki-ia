@@ -1,0 +1,134 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-15",
+  "search_window": {
+    "start_at": "2026-08-14T07:36:56+03:00",
+    "end_at": "2026-08-15T06:48:32+03:00",
+    "latest_archive_at": "2026-08-14T07:36:56+03:00",
+    "start_date": "2026-08-14",
+    "end_date": "2026-08-15",
+    "latest_archive_date": "2026-08-14"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Google сделала видимые водяные знаки в AI-генерациях опциональными",
+      "organization": "Google; Gemini; Flow",
+      "published_date": "2026-08-14",
+      "published_at": "2026-08-14T09:13:00-07:00",
+      "time_precision": "datetime",
+      "topic": "маркировка и происхождение AI-сгенерированных изображений, видео и аудио",
+      "event_type": "product_policy_update",
+      "keywords": [
+        "Google",
+        "Gemini",
+        "Flow",
+        "SynthID",
+        "C2PA",
+        "watermark",
+        "AI-generated media"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Google will now allow users to remove visible watermark from its AI generations",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/14/google-will-now-allow-users-to-remove-visible-watermark-from-its-ai-generations/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Credentio: a new open-source library for local media-credential validation",
+          "publisher": "Google Developers Blog",
+          "url": "https://developers.googleblog.com/"
+        }
+      ],
+      "event_summary": "Google объявила, что пользователи смогут отключать видимый watermark у генерируемых ИИ изображений, видео и музыки в Gemini и Flow для моделей Nano Banana, Omni и Lyria. Невидимая маркировка SynthID и связанные с C2PA метаданные сохраняются; одновременно Google открывает библиотеку Credentio для локальной валидации учётных данных медиа.",
+      "verified_facts": [
+        "TechCrunch указал время публикации: 14 августа 2026 года, 09:13 PDT, что попадает в effective window.",
+        "Отключение видимого watermark заявлено для AI-изображений, видео и музыки.",
+        "Настройка распространяется на Gemini и Flow для Nano Banana, Omni и Lyria; поддержка Search заявлена позднее.",
+        "Google сохраняет SynthID и C2PA-related metadata и открывает библиотеку Credentio для локальной проверки медиа-credentials."
+      ],
+      "significance": "Изменение заметно для массовых мультимодальных продуктов и практики происхождения синтетического контента: оно ослабляет видимую маркировку, но сохраняет машиночитаемые механизмы прозрачности.",
+      "significance_score": 2,
+      "limitations": "Источник описывает заявление Google и намеченный rollout; не приведены независимые проверки эффективности сохранённых SynthID/C2PA механизмов или полный график доступности.",
+      "archive_status": "none",
+      "archive_reason": "В архиве нет идентичного сюжета об опциональных видимых водяных знаках Google.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Проверены timestamp, затронутые продукты и модели, а также различие между видимым watermark и сохраняемыми SynthID/C2PA механизмами.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Новый продуктово-политический анонс опубликован внутри effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это изменение продуктовой политики и маркировки, а не самостоятельное крупное судебное или регуляторное событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не является curiosity-кандидатом.",
+      "id": "cand-001"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=4, validated unique=4, final candidates=4. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1."
+}

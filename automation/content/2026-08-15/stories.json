@@ -1,0 +1,33 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Google сделала видимые водяные знаки в ИИ-генерациях опциональными",
+    "organization": "Google; Gemini; Flow",
+    "topic": "маркировка и происхождение AI-сгенерированных изображений, видео и аудио",
+    "event_type": "product_policy_update",
+    "status": "new",
+    "summary": "Google объявила, что пользователи смогут отключать видимый watermark у генерируемых ИИ изображений, видео и музыки в Gemini и Flow для моделей Nano Banana, Omni и Lyria. Невидимая маркировка SynthID и связанные с C2PA метаданные сохраняются; одновременно Google открывает библиотеку Credentio для локальной валидации учётных данных медиа.",
+    "published_at": "2026-08-14T09:13:00-07:00",
+    "published_date": "2026-08-14",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google will now allow users to remove visible watermark from its AI generations",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/14/google-will-now-allow-users-to-remove-visible-watermark-from-its-ai-generations/"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Gemini",
+      "Flow",
+      "SynthID",
+      "C2PA",
+      "watermark",
+      "AI-generated media"
+    ],
+    "geography": "world",
+    "category": "security"
+  }
+]
