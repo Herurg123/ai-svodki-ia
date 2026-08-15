@@ -1,0 +1,364 @@
+name: Repair Aug 15 digest on PR branch
+
+on:
+  push:
+    branches:
+      - fix/aug15-editorial-retry-window
+    paths:
+      - ".github/workflows/repair-aug15-branch.yml"
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      PUBLICATION_DATE: "2026-08-15"
+      SOURCE_ARTIFACT_ID: "9241180666"
+      SOURCE_RESEARCH_SHA256: "14c014e7adcc14d47d9d7c29c94e0dfdc31b2cd0643e8d7ac1d3a8106dcd677e"
+      SOURCE_COVERAGE_SHA256: "3e88edd1f6d5b06873f2aadac4849339552f2ca9108e6a7c26e1a076974e0758"
+      OPENAI_TEXT_MODEL: ${{ vars.OPENAI_TEXT_MODEL || 'gpt-5.6-terra' }}
+      OPENAI_IMAGE_MODEL: ${{ vars.OPENAI_IMAGE_MODEL || 'gpt-image-2' }}
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      - name: Check out repair branch
+        uses: actions/checkout@v7
+        with:
+          ref: fix/aug15-editorial-retry-window
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Validate branch and API configuration
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          set -euo pipefail
+          [[ "${GITHUB_REF}" == "refs/heads/fix/aug15-editorial-retry-window" ]]
+          [[ -n "${OPENAI_API_KEY}" ]] || { echo "OPENAI_API_KEY missing" >&2; exit 1; }
+          [[ "${OPENAI_TEXT_MODEL}" == "gpt-5.6-terra" ]] || { echo "Unexpected text model" >&2; exit 1; }
+          [[ "${OPENAI_IMAGE_MODEL}" == "gpt-image-2" ]] || { echo "Unexpected image model" >&2; exit 1; }
+
+      - name: Install pinned OpenAI SDK
+        run: python -m pip install --disable-pip-version-check "openai==2.45.0"
+
+      - name: Download and verify saved five-candidate production evidence
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/aug15-source /tmp/aug15-source.zip
+          mkdir -p /tmp/aug15-source
+          curl -L --fail --silent --show-error \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -o /tmp/aug15-source.zip \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT_ID}/zip"
+          unzip -q /tmp/aug15-source.zip -d /tmp/aug15-source
+          research="/tmp/aug15-source/production-daily/coverage-audit-merged-candidates-${PUBLICATION_DATE}.json"
+          coverage="/tmp/aug15-source/production-daily/coverage-audit.json"
+          [[ -f "${research}" && -f "${coverage}" ]]
+          [[ "$(sha256sum "${research}" | awk '{print $1}')" == "${SOURCE_RESEARCH_SHA256}" ]]
+          [[ "$(sha256sum "${coverage}" | awk '{print $1}')" == "${SOURCE_COVERAGE_SHA256}" ]]
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          source = Path('/tmp/aug15-source/production-daily') / f"coverage-audit-merged-candidates-{os.environ['PUBLICATION_DATE']}.json"
+          payload = json.loads(source.read_text(encoding='utf-8'))
+          candidates = payload.get('candidates')
+          assert isinstance(candidates, list) and len(candidates) == 5, len(candidates or [])
+          assert payload.get('search_window', {}).get('start_at') == '2026-08-13T07:36:56+03:00'
+          assert payload.get('search_window', {}).get('end_at') == '2026-08-15T06:48:32+03:00'
+          print('Verified saved repair source: 5 candidates and exact Aug 13→15 effective window.')
+          PY
+
+      - name: Temporarily remove only the latest broken release from the worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import shutil
+          import sys
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          sys.path.insert(0, 'automation/scripts')
+          from production_daily_common import parse_rss
+
+          target = '2026-08-15'
+          target_url = f'https://rybalka.one/posts/{target}/'
+          rss_path = Path('posts/rss.xml')
+          rss = parse_rss(rss_path)
+          latest = rss['latest_item']
+          if latest.get('date') != target or latest.get('link') != target_url:
+              raise SystemExit(f'Replacement is allowed only for current latest release: {latest!r}')
+
+          tree = ET.parse(rss_path)
+          root = tree.getroot()
+          channel = root.find('channel')
+          if channel is None:
+              raise SystemExit('RSS channel missing')
+          matches = [item for item in channel.findall('item') if (item.findtext('link') or '').strip() == target_url]
+          if len(matches) != 1:
+              raise SystemExit(f'Expected exactly one target RSS item, got {len(matches)}')
+          channel.remove(matches[0])
+          tree.write(rss_path, encoding='utf-8', xml_declaration=True)
+
+          article_dir = Path('posts') / target
+          image = Path('posts/images') / f'ai-svodka-{target}.png'
+          content_dir = Path('automation/content') / target
+          for required in (article_dir / 'index.html', image, content_dir):
+              if not required.exists():
+                  raise SystemExit(f'Expected current release path missing: {required}')
+          shutil.rmtree(article_dir)
+          image.unlink()
+          shutil.rmtree(content_dir)
+          print('Broken latest release removed from ephemeral worktree only; main/live site untouched.')
+          PY
+
+      - name: Prepare replacement runtime against Aug 14 continuity
+        id: runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p automation/preview/production-daily/preflight
+          python automation/scripts/prepare_production_daily.py \
+            --config automation/config/production-daily.json \
+            --rss posts/rss.xml \
+            --publication-date "${PUBLICATION_DATE}" \
+            --output automation/preview/production-daily/preflight/runtime.json \
+            --github-output "${GITHUB_OUTPUT}"
+          python automation/scripts/verify_previous_release.py \
+            --config automation/config/production-daily.json \
+            --rss posts/rss.xml \
+            --posts-root posts \
+            --publication-date "${PUBLICATION_DATE}" \
+            --output automation/preview/production-daily/previous-release.json
+
+      - name: Patch runtime publication hour and rebuild pre-target archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp automation/config/site.json automation/preview/production-daily/preflight/site.json.original
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path('automation/config/site.json')
+          data = json.loads(path.read_text(encoding='utf-8'))
+          data['publication_hour'] = 6
+          path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+          python automation/scripts/validate_editorial_contract.py
+          python automation/scripts/bootstrap_archive.py
+          python automation/scripts/validate_archive.py
+          python automation/scripts/validate_search_window_continuity.py \
+            --runtime automation/preview/production-daily/preflight/runtime.json \
+            --archive automation/archive/index.json \
+            --timezone Europe/Moscow \
+            --publication-hour 6 \
+            --output automation/preview/production-daily/search-window-continuity.json
+
+      - name: Re-run editorial from the saved five-candidate research
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DIGEST_REQUEST_ID: ${{ steps.runtime.outputs.digest_request_id }}
+        run: |
+          set -euo pipefail
+          runtime_research="automation/fixtures/research/.runtime/aug15-republish.json"
+          mkdir -p "$(dirname "${runtime_research}")" automation/preview/production-daily
+          cp "/tmp/aug15-source/production-daily/coverage-audit-merged-candidates-${PUBLICATION_DATE}.json" "${runtime_research}"
+          cp /tmp/aug15-source/production-daily/coverage-audit.json automation/preview/production-daily/coverage-audit.json
+          python automation/scripts/run_digest_preview.py \
+            --allow-provisional-editorial \
+            --publication-date "${PUBLICATION_DATE}" \
+            --minimum-candidates 12 \
+            --maximum-candidates 20 \
+            --minimum-selected-stories 7 \
+            --maximum-selected-stories 12 \
+            --maximum-research-web-search-calls 12 \
+            --research-input "${runtime_research}"
+
+      - name: Reuse completed Coverage proof and finalize short/full edition
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          set -euo pipefail
+          python automation/scripts/ensure_story_coverage.py \
+            --artifact-dir "automation/preview/${PUBLICATION_DATE}" \
+            --archive automation/archive/index.json \
+            --publication-date "${PUBLICATION_DATE}" \
+            --model "${OPENAI_TEXT_MODEL}" \
+            --usual-total 7 \
+            --minimum-publishable 1 \
+            --maximum-audit-web-search-calls 7 \
+            --maximum-candidates 20 \
+            --maximum-selected-stories 12 \
+            --report automation/preview/production-daily/coverage-audit.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('automation/preview/production-daily/coverage-audit.json').read_text(encoding='utf-8'))
+          if report.get('web_search_performed') and not report.get('prior_audit_reused'):
+              raise SystemExit('Repair unexpectedly performed new Coverage search instead of reusing saved proof')
+          if report.get('status') != 'ok':
+              raise SystemExit(f'Coverage repair not publishable: {report.get("status")}: {report.get("error")}')
+          print('Coverage proof reused without new Web Search.')
+          PY
+
+      - name: Normalize and validate repaired digest
+        shell: bash
+        run: |
+          set -euo pipefail
+          artifact_dir="automation/preview/${PUBLICATION_DATE}"
+          python automation/scripts/normalize_digest_artifact.py \
+            --artifact-dir "${artifact_dir}" \
+            --report "${artifact_dir}/artifact-normalization.json"
+          python automation/scripts/validate_digest_artifact.py \
+            --artifact-dir "${artifact_dir}" \
+            --report "${artifact_dir}/artifact-validation.json"
+          python automation/scripts/validate_story_coverage.py \
+            --artifact-dir "${artifact_dir}" \
+            --usual-total 7 \
+            --minimum-publishable 1 \
+            --report automation/preview/production-daily/story-coverage-validation.json
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path('automation/preview') / os.environ['PUBLICATION_DATE']
+          stories = json.loads((root / 'stories.json').read_text(encoding='utf-8'))
+          if len(stories) < 2:
+              raise SystemExit(f'Repair still produced an unacceptable one-story digest: {len(stories)}')
+          validation = json.loads((root / 'artifact-validation.json').read_text(encoding='utf-8'))
+          if validation.get('status') != 'ok':
+              raise SystemExit('Artifact validation not ok')
+          print(f'Repaired digest validated with {len(stories)} stories.')
+          PY
+
+      - name: Generate one fresh repaired cover
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          set -euo pipefail
+          python automation/scripts/create_production_image_request.py \
+            --source-dir "automation/preview/${PUBLICATION_DATE}" \
+            --publication-date "${PUBLICATION_DATE}" \
+            --request-id "${{ steps.runtime.outputs.image_request_id }}" \
+            --output automation/preview/production-daily/image-request.json
+          image_dir="automation/preview/production-daily/image/${PUBLICATION_DATE}"
+          rm -rf "${image_dir}"
+          python automation/scripts/generate_image_preview.py \
+            --source-dir "automation/preview/${PUBLICATION_DATE}" \
+            --output-dir "${image_dir}" \
+            --request automation/preview/production-daily/image-request.json \
+            --model "${OPENAI_IMAGE_MODEL}"
+          python automation/scripts/validate_cover_contract.py \
+            --artifact-dir "${image_dir}" \
+            --report "${image_dir}/cover-validation.json"
+
+      - name: Build and validate replacement site
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_dir="automation/preview/production-daily/image/${PUBLICATION_DATE}"
+          candidate_root="automation/preview/production-daily/candidate"
+          python automation/scripts/stage_legacy_images.py \
+            --source posts/dzen-test/images \
+            --target posts/images \
+            --report automation/preview/production-daily/legacy-images.json
+          python automation/scripts/run_build_site.py \
+            --source-dir "${source_dir}" \
+            --output-dir "${candidate_root}/posts" \
+            --build-info "${candidate_root}/build-info.json"
+          python automation/scripts/normalize_production_rss.py \
+            --rss "${candidate_root}/posts/rss.xml" \
+            --feed-url "https://rybalka.one/posts/rss.xml" \
+            --site-link "https://rybalka.one/posts" \
+            --report "${candidate_root}/rss-normalization.json"
+          python automation/scripts/inject_blogposting_schema.py \
+            --config automation/config/structured-data.json \
+            --source-dir "${source_dir}" \
+            --posts-root "${candidate_root}/posts" \
+            --report "${candidate_root}/structured-data-injection.json"
+          python automation/scripts/validate_structured_data.py \
+            --source-dir "${source_dir}" \
+            --posts-root "${candidate_root}/posts" \
+            --report "${candidate_root}/structured-data-validation.json"
+          python automation/scripts/build_posts_sitemap.py \
+            --rss "${candidate_root}/posts/rss.xml" \
+            --posts-root "${candidate_root}/posts" \
+            --output "${candidate_root}/posts/sitemap.xml" \
+            --report "${candidate_root}/posts-sitemap-build.json"
+          python automation/scripts/validate_posts_sitemap.py \
+            --sitemap "${candidate_root}/posts/sitemap.xml" \
+            --rss "${candidate_root}/posts/rss.xml" \
+            --report "${candidate_root}/posts-sitemap-validation.json"
+          python automation/scripts/run_validate_site.py \
+            --source-dir "${source_dir}" \
+            --site-dir "${candidate_root}/posts" \
+            --report "${candidate_root}/site-validation.json"
+          python automation/scripts/validate_dzen_feed.py \
+            --rss "${candidate_root}/posts/rss.xml" \
+            --report "${candidate_root}/dzen-feed-validation.json"
+
+      - name: Promote replacement into branch worktree and validate archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/promote_production_site.py \
+            --config automation/config/production-daily.json \
+            --candidate-posts automation/preview/production-daily/candidate/posts \
+            --live-posts posts \
+            --source-dir "automation/preview/production-daily/image/${PUBLICATION_DATE}" \
+            --content-root automation/content \
+            --publication-date "${PUBLICATION_DATE}" \
+            --report automation/preview/production-daily/promotion.json
+          python automation/scripts/bootstrap_archive.py
+          python automation/scripts/validate_archive.py
+          cp automation/preview/production-daily/preflight/site.json.original automation/config/site.json
+          python automation/scripts/validate_rss.py --rss posts/rss.xml
+          python automation/scripts/validate_dzen_feed.py \
+            --rss posts/rss.xml \
+            --report automation/preview/production-daily/final-dzen-feed-validation.json
+
+      - name: Commit validated replacement to PR branch only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_publish_changes.py \
+            --publication-date "${PUBLICATION_DATE}" \
+            --report automation/preview/production-daily/publish-changes.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Replace AI digest for ${PUBLICATION_DATE} after retry fix"
+          git push origin HEAD:fix/aug15-editorial-retry-window
+
+      - name: Restore repository site config on failure
+        if: failure()
+        shell: bash
+        run: |
+          if [[ -f automation/preview/production-daily/preflight/site.json.original ]]; then
+            cp automation/preview/production-daily/preflight/site.json.original automation/config/site.json
+          fi
+
+      - name: Upload repair diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: aug15-branch-repair-${{ github.run_id }}
+          path: |
+            automation/preview/production-daily/
+            automation/preview/2026-08-15/
+          if-no-files-found: warn
+          retention-days: 7
