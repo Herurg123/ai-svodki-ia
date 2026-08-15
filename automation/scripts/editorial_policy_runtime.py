@@ -3,11 +3,12 @@
 
 Production entry points import this module before calling the shared editorial
 validator. The corrections are deliberately narrow: preserve every unrelated
-policy error, accept only the explicitly allowed Russian wording, normalize one
-safe research-ranking metadata contradiction, restore source metadata from the
-paid research pool instead of asking the model to copy URLs perfectly, and
-repair the one mandatory world-section heading when the model omits it from an
-otherwise structurally valid short digest.
+policy error, accept only the explicitly allowed Russian wording, classify the
+regional section from a story's primary subject rather than a secondary model
+reference, normalize one safe research-ranking metadata contradiction, restore
+source metadata from the paid research pool instead of asking the model to copy
+URLs perfectly, and repair the one mandatory world-section heading when the
+model omits it from an otherwise structurally valid short digest.
 """
 from __future__ import annotations
 
@@ -34,6 +35,41 @@ def actual_prohibited_agent_form(text: str) -> bool:
     return any(re.search(pattern, text, flags=re.IGNORECASE) for pattern in patterns)
 
 
+def primary_subject_is_asia(
+    candidate: dict[str, Any], policy: dict[str, Any]
+) -> bool:
+    """Classify the China/Asia section from the story's primary subject.
+
+    ``organization`` may contain several semicolon-separated entities. The first
+    one is the event subject; later entities can be dependencies, suppliers or
+    model provenance. Counting every later name made Writer + Z.ai look like a
+    Chinese story on 2026-08-15 and triggered an invalid structural retry.
+    """
+
+    tracked = [
+        str(item).strip().casefold()
+        for item in policy.get("tracked_asia_organizations", [])
+        if str(item).strip()
+    ]
+    organization = str(candidate.get("organization") or "").strip()
+    primary = organization.split(";", 1)[0].strip().casefold()
+    if primary:
+        return any(name in primary for name in tracked)
+    title = str(candidate.get("title") or "").casefold()
+    return any(name in title for name in tracked)
+
+
+def _selected_candidates_and_policy(
+    args: tuple[Any, ...], kwargs: dict[str, Any]
+) -> tuple[list[dict[str, Any]] | None, dict[str, Any] | None]:
+    selected = args[0] if len(args) >= 1 else kwargs.get("selected_candidates")
+    policy = args[2] if len(args) >= 3 else kwargs.get("policy")
+    if not isinstance(selected, list) or not isinstance(policy, dict):
+        return None, None
+    candidates = [item for item in selected if isinstance(item, dict)]
+    return candidates, policy
+
+
 def wrap_validator(original: Validator) -> Validator:
     """Wrap one article validator while preserving every unrelated error."""
 
@@ -46,25 +82,48 @@ def wrap_validator(original: Validator) -> Validator:
         **kwargs: Any,
     ) -> tuple[list[str], list[str], dict[str, Any]]:
         errors, warnings, analysis = original(article_html, *args, **kwargs)
-        if AGENT_ERROR not in errors:
-            return errors, warnings, analysis
-
-        try:
-            import editorial_policy
-
-            visible_text = editorial_policy.parse_article(article_html).visible_text
-        except Exception:
-            visible_text = article_html
-
-        if actual_prohibited_agent_form(visible_text):
-            return errors, warnings, analysis
-
-        filtered = [error for error in errors if error != AGENT_ERROR]
+        filtered = list(errors)
         updated_warnings = list(warnings)
-        updated_warnings.append(
-            "Игнорировано ложное совпадение AI + прилагательное «агентный»: "
-            "название продукта с AI не является формой AI-агент."
-        )
+
+        if AGENT_ERROR in filtered:
+            try:
+                import editorial_policy
+
+                visible_text = editorial_policy.parse_article(article_html).visible_text
+            except Exception:
+                visible_text = article_html
+
+            if not actual_prohibited_agent_form(visible_text):
+                filtered = [error for error in filtered if error != AGENT_ERROR]
+                updated_warnings.append(
+                    "Игнорировано ложное совпадение AI + прилагательное «агентный»: "
+                    "название продукта с AI не является формой AI-агент."
+                )
+
+        selected, policy = _selected_candidates_and_policy(args, kwargs)
+        if selected is not None and policy is not None:
+            china_heading = str(
+                policy.get("article", {}).get(
+                    "china_heading", "Китайские лидеры ИИ"
+                )
+            )
+            china_required_error = (
+                f"При выбранных китайских сюжетах заголовок «{china_heading}» "
+                "должен встречаться ровно один раз."
+            )
+            if (
+                china_required_error in filtered
+                and not any(primary_subject_is_asia(item, policy) for item in selected)
+            ):
+                filtered = [
+                    error for error in filtered if error != china_required_error
+                ]
+                updated_warnings.append(
+                    "Игнорировано ложное требование китайского раздела: "
+                    "азиатский бренд присутствует только как вторичная организация, "
+                    "а не основной субъект выбранного сюжета."
+                )
+
         return filtered, updated_warnings, analysis
 
     setattr(corrected, "_ai_svodki_agent_policy_fixed", True)
