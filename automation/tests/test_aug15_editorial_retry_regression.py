@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import sys
 import tempfile
+import types
 import unittest
 from datetime import date, datetime
 from pathlib import Path
@@ -11,6 +12,14 @@ ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "automation" / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
+
+# Main CI intentionally runs without the paid OpenAI SDK. This regression uses
+# only deterministic sanitation helpers, so keep the test offline rather than
+# installing a transport dependency merely to import the module under test.
+if "openai" not in sys.modules:
+    openai_stub = types.ModuleType("openai")
+    openai_stub.OpenAI = object
+    sys.modules["openai"] = openai_stub
 
 import generate_digest_preview as generator  # noqa: E402
 import run_digest_preview as runner  # noqa: E402
