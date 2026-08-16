@@ -1,0 +1,26 @@
+name: Retrieval quality branch patch
+on:
+  push:
+    branches:
+      - agent/retrieval-quality-v1
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: agent/retrieval-quality-v1
+          fetch-depth: 0
+      - name: Patch target branch and remove temporary machinery
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/_apply_retrieval_quality_branch_patch.py
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git diff --cached --check
+          git commit -m "Integrate Retrieval Quality v1 with recovery and docs"
+          git push origin HEAD:agent/retrieval-quality-v1
