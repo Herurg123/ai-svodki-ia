@@ -20,7 +20,7 @@ for name in ('README.md', 'automation/README.md'):
     body = path.read_text(encoding='utf-8')
     marker = '## Retrieval Quality v1: unresolved-сигналы и региональная полнота'
     if marker not in body:
-        path.write_text(body.rstrip() + section + '\n', encoding='utf-8')
+        path.write_text(body.rstrip() + section.rstrip() + '\n', encoding='utf-8')
 
 agents = Path('AGENTS.md')
 body = agents.read_text(encoding='utf-8')
@@ -39,4 +39,4 @@ agent_section = '''
 - Live Terra smoke применять как диагностическую проверку query architecture. Не требовать конкретную live Reuters/AP/Bloomberg/FT URL в deterministic CI.
 '''
 if '## Retrieval Quality v1\n' not in body:
-    agents.write_text(body.rstrip() + agent_section + '\n', encoding='utf-8')
+    agents.write_text(body.rstrip() + agent_section.rstrip() + '\n', encoding='utf-8')
