@@ -497,3 +497,8 @@ Timezone-aware `published_at` сравнивается непосредстве�
 может подтвердить source-health: same-day recovery обязан fail-closed, потому что
 по одной дате нельзя доказать, что материал существовал до исходного cutoff.
 Стартовый date-only день остаётся допустимым для bounded healing overlap.
+
+
+### Terminal source-health contract
+
+Agency retrieval остаётся обязательным: `major_agencies` должен выполнить свой search, а при необходимости Coverage использует один bounded same-event Reuters/AP/Bloomberg/FT rescue. Нулевой результат после технически успешного обязательного поиска теперь записывается как warning, а не как самостоятельный fatal error, потому что ranking Terra недетерминирован. Ошибка/неполнота обязательного маршрута остаётся fatal. Search budget и точная временная валидация agency evidence не изменены. Production status при нескольких сохранённых ошибках отдаёт приоритет фактически достигнутому terminal stage (`artifact-normalization.json`/`artifact-validation.json`), а recovery-ошибка используется только как более ранняя диагностика.

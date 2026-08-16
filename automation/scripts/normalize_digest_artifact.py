@@ -303,8 +303,8 @@ def normalize_fresh_primary_metadata(artifact_dir: Path, report: dict[str, Any])
         report["changes"].extend({"file": "run-info.json", **item} for item in changes)
 
 
-def validate_primary_source_health(artifact_dir: Path) -> None:
-    """Fail closed when a completed fresh primary searched mostly junk/empty sources."""
+def validate_primary_source_health(artifact_dir: Path) -> str | None:
+    """Validate mandatory agency retrieval and warn on a healthy zero-result outcome."""
     primary_path = artifact_dir / "primary-recall.json"
     if not primary_path.is_file():
         return
@@ -378,13 +378,15 @@ def validate_primary_source_health(artifact_dir: Path) -> None:
             artifact_dir, start_at=start_at, end_at=end_at
         )
         if not (primary_has_fresh_agency or final_pool_has_fresh_agency):
-            raise NormalizationError(
-                "Primary Recall source-health degraded: ни Primary diagnostics, ни "
-                "финальный validated candidate pool после mandatory Coverage не "
-                "подтвердили свежий Reuters/AP/Bloomberg/FT материал в effective "
-                "window; служебные, author и старые newsletter URL не считаются "
-                "доказательством свежего agency retrieval."
+            return (
+                "Primary Recall source-health warning: обязательный major_agencies pass "
+                "и последующий Coverage/rescue завершились технически, но validated "
+                "candidate pool не подтвердил свежий Reuters/AP/Bloomberg/FT материал "
+                "в effective window. Нулевая выдача после успешно выполненного "
+                "ограниченного поиска считается недетерминированным retrieval outcome, "
+                "а не самостоятельной причиной блокировки публикации."
             )
+    return None
 
 
 def normalize_artifact(artifact_dir: Path, report_path: Path) -> dict[str, Any]:
@@ -396,6 +398,7 @@ def normalize_artifact(artifact_dir: Path, report_path: Path) -> dict[str, Any]:
         "artifact_dir": str(artifact_dir),
         "changed_files": [],
         "changes": [],
+        "warnings": [],
     }
     prompt_locations = 0
 
@@ -437,7 +440,9 @@ def normalize_artifact(artifact_dir: Path, report_path: Path) -> dict[str, Any]:
         raise NormalizationError("В artifact не найден image_prompt")
 
     normalize_fresh_primary_metadata(artifact_dir, report)
-    validate_primary_source_health(artifact_dir)
+    source_health_warning = validate_primary_source_health(artifact_dir)
+    if source_health_warning:
+        report["warnings"].append(source_health_warning)
 
     # The old validation report hashes pre-normalized files and must never be
     # reused as an image source manifest. The validator immediately recreates it.

@@ -588,3 +588,8 @@ Date-only evidence на календарном дне cutoff не считает
 опубликованную после исходного cutoff. Date-only evidence на стартовом дне
 сохраняет совместимость с bounded healing overlap; точный timestamp, если он
 есть, всегда проверяется строго.
+
+
+### Source-health при недетерминированной agency-выдаче
+
+Обязательный `major_agencies` Primary pass и bounded same-event agency rescue остаются частью fail-closed поискового контура и не увеличивают бюджет: максимум по-прежнему 12 Primary + до 4 Hybrid + до 7 Coverage searches. Технически незавершённый обязательный маршрут, отсутствие search operation или деградация общего source-health по-прежнему блокируют выпуск. Если же обязательные маршруты корректно завершились, но Terra не вернула подтверждённый свежий Reuters/AP/Bloomberg/FT материал, сам нулевой ranking-result больше не считается достаточной причиной аварии: normalization сохраняет явное `source-health warning`, а остальные editorial/validation gates продолжают работать. Любой найденный agency-материал всё так же обязан пройти точную проверку effective window.

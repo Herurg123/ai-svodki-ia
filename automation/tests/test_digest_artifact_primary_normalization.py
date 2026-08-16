@@ -126,9 +126,15 @@ class FreshPrimaryArtifactNormalizationTests(unittest.TestCase):
                 other_sources=["https://openai.com/index/example", "https://nvidia.com/example"],
                 with_search_window=True,
             )
-            with self.assertRaises(normalizer.NormalizationError) as ctx:
-                normalizer.normalize_artifact(artifact, artifact / "artifact-normalization.json")
-            self.assertIn("Reuters/AP/Bloomberg/FT", str(ctx.exception))
+            report = normalizer.normalize_artifact(
+                artifact, artifact / "artifact-normalization.json"
+            )
+            self.assertTrue(
+                any(
+                    "source-health warning" in warning
+                    for warning in report.get("warnings", [])
+                )
+            )
 
     def test_fresh_agency_candidate_in_thematic_direction_is_source_health_evidence(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -249,10 +255,15 @@ class FreshPrimaryArtifactNormalizationTests(unittest.TestCase):
                     ]
                 },
             )
-            with self.assertRaises(normalizer.NormalizationError):
-                normalizer.normalize_artifact(
-                    artifact, artifact / "artifact-normalization.json"
+            report = normalizer.normalize_artifact(
+                artifact, artifact / "artifact-normalization.json"
+            )
+            self.assertTrue(
+                any(
+                    "source-health warning" in warning
+                    for warning in report.get("warnings", [])
                 )
+            )
 
     def test_final_pool_exact_pre_cutoff_agency_evidence_is_accepted(self):
         with tempfile.TemporaryDirectory() as tmp:
