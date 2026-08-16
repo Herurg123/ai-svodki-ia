@@ -112,10 +112,11 @@ or a reason to republish yesterday's story.
 The effective window has two distinct retrieval roles. The first 24 hours from
 effective start to the continuity anchor are **healing overlap**. The main
 continuity period starts at the anchor and ends at `search_window.end_at`.
-Primary, Hybrid and fallback Coverage search queries must prioritize calendar
-dates of that main continuity period; the overlap remains valid for an
-incidentally discovered major miss but must not dominate fresh ranking. Candidate
-freshness validation still uses the full effective window.
+Primary, Hybrid and fallback Coverage search queries use short date-free
+relative-freshness wording; neither the continuity period nor healing overlap is
+encoded as calendar dates in query text. Exact timestamps remain authoritative
+for post-retrieval eligibility, and the full effective window remains valid for
+healing a major missed event.
 
 Only internally generated runtime research may carry this wider effective
 window through the legacy generator. The trusted bridge lives under the ignored
@@ -155,7 +156,7 @@ Each Primary Responses pass has `max_output_tokens=6000`. This is structured-out
 
 Broad safety nets are source-neutral: `global_breaking` and
 `independent_missing_events` have no API domain filter. `major_agencies` remains
-an extra Bloomberg/FT high-signal route. Do not turn this source route into a
+an extra Reuters/AP/Bloomberg/FT high-signal route. Do not turn this source route into a
 project-wide whitelist; source quality is still validated after retrieval.
 
 Search prompts carry the exact effective window only as the authoritative
@@ -170,7 +171,7 @@ budget:
 
 - `global_breaking` is a source-neutral broad current-AI catch-all without an API
   domain filter;
-- `major_agencies` is an additional date-free `bloomberg.com` + `ft.com` sweep;
+- `major_agencies` is an additional Reuters/AP/Bloomberg/FT sweep using the exact date-free query `latest AI chips data centers investments deals policy security`;
 - `independent_missing_events` is a source-neutral broad missing-events sweep
   after seeing the current candidate pool.
 
@@ -263,6 +264,19 @@ validator rejections for each direction.
 The final `independent_missing_events` pass receives a compact list of already
 found candidates and explicitly searches for significant events absent from the
 pool. It is a last-mile recall check, not another editorial filter.
+
+The 2026-08-16 source-health failure is a permanent regression case. A generic
+`latest major artificial intelligence news` agency query completed but ranked
+hubs instead of enough fresh direct agency stories, even though fresh Reuters
+evidence existed in the effective window. The `major_agencies` route therefore
+uses Reuters/AP/Bloomberg/FT API routing plus the exact high-signal date-free
+query above without increasing the 12-search Primary budget. Agency rescue target
+ranking must normalize event-type families such as `acquisition_closed` to the
+`acquisition` family. Regional classification must keep metadata-only secondary
+organizations such as `Writer; Z.ai` out of the China section while recognizing
+a tracked secondary party explicitly named in the story title, such as
+`Uber; Pony.ai`. Coverage editorial reruns must echo child output before raising
+so the real validation error remains visible in Actions diagnostics.
 
 Primary Recall v2 is injected into the existing generator through its
 `--research-input` interface so editorial policy and artifact validation remain

@@ -108,7 +108,7 @@ class PrimaryRecallSearchTests(unittest.TestCase):
         self.assertEqual(tuple(directions["global_breaking"].get("allowed_domains") or ()), ())
         self.assertEqual(
             tuple(directions["major_agencies"].get("allowed_domains") or ()),
-            prs.BLOOMBERG_FT_DOMAINS,
+            prs.AGENCY_DOMAINS,
         )
         self.assertEqual(tuple(directions["independent_missing_events"].get("allowed_domains") or ()), ())
         self.assertEqual(
@@ -158,7 +158,7 @@ class PrimaryRecallSearchTests(unittest.TestCase):
         self.assertEqual(len(research["candidates"]), 1)
         self.assertIn("Alpha Model", final_prompt)
         self.assertEqual(seen_domains["global_breaking"], ())
-        self.assertEqual(seen_domains["major_agencies"], prs.BLOOMBERG_FT_DOMAINS)
+        self.assertEqual(seen_domains["major_agencies"], prs.AGENCY_DOMAINS)
         self.assertEqual(seen_domains["independent_missing_events"], ())
         self.assertEqual(seen_domains["models_products_agents"], ())
 

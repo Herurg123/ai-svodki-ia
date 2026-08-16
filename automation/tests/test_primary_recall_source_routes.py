@@ -14,7 +14,7 @@ class PrimaryRecallSourceRouteTests(unittest.TestCase):
     def test_broad_and_gap_passes_are_source_neutral(self) -> None:
         routes = {str(item["id"]): tuple(item.get("allowed_domains", ())) for item in primary.PRIMARY_DIRECTIONS}
         self.assertEqual(routes["global_breaking"], ())
-        self.assertEqual(routes["major_agencies"], ("bloomberg.com", "ft.com"))
+        self.assertEqual(routes["major_agencies"], primary.AGENCY_DOMAINS)
         self.assertEqual(routes["independent_missing_events"], ())
         for direction_id, domains in routes.items():
             if direction_id != "major_agencies":

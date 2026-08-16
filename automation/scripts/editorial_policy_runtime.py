@@ -53,8 +53,12 @@ def primary_subject_is_asia(
     ]
     organization = str(candidate.get("organization") or "").strip()
     primary = organization.split(";", 1)[0].strip().casefold()
-    if primary:
-        return any(name in primary for name in tracked)
+    if primary and any(name in primary for name in tracked):
+        return True
+    # A secondary tracked organization is a regional subject only when the
+    # editorial title itself names it as a party to the event. This keeps
+    # metadata-only provenance such as Writer; Z.ai out of the China section,
+    # while joint events such as Uber; Pony.ai are classified correctly.
     title = str(candidate.get("title") or "").casefold()
     return any(name in title for name in tracked)
 

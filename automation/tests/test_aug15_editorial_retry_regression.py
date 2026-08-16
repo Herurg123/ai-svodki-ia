@@ -201,7 +201,7 @@ class Aug15RetryWindowRegressionTests(unittest.TestCase):
 
 class Aug15AsiaSubjectRegressionTests(unittest.TestCase):
     policy = {
-        "tracked_asia_organizations": ["Z.ai", "DeepSeek"],
+        "tracked_asia_organizations": ["Z.ai", "DeepSeek", "Pony.ai"],
         "article": {"china_heading": "Китайские лидеры ИИ"},
     }
     china_error = (
@@ -220,6 +220,13 @@ class Aug15AsiaSubjectRegressionTests(unittest.TestCase):
         candidate = {
             "title": "Z.ai представила новую модель",
             "organization": "Z.ai; Partner",
+        }
+        self.assertTrue(primary_subject_is_asia(candidate, self.policy))
+
+    def test_secondary_asia_party_named_in_title_is_chinese(self) -> None:
+        candidate = {
+            "title": "Uber и Pony.ai расширяют роботакси-партнёрство в Европе",
+            "organization": "Uber; Pony.ai",
         }
         self.assertTrue(primary_subject_is_asia(candidate, self.policy))
 

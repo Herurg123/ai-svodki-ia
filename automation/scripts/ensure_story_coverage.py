@@ -12,6 +12,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -343,6 +344,26 @@ def _candidate_id(candidate: Any) -> str | None:
     return str(value) if value is not None else None
 
 
+def _agency_event_family(event_type: str) -> str:
+    """Normalize common event-type variants for rescue target ranking."""
+    raw = str(event_type or "").casefold().strip()
+    if raw == "m&a":
+        return raw
+    normalized = re.sub(r"[^a-z0-9]+", "_", raw).strip("_")
+    for family in (
+        "funding",
+        "acquisition",
+        "merger",
+        "investment",
+        "data_center",
+        "infrastructure",
+        "partnership",
+    ):
+        if normalized == family or normalized.startswith(family + "_"):
+            return family
+    return normalized
+
+
 def _select_agency_corroboration_target(
     candidates: list[Any],
 ) -> dict[str, Any] | None:
@@ -368,7 +389,7 @@ def _select_agency_corroboration_target(
             continue
         event_type = str(raw.get("event_type") or "").casefold().strip()
         category = str(raw.get("category") or "").casefold().strip()
-        priority = event_priority.get(event_type)
+        priority = event_priority.get(_agency_event_family(event_type))
         if priority is None and category in {"investment", "infrastructure", "chips"}:
             priority = 1
         if priority is None:
