@@ -1,0 +1,301 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-16",
+  "search_window": {
+    "start_at": "2026-08-14T06:48:32+03:00",
+    "end_at": "2026-08-16T08:59:33+03:00",
+    "latest_archive_at": "2026-08-15T06:48:32+03:00",
+    "start_date": "2026-08-14",
+    "end_date": "2026-08-16",
+    "latest_archive_date": "2026-08-15"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=3, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "SpaceX официально закрыла приобретение AI-кодинг-стартапа Cursor",
+      "organization": "SpaceX; Cursor",
+      "published_date": "2026-08-15",
+      "published_at": "2026-08-15T09:30:00-07:00",
+      "time_precision": "datetime",
+      "topic": "крупная консолидация AI-кодинга и вычислительной инфраструктуры",
+      "event_type": "acquisition_closed",
+      "keywords": [
+        "SpaceX",
+        "Cursor",
+        "AI coding",
+        "acquisition",
+        "GPUs",
+        "infrastructure"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "SpaceX officially closes its Cursor acquisition",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/15/spacex-officially-closes-its-cursor-acquisition/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Cursor announcement",
+          "publisher": "Cursor",
+          "url": "https://cursor.com/"
+        }
+      ],
+      "event_summary": "Cursor сообщила о юридическом закрытии сделки и переходе в состав SpaceX. По данным TechCrunch, ранее соглашение давало SpaceX опцион на покупку Cursor за $60 млрд; Cursor заявила, что после объединения получит доступ к вычислительной инфраструктуре и крупнейшему парку GPU SpaceX.",
+      "verified_facts": [
+        "TechCrunch опубликовал материал 15 августа 2026 года в 09:30 PDT.",
+        "Cursor подтвердила, что стала частью SpaceX.",
+        "Материал связывает закрытие сделки с ранее объявленным опционом SpaceX на приобретение Cursor за $60 млрд.",
+        "Cursor заявила, что получит доступ к GPU-инфраструктуре SpaceX."
+      ],
+      "significance": "Закрытие сделки превращает заметного разработчика AI-кодинга в часть крупного владельца вычислительной инфраструктуры и является самостоятельным material update ранее объявленной сделки.",
+      "significance_score": 4,
+      "limitations": "Параметры окончательно закрытой сделки, включая фактическую цену и структуру расчётов, в найденном материале не раскрыты.",
+      "archive_status": "update",
+      "archive_reason": "В архиве нет сюжета о приобретении Cursor SpaceX; это новое подтверждённое закрытие ранее объявленной сделки.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Закрытие подтверждено публикацией Cursor, на которую ссылается TechCrunch; дата и ключевые детали проверены по открытому материалу TechCrunch.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Само соглашение и намерение завершить покупку были известны ранее, но юридическое закрытие сделки опубликовано в пределах текущего окна.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Основное событие — корпоративная сделка, а не судебное или регуляторное действие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "not_applicable",
+      "id": "cand-001"
+    },
+    {
+      "title": "EMERGING и Promethean запустили фонд XPR на $300 млн для инвестиций в ИИ для гостиничного и развлекательного бизнеса",
+      "organization": "EMERGING; Promethean Investments; The Experience Fund (XPR); Buyers Edge Platform",
+      "published_date": "2026-08-14",
+      "published_at": "2026-08-14T06:16:00-04:00",
+      "time_precision": "datetime",
+      "topic": "частный капитал для ИИ, автоматизации и data-инфраструктуры в hospitality и experiential entertainment",
+      "event_type": "fund launch",
+      "keywords": [
+        "AI investment",
+        "private equity",
+        "hospitality",
+        "automation",
+        "computer vision",
+        "autonomous service",
+        "enterprise deployment"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "official",
+      "primary_source": {
+        "title": "EMERGING and Promethean Launch $300M Experience Fund to Back AI for Hospitality",
+        "publisher": "EMERGING via PR Newswire",
+        "url": "https://www.prnewswire.com/news-releases/emerging-and-promethean-launch-300m-experience-fund-to-back-ai-for-hospitality-302851776.html"
+      },
+      "supporting_sources": [
+        {
+          "title": "EMERGING and Promethean Raise $300M Experience Fund With $500M Hard Cap",
+          "publisher": "Unite.AI",
+          "url": "https://www.unite.ai/emerging-and-promethean-raise-300m-experience-fund-with-500m-hard-cap-to-invest-in-hospitality-ai-ip-holdings-and-automation-platforms/"
+        }
+      ],
+      "event_summary": "EMERGING и Promethean объявили о запуске The Experience Fund (XPR): инвестиционного механизма объёмом $300 млн с лимитом $500 млн. Фонд будет инвестировать в ИИ, автоматизацию и связанные data-платформы для ресторанного, гостиничного и experiential-развлекательного бизнеса.",
+      "verified_facts": [
+        "Пресс-релиз опубликован 14 августа 2026 года в 06:16 ET, что попадает в effective editorial window.",
+        "XPR заявлен как фонд на $300 млн с hard cap $500 млн и со-спонсируется EMERGING и Promethean в пропорции 50/50.",
+        "Мандат фонда охватывает ИИ и автоматизацию для hospitality, включая computer vision, автономный сервис, order/beverage automation, а также трудовую и supply-chain intelligence.",
+        "В сообщении говорится, что потенциальные портфельные компании смогут использовать канал распространения Buyers Edge Platform, работающий примерно с третью ресторанов США."
+      ],
+      "significance": "Это не обычный ранний раунд, а новый секторный PE/ростовой инструмент с существенным целевым размером и встроенным каналом enterprise-дистрибуции для внедрения ИИ в крупной фрагментированной индустрии hospitality.",
+      "significance_score": 2,
+      "limitations": "Основное подтверждение — корпоративный пресс-релиз; независимой деловой верификации закрытия капитала и фактических инвестиций в портфель на момент прохода не найдено. Часть заявлений о рынке и канале продаж исходит от организаторов фонда.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве и пуле текущего прохода нет совпадающего сюжета о запуске XPR.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Параметры фонда, со-спонсоры, временная метка публикации и инвестиционный мандат подтверждены первичным пресс-релизом; отраслевой пересказ дополнительно согласуется с ним.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Запуск фонда объявлен 14 августа 2026 года и не является перепечаткой ранее опубликованного архивного сюжета.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Юридического или регуляторного события нет.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity: кандидат соответствует основной бизнес-инвестиционной тематике прохода.",
+      "id": "cand-002"
+    },
+    {
+      "title": "Anthropic раскрыла технические детали глобального watermarking текстов Claude",
+      "organization": "Anthropic; Claude",
+      "published_date": "2026-08-14",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "маркировка AI-генерируемого текста, transparency и EU AI Act",
+      "event_type": "product_policy_update",
+      "keywords": [
+        "Anthropic",
+        "Claude",
+        "watermarking",
+        "SynthID-Text",
+        "C2PA",
+        "EU AI Act",
+        "transparency"
+      ],
+      "geography": "world",
+      "category": "regulation",
+      "source_type": "official",
+      "primary_source": {
+        "title": "How Claude’s text watermark works",
+        "publisher": "Anthropic",
+        "url": "https://www.anthropic.com/news/claude-text-watermark"
+      },
+      "supporting_sources": [
+        {
+          "title": "Anthropic shares more details about how Claude’s new watermarks will work",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/08/15/anthropic-shares-more-details-about-how-claudes-new-watermarks-will-work/"
+        }
+      ],
+      "event_summary": "Anthropic описала, как будущие модели Claude будут встраивать невидимый текстовый watermark на базе подхода SynthID-Text, а также сообщила о планах выпустить API для его проверки. Компания заявила, что запускает маркировку глобально, поскольку пока не может надёжно ограничить её только отдельными регионами.",
+      "verified_facts": [
+        "Официальный материал Anthropic датирован 14 августа 2026 года.",
+        "Anthropic использует вариант подхода SynthID-Text для watermarking текстов Claude.",
+        "Компания заявляет, что watermark не добавляет токенов, не влияет практически на скорость и стоимость и не несёт данных о пользователе.",
+        "Anthropic планирует предоставить API для проверки watermark.",
+        "Для поддерживаемых файлов Claude будет добавлять C2PA content credentials.",
+        "Anthropic связывает внедрение с требованиями EU AI Act и кодексом прозрачности AI-generated content."
+      ],
+      "significance": "Это конкретизирует одну из первых крупных глобальных реализаций маркировки LLM-текста: решение затрагивает продукты Claude, API, программный код и проверяемость происхождения контента.",
+      "significance_score": 3,
+      "limitations": "Anthropic не назвала дату доступности detection API и не раскрыла все практические параметры устойчивости watermark к редактированию.",
+      "archive_status": "update",
+      "archive_reason": "В архиве нет публикации о watermarking Claude; исходное сообщение от 11 августа находится вне окна, но официальный технический релиз от 14 августа содержит существенные новые детали.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверено по официальной публикации Anthropic; дополнительное изложение и timestamp подтверждены TechCrunch.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Это не первое объявление о watermarking Claude, но в окне опубликованы технические принципы, охват файлов, глобальный rollout и планы detection API.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие связано с соблюдением регулирования, но не является самостоятельным крупным правовым действием или решением регулятора.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "not_applicable",
+      "id": "cand-003"
+    },
+    {
+      "title": "Google сделала видимые водяные знаки в AI-генерациях отключаемыми, сохранив SynthID и C2PA",
+      "organization": "Google; Gemini; Flow",
+      "published_date": "2026-08-14",
+      "published_at": "2026-08-14T09:13:00-07:00",
+      "time_precision": "datetime",
+      "topic": "provenance и маркировка синтетических изображений, видео и музыки",
+      "event_type": "product_policy_update",
+      "keywords": [
+        "Google",
+        "Gemini",
+        "Flow",
+        "SynthID",
+        "C2PA",
+        "watermark",
+        "AI media"
+      ],
+      "geography": "world",
+      "category": "multimodal",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Google will now allow users to remove visible watermark from its AI generations",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/14/google-will-now-allow-users-to-remove-visible-watermark-from-its-ai-generations/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Credentio",
+          "publisher": "Google Developers Blog",
+          "url": "https://developers.googleblog.com/"
+        }
+      ],
+      "event_summary": "Google разрешила пользователям отключать видимый watermark в AI-генерациях изображений, видео и музыки для Nano Banana, Omni и Lyria в Gemini и Flow. Невидимый SynthID и метаданные C2PA при этом сохраняются; компания также представила библиотеку Credentio для локальной валидации provenance в приложениях.",
+      "verified_facts": [
+        "TechCrunch датирует публикацию 14 августа 2026 года, 09:13 PDT.",
+        "Отключение видимого watermark распространяется на генерации изображений, видео и музыки.",
+        "Google заявила, что невидимый SynthID watermark и C2PA-метаданные останутся.",
+        "Функция заявлена для Nano Banana, Omni и Lyria, с доступом через Gemini и Flow.",
+        "Google также анонсировала библиотеку Credentio для локальной проверки provenance."
+      ],
+      "significance": "Обновление демонстрирует компромисс крупной платформы между коммерческой пригодностью генеративных медиа и сохранением машиночитаемой идентификации AI-контента; оно особенно релевантно на фоне вступивших в силу требований прозрачности.",
+      "significance_score": 2,
+      "limitations": "Основное подтверждение в найденном материале — сообщение в X, пересказанное TechCrunch; детали rollout и документация Credentio требуют последующей редакционной проверки по первичным материалам Google.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет идентичного сюжета.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата, продукты и сохранение SynthID/C2PA проверены по открытому материалу TechCrunch; первичный анонс Google в рамках доступной навигации не был открыт.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Продуктовое изменение опубликовано внутри эффективного окна и не совпадает с архивными сюжетами.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это продуктовое решение о маркировке, а не правовой кейс.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "not_applicable",
+      "id": "cand-004"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=4, validated unique=4, final candidates=4. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений."
+}

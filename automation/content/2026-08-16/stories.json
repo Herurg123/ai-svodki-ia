@@ -1,0 +1,94 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Обновление: SpaceX официально закрыла приобретение Cursor",
+    "organization": "SpaceX; Cursor",
+    "topic": "крупная консолидация AI-кодинга и вычислительной инфраструктуры",
+    "event_type": "acquisition_closed",
+    "status": "update",
+    "summary": "Cursor сообщила о юридическом закрытии сделки и переходе в состав SpaceX. По данным TechCrunch, ранее соглашение давало SpaceX опцион на покупку Cursor за $60 млрд; Cursor заявила, что после объединения получит доступ к вычислительной инфраструктуре и крупнейшему парку GPU SpaceX.",
+    "published_at": "2026-08-15T09:30:00-07:00",
+    "published_date": "2026-08-15",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "SpaceX officially closes its Cursor acquisition",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/15/spacex-officially-closes-its-cursor-acquisition/"
+      }
+    ],
+    "keywords": [
+      "SpaceX",
+      "Cursor",
+      "AI coding",
+      "acquisition",
+      "GPUs",
+      "infrastructure"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Обновление: Anthropic раскрыла, как будет маркировать текст Claude",
+    "organization": "Anthropic; Claude",
+    "topic": "маркировка AI-генерируемого текста, transparency и EU AI Act",
+    "event_type": "product_policy_update",
+    "status": "update",
+    "summary": "Anthropic описала, как будущие модели Claude будут встраивать невидимый текстовый watermark на базе подхода SynthID-Text, а также сообщила о планах выпустить API для его проверки. Компания заявила, что запускает маркировку глобально, поскольку пока не может надёжно ограничить её только отдельными регионами.",
+    "published_at": null,
+    "published_date": "2026-08-14",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "How Claude’s text watermark works",
+        "publisher": "Anthropic",
+        "url": "https://www.anthropic.com/news/claude-text-watermark"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "watermarking",
+      "SynthID-Text",
+      "C2PA",
+      "EU AI Act",
+      "transparency"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Google разрешила отключать видимые водяные знаки в ИИ-медиа",
+    "organization": "Google; Gemini; Flow",
+    "topic": "provenance и маркировка синтетических изображений, видео и музыки",
+    "event_type": "product_policy_update",
+    "status": "new",
+    "summary": "Google разрешила пользователям отключать видимый watermark в AI-генерациях изображений, видео и музыки для Nano Banana, Omni и Lyria в Gemini и Flow. Невидимый SynthID и метаданные C2PA при этом сохраняются; компания также представила библиотеку Credentio для локальной валидации provenance в приложениях.",
+    "published_at": "2026-08-14T09:13:00-07:00",
+    "published_date": "2026-08-14",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google will now allow users to remove visible watermark from its AI generations",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/14/google-will-now-allow-users-to-remove-visible-watermark-from-its-ai-generations/"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Gemini",
+      "Flow",
+      "SynthID",
+      "C2PA",
+      "watermark",
+      "AI media"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  }
+]

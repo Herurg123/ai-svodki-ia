@@ -1,0 +1,14 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-003",
+    "cand-004"
+  ],
+  "excluded_candidate_ids": [
+    "cand-002"
+  ],
+  "selection_summary": "Выбраны три подтверждённых сюжета: юридическое закрытие сделки SpaceX и Cursor, существенное обновление о маркировке текста Claude и новое продуктовое решение Google по визуальным водяным знакам. Фонд XPR исключён как менее значимый секторный анонс, основанный преимущественно на пресс-релизе.",
+  "diversity_overrides": []
+}

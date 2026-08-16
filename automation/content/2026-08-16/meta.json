@@ -1,0 +1,45 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-16",
+  "slug": "2026-08-16",
+  "title": "ИИ-Сводка на 16 августа 2026",
+  "description": "SpaceX завершила сделку по покупке Cursor, Anthropic раскрыла устройство маркировки текста Claude, а Google разрешила отключать видимые водяные знаки в ИИ-медиа, сохраняя машиночитаемое происхождение.",
+  "published_at": "2026-08-16T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-16.png",
+  "topics": [
+    "SpaceX",
+    "Cursor",
+    "ИИ-кодинг",
+    "GPU-инфраструктура",
+    "Anthropic",
+    "Claude",
+    "маркировка текста",
+    "SynthID-Text",
+    "Google",
+    "Gemini",
+    "Flow",
+    "SynthID",
+    "C2PA",
+    "происхождение ИИ-контента"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-003."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation, independent_missing_events."
+    }
+  ]
+}
