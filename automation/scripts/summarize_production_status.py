@@ -58,7 +58,22 @@ def find_publication_dir(publication_date: str) -> Path | None:
 
 
 def locate_reason(publication_date: str) -> tuple[str, str]:
-    candidates = [
+    publication_dir = find_publication_dir(publication_date)
+    candidates = []
+    if publication_dir:
+        candidates.extend(
+            [
+                (
+                    "Нормализация editorial artifact",
+                    publication_dir / "artifact-normalization.json",
+                ),
+                (
+                    "Проверка editorial artifact",
+                    publication_dir / "artifact-validation.json",
+                ),
+            ]
+        )
+    candidates.extend([
         (
             "Проверка состава новостей",
             REPORT_ROOT / "coverage-audit.json",
@@ -128,21 +143,14 @@ def locate_reason(publication_date: str) -> tuple[str, str]:
             "Проверка файлов перед commit",
             REPORT_ROOT / "publish-changes.json",
         ),
-    ]
+    ])
 
-    publication_dir = find_publication_dir(publication_date)
     if publication_dir:
-        candidates.extend(
-            [
-                (
-                    "Research/editorial",
-                    publication_dir / "run-info.json",
-                ),
-                (
-                    "Проверка editorial artifact",
-                    publication_dir / "artifact-validation.json",
-                ),
-            ]
+        candidates.append(
+            (
+                "Research/editorial",
+                publication_dir / "run-info.json",
+            )
         )
 
     for stage, path in candidates:

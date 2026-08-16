@@ -1520,6 +1520,14 @@ def apply_short_edition_marker(artifact_dir: Path, *, short_edition: bool) -> No
             write_json(editorial_path, editorial)
 
 
+def _format_exception_with_output(exc: Exception) -> str:
+    message = f"{type(exc).__name__}: {exc}"
+    output = getattr(exc, "output", None)
+    if isinstance(output, str) and output.strip():
+        message += "\n" + output.strip()
+    return message
+
+
 def snapshot_artifact(artifact_dir: Path) -> dict[Path, bytes]:
     return {
         path.relative_to(artifact_dir): path.read_bytes()
@@ -2016,7 +2024,7 @@ def main() -> int:
                     short_edition=short_edition,
                 )
                 report["editorial_repair_error"] = (
-                    f"{type(exc).__name__}: {exc}"
+                    _format_exception_with_output(exc)
                 )
                 report["after"] = before
                 report["publication_mode"] = (
@@ -2073,7 +2081,7 @@ def main() -> int:
         return 0
     except Exception as exc:
         report["status"] = "error"
-        report["error"] = f"{type(exc).__name__}: {exc}"
+        report["error"] = _format_exception_with_output(exc)
         write_json(args.report, report)
         print(json.dumps(report, ensure_ascii=False, indent=2), file=sys.stderr)
         return 1
