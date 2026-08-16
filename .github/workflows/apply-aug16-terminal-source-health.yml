@@ -19,7 +19,12 @@ jobs:
           fetch-depth: 0
 
       - name: Apply deterministic patch
-        run: python .github/patches/apply_aug16_terminal_fix.py
+        run: |
+          set -euo pipefail
+          python .github/patches/apply_aug16_terminal_fix.py
+          python .github/patches/update_aug16_terminal_tests.py
+          rm -f .github/workflows/apply-aug16-terminal-source-health.yml
+          rm -rf .github/patches
 
       - name: Compile and run full offline tests
         run: |
@@ -76,11 +81,6 @@ jobs:
           print('historical_terminal_stage=', stage)
           print('historical_terminal_reason=', reason)
           PY
-
-      - name: Remove temporary harness files
-        run: |
-          rm -f .github/workflows/apply-aug16-terminal-source-health.yml
-          rm -f .github/patches/apply_aug16_terminal_fix.py
 
       - name: Commit patched branch
         run: |
