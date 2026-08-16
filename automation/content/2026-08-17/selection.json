@@ -1,0 +1,11 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-002"
+  ],
+  "excluded_candidate_ids": [],
+  "selection_summary": "В проверенном пуле найдены два самостоятельных и подтверждённых сюжета: раскрытие Anthropic о трёх компрометациях во время кибероценок и сообщение о крупной покупке OpenRouter компанией Stripe. Оба события свежие, значимые и не дублируют архив; объёма для обычного выпуска недостаточно.",
+  "diversity_overrides": []
+}
