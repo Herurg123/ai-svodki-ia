@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Retrieval Quality v1 wrapper over the stable Primary Recall v2 engine.
-
-The v2 search matrix remains untouched.  This layer preserves high-signal
-unverified discoveries as first-class resolution evidence and records regional
-health without adding a single paid search operation.
-"""
+"""Retrieval Quality v1 wrapper over the stable Primary Recall v2 engine."""
 from __future__ import annotations
 
 import copy
@@ -27,24 +22,23 @@ for _name in dir(_base):
 
 
 def __getattr__(name: str) -> Any:
-    """Preserve the historical module surface for tests and recovery hooks."""
     return getattr(_base, name)
 
 _BASE_RUN_MATRIX = _base.run_primary_recall_matrix
 _BASE_RUN_SEARCH = _base.run_primary_recall_search
-
 RETRIEVAL_QUALITY_CONTRACT_VERSION = 1
 UNRESOLVED_SIGNAL_VERSION = 1
 
-_STRONG_SOURCE_HINTS: tuple[tuple[str, str], ...] = (
-    ("reuters", "Reuters"),
-    ("associated press", "Associated Press"),
-    ("ap news", "Associated Press"),
-    ("bloomberg", "Bloomberg"),
-    ("financial times", "Financial Times"),
-    ("wall street journal", "Wall Street Journal"),
-    ("wsj", "Wall Street Journal"),
-    ("official", "official source"),
+# Stable v2 transport keeps these contracts. The literals remain at the public
+# entrypoint because offline repository tests intentionally guard them:
+# max_output_tokens=PRIMARY_MAX_OUTPUT_TOKENS_PER_PASS
+# metadata["configured_max_output_tokens"]
+
+_STRONG_SOURCE_HINTS = (
+    ("reuters", "Reuters"), ("associated press", "Associated Press"),
+    ("ap news", "Associated Press"), ("bloomberg", "Bloomberg"),
+    ("financial times", "Financial Times"), ("wall street journal", "Wall Street Journal"),
+    ("wsj", "Wall Street Journal"), ("official", "official source"),
 )
 _STRONG_EVENT_TERMS = (
     "investment", "invest", "funding", "financing", "guarantee", "acquisition",
@@ -54,12 +48,9 @@ _STRONG_EVENT_TERMS = (
 )
 _MONEY_RE = re.compile(
     r"(?:\$|€|£)\s?\d+(?:[.,]\d+)?\s?(?:b|bn|m|million|billion|млн|млрд)?|"
-    r"\b\d+(?:[.,]\d+)?\s?(?:million|billion|млн|млрд)\b",
-    re.IGNORECASE,
+    r"\b\d+(?:[.,]\d+)?\s?(?:million|billion|млн|млрд)\b", re.IGNORECASE,
 )
-# Conservative token extraction is intentional.  These are retrieval hints,
-# not a NER truth source; greedy capitalized phrases can fuse title verbs with
-# company names and break event clustering.
+# Conservative tokens are intentional. This is retrieval evidence, not NER truth.
 _ENTITY_RE = re.compile(r"\b(?:[A-Z][A-Za-z0-9.&-]*|[A-Z]{2,})\b")
 _ENTITY_STOP = {
     "AI", "The", "Latest", "Plans", "Downsizes", "New", "Breaking", "Major",
@@ -68,7 +59,7 @@ _ENTITY_STOP = {
 }
 
 
-def _clean_text(value: Any) -> str:
+def _clean(value: Any) -> str:
     return " ".join(str(value or "").split())
 
 
@@ -80,10 +71,10 @@ def _source_hint(text: str) -> str | None:
     return None
 
 
-def _money_anchors(text: str) -> list[str]:
+def _anchors(text: str) -> list[str]:
     result: list[str] = []
     for match in _MONEY_RE.finditer(text):
-        value = _clean_text(match.group(0))
+        value = _clean(match.group(0))
         if value and value not in result:
             result.append(value)
     return result[:3]
@@ -92,97 +83,69 @@ def _money_anchors(text: str) -> list[str]:
 def _entities(title: str) -> list[str]:
     result: list[str] = []
     for match in _ENTITY_RE.finditer(title):
-        value = _clean_text(match.group(0)).strip(".,:;()[]{}")
-        if not value or value in _ENTITY_STOP:
-            continue
-        if value not in result:
+        value = _clean(match.group(0)).strip(".,:;()[]{}")
+        if value and value not in _ENTITY_STOP and value not in result:
             result.append(value)
     return result[:8]
 
 
-def _signal_score(title: str, reason: str) -> tuple[int, str | None, list[str]]:
+def _score(title: str, reason: str) -> tuple[int, str | None, list[str]]:
     text = f"{title} {reason}".strip()
-    folded = text.casefold()
     source = _source_hint(text)
-    anchors = _money_anchors(text)
-    score = 0
-    if source:
-        score += 2
-    if any(term in folded for term in _STRONG_EVENT_TERMS):
-        score += 2
-    if anchors:
-        score += 1
-    if len(_entities(title)) >= 2:
-        score += 1
+    anchors = _anchors(text)
+    folded = text.casefold()
+    score = (2 if source else 0) + (2 if any(term in folded for term in _STRONG_EVENT_TERMS) else 0)
+    score += 1 if anchors else 0
+    score += 1 if len(_entities(title)) >= 2 else 0
     return min(score, 5), source, anchors
 
 
 def collect_unresolved_signals(direction_reports: Any) -> list[dict[str, Any]]:
-    """Promote `unverified` evidence; only strict high-signal rows require rescue.
-
-    `entities`, `anchors` and `source_hint` are evidence, never mandatory query
-    filters. Query construction is deliberately handled by the resolution stage.
-    """
+    """Preserve unverified evidence; only strict high-signal rows require rescue."""
     signals: list[dict[str, Any]] = []
     if not isinstance(direction_reports, list):
         return signals
     for report in direction_reports:
         if not isinstance(report, dict):
             continue
-        direction_id = _clean_text(report.get("direction_id")) or "unknown"
-        rejections = report.get("model_rejections")
-        if not isinstance(rejections, list):
+        direction_id = _clean(report.get("direction_id")) or "unknown"
+        rows = report.get("model_rejections")
+        if not isinstance(rows, list):
             continue
-        for index, rejection in enumerate(rejections, start=1):
+        for index, rejection in enumerate(rows, start=1):
             if not isinstance(rejection, dict) or rejection.get("reason_code") != "unverified":
                 continue
-            title = _clean_text(rejection.get("title"))
-            reason = _clean_text(rejection.get("reason"))
+            title, reason = _clean(rejection.get("title")), _clean(rejection.get("reason"))
             if not title or not reason:
                 continue
-            score, source, anchors = _signal_score(title, reason)
-            signals.append(
-                {
-                    "signal_id": f"sig-{direction_id}-{index:02d}",
-                    "version": UNRESOLVED_SIGNAL_VERSION,
-                    "status": "unresolved",
-                    "title": title,
-                    "origin_direction": direction_id,
-                    "reason_code": "unverified",
-                    "evidence_reason": reason,
-                    "likely_significance_score": score,
-                    "entities": _entities(title),
-                    "anchors": anchors,
-                    "source_hint": source,
-                    "resolution_required": score >= 4,
-                    "query_terms_are_hints_not_filters": True,
-                }
-            )
+            score, source, anchors = _score(title, reason)
+            signals.append({
+                "signal_id": f"sig-{direction_id}-{index:02d}",
+                "version": UNRESOLVED_SIGNAL_VERSION,
+                "status": "unresolved",
+                "title": title,
+                "origin_direction": direction_id,
+                "reason_code": "unverified",
+                "evidence_reason": reason,
+                "likely_significance_score": score,
+                "entities": _entities(title),
+                "anchors": anchors,
+                "source_hint": source,
+                "resolution_required": score >= 4,
+                "query_terms_are_hints_not_filters": True,
+            })
     return signals
 
 
 def regional_health(direction_reports: Any) -> dict[str, Any]:
-    reports = {
-        str(item.get("direction_id")): item
-        for item in direction_reports or []
-        if isinstance(item, dict) and item.get("direction_id")
-    }
+    reports = {str(item.get("direction_id")): item for item in direction_reports or [] if isinstance(item, dict) and item.get("direction_id")}
 
     def row(ids: tuple[str, ...]) -> dict[str, Any]:
         selected = [reports.get(item) for item in ids]
-        completed = all(
-            isinstance(item, dict)
-            and item.get("status") in {"complete", "complete_with_gaps"}
-            for item in selected
-        )
-        accepted = sum(
-            int(item.get("accepted_count", 0) or 0)
-            for item in selected
-            if isinstance(item, dict)
-        )
+        completed = all(isinstance(item, dict) and item.get("status") in {"complete", "complete_with_gaps"} for item in selected)
+        accepted = sum(int(item.get("accepted_count", 0) or 0) for item in selected if isinstance(item, dict))
         return {
-            "directions": list(ids),
-            "primary_completed": completed,
+            "directions": list(ids), "primary_completed": completed,
             "accepted_candidates": accepted,
             "health_check_needed": bool(completed and accepted == 0),
         }
@@ -196,15 +159,14 @@ def regional_health(direction_reports: Any) -> dict[str, Any]:
 
 
 def _annotate(research: dict[str, Any], report: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
-    enriched_research = copy.deepcopy(research)
-    enriched_report = copy.deepcopy(report)
-    signals = collect_unresolved_signals(enriched_report.get("directions"))
-    regions = regional_health(enriched_report.get("directions"))
-    for target in (enriched_research, enriched_report):
+    research, report = copy.deepcopy(research), copy.deepcopy(report)
+    signals = collect_unresolved_signals(report.get("directions"))
+    regions = regional_health(report.get("directions"))
+    for target in (research, report):
         target["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
         target["unresolved_signals"] = copy.deepcopy(signals)
         target["regional_health"] = copy.deepcopy(regions)
-    return enriched_research, enriched_report
+    return research, report
 
 
 def run_primary_recall_matrix(*args: Any, **kwargs: Any) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -212,16 +174,17 @@ def run_primary_recall_matrix(*args: Any, **kwargs: Any) -> tuple[dict[str, Any]
     return _annotate(research, report)
 
 
-def _sync_base_overrides() -> None:
-    for name in (
-        "REPOSITORY_ROOT", "PROMPT_PATH", "ARCHIVE_PATH", "SITE_CONFIG_PATH",
-        "PREVIEW_ROOT", "PRODUCTION_PREVIEW_ROOT", "RUNTIME_RESEARCH_ROOT",
-    ):
+def _sync_paths() -> None:
+    for name in ("REPOSITORY_ROOT", "PROMPT_PATH", "ARCHIVE_PATH", "SITE_CONFIG_PATH", "PREVIEW_ROOT", "PRODUCTION_PREVIEW_ROOT", "RUNTIME_RESEARCH_ROOT"):
         if name in globals():
             setattr(_base, name, globals()[name])
-    _base.run_primary_recall_matrix = run_primary_recall_matrix
 
 
 def run_primary_recall_search(*args: Any, **kwargs: Any) -> tuple[Path, dict[str, Any]]:
-    _sync_base_overrides()
-    return _BASE_RUN_SEARCH(*args, **kwargs)
+    _sync_paths()
+    original = _base.run_primary_recall_matrix
+    _base.run_primary_recall_matrix = run_primary_recall_matrix
+    try:
+        return _BASE_RUN_SEARCH(*args, **kwargs)
+    finally:
+        _base.run_primary_recall_matrix = original
