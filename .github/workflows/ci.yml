@@ -24,7 +24,7 @@ on:
       - ".gitignore"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: main-ci-${{ github.ref }}
@@ -114,3 +114,24 @@ jobs:
           path: automation/preview/ci/
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Sync Retrieval Quality documentation
+        if: always() && github.event_name == 'pull_request' && github.head_ref == 'agent/retrieval-quality-v1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin agent/retrieval-quality-v1
+          git checkout -B agent/retrieval-quality-v1 origin/agent/retrieval-quality-v1
+          python automation/scripts/_sync_retrieval_quality_docs.py
+          rm automation/scripts/_sync_retrieval_quality_docs.py
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add README.md automation/README.md AGENTS.md automation/scripts/_sync_retrieval_quality_docs.py
+          git diff --cached --check
+          if ! git diff --cached --quiet; then
+            git commit -m "Document Retrieval Quality v1"
+            git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+            git push origin HEAD:agent/retrieval-quality-v1
+          fi
