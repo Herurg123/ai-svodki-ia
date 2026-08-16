@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""Versioned runtime policy for the final zero-pool recall search.
+"""Retrieval Quality v1 policy layered over the stable Coverage v8 runtime.
 
-The previous runtime is kept in ``ensure_story_coverage_runtime_base.py`` so
-its transport diagnostics and battle-tested policy bridge remain reusable.
-This thin layer only owns recall-sentinel versioning, stale-artifact migration
-and the source-agnostic high-signal query used when all mandatory coverage passes
-finished with no eligible story.
+Six mandatory Coverage passes remain unchanged.  The existing seventh search
+slot now prefers resolving a high-confidence discovery that Primary Recall saw
+but could not verify.  If there is no such signal, the v8 fresh-agency rescue or
+zero-pool sentinel keeps its historical behavior.  Search budget stays at seven.
 """
 from __future__ import annotations
 
@@ -14,229 +13,330 @@ import importlib.util
 import json
 import re
 import sys
-from datetime import datetime, timezone
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
-_BASE_PATH = Path(__file__).with_name("ensure_story_coverage_runtime_base.py")
-_BASE_SPEC = importlib.util.spec_from_file_location(
-    "ensure_story_coverage_runtime_base",
-    _BASE_PATH,
-)
+_BASE_PATH = Path(__file__).with_name("ensure_story_coverage_v8.py")
+_BASE_SPEC = importlib.util.spec_from_file_location("ensure_story_coverage_v8", _BASE_PATH)
 assert _BASE_SPEC and _BASE_SPEC.loader
-_base = importlib.util.module_from_spec(_BASE_SPEC)
-sys.modules[_BASE_SPEC.name] = _base
-_BASE_SPEC.loader.exec_module(_base)
+_v8 = importlib.util.module_from_spec(_BASE_SPEC)
+sys.modules[_BASE_SPEC.name] = _v8
+_BASE_SPEC.loader.exec_module(_v8)
 
-# Preserve the historical public import surface. Private runtime hooks that are
-# intentionally overridden are defined below.
-for _name in dir(_base):
+for _name in dir(_v8):
     if not _name.startswith("_"):
-        globals()[_name] = getattr(_base, _name)
-
-_policy = _base._policy
-_BASE_EXECUTE_AUDIT_PLAN = _base._BASE_EXECUTE_AUDIT_PLAN
-_LAST_RECALL_SENTINEL: dict[str, Any] | None = None
-_LAST_AGENCY_RESCUE: dict[str, Any] | None = None
-
-RECALL_SENTINEL_STRATEGY = "high_signal_recall_sentinel"
-TEMPORAL_ANCHOR_VERSION = 1
-RECALL_SENTINEL_VERSION = 8
-RECALL_SENTINEL_DOMAINS: tuple[str, ...] = ()
-RECALL_SENTINEL_MINIMUM_BUDGET = 7
-AGENCY_RESCUE_STRATEGY = "fresh_agency_rescue"
-AGENCY_RESCUE_VERSION = 7
-AGENCY_RESCUE_DOMAINS: tuple[str, ...] = ()
-SOURCE_HEALTH_CONTRACT_VERSION = _policy.SOURCE_HEALTH_CONTRACT_VERSION
-
-# Transport remains implemented by the preserved runtime base. Keep this
-# literal here because the repository contract verifies transient retries at
-# the historical entry point too: OpenAI(..., max_retries=2).
+        globals()[_name] = getattr(_v8, _name)
 
 
-def _set_last_recall_sentinel(value: dict[str, Any] | None) -> None:
-    global _LAST_RECALL_SENTINEL
-    _LAST_RECALL_SENTINEL = value
-    _base._LAST_RECALL_SENTINEL = value
+def __getattr__(name: str) -> Any:
+    """Preserve the historical module surface for tests and recovery hooks."""
+    return getattr(_v8, name)
+
+_V8_EXECUTE = _v8.execute_audit_plan
+_V8_PREPARE = _v8._prepare_prior_plan
+_V8_COMPLETED_PRIOR = _v8.completed_prior_audit
+_MANDATORY_EXECUTE = _v8._BASE_EXECUTE_AUDIT_PLAN
+_policy = _v8._policy
+_runtime = _v8._base
+
+RETRIEVAL_QUALITY_CONTRACT_VERSION = 1
+UNRESOLVED_RESOLUTION_VERSION = 1
+UNRESOLVED_RESOLUTION_STRATEGY = "unresolved_high_signal_resolution"
+UNRESOLVED_RESOLUTION_DOMAINS: tuple[str, ...] = ()
+
+_LAST_RESOLUTION: dict[str, Any] | None = None
+
+_EVENT_TERMS: tuple[str, ...] = (
+    "data center",
+    "data centre",
+    "guarantee",
+    "investment",
+    "funding",
+    "financing",
+    "acquisition",
+    "merger",
+    "partnership",
+    "chips",
+    "semiconductor",
+    "cloud",
+    "infrastructure",
+    "model",
+    "release",
+    "regulation",
+    "security",
+)
+_TOKEN_RE = re.compile(r"[A-Za-zА-Яа-яЁё0-9][A-Za-zА-Яа-яЁё0-9.+-]{2,}")
+_TOKEN_STOP = {
+    "latest", "major", "artificial", "intelligence", "news", "plans", "new",
+    "with", "from", "into", "under", "over", "about", "could", "would", "after",
+    "data", "center", "centre", "company", "report", "reported", "possible",
+    "fresh", "result", "direct", "primary", "source", "available", "within",
+    "search", "operation", "unverified", "aggregated", "latest",
+}
 
 
-def _set_last_agency_rescue(value: dict[str, Any] | None) -> None:
-    global _LAST_AGENCY_RESCUE
-    _LAST_AGENCY_RESCUE = value
+def _set_last_resolution(value: dict[str, Any] | None) -> None:
+    global _LAST_RESOLUTION
+    _LAST_RESOLUTION = value
 
 
-def _pool_total(payload: dict[str, Any]) -> int | None:
-    for key in ("candidate_pool_after", "candidate_pool_before"):
-        pool = payload.get(key)
-        if not isinstance(pool, dict):
-            continue
-        total = pool.get("total")
-        if isinstance(total, int):
-            return total
-    return None
-
-
-def _sentinel_version(record: Any) -> int | None:
-    if not isinstance(record, dict):
+def _primary_quality_report(publication_date: str) -> dict[str, Any] | None:
+    path = (
+        Path(REPOSITORY_ROOT)
+        / "automation"
+        / "preview"
+        / "production-daily"
+        / f"primary-recall-{publication_date}.json"
+    )
+    if not path.is_file():
         return None
-    raw = record.get("recall_sentinel_version", record.get("version"))
     try:
-        return int(raw)
-    except (TypeError, ValueError):
+        payload = read_json(path)
+    except Exception:
         return None
+    return payload if isinstance(payload, dict) else None
 
 
-def _current_sentinel_record(record: Any) -> bool:
-    return bool(
-        isinstance(record, dict)
-        and record.get("search_strategy") == RECALL_SENTINEL_STRATEGY
-        and _sentinel_version(record) == RECALL_SENTINEL_VERSION
-        and record.get("status") in {"checked", "checked_with_gaps"}
-    )
-
-
-def _completed_sentinel_evidence(payload: dict[str, Any]) -> bool:
-    sentinel = payload.get("recall_sentinel")
-    if (
-        isinstance(sentinel, dict)
-        and _sentinel_version(sentinel) == RECALL_SENTINEL_VERSION
-        and sentinel.get("status") in {
-            "complete",
-            "complete_with_gaps",
-            "reused",
-        }
-    ):
-        return True
-    attempts = payload.get("attempts")
-    return bool(
-        isinstance(attempts, list)
-        and any(_current_sentinel_record(item) for item in attempts)
-    )
-
-
-def completed_prior_audit(payload: Any) -> bool:
-    """Reuse zero-pool audit only after the current recall-sentinel version."""
-    if not isinstance(payload, dict):
-        return False
-    audit_state = payload.get("audit_state")
-    if audit_state is not None and audit_state != "completed_usable":
-        return False
-    api = payload.get("api") or {}
-    complete = (
-        payload.get("web_search_performed") is True
-        and payload.get("audit_status") in {"complete", "complete_with_gaps"}
-        and set(payload.get("checked_directions") or ()) == set(AUDIT_DIRECTION_IDS)
-        and isinstance(api, dict)
-        and api.get("status") == "completed"
-    )
-    if not complete:
-        return False
-    pool_total = _pool_total(payload)
-    if pool_total == 0 and not _completed_sentinel_evidence(payload):
-        return False
-    return True
-
-
-def _is_stale_sentinel_attempt(item: Any) -> bool:
-    return bool(
-        isinstance(item, dict)
-        and item.get("search_strategy") == RECALL_SENTINEL_STRATEGY
-        and _sentinel_version(item) != RECALL_SENTINEL_VERSION
-    )
-
-
-def _is_supplemental_attempt(item: Any) -> bool:
-    return bool(
-        isinstance(item, dict)
-        and item.get("search_strategy")
-        in {RECALL_SENTINEL_STRATEGY, AGENCY_RESCUE_STRATEGY}
-    )
-
-
-def _rebuild_directions(
-    prior_directions: Any,
-    attempts: list[dict[str, Any]],
-) -> list[dict[str, Any]]:
-    latest: dict[str, dict[str, Any]] = {}
-    for item in attempts:
-        direction_id = item.get("direction_id")
-        if direction_id not in AUDIT_DIRECTION_IDS or _is_supplemental_attempt(item):
-            continue
-        previous = latest.get(str(direction_id))
-        if previous is None or int(item.get("attempt", 0) or 0) >= int(
-            previous.get("attempt", 0) or 0
-        ):
-            latest[str(direction_id)] = copy.deepcopy(item)
-
-    fallback: dict[str, dict[str, Any]] = {}
-    if isinstance(prior_directions, list):
-        for item in prior_directions:
-            if (
-                isinstance(item, dict)
-                and item.get("direction_id") in AUDIT_DIRECTION_IDS
-                and not _is_stale_sentinel_attempt(item)
-                and not _is_supplemental_attempt(item)
-            ):
-                fallback[str(item["direction_id"])] = copy.deepcopy(item)
-
-    return [
-        copy.deepcopy(latest.get(direction_id) or fallback.get(direction_id) or {})
-        for direction_id in AUDIT_DIRECTION_IDS
-    ]
-
-
-def _legacy_cross_midnight_window(search_window: dict[str, Any] | None) -> bool:
-    if not isinstance(search_window, dict):
-        return False
-    end_at = search_window.get("end_at")
-    if not isinstance(end_at, str) or not end_at.strip():
-        return False
-    try:
-        parsed = datetime.fromisoformat(end_at.replace("Z", "+00:00"))
-    except ValueError:
-        return False
-    if parsed.tzinfo is None:
-        return False
-    return parsed.date() > parsed.astimezone(timezone.utc).date()
-
-
-def _prepare_prior_plan(
-    prior_plan: dict[str, Any] | None,
-    search_window: dict[str, Any] | None = None,
-) -> dict[str, Any] | None:
-    """Drop obsolete sentinel attempts while retaining the six paid passes."""
-    if not isinstance(prior_plan, dict):
-        return prior_plan
-    if (
-        prior_plan.get("temporal_anchor_version") != TEMPORAL_ANCHOR_VERSION
-        and _legacy_cross_midnight_window(search_window)
-    ):
-        return None
-
-    prepared = copy.deepcopy(prior_plan)
-    raw_attempts = prepared.get("attempts")
-    if not isinstance(raw_attempts, list):
-        return prepared
-
-    stale = [item for item in raw_attempts if _is_stale_sentinel_attempt(item)]
-    if not stale:
-        return prepared
-
-    attempts = [
+def _required_signals(publication_date: str) -> list[dict[str, Any]]:
+    report = _primary_quality_report(publication_date)
+    if not isinstance(report, dict):
+        return []
+    if report.get("retrieval_quality_contract_version") != RETRIEVAL_QUALITY_CONTRACT_VERSION:
+        return []
+    signals = report.get("unresolved_signals")
+    if not isinstance(signals, list):
+        return []
+    result = [
         copy.deepcopy(item)
-        for item in raw_attempts
-        if isinstance(item, dict) and not _is_stale_sentinel_attempt(item)
+        for item in signals
+        if isinstance(item, dict)
+        and item.get("status") == "unresolved"
+        and item.get("resolution_required") is True
     ]
-    prepared["attempts"] = attempts
-    prepared["directions"] = _rebuild_directions(
-        prepared.get("directions"),
-        attempts,
+    result.sort(
+        key=lambda item: (
+            -int(item.get("likely_significance_score", 0) or 0),
+            str(item.get("signal_id") or ""),
+        )
     )
-    prepared.pop("recall_sentinel", None)
+    return result
 
-    maximum_calls = int(
-        (prepared.get("search_budget") or {}).get("maximum_calls", 7) or 7
+
+def _normalized_entities(signal: dict[str, Any]) -> set[str]:
+    result: set[str] = set()
+    for raw in signal.get("entities") or []:
+        value = " ".join(str(raw).split()).casefold()
+        if value:
+            result.add(value)
+    return result
+
+
+def _content_tokens(signal: dict[str, Any]) -> set[str]:
+    text = " ".join(
+        str(signal.get(key) or "")
+        for key in ("title", "evidence_reason")
     )
+    return {
+        token.casefold()
+        for token in _TOKEN_RE.findall(text)
+        if token.casefold() not in _TOKEN_STOP and not token.isdigit()
+    }
+
+
+def _signals_related(left: dict[str, Any], right: dict[str, Any]) -> bool:
+    entity_overlap = _normalized_entities(left) & _normalized_entities(right)
+    token_overlap = _content_tokens(left) & _content_tokens(right)
+    return bool(len(entity_overlap) >= 2 or (entity_overlap and len(token_overlap) >= 2))
+
+
+def resolution_cluster(signals: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Return the highest-priority related cluster that one query can reasonably resolve."""
+    if not signals:
+        return []
+    cluster = [copy.deepcopy(signals[0])]
+    for signal in signals[1:]:
+        if any(_signals_related(signal, existing) for existing in cluster):
+            cluster.append(copy.deepcopy(signal))
+    return cluster[:4]
+
+
+def _display_entity(originals: list[Any], folded: str) -> str:
+    for raw in originals:
+        value = " ".join(str(raw).split())
+        if value.casefold() == folded:
+            return value
+    return folded
+
+
+def build_resolution_query(cluster: list[dict[str, Any]]) -> str:
+    """Build a short source-neutral query from minimal evidence, never an AND whitelist."""
+    if not cluster:
+        raise ValueError("resolution query requires a non-empty cluster")
+
+    all_entity_values: list[Any] = []
+    entity_counts: Counter[str] = Counter()
+    for signal in cluster:
+        values = list(signal.get("entities") or [])
+        all_entity_values.extend(values)
+        entity_counts.update({" ".join(str(raw).split()).casefold() for raw in values if str(raw).strip()})
+
+    if len(cluster) > 1:
+        ranked_entities = [
+            value for value, count in entity_counts.most_common()
+            if count >= 2
+        ][:2]
+    else:
+        ranked_entities = [value for value, _count in entity_counts.most_common(2)]
+
+    parts = [_display_entity(all_entity_values, value) for value in ranked_entities]
+    combined = " ".join(
+        str(signal.get(key) or "")
+        for signal in cluster
+        for key in ("title", "evidence_reason")
+    ).casefold()
+    for event_term in _EVENT_TERMS:
+        if event_term in combined and event_term not in {part.casefold() for part in parts}:
+            parts.append(event_term)
+        if len(parts) >= 5:
+            break
+
+    if len(parts) < 3:
+        counts: Counter[str] = Counter()
+        surface: dict[str, str] = {}
+        for signal in cluster:
+            for token in _TOKEN_RE.findall(str(signal.get("title") or "")):
+                folded = token.casefold()
+                if folded in _TOKEN_STOP or token.isdigit():
+                    continue
+                counts[folded] += 1
+                surface.setdefault(folded, token)
+        for folded, _count in counts.most_common():
+            token = surface[folded]
+            if folded not in {part.casefold() for part in parts}:
+                parts.append(token)
+            if len(parts) >= 4:
+                break
+
+    parts = [" ".join(part.split()) for part in parts if part.strip()]
+    query = " ".join(parts[:5] + ["latest"]).strip()
+    if not query or query == "latest":
+        raise ValueError("could not build a distinctive resolution query")
+    return query
+
+
+def _cluster_compact(cluster: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [
+        {
+            "signal_id": item.get("signal_id"),
+            "title": item.get("title"),
+            "origin_direction": item.get("origin_direction"),
+            "evidence_reason": item.get("evidence_reason"),
+            "entities": item.get("entities"),
+            "anchors": item.get("anchors"),
+            "source_hint": item.get("source_hint"),
+            "likely_significance_score": item.get("likely_significance_score"),
+            "query_terms_are_hints_not_filters": True,
+        }
+        for item in cluster
+    ]
+
+
+def build_resolution_prompt(
+    *, search_window: dict[str, Any], cluster: list[dict[str, Any]], archive: dict[str, Any]
+) -> str:
+    query = build_resolution_query(cluster)
+    start_at = str(search_window.get("start_at") or "")
+    end_at = str(search_window.get("end_at") or "")
+    return f"""Ты — targeted resolution-проход редакции «ИИ-Сводки».
+
+Строгое редакционное окно: {start_at} → {end_at}
+Авторитетное текущее время: {end_at}
+Идентификатор направления: general_coverage_gaps
+Версия resolution: {UNRESOLVED_RESOLUTION_VERSION}
+
+Primary Recall уже заметил один или несколько потенциально крупных событий, но не
+успел подтвердить их внутри своего единственного search operation. Это НЕ список
+разрешённых компаний и НЕ publisher whitelist. `entities`, `anchors` и
+`source_hint` ниже являются только evidence/hints. Кандидат не обязан содержать
+каждую сущность или каждый anchor.
+
+Выполни РОВНО ОДИН source-neutral Web Search без API domain filter. Не добавляй
+Reuters, site:, календарные даты или длинную OR-цепочку. Фактический query должен
+быть ТОЧНО:
+`{query}`
+
+Задача: подтвердить одно или несколько событий из одного связанного кластера.
+Допустим любой авторитетный источник: официальный первоисточник, агентство,
+крупное деловое, технологическое или отраслевое СМИ. Не отдавай предпочтение
+Reuters только из-за source_hint. После поиска открой релевантные страницы и
+проверь фактическую дату/timestamp, событие и существенные факты. Для
+include/consider обязательны verification_status=verified и freshness_status
+new_event/material_update. Старую перепечатку, слух или событие другого типа
+отклоняй. Не выдумывай timestamp.
+
+Unresolved evidence:
+{json.dumps(_cluster_compact(cluster), ensure_ascii=False, indent=2)}
+
+Недавний архив:
+{json.dumps(_runtime._compact_recent_archive(archive), ensure_ascii=False, indent=2)}
+
+Верни до 3 подтверждённых кандидатов, относящихся к этому evidence cluster. Если
+подтвердить событие нельзя, верни пустой candidates и status=complete_with_gaps.
+`direction_id` строго `general_coverage_gaps`. Верни только JSON по схеме."""
+
+
+def _candidate_text(candidate: dict[str, Any]) -> str:
+    keywords = candidate.get("keywords") if isinstance(candidate.get("keywords"), list) else []
+    return " ".join(
+        [
+            str(candidate.get("title") or ""),
+            str(candidate.get("organization") or ""),
+            str(candidate.get("event_summary") or ""),
+            *[str(item) for item in keywords],
+        ]
+    ).casefold()
+
+
+def _candidate_matches_cluster(candidate: dict[str, Any], cluster: list[dict[str, Any]]) -> bool:
+    candidate_text = _candidate_text(candidate)
+    candidate_tokens = {
+        token.casefold()
+        for token in _TOKEN_RE.findall(candidate_text)
+        if token.casefold() not in _TOKEN_STOP
+    }
+    for signal in cluster:
+        if len(candidate_tokens & _content_tokens(signal)) >= 2:
+            return True
+        entities = _normalized_entities(signal)
+        if any(entity in candidate_text for entity in entities):
+            if any(term in candidate_text for term in _EVENT_TERMS):
+                return True
+    return False
+
+
+def _eligible_resolution_candidate(candidate: Any, cluster: list[dict[str, Any]]) -> bool:
+    return bool(
+        isinstance(candidate, dict)
+        and candidate.get("recommendation") in {"include", "consider"}
+        and candidate.get("verification_status") == "verified"
+        and candidate.get("freshness_status") in {"new_event", "material_update"}
+        and _candidate_matches_cluster(candidate, cluster)
+    )
+
+
+def _normalize_resolution_candidate(candidate: dict[str, Any], signal_ids: list[str]) -> dict[str, Any]:
+    value = copy.deepcopy(candidate)
+    value["audit_direction"] = "unresolved_resolution"
+    value["resolution_signal_ids"] = signal_ids
+    if value.get("category") != "legal":
+        value["legal_scale"] = "not_applicable"
+        value["legal_scale_reason"] = ""
+    return value
+
+
+def _recalculate_budget(plan: dict[str, Any], maximum_calls: int) -> None:
+    attempts = [item for item in plan.get("attempts", []) if isinstance(item, dict)]
     completed = 0
     observed = 0
     provider_overrun = False
@@ -244,25 +344,66 @@ def _prepare_prior_plan(
         api = attempt.get("api")
         if not isinstance(api, dict):
             continue
-        pass_completed = int(api.get("web_search_calls_completed", 0) or 0)
-        completed += pass_completed
+        calls = int(api.get("web_search_calls_completed", 0) or 0)
+        completed += calls
         observed += int(api.get("web_search_call_items_total", 0) or 0)
-        provider_overrun = provider_overrun or pass_completed > 1
-
-    prepared["search_budget"] = {
+        provider_overrun = provider_overrun or calls > 1
+    plan["search_budget"] = {
         "maximum_calls": maximum_calls,
         "minimum_required_calls": len(AUDIT_DIRECTION_IDS),
         "response_attempts": len(attempts),
         "observed_call_items": observed,
         "completed_calls": completed,
         "remaining_calls": max(0, maximum_calls - completed),
-        "exhausted": False,
-        "search_budget_exhausted": False,
+        "exhausted": completed >= maximum_calls,
+        "search_budget_exhausted": completed >= maximum_calls,
         "response_attempt_limit_exhausted": False,
         "provider_overrun": provider_overrun,
-        "stop_reason": "stale_recall_sentinel_removed",
+        "stop_reason": "retrieval_quality_contract_migration",
     }
-    prepared["api"] = _policy._aggregate_api_metadata(attempts)
+    plan["api"] = _policy._aggregate_api_metadata(attempts)
+
+
+def _is_quality_supplemental(item: Any) -> bool:
+    return bool(
+        isinstance(item, dict)
+        and item.get("search_strategy")
+        in {
+            _v8.RECALL_SENTINEL_STRATEGY,
+            _v8.AGENCY_RESCUE_STRATEGY,
+            UNRESOLVED_RESOLUTION_STRATEGY,
+        }
+    )
+
+
+def _prepare_prior_plan(
+    prior_plan: dict[str, Any] | None,
+    search_window: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
+    prepared = _V8_PREPARE(prior_plan, search_window)
+    if not isinstance(prepared, dict):
+        return prepared
+    quality = prepared.get("retrieval_quality")
+    current = bool(
+        prepared.get("retrieval_quality_contract_version") == RETRIEVAL_QUALITY_CONTRACT_VERSION
+        and isinstance(quality, dict)
+        and quality.get("status") == "complete"
+    )
+    if current:
+        return prepared
+
+    attempts = [
+        copy.deepcopy(item)
+        for item in prepared.get("attempts", [])
+        if isinstance(item, dict) and not _is_quality_supplemental(item)
+    ]
+    prepared["attempts"] = attempts
+    prepared["directions"] = _v8._rebuild_directions(prepared.get("directions"), attempts)
+    for key in ("recall_sentinel", "agency_rescue", "unresolved_resolution", "retrieval_quality"):
+        prepared.pop(key, None)
+    prepared.pop("retrieval_quality_contract_version", None)
+    maximum_calls = int((prepared.get("search_budget") or {}).get("maximum_calls", 7) or 7)
+    _recalculate_budget(prepared, maximum_calls)
     prepared["audit_status"] = (
         "complete_with_gaps"
         if set(prepared.get("checked_directions") or ()) == set(AUDIT_DIRECTION_IDS)
@@ -271,477 +412,164 @@ def _prepare_prior_plan(
     return prepared
 
 
-def build_recall_sentinel_prompt(
-    *,
-    publication_date: str,
-    search_window: dict[str, Any],
-    existing_candidates: list[Any],
-    archive: dict[str, Any],
-) -> str:
-    del publication_date
-    existing = [
-        {
-            "title": item.get("title"),
-            "organization": item.get("organization"),
-            "primary_url": (
-                item.get("primary_source", {}).get("url")
-                if isinstance(item.get("primary_source"), dict)
-                else None
-            ),
-        }
-        for item in existing_candidates
-        if isinstance(item, dict)
-    ]
-    recent_archive = _base._compact_recent_archive(archive)
-    start_at = str(search_window.get("start_at") or "")
-    end_at = str(search_window.get("end_at") or "")
-    required_query = "latest major artificial intelligence news"
-
-    return f"""Ты — финальный source-neutral recall sentinel редакции «ИИ-сводки».
-
-Строгое редакционное окно для проверки кандидатов: {start_at} → {end_at}
-Авторитетное текущее время этого sentinel-прохода: {end_at}. Всё, что опубликовано не позже этого timestamp, не является будущим только из-за системной даты модели.
-Идентификатор направления: general_coverage_gaps
-Версия sentinel: {RECALL_SENTINEL_VERSION}
-
-Основной research и шесть обязательных coverage-проходов уже завершились, но
-пригодный пул всё ещё равен нулю. Это последний broad safety net, поэтому он не
-должен быть привязан ни к OpenAI, ни к security, ни к одному издателю. API
-domain filter отключён.
-
-Выполни РОВНО ОДИН Web Search. Не расширяй и не переписывай поисковую строку.
-Фактический поисковый запрос должен быть точно:
-`{required_query}`
-
-В query намеренно нет календарных дат: relative freshness нужна только для
-ranking. После поиска открой релевантные страницы и строго проверь фактическую
-дату/timestamp каждого события против editorial window. Ищи любое крупное
-самостоятельное ИИ-событие: модели и продукты, агенты/coding, chips/cloud/data
-centers, business/funding/M&A, security/safety, policy/legal, Китай/Азия, Россия,
-research/robotics. Предпочитай официальный первоисточник, Reuters/AP/Bloomberg/FT
-или другое авторитетное деловое/технологическое/отраслевое СМИ.
-
-Старую перепечатку без нового развития отклоняй. Для include/consider нужны
-verification_status=verified и freshness_status new_event/material_update. Если
-точного времени публикации нет, ставь published_at=null и time_precision=date;
-время не выдумывай. Не добивай количество слабым материалом.
-
-Уже найденные кандидаты:
-{json.dumps(existing, ensure_ascii=False, indent=2)}
-
-Недавний архив для дедупликации:
-{json.dumps(recent_archive, ensure_ascii=False, indent=2)}
-
-Если достойные события найдены, верни до 3 кандидатов по заданной JSON-схеме.
-Если нет, верни пустой `candidates` и status=complete_with_gaps. `direction_id`
-должен быть строго `general_coverage_gaps`. Верни только JSON по схеме."""
-
-
-def _candidate_id(candidate: Any) -> str | None:
-    if not isinstance(candidate, dict):
-        return None
-    value = candidate.get("id", candidate.get("candidate_id"))
-    return str(value) if value is not None else None
-
-
-def _agency_event_family(event_type: str) -> str:
-    """Normalize common event-type variants for rescue target ranking."""
-    raw = str(event_type or "").casefold().strip()
-    if raw == "m&a":
-        return raw
-    normalized = re.sub(r"[^a-z0-9]+", "_", raw).strip("_")
-    for family in (
-        "funding",
-        "acquisition",
-        "merger",
-        "investment",
-        "data_center",
-        "infrastructure",
-        "partnership",
+def completed_prior_audit(payload: Any) -> bool:
+    if not isinstance(payload, dict):
+        return False
+    quality = payload.get("retrieval_quality")
+    if not (
+        payload.get("retrieval_quality_contract_version") == RETRIEVAL_QUALITY_CONTRACT_VERSION
+        and isinstance(quality, dict)
+        and quality.get("status") == "complete"
     ):
-        if normalized == family or normalized.startswith(family + "_"):
-            return family
-    return normalized
+        return False
+    return _V8_COMPLETED_PRIOR(payload)
 
 
-def _select_agency_corroboration_target(
-    candidates: list[Any],
-) -> dict[str, Any] | None:
-    """Choose one strong, agency-likely current event for last-mile corroboration."""
-    event_priority = {
-        "funding": 0,
-        "funding_round": 0,
-        "acquisition": 0,
-        "merger": 0,
-        "m&a": 0,
-        "investment": 1,
-        "data_center": 1,
-        "infrastructure": 1,
-        "partnership": 2,
-    }
-    eligible: list[dict[str, Any]] = []
-    for raw in candidates:
-        if not isinstance(raw, dict):
-            continue
-        if raw.get("recommendation") not in {"include", "consider"}:
-            continue
-        if _candidate_id(raw) is None:
-            continue
-        event_type = str(raw.get("event_type") or "").casefold().strip()
-        category = str(raw.get("category") or "").casefold().strip()
-        priority = event_priority.get(_agency_event_family(event_type))
-        if priority is None and category in {"investment", "infrastructure", "chips"}:
-            priority = 1
-        if priority is None:
-            continue
-        item = copy.deepcopy(raw)
-        item["_agency_target_priority"] = priority
-        eligible.append(item)
-    if not eligible:
-        return None
-    eligible.sort(
-        key=lambda item: (
-            int(item.get("_agency_target_priority", 99)),
-            0 if item.get("recommendation") == "include" else 1,
-            -int(item.get("significance_score", 0) or 0),
-            str(item.get("published_date") or ""),
-            str(item.get("title") or ""),
-        )
-    )
-    target = eligible[0]
-    target.pop("_agency_target_priority", None)
-    return target
-
-
-def _money_anchors(target: dict[str, Any]) -> list[str]:
-    """Extract distinctive monetary facts from the event title before generic terms."""
-    title = str(target.get("title") or "")
-    anchors: list[str] = []
-    patterns = (
-        (r"\$\s*([0-9]+(?:[.,][0-9]+)?)\s*(?:млрд|billion)\b", "billion"),
-        (r"\$\s*([0-9]+(?:[.,][0-9]+)?)\s*(?:млн|million)\b", "million"),
-        (r"\$\s*([0-9]+(?:[.,][0-9]+)?)\s*B\b", "billion"),
-        (r"\$\s*([0-9]+(?:[.,][0-9]+)?)\s*M\b", "million"),
-    )
-    for pattern, unit in patterns:
-        for match in re.finditer(pattern, title, flags=re.IGNORECASE):
-            value = match.group(1).replace(",", ".")
-            rendered = f"${value} {unit}"
-            if rendered not in anchors:
-                anchors.append(rendered)
-    return anchors[:2]
-
-
-def _agency_corroboration_query(target: dict[str, Any]) -> str:
-    organization = str(target.get("organization") or "").split(";", 1)[0].strip()
-    organization = " ".join(organization.split())
-    anchors = _money_anchors(target)
-    if anchors:
-        # Exact monetary anchors are stronger retrieval signals than a publisher
-        # name; live Aug-14 recovery showed that the Reuters hint biased ranking
-        # toward an older syndicated $188B story. Acceptance remains agency-only.
-        return " ".join([organization, *anchors]).strip()
-
-    event_type = " ".join(str(target.get("event_type") or "").split())
-    organization_cf = organization.casefold()
-    event_cf = event_type.casefold()
-    keyword = ""
-    for raw_keyword in target.get("keywords") or []:
-        candidate = " ".join(str(raw_keyword).split())
-        if not candidate:
-            continue
-        candidate_cf = candidate.casefold()
-        if candidate_cf == organization_cf or candidate_cf == event_cf:
-            continue
-        if candidate_cf in organization_cf or candidate_cf in event_cf:
-            continue
-        keyword = candidate
-        break
-    parts = ["Reuters", organization, event_type]
-    if keyword:
-        parts.append(keyword)
-    parts.append("latest")
-    return " ".join(part for part in parts if part).strip()
-
-
-def _same_event_for_corroboration(
-    target: dict[str, Any], candidate: dict[str, Any]
-) -> bool:
-    """Deterministic guard against attaching an agency story to a different event."""
-    return bool(
-        str(candidate.get("organization") or "").casefold().strip()
-        == str(target.get("organization") or "").casefold().strip()
-        and str(candidate.get("event_type") or "").casefold().strip()
-        == str(target.get("event_type") or "").casefold().strip()
-        and str(candidate.get("published_date") or "")
-        == str(target.get("published_date") or "")
-    )
-
-
-def build_agency_rescue_prompt(
-    *,
-    search_window: dict[str, Any],
-    target: dict[str, Any],
-    archive: dict[str, Any],
-) -> str:
-    start_at = str(search_window.get("start_at") or "")
-    end_at = str(search_window.get("end_at") or "")
-    required_query = _agency_corroboration_query(target)
-    compact_target = {
-        "id": _candidate_id(target),
-        "title": target.get("title"),
-        "organization": target.get("organization"),
-        "published_date": target.get("published_date"),
-        "published_at": target.get("published_at"),
-        "event_type": target.get("event_type"),
-        "category": target.get("category"),
-        "keywords": target.get("keywords"),
-        "event_summary": target.get("event_summary"),
-        "primary_source": target.get("primary_source"),
-    }
-    return f"""Ты — last-mile agency corroboration редакции «ИИ-сводки».
-
-Строгое редакционное окно: {start_at} → {end_at}
-Авторитетное текущее время: {end_at}.
-Идентификатор направления: general_coverage_gaps
-Версия rescue: {AGENCY_RESCUE_VERSION}
-
-Primary, Hybrid и шесть обязательных Coverage-проходов уже дали ненулевой пул,
-но в нём нет свежего Reuters/AP/Bloomberg/FT primary source. Свободен ровно один,
-седьмой Coverage search operation. НЕ ищи новое произвольное событие. Твоя
-задача — независимо подтвердить РОВНО ЭТО уже найденное событие сильным agency
-источником, предпочтительно Reuters.
-
-Выполни РОВНО ОДИН Web Search. API domain filter намеренно отключён, потому что
-live-smoke показал слепоту Reuters allowed_domains. Фактический query должен быть
-точно:
-`{required_query}`
-
-Верни не больше ОДНОГО кандидата. Он должен описывать то же событие, что target,
-а поля `organization`, `event_type` и `published_date` должны ТОЧНО совпадать с
-target. `primary_source.url` обязан вести непосредственно на Reuters/AP/
-Bloomberg/FT, не на синдикацию, агрегатор или вторичное СМИ. Источник должен быть
-внутри editorial window. Если такого подтверждения нет, верни пустой candidates
-и status=complete_with_gaps. Не придумывай timestamp или факты.
-
-Target для подтверждения:
-{json.dumps(compact_target, ensure_ascii=False, indent=2)}
-
-Недавний архив для контекста:
-{json.dumps(_base._compact_recent_archive(archive), ensure_ascii=False, indent=2)}
-
-Для include/consider обязательны verification_status=verified и
-freshness_status=new_event/material_update. `direction_id` строго
-`general_coverage_gaps`. Верни только JSON по схеме."""
-
-
-def _normalize_agency_rescue_candidate(
-    candidate: dict[str, Any], *, target_id: str
+def _resolution_quality(
+    *, status: str, required: int, cluster: list[dict[str, Any]], resolved: int,
+    remaining_required: int, query: str | None = None, reason: str | None = None,
 ) -> dict[str, Any]:
-    normalized = copy.deepcopy(candidate)
-    normalized["audit_direction"] = "agency_rescue"
-    normalized["corroboration_target_id"] = target_id
-    if normalized.get("category") != "legal":
-        normalized["legal_scale"] = "not_applicable"
-        normalized["legal_scale_reason"] = ""
-    return normalized
+    return {
+        "version": RETRIEVAL_QUALITY_CONTRACT_VERSION,
+        "status": status,
+        "required_signal_count": required,
+        "cluster_signal_ids": [str(item.get("signal_id") or "") for item in cluster],
+        "resolved_candidate_count": resolved,
+        "remaining_required_signal_count": remaining_required,
+        "query": query,
+        "domain_filter": False,
+        "publisher_whitelist": False,
+        "company_whitelist": False,
+        "reason": reason,
+    }
 
 
-def _existing_agency_rescue(plan: dict[str, Any]) -> dict[str, Any] | None:
-    attempts = plan.get("attempts")
-    if not isinstance(attempts, list):
-        return None
-    return next(
-        (
-            item
-            for item in reversed(attempts)
-            if isinstance(item, dict)
-            and item.get("search_strategy") == AGENCY_RESCUE_STRATEGY
-            and int(item.get("agency_rescue_version", 0) or 0) == AGENCY_RESCUE_VERSION
-            and item.get("status") in {"checked", "checked_with_gaps"}
-        ),
-        None,
-    )
-
-
-def _run_agency_rescue(
-    *,
-    plan: dict[str, Any],
-    budget: dict[str, Any],
-    api_key: str,
-    model: str,
-    search_window: dict[str, Any],
-    existing_candidates: list[Any],
-    archive: dict[str, Any],
+def _run_resolution(
+    *, plan: dict[str, Any], budget: dict[str, Any], api_key: str, model: str,
+    search_window: dict[str, Any], archive: dict[str, Any], signals: list[dict[str, Any]],
     maximum_web_search_calls: int,
 ) -> dict[str, Any]:
-    target = _select_agency_corroboration_target(existing_candidates)
-    if target is None:
-        _set_last_agency_rescue(
-            {
-                "status": "error",
-                "version": AGENCY_RESCUE_VERSION,
-                "search_strategy": AGENCY_RESCUE_STRATEGY,
-                "error": "no suitable corroboration target in current pool",
-            }
-        )
-        plan["audit_status"] = "partial"
-        budget["stop_reason"] = "agency_corroboration_target_missing"
-        return plan
-    target_id = _candidate_id(target)
-    assert target_id is not None
-    required_query = _agency_corroboration_query(target)
-    prompt = build_agency_rescue_prompt(
-        search_window=search_window,
-        target=target,
-        archive=archive,
-    )
+    cluster = resolution_cluster(signals)
+    query = build_resolution_query(cluster)
+    prompt = build_resolution_prompt(search_window=search_window, cluster=cluster, archive=archive)
+    signal_ids = [str(item.get("signal_id") or "") for item in cluster]
     try:
-        _base.run_audit_request = globals()["run_audit_request"]
-        result = _base._policy_audit_request(
+        _runtime.run_audit_request = globals()["run_audit_request"]
+        result = _runtime._policy_audit_request(
             api_key=api_key,
             model=model,
             prompt=prompt,
             maximum_web_search_calls=1,
-            allowed_domains=AGENCY_RESCUE_DOMAINS,
+            allowed_domains=UNRESOLVED_RESOLUTION_DOMAINS,
         )
         payload = result.payload or {}
         if payload.get("status") not in {"complete", "complete_with_gaps"}:
             raise RuntimeError(
-                "Fresh-agency rescue вернул непригодный status="
-                + repr(payload.get("status"))
+                "Unresolved resolution вернул непригодный status=" + repr(payload.get("status"))
             )
     except Exception as exc:
-        _set_last_agency_rescue(
-            {
-                "status": "error",
-                "version": AGENCY_RESCUE_VERSION,
-                "search_strategy": AGENCY_RESCUE_STRATEGY,
-                "allowed_domains": list(AGENCY_RESCUE_DOMAINS),
-                "error": f"{type(exc).__name__}: {exc}",
-            }
+        quality = _resolution_quality(
+            status="incomplete", required=len(signals), cluster=cluster, resolved=0,
+            remaining_required=len(signals), query=query,
+            reason=f"technical resolution failure: {type(exc).__name__}: {exc}",
         )
+        plan["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
+        plan["retrieval_quality"] = quality
         plan["audit_status"] = "partial"
-        budget["stop_reason"] = "agency_rescue_incomplete"
+        budget["stop_reason"] = "unresolved_resolution_incomplete"
+        _set_last_resolution(copy.deepcopy(quality))
         return plan
 
     metadata = result.metadata
     raw_candidates = payload.get("candidates")
-    accepted_for_pass = [
-        _normalize_agency_rescue_candidate(item, target_id=target_id)
-        for item in raw_candidates
-        if isinstance(item, dict)
-        and _policy._candidate_has_fresh_agency_source(item, search_window)
-        and _same_event_for_corroboration(target, item)
+    accepted = [
+        _normalize_resolution_candidate(item, signal_ids)
+        for item in raw_candidates or []
+        if _eligible_resolution_candidate(item, cluster)
     ] if isinstance(raw_candidates, list) else []
-    if len(accepted_for_pass) > 1:
-        accepted_for_pass = accepted_for_pass[:1]
+    accepted = accepted[:3]
+
     prior_general_attempts = [
         int(item.get("attempt", 0) or 0)
         for item in plan.get("attempts", [])
-        if isinstance(item, dict)
-        and item.get("direction_id") == "general_coverage_gaps"
+        if isinstance(item, dict) and item.get("direction_id") == "general_coverage_gaps"
     ]
     attempt_number = max(prior_general_attempts or [0]) + 1
     payload_status = str(payload.get("status"))
     record = {
         "direction_id": "general_coverage_gaps",
-        "label": "Targeted fresh-agency corroboration v7",
+        "label": "Unresolved high-signal resolution v1",
         "required": True,
         "attempt": attempt_number,
-        "search_strategy": AGENCY_RESCUE_STRATEGY,
-        "agency_rescue_version": AGENCY_RESCUE_VERSION,
-        "allowed_domains": list(AGENCY_RESCUE_DOMAINS),
-        "corroboration_target_id": target_id,
-        "corroboration_target_title": target.get("title"),
-        "required_query": required_query,
+        "search_strategy": UNRESOLVED_RESOLUTION_STRATEGY,
+        "unresolved_resolution_version": UNRESOLVED_RESOLUTION_VERSION,
+        "allowed_domains": [],
+        "signal_ids": signal_ids,
+        "required_query": query,
         "prompt": prompt,
         "status": "checked" if payload_status == "complete" else "checked_with_gaps",
-        "outcome": "candidates_found" if accepted_for_pass else "no_news_found",
+        "outcome": "candidates_found" if accepted else "unresolved",
         "actual_queries": list(metadata.get("actual_queries") or []),
         "sources": list(metadata.get("consulted_sources") or []),
-        "candidate_count": len(accepted_for_pass),
-        "candidates": accepted_for_pass,
+        "candidate_count": len(accepted),
+        "candidates": accepted,
         "rejections": list(payload.get("rejections") or []),
         "notes": payload.get("notes"),
         "api": metadata,
         "error": None,
     }
     plan.setdefault("attempts", []).append(record)
-    plan.setdefault("candidates", []).extend(copy.deepcopy(accepted_for_pass))
+    plan.setdefault("candidates", []).extend(copy.deepcopy(accepted))
 
     completed = int(metadata.get("web_search_calls_completed", 0) or 0)
     observed = int(metadata.get("web_search_call_items_total", 0) or 0)
     budget["response_attempts"] = int(budget.get("response_attempts", 0) or 0) + 1
     budget["observed_call_items"] = int(budget.get("observed_call_items", 0) or 0) + observed
     budget["completed_calls"] = int(budget.get("completed_calls", 0) or 0) + completed
-    budget["remaining_calls"] = max(
-        0, maximum_web_search_calls - int(budget.get("completed_calls", 0) or 0)
-    )
+    budget["remaining_calls"] = max(0, maximum_web_search_calls - int(budget.get("completed_calls", 0) or 0))
     budget["provider_overrun"] = bool(budget.get("provider_overrun")) or completed > 1
-    budget["exhausted"] = False
-    budget["search_budget_exhausted"] = False
+    budget["exhausted"] = int(budget.get("completed_calls", 0) or 0) >= maximum_web_search_calls
+    budget["search_budget_exhausted"] = budget["exhausted"]
     budget["response_attempt_limit_exhausted"] = False
-    budget["stop_reason"] = "agency_rescue_completed"
+    budget["stop_reason"] = "unresolved_resolution_completed"
     plan["api"] = _policy._aggregate_api_metadata(plan.get("attempts", []))
-    _set_last_agency_rescue(
-        {
-            "status": "complete" if payload_status == "complete" else "complete_with_gaps",
-            "version": AGENCY_RESCUE_VERSION,
-            "search_strategy": AGENCY_RESCUE_STRATEGY,
-            "allowed_domains": list(AGENCY_RESCUE_DOMAINS),
-            "attempt": attempt_number,
-            "corroboration_target_id": target_id,
-            "corroboration_target_title": target.get("title"),
-            "required_query": required_query,
-            "actual_queries": record["actual_queries"],
-            "candidate_count": len(accepted_for_pass),
-            "sources": record["sources"],
-        }
+
+    unresolved_outside_cluster = max(0, len(signals) - len(cluster))
+    if accepted and unresolved_outside_cluster == 0:
+        quality_status = "complete"
+        remaining_required = 0
+        reason = "targeted resolution produced verified candidate evidence"
+    else:
+        quality_status = "degraded"
+        remaining_required = unresolved_outside_cluster + (0 if accepted else len(cluster))
+        reason = "high-confidence unresolved evidence remains after the single available resolution slot"
+        plan["audit_status"] = "partial"
+
+    quality = _resolution_quality(
+        status=quality_status,
+        required=len(signals),
+        cluster=cluster,
+        resolved=len(accepted),
+        remaining_required=remaining_required,
+        query=query,
+        reason=reason,
     )
+    plan["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
+    plan["retrieval_quality"] = quality
+    plan["unresolved_resolution"] = copy.deepcopy(quality)
+    _set_last_resolution(copy.deepcopy(quality))
     return plan
 
 
-def _existing_recall_sentinel(plan: dict[str, Any]) -> dict[str, Any] | None:
-    attempts = plan.get("attempts")
-    if not isinstance(attempts, list):
-        return None
-    return next(
-        (
-            item
-            for item in reversed(attempts)
-            if _current_sentinel_record(item)
-        ),
-        None,
-    )
-
-
-def _normalize_sentinel_candidate(candidate: dict[str, Any]) -> dict[str, Any]:
-    normalized = copy.deepcopy(candidate)
-    normalized["audit_direction"] = "recall_sentinel"
-    if normalized.get("category") != "legal":
-        normalized["legal_scale"] = "not_applicable"
-        normalized["legal_scale_reason"] = ""
-    return normalized
-
-
 def execute_audit_plan(
-    *,
-    api_key: str,
-    model: str,
-    template: str,
-    publication_date: str,
-    search_window: dict[str, Any],
-    missing_total: int,
-    maximum_web_search_calls: int,
-    existing_candidates: list[Any],
-    archive: dict[str, Any],
-    prior_plan: dict[str, Any] | None = None,
-    source_health_rescue_needed: bool = False,
+    *, api_key: str, model: str, template: str, publication_date: str,
+    search_window: dict[str, Any], missing_total: int, maximum_web_search_calls: int,
+    existing_candidates: list[Any], archive: dict[str, Any],
+    prior_plan: dict[str, Any] | None = None, source_health_rescue_needed: bool = False,
 ) -> dict[str, Any]:
-    """Run mandatory coverage, then one versioned source-agnostic recall operation."""
+    """Mandatory Coverage -> unresolved resolution -> historical v8 supplementals."""
     prepared_prior = _prepare_prior_plan(prior_plan, search_window)
-    plan = globals()["_BASE_EXECUTE_AUDIT_PLAN"](
+    plan = _MANDATORY_EXECUTE(
         api_key=api_key,
         model=model,
         template=template,
@@ -753,298 +581,113 @@ def execute_audit_plan(
         archive=archive,
         prior_plan=prepared_prior,
     )
-    plan["temporal_anchor_version"] = TEMPORAL_ANCHOR_VERSION
-
-    existing_sentinel = _existing_recall_sentinel(plan)
-    if existing_sentinel is not None:
-        _set_last_recall_sentinel(
-            {
-                "status": "reused",
-                "version": RECALL_SENTINEL_VERSION,
-                "search_strategy": RECALL_SENTINEL_STRATEGY,
-                "allowed_domains": list(RECALL_SENTINEL_DOMAINS),
-                "attempt": existing_sentinel.get("attempt"),
-                "actual_queries": existing_sentinel.get("actual_queries", []),
-                "candidate_count": existing_sentinel.get("candidate_count", 0),
-            }
-        )
-        return plan
-
-    existing_rescue = _existing_agency_rescue(plan)
-    if existing_rescue is not None:
-        _set_last_agency_rescue(
-            {
-                "status": "reused",
-                "version": AGENCY_RESCUE_VERSION,
-                "search_strategy": AGENCY_RESCUE_STRATEGY,
-                "allowed_domains": list(AGENCY_RESCUE_DOMAINS),
-                "attempt": existing_rescue.get("attempt"),
-                "actual_queries": existing_rescue.get("actual_queries", []),
-                "candidate_count": existing_rescue.get("candidate_count", 0),
-            }
-        )
-        return plan
+    plan["temporal_anchor_version"] = _v8.TEMPORAL_ANCHOR_VERSION
 
     budget = plan.get("search_budget")
-    if not isinstance(budget, dict):
-        return plan
-    mandatory_complete = (
-        plan.get("audit_status") in {"complete", "complete_with_gaps"}
+    mandatory_complete = bool(
+        isinstance(budget, dict)
+        and plan.get("audit_status") in {"complete", "complete_with_gaps"}
         and set(plan.get("checked_directions") or ()) == set(AUDIT_DIRECTION_IDS)
     )
-    final_eligible = _base._eligible_candidate_count(
-        existing_candidates
-    ) + _base._eligible_candidate_count(plan.get("candidates"))
-    remaining_calls = int(budget.get("remaining_calls", 0) or 0)
-    combined_candidates = list(existing_candidates) + list(plan.get("candidates") or [])
-    agency_rescue_needed = bool(
-        final_eligible > 0
-        and not _policy._candidates_have_fresh_agency_source(
-            combined_candidates, search_window
-        )
-    )
-    if (
-        maximum_web_search_calls >= RECALL_SENTINEL_MINIMUM_BUDGET
-        and mandatory_complete
-        and source_health_rescue_needed
-        and agency_rescue_needed
-        and remaining_calls >= 1
-    ):
-        return _run_agency_rescue(
+    signals = _required_signals(publication_date)
+    remaining_calls = int(budget.get("remaining_calls", 0) or 0) if isinstance(budget, dict) else 0
+
+    if signals and mandatory_complete and remaining_calls >= 1:
+        plan = _run_resolution(
             plan=plan,
             budget=budget,
             api_key=api_key,
             model=model,
             search_window=search_window,
-            existing_candidates=combined_candidates,
             archive=archive,
+            signals=signals,
             maximum_web_search_calls=maximum_web_search_calls,
         )
-
-    if not (
-        maximum_web_search_calls >= RECALL_SENTINEL_MINIMUM_BUDGET
-        and mandatory_complete
-        and final_eligible == 0
-        and remaining_calls >= 1
-    ):
+        if plan.get("retrieval_quality", {}).get("status") != "complete":
+            return plan
+        if int((plan.get("search_budget") or {}).get("remaining_calls", 0) or 0) <= 0:
+            return plan
+    elif signals:
+        quality = _resolution_quality(
+            status="degraded",
+            required=len(signals),
+            cluster=[],
+            resolved=0,
+            remaining_required=len(signals),
+            reason=(
+                "mandatory Coverage retry consumed the adaptive budget before high-signal resolution"
+                if mandatory_complete
+                else "mandatory Coverage is incomplete"
+            ),
+        )
+        plan["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
+        plan["retrieval_quality"] = quality
+        plan["audit_status"] = "partial"
+        _set_last_resolution(copy.deepcopy(quality))
         return plan
+    else:
+        quality = _resolution_quality(
+            status="complete",
+            required=0,
+            cluster=[],
+            resolved=0,
+            remaining_required=0,
+            reason="Primary Recall produced no high-confidence unresolved signal requiring resolution",
+        )
+        plan["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
+        plan["retrieval_quality"] = quality
 
-    prompt = build_recall_sentinel_prompt(
+    return _V8_EXECUTE(
+        api_key=api_key,
+        model=model,
+        template=template,
         publication_date=publication_date,
         search_window=search_window,
+        missing_total=missing_total,
+        maximum_web_search_calls=maximum_web_search_calls,
         existing_candidates=existing_candidates,
         archive=archive,
+        prior_plan=plan,
+        source_health_rescue_needed=source_health_rescue_needed,
     )
-    try:
-        # Keep test doubles and production transport wired through the same
-        # historical hook.
-        _base.run_audit_request = globals()["run_audit_request"]
-        result = _base._policy_audit_request(
-            api_key=api_key,
-            model=model,
-            prompt=prompt,
-            maximum_web_search_calls=1,
-            allowed_domains=RECALL_SENTINEL_DOMAINS,
-        )
-        payload = result.payload or {}
-        if payload.get("status") not in {"complete", "complete_with_gaps"}:
-            raise RuntimeError(
-                "Recall sentinel вернул непригодный status="
-                + repr(payload.get("status"))
-            )
-    except Exception as exc:
-        _set_last_recall_sentinel(
-            {
-                "status": "error",
-                "version": RECALL_SENTINEL_VERSION,
-                "search_strategy": RECALL_SENTINEL_STRATEGY,
-                "allowed_domains": list(RECALL_SENTINEL_DOMAINS),
-                "error": f"{type(exc).__name__}: {exc}",
-            }
-        )
-        plan["audit_status"] = "partial"
-        budget["stop_reason"] = "recall_sentinel_incomplete"
-        return plan
-
-    metadata = result.metadata
-    raw_candidates = payload.get("candidates")
-    accepted_for_pass = [
-        _normalize_sentinel_candidate(item)
-        for item in raw_candidates
-        if isinstance(item, dict)
-    ] if isinstance(raw_candidates, list) else []
-
-    prior_general_attempts = [
-        int(item.get("attempt", 0) or 0)
-        for item in plan.get("attempts", [])
-        if isinstance(item, dict)
-        and item.get("direction_id") == "general_coverage_gaps"
-    ]
-    attempt_number = max(prior_general_attempts or [0]) + 1
-    payload_status = str(payload.get("status"))
-    record = {
-        "direction_id": "general_coverage_gaps",
-        "label": "Source-neutral broad recall sentinel v8",
-        "required": True,
-        "attempt": attempt_number,
-        "search_strategy": RECALL_SENTINEL_STRATEGY,
-        "recall_sentinel_version": RECALL_SENTINEL_VERSION,
-        "allowed_domains": list(RECALL_SENTINEL_DOMAINS),
-        "prompt": prompt,
-        "status": (
-            "checked" if payload_status == "complete" else "checked_with_gaps"
-        ),
-        "outcome": "candidates_found" if accepted_for_pass else "no_news_found",
-        "actual_queries": list(metadata.get("actual_queries") or []),
-        "sources": list(metadata.get("consulted_sources") or []),
-        "candidate_count": len(accepted_for_pass),
-        "candidates": accepted_for_pass,
-        "rejections": list(payload.get("rejections") or []),
-        "notes": payload.get("notes"),
-        "api": metadata,
-        "error": None,
-    }
-    plan.setdefault("attempts", []).append(record)
-    plan.setdefault("candidates", []).extend(copy.deepcopy(accepted_for_pass))
-
-    completed = int(metadata.get("web_search_calls_completed", 0) or 0)
-    observed = int(metadata.get("web_search_call_items_total", 0) or 0)
-    budget["response_attempts"] = int(budget.get("response_attempts", 0) or 0) + 1
-    budget["observed_call_items"] = int(budget.get("observed_call_items", 0) or 0) + observed
-    budget["completed_calls"] = int(budget.get("completed_calls", 0) or 0) + completed
-    budget["remaining_calls"] = max(
-        0,
-        maximum_web_search_calls - int(budget.get("completed_calls", 0) or 0),
-    )
-    budget["provider_overrun"] = bool(budget.get("provider_overrun")) or completed > 1
-    budget["exhausted"] = False
-    budget["search_budget_exhausted"] = False
-    budget["response_attempt_limit_exhausted"] = False
-    budget["stop_reason"] = "recall_sentinel_completed"
-    plan["api"] = _policy._aggregate_api_metadata(plan.get("attempts", []))
-
-    _set_last_recall_sentinel(
-        {
-            "status": (
-                "complete" if payload_status == "complete" else "complete_with_gaps"
-            ),
-            "version": RECALL_SENTINEL_VERSION,
-            "search_strategy": RECALL_SENTINEL_STRATEGY,
-            "allowed_domains": list(RECALL_SENTINEL_DOMAINS),
-            "attempt": attempt_number,
-            "actual_queries": record["actual_queries"],
-            "candidate_count": len(accepted_for_pass),
-            "sources": record["sources"],
-        }
-    )
-    return plan
 
 
-def _primary_search_diagnostics(publication_date: str) -> dict[str, Any] | None:
-    _base.REPOSITORY_ROOT = globals()["REPOSITORY_ROOT"]
-    return _base._primary_search_diagnostics(publication_date)
-
-
-def _sync_policy_overrides() -> None:
-    # Preserve the historical monkeypatch/runtime surface. Tests, recovery and
-    # callers still override these names on ensure_story_coverage.py; forward
-    # them into the preserved base before it wires the policy module.
+def _sync_v8_overrides() -> None:
     for name in (
-        "RUNTIME_RESEARCH_ROOT",
-        "PERSISTED_RESEARCH_ROOT",
-        "PROMPT_PATH",
-        "GENERATOR_PATH",
-        "rerun_editorial",
-        "run_audit_request",
+        "REPOSITORY_ROOT", "RUNTIME_RESEARCH_ROOT", "PERSISTED_RESEARCH_ROOT",
+        "PROMPT_PATH", "GENERATOR_PATH", "rerun_editorial", "run_audit_request",
     ):
         if name in globals():
-            setattr(_base, name, globals()[name])
-    _base.RECALL_SENTINEL_DOMAINS = RECALL_SENTINEL_DOMAINS
-    _base.completed_prior_audit = completed_prior_audit
-    _base.execute_audit_plan = execute_audit_plan
-    _base.build_recall_sentinel_prompt = build_recall_sentinel_prompt
-    _base._existing_recall_sentinel = _existing_recall_sentinel
-    _base._sync_policy_overrides()
+            setattr(_v8, name, globals()[name])
+    _v8.execute_audit_plan = execute_audit_plan
+    _v8.completed_prior_audit = completed_prior_audit
+    _v8._prepare_prior_plan = _prepare_prior_plan
 
 
-def _promote_completed_zero_pool_editorial_stop(report_path: Path | None) -> bool:
-    """Convert only a proven complete zero-pool audit into a healthy no-publish stop."""
-    if report_path is None or not report_path.is_file():
-        return False
-    try:
-        payload = read_json(report_path)
-    except Exception:
-        return False
-    if not isinstance(payload, dict):
-        return False
-    pool_after = payload.get("candidate_pool_after")
-    api = payload.get("api") or {}
-    error = str(payload.get("error") or "")
-    terminal = bool(
-        payload.get("status") == "error"
-        and "После основного и дополнительного поиска не осталось ни одного достойного сюжета" in error
-        and payload.get("audit_state") == "completed_usable"
-        and not payload.get("audit_error")
-        and not payload.get("validation_error")
-        and payload.get("web_search_performed") is True
-        and isinstance(api, dict)
-        and api.get("status") == "completed"
-        and payload.get("audit_status") in {"complete", "complete_with_gaps"}
-        and set(payload.get("checked_directions") or ()) == set(AUDIT_DIRECTION_IDS)
-        and payload.get("temporal_anchor_version") == TEMPORAL_ANCHOR_VERSION
-        and _completed_sentinel_evidence(payload)
-        and isinstance(pool_after, dict)
-        and pool_after.get("total") == 0
-    )
-    if not terminal:
-        return False
-    payload["status"] = "editorial_stop"
-    payload["editorial_stop"] = True
-    payload["publication_mode"] = "none"
-    payload["mode"] = "completed_zero_pool_editorial_stop"
-    payload["editorial_stop_reason"] = (
-        "Полный research, шесть обязательных coverage-проходов и актуальный "
-        "recall sentinel не нашли ни одного достойного сюжета."
-    )
-    payload["error"] = None
-    write_json(report_path, payload)
-    return True
-
-
-def _finalize_source_health_report(report_path: Path | None) -> None:
+def _finalize_quality_report(report_path: Path | None) -> None:
     if report_path is None or not report_path.is_file():
         return
     payload = read_json(report_path)
     if not isinstance(payload, dict):
         return
-    payload["source_health_contract_version"] = SOURCE_HEALTH_CONTRACT_VERSION
-    if _LAST_AGENCY_RESCUE is not None:
-        payload["agency_rescue"] = copy.deepcopy(_LAST_AGENCY_RESCUE)
-        status = str(_LAST_AGENCY_RESCUE.get("status") or "")
-        if status in {"complete", "complete_with_gaps", "reused"}:
-            payload["audit_notes"] = (
-                "Шесть обязательных Coverage-проходов завершены; свободный "
-                "седьмой search operation использован как Reuters/AP fresh-agency "
-                "rescue для ненулевого пула без свежего agency-кандидата."
-            )
-        elif status == "error":
-            payload["audit_notes"] = (
-                "Шесть обязательных Coverage-проходов завершены, но требуемый "
-                "fresh-agency rescue технически не завершён; публикация заблокирована."
+    payload["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
+    if not isinstance(payload.get("retrieval_quality"), dict):
+        if _LAST_RESOLUTION is not None:
+            payload["retrieval_quality"] = copy.deepcopy(_LAST_RESOLUTION)
+        else:
+            payload["retrieval_quality"] = _resolution_quality(
+                status="complete", required=0, cluster=[], resolved=0,
+                remaining_required=0,
+                reason="no high-confidence unresolved signal required resolution",
             )
     write_json(report_path, payload)
 
 
 def main() -> int:
-    _set_last_recall_sentinel(None)
-    _set_last_agency_rescue(None)
-    _sync_policy_overrides()
-    result = int(_base.main())
-    # _base.main() resets and then populates the shared sentinel diagnostics.
-    _set_last_recall_sentinel(_base._LAST_RECALL_SENTINEL)
-    _finalize_source_health_report(_base._report_path())
-    if result != 0 and _promote_completed_zero_pool_editorial_stop(_base._report_path()):
-        return 0
+    _set_last_resolution(None)
+    _sync_v8_overrides()
+    result = int(_v8.main())
+    _finalize_quality_report(_v8._base._report_path())
     return result
 
 
