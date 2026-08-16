@@ -502,3 +502,15 @@ Timezone-aware `published_at` сравнивается непосредстве�
 ### Terminal source-health contract
 
 Agency retrieval остаётся обязательным: `major_agencies` должен выполнить свой search, а при необходимости Coverage использует один bounded same-event Reuters/AP/Bloomberg/FT rescue. Нулевой результат после технически успешного обязательного поиска теперь записывается как warning, а не как самостоятельный fatal error, потому что ranking Terra недетерминирован. Ошибка/неполнота обязательного маршрута остаётся fatal. Search budget и точная временная валидация agency evidence не изменены. Production status при нескольких сохранённых ошибках отдаёт приоритет фактически достигнутому terminal stage (`artifact-normalization.json`/`artifact-validation.json`), а recovery-ошибка используется только как более ранняя диагностика.
+
+## Retrieval Quality v1: unresolved-сигналы и региональная полнота
+
+С 2026-08-16 production сохраняет важный `unverified` след из Primary Recall как отдельный `unresolved_signal`, вместо того чтобы безвозвратно оставлять его в обычных rejections. Targeted resolution обязателен только для strict high-signal evidence; слабый `unverified` остаётся диагностикой и сам по себе не блокирует выпуск.
+
+`entities`, `anchors` и `source_hint` являются только evidence для построения короткого запроса. Это **не** company whitelist, не обязательный AND-набор и не publisher whitelist. Resolution выполняет один source-neutral Web Search без API domain filter и может подтвердить событие любым авторитетным первичным или вторичным источником. Reuters остаётся одним из возможных источников, а не центром поисковой архитектуры.
+
+Если Primary Recall технически завершил China/Asia- или Russia-направление с нулём принятых кандидатов, существующий optional 4-й Hybrid slot может стать региональным recall-health check. Ноль после такой проверки допустим: это контроль достаточности поиска, **не квота на публикацию** и не требование искусственно добавлять российскую или азиатскую историю.
+
+Adaptive-приоритет сохраняет стоимость: mandatory Coverage retry имеет приоритет над unresolved resolution; при отсутствии unresolved-сигнала действуют прежние fresh-agency rescue / zero-pool sentinel. Максимум не меняется: **12 Primary + до 4 Hybrid + до 7 Coverage = 23 Web Search operations на выпуск**.
+
+`retrieval_quality_contract_version=1` участвует в recovery. Modern full artifact без завершённого Retrieval Quality v1 понижается до partial editorial recovery: уже оплаченные валидные mandatory-проходы переиспользуются, а свободный quality-slot выполняется по новой семантике. Legacy zero-pool terminal artifact старого контракта не используется между разными датами выпуска, потому что recovery выбирается строго по `daily-production-YYYY-MM-DD`. Live Terra smoke остаётся диагностической pre-release проверкой; наличие конкретной Reuters URL не является детерминированным CI-gate из-за недетерминированного ранжирования поиска.

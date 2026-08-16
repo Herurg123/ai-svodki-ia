@@ -476,3 +476,15 @@ post-cutoff agency evidence.
 ## Regression rule: terminal agency source-health (2026-08-16)
 
 Не превращать отсутствие свежего Reuters/AP/Bloomberg/FT кандидата в самостоятельный fatal gate, если обязательный `major_agencies` pass и bounded Coverage/rescue технически завершились. Terra/web-search ranking недетерминирован: такой zero-result должен сохраняться как заметный source-health warning, после чего решение о публикации принимают обычные editorial/validation gates. При этом незавершённый обязательный agency search, сломанный search contract, неполный Coverage audit и невалидная временная привязка найденного evidence остаются fail-closed. Не увеличивать search budget ради компенсации ranking-недетерминизма без отдельного проверенного архитектурного решения. В pipeline diagnostics приоритет имеет наиболее поздний фактически достигнутый terminal stage; recovery не должна маскировать последующую normalization/validation ошибку. Для subprocess editorial rerun всегда сохранять captured child output в JSON diagnostics.
+
+## Retrieval Quality v1
+
+- Не терять потенциально крупный `unverified` discovery: сохранять его в `unresolved_signals`; обязательный resolver разрешён только для strict high-signal evidence, слабые сигналы не блокируют выпуск.
+- `entities`, `anchors`, `source_hint` являются hints/evidence, а не обязательными поисковыми фильтрами. Запрещено превращать их в company whitelist, publisher whitelist или длинный AND-query.
+- Targeted unresolved resolution использует только существующий 7-й Coverage slot, source-neutral Web Search и не увеличивает Coverage budget выше 7.
+- Приоритет adaptive Coverage slot: сначала обязательный technical retry; затем high-signal unresolved resolution; если unresolved нет, действуют существующие fresh-agency rescue / zero-pool sentinel правила.
+- Russia/Asia zero-result проверяется как completeness-health через существующий optional 4-й Hybrid slot. Это не региональная story quota: отсутствие достойной новости после достаточного поиска является допустимым результатом.
+- Общий production search ceiling остаётся 23: 12 Primary + до 4 Hybrid + до 7 Coverage.
+- Modern full recovery без `retrieval_quality_contract_version=1` понижать до partial editorial recovery: переиспользовать уже оплаченные валидные mandatory-проходы и выполнить отсутствующий quality-slot, а не повторять весь research.
+- Recovery artifacts привязаны к точной дате `daily-production-YYYY-MM-DD`; не переносить terminal/research artifacts между календарными выпусками.
+- Live Terra smoke применять как диагностическую проверку query architecture. Не требовать конкретную live Reuters/AP/Bloomberg/FT URL в deterministic CI.
