@@ -1334,7 +1334,24 @@ def rerun_editorial(
         "--research-input",
         str(merged_research_path.relative_to(REPOSITORY_ROOT)),
     ]
-    subprocess.run(command, cwd=REPOSITORY_ROOT, env=os.environ.copy(), check=True)
+    completed = subprocess.run(
+        command,
+        cwd=REPOSITORY_ROOT,
+        env=os.environ.copy(),
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        check=False,
+    )
+    if completed.stdout:
+        print(
+            completed.stdout,
+            end="" if completed.stdout.endswith("\n") else "\n",
+        )
+    if completed.returncode != 0:
+        raise subprocess.CalledProcessError(
+            completed.returncode, command, output=completed.stdout
+        )
 
 
 

@@ -86,7 +86,7 @@ Responses-output ceiling для каждого Primary pass равен **6000 to
 Фиксированная матрица:
 
 1. `global_breaking` — широкий мировой discovery;
-2. `major_agencies` — дополнительный high-signal route по Bloomberg и FT;
+2. `major_agencies` — дополнительный high-signal route по Reuters, AP, Bloomberg и FT;
 3. `models_products_agents` — модели, продукты, агенты, research;
 4. `infrastructure_chips_cloud` — чипы, дата-центры, cloud, energy, inference;
 5. `business_investment_partnerships` — инвестиции, M&A, financing,
@@ -105,7 +105,7 @@ Responses-output ceiling для каждого Primary pass равен **6000 to
 
 `global_breaking` и `independent_missing_events` являются source-neutral broad
 catch-all проходами без API domain filter. `major_agencies` сохраняет отдельный
-`bloomberg.com` + `ft.com` high-signal filter; остальные направления также
+Reuters/AP/Bloomberg/FT high-signal filter; остальные направления также
 остаются широкими.
 
 Каноническая continuity-точка остаётся фактическим `search_cutoff_at`
@@ -129,7 +129,7 @@ window. Так overlap остаётся доступен для healing, а сл
 
 Broad safety nets `global_breaking` и `independent_missing_events` не имеют API
 domain filter. `major_agencies` остаётся отдельным дополнительным sweep по
-`bloomberg.com` + `ft.com`. Это ranking-шансы, а не whitelist кандидатов или
+Reuters/AP/Bloomberg/FT. Для этого прохода закреплён короткий date-free query `latest AI chips data centers investments deals policy security`. Это ranking-шансы, а не whitelist кандидатов или
 издательская квота; остальные Primary directions также остаются широкими.
 
 Wikipedia и Reddit не являются допустимым основным подтверждением свежего

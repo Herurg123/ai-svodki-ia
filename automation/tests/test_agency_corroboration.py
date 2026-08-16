@@ -80,6 +80,50 @@ class AgencyCorroborationTests(unittest.TestCase):
         self.assertIsNotNone(target)
         self.assertEqual(target["id"], "cand-003")
 
+    def test_target_selection_treats_acquisition_closed_as_acquisition_family(self):
+        pool = [
+            candidate(
+                "cand-001",
+                "SpaceX; Cursor",
+                "acquisition_closed",
+                4,
+                category="investment",
+            ),
+            candidate(
+                "cand-002",
+                "Kog",
+                "model_release",
+                2,
+                category="infrastructure",
+            ),
+        ]
+        target = runtime._select_agency_corroboration_target(pool)
+        self.assertIsNotNone(target)
+        self.assertEqual(target["id"], "cand-001")
+
+    def test_rerun_editorial_preserves_child_output_on_failure(self):
+        import contextlib
+        import io
+        import subprocess
+        from types import SimpleNamespace
+        from unittest import mock
+
+        fake = SimpleNamespace(returncode=7, stdout="exact editorial failure\n")
+        research_path = policy.REPOSITORY_ROOT / "automation/fixtures/research/.coverage-audit-test.json"
+        stream = io.StringIO()
+        with mock.patch.object(policy.subprocess, "run", return_value=fake):
+            with contextlib.redirect_stdout(stream):
+                with self.assertRaises(subprocess.CalledProcessError) as raised:
+                    policy.rerun_editorial(
+                        publication_date="2026-08-16",
+                        merged_research_path=research_path,
+                        minimum_total=7,
+                        maximum_candidates=20,
+                        maximum_selected_stories=12,
+                    )
+        self.assertEqual(raised.exception.output, "exact editorial failure\n")
+        self.assertIn("exact editorial failure", stream.getvalue())
+
     def test_databricks_query_is_short_date_free_and_adaptive(self):
         target = candidate(
             "cand-003",

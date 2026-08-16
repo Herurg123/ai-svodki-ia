@@ -53,9 +53,11 @@ products business infrastructure`, не привязываясь к компан
 Это основной catch-all, который не должен ослепнуть из-за проблем одного домена.
 
 `major_agencies` остаётся отдельным дополнительным high-signal каналом с API
-filter `bloomberg.com` + `ft.com`; query при этом source-neutral и date-free,
-например `latest major artificial intelligence news`. Это дополнительный шанс
-ranking, а не доказательство отсутствия события вне этих издателей.
+filter Reuters/AP/Bloomberg/FT. Для этого прохода фактический query должен быть
+ровно `latest AI chips data centers investments deals policy security`. Он
+остаётся коротким, date-free и не кодирует издателя в query text; publisher
+routing задаётся API domain filter. Это дополнительный шанс ranking, а не
+доказательство отсутствия события вне этих издателей.
 
 `independent_missing_events` становится source-neutral адаптивным last-mile
 поиском без API domain filter. Учитывая уже найденный pool, найди крупнейшие

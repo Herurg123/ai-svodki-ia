@@ -95,13 +95,14 @@ repository hygiene: в policy она отдельно классифицируе
    найденного и ищет именно крупные отсутствующие события.
 6. Broad safety nets `global_breaking` и `independent_missing_events` работают
    без API domain filter. `major_agencies` остаётся дополнительным high-signal
-   проходом только по `bloomberg.com` + `ft.com`. Фактический query во всех
+   проходом по Reuters, AP, Bloomberg и FT. Фактический query во всех
    Primary-направлениях должен быть короткой date-free natural-language фразой
    с relative-freshness cue (`latest`/`recent`/`current`/`breaking`). Календарные
    даты, годы, названия месяцев, `after:`/`before:`, длинные Boolean `OR`-цепочки,
    скобки и огромные списки компаний в query запрещены. Полное effective window
    остаётся строгой post-retrieval границей допустимости кандидата; `latest` сам
    по себе не считается доказательством свежести.
+   Для `major_agencies` production использует Terra-проверенный короткий query `latest AI chips data centers investments deals policy security`; publisher routing задаётся API domain filter и не увеличивает 12-search budget.
 7. Китай/Азия намеренно разделены на два прохода. Исторический эксперимент на
    окне выпуска 2026-08-11 показал, что одна широкая China/Asia-проверка
    обнаружила 5 из 6 контрольных событий, но пропустила продуктовую интеграцию
