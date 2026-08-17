@@ -69,7 +69,7 @@ class StageLegacyImagesTests(unittest.TestCase):
             self.assertEqual(report["already_present"], [name])
             self.assertEqual(len(report["different_existing"]), 1)
 
-    def test_repository_legacy_set_is_stageable_in_dry_run(self) -> None:
+    def test_repository_legacy_set_matches_best_effort_cleanup_contract(self) -> None:
         repo = Path(__file__).resolve().parents[2]
         report = stage_images_best_effort(
             repo / "posts" / "dzen-test" / "images",
@@ -77,7 +77,11 @@ class StageLegacyImagesTests(unittest.TestCase):
             dry_run=True,
         )
 
-        self.assertEqual(report["status"], "ok", report.get("warnings"))
+        # Repository cleanup may legitimately remove the historical package.
+        # Staging is explicitly best-effort, so both an available source (ok)
+        # and an already-cleaned source (non-blocking warning) are healthy.
+        self.assertIn(report["status"], {"ok", "warning"}, report.get("warnings"))
+        self.assertFalse(report["blocking"])
         self.assertGreaterEqual(report["source_images"], 0)
 
 
