@@ -1,0 +1,16 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "author",
+      "model_value": "ИИ-Сводка",
+      "normalized_value": "ИИ-сводки"
+    },
+    {
+      "field": "cover_filename",
+      "model_value": "2026-08-18.png",
+      "normalized_value": "ai-svodka-2026-08-18.png"
+    }
+  ],
+  "changed_count": 2
+}

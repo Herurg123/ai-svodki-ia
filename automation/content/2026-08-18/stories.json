@@ -1,0 +1,193 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Nvidia инвестирует $1,5 млрд в девелопера площадки OpenAI в Огайо",
+    "organization": "Nvidia; SB Energy; OpenAI; SoftBank",
+    "topic": "финансирование и закрепление энергоснабжения, площадки и вычислительной инфраструктуры для крупной AI-фабрики OpenAI",
+    "event_type": "infrastructure investment",
+    "status": "new",
+    "summary": "Nvidia, по данным TechCrunch и подтверждающему сообщению компании, закрепляет площадку PORTS-Pike через партнёрство с SB Energy: OpenAI станет арендатором AI-фабрики, а Nvidia обеспечит эксклюзивное размещение своего вычислительного стека. TechCrunch сообщает об инвестиции Nvidia в $1,5 млрд и кредитной поддержке строительства; Nvidia подтверждает первоначальную мощность проекта в 4,25 ГВт и возможность расширения ещё на 3,75 ГВт.",
+    "published_at": "2026-08-17T15:16:24+00:00",
+    "published_date": "2026-08-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Nvidia investing $1.5B in SoftBank data center developer behind OpenAI project",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/17/nvidia-investing-1-5b-in-softbank-data-center-developer-behind-openai-project/"
+      }
+    ],
+    "keywords": [
+      "Nvidia",
+      "OpenAI",
+      "SB Energy",
+      "PORTS-Pike",
+      "AI factory",
+      "data center",
+      "compute",
+      "Ohio",
+      "power infrastructure"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Gravis Robotics привлекла $200 млн на автономизацию тяжёлой строительной техники",
+    "organization": "Gravis Robotics; SoftBank",
+    "topic": "финансирование physical AI и коммерческое развертывание автономных систем на существующих парках строительной техники",
+    "event_type": "funding round",
+    "status": "new",
+    "summary": "Швейцарская Gravis Robotics, разрабатывающая аппаратно-программные комплексы для автономизации экскаваторов и другой тяжёлой техники, привлекла $200 млн в Series A от SoftBank. Средства предназначены для международного расширения, инженерного найма и внедрения систем на инфраструктурных и строительных проектах.",
+    "published_at": "2026-08-17T09:49:01-04:00",
+    "published_date": "2026-08-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Gravis Robotics Raises $200M Series A to Scale Autonomous Heavy Machinery",
+        "publisher": "Unite.AI",
+        "url": "https://www.unite.ai/gravis-robotics-raises-200m-series-a-to-scale-autonomous-heavy-machinery/"
+      }
+    ],
+    "keywords": [
+      "Gravis Robotics",
+      "SoftBank",
+      "Series A",
+      "$200 million",
+      "construction robotics",
+      "autonomous excavators",
+      "physical AI"
+    ],
+    "geography": "world",
+    "category": "robotics"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Wispr получила $280 млн и представила речевую модель Canto",
+    "organization": "Wispr; Menlo Ventures",
+    "topic": "финансирование потребительского AI-продукта для диктовки, заметок и голосового интерфейса",
+    "event_type": "funding_and_product_launch",
+    "status": "new",
+    "summary": "Wispr объявила о Series B на $280 млн под руководством Menlo Ventures при оценке $2 млрд. Компания одновременно сообщила о новой модели распознавания речи Canto и расширении продукта из AI-диктовки в заметки встреч и другие интерфейсы.",
+    "published_at": "2026-08-17T13:10:05+00:00",
+    "published_date": "2026-08-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Wispr raises $280M at $2B valuation as it looks beyond dictation",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/17/wispr-raises-280m-at-2b-valuation-as-it-looks-beyond-dictation/"
+      }
+    ],
+    "keywords": [
+      "Wispr",
+      "Wispr Flow",
+      "Canto",
+      "AI dictation",
+      "speech understanding",
+      "Series B",
+      "Menlo Ventures"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Groq привлекла $350 млн для глобального inference-облака",
+    "organization": "Groq; Disruptive; Nvidia",
+    "topic": "финансирование и расширение распределённой AI-inference-инфраструктуры на базе ускорителей Nvidia",
+    "event_type": "fundraising",
+    "status": "new",
+    "summary": "Groq объявила о раунде Series A на $350 млн при оценке $3,5 млрд. Средства предназначены для перехода от производителя AI-чипов к глобальному inference-neocloud: компания сообщает о 13 дата-центрах и плане увеличить мощность с 54 МВт до более чем 200 МВт в 2027 году; участие Nvidia в раунде запланировано.",
+    "published_at": "2026-08-17T16:15:12+00:00",
+    "published_date": "2026-08-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Groq raises $350M to fuel its pivot from AI chips to neocloud",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/17/groq-raises-350m-to-fuel-its-pivot-from-ai-chips-to-neocloud/"
+      }
+    ],
+    "keywords": [
+      "Groq",
+      "neocloud",
+      "AI inference",
+      "Nvidia",
+      "Series A",
+      "data centers",
+      "GPU cloud",
+      "Disruptive"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Serve Robotics выводит автономную доставку в Grubhub сразу в трёх городах США",
+    "organization": "Serve Robotics; Grubhub; Wonder; DoorDash",
+    "topic": "крупное коммерческое внедрение автономной роботодоставки через маркетплейс еды",
+    "event_type": "strategic partnership and enterprise deployment",
+    "status": "new",
+    "summary": "Serve Robotics договорилась с Grubhub о выводе автономных тротуарных роботов доставки на маркетплейс Grubhub в Чикаго, Лос-Анджелесе и Александрии (Виргиния). На старте участвуют более 100 заведений в Чикаго и почти 200 в Лос-Анджелесе; одновременно Serve объявила расширение присутствия в Вашингтоне и Сан-Хосе через DoorDash.",
+    "published_at": "2026-08-17T08:31:13-04:00",
+    "published_date": "2026-08-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Serve Robotics Brings Sidewalk Robot Delivery to Grubhub, Expands to Three New Cities",
+        "publisher": "Unite.AI",
+        "url": "https://www.unite.ai/serve-robotics-brings-sidewalk-robot-delivery-to-grubhub-expands-to-three-new-cities/"
+      }
+    ],
+    "keywords": [
+      "Serve Robotics",
+      "Grubhub",
+      "Wonder",
+      "autonomous delivery",
+      "sidewalk robots",
+      "Chicago",
+      "Los Angeles",
+      "Alexandria"
+    ],
+    "geography": "world",
+    "category": "robotics"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Alibaba продаёт Lingxi Games, чтобы направить капитал в ИИ и облако",
+    "organization": "Alibaba Group; Lingxi Games; Trustar Capital",
+    "topic": "Стратегическое финансирование AI-инфраструктуры через продажу непрофильного актива",
+    "event_type": "asset sale / strategic capital reallocation",
+    "status": "new",
+    "summary": "Alibaba согласилась продать принадлежащую ей игровую студию Lingxi Games фонду Trustar Capital. По данным Reuters, сумма сделки превышает $2 млрд; Bloomberg оценивал актив как минимум в $1,5 млрд. Продажа означает выход Alibaba из собственной разработки игр и высвобождает капитал для её расширяющейся программы вложений в облачную и AI-инфраструктуру.",
+    "published_at": "2026-08-17T15:39:28+00:00",
+    "published_date": "2026-08-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Alibaba is selling its gaming studio for at least $1.5 billion to help fund AI buildout, mirroring Micron's exit from consumer business",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/alibaba-sells-its-gaming-studio-for-at-least-1-5-billion-to-help-fund-ai-buildout"
+      }
+    ],
+    "keywords": [
+      "Alibaba",
+      "Lingxi Games",
+      "Trustar Capital",
+      "AI infrastructure",
+      "cloud",
+      "data centers",
+      "divestiture",
+      "China"
+    ],
+    "geography": "world",
+    "category": "investment"
+  }
+]

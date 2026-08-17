@@ -1,0 +1,149 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-08-18",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-08-18.json",
+  "warnings": [
+    "Целевой пул — 12 кандидатов, но после проверки свежести осталось 7.",
+    "Выбрано 6 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-08-18",
+  "started_at": "2026-08-17T23:42:46+00:00",
+  "finished_at": "2026-08-17T23:43:19+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 32,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "cbcbe72dcb14ede23b792a82050fde72af26d80416019297b28826006cc715d8",
+    "candidates_sha256": "da4c350b864ec84de244544893073704dbe3de26eb7683f5bf3887fc2e79657c",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-08-16T02:33:51+03:00",
+      "end_at": "2026-08-18T02:35:53+03:00",
+      "latest_archive_at": "2026-08-17T02:33:51+03:00",
+      "start_date": "2026-08-16",
+      "end_date": "2026-08-18",
+      "latest_archive_date": "2026-08-17"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "74281f8c95356817e44e602f1def2f964f32a8fa15cb0d42e71264984a92a4af",
+    "editorial_sha256": "ff71c64611e36b06404e6341f76ebd4b1fb46d9bee9f17a64ea4c7d6ef41d5b4",
+    "digest_sha256": "d11a9bd6c96a19d52b43190b5310f3532a7b64daa65780e8f68a282f9a27db60",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-08-18.png",
+          "normalized_value": "ai-svodka-2026-08-18.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        }
+      ],
+      "changed_count": 1,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 6 сюжетов."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: В коротком пуле три независимых и содержательно разных сюжета TechCrunch: инвестиция Nvidia в площадку OpenAI, раунд Wispr и раунд Groq. Их исключение только из-за мягкого лимита уменьшило бы и без того неполный выпуск."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_014fefdfdf8ebaed016a839c7756c88191b6bafa10e8ad5628",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 83262,
+        "input_tokens_details": {
+          "cache_write_tokens": 83259,
+          "cached_tokens": 0
+        },
+        "output_tokens": 3697,
+        "output_tokens_details": {
+          "reasoning_tokens": 479
+        },
+        "total_tokens": 86959
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 83262,
+    "output_tokens": 3697,
+    "total_tokens": 86959,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "7548114513dc861a7fc57439fdd616e629210eb7",
+    "run_id": "32081073016",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-08-18T02:35:53+03:00"
+}

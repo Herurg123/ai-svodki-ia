@@ -1,0 +1,46 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-18",
+  "slug": "2026-08-18",
+  "title": "ИИ-Сводка на 18 августа 2026",
+  "description": "Nvidia закрепляет многогигаваттную площадку для OpenAI, Groq расширяет inference-облако, а Alibaba перераспределяет капитал в ИИ-инфраструктуру. В робототехнике растут инвестиции и каналы коммерческого внедрения.",
+  "published_at": "2026-08-18T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-18.png",
+  "topics": [
+    "Nvidia",
+    "OpenAI",
+    "SB Energy",
+    "ИИ-инфраструктура",
+    "Groq",
+    "inference-облака",
+    "Gravis Robotics",
+    "physical AI",
+    "автономная строительная техника",
+    "Wispr",
+    "речевые модели",
+    "Serve Robotics",
+    "роботодоставка",
+    "Alibaba",
+    "облачная инфраструктура"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: В коротком пуле три независимых и содержательно разных сюжета TechCrunch: инвестиция Nvidia в площадку OpenAI, раунд Wispr и раунд Groq. Их исключение только из-за мягкого лимита уменьшило бы и без того неполный выпуск."
+    }
+  ]
+}

@@ -1,0 +1,491 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-18",
+  "search_window": {
+    "start_at": "2026-08-16T02:33:51+03:00",
+    "end_at": "2026-08-18T02:35:53+03:00",
+    "latest_archive_at": "2026-08-17T02:33:51+03:00",
+    "start_date": "2026-08-16",
+    "end_date": "2026-08-18",
+    "latest_archive_date": "2026-08-17"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=1, rejected=1."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Nvidia инвестирует $1,5 млрд в SB Energy для площадки OpenAI PORTS-Pike в Огайо",
+      "organization": "Nvidia; SB Energy; OpenAI; SoftBank",
+      "published_date": "2026-08-17",
+      "published_at": "2026-08-17T15:16:24+00:00",
+      "time_precision": "datetime",
+      "topic": "финансирование и закрепление энергоснабжения, площадки и вычислительной инфраструктуры для крупной AI-фабрики OpenAI",
+      "event_type": "infrastructure investment",
+      "keywords": [
+        "Nvidia",
+        "OpenAI",
+        "SB Energy",
+        "PORTS-Pike",
+        "AI factory",
+        "data center",
+        "compute",
+        "Ohio",
+        "power infrastructure"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Nvidia investing $1.5B in SoftBank data center developer behind OpenAI project",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/17/nvidia-investing-1-5b-in-softbank-data-center-developer-behind-openai-project/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Securing the Infrastructure of Intelligence",
+          "publisher": "NVIDIA Blog",
+          "url": "https://blogs.nvidia.com/blog/securing-the-infrastructure-of-intelligence/"
+        }
+      ],
+      "event_summary": "Nvidia, по данным TechCrunch и подтверждающему сообщению компании, закрепляет площадку PORTS-Pike через партнёрство с SB Energy: OpenAI станет арендатором AI-фабрики, а Nvidia обеспечит эксклюзивное размещение своего вычислительного стека. TechCrunch сообщает об инвестиции Nvidia в $1,5 млрд и кредитной поддержке строительства; Nvidia подтверждает первоначальную мощность проекта в 4,25 ГВт и возможность расширения ещё на 3,75 ГВт.",
+      "verified_facts": [
+        "TechCrunch опубликовал материал 17 августа 2026 года в 08:16 PDT, что попадает в effective window.",
+        "NVIDIA 17 августа сообщила о партнёрстве с SB Energy по обеспечению площадки PORTS-Pike в Портсмуте, Огайо, где арендатором будет OpenAI.",
+        "NVIDIA указывает, что первоначальное развёртывание рассчитано на 4,25 ГВт мощности AI-фабрики, с возможностью расширения площадки ещё на 3,75 ГВт.",
+        "TechCrunch сообщает, что Nvidia инвестирует $1,5 млрд в SB Energy и будет единственным поставщиком вычислительной инфраструктуры для объекта."
+      ],
+      "significance": "Это самостоятельное крупное инфраструктурное событие: оно связывает Nvidia, OpenAI и SoftBank вокруг многогигаваттной площадки и показывает переход Nvidia от поставки ускорителей к обеспечению площадок, энергии и долгосрочной capacity-финансировки.",
+      "significance_score": 4,
+      "limitations": "Размер инвестиции и параметры кредитной поддержки в доступном наборе источников раскрыты TechCrunch; официальный блог NVIDIA подтверждает партнёрство, арендатора и мощности, но не приводит эти финансовые суммы.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть другие сделки Nvidia и инфраструктурные проекты, но нет PORTS-Pike/SB Energy и данной инвестиции.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверены независимый технологический источник с точным временем публикации и официальный блог NVIDIA с совпадающими ключевыми фактами о площадке, OpenAI и мощности.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-17T15:16:24+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-17T15:16:24+00:00; timestamp проверен Python против effective window. Анонс и обе использованные публикации датированы 17 августа 2026 года; сюжет отсутствует в предоставленном архиве.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является судебным или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-рубрике.",
+      "id": "cand-001"
+    },
+    {
+      "title": "Gravis Robotics привлекла $200 млн в раунде Series A от SoftBank для масштабирования автономной тяжёлой техники",
+      "organization": "Gravis Robotics; SoftBank",
+      "published_date": "2026-08-17",
+      "published_at": "2026-08-17T09:49:01-04:00",
+      "time_precision": "datetime",
+      "topic": "финансирование physical AI и коммерческое развертывание автономных систем на существующих парках строительной техники",
+      "event_type": "funding round",
+      "keywords": [
+        "Gravis Robotics",
+        "SoftBank",
+        "Series A",
+        "$200 million",
+        "construction robotics",
+        "autonomous excavators",
+        "physical AI"
+      ],
+      "geography": "world",
+      "category": "robotics",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "Gravis Robotics Raises $200M Series A to Scale Autonomous Heavy Machinery",
+        "publisher": "Unite.AI",
+        "url": "https://www.unite.ai/gravis-robotics-raises-200m-series-a-to-scale-autonomous-heavy-machinery/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Gravis Robotics",
+          "publisher": "Gravis Robotics",
+          "url": "https://www.gravisrobotics.com/"
+        }
+      ],
+      "event_summary": "Швейцарская Gravis Robotics, разрабатывающая аппаратно-программные комплексы для автономизации экскаваторов и другой тяжёлой техники, привлекла $200 млн в Series A от SoftBank. Средства предназначены для международного расширения, инженерного найма и внедрения систем на инфраструктурных и строительных проектах.",
+      "verified_facts": [
+        "Unite.AI указывает дату публикации 17 августа 2026 года.",
+        "Материал сообщает о Series A на $200 млн от SoftBank.",
+        "Gravis выпускает модульную систему автономного управления для уже эксплуатируемых экскаваторов и колёсных погрузчиков, а не только для новой специализированной техники.",
+        "Компания заявляет, что направит капитал на международное развертывание и расширение инженерной команды."
+      ],
+      "significance": "Очень крупный для construction-robotics раунд, подкрепляющий переход physical AI от пилотов к масштабированию на существующем мировом парке тяжёлой техники. Сделка также примечательна участием SoftBank и фокусом на инфраструктурном рынке.",
+      "significance_score": 3,
+      "limitations": "Основной доступный материал — отраслевое издание; точное время публикации и прямой URL пресс-релиза Gravis в ходе прохода не были извлечены. Размер, инвестор и назначение средств следует финально сверить с первичным сообщением компании.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет публикации о Gravis Robotics или данном раунде SoftBank; событие не совпадает с уже найденными инвестициями Nvidia в SB Energy и раундом Groq.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Дата, сумма, инвестор и бизнес-назначение финансирования согласованно изложены в открытом отраслевом материале, который ссылается на Gravis Robotics.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-17T09:49:01-04:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-17T09:49:01-04:00; timestamp проверен Python против effective window. Публикация датирована 17 августа 2026 года и попадает в effective window; в архиве сюжета нет.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не является curiosity-кандидатом: это тематически релевантное финансирование и коммерческое масштабирование physical AI.",
+      "id": "cand-002"
+    },
+    {
+      "title": "Claude Code v2.1.234 усиливает защиту от утечек NTLM-учётных данных и секретов в MCP-диагностике",
+      "organization": "Anthropic; Claude Code",
+      "published_date": "2026-08-17",
+      "published_at": "2026-08-17T18:19:13.187000+00:00",
+      "time_precision": "datetime",
+      "topic": "Безопасность CLI-кодинг-агента и защита локальных developer workflows",
+      "event_type": "product security update",
+      "keywords": [
+        "Claude Code",
+        "CLI agent",
+        "NTLM",
+        "credential leak",
+        "MCP",
+        "secrets",
+        "GitLab"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "documentation",
+      "primary_source": {
+        "title": "Claude Code v2.1.234",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/claude-code-2.1.234"
+      },
+      "supporting_sources": [
+        {
+          "title": "claude-code CHANGELOG.md",
+          "publisher": "Anthropic / GitHub",
+          "url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md"
+        }
+      ],
+      "event_summary": "В релизе Claude Code v2.1.234 Anthropic добавила защиту ряда предодобренных операций чтения файлов от Windows NT-namespace-путей, связанных с вектором утечки NTLM-учётных данных. Также исправлено раскрытие разрешённых секретов в диагностике MCP: предупреждения теперь показывают форму переменной, а ошибки подключения — только origin сервера. Среди прочего релиз добавляет автоматическое продолжение сессии после сброса лимита использования.",
+      "verified_facts": [
+        "Релиз v2.1.234 датирован 17 августа 2026 года.",
+        "Защита от NTLM credential-leak vector применяется к remote file reads, session restore, CLAUDE.md includes, workflow scripts и file uploads.",
+        "MCP diagnostics больше не должны печатать resolved secrets: сообщения используют ${VAR}, а ошибки подключения скрывают детали кроме server origin.",
+        "Функцию автоматического продолжения сессии после сброса лимита можно отключить в /config."
+      ],
+      "significance": "Это не крупный запуск, но самостоятельное и практически важное обновление безопасности одного из ведущих CLI coding agents: оно затрагивает обработку файловых путей и конфиденциальные данные в MCP-интеграциях.",
+      "significance_score": 2,
+      "limitations": "Подтверждение опирается на changelog проекта и отраслевой трекер релизов; независимого сообщения о фактической эксплуатации уязвимости или оценке масштаба нет.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном недавнем архиве нет сюжета о Claude Code v2.1.234 либо об этом конкретном исправлении NTLM/MCP.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата, номер версии и технические изменения совпадают в карточке релиза и в указанном ею первичном changelog Anthropic на GitHub.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-17T18:19:13.187Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-17T18:19:13.187Z; timestamp проверен Python против effective window. Релиз датирован 2026-08-17 и попадает в effective window; в текущем пуле и архиве отсутствует.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие является продуктовым security update, а не судебным или регуляторным действием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-направлению.",
+      "id": "cand-003"
+    },
+    {
+      "title": "Wispr привлекла $280 млн в Series B при оценке $2 млрд и представила речевую модель Canto",
+      "organization": "Wispr; Menlo Ventures",
+      "published_date": "2026-08-17",
+      "published_at": "2026-08-17T13:10:05+00:00",
+      "time_precision": "datetime",
+      "topic": "финансирование потребительского AI-продукта для диктовки, заметок и голосового интерфейса",
+      "event_type": "funding_and_product_launch",
+      "keywords": [
+        "Wispr",
+        "Wispr Flow",
+        "Canto",
+        "AI dictation",
+        "speech understanding",
+        "Series B",
+        "Menlo Ventures"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Wispr raises $280M at $2B valuation as it looks beyond dictation",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/17/wispr-raises-280m-at-2b-valuation-as-it-looks-beyond-dictation/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Wispr объявила о Series B на $280 млн под руководством Menlo Ventures при оценке $2 млрд. Компания одновременно сообщила о новой модели распознавания речи Canto и расширении продукта из AI-диктовки в заметки встреч и другие интерфейсы.",
+      "verified_facts": [
+        "TechCrunch указал время публикации 17 августа 2026 года, 6:10 AM PDT, что попадает в effective window.",
+        "Раунд составляет $280 млн, его лидировал Menlo Ventures; оценка Wispr заявлена на уровне $2 млрд.",
+        "По данным публикации, Wispr представила модель Canto и заявила цель снизить ошибки распознавания с 30% до менее 10%."
+      ],
+      "significance": "Крупный раунд и оценка для быстрорастущего consumer/knowledge-work AI-инструмента, дополненный самостоятельным модельным обновлением и расширением продуктовой категории.",
+      "significance_score": 3,
+      "limitations": "Сведения о финансировании и целевых метриках Canto приведены компанией через TechCrunch; независимой проверки заявленного снижения ошибок в материале нет.",
+      "archive_status": "none",
+      "archive_reason": "Событие отсутствует среди переданного текущего пула и недавнего архива; это не повтор Groq, Nvidia/SB Energy или других финансирований.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Дата, точное время, размер раунда, оценка, ведущий инвестор и описание Canto проверены по открытой странице TechCrunch.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-17T13:10:05+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-17T13:10:05+00:00; timestamp проверен Python против effective window. Публикация и объявление датированы 17 августа 2026 года и являются самостоятельным новым раундом с продуктовым обновлением.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран по финансированию и продуктовой значимости.",
+      "id": "cand-004"
+    },
+    {
+      "title": "Groq привлекла $350 млн для расширения глобального inference-neocloud",
+      "organization": "Groq; Disruptive; Nvidia",
+      "published_date": "2026-08-17",
+      "published_at": "2026-08-17T16:15:12+00:00",
+      "time_precision": "datetime",
+      "topic": "финансирование и расширение распределённой AI-inference-инфраструктуры на базе ускорителей Nvidia",
+      "event_type": "fundraising",
+      "keywords": [
+        "Groq",
+        "neocloud",
+        "AI inference",
+        "Nvidia",
+        "Series A",
+        "data centers",
+        "GPU cloud",
+        "Disruptive"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Groq raises $350M to fuel its pivot from AI chips to neocloud",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/17/groq-raises-350m-to-fuel-its-pivot-from-ai-chips-to-neocloud/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Groq Closes $350 million Series A, Building the World's Leading AI Inference Cloud",
+          "publisher": "Groq",
+          "url": "https://groq.com/newsroom/groq-closes-usd350-million-series-a-building-the-world-s-leading-ai-inference-cloud"
+        }
+      ],
+      "event_summary": "Groq объявила о раунде Series A на $350 млн при оценке $3,5 млрд. Средства предназначены для перехода от производителя AI-чипов к глобальному inference-neocloud: компания сообщает о 13 дата-центрах и плане увеличить мощность с 54 МВт до более чем 200 МВт в 2027 году; участие Nvidia в раунде запланировано.",
+      "verified_facts": [
+        "TechCrunch опубликовал материал 17 августа 2026 года в 09:15 PDT, внутри effective window.",
+        "Groq официально объявила о Series A на $350 млн при оценке $3,5 млрд; лидером назван Disruptive, а Nvidia указана как планируемый участник.",
+        "Groq сообщает, что вместе с июньским раундом объём недавнего привлечённого капитала достиг $1 млрд.",
+        "Компания заявляет о 13 дата-центрах в Северной Америке, Европе, на Ближнем Востоке и в Азиатско-Тихоокеанском регионе и планирует превысить 200 МВт мощности в 2027 году."
+      ],
+      "significance": "Раунд заметен не только размером, но и как подтверждение консолидации AI-инфраструктуры вокруг inference-neocloud: Groq перестраивает бизнес от собственных чипов к эксплуатации GPU-кластеров Nvidia в нескольких регионах.",
+      "significance_score": 3,
+      "limitations": "Операционные показатели, число клиентов и план по мощности приведены компанией и не имеют независимого аудита в доступных источниках; участие Nvidia обозначено как planned participation.",
+      "archive_status": "none",
+      "archive_reason": "В недавнем архиве нет этого раунда Groq или его перехода к глобальному inference-neocloud.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Есть точный timestamp авторитетного технологического медиа и официальный анонс Groq, совпадающий по сумме, оценке, инвестору и назначению средств.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-17T16:15:12+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-17T16:15:12+00:00; timestamp проверен Python против effective window. Официальный анонс и новостное освещение опубликованы 17 августа 2026 года; в архиве нет идентичного сюжета.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является судебным или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-рубрике.",
+      "id": "cand-005"
+    },
+    {
+      "title": "Serve Robotics и Grubhub запустили партнёрство по доставке автономными роботами в трёх городах США",
+      "organization": "Serve Robotics; Grubhub; Wonder; DoorDash",
+      "published_date": "2026-08-17",
+      "published_at": "2026-08-17T08:31:13-04:00",
+      "time_precision": "datetime",
+      "topic": "крупное коммерческое внедрение автономной роботодоставки через маркетплейс еды",
+      "event_type": "strategic partnership and enterprise deployment",
+      "keywords": [
+        "Serve Robotics",
+        "Grubhub",
+        "Wonder",
+        "autonomous delivery",
+        "sidewalk robots",
+        "Chicago",
+        "Los Angeles",
+        "Alexandria"
+      ],
+      "geography": "world",
+      "category": "robotics",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "Serve Robotics Brings Sidewalk Robot Delivery to Grubhub, Expands to Three New Cities",
+        "publisher": "Unite.AI",
+        "url": "https://www.unite.ai/serve-robotics-brings-sidewalk-robot-delivery-to-grubhub-expands-to-three-new-cities/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Serve Robotics investor relations",
+          "publisher": "Serve Robotics",
+          "url": "https://investors.serverobotics.com/"
+        }
+      ],
+      "event_summary": "Serve Robotics договорилась с Grubhub о выводе автономных тротуарных роботов доставки на маркетплейс Grubhub в Чикаго, Лос-Анджелесе и Александрии (Виргиния). На старте участвуют более 100 заведений в Чикаго и почти 200 в Лос-Анджелесе; одновременно Serve объявила расширение присутствия в Вашингтоне и Сан-Хосе через DoorDash.",
+      "verified_facts": [
+        "Unite.AI датирует материал 17 августа 2026 года и ссылается на объявление компаний в тот же день.",
+        "Сообщается о подключении роботов Serve к маркетплейсу Grubhub в Чикаго, Лос-Анджелесе и Александрии, штат Виргиния.",
+        "На запуске заявлены более 100 участвующих ресторанов в Чикаго и почти 200 в Лос-Анджелесе.",
+        "Материал также описывает выход Serve в Вашингтон и Сан-Хосе в партнёрстве с DoorDash."
+      ],
+      "significance": "Это заметное расширение канала сбыта для публичного оператора роботодоставки: партнёрство добавляет Grubhub к уже существующим связям Serve с DoorDash и Uber Eats и переводит автономную доставку в масштабный маркетплейсный сценарий с сотнями ресторанов.",
+      "significance_score": 3,
+      "limitations": "Доступный материал является отраслевым пересказом корпоративного объявления; точное время публикации и полный первичный релиз в ходе прохода не были открыты. Количество активных заведений и географию следует подтвердить по релизу Serve/Grubhub.",
+      "archive_status": "none",
+      "archive_reason": "Сюжет о партнёрстве Serve Robotics и Grubhub отсутствует в предоставленном архиве и не является дублем ранее опубликованных историй.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Открытый материал содержит конкретные сведения об участниках, рынках и масштабе запуска и ведёт на investor-relations Serve как на источник корпоративного объявления.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-17T08:31:13-04:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-17T08:31:13-04:00; timestamp проверен Python против effective window. Материал опубликован 17 августа 2026 года, внутри effective window; событий такого содержания в недавнем архиве нет.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не curiosity: партнёрство соответствует основной тематике business/partnerships и отражает существенное коммерческое внедрение ИИ-роботики.",
+      "id": "cand-006"
+    },
+    {
+      "title": "Alibaba продаёт игровую студию Lingxi Games, высвобождая средства для расширения AI- и облачной инфраструктуры",
+      "organization": "Alibaba Group; Lingxi Games; Trustar Capital",
+      "published_date": "2026-08-17",
+      "published_at": "2026-08-17T15:39:28+00:00",
+      "time_precision": "datetime",
+      "topic": "Стратегическое финансирование AI-инфраструктуры через продажу непрофильного актива",
+      "event_type": "asset sale / strategic capital reallocation",
+      "keywords": [
+        "Alibaba",
+        "Lingxi Games",
+        "Trustar Capital",
+        "AI infrastructure",
+        "cloud",
+        "data centers",
+        "divestiture",
+        "China"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Alibaba is selling its gaming studio for at least $1.5 billion to help fund AI buildout, mirroring Micron's exit from consumer business",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/alibaba-sells-its-gaming-studio-for-at-least-1-5-billion-to-help-fund-ai-buildout"
+      },
+      "supporting_sources": [
+        {
+          "title": "Alibaba to sell Lingxi Games for more than $2 billion, sources say",
+          "publisher": "Reuters (via Yahoo Finance)",
+          "url": "https://finance.yahoo.com/technology/articles/alibaba-sell-lingxi-games-more-061745401.html"
+        },
+        {
+          "title": "Alibaba to Sell Gaming Unit Lingxi to Trustar Capital, Memo Says",
+          "publisher": "Bloomberg",
+          "url": "https://www.bloomberg.com/"
+        }
+      ],
+      "event_summary": "Alibaba согласилась продать принадлежащую ей игровую студию Lingxi Games фонду Trustar Capital. По данным Reuters, сумма сделки превышает $2 млрд; Bloomberg оценивал актив как минимум в $1,5 млрд. Продажа означает выход Alibaba из собственной разработки игр и высвобождает капитал для её расширяющейся программы вложений в облачную и AI-инфраструктуру.",
+      "verified_facts": [
+        "Tom's Hardware опубликовал материал 17 августа 2026 года и сообщает, что Lingxi Games будет продана Trustar Capital.",
+        "Материал ссылается на внутреннюю записку CEO Lingxi и на сообщение Reuters со ссылкой на источник, знакомый со сделкой.",
+        "Alibaba ранее заявляла о плане вложить не менее 380 млрд юаней в облачную и AI-инфраструктуру за три года; в материале отмечено, что компания ожидает превысить этот план.",
+        "Цена, сроки закрытия и регуляторные условия сделки публично не раскрыты."
+      ],
+      "significance": "Крупная стратегическая продажа непрофильного бизнеса у одного из ведущих китайских облачных игроков непосредственно связана с перераспределением капитала в AI-вычисления, дата-центры и собственную облачную инфраструктуру. Это самостоятельный корпоративный сигнал о приоритете AI capex.",
+      "significance_score": 4,
+      "limitations": "Первичные условия сделки не опубликованы сторонами; стоимостная оценка основана на сообщениях Reuters/Bloomberg, а точное время публикации исходных сообщений недоступно. Поэтому указана только дата.",
+      "archive_status": "none",
+      "archive_reason": "Событие отсутствует в предоставленном архиве и не совпадает с уже найденными кандидатами.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Сделка подтверждена авторитетным технологическим изданием со ссылками на внутреннюю записку Lingxi, Reuters и Bloomberg. Независимый переход к Reuters через Yahoo Finance был недоступен из-за ограничения доступа, но URL и атрибуция источника зафиксированы.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-17T15:39:28Z; timestamp проверен Python против effective window. Материал опубликован 17 августа 2026 года, то есть в пределах заданного редакционного окна; это новое сообщение о согласованной продаже, а не пересказ архивного AI-инфраструктурного плана Alibaba.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат проходит по основной инфраструктурно-бизнесовой тематике.",
+      "audit_direction": "hybrid_infrastructure_business",
+      "id": "cand-007"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=7, validated unique=6, final candidates=6. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota"
+  }
+}
