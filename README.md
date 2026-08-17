@@ -605,3 +605,15 @@ Date-only evidence на календарном дне cutoff не считает
 Adaptive-приоритет сохраняет стоимость: mandatory Coverage retry имеет приоритет над unresolved resolution; при отсутствии unresolved-сигнала действуют прежние fresh-agency rescue / zero-pool sentinel. Максимум не меняется: **12 Primary + до 4 Hybrid + до 7 Coverage = 23 Web Search operations на выпуск**.
 
 `retrieval_quality_contract_version=1` участвует в recovery. Modern full artifact без завершённого Retrieval Quality v1 понижается до partial editorial recovery: уже оплаченные валидные mandatory-проходы переиспользуются, а свободный quality-slot выполняется по новой семантике. Legacy zero-pool terminal artifact старого контракта не используется между разными датами выпуска, потому что recovery выбирается строго по `daily-production-YYYY-MM-DD`. Live Terra smoke остаётся диагностической pre-release проверкой; наличие конкретной Reuters URL не является детерминированным CI-gate из-за недетерминированного ранжирования поиска.
+
+## Source Freshness Proof v1
+
+С 2026-08-17 модельные `published_at` и `published_date` больше не являются достаточным доказательством свежести trusted production candidate. Перед каждым editorial-проходом внутреннего Primary/Hybrid/Coverage runtime `automation/scripts/source_freshness.py` бесплатно, без OpenAI и Web Search, открывает только уже процитированные source URL и извлекает машинно-читаемое время публикации (`article:published_time`, JSON-LD `datePublished` и эквиваленты). `dateModified` не используется как дата публикации.
+
+Сравнение с сохранённым effective `search_window` и перевод timezone делает Python. Точный timestamp обязан попадать в окно; date-only evidence на календарном дне cutoff недостаточно и fail-closed. Если primary source не отдаёт пригодную дату, но уже цитируемый supporting source подтверждает свежесть, supporting может стать primary. Нового поиска для этого нет.
+
+Источник с подтверждённой датой вне окна исключает candidate как `old_reprint`. Если ни один уже цитируемый источник не позволяет независимо доказать дату публикации, candidate становится `unconfirmed` и не может быть опубликован. Caller-supplied fixtures остаются offline.
+
+Контрольная регрессия: AP/Anthropic в выпуске 2026-08-17 был ошибочно размечен как 2026-08-16 при фактическом `datePublished=2026-07-31`; новый gate его отсекает. Свежий timestamp вроде TechCrunch `2026-08-16T13:57:00-07:00` корректно остаётся внутри окна благодаря Python timezone arithmetic.
+
+Механика поиска не меняется: новые Search/OpenAI вызовы не добавлены, 7-й Coverage slot не менялся, потолок остаётся **12 Primary + до 4 Hybrid + до 7 Coverage = 23 search operations**.
