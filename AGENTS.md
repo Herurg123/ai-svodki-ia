@@ -488,3 +488,15 @@ post-cutoff agency evidence.
 - Modern full recovery без `retrieval_quality_contract_version=1` понижать до partial editorial recovery: переиспользовать уже оплаченные валидные mandatory-проходы и выполнить отсутствующий quality-slot, а не повторять весь research.
 - Recovery artifacts привязаны к точной дате `daily-production-YYYY-MM-DD`; не переносить terminal/research artifacts между календарными выпусками.
 - Live Terra smoke применять как диагностическую проверку query architecture. Не требовать конкретную live Reuters/AP/Bloomberg/FT URL в deterministic CI.
+
+## Source Freshness Proof v1
+
+Trusted production research must not publish a candidate merely because a model populated `published_date` or `published_at`. Before each editorial pass fed by the internal trusted runtime bridge, `source_freshness.py` fetches only the source URLs already cited by that candidate and extracts machine-readable publication evidence such as `article:published_time` or JSON-LD `datePublished`. `dateModified` never counts as publication evidence.
+
+Timezone conversion and comparison against the saved effective `search_window` are deterministic Python operations. A timezone-aware source timestamp must be inside the exact interval. Date-only evidence on the cutoff calendar day is insufficient because it cannot prove the page existed before `search_window.end_at`, so it fails closed.
+
+If the current primary source does not expose usable publication metadata but an already-cited supporting source does, that supporting source may be promoted to primary. Do not run a new search, add a publisher whitelist, or invent a date to rescue the candidate. If a cited source proves a date outside the window, mark the candidate `exclude` / `old_reprint`; if none of the cited sources can independently prove a publication date, mark it unconfirmed and fail closed for publication.
+
+The verifier applies only to internally generated Primary/Hybrid/Coverage runtime handoffs. Arbitrary caller fixtures remain offline. Source Freshness Proof makes no OpenAI or Web Search call and must not change the 12 + up to 4 + up to 7 = 23 search-operation ceiling. In particular, this change does **not** introduce a new short-pool seventh-slot search or alter the existing adaptive Coverage priority.
+
+The 2026-08-17 AP/Anthropic incident is the permanent freshness regression: production labelled the AP story as 2026-08-16 even though the source page's actual `datePublished` was 2026-07-31. Future changes must keep that stale candidate excluded while preserving an actually fresh offset timestamp such as TechCrunch `2026-08-16T13:57:00-07:00` via Python timezone arithmetic.
