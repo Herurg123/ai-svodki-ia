@@ -252,6 +252,34 @@ def _maximum_candidates(forwarded: list[str]) -> int:
         return 20
 
 
+def _verify_trusted_source_freshness(
+    *, forwarded: list[str], publication_date: str
+) -> dict[str, Any] | None:
+    """Verify source dates before any trusted runtime research reaches editorial.
+
+    The same gate therefore covers fresh Primary research, Hybrid merged research
+    and Coverage's hidden merged handoff without adding a paid model call.
+    Caller-supplied fixtures remain offline and unchanged.
+    """
+    research_path = _trusted_runtime_research_path(research_input_from_argv(forwarded))
+    if research_path is None:
+        return None
+    from source_freshness import verify_research_file
+
+    report_path = PRODUCTION_PREVIEW_ROOT / f"source-freshness-{publication_date}.json"
+    run = verify_research_file(
+        research_path,
+        publication_date=publication_date,
+        report_path=report_path,
+    )
+    print(
+        "Source Freshness Proof v1 completed: "
+        f"stage={run.get('stage')}, eligible {run.get('eligible_before')} -> "
+        f"{run.get('eligible_after')}; paid API calls=0."
+    )
+    return run
+
+
 def _run_fresh_primary_recall(
     *, forwarded: list[str], publication_date: str
 ) -> tuple[list[str], dict[str, Any]]:
@@ -466,6 +494,21 @@ def main() -> int:
             print(
                 "::error title=Primary recall v2 incomplete::"
                 f"{type(exc).__name__}: {exc}. Fresh production research is fail-closed."
+            )
+            return 1
+
+    if publication_date and _trusted_runtime_research_path(
+        research_input_from_argv(forwarded)
+    ) is not None:
+        try:
+            _verify_trusted_source_freshness(
+                forwarded=forwarded,
+                publication_date=publication_date,
+            )
+        except Exception as exc:
+            print(
+                "::error title=Source freshness verification failed::"
+                f"{type(exc).__name__}: {exc}. Trusted production research is fail-closed."
             )
             return 1
 

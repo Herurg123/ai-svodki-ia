@@ -514,3 +514,26 @@ Agency retrieval остаётся обязательным: `major_agencies` д�
 Adaptive-приоритет сохраняет стоимость: mandatory Coverage retry имеет приоритет над unresolved resolution; при отсутствии unresolved-сигнала действуют прежние fresh-agency rescue / zero-pool sentinel. Максимум не меняется: **12 Primary + до 4 Hybrid + до 7 Coverage = 23 Web Search operations на выпуск**.
 
 `retrieval_quality_contract_version=1` участвует в recovery. Modern full artifact без завершённого Retrieval Quality v1 понижается до partial editorial recovery: уже оплаченные валидные mandatory-проходы переиспользуются, а свободный quality-slot выполняется по новой семантике. Legacy zero-pool terminal artifact старого контракта не используется между разными датами выпуска, потому что recovery выбирается строго по `daily-production-YYYY-MM-DD`. Live Terra smoke остаётся диагностической pre-release проверкой; наличие конкретной Reuters URL не является детерминированным CI-gate из-за недетерминированного ранжирования поиска.
+
+## Source Freshness Proof v1
+
+Trusted production runtime перед каждым editorial-проходом через `run_digest_preview.py` запускает `scripts/source_freshness.py`. Verifier не вызывает OpenAI или Web Search: он открывает только source URL, уже сохранённые в candidate, и ищет машинно-читаемое publication evidence (`article:published_time`, JSON-LD `datePublished`, `<time>` и эквивалентные publisher metadata). `dateModified` не считается датой публикации.
+
+Timezone arithmetic выполняется Python против сохранённого effective `search_window`. Точный timestamp проверяется по обеим границам; date-only evidence на календарном дне cutoff fail-closed. Если primary URL не отдаёт пригодную дату, уже цитируемый supporting source может подтвердить свежесть и быть повышен до primary. Новый retrieval для этого не запускается.
+
+Подтверждённая дата вне окна переводит candidate в `exclude / old_reprint`; отсутствие независимо проверяемой даты у всех уже цитируемых источников переводит его в `unconfirmed` и блокирует публикацию. Gate применяется к внутренним Primary, Hybrid и Coverage runtime-handoff; caller fixtures остаются offline.
+
+Диагностика пишется в `preview/production-daily/source-freshness-YYYY-MM-DD.json` и содержит этап, eligible before/after, найденные даты и `paid_api_calls=0`. Regression-тест 2026-08-17 закрепляет старую AP/Anthropic статью с фактическим `datePublished=2026-07-31` как stale и свежий offset timestamp TechCrunch как допустимый.
+
+Поисковые лимиты и adaptive Coverage не меняются. В частности, никакого нового short-pool использования 7-го слота нет; максимум остаётся **12 Primary + до 4 Hybrid + до 7 Coverage = 23 search operations**.
+
+Ручная офлайн/HTTP-проверка уже сохранённого trusted research:
+
+```bash
+python automation/scripts/source_freshness.py \
+  --research automation/fixtures/research/.runtime/<research>.json \
+  --publication-date YYYY-MM-DD \
+  --report automation/preview/production-daily/source-freshness-YYYY-MM-DD.json
+```
+
+Команда не вызывает платные API, но требует обычного сетевого доступа к уже цитируемым страницам источников.
