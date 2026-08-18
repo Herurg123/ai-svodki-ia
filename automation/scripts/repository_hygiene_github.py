@@ -2,9 +2,14 @@ from __future__ import annotations
 
 import base64
 import json
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
+
+
+RETRYABLE_GET_STATUS_CODES = frozenset({500, 502, 503, 504})
+GET_RETRY_DELAYS_SECONDS = (1.0, 2.0)
 
 
 class ApiError(RuntimeError):
@@ -23,23 +28,48 @@ class GitHub:
         }
 
     def request(self, method: str, path: str, expected=(200,)):
-        request = urllib.request.Request(f"{self.api_url}{path}", headers=self.headers, method=method)
-        try:
-            with urllib.request.urlopen(request, timeout=30) as response:
-                raw = response.read()
-                data = json.loads(raw.decode("utf-8")) if raw else None
-                status = response.status
-        except urllib.error.HTTPError as exc:
-            raw = exc.read().decode("utf-8", errors="replace")
-            if exc.code not in expected:
-                raise ApiError(f"{method} {path}: HTTP {exc.code}: {raw[:500]}") from exc
-            status = exc.code
-            data = json.loads(raw) if raw else None
-        except urllib.error.URLError as exc:
-            raise ApiError(f"{method} {path}: {exc}") from exc
-        if status not in expected:
-            raise ApiError(f"{method} {path}: unexpected HTTP {status}")
-        return status, data
+        method = method.upper()
+        max_attempts = (
+            1 + len(GET_RETRY_DELAYS_SECONDS)
+            if method == "GET"
+            else 1
+        )
+        for attempt in range(max_attempts):
+            request = urllib.request.Request(
+                f"{self.api_url}{path}",
+                headers=self.headers,
+                method=method,
+            )
+            try:
+                with urllib.request.urlopen(request, timeout=30) as response:
+                    raw = response.read()
+                    data = json.loads(raw.decode("utf-8")) if raw else None
+                    status = response.status
+            except urllib.error.HTTPError as exc:
+                raw = exc.read().decode("utf-8", errors="replace")
+                if exc.code in expected:
+                    status = exc.code
+                    data = json.loads(raw) if raw else None
+                elif (
+                    method == "GET"
+                    and exc.code in RETRYABLE_GET_STATUS_CODES
+                    and attempt + 1 < max_attempts
+                ):
+                    time.sleep(GET_RETRY_DELAYS_SECONDS[attempt])
+                    continue
+                else:
+                    raise ApiError(
+                        f"{method} {path}: HTTP {exc.code}: {raw[:500]}"
+                    ) from exc
+            except urllib.error.URLError as exc:
+                if method == "GET" and attempt + 1 < max_attempts:
+                    time.sleep(GET_RETRY_DELAYS_SECONDS[attempt])
+                    continue
+                raise ApiError(f"{method} {path}: {exc}") from exc
+            if status not in expected:
+                raise ApiError(f"{method} {path}: unexpected HTTP {status}")
+            return status, data
+        raise ApiError(f"{method} {path}: retry attempts exhausted")
 
     def pages(self, path: str):
         result = []

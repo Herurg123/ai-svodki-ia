@@ -500,3 +500,27 @@ If the current primary source does not expose usable publication metadata but an
 The verifier applies only to internally generated Primary/Hybrid/Coverage runtime handoffs. Arbitrary caller fixtures remain offline. Source Freshness Proof makes no OpenAI or Web Search call and must not change the 12 + up to 4 + up to 7 = 23 search-operation ceiling. In particular, this change does **not** introduce a new short-pool seventh-slot search or alter the existing adaptive Coverage priority.
 
 The 2026-08-17 AP/Anthropic incident is the permanent freshness regression: production labelled the AP story as 2026-08-16 even though the source page's actual `datePublished` was 2026-07-31. Future changes must keep that stale candidate excluded while preserving an actually fresh offset timestamp such as TechCrunch `2026-08-16T13:57:00-07:00` via Python timezone arithmetic.
+
+## Cleanup resilience contract (2026-08-18)
+
+The public-content cleanup must treat `posts/images/` as mandatory, but the
+historical `posts/dzen-test/images/` directory may be absent after the final
+legacy image has expired. Git does not retain an empty directory, so absence of
+that retired legacy image directory is a valid steady state only when the RSS
+and retained publication inventory require no legacy image. Any retained legacy
+publication still requires its exact page, primary legacy image and canonical
+mirror and must fail closed if any of them is missing. Do not add a `.gitkeep`
+merely to satisfy cleanup validation.
+
+Repository hygiene may retry only idempotent GitHub API `GET` requests after
+transient transport failures or HTTP `500`, `502`, `503`, or `504`. The current
+bound is two retries after the initial attempt with short backoff. Mutating
+`DELETE` and `PUT` requests must not be automatically retried by this client;
+apply-time classification and safety rechecks remain authoritative before every
+destructive operation.
+
+The regression source for this contract is the pair of 2026-08-17 failures:
+workflow run `32035035642` received a GitHub Actions API HTTP 500 while reading
+jobs, while run `32078536750` failed because the already-retired empty
+`posts/dzen-test/images/` directory was absent after checkout. Future cleanup
+changes must preserve both regression cases in offline tests.

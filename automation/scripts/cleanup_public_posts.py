@@ -167,7 +167,13 @@ def dated_page_directories(posts_root: Path) -> set[Path]:
 
 def dated_images(posts_root: Path) -> set[Path]:
     result: set[Path] = set()
-    for parent in (posts_root / "images", posts_root / "dzen-test" / "images"):
+    image_directories = (
+        (posts_root / "images", False),
+        (posts_root / "dzen-test" / "images", True),
+    )
+    for parent, optional_if_missing in image_directories:
+        if optional_if_missing and not parent.exists() and not parent.is_symlink():
+            continue
         require_regular_directory(parent, "Post images directory")
         for child in parent.iterdir():
             if not IMAGE_NAME.fullmatch(child.name):
