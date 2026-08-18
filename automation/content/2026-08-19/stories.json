@@ -1,0 +1,250 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Обновление: OpenAI замедлила frontier RL и усилила safeguards для Astra",
+    "organization": "OpenAI",
+    "topic": "Усиление изоляции исследовательских сред, мониторинга цепочек рассуждений и alignment-процедур при разработке frontier-моделей с критическими кибервозможностями.",
+    "event_type": "safety and security policy update",
+    "status": "update",
+    "summary": "OpenAI сообщила, что на две недели приостанавливала RL-обучение последних моделей для усиления исследовательской безопасности и удерживает крупнейший запланированный frontier RL-run на паузе. Компания расширила мониторинг действий моделей, усилила sandboxing и сетевую изоляцию, а для Astra и cyber-нагрузок ввела наиболее строгий режим защиты.",
+    "published_at": "2026-08-18T18:00:00+00:00",
+    "published_date": "2026-08-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI institutes new safeguards after Hugging Face breach",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/18/openai-institutes-new-safeguards-after-hugging-face-breach/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Astra",
+      "frontier RL",
+      "cybersecurity",
+      "chain-of-thought monitoring",
+      "alignment",
+      "research security"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "PJM предлагает ограничивать новые дата-центры первыми при дефиците мощности",
+    "organization": "PJM Interconnection; Federal Energy Regulatory Commission",
+    "topic": "энергоснабжение и правила подключения крупных AI-дата-центров к энергосистеме США",
+    "event_type": "regulatory filing",
+    "status": "new",
+    "summary": "PJM Interconnection направила в FERC предложение о временном механизме adequacy: новые площадки с нагрузкой от 50 МВт, не обеспечившие собственную генерацию или иные гарантии снабжения, могут ограничиваться раньше других потребителей при дефиците энергии. Предложение также предусматривает реестр крупных нагрузок; существующие объекты под действие механизма не подпадают.",
+    "published_at": "2026-08-17T13:11:38+00:00",
+    "published_date": "2026-08-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "America's largest grid wants to cut power to new data centers first during shortages — 50MW-plus data centers must bring their own electricity generation to avoid shutoffs",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/tech-industry/data-centers/new-data-centers-on-americas-largest-grid-face-first-in-line-blackouts-unless-they-bring-their-own-power"
+      }
+    ],
+    "keywords": [
+      "PJM",
+      "FERC",
+      "AI data centers",
+      "power grid",
+      "large loads",
+      "energy",
+      "curtailment"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Обновление: Nvidia обеспечит до $105 млрд для аренды OpenAI дата-центра в Огайо",
+    "organization": "OpenAI; Nvidia; SB Energy; SoftBank",
+    "topic": "Крупное финансирование и закрепление вычислительной, энергетической и площадочной инфраструктуры для AI-фабрики OpenAI",
+    "event_type": "compute financing and data-center lease",
+    "status": "update",
+    "summary": "По данным AFP, OpenAI арендует на 20 лет строящийся в Огайо AI-дата-центр, для которого Nvidia предоставит обязательство по финансированию на $105 млрд. Начальная мощность объекта заявлена на уровне 4,25 ГВт с потенциальным расширением до 8 ГВт; OpenAI, SB Energy и SoftBank также заявили инвестиции в энергетическую инфраструктуру.",
+    "published_at": "2026-08-18T04:07:40-04:00",
+    "published_date": "2026-08-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI to lease massive new AI data center in US, backed by Nvidia",
+        "publisher": "AFP via Tech Xplore",
+        "url": "https://techxplore.com/news/2026-08-openai-lease-massive-ai-center.html"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Nvidia",
+      "SB Energy",
+      "SoftBank",
+      "Ohio",
+      "data center",
+      "$105 billion",
+      "8 GW",
+      "AI infrastructure"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Anthropic, по данным СМИ, превысила $65 млрд годового темпа выручки",
+    "organization": "Anthropic",
+    "topic": "business growth and prospective AI-lab IPO",
+    "event_type": "revenue milestone",
+    "status": "new",
+    "summary": "TechCrunch, citing Bloomberg, reported that Anthropic’s annualized revenue run rate exceeded $65 billion at the end of July, versus $47 billion in May and $9 billion at the end of 2025. The report also said investors expect 2026 revenue in the $100–120 billion range and that Anthropic has confidentially filed IPO paperwork.",
+    "published_at": "2026-08-17T23:56:26+00:00",
+    "published_date": "2026-08-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic’s annualized revenue surges to $65B",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/17/anthropics-annualized-revenue-surges-to-65b/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "annualized revenue",
+      "ARR",
+      "IPO",
+      "frontier models",
+      "enterprise AI"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Etched привлекла $700 млн на системы для inference frontier-моделей",
+    "organization": "Etched; Jane Street",
+    "topic": "Крупное финансирование разработчика специализированных inference-систем, объединяющих prefill-чипы, память и межсоединение для frontier-моделей.",
+    "event_type": "funding round",
+    "status": "new",
+    "summary": "Etched объявила о новом раунде в $700 млн, который возглавила Jane Street, при оценке $21 млрд. Компания поставляет «frontier inference clusters» и заявляет, что ее новые вычислительные и memory/interconnect-компоненты рассчитаны на ускорение и удешевление inference для различных frontier-моделей.",
+    "published_at": "2026-08-18T17:21:58+00:00",
+    "published_date": "2026-08-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Etched’s valuation doubles to $21B in a month",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/18/etcheds-valuation-doubles-to-21b-in-a-month/"
+      }
+    ],
+    "keywords": [
+      "Etched",
+      "Jane Street",
+      "AI chips",
+      "inference",
+      "frontier inference clusters",
+      "semiconductors",
+      "funding"
+    ],
+    "geography": "world",
+    "category": "chips"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Higgsfield привлекла $400 млн на генеративное видео и изображения",
+    "organization": "Higgsfield; DST Global; Tribe Capital; Goldman Sachs Alternatives; Intel Capital; NTT DOCOMO Ventures",
+    "topic": "Крупный раунд финансирования AI-native платформы генерации видео и изображений для профессиональных создателей и корпоративных заказчиков",
+    "event_type": "Series B financing",
+    "status": "new",
+    "summary": "Higgsfield объявила о Series B на $400 млн при оценке $5,4 млрд. Раунд возглавила DST Global; среди участников названы Tribe Capital, Goldman Sachs Alternatives, Intel Capital и NTT DOCOMO Ventures. Компания позиционирует себя как AI-native платформу создания визуального контента для брендов, агентств, студий и других профессиональных команд.",
+    "published_at": "2026-08-17T06:00:00-04:00",
+    "published_date": "2026-08-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Higgsfield Raises $400 Million Series B Financing at $5.4 Billion Valuation with Annualized Revenue Reaching $700 Million",
+        "publisher": "Higgsfield Inc. via PR Newswire",
+        "url": "https://www.prnewswire.com/news-releases/higgsfield-raises-400-million-series-b-financing-at-5-4-billion-valuation-with-annualized-revenue-reaching-700-million-302852430.html"
+      }
+    ],
+    "keywords": [
+      "Higgsfield",
+      "AI video",
+      "AI image generation",
+      "Series B",
+      "$400 million",
+      "DST Global",
+      "enterprise visual production"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "OpenAI запустила ChatGPT for Teens с отдельными защитными настройками",
+    "organization": "OpenAI; ChatGPT; CodeAI",
+    "topic": "Потребительский AI-продукт для подростков с возрастными ограничениями, образовательным режимом и семейными настройками.",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "OpenAI представила ChatGPT for Teens: отдельный подростковый опыт с возрастными защитами по умолчанию, Study Mode, напоминаниями при признаках списывания, квизами, визуализациями для обучения и настройками для родителей или опекунов.",
+    "published_at": "2026-08-18T13:50:30+00:00",
+    "published_date": "2026-08-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI launches a safer ChatGPT for teens — years after teens started using it",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/18/openai-launches-a-safer-chatgpt-for-teens-years-after-teens-started-using-it/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ChatGPT for Teens",
+      "teen safety",
+      "Study Mode",
+      "parental controls",
+      "education"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "Обновление: Cursor запустила Origin — платформу хостинга кода, совместимую с GitHub",
+    "organization": "Cursor; SpaceX; GitHub",
+    "topic": "Расширение AI-кодинг-платформы в code hosting и agent-native инфраструктуру разработки.",
+    "event_type": "product launch",
+    "status": "update",
+    "summary": "Cursor, уже входящая в SpaceX, представила Origin — платформу хостинга репозиториев, pull request'ов и совместной работы с кодом. Origin может синхронизироваться с GitHub и, по заявлению Cursor, позднее получит agent-native функции и экосистему приложений.",
+    "published_at": "2026-08-18T22:14:25+00:00",
+    "published_date": "2026-08-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Cursor capitalizes on GitHub frustration, launches rival hosting platform",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/18/cursor-capitalizes-on-github-frustration-launches-rival-hosting-platform/"
+      }
+    ],
+    "keywords": [
+      "Cursor",
+      "Origin",
+      "AI coding",
+      "code hosting",
+      "GitHub",
+      "agent-native",
+      "SpaceX"
+    ],
+    "geography": "world",
+    "category": "coding"
+  }
+]

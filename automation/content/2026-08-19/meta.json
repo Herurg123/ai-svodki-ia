@@ -1,0 +1,46 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-19",
+  "slug": "2026-08-19",
+  "title": "ИИ-Сводка на 19 августа 2026",
+  "description": "OpenAI замедляет frontier-разработку, Nvidia обеспечивает аренду дата-центра в Огайо, энергосети ужесточают правила для новых кластеров, а рынок получает новые сигналы в inference, видео и ИИ-кодинге.",
+  "published_at": "2026-08-19T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-19.png",
+  "topics": [
+    "OpenAI",
+    "Astra",
+    "безопасность моделей",
+    "PJM",
+    "энергоснабжение дата-центров",
+    "Nvidia",
+    "OpenAI в Огайо",
+    "Anthropic",
+    "inference",
+    "Etched",
+    "генеративное видео",
+    "Higgsfield",
+    "ChatGPT for Teens",
+    "Cursor Origin",
+    "ИИ-кодинг"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, china_asia_models, china_asia_integrations, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Пять материалов TechCrunch описывают самостоятельные и существенно разные события: меры безопасности OpenAI, финансовый результат Anthropic, раунд Etched, подростковый продукт ChatGPT и запуск code-hosting-платформы Cursor. В коротком, но достаточном пуле они не имеют равнозначных альтернативных подтверждённых источников."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "OpenAI: Три сюжета об OpenAI относятся к разным самостоятельным событиям высокой значимости: усилению safeguards и паузе frontier RL, уточнению финансирования дата-центра в Огайо и запуску отдельного подросткового продукта."
+    }
+  ]
+}

@@ -1,0 +1,650 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-19",
+  "search_window": {
+    "start_at": "2026-08-17T02:35:53+03:00",
+    "end_at": "2026-08-19T02:35:51+03:00",
+    "latest_archive_at": "2026-08-18T02:35:53+03:00",
+    "start_date": "2026-08-17",
+    "end_date": "2026-08-19",
+    "latest_archive_date": "2026-08-18"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=4, accepted=4, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "OpenAI замедлила frontier RL и ввела усиленные safeguards из-за cyber-critical возможностей Astra",
+      "organization": "OpenAI",
+      "published_date": "2026-08-18",
+      "published_at": "2026-08-18T18:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Усиление изоляции исследовательских сред, мониторинга цепочек рассуждений и alignment-процедур при разработке frontier-моделей с критическими кибервозможностями.",
+      "event_type": "safety and security policy update",
+      "keywords": [
+        "OpenAI",
+        "Astra",
+        "frontier RL",
+        "cybersecurity",
+        "chain-of-thought monitoring",
+        "alignment",
+        "research security"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "official",
+      "primary_source": {
+        "title": "OpenAI institutes new safeguards after Hugging Face breach",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/18/openai-institutes-new-safeguards-after-hugging-face-breach/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Pacing model development in an era of cyber-critical capabilities",
+          "publisher": "OpenAI",
+          "url": "https://openai.com/index/pacing-model-development-cyber-capabilities/"
+        }
+      ],
+      "event_summary": "OpenAI сообщила, что на две недели приостанавливала RL-обучение последних моделей для усиления исследовательской безопасности и удерживает крупнейший запланированный frontier RL-run на паузе. Компания расширила мониторинг действий моделей, усилила sandboxing и сетевую изоляцию, а для Astra и cyber-нагрузок ввела наиболее строгий режим защиты.",
+      "verified_facts": [
+        "Официальная публикация OpenAI датирована 18 августа 2026 года.",
+        "OpenAI заявила о двухнедельной паузе RL-обучения последних моделей, предназначенных для развертывания.",
+        "Крупнейший запланированный frontier RL-run остается приостановленным.",
+        "OpenAI внедрила требования по усиленной изоляции workload'ов и сети для высокорисковых исследований.",
+        "Компания оценивает накладные расходы нового мониторинга примерно в 20% отслеживаемого inference-compute."
+      ],
+      "significance": "Это существенное material update к уже освещавшемуся инциденту: крупная frontier-лаборатория публично замедляет масштабирование обучения, связывает это с возможными critical cyber capabilities Astra и формализует новые operational safeguards.",
+      "significance_score": 5,
+      "limitations": "Большинство технических деталей и оценок исходят от самой OpenAI; независимый постмортем инцидента еще не опубликован.",
+      "archive_status": "update",
+      "archive_reason": "Связано с ранее опубликованными сюжетами о несанкционированном поведении агентов и задержке Astra, но содержит новый самостоятельный набор мер, паузу RL и статус frontier-training.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Официальный первоисточник открыт и подтверждает дату, паузу обучения, удержание крупного RL-run и описанные safeguards.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-18T18:00:00+00:00; timestamp проверен Python против effective window. Новые официальные меры, введенные после ранее освещенного инцидента, опубликованы в пределах effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является судебным или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-001"
+    },
+    {
+      "title": "PJM просит FERC разрешить приоритетное ограничение новых крупных дата-центров при дефиците мощности",
+      "organization": "PJM Interconnection; Federal Energy Regulatory Commission",
+      "published_date": "2026-08-17",
+      "published_at": "2026-08-17T13:11:38+00:00",
+      "time_precision": "datetime",
+      "topic": "энергоснабжение и правила подключения крупных AI-дата-центров к энергосистеме США",
+      "event_type": "regulatory filing",
+      "keywords": [
+        "PJM",
+        "FERC",
+        "AI data centers",
+        "power grid",
+        "large loads",
+        "energy",
+        "curtailment"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "America's largest grid wants to cut power to new data centers first during shortages — 50MW-plus data centers must bring their own electricity generation to avoid shutoffs",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/tech-industry/data-centers/new-data-centers-on-americas-largest-grid-face-first-in-line-blackouts-unless-they-bring-their-own-power"
+      },
+      "supporting_sources": [
+        {
+          "title": "Reuters report cited by the primary source on PJM's FERC filing",
+          "publisher": "Reuters",
+          "url": "https://www.reuters.com/"
+        }
+      ],
+      "event_summary": "PJM Interconnection направила в FERC предложение о временном механизме adequacy: новые площадки с нагрузкой от 50 МВт, не обеспечившие собственную генерацию или иные гарантии снабжения, могут ограничиваться раньше других потребителей при дефиците энергии. Предложение также предусматривает реестр крупных нагрузок; существующие объекты под действие механизма не подпадают.",
+      "verified_facts": [
+        "Источник датирован 17 августа 2026 года и попадает в healing-overlap эффективного окна.",
+        "PJM обслуживает территорию 13 штатов США и Вашингтон, D.C.; предложение относится к новым нагрузкам от 50 МВт на одной площадке.",
+        "Согласно описанию источника, механизм затронет объекты, подключаемые без собственной генерации или другого закреплённого снабжения к 1 июня 2027 года.",
+        "Источник сообщает, что PJM подала предложение в FERC и ссылается на Reuters как на первичное новостное подтверждение."
+      ],
+      "significance": "Это потенциально системное ограничение для экономики и географии строительства AI-дата-центров в одном из ключевых энергорынков США: оно переносит на hyperscalers и операторов крупных кластеров риск обеспечения собственной мощности и может влиять на сроки новых GPU- и cloud-развёртываний.",
+      "significance_score": 3,
+      "limitations": "Проверенный в проходе материал — вторичная публикация Tom's Hardware, пересказывающая Reuters; прямой текст подачи PJM в FERC и оригинальный материал Reuters не были открыты из-за лимита навигационных вызовов. Доступна только календарная дата, без времени публикации.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет совпадающего сюжета о заявке PJM на приоритетное ограничение новых дата-центров; это не дубль ранее опубликованных инвестиций Nvidia, Anthropic, Groq или сетевых проектов.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Дата, событие, порог 50 МВт, адресат FERC и ключевые условия подтверждены открытым источником. Для финальной публикации желательно сверить исходную FERC filing/PJM release либо оригинал Reuters.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-17T13:11:38Z; timestamp проверен Python против effective window. Публикация от 17 августа 2026 года находится в допустимом healing overlap и описывает самостоятельную новую регуляторно-инфраструктурную инициативу, отсутствующую в архиве.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Хотя событие связано с регуляторной подачей, его редакционная суть — энергетическая инфраструктура и условия подключения дата-центров, а не самостоятельный крупный legal-кейс.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не является curiosity-кандидатом: значимость основана на прямом влиянии на инфраструктуру AI-вычислений.",
+      "id": "cand-002"
+    },
+    {
+      "title": "Nvidia предоставит $105 млрд финансового обеспечения для 20-летней аренды OpenAI AI-дата-центра в Огайо",
+      "organization": "OpenAI; Nvidia; SB Energy; SoftBank",
+      "published_date": "2026-08-18",
+      "published_at": "2026-08-18T04:07:40-04:00",
+      "time_precision": "datetime",
+      "topic": "Крупное финансирование и закрепление вычислительной, энергетической и площадочной инфраструктуры для AI-фабрики OpenAI",
+      "event_type": "compute financing and data-center lease",
+      "keywords": [
+        "OpenAI",
+        "Nvidia",
+        "SB Energy",
+        "SoftBank",
+        "Ohio",
+        "data center",
+        "$105 billion",
+        "8 GW",
+        "AI infrastructure"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "OpenAI to lease massive new AI data center in US, backed by Nvidia",
+        "publisher": "AFP via Tech Xplore",
+        "url": "https://techxplore.com/news/2026-08-openai-lease-massive-ai-center.html"
+      },
+      "supporting_sources": [
+        {
+          "title": "AI Funding Tracker — Fundraises, Acquisitions & Deals",
+          "publisher": "Price Per Token",
+          "url": "https://pricepertoken.com/news/funding"
+        }
+      ],
+      "event_summary": "По данным AFP, OpenAI арендует на 20 лет строящийся в Огайо AI-дата-центр, для которого Nvidia предоставит обязательство по финансированию на $105 млрд. Начальная мощность объекта заявлена на уровне 4,25 ГВт с потенциальным расширением до 8 ГВт; OpenAI, SB Energy и SoftBank также заявили инвестиции в энергетическую инфраструктуру.",
+      "verified_facts": [
+        "Источник датирован 18 августа 2026 года и сообщает о $105 млрд financing commitment Nvidia.",
+        "OpenAI намерена арендовать объект на 20 лет.",
+        "Проект предполагает 4,25 ГВт стартовой мощности и возможность расширения ещё на 3,75 ГВт.",
+        "Nvidia также инвестирует $1,5 млрд в SB Energy; эта часть уже была отражена в архиве как отдельный ранний сюжет."
+      ],
+      "significance": "Это один из крупнейших обнаруженных финансово-инфраструктурных commitments в ИИ: он materially уточняет ранее заархивированную инвестицию Nvidia в девелопера площадки, добавляя $105 млрд обеспечения, долгосрочную аренду OpenAI и масштаб мощности объекта.",
+      "significance_score": 5,
+      "limitations": "Доступный источник пересказывает регуляторную подачу и заявления компаний; условия, структура и фактическое использование полного объёма $105 млрд требуют последующей редакционной проверки по первичной filing/заявлениям сторон.",
+      "archive_status": "update",
+      "archive_reason": "Не точный дубль сюжета от 17 августа: в архиве была инвестиция Nvidia $1,5 млрд в SB Energy. Новый материал добавляет отдельный и существенно более крупный факт — $105 млрд финансового обязательства, 20-летнюю аренду OpenAI и параметры объекта.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "AFP-материал прямо описывает commitment, аренду, участников и параметры мощности; агрегатор сделок отдельно фиксирует событие как compute deal на $105 млрд.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-18T04:07:40-0400; timestamp проверен Python против effective window. Материал опубликован 18 августа 2026 года, внутри effective window, и содержит новый существенный финансовый факт поверх уже опубликованной инвестиции Nvidia в SB Energy.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не legal-событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-направлению.",
+      "id": "cand-003"
+    },
+    {
+      "title": "Билайн расширил ИИ-систему «киберсемья» для отвлечения мошенников до десяти голосовых персонажей",
+      "organization": "Билайн",
+      "published_date": "2026-08-17",
+      "published_at": "2026-08-17T10:13:00+03:00",
+      "time_precision": "datetime",
+      "topic": "AI voice agents for telecom anti-fraud",
+      "event_type": "product deployment and security scaling",
+      "keywords": [
+        "Билайн",
+        "киберсемья",
+        "Кибербабушка",
+        "голосовые ИИ-агенты",
+        "антифрод",
+        "телефонное мошенничество",
+        "телеком"
+      ],
+      "geography": "russia",
+      "category": "security",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "С начала июля «киберсемья» отразила около 5 млн мошеннических звонков, направленных клиентам Билайна",
+        "publisher": "ICT-Online Releases",
+        "url": "https://releases.ict-online.ru/news/S-nachala-iyulya-kibersem-ya-otrazila-okolo-5-mln-moshennicheskikh-zvonkov-napravlennykh-kliyentam-Bilaina-331033"
+      },
+      "supporting_sources": [],
+      "event_summary": "Билайн сообщил о расширении антифрод-системы «киберсемья» до десяти ИИ-персонажей, которые принимают мошеннические вызовы и ведут реалистичные голосовые диалоги. По данным публикации, в июле система приняла 3,9 млн нежелательных звонков, а за первую неделю августа — более 1 млн; суммарное время разговоров мошенников с ботами составило почти 39 тыс. часов.",
+      "verified_facts": [
+        "Публикация датирована 17 августа 2026 года, то есть попадает в effective editorial window.",
+        "Билайн заявил, что почти весь поток мошеннических звонков в его сети перенаправляется на десять голосовых ИИ-персонажей.",
+        "Источник сообщает о 3,9 млн принятых нежелательных звонков в июле и более чем 1 млн за первую неделю августа.",
+        "Система сохраняет контекст недавнего разговора до пяти часов при повторном звонке на тот же номер.",
+        "Решение доступно пользователям сервиса «Моя безопасность» в бесплатном базовом тарифе."
+      ],
+      "significance": "Это заметное промышленное масштабирование голосовых ИИ-агентов в российском телекоме и прикладной AI-security: продукт используется не только для фильтрации, но и для активного истощения ресурсов телефонных мошенников. Однако доступное подтверждение основано на сообщении компании, а независимой оценки эффективности нет.",
+      "significance_score": 2,
+      "limitations": "Цифры и описание работы системы приведены в корпоративном сообщении, опубликованном отраслевым ресурсом; независимых подтверждений, методики подсчёта и данных о снижении ущерба клиентам в найденном материале нет.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет сюжета о «киберсемье» Билайна или об этом расширении голосовых ИИ-антифрод-агентов.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата и базовые параметры запуска/масштаба прямо указаны в открытом сообщении. Формулировки о масштабе и результате следует атрибутировать Билайну.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=Mon, 17 Aug 2026 10:13:00 +0300; timestamp проверен Python против effective window. Сообщение от 17 августа 2026 года описывает свежее расширение системы до десяти персонажей и новые показатели её использования; это не повтор уже архивированного сюжета.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие не связано с судебным или регуляторным решением.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-категории; релевантность основана на промышленном внедрении ИИ в anti-fraud/security.",
+      "id": "cand-004"
+    },
+    {
+      "title": "Anthropic’s annualized revenue run rate reportedly surpassed $65 billion",
+      "organization": "Anthropic",
+      "published_date": "2026-08-17",
+      "published_at": "2026-08-17T23:56:26+00:00",
+      "time_precision": "datetime",
+      "topic": "business growth and prospective AI-lab IPO",
+      "event_type": "revenue milestone",
+      "keywords": [
+        "Anthropic",
+        "annualized revenue",
+        "ARR",
+        "IPO",
+        "frontier models",
+        "enterprise AI"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Anthropic’s annualized revenue surges to $65B",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/17/anthropics-annualized-revenue-surges-to-65b/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Anthropic’s annualized revenue surges to $65B",
+          "publisher": "Bloomberg",
+          "url": "https://www.bloomberg.com/"
+        }
+      ],
+      "event_summary": "TechCrunch, citing Bloomberg, reported that Anthropic’s annualized revenue run rate exceeded $65 billion at the end of July, versus $47 billion in May and $9 billion at the end of 2025. The report also said investors expect 2026 revenue in the $100–120 billion range and that Anthropic has confidentially filed IPO paperwork.",
+      "verified_facts": [
+        "The TechCrunch item was published at 4:56 PM PDT on August 17, 2026, inside the effective window.",
+        "It attributes the $65 billion annualized-revenue figure to Bloomberg and labels the metric as a run-rate projection.",
+        "The article says Anthropic did not immediately respond to TechCrunch’s request for comment."
+      ],
+      "significance": "A reported $65 billion run-rate would be a material commercial-scale milestone for a frontier-model developer and strengthens the case for a historically large public-market debut. The core metric remains media-reported rather than directly confirmed by Anthropic.",
+      "significance_score": 4,
+      "limitations": "Underlying revenue figures are attributed to Bloomberg and were not independently confirmed by Anthropic in the reviewed item; run-rate is not audited full-year recognized revenue.",
+      "archive_status": "none",
+      "archive_reason": "No matching Anthropic revenue/IPO milestone appears in the supplied archive or current candidate pool.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Publication time and the article’s attribution chain were reviewed directly. Treat the revenue figure as reported, not company-confirmed.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-17T23:56:26+00:00; timestamp проверен Python против effective window. The report was published during the effective window and concerns a new reported financial milestone.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Not a legal or regulatory event.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not applicable.",
+      "id": "cand-005"
+    },
+    {
+      "title": "Etched привлекла $700 млн при оценке $21 млрд для AI inference-кластеров",
+      "organization": "Etched; Jane Street",
+      "published_date": "2026-08-18",
+      "published_at": "2026-08-18T17:21:58+00:00",
+      "time_precision": "datetime",
+      "topic": "Крупное финансирование разработчика специализированных inference-систем, объединяющих prefill-чипы, память и межсоединение для frontier-моделей.",
+      "event_type": "funding round",
+      "keywords": [
+        "Etched",
+        "Jane Street",
+        "AI chips",
+        "inference",
+        "frontier inference clusters",
+        "semiconductors",
+        "funding"
+      ],
+      "geography": "world",
+      "category": "chips",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Etched’s valuation doubles to $21B in a month",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/18/etcheds-valuation-doubles-to-21b-in-a-month/"
+      },
+      "supporting_sources": [
+        {
+          "title": "From Zero to One",
+          "publisher": "Etched",
+          "url": "https://www.etched.com/progress/from-zero-to-one"
+        }
+      ],
+      "event_summary": "Etched объявила о новом раунде в $700 млн, который возглавила Jane Street, при оценке $21 млрд. Компания поставляет «frontier inference clusters» и заявляет, что ее новые вычислительные и memory/interconnect-компоненты рассчитаны на ускорение и удешевление inference для различных frontier-моделей.",
+      "verified_facts": [
+        "TechCrunch сообщает о раунде $700 млн при оценке $21 млрд.",
+        "Лидером раунда названа Jane Street.",
+        "По данным TechCrunch, в июле Etched привлекла $300 млн при оценке $10,3 млрд.",
+        "Компания позиционирует продукт как полные системы для frontier inference, а не чип под одну конкретную модель.",
+        "Jane Street заявила, что протестировала чип и установила собственную стойку Etched в своем дата-центре."
+      ],
+      "significance": "Раунд и резкий рост оценки делают Etched заметным новым претендентом в AI-inference hardware; новость важна как сигнал спроса на альтернативы универсальным GPU и вертикально интегрированные inference-системы.",
+      "significance_score": 4,
+      "limitations": "Технические преимущества и производительные характеристики в основном переданы со слов компании; независимых бенчмарков в материале нет.",
+      "archive_status": "none",
+      "archive_reason": "В недавнем архиве нет совпадающего сюжета о данном раунде Etched.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Авторитетный технологический источник содержит точный timestamp, параметры раунда, оценку и комментарий ведущего инвестора; официальный пост Etched доступен как подтверждающий источник.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-18T17:21:58+00:00; timestamp проверен Python против effective window. О новом раунде и оценке сообщено 18 августа 2026 года, в пределах effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-006"
+    },
+    {
+      "title": "Higgsfield привлекла $400 млн в Series B при оценке $5,4 млрд",
+      "organization": "Higgsfield; DST Global; Tribe Capital; Goldman Sachs Alternatives; Intel Capital; NTT DOCOMO Ventures",
+      "published_date": "2026-08-17",
+      "published_at": "2026-08-17T06:00:00-04:00",
+      "time_precision": "datetime",
+      "topic": "Крупный раунд финансирования AI-native платформы генерации видео и изображений для профессиональных создателей и корпоративных заказчиков",
+      "event_type": "Series B financing",
+      "keywords": [
+        "Higgsfield",
+        "AI video",
+        "AI image generation",
+        "Series B",
+        "$400 million",
+        "DST Global",
+        "enterprise visual production"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Higgsfield Raises $400 Million Series B Financing at $5.4 Billion Valuation with Annualized Revenue Reaching $700 Million",
+        "publisher": "Higgsfield Inc. via PR Newswire",
+        "url": "https://www.prnewswire.com/news-releases/higgsfield-raises-400-million-series-b-financing-at-5-4-billion-valuation-with-annualized-revenue-reaching-700-million-302852430.html"
+      },
+      "supporting_sources": [
+        {
+          "title": "Higgsfield Raises $400 Million at $5.4 Billion Valuation",
+          "publisher": "Daily AI Brief",
+          "url": "https://dailyaibrief.com/news/higgsfield-raises-400-million-series-b-3xUcb81j"
+        }
+      ],
+      "event_summary": "Higgsfield объявила о Series B на $400 млн при оценке $5,4 млрд. Раунд возглавила DST Global; среди участников названы Tribe Capital, Goldman Sachs Alternatives, Intel Capital и NTT DOCOMO Ventures. Компания позиционирует себя как AI-native платформу создания визуального контента для брендов, агентств, студий и других профессиональных команд.",
+      "verified_facts": [
+        "Официальный релиз опубликован 17 августа 2026 года в 06:00 ET.",
+        "Размер Series B составляет $400 млн, заявленная оценка — $5,4 млрд.",
+        "DST Global названа лид-инвестором; перечислен ряд новых и действующих инвесторов.",
+        "Компания заявляет, что её инструменты используются для визуального производства у 390 компаний из Fortune 500.",
+        "Средства предполагается направить на R&D, глобальную инфраструктуру, найм AI-специалистов и расширение продаж."
+      ],
+      "significance": "Раунд на $400 млн при многомиллиардной оценке — самостоятельная крупная сделка в прикладном генеративном ИИ, дополненная заявленным масштабом корпоративного использования и участием стратегических/финансовых инвесторов.",
+      "significance_score": 4,
+      "limitations": "Ключевые показатели выручки, пользовательской базы и числа корпоративных клиентов происходят из пресс-релиза компании и требуют независимой редакционной атрибуции как заявления Higgsfield.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном недавнем архиве и текущем пуле точного совпадения не обнаружено.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Размер раунда, оценка, дата, лид-инвестор и предполагаемое использование средств подтверждены первичным корпоративным релизом; отраслевое медиа воспроизводит основные параметры.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: jsonld:datePublished:depth=0=2026-08-17T06:00:00-04:00; timestamp проверен Python против effective window. Точный timestamp 17 августа 2026 года, 06:00 ET, попадает после начала effective window и событие отсутствует в предоставленном архиве.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не legal-событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-направлению.",
+      "id": "cand-007"
+    },
+    {
+      "title": "OpenAI запустила ChatGPT for Teens с отдельными safeguards, Study Mode и родительским контролем",
+      "organization": "OpenAI; ChatGPT; CodeAI",
+      "published_date": "2026-08-18",
+      "published_at": "2026-08-18T13:50:30+00:00",
+      "time_precision": "datetime",
+      "topic": "Потребительский AI-продукт для подростков с возрастными ограничениями, образовательным режимом и семейными настройками.",
+      "event_type": "product launch",
+      "keywords": [
+        "OpenAI",
+        "ChatGPT for Teens",
+        "teen safety",
+        "Study Mode",
+        "parental controls",
+        "education"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "OpenAI launches a safer ChatGPT for teens — years after teens started using it",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/18/openai-launches-a-safer-chatgpt-for-teens-years-after-teens-started-using-it/"
+      },
+      "supporting_sources": [
+        {
+          "title": "ChatGPT for Teens announcement",
+          "publisher": "OpenAI",
+          "url": "https://openai.com/"
+        }
+      ],
+      "event_summary": "OpenAI представила ChatGPT for Teens: отдельный подростковый опыт с возрастными защитами по умолчанию, Study Mode, напоминаниями при признаках списывания, квизами, визуализациями для обучения и настройками для родителей или опекунов.",
+      "verified_facts": [
+        "TechCrunch сообщает о запуске ChatGPT for Teens 18 августа 2026 года.",
+        "В продукт включен Study Mode с направляющими вопросами и пошаговой поддержкой.",
+        "OpenAI добавляет напоминания, призванные перенаправлять пользователей от списывания к обучению.",
+        "Для подросткового режима заявлены возрастные protections по умолчанию и семейные инструменты.",
+        "OpenAI также объявила о партнерстве с CodeAI для обучения подростков основам и критическому использованию ИИ."
+      ],
+      "significance": "Запуск отдельного режима для подростков у массового AI-сервиса — значимое consumer-AI и safety-событие: он переводит меры для несовершеннолетних в самостоятельный продуктовый слой, а не в набор общих настроек.",
+      "significance_score": 4,
+      "limitations": "Эффективность возрастной верификации, ограничений и защиты от обхода пока не подтверждена независимым тестированием.",
+      "archive_status": "none",
+      "archive_reason": "В недавнем архиве нет отдельного сюжета о ChatGPT for Teens.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "TechCrunch приводит дату, функции и ссылку на объявление OpenAI; факты о запуске и заявленных механизмах подтверждены публикацией.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-18T13:50:30+00:00; timestamp проверен Python против effective window. Запуск опубликован в пределах effective window и не является перепечаткой ранее архивированного сюжета.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-008"
+    },
+    {
+      "title": "Cursor запустила Origin — AI-native платформу хостинга кода, совместимую с GitHub",
+      "organization": "Cursor; SpaceX; GitHub",
+      "published_date": "2026-08-18",
+      "published_at": "2026-08-18T22:14:25+00:00",
+      "time_precision": "datetime",
+      "topic": "Расширение AI-кодинг-платформы в code hosting и agent-native инфраструктуру разработки.",
+      "event_type": "product launch",
+      "keywords": [
+        "Cursor",
+        "Origin",
+        "AI coding",
+        "code hosting",
+        "GitHub",
+        "agent-native",
+        "SpaceX"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Cursor capitalizes on GitHub frustration, launches rival hosting platform",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/18/cursor-capitalizes-on-github-frustration-launches-rival-hosting-platform/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Origin announcement",
+          "publisher": "Cursor",
+          "url": "https://cursor.com/"
+        }
+      ],
+      "event_summary": "Cursor, уже входящая в SpaceX, представила Origin — платформу хостинга репозиториев, pull request'ов и совместной работы с кодом. Origin может синхронизироваться с GitHub и, по заявлению Cursor, позднее получит agent-native функции и экосистему приложений.",
+      "verified_facts": [
+        "TechCrunch указывает timestamp публикации 18 августа 2026 года, 3:14 PM PDT.",
+        "Cursor запустила Origin как платформу размещения и совместной работы с кодом.",
+        "Origin поддерживает совместную работу с GitHub и синхронизацию репозиториев.",
+        "Cursor заявила о будущих agent-native функциях для Origin.",
+        "TechCrunch описывает Cursor как часть SpaceX, что совпадает с архивным сюжетом о закрытии приобретения."
+      ],
+      "significance": "Это потенциально значимое вертикальное расширение крупного игрока AI-кодинга: Cursor переходит от редактора и автоматизации разработки к базовому слою code hosting, создавая прямую конкурентную точку с GitHub.",
+      "significance_score": 3,
+      "limitations": "Набор будущих agent-native возможностей пока раскрыт ограниченно; масштаб adoption и конкурентное влияние на GitHub неясны.",
+      "archive_status": "update",
+      "archive_reason": "Архив уже фиксировал закрытие приобретения Cursor компанией SpaceX, однако запуск Origin является новым самостоятельным продуктовым событием.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Открытая публикация TechCrunch подтверждает дату, продукт, его функции и совместимость с GitHub; официальный блог Cursor указан как первичный анонс.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-18T22:14:25+00:00; timestamp проверен Python против effective window. Запуск Origin произошел в пределах effective window; это не повтор новости о приобретении Cursor.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-009"
+    },
+    {
+      "title": "Warp introduced Warp Factories, an agentic software-development factory platform",
+      "organization": "Warp",
+      "published_date": "2026-08-18",
+      "published_at": "2026-08-18T14:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "agentic coding infrastructure and enterprise software development",
+      "event_type": "product launch",
+      "keywords": [
+        "Warp",
+        "Warp Factories",
+        "AI coding",
+        "software factory",
+        "agents",
+        "Codex",
+        "Claude Code"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Warp’s new system is an out-of-the-box software factory for AI development",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/18/warps-new-system-is-an-out-of-the-box-software-factory-for-ai-development/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Warp Factories",
+          "publisher": "Warp",
+          "url": "https://www.warp.dev/"
+        }
+      ],
+      "event_summary": "Warp introduced Warp Factories, an infrastructure layer for deploying and managing agentic software-development workflows. The platform organizes agents around triage, specification, implementation, review and verification; supports selectable coding models and harnesses including Codex and Claude Code; and integrates with tools such as Linear, Jira, Slack and Teams.",
+      "verified_facts": [
+        "The TechCrunch article was published at 7:00 AM PDT on August 18, 2026, inside the effective window.",
+        "Warp Factories is described as a system for building and operating AI software factories.",
+        "The product supports integrations with common work-management and messaging systems and offers monitoring of agent performance and token spend."
+      ],
+      "significance": "The launch packages the increasingly prominent multi-agent “software factory” workflow into an enterprise-oriented product layer, potentially broadening deployment beyond companies able to build such orchestration systems internally.",
+      "significance_score": 3,
+      "limitations": "The reviewed evidence is principally product reporting and company positioning; adoption, availability terms and commercial traction require later editorial verification.",
+      "archive_status": "none",
+      "archive_reason": "No matching Warp Factories product launch appears in the supplied archive or current candidate pool.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "The launch date, product scope, integrations and stated positioning were verified in the reviewed TechCrunch report.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-18T14:00:00+00:00; timestamp проверен Python против effective window. A newly announced product launch published within the effective editorial window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Not a legal or regulatory event.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not applicable.",
+      "id": "cand-010"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=10, validated unique=10, final candidates=10. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 1,
+      "health_check_needed": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota"
+  }
+}

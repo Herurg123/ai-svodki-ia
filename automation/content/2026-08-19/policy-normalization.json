@@ -1,0 +1,29 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "article_html.h3[7]",
+      "model_value": "Cursor запустила Origin — платформу хостинга кода, совместимую с GitHub",
+      "normalized_value": "Обновление: Cursor запустила Origin — платформу хостинга кода, совместимую с GitHub"
+    }
+  ],
+  "changed_count": 1,
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, china_asia_models, china_asia_integrations, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Пять материалов TechCrunch описывают самостоятельные и существенно разные события: меры безопасности OpenAI, финансовый результат Anthropic, раунд Etched, подростковый продукт ChatGPT и запуск code-hosting-платформы Cursor. В коротком, но достаточном пуле они не имеют равнозначных альтернативных подтверждённых источников."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "OpenAI: Три сюжета об OpenAI относятся к разным самостоятельным событиям высокой значимости: усилению safeguards и паузе frontier RL, уточнению финансирования дата-центра в Огайо и запуску отдельного подросткового продукта."
+    }
+  ]
+}
