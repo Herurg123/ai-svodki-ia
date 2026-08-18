@@ -537,3 +537,19 @@ python automation/scripts/source_freshness.py \
 ```
 
 Команда не вызывает платные API, но требует обычного сетевого доступа к уже цитируемым страницам источников.
+
+## Cleanup resilience после инцидентов 2026-08-17
+
+`cleanup_public_posts.py` различает обязательный основной каталог картинок и
+исторический legacy-каталог. `posts/images/` обязан существовать всегда.
+`posts/dzen-test/images/` может отсутствовать после истечения последнего
+legacy-выпуска, потому что Git не хранит пустой каталог. Это не ослабляет
+проверку retained legacy: если legacy item остаётся в RSS, его страница,
+primary image и mirror обязательны и отсутствие любого файла останавливает
+cleanup до mutation.
+
+`repository_hygiene_github.py` имеет bounded retry только для read-only `GET`:
+после transient `500/502/503/504` или `URLError` выполняются максимум две
+повторные попытки с коротким backoff. `DELETE`/`PUT` не ретраятся автоматически.
+Так кратковременный сбой GitHub API не делает hygiene красным с первого чиха, но
+неопределённый destructive response не повторяется вслепую.
