@@ -1,0 +1,220 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Google добавила в Gemini и Поиск инструменты для учёбы и исследований",
+    "organization": "Google",
+    "topic": "Consumer AI product expansion in Search and Gemini for education",
+    "event_type": "product_launch",
+    "status": "new",
+    "summary": "Google announced a set of student-oriented AI features across Search and Gemini, including generated interactive visuals and simulations in Search, customized quizzes, file-based study documents, a Gemini learning hub, and background multi-step research reports that can be discussed in Gemini Live.",
+    "published_at": "2026-08-19T19:00:00+00:00",
+    "published_date": "2026-08-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google packs Search and Gemini with new AI study tools",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/19/google-launches-new-study-tools-for-students-across-search-and-gemini/"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Gemini",
+      "Google Search",
+      "AI Mode",
+      "AI Overviews",
+      "education",
+      "3D simulations",
+      "Gemini Live"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Amazon сделала Alexa+ бесплатной для совместимых Fire TV в США",
+    "organization": "Amazon",
+    "topic": "Mass consumer distribution of a conversational AI assistant through Fire TV, including AI search, recommendations and smart-home controls.",
+    "event_type": "product rollout",
+    "status": "new",
+    "summary": "Amazon said Alexa+ will roll out free to all compatible Fire TV devices in the U.S., including for customers without Prime. The deployment adds conversational content search, AI recommendations and smart-home controls to supported Fire TV hardware and televisions.",
+    "published_at": "2026-08-19T15:00:00+00:00",
+    "published_date": "2026-08-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Amazon makes its AI-powered Alexa+ free on Fire TV, no Prime required",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/19/amazon-makes-its-ai-powered-alexa-free-on-fire-tv-no-prime-required/"
+      }
+    ],
+    "keywords": [
+      "Amazon",
+      "Alexa+",
+      "Fire TV",
+      "consumer AI",
+      "AI assistant",
+      "smart home"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "OpenAI представила preview Private Safety Processing для корпоративных клиентов",
+    "organization": "OpenAI",
+    "topic": "Enterprise AI safety, privacy and long-horizon misuse monitoring",
+    "event_type": "product_preview",
+    "status": "new",
+    "summary": "OpenAI is previewing Private Safety Processing for selected customers: an automated system intended to detect misuse patterns across multiple conversations while retaining none of the customer data. The launch is positioned as an expansion of zero-data-retention safety monitoring for sensitive enterprise use cases.",
+    "published_at": "2026-08-19T22:10:46+00:00",
+    "published_date": "2026-08-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI seeks to one-up Anthropic with new customer privacy protections",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/19/openai-seeks-to-one-up-anthropic-with-new-customer-privacy-protections/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Private Safety Processing",
+      "Zero Data Retention",
+      "enterprise privacy",
+      "safety monitoring",
+      "cybersecurity"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "TerraPower готовит проект энергоснабжения дата-центра с тепловым накопителем",
+    "organization": "TerraPower",
+    "topic": "Power infrastructure for AI data centers",
+    "event_type": "infrastructure_project",
+    "status": "new",
+    "summary": "TechCrunch, citing Bloomberg reporting, says TerraPower plans to announce its first data-center project in 2026, with groundbreaking expected in 2027. The proposed use of its Natrium design would pair a 345-megawatt reactor with molten-sodium thermal storage, allowing output to better follow volatile AI data-center demand.",
+    "published_at": "2026-08-19T15:44:53+00:00",
+    "published_date": "2026-08-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "TerraPower’s nuclear reactor has a secret weapon for powering AI data centers",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/19/terrapowers-nuclear-reactor-has-a-secret-weapon-for-powering-ai-data-centers/"
+      }
+    ],
+    "keywords": [
+      "TerraPower",
+      "Natrium",
+      "nuclear power",
+      "AI data centers",
+      "thermal storage",
+      "molten sodium",
+      "Meta"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Warp представила Factories для управления агентной разработкой ПО",
+    "organization": "Warp",
+    "topic": "Agent-native developer tooling for building, operating, evaluating and monitoring AI software-development workflows.",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Warp introduced Warp Factories, a platform intended to let organizations deploy and operate agent-based software-development workflows. It supports model and harness choice, integrates with tools including Jira, Linear, Slack and Teams, and includes evaluation, performance and token-spend monitoring features.",
+    "published_at": "2026-08-18T14:00:00+00:00",
+    "published_date": "2026-08-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Warp’s new system is an out-of-the-box software factory for AI development",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/18/warps-new-system-is-an-out-of-the-box-software-factory-for-ai-development/"
+      }
+    ],
+    "keywords": [
+      "Warp",
+      "Warp Factories",
+      "AI coding",
+      "software factory",
+      "agents",
+      "developer tools",
+      "Codex",
+      "Claude Code"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "NVIDIA выпустила Cosmos 3 Edge для управления роботами на устройстве",
+    "organization": "NVIDIA",
+    "topic": "Робототехника и physical AI: компактная world model для выполнения манипуляционных задач непосредственно на роботе",
+    "event_type": "model release",
+    "status": "new",
+    "summary": "NVIDIA сообщила о новом Cosmos 3 Edge — 4B omni-модели с 2B reasoner на базе Nemotron — и опубликовала checkpoint и воспроизводимый рецепт постобучения для роботизированной манипуляционной политики. Модель рассчитана на запуск непосредственно на Jetson Thor, без обращения к дата-центровому GPU.",
+    "published_at": "2026-08-19T16:00:00+00:00",
+    "published_date": "2026-08-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Post-Train NVIDIA Cosmos 3 Edge for On-Device Robot Control",
+        "publisher": "NVIDIA Technical Blog",
+        "url": "https://developer.nvidia.com/blog/post-train-nvidia-cosmos-3-edge-for-on-device-robot-control/"
+      }
+    ],
+    "keywords": [
+      "NVIDIA Cosmos 3 Edge",
+      "robotics",
+      "physical AI",
+      "world model",
+      "on-device",
+      "Jetson Thor",
+      "open weights"
+    ],
+    "geography": "world",
+    "category": "robotics"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "russia",
+    "headline": "MWS AI и Rubytech испытали ПАК с китайскими GPU для российских LLM",
+    "organization": "MWS AI; Rubytech; МТС Web Services",
+    "topic": "Тестирование российскими разработчиками ИИ-инфраструктуры программно-аппаратного комплекса с восемью GPU китайского производства как альтернативы ускорителям Nvidia.",
+    "event_type": "infrastructure testing and commercialization plan",
+    "status": "new",
+    "summary": "MWS AI и Rubytech совместно испытали ПАК с восемью китайскими GPU для запуска российских больших языковых моделей. Rubytech подтвердила тесты и сообщила о планах полноценного коммерческого запуска таких ПАКов в 2027 году.",
+    "published_at": "2026-08-20T00:41:13+03:00",
+    "published_date": "2026-08-20",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "ПАКи с китайскими GPU могут выйти на российский рынок в 2027 году",
+        "publisher": "Ведомости",
+        "url": "https://www.vedomosti.ru/technology/articles/2026/08/20/1222386-paki-s-gpu-mogut-viiti-na-rossiiskii-rinok"
+      }
+    ],
+    "keywords": [
+      "MWS AI",
+      "Rubytech",
+      "МТС Web Services",
+      "китайские GPU",
+      "ПАК",
+      "LLM",
+      "AI-ускорители",
+      "Nvidia"
+    ],
+    "geography": "russia",
+    "category": "infrastructure"
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "status": "applied",
+  "changed_fields": [],
+  "changed_count": 0,
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Пять материалов TechCrunch описывают независимые события разных организаций и сегментов: образовательные инструменты Google, дистрибуцию Alexa+, приватность OpenAI, энергетику дата-центров и агентную разработку Warp. В ограниченном подтверждённом пуле их исключение ухудшило бы содержательное покрытие выпуска."
+    }
+  ]
+}

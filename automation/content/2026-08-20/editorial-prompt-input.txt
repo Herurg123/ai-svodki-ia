@@ -1,263 +1,16 @@
+Ты — редактор ежедневного аналитического выпуска «ИИ-сводка».
+
+Дата выпуска: 2026-08-20
+Обычная цель минимального числа сюжетов: 7
+Максимальное число сюжетов: 12
+
+Контекст предыдущих выпусков для проверки повторов:
+=== ARCHIVE_CONTEXT_BEGIN ===
 {
   "version": 2,
-  "generated_at": "2026-08-19T23:43:47+00:00",
+  "generated_at": "2026-08-19T23:36:13+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
-    {
-      "date": "2026-08-20",
-      "published_at": "2026-08-20T06:00:00+03:00",
-      "search_cutoff_at": "2026-08-20T02:36:13+03:00",
-      "title": "ИИ-Сводка на 20 августа 2026",
-      "link": "https://rybalka.one/posts/2026-08-20/",
-      "summary": "Главные новости искусственного интеллекта за 20 августа 2026 года Потребительские ИИ-сервисы продолжают встраиваться в привычные экраны и учебные сценарии: Google расширяет функции Gemini и Поиска, а Amazon убирает подписочный барьер для Alexa+ на Fire TV. Параллельно рынок смещается к операционным вопросам — приватности корпоративных данных, энергоснабжению дата-центров, управлению агентами ИИ и локальному запуску роботизированных моделей. В российской части заметен практический поиск альтернат",
-      "topics": [
-        "Google",
-        "Gemini",
-        "Google Search",
-        "Alexa+",
-        "Amazon Fire TV",
-        "OpenAI",
-        "приватность ИИ",
-        "энергоснабжение дата-центров",
-        "TerraPower",
-        "Warp Factories",
-        "агенты ИИ",
-        "NVIDIA Cosmos 3 Edge",
-        "робототехника",
-        "MWS AI",
-        "китайские GPU",
-        "российские LLM"
-      ],
-      "source_urls": [
-        "https://techcrunch.com/2026/08/19/google-launches-new-study-tools-for-students-across-search-and-gemini/",
-        "https://techcrunch.com/2026/08/19/amazon-makes-its-ai-powered-alexa-free-on-fire-tv-no-prime-required/",
-        "https://techcrunch.com/2026/08/19/openai-seeks-to-one-up-anthropic-with-new-customer-privacy-protections/",
-        "https://techcrunch.com/2026/08/19/terrapowers-nuclear-reactor-has-a-secret-weapon-for-powering-ai-data-centers/",
-        "https://techcrunch.com/2026/08/18/warps-new-system-is-an-out-of-the-box-software-factory-for-ai-development/",
-        "https://developer.nvidia.com/blog/post-train-nvidia-cosmos-3-edge-for-on-device-robot-control/",
-        "https://www.vedomosti.ru/technology/articles/2026/08/20/1222386-paki-s-gpu-mogut-viiti-na-rossiiskii-rinok"
-      ],
-      "stories": [
-        {
-          "candidate_id": "cand-001",
-          "section": "world",
-          "headline": "Google добавила в Gemini и Поиск инструменты для учёбы и исследований",
-          "organization": "Google",
-          "topic": "Consumer AI product expansion in Search and Gemini for education",
-          "event_type": "product_launch",
-          "status": "new",
-          "summary": "Google announced a set of student-oriented AI features across Search and Gemini, including generated interactive visuals and simulations in Search, customized quizzes, file-based study documents, a Gemini learning hub, and background multi-step research reports that can be discussed in Gemini Live.",
-          "published_at": "2026-08-19T19:00:00+00:00",
-          "published_date": "2026-08-19",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Google packs Search and Gemini with new AI study tools",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/08/19/google-launches-new-study-tools-for-students-across-search-and-gemini/"
-            }
-          ],
-          "keywords": [
-            "Google",
-            "Gemini",
-            "Google Search",
-            "AI Mode",
-            "AI Overviews",
-            "education",
-            "3D simulations",
-            "Gemini Live"
-          ],
-          "geography": "world",
-          "category": "models"
-        },
-        {
-          "candidate_id": "cand-003",
-          "section": "world",
-          "headline": "Amazon сделала Alexa+ бесплатной для совместимых Fire TV в США",
-          "organization": "Amazon",
-          "topic": "Mass consumer distribution of a conversational AI assistant through Fire TV, including AI search, recommendations and smart-home controls.",
-          "event_type": "product rollout",
-          "status": "new",
-          "summary": "Amazon said Alexa+ will roll out free to all compatible Fire TV devices in the U.S., including for customers without Prime. The deployment adds conversational content search, AI recommendations and smart-home controls to supported Fire TV hardware and televisions.",
-          "published_at": "2026-08-19T15:00:00+00:00",
-          "published_date": "2026-08-19",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Amazon makes its AI-powered Alexa+ free on Fire TV, no Prime required",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/08/19/amazon-makes-its-ai-powered-alexa-free-on-fire-tv-no-prime-required/"
-            }
-          ],
-          "keywords": [
-            "Amazon",
-            "Alexa+",
-            "Fire TV",
-            "consumer AI",
-            "AI assistant",
-            "smart home"
-          ],
-          "geography": "world",
-          "category": "models"
-        },
-        {
-          "candidate_id": "cand-004",
-          "section": "world",
-          "headline": "OpenAI представила preview Private Safety Processing для корпоративных клиентов",
-          "organization": "OpenAI",
-          "topic": "Enterprise AI safety, privacy and long-horizon misuse monitoring",
-          "event_type": "product_preview",
-          "status": "new",
-          "summary": "OpenAI is previewing Private Safety Processing for selected customers: an automated system intended to detect misuse patterns across multiple conversations while retaining none of the customer data. The launch is positioned as an expansion of zero-data-retention safety monitoring for sensitive enterprise use cases.",
-          "published_at": "2026-08-19T22:10:46+00:00",
-          "published_date": "2026-08-19",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "OpenAI seeks to one-up Anthropic with new customer privacy protections",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/08/19/openai-seeks-to-one-up-anthropic-with-new-customer-privacy-protections/"
-            }
-          ],
-          "keywords": [
-            "OpenAI",
-            "Private Safety Processing",
-            "Zero Data Retention",
-            "enterprise privacy",
-            "safety monitoring",
-            "cybersecurity"
-          ],
-          "geography": "world",
-          "category": "security"
-        },
-        {
-          "candidate_id": "cand-005",
-          "section": "world",
-          "headline": "TerraPower готовит проект энергоснабжения дата-центра с тепловым накопителем",
-          "organization": "TerraPower",
-          "topic": "Power infrastructure for AI data centers",
-          "event_type": "infrastructure_project",
-          "status": "new",
-          "summary": "TechCrunch, citing Bloomberg reporting, says TerraPower plans to announce its first data-center project in 2026, with groundbreaking expected in 2027. The proposed use of its Natrium design would pair a 345-megawatt reactor with molten-sodium thermal storage, allowing output to better follow volatile AI data-center demand.",
-          "published_at": "2026-08-19T15:44:53+00:00",
-          "published_date": "2026-08-19",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "TerraPower’s nuclear reactor has a secret weapon for powering AI data centers",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/08/19/terrapowers-nuclear-reactor-has-a-secret-weapon-for-powering-ai-data-centers/"
-            }
-          ],
-          "keywords": [
-            "TerraPower",
-            "Natrium",
-            "nuclear power",
-            "AI data centers",
-            "thermal storage",
-            "molten sodium",
-            "Meta"
-          ],
-          "geography": "world",
-          "category": "infrastructure"
-        },
-        {
-          "candidate_id": "cand-008",
-          "section": "world",
-          "headline": "Warp представила Factories для управления агентной разработкой ПО",
-          "organization": "Warp",
-          "topic": "Agent-native developer tooling for building, operating, evaluating and monitoring AI software-development workflows.",
-          "event_type": "product launch",
-          "status": "new",
-          "summary": "Warp introduced Warp Factories, a platform intended to let organizations deploy and operate agent-based software-development workflows. It supports model and harness choice, integrates with tools including Jira, Linear, Slack and Teams, and includes evaluation, performance and token-spend monitoring features.",
-          "published_at": "2026-08-18T14:00:00+00:00",
-          "published_date": "2026-08-18",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Warp’s new system is an out-of-the-box software factory for AI development",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/08/18/warps-new-system-is-an-out-of-the-box-software-factory-for-ai-development/"
-            }
-          ],
-          "keywords": [
-            "Warp",
-            "Warp Factories",
-            "AI coding",
-            "software factory",
-            "agents",
-            "developer tools",
-            "Codex",
-            "Claude Code"
-          ],
-          "geography": "world",
-          "category": "coding"
-        },
-        {
-          "candidate_id": "cand-009",
-          "section": "world",
-          "headline": "NVIDIA выпустила Cosmos 3 Edge для управления роботами на устройстве",
-          "organization": "NVIDIA",
-          "topic": "Робототехника и physical AI: компактная world model для выполнения манипуляционных задач непосредственно на роботе",
-          "event_type": "model release",
-          "status": "new",
-          "summary": "NVIDIA сообщила о новом Cosmos 3 Edge — 4B omni-модели с 2B reasoner на базе Nemotron — и опубликовала checkpoint и воспроизводимый рецепт постобучения для роботизированной манипуляционной политики. Модель рассчитана на запуск непосредственно на Jetson Thor, без обращения к дата-центровому GPU.",
-          "published_at": "2026-08-19T16:00:00+00:00",
-          "published_date": "2026-08-19",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Post-Train NVIDIA Cosmos 3 Edge for On-Device Robot Control",
-              "publisher": "NVIDIA Technical Blog",
-              "url": "https://developer.nvidia.com/blog/post-train-nvidia-cosmos-3-edge-for-on-device-robot-control/"
-            }
-          ],
-          "keywords": [
-            "NVIDIA Cosmos 3 Edge",
-            "robotics",
-            "physical AI",
-            "world model",
-            "on-device",
-            "Jetson Thor",
-            "open weights"
-          ],
-          "geography": "world",
-          "category": "robotics"
-        },
-        {
-          "candidate_id": "cand-002",
-          "section": "russia",
-          "headline": "MWS AI и Rubytech испытали ПАК с китайскими GPU для российских LLM",
-          "organization": "MWS AI; Rubytech; МТС Web Services",
-          "topic": "Тестирование российскими разработчиками ИИ-инфраструктуры программно-аппаратного комплекса с восемью GPU китайского производства как альтернативы ускорителям Nvidia.",
-          "event_type": "infrastructure testing and commercialization plan",
-          "status": "new",
-          "summary": "MWS AI и Rubytech совместно испытали ПАК с восемью китайскими GPU для запуска российских больших языковых моделей. Rubytech подтвердила тесты и сообщила о планах полноценного коммерческого запуска таких ПАКов в 2027 году.",
-          "published_at": "2026-08-20T00:41:13+03:00",
-          "published_date": "2026-08-20",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "ПАКи с китайскими GPU могут выйти на российский рынок в 2027 году",
-              "publisher": "Ведомости",
-              "url": "https://www.vedomosti.ru/technology/articles/2026/08/20/1222386-paki-s-gpu-mogut-viiti-na-rossiiskii-rinok"
-            }
-          ],
-          "keywords": [
-            "MWS AI",
-            "Rubytech",
-            "МТС Web Services",
-            "китайские GPU",
-            "ПАК",
-            "LLM",
-            "AI-ускорители",
-            "Nvidia"
-          ],
-          "geography": "russia",
-          "category": "infrastructure"
-        }
-      ]
-    },
     {
       "date": "2026-08-19",
       "published_at": "2026-08-19T06:00:00+03:00",
@@ -6909,3 +6662,1144 @@
     }
   ]
 }
+=== ARCHIVE_CONTEXT_END ===
+
+Проверенный исследовательский пул:
+=== CANDIDATES_CONTEXT_BEGIN ===
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-20",
+  "search_window": {
+    "start_at": "2026-08-18T02:35:51+03:00",
+    "end_at": "2026-08-20T02:36:13+03:00",
+    "latest_archive_at": "2026-08-19T02:35:51+03:00",
+    "start_date": "2026-08-18",
+    "end_date": "2026-08-20",
+    "latest_archive_date": "2026-08-19"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=4, accepted=4, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=3, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Google launched new Gemini and Search AI study tools, including interactive simulations and background research reports",
+      "organization": "Google",
+      "published_date": "2026-08-19",
+      "published_at": "2026-08-19T19:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Consumer AI product expansion in Search and Gemini for education",
+      "event_type": "product_launch",
+      "keywords": [
+        "Google",
+        "Gemini",
+        "Google Search",
+        "AI Mode",
+        "AI Overviews",
+        "education",
+        "3D simulations",
+        "Gemini Live"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Google packs Search and Gemini with new AI study tools",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/19/google-launches-new-study-tools-for-students-across-search-and-gemini/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Google announced a set of student-oriented AI features across Search and Gemini, including generated interactive visuals and simulations in Search, customized quizzes, file-based study documents, a Gemini learning hub, and background multi-step research reports that can be discussed in Gemini Live.",
+      "verified_facts": [
+        "The report says Google announced AI-generated interactive visuals and 3D simulations for learning.",
+        "Search can generate subject-specific practice quizzes and study documents from uploaded files.",
+        "Gemini can run multi-step research in the background and present results for follow-up voice discussion in Gemini Live."
+      ],
+      "significance": "This is a broad consumer distribution expansion of Gemini and Search AI into a high-frequency education workflow, combining multimodal generation, research-agent behavior and file grounding.",
+      "significance_score": 3,
+      "limitations": "The report does not fully specify regional availability, user eligibility, model tiers or release timing for every feature.",
+      "archive_status": "none",
+      "archive_reason": "No equivalent Google Search/Gemini education-feature launch appears in the provided archive.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "The announcement is reported by TechCrunch with a precise August 19 publication time and concrete feature descriptions.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-19T19:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-19T19:00:00+00:00; timestamp проверен Python против effective window. New feature launch published within the effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "No legal or regulatory component.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Directly within the consumer-AI product remit.",
+      "id": "cand-001"
+    },
+    {
+      "title": "MWS AI и Rubytech испытали ПАК с китайскими GPU для российских LLM; коммерческий запуск намечен на 2027 год",
+      "organization": "MWS AI; Rubytech; МТС Web Services",
+      "published_date": "2026-08-20",
+      "published_at": "2026-08-20T00:41:13+03:00",
+      "time_precision": "datetime",
+      "topic": "Тестирование российскими разработчиками ИИ-инфраструктуры программно-аппаратного комплекса с восемью GPU китайского производства как альтернативы ускорителям Nvidia.",
+      "event_type": "infrastructure testing and commercialization plan",
+      "keywords": [
+        "MWS AI",
+        "Rubytech",
+        "МТС Web Services",
+        "китайские GPU",
+        "ПАК",
+        "LLM",
+        "AI-ускорители",
+        "Nvidia"
+      ],
+      "geography": "russia",
+      "category": "infrastructure",
+      "source_type": "business_media",
+      "primary_source": {
+        "title": "ПАКи с китайскими GPU могут выйти на российский рынок в 2027 году",
+        "publisher": "Ведомости",
+        "url": "https://www.vedomosti.ru/technology/articles/2026/08/20/1222386-paki-s-gpu-mogut-viiti-na-rossiiskii-rinok"
+      },
+      "supporting_sources": [],
+      "event_summary": "MWS AI и Rubytech совместно испытали ПАК с восемью китайскими GPU для запуска российских больших языковых моделей. Rubytech подтвердила тесты и сообщила о планах полноценного коммерческого запуска таких ПАКов в 2027 году.",
+      "verified_facts": [
+        "«Ведомости» сообщили, что MWS AI и Rubytech испытали ПАК с восемью китайскими GPU.",
+        "Представитель Rubytech подтвердил изданию испытания российских LLM на GPU китайского производства в ПАКе с MWS AI.",
+        "Rubytech планирует полноценный коммерческий запуск ПАКов с китайскими GPU в 2027 году.",
+        "МТС Web Services характеризует работу с альтернативными поставщиками как диверсификацию для снижения инфраструктурных рисков."
+      ],
+      "significance": "Это заметный сигнал о практическом поиске российскими AI-разработчиками альтернатив Nvidia для инфраструктуры LLM и о потенциальном выводе на рынок локально интегрированных ПАКов с китайскими ускорителями.",
+      "significance_score": 3,
+      "limitations": "Материал основан на сообщении MWS AI и подтверждении Rubytech; массовое коммерческое внедрение еще не началось, а технические характеристики и производительность ПАКа не раскрыты.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет сюжета о тестировании MWS AI и Rubytech ПАКов с китайскими GPU.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Открытый материал «Ведомостей» прямо указывает на совместные испытания, подтверждение Rubytech и план коммерческого запуска в 2027 году.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: jsonld:datePublished:depth=0=2026-08-20T00:41:13+03:00; timestamp проверен Python против effective window. Source Freshness Proof v1: jsonld:datePublished:depth=0=2026-08-20T00:41:13+03:00; timestamp проверен Python против effective window. Публикация датирована 20 августа 2026 года и описывает ранее не заархивированное испытание и план коммерциализации.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие относится к AI-инфраструктуре, а не к судебному или регуляторному решению.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран по инфраструктурной значимости.",
+      "id": "cand-002"
+    },
+    {
+      "title": "Amazon made Alexa+ free on compatible Fire TV devices in the United States without requiring Prime",
+      "organization": "Amazon",
+      "published_date": "2026-08-19",
+      "published_at": "2026-08-19T15:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Mass consumer distribution of a conversational AI assistant through Fire TV, including AI search, recommendations and smart-home controls.",
+      "event_type": "product rollout",
+      "keywords": [
+        "Amazon",
+        "Alexa+",
+        "Fire TV",
+        "consumer AI",
+        "AI assistant",
+        "smart home"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Amazon makes its AI-powered Alexa+ free on Fire TV, no Prime required",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/19/amazon-makes-its-ai-powered-alexa-free-on-fire-tv-no-prime-required/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Amazon said Alexa+ will roll out free to all compatible Fire TV devices in the U.S., including for customers without Prime. The deployment adds conversational content search, AI recommendations and smart-home controls to supported Fire TV hardware and televisions.",
+      "verified_facts": [
+        "TechCrunch published the report at 8:00 AM PDT on August 19, 2026.",
+        "Amazon said Alexa+ would be available free on compatible Fire TV devices in the U.S. regardless of Prime membership.",
+        "The rollout includes conversational search, recommendations and smart-home controls."
+      ],
+      "significance": "A major platform owner is removing a subscription and Prime-membership barrier for an AI assistant across a broad installed base of consumer TV devices, making this a meaningful distribution and product-integration move.",
+      "significance_score": 3,
+      "limitations": "The source does not provide a precise compatible-device count or a timetable beyond the announced rollout; the availability described is U.S.-only.",
+      "archive_status": "none",
+      "archive_reason": "No matching Amazon Alexa+/Fire TV rollout appears in the supplied current pool or recent archive.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Directly reported by TechCrunch with a dated timestamp and specific rollout scope; the article attributes product details to Amazon.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-19T15:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-19T15:00:00+00:00; timestamp проверен Python против effective window. The product-distribution announcement was published within the effective editorial window and is not a reprint of an archived story.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Not a legal or regulatory event.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not applicable.",
+      "id": "cand-003"
+    },
+    {
+      "title": "OpenAI previewed Private Safety Processing for privacy-preserving cross-session misuse monitoring",
+      "organization": "OpenAI",
+      "published_date": "2026-08-19",
+      "published_at": "2026-08-19T22:10:46+00:00",
+      "time_precision": "datetime",
+      "topic": "Enterprise AI safety, privacy and long-horizon misuse monitoring",
+      "event_type": "product_preview",
+      "keywords": [
+        "OpenAI",
+        "Private Safety Processing",
+        "Zero Data Retention",
+        "enterprise privacy",
+        "safety monitoring",
+        "cybersecurity"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "OpenAI seeks to one-up Anthropic with new customer privacy protections",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/19/openai-seeks-to-one-up-anthropic-with-new-customer-privacy-protections/"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI is previewing Private Safety Processing for selected customers: an automated system intended to detect misuse patterns across multiple conversations while retaining none of the customer data. The launch is positioned as an expansion of zero-data-retention safety monitoring for sensitive enterprise use cases.",
+      "verified_facts": [
+        "TechCrunch reports that OpenAI announced a preview of Private Safety Processing for select customers.",
+        "The system is designed to analyze potential misuse across multiple sessions rather than only within an individual session.",
+        "According to the report, the system sends OpenAI only a narrowly scoped signal when it detects a defined category of suspicious activity; customers may then decide whether to share further data."
+      ],
+      "significance": "A material product-and-policy change for enterprise adoption of frontier models: it targets the tension between stronger abuse monitoring and zero-retention requirements for sensitive customer workloads.",
+      "significance_score": 3,
+      "limitations": "The source describes a selective preview; availability, technical guarantees and independent privacy validation remain unclear.",
+      "archive_status": "none",
+      "archive_reason": "Not found as a matching archived story; it is distinct from prior Daybreak, cyber-access and Astra-safeguard coverage.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "A reputable technology outlet reports the announcement and describes the product’s intended operation; the announcement is dated and timestamped within the effective window.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-19T22:10:46+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-19T22:10:46+00:00; timestamp проверен Python против effective window. Published August 19, 2026, within the effective window, and concerns a newly previewed OpenAI safety/privacy product.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "No court or regulatory action is involved.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not a curiosity item; it is directly relevant to enterprise AI safety and privacy.",
+      "id": "cand-004"
+    },
+    {
+      "title": "TerraPower plans a data-center power project using thermal storage to handle AI load swings",
+      "organization": "TerraPower",
+      "published_date": "2026-08-19",
+      "published_at": "2026-08-19T15:44:53+00:00",
+      "time_precision": "datetime",
+      "topic": "Power infrastructure for AI data centers",
+      "event_type": "infrastructure_project",
+      "keywords": [
+        "TerraPower",
+        "Natrium",
+        "nuclear power",
+        "AI data centers",
+        "thermal storage",
+        "molten sodium",
+        "Meta"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "TerraPower’s nuclear reactor has a secret weapon for powering AI data centers",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/19/terrapowers-nuclear-reactor-has-a-secret-weapon-for-powering-ai-data-centers/"
+      },
+      "supporting_sources": [],
+      "event_summary": "TechCrunch, citing Bloomberg reporting, says TerraPower plans to announce its first data-center project in 2026, with groundbreaking expected in 2027. The proposed use of its Natrium design would pair a 345-megawatt reactor with molten-sodium thermal storage, allowing output to better follow volatile AI data-center demand.",
+      "verified_facts": [
+        "TechCrunch reports that TerraPower intends to announce a first data-center project this year, while the customer has not been identified.",
+        "The reported project is expected to break ground in 2027.",
+        "TerraPower’s Natrium design uses stored heat in molten sodium to produce additional electricity during demand peaks rather than changing reactor output alone."
+      ],
+      "significance": "If formalized, the project would be a notable attempt to pair advanced nuclear generation and energy storage specifically with AI-compute load profiles, a central bottleneck for frontier-scale data centers.",
+      "significance_score": 3,
+      "limitations": "The customer, commercial terms, location and final project commitment were not disclosed; the core project claim is reported rather than a completed company announcement.",
+      "archive_status": "none",
+      "archive_reason": "Distinct from archived PJM curtailment and existing OpenAI/Nvidia data-center financing stories.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "The reporting is from TechCrunch and explicitly attributes the planned project to Bloomberg; technical details are described, but the project remains prospective.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-19T15:44:53+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-19T15:44:53+00:00; timestamp проверен Python против effective window. The reporting and newly disclosed plan were published within the effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "No legal or regulatory action is involved.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Directly relevant to AI-infrastructure power supply.",
+      "id": "cand-005"
+    },
+    {
+      "title": "OpenAI said a technical issue revoked some researchers' Daybreak Blue cyber-program access and required re-verification",
+      "organization": "OpenAI",
+      "published_date": "2026-08-19",
+      "published_at": "2026-08-19T18:46:14+00:00",
+      "time_precision": "datetime",
+      "topic": "Operational access controls for vetted security researchers using frontier AI models with tailored defensive-cyber safeguards.",
+      "event_type": "security program access incident",
+      "keywords": [
+        "OpenAI",
+        "Daybreak Blue",
+        "Trusted Access for Cyber",
+        "TAC",
+        "cybersecurity",
+        "access verification"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Researchers say OpenAI revoked their access to limited cyber program",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/19/researchers-complain-that-openai-revoked-their-access-to-limited-cyber-program/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Multiple researchers reported losing access to OpenAI's Trusted Access for Cyber program, including the Daybreak Blue tier. OpenAI told TechCrunch that a technical issue affected a limited set of users and that affected users needed to re-verify; reporting indicated the affected researchers contacted by the outlet were outside the U.S. and Europe.",
+      "verified_facts": [
+        "TechCrunch published the report at 11:46 AM PDT on August 19, 2026.",
+        "OpenAI confirmed that a technical issue affected access for a limited set of Daybreak Blue users.",
+        "Affected users were instructed to reapply and complete verification.",
+        "Daybreak Blue provides vetted defenders access to frontier general-purpose models with safeguards tailored to authorized defensive work."
+      ],
+      "significance": "The issue concerns access governance for OpenAI's newly launched higher-capability defensive-cyber program, a sensitive area after the recent frontier-model cyber-safety developments. It is a potentially relevant operational update, though OpenAI characterized it as an error rather than a policy change or breach.",
+      "significance_score": 2,
+      "limitations": "The number of affected users, root cause, duration and any permanent regional access policy are not established. The report says the apparent geographic pattern is suggestive, not confirmed.",
+      "archive_status": "update",
+      "archive_reason": "The archive already covers OpenAI Daybreak model availability and cyber programs, but this is a distinct, newly reported access-control incident affecting Daybreak Blue users.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "TechCrunch reported statements from affected researchers and OpenAI's confirmation that the loss of access resulted from a limited technical issue.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-19T18:46:14+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-19T18:46:14+00:00; timestamp проверен Python против effective window. Published during the effective window and adds a new operational fact about access to the previously archived Daybreak program.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Not a legal or regulatory event.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not applicable.",
+      "id": "cand-006"
+    },
+    {
+      "title": "Silicon Data raised $30 million and plans an AI-compute pricing index and CME futures launch",
+      "organization": "Silicon Data",
+      "published_date": "2026-08-19",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Financial infrastructure for GPU rental and AI compute markets",
+      "event_type": "funding_and_product_launch",
+      "keywords": [
+        "Silicon Data",
+        "GPU rental",
+        "AI compute",
+        "compute futures",
+        "CME",
+        "pricing index",
+        "Series A"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Meet the startup helping Wall Street put a price on AI compute",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/video/meet-the-startup-helping-wall-street-put-a-price-on-ai-compute/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Silicon Data has closed a $30 million Series A and aims to establish a reference price for GPU rentals. The company plans to launch AI-compute futures trading on CME on October 5, subject to regulatory approval.",
+      "verified_facts": [
+        "TechCrunch reports that Silicon Data closed a $30 million Series A.",
+        "The startup aims to create a reference price/index for GPU rental compute.",
+        "The report says a CME compute-futures launch is planned for October 5, pending regulatory approval."
+      ],
+      "significance": "The event points to emerging financial-market infrastructure around AI-compute pricing and hedging, potentially important as GPU rental becomes a large operating cost for AI developers.",
+      "significance_score": 2,
+      "limitations": "The item is a podcast/video report and the planned futures product is contingent on regulatory approval; the funding size is modest relative to the largest AI infrastructure financings.",
+      "archive_status": "none",
+      "archive_reason": "No matching Silicon Data funding or compute-futures story appears in the provided archive.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "TechCrunch provides a precise timestamp and specific claims about the Series A, intended index and planned CME launch.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:sailthru.date=2026-08-19 10:26:48; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:sailthru.date=2026-08-19 10:26:48; timestamp проверен Python против effective window. Published August 19, 2026, within the effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Regulatory approval is a future contingency, not a current legal event.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Directly related to financing and market infrastructure for AI compute.",
+      "id": "cand-007"
+    },
+    {
+      "title": "Warp introduced Warp Factories, an infrastructure layer for deploying and managing agentic software-development workflows",
+      "organization": "Warp",
+      "published_date": "2026-08-18",
+      "published_at": "2026-08-18T14:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Agent-native developer tooling for building, operating, evaluating and monitoring AI software-development workflows.",
+      "event_type": "product launch",
+      "keywords": [
+        "Warp",
+        "Warp Factories",
+        "AI coding",
+        "software factory",
+        "agents",
+        "developer tools",
+        "Codex",
+        "Claude Code"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Warp’s new system is an out-of-the-box software factory for AI development",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/18/warps-new-system-is-an-out-of-the-box-software-factory-for-ai-development/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Warp introduced Warp Factories, a platform intended to let organizations deploy and operate agent-based software-development workflows. It supports model and harness choice, integrates with tools including Jira, Linear, Slack and Teams, and includes evaluation, performance and token-spend monitoring features.",
+      "verified_facts": [
+        "TechCrunch published the report at 7:00 AM PDT on August 18, 2026.",
+        "Warp Factories is designed as an infrastructure layer for deploying and steering development agents.",
+        "The platform supports Codex and Claude Code, according to the report.",
+        "Warp said the system integrates with common ticketing and messaging tools and offers agent-performance and token-spend monitoring."
+      ],
+      "significance": "The launch illustrates the shift from individual AI coding assistants toward managed multi-agent software-production infrastructure. However, it is a startup product announcement without disclosed adoption, financing or independently measured impact.",
+      "significance_score": 2,
+      "limitations": "Claims about ease of deployment, automation levels and target-market value are largely based on Warp's product positioning and executive comments.",
+      "archive_status": "none",
+      "archive_reason": "No matching Warp Factories product launch appears in the supplied pool or archive.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "The launch, date and described capabilities are directly reported by TechCrunch; product-performance implications remain unverified.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-18T14:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-18T14:00:00+00:00; timestamp проверен Python против effective window. The announcement was published within the effective editorial window and is separate from the archived Cursor code-hosting story.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Not a legal or regulatory event.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not applicable.",
+      "id": "cand-008"
+    },
+    {
+      "title": "NVIDIA представила Cosmos 3 Edge и открытый checkpoint для постобучения роботизированной политики на устройстве",
+      "organization": "NVIDIA",
+      "published_date": "2026-08-19",
+      "published_at": "2026-08-19T16:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Робототехника и physical AI: компактная world model для выполнения манипуляционных задач непосредственно на роботе",
+      "event_type": "model release",
+      "keywords": [
+        "NVIDIA Cosmos 3 Edge",
+        "robotics",
+        "physical AI",
+        "world model",
+        "on-device",
+        "Jetson Thor",
+        "open weights"
+      ],
+      "geography": "world",
+      "category": "robotics",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Post-Train NVIDIA Cosmos 3 Edge for On-Device Robot Control",
+        "publisher": "NVIDIA Technical Blog",
+        "url": "https://developer.nvidia.com/blog/post-train-nvidia-cosmos-3-edge-for-on-device-robot-control/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Cosmos 3 Edge model card",
+          "publisher": "Hugging Face / NVIDIA",
+          "url": "https://huggingface.co/nvidia/Cosmos3-Edge-Policy-DROID"
+        },
+        {
+          "title": "RoboLab",
+          "publisher": "NVIDIA",
+          "url": "https://github.com/NVlabs/RoboLab"
+        }
+      ],
+      "event_summary": "NVIDIA сообщила о новом Cosmos 3 Edge — 4B omni-модели с 2B reasoner на базе Nemotron — и опубликовала checkpoint и воспроизводимый рецепт постобучения для роботизированной манипуляционной политики. Модель рассчитана на запуск непосредственно на Jetson Thor, без обращения к дата-центровому GPU.",
+      "verified_facts": [
+        "Официальная публикация NVIDIA датирована 19 августа 2026 года.",
+        "NVIDIA описывает Cosmos 3 Edge как 4B omni-model с 2B reasoner на базе NVIDIA Nemotron.",
+        "Checkpoint политики и открытый cosmos-framework доступны разработчикам.",
+        "В описанной конфигурации политика работает на Jetson AGX Thor; NVIDIA указывает около 1,53 секунды на генерацию action chunk.",
+        "В закрыто-контурной оценке RoboLab NVIDIA сообщает 22,9% успеха для постобученной Edge-политики."
+      ],
+      "significance": "Это самостоятельный релиз в physical AI: NVIDIA переводит world-model подход в более компактный, воспроизводимый on-device стек для управления роботом. Практическая доступность checkpoint, кода и рецепта постобучения делает событие заметнее обычной демонстрации.",
+      "significance_score": 3,
+      "limitations": "Заявленные показатели производительности и успеха получены NVIDIA в собственной конфигурации и на RoboLab; они не являются независимым сравнением с конкурирующими роботизированными политиками. Публикация также оформлена как технический tutorial, хотя прямо фиксирует новый Edge-модельный checkpoint и его выпуск.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет Cosmos 3 Edge, его robot-policy checkpoint или данного on-device релиза.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Дата, наличие модели, checkpoint, кода и заявленные технические параметры подтверждаются первичным официальным материалом NVIDIA.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-19T16:00:00+00:00; timestamp проверен Python против effective window. Официальный первоисточник опубликован 19 августа 2026 года, внутри effective window; событие не является перепечаткой ранее архивированного релиза.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется.",
+      "audit_direction": "hybrid_models_products_research",
+      "id": "cand-009"
+    },
+    {
+      "title": "Ornith AI выложила open-weight семейство Ornith-1.5, включая 397B-модель и варианты квантования",
+      "organization": "Ornith AI",
+      "published_date": "2026-08-19",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Open-weight языковые модели для reasoning, агентных и coding-задач",
+      "event_type": "open-weight model release",
+      "keywords": [
+        "Ornith-1.5",
+        "open weights",
+        "397B",
+        "Mixture of Experts",
+        "coding",
+        "agentic AI",
+        "GGUF",
+        "FP8",
+        "NVFP4"
+      ],
+      "geography": "world",
+      "category": "open_source",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Ornith-1.5",
+        "publisher": "Ornith AI / Hugging Face",
+        "url": "https://huggingface.co/collections/ornith-ai/ornith-15"
+      },
+      "supporting_sources": [
+        {
+          "title": "Ornith-1.5 (397B [DeepSWE 56], 35B-A3B, 9B)",
+          "publisher": "r/LocalLLaMA",
+          "url": "https://www.reddit.com/r/LocalLLaMA/"
+        }
+      ],
+      "event_summary": "Ornith AI опубликовала на Hugging Face семейство Ornith-1.5: 9B, 35B-A3B и 397B модели, а также варианты GGUF, FP8, NVFP4 и MLX. Релиз позиционируется для reasoning, агентных и coding-сценариев.",
+      "verified_facts": [
+        "Коллекция Ornith-1.5 на Hugging Face содержит 9B, 35B-A3B и 397B базовые модели.",
+        "В коллекции доступны дополнительные форматы, включая GGUF, FP8, NVFP4 и MLX.",
+        "Страницы моделей были обновлены 19 августа 2026 года по данным Hugging Face.",
+        "Публичный анонс с заявленными бенчмарками был размещён в сообществе r/LocalLLaMA 19 августа 2026 года."
+      ],
+      "significance": "Крупный самостоятельный open-weight выпуск с моделью на 397B параметров и несколькими форматами распространения, потенциально значимый для локального и self-hosted использования крупных coding/agentic моделей.",
+      "significance_score": 2,
+      "limitations": "Доступность весов подтверждена, однако заявленные разработчиком benchmark-результаты не получили независимой верификации в авторитетных источниках. У организации ограниченная внешняя медийная валидация, поэтому не следует воспроизводить сравнительные claims как установленный факт.",
+      "archive_status": "none",
+      "archive_reason": "Ornith-1.5 и организация Ornith AI отсутствуют среди предоставленных архивных выпусков и уже найденных кандидатов.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Проверены публичное наличие моделей и их варианты в первичной Hugging Face-коллекции. Проверка подтверждает факт релиза, но не независимую достоверность заявленных benchmark-показателей.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется.",
+      "audit_direction": "hybrid_models_products_research",
+      "id": "cand-010"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=8, validated unique=8, final candidates=8. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 2.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-russia-04",
+      "version": 1,
+      "status": "unresolved",
+      "title": "«Финуслуги» запустили ИИ-заводы для устранения ошибок",
+      "origin_direction": "russia",
+      "reason_code": "unverified",
+      "evidence_reason": "Поисковая страница показала заголовок и дату, но прямое открытие материала завершилось ошибкой, поэтому факты и масштаб внедрения нельзя достаточно надежно подтвердить.",
+      "likely_significance_score": 0,
+      "entities": [],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-independent_missing_events-02",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Cognition CEO denies report that SpaceX tried to acquire the startup",
+      "origin_direction": "independent_missing_events",
+      "reason_code": "unverified",
+      "evidence_reason": "A denial of an acquisition rumor does not establish a new, independently verifiable AI business event.",
+      "likely_significance_score": 3,
+      "entities": [
+        "Cognition",
+        "CEO",
+        "SpaceX"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 1,
+      "health_check_needed": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota"
+  }
+}
+=== CANDIDATES_CONTEXT_END ===
+
+Утверждённая машиночитаемая редакционная политика:
+=== EDITORIAL_POLICY_BEGIN ===
+{
+  "spec_version": "2026-08-05",
+  "language": "ru",
+  "timezone": "Europe/Moscow",
+  "story_counts": {
+    "total_target_minimum": 7,
+    "total_target_maximum": 12,
+    "short_digest_minimum": 1,
+    "zero_stories_status": "error",
+    "regional_story_quotas_enabled": false,
+    "short_digest_notice": "Новостей сегодня меньше, чем обычно",
+    "short_digest_notice_html": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+  },
+  "diversity": {
+    "max_selected_per_publisher_soft": 2,
+    "max_selected_per_organization_soft": 2,
+    "override_requires_reason": true,
+    "short_pool_soft_limits_may_reduce_selection": false
+  },
+  "candidate_selection": {
+    "verification_required_for_selection": "verified",
+    "allowed_freshness_for_selection": [
+      "new_event",
+      "material_update"
+    ],
+    "legal_category": "legal",
+    "legal_scale_required_for_selection": "major",
+    "legal_minimum_significance_score": 4,
+    "curiosity_category": "curiosity",
+    "curiosity_optional": true,
+    "maximum_selected_curiosity_stories": 1,
+    "curiosity_requires_explicit_verification": true
+  },
+  "what_it_means": {
+    "required": true,
+    "minimum_items": 4,
+    "maximum_items": 6,
+    "html_heading": "<h2>Что это значит</h2>",
+    "list_tag": "ol"
+  },
+  "dzen": {
+    "required": true,
+    "heading": "Все ИИ-Сводки",
+    "url": "https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1",
+    "anchor_text": "Архив ИИ-Сводок",
+    "html": "<h2>Все ИИ-Сводки</h2><p><a href=\"https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1\">Архив ИИ-Сводок</a></p>"
+  },
+  "meta_marking": {
+    "enabled": true,
+    "visible_name": "Meta",
+    "first_visible_form": "Meta*",
+    "subsequent_visible_form": "Meta",
+    "footnote_html": "<p><em>*Meta и ее сервисы - в России запрещены</em></p>",
+    "footnote_position": "after_dzen_block",
+    "service_fields_use_asterisk": false
+  },
+  "updates": {
+    "headline_prefix": "Обновление: ",
+    "required_for_archive_status": "update",
+    "forbidden_for_archive_status": "new"
+  },
+  "article": {
+    "introduction_sentences_minimum": 2,
+    "introduction_sentences_maximum": 4,
+    "paragraphs_per_story_minimum": 2,
+    "paragraphs_per_story_maximum": 3,
+    "world_heading": "Мировые лидеры ИИ",
+    "russian_heading": "Российские лидеры ИИ",
+    "allow_missing_russian_section": true,
+    "forbidden_tags": [
+      "h1",
+      "img",
+      "html",
+      "head",
+      "body",
+      "script",
+      "style",
+      "iframe"
+    ],
+    "china_heading": "Китайские лидеры ИИ",
+    "allow_missing_china_section": true
+  },
+  "terminology": {
+    "prefer": {
+      "AI": "ИИ",
+      "AI agent": "агент ИИ"
+    },
+    "keep_untranslated": [
+      "LLM"
+    ],
+    "preserve_company_and_product_names": true,
+    "allow_ai_in_official_names": true
+  },
+  "style": [
+    "ясно",
+    "делово",
+    "живо",
+    "без воды",
+    "без чрезмерного хайпа"
+  ],
+  "tracked_world_organizations": [
+    "OpenAI",
+    "Google DeepMind",
+    "Anthropic",
+    "Meta AI",
+    "Microsoft",
+    "Nvidia",
+    "xAI",
+    "Amazon",
+    "Mistral",
+    "Hugging Face",
+    "Apple",
+    "Cohere"
+  ],
+  "tracked_asia_organizations": [
+    "DeepSeek",
+    "Alibaba",
+    "Qwen",
+    "Baidu",
+    "ERNIE",
+    "Tencent",
+    "Hunyuan",
+    "ByteDance",
+    "Doubao",
+    "Moonshot AI",
+    "Kimi",
+    "Z.ai",
+    "Zhipu AI",
+    "GLM",
+    "MiniMax",
+    "01.AI",
+    "SenseTime",
+    "Pony.ai",
+    "Huawei"
+  ],
+  "tracked_developer_tools": [
+    "IDE",
+    "coding agents",
+    "agentic development environments",
+    "CLI-агенты",
+    "Claude Code",
+    "Cursor",
+    "GitHub Copilot",
+    "OpenCode",
+    "Cline",
+    "GLM",
+    "Qwen",
+    "DeepSeek",
+    "Kimi",
+    "Claude",
+    "GPT",
+    "Gemini"
+  ],
+  "tracked_russian_organizations": [
+    "Яндекс",
+    "Сбер",
+    "VK",
+    "МТС AI",
+    "Т-Банк",
+    "Тинькофф",
+    "Газпромбанк",
+    "Ростелеком"
+  ],
+  "editorial_notes": {
+    "publish_in_article": false,
+    "publish_in_rss": false,
+    "allowed_types": [
+      "source_gap",
+      "low_news_volume",
+      "time_precision",
+      "diversity_override"
+    ]
+  },
+  "stories_file": {
+    "enabled": true,
+    "filename": "stories.json"
+  },
+  "image": {
+    "aspect_ratio": "16:9",
+    "title_template": "ИИ-Сводка на {human_date}",
+    "direct_prompt_to_image_api": true,
+    "restrictions": [
+      "без логотипов компаний",
+      "без дополнительного текста, кроме точного заголовка",
+      "без водяных знаков",
+      "без мелких интерфейсных надписей",
+      "без пустой половины кадра",
+      "без стокового корпоративного клипарта",
+      "без узнаваемых лиц реальных людей",
+      "нейтральные силуэты без идентифицируемых черт допустимы"
+    ]
+  }
+}
+=== EDITORIAL_POLICY_END ===
+
+## 1. Источники данных
+
+Используй только сведения и URL из `CANDIDATES_CONTEXT`. На этом этапе не ищи новые материалы и не добавляй факты по памяти.
+
+Не выбирай кандидатов с `recommendation: exclude`. Не выбирай полноценные дубли.
+Не выбирай include/consider без `verification_status: verified`.
+Не выбирай `freshness_status: old_reprint`: текущая дата перепечатки без нового
+события не делает старый материал новой новостью.
+
+Кандидат с `archive_status: update` допустим только тогда, когда в статье ясно описано существенное новое развитие, а его заголовок начинается с `Обновление:`.
+
+## 2. Отбор
+
+Выбери лучшие подтверждённые сюжеты, но не заполняй выпуск слабыми или старыми материалами ради количества.
+
+Редакционные цели:
+
+- 7–12 сюжетов всего;
+- выбрать все действительно важные сюжеты, которые подтверждены пулом;
+- не добавлять слабые или старые материалы ради объёма.
+
+Legal-кандидат допустим только с `category: legal`, `legal_scale: major`,
+конкретным объяснением масштаба и `significance_score` не ниже 4. Мелкий
+бытовой или локальный спор не выбирай. Из кандидатов `category: curiosity`
+можно выбрать не более одного: только проверяемый, самостоятельно значимый и
+не вытесняющий более важную серьёзную новость.
+
+Числовых квот для китайских и российских новостей нет. Если в
+`CANDIDATES_CONTEXT` есть достойные сюжеты этих направлений, включи столько
+значимых сюжетов, сколько действительно есть. Если подходящих сюжетов нет,
+не создавай соответствующий раздел.
+
+Если исследовательский пул не позволяет собрать обычный объём, выбери всё
+действительно важное. Автоматизация может выполнить ограниченный coverage
+audit, но отсутствие дополнений не является ошибкой и не должно мешать
+публикации короткого выпуска.
+
+Когда после базовых eligibility-проверок достойный пул остаётся меньше
+`MINIMUM_SELECTED_STORIES`, мягкие лимиты разнообразия издателей и организаций
+не могут сами по себе уменьшать число выбранных сюжетов. Не исключай иначе
+достойный `include`/`consider` только ради соблюдения soft publisher/organization
+cap. Для такого исключения нужна самостоятельная содержательная причина,
+не связанная с diversity: недостаточная значимость самого события, слабое
+подтверждение, дубль, устаревание или другое редакционное основание. Если
+достойный сюжет приводит к превышению soft cap, выбери его и зафиксируй
+обоснованный `diversity_override`.
+
+Если найдено от 1 до 6 достойных сюжетов:
+
+- верни `status: ok`;
+- поставь `digest.short_digest: true`;
+- первым элементом `article_html` поставь точный абзац:
+
+```html
+<p><em>Новостей сегодня меньше, чем обычно</em></p>
+```
+
+- добавь в `editorial_notes` запись `low_news_volume`.
+
+Если не найдено ни одного достойного сюжета, верни `status: error` и ясную причину.
+
+Не добавляй фразы вида «по компании новостей нет».
+
+## 3. Разнообразие
+
+Мягкие цели:
+
+- не более двух выбранных сюжетов от одного издателя;
+- не более двух выбранных сюжетов одной компании или организации.
+
+Превышение допустимо только для независимых событий высокой значимости. В таком случае добавь объект в `diversity_overrides`:
+
+- `type`: `publisher` или `organization`;
+- `value`: точное название;
+- `reason`: конкретное объяснение.
+
+Без причины превышение недопустимо.
+
+Для короткого пула меньше обычной минимальной цели эти лимиты являются только
+балансирующим сигналом: превышение всё ещё требует `diversity_override`, но
+сам soft limit не является основанием удалить иначе достойный сюжет. Для пула,
+который позволяет выбрать обычные 7–12 сюжетов, применяй мягкие цели как обычно
+при сравнении сопоставимых по значимости кандидатов.
+
+Если в пуле есть достойные российские или китайские кандидаты, не исключай их
+ради упрощения структуры. Выбирай по значимости и качеству без числовой квоты.
+Если подходящих кандидатов направления нет, соответствующий раздел не нужен.
+
+## 4. Структура article_html
+
+`article_html` содержит полный готовый текст статьи в чистом HTML.
+
+Разрешены только теги:
+
+- `p`;
+- `h2`;
+- `h3`;
+- `ul`;
+- `ol`;
+- `li`;
+- `strong`;
+- `em`;
+- `a`;
+- `blockquote`.
+
+У тега `a` разрешён только атрибут `href`.
+
+Не добавляй:
+
+- `h1`;
+- обложку;
+- `html`, `head` или `body`;
+- `script`, `style` или `iframe`;
+- Markdown;
+- служебные комментарии;
+- упоминания GitHub, RSS, Blogger, автоматизации или внутреннего архива;
+- отдельный раздел со списком источников.
+
+Обычный выпуск начинается с 2–4 предложений вступления.
+
+Короткий выпуск сначала содержит точную курсивную пометку о меньшем числе новостей, затем обычное вступление.
+
+Далее:
+
+1. `<h2>Мировые лидеры ИИ</h2>`;
+2. мировые сюжеты, не относящиеся к китайским компаниям;
+3. `<h2>Китайские лидеры ИИ</h2>`, только если выбраны сюжеты о китайских компаниях или моделях;
+4. китайские сюжеты;
+5. `<h2>Российские лидеры ИИ</h2>`, только если выбраны российские сюжеты;
+6. российские сюжеты;
+7. `<h2>Что это значит</h2>`;
+8. `<ol>` с 4–6 выводами;
+9. точный блок Дзена, указанный ниже;
+10. сноска Meta, если она требуется.
+
+Не создавай пустые разделы «Китайские лидеры ИИ» и «Российские лидеры ИИ».
+
+## 5. Структура каждой новости
+
+Каждый сюжет содержит:
+
+```html
+<h3>Заголовок новости</h3>
+<p>Первый содержательный абзац.</p>
+<p>Второй содержательный абзац.</p>
+```
+
+Допускается третий содержательный абзац. Итого 2–3 абзаца на сюжет.
+
+Для каждой новости объясни:
+
+- что произошло;
+- что подтверждено;
+- почему это важно;
+- ограничения и неопределённости;
+- применимые последствия для рынка, продуктов, исследований, бизнеса, автоматизации, маркетинга, разработки и создателей ИИ-контента.
+
+Не нужно искусственно затрагивать все направления в каждом сюжете.
+
+Каждая новость должна содержать хотя бы одну ссылку вида:
+
+```html
+<a href="https://точный-url-из-кандидата">Название источника</a>
+```
+
+Не изменяй URL и не добавляй URL, которых нет в `CANDIDATES_CONTEXT`.
+
+Если утверждение подтверждено только лендингом, пресс-релизом или соцсетями, называй его продуктовым анонсом или заявлением компании, а не независимой оценкой.
+
+## 6. Раздел «Что это значит»
+
+Используй точную структуру:
+
+```html
+<h2>Что это значит</h2>
+<ol>
+  <li>...</li>
+</ol>
+```
+
+Количество выводов: 4–6. Они должны вытекать из выбранных сюжетов.
+
+## 7. Блок Дзена
+
+В конце статьи обязателен точный блок:
+
+```html
+<h2>Все ИИ-Сводки</h2>
+<p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>
+```
+
+Заголовок `<h2>Все ИИ-Сводки</h2>` не изменяй. Текст ссылки должен быть `Архив ИИ-Сводок`.
+
+Ссылка Дзена является навигационной и не включается в массив `sources`.
+
+## 8. Маркировка Meta
+
+Правило применяется только к видимому тексту `article_html`:
+
+- первое видимое упоминание должно быть `Meta*`;
+- все последующие видимые упоминания должны быть `Meta` без звёздочки;
+- после блока Дзена добавь ровно одну сноску:
+
+```html
+<p><em>*Meta и ее сервисы - в России запрещены</em></p>
+```
+
+Если Meta в статье отсутствует, сноску не добавляй.
+
+В `sources`, `topics`, служебных полях, URL и названиях организаций пиши `Meta` без звёздочки.
+
+## 9. Обновления
+
+Если выбранный кандидат имеет `archive_status: update`, соответствующий `<h3>` обязан начинаться с:
+
+```text
+Обновление:
+```
+
+Для кандидата с `archive_status: none` такой префикс запрещён.
+
+Порядок `<h3>` должен точно совпадать с порядком `selected_candidate_ids`.
+
+## 10. Стиль и терминология
+
+Пиши на русском языке: ясно, делово, живо, без воды и чрезмерного хайпа.
+
+Пиши:
+
+- `ИИ`, а не `AI`;
+- `агент ИИ`, а не `AI agent` или `AI-агент`;
+- `LLM` без перевода.
+
+Названия компаний и продуктов не переводи. `AI` допустимо внутри официального названия, например `Mistral AI`.
+
+Не представляй заявление компании как независимо доказанный факт. Не копируй длинные фрагменты источников.
+
+## 11. Описание, темы и заметки
+
+`description`:
+
+- от 150 до 300 символов;
+- без HTML и ссылок;
+- отражает главные темы выпуска.
+
+`topics`:
+
+- от 5 до 20 коротких тем;
+- без дублей;
+- только по выбранным сюжетам;
+- без `Meta*`.
+
+`sources`:
+
+- содержит каждый новостной URL из `article_html`;
+- не содержит ссылку Дзена;
+- не содержит URL, отсутствующих в статье;
+- использует точные `title`, `publisher` и `url` из исследовательского пула.
+
+`editorial_notes` — внутренний массив. Он не публикуется в статье и RSS. Используй объекты с полями `type`, `area`, `message`.
+
+## 12. Промпт обложки
+
+`image_prompt` должен быть полноценным самостоятельным заданием для прямой генерации изображения.
+
+Он обязан иметь четыре смысловых абзаца в таком порядке:
+
+1. `Изображение 16:9: ...` — назначение и точный единственный читаемый заголовок `ИИ-Сводка на D месяца YYYY`;
+2. `Главные визуальные темы: ...` — конкретные сцены из выбранных новостей;
+3. `Композиция: ...` — центральный фокус, окружающие сцены и нижняя зона;
+4. `Стиль: ...` — палитра, детализация и запреты.
+
+Постоянные требования:
+
+- современная футуристическая редакционная обложка;
+- крупный и единственный читаемый текст — точный заголовок выпуска;
+- число визуальных мотивов соответствует реальному числу сюжетов;
+- без логотипов компаний;
+- без дополнительного текста;
+- без водяных знаков;
+- без мелких интерфейсных надписей;
+- без технического имени файла;
+- без пустой половины кадра;
+- без стокового корпоративного клипарта;
+- без узнаваемых лиц реальных людей;
+- нейтральные силуэты без идентифицируемых черт допустимы.
+
+## 13. Технические метаданные
+
+Поля `date`, `slug`, `title`, `published_at`, `author` и `cover_filename` всё равно будут принудительно нормализованы кодом. Заполни их по схеме, но не меняй редакционную дату и название выпуска.
+
+## 14. Результат
+
+Верни только строгий JSON по переданной схеме. Никакого Markdown, пояснений до JSON или текста после JSON.
