@@ -1,0 +1,39 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-21",
+  "slug": "2026-08-21",
+  "title": "ИИ-Сводка на 21 августа 2026",
+  "description": "Google меняет работу с источниками в ИИ-поиске, OpenAI и Meta расширяют агентные интерфейсы, а Binance открывает торговую инфраструктуру агентам. В инфраструктуре — маршрутизация моделей, память Micron и Grok в Amazon Bedrock.",
+  "published_at": "2026-08-21T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-21.png",
+  "topics": [
+    "Google Search",
+    "Preferred Sources",
+    "OpenAI Codex",
+    "агенты ИИ",
+    "Microsoft Copilot",
+    "Binance Agent OS",
+    "Meta AI",
+    "ChatGPT",
+    "маршрутизация LLM",
+    "Micron",
+    "память для ИИ",
+    "Grok 4.6",
+    "Amazon Bedrock"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Шесть независимых событий из пула подтверждены одним изданием, но относятся к разным компаниям и слоям рынка: поисковой дистрибуции, финансовым агентам, настольному ассистенту, интеграции сообщений и маршрутизации моделей. Их исключение только ради мягкого лимита снизило бы полноту выпуска."
+    }
+  ]
+}

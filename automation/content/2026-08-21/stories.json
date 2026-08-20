@@ -1,0 +1,291 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Google добавила издателям кнопку Preferred Sources для ИИ-поиска",
+    "organization": "Google",
+    "topic": "AI search, publisher traffic and source-preference controls",
+    "event_type": "product_update",
+    "status": "new",
+    "summary": "Google is making a Preferred Sources button available for publishers to embed on their sites, allowing readers to indicate sources they want highlighted more prominently in Search, Discover and Google News. The company also outlined forthcoming natural-language controls for Discover personalization and customizable Google News audio briefings on Android.",
+    "published_at": "2026-08-20T19:18:21+00:00",
+    "published_date": "2026-08-20",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google gives publishers a new way to fight AI-driven traffic losses",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/20/google-gives-publishers-a-new-way-to-fight-ai-driven-traffic-losses/"
+      }
+    ],
+    "keywords": [
+      "Google Search",
+      "AI Overviews",
+      "AI Mode",
+      "Preferred Sources",
+      "publishers",
+      "Discover"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "OpenAI обновила Codex CLI: dashboard агентов и очередь сообщений между сессиями",
+    "organization": "OpenAI",
+    "topic": "CLI coding-agent orchestration, multi-session task management, permissions and developer workflow",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "OpenAI выпустила Codex CLI rust-v0.149.0. В релиз вошёл интерактивный dashboard для поиска, запуска, открытия, переименования и остановки задач агентов; команда очереди сообщений для существующих локальных и удалённых сессий; команды управления рабочей директорией; расширенное Vim-редактирование; а также диагностические и security-улучшения.",
+    "published_at": "2026-08-20T21:04:55+00:00",
+    "published_date": "2026-08-20",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release rust-v0.149.0 · openai/codex",
+        "publisher": "OpenAI GitHub",
+        "url": "https://github.com/openai/codex/releases/tag/rust-v0.149.0"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Codex CLI",
+      "coding agent",
+      "agent dashboard",
+      "task management",
+      "message queue",
+      "CLI",
+      "developer tools"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Исследователи раскрыли CoSnitch — цепочку атак на Microsoft Copilot Personal",
+    "organization": "Microsoft; Varonis",
+    "topic": "Indirect prompt injection and unauthorized actions through a consumer AI assistant with access to connected applications and persistent memory",
+    "event_type": "Vulnerability disclosure and server-side remediation",
+    "status": "new",
+    "summary": "TechRadar reported that Varonis disclosed CoSnitch, a three-part vulnerability chain in Microsoft Copilot Personal. The chain combined URL-based automatic prompt execution, access to user-authorized connected apps for data exfiltration, and indirect prompt injection through web summarization that could alter persistent Copilot memory. Microsoft assigned CVE-2026-24301 and shipped a server-side fix; Varonis said it found no evidence of exploitation in the wild.",
+    "published_at": "2026-08-19T14:55:00+00:00",
+    "published_date": "2026-08-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Experts manage to hack Microsoft Copilot by continually asking it questions about itself",
+        "publisher": "TechRadar",
+        "url": "https://www.techradar.com/pro/security/experts-manage-to-hack-microsoft-copilot-by-continually-asking-it-questions-about-itself"
+      },
+      {
+        "title": "CoSnitch: When Your AI Assistant Becomes Its Own Whistleblower",
+        "publisher": "Varonis Threat Labs",
+        "url": "https://www.varonis.com/blog/cosnitch"
+      }
+    ],
+    "keywords": [
+      "Microsoft Copilot",
+      "CoSnitch",
+      "CVE-2026-24301",
+      "indirect prompt injection",
+      "persistent memory poisoning",
+      "data exfiltration",
+      "OAuth connectors",
+      "meta-hacking"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Binance запустила Agent OS для анализа рынков и торговли через агентов ИИ",
+    "organization": "Binance",
+    "topic": "Agentic financial infrastructure and autonomous trading",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Binance launched Agent OS, a platform for connecting AI applications and agents to its trading, wallet, payment and verification infrastructure. It supports MCP and tools including ChatGPT, Codex, Claude Code and Cursor; users may authorize agents to inspect account data and place trades through segregated subaccounts.",
+    "published_at": "2026-08-20T09:30:00+00:00",
+    "published_date": "2026-08-20",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Binance now lets AI agents trade, but keeping them in check is largely up to users",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/20/binance-now-lets-ai-agents-trade-but-keeping-them-in-check-is-largely-up-to-users/"
+      }
+    ],
+    "keywords": [
+      "AI agents",
+      "autonomous trading",
+      "Agent OS",
+      "MCP",
+      "crypto",
+      "financial infrastructure",
+      "subaccounts"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Meta выпустила приложение Meta AI для Mac с диктовкой и анализом экрана",
+    "organization": "Meta",
+    "topic": "Consumer and small-business AI assistant expansion on macOS",
+    "event_type": "product_launch",
+    "status": "new",
+    "summary": "Meta announced a Mac application for Meta AI with system-wide dictation and screen-aware question answering based on the current display. The update also adds business-account connections and productivity features for merchants using Meta AI.",
+    "published_at": "2026-08-20T12:11:57+00:00",
+    "published_date": "2026-08-20",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Meta AI’s new Mac app wants you to talk to your apps",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/20/meta-ais-new-mac-app-wants-you-to-talk-to-your-apps/"
+      }
+    ],
+    "keywords": [
+      "Meta AI",
+      "macOS",
+      "dictation",
+      "screen context",
+      "Muse Spark",
+      "business assistant"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "ChatGPT получил плагин Apple Messages с отправкой и удалением сообщений",
+    "organization": "OpenAI; Apple",
+    "topic": "Consumer AI agent integration with personal messaging",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "OpenAI launched an Apple Messages plug-in for ChatGPT. The integration lets users connect their Messages inbox and use ChatGPT to search, analyze, edit, delete, draft and send messages; it also works with Codex and ChatGPT Work.",
+    "published_at": "2026-08-20T22:09:51+00:00",
+    "published_date": "2026-08-20",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "ChatGPT can now send texts for you with new Apple Messages plug-in",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/20/chatgpt-can-now-send-texts-for-you-with-new-apple-messages-plugin/"
+      }
+    ],
+    "keywords": [
+      "ChatGPT",
+      "Apple Messages",
+      "agent actions",
+      "message drafting",
+      "privacy",
+      "Codex",
+      "ChatGPT Work"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Ramp запустила Router для маршрутизации запросов между LLM",
+    "organization": "Ramp",
+    "topic": "AI inference and model-routing infrastructure",
+    "event_type": "product_launch",
+    "status": "new",
+    "summary": "Ramp launched Router, a U.S.-only API service that lets companies access and route requests among multiple large-language-model providers. The service includes routing strategies, spend and latency dashboards, and default one-year retention of inputs, outputs and tool calls with an opt-out.",
+    "published_at": "2026-08-20T16:46:00+00:00",
+    "published_date": "2026-08-20",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Ramp launches its own AI model router, called Router",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/20/ramp-launches-its-own-ai-model-router-called-router/"
+      }
+    ],
+    "keywords": [
+      "Ramp",
+      "Router",
+      "model routing",
+      "LLM API",
+      "AI inference",
+      "OpenRouter"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-011",
+    "section": "world",
+    "headline": "Micron вложит $10 млрд в исследования памяти и упаковки для ИИ",
+    "organization": "Micron Technology",
+    "topic": "Долгосрочные R&D-инвестиции в HBM-подобные технологии памяти, интеграцию памяти и вычислений, advanced packaging и производство полупроводников для ИИ-инфраструктуры.",
+    "event_type": "investment",
+    "status": "new",
+    "summary": "Micron объявила о создании Micron Research Labs в Бойсе, штат Айдахо, и о вложении $10 млрд в долгосрочные исследования памяти, архитектур memory-and-compute, передовой упаковки и будущих технологий производства. Компания планирует начать строительство площадки в 2027 году; хаб должен объединить собственные исследования Micron с университетами, государственными структурами, стартапами и отраслевыми партнёрами.",
+    "published_at": "2026-08-20T14:11:06+00:00",
+    "published_date": "2026-08-20",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Micron Puts $10B Behind US AI Memory Research",
+        "publisher": "Data Center Knowledge",
+        "url": "https://www.datacenterknowledge.com/data-center-chips/micron-puts-10b-behind-us-ai-memory-research"
+      }
+    ],
+    "keywords": [
+      "Micron",
+      "HBM",
+      "AI memory",
+      "advanced packaging",
+      "semiconductor R&D",
+      "AI infrastructure",
+      "Idaho"
+    ],
+    "geography": "world",
+    "category": "chips"
+  },
+  {
+    "candidate_id": "cand-012",
+    "section": "world",
+    "headline": "xAI сделала Grok 4.6 общедоступной в Amazon Bedrock",
+    "organization": "xAI; Amazon Web Services",
+    "topic": "Enterprise distribution of a frontier long-context model for agentic coding, research and multimodal work through AWS’s managed-model platform.",
+    "event_type": "product availability expansion",
+    "status": "new",
+    "summary": "xAI announced general availability of Grok 4.6 in Amazon Bedrock. The model has a 500K-token context window, selectable reasoning effort levels and pricing of $2 per million input tokens, $0.30 cached-input tokens and $6 output tokens; AWS says it is available in all regions where Bedrock is offered.",
+    "published_at": "2026-08-19T00:00:00+00:00",
+    "published_date": "2026-08-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Grok 4.6 on Amazon Bedrock",
+        "publisher": "xAI",
+        "url": "https://x.ai/news/grok-4-6-amazon-bedrock"
+      },
+      {
+        "title": "Amazon Bedrock now supports SpaceXAI Grok 4.6",
+        "publisher": "Amazon Web Services",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2026/08/amazon-bedrock-grok-4-6/"
+      }
+    ],
+    "keywords": [
+      "Grok 4.6",
+      "Amazon Bedrock",
+      "xAI",
+      "AWS",
+      "agents",
+      "long context",
+      "enterprise AI",
+      "model API"
+    ],
+    "geography": "world",
+    "category": "models"
+  }
+]

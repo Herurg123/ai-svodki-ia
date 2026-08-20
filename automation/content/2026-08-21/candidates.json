@@ -1,0 +1,737 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-21",
+  "search_window": {
+    "start_at": "2026-08-19T02:36:13+03:00",
+    "end_at": "2026-08-21T02:40:00+03:00",
+    "latest_archive_at": "2026-08-20T02:36:13+03:00",
+    "start_date": "2026-08-19",
+    "end_date": "2026-08-21",
+    "latest_archive_date": "2026-08-20"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=4, accepted=4, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=0, rejected=2."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=3, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Google lets publishers add a Preferred Sources control aimed at AI-search traffic losses",
+      "organization": "Google",
+      "published_date": "2026-08-20",
+      "published_at": "2026-08-20T19:18:21+00:00",
+      "time_precision": "datetime",
+      "topic": "AI search, publisher traffic and source-preference controls",
+      "event_type": "product_update",
+      "keywords": [
+        "Google Search",
+        "AI Overviews",
+        "AI Mode",
+        "Preferred Sources",
+        "publishers",
+        "Discover"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Google gives publishers a new way to fight AI-driven traffic losses",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/20/google-gives-publishers-a-new-way-to-fight-ai-driven-traffic-losses/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Google is making a Preferred Sources button available for publishers to embed on their sites, allowing readers to indicate sources they want highlighted more prominently in Search, Discover and Google News. The company also outlined forthcoming natural-language controls for Discover personalization and customizable Google News audio briefings on Android.",
+      "verified_facts": [
+        "TechCrunch reports that Google made an embeddable Preferred Sources button available to publishers on August 20, 2026.",
+        "The feature is intended to let readers favor sources across Google Search, Discover and Google News.",
+        "The report says Preferred Sources had already been rolled into Google's AI experiences, including AI Mode and AI Overviews.",
+        "Google also described planned natural-language personalization for Discover and customizable audio briefings in Google News for Android users."
+      ],
+      "significance": "The change addresses the distribution effects of AI-mediated search on publishers and adds a user-choice mechanism across Google's AI search and news surfaces.",
+      "significance_score": 3,
+      "limitations": "The report is based on Google's product announcement; the scale of adoption and whether the feature materially restores publisher traffic remain unproven.",
+      "archive_status": "none",
+      "archive_reason": "The archive includes Google's study tools in Search and Gemini, but not this publisher-source preference feature.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "A timestamped report gives specific product behavior and rollout context; the event is distinct from prior archived Google product coverage.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-20T19:18:21+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-20T19:18:21+00:00; timestamp проверен Python против effective window. Published within the effective window and describes a newly available publisher integration.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "No legal or regulatory action is central to the event.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not a curiosity candidate; it concerns AI-search product and media-ecosystem infrastructure.",
+      "id": "cand-001"
+    },
+    {
+      "title": "OpenAI releases Codex CLI rust-v0.149.0 with an interactive agents task dashboard and cross-session message queue",
+      "organization": "OpenAI",
+      "published_date": "2026-08-20",
+      "published_at": "2026-08-20T21:04:55+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding-agent orchestration, multi-session task management, permissions and developer workflow",
+      "event_type": "product release",
+      "keywords": [
+        "OpenAI",
+        "Codex CLI",
+        "coding agent",
+        "agent dashboard",
+        "task management",
+        "message queue",
+        "CLI",
+        "developer tools"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "OpenAI Codex CLI rust-v0.149.0",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/openai-codex-rust-v0.149.0"
+      },
+      "supporting_sources": [
+        {
+          "title": "Release rust-v0.149.0 · openai/codex",
+          "publisher": "OpenAI GitHub",
+          "url": "https://github.com/openai/codex/releases/tag/rust-v0.149.0"
+        }
+      ],
+      "event_summary": "OpenAI выпустила Codex CLI rust-v0.149.0. В релиз вошёл интерактивный dashboard для поиска, запуска, открытия, переименования и остановки задач агентов; команда очереди сообщений для существующих локальных и удалённых сессий; команды управления рабочей директорией; расширенное Vim-редактирование; а также диагностические и security-улучшения.",
+      "verified_facts": [
+        "Релиз rust-v0.149.0 помечен в официальном репозитории openai/codex 20 августа 2026 года.",
+        "В TUI добавлен интерактивный agents dashboard для управления задачами.",
+        "Добавлена команда очереди сообщений для существующих local/remote sessions.",
+        "Добавлены /cd, /pwd и /cwd для управления рабочей директорией в TUI.",
+        "В релизе также заявлены усиления permission profiles, MCP/плагин-ограничений и sandbox-related safeguards."
+      ],
+      "significance": "Это заметное развитие Codex из одиночного CLI-помощника в среду управления несколькими агентными задачами и сессиями. Dashboard и очередь сообщений особенно релевантны для длительных agentic development workflows.",
+      "significance_score": 3,
+      "limitations": "Это versioned CLI-релиз, а не отдельный крупный коммерческий анонс; GitHub показывает время публикации без явно отображённого часового пояса, поэтому сохранена только календарная дата.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве и текущем пуле нет совпадающего сюжета о Codex CLI rust-v0.149.0.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Факт релиза и основные изменения подтверждены официальной страницей GitHub Release; независимый агрегатор релизов согласуется с датой и перечнем ключевых функций.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-20T21:04:55Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-20T21:04:55Z; timestamp проверен Python против effective window. Релиз опубликован 20 августа 2026 года и не является перепечаткой ранее архивированного события.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является правовым или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: это тематический developer-tools кандидат, а не curiosity-сюжет.",
+      "id": "cand-002"
+    },
+    {
+      "title": "Varonis disclosed CoSnitch, a patched Microsoft Copilot Personal flaw chain enabling one-click prompt execution, connected-app data exfiltration and persistent-memory poisoning",
+      "organization": "Microsoft; Varonis",
+      "published_date": "2026-08-19",
+      "published_at": "2026-08-19T14:55:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Indirect prompt injection and unauthorized actions through a consumer AI assistant with access to connected applications and persistent memory",
+      "event_type": "Vulnerability disclosure and server-side remediation",
+      "keywords": [
+        "Microsoft Copilot",
+        "CoSnitch",
+        "CVE-2026-24301",
+        "indirect prompt injection",
+        "persistent memory poisoning",
+        "data exfiltration",
+        "OAuth connectors",
+        "meta-hacking"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Experts manage to hack Microsoft Copilot by continually asking it questions about itself",
+        "publisher": "TechRadar",
+        "url": "https://www.techradar.com/pro/security/experts-manage-to-hack-microsoft-copilot-by-continually-asking-it-questions-about-itself"
+      },
+      "supporting_sources": [
+        {
+          "title": "CoSnitch: When Your AI Assistant Becomes Its Own Whistleblower",
+          "publisher": "Varonis Threat Labs",
+          "url": "https://www.varonis.com/blog/cosnitch"
+        }
+      ],
+      "event_summary": "TechRadar reported that Varonis disclosed CoSnitch, a three-part vulnerability chain in Microsoft Copilot Personal. The chain combined URL-based automatic prompt execution, access to user-authorized connected apps for data exfiltration, and indirect prompt injection through web summarization that could alter persistent Copilot memory. Microsoft assigned CVE-2026-24301 and shipped a server-side fix; Varonis said it found no evidence of exploitation in the wild.",
+      "verified_facts": [
+        "The in-window TechRadar report is dated August 19, 2026 and identifies the issue as CoSnitch, CVE-2026-24301, with a reported CVSS severity of 8.8.",
+        "Varonis states that the attack chain could auto-execute an attacker-supplied prompt from a crafted Copilot URL and use authorized connectors such as Gmail, Drive and Calendar to retrieve data.",
+        "Varonis states that a crafted webpage summarized by Copilot could inject instructions into persistent user memory.",
+        "Varonis says it reported the issue to Microsoft in December 2025, patches shipped on August 18, 2026, and it saw no evidence of in-the-wild exploitation.",
+        "The remediation was server-side, so the report did not identify a user-side software update requirement."
+      ],
+      "significance": "This is a meaningful AI-agent security disclosure because it chains prompt execution, privileged connector access and persistent cross-session context into a plausible phishing-driven data-theft path. It also demonstrates a concrete weakness in treating natural-language agent behavior and connector calls as inherently user-authorized.",
+      "significance_score": 3,
+      "limitations": "The primary in-window report provides only a calendar date, not a timestamp. Varonis’s underlying technical report says it was last updated August 18, 2026, so the disclosure/remediation may have begun shortly before the effective-window boundary. The claim is based on vendor security research and was not independently confirmed by Microsoft in the retrieved material.",
+      "archive_status": "none",
+      "archive_reason": "No matching CoSnitch/CVE-2026-24301 story appears in the supplied archive or current-pool exclusions.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "The August 19 TechRadar report and Varonis’s detailed technical disclosure agree on the vulnerability name, CVE identifier, attack-chain components, server-side patch and absence of known exploitation.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-19T14:55:00Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-19T14:55:00Z; timestamp проверен Python против effective window. The underlying Varonis report was updated on August 18, but a detailed in-window report on August 19 surfaced the disclosure and its remediation; it is not a duplicate of an archived story.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "This is a vulnerability disclosure and remediation, not a legal or regulatory action.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not applicable: the candidate is directly within the security/safety remit.",
+      "id": "cand-003"
+    },
+    {
+      "title": "Binance launches Agent OS, enabling AI agents to analyze markets and execute user-authorized trades",
+      "organization": "Binance",
+      "published_date": "2026-08-20",
+      "published_at": "2026-08-20T09:30:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Agentic financial infrastructure and autonomous trading",
+      "event_type": "product launch",
+      "keywords": [
+        "AI agents",
+        "autonomous trading",
+        "Agent OS",
+        "MCP",
+        "crypto",
+        "financial infrastructure",
+        "subaccounts"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Binance now lets AI agents trade, but keeping them in check is largely up to users",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/20/binance-now-lets-ai-agents-trade-but-keeping-them-in-check-is-largely-up-to-users/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Agent OS",
+          "publisher": "Binance",
+          "url": "https://www.binance.com/"
+        }
+      ],
+      "event_summary": "Binance launched Agent OS, a platform for connecting AI applications and agents to its trading, wallet, payment and verification infrastructure. It supports MCP and tools including ChatGPT, Codex, Claude Code and Cursor; users may authorize agents to inspect account data and place trades through segregated subaccounts.",
+      "verified_facts": [
+        "TechCrunch reported a publication time of 2:30 AM PDT on August 20, 2026.",
+        "Binance said Agent OS connects agents to its APIs, Agentic Wallet, x402 services and MCP support.",
+        "The platform permits configurable permissions and approval requirements for trading, while subaccount withdrawals are blocked by default.",
+        "TechCrunch reported that Binance does not impose a separate cap on losses or trading volume inside the funded trading subaccount."
+      ],
+      "significance": "A major global exchange is opening core market and payment infrastructure to general-purpose AI agents, creating a notable real-money deployment of agentic systems and concentrating prompt-injection, authorization and consumer-protection questions.",
+      "significance_score": 3,
+      "limitations": "The launch is a company product announcement reported by a single technology outlet; adoption, jurisdictional availability and the practical safety of third-party agents require subsequent verification.",
+      "archive_status": "none",
+      "archive_reason": "No matching Binance Agent OS or autonomous-trading-platform story appears in the supplied current pool or archive.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "The source gives a precise timestamp and describes the product, its integrations and permission model. The event falls inside the effective editorial window.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-20T09:30:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-20T09:30:00+00:00; timestamp проверен Python против effective window. The reported launch occurred on August 20, 2026 and is not a reprint of an archived item.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "This is a product and infrastructure launch, not a legal or regulatory action.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not a curiosity candidate; it is a substantive agent-infrastructure launch.",
+      "id": "cand-004"
+    },
+    {
+      "title": "Meta releases a Mac app for Meta AI with system-wide dictation and screen-context answers",
+      "organization": "Meta",
+      "published_date": "2026-08-20",
+      "published_at": "2026-08-20T12:11:57+00:00",
+      "time_precision": "datetime",
+      "topic": "Consumer and small-business AI assistant expansion on macOS",
+      "event_type": "product_launch",
+      "keywords": [
+        "Meta AI",
+        "macOS",
+        "dictation",
+        "screen context",
+        "Muse Spark",
+        "business assistant"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Meta AI’s new Mac app wants you to talk to your apps",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/20/meta-ais-new-mac-app-wants-you-to-talk-to-your-apps/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Meta announced a Mac application for Meta AI with system-wide dictation and screen-aware question answering based on the current display. The update also adds business-account connections and productivity features for merchants using Meta AI.",
+      "verified_facts": [
+        "TechCrunch reports Meta announced the Mac app on August 20, 2026.",
+        "The app includes system-wide dictation across applications.",
+        "Meta says the assistant can inspect the current screen and answer questions using its Muse Spark model.",
+        "The business update lets merchants connect Meta accounts, advertising campaigns and Google Workspace accounts to Meta AI."
+      ],
+      "significance": "The launch moves Meta AI further into desktop computer-use and cross-application assistant workflows, while combining consumer distribution with business productivity integrations.",
+      "significance_score": 3,
+      "limitations": "The report summarizes Meta's announcement; the underlying product availability, regional rollout and privacy controls were not independently tested in this pass.",
+      "archive_status": "none",
+      "archive_reason": "No corresponding Meta AI macOS product release appears in the supplied archive.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "A current, timestamped technology-media report describes the product announcement and its stated features.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-20T12:11:57+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-20T12:11:57+00:00; timestamp проверен Python против effective window. The announcement was published within the effective window and presents a new desktop application and integrations.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "No legal or regulatory action is central to the event.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not a curiosity candidate; it is a mainstream assistant product expansion.",
+      "id": "cand-005"
+    },
+    {
+      "title": "OpenAI launches an Apple Messages plug-in for ChatGPT that can search, draft, send and delete messages",
+      "organization": "OpenAI; Apple",
+      "published_date": "2026-08-20",
+      "published_at": "2026-08-20T22:09:51+00:00",
+      "time_precision": "datetime",
+      "topic": "Consumer AI agent integration with personal messaging",
+      "event_type": "product launch",
+      "keywords": [
+        "ChatGPT",
+        "Apple Messages",
+        "agent actions",
+        "message drafting",
+        "privacy",
+        "Codex",
+        "ChatGPT Work"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "ChatGPT can now send texts for you with new Apple Messages plug-in",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/20/chatgpt-can-now-send-texts-for-you-with-new-apple-messages-plugin/"
+      },
+      "supporting_sources": [
+        {
+          "title": "ChatGPT Apple Messages plug-in guidance",
+          "publisher": "OpenAI",
+          "url": "https://learn.chatgpt.com/"
+        }
+      ],
+      "event_summary": "OpenAI launched an Apple Messages plug-in for ChatGPT. The integration lets users connect their Messages inbox and use ChatGPT to search, analyze, edit, delete, draft and send messages; it also works with Codex and ChatGPT Work.",
+      "verified_facts": [
+        "TechCrunch reported a publication time of 3:09 PM PDT on August 20, 2026.",
+        "The plug-in can connect an Apple Messages inbox to ChatGPT for search, analysis and editing tasks.",
+        "TechCrunch reported that it can draft, send and delete messages, with OpenAI warning that persistent approval removes the final review before a message is sent.",
+        "OpenAI told Bloomberg, as quoted by TechCrunch, that the plug-in runs locally and does not create an index of all messages."
+      ],
+      "significance": "The feature moves ChatGPT from advisory use into a high-frequency personal communication workflow with delegated actions, representing a consequential consumer-agent integration and privacy-sensitive expansion of OpenAI's product surface.",
+      "significance_score": 3,
+      "limitations": "The available reporting leaves technical implementation, geographic availability, platform requirements and privacy guarantees only partially specified; the item is labeled an in-brief report.",
+      "archive_status": "none",
+      "archive_reason": "No Apple Messages integration for ChatGPT appears in the supplied current pool or archive.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "A dated TechCrunch report documents the launch and links to OpenAI user guidance; its timestamp converts to August 21, 2026 at 01:09 +03:00, before the 02:40 +03:00 cutoff.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-20T22:09:51+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-20T22:09:51+00:00; timestamp проверен Python против effective window. The product integration was reported as launched on August 20, 2026, within the final portion of the window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "No legal proceeding or regulatory action is the event.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not a curiosity candidate; it is a mainstream consumer AI product integration.",
+      "id": "cand-006"
+    },
+    {
+      "title": "Ramp launches Router, an API service for routing requests across AI models",
+      "organization": "Ramp",
+      "published_date": "2026-08-20",
+      "published_at": "2026-08-20T16:46:00+00:00",
+      "time_precision": "datetime",
+      "topic": "AI inference and model-routing infrastructure",
+      "event_type": "product_launch",
+      "keywords": [
+        "Ramp",
+        "Router",
+        "model routing",
+        "LLM API",
+        "AI inference",
+        "OpenRouter"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Ramp launches its own AI model router, called Router",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/20/ramp-launches-its-own-ai-model-router-called-router/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Ramp launched Router, a U.S.-only API service that lets companies access and route requests among multiple large-language-model providers. The service includes routing strategies, spend and latency dashboards, and default one-year retention of inputs, outputs and tool calls with an opt-out.",
+      "verified_facts": [
+        "TechCrunch reports that Ramp launched Router on August 20, 2026.",
+        "Router provides API access to models from OpenAI, Anthropic, DeepSeek, Moonshot, MiniMax, Nvidia, xAI and Z.ai.",
+        "The service is initially U.S.-only and free through the end of 2026 excluding model-inference charges.",
+        "Ramp says Router records model inputs, outputs and tool calls for one year by default, subject to opt-out."
+      ],
+      "significance": "A large fintech platform entering multi-model routing expands competition around a critical AI-infrastructure layer, shortly after the reported consolidation of OpenRouter.",
+      "significance_score": 3,
+      "limitations": "The product claims and retention details are reported by one technology-media source; no first-party Ramp announcement was separately checked in this pass.",
+      "archive_status": "none",
+      "archive_reason": "No matching Router launch appears in the supplied archive; the archived Stripe/OpenRouter story is related market context but a distinct event.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "The source provides a precise publication timestamp and concrete launch, availability, provider and data-retention details.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-20T16:46:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-20T16:46:00+00:00; timestamp проверен Python против effective window. Published within the effective window and describes a newly launched service rather than a retrospective update.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "No legal or regulatory action is central to the event.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not a curiosity candidate; it is a direct infrastructure product launch.",
+      "id": "cand-007"
+    },
+    {
+      "title": "AWS Kiro CLI 2.19.0 adds spec-review mouse controls, AI session titles and automatic recovery for long streams",
+      "organization": "Amazon Web Services; Kiro",
+      "published_date": "2026-08-19",
+      "published_at": "2026-08-19T21:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding-agent reliability and specification-review workflow",
+      "event_type": "product release",
+      "keywords": [
+        "AWS",
+        "Kiro",
+        "Kiro CLI",
+        "coding agent",
+        "spec review",
+        "AI session titles",
+        "stream recovery",
+        "developer tools"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Kiro CLI v2.19.0",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/kiro-2.19.0"
+      },
+      "supporting_sources": [
+        {
+          "title": "Spec Review Mouse Support, AI Session Titles, and Automatic Stream Recovery",
+          "publisher": "Kiro",
+          "url": "https://kiro.dev/changelog/cli/2-19/"
+        }
+      ],
+      "event_summary": "Kiro выпустила CLI 2.19.0: в экран review спецификаций добавлена работа мышью, в picker возобновления V3-сессий — автоматически сгенерированные ИИ-названия, а потоковые ответы получили watchdog, автоматические retry с backoff и 60-минутный timeout.",
+      "verified_facts": [
+        "Официальный changelog Kiro датирует версию 2.19.0 19 августа 2026 года.",
+        "Spec review поддерживает прокрутку и позиционирование курсора мышью с переключателем клавишей m.",
+        "V3 session resume picker показывает краткое AI-generated название, суммирующее первый prompt.",
+        "Для потоковых ответов добавлены idle watchdog, повторные попытки при throttling/5xx/обрывах соединения и 60-минутный timeout по умолчанию."
+      ],
+      "significance": "Улучшения делают CLI-агента более пригодным для длительных сессий и review-циклов, однако релиз в основном повышает надёжность и удобство существующего инструмента, а не меняет рынок coding agents.",
+      "significance_score": 2,
+      "limitations": "Небольшой продуктовый релиз с ограниченной самостоятельной новостной ценностью; точное время публикации на первоисточнике не указано.",
+      "archive_status": "none",
+      "archive_reason": "В архиве нет совпадающего события о Kiro CLI 2.19.0.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата и функции подтверждены официальной страницей changelog Kiro.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-19T21:00:00.000Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-19T21:00:00.000Z; timestamp проверен Python против effective window. Это новый релиз от 19 августа 2026 года, не найденный среди опубликованных архивных сюжетов.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является правовым или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат относится к тематике developer tools.",
+      "id": "cand-008"
+    },
+    {
+      "title": "Meta rolls out Pocket, an AI vibe-coding game creation app, to all U.S. users",
+      "organization": "Meta",
+      "published_date": "2026-08-20",
+      "published_at": "2026-08-20T16:07:26+00:00",
+      "time_precision": "datetime",
+      "topic": "Consumer AI creation and AI-generated interactive games",
+      "event_type": "product rollout",
+      "keywords": [
+        "Meta",
+        "Pocket",
+        "vibe coding",
+        "AI game generation",
+        "consumer AI",
+        "mobile app",
+        "United States"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Meta brings Pocket, an app that lets you vibe-code and share games, to US users",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/20/meta-brings-pocket-an-app-that-lets-you-vibe-code-and-share-games-to-us-users/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Pocket on the App Store",
+          "publisher": "Apple App Store",
+          "url": "https://apps.apple.com/"
+        }
+      ],
+      "event_summary": "Meta expanded Pocket, its experimental mobile app for generating and sharing small interactive games through AI prompts, from an earlier Brazil test to general availability in the United States. Users can publish, remix and share generated games in a feed.",
+      "verified_facts": [
+        "TechCrunch reported a publication time of 9:07 AM PDT on August 20, 2026.",
+        "Pocket had previously been tested in Brazil and was rolling out to all U.S. users.",
+        "The app lets users generate interactive games using AI prompts and distribute them in a feed.",
+        "TechCrunch reported that creations can use phone interaction, sound, photos from the camera roll or the camera, and can be saved or remixed by other users."
+      ],
+      "significance": "A major platform company is widening consumer distribution of AI-native creation software from images and video into interactive mobile experiences. The U.S. rollout gives the experiment materially broader reach, though its standalone strategic importance remains uncertain.",
+      "significance_score": 2,
+      "limitations": "The app is experimental, U.S.-only in the cited rollout and focused on a narrow entertainment format; independent usage or retention data are unavailable.",
+      "archive_status": "none",
+      "archive_reason": "The supplied pool contains Meta's Mac Meta AI app but no Pocket rollout; the products and user workflows are distinct.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "The precise publication timestamp and U.S. rollout details are explicit in the TechCrunch report; the timestamp is inside the effective window.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-20T16:07:26+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-20T16:07:26+00:00; timestamp проверен Python против effective window. The U.S.-wide rollout was reported on August 20, 2026 and is distinct from the prior Brazil test.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "No legal or regulatory action is involved.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not a curiosity item; it is a product-distribution event, but its editorial importance is moderate.",
+      "id": "cand-009"
+    },
+    {
+      "title": "Ramp data indicates OpenAI is gaining growth momentum with U.S. business users versus Anthropic",
+      "organization": "OpenAI; Anthropic; Ramp",
+      "published_date": "2026-08-20",
+      "published_at": "2026-08-20T22:36:37+00:00",
+      "time_precision": "datetime",
+      "topic": "Enterprise AI adoption and competitive market-share indicators",
+      "event_type": "market_data",
+      "keywords": [
+        "OpenAI",
+        "Anthropic",
+        "Ramp",
+        "enterprise AI",
+        "market share",
+        "GPT-5.6 Sol",
+        "business spending"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "OpenAI is gaining on Anthropic with business users, new data indicates",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/20/openai-is-gaining-on-anthropic-with-business-users-new-data-indicates/"
+      },
+      "supporting_sources": [],
+      "event_summary": "New Ramp spending data indicates that OpenAI's growth among its U.S. business customers has recently accelerated relative to Anthropic, although Anthropic retained a larger share in Ramp's July measure. The dataset covers more than 70,000 U.S. businesses using Ramp's bill-pay and corporate-card products.",
+      "verified_facts": [
+        "TechCrunch published the report on August 20, 2026, citing data from Ramp.",
+        "Ramp's July measure put Anthropic at nearly 44% of tracked AI spend versus nearly 40% for OpenAI.",
+        "Ramp economist Ara Kharazian said OpenAI was growing faster than Anthropic among this segment in Q3 to date.",
+        "The reported dataset covers more than 70,000 U.S. businesses but is not a measurement of the total enterprise-AI market."
+      ],
+      "significance": "The data offers a fresh, qualified indicator of volatility in enterprise model-provider adoption and spending between the two leading AI labs.",
+      "significance_score": 2,
+      "limitations": "This is a third-party, non-comprehensive spending proxy rather than audited company financial reporting; Ramp's customer base may skew toward technology firms and the quarter was incomplete.",
+      "archive_status": "none",
+      "archive_reason": "The archive covered Anthropic's reported revenue scale but not this new Ramp-based competitive adoption indicator.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "The underlying evidence is clearly attributed to Ramp and its scope limitations are stated in the source.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-20T22:36:37+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-20T22:36:37+00:00; timestamp проверен Python против effective window. The article and reported current-quarter trend fall within the effective window; it is not a reprint of an archived revenue report.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "No legal or regulatory action is central to the event.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not a curiosity candidate; it is a qualified market-development signal.",
+      "id": "cand-010"
+    },
+    {
+      "title": "Micron направляет $10 млрд на Micron Research Labs для памяти, упаковки и вычислительных архитектур следующего поколения",
+      "organization": "Micron Technology",
+      "published_date": "2026-08-20",
+      "published_at": "2026-08-20T14:11:06+00:00",
+      "time_precision": "datetime",
+      "topic": "Долгосрочные R&D-инвестиции в HBM-подобные технологии памяти, интеграцию памяти и вычислений, advanced packaging и производство полупроводников для ИИ-инфраструктуры.",
+      "event_type": "investment",
+      "keywords": [
+        "Micron",
+        "HBM",
+        "AI memory",
+        "advanced packaging",
+        "semiconductor R&D",
+        "AI infrastructure",
+        "Idaho"
+      ],
+      "geography": "world",
+      "category": "chips",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "Micron Puts $10B Behind US AI Memory Research",
+        "publisher": "Data Center Knowledge",
+        "url": "https://www.datacenterknowledge.com/data-center-chips/micron-puts-10b-behind-us-ai-memory-research"
+      },
+      "supporting_sources": [],
+      "event_summary": "Micron объявила о создании Micron Research Labs в Бойсе, штат Айдахо, и о вложении $10 млрд в долгосрочные исследования памяти, архитектур memory-and-compute, передовой упаковки и будущих технологий производства. Компания планирует начать строительство площадки в 2027 году; хаб должен объединить собственные исследования Micron с университетами, государственными структурами, стартапами и отраслевыми партнёрами.",
+      "verified_facts": [
+        "Публикация Data Center Knowledge датирована 20 августа 2026 года, то есть попадает в effective window.",
+        "Micron заявила об инвестиции $10 млрд в Micron Research Labs.",
+        "Заявленные направления включают технологии памяти, архитектуры памяти и вычислений, advanced packaging и полупроводниковое производство.",
+        "Планируемая площадка находится в Бойсе, Айдахо; начало строительства ожидается в 2027 году."
+      ],
+      "significance": "Это крупное стратегическое вложение одного из ключевых поставщиков памяти для AI-ускорителей в ограничивающий слой AI-инфраструктуры: пропускную способность, ёмкость и физическую близость памяти к вычислениям. Событие значимо для цепочки поставок HBM, упаковки и масштабирования будущих AI-систем, хотя инвестиция ориентирована на долгий горизонт, а не на немедленные поставки продукции.",
+      "significance_score": 5,
+      "limitations": "Источник указывает только дату, без точного времени публикации; отдельный официальный релиз Micron в рамках данного прохода не был найден. Указанная сумма относится к исследовательской программе и не равна подтверждённому CAPEX на конкретную фабрику или HBM-производство.",
+      "archive_status": "none",
+      "archive_reason": "Событие не совпадает с уже опубликованными архивными материалами о Groq, Etched, AMD, Nvidia, дата-центрах OpenAI или российских GPU-системах.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Ключевые параметры — сумма, название исследовательской структуры, расположение и технологические направления — прямо приведены в профильной отраслевой публикации от 20 августа 2026 года.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: jsonld:datePublished:depth=0=2026-08-20T14:11:06.000Z; timestamp проверен Python против effective window. Это новое объявление Micron от 20 августа 2026 года, а не пересказ ранее заархивированной сделки или обновление уже опубликованного события.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Событие имеет прямую инфраструктурную и отраслевую значимость; оно не предлагается как curiosity-материал.",
+      "audit_direction": "hybrid_infrastructure_business",
+      "id": "cand-011"
+    },
+    {
+      "title": "xAI makes Grok 4.6 generally available through Amazon Bedrock",
+      "organization": "xAI; Amazon Web Services",
+      "published_date": "2026-08-19",
+      "published_at": "2026-08-19T00:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Enterprise distribution of a frontier long-context model for agentic coding, research and multimodal work through AWS’s managed-model platform.",
+      "event_type": "product availability expansion",
+      "keywords": [
+        "Grok 4.6",
+        "Amazon Bedrock",
+        "xAI",
+        "AWS",
+        "agents",
+        "long context",
+        "enterprise AI",
+        "model API"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Grok 4.6 on Amazon Bedrock",
+        "publisher": "xAI",
+        "url": "https://x.ai/news/grok-4-6-amazon-bedrock"
+      },
+      "supporting_sources": [
+        {
+          "title": "Amazon Bedrock now supports SpaceXAI Grok 4.6",
+          "publisher": "Amazon Web Services",
+          "url": "https://aws.amazon.com/about-aws/whats-new/2026/08/amazon-bedrock-grok-4-6/"
+        }
+      ],
+      "event_summary": "xAI announced general availability of Grok 4.6 in Amazon Bedrock. The model has a 500K-token context window, selectable reasoning effort levels and pricing of $2 per million input tokens, $0.30 cached-input tokens and $6 output tokens; AWS says it is available in all regions where Bedrock is offered.",
+      "verified_facts": [
+        "xAI’s official announcement is dated August 19, 2026 and states that Grok 4.6 is generally available on Amazon Bedrock.",
+        "xAI describes Grok 4.6 as its flagship model for long-running agents plus interactive and visual work, with a 500K-token context window and four reasoning-effort settings.",
+        "AWS independently confirms Bedrock support, regional availability and enterprise controls such as monitoring, logging and cross-region inference.",
+        "The release is an access and distribution expansion for an existing Grok 4.6 model, not the original model launch."
+      ],
+      "significance": "This places xAI’s flagship model inside AWS’s enterprise procurement, IAM, logging and billing environment, materially broadening access for organizations already standardized on Bedrock. It is a substantial distribution update for a frontier model, especially for agentic workloads.",
+      "significance_score": 4,
+      "limitations": "Both primary sources provide only the publication date, not a publication time; published_at is therefore null. The source date is within the August 19–21 effective window, but exact intraday placement cannot be independently established.",
+      "archive_status": "none",
+      "archive_reason": "No matching Grok 4.6-on-Bedrock availability event appears in the supplied recent archive or already-found candidate list.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Verified against matching official xAI and AWS announcements. The two sources agree on general availability, model positioning and core technical details.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: jsonld:datePublished:depth=0=2026-08-19T00:00:00Z; timestamp проверен Python против effective window. Grok 4.6 itself predates the window, but its general availability through Amazon Bedrock is a new, independently announced enterprise-distribution event dated August 19, 2026.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not a curiosity item: it is a consequential enterprise model-distribution update.",
+      "audit_direction": "hybrid_models_products_research",
+      "id": "cand-012"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=12, validated unique=10, final candidates=10. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 2.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota"
+  }
+}
