@@ -41,5 +41,5 @@ def test_russia_and_hybrid_adaptive_capacity_are_unchanged():
     hybrid = HYBRID.read_text(encoding="utf-8")
     assert '"id": "russia"' in primary
     assert "DEFAULT_MAXIMUM_SEARCH_CALLS = 12" in primary
-    assert "MAXIMUM_SEARCH_CALLS = 4" in hybrid
-    assert "ADAPTIVE_SEARCH_CALLS = 1" in hybrid
+    assert "DEFAULT_MAXIMUM_SEARCH_CALLS = 4" in hybrid
+    assert 'ADAPTIVE_DIRECTION_ID = "adaptive_gap"' in hybrid
