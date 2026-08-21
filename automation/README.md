@@ -26,13 +26,17 @@ Archive-ветка не используется для разработки, н
 - `content/YYYY-MM-DD/` — структурированные материалы выпусков;
 - `archive/index.json` — редакционный архив для дедупликации и material updates;
 - `archive/search-baselines/` — manifests постоянных retrieval-baseline;
+- `audits/independent-audit-journal.md` — канонический журнал независимых
+  Freshness/Completeness аудитов;
+- `audits/experiments/` — сохранённые architecture/retrieval эксперименты;
 - `config/` — production-, editorial-, site- и image-конфигурация;
 - `prompts/primary_recall_pass.md` — активный prompt одного Primary Recall v2
   прохода;
 - `prompts/research_candidates.md` — legacy monolithic primary prompt для
   истории/rollback, не активный путь свежего production;
 - `prompts/` — также editorial и fallback coverage prompts;
-- `fixtures/recall/` — исторические retrieval regression windows;
+- `fixtures/recall/` — исторические retrieval regression windows и
+  machine-readable контракты экспериментов;
 - `fixtures/research/.runtime/` — ignored доверенный runtime ingress fresh
   primary/hybrid research в существующий generator; содержимое не коммитится;
 - `specs/` — канонические редакционные и технические контракты;
@@ -92,8 +96,9 @@ Responses-output ceiling для каждого Primary pass равен **6000 to
 5. `business_investment_partnerships` — инвестиции, M&A, financing,
    партнёрства, enterprise;
 6. `china_asia_models` — модели, релизы, open-weight, chips/cloud региона;
-7. `china_asia_integrations` — продуктовые интеграции, deployment и
-   партнёрства в Китае/Азии;
+7. `china_asia_integrations` — отдельный China/Asia business + integration route:
+   integrations, deployments, partnerships, AI-business, earnings, revenue,
+   strategy и cloud;
 8. `russia` — российские компании, исследования, внедрения, инфраструктура,
    regulation/security;
 9. `developer_tools` — coding agents, IDE, CLI и agentic development;
@@ -120,17 +125,28 @@ archive dedupe остаётся обязательным. События за п
 
 Effective window имеет две роли. Первые 24 часа от effective start до continuity
 anchor являются **healing overlap**, а весь window остаётся допустимой границей
-кандидатов. Но Web Search ranking больше не пытается кодировать эти границы
-календарными датами. Primary, Hybrid и Coverage используют короткие date-free
-relative-freshness queries (`latest`/`recent`/`current`/`breaking`), после чего
-фактическая дата/timestamp источника строго валидируется против полного effective
-window. Так overlap остаётся доступен для healing, а слово `latest` не получает
-ложный статус редакционного фильтра.
+кандидатов. Но Web Search ranking не кодирует эти границы календарными датами.
+Primary, Hybrid и Coverage используют короткие date-free relative-freshness
+queries (`latest`/`recent`/`current`/`breaking`), после чего фактическая дата /
+timestamp источника строго валидируется против полного effective window. Так
+overlap остаётся доступен для healing, а слово `latest` не получает ложный
+статус редакционного фильтра.
 
 Broad safety nets `global_breaking` и `independent_missing_events` не имеют API
 domain filter. `major_agencies` остаётся отдельным дополнительным sweep по
-Reuters/AP/Bloomberg/FT. Для этого прохода закреплён короткий date-free query `latest AI chips data centers investments deals policy security`. Это ranking-шансы, а не whitelist кандидатов или
-издательская квота; остальные Primary directions также остаются широкими.
+Reuters/AP/Bloomberg/FT. Для этого прохода закреплён короткий date-free query
+`latest AI chips infrastructure financing earnings business deals policy security`.
+Он расширяет coverage крупных AI-business/earnings/financing событий внутри
+существующего search slot и не увеличивает budget.
+
+Два China/Asia-прохода сохраняются раздельно. `china_asia_models` не меняется и
+отвечает за model/product/release discovery. Второй слот сохраняет стабильный id
+`china_asia_integrations`, но его текущий query
+`latest China Asia AI business earnings revenue strategy cloud partnerships deployments`
+намеренно добавляет business/earnings/revenue/strategy, сохраняя прежние
+integration/partnership/deployment semantics. Это ranking-путь в candidate pool,
+а не квота на азиатскую историю в финале. `russia` остаётся отдельным
+обязательным Primary slot и не расходуется agency/Asia routing.
 
 Wikipedia и Reddit не являются допустимым основным подтверждением свежего
 новостного события. ArXiv остаётся нормальным первоисточником действительно
@@ -158,9 +174,9 @@ validated pool и события, отброшенные только финал
 Два China/Asia-прохода являются намеренным контрактом. Regression-эксперимент
 на историческом окне 2026-08-08 02:48:25+03:00 → 2026-08-11
 02:50:46+03:00 показал: одна широкая regional-проверка обнаружила 5 из 6
-контрольных событий, но пропустила Apple/Qwen integration. Отдельный
-`china_asia_integrations` pass поднял шестое событие без увеличения бюджета.
-Fixture: `fixtures/recall/2026-08-11.json`.
+контрольных событий, но пропустила Apple/Qwen integration. Отдельный второй
+China/Asia pass поднял шестое событие без увеличения бюджета. Fixture:
+`fixtures/recall/2026-08-11.json`.
 
 Второй обязательный regression fixture: `fixtures/recall/2026-08-12.json`.
 Он фиксирует production run `31548550639`, где все 12 search actions завершились
@@ -168,6 +184,13 @@ Fixture: `fixtures/recall/2026-08-11.json`.
 runtime research-input. MUST_DISCOVER-контроли включают свежие Reuters-сюжеты
 IBM/Together AI/Nvidia, Nvidia Nemotron/NeMo и CoreWeave. Там же закреплён
 bounded backfill-контроль Meta Muse Glimmer.
+
+Regression fixture `fixtures/recall/2026-08-13.json` фиксирует ещё один
+upstream-recall класс: production `major_agencies` не поднял пять high-signal
+контролей, а независимые source-focused natural-language searches восстановили
+их без увеличения 12-search бюджета. Fixture
+`fixtures/recall/2026-08-21-agency-asia.json` добавляет свежий contract по
+Broadcom/Google-Marvell/Alibaba и Baidu/Alibaba Asia business semantics.
 
 Live run `31566813147` выявил следующий класс проблемы: все 12 primary searches,
 editorial и coverage завершились, но `major_agencies` не имел ни одного
@@ -235,11 +258,11 @@ completeness пула. Если целый кластер пуст, разреш
 hybrid pass может использовать до трёх navigation tool actions после своего
 единственного search для source verification.
 
-Hybrid `_time_hint` детерминированно сдвигает query start на 24 часа относительно
-effective start, то есть обратно к continuity anchor. Поэтому даты поисковой
-строки относятся к основному continuity-периоду; более ранний healing overlap
-остаётся допустимым только для случайно найденного важного пропуска и не должен
-доминировать ranking.
+Hybrid query planning следует тому же date-free relative-freshness контракту.
+Полное effective window сохраняется для eligibility, включая bounded healing
+overlap. Изменение agency/Asia query не перераспределяет и не отнимает один
+adaptive Hybrid slot, поэтому regional zero-pool check для Asia/Russia остаётся
+доступным как раньше.
 
 Все NEW-only hybrid candidates проходят те же строгие проверки. Editorial
 повторяется только если принят хотя бы один кандидат. Перед rerun primary
@@ -276,9 +299,8 @@ Production targeted passes получают одну search operation и до т
 tool calls для проверки найденных страниц. Это не расширяет search budget.
 Исторические multi-search callers сохраняют прежний hard `max_tool_calls` cap и
 не получают скрытого navigation allowance. Query discipline у Coverage та же,
-что у Primary/Hybrid: search сначала ранжирует основной continuity-период после
-первых 24 часов healing overlap, а полное effective window остаётся границей
-пригодности кандидата.
+что у Primary/Hybrid: date-free relative-freshness search и строгая eligibility
+проверка против полного effective window.
 
 Обязательные направления:
 
@@ -310,8 +332,9 @@ deploy; те же правила действуют для `partial`, `budget_ex
 Формула production-контракта: **12 primary + до 4 hybrid + до 7 coverage**.
 Теоретический worst case: **23 search operations**. Navigation tool calls
 увеличивают общее число hosted tool invocations, но не этот поисковый потолок.
-Primary v2 повышает recall перераспределением существующего search budget, а не
-скрытым увеличением поисковых расходов.
+Правка 2026-08-21 не добавляет 13-й agency search: сначала исправляется semantic
+coverage существующего обязательного слота. Если тот же Must Include agency miss
+повторится после изменения, новый rescue требует отдельного эксперимента.
 
 ## Recovery
 
@@ -377,55 +400,49 @@ Main CI дополнительно проверяет production workflow contra
 RSS, sitemap, Schema.org и отсутствие изменений защищённых путей. Точный
 актуальный набор команд задаётся `.github/workflows/ci.yml`.
 
-## Source-focused recall после production 2026-08-13 и 2026-08-14
+## Retrieval experiment 2026-08-21: agency + Asia
 
-Regression fixture `fixtures/recall/2026-08-13.json` фиксирует run
-`31652757802`: candidate pool содержал 4 события и editorial опубликовал все 4,
-поэтому пропуски локализованы в discovery. Независимые source-focused запросы по
-тому же effective window восстановили пять controls: Pixel 11/Gemini, Nebius,
-River AI, IBM/Together AI и Nvidia Nemotron.
+Контролируемый эксперимент сравнил текущую схему с repository regression data за
+последнюю неделю, включая fixtures 2026-08-11, 2026-08-12, 2026-08-13 и
+production-аудиты 17–21 августа. Подробный отчёт:
+`audits/experiments/2026-08-21-agency-asia-recall.md`.
+Machine-readable contract:
+`fixtures/recall/2026-08-21-agency-asia.json`.
 
-Свежий production 14 августа выявил следующий класс miss: все 12 Primary, четыре
-Hybrid и шесть Coverage searches технически завершились, однако почти все
-фактические query использовали даты всего расширенного effective window, включая
-24-часовой healing overlap. Ranking насыщался старыми материалами, а несколько
-свежих событий основного continuity-периода не попали в candidate pool. Кроме
-того, `global_breaking` и `major_agencies` оба были Reuters-focused, поэтому
-high-signal slots частично повторяли один source-ranking bias.
+Результат:
 
-Primary search budget остаётся 12, но routing теперь разделён без дублирования:
-`global_breaking` использует source-neutral funding/acquisition/M&A/major-business
-query внутри `reuters.com` API filter, `major_agencies` использует source-neutral
-major-AI query внутри `bloomberg.com` + `ft.com` filter,
-`independent_missing_events` делает source-neutral consumer-AI / major technology
-/ policy sweep внутри `apnews.com` + `ap.org` filter после просмотра
-существующего pool. Это source routing для ranking, не whitelist кандидатов.
-`models_products_agents` также учитывает крупные consumer-device/OS/service
-launches, если AI materially part of launch.
+- расширить `major_agencies` semantics до infrastructure/financing/earnings/
+  business внутри существующего Reuters/AP/Bloomberg/FT слота;
+- сохранить отдельный `china_asia_models`;
+- расширить второй China/Asia slot до business/earnings/revenue/strategy, не
+  теряя integrations/partnerships/deployments;
+- сохранить отдельный `russia` slot;
+- не трогать Hybrid adaptive slot, Coverage и Source Freshness Proof;
+- не добавлять 13-й Primary search, пока новый production ряд не докажет, что
+  semantic fix недостаточен.
 
-Primary, Hybrid и fallback Coverage используют одинаковую continuity-first query
-discipline: первые 24 часа effective window до continuity anchor являются
-healing overlap, а поисковая строка прежде всего использует календарные даты
-основного периода после anchor до текущего cutoff. Кандидаты из overlap не
-запрещены и всё ещё могут восстановить крупный пропуск предыдущего выпуска.
-Queries остаются короткими natural-language фразами, ориентир 6–18 значимых
-слов, без `after:`, `before:`, `site:`, длинных `OR`-цепочек, скобок и огромных
-entity/domain lists. `general_coverage_gaps` использует существующий API domain
-filter вместо ручного `site:`-мегазапроса.
+Новые query-replay в интерактивном окружении выполнялись доступным assistant web
+search и не выдаются за чистый Terra A/B, потому что отдельный Terra tool в этом
+окружении не был доступен. Production baseline и исторические artifacts при этом
+были получены от `gpt-5.6-terra`. Пользовательский production API для эксперимента
+не расходовался.
 
-Для modern `primary-recall.json` с `search_window` source-health дополнительно
-требует хотя бы одно свежее in-window Reuters/AP/Bloomberg/FT evidence среди
-`global_breaking`, `major_agencies`, `independent_missing_events`. Dated agency
-URL или verified in-window agency candidate считается evidence; stale author,
-newsletter, event или old document page не считается. Legacy diagnostics без
-`search_window` сохраняют backward compatibility. Search ceiling не меняется:
-12 Primary + до 4 Hybrid + до 7 Coverage = максимум 23 operations.
+## Канонический независимый мониторинг
 
+`audits/independent-audit-journal.md` хранит накопленную независимую историю
+Freshness/Completeness. После каждого успешного выпуска журнал следует обновлять
+на внешнем quality-control проходе, не включая его в платный production pipeline.
+Проверяются точное effective window, candidate/rejection anatomy, Freshness,
+Completeness, Must Include misses, source concentration, Asia/Russia и
+повторяющиеся дефекты.
+
+Журнал является evidence, а не автоматическим конфигуратором production. Один
+miss не меняет архитектуру. Повторяющийся паттерн сначала проходит отдельный
+эксперимент и architecture-wide regression/dependency audit.
 
 ## Hygiene search diagnostics
 
 Перед сохранением Primary, Hybrid и Coverage diagnostics URL, возвращённые search provider, очищаются от временных credential/token/signature query-параметров, включая AWS signed URL. Домен, путь и несекретные параметры сохраняются. Artifact secret-scanner остаётся fail-closed и не получает исключений для подписанных URL.
-
 
 ### Проверенный relative-freshness retrieval
 
@@ -437,7 +454,6 @@ ranking hint: фактическая дата/timestamp источника по-
 против полного effective window. Broad safety nets не привязаны к одному
 издателю. Если Hybrid добавил валидный candidate, но immediate editorial rerun
 упал, объединённый pool всё равно передаётся Coverage.
-
 
 Source-health после перехода на source-neutral routing проверяет свежую Reuters/AP/Bloomberg/FT evidence по **всей 12-pass Primary matrix**, а не только в `global_breaking`/`major_agencies`/`independent_missing_events`: тематический pass вправе первым обнаружить сильный agency-материал. При этом `major_agencies` всё равно обязан завершить свою search operation и иметь хотя бы один consulted source, а общий anti-junk gate по источникам не ослабляется.
 
@@ -497,7 +513,6 @@ Timezone-aware `published_at` сравнивается непосредстве�
 может подтвердить source-health: same-day recovery обязан fail-closed, потому что
 по одной дате нельзя доказать, что материал существовал до исходного cutoff.
 Стартовый date-only день остаётся допустимым для bounded healing overlap.
-
 
 ### Terminal source-health contract
 

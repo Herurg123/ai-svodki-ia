@@ -54,10 +54,28 @@ products business infrastructure`, не привязываясь к компан
 
 `major_agencies` остаётся отдельным дополнительным high-signal каналом с API
 filter Reuters/AP/Bloomberg/FT. Для этого прохода фактический query должен быть
-ровно `latest AI chips data centers investments deals policy security`. Он
-остаётся коротким, date-free и не кодирует издателя в query text; publisher
-routing задаётся API domain filter. Это дополнительный шанс ranking, а не
-доказательство отсутствия события вне этих издателей.
+ровно `latest AI chips infrastructure financing earnings business deals policy security`.
+Он остаётся коротким, date-free и не кодирует издателя в query text; publisher
+routing задаётся API domain filter. Формулировка намеренно включает business,
+earnings и financing: независимые проверки 13 и 21 августа показали, что прежний
+вариант с `data centers investments` систематически недопокрывал крупные
+AI-business/earnings события и мог возвращать stale agency pool. Это
+дополнительный шанс ranking, а не доказательство отсутствия события вне этих
+издателей и не повод увеличивать базовый 12-search Primary budget.
+
+`china_asia_integrations` сохраняется как отдельный второй China/Asia pass и не
+сливается с `china_asia_models`. Его роль расширена: помимо integrations,
+partnerships и deployments он обязан искать крупные AI-business события,
+earnings, revenue и strategy. Для этого прохода фактический query должен быть
+ровно `latest China Asia AI business earnings revenue strategy cloud partnerships deployments`.
+Это не географическая квота на публикацию: проход лишь даёт значимым азиатским
+событиям независимый путь в candidate pool. `china_asia_models` остаётся
+отдельным model/product/release маршрутом без изменений.
+
+`russia` остаётся отдельным обязательным Primary-направлением. Изменения agency
+и China/Asia routing не должны заменять, пропускать или расходовать его search
+operation. Нулевой российский pool допустим, если обязательный проход завершён и
+достойных событий действительно нет.
 
 `independent_missing_events` становится source-neutral адаптивным last-mile
 поиском без API domain filter. Учитывая уже найденный pool, найди крупнейшие
