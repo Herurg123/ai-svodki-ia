@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "name": "2026-08-21-agency-asia-recall-architecture",
+  "purpose": "Regression contract for the 2026-08-21 architecture experiment. Presence means the routing/query semantics must retain a plausible discovery path; editorial inclusion is not required.",
+  "production_window": {
+    "effective_start_at": "2026-08-19T02:36:13+03:00",
+    "continuity_start_at": "2026-08-20T02:36:13+03:00",
+    "end_at": "2026-08-21T02:40:00+03:00"
+  },
+  "major_agencies": {
+    "baseline_query": "latest AI chips data centers investments deals policy security",
+    "accepted_query": "latest AI chips infrastructure financing earnings business deals policy security",
+    "production_result": {
+      "consulted_url_count": 18,
+      "bloomberg_urls": 12,
+      "ap_urls": 6,
+      "reuters_urls": 0,
+      "ft_urls": 0,
+      "accepted_candidates": 0
+    },
+    "must_have_discovery_paths": [
+      "broadcom-ai-chip-financing",
+      "google-marvell-custom-ai-chips",
+      "alibaba-ai-cloud-earnings"
+    ]
+  },
+  "china_asia": {
+    "models_pass_must_remain_separate": true,
+    "baseline_second_pass_query": "latest China Asia AI integrations partnerships deployments",
+    "accepted_second_pass_query": "latest China Asia AI business earnings revenue strategy cloud partnerships deployments",
+    "must_have_discovery_paths": [
+      "alibaba-ai-cloud-earnings",
+      "baidu-ernie-ai-business-earnings"
+    ],
+    "preserve_integration_semantics": true
+  },
+  "architecture_invariants": {
+    "primary_search_operations": 12,
+    "hybrid_maximum_search_operations": 4,
+    "russia_primary_slot_preserved": true,
+    "china_asia_models_slot_preserved": true,
+    "coverage_budget_unchanged": true,
+    "source_freshness_proof_unchanged": true,
+    "new_paid_search_slot_added": false
+  },
+  "experiment_method": {
+    "historical_sources": [
+      "automation/fixtures/recall/2026-08-11.json",
+      "automation/fixtures/recall/2026-08-12.json",
+      "automation/fixtures/recall/2026-08-13.json",
+      "automation/audits/independent-audit-journal.md"
+    ],
+    "production_terra_baseline_used": true,
+    "new_paid_production_api_calls": false,
+    "assistant_side_replay": "web search; not represented as a clean Terra A/B because standalone Terra was unavailable in the interactive environment"
+  }
+}
