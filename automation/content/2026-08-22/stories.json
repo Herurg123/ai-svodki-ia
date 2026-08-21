@@ -1,0 +1,220 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Nvidia приобрела миноритарную долю в девелопере дата-центров Cloverleaf Infrastructure",
+    "organization": "Nvidia; Cloverleaf Infrastructure",
+    "topic": "Финансирование и подготовка энергетической и площадочной инфраструктуры для AI-дата-центров",
+    "event_type": "partnership_and_investment",
+    "status": "new",
+    "summary": "Nvidia объявила о партнерстве с Cloverleaf Infrastructure, девелопером площадок и энергоснабжения для дата-центров. По данным Reuters, Nvidia получила миноритарную долю; размер инвестиции публично не раскрыт, а по данным WSJ он может составить несколько сотен миллионов долларов.",
+    "published_at": "2026-08-21T22:37:38+00:00",
+    "published_date": "2026-08-21",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Nvidia partners with data center developer Cloverleaf",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/21/nvidia-partners-with-data-center-developer-cloverleaf/"
+      }
+    ],
+    "keywords": [
+      "Nvidia",
+      "Cloverleaf Infrastructure",
+      "AI data centers",
+      "power infrastructure",
+      "minority stake",
+      "data-center development"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "GitHub Copilot запустил совместные cloud-agent сессии в Microsoft Teams и Slack",
+    "organization": "GitHub; Microsoft; Slack",
+    "topic": "Совместная постановка, выполнение и review задач coding-агентам прямо в корпоративных чатах",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "GitHub вывел Copilot cloud agent в публичный preview для Microsoft Teams и Slack. Команды могут упоминать @GitHub в обсуждениях, совместно направлять агентную сессию, поручать ей исследование проблем и изменения кода, а затем получать draft pull request; выполнение идёт асинхронно в защищённой облачной песочнице.",
+    "published_at": "2026-08-21T09:03:36-07:00",
+    "published_date": "2026-08-21",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Shared agentic work with GitHub Copilot in Microsoft Teams",
+        "publisher": "GitHub Changelog",
+        "url": "https://github.blog/changelog/2026-08-21-shared-agentic-work-with-github-copilot-in-microsoft-teams"
+      }
+    ],
+    "keywords": [
+      "GitHub Copilot",
+      "cloud agent",
+      "Microsoft Teams",
+      "Slack",
+      "coding agents",
+      "agentic development",
+      "cloud sandbox",
+      "pull requests"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "NVIDIA заявила о 100% результате архитектуры AVO на публичном наборе ARC-AGI-3",
+    "organization": "NVIDIA; Anthropic; Claude",
+    "topic": "Долгосрочные AI-агенты, agent harnesses и бенчмаркинг интерактивного рассуждения",
+    "event_type": "research announcement",
+    "status": "new",
+    "summary": "NVIDIA представила результаты Agentic Variation Operators (AVO), собственной архитектуры агентного выполнения с постоянной памятью, инструментами и supervising-компонентом. Компания заявила, что система с Claude Opus 5 прошла все 183 уровня 25 сред публичного набора ARC-AGI-3 со score 100.00 RHAE; это подчёркивает роль системного harness, а не только базовой модели, в длительных автономных задачах.",
+    "published_at": "2026-08-21T13:00:00+00:00",
+    "published_date": "2026-08-21",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "NVIDIA AVO Reaches 100% on ARC-AGI-3, Demonstrating a Frontier-Level General-Purpose Architecture for Long-Horizon Autonomous Agents",
+        "publisher": "NVIDIA Technical Blog",
+        "url": "https://developer.nvidia.com/blog/nvidia-avo-reaches-100-on-arc-agi-3-demonstrating-a-frontier-level-general-purpose-architecture-for-long-horizon-autonomous-agents/"
+      }
+    ],
+    "keywords": [
+      "NVIDIA AVO",
+      "AI agents",
+      "ARC-AGI-3",
+      "long-horizon agents",
+      "persistent memory",
+      "supervisor",
+      "Claude Opus 5"
+    ],
+    "geography": "world",
+    "category": "research"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "TechCrunch воспроизвёл jailbreak Claude Opus 4.6 для обхода контентных ограничений",
+    "organization": "Anthropic; Claude",
+    "topic": "Безопасность и jailbreak-устойчивость доступных через API моделей Claude",
+    "event_type": "security_vulnerability_report",
+    "status": "new",
+    "summary": "TechCrunch сообщил, что воспроизвел многошаговую технику jailbreak, при которой Claude Opus 4.6 выдавал запрещенный сексуально явный контент, несмотря на публичные правила Anthropic. Издание пишет, что провело пять отдельных воспроизведений; модель остается доступной через API и сторонние платформы.",
+    "published_at": "2026-08-21T23:07:25+00:00",
+    "published_date": "2026-08-21",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic’s Opus 4.6 is a smut-machine",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/21/anthropics-opus-4-6-is-a-smut-machine/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude Opus 4.6",
+      "jailbreak",
+      "AI safety",
+      "content safeguards",
+      "API models"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Starcloud привлекла $250 млн на орбитальные дата-центры для ИИ",
+    "organization": "Starcloud; Manhattan West Ventures; Nvidia; Cisco",
+    "topic": "Финансирование орбитальной инфраструктуры для AI inference и спутниковых дата-центров",
+    "event_type": "funding",
+    "status": "new",
+    "summary": "Starcloud сообщила TechCrunch о расширении мартовского раунда Series A на $250 млн, что дает компании оценку $2,3 млрд. Стартап разрабатывает спутники для выполнения AI inference на орбите и намерен направить средства на производство и аппарат Starcloud-3.",
+    "published_at": "2026-08-21T14:00:00+00:00",
+    "published_date": "2026-08-21",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Starcloud raises $250 million for orbital data centers as launch options dry up",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/21/starcloud-raises-200-million-for-orbital-data-centers-as-launch-options-dry-up/"
+      }
+    ],
+    "keywords": [
+      "Starcloud",
+      "orbital data centers",
+      "AI inference",
+      "satellites",
+      "Nvidia",
+      "Cisco",
+      "funding"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Alibaba сообщила об ускорении ИИ-облака и росте инвестиций в инфраструктуру",
+    "organization": "Alibaba Group; Alibaba Cloud; Qwen",
+    "topic": "China AI cloud business, AI infrastructure investment and commercialization of AI services",
+    "event_type": "earnings and AI infrastructure strategy update",
+    "status": "new",
+    "summary": "Alibaba сообщила за квартал апрель—июнь о росте выручки AI Cloud and Compute Services на 45% год к году до 48,4 млрд юаней. Одновременно капитальные затраты, включая ИИ-инфраструктуру для удовлетворения спроса клиентов, выросли на 75% до 67,7 млрд юаней. Компания связывает спрос с внедрением AI-продуктов и агентов; AP также указывает на продолжение коммерческого развития Qwen и агентных сервисов для корпоративных клиентов.",
+    "published_at": null,
+    "published_date": "2026-08-20",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Alibaba quarterly profit drops 75% as AI investment spending grows",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/china-alibaba-earnings-ai-cloud-8a30302d23a96fc7b9aab664b9c1897d"
+      }
+    ],
+    "keywords": [
+      "Alibaba",
+      "Alibaba Cloud",
+      "AI Cloud and Compute Services",
+      "Qwen",
+      "AI agents",
+      "cloud revenue",
+      "capital expenditure",
+      "China"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Tencent Zhuque Lab выявила риски косвенной prompt-инъекции в DeepSeek Harness",
+    "organization": "DeepSeek; Tencent Zhuque Lab",
+    "topic": "Безопасность AI-агентов: косвенная prompt-инъекция через веб-контент, документы, скрытые Unicode-символы и Skills в DeepSeek Harness",
+    "event_type": "security research disclosure",
+    "status": "new",
+    "summary": "Tencent Zhuque Lab опубликовала результаты контролируемого тестирования DeepSeek Harness (DSH), open-source agent harness компании DeepSeek. В 14 560 запусках исследователи моделировали косвенные prompt-инъекции через 16 типов носителей, включая веб-страницы, документы, email, Skills, PDF-метаданные и скрытые Unicode-символы; чувствительные действия выполнялись только локальными имитационными инструментами. По заявленным результатам, полное успешное достижение цели инъекции фиксировалось в 5,3–5,6% запусков, а вызов simulated sensitive tool — в 4,4% случаев.",
+    "published_at": "2026-08-20T08:49:46+00:00",
+    "published_date": "2026-08-20",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "A.I.G Red Team's DeepSeek Harness test: 14,560 runs revealed Agent injection risks.",
+        "publisher": "Tencent Zhuque Lab",
+        "url": "https://matrix.tencent.com/en/2026/08/20/deepseek-harness-agent-injection-risk"
+      }
+    ],
+    "keywords": [
+      "DeepSeek Harness",
+      "DSH",
+      "indirect prompt injection",
+      "agent security",
+      "Tencent Zhuque Lab",
+      "AI-Infra-Guard",
+      "Skills",
+      "hidden Unicode"
+    ],
+    "geography": "world",
+    "category": "security"
+  }
+]

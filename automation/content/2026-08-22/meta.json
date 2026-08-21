@@ -1,0 +1,43 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-22",
+  "slug": "2026-08-22",
+  "title": "ИИ-Сводка на 22 августа 2026",
+  "description": "Nvidia инвестирует в площадки дата-центров, GitHub переносит coding-агентов в рабочие чаты, Alibaba ускоряет ИИ-облако, а новые исследования показывают риски и возможности агентных обвязок.",
+  "published_at": "2026-08-22T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-22.png",
+  "topics": [
+    "Nvidia",
+    "дата-центры",
+    "GitHub Copilot",
+    "агенты ИИ",
+    "ARC-AGI-3",
+    "Claude",
+    "jailbreak",
+    "Starcloud",
+    "Alibaba Cloud",
+    "DeepSeek Harness",
+    "prompt-инъекции",
+    "ИИ-инфраструктура"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-002."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Выбраны три самостоятельных события высокой редакционной значимости: инвестиция Nvidia в девелопера дата-центров, воспроизводимый jailbreak Claude и крупный раунд Starcloud. Они относятся к разным компаниям и сегментам рынка и не являются взаимозаменяемыми."
+    }
+  ]
+}

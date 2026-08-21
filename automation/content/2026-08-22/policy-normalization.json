@@ -1,0 +1,23 @@
+{
+  "status": "applied",
+  "changed_fields": [],
+  "changed_count": 0,
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-002."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Выбраны три самостоятельных события высокой редакционной значимости: инвестиция Nvidia в девелопера дата-центров, воспроизводимый jailbreak Claude и крупный раунд Starcloud. Они относятся к разным компаниям и сегментам рынка и не являются взаимозаменяемыми."
+    }
+  ]
+}

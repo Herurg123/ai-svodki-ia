@@ -1,0 +1,143 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-08-22",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-08-22.json",
+  "warnings": [
+    "cand-002: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: techcrunch (4)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-08-22",
+  "started_at": "2026-08-21T23:45:04+00:00",
+  "finished_at": "2026-08-21T23:45:38+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 36,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "ce3e9ad517aa06aaa0a1210a3b7acf406b29396fc45c4aab5cb16b0c814065c4",
+    "candidates_sha256": "02b9ae55b5ee0b44d104ca6ef0c35264881aa521e86b2709be201046f91c7362",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-08-20T02:40:00+03:00",
+      "end_at": "2026-08-22T02:37:50+03:00",
+      "latest_archive_at": "2026-08-21T02:40:00+03:00",
+      "start_date": "2026-08-20",
+      "end_date": "2026-08-22",
+      "latest_archive_date": "2026-08-21"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "5488899e6814ad38faf3db9114dc8998624c7fcc8a83d08642abaf78f84490cb",
+    "editorial_sha256": "224eee1bc62b21e3f1e17ffa10d64ee0805de0379ca75f9f4f05bf10a67527fa",
+    "digest_sha256": "bbc77a4487728ba61a4260c642668e008204094ef64520550c46f18c9cc7cc35",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-08-22-ai-digest.png",
+          "normalized_value": "ai-svodka-2026-08-22.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-002."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, russia, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Выбраны три самостоятельных события высокой редакционной значимости: инвестиция Nvidia в девелопера дата-центров, воспроизводимый jailbreak Claude и крупный раунд Starcloud. Они относятся к разным компаниям и сегментам рынка и не являются взаимозаменяемыми."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0bda2581a35e1a7c016a88e301641887d1aa14f8b3325908e4",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 97549,
+        "input_tokens_details": {
+          "cache_write_tokens": 97546,
+          "cached_tokens": 0
+        },
+        "output_tokens": 3953,
+        "output_tokens_details": {
+          "reasoning_tokens": 308
+        },
+        "total_tokens": 101502
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 97549,
+    "output_tokens": 3953,
+    "total_tokens": 101502,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "847f925dd33d059068d7f9ed39adcb961c9e63d1",
+    "run_id": "32537516584",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-08-22T02:37:50+03:00"
+}

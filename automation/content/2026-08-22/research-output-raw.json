@@ -1,0 +1,536 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-22",
+  "search_window": {
+    "start_at": "2026-08-20T02:40:00+03:00",
+    "end_at": "2026-08-22T02:37:50+03:00",
+    "latest_archive_at": "2026-08-21T02:40:00+03:00",
+    "start_date": "2026-08-20",
+    "end_date": "2026-08-22",
+    "latest_archive_date": "2026-08-21"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=3, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Nvidia приобрела миноритарную долю в девелопере дата-центров Cloverleaf Infrastructure",
+      "organization": "Nvidia; Cloverleaf Infrastructure",
+      "published_date": "2026-08-21",
+      "published_at": "2026-08-21T22:37:38+00:00",
+      "time_precision": "datetime",
+      "topic": "Финансирование и подготовка энергетической и площадочной инфраструктуры для AI-дата-центров",
+      "event_type": "partnership_and_investment",
+      "keywords": [
+        "Nvidia",
+        "Cloverleaf Infrastructure",
+        "AI data centers",
+        "power infrastructure",
+        "minority stake",
+        "data-center development"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Nvidia partners with data center developer Cloverleaf",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/21/nvidia-partners-with-data-center-developer-cloverleaf/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Nvidia объявила о партнерстве с Cloverleaf Infrastructure, девелопером площадок и энергоснабжения для дата-центров. По данным Reuters, Nvidia получила миноритарную долю; размер инвестиции публично не раскрыт, а по данным WSJ он может составить несколько сотен миллионов долларов.",
+      "verified_facts": [
+        "TechCrunch сообщил о публикации партнерства 21 августа 2026 года в 15:37 PDT.",
+        "Cloverleaf занимается подготовкой электроснабжения и другой критической инфраструктуры для площадок дата-центров.",
+        "TechCrunch со ссылкой на Reuters сообщил, что Nvidia получила миноритарную долю в Cloverleaf.",
+        "Условия сделки и точная сумма не были раскрыты."
+      ],
+      "significance": "Сделка продолжает прямое участие Nvidia в финансировании и развитии физической инфраструктуры, необходимой для масштабирования AI-вычислений, а не только в поставках ускорителей.",
+      "significance_score": 4,
+      "limitations": "Точная сумма и условия инвестирования не раскрыты; оценка возможного размера сделки основана на сообщении WSJ, пересказанном TechCrunch.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть отдельный сюжет об инвестиции Nvidia в SB Energy для проекта OpenAI в Огайо, но Cloverleaf является самостоятельной сделкой и отдельным инфраструктурным контрагентом.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Факт партнерства и миноритарной доли подтвержден свежим материалом TechCrunch, который ссылается на объявление компаний и Reuters.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-21T22:37:38+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-21T22:37:38+00:00; timestamp проверен Python против effective window. Сделка опубликована внутри effective window и не совпадает с архивными сюжетами.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является legal-событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-категории.",
+      "id": "cand-001"
+    },
+    {
+      "title": "Alibaba отчиталась об ускорении AI Cloud: выручка AI/облачных сервисов выросла на 45%, капзатраты на ИИ-инфраструктуру — на 75%",
+      "organization": "Alibaba Group; Alibaba Cloud; Qwen",
+      "published_date": "2026-08-20",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "China AI cloud business, AI infrastructure investment and commercialization of AI services",
+      "event_type": "earnings and AI infrastructure strategy update",
+      "keywords": [
+        "Alibaba",
+        "Alibaba Cloud",
+        "AI Cloud and Compute Services",
+        "Qwen",
+        "AI agents",
+        "cloud revenue",
+        "capital expenditure",
+        "China"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "Alibaba quarterly profit drops 75% as AI investment spending grows",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/china-alibaba-earnings-ai-cloud-8a30302d23a96fc7b9aab664b9c1897d"
+      },
+      "supporting_sources": [
+        {
+          "title": "Alibaba Group Announces June Quarter 2026 Results",
+          "publisher": "Alibaba Group (syndicated via Yahoo Finance)",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/alibaba-group-announces-june-quarter-093100015.html"
+        }
+      ],
+      "event_summary": "Alibaba сообщила за квартал апрель—июнь о росте выручки AI Cloud and Compute Services на 45% год к году до 48,4 млрд юаней. Одновременно капитальные затраты, включая ИИ-инфраструктуру для удовлетворения спроса клиентов, выросли на 75% до 67,7 млрд юаней. Компания связывает спрос с внедрением AI-продуктов и агентов; AP также указывает на продолжение коммерческого развития Qwen и агентных сервисов для корпоративных клиентов.",
+      "verified_facts": [
+        "Alibaba сообщила о квартальной выручке AI Cloud and Compute Services в 48,4 млрд юаней, что на 45% выше год к году.",
+        "Капитальные затраты компании за квартал выросли на 75% до 67,7 млрд юаней; в них входят инвестиции в ИИ-инфраструктуру.",
+        "Alibaba заявила, что расширяет вычислительные мощности в расчёте на рост внедрения AI-агентов клиентами.",
+        "Это не повторяет архивный сюжет от 18 августа о продаже Lingxi Games для перераспределения капитала в ИИ и облако: новый факт — опубликованные квартальные показатели AI Cloud, capex и спроса."
+      ],
+      "significance": "Это один из наиболее масштабных свежих индикаторов коммерциализации и инфраструктурного спроса на ИИ в Китае: крупный локальный облачный провайдер одновременно зафиксировал ускорение AI-выручки и резко нарастил расходы на мощности. Событие релевантно расширенному мандату прохода на China/Asia AI business, revenue и strategy.",
+      "significance_score": 4,
+      "limitations": "Источник AP даёт календарную дату публикации в поисковой выдаче, но на доступной странице не отображается надёжный точный timestamp; поэтому использована точность date. Часть продуктовых деталей о Qwen и агентных сервисах основана на корпоративных заявлениях и не является независимой оценкой.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве есть более ранний сюжет о стратегии Alibaba по финансированию AI buildout, но нет опубликованных в этом окне квартальных результатов AI Cloud и capex.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "AP независимо подтверждает ключевые финансовые показатели, инвестиции в инфраструктуру и связь роста с AI-сервисами. Событие опубликовано 20 августа 2026 года и попадает в effective window.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-20T15:05:43; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-20T15:05:43; timestamp проверен Python против effective window. Новые квартальные финансовые результаты и новый масштаб расходов на AI-инфраструктуру, опубликованные в текущем окне; это не старая перепечатка и не точный дубль архивных материалов.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран как значимое бизнес- и deployment-событие, а не как curiosity-материал.",
+      "id": "cand-002"
+    },
+    {
+      "title": "GitHub Copilot запустил совместные cloud-agent сессии в Microsoft Teams и Slack",
+      "organization": "GitHub; Microsoft; Slack",
+      "published_date": "2026-08-21",
+      "published_at": "2026-08-21T09:03:36-07:00",
+      "time_precision": "datetime",
+      "topic": "Совместная постановка, выполнение и review задач coding-агентам прямо в корпоративных чатах",
+      "event_type": "product release",
+      "keywords": [
+        "GitHub Copilot",
+        "cloud agent",
+        "Microsoft Teams",
+        "Slack",
+        "coding agents",
+        "agentic development",
+        "cloud sandbox",
+        "pull requests"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Shared agentic work with GitHub Copilot in Microsoft Teams",
+        "publisher": "GitHub Changelog",
+        "url": "https://github.blog/changelog/2026-08-21-shared-agentic-work-with-github-copilot-in-microsoft-teams"
+      },
+      "supporting_sources": [
+        {
+          "title": "The new GitHub Copilot experience in Slack",
+          "publisher": "GitHub Changelog",
+          "url": "https://github.blog/changelog/2026-08-21-the-new-github-copilot-experience-in-slack"
+        }
+      ],
+      "event_summary": "GitHub вывел Copilot cloud agent в публичный preview для Microsoft Teams и Slack. Команды могут упоминать @GitHub в обсуждениях, совместно направлять агентную сессию, поручать ей исследование проблем и изменения кода, а затем получать draft pull request; выполнение идёт асинхронно в защищённой облачной песочнице.",
+      "verified_facts": [
+        "В Microsoft Teams публичный preview доступен пользователям платных планов GitHub Copilot; сессии cloud agent расходуют AI credits, а sandbox usage тарифицируется отдельно.",
+        "В Slack preview доступен организациям на GitHub Copilot Business и Enterprise; агент может создавать issues, расследовать сбои, реализовывать и валидировать изменения, а также открывать pull request.",
+        "В обеих интеграциях GitHub предусматривает дополнительное обязательное одобрение для PR, созданных агентом, чтобы сохранить human-in-the-loop контроль."
+      ],
+      "significance": "Это заметное расширение agentic development environment: GitHub переносит постановку и коллективное управление автономными coding-задачами из IDE и веб-интерфейса в основные рабочие каналы инженерных команд.",
+      "significance_score": 3,
+      "limitations": "Это публичный preview, а не общедоступный финальный релиз; возможности и биллинг различаются между Teams и Slack.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет этого запуска интеграций Copilot cloud agent в Teams и Slack.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Обе части релиза датированы 21 августа 2026 года на официальном GitHub Changelog; функции, доступность и ограничения подтверждены первоисточниками.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: jsonld:datePublished:depth=0=2026-08-21T09:03:36-07:00; timestamp проверен Python против effective window. Source Freshness Proof v1: jsonld:datePublished:depth=0=2026-08-21T09:03:36-07:00; timestamp проверен Python против effective window. Официальные релизы опубликованы в пределах effective window и не совпадают с уже найденными текущими кандидатами.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не относится к судебному или регуляторному событию.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не является curiosity-сюжетом; релевантен напрямую как крупное обновление developer tooling.",
+      "id": "cand-003"
+    },
+    {
+      "title": "NVIDIA сообщила, что её агентная архитектура AVO достигла 100% на публичном наборе ARC-AGI-3",
+      "organization": "NVIDIA; Anthropic; Claude",
+      "published_date": "2026-08-21",
+      "published_at": "2026-08-21T13:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Долгосрочные AI-агенты, agent harnesses и бенчмаркинг интерактивного рассуждения",
+      "event_type": "research announcement",
+      "keywords": [
+        "NVIDIA AVO",
+        "AI agents",
+        "ARC-AGI-3",
+        "long-horizon agents",
+        "persistent memory",
+        "supervisor",
+        "Claude Opus 5"
+      ],
+      "geography": "world",
+      "category": "research",
+      "source_type": "official",
+      "primary_source": {
+        "title": "NVIDIA AVO Reaches 100% on ARC-AGI-3, Demonstrating a Frontier-Level General-Purpose Architecture for Long-Horizon Autonomous Agents",
+        "publisher": "NVIDIA Technical Blog",
+        "url": "https://developer.nvidia.com/blog/nvidia-avo-reaches-100-on-arc-agi-3-demonstrating-a-frontier-level-general-purpose-architecture-for-long-horizon-autonomous-agents/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Nvidia just showed that the harness, not the AI model, is now the real hero",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/08/21/nvidia-just-showed-that-the-harness-not-the-ai-model-is-now-the-real-hero/"
+        }
+      ],
+      "event_summary": "NVIDIA представила результаты Agentic Variation Operators (AVO), собственной архитектуры агентного выполнения с постоянной памятью, инструментами и supervising-компонентом. Компания заявила, что система с Claude Opus 5 прошла все 183 уровня 25 сред публичного набора ARC-AGI-3 со score 100.00 RHAE; это подчёркивает роль системного harness, а не только базовой модели, в длительных автономных задачах.",
+      "verified_facts": [
+        "Пост NVIDIA опубликован 21 августа 2026 года.",
+        "NVIDIA описывает AVO как универсальную систему coding/long-horizon agents с persistent memory, tool use и supervisor.",
+        "Согласно NVIDIA, AVO завершила все 183 уровня 25 сред публичного ARC-AGI-3 и получила 100.00 RHAE.",
+        "NVIDIA отдельно оговаривает, что сравнение с другими системами не является контролируемой абляцией и что результат относится к public set, а не к semi-private/private наборам."
+      ],
+      "significance": "Это заметный свежий исследовательский результат от NVIDIA на высокорезонансном benchmark для агентного рассуждения; он также поддерживает более широкий сдвиг конкуренции от выбора модели к качеству агентной обвязки и runtime.",
+      "significance_score": 3,
+      "limitations": "Заявленные результаты исходят от NVIDIA и относятся к публичному набору ARC-AGI-3; они не являются независимой оценкой на скрытых наборах, а вклад отдельных компонентов AVO не изолирован контролируемым сравнением.",
+      "archive_status": "none",
+      "archive_reason": "Сюжет об AVO и результате ARC-AGI-3 отсутствует в предоставленном архиве и текущем пуле; это не дубль материалов о Cosmos 3 Edge, инфраструктурных инвестициях NVIDIA или иных ранее опубликованных событиях.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Официальный пост NVIDIA и независимое технологическое сообщение согласуются по дате, архитектуре AVO и заявленному результату на публичном ARC-AGI-3.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-21T13:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-21T13:00:00+00:00; timestamp проверен Python против effective window. Официальная публикация датирована 21 августа 2026 года и попадает в effective editorial window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран по исследовательской и продуктово-экосистемной значимости, а не как curiosity.",
+      "id": "cand-004"
+    },
+    {
+      "title": "TechCrunch воспроизвёл jailbreak, обходящий запрет Anthropic на сексуально явный контент в Claude Opus 4.6",
+      "organization": "Anthropic; Claude",
+      "published_date": "2026-08-21",
+      "published_at": "2026-08-21T23:07:25+00:00",
+      "time_precision": "datetime",
+      "topic": "Безопасность и jailbreak-устойчивость доступных через API моделей Claude",
+      "event_type": "security_vulnerability_report",
+      "keywords": [
+        "Anthropic",
+        "Claude Opus 4.6",
+        "jailbreak",
+        "AI safety",
+        "content safeguards",
+        "API models"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Anthropic’s Opus 4.6 is a smut-machine",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/21/anthropics-opus-4-6-is-a-smut-machine/"
+      },
+      "supporting_sources": [],
+      "event_summary": "TechCrunch сообщил, что воспроизвел многошаговую технику jailbreak, при которой Claude Opus 4.6 выдавал запрещенный сексуально явный контент, несмотря на публичные правила Anthropic. Издание пишет, что провело пять отдельных воспроизведений; модель остается доступной через API и сторонние платформы.",
+      "verified_facts": [
+        "Материал опубликован 21 августа 2026 года в 16:07 PDT.",
+        "TechCrunch утверждает, что в собственных тестах Opus 4.6 выполнил 10 из 10 прямых запросов на сексуально явный контент.",
+        "Издание сообщило о пяти отдельных воспроизведениях многошаговой техники jailbreak.",
+        "По данным материала, Opus 4.6, Opus 3 и Haiku 4.5 продолжают быть доступны через API, а Opus 4.6 и Haiku 4.5 также распространяются через Azure Foundry и Amazon Bedrock.",
+        "TechCrunch отмечает, что более новые Opus 4.7–Opus 5 были устойчивы к описанному методу."
+      ],
+      "significance": "Это свежая проверяемая уязвимость guardrails у еще доступной API-модели крупной frontier-лаборатории; она имеет значение для safety-практик, доступа несовершеннолетних и надежности заявленных ограничений контента.",
+      "significance_score": 3,
+      "limitations": "Речь идет о контентной jailbreak-уязвимости, а не о доказанном обходе защит в кибер- или биорисковых доменах; основное подтверждение основано на тестировании одного издания и неназванного исследователя.",
+      "archive_status": "none",
+      "archive_reason": "Архив содержит другие истории о безопасности моделей OpenAI, Anthropic и Copilot, но не это свежее сообщение о воспроизводимом обходе guardrails Claude Opus 4.6.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "TechCrunch описал методику, сообщил о повторных собственных тестах и получил комментарий Anthropic; материал опубликован внутри окна.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-21T23:07:25+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-21T23:07:25+00:00; timestamp проверен Python против effective window. Сообщение о конкретной jailbreak-технике и ее воспроизведении опубликовано внутри effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Нет самостоятельного крупного судебного или регуляторного действия.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-категории.",
+      "id": "cand-005"
+    },
+    {
+      "title": "Starcloud привлекла дополнительные $250 млн на орбитальные AI-дата-центры",
+      "organization": "Starcloud; Manhattan West Ventures; Nvidia; Cisco",
+      "published_date": "2026-08-21",
+      "published_at": "2026-08-21T14:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Финансирование орбитальной инфраструктуры для AI inference и спутниковых дата-центров",
+      "event_type": "funding",
+      "keywords": [
+        "Starcloud",
+        "orbital data centers",
+        "AI inference",
+        "satellites",
+        "Nvidia",
+        "Cisco",
+        "funding"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Starcloud raises $250 million for orbital data centers as launch options dry up",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/21/starcloud-raises-200-million-for-orbital-data-centers-as-launch-options-dry-up/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Starcloud сообщила TechCrunch о расширении мартовского раунда Series A на $250 млн, что дает компании оценку $2,3 млрд. Стартап разрабатывает спутники для выполнения AI inference на орбите и намерен направить средства на производство и аппарат Starcloud-3.",
+      "verified_facts": [
+        "Материал опубликован 21 августа 2026 года в 07:00 PDT.",
+        "Starcloud заявила о $250 млн дополнительного финансирования к мартовскому Series A на $170 млн.",
+        "Заявленная оценка компании после extension — $2,3 млрд.",
+        "Раунд возглавила Manhattan West Ventures; среди участников названы Nvidia и Cisco.",
+        "Компания планирует расширять производство и разрабатывать Starcloud-3 для орбитального дата-центра."
+      ],
+      "significance": "Крупный раунд для инфраструктурной компании, пытающейся создать новый физический слой AI inference; участие Nvidia усиливает стратегическую релевантность события для рынка AI-вычислений.",
+      "significance_score": 3,
+      "limitations": "Сценарий массовых орбитальных дата-центров остается ранним и зависит от будущей доступности и стоимости запусков; часть технических и коммерческих планов является заявлениями компании.",
+      "archive_status": "none",
+      "archive_reason": "В архиве нет совпадающего сюжета о Starcloud или финансировании орбитальной AI-inference-инфраструктуры.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Сумма, инвесторы, оценка и назначение капитала приведены в свежем эксклюзивном материале TechCrunch со ссылкой на компанию.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-21T14:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-21T14:00:00+00:00; timestamp проверен Python против effective window. Финансирование раскрыто внутри effective window и отсутствует в недавнем архиве.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является legal-событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Хотя технология необычна, кандидат отобран по инфраструктурной и инвестиционной значимости, а не как curiosity.",
+      "id": "cand-006"
+    },
+    {
+      "title": "AI-data стартап Micro1 сообщил о достижении $500 млн gross annual run rate на фоне спроса на данные для обучения моделей",
+      "organization": "Micro1",
+      "published_date": "2026-08-21",
+      "published_at": "2026-08-21T00:13:44+00:00",
+      "time_precision": "datetime",
+      "topic": "Рынок AI training data, data labeling и synthetic data",
+      "event_type": "business metrics report",
+      "keywords": [
+        "Micro1",
+        "AI training data",
+        "data labeling",
+        "synthetic data",
+        "annual run rate",
+        "reinforcement learning"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "AI data startup Micro1 reaches $500M gross run rate amid AI training boom",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/20/ai-data-startup-micro1-reaches-500m-gross-run-rate-amid-ai-training-boom/"
+      },
+      "supporting_sources": [],
+      "event_summary": "TechCrunch со ссылкой на знакомый с компанией источник сообщило, что Micro1 увеличила gross annual run rate со $100 млн до $500 млн за восемь месяцев. Компания поставляет экспертные и синтетические данные для обучения и оценки ИИ-моделей; сама Micro1 на запрос издания не ответила.",
+      "verified_facts": [
+        "Материал TechCrunch опубликован 20 августа 2026 года в 17:13 PDT.",
+        "По данным источника TechCrunch, gross annual run rate Micro1 вырос со $100 млн до $500 млн за восемь месяцев.",
+        "Издание оценило net annual run rate компании после выплат экспертам в $150–200 млн.",
+        "TechCrunch пишет, что Micro1 также развивает генерацию синтетических данных и набор данных для pre-training робототехники."
+      ],
+      "significance": "Метрика иллюстрирует масштабирование рынка качественных данных для training и reinforcement learning, который стал одним из ключевых ограничителей и направлений расходов AI-лабораторий. Однако это всё же частная компания и показатель не подтверждён публичной отчётностью.",
+      "significance_score": 2,
+      "limitations": "Ключевая финансовая цифра приведена со ссылкой на анонимный источник; компания не ответила на запрос TechCrunch, а gross run rate не равен признанной выручке или аудированной финансовой отчётности.",
+      "archive_status": "none",
+      "archive_reason": "Micro1 и её новые показатели роста отсутствуют среди уже найденных кандидатов и в предоставленном архиве.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Публикация авторитетного технологического издания подтверждает факт сообщения и его ограничения; независимого корпоративного подтверждения заявленной метрики не найдено в рамках этого прохода.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-21T00:13:44+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-21T00:13:44+00:00; timestamp проверен Python против effective window. Исходный материал опубликован в effective window: 20 августа 2026 года, 17:13 PDT.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат предложен как бизнес-сигнал рынка AI training data.",
+      "id": "cand-007"
+    },
+    {
+      "title": "Tencent Zhuque Lab: тест DeepSeek Harness выявил риски косвенной prompt-инъекции в агентном runtime",
+      "organization": "DeepSeek; Tencent Zhuque Lab",
+      "published_date": "2026-08-20",
+      "published_at": "2026-08-20T08:49:46+00:00",
+      "time_precision": "datetime",
+      "topic": "Безопасность AI-агентов: косвенная prompt-инъекция через веб-контент, документы, скрытые Unicode-символы и Skills в DeepSeek Harness",
+      "event_type": "security research disclosure",
+      "keywords": [
+        "DeepSeek Harness",
+        "DSH",
+        "indirect prompt injection",
+        "agent security",
+        "Tencent Zhuque Lab",
+        "AI-Infra-Guard",
+        "Skills",
+        "hidden Unicode"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "research",
+      "primary_source": {
+        "title": "A.I.G Red Team's DeepSeek Harness test: 14,560 runs revealed Agent injection risks.",
+        "publisher": "Tencent Zhuque Lab",
+        "url": "https://matrix.tencent.com/en/2026/08/20/deepseek-harness-agent-injection-risk"
+      },
+      "supporting_sources": [],
+      "event_summary": "Tencent Zhuque Lab опубликовала результаты контролируемого тестирования DeepSeek Harness (DSH), open-source agent harness компании DeepSeek. В 14 560 запусках исследователи моделировали косвенные prompt-инъекции через 16 типов носителей, включая веб-страницы, документы, email, Skills, PDF-метаданные и скрытые Unicode-символы; чувствительные действия выполнялись только локальными имитационными инструментами. По заявленным результатам, полное успешное достижение цели инъекции фиксировалось в 5,3–5,6% запусков, а вызов simulated sensitive tool — в 4,4% случаев.",
+      "verified_facts": [
+        "Материал Tencent Zhuque Lab датирован 20 августа 2026 года; точное время публикации на странице не указано.",
+        "Тестирование проводилось на реальном TypeScript runtime DSH, но с контролируемыми Source/Sink-инструментами и без реальных внешних последствий.",
+        "Исследование охватило 14 560 запусков, 13 методов атаки, 16 каналов косвенной инъекции и 35 целевых сценариев.",
+        "Авторы сообщили о 5,6% full success по RuleJudge и 5,3% по LLMJudge; simulated sensitive actions были зафиксированы в 641 случаях, или 4,4% запусков.",
+        "Для скрытых Unicode-символов в файловом представлении заявлена success rate 25,5% по RuleJudge; для Skills — 16,0% в file mode.",
+        "DeepSeek Harness на момент теста обозначен разработчиком как developer preview, а результаты относятся к конкретной тестовой конфигурации."
+      ],
+      "significance": "Это свежая и технически конкретная проверка безопасности агентной обвязки заметного китайского AI-игрока. Работа показывает, что риск для агентных систем определяется не только базовой моделью, но и тем, как runtime передает недоверенный контент из внешних источников к инструментам с побочными эффектами.",
+      "significance_score": 3,
+      "limitations": "Исследование подготовлено Tencent Zhuque Lab, а не независимым аудитом DeepSeek; оно использует контролируемую среду и simulated sinks, поэтому не подтверждает эксплуатацию на реальных развертываниях или компрометацию пользователей. Точный timestamp недоступен: публикация подтверждена календарной датой 20 августа 2026 года.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть общие сюжеты о безопасности автономных агентов и о китайских моделях в киберзадачах, но нет этого нового раскрытия с измерениями prompt-injection-рисков именно в DeepSeek Harness.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Первичный технический отчет Tencent Zhuque Lab содержит дату, описание runtime, число запусков, тестовую матрицу, определения критериев успеха и конкретные метрики. Утверждения квалифицированы как результаты контролируемого исследования, а не как доказанный инцидент в production.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-20T08:49:46.000Z; timestamp проверен Python против effective window. Новый технический отчет опубликован 20 августа 2026 года, внутри календарного диапазона effective window; это самостоятельное раскрытие результатов теста, а не перепечатка прежних сообщений о DeepSeek или GLM.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие не является судебным или регуляторным действием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-категории.",
+      "audit_direction": "security_asia",
+      "id": "cand-008"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=7, validated unique=7, final candidates=7. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-global_breaking-01",
+      "version": 1,
+      "status": "unresolved",
+      "title": "AI data startup Micro1 reaches $500M gross run rate amid AI training boom",
+      "origin_direction": "global_breaking",
+      "reason_code": "unverified",
+      "evidence_reason": "Показатель gross annual run rate основан на информации от неназванного источника; компания не ответила на запрос TechCrunch, поэтому кандидат не достигает требуемого статуса verified.",
+      "likely_significance_score": 1,
+      "entities": [
+        "Micro1"
+      ],
+      "anchors": [
+        "$500M"
+      ],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 1,
+      "health_check_needed": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota"
+  }
+}

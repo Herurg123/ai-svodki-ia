@@ -1,0 +1,24 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-003",
+    "cand-004",
+    "cand-005",
+    "cand-006",
+    "cand-002",
+    "cand-008"
+  ],
+  "excluded_candidate_ids": [
+    "cand-007"
+  ],
+  "selection_summary": "Выбраны семь подтверждённых и самостоятельных событий: инфраструктурные инвестиции Nvidia и Starcloud, развитие агентной разработки GitHub Copilot, исследовательский результат NVIDIA, проверка jailbreak-устойчивости Claude, квартальные показатели Alibaba Cloud и исследование безопасности DeepSeek Harness. Micro1 исключён: ключевой показатель run rate основан на анонимном источнике и не подтверждён самой компанией.",
+  "diversity_overrides": [
+    {
+      "type": "publisher",
+      "value": "TechCrunch",
+      "reason": "Выбраны три самостоятельных события высокой редакционной значимости: инвестиция Nvidia в девелопера дата-центров, воспроизводимый jailbreak Claude и крупный раунд Starcloud. Они относятся к разным компаниям и сегментам рынка и не являются взаимозаменяемыми."
+    }
+  ]
+}
