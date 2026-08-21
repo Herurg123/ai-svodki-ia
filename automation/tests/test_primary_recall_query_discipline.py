@@ -22,7 +22,7 @@ class PrimaryRecallQueryDisciplineTests(unittest.TestCase):
         self.assertIn("`global_breaking` теперь снова является **source-neutral broad discovery**", text)
         self.assertIn("`major_agencies` остаётся", text)
         self.assertIn("Reuters/AP/Bloomberg/FT", text)
-        self.assertIn("latest AI chips data centers investments deals policy security", text)
+        self.assertIn("latest AI chips infrastructure financing earnings business deals policy security", text)
         self.assertIn("`independent_missing_events` становится source-neutral", text)
         self.assertIn("latest major artificial intelligence", text)
 
