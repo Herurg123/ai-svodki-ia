@@ -294,3 +294,67 @@
 - Source concentration и корреляцию с agency misses.
 - Mutable changelog dedupe отдельной экспериментальной линией.
 - Source Freshness Proof v1 оставить без изменений, пока stale-дефект не повторится.
+
+---
+
+## Контролируемый bounded agency rescue experiment — 2026-08-22
+
+### Цель и ограничения
+- Trigger эксперимента выполнен: после semantic patch от 21 августа `major_agencies` снова дал `raw=0 / accepted=0`, а Broadcom >$60 млрд остался Must Include miss.
+- Production API пользователя не использовался; эксперимент выполнен на assistant-side web/GitHub ресурсах.
+- Standalone Terra в текущем интерактивном окружении не экспонирован, поэтому replay не выдаётся за чистый Terra A/B. Production evidence по-прежнему взята из фактических Terra artifacts.
+
+### Replay на окнах 20–22 августа
+Проверялись known high-signal controls, существовавшие в соответствующих effective windows:
+- Google/Marvell — Reuters, 19 августа, custom AI chips + warrant до $12,2 млрд;
+- Broadcom — Reuters, 20 августа, >$60 млрд AI-chip debt financing;
+- Alibaba — Reuters/AP, 20 августа, AI/cloud revenue +45% и capex +75%;
+- Nvidia/Cloverleaf — Reuters, 21 августа, инвестиция в AI-data-center infrastructure.
+
+Результат независимого replay:
+- broad business/infrastructure formulations стабильно поднимают Google/Marvell и Nvidia/Cloverleaf;
+- Broadcom появляется при source-aware / event-class формулировках с явными `Reuters`, `AI chip`, `financing/debt`, но способен выпадать из более общего broad query;
+- Alibaba поднимается Reuters/AP route при явных earnings/business semantics;
+- это подтверждает, что одна и та же свежая high-signal статья может присутствовать в индексе, но не попадать в верхний source pool общего agency sweep.
+
+### Главный вывод по ranking/source-pool
+- Гипотеза **подтверждена**: оставшийся дефект не объясняется только semantics.
+- После добавления `infrastructure financing earnings business` production route всё равно может получить zero raw pool при существующем Reuters Must Include.
+- Значит нужен не ещё один общий broad query, а bounded quality-trigger, который срабатывает по доказанному gap-состоянию route.
+
+### Проверенный rescue-контур
+Наиболее безопасная архитектурная схема:
+1. Trigger только если обязательный `major_agencies` технически завершён, но `raw=0` или `accepted=0`.
+2. Не зависеть от общего story count: численно полный выпуск не отменяет source-quality gap.
+3. Выполнить **не более одной** дополнительной source-aware discovery search operation с коротким date-free query класса `Reuters AP AI chips infrastructure financing earnings business deals`.
+4. Не использовать календарные даты в production query; exact effective-window/cutoff проверять downstream существующим валидатором.
+5. Rescue-кандидаты обязаны пройти те же freshness, significance, archive URL/semantic dedupe и editorial правила, что обычный Primary pool.
+6. Никакой региональной или издательской квоты на публикацию не вводить.
+
+### Почему существующий `fresh_agency_rescue` не решает этот дефект
+Architecture-wide audit обнаружил, что production уже имеет `fresh_agency_rescue` в 7-м Coverage slot, но он предназначен для **corroboration уже найденного события**: выбирает target из существующих include/consider candidates и пытается повысить Reuters/AP/Bloomberg/FT источник до primary.
+
+Broadcom отсутствовал в candidate pool целиком. Следовательно, corroboration rescue не может восстановить missing event. Для текущего defect class нужен отдельный **agency discovery-gap rescue**, а не расширение existing same-event source-health rescue.
+
+### Architecture-wide audit
+Проверены зависимости и инварианты:
+- Primary 12 mandatory slots должны остаться без перестройки; semantic patch 21 августа сохраняется.
+- `china_asia_models` и расширенный Asia business pass не смешиваются с этим patch: Alibaba сегодня recovered.
+- Russia route и regional health logic не меняются.
+- Source Freshness Proof v1 не меняется.
+- Existing `fresh_agency_rescue` нельзя переиспользовать как discovery rescue без изменения его семантики и рисков для source-health contract.
+- Coverage 7th slot уже имеет взаимоисключающие роли (`zero-pool sentinel` / `fresh_agency_rescue`), поэтому бесконтрольное добавление третьей роли туда создаст сложный recovery/accounting state machine.
+- Наиболее чистая точка интеграции — quality/gap layer после Primary, до финального решения «достаточно историй», с жёстким лимитом одной search operation и отдельным diagnostic reason.
+- Если rescue добавит валидный candidate, он должен проходить normal merge/fairness и вызывать editorial rerun; если не добавит, выпуск может продолжиться без fatal, если обязательный agency pass технически завершён.
+
+### Search-budget и стоимость
+- Рекомендация **не принята автоматически в production**.
+- Если реализовывать буквально как отдельную operation, theoretical worst-case ceiling увеличится с 23 до 24 search operations.
+- Поэтому перед patch предпочтительнее проверить, можно ли переиспользовать один из уже условных quality slots без нарушения existing sentinel/source-health contracts; если нет, увеличение hard cap должно быть явным и отражено в README/AGENTS/tests.
+- Сам эксперимент не расходовал production API пользователя.
+
+### Итог эксперимента
+- Verdict: **PASS для гипотезы bounded discovery rescue; FAIL для идеи, что достаточно ещё раз переписать `major_agencies` query.**
+- Рекомендованный следующий patch-класс: `major_agencies zero-result -> one bounded source-aware discovery rescue`, независимо от итогового количества историй.
+- До реализации нужен отдельный кодовый patch с обновлением diagnostics/recovery/search-budget contracts и офлайн-регрессиями на окнах 20–22 августа.
+- Production retrieval в рамках этого эксперимента не изменён.
