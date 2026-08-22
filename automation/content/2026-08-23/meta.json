@@ -1,0 +1,43 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-23",
+  "slug": "2026-08-23",
+  "title": "ИИ-Сводка на 23 августа 2026",
+  "description": "Slack превращает командные чаты в среду для coding-агентов, Inherent заявляет о научном агенте Faraday, а OpenAI обсуждает правила контроля frontier-моделей в Калифорнии.",
+  "published_at": "2026-08-23T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-23.png",
+  "topics": [
+    "Slack Code",
+    "coding-агенты",
+    "Salesforce",
+    "безопасность frontier-моделей",
+    "containment",
+    "Guidelight",
+    "Inherent",
+    "Faraday",
+    "ИИ для науки",
+    "OpenAI",
+    "SB 53",
+    "регулирование ИИ"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Короткий подтверждённый пул содержит три самостоятельных сюжета TechCrunch о разных событиях: независимой оценке containment, запуске научного агента Inherent и новой policy-позиции OpenAI. Их исключение только ради мягкого лимита издателя неоправданно снизило бы полноту выпуска."
+    }
+  ]
+}

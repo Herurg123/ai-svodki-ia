@@ -1,0 +1,396 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-23",
+  "search_window": {
+    "start_at": "2026-08-21T02:37:50+03:00",
+    "end_at": "2026-08-23T02:35:04+03:00",
+    "latest_archive_at": "2026-08-22T02:37:50+03:00",
+    "start_date": "2026-08-21",
+    "end_date": "2026-08-23",
+    "latest_archive_date": "2026-08-22"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=3, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Guidelight: ведущие AI-лаборатории публично почти не раскрывают планы containment для вышедших из-под контроля моделей",
+      "organization": "Guidelight AI Standards; OpenAI; Anthropic; Google; Meta; xAI",
+      "published_date": "2026-08-22",
+      "published_at": "2026-08-22T16:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Безопасность frontier-моделей, containment response plans и публичная прозрачность контроля автономных AI-систем",
+      "event_type": "independent safety assessment",
+      "keywords": [
+        "Guidelight",
+        "AI containment",
+        "rogue model",
+        "frontier AI",
+        "OpenAI",
+        "Anthropic",
+        "Meta",
+        "model control"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Frontier AI labs still won’t say how they’d contain a rogue model",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/22/frontier-ai-labs-still-wont-say-how-theyd-contain-a-rogue-model/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Guidelight AI Standards Control assessment",
+          "publisher": "Guidelight AI Standards",
+          "url": "https://guidelight.ai/"
+        }
+      ],
+      "event_summary": "Guidelight AI Standards оценила публично доступные меры containment у пяти ведущих лабораторий — Anthropic, Google, Meta, OpenAI и xAI — и пришла к выводу, что публичных планов реагирования на попытки модели обойти человеческий контроль недостаточно. OpenAI получила наивысший результат в этой оценке, но лишь 3 из 5; низкий результат отражает прежде всего отсутствие публичных доказательств, а не обязательно отсутствие внутренних мер.",
+      "verified_facts": [
+        "TechCrunch опубликовал материал 22 августа 2026 года в 09:00 PDT.",
+        "Оценка Guidelight охватывает Anthropic, Google, Meta, OpenAI и xAI и основана на публично доступной документации.",
+        "В статье OpenAI указана как лидер оценки с результатом 3 из 5.",
+        "Методология прямо ограничена публичной информацией: низкий балл не доказывает отсутствия внутренних containment-процедур.",
+        "Представители Google и OpenAI сообщили, что оценка не охватывает весь объём их внутренних практик."
+      ],
+      "significance": "Свежая независимая попытка сравнить operational containment и раскрытие планов ведущими AI-лабораториями актуальна на фоне распространения автономных агентов и недавних safety-инцидентов. Сюжет может быть ценен как material safety update, но не является установленным фактом о реальном уровне внутренних защит каждой лаборатории.",
+      "significance_score": 2,
+      "limitations": "Оценка основана на публичных документах и комментариях, а не на аудите внутренних систем; Guidelight — специализированная организация, а не регулятор. Выводы о фактической безопасности лабораторий нельзя делать без дополнительной проверки методологии и ответов компаний.",
+      "archive_status": "none",
+      "archive_reason": "Архив освещал отдельные инциденты и меры лабораторий, но не данную сравнительную независимую оценку containment disclosure.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата, охват оценки, её публично-документарная методология, результат OpenAI и оговорки компаний подтверждены материалом TechCrunch.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-22T16:00:00+00:00; timestamp проверен Python против effective window. Публикация с новым исследованием и ответами компаний вышла внутри effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это независимая оценка безопасности, а не юридическое или регуляторное решение.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется.",
+      "id": "cand-001"
+    },
+    {
+      "title": "AMD заявила о четырёхкратном повышении энергоэффективности стоечных AI-систем относительно 2024 года",
+      "organization": "AMD",
+      "published_date": "2026-08-21",
+      "published_at": "2026-08-21T11:03:24+00:00",
+      "time_precision": "datetime",
+      "topic": "Энергоэффективность rack-scale инфраструктуры для обучения и инференса ИИ; влияние памяти, межсоединений, ПО и системного проектирования на энергопотребление дата-центров.",
+      "event_type": "corporate infrastructure efficiency update",
+      "keywords": [
+        "AMD",
+        "AI racks",
+        "energy efficiency",
+        "data centers",
+        "training",
+        "inference",
+        "HBM",
+        "interconnects",
+        "ROCm",
+        "power"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "AMD talks up sustainability efforts with rack-scale energy efficiency gains",
+        "publisher": "IT Pro",
+        "url": "https://www.itpro.com/infrastructure/amd-talks-up-sustainability-efforts-with-rack-scale-energy-efficiency-gains"
+      },
+      "supporting_sources": [
+        {
+          "title": "AMD claims its 2026 rack-scale AI solution is 4X more energy efficient than its 2024 AI platform",
+          "publisher": "Tom's Hardware",
+          "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/amd-claims-its-2026-rack-scale-ai-solution-is-4x-more-energy-efficient-than-its-2024-ai-platform-company-says-its-pacing-ahead-of-20x-efficiency-by-2030"
+        },
+        {
+          "title": "2025-26 Corporate Responsibility Report",
+          "publisher": "AMD",
+          "url": "https://www.amd.com/content/dam/amd/en/documents/corporate/cr/corporate-responsibility-report.pdf"
+        }
+      ],
+      "event_summary": "AMD сообщила, что превысила собственную цель на 2026 год по трёхкратному росту энергоэффективности rack-scale систем для AI training и inference: компания оценивает улучшение в 4 раза по сравнению с базой 2024 года. Заявленный показатель опирается на совокупный эффект вычислительных архитектур, памяти, межсоединений, ПО и системной оптимизации, а не на единый независимый сравнительный бенчмарк готовых стоек.",
+      "verified_facts": [
+        "IT Pro датирует публикацию 21 августа 2026 года, то есть она попадает в effective window.",
+        "AMD заявляет о 4-кратном повышении энергоэффективности rack-scale AI-систем по сравнению с 2024 годом и о превышении внутренней цели 3x к 2026 году.",
+        "Компания сохраняет цель 20x к 2030 году; медиа-источник описывает это как прогнозируемый системный показатель.",
+        "Tom's Hardware отдельно отмечает, что расчёт AMD сочетает измерения доступных продуктов и моделируемые результаты, поэтому это не независимый бенчмарк коммерчески доступных систем."
+      ],
+      "significance": "Свежая инфраструктурная метрика одного из двух ключевых поставщиков AI-ускорителей непосредственно относится к ограничениям мощности и охлаждения в AI-дата-центрах. Однако новость представляет собой главным образом обновление корпоративной цели и расчётную оценку, без нового крупного контракта, продукта или независимой валидации.",
+      "significance_score": 2,
+      "limitations": "Заявление основано на методологии AMD и включает моделируемые результаты; публикация IT Pro не содержит точного времени выхода. Событие заметно тематически, но его самостоятельная редакционная значимость ограничена.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет отдельного сюжета о достижении AMD показателя 4x энергоэффективности rack-scale AI-систем; ранее опубликованные материалы об AMD и AI-инфраструктуре описывают иные события.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата и ключевые утверждения проверены по публикации IT Pro в окне; дополнительная публикация Tom's Hardware подтверждает содержание заявления и его методологические ограничения.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-21T11:03:24Z; timestamp проверен Python против effective window. Это отдельное обновление целевой программы энергоэффективности AMD, опубликованное 21 августа 2026 года, не являющееся перепечаткой архивных инфраструктурных сюжетов.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Юридического события нет.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран по тематической инфраструктурной релевантности, а не как curiosity-сюжет.",
+      "id": "cand-002"
+    },
+    {
+      "title": "Salesforce представила Slack Code — совместную среду для работы команд с coding-агентами прямо в Slack",
+      "organization": "Salesforce; Slack; Anthropic; Cognition; GitHub; OpenAI; Vercel",
+      "published_date": "2026-08-21",
+      "published_at": "2026-08-21T09:05:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Совместная постановка задач, наблюдение, review и approval работы coding-агентов в выделенных Slack-каналах.",
+      "event_type": "product launch",
+      "keywords": [
+        "Slack Code",
+        "coding agents",
+        "Claude",
+        "Devin",
+        "GitHub Copilot",
+        "ChatGPT",
+        "Vercel",
+        "code review",
+        "agentic development"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Slack will now let you code as a team to get those tricky tasks done",
+        "publisher": "TechRadar",
+        "url": "https://www.techradar.com/pro/slack-will-now-let-you-code-as-a-team-to-get-those-tricky-tasks-done"
+      },
+      "supporting_sources": [
+        {
+          "title": "Introducing Slack Code: Agentic Coding for Teams",
+          "publisher": "Salesforce",
+          "url": "https://www.salesforce.com/introducing-slack-code/?bc=HL"
+        }
+      ],
+      "event_summary": "Salesforce запустила Slack Code: выделенные code channels, в которых команда может вызвать coding-агента, видеть его план и диффы, проверять live preview, давать обратную связь и утверждать результат перед отправкой в production. На старте заявлена интеграция с Claude, Devin, GitHub Copilot, ChatGPT и агентами Vercel; доступность заявлена для всех тарифов Slack при наличии доступа к соответствующему партнёрскому агенту.",
+      "verified_facts": [
+        "TechRadar датирует сообщение 21 августа 2026 года.",
+        "Salesforce описывает code channels как проектные каналы для совместной работы людей и агентов с кодом, диффами и live previews.",
+        "Salesforce указывает стартовых партнёров: Anthropic/Claude, Cognition/Devin, GitHub/Copilot, ChatGPT и Vercel.",
+        "Salesforce заявляет, что критические действия, включая отправку кода в production, требуют экспертного sign-off."
+      ],
+      "significance": "Это самостоятельное расширение рынка agentic development environments: Slack превращает корпоративный коммуникационный слой в мультиплеерную среду для выполнения и review агентной разработки с несколькими ведущими поставщиками coding-агентов. Сюжет частично пересекается с уже найденным запуском совместных сессий GitHub Copilot в Slack, но Slack Code шире одного Copilot-интегратора и включает отдельные каналы, diff/preview workflow и партнёрскую экосистему.",
+      "significance_score": 3,
+      "limitations": "Точное время публикации недоступно. Основной независимый датированный источник — TechRadar; детали продукта и доступности опираются на заявление Salesforce и требуют последующей редакционной проверки фактического rollout по регионам и планам.",
+      "archive_status": "none",
+      "archive_reason": "Не является точным дублем архивного сюжета о shared cloud-agent sessions GitHub Copilot в Teams и Slack: это отдельный продукт Salesforce/Slack с мультивендорной агентной средой, code channels, просмотром диффов и live previews.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Датированный материал TechRadar подтверждает анонс и дату; официальный материал Salesforce подтверждает набор функций, партнёров, доступность и human-in-the-loop для критических действий.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-21T09:05:00Z; timestamp проверен Python против effective window. Событие опубликовано в effective window и не найдено как самостоятельный сюжет в предоставленном текущем пуле или архиве; пересечение с уже опубликованной интеграцией Copilot в Slack ограничено одним партнёром.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие является продуктовым запуском, а не судебным или регуляторным делом.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-кандидатам; релевантно напрямую тематике developer tools и coding agents.",
+      "id": "cand-003"
+    },
+    {
+      "title": "Inherent представила агента Faraday для воспроизведения научных исследований и заявила о превосходстве над более крупными моделями",
+      "organization": "Inherent; Google DeepMind alumni; OpenAI; Anthropic; Qwen",
+      "published_date": "2026-08-22",
+      "published_at": "2026-08-22T19:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "AI for science, автономные исследовательские агенты и эффективное агентное использование компактных моделей",
+      "event_type": "product/research agent announcement",
+      "keywords": [
+        "Inherent",
+        "Faraday",
+        "AI scientist",
+        "research replication",
+        "Qwen 3.6",
+        "reinforcement learning",
+        "DeepMind alumni"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Inherent, founded by DeepMind alumni, says its AI ‘teammate’ just outperformed Anthropic and OpenAI at replicating research",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/22/inherent-founded-by-deepmind-alumni-says-its-ai-teammate-just-outperformed-anthropic-and-openai-at-replicating-research/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Лондонская лаборатория Inherent, основанная бывшими сотрудниками Google DeepMind, раскрыла исследовательского агента Faraday. Компания заявляет, что агент на базе сравнительно небольшой Qwen 3.6 27B самостоятельно воспроизводил результаты опубликованных работ лучше Claude Opus 4.8 и GPT-5.5 в её конкретной оценке.",
+      "verified_facts": [
+        "TechCrunch опубликовал материал 22 августа 2026 года в 12:00 PDT.",
+        "Inherent представила Faraday как агента для независимого воспроизведения результатов научных публикаций.",
+        "Сравнение с моделями Anthropic и OpenAI является заявлением Inherent и относится к специфической задаче, а не общему превосходству моделей.",
+        "В материале указано, что Faraday использует Qwen 3.6 с 27 млрд параметров и применяет GPT-5.5 Codex как инструмент для программирования."
+      ],
+      "significance": "Это потенциально самостоятельный сигнал в быстро растущем сегменте AI-for-science и research agents: стартап заявляет о конкурентном результате компактного агентного стека против frontier-моделей. Однако результат пока основан на корпоративном бенчмарке и требует независимой технической проверки.",
+      "significance_score": 2,
+      "limitations": "Нет первичной публикации с полной методологией, набором задач, воспроизводимыми результатами и независимой репликацией; заявление о превосходстве нельзя трактовать как общий бенчмарк frontier-моделей.",
+      "archive_status": "none",
+      "archive_reason": "В недавнем архиве нет отдельного сюжета об Inherent или Faraday.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата, участники, назначение агента и ограниченный характер заявленного сравнения подтверждены открытой страницей TechCrunch; ключевой performance claim атрибутирован компании.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-22T19:00:00+00:00; timestamp проверен Python против effective window. Основной источник опубликован внутри effective window 22 августа 2026 года.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие не является судебным или регуляторным действием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: это продуктово-исследовательский кандидат, а не curiosity-сюжет.",
+      "id": "cand-004"
+    },
+    {
+      "title": "OpenAI призвала Калифорнию усилить SB 53 и поддержала более жёсткий мониторинг frontier-моделей",
+      "organization": "OpenAI; California Legislature",
+      "published_date": "2026-08-22",
+      "published_at": "2026-08-22T16:30:34+00:00",
+      "time_precision": "datetime",
+      "topic": "Политика и безопасность frontier AI: позиция OpenAI по калифорнийскому закону SB 53, мониторингу инцидентов и киберзащите жизненного цикла моделей",
+      "event_type": "policy position",
+      "keywords": [
+        "OpenAI",
+        "California",
+        "SB 53",
+        "frontier AI safety",
+        "model monitoring",
+        "cybersecurity",
+        "reverse federalism"
+      ],
+      "geography": "world",
+      "category": "regulation",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "OpenAI says California should strengthen its AI safety bill",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/22/openai-says-california-should-strengthen-its-ai-safety-bill/"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI через команду global affairs призвала дополнить калифорнийский SB 53 требованиями к мониторингу frontier-моделей во время обучения и оценки, а также усилить киберзащиту на всём жизненном цикле разработки. Компания также поддержала подход, при котором штаты формируют совместимые базовые нормы до появления федерального регулирования.",
+      "verified_facts": [
+        "TechCrunch датирует публикацию 22 августа 2026 года, 09:30 PDT.",
+        "OpenAI предложила расширить safeguards в SB 53, включая мониторинг моделей на предмет серьёзных инцидентов во время training/evaluation.",
+        "Компания также призвала усилить cybersecurity protections в model-development lifecycle.",
+        "Материал характеризует позицию как изменение относительно прежнего противодействия OpenAI SB 53."
+      ],
+      "significance": "Поворот одной из ведущих AI-лабораторий в сторону ужесточения калифорнийских требований может заметно влиять на дискуссию о state-level регулировании frontier-моделей. Но это пока позиция компании, а не принятие закона, правило регулятора или судебное решение.",
+      "significance_score": 2,
+      "limitations": "Основание — корпоративная публичная позиция, а не новое нормативное действие; содержание и дальнейшая судьба возможных поправок требуют проверки по первоисточнику OpenAI и законодательным материалам Калифорнии.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть предыдущие сюжеты о safety-практиках OpenAI, но нет этой новой позиции по SB 53.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Факт публичной позиции, перечисленные направления поправок и контекст прежней позиции подтверждены материалом TechCrunch; эффект на закон пока не установлен.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-22T16:30:34+00:00; timestamp проверен Python против effective window. Статья с новым заявлением OpenAI опубликована внутри effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это корпоративное policy-заявление, не самостоятельное крупное судебное или регуляторное событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется.",
+      "id": "cand-005"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=5, validated unique=5, final candidates=5. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-models_products_agents-03",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Google представила EnvHarness для адаптивных сред обучения агентов",
+      "origin_direction": "models_products_agents",
+      "reason_code": "unverified",
+      "evidence_reason": "Единственный найденный свежий материал был недоступен для проверки, а независимого либо официального первоисточника в рамках прохода подтвердить не удалось.",
+      "likely_significance_score": 1,
+      "entities": [
+        "Google",
+        "EnvHarness"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota"
+  }
+}

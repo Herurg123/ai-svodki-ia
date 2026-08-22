@@ -1,0 +1,129 @@
+[
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Salesforce представила Slack Code — совместную среду для работы команд с coding-агентами прямо в Slack",
+    "organization": "Salesforce; Slack; Anthropic; Cognition; GitHub; OpenAI; Vercel",
+    "topic": "Совместная постановка задач, наблюдение, review и approval работы coding-агентов в выделенных Slack-каналах.",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Salesforce запустила Slack Code: выделенные code channels, в которых команда может вызвать coding-агента, видеть его план и диффы, проверять live preview, давать обратную связь и утверждать результат перед отправкой в production. На старте заявлена интеграция с Claude, Devin, GitHub Copilot, ChatGPT и агентами Vercel; доступность заявлена для всех тарифов Slack при наличии доступа к соответствующему партнёрскому агенту.",
+    "published_at": "2026-08-21T09:05:00+00:00",
+    "published_date": "2026-08-21",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Slack will now let you code as a team to get those tricky tasks done",
+        "publisher": "TechRadar",
+        "url": "https://www.techradar.com/pro/slack-will-now-let-you-code-as-a-team-to-get-those-tricky-tasks-done"
+      }
+    ],
+    "keywords": [
+      "Slack Code",
+      "coding agents",
+      "Claude",
+      "Devin",
+      "GitHub Copilot",
+      "ChatGPT",
+      "Vercel",
+      "code review",
+      "agentic development"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Guidelight: ведущие ИИ-лаборатории публично почти не раскрывают планы containment для вышедших из-под контроля моделей",
+    "organization": "Guidelight AI Standards; OpenAI; Anthropic; Google; Meta; xAI",
+    "topic": "Безопасность frontier-моделей, containment response plans и публичная прозрачность контроля автономных AI-систем",
+    "event_type": "independent safety assessment",
+    "status": "new",
+    "summary": "Guidelight AI Standards оценила публично доступные меры containment у пяти ведущих лабораторий — Anthropic, Google, Meta, OpenAI и xAI — и пришла к выводу, что публичных планов реагирования на попытки модели обойти человеческий контроль недостаточно. OpenAI получила наивысший результат в этой оценке, но лишь 3 из 5; низкий результат отражает прежде всего отсутствие публичных доказательств, а не обязательно отсутствие внутренних мер.",
+    "published_at": "2026-08-22T16:00:00+00:00",
+    "published_date": "2026-08-22",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Frontier AI labs still won’t say how they’d contain a rogue model",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/22/frontier-ai-labs-still-wont-say-how-theyd-contain-a-rogue-model/"
+      }
+    ],
+    "keywords": [
+      "Guidelight",
+      "AI containment",
+      "rogue model",
+      "frontier AI",
+      "OpenAI",
+      "Anthropic",
+      "Meta",
+      "model control"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Inherent представила агента Faraday для воспроизведения научных исследований",
+    "organization": "Inherent; Google DeepMind alumni; OpenAI; Anthropic; Qwen",
+    "topic": "AI for science, автономные исследовательские агенты и эффективное агентное использование компактных моделей",
+    "event_type": "product/research agent announcement",
+    "status": "new",
+    "summary": "Лондонская лаборатория Inherent, основанная бывшими сотрудниками Google DeepMind, раскрыла исследовательского агента Faraday. Компания заявляет, что агент на базе сравнительно небольшой Qwen 3.6 27B самостоятельно воспроизводил результаты опубликованных работ лучше Claude Opus 4.8 и GPT-5.5 в её конкретной оценке.",
+    "published_at": "2026-08-22T19:00:00+00:00",
+    "published_date": "2026-08-22",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Inherent, founded by DeepMind alumni, says its AI ‘teammate’ just outperformed Anthropic and OpenAI at replicating research",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/22/inherent-founded-by-deepmind-alumni-says-its-ai-teammate-just-outperformed-anthropic-and-openai-at-replicating-research/"
+      }
+    ],
+    "keywords": [
+      "Inherent",
+      "Faraday",
+      "AI scientist",
+      "research replication",
+      "Qwen 3.6",
+      "reinforcement learning",
+      "DeepMind alumni"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "OpenAI призвала Калифорнию усилить SB 53 и поддержала более жёсткий мониторинг frontier-моделей",
+    "organization": "OpenAI; California Legislature",
+    "topic": "Политика и безопасность frontier AI: позиция OpenAI по калифорнийскому закону SB 53, мониторингу инцидентов и киберзащите жизненного цикла моделей",
+    "event_type": "policy position",
+    "status": "new",
+    "summary": "OpenAI через команду global affairs призвала дополнить калифорнийский SB 53 требованиями к мониторингу frontier-моделей во время обучения и оценки, а также усилить киберзащиту на всём жизненном цикле разработки. Компания также поддержала подход, при котором штаты формируют совместимые базовые нормы до появления федерального регулирования.",
+    "published_at": "2026-08-22T16:30:34+00:00",
+    "published_date": "2026-08-22",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI says California should strengthen its AI safety bill",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/22/openai-says-california-should-strengthen-its-ai-safety-bill/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "California",
+      "SB 53",
+      "frontier AI safety",
+      "model monitoring",
+      "cybersecurity",
+      "reverse federalism"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  }
+]
