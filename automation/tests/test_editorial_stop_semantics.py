@@ -139,9 +139,9 @@ class EditorialStopWorkflowContractTests(unittest.TestCase):
                 (ROOT / "AGENTS.md").read_text(encoding="utf-8"),
             ]
         )
-        self.assertIn("штатным успешным `no-publish`", docs)
+        self.assertIn("normal successful `no-publish`", docs)
         self.assertIn("Technical partial/error audits remain", docs)
-        self.assertIn("recall sentinel v7", docs)
+        self.assertIn("`high_signal_recall_sentinel` версии 8", docs)
 
 
 if __name__ == "__main__":
