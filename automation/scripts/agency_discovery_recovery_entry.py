@@ -26,9 +26,6 @@ from story_coverage import read_json, write_json
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 RECOVERY_REPORT = REPOSITORY_ROOT / "automation" / "preview" / "production-daily" / "recovery.json"
-SOURCE_FRESHNESS_REPORT = (
-    REPOSITORY_ROOT / "automation" / "preview" / "production-daily" / "source-freshness.json"
-)
 RECOVERY_RUNTIME_ROOT = (
     REPOSITORY_ROOT / "automation" / "fixtures" / "research" / ".runtime"
 )
@@ -71,6 +68,26 @@ def _rescue_candidates_present(research: dict[str, Any]) -> bool:
     )
 
 
+def _without_rescue_candidates(research: dict[str, Any]) -> dict[str, Any]:
+    """Drop supplemental rescue rows if their freshness gate itself fails."""
+    clean = copy.deepcopy(research)
+    rows = clean.get("candidates")
+    if isinstance(rows, list):
+        clean["candidates"] = [
+            item
+            for item in rows
+            if not (
+                isinstance(item, dict)
+                and item.get("audit_direction")
+                == rescue.AGENCY_DISCOVERY_RESCUE_DIRECTION
+            )
+        ]
+        for index, item in enumerate(clean["candidates"], start=1):
+            if isinstance(item, dict):
+                item["id"] = f"cand-{index:03d}"
+    return clean
+
+
 def _persist_runtime_report(
     report: dict[str, Any], *, artifact_dir: Path, publication_date: str
 ) -> None:
@@ -103,6 +120,13 @@ def run_recovery_entry(
     artifact_dir = (REPOSITORY_ROOT / artifact_raw).resolve()
     archive_path = (REPOSITORY_ROOT / archive_raw).resolve()
     candidates_path = artifact_dir / "candidates.json"
+    source_freshness_report = (
+        REPOSITORY_ROOT
+        / "automation"
+        / "preview"
+        / "production-daily"
+        / f"source-freshness-{publication_date}.json"
+    )
     try:
         original_research = read_json(candidates_path)
     except Exception as exc:
@@ -151,12 +175,12 @@ def run_recovery_entry(
         freshness_run = verify_research_file(
             runtime_path,
             publication_date=publication_date,
-            report_path=SOURCE_FRESHNESS_REPORT,
+            report_path=source_freshness_report,
         )
         verified_research = read_json(runtime_path)
         if not isinstance(verified_research, dict):
             raise RuntimeError("verified recovery research is not an object")
-        # Persist the exact freshness-verified pool before editorial.  If the
+        # Persist the exact freshness-verified pool before editorial. If the
         # editor later fails, Coverage can continue from a safe research state.
         write_json(candidates_path, verified_research)
         report["coverage_recovery_source_freshness"] = {
@@ -169,7 +193,9 @@ def run_recovery_entry(
         }
     except Exception as exc:
         # Rescue is supplemental and cannot poison a previously usable artifact.
-        write_json(candidates_path, original_research)
+        # Remove every rescue-origin row rather than restoring a possibly
+        # pre-existing but never freshness-verified rescue candidate.
+        write_json(candidates_path, _without_rescue_candidates(original_research))
         report["coverage_recovery_source_freshness"] = {
             "status": "error",
             "error": f"{type(exc).__name__}: {exc}",
