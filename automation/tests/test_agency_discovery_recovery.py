@@ -180,6 +180,38 @@ class AgencyDiscoveryRecoveryTests(unittest.TestCase):
             ["cand-001", "cand-002"],
         )
 
+    def test_verified_rescue_merge_preserves_existing_rows_and_renumbers(self):
+        research = {
+            "search_window": {"start_at": "a", "end_at": "b"},
+            "candidates": [
+                {"id": "cand-001", "title": "Primary", "recommendation": "include"},
+                {
+                    "id": "cand-002",
+                    "title": "Old rescue",
+                    "audit_direction": "agency_discovery_rescue",
+                    "recommendation": "include",
+                },
+                {"id": "cand-003", "title": "Hybrid", "recommendation": "consider"},
+            ],
+        }
+        verified = {
+            "id": "temporary",
+            "title": "Fresh rescue",
+            "audit_direction": "agency_discovery_rescue",
+            "recommendation": "include",
+            "freshness_status": "new_event",
+        }
+        merged = recovery_entry._merge_verified_rescue(research, [verified])
+        self.assertEqual(
+            [item["title"] for item in merged["candidates"]],
+            ["Primary", "Hybrid", "Fresh rescue"],
+        )
+        self.assertEqual(
+            [item["id"] for item in merged["candidates"]],
+            ["cand-001", "cand-002", "cand-003"],
+        )
+        self.assertEqual(research["candidates"][1]["title"], "Old rescue")
+
 
 if __name__ == "__main__":
     unittest.main()
