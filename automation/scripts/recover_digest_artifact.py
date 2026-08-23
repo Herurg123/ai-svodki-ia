@@ -39,6 +39,7 @@ def __getattr__(name: str) -> Any:
     return getattr(_base, name)
 
 
+REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 _BASE_CHOOSE_SOURCE = _base.choose_source
 _BASE_RECOVER = _base.recover
 RETRIEVAL_QUALITY_CONTRACT_VERSION = 1
@@ -266,7 +267,7 @@ def _resume_agency_discovery_without_search(
     try:
         repaired = run_agency_discovery_rescue(
             artifact_dir=target_dir,
-            archive_path=Path(REPOSITORY_ROOT) / "automation" / "archive" / "index.json",
+            archive_path=REPOSITORY_ROOT / "automation" / "archive" / "index.json",
             publication_date=publication_date,
             api_key="",
             model="",
