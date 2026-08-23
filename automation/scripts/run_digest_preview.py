@@ -363,6 +363,47 @@ def _mark_primary_recall_artifact(
     _write_json(input_info_path, input_info)
 
 
+def _agency_rescue_survival_report(
+    *, output_dir: Path, publication_date: str, hybrid_error: Exception
+) -> dict[str, Any] | None:
+    """Preserve a successfully discovered rescue event when Hybrid itself fails.
+
+    The rescue already spent its single operation and persisted a trusted merged
+    research path. Returning a synthetic Hybrid report lets the existing
+    trusted-runtime Source Freshness Proof + editorial rerun path process that
+    candidate. We never rerun Hybrid or the rescue here.
+    """
+    rescue = _read_json(output_dir / "agency-discovery-rescue.json")
+    if not isinstance(rescue, dict) or int(rescue.get("added_count", 0) or 0) < 1:
+        return None
+    merged_path = rescue.get("merged_research_path")
+    if not isinstance(merged_path, str) or _trusted_runtime_research_path(merged_path) is None:
+        return None
+    return {
+        "version": 1,
+        "status": "complete_with_gaps",
+        "publication_date": publication_date,
+        "strategy": "agency_rescue_survived_hybrid_failure",
+        "agency_discovery_rescue": rescue,
+        "accepted_candidates": list(rescue.get("accepted_candidates") or []),
+        "editorial_rerun_needed": True,
+        "merged_research_path": merged_path,
+        "hybrid_error": f"{type(hybrid_error).__name__}: {hybrid_error}",
+        "search_budget": {
+            "maximum_calls": 4,
+            "completed_calls": None,
+            "status": "hybrid_failed_without_retry",
+        },
+        "pipeline_search_budget": {
+            "primary_maximum": 12,
+            "agency_discovery_rescue_maximum": 1,
+            "hybrid_maximum": 4,
+            "coverage_maximum": 7,
+            "maximum_total": 24,
+        },
+    }
+
+
 def _run_hybrid_completeness(
     *, forwarded: list[str], output_dir: Path, publication_date: str,
     fresh_primary_recall: bool = False,
@@ -390,11 +431,22 @@ def _run_hybrid_completeness(
             maximum_candidates=maximum_candidates,
         )
     except Exception as exc:
-        print(
-            "::warning title=Hybrid completeness failed open::"
-            f"{type(exc).__name__}: {exc}. Primary result сохранён без изменений."
+        report = _agency_rescue_survival_report(
+            output_dir=output_dir,
+            publication_date=publication_date,
+            hybrid_error=exc,
         )
-        return None, False
+        if report is None:
+            print(
+                "::warning title=Hybrid completeness failed open::"
+                f"{type(exc).__name__}: {exc}. Primary result сохранён без изменений."
+            )
+            return None, False
+        print(
+            "::warning title=Hybrid completeness failed after agency rescue::"
+            f"{type(exc).__name__}: {exc}. Rescue candidate сохранён и будет "
+            "передан штатному Source Freshness Proof/editorial rerun без второго search."
+        )
     merged_path_raw = report.get("merged_research_path")
     if not report.get("editorial_rerun_needed") or not isinstance(merged_path_raw, str):
         print(
