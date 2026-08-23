@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "name": "2026-08-22-bounded-agency-discovery-rescue",
+  "purpose": "Offline regression contract for the dedicated missing-event agency discovery rescue. Presence means the route must receive one bounded discovery opportunity after a proven major_agencies quality gap; it is not a publication quota.",
+  "trigger": {
+    "direction_id": "major_agencies",
+    "technical_success_required": true,
+    "reasons": [
+      "major_agencies_raw_zero",
+      "major_agencies_accepted_zero"
+    ],
+    "candidate_count_independent": true,
+    "maximum_additional_search_operations": 1
+  },
+  "search": {
+    "query": "latest Reuters AP AI chips infrastructure financing earnings business deals",
+    "date_free": true,
+    "api_domain_filter": false,
+    "direct_source_hosts_required": [
+      "reuters.com",
+      "apnews.com",
+      "ap.org"
+    ],
+    "publication_quota": false
+  },
+  "positive_controls": [
+    {
+      "id": "google-marvell-custom-ai-chips",
+      "window_date": "2026-08-20",
+      "source": "Reuters",
+      "event": "Google / Marvell custom AI chips and warrant up to $12.2B",
+      "role": "historical agency/infrastructure miss"
+    },
+    {
+      "id": "broadcom-ai-chip-financing",
+      "window_date": "2026-08-21",
+      "source": "Reuters",
+      "event": "Broadcom more than $60B AI-chip debt financing",
+      "role": "repeated Must Include miss that fired the bounded-rescue trigger"
+    },
+    {
+      "id": "alibaba-ai-cloud-earnings",
+      "window_date": "2026-08-21",
+      "source": "Reuters/AP",
+      "event": "Alibaba AI/cloud revenue +45% and AI capex +75%",
+      "role": "control that must remain discoverable through the existing Asia business path"
+    },
+    {
+      "id": "nvidia-cloverleaf-infrastructure",
+      "window_date": "2026-08-22",
+      "source": "Reuters",
+      "event": "Nvidia / Cloverleaf AI-data-center infrastructure investment",
+      "role": "positive agency/business control"
+    },
+    {
+      "id": "nvidia-ai-server-price-hikes",
+      "window_date": "2026-08-23",
+      "source": "Reuters",
+      "event": "Nvidia AI-server price hikes above 15%",
+      "role": "out-of-sample control added after the original bounded-rescue experiment"
+    }
+  ],
+  "negative_controls": [
+    {
+      "id": "quiet-window",
+      "expectation": "zero worthy Reuters/AP results is valid and must not fabricate a candidate"
+    },
+    {
+      "id": "stale-agency-source",
+      "expectation": "Source Freshness Proof excludes an agency article whose verified source timestamp is outside the effective window"
+    },
+    {
+      "id": "same-event-different-url",
+      "expectation": "organization + event_type + published_date identity prevents a second candidate even when the Reuters/AP URL differs"
+    },
+    {
+      "id": "weak-analysis-opinion",
+      "expectation": "agency provenance does not grant Must Include status or bypass normal significance/editorial rules"
+    }
+  ],
+  "architecture_invariants": {
+    "primary_search_operations": 12,
+    "agency_discovery_rescue_maximum": 1,
+    "hybrid_maximum_search_operations": 4,
+    "coverage_maximum_search_operations": 7,
+    "pipeline_maximum_search_operations": 24,
+    "fresh_agency_rescue_semantics": "same_event_corroboration_only",
+    "source_freshness_proof_unchanged": true,
+    "china_asia_models_unchanged": true,
+    "china_asia_integrations_unchanged": true,
+    "russia_route_unchanged": true,
+    "mutable_changelog_dedupe_unchanged": true
+  },
+  "experiment_evidence": {
+    "production_api_user_calls": 0,
+    "standalone_terra_available_in_interactive_environment": false,
+    "basis": [
+      "production Terra artifacts from 2026-08-21 through 2026-08-23",
+      "assistant-side bounded replay recorded in automation/audits/independent-audit-journal.md",
+      "offline mocks and deterministic validators"
+    ]
+  }
+}

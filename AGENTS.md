@@ -94,42 +94,33 @@ The scheduled 32-day content cleanup must never classify or delete this file.
 ## Temporal contract for nightly research
 
 For nightly production, the exact `search_window.end_at` timestamp is the
-authoritative current time for research, hybrid completeness, every coverage
-pass, and the recall sentinel. Do not let model/system calendar dates override
-that timestamp. Legacy recovery data from a cross-midnight local/UTC window must
-not be reused as final research or a terminal zero-pool stop unless it carries
-the current temporal-anchor contract version.
+authoritative current time for Primary, bounded agency discovery rescue, hybrid
+completeness, every Coverage pass, and the recall sentinel. Do not let
+model/system calendar dates override that timestamp. Legacy recovery data from a
+cross-midnight local/UTC window must not be reused as final research or a
+terminal zero-pool stop unless it carries the current temporal-anchor contract.
 
 The canonical continuity anchor is still the previous successfully published
 `search_cutoff_at`; it is never moved backwards in the archive. Fresh Primary
-Recall may, however, use an **effective discovery window** beginning up to 24
-hours before that anchor. This bounded healing overlap exists only to recover
-important events missed by the preceding digest. Exact source URLs already
-present in the archive must be rejected before merge, semantic archive checks
-still apply downstream, and the overlap must never become an unbounded lookback
-or a reason to republish yesterday's story.
+Recall may use an **effective discovery window** beginning up to 24 hours before
+that anchor. This bounded healing overlap exists only to recover important events
+missed by the preceding digest. Exact source URLs already present in the archive
+must be rejected before merge, semantic archive checks still apply downstream,
+and the overlap must never become an unbounded lookback or a reason to republish
+yesterday's story.
 
-The effective window has two distinct retrieval roles. The first 24 hours from
-effective start to the continuity anchor are **healing overlap**. The main
-continuity period starts at the anchor and ends at `search_window.end_at`.
-Primary, Hybrid and fallback Coverage search queries use short date-free
-relative-freshness wording; neither the continuity period nor healing overlap is
-encoded as calendar dates in query text. Exact timestamps remain authoritative
-for post-retrieval eligibility, and the full effective window remains valid for
-healing a major missed event.
-
-Only internally generated runtime research may carry this wider effective
-window through the legacy generator. The trusted bridge lives under the ignored
-`automation/fixtures/research/.runtime/` subtree. Arbitrary caller-supplied
-`--research-input` paths remain restricted by the existing generator guard and
-must not be allowed to request a wider window.
+Primary, conditional agency rescue, Hybrid and fallback Coverage queries use
+short date-free relative-freshness wording. Exact timestamps remain authoritative
+for post-retrieval eligibility. Only internally generated runtime research may
+carry this wider effective window through the legacy generator; the trusted
+bridge lives under `automation/fixtures/research/.runtime/`. Arbitrary
+caller-supplied `--research-input` paths remain restricted by the existing guard.
 
 ## Primary recall v2 contract
 
-Fresh production research uses deterministic **Primary Recall v2** instead of
-letting one agentic Responses call allocate the entire 12-search budget. The
-hard primary budget remains exactly twelve completed Web Search **search
-operations**, each assigned to one mandatory direction:
+Fresh production research uses deterministic **Primary Recall v2**. The hard
+Primary budget remains exactly twelve completed Web Search **search operations**,
+one per mandatory direction:
 
 1. `global_breaking`;
 2. `major_agencies`;
@@ -144,424 +135,339 @@ operations**, each assigned to one mandatory direction:
 11. `legal_regulation`;
 12. `independent_missing_events`.
 
-A primary pass must complete exactly **one `action.type=search` operation and
-one logical search query**. Do not use `max_tool_calls=1` as the search-budget
-mechanism: `open_page` and `find_in_page` are also hosted tool calls. Current
-passes allow up to three navigation tool actions after the one search so the
-model can verify source date and facts. Diagnostics must count search operations,
-logical queries, total web-search tool items and navigation actions separately.
-A second search action or a batched multi-query search is a contract violation.
+A Primary pass must complete exactly **one `action.type=search` operation and one
+logical query**. Do not use `max_tool_calls=1` as the search-budget mechanism:
+`open_page` and `find_in_page` are hosted tool calls too. Current passes allow up
+to three navigation actions after the one search. A second search action or a
+batched multi-query search is a contract violation.
 
-Each Primary Responses pass has `max_output_tokens=6000`. This is structured-output/reasoning headroom, not additional Web Search budget: the pass still must complete exactly one search operation. The 2026-08-14 live relative-freshness smoke showed the final `independent_missing_events` search and all three navigation actions completing successfully, but the response becoming `incomplete` solely at the former 3500-token ceiling.
+Each Primary Responses pass has `max_output_tokens=6000`. This is reasoning/JSON
+headroom, not additional search budget.
 
-Broad safety nets are source-neutral: `global_breaking` and
-`independent_missing_events` have no API domain filter. `major_agencies` remains
-an extra Reuters/AP/Bloomberg/FT high-signal route. Do not turn this source route into a
-project-wide whitelist; source quality is still validated after retrieval.
+Broad safety nets `global_breaking` and `independent_missing_events` have no API
+domain filter. `major_agencies` remains an extra Reuters/AP/Bloomberg/FT
+high-signal route using exact date-free query
+`latest AI chips infrastructure financing earnings business deals policy security`.
+Do not turn this route into a project-wide publisher whitelist. The route's API
+domain filter remains part of the mandatory Primary contract.
 
-Search prompts carry the exact effective window only as the authoritative
-eligibility boundary. The **actual search query is date-free**: use a short
-natural-language relative-freshness cue such as `latest`, `recent`, `current` or
-`breaking`; do not copy calendar dates, years, month names, `after:`/`before:` or
-other explicit temporal boundaries into the query. The full saved effective
-window remains authoritative for final freshness validation.
-
-High-signal routing stays source-diverse without increasing the 12-search
-budget:
-
-- `global_breaking` is a source-neutral broad current-AI catch-all without an API
-  domain filter;
-- `major_agencies` is an additional Reuters/AP/Bloomberg/FT sweep using the exact date-free query `latest AI chips infrastructure financing earnings business deals policy security`;
-- `independent_missing_events` is a source-neutral broad missing-events sweep
-  after seeing the current candidate pool.
-
-These are ranking routes, not a candidate whitelist. A stronger official primary
-source or other authoritative source may still be the final source of a
-candidate. All non-`major_agencies` Primary directions remain without API domain
-filters.
+Search prompts carry exact effective window only as eligibility boundary. Actual
+queries are short, date-free and use `latest`/`recent`/`current`/`breaking` cues.
+Do not copy calendar dates, years, month names, `after:`/`before:` or huge Boolean
+lists into query text.
 
 Wikipedia and Reddit must not be used as primary confirmation of a fresh news
-event. ArXiv is allowed as the primary source of a genuinely material research
-result, but it must not crowd out current product, infrastructure, corporate,
-security, legal, or policy news.
+event. ArXiv is allowed as primary for genuinely material research but must not
+crowd out current product, infrastructure, corporate, security, legal or policy
+news.
 
-Do not collapse the two China/Asia passes back into one broad regional search
-without a new recall experiment and explicit approval. The 2026-08-11
-regression showed that a broad China pass found the other control events but
-missed the Apple/Qwen product-integration story; a separate integrations /
-partnerships pass recovered it without increasing the 12-search primary budget.
-The historical benchmark is `automation/fixtures/recall/2026-08-11.json`.
-
-The second China/Asia slot keeps its stable id `china_asia_integrations`, but its
-current discovery role is deliberately broader than the historical name: retain
-integrations, partnerships and deployments while also covering major AI
-business, earnings, revenue and strategy. Its exact date-free query is
+Do not collapse the two China/Asia passes. `china_asia_models` remains the
+model/product/release route. `china_asia_integrations` keeps integrations,
+partnerships and deployments while also covering major business, earnings,
+revenue and strategy using
 `latest China Asia AI business earnings revenue strategy cloud partnerships deployments`.
-The separate `china_asia_models` slot remains unchanged for models, releases and
-product/model discovery. This is retrieval-pool coverage, not a geographic quota
-on published stories. The `russia` slot remains a separate mandatory Primary
-search and must not be replaced or consumed by agency/Asia changes.
+`russia` remains a separate mandatory Primary search and must not be consumed by
+agency/Asia changes.
 
-The 2026-08-12 production failure is a second permanent regression benchmark:
-`automation/fixtures/recall/2026-08-12.json`. It records the runtime-ingress
-failure and fresh Reuters controls including IBM/Together AI/Nvidia, Nvidia
-Nemotron/NeMo and CoreWeave, plus the bounded backfill control for Meta Muse
-Glimmer. Future retrieval changes must not silently recreate that false-zero
-class.
+Permanent regression references include:
 
-The later fresh production run `31566813147` is an additional live quality
-regression. It completed Primary Recall, editorial and coverage, but
-`major_agencies` had no consulted source and the selected pool was dominated by
-low-signal Wikipedia/Reddit/arXiv retrieval. It also exposed a metadata seam:
-trusted fresh Primary Recall was labelled `editorial_from_saved_research` while
-correctly recording 12 fresh search operations. Current normalisation must
-canonicalize proven fresh Primary Recall to
-`pipeline=primary_recall_v2_then_editorial` and
-`research.settings.source=trusted_runtime_primary_recall` before artifact
-validation.
+- `automation/fixtures/recall/2026-08-11.json` for separate China integration;
+- `automation/fixtures/recall/2026-08-12.json` for false-zero/runtime ingress;
+- `automation/fixtures/recall/2026-08-13.json` for high-signal agency controls;
+- `automation/fixtures/recall/2026-08-21-agency-asia.json` for agency/Asia
+  semantics.
 
-The 2026-08-14 production run is a separate recall-quality regression class. It
-completed all 12 Primary searches, four Hybrid searches and six Coverage
-searches, yet most actual queries used dates spanning the healing overlap plus
-the main continuity period. The expanded date range surfaced stale/overlap
-material while fresh high-signal continuity-period events were absent from the
-candidate pool. Future query changes must keep the full effective window for
-validation but must not restore equal ranking priority to the first 24-hour
-healing segment. The same run also demonstrated that two Reuters-focused broad
-slots are not meaningfully independent source coverage, hence the source-neutral
-`major_agencies` rule above.
+Fresh Primary remains subject to fail-closed source-health before publication.
+`major_agencies` must have at least one consulted source, and the combined matrix
+must contain at least two consulted source URLs outside Wikipedia, Reddit and
+arXiv. A technical failure or incomplete search in any mandatory direction is
+red. A technically completed route may legitimately return zero candidates.
 
-A fresh 2026-08-14 recovery attempt after continuity-first routing exposed a further
-source-ranking failure: the Reuters text-anchored pass returned old Reuters mirrors,
-while the four-domain agency pass returned stale Bloomberg hub/video pages and failed
-fresh agency source-health. The regression rule is therefore stronger: high-signal
-source diversity must be enforced by disjoint API domain filters, not merely publisher
-names in query text. Do not remove these filters without a new live recall experiment.
+Primary is discovery-first. The final candidate cap must not be enforced
+incrementally; all 12 passes first contribute to a larger validated/deduplicated
+pool, then the final cap is applied globally while preserving a strongest unique
+contribution per direction before global fill.
 
-Fresh Primary Recall is also subject to a fail-closed source-health guard before
-publication. `major_agencies` must have at least one consulted source, and the
-combined twelve-pass diagnostics must contain at least two consulted source URLs
-outside Wikipedia, Reddit and arXiv. This guard is deliberately minimal: it does
-not impose a project-wide whitelist or require every pass to find a candidate;
-it only prevents a technically completed but obviously degraded retrieval run
-from being mistaken for a healthy low-news day.
+Primary is injected through the existing generator `--research-input` interface.
+Fresh internal research lives under trusted ignored `.runtime`; caller-supplied
+`--research-input` means recovery/editorial rerun and must not execute paid fresh
+Primary.
 
-Primary is **discovery-first**. A pass should surface plausible meaningful
-fresh events into the candidate pool, using `consider` when final significance
-is uncertain, rather than performing aggressive editorial rejection during
-retrieval. Strict source, freshness, legal/curiosity, significance and
-deduplication checks still run through the existing story-coverage validator and
-editorial stages after discovery.
+Recovery must not resurrect known-bad artifacts. Any source with
+`artifact-normalization.json.status=error` or
+`artifact-validation.json.status=error` is non-reusable. Saved modern Primary
+must repeat current source-health validation even for a full artifact.
 
-The configured final candidate cap must **not** be enforced incrementally in
-search order. All twelve passes first contribute to a larger validated and
-deduplicated discovery pool. Only after every mandatory pass completes may the
-normal final cap be applied globally. The selection must preserve the strongest
-unique contribution of each direction before filling remaining slots by global
-rank, so early broad searches cannot starve later China/Asia, Russia, security,
-legal, or missing-events passes. This is retrieval-pool fairness, not a quota on
-published stories. Diagnostics must record both the validated discovery-pool
-size and any events dropped only by the final cap.
+## Bounded agency missing-event discovery rescue v1
 
-All twelve directions are mandatory for a fresh production run. A technical
-failure or incomplete Web Search in any direction is a red, fail-closed primary
-failure and must never be reinterpreted as a low-news day. A completed direction
-may legitimately return zero candidates. Primary diagnostics must preserve the
-actual queries, consulted sources, raw candidates, model rejections and
-validator rejections for each direction.
+After the saved Primary/provisional-editorial checkpoint and **before Hybrid**,
+production may run `automation/scripts/agency_discovery_rescue.py`. This layer is
+not a 13th mandatory Primary pass. It is conditionally enabled only when the
+mandatory `major_agencies` route technically completed and has either
+`raw_count == 0` or `accepted_count == 0`. Never use total candidate count or
+story count as its trigger.
 
-The final `independent_missing_events` pass receives a compact list of already
-found candidates and explicitly searches for significant events absent from the
-pool. It is a last-mile recall check, not another editorial filter.
+The rescue may perform at most **one** additional Web Search operation. The
+actual query is fixed and date-free:
+`latest Reuters AP AI chips infrastructure financing earnings business deals`.
+API `allowed_domains` is intentionally disabled only for this rescue because the
+mandatory four-domain source-pool already produced the qualifying false-zero.
+Downstream acceptance remains narrow: a discovered event needs a direct Reuters
+(`reuters.com`) or AP (`apnews.com` / `ap.org`) primary URL. Syndicated copies do
+not satisfy the direct-source condition.
 
-The 2026-08-16 source-health failure is a permanent regression case. A generic
-`latest major artificial intelligence news` agency query completed but ranked
-hubs instead of enough fresh direct agency stories, even though fresh Reuters
-evidence existed in the effective window. The `major_agencies` route therefore
-uses Reuters/AP/Bloomberg/FT API routing plus the exact high-signal date-free
-query above without increasing the 12-search Primary budget. Agency rescue target
-ranking must normalize event-type families such as `acquisition_closed` to the
-`acquisition` family. Regional classification must keep metadata-only secondary
-organizations such as `Writer; Z.ai` out of the China section while recognizing
-a tracked secondary party explicitly named in the story title, such as
-`Uber; Pony.ai`. Coverage editorial reruns must echo child output before raising
-so the real validation error remains visible in Actions diagnostics.
+This is **missing-event discovery**, not Coverage's same-event corroboration.
+Every returned candidate still passes the ordinary story-coverage validator,
+archive dedupe, and a deterministic same-event guard using
+`organization + event_type + published_date`. If the event already exists under a
+different URL, do not create a duplicate. Source upgrades for existing events
+remain the responsibility of the downstream corroboration layer.
 
-Primary Recall v2 is injected into the existing generator through its
-`--research-input` interface so editorial policy and artifact validation remain
-shared with recovery. Fresh internally generated research is staged in the
-trusted ignored `.runtime` subtree and also copied to preview diagnostics. A
-caller-supplied `--research-input` still means recovery or editorial rerun and
-must skip paid fresh primary. Recovery must not repeat already paid primary work.
+A discovered candidate must pass unchanged Source Freshness Proof before
+editorial. Reuters/AP never grant significance privilege or automatic inclusion.
+Stale, weak, duplicate and zero-result outcomes are normal diagnostics. A rescue
+transport/validation failure is supplemental and must not destroy a previously
+publishable Primary artifact.
 
-Recovery must also not resurrect a known-bad paid artifact. Any saved source
-whose `artifact-normalization.json` or `artifact-validation.json` already has
-`status=error` is non-reusable. If a saved artifact contains
-`primary-recall.json`, recovery must repeat the same source-health guard before
-selecting it, even when all canonical digest files are present. A `full` artifact
-must never bypass research/source-health validation merely because it reached a
-late stage in an earlier failed run.
+Persist `agency-discovery-rescue.json` before the paid call (`search_started`) and
+after the response. At-most-once semantics are mandatory: automatic recovery
+must never repeat `search_started`, because the provider-side consumption is
+unknown. `search_completed` or `merge_failed` may resume merge from saved
+response without another search. If recovery finds a modern full artifact whose
+`major_agencies` trigger applies but no rescue attempt has started, downgrade it
+to `partial_editorial` so normal text-runtime prerequisites are available for the
+one legitimate first attempt. If a saved response still needs merge/freshness/
+editorial, recovery is also text-needed.
+
+If rescue successfully adds a candidate and Hybrid later fails, that candidate
+must still reach the existing trusted-runtime Source Freshness Proof/editorial
+path. Do not silently restore Primary and discard the rescue addition. If the
+recovery freshness gate itself errors, remove supplemental rescue-origin rows
+rather than leaving an unverified candidate in the recovered pool.
+
+The permanent regression fixture is
+`automation/fixtures/recall/2026-08-22-agency-discovery-rescue.json`. It includes
+Google/Marvell, Broadcom, Alibaba, Nvidia/Cloverleaf and out-of-sample Nvidia
+server-pricing controls plus quiet-day, stale, duplicate and weak negatives.
 
 ## Hybrid search completeness contract
 
-A fresh completed Primary Recall v2 run is followed by the separate
-budget-capped hybrid completeness layer as independent insurance rather than as
-a substitute for primary coverage.
-
-The completeness layer performs three fixed one-search passes:
+A fresh completed Primary plus its conditional agency rescue is followed by the
+separate budget-capped Hybrid layer. Hybrid performs three fixed one-search
+passes:
 
 1. models/products/agents/research;
 2. infrastructure/chips/business;
 3. safety/security/policy/major regional gaps.
 
-After those passes, deterministic cluster coverage may authorize at most one
-adaptive gap search when a whole cluster is still absent from the combined
-primary + completeness candidate pool. The hard ceiling is four completed
-Web Search **search operations**. Each pass follows the same one-search rule as
-primary and may use limited navigation tool actions for source verification.
-API domain filtering is deliberately disabled in hybrid; source quality is
-validated after retrieval.
+Deterministic cluster coverage may authorize at most one adaptive gap search.
+Hybrid hard ceiling is four search operations. API domain filtering is disabled.
+The optional fourth slot may become a Russia/Asia completeness-health check when
+Primary regional routes are valid but empty; this is not a publication quota.
 
-Hybrid query planning must follow the same continuity-first temporal contract.
-Its `_time_hint` shifts the query start by 24 hours from effective start back to
-the continuity anchor, while full effective-window validation remains intact.
-Do not revert Hybrid to using the healing-overlap start date as an equal query
-boundary.
+Hybrid query planning follows the same date-free relative-freshness contract and
+full effective-window validation. New candidates are merged through the ordinary
+validator. Editorial reruns only when a candidate is actually accepted.
+Caller-supplied `--research-input` must not recurse into Hybrid. Hybrid failure
+must preserve/restore a usable Primary artifact, and any accepted agency rescue
+candidate must survive the failure and remain available to editorial/Coverage.
 
-New candidates are merged through the existing strict story-coverage validator
-and editorial is rerun only when at least one candidate is actually accepted.
-The completeness layer never runs recursively for caller-supplied
-`--research-input` editorial reruns or recovery, so already-paid
-primary/completeness work is not repeated. Accepted merged research is staged
-through the same trusted `.runtime` bridge. A transport or
-completeness-editorial failure must preserve or restore the completed primary
-artifact and remain diagnostic rather than destroying an otherwise publishable
-primary result. Short/empty pools still proceed to the mandatory six-direction
-coverage audit and zero-pool recall sentinel.
+Fallback Coverage also distinguishes search operations from navigation items.
+Production targeted passes request one search operation and may use a small
+navigation allowance; historical multi-search callers retain their hard caps.
 
-Fallback coverage also distinguishes search operations from navigation tool
-items. Its production targeted passes request one search operation and may use a
-small navigation allowance to verify pages. Historical multi-search callers
-retain their old hard `max_tool_calls` cap rather than silently gaining budget.
-Coverage query text must also prioritize the main continuity period after the
-24-hour healing overlap, while candidate validation remains against the full
-effective window.
-
-The total retrieval ceilings remain **12 primary + up to 4 hybrid + up to 7
-fallback coverage = 23 completed search operations** in the theoretical worst
-case. Navigation tool actions do not raise this search-operation ceiling, though
-they do increase the total number of hosted tool calls. Improving recall must
-not silently raise the 23-search limit.
+The total theoretical retrieval ceiling is now **12 Primary + up to 1 bounded
+agency discovery rescue + up to 4 Hybrid + up to 7 Coverage = 24 completed search
+operations**. Navigation actions do not raise this search-operation ceiling.
+Do not silently raise 24 without a new controlled experiment and architecture
+review.
 
 ## Editorial zero-pool stop
 
 A completed zero-pool result is a normal successful `no-publish`, not a
-production failure, but only after the current temporal-anchor contract, all
-six mandatory coverage directions, and the current recall sentinel have
-completed successfully with no publishable candidate. In that state Image API,
-commit, and deploy must remain skipped. Technical partial/error audits remain
-fail-closed and red. Recovery must reuse a proven completed editorial stop
-without repeating paid research or coverage.
+production failure, but only after current temporal-anchor contract, all required
+quality/search stages, six mandatory Coverage directions, and the applicable
+current sentinel have completed successfully with no publishable candidate.
+Technical partial/error audits remain fail-closed and red. Recovery must reuse a
+proven completed editorial stop without repeating paid work.
 
 ## Source-focused recall contract after 2026-08-13 and 2026-08-14
 
 Production run `31652757802` is a permanent retrieval-quality regression: its
-candidate pool contained exactly four events, editorial selected all four and
-all four were published. The failure was therefore upstream of editorial.
-`automation/fixtures/recall/2026-08-13.json` records five high-signal controls
-that independent source-focused searches recovered in the same effective
-window: Pixel 11/Gemini, Nebius, River AI, IBM/Together AI and Nvidia Nemotron.
+candidate pool contained exactly four events, editorial selected all four and all
+four were published. `automation/fixtures/recall/2026-08-13.json` records five
+high-signal controls recovered by independent source-focused searches.
 
-The following fresh production on 2026-08-14 showed that source-focused routing
-alone is insufficient if query dates still give equal ranking weight to the
-healing overlap. It also showed that duplicating Reuters anchors across two
-broad slots is not independent source coverage.
+The 2026-08-14 fresh production demonstrated that source-focused routing alone is
+insufficient when explicit date ranges distort ranking. Across Primary, rescue,
+Hybrid and Coverage, actual search strings use short date-free natural-language
+queries; exact effective window remains post-retrieval validator.
 
-Do not increase the 12-search Primary budget to solve this class. Keep the
-source-diverse routing and continuity-first query contract:
+Do not increase the mandatory 12-search Primary matrix to solve this class. The
+conditional rescue is a separate quality layer justified later by repeated
+out-of-sample agency misses. Mandatory source-diverse routing remains:
 
 - `global_breaking`: source-neutral broad current-AI catch-all;
-- `major_agencies`: the exact high-signal query `latest AI chips infrastructure financing earnings business deals policy security` inside the existing Reuters/AP/Bloomberg/FT API domain filter;
-- `independent_missing_events`: source-neutral broad missing-events sweep after
-  seeing the current candidate pool.
+- `major_agencies`: Reuters/AP/Bloomberg/FT filtered mandatory route;
+- `independent_missing_events`: source-neutral missing-events sweep.
 
-These routes are retrieval ranking aids, not a candidate whitelist.
-`models_products_agents` must also treat a major device, OS or mass-market
-service launch as relevant when the AI layer is materially part of the launch.
-
-Across Primary, Hybrid and fallback Coverage, actual search strings must use
-short date-free natural-language queries, roughly 6–18 meaningful words, with
-relative-freshness cues. Do not use `after:`, `before:`, `site:`, long Boolean
-`OR` chains, parentheses or huge entity/domain lists. The exact effective window
-remains the post-retrieval validator. `general_coverage_gaps` already has its own
-API domain filter and must not recreate it as a giant `site:` query.
-
-For modern Primary diagnostics that contain `search_window`, source-health must
-also prove at least one fresh in-window Reuters/AP/Bloomberg/FT evidence across
-the full twelve-pass matrix. A dated agency consulted URL or a verified agency
-raw candidate whose publication evidence is in the effective window counts.
-Stale author, newsletter, event or old document pages do not count. This is a
-technical health check, not a quota requiring an agency story in every published
-digest.
+For modern Primary diagnostics, source-health must prove at least one fresh
+in-window Reuters/AP/Bloomberg/FT evidence across the matrix. This is a technical
+health check, not an agency-story quota.
 
 ## Search diagnostic secret hygiene
 
-Provider-returned URLs may contain temporary signed credentials. Before persisting Primary, Hybrid or Coverage diagnostics, strip credential/token/signature query parameters while preserving source identity. Never weaken the artifact secret scanner to permit signed credentials.
-
-## 2026-08-14 relative-freshness retrieval regression
-
-A live `gpt-5.6-terra` A/B showed that explicit calendar dates in Web Search
-queries can degrade ranking and create false-zero retrieval. Production uses
-date-free relative-freshness queries for Primary, Hybrid, Coverage and the final
-broad zero-pool sentinel, while the exact effective window remains a strict
-post-retrieval validator. `global_breaking`, `independent_missing_events` and the
-sentinel are source-neutral catch-alls. If Hybrid finds valid candidates but its
-immediate editorial rerun fails, the merged candidate pool must still be handed
-to Coverage instead of being lost when the primary editorial artifact is
-restored.
-
-Source-health after the source-neutral routing transition checks fresh Reuters/AP/Bloomberg/FT evidence across the **entire 12-pass Primary matrix**, not only `global_breaking`/`major_agencies`/`independent_missing_events`: a thematic pass may discover a strong agency event first. `major_agencies` must still complete its own search operation and consult at least one source, and the general anti-junk source gate remains intact.
+Provider-returned URLs may contain temporary signed credentials. Before
+persisting Primary, agency rescue, Hybrid or Coverage diagnostics, strip
+credential/token/signature query parameters while preserving source identity.
+Never weaken artifact secret scanning to permit signed credentials.
 
 ## Paid-stage recovery and image provenance
 
-A validated digest is a paid-stage checkpoint. Once `Validate publishable story
-count and short digest marker` has succeeded for a publication date, a later
-cover/build/commit/deploy failure must not cause Primary, Hybrid, Coverage or
-editorial to be repaid automatically. Recovery must reuse the highest-completeness
-non-expired artifact and resume from the first incomplete stage. A successfully
-validated cover is a still later checkpoint; FTP-only failure must reuse the
-committed release instead of regenerating research or the cover.
+A validated digest is a paid-stage checkpoint. Once text validation succeeds, a
+later cover/build/commit/deploy failure must not automatically repay completed
+Primary, agency rescue, Hybrid, Coverage or editorial work. Recovery reuses the
+highest-completeness valid artifact and resumes from first incomplete stage.
 
 Image provenance uses separate identities. `image_request_id` is mandatory for
-the image operation. `source_editorial_request_id` is optional provenance and
-must never block an otherwise valid recovered digest from reaching the Images
-API. Never fabricate an editorial ID from an image ID. A real Images API call
-should preserve the provider `x-request-id` when available. Image failures must
-be classified as local preflight, transport/HTTP, or response/contract failures
-so operators can distinguish a zero-cost metadata failure from a billable API
-attempt. Automatic image retries remain disabled; one production cover means at
-most one Images API call unless an operator explicitly starts a new recovery run.
+the image operation; `source_editorial_request_id` is optional provenance and
+must not block valid recovery. Preserve provider `x-request-id` when available.
+Automatic image retries remain disabled.
 
-## Fresh-agency coverage rescue
+## Fresh-agency Coverage corroboration
 
-For modern production artifacts with a non-zero candidate pool, source-health
-may require one bounded last-mile agency corroboration after all six mandatory
-Coverage directions complete. Use only the otherwise free seventh Coverage
-search slot. Zero-pool recall sentinel v8 and non-zero `fresh_agency_rescue` v7
-are mutually exclusive, so the worst-case retrieval ceiling remains 12 Primary
-+ up to 4 Hybrid + up to 7 Coverage = 23 completed search operations.
+For modern non-zero pools, source-health may require one bounded same-event agency
+corroboration after six mandatory Coverage directions. Use only the otherwise
+free seventh Coverage slot. Zero-pool sentinel and non-zero
+`fresh_agency_rescue` are mutually exclusive **within Coverage**; Coverage hard
+cap remains seven.
 
-The rescue must target one existing high-significance agency-likely event, not
-open a new broad discovery stream. Prefer distinctive publisher-neutral factual
-anchors for monetary events. It performs exactly one Web Search without an API
-domain filter, but acceptance remains strict and fail-closed: the primary URL
-must be direct Reuters/AP/Bloomberg/FT, fresh inside the effective window, and
-match the target exactly by `organization`, `event_type`, and `published_date`.
-A successful corroboration updates the existing candidate primary source,
-moves the former primary into supporting sources, and triggers editorial rerun;
-it must never create a duplicate story.
+This downstream rescue targets one **existing** high-significance agency-likely
+event. It performs exactly one Web Search without API domain filter, while
+acceptance requires direct Reuters/AP/Bloomberg/FT URL, in-window freshness and
+exact same-event match by `organization`, `event_type`, `published_date`. A
+successful corroboration changes the source of the existing candidate and must
+never create a duplicate story.
 
-Versioned source-health recovery must reuse already-paid mandatory Coverage
-passes and spend only the new rescue call when needed. Do not make the presence
-of one specific external article in a live search index a deterministic CI gate;
-keep live Terra/Web Search checks as retrieval diagnostics while production
-acceptance itself remains fail-closed.
+Do not confuse this with pre-Hybrid `agency_discovery_rescue`: corroboration
+finds a stronger source for an existing event; discovery finds an event missing
+from the candidate pool. The global ceiling including the separate discovery
+slot is 24, while Coverage itself remains capped at seven.
 
 ## Exact agency cutoff
 
-Fresh-agency evidence must respect the exact saved temporal boundary during
-recovery. When a candidate has a timezone-aware `published_at`, compare it
-directly with `search_window.start_at/end_at`. A date-only agency source on the
-cutoff calendar day is not proof that the article existed before the saved
-cutoff and must fail closed. Keep start-day date-only compatibility for the
-bounded healing overlap, but never let a later same-day recovery import
-post-cutoff agency evidence.
+All agency evidence respects exact saved temporal boundary. Timezone-aware
+`published_at` compares directly with `search_window.start_at/end_at`. Date-only
+evidence on the cutoff calendar day is not proof that an article existed before
+the saved cutoff and must fail closed. Keep start-day date-only compatibility for
+bounded healing overlap.
 
-## Regression rule: terminal agency source-health (2026-08-16)
+## Regression rule: terminal agency source-health
 
-Не превращать отсутствие свежего Reuters/AP/Bloomberg/FT кандидата в самостоятельный fatal gate, если обязательный `major_agencies` pass и bounded Coverage/rescue технически завершились. Terra/web-search ranking недетерминирован: такой zero-result должен сохраняться как заметный source-health warning, после чего решение о публикации принимают обычные editorial/validation gates. При этом незавершённый обязательный agency search, сломанный search contract, неполный Coverage audit и невалидная временная привязка найденного evidence остаются fail-closed. Не увеличивать search budget ради компенсации ranking-недетерминизма без отдельного проверенного архитектурного решения. В pipeline diagnostics приоритет имеет наиболее поздний фактически достигнутый terminal stage; recovery не должна маскировать последующую normalization/validation ошибку. Для subprocess editorial rerun всегда сохранять captured child output в JSON diagnostics.
+Do not turn absence of a fresh agency candidate into a standalone fatal gate if
+mandatory `major_agencies` and applicable bounded quality layers technically
+completed. Terra/Web Search ranking is nondeterministic. A zero-result from the
+conditional discovery rescue is diagnostic, not an instruction to publish weak
+material or to fail an otherwise usable digest. Technical failure of mandatory
+routes, broken search contract, incomplete Coverage and invalid temporal evidence
+remain fail-closed.
 
 ## Retrieval Quality v1
 
-- Не терять потенциально крупный `unverified` discovery: сохранять его в `unresolved_signals`; обязательный resolver разрешён только для strict high-signal evidence, слабые сигналы не блокируют выпуск.
-- `entities`, `anchors`, `source_hint` являются hints/evidence, а не обязательными поисковыми фильтрами. Запрещено превращать их в company whitelist, publisher whitelist или длинный AND-query.
-- Targeted unresolved resolution использует только существующий 7-й Coverage slot, source-neutral Web Search и не увеличивает Coverage budget выше 7.
-- Приоритет adaptive Coverage slot: сначала обязательный technical retry; затем high-signal unresolved resolution; если unresolved нет, действуют существующие fresh-agency rescue / zero-pool sentinel правила.
-- Russia/Asia zero-result проверяется как completeness-health через существующий optional 4-й Hybrid slot. Это не региональная story quota: отсутствие достойной новости после достаточного поиска является допустимым результатом.
-- Общий production search ceiling остаётся 23: 12 Primary + до 4 Hybrid + до 7 Coverage.
-- Modern full recovery без `retrieval_quality_contract_version=1` понижать до partial editorial recovery: переиспользовать уже оплаченные валидные mandatory-проходы и выполнить отсутствующий quality-slot, а не повторять весь research.
-- Recovery artifacts привязаны к точной дате `daily-production-YYYY-MM-DD`; не переносить terminal/research artifacts между календарными выпусками.
-- Live Terra smoke применять как диагностическую проверку query architecture. Не требовать конкретную live Reuters/AP/Bloomberg/FT URL в deterministic CI.
+- Preserve potentially large `unverified` Primary evidence in
+  `unresolved_signals`; mandatory resolver is reserved for strict high-signal
+  evidence.
+- `entities`, `anchors`, `source_hint` are evidence/hints, not company or
+  publisher whitelists.
+- Targeted unresolved resolution uses only the existing seventh Coverage slot and
+  does not increase Coverage above 7.
+- Coverage adaptive priority remains mandatory technical retry first, then
+  unresolved resolution; without unresolved signal, existing same-event
+  fresh-agency rescue / zero-pool sentinel rules apply.
+- Russia/Asia zero-result is a completeness-health check through existing
+  optional fourth Hybrid slot, not a regional story quota.
+- Global production search ceiling is **24**: 12 Primary + up to 1 conditional
+  agency discovery + up to 4 Hybrid + up to 7 Coverage.
+- Modern full recovery without current Retrieval Quality is downgraded to partial
+  editorial recovery. Agency discovery has an independent recovery contract and
+  may also require that downgrade without replaying completed paid work.
+- Recovery artifacts remain bound to exact `daily-production-YYYY-MM-DD` date.
+- Live Terra smoke is diagnostic; do not require one exact external agency URL in
+  deterministic CI.
 
 ## Source Freshness Proof v1
 
-Trusted production research must not publish a candidate merely because a model populated `published_date` or `published_at`. Before each editorial pass fed by the internal trusted runtime bridge, `source_freshness.py` fetches only the source URLs already cited by that candidate and extracts machine-readable publication evidence such as `article:published_time` or JSON-LD `datePublished`. `dateModified` never counts as publication evidence.
+Trusted production research must not publish a candidate merely because a model
+populated `published_date`/`published_at`. Before each editorial pass fed by an
+internal Primary/rescue/Hybrid/Coverage runtime bridge, `source_freshness.py`
+fetches only source URLs already cited by that candidate and extracts
+machine-readable publication evidence such as `article:published_time` or JSON-LD
+`datePublished`. `dateModified` never counts as publication evidence.
 
-Timezone conversion and comparison against the saved effective `search_window` are deterministic Python operations. A timezone-aware source timestamp must be inside the exact interval. Date-only evidence on the cutoff calendar day is insufficient because it cannot prove the page existed before `search_window.end_at`, so it fails closed.
+Timezone conversion and comparison against exact saved effective window are
+deterministic Python operations. Date-only evidence on cutoff day fails closed.
+An already-cited supporting source may be promoted to primary when it provides
+the valid date. Never run a new search or invent a date merely to pass freshness.
+Outside-window source yields `exclude / old_reprint`; no verifiable date yields
+unconfirmed and blocks publication.
 
-If the current primary source does not expose usable publication metadata but an already-cited supporting source does, that supporting source may be promoted to primary. Do not run a new search, add a publisher whitelist, or invent a date to rescue the candidate. If a cited source proves a date outside the window, mark the candidate `exclude` / `old_reprint`; if none of the cited sources can independently prove a publication date, mark it unconfirmed and fail closed for publication.
+Source Freshness Proof itself makes no OpenAI or Web Search call. It does not
+consume the new rescue slot. The project-wide search ceiling is 24 solely because
+of the separate conditional agency discovery layer.
 
-The verifier applies only to internally generated Primary/Hybrid/Coverage runtime handoffs. Arbitrary caller fixtures remain offline. Source Freshness Proof makes no OpenAI or Web Search call and must not change the 12 + up to 4 + up to 7 = 23 search-operation ceiling. In particular, this change does **not** introduce a new short-pool seventh-slot search or alter the existing adaptive Coverage priority.
-
-The 2026-08-17 AP/Anthropic incident is the permanent freshness regression: production labelled the AP story as 2026-08-16 even though the source page's actual `datePublished` was 2026-07-31. Future changes must keep that stale candidate excluded while preserving an actually fresh offset timestamp such as TechCrunch `2026-08-16T13:57:00-07:00` via Python timezone arithmetic.
+The 2026-08-17 AP/Anthropic incident remains the permanent stale regression:
+actual source `datePublished` was 2026-07-31 despite production metadata claiming
+2026-08-16. Keep that candidate excluded while preserving genuinely fresh offset
+timestamps through Python timezone arithmetic.
 
 ## Independent audit journal and retrieval experiments
 
 `automation/audits/independent-audit-journal.md` is the canonical long-lived
-journal for independent Freshness/Completeness monitoring. Do not create a
-parallel competing journal. Stored architecture experiments belong under
-`automation/audits/experiments/`; machine-readable historical regression
-contracts belong under `automation/fixtures/recall/`.
+journal for independent Freshness/Completeness monitoring. Stored architecture
+experiments belong under `automation/audits/experiments/`; machine-readable
+historical contracts belong under `automation/fixtures/recall/`.
 
-After each successful daily production release, the normal quality-monitoring
-workflow should:
+After each successful release:
 
-1. resolve the factual production run, artifact, published digest and exact
-effective window including continuity anchor and healing overlap;
-2. inspect the full Primary/Hybrid/Coverage candidate and rejection anatomy;
-3. independently build a reference set using assistant-side Terra when that tool
-is actually available, otherwise clearly label any other web search method;
-4. classify stale stories, retrieval misses, editorial rejections, duplicates,
-material updates, after-cutoff events and borderline signals separately;
-5. check major agencies, models/products/agents, chips/infrastructure/cloud,
-business/investment, legal/copyright, security, Russia and China/Asia including
-business/earnings/strategy;
-6. update the same canonical journal with Freshness and Completeness verdicts,
-approximate strict recall when defensible, Must Include misses, repeated patterns
-and architecture evidence.
+1. resolve actual production run, artifact, published digest and exact effective
+   window;
+2. inspect Primary/agency rescue/Hybrid/Coverage candidate and rejection anatomy;
+3. independently build a reference set using assistant-side Terra when actually
+   available, otherwise clearly label the alternative search method;
+4. classify stale, retrieval misses, editorial rejections, duplicates, material
+   updates, after-cutoff and borderline signals separately;
+5. check agencies, models/products/agents, chips/infrastructure/cloud,
+   business/investment, legal, security, Russia and China/Asia;
+6. update the same canonical journal with verdicts and architecture evidence.
 
-This monitoring must use assistant-owned resources and must not spend the user's
-production API budget. A single miss is evidence for the journal, not automatic
-permission to mutate retrieval. Architecture changes still require a separate
-controlled experiment and an architecture-wide dependency/regression audit.
+This monitoring uses assistant-owned resources and must not spend the user's
+production API budget. A single miss is evidence, not automatic permission to
+mutate retrieval. Architecture changes require controlled experiment and
+architecture-wide dependency/regression audit.
 
-The 2026-08-21 agency/Asia experiment is stored in
-`automation/audits/experiments/2026-08-21-agency-asia-recall.md` with the
-machine-readable contract
-`automation/fixtures/recall/2026-08-21-agency-asia.json`. Its accepted production
-change keeps Primary at 12 searches, Hybrid at up to 4, Coverage at up to 7, and
-therefore keeps the 23-search worst-case ceiling. It deliberately does not add a
-13th Primary agency rescue. If the same fresh-agency Must Include miss class
-repeats after the query change, treat that as evidence for a new bounded-rescue
-experiment rather than silently increasing paid search budget.
+The 2026-08-21 agency/Asia experiment initially kept Primary at 12, Hybrid at up
+to 4 and Coverage at up to 7, so its historical accepted patch retained the
+23-search ceiling and deliberately avoided an immediate new agency slot. That
+statement is historical, not the current architecture. Repeated Broadcom miss on
+22 August plus out-of-sample Reuters/Nvidia miss on 23 August, together with the
+bounded experiment on 22 August, justified the current separate conditional
+agency discovery rescue. Its regression fixture is
+`automation/fixtures/recall/2026-08-22-agency-discovery-rescue.json`; current
+worst-case ceiling is 24.
 
 ## Cleanup resilience contract (2026-08-18)
 
 The public-content cleanup must treat `posts/images/` as mandatory, but the
 historical `posts/dzen-test/images/` directory may be absent after the final
-legacy image has expired. Git does not retain an empty directory, so absence of
-that retired legacy image directory is a valid steady state only when the RSS
-and retained publication inventory require no legacy image. Any retained legacy
-publication still requires its exact page, primary legacy image and canonical
-mirror and must fail closed if any of them is missing. Do not add a `.gitkeep`
-merely to satisfy cleanup validation.
+legacy image has expired. Any retained legacy publication still requires its
+exact page, primary legacy image and canonical mirror and must fail closed if any
+is missing. Do not add `.gitkeep` merely to satisfy cleanup validation.
 
 Repository hygiene may retry only idempotent GitHub API `GET` requests after
 transient transport failures or HTTP `500`, `502`, `503`, or `504`. The current
 bound is two retries after the initial attempt with short backoff. Mutating
-`DELETE` and `PUT` requests must not be automatically retried by this client;
-apply-time classification and safety rechecks remain authoritative before every
-destructive operation.
+`DELETE` and `PUT` requests must not be automatically retried; apply-time safety
+checks remain authoritative.
 
 The regression source for this contract is the pair of 2026-08-17 failures:
 workflow run `32035035642` received a GitHub Actions API HTTP 500 while reading

@@ -4,7 +4,9 @@
 The six mandatory passes and all v8 sentinel/agency behavior stay intact. Only
 when Primary Recall produced a high-confidence unresolved signal do we reserve
 the already-existing seventh Coverage slot for one source-neutral resolution
-search. Coverage remains capped at seven calls and the full pipeline at 23.
+search. Coverage remains capped at seven calls. A distinct pre-Hybrid agency
+discovery rescue may add at most one separate search, so the explicit whole-
+pipeline ceiling is 24 = 12 Primary + 1 agency discovery + 4 Hybrid + 7 Coverage.
 """
 from __future__ import annotations
 
@@ -27,6 +29,8 @@ _BASE_SPEC.loader.exec_module(_v8)
 for _name in dir(_v8):
     if not _name.startswith("_"):
         globals()[_name] = getattr(_v8, _name)
+
+from agency_discovery_recovery_entry import run_recovery_entry
 
 
 def __getattr__(name: str) -> Any:
@@ -517,7 +521,6 @@ def _run_resolution(
         or maximum_web_search_calls
     )
     _recalculate_budget(plan, maximum_calls)
-
     unresolved_outside = max(0, len(signals) - len(cluster))
     complete = bool(accepted and unresolved_outside == 0)
     remaining = unresolved_outside + (0 if accepted else len(cluster))
@@ -622,7 +625,7 @@ def execute_audit_plan(
     )
 
 
-def _finalize_quality_report(report_path: Path | None) -> None:
+def _finalize_quality_report(report_path: Path | None, recovery_entry: dict[str, Any] | None = None) -> None:
     if report_path is None or not report_path.is_file():
         return
     payload = read_json(report_path)
@@ -630,6 +633,29 @@ def _finalize_quality_report(report_path: Path | None) -> None:
         return
     if not isinstance(payload.get("retrieval_quality"), dict):
         payload = _annotate_no_signal_quality(payload)
+    if isinstance(recovery_entry, dict) and recovery_entry.get("status") != "not_recovery":
+        payload["agency_discovery_rescue_recovery_entry"] = {
+            key: recovery_entry.get(key)
+            for key in (
+                "version",
+                "search_strategy",
+                "triggered",
+                "trigger_reason",
+                "executed",
+                "state",
+                "status",
+                "raw_count",
+                "accepted_count",
+                "added_count",
+                "duplicate_count",
+                "search_operation_count_contribution",
+                "recovered_from_artifact",
+                "coverage_recovery_entry",
+                "coverage_recovery_editorial_rerun",
+                "coverage_recovery_source_freshness",
+            )
+            if key in recovery_entry
+        }
     write_json(report_path, payload)
 
 
@@ -637,9 +663,10 @@ def main() -> int:
     _sync_direct_hooks()
     _v8.execute_audit_plan = execute_audit_plan
     _v8.completed_prior_audit = completed_prior_audit
+    recovery_entry = run_recovery_entry(rerun_editorial_fn=rerun_editorial)
     result = int(_v8.main())
     _sync_state_from_v8()
-    _finalize_quality_report(_runtime._report_path())
+    _finalize_quality_report(_runtime._report_path(), recovery_entry)
     return result
 
 
