@@ -10,8 +10,9 @@ Agency-discovery rescue recovery is deliberately at-most-once.  A saved
 ``search_completed``/``merge_failed`` response may finish merge without an API
 call.  A saved ``search_started`` state is never retried automatically because
 whether the provider consumed the one allowed search is unknowable.  If Primary
-was saved but the rescue had not started yet, recovery reports a pending first
-attempt for the later quality-layer entrypoint instead of spending API here.
+was saved but the rescue had not started yet, recovery marks the full artifact
+partial so the normal text-runtime prerequisites are available for the one
+legitimate first attempt before Coverage.
 """
 from __future__ import annotations
 
@@ -41,6 +42,14 @@ def __getattr__(name: str) -> Any:
 _BASE_CHOOSE_SOURCE = _base.choose_source
 _BASE_RECOVER = _base.recover
 RETRIEVAL_QUALITY_CONTRACT_VERSION = 1
+_AGENCY_DISCOVERY_TERMINAL_STATES = {
+    "not_triggered",
+    "completed",
+    "completed_no_addition",
+    "search_failed",
+    "indeterminate_after_interruption",
+    "diagnostics_missing",
+}
 
 
 def _modern_primary_artifact(source_dir: Path, recovery_root: Path) -> bool:
@@ -72,26 +81,137 @@ def _current_quality_report(recovery_root: Path, publication_date: str) -> dict[
     return None
 
 
+def _primary_report(
+    source_dir: Path, recovery_root: Path, publication_date: str
+) -> dict[str, Any] | None:
+    paths = [source_dir / "primary-recall.json"]
+    paths.extend(sorted(recovery_root.rglob(f"primary-recall-{publication_date}.json")))
+    paths.extend(sorted(recovery_root.rglob("primary-recall.json")))
+    seen: set[Path] = set()
+    for path in paths:
+        if path in seen or not path.is_file():
+            continue
+        seen.add(path)
+        try:
+            payload = read_json(path)
+        except Exception:
+            continue
+        if not isinstance(payload, dict):
+            continue
+        found_date = payload.get("publication_date")
+        if found_date not in {None, publication_date}:
+            continue
+        return payload
+    return None
+
+
+def _major_agencies_requires_discovery(primary: dict[str, Any] | None) -> bool:
+    if not isinstance(primary, dict):
+        return False
+    rows = primary.get("directions")
+    if not isinstance(rows, list):
+        return False
+    for row in rows:
+        if not isinstance(row, dict) or row.get("direction_id") != "major_agencies":
+            continue
+        if row.get("status") not in {"complete", "complete_with_gaps"}:
+            return False
+        raw = row.get("raw_candidates")
+        raw_count = len(raw) if isinstance(raw, list) else 0
+        accepted_count = int(row.get("accepted_count", 0) or 0)
+        return raw_count == 0 or accepted_count == 0
+    return False
+
+
+def _agency_state(
+    source_dir: Path, recovery_root: Path, publication_date: str
+) -> dict[str, Any] | None:
+    paths = [source_dir / "agency-discovery-rescue.json"]
+    paths.extend(
+        sorted(recovery_root.rglob(f"agency-discovery-rescue-{publication_date}.json"))
+    )
+    paths.extend(sorted(recovery_root.rglob("agency-discovery-rescue.json")))
+    seen: set[Path] = set()
+    for path in paths:
+        if path in seen or not path.is_file():
+            continue
+        seen.add(path)
+        try:
+            payload = read_json(path)
+        except Exception:
+            continue
+        if not isinstance(payload, dict):
+            continue
+        if payload.get("publication_date") not in {None, publication_date}:
+            continue
+        if payload.get("search_strategy") not in {None, "agency_discovery_rescue"}:
+            continue
+        return payload
+    return None
+
+
+def agency_discovery_upgrade_needed(
+    source_dir: Path, recovery_root: Path, publication_date: str
+) -> tuple[bool, str]:
+    """Whether full recovery still needs text runtime for agency discovery work."""
+    primary = _primary_report(source_dir, recovery_root, publication_date)
+    if not _major_agencies_requires_discovery(primary):
+        return False, "major_agencies_not_triggered"
+    state = _agency_state(source_dir, recovery_root, publication_date)
+    if not isinstance(state, dict):
+        return True, "agency_discovery_first_attempt_pending"
+    value = str(state.get("state") or "")
+    if value in _AGENCY_DISCOVERY_TERMINAL_STATES:
+        return False, f"agency_discovery_terminal:{value}"
+    if value == "search_started":
+        # Outcome is unknowable. At-most-once semantics prohibit another search.
+        return False, "agency_discovery_indeterminate_no_retry"
+    if value in {"search_completed", "merge_failed"}:
+        # No second search is needed, but merge/freshness/editorial may still be.
+        return True, f"agency_discovery_resume_pending:{value}"
+    return True, f"agency_discovery_unknown_state:{value or 'missing'}"
+
+
 def choose_source(
     recovery_root: Path,
     publication_date: str,
 ) -> tuple[Path, str, list[dict[str, Any]]]:
     source_dir, mode, diagnostics = _BASE_CHOOSE_SOURCE(recovery_root, publication_date)
-    if (
-        mode == "full"
-        and _modern_primary_artifact(source_dir, recovery_root)
-        and _current_quality_report(recovery_root, publication_date) is None
-    ):
+    downgrade_reasons: list[dict[str, Any]] = []
+    if mode == "full" and _modern_primary_artifact(source_dir, recovery_root):
+        if _current_quality_report(recovery_root, publication_date) is None:
+            downgrade_reasons.append(
+                {
+                    "status": "quality-contract-upgrade",
+                    "retrieval_quality_contract_version": RETRIEVAL_QUALITY_CONTRACT_VERSION,
+                    "reason": "current Retrieval Quality report is missing",
+                }
+            )
+        agency_needed, agency_reason = agency_discovery_upgrade_needed(
+            source_dir, recovery_root, publication_date
+        )
+        if agency_needed:
+            downgrade_reasons.append(
+                {
+                    "status": "agency-discovery-contract-upgrade",
+                    "agency_discovery_rescue_version": 1,
+                    "reason": agency_reason,
+                }
+            )
+    if downgrade_reasons:
         mode = "partial_editorial"
         diagnostics = copy.deepcopy(diagnostics)
-        diagnostics.append(
-            {
-                "directory": str(source_dir),
-                "status": "quality-contract-upgrade",
-                "retrieval_quality_contract_version": RETRIEVAL_QUALITY_CONTRACT_VERSION,
-                "action": "downgrade full recovery to partial_editorial; reuse paid research and rerun Coverage quality stage",
-            }
-        )
+        for reason in downgrade_reasons:
+            diagnostics.append(
+                {
+                    "directory": str(source_dir),
+                    **reason,
+                    "action": (
+                        "downgrade full recovery to partial_editorial; reuse paid "
+                        "research and make text runtime available for pending quality work"
+                    ),
+                }
+            )
     return source_dir, mode, diagnostics
 
 
