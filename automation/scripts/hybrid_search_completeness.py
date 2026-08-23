@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
 """Regional-health wrapper over Hybrid Completeness v1.
 
-The first three independent completeness searches are unchanged.  The existing
-optional fourth slot is redirected to a source-neutral Russia/Asia health-check
-when Primary Recall completed those regional beats with zero accepted candidates.
-No publication quota and no additional search budget are introduced.
+Before Hybrid spends its own search budget, a separate bounded quality layer may
+spend at most one agency-discovery search when the mandatory ``major_agencies``
+Primary route completed with raw=0 or accepted=0.  The rescue is independent of
+candidate count and remains distinct from Coverage's same-event
+``fresh_agency_rescue`` corroboration.
+
+The first three independent Hybrid completeness searches are unchanged.  The
+existing optional fourth Hybrid slot is redirected to a source-neutral
+Russia/Asia health-check when Primary Recall completed those regional beats with
+zero accepted candidates.  Hybrid itself remains capped at four searches; the
+explicit whole-pipeline ceiling is 24 = 12 Primary + 1 agency discovery rescue
++ 4 Hybrid + 7 Coverage.
 """
 from __future__ import annotations
 
@@ -25,10 +33,17 @@ for _name in dir(_base):
     if not _name.startswith("_"):
         globals()[_name] = getattr(_base, _name)
 
+from agency_discovery_rescue import (
+    AGENCY_DISCOVERY_RESCUE_STRATEGY,
+    PIPELINE_MAXIMUM_SEARCH_OPERATIONS,
+    run_agency_discovery_rescue,
+)
+
 
 def __getattr__(name: str) -> Any:
     """Preserve the historical module surface for tests and recovery hooks."""
     return getattr(_base, name)
+
 
 _BASE_RUN = _base.run_hybrid_completeness
 REGIONAL_HEALTH_VERSION = 1
@@ -89,6 +104,115 @@ def _regional_prompt(
 """
 
 
+def _run_pre_hybrid_agency_rescue(
+    *,
+    artifact_dir: Path,
+    archive_path: Path,
+    publication_date: str,
+    api_key: str,
+    model: str,
+    maximum_candidates: int,
+    output_root: Path,
+) -> dict[str, Any]:
+    """Quality-gap rescue is non-fatal; Hybrid remains available on failure."""
+    try:
+        report = run_agency_discovery_rescue(
+            artifact_dir=artifact_dir,
+            archive_path=archive_path,
+            publication_date=publication_date,
+            api_key=api_key,
+            model=model,
+            maximum_candidates=maximum_candidates,
+            output_root=output_root,
+        )
+    except Exception as exc:
+        report = {
+            "version": 1,
+            "search_strategy": AGENCY_DISCOVERY_RESCUE_STRATEGY,
+            "publication_date": publication_date,
+            "triggered": False,
+            "executed": False,
+            "state": "integration_error",
+            "status": "complete_with_gaps",
+            "search_operation_limit": 1,
+            "search_operation_reserved": 0,
+            "search_operation_count_contribution": 0,
+            "added_count": 0,
+            "duplicate_count": 0,
+            "rejections": [
+                {
+                    "reason_code": "integration_error",
+                    "detail": f"{type(exc).__name__}: {exc}",
+                }
+            ],
+            "pipeline_search_budget": {
+                "primary_maximum": 12,
+                "agency_discovery_rescue_maximum": 1,
+                "hybrid_maximum": 4,
+                "coverage_maximum": 7,
+                "maximum_total": PIPELINE_MAXIMUM_SEARCH_OPERATIONS,
+            },
+        }
+        write_json(artifact_dir / "agency-discovery-rescue.json", report)
+        output_root.mkdir(parents=True, exist_ok=True)
+        write_json(
+            output_root / f"agency-discovery-rescue-{publication_date}.json",
+            report,
+        )
+    return report
+
+
+def _rescue_added(report: dict[str, Any]) -> bool:
+    return int(report.get("added_count", 0) or 0) > 0
+
+
+def _attach_rescue_to_hybrid_report(
+    *,
+    report: dict[str, Any],
+    rescue: dict[str, Any],
+    artifact_dir: Path,
+    publication_date: str,
+    output_root: Path,
+) -> dict[str, Any]:
+    report = copy.deepcopy(report)
+    report["agency_discovery_rescue"] = copy.deepcopy(rescue)
+    report["pre_hybrid_quality_search_operations"] = int(
+        rescue.get("search_operation_count_contribution", 0) or 0
+    )
+    report["pipeline_search_budget"] = {
+        "primary_maximum": 12,
+        "agency_discovery_rescue_maximum": 1,
+        "hybrid_maximum": DEFAULT_MAXIMUM_SEARCH_CALLS,
+        "coverage_maximum": 7,
+        "maximum_total": PIPELINE_MAXIMUM_SEARCH_OPERATIONS,
+    }
+
+    if _rescue_added(rescue):
+        report["editorial_rerun_needed"] = True
+        merged_path = report.get("merged_research_path")
+        if not isinstance(merged_path, str) or not Path(merged_path).is_file():
+            current = read_json(artifact_dir / "candidates.json")
+            if isinstance(current, dict) and isinstance(current.get("candidates"), list):
+                output_root.mkdir(parents=True, exist_ok=True)
+                diagnostic = (
+                    output_root / f"hybrid-completeness-merged-{publication_date}.json"
+                )
+                runtime_root = _base._runtime_root_for(output_root)
+                runtime_root.mkdir(parents=True, exist_ok=True)
+                runtime = (
+                    runtime_root / f"hybrid-completeness-merged-{publication_date}.json"
+                )
+                write_json(diagnostic, current)
+                write_json(runtime, current)
+                report["diagnostic_merged_research_path"] = str(diagnostic)
+                report["merged_research_path"] = str(runtime)
+
+    output_root.mkdir(parents=True, exist_ok=True)
+    write_json(output_root / f"hybrid-completeness-{publication_date}.json", report)
+    write_json(artifact_dir / "hybrid-completeness.json", report)
+    return report
+
+
 def run_hybrid_completeness(
     *, artifact_dir: Path, archive_path: Path, publication_date: str, api_key: str,
     model: str, maximum_search_calls: int = DEFAULT_MAXIMUM_SEARCH_CALLS,
@@ -99,9 +223,25 @@ def run_hybrid_completeness(
     research = read_json(artifact_dir / "candidates.json")
     if not isinstance(research, dict):
         raise RuntimeError("Hybrid completeness: candidates.json должен быть объектом")
+
+    rescue = _run_pre_hybrid_agency_rescue(
+        artifact_dir=artifact_dir,
+        archive_path=archive_path,
+        publication_date=publication_date,
+        api_key=api_key,
+        model=model,
+        maximum_candidates=maximum_candidates,
+        output_root=output_root,
+    )
+    # Rescue may have added a candidate to the persisted pool. Hybrid must see
+    # that event so it does not spend its own searches rediscovering it.
+    refreshed = read_json(artifact_dir / "candidates.json")
+    if isinstance(refreshed, dict):
+        research = refreshed
+
     gaps = _regional_gaps(research)
     if not gaps or maximum_search_calls < DEFAULT_MAXIMUM_SEARCH_CALLS:
-        return _BASE_RUN(
+        report = _BASE_RUN(
             artifact_dir=artifact_dir,
             archive_path=archive_path,
             publication_date=publication_date,
@@ -110,6 +250,13 @@ def run_hybrid_completeness(
             maximum_search_calls=maximum_search_calls,
             maximum_candidates=maximum_candidates,
             request_fn=request_fn,
+            output_root=output_root,
+        )
+        return _attach_rescue_to_hybrid_report(
+            report=report,
+            rescue=rescue,
+            artifact_dir=artifact_dir,
+            publication_date=publication_date,
             output_root=output_root,
         )
 
@@ -128,7 +275,13 @@ def run_hybrid_completeness(
     archive = read_json(archive_path)
     search_window = research.get("search_window")
     if not isinstance(archive, dict) or not isinstance(search_window, dict):
-        return report
+        return _attach_rescue_to_hybrid_report(
+            report=report,
+            rescue=rescue,
+            artifact_dir=artifact_dir,
+            publication_date=publication_date,
+            output_root=output_root,
+        )
 
     current_research = research
     merged_path = report.get("merged_research_path")
@@ -174,7 +327,11 @@ def run_hybrid_completeness(
     record["regional_gaps"] = list(gaps)
     record["required_query"] = regional_health_query(gaps)
 
-    additions = [copy.deepcopy(item) for item in record.get("candidates", []) if isinstance(item, dict)]
+    additions = [
+        copy.deepcopy(item)
+        for item in record.get("candidates", [])
+        if isinstance(item, dict)
+    ]
     merged, accepted, rejected = merge_candidates(
         current_research, additions, maximum_candidates=maximum_candidates
     )
@@ -198,12 +355,31 @@ def run_hybrid_completeness(
                 "publication_quota": False,
                 "domain_filter": False,
             },
-            "additional_candidates_returned": int(report.get("additional_candidates_returned", 0) or 0) + len(additions),
-            "accepted_candidates": list(report.get("accepted_candidates") or []) + accepted,
-            "rejected_candidates": list(report.get("rejected_candidates") or []) + rejected,
-            "final_candidate_count": len([item for item in merged.get("candidates", []) if isinstance(item, dict)]),
-            "final_cluster_counts": cluster_counts([item for item in merged.get("candidates", []) if isinstance(item, dict)]),
-            "editorial_rerun_needed": bool(report.get("editorial_rerun_needed") or accepted),
+            "additional_candidates_returned": int(
+                report.get("additional_candidates_returned", 0) or 0
+            )
+            + len(additions),
+            "accepted_candidates": list(report.get("accepted_candidates") or [])
+            + accepted,
+            "rejected_candidates": list(report.get("rejected_candidates") or [])
+            + rejected,
+            "final_candidate_count": len(
+                [
+                    item
+                    for item in merged.get("candidates", [])
+                    if isinstance(item, dict)
+                ]
+            ),
+            "final_cluster_counts": cluster_counts(
+                [
+                    item
+                    for item in merged.get("candidates", [])
+                    if isinstance(item, dict)
+                ]
+            ),
+            "editorial_rerun_needed": bool(
+                report.get("editorial_rerun_needed") or accepted
+            ),
         }
     )
     budget = dict(report.get("search_budget") or {})
@@ -214,22 +390,34 @@ def run_hybrid_completeness(
             "adaptive_calls_maximum": 1,
             "response_attempts": len(attempts),
             "completed_calls": completed_calls,
-            "remaining_calls": max(0, min(maximum_search_calls, DEFAULT_MAXIMUM_SEARCH_CALLS) - completed_calls),
+            "remaining_calls": max(
+                0,
+                min(maximum_search_calls, DEFAULT_MAXIMUM_SEARCH_CALLS)
+                - completed_calls,
+            ),
         }
     )
     report["search_budget"] = budget
 
     output_root.mkdir(parents=True, exist_ok=True)
     if accepted:
-        diagnostic_merged = output_root / f"hybrid-completeness-merged-{publication_date}.json"
+        diagnostic_merged = (
+            output_root / f"hybrid-completeness-merged-{publication_date}.json"
+        )
         runtime_root = _base._runtime_root_for(output_root)
         runtime_root.mkdir(parents=True, exist_ok=True)
-        runtime_merged = runtime_root / f"hybrid-completeness-merged-{publication_date}.json"
+        runtime_merged = (
+            runtime_root / f"hybrid-completeness-merged-{publication_date}.json"
+        )
         write_json(diagnostic_merged, merged)
         write_json(runtime_merged, merged)
         report["diagnostic_merged_research_path"] = str(diagnostic_merged)
         report["merged_research_path"] = str(runtime_merged)
-    report_path = output_root / f"hybrid-completeness-{publication_date}.json"
-    write_json(report_path, report)
-    write_json(artifact_dir / "hybrid-completeness.json", report)
-    return report
+
+    return _attach_rescue_to_hybrid_report(
+        report=report,
+        rescue=rescue,
+        artifact_dir=artifact_dir,
+        publication_date=publication_date,
+        output_root=output_root,
+    )
