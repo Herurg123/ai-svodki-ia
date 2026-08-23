@@ -7,6 +7,11 @@ Primary route completed with raw=0 or accepted=0.  The rescue is independent of
 candidate count and remains distinct from Coverage's same-event
 ``fresh_agency_rescue`` corroboration.
 
+A rescue-origin candidate is source-freshness verified before Hybrid sees it.
+That prevents a model-claimed-fresh but actually stale agency row from filling a
+cluster and suppressing Hybrid's adaptive gap search.  The freshness gate uses
+only already-cited URLs and spends no OpenAI/Web Search budget.
+
 The first three independent Hybrid completeness searches are unchanged.  The
 existing optional fourth Hybrid slot is redirected to a source-neutral
 Russia/Asia health-check when Primary Recall completed those regional beats with
@@ -34,6 +39,7 @@ for _name in dir(_base):
         globals()[_name] = getattr(_base, _name)
 
 from agency_discovery_rescue import (
+    AGENCY_DISCOVERY_RESCUE_DIRECTION,
     AGENCY_DISCOVERY_RESCUE_STRATEGY,
     PIPELINE_MAXIMUM_SEARCH_OPERATIONS,
     run_agency_discovery_rescue,
@@ -166,6 +172,156 @@ def _rescue_added(report: dict[str, Any]) -> bool:
     return int(report.get("added_count", 0) or 0) > 0
 
 
+def _renumber_candidates(candidates: list[dict[str, Any]]) -> None:
+    for index, candidate in enumerate(candidates, start=1):
+        candidate["id"] = f"cand-{index:03d}"
+
+
+def _safe_remove_generated_path(raw: Any) -> None:
+    if not isinstance(raw, str) or not raw.strip():
+        return
+    path = Path(raw)
+    try:
+        path.resolve().relative_to(Path(REPOSITORY_ROOT).resolve())
+    except (OSError, ValueError):
+        return
+    try:
+        path.unlink(missing_ok=True)
+    except OSError:
+        return
+
+
+def _persist_rescue_report(
+    report: dict[str, Any], *, artifact_dir: Path, output_root: Path,
+    publication_date: str
+) -> None:
+    write_json(artifact_dir / "agency-discovery-rescue.json", report)
+    output_root.mkdir(parents=True, exist_ok=True)
+    write_json(output_root / f"agency-discovery-rescue-{publication_date}.json", report)
+
+
+def _pre_hybrid_source_freshness_gate(
+    *,
+    rescue: dict[str, Any],
+    artifact_dir: Path,
+    publication_date: str,
+    output_root: Path,
+    verify_fn: Callable[[dict[str, Any]], tuple[dict[str, Any], dict[str, Any]]] | None = None,
+) -> dict[str, Any]:
+    """Verify only rescue rows before they can influence Hybrid gap planning.
+
+    This gate is supplemental and fail-open for the original Primary pool.  A
+    rescue freshness failure therefore removes rescue-origin rows and continues
+    with Primary/Hybrid rather than poisoning or blocking a previously usable
+    artifact.
+    """
+    if not _rescue_added(rescue):
+        return rescue
+    research = read_json(artifact_dir / "candidates.json")
+    if not isinstance(research, dict) or not isinstance(research.get("candidates"), list):
+        return rescue
+    rows = [copy.deepcopy(item) for item in research["candidates"] if isinstance(item, dict)]
+    rescue_rows = [
+        item
+        for item in rows
+        if item.get("audit_direction") == AGENCY_DISCOVERY_RESCUE_DIRECTION
+        and item.get("recommendation") in {"include", "consider"}
+    ]
+    if not rescue_rows:
+        return rescue
+    base_rows = [
+        item
+        for item in rows
+        if item.get("audit_direction") != AGENCY_DISCOVERY_RESCUE_DIRECTION
+    ]
+    window = research.get("search_window")
+    result = copy.deepcopy(rescue)
+    result["source_freshness_gate"] = {
+        "version": 1,
+        "status": "running",
+        "paid_api_calls": 0,
+        "candidate_count_before": len(rescue_rows),
+    }
+    try:
+        if not isinstance(window, dict):
+            raise RuntimeError("rescued research is missing search_window")
+        if verify_fn is None:
+            from source_freshness import verify_research_payload
+
+            verify_fn = verify_research_payload
+        verified, summary = verify_fn(
+            {
+                "search_window": copy.deepcopy(window),
+                "candidates": copy.deepcopy(rescue_rows),
+            }
+        )
+        verified_rows = verified.get("candidates") if isinstance(verified, dict) else None
+        survivors = [
+            copy.deepcopy(item)
+            for item in (verified_rows if isinstance(verified_rows, list) else [])
+            if isinstance(item, dict)
+            and item.get("recommendation") in {"include", "consider"}
+        ]
+        result["source_freshness_gate"] = {
+            "version": 1,
+            "status": "complete",
+            "paid_api_calls": 0,
+            "candidate_count_before": len(rescue_rows),
+            "candidate_count_after": len(survivors),
+            "summary": copy.deepcopy(summary),
+        }
+    except Exception as exc:
+        survivors = []
+        result["source_freshness_gate"] = {
+            "version": 1,
+            "status": "error_nonfatal",
+            "paid_api_calls": 0,
+            "candidate_count_before": len(rescue_rows),
+            "candidate_count_after": 0,
+            "error": f"{type(exc).__name__}: {exc}",
+        }
+
+    rebuilt = copy.deepcopy(research)
+    rebuilt_rows = base_rows + survivors
+    _renumber_candidates(rebuilt_rows)
+    rebuilt["candidates"] = rebuilt_rows
+    write_json(artifact_dir / "candidates.json", rebuilt)
+
+    result["validated_count_before_source_freshness"] = int(
+        rescue.get("accepted_count", rescue.get("added_count", 0)) or 0
+    )
+    result["freshness_verified_added_count"] = len(survivors)
+    result["accepted_count"] = len(survivors)
+    result["added_count"] = len(survivors)
+    result["accepted_candidates"] = copy.deepcopy(survivors)
+
+    if survivors:
+        for key in ("diagnostic_merged_research_path", "merged_research_path"):
+            raw_path = result.get(key)
+            if isinstance(raw_path, str) and raw_path.strip():
+                path = Path(raw_path)
+                try:
+                    path.resolve().relative_to(Path(REPOSITORY_ROOT).resolve())
+                except (OSError, ValueError):
+                    continue
+                write_json(path, rebuilt)
+        result["state"] = "completed"
+    else:
+        for key in ("diagnostic_merged_research_path", "merged_research_path"):
+            _safe_remove_generated_path(result.get(key))
+            result.pop(key, None)
+        result["state"] = "completed_no_addition"
+        result["status"] = "complete_with_gaps"
+
+    _persist_rescue_report(
+        result,
+        artifact_dir=artifact_dir,
+        output_root=output_root,
+        publication_date=publication_date,
+    )
+    return result
+
+
 def _attach_rescue_to_hybrid_report(
     *,
     report: dict[str, Any],
@@ -233,8 +389,14 @@ def run_hybrid_completeness(
         maximum_candidates=maximum_candidates,
         output_root=output_root,
     )
-    # Rescue may have added a candidate to the persisted pool. Hybrid must see
-    # that event so it does not spend its own searches rediscovering it.
+    rescue = _pre_hybrid_source_freshness_gate(
+        rescue=rescue,
+        artifact_dir=artifact_dir,
+        publication_date=publication_date,
+        output_root=output_root,
+    )
+    # Hybrid sees only freshness-verified rescue events. Stale/unverifiable
+    # supplemental rows are removed before any cluster/adaptive decision.
     refreshed = read_json(artifact_dir / "candidates.json")
     if isinstance(refreshed, dict):
         research = refreshed
