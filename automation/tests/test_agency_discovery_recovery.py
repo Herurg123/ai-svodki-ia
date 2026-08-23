@@ -85,6 +85,53 @@ class AgencyDiscoveryRecoveryTests(unittest.TestCase):
             self.assertFalse(needed)
             self.assertEqual(reason, "agency_discovery_indeterminate_no_retry")
 
+    def test_resume_helper_handles_search_started_without_second_search(self):
+        with tempfile.TemporaryDirectory() as temp:
+            target = Path(temp)
+            (target / "primary-recall.json").write_text(
+                json.dumps(primary_report()), encoding="utf-8"
+            )
+            (target / "candidates.json").write_text(
+                json.dumps(
+                    {
+                        "search_window": {
+                            "start_at": "2026-08-21T02:37:50+03:00",
+                            "end_at": "2026-08-23T02:35:04+03:00",
+                            "start_date": "2026-08-21",
+                            "end_date": "2026-08-23",
+                        },
+                        "candidates": [],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (target / "agency-discovery-rescue.json").write_text(
+                json.dumps(
+                    {
+                        "version": 1,
+                        "publication_date": DATE,
+                        "search_strategy": "agency_discovery_rescue",
+                        "state": "search_started",
+                        "status": "complete_with_gaps",
+                        "search_operation_count_contribution": 0,
+                    }
+                ),
+                encoding="utf-8",
+            )
+            result = recovery._resume_agency_discovery_without_search(
+                target_dir=target,
+                publication_date=DATE,
+            )
+            self.assertEqual(result["status"], "reused")
+            self.assertEqual(
+                result["state"], "indeterminate_after_interruption"
+            )
+            self.assertFalse(result["search_performed"])
+            saved = json.loads(
+                (target / "agency-discovery-rescue.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(saved["state"], "indeterminate_after_interruption")
+
     def test_saved_search_response_requires_text_runtime_for_merge_and_editorial(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
