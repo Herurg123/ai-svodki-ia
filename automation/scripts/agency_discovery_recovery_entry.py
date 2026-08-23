@@ -7,9 +7,11 @@ before Coverage: reuse/repair a saved rescue response, never retry an uncertain
 ``search_started`` state, or perform the first rescue search if the crash
 happened before the rescue began.
 
-If a rescue-origin candidate is present, this helper stages the recovered pool
-through the unchanged Source Freshness Proof and normal editorial rerun before
-Coverage decides whether the numerical story target is already satisfied.
+If a rescue-origin candidate is present, this helper verifies only those new
+supplemental rows through Source Freshness Proof.  Previously accepted Primary/
+Hybrid rows are preserved rather than re-fetched on recovery.  Fresh rescue rows
+are then merged back into the unchanged base pool and sent through the normal
+editorial rerun before Coverage decides whether the numerical target is met.
 """
 from __future__ import annotations
 
@@ -59,33 +61,51 @@ def recovery_active() -> bool:
     return isinstance(payload, dict) and payload.get("status") == "ok"
 
 
-def _rescue_candidates_present(research: dict[str, Any]) -> bool:
-    return any(
-        isinstance(item, dict)
+def _rescue_candidates(research: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        copy.deepcopy(item)
+        for item in research.get("candidates", [])
+        if isinstance(item, dict)
         and item.get("audit_direction") == rescue.AGENCY_DISCOVERY_RESCUE_DIRECTION
         and item.get("recommendation") in {"include", "consider"}
-        for item in research.get("candidates", [])
-    )
+    ]
+
+
+def _rescue_candidates_present(research: dict[str, Any]) -> bool:
+    return bool(_rescue_candidates(research))
 
 
 def _without_rescue_candidates(research: dict[str, Any]) -> dict[str, Any]:
-    """Drop supplemental rescue rows if their freshness gate itself fails."""
+    """Drop supplemental rescue rows while preserving the existing base pool."""
     clean = copy.deepcopy(research)
     rows = clean.get("candidates")
     if isinstance(rows, list):
         clean["candidates"] = [
-            item
+            copy.deepcopy(item)
             for item in rows
-            if not (
-                isinstance(item, dict)
-                and item.get("audit_direction")
-                == rescue.AGENCY_DISCOVERY_RESCUE_DIRECTION
-            )
+            if isinstance(item, dict)
+            and item.get("audit_direction")
+            != rescue.AGENCY_DISCOVERY_RESCUE_DIRECTION
         ]
         for index, item in enumerate(clean["candidates"], start=1):
-            if isinstance(item, dict):
-                item["id"] = f"cand-{index:03d}"
+            item["id"] = f"cand-{index:03d}"
     return clean
+
+
+def _merge_verified_rescue(
+    research: dict[str, Any], rescue_rows: list[dict[str, Any]]
+) -> dict[str, Any]:
+    merged = _without_rescue_candidates(research)
+    rows = merged.get("candidates")
+    if not isinstance(rows, list):
+        rows = []
+        merged["candidates"] = rows
+    for item in rescue_rows:
+        if isinstance(item, dict) and item.get("recommendation") in {"include", "consider"}:
+            rows.append(copy.deepcopy(item))
+    for index, item in enumerate(rows, start=1):
+        item["id"] = f"cand-{index:03d}"
+    return merged
 
 
 def _persist_runtime_report(
@@ -163,25 +183,53 @@ def run_recovery_entry(
         current_research = read_json(candidates_path)
     except Exception:
         current_research = original_research
-    if not isinstance(current_research, dict) or not _rescue_candidates_present(current_research):
+    if not isinstance(current_research, dict):
+        current_research = original_research
+    rescue_rows = _rescue_candidates(current_research)
+    if not rescue_rows:
         report["coverage_recovery_editorial_rerun"] = "not_needed"
+        _persist_runtime_report(report, artifact_dir=artifact_dir, publication_date=publication_date)
+        return report
+
+    search_window = current_research.get("search_window")
+    if not isinstance(search_window, dict):
+        write_json(candidates_path, _without_rescue_candidates(current_research))
+        report["coverage_recovery_source_freshness"] = {
+            "status": "error",
+            "error": "recovered research is missing search_window",
+        }
+        report["coverage_recovery_editorial_rerun"] = "skipped_after_freshness_error"
         _persist_runtime_report(report, artifact_dir=artifact_dir, publication_date=publication_date)
         return report
 
     RECOVERY_RUNTIME_ROOT.mkdir(parents=True, exist_ok=True)
     runtime_path = RECOVERY_RUNTIME_ROOT / f"agency-discovery-recovery-{publication_date}.json"
-    write_json(runtime_path, copy.deepcopy(current_research))
+    write_json(
+        runtime_path,
+        {
+            "search_window": copy.deepcopy(search_window),
+            "candidates": copy.deepcopy(rescue_rows),
+        },
+    )
     try:
         freshness_run = verify_research_file(
             runtime_path,
             publication_date=publication_date,
             report_path=source_freshness_report,
         )
-        verified_research = read_json(runtime_path)
-        if not isinstance(verified_research, dict):
-            raise RuntimeError("verified recovery research is not an object")
-        # Persist the exact freshness-verified pool before editorial. If the
-        # editor later fails, Coverage can continue from a safe research state.
+        verified_payload = read_json(runtime_path)
+        verified_rows = (
+            verified_payload.get("candidates")
+            if isinstance(verified_payload, dict)
+            else []
+        )
+        survivors = [
+            copy.deepcopy(item)
+            for item in (verified_rows if isinstance(verified_rows, list) else [])
+            if isinstance(item, dict)
+            and item.get("recommendation") in {"include", "consider"}
+        ]
+        verified_research = _merge_verified_rescue(current_research, survivors)
         write_json(candidates_path, verified_research)
         report["coverage_recovery_source_freshness"] = {
             "status": "complete",
@@ -191,15 +239,19 @@ def run_recovery_entry(
             "excluded_outside_window": freshness_run.get("excluded_outside_window"),
             "excluded_unverified_freshness": freshness_run.get("excluded_unverified_freshness"),
         }
+        report["accepted_count"] = len(survivors)
+        report["added_count"] = len(survivors)
+        report["accepted_candidates"] = copy.deepcopy(survivors)
     except Exception as exc:
         # Rescue is supplemental and cannot poison a previously usable artifact.
-        # Remove every rescue-origin row rather than restoring a possibly
-        # pre-existing but never freshness-verified rescue candidate.
-        write_json(candidates_path, _without_rescue_candidates(original_research))
+        write_json(candidates_path, _without_rescue_candidates(current_research))
         report["coverage_recovery_source_freshness"] = {
             "status": "error",
             "error": f"{type(exc).__name__}: {exc}",
         }
+        report["accepted_count"] = 0
+        report["added_count"] = 0
+        report["accepted_candidates"] = []
         report["coverage_recovery_editorial_rerun"] = "skipped_after_freshness_error"
         _persist_runtime_report(report, artifact_dir=artifact_dir, publication_date=publication_date)
         try:
@@ -208,6 +260,20 @@ def run_recovery_entry(
             pass
         return report
 
+    if not report.get("added_count"):
+        report["state"] = "completed_no_addition"
+        report["coverage_recovery_editorial_rerun"] = "not_needed_after_freshness"
+        _persist_runtime_report(report, artifact_dir=artifact_dir, publication_date=publication_date)
+        try:
+            runtime_path.unlink()
+        except OSError:
+            pass
+        return report
+
+    # Editorial receives the full freshness-safe recovered pool, not only the
+    # mini rescue payload used for date verification.
+    verified_research = read_json(candidates_path)
+    write_json(runtime_path, verified_research)
     try:
         rerun_editorial_fn(
             publication_date=publication_date,
