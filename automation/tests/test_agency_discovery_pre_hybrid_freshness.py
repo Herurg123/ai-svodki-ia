@@ -83,6 +83,14 @@ def rescue_report(runtime: Path, diagnostic: Path) -> dict:
 
 class PreHybridAgencyFreshnessTests(unittest.TestCase):
     def _fixture(self, root: Path) -> tuple[Path, Path, Path, dict]:
+        # The production helper only mutates generated files underneath the
+        # repository root. Treat this temp directory as that root so cleanup
+        # assertions exercise the real safety boundary instead of an impossible
+        # out-of-repository path.
+        old_repository_root = hybrid.REPOSITORY_ROOT
+        hybrid.REPOSITORY_ROOT = root
+        self.addCleanup(setattr, hybrid, "REPOSITORY_ROOT", old_repository_root)
+
         artifact = root / "artifact"
         output = root / "output"
         runtime = root / "runtime.json"
