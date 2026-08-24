@@ -154,7 +154,7 @@ editorial получает его через `--research-input`. Caller-supplied
 `--research-input` остаётся recovery/editorial-only путём и не запускает свежий
 Primary.
 
-### 2. Bounded agency discovery rescue v2
+### 2. Bounded agency discovery rescue v3
 
 После сохранённого Primary/provisional-editorial checkpoint и **до Hybrid**
 `agency_discovery_rescue.py` проверяет только качество обязательного
@@ -170,10 +170,17 @@ Primary.
 API route ограничен `allowed_domains=["reuters.com"]`. Это отдельный более
 узкий provider/source-pool, а не повтор обязательного
 Reuters/AP/Bloomberg/FT `major_agencies`. Publisher names, `site:`, даты и
-Boolean-цепочки в query не дублируются. `search_context_size` остаётся `medium`:
-изолированный assistant-side `medium`/`high` Terra A/B не был доступен, а
-провалившийся Primary 24 августа уже использовал `high`, поэтому менять context
-без доказательства не следует.
+Boolean-цепочки в query не дублируются. В v3 `search_context_size` равен `high`.
+Причина изменения узкая: fresh production run `32691255059` уже проверил v2 на
+реальном Reuters-only route с тем же query и `medium`, но вернул
+`consulted_sources=[]` и `raw_count=0`, хотя Alibaba share placement от
+23 августа оставался in-window positive control и независимо находился
+Reuters-focused поиском. Query, один search operation, Reuters-only domain
+routing, downstream acceptance и общий потолок 24 не меняются. Отдельного
+assistant-side Terra A/B с явным переключателем `medium/high` среда по-прежнему
+не предоставляет, поэтому `high` фиксируется как минимальная следующая
+production-supported reliability-гипотеза, а не как универсально доказанный
+оптимум.
 
 Downstream acceptance узкий: новый candidate должен иметь прямой
 `reuters.com` primary URL. Yahoo, TradingView, MarketScreener, Investing и другие
@@ -380,13 +387,26 @@ rescue получил преимущественно aggregators/syndication. В
 window Reuters опубликовал Alibaba share placement примерно на $10.2B с
 назначением proceeds на full-stack AI. Assistant-side Reuters-focused replay
 восстановил этот out-of-sample control и предыдущие Reuters controls без нового
-search slot. Поэтому текущий patch сужает **существующий один** rescue до
-Reuters-only provider route, а freshness/Asia/Russia/editorial не меняет.
+search slot. Поэтому v2 сузил **существующий один** rescue до Reuters-only
+provider route, сохранив freshness/Asia/Russia/editorial без изменений.
+
+Fresh production run `32691255059` затем изолировал следующий дефект уже внутри
+нового source route: v2 действительно выполнил Reuters-only search с тем же
+publisher-neutral query и `search_context_size=medium`, но provider вернул
+`consulted_sources=[]`, `raw_count=0`, и Alibaba снова не дошёл до candidate
+pool. Это не downstream filtering failure. V3 меняет только context size на
+`high`; query, `allowed_domains=["reuters.com"]`, one-search budget, direct-Reuters
+acceptance, freshness, editorial и global ceiling 24 остаются прежними. Если
+следующий fresh run снова даст ноль Reuters sources, отдельным следующим
+экспериментом должен стать более короткий query, а не одновременное изменение
+нескольких переменных.
 
 Пользовательский production API для разработки и regression replay не
 расходовался. Assistant-side replay не выдаётся за чистый Terra A/B, когда
 standalone Terra tool недоступен; baseline evidence берётся из сохранённых
-production artifacts. `high` context не добавляется без отдельного доказательства.
+production artifacts. V3 `high` опирается на реальный v2 `medium` false-zero как
+минимальную следующую reliability-гипотезу, но не описывается как доказанный
+изолированный assistant-side `medium/high` A/B.
 
 ## Канонический независимый мониторинг
 
