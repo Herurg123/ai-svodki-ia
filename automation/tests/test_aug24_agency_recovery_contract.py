@@ -17,8 +17,9 @@ import agency_discovery_rescue as rescue
 class Aug24AgencyRecoveryContractTests(unittest.TestCase):
     def test_reuters_only_provider_routing_is_bounded(self):
         tool = rescue._web_search_tool()
+        self.assertEqual(rescue.AGENCY_DISCOVERY_RESCUE_VERSION, 3)
         self.assertEqual(tool["filters"]["allowed_domains"], ["reuters.com"])
-        self.assertEqual(tool["search_context_size"], "medium")
+        self.assertEqual(tool["search_context_size"], "high")
         self.assertEqual(rescue.MAXIMUM_SEARCH_OPERATIONS, 1)
         self.assertEqual(rescue.PIPELINE_MAXIMUM_SEARCH_OPERATIONS, 24)
 
@@ -47,9 +48,10 @@ class Aug24AgencyRecoveryContractTests(unittest.TestCase):
             },
             candidate_pool_count=0,
         )
+        self.assertEqual(report["version"], 3)
         self.assertEqual(report["allowed_domains"], ["reuters.com"])
         self.assertEqual(report["required_direct_source_hosts"], ["reuters.com"])
-        self.assertEqual(report["search_context_size"], "medium")
+        self.assertEqual(report["search_context_size"], "high")
         self.assertTrue(report["candidate_count_independent_trigger"])
 
     def test_direct_reuters_is_allowed_but_ap_and_syndication_are_not(self):

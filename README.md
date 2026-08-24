@@ -157,18 +157,17 @@ repository hygiene: в policy она отдельно классифицируе
     `--research-input` по-прежнему означает recovery/editorial rerun и не
     оплачивает fresh primary.
 14. После сохранённого Primary/provisional-editorial checkpoint, но **до Hybrid**,
-    выполняется bounded `agency_discovery_rescue` v2 только если обязательный
+    выполняется bounded `agency_discovery_rescue` v3 только если обязательный
     `major_agencies` технически завершился и дал `raw_count=0` либо
     `accepted_count=0`. Trigger не зависит от общего числа candidates или stories:
     даже полный пул не маскирует подтверждённый gap dedicated agency route.
     Rescue получает максимум **одну** дополнительную Web Search operation,
     использует publisher-neutral date-free query
     `latest AI chips infrastructure financing earnings business deals policy security`
-    и отдельный provider-level `allowed_domains=["reuters.com"]`. Это другой,
-    более узкий source-pool, чем обязательный Reuters/AP/Bloomberg/FT route;
-    downstream принимаются только прямые Reuters primary URL. Rescue остаётся
-    missing-event discovery, а не подтверждением уже известного события и не
-    Reuters quota.
+    и отдельный provider-level `allowed_domains=["reuters.com"]`. В v3
+    `search_context_size=high`; downstream принимаются только прямые Reuters
+    primary URL. Rescue остаётся missing-event discovery, а не подтверждением уже
+    известного события и не Reuters quota.
 15. Rescue-candidate проходит обычный `story_coverage` validator, archive check,
     same-event guard (`organization + event_type + published_date`), затем штатный
     Source Freshness Proof и editorial. Reuters не даёт бонуса к significance и
@@ -537,9 +536,18 @@ $10.2 млрд с направлением net proceeds на full-stack AI. Об
 Proof не отклонял Alibaba: ни один кандидат до него не дошёл. Независимый
 source-focused replay подтвердил, что один Reuters-only provider route с
 publisher-neutral query устойчивее восстанавливает контрольный Reuters-слой,
-не требуя второго search. Изолированный `medium`/`high` A/B без production API
-не был доступен; Primary уже использовал `high` в провалившемся run, поэтому
-context size rescue оставлен `medium` и не используется как недоказанное лечение.
+не требуя второго search. Это привело к v2: Reuters-only route с
+`search_context_size=medium`.
+
+Fresh production run `32691255059` затем дал более точный контроль уже для v2.
+Старый artifact не переиспользовался, Reuters-only rescue действительно выполнил
+один search с тем же нейтральным query и `medium`, но вернул
+`consulted_sources=[]` и `raw_count=0`; Alibaba снова не дошёл ни до freshness,
+ни до editorial. Поэтому v3 меняет только `search_context_size` на `high`.
+Изолированный assistant-side Terra `medium/high` A/B по-прежнему недоступен, так
+что это минимальная production-supported reliability-гипотеза, а не доказанный
+универсальный optimum. Query, Reuters-only filter, один search, direct-Reuters
+acceptance, freshness/significance/dedupe и global ceiling 24 не меняются.
 
 Текущий high-signal routing:
 
@@ -547,8 +555,8 @@ context size rescue оставлен `medium` и не используется �
 - `major_agencies`: обязательный Reuters/AP/Bloomberg/FT API route с query
   `latest AI chips infrastructure financing earnings business deals policy security`;
 - `agency_discovery_rescue`: условный one-search missing-event route с тем же
-  publisher-neutral query, отдельным `allowed_domains=["reuters.com"]` и
-  downstream direct-Reuters acceptance;
+  publisher-neutral query, отдельным `allowed_domains=["reuters.com"]`,
+  `search_context_size=high` и downstream direct-Reuters acceptance;
 - `independent_missing_events`: source-neutral broad missing-events sweep;
 - `china_asia_models`: отдельный model/product/release route;
 - `china_asia_integrations`: integrations/partnerships/deployments +
@@ -563,7 +571,8 @@ agency discovery rescue + до 4 Hybrid + до 7 Coverage**.
 - `automation/audits/experiments/2026-08-21-agency-asia-recall.md`;
 - `automation/fixtures/recall/2026-08-21-agency-asia.json`;
 - `automation/fixtures/recall/2026-08-22-agency-discovery-rescue.json`;
-- `automation/fixtures/recall/2026-08-24-agency-recovery.json`.
+- `automation/fixtures/recall/2026-08-24-agency-recovery.json`;
+- `automation/audits/experiments/2026-08-24-agency-context-high.md`.
 
 ## Независимый ежедневный аудит качества
 

@@ -200,7 +200,7 @@ Recovery must not resurrect known-bad artifacts. Any source with
 `artifact-validation.json.status=error` is non-reusable. Saved modern Primary
 must repeat current source-health validation even for a full artifact.
 
-## Bounded agency missing-event discovery rescue v2
+## Bounded agency missing-event discovery rescue v3
 
 After the saved Primary/provisional-editorial checkpoint and **before Hybrid**,
 production may run `automation/scripts/agency_discovery_rescue.py`. This layer is
@@ -214,10 +214,18 @@ actual query is fixed, date-free and publisher-neutral:
 `latest AI chips infrastructure financing earnings business deals policy security`.
 Use a provider-level Reuters-only route with
 `allowed_domains=["reuters.com"]`; do not redundantly add `Reuters`, `AP`, dates,
-`site:` or Boolean publisher lists to the query text. Search context remains
-`medium` until a controlled experiment proves a different value is better. The
-failed Aug 24 Primary route already used `high`, so `high` is not an evidence-
-backed cure by itself.
+`site:` or Boolean publisher lists to the query text. In v3 search context is
+`high`. The evidence for this narrow change is fresh production run
+`32691255059`: v2 used the same Reuters-only route and exact query with `medium`
+but returned `consulted_sources=[]` and `raw_count=0`, leaving the in-window
+Alibaba share-placement positive control undiscovered. Independent Reuters-
+focused search with the same neutral query can surface that control. The current
+environment still does not expose an assistant-side Terra interface with an
+explicit `medium/high` switch, so do not describe this as an isolated Terra A/B.
+Treat `high` as the next bounded production-supported reliability hypothesis.
+Do not change the query, add a second search, broaden domains, or weaken
+freshness/significance/dedupe in the same experiment. The global ceiling remains
+24.
 
 Downstream acceptance is defense-in-depth narrow: a discovered event needs a
 direct Reuters (`reuters.com`) primary URL. Yahoo, TradingView, MarketScreener,
@@ -494,15 +502,20 @@ statement is historical, not the current architecture. Repeated Broadcom miss on
 22 August plus out-of-sample Reuters/Nvidia miss on 23 August justified the
 separate conditional agency discovery rescue.
 
-The 2026-08-24 zero-pool run is the next out-of-sample control. Its artifact
-proved that the mandatory four-domain agency route ranked stale sources while the
-source-open rescue produced a polluted aggregator/syndication pool. Independent
-assistant-side Reuters-focused replay recovered the Alibaba placement and the
-recent Reuters regression set without increasing the budget. The resulting
-minimal contract is Reuters-only provider routing, publisher-neutral query,
-unchanged freshness/significance/dedupe, one search only, and unchanged global
-ceiling 24. The machine-readable regression fixture is
-`automation/fixtures/recall/2026-08-24-agency-recovery.json`.
+The first 2026-08-24 zero-pool run proved that the mandatory four-domain agency
+route ranked stale sources while the source-open rescue produced a polluted
+aggregator/syndication pool. Independent assistant-side Reuters-focused replay
+recovered the Alibaba placement and the recent Reuters regression set without
+increasing the budget, which justified v2 Reuters-only provider routing. Fresh
+run `32691255059` then tested that v2 route in production: the one Reuters-only
+search with `medium` completed but returned zero consulted sources and zero raw
+candidates, so Alibaba was still absent before freshness/editorial. V3 therefore
+changes only `search_context_size` to `high`, keeping the exact neutral query,
+Reuters-only domain filter, one-search cap, direct-source acceptance and global
+ceiling 24. This is not presented as an isolated assistant-side Terra A/B. The
+machine-readable regression fixture remains
+`automation/fixtures/recall/2026-08-24-agency-recovery.json`; the v3 decision is
+recorded in `automation/audits/experiments/2026-08-24-agency-context-high.md`.
 
 ## Cleanup resilience contract (2026-08-18)
 
