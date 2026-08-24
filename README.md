@@ -157,21 +157,22 @@ repository hygiene: в policy она отдельно классифицируе
     `--research-input` по-прежнему означает recovery/editorial rerun и не
     оплачивает fresh primary.
 14. После сохранённого Primary/provisional-editorial checkpoint, но **до Hybrid**,
-    выполняется bounded `agency_discovery_rescue` v1 только если обязательный
+    выполняется bounded `agency_discovery_rescue` v2 только если обязательный
     `major_agencies` технически завершился и дал `raw_count=0` либо
     `accepted_count=0`. Trigger не зависит от общего числа candidates или stories:
     даже полный пул не маскирует подтверждённый gap dedicated agency route.
-    Rescue получает максимум **одну** дополнительную Web Search operation и
-    использует точный date-free query
-    `latest Reuters AP AI chips infrastructure financing earnings business deals`.
-    API domain filter здесь намеренно выключен, чтобы не повторять тот же
-    ranking/source-pool механизм, который уже дал false-zero; downstream
-    принимаются только прямые Reuters/AP primary URL. Это missing-event discovery,
-    а не подтверждение уже известного события и не publisher quota.
+    Rescue получает максимум **одну** дополнительную Web Search operation,
+    использует publisher-neutral date-free query
+    `latest AI chips infrastructure financing earnings business deals policy security`
+    и отдельный provider-level `allowed_domains=["reuters.com"]`. Это другой,
+    более узкий source-pool, чем обязательный Reuters/AP/Bloomberg/FT route;
+    downstream принимаются только прямые Reuters primary URL. Rescue остаётся
+    missing-event discovery, а не подтверждением уже известного события и не
+    Reuters quota.
 15. Rescue-candidate проходит обычный `story_coverage` validator, archive check,
     same-event guard (`organization + event_type + published_date`), затем штатный
-    Source Freshness Proof и editorial. Reuters/AP не дают бонуса к significance
-    и ничего не публикуют автоматически. Zero-result, stale, weak, duplicate или
+    Source Freshness Proof и editorial. Reuters не даёт бонуса к significance и
+    ничего не публикует автоматически. Zero-result, stale, weak, duplicate или
     техническая ошибка rescue не блокируют ранее пригодный выпуск. Состояние
     `agency-discovery-rescue.json` пишется до поиска и после ответа: recovery
     никогда не повторяет `search_started`, а `search_completed`/`merge_failed`
@@ -292,10 +293,19 @@ cron-окна больше не дублируют один и тот же gate.
 - ручной `workflow_dispatch` по умолчанию работает как dry-run (`publish=false`);
 - `publication_date` задаёт необязательную дату `YYYY-MM-DD`;
 - `recovery_run_id` позволяет явно переиспользовать сохранённый artifact;
-- без явного ID workflow автоматически ищет пригодный artifact той же даты,
-  предпочитает наиболее полный результат (готовая обложка → готовый digest →
-  research-only), а свежесть использует как tie-break; уже оплаченные стадии
-  повторно не запускаются без необходимости;
+- `force_fresh_research` по умолчанию `false`. Только для ручного
+  `workflow_dispatch` значение `true` отключает **автоматический** выбор artifact
+  той же даты и тем самым разрешает fresh research на текущем `main`; это нужно,
+  например, для проверки retrieval-hotfix после уже завершённого zero-pool
+  `editorial_stop`. `force_fresh_research=true` и явный `recovery_run_id`
+  взаимоисключающие и завершают run ошибкой до платных API. На scheduled runs
+  новый флаг не меняет recovery semantics. `publish` остаётся независимым:
+  `false` сохраняет dry-run, `true` после успешного fresh research идёт обычным
+  publish path;
+- без явного ID и без `force_fresh_research=true` workflow автоматически ищет
+  пригодный artifact той же даты, предпочитает наиболее полный результат
+  (готовая обложка → готовый digest → research-only), а свежесть использует как
+  tie-break; уже оплаченные стадии повторно не запускаются без необходимости;
 - artifact, который уже имеет `artifact-normalization.json.status=error` или
   `artifact-validation.json.status=error`, не может быть выбран recovery;
   сохранённый `primary-recall.json` дополнительно обязан повторно пройти
@@ -488,7 +498,7 @@ window остаётся авторитетной границей post-retrieval
 заново. Coverage audit старого temporal contract также не считается
 окончательной нулевой остановкой.
 
-## Обновление retrieval после экспериментов 2026-08-13, 2026-08-14 и 2026-08-21–23
+## Обновление retrieval после экспериментов 2026-08-13, 2026-08-14 и 2026-08-21–24
 
 Production run `31652757802` за 13 августа дал ровно четыре raw candidates,
 editorial выбрал все четыре и все четыре были опубликованы. Значит крупные
@@ -514,33 +524,46 @@ Out-of-sample наблюдения 22–23 августа показали, чт
 недостаточно: `major_agencies` продолжил давать 0/0, Broadcom повторно выпадал,
 а 23 августа был пропущен свежий Reuters-сигнал Nvidia server price hikes.
 Контролируемый bounded experiment 22 августа подтвердил source-pool/ranking
-instability и перевёл рекомендацию в production patch: отдельный one-search
-missing-event rescue после Primary checkpoint и до Hybrid. Это **не** 13-й
-обязательный Primary pass; он запускается только по конкретному gap dedicated
-agency route.
+instability и добавил отдельный one-search missing-event rescue после Primary
+checkpoint и до Hybrid.
+
+Production run `32674034063` за 24 августа дал следующий независимый контроль:
+все 24 search operations завершились, но candidate pool остался нулевым, хотя
+в effective window находилось Reuters-событие Alibaba о размещении примерно на
+$10.2 млрд с направлением net proceeds на full-stack AI. Обязательный
+`major_agencies` с Reuters/AP/Bloomberg/FT provider filter ранжировал в основном
+старые Bloomberg/FT материалы; source-open discovery rescue получил
+агрегаторы/syndication и тоже не поднял свежий прямой Reuters. Source Freshness
+Proof не отклонял Alibaba: ни один кандидат до него не дошёл. Независимый
+source-focused replay подтвердил, что один Reuters-only provider route с
+publisher-neutral query устойчивее восстанавливает контрольный Reuters-слой,
+не требуя второго search. Изолированный `medium`/`high` A/B без production API
+не был доступен; Primary уже использовал `high` в провалившемся run, поэтому
+context size rescue оставлен `medium` и не используется как недоказанное лечение.
 
 Текущий high-signal routing:
 
 - `global_breaking`: source-neutral broad current-AI catch-all;
 - `major_agencies`: обязательный Reuters/AP/Bloomberg/FT API route с query
   `latest AI chips infrastructure financing earnings business deals policy security`;
-- `agency_discovery_rescue`: условный one-search missing-event route с query
-  `latest Reuters AP AI chips infrastructure financing earnings business deals`,
-  без API domain filter и с downstream direct Reuters/AP acceptance;
+- `agency_discovery_rescue`: условный one-search missing-event route с тем же
+  publisher-neutral query, отдельным `allowed_domains=["reuters.com"]` и
+  downstream direct-Reuters acceptance;
 - `independent_missing_events`: source-neutral broad missing-events sweep;
 - `china_asia_models`: отдельный model/product/release route;
 - `china_asia_integrations`: integrations/partnerships/deployments +
   business/earnings/revenue/strategy;
 - `russia`: отдельный обязательный Primary route без изменений.
 
-Общий worst-case ceiling теперь **24 operations: 12 Primary + 1 conditional
+Общий worst-case ceiling остаётся **24 operations: 12 Primary + 1 conditional
 agency discovery rescue + до 4 Hybrid + до 7 Coverage**.
 
 Эксперименты и regression contracts сохранены в:
 
 - `automation/audits/experiments/2026-08-21-agency-asia-recall.md`;
 - `automation/fixtures/recall/2026-08-21-agency-asia.json`;
-- `automation/fixtures/recall/2026-08-22-agency-discovery-rescue.json`.
+- `automation/fixtures/recall/2026-08-22-agency-discovery-rescue.json`;
+- `automation/fixtures/recall/2026-08-24-agency-recovery.json`.
 
 ## Независимый ежедневный аудит качества
 
@@ -628,11 +651,11 @@ Source Freshness Proof и к downstream corroboration evidence.
 
 Обязательный `major_agencies` Primary pass остаётся fail-closed по техническому
 контракту. Если он технически завершён, но даёт raw/accepted zero, bounded
-missing-event discovery получает один независимый шанс; его zero-result или
-слабый/устаревший candidate сам по себе не превращает пригодный выпуск в
-аварию. Downstream same-event corroboration сохраняет прежний контракт. Общий
-максимум теперь 12 Primary + 1 conditional discovery rescue + до 4 Hybrid + до
-7 Coverage = 24 searches.
+missing-event discovery получает один независимый Reuters-only шанс; его
+zero-result или слабый/устаревший candidate сам по себе не превращает пригодный
+выпуск в аварию. Downstream same-event corroboration сохраняет прежний контракт.
+Общий максимум остаётся 12 Primary + 1 conditional discovery rescue + до 4 Hybrid
++ до 7 Coverage = 24 searches.
 
 ## Retrieval Quality v1: unresolved-сигналы и региональная полнота
 
