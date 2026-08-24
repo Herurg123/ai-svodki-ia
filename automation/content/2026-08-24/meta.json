@@ -1,0 +1,33 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-24",
+  "slug": "2026-08-24",
+  "title": "ИИ-Сводка на 24 августа 2026",
+  "description": "Нидерландский регулятор назначил Uber штраф €825 млн за автоматизированные деактивации водителей. Решение подчёркивает, что алгоритмическое управление работой требует прозрачности и человеческого контроля.",
+  "published_at": "2026-08-24T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-24.png",
+  "topics": [
+    "Uber",
+    "Нидерланды",
+    "GDPR",
+    "автоматизированные решения",
+    "человеческий контроль",
+    "платформенная занятость",
+    "регулирование алгоритмов"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: global_breaking, major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation, independent_missing_events."
+    }
+  ]
+}

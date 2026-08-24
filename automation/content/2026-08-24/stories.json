@@ -1,0 +1,32 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Нидерландский регулятор оштрафовал Uber на €825 млн за автоматизированные деактивации водителей",
+    "organization": "Uber; Dutch Data Protection Authority",
+    "topic": "Регулирование алгоритмического принятия решений с существенными последствиями для работников платформенной экономики.",
+    "event_type": "regulatory penalty",
+    "status": "new",
+    "summary": "Нидерландский орган по защите данных назначил Uber штраф €825 млн (около $966 млн) по жалобам на деактивацию аккаунтов водителей автоматизированным способом без достаточного предупреждения и человеческого надзора. Uber оспаривает решение и заявила о намерении подать апелляцию.",
+    "published_at": "2026-08-23T19:30:00+00:00",
+    "published_date": "2026-08-23",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Uber faces fine of nearly $1B over automated driver suspensions",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/23/uber-faces-fine-of-nearly-1b-over-automated-driver-suspensions/"
+      }
+    ],
+    "keywords": [
+      "Uber",
+      "GDPR",
+      "automated decision-making",
+      "human oversight",
+      "driver deactivation",
+      "Dutch Data Protection Authority"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  }
+]

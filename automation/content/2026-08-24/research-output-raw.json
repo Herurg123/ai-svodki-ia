@@ -1,0 +1,151 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-24",
+  "search_window": {
+    "start_at": "2026-08-22T02:35:04+03:00",
+    "end_at": "2026-08-24T09:07:30+03:00",
+    "latest_archive_at": "2026-08-23T02:35:04+03:00",
+    "start_date": "2026-08-22",
+    "end_date": "2026-08-24",
+    "latest_archive_date": "2026-08-23"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=1, rejected=1."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Нидерландский регулятор оштрафовал Uber на €825 млн за автоматизированные деактивации водителей без достаточного человеческого контроля",
+      "organization": "Uber; Dutch Data Protection Authority",
+      "published_date": "2026-08-23",
+      "published_at": "2026-08-23T19:30:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Регулирование алгоритмического принятия решений с существенными последствиями для работников платформенной экономики.",
+      "event_type": "regulatory penalty",
+      "keywords": [
+        "Uber",
+        "GDPR",
+        "automated decision-making",
+        "human oversight",
+        "driver deactivation",
+        "Dutch Data Protection Authority"
+      ],
+      "geography": "world",
+      "category": "regulation",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Uber faces fine of nearly $1B over automated driver suspensions",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/23/uber-faces-fine-of-nearly-1b-over-automated-driver-suspensions/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Нидерландский орган по защите данных назначил Uber штраф €825 млн (около $966 млн) по жалобам на деактивацию аккаунтов водителей автоматизированным способом без достаточного предупреждения и человеческого надзора. Uber оспаривает решение и заявила о намерении подать апелляцию.",
+      "verified_facts": [
+        "TechCrunch датирует публикацию 23 августа 2026 года, 12:30 PDT, что соответствует 23 августа 2026 года, 22:30 по часовому поясу окна (+03:00).",
+        "Материал сообщает о штрафе Dutch Data Protection Authority в размере €825 млн.",
+        "Предметом разбирательства были автоматизированные деактивации аккаунтов водителей и достаточность человеческого контроля.",
+        "Uber публично не согласилась с решением и планирует его обжаловать."
+      ],
+      "significance": "Один из крупнейших штрафов по GDPR и заметный прецедент для систем алгоритмического управления трудом: регулятор прямо связал тяжёлые последствия автоматизированного решения с требованием человеческого надзора. Сюжет релевантен практическому регулированию AI-подобных систем принятия решений, хотя не относится к генеративным моделям.",
+      "significance_score": 1,
+      "limitations": "Основной доступный источник — TechCrunch, ссылающийся на Reuters и заявления сторон; отдельный первичный документ регулятора в рамках этого last-mile прохода не был получен. Решение будет оспариваться, поэтому окончательная юридическая судьба штрафа не определена.",
+      "archive_status": "none",
+      "archive_reason": "В архиве нет ранее включённого события о штрафе Uber €825 млн или о данном решении нидерландского регулятора.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверены точный timestamp публикации, размер штрафа, предмет претензий, позиция регулятора и намерение Uber обжаловать решение. Событие находится внутри effective window и не является перепечаткой старого материала.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-23T19:30:00+00:00; timestamp проверен Python против effective window. Публикация от 23 августа освещает новое регуляторное решение, а не повторяет ранее архивированное событие.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Сюжет классифицирован как регуляторное применение GDPR к автоматизированным решениям, а не как copyright/scraping-правовой кейс.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к направлению curiosity.",
+      "audit_direction": "general_coverage_gaps",
+      "id": "cand-001"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=2, validated unique=1, final candidates=1. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 1,
+      "health_check_needed": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota"
+  }
+}
