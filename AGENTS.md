@@ -175,7 +175,9 @@ Permanent regression references include:
 - `automation/fixtures/recall/2026-08-12.json` for false-zero/runtime ingress;
 - `automation/fixtures/recall/2026-08-13.json` for high-signal agency controls;
 - `automation/fixtures/recall/2026-08-21-agency-asia.json` for agency/Asia
-  semantics.
+  semantics;
+- `automation/fixtures/recall/2026-08-24-agency-recovery.json` for the Aug 24
+  false-zero, Reuters-only rescue routing, and manual fresh-research recovery.
 
 Fresh Primary remains subject to fail-closed source-health before publication.
 `major_agencies` must have at least one consulted source, and the combined matrix
@@ -198,7 +200,7 @@ Recovery must not resurrect known-bad artifacts. Any source with
 `artifact-validation.json.status=error` is non-reusable. Saved modern Primary
 must repeat current source-health validation even for a full artifact.
 
-## Bounded agency missing-event discovery rescue v1
+## Bounded agency missing-event discovery rescue v2
 
 After the saved Primary/provisional-editorial checkpoint and **before Hybrid**,
 production may run `automation/scripts/agency_discovery_rescue.py`. This layer is
@@ -208,13 +210,21 @@ mandatory `major_agencies` route technically completed and has either
 story count as its trigger.
 
 The rescue may perform at most **one** additional Web Search operation. The
-actual query is fixed and date-free:
-`latest Reuters AP AI chips infrastructure financing earnings business deals`.
-API `allowed_domains` is intentionally disabled only for this rescue because the
-mandatory four-domain source-pool already produced the qualifying false-zero.
-Downstream acceptance remains narrow: a discovered event needs a direct Reuters
-(`reuters.com`) or AP (`apnews.com` / `ap.org`) primary URL. Syndicated copies do
-not satisfy the direct-source condition.
+actual query is fixed, date-free and publisher-neutral:
+`latest AI chips infrastructure financing earnings business deals policy security`.
+Use a provider-level Reuters-only route with
+`allowed_domains=["reuters.com"]`; do not redundantly add `Reuters`, `AP`, dates,
+`site:` or Boolean publisher lists to the query text. Search context remains
+`medium` until a controlled experiment proves a different value is better. The
+failed Aug 24 Primary route already used `high`, so `high` is not an evidence-
+backed cure by itself.
+
+Downstream acceptance is defense-in-depth narrow: a discovered event needs a
+direct Reuters (`reuters.com`) primary URL. Yahoo, TradingView, MarketScreener,
+Investing and other syndicated/aggregator URLs do not satisfy the direct-source
+condition. AP remains available through the mandatory `major_agencies` Primary
+route and downstream same-event corroboration; do not silently add a second AP
+rescue search.
 
 This is **missing-event discovery**, not Coverage's same-event corroboration.
 Every returned candidate still passes the ordinary story-coverage validator,
@@ -224,10 +234,11 @@ different URL, do not create a duplicate. Source upgrades for existing events
 remain the responsibility of the downstream corroboration layer.
 
 A discovered candidate must pass unchanged Source Freshness Proof before
-editorial. Reuters/AP never grant significance privilege or automatic inclusion.
-Stale, weak, duplicate and zero-result outcomes are normal diagnostics. A rescue
-transport/validation failure is supplemental and must not destroy a previously
-publishable Primary artifact.
+editorial. Reuters never grants significance privilege or automatic inclusion.
+Stale, weak, analysis/opinion-only, duplicate and zero-result outcomes are normal
+diagnostics. A rescue transport/validation failure is supplemental and must not
+destroy a previously publishable Primary artifact. Do not weaken freshness,
+editorial significance or archive dedupe to compensate for retrieval misses.
 
 Persist `agency-discovery-rescue.json` before the paid call (`search_started`) and
 after the response. At-most-once semantics are mandatory: automatic recovery
@@ -245,10 +256,37 @@ path. Do not silently restore Primary and discard the rescue addition. If the
 recovery freshness gate itself errors, remove supplemental rescue-origin rows
 rather than leaving an unverified candidate in the recovered pool.
 
-The permanent regression fixture is
-`automation/fixtures/recall/2026-08-22-agency-discovery-rescue.json`. It includes
-Google/Marvell, Broadcom, Alibaba, Nvidia/Cloverleaf and out-of-sample Nvidia
-server-pricing controls plus quiet-day, stale, duplicate and weak negatives.
+The historical source-open fixture remains
+`automation/fixtures/recall/2026-08-22-agency-discovery-rescue.json`. The current
+out-of-sample contract is
+`automation/fixtures/recall/2026-08-24-agency-recovery.json`, which adds Alibaba
+share placement and explicit stale/opinion/syndication/duplicate/after-cutoff/
+quiet-window negatives. The global search ceiling remains 24.
+
+## Manual fresh-research recovery after a terminal zero-pool
+
+`daily-production.yml` normally reuses the best same-day artifact, including a
+completed usable zero-pool `editorial_stop`. That is correct for cost control,
+but it means a plain rerun after a retrieval hotfix may never execute the new
+retrieval code.
+
+For this specific operator case, `workflow_dispatch` exposes
+`force_fresh_research` with default `false`. When and only when a manual run sets
+it to `true`, automatic same-day artifact selection is disabled and the workflow
+is allowed to execute fresh research on current `main`. Scheduled behavior and
+default manual behavior must remain unchanged.
+
+`force_fresh_research=true` and an explicitly supplied `recovery_run_id` are
+mutually exclusive. Reject that conflict before any paid API call rather than
+inventing precedence. The `publish` input remains independent: manual
+`publish=false` is still a dry-run; `publish=true` follows the normal publish path
+only after successful fresh research.
+
+Use this flag only after the relevant retrieval patch is merged and only when the
+project owner explicitly authorizes a real production rerun that may spend
+`OPENAI_API_KEY`. Architecture experiments, A/B comparisons, debugging and
+regression validation must use assistant-owned resources and offline tests. A
+request to fix code is not permission to spend production API budget.
 
 ## Hybrid search completeness contract
 
@@ -276,7 +314,7 @@ Fallback Coverage also distinguishes search operations from navigation items.
 Production targeted passes request one search operation and may use a small
 navigation allowance; historical multi-search callers retain their hard caps.
 
-The total theoretical retrieval ceiling is now **12 Primary + up to 1 bounded
+The total theoretical retrieval ceiling is **12 Primary + up to 1 bounded
 agency discovery rescue + up to 4 Hybrid + up to 7 Coverage = 24 completed search
 operations**. Navigation actions do not raise this search-operation ceiling.
 Do not silently raise 24 without a new controlled experiment and architecture
@@ -289,7 +327,8 @@ production failure, but only after current temporal-anchor contract, all require
 quality/search stages, six mandatory Coverage directions, and the applicable
 current sentinel have completed successfully with no publishable candidate.
 Technical partial/error audits remain fail-closed and red. Recovery must reuse a
-proven completed editorial stop without repeating paid work.
+proven completed editorial stop without repeating paid work unless a manual
+`force_fresh_research=true` run explicitly opts out after an authorized hotfix.
 
 ## Source-focused recall contract after 2026-08-13 and 2026-08-14
 
@@ -443,17 +482,27 @@ After each successful release:
 This monitoring uses assistant-owned resources and must not spend the user's
 production API budget. A single miss is evidence, not automatic permission to
 mutate retrieval. Architecture changes require controlled experiment and
-architecture-wide dependency/regression audit.
+architecture-wide dependency/regression audit. If assistant-side Terra is not
+exposed in the current environment, state that limitation explicitly rather than
+pretending another search backend is a Terra A/B. Never use the user's production
+API merely to resolve that tooling gap without explicit permission.
 
 The 2026-08-21 agency/Asia experiment initially kept Primary at 12, Hybrid at up
 to 4 and Coverage at up to 7, so its historical accepted patch retained the
 23-search ceiling and deliberately avoided an immediate new agency slot. That
 statement is historical, not the current architecture. Repeated Broadcom miss on
-22 August plus out-of-sample Reuters/Nvidia miss on 23 August, together with the
-bounded experiment on 22 August, justified the current separate conditional
-agency discovery rescue. Its regression fixture is
-`automation/fixtures/recall/2026-08-22-agency-discovery-rescue.json`; current
-worst-case ceiling is 24.
+22 August plus out-of-sample Reuters/Nvidia miss on 23 August justified the
+separate conditional agency discovery rescue.
+
+The 2026-08-24 zero-pool run is the next out-of-sample control. Its artifact
+proved that the mandatory four-domain agency route ranked stale sources while the
+source-open rescue produced a polluted aggregator/syndication pool. Independent
+assistant-side Reuters-focused replay recovered the Alibaba placement and the
+recent Reuters regression set without increasing the budget. The resulting
+minimal contract is Reuters-only provider routing, publisher-neutral query,
+unchanged freshness/significance/dedupe, one search only, and unchanged global
+ceiling 24. The machine-readable regression fixture is
+`automation/fixtures/recall/2026-08-24-agency-recovery.json`.
 
 ## Cleanup resilience contract (2026-08-18)
 
