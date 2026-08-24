@@ -43,7 +43,7 @@ Archive-ветка не используется для разработки, н
   коммитится;
 - `specs/` — канонические редакционные и технические контракты;
 - `scripts/primary_recall_search.py` — deterministic primary orchestrator;
-- `scripts/agency_discovery_rescue.py` — условный missing-event Reuters/AP
+- `scripts/agency_discovery_rescue.py` — условный missing-event Reuters-only
   discovery rescue;
 - `scripts/agency_discovery_recovery_entry.py` — idempotent recovery-entry
   rescue перед Coverage;
@@ -139,7 +139,9 @@ Regression fixtures:
 - `fixtures/recall/2026-08-12.json` — false-zero/runtime-ingress incident;
 - `fixtures/recall/2026-08-13.json` — high-signal agency controls;
 - `fixtures/recall/2026-08-21-agency-asia.json` — Broadcom/Google-Marvell/Alibaba
-  и Asia business semantics.
+  и Asia business semantics;
+- `fixtures/recall/2026-08-24-agency-recovery.json` — out-of-sample Alibaba
+  placement, Reuters-only rescue routing и manual fresh-research recovery.
 
 Source-health gate остаётся fail-closed для технически degraded Primary:
 `major_agencies` обязан завершить свой search и иметь минимум один consulted
@@ -152,7 +154,7 @@ editorial получает его через `--research-input`. Caller-supplied
 `--research-input` остаётся recovery/editorial-only путём и не запускает свежий
 Primary.
 
-### 2. Bounded agency discovery rescue v1
+### 2. Bounded agency discovery rescue v2
 
 После сохранённого Primary/provisional-editorial checkpoint и **до Hybrid**
 `agency_discovery_rescue.py` проверяет только качество обязательного
@@ -161,23 +163,31 @@ Primary.
 условии отсутствует, поэтому полный пул не маскирует слепоту agency route.
 
 При trigger разрешена максимум **одна** дополнительная Web Search operation.
-Фактический query фиксирован и date-free:
+Фактический query фиксирован, date-free и publisher-neutral:
 
-`latest Reuters AP AI chips infrastructure financing earnings business deals`
+`latest AI chips infrastructure financing earnings business deals policy security`
 
-API `allowed_domains` для этого rescue намеренно отключён: обязательный
-`major_agencies` уже использовал four-domain source-pool и именно этот route
-продемонстрировал повторные false-zero/ranking gaps. Но downstream acceptance
-узкий: новый candidate должен иметь прямой `reuters.com`, `apnews.com` или
-`ap.org` primary URL. Syndication/aggregator не считается прямым agency source.
+API route ограничен `allowed_domains=["reuters.com"]`. Это отдельный более
+узкий provider/source-pool, а не повтор обязательного
+Reuters/AP/Bloomberg/FT `major_agencies`. Publisher names, `site:`, даты и
+Boolean-цепочки в query не дублируются. `search_context_size` остаётся `medium`:
+изолированный assistant-side `medium`/`high` Terra A/B не был доступен, а
+провалившийся Primary 24 августа уже использовал `high`, поэтому менять context
+без доказательства не следует.
+
+Downstream acceptance узкий: новый candidate должен иметь прямой
+`reuters.com` primary URL. Yahoo, TradingView, MarketScreener, Investing и другие
+syndication/aggregator URL не считаются прямым agency source. AP остаётся частью
+обязательного Primary и downstream corroboration; второй AP rescue search не
+добавляется.
 
 Это **missing-event discovery**, а не downstream same-event corroboration.
 Candidate проходит обычный `story_coverage` validator, exact archive URL check и
 same-event guard по `organization + event_type + published_date`. Затем trusted
 runtime path запускает неизменённый Source Freshness Proof и обычный editorial.
-Reuters/AP не повышает significance и не гарантирует публикацию. Stale, weak,
-duplicate и zero-result остаются диагностикой и не ломают ранее пригодный
-выпуск.
+Reuters не повышает significance и не гарантирует публикацию. Stale, weak,
+analysis/opinion-only, duplicate и zero-result остаются диагностикой и не ломают
+ранее пригодный выпуск.
 
 State machine persisted в `agency-discovery-rescue.json` до и после paid call.
 `search_started` никогда не ретраится автоматически: неизвестно, успел ли
@@ -193,10 +203,11 @@ Source Freshness Proof/editorial; Hybrid и rescue не ретраятся.
 - `preview/production-daily/agency-discovery-rescue-<DATE>.json`;
 - при accepted candidate — diagnostic/runtime merged research.
 
-Исторический regression contract находится в
-`fixtures/recall/2026-08-22-agency-discovery-rescue.json`: Google/Marvell,
-Broadcom, Alibaba, Nvidia/Cloverleaf и out-of-sample Nvidia server-price control,
-плюс quiet/stale/duplicate/weak negatives.
+Исторический source-open regression contract находится в
+`fixtures/recall/2026-08-22-agency-discovery-rescue.json`. Текущий контракт
+закреплён `fixtures/recall/2026-08-24-agency-recovery.json` и добавляет Alibaba
+share placement вместе со stale/opinion/syndication/duplicate/after-cutoff/
+quiet-window negative controls.
 
 ### 3. Hybrid completeness v1
 
@@ -268,9 +279,10 @@ Rescue не является 13-м mandatory Primary pass и не выполня
 `major_agencies` trigger. Navigation hosted calls в этот потолок не входят.
 
 Исторический experiment 2026-08-21 действительно сохранял потолок 23 и сначала
-исправлял semantics существующих slots. Повтор Broadcom 22 августа и новый
-Reuters/Nvidia miss 23 августа подтвердили, что semantic fix недостаточен;
-bounded experiment 22 августа разрешил отдельный conditional discovery slot.
+исправлял semantics существующих slots. Повтор Broadcom 22 августа и новые
+out-of-sample misses 23–24 августа подтвердили, что semantic/source-open fix
+недостаточен; Reuters-only bounded route сохраняет тот же единственный
+conditional discovery slot и общий ceiling 24.
 
 ## Recovery
 
@@ -278,6 +290,13 @@ bounded experiment 22 августа разрешил отдельный conditi
 `recovery_run_id` позволяет явно выбрать artifact. Automatic recovery предпочитает
 наиболее полный artifact той же даты и не повторяет оплаченные стадии без
 необходимости.
+
+`force_fresh_research` — отдельный manual-only opt-out из automatic recovery с
+default `false`. При `workflow_dispatch + force_fresh_research=true` workflow не
+выбирает same-day automatic artifact, поэтому retrieval hotfix действительно
+получает fresh research на текущем `main`. Scheduled/default behavior не
+меняется. Явный `recovery_run_id` конфликтует с `force_fresh_research=true` и
+завершает run до платных API. `publish` независим: false остаётся dry-run.
 
 - готовый выпуск может быть только redeployed;
 - fresh Primary получает conditional rescue/Hybrid один раз;
@@ -295,11 +314,16 @@ bounded experiment 22 августа разрешил отдельный conditi
   если старый artifact имел полный story target;
 - завершённый fallback audit и актуальный sentinel переиспользуются;
 - partial fallback продолжает только незавершённые directions;
-- доказанный zero-pool `editorial_stop` переиспользуется без новой оплаты;
+- доказанный zero-pool `editorial_stop` переиспользуется без новой оплаты, кроме
+  явного manual `force_fresh_research=true` после разрешённого retrieval hotfix;
 - artifact с `artifact-normalization.json.status=error` или
   `artifact-validation.json.status=error` не переиспользуется;
 - сохранённый `primary-recall.json` обязан повторно пройти current source-health
   gate даже для `full` artifact.
+
+Реальный fresh production rerun может расходовать `OPENAI_API_KEY`; исправление
+кода само по себе не является разрешением его запускать. Эксперименты, A/B и
+регрессионные проверки выполняются на assistant-owned ресурсах или offline.
 
 ## Редакционный контракт короткого выпуска
 
@@ -338,7 +362,7 @@ Main CI дополнительно проверяет production workflow contra
 RSS, sitemap, Schema.org и защищённые пути. Точный набор команд задаётся
 `.github/workflows/ci.yml`.
 
-## Retrieval experiments 2026-08-21–23
+## Retrieval experiments 2026-08-21–24
 
 Эксперимент 21 августа расширил `major_agencies` и второй China/Asia slot без
 роста бюджета. Отчёт: `audits/experiments/2026-08-21-agency-asia-recall.md`,
@@ -346,15 +370,23 @@ contract: `fixtures/recall/2026-08-21-agency-asia.json`.
 
 Наблюдение 22 августа показало повтор Broadcom после semantic patch.
 Контролируемый bounded experiment подтвердил source-pool/ranking instability и
-рекомендовал `major_agencies gap -> one bounded source-aware discovery rescue`.
-23 августа новый Reuters/Nvidia miss дал out-of-sample подтверждение. Текущий
-production patch реализует именно этот класс; China models, Russia и Source
-Freshness Proof не переписываются.
+рекомендовал `major_agencies gap -> one bounded discovery rescue`. 23 августа
+новый Reuters/Nvidia miss дал out-of-sample подтверждение.
+
+Run `32674034063` за 24 августа завершил 12 Primary + 1 rescue + 4 Hybrid + 7
+Coverage searches, но остался с нулевым pool. Его `major_agencies` имел
+Reuters/AP/Bloomberg/FT filter, однако ranked stale Bloomberg/FT слой; source-open
+rescue получил преимущественно aggregators/syndication. В том же effective
+window Reuters опубликовал Alibaba share placement примерно на $10.2B с
+назначением proceeds на full-stack AI. Assistant-side Reuters-focused replay
+восстановил этот out-of-sample control и предыдущие Reuters controls без нового
+search slot. Поэтому текущий patch сужает **существующий один** rescue до
+Reuters-only provider route, а freshness/Asia/Russia/editorial не меняет.
 
 Пользовательский production API для разработки и regression replay не
 расходовался. Assistant-side replay не выдаётся за чистый Terra A/B, когда
 standalone Terra tool недоступен; baseline evidence берётся из сохранённых
-production artifacts.
+production artifacts. `high` context не добавляется без отдельного доказательства.
 
 ## Канонический независимый мониторинг
 

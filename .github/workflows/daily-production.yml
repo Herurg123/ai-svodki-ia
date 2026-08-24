@@ -18,6 +18,11 @@ on:
         description: "Optional failed run ID whose saved paid research/editorial artifact should be reused"
         required: false
         type: string
+      force_fresh_research:
+        description: "Ignore automatic same-day recovery and run fresh research on current main"
+        required: true
+        default: false
+        type: boolean
 permissions:
   actions: read
   contents: write
@@ -215,12 +220,22 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
+          EVENT_NAME: ${{ github.event_name }}
           MANUAL_RECOVERY_RUN_ID: ${{ inputs.recovery_run_id || '' }}
+          FORCE_FRESH_RESEARCH: ${{ inputs.force_fresh_research || 'false' }}
         run: |
           set -euo pipefail
+          if [[ "${EVENT_NAME}" == "workflow_dispatch" && "${FORCE_FRESH_RESEARCH}" == "true" && -n "${MANUAL_RECOVERY_RUN_ID}" ]]; then
+            echo "force_fresh_research=true conflicts with recovery_run_id; choose fresh research or explicit artifact recovery, not both." >&2
+            exit 1
+          fi
           run_id="${MANUAL_RECOVERY_RUN_ID}"
           source="manual"
-          if [[ -z "${run_id}" ]]; then
+          if [[ "${EVENT_NAME}" == "workflow_dispatch" && "${FORCE_FRESH_RESEARCH}" == "true" ]]; then
+            run_id=""
+            source="none"
+            echo "Manual fresh research requested; automatic recovery is disabled for this run."
+          elif [[ -z "${run_id}" ]]; then
             source="automatic"
             candidates="$(
               gh api --paginate \
@@ -264,7 +279,7 @@ jobs:
           else
             echo "run_id=" >> "${GITHUB_OUTPUT}"
             echo "source=none" >> "${GITHUB_OUTPUT}"
-            echo "No reusable artifact found for ${PUBLICATION_DATE}."
+            echo "No reusable artifact selected for ${PUBLICATION_DATE}."
           fi
       - name: Download saved editorial artifact for recovery
         if: steps.recovery_source.outputs.run_id != ''
