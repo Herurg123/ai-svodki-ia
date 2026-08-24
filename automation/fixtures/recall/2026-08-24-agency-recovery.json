@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "name": "2026-08-24-agency-recovery",
+  "purpose": "Out-of-sample regression contract for the false-zero production run on 2026-08-24. The bounded discovery rescue remains one conditional opportunity, not a Reuters publication quota.",
+  "production_run": {
+    "run_id": 32674034063,
+    "head_sha": "ca1cd7f4b2acaf429f0a1dd9d9fc4bc6b9a0ff6d",
+    "effective_window_start": "2026-08-22T02:35:04+03:00",
+    "effective_window_end": "2026-08-24T02:35:38+03:00",
+    "primary_candidates": 0,
+    "agency_discovery_candidates": 0,
+    "final_candidates": 0,
+    "editorial_stop": true,
+    "completed_search_operations": 24
+  },
+  "search_contract": {
+    "trigger": "major_agencies raw=0 or accepted=0 after technical completion",
+    "query": "latest AI chips infrastructure financing earnings business deals policy security",
+    "date_free": true,
+    "publisher_tokens_in_query": false,
+    "allowed_domains": ["reuters.com"],
+    "search_context_size": "medium",
+    "maximum_additional_search_operations": 1,
+    "direct_source_hosts_required": ["reuters.com"],
+    "publication_quota": false
+  },
+  "positive_controls": [
+    {
+      "id": "google-marvell-custom-ai-chips",
+      "source": "Reuters",
+      "source_date": "2026-08-19",
+      "event": "Google / Marvell custom AI chips and stock warrant up to $12.2B"
+    },
+    {
+      "id": "broadcom-ai-chip-financing",
+      "source": "Reuters",
+      "source_date": "2026-08-20",
+      "event": "Broadcom seeks more than $60B debt financing for an AI-chip structure"
+    },
+    {
+      "id": "alibaba-ai-cloud-earnings",
+      "source": "Reuters",
+      "source_date": "2026-08-20",
+      "event": "Alibaba AI/cloud revenue +45% and capex +75%"
+    },
+    {
+      "id": "nvidia-cloverleaf-infrastructure",
+      "source": "Reuters",
+      "source_date": "2026-08-21",
+      "event": "Nvidia / Cloverleaf AI data-center infrastructure investment"
+    },
+    {
+      "id": "nvidia-ai-server-price-hikes",
+      "source": "Reuters",
+      "source_date": "2026-08-22",
+      "event": "Nvidia AI-server price hikes above 15%"
+    },
+    {
+      "id": "alibaba-share-placement-ai",
+      "source": "Reuters",
+      "source_date": "2026-08-23",
+      "event": "Alibaba HK$80B / about $10.2B share placement with net proceeds for full-stack AI",
+      "role": "out-of-sample control for the 2026-08-24 false-zero"
+    }
+  ],
+  "negative_controls": [
+    {
+      "id": "stale-reuters",
+      "expectation": "verified source timestamp outside the effective window remains excluded by Source Freshness Proof"
+    },
+    {
+      "id": "analysis-opinion",
+      "expectation": "Reuters provenance alone does not create a publishable event or Must Include status"
+    },
+    {
+      "id": "syndicated-copy",
+      "expectation": "Yahoo, TradingView, MarketScreener and similar syndication URLs do not satisfy direct Reuters validation"
+    },
+    {
+      "id": "duplicate-event",
+      "expectation": "an event already present in the candidate pool is not added a second time under another Reuters URL"
+    },
+    {
+      "id": "after-cutoff",
+      "expectation": "an event after the saved cutoff remains ineligible for that historical release"
+    },
+    {
+      "id": "quiet-window",
+      "expectation": "a worthy Reuters event is not required; zero rescue candidates remains a valid result"
+    }
+  ],
+  "recovery_contract": {
+    "force_fresh_research_default": false,
+    "scheduled_behavior_unchanged": true,
+    "manual_true_skips_automatic_recovery": true,
+    "manual_recovery_run_id_conflict": "error_before_paid_api",
+    "publish_input_remains_independent": true
+  },
+  "architecture_invariants": {
+    "primary_search_operations": 12,
+    "agency_discovery_rescue_maximum": 1,
+    "hybrid_maximum_search_operations": 4,
+    "coverage_maximum_search_operations": 7,
+    "pipeline_maximum_search_operations": 24,
+    "source_freshness_proof_unchanged": true,
+    "fresh_agency_rescue_semantics": "same_event_corroboration_only",
+    "fail_closed": true
+  },
+  "experiment_evidence": {
+    "production_api_user_calls": 0,
+    "standalone_terra_available_in_interactive_environment": false,
+    "high_vs_medium_isolated_ab_completed": false,
+    "reason_context_size_unchanged": "Primary already used high context in the failed run, while the independently supported change is source-aware Reuters routing rather than context size."
+  }
+}
