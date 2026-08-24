@@ -195,7 +195,7 @@ def choose_source(
             downgrade_reasons.append(
                 {
                     "status": "agency-discovery-contract-upgrade",
-                    "agency_discovery_rescue_version": 1,
+                    "agency_discovery_rescue_version": 2,
                     "reason": agency_reason,
                 }
             )
