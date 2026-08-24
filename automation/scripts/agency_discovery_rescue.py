@@ -3,7 +3,7 @@
 
 This is deliberately distinct from Coverage's ``fresh_agency_rescue``.  The
 Coverage mechanism corroborates an event that is already present in the pool.
-This module is allowed to discover a missing Reuters/AP event only when the
+This module is allowed to discover a missing Reuters event only when the
 mandatory ``major_agencies`` Primary direction completed but produced a proven
 quality gap (raw=0 or accepted=0).
 
@@ -38,12 +38,14 @@ RUNTIME_RESEARCH_ROOT = (
     REPOSITORY_ROOT / "automation" / "fixtures" / "research" / ".runtime"
 )
 
-AGENCY_DISCOVERY_RESCUE_VERSION = 1
+AGENCY_DISCOVERY_RESCUE_VERSION = 2
 AGENCY_DISCOVERY_RESCUE_STRATEGY = "agency_discovery_rescue"
 AGENCY_DISCOVERY_RESCUE_DIRECTION = "agency_discovery_rescue"
 AGENCY_DISCOVERY_RESCUE_QUERY = (
-    "latest Reuters AP AI chips infrastructure financing earnings business deals"
+    "latest AI chips infrastructure financing earnings business deals policy security"
 )
+AGENCY_DISCOVERY_ALLOWED_DOMAINS: tuple[str, ...] = ("reuters.com",)
+AGENCY_DISCOVERY_SEARCH_CONTEXT_SIZE = "medium"
 MAXIMUM_SEARCH_OPERATIONS = 1
 NAVIGATION_TOOL_ALLOWANCE = 3
 MAXIMUM_TOOL_CALLS = MAXIMUM_SEARCH_OPERATIONS + NAVIGATION_TOOL_ALLOWANCE
@@ -58,7 +60,7 @@ PIPELINE_MAXIMUM_SEARCH_OPERATIONS = (
     + COVERAGE_MAXIMUM_SEARCH_OPERATIONS
 )
 
-_DIRECT_AGENCY_HOSTS = ("reuters.com", "apnews.com", "ap.org")
+_DIRECT_AGENCY_HOSTS = AGENCY_DISCOVERY_ALLOWED_DOMAINS
 
 RESCUE_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -224,24 +226,24 @@ Strategy: {AGENCY_DISCOVERY_RESCUE_STRATEGY}
 
 Mandatory Primary direction `major_agencies` технически завершён, но не дал
 пригодного agency candidate. Это missing-event discovery, НЕ corroboration уже
-известного события и НЕ квота Reuters/AP.
+известного события и НЕ квота Reuters.
 
 Выполни РОВНО ОДНУ поисковую операцию Web Search. Второй search запрещён.
-API domain filter намеренно отсутствует: основной four-domain route уже дал
-quality gap, а отдельный rescue должен получить независимый ranking/source-pool
-шанс. Фактический query должен быть ТОЧНО:
+API domain filter задаёт отдельный Reuters-only provider route, чтобы rescue не
+получал загрязнённый source-open ranked pool. Publisher в query не дублируется:
+фактический query должен быть ТОЧНО:
 `{AGENCY_DISCOVERY_RESCUE_QUERY}`
 
 Query date-free. Не добавляй календарные даты, after:, before:, site:, OR-цепочки
-или второй publisher sweep. Reuters и AP здесь source-aware ranking hints, а не
-причина автоматически публиковать материал.
+или второй publisher sweep. Reuters routing здесь только шанс обнаружить
+отсутствующее high-signal событие, а не причина автоматически публиковать его.
 
 Возвращай только самостоятельные свежие AI events высокой новостной ценности,
-для которых primary_source является ПРЯМЫМ Reuters (`reuters.com`) или AP
-(`apnews.com` / `ap.org`) URL. Syndication/агрегатор не считается прямым agency
-source. Событие и фактический source timestamp обязаны попадать в effective
-window. Все обычные verification/freshness/significance/archive правила
-сохраняются. Не дублируй уже найденное событие под другим URL.
+для которых primary_source является ПРЯМЫМ Reuters (`reuters.com`) URL.
+Syndication/агрегатор не считается прямым agency source. Событие и фактический
+source timestamp обязаны попадать в effective window. Все обычные
+verification/freshness/significance/archive правила сохраняются. Не дублируй уже
+найденное событие под другим URL.
 
 Уже найденные candidates:
 {json.dumps(_compact_candidates(existing_candidates), ensure_ascii=False, indent=2)}
@@ -257,6 +259,15 @@ direction_id должен быть `{AGENCY_DISCOVERY_RESCUE_DIRECTION}`.
 Верни только JSON."""
 
 
+def _web_search_tool() -> dict[str, Any]:
+    return {
+        "type": "web_search",
+        "search_context_size": AGENCY_DISCOVERY_SEARCH_CONTEXT_SIZE,
+        "return_token_budget": "default",
+        "filters": {"allowed_domains": list(AGENCY_DISCOVERY_ALLOWED_DOMAINS)},
+    }
+
+
 def run_search_request(
     *, api_key: str, model: str, prompt: str
 ) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -266,13 +277,7 @@ def run_search_request(
     response = client.responses.create(
         model=model,
         input=prompt,
-        tools=[
-            {
-                "type": "web_search",
-                "search_context_size": "medium",
-                "return_token_budget": "default",
-            }
-        ],
+        tools=[_web_search_tool()],
         tool_choice="required",
         max_tool_calls=MAXIMUM_TOOL_CALLS,
         include=["web_search_call.action.sources"],
@@ -294,7 +299,8 @@ def run_search_request(
     metadata["configured_search_operations"] = MAXIMUM_SEARCH_OPERATIONS
     metadata["configured_total_tool_calls"] = MAXIMUM_TOOL_CALLS
     metadata["navigation_tool_allowance"] = NAVIGATION_TOOL_ALLOWANCE
-    metadata["allowed_domains"] = []
+    metadata["allowed_domains"] = list(AGENCY_DISCOVERY_ALLOWED_DOMAINS)
+    metadata["search_context_size"] = AGENCY_DISCOVERY_SEARCH_CONTEXT_SIZE
     completed = int(metadata.get("web_search_calls_completed", 0) or 0)
     if completed != MAXIMUM_SEARCH_OPERATIONS:
         raise AgencyDiscoveryResponseError(
@@ -469,8 +475,9 @@ def _base_report(
         "state": "not_triggered",
         "status": "complete",
         "query": AGENCY_DISCOVERY_RESCUE_QUERY,
-        "allowed_domains": [],
+        "allowed_domains": list(AGENCY_DISCOVERY_ALLOWED_DOMAINS),
         "required_direct_source_hosts": list(_DIRECT_AGENCY_HOSTS),
+        "search_context_size": AGENCY_DISCOVERY_SEARCH_CONTEXT_SIZE,
         "search_operation_limit": MAXIMUM_SEARCH_OPERATIONS,
         "search_operation_reserved": 0,
         "search_operation_count_contribution": 0,
@@ -757,6 +764,7 @@ def run_agency_discovery_rescue(
             rescue_rejections.append(
                 {
                     "title": candidate.get("title"),
+                    # Keep the historical reason code stable for old diagnostics consumers.
                     "reason_code": "non_direct_reuters_ap_source",
                     "primary_url": candidate_primary_url(candidate),
                 }
