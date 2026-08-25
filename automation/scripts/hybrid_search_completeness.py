@@ -12,6 +12,11 @@ That prevents a model-claimed-fresh but actually stale agency row from filling a
 cluster and suppressing Hybrid's adaptive gap search.  The freshness gate uses
 only already-cited URLs and spends no OpenAI/Web Search budget.
 
+After that rescue/freshness checkpoint and before Hybrid gap planning, Source
+Pulse v1 runs in production-shadow mode.  It is diagnostics-only: source health
+and pulse/search overlap are persisted, while the candidate pool is unchanged.
+Pulse failure is non-fatal and it spends no OpenAI/Web Search budget.
+
 The first three independent Hybrid completeness searches are unchanged.  The
 existing optional fourth Hybrid slot is redirected to a source-neutral
 Russia/Asia health-check when Primary Recall completed those regional beats with
@@ -44,6 +49,7 @@ from agency_discovery_rescue import (
     PIPELINE_MAXIMUM_SEARCH_OPERATIONS,
     run_agency_discovery_rescue,
 )
+from source_pulse_shadow import compact_shadow_report, run_source_pulse_shadow
 
 
 def __getattr__(name: str) -> Any:
@@ -343,6 +349,20 @@ def _attach_rescue_to_hybrid_report(
         "maximum_total": PIPELINE_MAXIMUM_SEARCH_OPERATIONS,
     }
 
+    pulse_path = artifact_dir / "source-pulse.json"
+    if pulse_path.is_file():
+        try:
+            report["source_pulse_shadow"] = compact_shadow_report(read_json(pulse_path))
+        except Exception as exc:
+            report["source_pulse_shadow"] = {
+                "version": 1,
+                "status": "diagnostic_read_error",
+                "candidate_influence": False,
+                "paid_api_calls": 0,
+                "web_search_operations": 0,
+                "error": f"{type(exc).__name__}: {exc}",
+            }
+
     if _rescue_added(rescue):
         report["editorial_rerun_needed"] = True
         merged_path = report.get("merged_research_path")
@@ -400,6 +420,26 @@ def run_hybrid_completeness(
     refreshed = read_json(artifact_dir / "candidates.json")
     if isinstance(refreshed, dict):
         research = refreshed
+
+    # Stage 2 Dual Discovery: run fixed-source Source Pulse only as a shadow.
+    # It observes the exact post-rescue candidate pool but cannot mutate it or
+    # suppress agency/regional health checks. Any source/network failure is
+    # persisted as non-fatal diagnostics and Hybrid continues unchanged.
+    pulse_shadow = run_source_pulse_shadow(
+        artifact_dir=artifact_dir,
+        archive_path=archive_path,
+        publication_date=publication_date,
+        output_root=output_root,
+    )
+    pulse_fusion = pulse_shadow.get("fusion") if isinstance(pulse_shadow, dict) else None
+    pulse_summary = pulse_fusion.get("summary") if isinstance(pulse_fusion, dict) else None
+    print(
+        "Source Pulse v1 shadow: "
+        f"state={pulse_shadow.get('state') if isinstance(pulse_shadow, dict) else 'unknown'}, "
+        f"pulse_only={pulse_summary.get('pulse_only_count') if isinstance(pulse_summary, dict) else 'n/a'}, "
+        f"both={pulse_summary.get('both_count') if isinstance(pulse_summary, dict) else 'n/a'}, "
+        "candidate influence=0; paid API calls=0; Web Search operations=0."
+    )
 
     gaps = _regional_gaps(research)
     if not gaps or maximum_search_calls < DEFAULT_MAXIMUM_SEARCH_CALLS:
