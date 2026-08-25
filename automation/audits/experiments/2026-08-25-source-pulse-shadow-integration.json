@@ -5,6 +5,7 @@
   "stage": 2,
   "production_api_used_during_preparation": false,
   "candidate_influence": false,
+  "maintained_docs_synchronized": true,
   "integration_order": [
     "primary_12_12",
     "agency_discovery_rescue",
