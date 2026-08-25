@@ -499,6 +499,7 @@ Production-artifacts создаются с `retention-days: 14`, но инжен
 completeness, всех coverage-проходов и recall sentinel. Модель обязана считать
 всё до этой отметки не будущим независимо от собственной системной даты или
 UTC-даты API-запуска.
+
 Канонический continuity anchor остаётся `search_cutoff_at` последнего успешного
 выпуска. Fresh Primary Recall строит effective discovery start не более чем на
 24 часа раньше anchor, чтобы восстановить существенные пропуски предыдущего
@@ -618,6 +619,7 @@ Include misses, stale, source concentration, Asia/Russia и повторение
 query-параметров, включая AWS signed URL. Домен, путь и несекретные параметры
 сохраняются. Artifact secret-scanner остаётся fail-closed и не получает
 исключений для подписанных URL.
+
 ### Проверенный relative-freshness retrieval
 
 Эксперимент 2026-08-14 на production-модели `gpt-5.6-terra` показал: явные
@@ -737,6 +739,7 @@ supporting может стать primary. Нового поиска для эт�
 публикации, candidate становится `unconfirmed` и не может быть опубликован.
 Recovery freshness-error удаляет supplemental rescue rows из candidate pool,
 чтобы непроверенный rescue не загрязнял ранее пригодный artifact.
+
 Source Freshness Proof сам по себе не добавляет Search/OpenAI вызовов. Изменение
 общего потолка 23 → 24 связано только с отдельным conditional
 `agency_discovery_rescue`, а не с freshness-проверкой.
