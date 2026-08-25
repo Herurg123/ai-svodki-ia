@@ -23,6 +23,7 @@ New-Item -ItemType Directory -Path $TargetDir -Force | Out-Null
 $files = @(
     "worker.js",
     "package.json",
+    "package-lock.json",
     "run-worker.cmd",
     "run-worker-hidden.vbs",
     "install-ftp-support.cmd",
@@ -68,8 +69,8 @@ $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
 Push-Location $TargetDir
 try {
-    npm install --no-audit --no-fund
-    if ($LASTEXITCODE -ne 0) { throw "npm install завершился ошибкой." }
+    npm ci --no-audit --no-fund
+    if ($LASTEXITCODE -ne 0) { throw "npm ci завершился ошибкой." }
     node --check worker.js
     if ($LASTEXITCODE -ne 0) { throw "node --check worker.js завершился ошибкой." }
 }
