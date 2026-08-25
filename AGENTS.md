@@ -33,26 +33,46 @@ previous message asked to continue. Merge only after the project owner gives a
 separate explicit merge command for that prepared PR. Production recovery or
 publication that depends on the change must wait for that merge command.
 
+`main` must be protected by the canonical repository ruleset described in
+`automation/config/main-branch-ruleset.json`; operator activation is documented
+in `automation/MAIN_PROTECTION.md`. Presence of the JSON file alone does not
+activate GitHub settings. `Required PR Gate` is the only required status check.
+Do not make path-filtered Main CI or Video CI directly required, because a skipped
+required workflow remains pending.
+
+The only allowed direct pushes to protected `main` are the validated publication
+commit in `daily-production.yml` and validated retention commit in
+`repository-cleanup.yml`. They must use `automation/scripts/push_protected_main.sh`
+with the dedicated `MAIN_PUSH_DEPLOY_KEY` secret. Do not expose that secret to any
+other workflow or job, and do not grant broad GitHub Actions/admin bypass instead.
+
 ## CI ownership boundary
 
+`PR Gate` (`.github/workflows/pr-gate.yml`) is the always-on pull-request
+orchestrator. It classifies changed paths, calls the relevant reusable domain CI,
+and emits `Required PR Gate`. A change to the gate itself must exercise both CI
+domains.
+
 `Main CI` (`.github/workflows/ci.yml`) owns the main production repository checks.
-It must exclude video-only changes under `automation/notebooklm-video/**` and the
-dedicated `.github/workflows/video-ci.yml` file from its path trigger.
+It remains reusable for PR Gate and keeps push/manual execution. Its push path
+filter must exclude video-only changes under `automation/notebooklm-video/**` and
+the dedicated `.github/workflows/video-ci.yml` file.
 
 `Video CI` (`.github/workflows/video-ci.yml`) exclusively owns repository-level
-offline checks for the local NotebookLM video subproject. Video-only source or
-test changes must not require Main CI. Cross-cutting changes such as shared
-architecture documentation may still trigger Main CI through their own paths.
+offline checks for the local NotebookLM video subproject. It remains reusable for
+PR Gate and dependency-free. Video-only source or test changes must not require
+Main CI. Cross-cutting changes can route to both domains.
 
 Do not add `automation/notebooklm-video/` as an input, dependency, generated
 artifact, cleanup target or deploy source of `daily-production.yml`,
 `deploy-posts.yml`, `repository-cleanup.yml` or `repository-hygiene.yml` unless
 the project owner explicitly changes the architecture boundary.
 
-The boundary is enforced by `automation/tests/test_video_ci_boundary.py` and the
-video subproject's own dependency-free smoke tests. A future workflow change that
-re-couples the two CI domains must update the architecture intentionally rather
-than bypassing those tests.
+These boundaries are enforced by `automation/tests/test_video_ci_boundary.py`,
+`automation/tests/test_pr_gate_and_main_protection.py`, and the video subproject's
+own dependency-free smoke tests. A future workflow change that re-couples the two
+CI domains or broadens protected-main bypass must update the architecture
+intentionally rather than bypassing those tests.
 
 ## NotebookLM video subproject boundary
 

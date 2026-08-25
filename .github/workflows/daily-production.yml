@@ -756,6 +756,8 @@ jobs:
         id: commit
         if: steps.mode.outputs.publish == 'true' && steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true'
         shell: bash
+        env:
+          MAIN_PUSH_DEPLOY_KEY: ${{ secrets.MAIN_PUSH_DEPLOY_KEY }}
         run: |
           set -euo pipefail
           date="${{ steps.runtime.outputs.publication_date }}"
@@ -771,7 +773,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Publish AI digest for ${date}"
           commit_sha="$(git rev-parse HEAD)"
-          git push origin HEAD:main
+          bash automation/scripts/push_protected_main.sh HEAD:main
           echo "commit_sha=${commit_sha}" >> "${GITHUB_OUTPUT}"
       - name: Publish Russian pipeline status
         if: always() && steps.terminal_reuse.outputs.stop != 'true'

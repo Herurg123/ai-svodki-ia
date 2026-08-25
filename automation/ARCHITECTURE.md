@@ -105,10 +105,11 @@ emergency и patch workflow после выполнения задачи в по
 
 ## 4. GitHub Actions
 
-Постоянный workflow inventory состоит из шести файлов.
+Постоянный workflow inventory состоит из семи файлов.
 
 | Workflow | Ответственность | Может менять production state |
 |---|---|---|
+| `pr-gate.yml` | Always-on PR routing и единый required gate | Нет |
 | `ci.yml` | Main CI, offline проверки основного production-кода | Нет |
 | `video-ci.yml` | Video CI, dependency-free offline проверки video-подпроекта | Нет |
 | `daily-production.yml` | Ежедневный retrieval/editorial/build/publish pipeline | Да, по production contract |
@@ -116,31 +117,44 @@ emergency и patch workflow после выполнения задачи в по
 | `repository-cleanup.yml` | 32-day content/public cleanup с validation | Да, только documented retention scope |
 | `repository-hygiene.yml` | Уборка безопасно классифицированных GitHub objects | Да, только GitHub-object policy scope |
 
-### 4.1. Main CI
+### 4.1. PR Gate
 
-Main CI предназначен для основного production дерева. Его path filter исключает:
+`pr-gate.yml` запускается для каждого pull request в `main` без `paths` filter.
+Он сравнивает base/head commit, классифицирует changed paths и вызывает reusable
+domain workflows:
+
+- Main CI для production/shared paths;
+- Video CI для `automation/notebooklm-video/**` и `video-ci.yml`;
+- оба домена для изменения самого `pr-gate.yml` и mixed PR.
+
+Финальный job всегда называется `Required PR Gate`. Именно он является
+стабильным required status ruleset. Path-dependent Main CI и Video CI нельзя
+делать required напрямую: когда workflow пропущен по path routing, required
+status не появляется как успешный check и merge может зависнуть.
+
+### 4.2. Main CI
+
+Main CI является reusable workflow для PR Gate и сохраняет `workflow_dispatch`
+и push-to-main проверку. Его push path filter исключает:
 
 - `automation/notebooklm-video/**`;
 - `.github/workflows/video-ci.yml`.
 
-Video-only PR не должен становиться зависимым от Python production CI. При этом
-изменения общей архитектуры, основного workflow или production tests по своим
-собственным путям могут запускать Main CI.
+Video-only PR не становится зависимым от Python production CI. Изменения общей
+архитектуры, production workflow/tests и других main-domain paths маршрутизируются
+PR Gate в Main CI.
 
 Main CI выполняет compileall, Python unit regressions и ключевые validators
 editorial/archive/production/RSS/sitemap/structured-data contracts.
 
-### 4.2. Video CI
+### 4.3. Video CI
 
-Video CI запускается только для:
-
-- `automation/notebooklm-video/**`;
-- `.github/workflows/video-ci.yml`.
-
-Текущий CI намеренно dependency-free: он не выполняет `npm install` или `npm ci`,
-не запускает браузер, NotebookLM, FTP или Windows DPAPI. Он использует Node.js
-для syntax checks и offline contract smoke tests, которые работают только со
-встроенными Node modules и committed files.
+Video CI является reusable workflow для PR Gate и сохраняет manual/push режимы.
+На PR он вызывается только для video-domain changes. Текущий CI намеренно
+dependency-free: он не выполняет `npm install` или `npm ci`, не запускает
+браузер, NotebookLM, FTP или Windows DPAPI. Он использует Node.js для syntax
+checks и offline contract smoke tests, которые работают только со встроенными
+Node modules и committed files.
 
 Полное npm-дерево video runtime при этом воспроизводимо: `package.json` и
 committed `package-lock.json` являются одной версионируемой единицей, а локальные
@@ -148,25 +162,46 @@ setup/dependency entrypoints устанавливают зависимости �
 npm-зависимостей должно обновлять lockfile в том же PR и отдельно доказывать
 чистую `npm ci` установку; обычный Video CI от npm registry по-прежнему не зависит.
 
-Такой CI проверяет переносимый код и safety boundaries, не превращая локальный
-Windows runtime в скрытую зависимость GitHub production.
+### 4.4. Enforcement CI boundary
 
-### 4.3. Enforcement CI boundary
+`automation/tests/test_video_ci_boundary.py` проверяет разделение production/video,
+а `automation/tests/test_pr_gate_and_main_protection.py` проверяет always-on gate,
+reusable domain CI, узкий automated-writer secret scope и canonical ruleset.
 
-`automation/tests/test_video_ci_boundary.py` проверяет:
+`automation/notebooklm-video/tests/video-boundary-smoke.js` проверяет hard FTP
+boundary и ignore rules. `lockfile-contract-smoke.js` проверяет синхронизацию
+`package.json`/`package-lock.json` и локальный `npm ci` contract.
 
-- исключение video-only paths из Main CI;
-- наличие dedicated Video CI;
-- отсутствие video dependency в production/deploy/cleanup/hygiene workflows;
-- отсутствие production credentials/write permissions в Video CI.
+### 4.5. Защита `main` и automated writers
 
-`automation/notebooklm-video/tests/video-boundary-smoke.js` проверяет локальные
-video invariants, включая hard FTP boundary и ignore rules.
+Канонический desired ruleset хранится в
+`automation/config/main-branch-ruleset.json`. Он нацелен только на default branch
+и требует:
 
-`automation/notebooklm-video/tests/lockfile-contract-smoke.js` проверяет
-синхронизацию direct dependencies между `package.json` и `package-lock.json`,
-наличие точных locked direct versions и использование `npm ci` локальными
-install entrypoints без сетевой установки зависимостей в Video CI.
+- pull request для обычных изменений;
+- успешный `Required PR Gate` на актуальном base;
+- linear history с merge через squash/rebase;
+- resolved review threads;
+- запрет удаления `main` и force-push.
+
+Число обязательных approvals равно 0: репозиторий персональный, поэтому правило
+не должно требовать невозможного self-approval. Bypass actor только `DeployKey`.
+Нельзя заменять его repository-admin role или всем GitHub Actions App: это
+расширило бы прямой write bypass на несвязанные workflows.
+
+Два легитимных automated writer контура остаются direct-push по архитектурной
+необходимости: `daily-production.yml` публикует validated release, а
+`repository-cleanup.yml` фиксирует validated retention cleanup. Только их финальные
+commit steps получают secret `MAIN_PUSH_DEPLOY_KEY` и вызывают
+`automation/scripts/push_protected_main.sh HEAD:main`. Helper отвергает другой
+refspec, использует отдельный SSH key только на время push и pin'ит официальный
+GitHub Ed25519 host key.
+
+Пока deploy-key secret не установлен и ruleset ещё не активирован, helper может
+использовать существующий authenticated `origin` как переходный fallback. Перед
+активацией ruleset write deploy key и repository secret обязаны быть установлены;
+после активации fallback больше не является рабочим путём. Repository hygiene,
+Video CI, Main CI, PR Gate и deploy-posts этот secret не получают.
 
 ## 5. Nightly production и временная непрерывность
 

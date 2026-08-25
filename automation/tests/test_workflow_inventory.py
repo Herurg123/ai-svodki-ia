@@ -13,6 +13,7 @@ class WorkflowInventoryTests(unittest.TestCase):
         self.assertEqual(
             actual,
             {
+                "pr-gate.yml",
                 "ci.yml",
                 "video-ci.yml",
                 "daily-production.yml",
