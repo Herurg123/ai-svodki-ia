@@ -1,0 +1,147 @@
+{
+  "version": 1,
+  "mode": "research_only",
+  "production_integration": false,
+  "limits": {
+    "max_response_bytes": 1500000,
+    "fetch_timeout_seconds": 10,
+    "fetch_attempts": 2,
+    "max_items_per_source": 30,
+    "max_global_leads": 120
+  },
+  "sources": [
+    {
+      "id": "baidu_ir",
+      "tier": "A",
+      "region": "china_asia",
+      "role": "official",
+      "adapter": "html_index",
+      "url": "https://ir.baidu.com/",
+      "allowed_hosts": ["ir.baidu.com"],
+      "include_url_regex": "baidu|news|release|quarter|result",
+      "max_items": 20
+    },
+    {
+      "id": "alibaba_ir_hkex",
+      "tier": "A",
+      "region": "china_asia",
+      "role": "official",
+      "adapter": "html_index",
+      "url": "https://www.alibabagroup.com/en-US/ir-filings-hkex",
+      "allowed_hosts": ["alibabagroup.com"],
+      "include_url_regex": "alibaba|ir|filing|announcement|news",
+      "max_items": 25
+    },
+    {
+      "id": "alibaba_cloud_blog",
+      "tier": "A",
+      "region": "china_asia",
+      "role": "official",
+      "adapter": "html_index",
+      "url": "https://www.alibabacloud.com/blog",
+      "allowed_hosts": ["alibabacloud.com"],
+      "include_url_regex": "blog|news|product",
+      "max_items": 25
+    },
+    {
+      "id": "marvell_current_reports",
+      "tier": "A",
+      "region": "global",
+      "role": "official",
+      "adapter": "html_index",
+      "url": "https://investor.marvell.com/sec-filings/current-reports",
+      "allowed_hosts": ["investor.marvell.com"],
+      "include_url_regex": "sec|filing|8-k|current|report|news",
+      "max_items": 20
+    },
+    {
+      "id": "nvidia_recent_news",
+      "tier": "A",
+      "region": "global",
+      "role": "official",
+      "adapter": "html_index",
+      "url": "https://blogs.nvidia.com/recent-news/",
+      "allowed_hosts": ["blogs.nvidia.com", "nvidia.com"],
+      "include_url_regex": "blog|news|press|nvidia",
+      "max_items": 25
+    },
+    {
+      "id": "yandex_ir",
+      "tier": "A",
+      "region": "russia",
+      "role": "official",
+      "adapter": "html_index",
+      "url": "https://ir.yandex.ru/press-releases?year=2026",
+      "allowed_hosts": ["ir.yandex.ru", "yandex.ru"],
+      "include_url_regex": "press|release|2026|yandex",
+      "max_items": 25
+    },
+    {
+      "id": "xpeng_ir",
+      "tier": "A",
+      "region": "china_asia",
+      "role": "official",
+      "adapter": "rss_atom",
+      "url": "https://ir.xiaopeng.com/rss/news-releases.xml",
+      "fallback_urls": ["https://ir.xiaopeng.com/news-events/news-releases"],
+      "allowed_hosts": ["ir.xiaopeng.com"],
+      "include_url_regex": "news|release|xpeng|xiaopeng",
+      "max_items": 25
+    },
+    {
+      "id": "deepseek_official_news",
+      "tier": "A",
+      "region": "china_asia",
+      "role": "official",
+      "adapter": "html_index",
+      "url": "https://api-docs.deepseek.com/news/",
+      "allowed_hosts": ["api-docs.deepseek.com"],
+      "include_url_regex": "news|deepseek",
+      "max_items": 25
+    },
+    {
+      "id": "mws_news",
+      "tier": "A",
+      "region": "russia",
+      "role": "official",
+      "adapter": "html_index",
+      "url": "https://mws.ru/news/",
+      "allowed_hosts": ["mws.ru"],
+      "include_url_regex": "news|mws",
+      "max_items": 30
+    },
+    {
+      "id": "vk_press",
+      "tier": "A",
+      "region": "russia",
+      "role": "official",
+      "adapter": "html_index",
+      "url": "https://vk.company.ru/ru/press/releases/",
+      "allowed_hosts": ["vk.company.ru"],
+      "include_url_regex": "press|release|vk",
+      "max_items": 25
+    },
+    {
+      "id": "ithome_ai",
+      "tier": "B",
+      "region": "china_asia",
+      "role": "lead_only",
+      "adapter": "html_index",
+      "url": "https://www.ithome.com/tag/AI/",
+      "allowed_hosts": ["ithome.com"],
+      "include_url_regex": "ithome|html|news|ai",
+      "max_items": 30
+    },
+    {
+      "id": "cnews_ai",
+      "tier": "B",
+      "region": "russia",
+      "role": "lead_only",
+      "adapter": "html_index",
+      "url": "https://www.cnews.ru/news/line/",
+      "allowed_hosts": ["cnews.ru"],
+      "include_url_regex": "news|line|articles|cnews",
+      "max_items": 30
+    }
+  ]
+}
