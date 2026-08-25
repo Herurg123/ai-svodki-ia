@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "experiment": "source_pulse_v1_offline_prototype",
+  "date": "2026-08-25",
+  "status": "research_only",
+  "production_integration": false,
+  "production_api_used": false,
+  "web_search_operations": 0,
+  "registry_source_count": 12,
+  "tiers": {
+    "A": "official/newsroom/IR/release",
+    "B": "lead_only regional"
+  },
+  "historical_replay": {
+    "start": "2026-08-19",
+    "end": "2026-08-25",
+    "strict_instances": 13,
+    "strict_hits": 9,
+    "recovery_rate": 0.6923076923
+  },
+  "offline_tests": {
+    "count": 16,
+    "passed": 16
+  },
+  "architecture_invariants": {
+    "primary_12_12_unchanged": true,
+    "agency_rescue_unchanged": true,
+    "hybrid_unchanged": true,
+    "coverage_unchanged": true,
+    "source_freshness_unchanged": true,
+    "editorial_unchanged": true,
+    "publication_unchanged": true,
+    "web_search_ceiling_24_unchanged": true,
+    "regional_quota_added": false,
+    "paid_pulse_triage_added": false,
+    "daily_independent_audit_changed": false
+  },
+  "issues_found_and_fixed_pre_pr": [
+    "rss_config_html_fallback_parser_mismatch",
+    "snapshot_hash_included_volatile_latency",
+    "redirect_target_was_not_prevalidated_before_follow"
+  ],
+  "verdict": "PASS_READY_FOR_RESEARCH_ONLY_PR"
+}
