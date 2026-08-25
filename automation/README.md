@@ -62,6 +62,11 @@ production и не запускают Main CI; их через PR Gate пров�
 runtime. Полный workflow inventory, ruleset и automated-writer boundary описаны
 в [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
+Операторская установка write deploy key, repository secret и самого GitHub
+ruleset описана в [`MAIN_PROTECTION.md`](MAIN_PROTECTION.md). Ruleset JSON в
+`config/` является каноническим desired state, но не активирует настройку GitHub
+сам по себе.
+
 ## Repository hygiene
 
 `repository-hygiene.yml` является отдельным operational workflow и не заменяет
