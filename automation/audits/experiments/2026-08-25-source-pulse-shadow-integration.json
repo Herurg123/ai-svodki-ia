@@ -36,6 +36,13 @@
     "collector_failure": "complete_with_gaps_error_nonfatal",
     "candidate_pool_mutation_on_failure": false
   },
+  "hardening_review": {
+    "runtime_shadow_contract_enforced": true,
+    "sensitive_query_parameters_redacted": true,
+    "opaque_source_ids_hashed": true,
+    "pre_and_post_hybrid_fusion_recorded": true,
+    "temporary_patch_workflows_removed": true
+  },
   "audit_contract": {
     "daily_independent_audit_preserved": true,
     "new_fields": [
