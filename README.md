@@ -12,6 +12,28 @@
 - [RSS для Дзена](https://rybalka.one/posts/rss.xml)
 - [sitemap](https://rybalka.one/posts/sitemap.xml)
 
+## Локальный подпроект NotebookLM-видео
+
+`automation/notebooklm-video/` хранит отдельный Windows-подпроект downstream-
+автоматизации. После уже опубликованной ИИ-Сводки он читает RSS, создаёт
+видеоповествование в NotebookLM, скачивает MP4, делает PNG-превью первого кадра
+и при включённой настройке доставляет медиа в изолированный FTP-каталог `video`.
+
+Подпроект находится в том же репозитории, чтобы схема выпуска, исходники и
+инструкции оставались доступны в одном месте, но он **не входит** в основной
+ночной retrieval/editorial GitHub Actions production. Его содержимое
+обслуживается отдельными задачами подпроекта. Обычные изменения поиска,
+редакционной логики, сайта, RSS, основного FTP-deploy, очистки и аудитов не
+должны попутно менять `automation/notebooklm-video/`.
+
+В Git попадают только переносимые исходники, безопасные шаблоны и инструкции.
+Реальные локальные конфиги, доступы, state, журналы, скачанные медиа и
+защищённый браузерный профиль не коммитятся. Подробности работы и переноса на
+другую Windows-машину описаны в
+[`automation/notebooklm-video/README.md`](automation/notebooklm-video/README.md)
+и
+[`automation/notebooklm-video/DEPLOYMENT.md`](automation/notebooklm-video/DEPLOYMENT.md).
+
 ## Текущее состояние production
 
 Production работает только из ветки `main`, использует часовой пояс
@@ -477,7 +499,6 @@ Production-artifacts создаются с `retention-days: 14`, но инжен
 completeness, всех coverage-проходов и recall sentinel. Модель обязана считать
 всё до этой отметки не будущим независимо от собственной системной даты или
 UTC-даты API-запуска.
-
 Канонический continuity anchor остаётся `search_cutoff_at` последнего успешного
 выпуска. Fresh Primary Recall строит effective discovery start не более чем на
 24 часа раньше anchor, чтобы восстановить существенные пропуски предыдущего
@@ -597,7 +618,6 @@ Include misses, stale, source concentration, Asia/Russia и повторение
 query-параметров, включая AWS signed URL. Домен, путь и несекретные параметры
 сохраняются. Artifact secret-scanner остаётся fail-closed и не получает
 исключений для подписанных URL.
-
 ### Проверенный relative-freshness retrieval
 
 Эксперимент 2026-08-14 на production-модели `gpt-5.6-terra` показал: явные
@@ -717,7 +737,6 @@ supporting может стать primary. Нового поиска для эт�
 публикации, candidate становится `unconfirmed` и не может быть опубликован.
 Recovery freshness-error удаляет supplemental rescue rows из candidate pool,
 чтобы непроверенный rescue не загрязнял ранее пригодный artifact.
-
 Source Freshness Proof сам по себе не добавляет Search/OpenAI вызовов. Изменение
 общего потолка 23 → 24 связано только с отдельным conditional
 `agency_discovery_rescue`, а не с freshness-проверкой.
