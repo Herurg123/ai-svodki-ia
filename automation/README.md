@@ -237,8 +237,9 @@ regional/adaptive decisions. Он не вызывает OpenAI/Web Search; гл�
 
 `preview/<DATE>/source-pulse.json` и
 `preview/production-daily/source-pulse-<DATE>.json` сохраняют deterministic snapshot,
-source health и `pulse_only / both / search_only` diagnostics. Snapshot является
-частью обычного Actions artifact. Повтор на том же artifact и same-day recovery не
+source health и pre-Hybrid `pulse_only / both / search_only` diagnostics; после
+Hybrid тот же сохранённый snapshot без повторного polling сравнивается ещё раз и
+даёт `fusion_post_hybrid`. Snapshot является частью обычного Actions artifact. Повтор на том же artifact и same-day recovery не
 должны молча repoll'ить mutable sources. Любая Pulse transport/parser ошибка
 `complete_with_gaps/error_nonfatal` и не блокирует старый retrieval pipeline.
 
@@ -269,7 +270,7 @@ API domain filter отсутствует. Optional 4-й slot сохраняет 
 восстанавливается, а валидный merged handoff сохраняется для Coverage; rescue
 candidate, уже принятый перед Hybrid, отдельно защищён от потери.
 
-### 4. Диагностика Hybrid
+### 5. Диагностика Hybrid
 
 Каждый запуск сохраняет `hybrid-completeness.json`, production diagnostic report
 и при accepted candidates diagnostic/runtime merged research. Report фиксирует

@@ -49,7 +49,7 @@ from agency_discovery_rescue import (
     PIPELINE_MAXIMUM_SEARCH_OPERATIONS,
     run_agency_discovery_rescue,
 )
-from source_pulse_shadow import compact_shadow_report, run_source_pulse_shadow
+from source_pulse_shadow import compact_shadow_report, refresh_post_hybrid_fusion, run_source_pulse_shadow
 
 
 def __getattr__(name: str) -> Any:
@@ -350,6 +350,22 @@ def _attach_rescue_to_hybrid_report(
     }
 
     pulse_path = artifact_dir / "source-pulse.json"
+    try:
+        fusion_research = read_json(artifact_dir / "candidates.json")
+        merged_path = report.get("merged_research_path")
+        if isinstance(merged_path, str) and Path(merged_path).is_file():
+            candidate_research = read_json(Path(merged_path))
+            if isinstance(candidate_research, dict):
+                fusion_research = candidate_research
+        if isinstance(fusion_research, dict):
+            refresh_post_hybrid_fusion(
+                artifact_dir=artifact_dir,
+                output_root=output_root,
+                publication_date=publication_date,
+                research=fusion_research,
+            )
+    except Exception:
+        pass
     if pulse_path.is_file():
         try:
             report["source_pulse_shadow"] = compact_shadow_report(read_json(pulse_path))

@@ -84,6 +84,17 @@ Compact Source Pulse summary также прикладывается к `hybrid-
 - статический order guard: agency freshness → Source Pulse shadow → Hybrid gap planning;
 - workflow и `run_digest_preview.py` не получают отдельный прямой Pulse invocation.
 
+## Дополнительный hardening review
+
+Перед финальным CI stage 2 отдельно проверен на production-специфические seam risks. Найдены и исправлены:
+
+- **diagnostic secret hygiene:** Pulse URL normalization теперь удаляет token/signature/credential/API-key query parameters, а opaque source item IDs сохраняются только как hash;
+- **runtime config drift:** shadow wrapper сам fail-open проверяет `mode=production_shadow`, `candidate_influence=false` и `repoll_on_recovery=false`, а не полагается только на CI;
+- **pre-Hybrid overstatement:** один и тот же snapshot теперь сравнивается повторно после Hybrid без network repoll, поэтому аудит может отличать `pulse_only` до Hybrid от того, что Hybrid позже всё-таки восстановил;
+- **latency observability:** snapshot summary сохраняет суммарный и максимальный elapsed fetch time. Sequential collector остаётся bounded (10 s × 2 attempts per URL) и fail-open; реальную задержку надо отдельно измерять в ежедневном аудите первого live shadow sample.
+
+Event-fingerprint matching намеренно остаётся консервативной diagnostic heuristic. `pulse_only` не является автоматически подтверждённым retrieval miss или Must Include; это обязан перепроверить независимый reference-set audit.
+
 ## Architecture verdict
 
 **GO для production-shadow этапа при зелёном полном CI.**

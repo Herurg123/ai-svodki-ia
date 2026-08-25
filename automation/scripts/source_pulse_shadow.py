@@ -144,6 +144,7 @@ def build_fusion_diagnostics(
         "version": 1,
         "candidate_influence": False,
         "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+        "matching_is_diagnostic_only": True,
         "pulse_leads": rows,
         "search_candidate_ids": candidate_ids,
         "search_only_candidate_ids": search_only,
@@ -220,6 +221,8 @@ def compact_shadow_report(report: dict[str, Any] | None) -> dict[str, Any] | Non
         "snapshot_hash": snapshot.get("snapshot_hash") if isinstance(snapshot, dict) else None,
         "source_summary": copy.deepcopy(snapshot.get("summary")) if isinstance(snapshot, dict) else None,
         "fusion_summary": copy.deepcopy(fusion.get("summary")) if isinstance(fusion, dict) else None,
+        "fusion_pre_hybrid_summary": copy.deepcopy(report.get("fusion_pre_hybrid", {}).get("summary")) if isinstance(report.get("fusion_pre_hybrid"), dict) else None,
+        "fusion_post_hybrid_summary": copy.deepcopy(report.get("fusion_post_hybrid", {}).get("summary")) if isinstance(report.get("fusion_post_hybrid"), dict) else None,
         "error": report.get("error"),
     }
 
@@ -274,6 +277,15 @@ def run_source_pulse_shadow(
         start_at = _aware(window.get("start_at"), "search_window.start_at")
         end_at = _aware(window.get("end_at"), "search_window.end_at")
         archive = read_json(archive_path)
+        registry_contract = read_json(registry_path)
+        if registry_contract.get("mode") != "production_shadow":
+            raise RuntimeError("Source Pulse registry mode must be production_shadow")
+        if registry_contract.get("production_integration") is not True:
+            raise RuntimeError("Source Pulse registry production_integration must be true")
+        if registry_contract.get("candidate_influence") is not False:
+            raise RuntimeError("Source Pulse shadow candidate_influence must remain false")
+        if registry_contract.get("repoll_on_recovery") is not False:
+            raise RuntimeError("Source Pulse shadow repoll_on_recovery must remain false")
         registry = source_pulse.load_registry(registry_path)
         snapshot = collector_fn(
             registry=registry,
@@ -293,6 +305,7 @@ def run_source_pulse_shadow(
                 "state": "completed",
                 "snapshot": snapshot,
                 "fusion": fusion,
+                "fusion_pre_hybrid": copy.deepcopy(fusion),
                 "error": None,
             }
         )
@@ -312,3 +325,17 @@ def run_source_pulse_shadow(
         publication_date=publication_date,
     )
     return report
+
+
+def refresh_post_hybrid_fusion(
+    *, artifact_dir: Path, output_root: Path, publication_date: str,
+    research: dict[str, Any]
+) -> dict[str, Any] | None:
+    """Recompare the saved snapshot after Hybrid without repolling sources."""
+    report = _prior_report(artifact_dir, output_root, publication_date)
+    if not isinstance(report, dict) or not isinstance(report.get("snapshot"), dict):
+        return report
+    updated = copy.deepcopy(report)
+    updated["fusion_post_hybrid"] = build_fusion_diagnostics(updated["snapshot"], research)
+    _persist(updated, artifact_dir=artifact_dir, output_root=output_root, publication_date=publication_date)
+    return updated

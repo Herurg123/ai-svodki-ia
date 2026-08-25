@@ -239,6 +239,53 @@ class SourcePulseShadowRuntimeTests(unittest.TestCase):
         self.assertTrue(result["reused_snapshot"])
 
 
+    def test_invalid_shadow_contract_fails_open_without_polling(self):
+        payload = json.loads(self.registry.read_text(encoding="utf-8"))
+        payload["candidate_influence"] = True
+        self.registry.write_text(json.dumps(payload) + "\n", encoding="utf-8")
+
+        def collector(**kwargs):
+            self.fail("collector must not run with invalid shadow contract")
+
+        result = shadow.run_source_pulse_shadow(
+            artifact_dir=self.artifact,
+            archive_path=self.archive,
+            publication_date="2026-08-25",
+            output_root=self.output,
+            registry_path=self.registry,
+            collector_fn=collector,
+        )
+        self.assertEqual(result["state"], "error_nonfatal")
+        self.assertIn("candidate_influence", result["error"])
+
+    def test_saved_snapshot_gets_post_hybrid_fusion_without_repoll(self):
+        pulse_lead = lead("x", "Current important event", "https://x.example/news/event", "2026-08-24")
+        calls = []
+
+        def collector(**kwargs):
+            calls.append(1)
+            return {
+                "version": 1, "snapshot_hash": "abc", "summary": {"lead_count": 1},
+                "leads": [pulse_lead], "sources": [], "paid_api_calls": 0,
+                "web_search_operations": 0,
+            }
+
+        first = shadow.run_source_pulse_shadow(
+            artifact_dir=self.artifact, archive_path=self.archive, publication_date="2026-08-25",
+            output_root=self.output, registry_path=self.registry, collector_fn=collector,
+        )
+        self.assertEqual(first["fusion_pre_hybrid"]["summary"]["pulse_only_count"], 1)
+        research = {
+            "candidates": [candidate("cand-001", "Current important event", "https://x.example/news/event", "2026-08-24")]
+        }
+        updated = shadow.refresh_post_hybrid_fusion(
+            artifact_dir=self.artifact, output_root=self.output, publication_date="2026-08-25", research=research
+        )
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(updated["fusion_post_hybrid"]["summary"]["both_count"], 1)
+        self.assertEqual(updated["fusion_post_hybrid"]["summary"]["pulse_only_count"], 0)
+
+
 class SourcePulseShadowArchitectureTests(unittest.TestCase):
     def test_hybrid_owns_shadow_integration_before_gap_planning(self):
         text = (SCRIPTS_ROOT / "hybrid_search_completeness.py").read_text(encoding="utf-8")

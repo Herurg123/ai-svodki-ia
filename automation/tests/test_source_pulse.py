@@ -73,6 +73,15 @@ class SourcePulseWindowAndSafetyTests(unittest.TestCase):
         b = sp._normalized_url("https://x.example/a?k=1")
         self.assertEqual(a, b)
 
+    def test_signed_credentials_are_stripped_from_persisted_url_identity(self):
+        value = sp._normalized_url(
+            "https://x.example/a?keep=1&token=secret&X-Amz-Signature=abc&credential=xyz"
+        )
+        self.assertEqual(value, "https://x.example/a?keep=1")
+        opaque = sp._safe_source_item_id("opaque-secret-provider-guid")
+        self.assertTrue(opaque.startswith("opaque-sha256:"))
+        self.assertNotIn("secret", opaque)
+
     def test_mutable_url_does_not_force_same_event_fingerprint(self):
         a = sp.event_fingerprint("Qwen Cloud releases model Alpha", datetime(2026, 8, 24).date())
         b = sp.event_fingerprint("Qwen Cloud releases model Beta", datetime(2026, 8, 25).date())
