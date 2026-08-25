@@ -14,6 +14,7 @@ class WorkflowInventoryTests(unittest.TestCase):
             actual,
             {
                 "ci.yml",
+                "video-ci.yml",
                 "daily-production.yml",
                 "deploy-posts.yml",
                 "repository-cleanup.yml",
