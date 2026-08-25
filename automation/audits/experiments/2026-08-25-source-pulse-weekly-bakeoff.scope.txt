@@ -1,0 +1,6 @@
+Architecture guardrail summary
+
+GO: bounded fail-open Source Pulse sidecar prototype.
+NO-GO: replacing Primary, raw injection into Primary per-pass caps, regional publication quotas, weakening Source Freshness Proof, increasing Web Search ceiling above 24, or bundling Source Pulse and freshness-extractor changes into one causal experiment.
+
+Production OpenAI API was not used for this experiment.
