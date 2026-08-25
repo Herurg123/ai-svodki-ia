@@ -42,11 +42,12 @@ Tier B не является authority и не получает никаких p
 
 Перед фиксацией прототипа отдельно проверены failure modes, которые могли бы превратить новый discovery-plane в новый источник регрессий.
 
-### Найдено и исправлено до PR
+### Найдено и исправлено до merge
 
 1. **RSS fallback parser mismatch.** Исторически подтверждённый XPENG RSS endpoint может отвечать HTTP 403. Первая версия prototype наследовала RSS parser и для HTML fallback, из-за чего XPENG control не восстанавливался. Исправлено auto-detection фактического XML/HTML payload. После исправления weekly replay вернулся к ожидаемым 9/13.
 2. **Nondeterministic snapshot hash.** Первая версия включала `elapsed_ms` в hash payload. Это делало одинаковый source snapshot разным при recovery. Исправлено: hash строится только по semantic state, source status/http state и leads; wall-clock latency/fetched_at/error text остаются diagnostics, но не identity.
 3. **Redirect/SSRF boundary.** Простая final-URL проверка происходила бы уже после автоматического redirect. Добавлен custom redirect handler: redirect target проверяется против fixed HTTPS host allowlist и public DNS **до** follow. Initial host DNS также должен разрешаться только в global IP.
+4. **Misleading unused config limits.** Первый PR-diff показал блок `limits` в registry JSON, который выглядел как активная runtime-конфигурация, хотя prototype intentionally держит safety caps code-owned. Блок удалён, чтобы config не обещал несуществующий контракт. Перенос runtime limits в конфиг возможен позже только вместе с явной validation/schema semantics.
 
 ### Что намеренно НЕ реализовано на первом этапе
 
@@ -104,11 +105,13 @@ Negative controls сохраняются: prototype не создаёт иску
 - tracking URL normalization;
 - mutable URL/event fingerprint separation;
 - private/wrong-host rejection;
+- redirect to unlisted host rejected before follow;
+- explicit research-only boundary: registry flag + absence of Source Pulse wiring in `daily-production.yml` and `run_digest_preview.py`;
 - quiet stale-only window;
 - deterministic snapshot hash;
 - full weekly 9/13 replay.
 
-Локальный prototype suite: **16/16 PASS** до отправки в GitHub CI.
+Локальный core prototype suite: **16/16 PASS** до отправки в GitHub. В PR дополнительно добавлены 2 research-boundary/redirect regression tests; полный repository CI является финальной проверкой первого этапа.
 
 ## Architecture verdict первого этапа
 
