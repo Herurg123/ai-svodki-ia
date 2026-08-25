@@ -5,8 +5,8 @@
   "description": "Local Windows NotebookLM video worker for AI-Svodki releases",
   "type": "commonjs",
   "scripts": {
-    "check": "node --check worker.js",
-    "test": "node tests/uuid-envelope-smoke.js"
+    "check": "node --check worker.js && node --check tests/uuid-envelope-smoke.js && node --check tests/video-boundary-smoke.js",
+    "test": "node tests/uuid-envelope-smoke.js && node tests/video-boundary-smoke.js"
   },
   "dependencies": {
     "basic-ftp": "6.2.0",
