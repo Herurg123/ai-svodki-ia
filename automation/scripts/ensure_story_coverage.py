@@ -48,6 +48,14 @@ RETRIEVAL_QUALITY_CONTRACT_VERSION = 1
 UNRESOLVED_RESOLUTION_VERSION = 1
 UNRESOLVED_RESOLUTION_STRATEGY = "unresolved_high_signal_resolution"
 UNRESOLVED_RESOLUTION_DOMAINS: tuple[str, ...] = ()
+TERMINAL_NEGATIVE_REASON_CODES = frozenset({
+    "duplicate",
+    "outside_window",
+    "old_reprint",
+    "minor_legal_event",
+    "satire_or_fiction",
+    "not_ai_news",
+})
 
 # Stable v8 transport still uses OpenAI(..., max_retries=2). Keep this literal
 # at the public entrypoint because repository contract tests inspect it.
@@ -324,6 +332,115 @@ def _eligible_resolution_candidate(candidate: Any, cluster: list[dict[str, Any]]
     )
 
 
+def _rejection_text(rejection: dict[str, Any]) -> str:
+    return " ".join(
+        str(rejection.get(key) or "") for key in ("title", "reason")
+    ).casefold()
+
+
+def _rejection_matches_signal(
+    rejection: dict[str, Any], signal: dict[str, Any]
+) -> bool:
+    text = _rejection_text(rejection)
+    tokens = {
+        token.casefold()
+        for token in _TOKEN_RE.findall(text)
+        if token.casefold() not in _TOKEN_STOP and not token.isdigit()
+    }
+    overlap = tokens & _content_tokens(signal)
+    if len(overlap) < 2:
+        return False
+    entities = {
+        entity for entity in _normalized_entities(signal) if len(entity) >= 4
+    }
+    return bool(any(entity in text for entity in entities) or len(overlap) >= 3)
+
+
+def _terminal_negative_signal_ids(
+    rejections: Any, signals: list[dict[str, Any]]
+) -> set[str]:
+    if not isinstance(rejections, list):
+        return set()
+    resolved: set[str] = set()
+    for rejection in rejections:
+        if (
+            not isinstance(rejection, dict)
+            or rejection.get("reason_code") not in TERMINAL_NEGATIVE_REASON_CODES
+        ):
+            continue
+        for signal in signals:
+            signal_id = str(signal.get("signal_id") or "")
+            if signal_id and _rejection_matches_signal(rejection, signal):
+                resolved.add(signal_id)
+    return resolved
+
+
+def _latest_resolution_attempt(plan: dict[str, Any]) -> dict[str, Any] | None:
+    attempts = plan.get("attempts")
+    if not isinstance(attempts, list):
+        return None
+    return next(
+        (
+            item
+            for item in reversed(attempts)
+            if isinstance(item, dict)
+            and item.get("search_strategy") == UNRESOLVED_RESOLUTION_STRATEGY
+            and int(item.get("unresolved_resolution_version", 0) or 0)
+            == UNRESOLVED_RESOLUTION_VERSION
+            and item.get("status") in {"checked", "checked_with_gaps"}
+            and not item.get("error")
+        ),
+        None,
+    )
+
+
+def _quality_from_resolution_attempt(
+    signals: list[dict[str, Any]], attempt: dict[str, Any]
+) -> dict[str, Any]:
+    signal_ids = {
+        str(item.get("signal_id") or "") for item in signals if item.get("signal_id")
+    }
+    attempted_ids = {
+        str(item) for item in attempt.get("signal_ids") or [] if str(item)
+    }
+    cluster = [
+        copy.deepcopy(item)
+        for item in signals
+        if str(item.get("signal_id") or "") in attempted_ids
+    ]
+    candidates = [
+        item for item in attempt.get("candidates") or [] if isinstance(item, dict)
+    ]
+    terminal_ids = _terminal_negative_signal_ids(attempt.get("rejections"), cluster)
+    cluster_ids = {
+        str(item.get("signal_id") or "") for item in cluster if item.get("signal_id")
+    }
+    negative_complete = bool(cluster_ids and cluster_ids.issubset(terminal_ids))
+    cluster_resolved = bool(candidates) or negative_complete
+    unresolved_outside = len(signal_ids - cluster_ids)
+    complete = bool(cluster_resolved and unresolved_outside == 0)
+    remaining = unresolved_outside + (0 if cluster_resolved else len(cluster_ids))
+    query = str(attempt.get("required_query") or "") or None
+    if complete and candidates:
+        reason = "verified candidate evidence found"
+    elif complete and negative_complete:
+        reason = (
+            "resolution search conclusively rejected the signal under existing "
+            "freshness, deduplication, legal/fiction, or AI-relevance rules"
+        )
+    else:
+        reason = "high-confidence unresolved evidence remains after the single resolution slot"
+    return _quality(
+        "complete" if complete else "degraded",
+        signals,
+        cluster,
+        resolved=len(candidates),
+        remaining=remaining,
+        query=query,
+        reason=reason,
+    )
+
+
 def _is_quality_supplemental(item: Any) -> bool:
     return bool(
         isinstance(item, dict)
@@ -385,6 +502,7 @@ def _prepare_prior_for_quality(
         prepared.get("retrieval_quality_contract_version") == RETRIEVAL_QUALITY_CONTRACT_VERSION
         and isinstance(quality, dict)
         and quality.get("status") == "complete"
+        and completed_prior_audit(prepared)
     ):
         return prepared
     attempts = [
@@ -487,6 +605,15 @@ def _run_resolution(
         accepted.append(item)
     accepted = accepted[:3]
 
+    terminal_negative_ids = _terminal_negative_signal_ids(
+        payload.get("rejections"), cluster
+    )
+    cluster_ids = {item for item in signal_ids if item}
+    negative_complete = bool(
+        cluster_ids and cluster_ids.issubset(terminal_negative_ids)
+    )
+    cluster_resolved = bool(accepted) or negative_complete
+
     attempts = plan.setdefault("attempts", [])
     attempt_number = 1 + max([
         int(item.get("attempt", 0) or 0)
@@ -505,7 +632,17 @@ def _run_resolution(
         "required_query": query,
         "prompt": prompt,
         "status": "checked" if payload.get("status") == "complete" else "checked_with_gaps",
-        "outcome": "candidates_found" if accepted else "unresolved",
+        "outcome": (
+            "candidates_found"
+            if accepted
+            else ("resolved_no_candidate" if negative_complete else "unresolved")
+        ),
+        "resolution_disposition": (
+            "positive"
+            if accepted
+            else ("terminal_negative" if negative_complete else "unresolved")
+        ),
+        "terminal_negative_signal_ids": sorted(terminal_negative_ids),
         "actual_queries": list(metadata.get("actual_queries") or []),
         "sources": list(metadata.get("consulted_sources") or []),
         "candidate_count": len(accepted),
@@ -522,8 +659,8 @@ def _run_resolution(
     )
     _recalculate_budget(plan, maximum_calls)
     unresolved_outside = max(0, len(signals) - len(cluster))
-    complete = bool(accepted and unresolved_outside == 0)
-    remaining = unresolved_outside + (0 if accepted else len(cluster))
+    complete = bool(cluster_resolved and unresolved_outside == 0)
+    remaining = unresolved_outside + (0 if cluster_resolved else len(cluster))
     plan["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
     plan["retrieval_quality"] = _quality(
         "complete" if complete else "degraded",
@@ -534,8 +671,13 @@ def _run_resolution(
         query=query,
         reason=(
             "verified candidate evidence found"
-            if complete
-            else "high-confidence unresolved evidence remains after the single resolution slot"
+            if complete and accepted
+            else (
+                "resolution search conclusively rejected the signal under existing "
+                "freshness, deduplication, legal/fiction, or AI-relevance rules"
+                if complete and negative_complete
+                else "high-confidence unresolved evidence remains after the single resolution slot"
+            )
         ),
     )
     plan["unresolved_resolution"] = copy.deepcopy(plan["retrieval_quality"])
@@ -631,8 +773,31 @@ def _finalize_quality_report(report_path: Path | None, recovery_entry: dict[str,
     payload = read_json(report_path)
     if not isinstance(payload, dict):
         return
-    if not isinstance(payload.get("retrieval_quality"), dict):
+    publication_date = str(payload.get("publication_date") or "")
+    signals = _required_signals(publication_date) if publication_date else []
+    if not signals:
         payload = _annotate_no_signal_quality(payload)
+    else:
+        attempt = _latest_resolution_attempt(payload)
+        payload["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
+        if attempt is not None:
+            quality = _quality_from_resolution_attempt(signals, attempt)
+        else:
+            mandatory_complete = (
+                set(payload.get("checked_directions") or ()) == set(AUDIT_DIRECTION_IDS)
+            )
+            quality = _quality(
+                "degraded",
+                signals,
+                [],
+                reason=(
+                    "required resolution attempt was not completed"
+                    if mandatory_complete
+                    else "mandatory Coverage remains incomplete"
+                ),
+            )
+        payload["retrieval_quality"] = quality
+        payload["unresolved_resolution"] = copy.deepcopy(quality)
     if isinstance(recovery_entry, dict) and recovery_entry.get("status") != "not_recovery":
         payload["agency_discovery_rescue_recovery_entry"] = {
             key: recovery_entry.get(key)
