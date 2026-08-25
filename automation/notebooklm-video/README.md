@@ -69,8 +69,9 @@ RSS rybalka.one
 проверяет `worker.js`.
 
 FTP-доступ создаётся отдельным `configure-ftp-access.ps1`. Поле `uuid` вводится
-скрыто. Файл создаётся с `protocol=0`; при первом FTP-проходе worker локально
-переводит его в `protocol=1` с Windows DPAPI `CurrentUser`.
+скрыто. Файл создаётся с `protocol=0`; на ближайшем запуске worker при
+включённой FTP-доставке локально переводит его в `protocol=1` с Windows DPAPI
+`CurrentUser`, даже если текущие медиа уже доставлены.
 
 `protocol=1` привязан к Windows-пользователю. При переносе под другой профиль
 нужно заново создать локальный файл доступа с `protocol=0`.
@@ -94,7 +95,8 @@ node --check .\worker.js
 npm test
 ```
 
-Windows DPAPI проверяется уже на целевой Windows-машине при первом FTP-проходе.
-Linux CI/контейнер не может полноценно воспроизвести `CurrentUser` DPAPI.
+Windows DPAPI проверяется уже на целевой Windows-машине при первом защищающем
+запуске. Linux CI/контейнер не может полноценно воспроизвести `CurrentUser`
+DPAPI.
 
 Полный перенос на новую машину описан в [DEPLOYMENT.md](DEPLOYMENT.md).
