@@ -6,7 +6,9 @@
 применяется после discovery**. Двенадцать обязательных Primary search operations
 распределяются детерминированно; отдельный bounded agency discovery rescue может
 добавить максимум одну search operation только при доказанном gap
-`major_agencies`.
+`major_agencies`. После rescue/freshness и до Hybrid gap planning работает
+Source Pulse v1 в production-shadow режиме без candidate influence и без OpenAI/Web
+Search расходов.
 
 ## Постоянный baseline старого поиска
 
@@ -47,6 +49,10 @@ Archive-ветка не используется для разработки, н
   discovery rescue;
 - `scripts/agency_discovery_recovery_entry.py` — idempotent recovery-entry
   rescue перед Coverage;
+- `scripts/source_pulse.py` — bounded fixed-source RSS/HTML discovery collector;
+- `scripts/source_pulse_shadow.py` — fail-open production-shadow snapshot и
+  Search/Pulse fusion diagnostics перед Hybrid;
+- `config/source-pulse-v1.json` — fixed source registry; Tier B остаётся lead-only;
 - `scripts/` — production, recovery, hybrid completeness, cleanup и validators;
 - `tests/` — офлайн-регрессии;
 - `notebooklm-video/` — отдельный локальный Windows downstream-подпроект для
@@ -67,8 +73,8 @@ Archive-ветка не используется для разработки, н
 
 - `ci.yml` — бесплатные офлайн-проверки;
 - `daily-production.yml` — ежедневный Primary Recall v2, conditional agency
-  discovery rescue, hybrid completeness, editorial, fallback coverage, обложка,
-  сборка и публикация;
+  discovery rescue, Source Pulse v1 production shadow, hybrid completeness,
+  editorial, fallback coverage, обложка, сборка и публикация;
 - `repository-cleanup.yml` — 32-дневная очистка контента;
 - `repository-hygiene.yml` — инженерная уборка безопасных GitHub-объектов;
 - `deploy-posts.yml` — FTP-синхронизация точного состояния `posts/` выбранного
@@ -220,7 +226,32 @@ Source Freshness Proof/editorial; Hybrid и rescue не ретраятся.
 share placement вместе со stale/opinion/syndication/duplicate/after-cutoff/
 quiet-window negative controls.
 
-### 3. Hybrid completeness v1
+### 3. Source Pulse v1 production shadow
+
+После conditional agency rescue и его Source Freshness Proof wrapper запускает
+`source_pulse_shadow.py`, а уже затем Hybrid считает gaps. Registry фиксирован в
+`config/source-pulse-v1.json`: Tier A содержит official/newsroom/IR surfaces, Tier B
+— региональные lead-only surfaces. Polling bounded и fail-open; каждый source имеет
+HTTPS host allowlist, DNS/private-IP и redirect guards, timeout/retry/response caps.
+
+Текущий stage намеренно диагностический: `candidate_influence=false`. Pulse не
+мутирует `candidates.json`, не участвует в significance/editorial и не меняет
+regional/adaptive decisions. Он не вызывает OpenAI/Web Search; глобальный лимит
+по-прежнему 12 + 1 + 4 + 7 = **24 Web Search operations**.
+
+`preview/<DATE>/source-pulse.json` и
+`preview/production-daily/source-pulse-<DATE>.json` сохраняют deterministic snapshot,
+source health и pre-Hybrid `pulse_only / both / search_only` diagnostics; после
+Hybrid тот же сохранённый snapshot без повторного polling сравнивается ещё раз и
+даёт `fusion_post_hybrid`. Snapshot является частью обычного Actions artifact. Повтор на том же artifact и same-day recovery не
+должны молча repoll'ить mutable sources. Любая Pulse transport/parser ошибка
+`complete_with_gaps/error_nonfatal` и не блокирует старый retrieval pipeline.
+
+Ежедневный независимый аудит сохраняется и должен использовать эти diagnostics для
+оценки реального дополнительного recall, false positives и отказов источников. До
+отдельного controlled experiment Pulse lead не становится candidate.
+
+### 4. Hybrid completeness v1
 
 После fresh Primary и conditional rescue запускается независимый
 `hybrid_search_completeness.py`. Caller-supplied `--research-input` Hybrid
@@ -243,7 +274,7 @@ API domain filter отсутствует. Optional 4-й slot сохраняет 
 восстанавливается, а валидный merged handoff сохраняется для Coverage; rescue
 candidate, уже принятый перед Hybrid, отдельно защищён от потери.
 
-### 4. Диагностика Hybrid
+### 5. Диагностика Hybrid
 
 Каждый запуск сохраняет `hybrid-completeness.json`, production diagnostic report
 и при accepted candidates diagnostic/runtime merged research. Report фиксирует

@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "experiment": "source_pulse_v1_production_shadow_integration",
+  "date": "2026-08-25",
+  "stage": 2,
+  "production_api_used_during_preparation": false,
+  "candidate_influence": false,
+  "maintained_docs_synchronized": true,
+  "integration_order": [
+    "primary_12_12",
+    "agency_discovery_rescue",
+    "agency_rescue_source_freshness",
+    "source_pulse_shadow",
+    "hybrid_gap_planning",
+    "hybrid_search",
+    "coverage",
+    "editorial_publication"
+  ],
+  "cost_contract": {
+    "source_pulse_paid_api_calls": 0,
+    "source_pulse_web_search_operations": 0,
+    "primary_maximum": 12,
+    "agency_rescue_maximum": 1,
+    "hybrid_maximum": 4,
+    "coverage_maximum": 7,
+    "global_web_search_ceiling": 24
+  },
+  "recovery_contract": {
+    "snapshot_persisted": true,
+    "repoll_on_same_artifact": false,
+    "fetch_started_repoll": false,
+    "normal_recovery_reuses_artifact_snapshot": true
+  },
+  "failure_contract": {
+    "source_failure": "fail_open",
+    "collector_failure": "complete_with_gaps_error_nonfatal",
+    "candidate_pool_mutation_on_failure": false
+  },
+  "hardening_review": {
+    "runtime_shadow_contract_enforced": true,
+    "sensitive_query_parameters_redacted": true,
+    "opaque_source_ids_hashed": true,
+    "pre_and_post_hybrid_fusion_recorded": true,
+    "temporary_patch_workflows_removed": true
+  },
+  "audit_contract": {
+    "daily_independent_audit_preserved": true,
+    "new_fields": [
+      "pulse_only",
+      "both_exact_url",
+      "both_event_fingerprint",
+      "search_only",
+      "source_health",
+      "cutoff_ambiguous",
+      "archive_duplicate"
+    ]
+  },
+  "next_gate": "first real production shadow sample plus independent daily audit before candidate influence"
+}

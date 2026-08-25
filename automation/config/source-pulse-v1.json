@@ -1,7 +1,9 @@
 {
   "version": 1,
-  "mode": "research_only",
-  "production_integration": false,
+  "mode": "production_shadow",
+  "production_integration": true,
+  "candidate_influence": false,
+  "repoll_on_recovery": false,
   "sources": [
     {
       "id": "baidu_ir",

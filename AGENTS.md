@@ -310,6 +310,39 @@ project owner explicitly authorizes a real production rerun that may spend
 regression validation must use assistant-owned resources and offline tests. A
 request to fix code is not permission to spend production API budget.
 
+## Source Pulse v1 production shadow contract
+
+Stage 2 Dual Discovery runs `source_pulse_shadow.py` only after mandatory Primary and
+conditional agency-discovery rescue (including rescue Source Freshness Proof), and
+strictly before Hybrid gap planning. This placement is intentional: Pulse must never
+mask `major_agencies raw=0/accepted=0`, change the rescue trigger, occupy Primary caps,
+or suppress the existing optional regional Hybrid health check.
+
+The current production mode is **shadow only**. `automation/config/source-pulse-v1.json`
+must keep `candidate_influence=false` and `repoll_on_recovery=false`. Source Pulse may
+collect fixed-source leads and produce Search/Pulse fusion diagnostics, but it must not
+add/remove/rank candidates, grant significance, bypass Source Freshness Proof, or create
+a China/Russia publication quota. Tier B sources are lead-only and have no authority
+privilege. Candidate influence or any model-based Pulse triage requires a separate
+controlled experiment, explicit production-cost review, documentation update and PR.
+
+Source Pulse itself performs zero OpenAI calls and zero Web Search operations. The
+global Web Search ceiling remains **24 = 12 Primary + 1 agency rescue + 4 Hybrid + 7
+Coverage**. Source/HTTP/DNS/parser failure is fail-open and must leave `candidates.json`
+unchanged. Persist `source-pulse.json` in the dated artifact plus a production-daily
+diagnostic mirror. Persist `fetch_started` before network polling; a second invocation
+for the same artifact reuses the saved snapshot and must not silently repoll mutable
+sources, including an interrupted `fetch_started` state. Normal same-day recovery reuses
+the saved artifact and does not create a fresh Pulse snapshot.
+
+Diagnostics must expose source health plus `pulse_only`, exact/event `both`,
+`search_only`, cutoff ambiguity and archive duplicates. The daily independent audit is
+permanent and, whenever Source Pulse diagnostics are present, must separately assess
+Search-vs-Pulse recall, Pulse-only high-signal leads, false positives/noise, source
+outages/parser drift, China/Asia and Russia benefit, and whether any shadow behavior
+accidentally influenced publication. Do not interpret a Pulse-only lead as automatic
+Must Include; the independent reference set remains authoritative for recall analysis.
+
 ## Hybrid search completeness contract
 
 A fresh completed Primary plus its conditional agency rescue is followed by the

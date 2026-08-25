@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Research-only Source Pulse v1. Not wired into daily production."""
+"""Bounded Source Pulse v1 collector for offline replay and production shadow."""
 from __future__ import annotations
 
 import argparse, hashlib, ipaddress, json, re, socket, time, urllib.error, urllib.parse, urllib.request
@@ -12,9 +12,12 @@ from pathlib import Path
 from typing import Any, Callable, Iterable
 
 VERSION=1; MAX_BYTES=1_500_000; TIMEOUT=10; ATTEMPTS=2; MAX_ITEMS=30; MAX_LEADS=120
-UA="ai-svodki-source-pulse/1.0 research-only (+https://rybalka.one/posts/)"
+UA="ai-svodki-source-pulse/1.0 (+https://rybalka.one/posts/)"
 WS=re.compile(r"\s+"); TOK=re.compile(r"[\w$€£¥₽.%+-]+",re.UNICODE)
 GENERIC={"ai","artificial","intelligence","latest","news","release","releases","announces","announced","launches","launched","update","updated","company","group","inc","ltd","the","and","for","with","from","its","new","on","in","to","of","a","an"}
+TRACKING_QUERY_KEYS={"utm_source","utm_medium","utm_campaign","utm_term","utm_content","fbclid","gclid","mc_cid","mc_eid","ref","source"}
+SENSITIVE_QUERY_KEYS={"token","access_token","auth","authorization","signature","sig","credential","credentials","secret","api_key","apikey","key","x-amz-signature","x-amz-credential","x-amz-security-token","x-goog-signature","x-goog-credential"}
+SENSITIVE_QUERY_MARKERS=("token","signature","credential","secret","api_key","apikey","access_key")
 
 class SourcePulseError(RuntimeError): pass
 
@@ -74,12 +77,23 @@ def parse_date(raw:Any)->tuple[date|None,datetime|None,str]:
         except ValueError: pass
     return None,None,"unknown"
 
+def _drop_query_key(key:str)->bool:
+    value=key.casefold().strip()
+    return value in TRACKING_QUERY_KEYS or value in SENSITIVE_QUERY_KEYS or any(marker in value for marker in SENSITIVE_QUERY_MARKERS)
+
 def norm_url(url:str)->str:
     p=urllib.parse.urlsplit(url); q=urllib.parse.parse_qsl(p.query,keep_blank_values=False)
-    drop={"utm_source","utm_medium","utm_campaign","utm_term","utm_content","fbclid","gclid","mc_cid","mc_eid","ref","source"}
-    q=[(k,v) for k,v in q if k.lower() not in drop]
+    q=[(k,v) for k,v in q if not _drop_query_key(k)]
     net=(p.hostname or "").lower()+((":"+str(p.port)) if p.port else "")
     return urllib.parse.urlunsplit((p.scheme.lower(),net,p.path.rstrip("/") or "/",urllib.parse.urlencode(q),""))
+
+def safe_source_item_id(value:Any)->str:
+    raw=str(value or "").strip()
+    if raw.startswith("https://"):
+        return norm_url(raw)
+    if not raw:
+        return ""
+    return "opaque-sha256:"+hashlib.sha256(raw.encode()).hexdigest()[:24]
 def norm_title(t:str)->str: return WS.sub(" ",t).strip()
 def event_fp(title:str,d:date|None)->str:
     words=[]
@@ -239,14 +253,15 @@ def run_source_pulse(*,registry:list[SourceDefinition],start_at:datetime,end_at:
             if not ok: continue
             win+=1; ef=event_fp(x.title,x.published_date); xf=exact_fp(x.title,x.url,x.published_date)
             if xf in seen: continue
-            seen.add(xf); local.append(PulseLead(s.id,s.tier,s.region,s.role,x.title,norm_url(x.url),x.published_date.isoformat() if x.published_date else None,x.published_at.isoformat() if x.published_at else None,x.time_precision,amb,x.source_item_id,ef,xf,norm_url(x.url) in archived))
+            seen.add(xf); local.append(PulseLead(s.id,s.tier,s.region,s.role,x.title,norm_url(x.url),x.published_date.isoformat() if x.published_date else None,x.published_at.isoformat() if x.published_at else None,x.time_precision,amb,safe_source_item_id(x.source_item_id),ef,xf,norm_url(x.url) in archived))
             if len(leads)+len(local)>=MAX_LEADS: break
-        leads.extend(local); reports.append({"source_id":s.id,"tier":s.tier,"region":s.region,"status":"ok","attempts":attempts,"selected_url":chosen.final_url or chosen.requested_url,"parsed_items":len(parsed),"window_items":win,"accepted_leads":len(local),"cutoff_ambiguous_leads":sum(x.cutoff_ambiguous for x in local),"archive_url_duplicates":sum(x.archive_url_duplicate for x in local)})
+        leads.extend(local); reports.append({"source_id":s.id,"tier":s.tier,"region":s.region,"status":"ok","attempts":attempts,"selected_url":norm_url(chosen.final_url or chosen.requested_url),"parsed_items":len(parsed),"window_items":win,"accepted_leads":len(local),"cutoff_ambiguous_leads":sum(x.cutoff_ambiguous for x in local),"archive_url_duplicates":sum(x.archive_url_duplicate for x in local)})
         if len(leads)>=MAX_LEADS: break
     out=[]; seen=set()
     for x in sorted(leads,key=lambda z:(z.published_at or z.published_date or "",z.source_id,z.title)):
         if x.exact_fingerprint not in seen: seen.add(x.exact_fingerprint); out.append(x)
-    summary={"configured_sources":len(registry),"sources_ok":sum(r["status"]=="ok" for r in reports),"sources_unavailable":sum(r["status"]=="source_unavailable" for r in reports),"sources_parse_error":sum(r["status"]=="parse_error" for r in reports),"lead_count":len(out),"eligible_new_lead_count":sum(not x.cutoff_ambiguous and not x.archive_url_duplicate for x in out),"tier_a_leads":sum(x.tier=="A" for x in out),"tier_b_leads":sum(x.tier=="B" for x in out),"cutoff_ambiguous_leads":sum(x.cutoff_ambiguous for x in out),"archive_url_duplicates":sum(x.archive_url_duplicate for x in out)}
+    elapsed=[int(a.get("elapsed_ms",0) or 0) for r in reports for a in r.get("attempts",[]) if isinstance(a,dict)]
+    summary={"configured_sources":len(registry),"sources_ok":sum(r["status"]=="ok" for r in reports),"sources_unavailable":sum(r["status"]=="source_unavailable" for r in reports),"sources_parse_error":sum(r["status"]=="parse_error" for r in reports),"lead_count":len(out),"eligible_new_lead_count":sum(not x.cutoff_ambiguous and not x.archive_url_duplicate for x in out),"tier_a_leads":sum(x.tier=="A" for x in out),"tier_b_leads":sum(x.tier=="B" for x in out),"cutoff_ambiguous_leads":sum(x.cutoff_ambiguous for x in out),"archive_url_duplicates":sum(x.archive_url_duplicate for x in out),"fetch_elapsed_ms_total":sum(elapsed),"fetch_elapsed_ms_max":max(elapsed,default=0)}
     core={"version":VERSION,"mode":"research_only","production_integration":False,"paid_api_calls":0,"web_search_operations":0,"window":{"start_at":start_at.isoformat(),"end_at":end_at.isoformat()},"sources":reports,"leads":[asdict(x) for x in out],"summary":summary}
     hs=[{"source_id":r.get("source_id"),"status":r.get("status"),"selected_url":r.get("selected_url"),"parsed_items":r.get("parsed_items"),"window_items":r.get("window_items"),"accepted_leads":r.get("accepted_leads"),"attempts":[{"url":a.get("url"),"status":a.get("status"),"http_status":a.get("http_status")} for a in r.get("attempts",[])]} for r in reports]
     canon=json.dumps({"version":VERSION,"window":core["window"],"sources":hs,"leads":core["leads"]},ensure_ascii=False,sort_keys=True,separators=(",",":"))
@@ -269,6 +284,7 @@ def replay_fixture(path:Path)->dict[str,Any]:
 
 _safe_public_url=safe_url
 _normalized_url=norm_url
+_safe_source_item_id=safe_source_item_id
 event_fingerprint=event_fp
 parse_html_index=parse_html
 parse_rss_atom=parse_rss
