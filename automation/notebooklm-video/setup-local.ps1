@@ -25,6 +25,7 @@ $files = @(
     "package.json",
     "run-worker.cmd",
     "run-worker-hidden.vbs",
+    "install-ftp-support.cmd",
     "configure-ftp-access.ps1",
     "README.md",
     "DEPLOYMENT.md",
