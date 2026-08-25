@@ -30,12 +30,14 @@ production-автоматизации и операторских проверо
 | `automation/` | Основной production-конвейер: retrieval, editorial, recovery, validators, archive, audits и configuration. |
 | `posts/` | Сформированный публичный сайт, RSS, sitemap и постоянные публичные assets. |
 | `automation/notebooklm-video/` | Отдельный локальный Windows downstream-подпроект: после публикации выпуска создаёт NotebookLM-видео, MP4, PNG-превью и при включённой настройке доставляет их только в FTP-каталог `video`. |
-| `.github/workflows/` | Production, deploy, cleanup/hygiene и два раздельных CI-контура. |
+| `.github/workflows/` | Always-on PR Gate, два раздельных CI-домена, production, deploy и cleanup/hygiene. |
 
 ## CI и production
 
-В репозитории шесть постоянных GitHub Actions workflow:
+В репозитории семь постоянных GitHub Actions workflow:
 
+- `pr-gate.yml` — **PR Gate**, всегда запускается для pull request в `main`,
+  определяет затронутые CI-домены и завершает единым `Required PR Gate`;
 - `ci.yml` — **Main CI**, бесплатные офлайн-проверки основного production-кода;
 - `video-ci.yml` — **Video CI**, отдельные dependency-free проверки только
   NotebookLM-video подпроекта;
@@ -46,10 +48,16 @@ production-автоматизации и операторских проверо
 - `repository-hygiene.yml` — отдельная уборка безопасно классифицированных
   GitHub-объектов.
 
-Video-only изменения намеренно не запускают Main CI и не входят в nightly
-retrieval/editorial production. Эта граница закреплена правилами и offline
-contract tests; подробности описаны в
+Video-only изменения по-прежнему не запускают Main CI: PR Gate вызывает только
+Video CI. Для mixed/cross-cutting PR он требует оба домена. В ruleset обязательным
+является только всегда существующий `Required PR Gate`, а не path-dependent Main
+CI/Video CI. Подробности описаны в
 [`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md#4-github-actions).
+
+`main` защищается repository ruleset: обычные изменения должны проходить через
+pull request, force-push и удаление запрещены. Единственный direct-push bypass
+предназначен для отдельного write deploy key ночного production/cleanup; ключ не
+используется retrieval, video, deploy-posts или repository-hygiene jobs.
 
 ## Краткие production-инварианты
 

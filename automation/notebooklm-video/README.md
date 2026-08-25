@@ -115,7 +115,7 @@ Windows-пользователю, поэтому при переносе под 
 
 ## Проверка в GitHub
 
-Video CI выполняет только переносимые dependency-free проверки:
+На pull request always-on `PR Gate` вызывает Video CI только когда затронут video-домен; Main CI для video-only изменений не запускается. Сам Video CI выполняет только переносимые dependency-free проверки:
 
 ```text
 node --check worker.js

@@ -250,6 +250,7 @@ jobs:
         shell: bash
         env:
           RETENTION_DAYS: ${{ steps.mode.outputs.retention_days }}
+          MAIN_PUSH_DEPLOY_KEY: ${{ secrets.MAIN_PUSH_DEPLOY_KEY }}
         run: |
           set -euo pipefail
           git fetch --no-tags origin main
@@ -261,7 +262,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Prune content older than ${RETENTION_DAYS} days"
-          git push origin HEAD:main
+          bash automation/scripts/push_protected_main.sh HEAD:main
           echo "commit_sha=$(git rev-parse HEAD)" >> "${GITHUB_OUTPUT}"
 
       - name: Publish cleanup summary

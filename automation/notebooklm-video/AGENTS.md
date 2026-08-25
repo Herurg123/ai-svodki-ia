@@ -6,7 +6,7 @@ The repository-level relationship and CI boundary are canonical in [`../ARCHITEC
 
 - Its scope is the local NotebookLM video workflow: RSS detection, Yandex Browser/Playwright automation, NotebookLM generation, MP4 download, PNG first-frame preview, local state/logging, and restricted FTP delivery to `video`.
 - It is not part of the main nightly retrieval/editorial GitHub Actions production.
-- Repository checks for this directory belong to the dedicated **Video CI** in `.github/workflows/video-ci.yml`; **Main CI** must exclude video-only changes.
+- Pull requests are routed by the always-on **PR Gate**; video-domain changes call the dedicated **Video CI** in `.github/workflows/video-ci.yml`, while **Main CI** must remain unnecessary for video-only changes.
 - Do not re-couple Video CI and Main CI without an explicit architecture change plus matching documentation and contract-test updates.
 - Video CI stays offline with respect to NotebookLM, FTP, production APIs, Windows DPAPI, and npm dependency installation. Platform-specific behavior is verified on the target Windows machine.
 - Keep `package.json` and committed `package-lock.json` synchronized. Any npm dependency change must update the lockfile in the same pull request and prove a clean `npm ci`; normal setup/deployment entrypoints must use `npm ci`, not `npm install`.

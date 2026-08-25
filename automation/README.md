@@ -51,13 +51,16 @@ lifecycle and refactor rules are described in [`ARCHITECTURE.md`](ARCHITECTURE.m
 
 ## Workflows
 
-Основной production-код обслуживается `Main CI`, а локальный video-подпроект
-имеет отдельный `Video CI`. Полный workflow inventory и границы ответственности
-см. в [`ARCHITECTURE.md`](ARCHITECTURE.md).
+Каждый pull request в `main` сначала проходит через always-on `PR Gate`. Он
+классифицирует changed paths и вызывает reusable `Main CI`, `Video CI` или оба
+домена. Финальный job `Required PR Gate` является единственным стабильным
+required status для защиты `main`.
 
 Video-only изменения под `notebooklm-video/**` не являются изменениями nightly
-production и не должны запускать Main CI. В обратную сторону production
-workflows не должны читать или изменять video runtime.
+production и не запускают Main CI; их через PR Gate проверяет только Video CI.
+В обратную сторону production workflows не должны читать или изменять video
+runtime. Полный workflow inventory, ruleset и automated-writer boundary описаны
+в [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## Repository hygiene
 
