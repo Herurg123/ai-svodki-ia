@@ -1,0 +1,41 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-25",
+  "slug": "2026-08-25",
+  "title": "ИИ-Сводка на 25 августа 2026",
+  "description": "Hugging Face обсуждает возможную продажу, General Intuition привлекает капитал для physical AI, а история Instinct показывает риски персональных агентов с доступом к данным и действиям пользователей.",
+  "published_at": "2026-08-25T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-25.png",
+  "topics": [
+    "Hugging Face",
+    "General Intuition",
+    "physical AI",
+    "робототехника",
+    "open-source ИИ",
+    "инвестиции в ИИ",
+    "агенты ИИ",
+    "конфиденциальность",
+    "безопасность данных",
+    "Instinct"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Все три достойных и подтверждённых события короткого пула освещены TechCrunch; исключение одного из независимых сюжетов только ради мягкого лимита издателя необоснованно."
+    }
+  ]
+}

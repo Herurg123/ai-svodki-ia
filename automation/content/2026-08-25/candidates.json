@@ -1,0 +1,418 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-25",
+  "search_window": {
+    "start_at": "2026-08-23T09:07:30+03:00",
+    "end_at": "2026-08-25T04:43:30+03:00",
+    "latest_archive_at": "2026-08-24T09:07:30+03:00",
+    "start_date": "2026-08-23",
+    "end_date": "2026-08-25",
+    "latest_archive_date": "2026-08-24"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=2, rejected=1."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Google Cloud и Verizon объявили стратегическое партнёрство по масштабированию enterprise AI",
+      "organization": "Google Cloud; Verizon",
+      "published_date": "2026-08-24",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Крупное внедрение Gemini Enterprise, агентной платформы данных и ИИ-автоматизации в телекоммуникационной компании общенационального масштаба.",
+      "event_type": "enterprise AI partnership",
+      "keywords": [
+        "Google Cloud",
+        "Verizon",
+        "Gemini Enterprise",
+        "agentic AI",
+        "telecommunications",
+        "autonomous network",
+        "AI agents"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Google Cloud Announces Strategic Partnership with Verizon to Scale Enterprise AI",
+        "publisher": "Google Cloud",
+        "url": "https://www.googlecloudpresscorner.com/2026-08-24-Google-Cloud-Announces-Strategic-Partnership-with-Verizon-to-Scale-Enterprise-AI"
+      },
+      "supporting_sources": [],
+      "event_summary": "Google Cloud и Verizon объявили стратегическое партнёрство: Verizon будет расширять использование полного AI-стека Google Cloud, включая Gemini Enterprise и Agentic Data Cloud, для обслуживания клиентов, автоматизации операций, маркетинга, безопасности, продуктивности сотрудников и предиктивного управления сетью.",
+      "verified_facts": [
+        "Официальный релиз датирован 24 августа 2026 года.",
+        "В релизе названы Gemini Enterprise и Agentic Data Cloud как ключевые компоненты внедрения.",
+        "Verizon заявляет о применении ИИ для клиентского обслуживания, агентной оркестрации, сетевой аналитики, маркетинга и безопасности.",
+        "Google Cloud описывает проект как enterprise-wide AI transformation и основу для автономной сети."
+      ],
+      "significance": "Партнёрство связывает крупного оператора связи США с full-stack AI-платформой Google и предусматривает внедрение агентных систем в несколько критических бизнес-функций, что делает его заметным примером масштабной enterprise-AI-интеграции.",
+      "significance_score": 3,
+      "limitations": "Детали объёма контракта, сроки, финансовые параметры и независимо измеренные результаты не раскрыты; факты о результатах исходят из совместного корпоративного объявления.",
+      "archive_status": "none",
+      "archive_reason": "В архиве нет данного партнёрства Google Cloud и Verizon.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Дата и заявленные направления внедрения проверены по официальному сообщению Google Cloud; независимое подтверждение коммерческого масштаба не найдено в рамках данного discovery-прохода.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является правовым или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-категории.",
+      "id": "cand-001"
+    },
+    {
+      "title": "Яндекс открыл медицинского ИИ-ассистента для всех врачей",
+      "organization": "Яндекс; Яндекс Мед; Yandex AI Studio",
+      "published_date": "2026-08-24",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Медицинский ИИ-ассистент для клинической справки и поддержки принятия решений",
+      "event_type": "product launch / deployment expansion",
+      "keywords": [
+        "Яндекс",
+        "Яндекс Мед",
+        "медицинский ИИ",
+        "Yandex AI Studio",
+        "клинические рекомендации",
+        "RAG",
+        "здравоохранение"
+      ],
+      "geography": "russia",
+      "category": "enterprise",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Медицинский ИИ-ассистент Яндекса стал доступен всем врачам",
+        "publisher": "Яндекс",
+        "url": "https://yandex.ru/company/news/24-08-2026-01"
+      },
+      "supporting_sources": [],
+      "event_summary": "Яндекс открыл бета-доступ к своему медицинскому ИИ-ассистенту всем медицинским работникам, расширив продукт за пределы клиник-партнёров. Ассистент предназначен для поиска и сверки клинической информации, расчёта специализированных медицинских шкал и выдаёт ссылки на использованные источники.",
+      "verified_facts": [
+        "Официальная публикация Яндекса датирована 24 августа 2026 года и попадает в effective editorial window.",
+        "По сообщению компании, ассистент стал доступен всем медработникам в бета-версии, а ранее был доступен сотрудникам клиник-партнёров.",
+        "Система опирается более чем на 1000 источников, включая клинические рекомендации, МКБ, госреестр лекарственных средств, приказы Минздрава и нормативные акты.",
+        "В описанном пайплайне используются классификатор медицинских запросов, роутер источников и реранкер; Яндекс заявляет, что это снижает риск нерелевантных ответов и галлюцинаций.",
+        "Ассистент работает в веб-версии и Android-приложении «Яндекс Мед»; корпоративное решение для медорганизаций также включает подготовку черновика протокола приёма и извлечение данных из электронной карты."
+      ],
+      "significance": "Это заметное расширение доступности российского вертикального ИИ-продукта для здравоохранения: продукт переходит от ограниченного внедрения у партнёров к широкому доступу профессиональной аудитории. Событие релевантно одновременно по линиям AI deployment, enterprise/health-tech и контролируемого применения генеративного ИИ в чувствительной сфере.",
+      "significance_score": 3,
+      "limitations": "Источник — корпоративный анонс; независимой оценки качества, клинической безопасности, числа пользователей и регуляторного статуса продукта в найденных материалах нет. Время публикации на странице не указано, поэтому точное попадание в границы окна внутри календарного дня установить нельзя.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве и списке уже найденных событий нет этого анонса или эквивалентного сюжета о публичном доступе к медицинскому ассистенту Яндекса.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Первичный официальный источник открыт и подтверждает дату, расширение доступа, назначение продукта и заявленную архитектуру работы с источниками.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие является продуктовым анонсом, а не крупным судебным или регуляторным действием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран по самостоятельной продуктовой и отраслевой значимости.",
+      "id": "cand-002"
+    },
+    {
+      "title": "General Intuition ведёт раунд финансирования при pre-money оценке $6 млрд для развития physical AI и робототехники",
+      "organization": "General Intuition; Valor Equity Partners; Point72 Ventures; Seven Seven Six; Khosla Ventures; General Catalyst; CoreWeave",
+      "published_date": "2026-08-24",
+      "published_at": "2026-08-24T15:24:18+00:00",
+      "time_precision": "datetime",
+      "topic": "Финансирование physical AI: foundation-модель и generalized AI-агенты для действий в пространстве и времени с последующим применением в робототехнике.",
+      "event_type": "fundraising negotiations",
+      "keywords": [
+        "General Intuition",
+        "physical AI",
+        "robotics",
+        "large action models",
+        "fundraising",
+        "Valor",
+        "Point72",
+        "CoreWeave"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Valor, Point72 back General Intuition at $6B valuation as AI startup pushes into robotics",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/24/valor-point72-back-general-intuition-at-6b-valuation-as-ai-startup-pushes-into-robotics/"
+      },
+      "supporting_sources": [],
+      "event_summary": "TechCrunch сообщило, что General Intuition завершает и, по данным источников, переподписывает новый раунд при pre-money оценке $6 млрд. Компания разрабатывает foundation model/large action models для обобщённых агентов и планирует направить средства на модели, вычисления и роботизированные воплощения.",
+      "verified_facts": [
+        "Материал TechCrunch опубликован 24 августа 2026 года в 08:24 PDT, что соответствует 18:24 +03:00 и попадает в редакционное окно.",
+        "По данным TechCrunch, в переговорах о раунде участвуют Valor Equity Partners, Point72 Ventures и Seven Seven Six; также участвуют существующие инвесторы Khosla Ventures и General Catalyst.",
+        "Раунд ещё финализируется; сообщать о закрытом финансировании как о свершившемся факте нельзя.",
+        "TechCrunch указывает, что компания намерена инвестировать в улучшение модели, вычислительную инфраструктуру и роботизированные применения."
+      ],
+      "significance": "Потенциальная оценка $6 млрд у молодой компании physical AI и участие крупных инвесторов делают это заметным бизнес-сигналом для рынка агентных моделей и робототехники.",
+      "significance_score": 3,
+      "limitations": "Сделка не закрыта и основана на сообщении источников; сумма раунда не раскрыта, а оценка является заявленной pre-money оценкой в переговорах.",
+      "archive_status": "none",
+      "archive_reason": "Событие отсутствует среди переданного текущего пула и архивных сюжетов; это не повтор ранее освещённого раунда General Intuition.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверено существование и статус переговоров в авторитетном технологическом СМИ. Верифицированным является факт сообщения о переговорах, а не окончательное закрытие раунда.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-24T15:24:18+00:00; timestamp проверен Python против effective window. Первичный материал опубликован внутри effective window 24 августа 2026 года.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран по самостоятельной бизнес-значимости.",
+      "id": "cand-003"
+    },
+    {
+      "title": "Hugging Face, по данным СМИ, ведёт переговоры о продаже при оценке от $13 млрд",
+      "organization": "Hugging Face",
+      "published_date": "2026-08-24",
+      "published_at": "2026-08-24T13:47:26+00:00",
+      "time_precision": "datetime",
+      "topic": "Возможная крупная M&A-сделка вокруг ключевой open-source платформы распространения, тестирования и развёртывания ИИ-моделей.",
+      "event_type": "reported acquisition talks",
+      "keywords": [
+        "Hugging Face",
+        "M&A",
+        "open source",
+        "AI infrastructure",
+        "model hub",
+        "Business Insider"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Hugging Face reportedly in talks to be acquired for $13B",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/24/hugging-face-reportedly-in-talks-to-be-acquired-for-13b/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Hugging Face reportedly in talks to be acquired for $13B",
+          "publisher": "Business Insider",
+          "url": "https://www.businessinsider.com/"
+        }
+      ],
+      "event_summary": "TechCrunch со ссылкой на Business Insider сообщила, что к Hugging Face обращались с предложениями о продаже при оценке $13 млрд и выше. Покупатель не назван, соглашение не достигнуто; по данным публикации, компания обсуждала с банками оценку предложений.",
+      "verified_facts": [
+        "TechCrunch опубликовала материал 24 августа 2026 года в 6:47 AM PDT.",
+        "Материал прямо указывает, что переговоры и интерес покупателей были сообщены Business Insider.",
+        "Потенциальная оценка составляет не менее $13 млрд.",
+        "Покупатель не раскрыт, а сделка на момент публикации не была заключена."
+      ],
+      "significance": "Hugging Face — центральная инфраструктурная площадка open-source ИИ-экосистемы; потенциальная сделка такого масштаба способна заметно изменить контроль над распространением моделей и инструментов для разработчиков.",
+      "significance_score": 4,
+      "limitations": "Это сообщение о переговорах, а не о подписанной сделке; сторона-покупатель и условия не подтверждены самой Hugging Face.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет сюжета о возможной продаже Hugging Face.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Проверено существование и содержание сообщения авторитетного технологического издания; подтверждён именно факт сообщений о переговорах, а не совершение сделки.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-24T13:47:26+00:00; timestamp проверен Python против effective window. Основной материал опубликован внутри effective window; аналогичного события в архиве нет.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является правовым или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-категории.",
+      "id": "cand-004"
+    },
+    {
+      "title": "Private-access агент Instinct оказался в центре вопросов о конфиденциальности, хранении данных и действиях от имени пользователей",
+      "organization": "Instinct; Spear Street Technology",
+      "published_date": "2026-08-24",
+      "published_at": "2026-08-24T18:03:55+00:00",
+      "time_precision": "datetime",
+      "topic": "Безопасность и privacy consumer AI-агентов с доступом к почте, сообщениям, календарю, экрану, аудио, геолокации и возможностью совершать действия от имени пользователя.",
+      "event_type": "security and privacy concerns",
+      "keywords": [
+        "Instinct",
+        "personal AI agent",
+        "privacy",
+        "security",
+        "prompt injection",
+        "email access",
+        "consumer agents",
+        "data retention"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Instinct’s powerful AI assistant is raising privacy and security concerns",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/24/instincts-powerful-ai-assistant-is-raising-privacy-and-security-concerns/"
+      },
+      "supporting_sources": [],
+      "event_summary": "TechCrunch описало претензии ранних пользователей к приватному AI-ассистенту Instinct: широкие права на пользовательские материалы в условиях сервиса, доступ к чувствительным данным устройств и почты, а также сообщения о сохранении писем после отключения интеграции и действиях без предварительного согласования.",
+      "verified_facts": [
+        "Материал опубликован 24 августа 2026 года в 11:03 PDT, что соответствует 21:03 +03:00 и входит в редакционное окно.",
+        "По описанию TechCrunch, Instinct подключается к почте, мессенджерам, календарю, аудио, геолокации и экрану устройства для выполнения задач.",
+        "TechCrunch указывает, что условия сервиса предусматривают широкую лицензию на пользовательские материалы и возможность заключать обязательства или совершать транзакции от имени пользователя.",
+        "Сообщения о неудалённых или продолжавших обрабатываться данных и несанкционированной отправке письма исходят от ранних тестировщиков; подтверждённого массового инцидента или независимого технического аудита в материале нет.",
+        "Компания находилась в private access, и TechCrunch отмечало отсутствие ответа команды на часть публичных вопросов."
+      ],
+      "significance": "Сюжет иллюстрирует практический security/privacy риск нового класса автономных потребительских агентов, которым предоставляют постоянный доступ к персональным данным и возможность действовать от имени человека.",
+      "significance_score": 2,
+      "limitations": "Это не подтверждённый массовый взлом и не регуляторное действие: значительная часть конкретных претензий основана на свидетельствах тестировщиков и условиях сервиса private-access продукта.",
+      "archive_status": "none",
+      "archive_reason": "В архиве и текущем пуле нет отдельного сюжета об Instinct.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Проверены дата публикации, заявленные возможности агента и содержание описанных TechCrunch условий сервиса. Конкретные пользовательские инциденты следует подавать как сообщения тестировщиков, а не как окончательно установленный факт нарушения.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-24T18:03:55+00:00; timestamp проверен Python против effective window. Первичный материал опубликован внутри effective window 24 августа 2026 года.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "На момент источника нет крупного судебного или регуляторного действия.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: ценность кандидата связана с безопасностью агентных интеграций, а не с курьёзностью.",
+      "id": "cand-005"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=6, validated unique=5, final candidates=5. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-global_breaking-02",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Who’s behind the new ‘stealth model’ Ox Alpha?",
+      "origin_direction": "global_breaking",
+      "reason_code": "unverified",
+      "evidence_reason": "Публикация фиксирует выпуск анонимной preview-модели на OpenRouter, но её разработчик, происхождение и заявленные возможности остаются неизвестными; самостоятельная значимость пока недостаточно подтверждена.",
+      "likely_significance_score": 1,
+      "entities": [
+        "Who",
+        "Ox",
+        "Alpha"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-business_investment_partnerships-02",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Rillet Lands $100M to Scale AI ERP",
+      "origin_direction": "business_investment_partnerships",
+      "reason_code": "unverified",
+      "evidence_reason": "Найдена только публикация AIPressRoom от 2026-08-24 с заявлением о Series C на $100 млн; первичный сайт Rillet подтверждает AI-native ERP-продукт и партнёрства, но не подтверждает раунд, дату объявления, оценку или инвесторов. Для verified-кандидата источников недостаточно.",
+      "likely_significance_score": 4,
+      "entities": [
+        "Rillet",
+        "Lands",
+        "Scale",
+        "ERP"
+      ],
+      "anchors": [
+        "$100M",
+        "$100 млн"
+      ],
+      "source_hint": null,
+      "resolution_required": true,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-independent_missing_events-01",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Who’s behind the new ‘stealth model’ Ox Alpha?",
+      "origin_direction": "independent_missing_events",
+      "reason_code": "unverified",
+      "evidence_reason": "В окне подтверждён лишь preview-анонимной модели на OpenRouter; происхождение модели и ключевые заявления остаются предметом спекуляций, а самостоятельная значимость для выпуска не доказана.",
+      "likely_significance_score": 1,
+      "entities": [
+        "Who",
+        "Ox",
+        "Alpha"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 1,
+      "health_check_needed": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota"
+  }
+}

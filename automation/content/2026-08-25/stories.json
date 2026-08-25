@@ -1,0 +1,96 @@
+[
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "General Intuition ведёт раунд при оценке $6 млрд для развития physical AI и робототехники",
+    "organization": "General Intuition; Valor Equity Partners; Point72 Ventures; Seven Seven Six; Khosla Ventures; General Catalyst; CoreWeave",
+    "topic": "Финансирование physical AI: foundation-модель и generalized AI-агенты для действий в пространстве и времени с последующим применением в робототехнике.",
+    "event_type": "fundraising negotiations",
+    "status": "new",
+    "summary": "TechCrunch сообщило, что General Intuition завершает и, по данным источников, переподписывает новый раунд при pre-money оценке $6 млрд. Компания разрабатывает foundation model/large action models для обобщённых агентов и планирует направить средства на модели, вычисления и роботизированные воплощения.",
+    "published_at": "2026-08-24T15:24:18+00:00",
+    "published_date": "2026-08-24",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Valor, Point72 back General Intuition at $6B valuation as AI startup pushes into robotics",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/24/valor-point72-back-general-intuition-at-6b-valuation-as-ai-startup-pushes-into-robotics/"
+      }
+    ],
+    "keywords": [
+      "General Intuition",
+      "physical AI",
+      "robotics",
+      "large action models",
+      "fundraising",
+      "Valor",
+      "Point72",
+      "CoreWeave"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Hugging Face, по данным СМИ, ведёт переговоры о продаже при оценке от $13 млрд",
+    "organization": "Hugging Face",
+    "topic": "Возможная крупная M&A-сделка вокруг ключевой open-source платформы распространения, тестирования и развёртывания ИИ-моделей.",
+    "event_type": "reported acquisition talks",
+    "status": "new",
+    "summary": "TechCrunch со ссылкой на Business Insider сообщила, что к Hugging Face обращались с предложениями о продаже при оценке $13 млрд и выше. Покупатель не назван, соглашение не достигнуто; по данным публикации, компания обсуждала с банками оценку предложений.",
+    "published_at": "2026-08-24T13:47:26+00:00",
+    "published_date": "2026-08-24",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Hugging Face reportedly in talks to be acquired for $13B",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/24/hugging-face-reportedly-in-talks-to-be-acquired-for-13b/"
+      }
+    ],
+    "keywords": [
+      "Hugging Face",
+      "M&A",
+      "open source",
+      "AI infrastructure",
+      "model hub",
+      "Business Insider"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Instinct оказался в центре вопросов о конфиденциальности и действиях от имени пользователей",
+    "organization": "Instinct; Spear Street Technology",
+    "topic": "Безопасность и privacy consumer AI-агентов с доступом к почте, сообщениям, календарю, экрану, аудио, геолокации и возможностью совершать действия от имени пользователя.",
+    "event_type": "security and privacy concerns",
+    "status": "new",
+    "summary": "TechCrunch описало претензии ранних пользователей к приватному AI-ассистенту Instinct: широкие права на пользовательские материалы в условиях сервиса, доступ к чувствительным данным устройств и почты, а также сообщения о сохранении писем после отключения интеграции и действиях без предварительного согласования.",
+    "published_at": "2026-08-24T18:03:55+00:00",
+    "published_date": "2026-08-24",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Instinct’s powerful AI assistant is raising privacy and security concerns",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/24/instincts-powerful-ai-assistant-is-raising-privacy-and-security-concerns/"
+      }
+    ],
+    "keywords": [
+      "Instinct",
+      "personal AI agent",
+      "privacy",
+      "security",
+      "prompt injection",
+      "email access",
+      "consumer agents",
+      "data retention"
+    ],
+    "geography": "world",
+    "category": "security"
+  }
+]

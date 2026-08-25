@@ -1,0 +1,116 @@
+{
+  "version": 3,
+  "search_strategy": "agency_discovery_rescue",
+  "publication_date": "2026-08-25",
+  "triggered": true,
+  "trigger_reason": "major_agencies_raw_zero",
+  "major_agencies_status": "complete_with_gaps",
+  "major_agencies_raw_count": 0,
+  "major_agencies_accepted_count": 0,
+  "candidate_pool_count_at_trigger": 5,
+  "candidate_count_independent_trigger": true,
+  "executed": true,
+  "state": "completed_no_addition",
+  "status": "complete",
+  "query": "latest AI chips infrastructure financing earnings business deals policy security",
+  "allowed_domains": [
+    "reuters.com"
+  ],
+  "required_direct_source_hosts": [
+    "reuters.com"
+  ],
+  "search_context_size": "high",
+  "search_operation_limit": 1,
+  "search_operation_reserved": 1,
+  "search_operation_count_contribution": 1,
+  "search_retry_allowed": false,
+  "raw_count": 0,
+  "validated_count": 0,
+  "accepted_count": 0,
+  "added_count": 0,
+  "duplicate_count": 0,
+  "archive_duplicate_count": 0,
+  "rejections": [],
+  "model_rejections": [],
+  "api": {
+    "response_id": "resp_0acbcb1db111dfa5016a8cf4512e9887d0bf4f0697a3a6cab6",
+    "status": "completed",
+    "model": "gpt-5.6-terra",
+    "configured_max_tool_calls": 1,
+    "configured_web_search_limit": 1,
+    "observed_web_search_calls": 1,
+    "budget_overrun": false,
+    "web_search_calls": 1,
+    "web_search_calls_completed": 1,
+    "web_search_search_operations_total": 1,
+    "web_search_search_operations_performed": 1,
+    "web_search_search_operations_incomplete": 0,
+    "web_search_navigation_items_total": 0,
+    "web_search_call_items_total": 1,
+    "web_search_call_statuses": {
+      "completed": 1
+    },
+    "web_search_search_statuses": {
+      "completed": 1
+    },
+    "web_search_action_type_counts": {
+      "search": 1
+    },
+    "web_search_call_items": [
+      {
+        "id": "ws_0acbcb1db111dfa5016a8cf452402487d0b9b82ce958543ee9",
+        "status": "completed",
+        "action_type": "search",
+        "action": {
+          "type": "search",
+          "queries": [
+            "latest AI chips infrastructure financing earnings business deals policy security"
+          ],
+          "query": "latest AI chips infrastructure financing earnings business deals policy security",
+          "sources": null
+        }
+      }
+    ],
+    "actual_queries": [
+      "latest AI chips infrastructure financing earnings business deals policy security"
+    ],
+    "consulted_sources": [],
+    "completed_call_limit_exceeded": false,
+    "output_item_limit_exceeded": false,
+    "usage": {
+      "input_tokens": 15048,
+      "input_tokens_details": {
+        "cache_write_tokens": 14789,
+        "cached_tokens": 0
+      },
+      "output_tokens": 213,
+      "output_tokens_details": {
+        "reasoning_tokens": 103
+      },
+      "total_tokens": 15261
+    },
+    "error": null,
+    "incomplete_details": null,
+    "configured_search_operations": 1,
+    "configured_total_tool_calls": 4,
+    "navigation_tool_allowance": 3,
+    "allowed_domains": [
+      "reuters.com"
+    ],
+    "search_context_size": "high"
+  },
+  "resumed": true,
+  "recovered_from_artifact": true,
+  "pipeline_search_budget": {
+    "primary_maximum": 12,
+    "agency_discovery_rescue_maximum": 1,
+    "hybrid_maximum": 4,
+    "coverage_maximum": 7,
+    "maximum_total": 24
+  },
+  "raw_candidates": [],
+  "notes": "Единственная разрешённая поисковая операция Web Search выполнена с точным query и Reuters-only domain filter. Прямых Reuters-результатов, позволяющих подтвердить самостоятельное свежее AI-событие с timestamp внутри effective window, не обнаружено; candidates не сформированы.",
+  "accepted_candidates": [],
+  "coverage_recovery_entry": true,
+  "coverage_recovery_editorial_rerun": "not_needed"
+}
