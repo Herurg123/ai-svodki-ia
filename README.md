@@ -34,7 +34,7 @@ overlap лечит старые пропуски, не превращаясь в
 | Workflow | Назначение |
 |---|---|
 | `.github/workflows/ci.yml` | Бесплатные офлайн-проверки pull request и `main`: компиляция, unit-тесты, редакционный и production-контракты, архив, RSS, sitemap и Schema.org. |
-| `.github/workflows/daily-production.yml` | Gate, Primary Recall v2, bounded agency discovery rescue при подтверждённом gap, независимый hybrid completeness, editorial, ограниченный coverage audit, обложка, сборка сайта, commit в `main` и вызов FTP-деплоя. |
+| `.github/workflows/daily-production.yml` | Gate, Primary Recall v2, bounded agency discovery rescue, Source Pulse v1 production shadow, независимый hybrid completeness, editorial, ограниченный coverage audit, обложка, сборка сайта, commit в `main` и вызов FTP-деплоя. |
 | `.github/workflows/repository-cleanup.yml` | Ежедневная очистка в 01:43 МСК: компактация архива и удаление публичных выпусков старше 32 дней. |
 | `.github/workflows/repository-hygiene.yml` | Отдельная инженерная уборка GitHub в 15:43 МСК: старые merged-ветки, безопасно классифицированные Actions artifacts и orphaned workflows; исходники и старые runs только диагностируются. |
 | `.github/workflows/deploy-posts.yml` | Синхронизация точного состояния `posts/` выбранного commit на FTP, включая контролируемое удаление исчезнувших файлов. |
@@ -612,6 +612,32 @@ Primary matrix. `major_agencies` всё равно обязан завершит
 и иметь хотя бы один consulted source, а общий anti-junk gate не ослабляется.
 Новый discovery rescue не заменяет mandatory route и не исправляет его
 технические ошибки: он разрешён только после технически завершённого gap.
+
+## Source Pulse v1: второй discovery-plane в production shadow
+
+После Primary Recall и conditional agency discovery rescue, но **до расчёта Hybrid gaps**,
+production запускает фиксированный Source Pulse v1. Это второй discovery-plane, который
+обычным bounded HTTPS polling читает registry официальных newsroom/IR/release/index
+источников и региональных lead-only источников для China/Asia и Russia. На текущем
+этапе он работает строго как **production shadow**: `candidate_influence=false`.
+
+Shadow не добавляет, не удаляет и не ранжирует candidates, не меняет editorial и не
+может скрыть деградацию `major_agencies`. Он выполняется только после независимого
+agency-rescue trigger и его freshness gate. Source Pulse не вызывает OpenAI и Web
+Search, поэтому потолок остаётся **24 Web Search operations**. Ошибка DNS/HTTP/parser
+fail-open: сохраняется diagnostics, а прежний Hybrid продолжает работу.
+
+В artifact сохраняется `source-pulse.json` с deterministic snapshot/source-health и
+fusion diagnostics: `pulse_only`, `both_exact_url`, `both_event_fingerprint`,
+`search_only`, cutoff ambiguity и archive duplicates. Повторный запуск на том же
+artifact использует сохранённый snapshot и не poll'ит mutable sources молча; обычный
+same-day recovery также восстанавливает этот файл из Actions artifact.
+
+Tier B остаётся только lead-only и не получает publication privileges. Source Freshness
+Proof, semantic/archive dedupe, regional no-quota rule и editorial остаются без
+изменений. Любое будущее влияние Pulse на candidate pool или отдельный LLM triage
+требует нового controlled experiment и отдельного production PR. Ежедневный
+независимый аудит должен отдельно сравнивать Search/Pulse coverage и source health.
 
 ## Возобновляемые платные стадии
 
