@@ -339,3 +339,19 @@ High-confidence strict reference set текущего main window: **3 собы�
 - Russia: различать retrieval health и последующее editorial/freshness rejection; не вводить региональную квоту.
 - Coverage: проверять не только наличие artifact, но способность general/high-signal pass реально восстановить independently known strict miss.
 - Publisher concentration считать симптомом только вместе с конкретным completeness loss; текущий 3/3 TechCrunch день такой loss продемонстрировал.
+
+---
+
+## 2026-08-25 — Source Pulse v0 weekly architecture experiment
+
+Подробный отчёт: `automation/audits/experiments/2026-08-25-source-pulse-weekly-bakeoff.md`.
+
+- Research-only assistant-side fixed-source/source-aware replay; standalone Terra в текущем чате недоступна; production API пользователя не использовался.
+- Benchmark: 19–25 августа по уже зафиксированным historical misses; canonical daily recall задним числом не пересчитывается.
+- Source Pulse v0 дал lead для **9/13 strict miss-day instances = 69,2%** и **8/11 unique strict missed events = 72,7%**. Если добавить Baidu 19 августа как отдельно сохранённый historical high-signal control, результат **10/14 = 71,4%**.
+- Сильнейшие recovery: Google/Marvell, Baidu, Alibaba earnings/placement, DeepSeek Vision, Wan3.0, XPENG robotics и NVIDIA Groq 3 LPX.
+- Не восстановлены Round Hill legal, Broadcom private debt и Nvidia server pricing. Это подтверждает, что Pulse **дополняет**, но не заменяет Web/agency discovery.
+- Architecture verdict: **GO** для bounded fail-open Source Pulse sidecar prototype; **NO-GO** для raw injection в Primary, региональных квот, ослабления freshness или увеличения Web Search ceiling выше 24.
+- Безопасный contour: Pulse fetch/snapshot отдельно; Primary 12/12 и agency rescue без изменений; после них dedupe unmatched leads; будущая bounded no-Web-Search triage только при отдельном разрешении production cost; затем обычные freshness/dedupe/editorial/Hybrid/Coverage.
+- Freshness diagnosis 25 августа уточнён: Google/Verizon и Yandex — это прежде всего проблема extractor/alternate-source proof, а не общий запрет date-only evidence. Отдельный freshness experiment должен тестировать alternate authoritative corroboration и boundary negatives, не ослабляя Source Freshness Proof.
+- README/automation README/AGENTS не менялись: этот experiment фиксирует результаты исследования и не меняет production behavior.
