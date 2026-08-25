@@ -1,0 +1,142 @@
+name: PR Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  classify:
+    name: Classify changed paths
+    runs-on: ubuntu-latest
+    outputs:
+      main: ${{ steps.paths.outputs.main }}
+      video: ${{ steps.paths.outputs.video }}
+    steps:
+      - name: Check out PR head
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Route changed paths to CI domains
+        id: paths
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          import subprocess
+          from pathlib import Path
+
+          base = os.environ["BASE_SHA"]
+          head = os.environ["HEAD_SHA"]
+          changed = [
+              line.strip()
+              for line in subprocess.check_output(
+                  ["git", "diff", "--name-only", "--diff-filter=ACMRD", base, head],
+                  text=True,
+              ).splitlines()
+              if line.strip()
+          ]
+
+          main = False
+          video = False
+          for path in changed:
+              if path == ".github/workflows/pr-gate.yml":
+                  main = True
+                  video = True
+              elif path.startswith("automation/notebooklm-video/") or path == ".github/workflows/video-ci.yml":
+                  video = True
+              elif (
+                  path.startswith("automation/")
+                  or path.startswith("posts/")
+                  or path.startswith(".github/workflows/")
+                  or path in {"README.md", "AGENTS.md", ".gitignore"}
+              ):
+                  main = True
+
+          output = Path(os.environ["GITHUB_OUTPUT"])
+          with output.open("a", encoding="utf-8") as stream:
+              stream.write(f"main={'true' if main else 'false'}\n")
+              stream.write(f"video={'true' if video else 'false'}\n")
+
+          print(f"Changed files ({len(changed)}):")
+          for path in changed:
+              print(f"- {path}")
+          print(f"CI routing: main={main}, video={video}")
+          PY
+
+  main-ci:
+    name: Main CI
+    needs: classify
+    if: needs.classify.outputs.main == 'true'
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  video-ci:
+    name: Video CI
+    needs: classify
+    if: needs.classify.outputs.video == 'true'
+    uses: ./.github/workflows/video-ci.yml
+    permissions:
+      contents: read
+
+  required:
+    name: Required PR Gate
+    needs:
+      - classify
+      - main-ci
+      - video-ci
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every routed CI domain to succeed
+        shell: bash
+        env:
+          CLASSIFY_RESULT: ${{ needs.classify.result }}
+          MAIN_REQUIRED: ${{ needs.classify.outputs.main }}
+          MAIN_RESULT: ${{ needs.main-ci.result }}
+          VIDEO_REQUIRED: ${{ needs.classify.outputs.video }}
+          VIDEO_RESULT: ${{ needs.video-ci.result }}
+        run: |
+          set -euo pipefail
+
+          [[ "${CLASSIFY_RESULT}" == "success" ]] || {
+            echo "Path classification did not succeed: ${CLASSIFY_RESULT}" >&2
+            exit 1
+          }
+
+          if [[ "${MAIN_REQUIRED}" == "true" ]]; then
+            [[ "${MAIN_RESULT}" == "success" ]] || {
+              echo "Main CI is required but finished as ${MAIN_RESULT}." >&2
+              exit 1
+            }
+          elif [[ "${MAIN_RESULT}" != "skipped" ]]; then
+            echo "Main CI was not required but finished as ${MAIN_RESULT}; routing is inconsistent." >&2
+            exit 1
+          fi
+
+          if [[ "${VIDEO_REQUIRED}" == "true" ]]; then
+            [[ "${VIDEO_RESULT}" == "success" ]] || {
+              echo "Video CI is required but finished as ${VIDEO_RESULT}." >&2
+              exit 1
+            }
+          elif [[ "${VIDEO_RESULT}" != "skipped" ]]; then
+            echo "Video CI was not required but finished as ${VIDEO_RESULT}; routing is inconsistent." >&2
+            exit 1
+          fi
+
+          echo "Required PR Gate passed: main=${MAIN_REQUIRED}/${MAIN_RESULT}, video=${VIDEO_REQUIRED}/${VIDEO_RESULT}."
