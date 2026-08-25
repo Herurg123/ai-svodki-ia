@@ -131,6 +131,7 @@ bridge lives under `automation/fixtures/research/.runtime/`. Arbitrary
 caller-supplied `--research-input` paths remain restricted by the existing guard.
 
 ## Primary recall v2 contract
+
 Fresh production research uses deterministic **Primary Recall v2**. The hard
 Primary budget remains exactly twelve completed Web Search **search operations**,
 one per mandatory direction:
@@ -370,6 +371,7 @@ out-of-sample agency misses. Mandatory source-diverse routing remains:
 - `global_breaking`: source-neutral broad current-AI catch-all;
 - `major_agencies`: Reuters/AP/Bloomberg/FT filtered mandatory route;
 - `independent_missing_events`: source-neutral missing-events sweep.
+
 For modern Primary diagnostics, source-health must prove at least one fresh
 in-window Reuters/AP/Bloomberg/FT evidence across the matrix. This is a technical
 health check, not an agency-story quota.
