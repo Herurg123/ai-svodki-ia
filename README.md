@@ -54,10 +54,12 @@ Video CI. Для mixed/cross-cutting PR он требует оба домена.
 CI/Video CI. Подробности описаны в
 [`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md#4-github-actions).
 
-`main` защищается repository ruleset: обычные изменения должны проходить через
-pull request, force-push и удаление запрещены. Единственный direct-push bypass
-предназначен для отдельного write deploy key ночного production/cleanup; ключ не
-используется retrieval, video, deploy-posts или repository-hygiene jobs.
+Для `main` подготовлен repository ruleset: обычные изменения должны проходить
+через pull request, force-push и удаление запрещаются, а единственный direct-push
+bypass предназначен для отдельного write deploy key ночного production/cleanup.
+Наличие ruleset JSON в Git само по себе не включает GitHub setting; порядок
+активации описан в
+[`automation/MAIN_PROTECTION.md`](automation/MAIN_PROTECTION.md).
 
 ## Краткие production-инварианты
 
