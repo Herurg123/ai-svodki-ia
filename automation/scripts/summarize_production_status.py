@@ -75,6 +75,10 @@ def locate_reason(publication_date: str) -> tuple[str, str]:
         )
     candidates.extend([
         (
+            "Research API / Primary Recall",
+            REPORT_ROOT / "research-error.json",
+        ),
+        (
             "Проверка состава новостей",
             REPORT_ROOT / "coverage-audit.json",
         ),
@@ -176,6 +180,16 @@ def translate_reason(reason: str) -> str:
         "",
         value,
     )
+    folded = value.casefold()
+    if (
+        "insufficient_quota" in folded
+        or "credit_balance_exhausted" in folded
+        or "you have no credits remaining" in folded
+    ):
+        return (
+            "Недостаточно средств на балансе OpenAI API: запрос отклонён с "
+            "429 `insufficient_quota` / `credit_balance_exhausted`."
+        )
     translations = (
         (
             "После основного и дополнительного поиска не осталось ни одного "
@@ -455,6 +469,13 @@ def build_summary(
             "Это редакционная остановка, а не техническая авария. "
             "Не повторяйте поиск сразу. Следующий выпуск возьмёт окно "
             "с последнего успешно опубликованного выпуска."
+        )
+    elif "Недостаточно средств на балансе OpenAI API" in reason:
+        action = (
+            "Пополните баланс OpenAI API, затем вручную запустите "
+            "`Daily production digest` для этой же даты: "
+            f"`publication_date={publication_date}`, `publish=true`, "
+            "`force_fresh_research=true`, `recovery_run_id` оставьте пустым."
         )
     elif paid_completed:
         action = (
