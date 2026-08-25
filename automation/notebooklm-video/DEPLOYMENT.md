@@ -28,6 +28,10 @@ production ИИ-Сводок и не требует изменения ночн�
 automation/notebooklm-video/
 ```
 
+В каталоге должны присутствовать одновременно `package.json` и
+`package-lock.json`. Lockfile является частью канонического переносимого
+комплекта и фиксирует полное npm-дерево зависимостей.
+
 Не копировать из Git никакие реальные секреты: их там быть не должно.
 
 ## 3. Автоматическая подготовка рабочего каталога
@@ -43,13 +47,19 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\setup-local.ps1 `
 
 Скрипт:
 
-1. копирует переносимые runtime-файлы;
+1. копирует переносимые runtime-файлы, включая `package.json` и
+   `package-lock.json`;
 2. создаёт `config.json` из `config.example.json`;
 3. подставляет локальные каталоги;
 4. запрашивает разрешённый внешний IP, если он не передан параметром;
-5. выполняет `npm install`;
+5. выполняет `npm ci --no-audit --no-fund` строго по committed lockfile;
 6. выполняет `node --check worker.js`;
 7. при необходимости запускает интерактивное создание `ftp-access.json`.
+
+`npm ci` намеренно не обновляет dependency tree. Если `package.json` и
+`package-lock.json` расходятся, установка завершается ошибкой. При успешном
+запуске существующий `node_modules` заменяется содержимым, соответствующим
+lockfile.
 
 После этого вручную проверить параметры `config.json`, особенно:
 
@@ -91,6 +101,13 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File `
 ввода учётных данных.
 
 ## 6. Ручная проверка до Планировщика
+
+Если исходники только что получены или зависимости были обновлены, сначала
+выполнить в каталоге подпроекта:
+
+```powershell
+npm ci --no-audit --no-fund
+```
 
 Временно установить:
 
@@ -149,12 +166,17 @@ Task Scheduler -> wscript.exe -> run-worker-hidden.vbs
   выпусков;
 - локальные MP4/PNG только если они нужны для недовыполненной FTP-доставки.
 
+`node_modules` переносить между машинами не требуется и не рекомендуется: на
+целевой машине зависимости восстанавливаются через `npm ci` из committed
+`package-lock.json`.
+
 Не следует просто переносить `protocol=1` как универсальный секрет между
 Windows-пользователями. На новом профиле локальный доступ создаётся заново.
 
 ## 9. Проверка после переноса
 
 ```powershell
+npm ci --prefix C:\TRASH\NotebookLMBot --no-audit --no-fund
 node --check C:\TRASH\NotebookLMBot\worker.js
 Get-Content -Raw C:\TRASH\NotebookLMBot\config.json | ConvertFrom-Json | Out-Null
 ```
@@ -168,9 +190,18 @@ Get-Content -Raw C:\TRASH\NotebookLMBot\config.json | ConvertFrom-Json | Out-Nul
 - FTP `video/`;
 - отсутствие повторной обработки `DONE`.
 
-## 10. Откат
+## 10. Обновление npm-зависимостей
+
+Если меняется любая запись `dependencies` в `package.json`, в том же pull request
+обязательно обновляется `package-lock.json` штатным npm. После обновления нужно
+проверить чистую установку `npm ci` и dependency-free `npm test`.
+
+Обычное развёртывание и helper `install-ftp-support.cmd` не должны выполнять
+`npm install`: они используют только `npm ci` и не переписывают lockfile.
+
+## 11. Откат
 
 Перед заменой рабочего `worker.js` всегда сохранять резервную копию. Git хранит
-канонический исходник подпроекта, но локальный runtime может иметь ещё не
-перенесённые настройки. При откате менять только код/шаблоны и не удалять
-профиль браузера, state, реестр или скачанные медиа.
+канонический исходник подпроекта, включая manifest и lockfile, но локальный
+runtime может иметь ещё не перенесённые настройки. При откате менять только
+код/шаблоны и не удалять профиль браузера, state, реестр или скачанные медиа.
