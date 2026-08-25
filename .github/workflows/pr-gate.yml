@@ -50,6 +50,8 @@ jobs:
               ).splitlines()
               if line.strip()
           ]
+          if not changed:
+              raise SystemExit("PR Gate found no changed paths; refusing to pass without CI routing")
 
           main = False
           video = False
@@ -59,12 +61,9 @@ jobs:
                   video = True
               elif path.startswith("automation/notebooklm-video/") or path == ".github/workflows/video-ci.yml":
                   video = True
-              elif (
-                  path.startswith("automation/")
-                  or path.startswith("posts/")
-                  or path.startswith(".github/workflows/")
-                  or path in {"README.md", "AGENTS.md", ".gitignore"}
-              ):
+              else:
+                  # Fail safe: every path that is not proven video-only belongs to Main CI.
+                  # New root files/directories therefore cannot silently bypass repository checks.
                   main = True
 
           output = Path(os.environ["GITHUB_OUTPUT"])
