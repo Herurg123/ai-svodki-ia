@@ -142,6 +142,12 @@ Video CI запускается только для:
 для syntax checks и offline contract smoke tests, которые работают только со
 встроенными Node modules и committed files.
 
+Полное npm-дерево video runtime при этом воспроизводимо: `package.json` и
+committed `package-lock.json` являются одной версионируемой единицей, а локальные
+setup/dependency entrypoints устанавливают зависимости через `npm ci`. Изменение
+npm-зависимостей должно обновлять lockfile в том же PR и отдельно доказывать
+чистую `npm ci` установку; обычный Video CI от npm registry по-прежнему не зависит.
+
 Такой CI проверяет переносимый код и safety boundaries, не превращая локальный
 Windows runtime в скрытую зависимость GitHub production.
 
@@ -156,6 +162,11 @@ Windows runtime в скрытую зависимость GitHub production.
 
 `automation/notebooklm-video/tests/video-boundary-smoke.js` проверяет локальные
 video invariants, включая hard FTP boundary и ignore rules.
+
+`automation/notebooklm-video/tests/lockfile-contract-smoke.js` проверяет
+синхронизацию direct dependencies между `package.json` и `package-lock.json`,
+наличие точных locked direct versions и использование `npm ci` локальными
+install entrypoints без сетевой установки зависимостей в Video CI.
 
 ## 5. Nightly production и временная непрерывность
 
@@ -404,6 +415,17 @@ RSS
 
 Runtime state, real config, FTP access, logs, media и browser profile не хранятся
 в Git. Локальный `.gitignore` является частью safety contract.
+
+Переносимые npm dependencies являются частью versioned runtime contract:
+
+- `package.json` фиксирует direct dependency versions;
+- `package-lock.json` фиксирует полное транзитивное дерево;
+- `setup-local.ps1` и `install-ftp-support.cmd` используют `npm ci`, а не
+  `npm install`;
+- dependency change обязан обновлять manifest и lockfile одним PR и проходить
+  clean-install proof;
+- обычный Video CI проверяет lockfile contract офлайн и не устанавливает npm
+  dependencies.
 
 FTP boundary реализован defense-in-depth:
 
