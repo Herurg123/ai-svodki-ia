@@ -173,3 +173,169 @@
 - Russia business/financing без региональной квоты; strict defect только при independently verified Must Include.
 - Coverage persistence для short digest и failure observability как отдельные reliability-линии.
 - Source Freshness Proof v1 оставить без изменений, пока stale-defect не повторится.
+
+---
+
+## 2026-08-25 — substantive post-patch audit после успешной публикации
+
+### Artifact lineage / production
+- Финальный publish run: `32800936619`; production job завершён успешно, выпуск опубликован commit `80324ba06d18c7619d21e61c89bb0f5dd71f5618` (`Publish AI digest for 2026-08-25`).
+- Финальный run работал на code SHA `5b6b08ddeb8e87402e5fba3ec92dbc0c3502d774`, но **не повторял уже завершённый paid research**.
+- Полный Primary + agency rescue v3 + Hybrid были восстановлены из reusable artifact run `32798613325`, code SHA `2c7b4e26a2cd992dea41bc63fa492545ff409e80`.
+- `run-info.json` recovered research: start `2026-08-25T01:47:36Z`, finish `01:48:00Z`, authoritative research cutoff `2026-08-25T04:43:30+03:00`.
+- Recovery mode: `full`; source `automation/recovery/32798613325/2026-08-25`.
+- Initial recovered Coverage artifact имел `status=error`, поэтому финальный publish run корректно завершил Coverage заново; это не привело к повтору Primary/rescue/Hybrid.
+- Таким образом, для quality-аудита это один substantive artifact lineage: 12 Primary + 1 agency rescue + 4 Hybrid уже были выполнены в research run, а 7 Coverage calls были завершены при recovery/publish. Полный архитектурный contour проверен без повторного расхода уже завершённых research stages.
+
+### Effective window
+- Main continuity start: `2026-08-24T09:07:30+03:00`.
+- Полный effective window с bounded healing overlap: `2026-08-23T09:07:30+03:00 → 2026-08-25T04:43:30+03:00`.
+- `latest_archive_at`: `2026-08-24T09:07:30+03:00`.
+- Для нового strict main-window denominator ниже используются события после continuity start; overlap не раздувает denominator старыми сюжетами.
+
+### Что production опубликовал
+Опубликовано 3 сюжета, все из TechCrunch:
+1. General Intuition — переговоры о новом финансировании при pre-money оценке $6 млрд.
+2. Hugging Face — сообщения о возможной продаже при оценке от $13 млрд.
+3. Instinct — privacy/security concerns вокруг private-access персонального агента.
+
+Все три сюжета свежие и имеют точные timestamps внутри effective window. Явного stale, duplicate или out-of-window сюжета среди опубликованных не найдено.
+
+Классификация независимого аудита:
+- General Intuition: **borderline / Consider**, поскольку сделка не закрыта, сумма раунда не раскрыта, а подтверждён именно факт переговоров.
+- Hugging Face: **strong Consider / borderline**, поскольку это exploration of sale, покупатель не назван и сделки нет.
+- Instinct: **Consider / borderline security signal**, поскольку нет подтверждённого массового breach или регуляторного действия; часть конкретных претензий основана на сообщениях ранних тестировщиков.
+
+То есть freshness публикации хорошая, но ни один из трёх опубликованных сюжетов не входит в мой high-confidence strict Must Include denominator этого дня.
+
+### Independently verified strict Must Include misses
+Метод: assistant-side web search на независимых ресурсах ассистента; production API пользователя не использовался. Отдельного standalone Terra-инструмента в этом чате нет, поэтому это **не pure Terra A/B**.
+
+1. **Alibaba — официальный rollout Wan3.0 AI video model.**
+   - Reuters timestamp: `2026-08-24 08:15:19 UTC` = `11:15:19 +03:00`.
+   - Это после main continuity start и до production cutoff.
+   - Reuters описывает официальный запуск latest AI video generation model с расширенными возможностями.
+   - Классификация: **strict Must Include / retrieval miss**.
+   - Должен был быть достижим минимум через `major_agencies`, `china_asia_models`, broad missing-events и Hybrid models/products.
+   - Source: https://www.reuters.com/business/retail-consumer/alibaba-launches-wan30-ai-video-model-after-10-billion-share-sale-2026-08-24/
+
+2. **Xpeng robotics — более $900 млн первого раунда, valuation >$6,3 млрд.**
+   - Reuters timestamp: `2026-08-24 09:40:44 UTC` = `12:40:44 +03:00`.
+   - Reuters называет это новым рекордом single private financing в китайском embodied-AI sector; деньги идут на hardware/software, physical-AI models, data, mass production и global expansion.
+   - Классификация: **strict Must Include / retrieval miss**.
+   - Должен был быть достижим через `major_agencies`, business/investment, China/Asia business и regional Hybrid.
+   - Source: https://www.reuters.com/business/retail-consumer/xpeng-says-its-robotics-business-raised-over-900-million-first-funding-round-2026-08-24/
+
+3. **NVIDIA Groq 3 LPX — full production для agentic inference.**
+   - NVIDIA Blog: `2026-08-24`, внутри материала указан timestamp `Tuesday, Aug. 24, 8:00 a.m. PT` = `15:00 UTC` = `18:00 +03:00`.
+   - NVIDIA прямо объявляет Groq 3 LPX in full production; Nebius назван первым AI-cloud adopter, CoreWeave — production deployment Spectrum-X Multiplane; это самостоятельный production-stage infrastructure event.
+   - Классификация: **strict Must Include / retrieval miss**.
+   - Должен был быть достижим через `infrastructure_chips_cloud`, broad discovery и Hybrid infrastructure/business.
+   - Source: https://blogs.nvidia.com/blog/vera-rubin-lpx-spectrum-x-nvlink-fusion/
+
+High-confidence strict reference set текущего main window: **3 события; production retrieved 0 и published 0 → strict recall 0/3 = 0% на этом независимо подтверждённом контрольном наборе**. Это не утверждение, что во всём мире было ровно три значимых события; это bounded denominator из трёх наиболее надёжно подтверждённых controls.
+
+### Strong Consider / дополнительные пропуски
+- **Generalist AI — около $200 млн нового финансирования robotics AI.** Axios 24 августа сообщил о новом раунде примерно на $200 млн; 8VC lead по источнику, а сам round раскрыт в federal filing. Exact syndicated timestamp `2026-08-24 16:54 EDT` = `20:54 UTC`. Классификация: **strong Consider / borderline-to-Must-Include**, но в строгий denominator выше не включён из-за source-attribution/round-detail uncertainty.
+- Это retrieval miss и важный editorial comparator: событие заметно более конкретно, чем переговоры General Intuition при нераскрытой сумме.
+
+### Primary / major agencies / rescue v3
+- Primary завершил 12/12 mandatory search operations и оставил 5 кандидатов.
+- `major_agencies`: `complete_with_gaps`, `raw=0`, `accepted=0`; hard routing Reuters/Bloomberg/FT/AP снова дал главным образом старые Bloomberg/AP материалы.
+- `agency_discovery_rescue v3` **реально исполнен** на первом meaningful post-patch sample:
+  - trigger: `major_agencies_raw_zero`;
+  - query неизменён: `latest AI chips infrastructure financing earnings business deals policy security`;
+  - `allowed_domains=["reuters.com"]`;
+  - `search_context_size=high`;
+  - ровно 1 search operation;
+  - `consulted_sources=[]`, `raw=0`, `validated=0`, `accepted=0`, `added=0`.
+- При этом в exact main window находились минимум два однозначных Reuters strict controls: Alibaba Wan3.0 и Xpeng robotics funding.
+
+**v3 verdict: mechanics PASS, practical recovery FAIL.** Повышение context `medium → high` не исправило production provider/source-pool failure. Это теперь не quota-excluded observation, а первый настоящий out-of-sample production test v3.
+
+### China / Asia
+- `china_asia_models`: 0 кандидатов.
+- `china_asia_integrations`: 0 кандидатов.
+- Hybrid adaptive regional pass также не восстановил Asia event.
+- Независимо в main window подтверждены Alibaba Wan3.0 и Xpeng embodied-AI financing.
+
+**China/Asia recall: FAIL.** Это усиливает отдельную model/product blind-spot линию после DeepSeek: проблема уже не ограничивается одним названием модели и затрагивает также крупный robotics/physical-AI business event.
+
+### Infrastructure
+- `infrastructure_chips_cloud` дал 0 кандидатов.
+- NVIDIA Groq 3 LPX full-production event с точным внутривоконным timestamp не найден ни Primary, ни Hybrid/Coverage.
+
+**Infrastructure recall: FAIL** на этом control.
+
+### Russia
+- В отличие от прошлых zero-pool дней, production `russia` route нашёл самостоятельный кандидат: **медицинский ИИ-ассистент Яндекса стал доступен всем врачам**.
+- Первичный официальный source Яндекса датирован 24 августа; independent CNews даёт `24.08.2026 12:32`, то есть уверенно после main continuity start.
+- Кандидат не дошёл в final digest из-за `verification_status=unconfirmed` и fail-closed freshness proof, а не из-за retrieval miss.
+- Отдельного более сильного strict Russia Must Include в independent search не подтверждено.
+
+Итог по России: **retrieval не нулевой; strict Russia recall = N/A / отдельного strict miss не найдено.** Но exclusion Яндекса — отдельный editorial/freshness-proof false-negative candidate, см. ниже.
+
+### Source Freshness Proof v1 — возможный false-negative по date-only source
+Два production candidates были retrieved, имели `published_date=2026-08-24`, `time_precision=date`, но были исключены:
+- Google Cloud + Verizon enterprise-AI partnership;
+- Яндекс medical AI assistant.
+
+Оба artifact одновременно маркирует `freshness_status=new_event`, но `freshness_reason` говорит: `ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed`.
+
+Это выглядит как **контрактная/верификационная несогласованность**, а не retrieval miss:
+- Google Cloud official press release прямо датирован Aug 24; независимый web также видит этот официальный date marker.
+- Яндекс official IR прямо датирован 24 августа; CNews даёт точное время 12:32 и подтверждает то же событие.
+- Поскольку full effective window охватывает всю календарную дату 24 августа, calendar-date proof здесь достаточно, чтобы установить попадание в full window; для main-continuity классификации точное время полезно, но independent secondary source в случае Яндекса его дополнительно даёт.
+
+Пока это **не основание ослаблять Source Freshness Proof v1 глобально**: published freshness остаётся стабильной. Нужен отдельный bounded offline test date-only logic с positive controls внутри окна и boundary-date negatives.
+
+### Hybrid / Coverage / source concentration
+- Hybrid: 4/4, added 0, final pool остался 5.
+- Финальный Coverage: 7/7, `status=ok`, added 0; short-digest coverage artifact присутствует и подробен. Значит наблюдавшийся 23 августа persistence/observability gap сегодня **не повторился**.
+- Coverage не восстановил ни Alibaba, ни Xpeng, ни NVIDIA.
+- Финальный digest — **3/3 TechCrunch**. Production само зафиксировало publisher `diversity_override`.
+- При одновременно пропущенных Reuters и official NVIDIA strict events это уже не просто эстетическая концентрация, а сигнал, что source-pool imbalance коррелирует с реальным completeness loss.
+
+### Оценка дня
+- Freshness опубликованных сюжетов: **PASS (3/3 fresh; stale не найдено)**.
+- Completeness: **FAIL**.
+- Strict recall на high-confidence independent controls: **0/3 = 0%**.
+- Agency rescue v3: **mechanics PASS / recovery effectiveness FAIL**.
+- China/Asia: **FAIL**.
+- Infrastructure: **FAIL**.
+- Russia retrieval: **не нулевой; отдельного strict miss не найдено**.
+- Source concentration: **warning / 3 из 3 финальных сюжетов TechCrunch**.
+- Source Freshness Proof: freshness protection в целом сохраняет precision, но появился independently reproducible **date-only false-negative candidate** для отдельного диагностического теста.
+
+### Post-patch verdict
+Это первый meaningful post-patch day после PR #77: **sample = 1/7**.
+
+Относительно baseline false-zero 24 августа результат нельзя назвать BETTER по completeness: pipeline теперь опубликовал три свежих сюжета, но основной дефект agency/source discovery сохраняется и проявился одновременно на двух Reuters strict controls, а China/Asia и infrastructure дали дополнительные подтверждённые misses.
+
+Итог: **WORSE/FAIL по strict completeness sample, при PASS по freshness и нормальной fail-closed публикационной механике.** Важное различие: система больше не дала false-zero final publication, но выбранный финальный набор оказался слабее нескольких реально существовавших high-signal событий.
+
+### Что делать дальше
+- Production code **не менять автоматически по этому аудиту**.
+- Не тратить следующий patch на ещё одно изменение wording/context-size: v2 и v3 уже дали одинаковый `consulted_sources=[]` / zero-result symptom при существующих Reuters controls.
+- Следующий bounded experiment должен отдельно исследовать **provider/source-routing health**, а не семантику query: trigger/diagnostic для `consulted_sources=[]` или полностью stale agency source pool, с тем же one-slot budget и без увеличения global ceiling.
+- Отдельно провести offline test Source Freshness Proof для date-only источников на Google/Verizon и Яндекс positive controls плюс boundary-date negatives; не ослаблять freshness guard до результата этого теста.
+- China/Asia model/product + embodied-AI business route теперь имеет достаточное повторное evidence для отдельного диагностического experiment, но его не смешивать с agency-source experiment.
+
+---
+
+## Актуальная post-patch серия после PR #77
+
+| Статус | Дата | Production | v3 meaningful test | Verdict | Ключевой результат |
+|---|---|---|---|---|---|
+| excluded | 2026-08-25 scheduled `32789961306` | FAIL до Primary completion | нет | N/A / operational incident | API 429 `credit_balance_exhausted`; sample не расходуется |
+| **1/7** | 2026-08-25 substantive artifact lineage `32798613325 → 32800936619` | PUBLISHED | да | **FAIL completeness / PASS freshness** | v3 `consulted_sources=[]`; strict misses Alibaba Wan3.0, Xpeng robotics funding, NVIDIA Groq 3 LPX; 3/3 final stories TechCrunch |
+
+## Что наблюдать дальше после day 1/7
+
+- Повторяется ли `fresh Reuters Must Include exists → major_agencies 0/0 → v3 consulted_sources=[] → rescue 0`.
+- China/Asia отдельно по model/product и embodied-AI business, не смешивая с agency source-routing.
+- Infrastructure/chips/cloud после NVIDIA Groq 3 LPX miss.
+- Date-only Source Freshness Proof на доказуемо внутривоконных official sources.
+- Russia: различать retrieval health и последующее editorial/freshness rejection; не вводить региональную квоту.
+- Coverage: проверять не только наличие artifact, но способность general/high-signal pass реально восстановить independently known strict miss.
+- Publisher concentration считать симптомом только вместе с конкретным completeness loss; текущий 3/3 TechCrunch день такой loss продемонстрировал.
