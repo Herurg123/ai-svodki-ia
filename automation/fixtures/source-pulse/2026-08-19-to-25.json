@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "description": "Offline historical Source Pulse v1 replay fixture for canonical 2026-08-19..25 miss-day controls.",
+  "registry": [
+    {"id":"baidu_ir","tier":"A","region":"china_asia","role":"official","adapter":"html_index","url":"https://baidu.example.com/news","allowed_hosts":["baidu.example.com"]},
+    {"id":"marvell_ir","tier":"A","region":"global","role":"official","adapter":"html_index","url":"https://marvell.example.com/current","allowed_hosts":["marvell.example.com"]},
+    {"id":"alibaba_ir","tier":"A","region":"china_asia","role":"official","adapter":"rss_atom","url":"https://alibaba.example.com/feed.xml","allowed_hosts":["alibaba.example.com"]},
+    {"id":"deepseek_official","tier":"A","region":"china_asia","role":"official","adapter":"html_index","url":"https://deepseek.example.com/news","allowed_hosts":["deepseek.example.com"]},
+    {"id":"nvidia_news","tier":"A","region":"global","role":"official","adapter":"html_index","url":"https://nvidia.example.com/news","allowed_hosts":["nvidia.example.com"]},
+    {"id":"xpeng_ir","tier":"A","region":"china_asia","role":"official","adapter":"rss_atom","url":"https://xpeng.example.com/rss.xml","fallback_urls":["https://xpeng.example.com/news"],"allowed_hosts":["xpeng.example.com"]},
+    {"id":"ithome","tier":"B","region":"china_asia","role":"lead_only","adapter":"rss_atom","url":"https://ithome.example.com/feed.xml","allowed_hosts":["ithome.example.com"]},
+    {"id":"cnews","tier":"B","region":"russia","role":"lead_only","adapter":"rss_atom","url":"https://cnews.example.com/feed.xml","allowed_hosts":["cnews.example.com"]}
+  ],
+  "snapshots": {
+    "https://baidu.example.com/news": {
+      "status":"ok",
+      "body":"<html><head><script type=\"application/ld+json\">{\"@type\":\"NewsArticle\",\"headline\":\"Baidu AI-powered business grows 25% as ERNIE returns to frontier push\",\"url\":\"https://baidu.example.com/news/ernie-q2\",\"datePublished\":\"2026-08-18T09:04:52+00:00\"}</script></head></html>"
+    },
+    "https://marvell.example.com/current": {
+      "status":"ok",
+      "body":"<html><head><script type=\"application/ld+json\">{\"@type\":\"NewsArticle\",\"headline\":\"Marvell and Google expand custom semiconductor programs including AI inference accelerators and warrant\",\"url\":\"https://marvell.example.com/current/google-ai-8k\",\"datePublished\":\"2026-08-19T15:20:00+00:00\"}</script></head></html>"
+    },
+    "https://alibaba.example.com/feed.xml": {
+      "status":"ok",
+      "body":"<?xml version=\"1.0\"?><rss><channel><item><title>Alibaba Cloud AI demand accelerates as cloud revenue and capex rise</title><link>https://alibaba.example.com/news/q2-ai-cloud</link><pubDate>Thu, 20 Aug 2026 08:00:00 GMT</pubDate></item><item><title>Alibaba completes HK$80 billion share placement with proceeds for full-stack AI</title><link>https://alibaba.example.com/news/ai-placement</link><pubDate>Sun, 23 Aug 2026 04:47:38 GMT</pubDate></item></channel></rss>"
+    },
+    "https://deepseek.example.com/news": {
+      "status":"ok",
+      "body":"<html><head><script type=\"application/ld+json\">{\"@type\":\"NewsArticle\",\"headline\":\"DeepSeek V4-Flash-Vision-Exp released with vision capabilities\",\"url\":\"https://deepseek.example.com/news/v4-flash-vision-exp\",\"datePublished\":\"2026-08-21T12:00:00+08:00\"}</script></head></html>"
+    },
+    "https://nvidia.example.com/news": {
+      "status":"ok",
+      "body":"<html><head><script type=\"application/ld+json\">[{\"@type\":\"NewsArticle\",\"headline\":\"NVIDIA Groq 3 LPX enters full production for agentic inference with Nebius as first cloud adopter\",\"url\":\"https://nvidia.example.com/news/groq-3-lpx\",\"datePublished\":\"2026-08-24T08:00:00-07:00\"},{\"@type\":\"NewsArticle\",\"headline\":\"NVIDIA old platform announcement\",\"url\":\"https://nvidia.example.com/news/old\",\"datePublished\":\"2026-07-01T08:00:00-07:00\"}]</script></head></html>"
+    },
+    "https://xpeng.example.com/rss.xml": {"status":"error","http_status":403,"error":"HTTP 403 fixture"},
+    "https://xpeng.example.com/news": {
+      "status":"ok",
+      "body":"<html><head><script type=\"application/ld+json\">{\"@type\":\"NewsArticle\",\"headline\":\"XPENG robotics business raises over US$900 million for Physical AI at valuation over US$6.3 billion\",\"url\":\"https://xpeng.example.com/news/robotics-900m\",\"datePublished\":\"2026-08-24T09:40:44+00:00\"}</script></head></html>"
+    },
+    "https://ithome.example.com/feed.xml": {
+      "status":"ok",
+      "body":"<?xml version=\"1.0\"?><rss><channel><item><title>Alibaba Wan3.0 AI video model full launch expands generation capabilities</title><link>https://ithome.example.com/news/wan3-launch</link><pubDate>Mon, 24 Aug 2026 08:15:19 GMT</pubDate></item><item><title>DeepSeek V4-Flash-Vision-Exp lands on August 21</title><link>https://ithome.example.com/news/deepseek-vision</link><pubDate>Fri, 21 Aug 2026 06:00:00 GMT</pubDate></item></channel></rss>"
+    },
+    "https://cnews.example.com/feed.xml": {
+      "status":"ok",
+      "body":"<?xml version=\"1.0\"?><rss><channel><item><title>fabricaONE.AI plans 4.7 billion ruble bond placement</title><link>https://cnews.example.com/news/fabricaone-bonds</link><pubDate>Sat, 22 Aug 2026 10:00:00 GMT</pubDate></item><item><title>Yandex opens medical AI assistant to all doctors</title><link>https://cnews.example.com/news/yandex-medical-ai</link><pubDate>Mon, 24 Aug 2026 09:32:00 GMT</pubDate></item></channel></rss>"
+    }
+  },
+  "days": [
+    {
+      "date":"2026-08-19","start_at":"2026-08-17T02:35:53+03:00","end_at":"2026-08-19T02:35:51+03:00",
+      "controls":[{"id":"round_hill_copyright","all_token_groups":[["round hill"],["copyright","lawsuit"]]}]
+    },
+    {
+      "date":"2026-08-20","start_at":"2026-08-18T02:35:51+03:00","end_at":"2026-08-20T02:36:13+03:00",
+      "controls":[
+        {"id":"google_marvell","all_token_groups":[["marvell"],["google"],["semiconductor","inference","warrant"]]},
+        {"id":"baidu_ernie","all_token_groups":[["baidu"],["ernie"],["business","25%"]]}
+      ]
+    },
+    {
+      "date":"2026-08-21","start_at":"2026-08-19T02:36:13+03:00","end_at":"2026-08-21T02:35:30+03:00",
+      "controls":[
+        {"id":"broadcom_debt","all_token_groups":[["broadcom"],["60","debt","financing"]]},
+        {"id":"alibaba_earnings","all_token_groups":[["alibaba"],["cloud"],["ai","capex","revenue"]]},
+        {"id":"google_marvell_repeat","all_token_groups":[["marvell"],["google"],["semiconductor","inference","warrant"]]}
+      ]
+    },
+    {
+      "date":"2026-08-22","start_at":"2026-08-20T02:35:30+03:00","end_at":"2026-08-22T02:35:20+03:00",
+      "controls":[{"id":"broadcom_debt_repeat","all_token_groups":[["broadcom"],["60","debt","financing"]]}]
+    },
+    {
+      "date":"2026-08-23","start_at":"2026-08-21T02:35:20+03:00","end_at":"2026-08-23T02:35:10+03:00",
+      "controls":[
+        {"id":"nvidia_server_pricing","all_token_groups":[["nvidia"],["server"],["price","pricing","15%"]]},
+        {"id":"deepseek_vision","all_token_groups":[["deepseek"],["vision"],["v4","flash"]]}
+      ]
+    },
+    {
+      "date":"2026-08-24","start_at":"2026-08-22T02:35:10+03:00","end_at":"2026-08-24T09:07:30+03:00",
+      "controls":[{"id":"alibaba_placement","all_token_groups":[["alibaba"],["80 billion","placement"],["full-stack ai","full-stack"]]}]
+    },
+    {
+      "date":"2026-08-25","start_at":"2026-08-23T09:07:30+03:00","end_at":"2026-08-25T04:43:30+03:00",
+      "controls":[
+        {"id":"wan3","all_token_groups":[["alibaba"],["wan3.0"],["video"]]},
+        {"id":"xpeng_robotics","all_token_groups":[["xpeng"],["900 million","900"],["robotics","physical ai"]]},
+        {"id":"nvidia_groq3","all_token_groups":[["nvidia"],["groq 3 lpx"],["full production"]]}
+      ]
+    }
+  ]
+}
