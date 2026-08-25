@@ -12,6 +12,28 @@
 - [RSS для Дзена](https://rybalka.one/posts/rss.xml)
 - [sitemap](https://rybalka.one/posts/sitemap.xml)
 
+## Локальный подпроект NotebookLM-видео
+
+`automation/notebooklm-video/` хранит отдельный Windows-подпроект downstream-
+автоматизации. После уже опубликованной ИИ-Сводки он читает RSS, создаёт
+видеоповествование в NotebookLM, скачивает MP4, делает PNG-превью первого кадра
+и при включённой настройке доставляет медиа в изолированный FTP-каталог `video`.
+
+Подпроект находится в том же репозитории, чтобы схема выпуска, исходники и
+инструкции оставались доступны в одном месте, но он **не входит** в основной
+ночной retrieval/editorial GitHub Actions production. Его содержимое
+обслуживается отдельными задачами подпроекта. Обычные изменения поиска,
+редакционной логики, сайта, RSS, основного FTP-deploy, очистки и аудитов не
+должны попутно менять `automation/notebooklm-video/`.
+
+В Git попадают только переносимые исходники, безопасные шаблоны и инструкции.
+Реальные локальные конфиги, доступы, state, журналы, скачанные медиа и
+защищённый браузерный профиль не коммитятся. Подробности работы и переноса на
+другую Windows-машину описаны в
+[`automation/notebooklm-video/README.md`](automation/notebooklm-video/README.md)
+и
+[`automation/notebooklm-video/DEPLOYMENT.md`](automation/notebooklm-video/DEPLOYMENT.md).
+
 ## Текущее состояние production
 
 Production работает только из ветки `main`, использует часовой пояс

@@ -33,6 +33,20 @@ Production recovery or publication that depends on the change must wait for that
 merge command; preparation, diagnostics, CI and diff review may proceed before
 it.
 
+## NotebookLM video subproject boundary
+
+`automation/notebooklm-video/` is an independently maintained local Windows
+downstream subproject inside the wider AI-Svodki repository. It consumes an
+already-published daily digest and produces NotebookLM video assets; it does not
+participate in the main nightly retrieval/editorial GitHub Actions production.
+
+Do not modify files under `automation/notebooklm-video/` as a side effect of
+tasks about retrieval, editorial policy, RSS/site generation, the main FTP
+deploy, cleanup, audits, or repository hygiene unless the task explicitly
+targets that subproject. Its own `AGENTS.md`, `README.md`, and `DEPLOYMENT.md`
+are authoritative for that scope. Conversely, work on the video subproject does
+not authorize unrelated production changes.
+
 ## Permanent pre-hybrid search baseline
 
 The repository state immediately before the hybrid completeness architecture is

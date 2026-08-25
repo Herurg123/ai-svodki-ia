@@ -49,6 +49,10 @@ Archive-ветка не используется для разработки, н
   rescue перед Coverage;
 - `scripts/` — production, recovery, hybrid completeness, cleanup и validators;
 - `tests/` — офлайн-регрессии;
+- `notebooklm-video/` — отдельный локальный Windows downstream-подпроект для
+  NotebookLM-видео, PNG-превью и ограниченной FTP-доставки в `video`; он не
+  участвует в ночном retrieval/editorial GitHub Actions production и меняется
+  только задачами, явно адресованными этому подпроекту;
 - `preview/` — временные диагностические результаты production/CI, в Git не
   входят;
 - `recovery/` — временно восстановленные Actions artifacts, в Git не входят.
