@@ -69,8 +69,9 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File `
   C:\TRASH\NotebookLMBot\configure-ftp-access.ps1
 ```
 
-Скрипт создаёт локальный файл с `protocol=0`. При первом FTP-проходе worker
-переведёт его в `protocol=1` средствами Windows DPAPI `CurrentUser`.
+Скрипт создаёт локальный файл с `protocol=0`. На ближайшем запуске worker при
+включённой FTP-доставке переведёт его в `protocol=1` средствами Windows DPAPI
+`CurrentUser`, даже если текущий выпуск уже полностью доставлен.
 
 Защищённое значение нельзя переносить как рабочее между разными Windows-
 пользователями. При смене машины/профиля создать локальный файл заново.
