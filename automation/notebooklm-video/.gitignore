@@ -1,0 +1,30 @@
+# Local runtime configuration / protected access
+config.json
+ftp-access.json
+
+# Runtime state and locks
+state.json
+worker.lock
+
+# Logs and diagnostics
+worker.log
+!!! ERROR !!!.log
+logs/
+screenshots/
+traces/
+temp/
+
+# Generated media / registries
+downloads/
+
+# Browser profile and local browser data
+yandex-profile/
+
+# Node runtime
+node_modules/
+
+# Local backups / patch remnants
+*.bak
+*.bak-*
+*.tmp
+*.part
