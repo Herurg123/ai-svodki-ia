@@ -49,7 +49,7 @@ production-автоматизации и операторских проверо
 Video-only изменения намеренно не запускают Main CI и не входят в nightly
 retrieval/editorial production. Эта граница закреплена правилами и offline
 contract tests; подробности описаны в
-[`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md#ci-и-границы-подпроектов).
+[`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md#4-github-actions).
 
 ## Локальный NotebookLM-video
 
