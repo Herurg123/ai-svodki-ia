@@ -1,0 +1,16 @@
+Tier A official/source-aware families used in the research replay:
+- Baidu Investor Relations
+- Alibaba Group HKEX / IR
+- Alibaba Cloud Blog
+- Marvell Current Reports / SEC filings
+- NVIDIA Recent News
+- Yandex IR press releases
+- XPENG IR / RSS discovery (RSS replay returned HTTP 403; HTML/index fallback required)
+- fabricaONE.AI investor/news pages
+- DeepSeek official docs/changelog/model inventory where available
+
+Tier B lead-only families:
+- IT之家 / ITHome
+- CNews
+
+This is a research fixture/source inventory, not a production whitelist and not a publication quota.
