@@ -1,0 +1,1 @@
+Research-only note: this experiment changes no production workflow, retrieval budget, source freshness rule, regional quota, or publication behavior. Detailed findings are in the adjacent Markdown/JSON files and summarized in the canonical independent audit journal.
