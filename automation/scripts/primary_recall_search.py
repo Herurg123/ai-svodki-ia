@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import json
 import re
 import sys
 from pathlib import Path
@@ -180,11 +181,50 @@ def _sync_paths() -> None:
             setattr(_base, name, globals()[name])
 
 
+def _primary_failure_reason_code(message: str) -> str:
+    folded = message.casefold()
+    if (
+        "insufficient_quota" in folded
+        or "credit_balance_exhausted" in folded
+        or "you have no credits remaining" in folded
+    ):
+        return "openai_insufficient_quota"
+    return "primary_recall_error"
+
+
+def _persist_primary_failure(publication_date: Any, exc: Exception) -> None:
+    """Persist a machine-readable fresh-Primary failure for the final summary."""
+    if not isinstance(publication_date, str) or not publication_date.strip():
+        return
+    message = str(exc).strip()
+    report_path = Path(PRODUCTION_PREVIEW_ROOT) / "research-error.json"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(
+        json.dumps(
+            {
+                "status": "error",
+                "stage": "primary_recall",
+                "publication_date": publication_date.strip(),
+                "reason_code": _primary_failure_reason_code(message),
+                "error_type": type(exc).__name__,
+                "error_message": message,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+
 def run_primary_recall_search(*args: Any, **kwargs: Any) -> tuple[Path, dict[str, Any]]:
     _sync_paths()
     original = _base.run_primary_recall_matrix
     _base.run_primary_recall_matrix = run_primary_recall_matrix
     try:
         return _BASE_RUN_SEARCH(*args, **kwargs)
+    except Exception as exc:
+        _persist_primary_failure(kwargs.get("publication_date"), exc)
+        raise
     finally:
         _base.run_primary_recall_matrix = original
