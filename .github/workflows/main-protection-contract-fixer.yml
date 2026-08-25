@@ -1,0 +1,52 @@
+name: Main protection contract fixer
+
+on:
+  push:
+    branches:
+      - agent/main-protection-pr-gate-2026-08-25
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.event.head_commit.message != 'Fix main protection CI contracts'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: agent/main-protection-pr-gate-2026-08-25
+          fetch-depth: 0
+
+      - name: Apply focused contract fixes
+        run: python automation/scripts/_tmp_fix_main_protection_contracts.py
+
+      - name: Verify focused contracts
+        run: |
+          set -euo pipefail
+          python -m unittest \
+            automation.tests.test_pr_gate_and_main_protection \
+            automation.tests.test_repository_hygiene_workflow \
+            automation.tests.test_workflow_hygiene \
+            automation.tests.test_production_contract_sync -v
+          python automation/scripts/validate_production_daily_contract.py \
+            --config automation/config/production-daily.json \
+            --site-config automation/config/site.json \
+            --workflow .github/workflows/daily-production.yml \
+            --rss posts/rss.xml \
+            --report /tmp/production-contract.json
+          git diff --check
+
+      - name: Commit focused fixes
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            automation/scripts/validate_production_daily_contract.py \
+            automation/tests/test_pr_gate_and_main_protection.py \
+            automation/tests/test_repository_hygiene_workflow.py \
+            automation/tests/test_workflow_hygiene.py
+          git diff --cached --quiet && exit 0
+          git commit -m "Fix main protection CI contracts"
+          git push origin HEAD:agent/main-protection-pr-gate-2026-08-25
