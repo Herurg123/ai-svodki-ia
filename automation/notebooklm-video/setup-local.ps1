@@ -25,7 +25,11 @@ $files = @(
     "package.json",
     "run-worker.cmd",
     "run-worker-hidden.vbs",
-    "configure-ftp-access.ps1"
+    "configure-ftp-access.ps1",
+    "README.md",
+    "DEPLOYMENT.md",
+    "config.example.json",
+    "ftp-access.example.json"
 )
 foreach ($name in $files) {
     Copy-Item (Join-Path $SourceDir $name) (Join-Path $TargetDir $name) -Force
@@ -73,8 +77,11 @@ finally {
 }
 
 $accessPath = Join-Path $TargetDir "ftp-access.json"
-if ($ConfigureFtp -or -not (Test-Path $accessPath)) {
+if ($ConfigureFtp) {
     & (Join-Path $TargetDir "configure-ftp-access.ps1") -AccessFile $accessPath
+}
+else {
+    Write-Host "FTP-доступ не создавался. При необходимости запустите configure-ftp-access.ps1 отдельно."
 }
 
 Write-Host "Локальная установка подготовлена: $TargetDir"
