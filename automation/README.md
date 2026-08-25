@@ -121,6 +121,7 @@ API domain route с date-free query
 24-часовым healing overlap перед anchor. Archive anchor назад не двигается,
 exact source URL уже опубликованных сюжетов отсекаются до merge, downstream
 semantic dedupe остаётся обязательным.
+
 Primary, bounded rescue, Hybrid и Coverage используют короткие date-free
 relative-freshness queries (`latest`/`recent`/`current`/`breaking`). Exact
 `search_window` является post-retrieval eligibility boundary, а не query text.
@@ -360,6 +361,7 @@ scanner только диагностирует и никогда не удал�
 ## Локальная проверка
 
 Основной бесплатный набор:
+
 ```bash
 python -m compileall automation/scripts automation/tests
 python -m unittest discover -s automation/tests -v
