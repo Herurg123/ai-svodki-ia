@@ -18,21 +18,23 @@ spec.loader.exec_module(sp)
 
 
 class SourcePulseResearchBoundaryTests(unittest.TestCase):
-    def test_registry_is_research_only_and_not_wired_into_production(self):
+    def test_registry_is_shadow_only_and_has_no_candidate_influence(self):
         config_path = AUTOMATION_ROOT / "config" / "source-pulse-v1.json"
         payload = json.loads(config_path.read_text(encoding="utf-8"))
-        self.assertEqual(payload["mode"], "research_only")
-        self.assertFalse(payload["production_integration"])
+        self.assertEqual(payload["mode"], "production_shadow")
+        self.assertTrue(payload["production_integration"])
+        self.assertFalse(payload["candidate_influence"])
+        self.assertFalse(payload["repoll_on_recovery"])
         self.assertEqual(len(sp.load_registry(config_path)), 12)
 
-        production_surfaces = [
-            REPOSITORY_ROOT / ".github" / "workflows" / "daily-production.yml",
-            AUTOMATION_ROOT / "scripts" / "run_digest_preview.py",
-        ]
-        for path in production_surfaces:
-            text = path.read_text(encoding="utf-8").casefold()
-            self.assertNotIn("source_pulse", text, str(path))
-            self.assertNotIn("source-pulse-v1", text, str(path))
+        workflow = REPOSITORY_ROOT / ".github" / "workflows" / "daily-production.yml"
+        preview = AUTOMATION_ROOT / "scripts" / "run_digest_preview.py"
+        hybrid = AUTOMATION_ROOT / "scripts" / "hybrid_search_completeness.py"
+        self.assertNotIn("source_pulse", workflow.read_text(encoding="utf-8").casefold())
+        self.assertNotIn("source_pulse", preview.read_text(encoding="utf-8").casefold())
+        hybrid_text = hybrid.read_text(encoding="utf-8")
+        self.assertIn("source_pulse_shadow", hybrid_text)
+        self.assertIn("run_source_pulse_shadow", hybrid_text)
 
     def test_redirect_to_unlisted_host_is_rejected_before_follow(self):
         handler = sp.SafeRedirect(("good.example",))
