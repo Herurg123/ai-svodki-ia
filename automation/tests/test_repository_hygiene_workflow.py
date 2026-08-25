@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[2]
 HYGIENE = ROOT / ".github" / "workflows" / "repository-hygiene.yml"
 CONTENT = ROOT / ".github" / "workflows" / "repository-cleanup.yml"
 CI = ROOT / ".github" / "workflows" / "ci.yml"
+PR_GATE = ROOT / ".github" / "workflows" / "pr-gate.yml"
 AGENTS = ROOT / "AGENTS.md"
 ROOT_README = ROOT / "README.md"
 AUTOMATION_README = ROOT / "automation" / "README.md"
@@ -62,9 +63,13 @@ class RepositoryHygieneWorkflowTests(unittest.TestCase):
         self.assertIn("automation/preview/", gitignore)
         self.assertIn("automation/recovery/", gitignore)
 
-    def test_main_ci_runs_when_agent_contract_changes(self) -> None:
+    def test_agent_contract_changes_are_covered_by_main_ci(self) -> None:
         ci = CI.read_text(encoding="utf-8")
-        self.assertEqual(ci.count('- "AGENTS.md"'), 2)
+        gate = PR_GATE.read_text(encoding="utf-8")
+        self.assertEqual(ci.count('- "AGENTS.md"'), 1)
+        self.assertIn("workflow_call:", ci)
+        self.assertIn("pull_request:", gate)
+        self.assertIn("every path that is not proven video-only belongs to Main CI", gate)
 
 
 if __name__ == "__main__":

@@ -47,8 +47,13 @@ class PrGateAndMainProtectionTests(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             self.assertNotIn("git push origin HEAD:main", text)
             if path.name in writers:
-                self.assertIn("automation/scripts/push_protected_main.sh HEAD:main", text)
-                self.assertEqual(text.count("MAIN_PUSH_DEPLOY_KEY"), 1)
+                self.assertEqual(
+                    text.count("automation/scripts/push_protected_main.sh HEAD:main"), 1
+                )
+                self.assertEqual(
+                    text.count("MAIN_PUSH_DEPLOY_KEY: ${{ secrets.MAIN_PUSH_DEPLOY_KEY }}"),
+                    1,
+                )
 
     def test_push_helper_is_narrow_and_pins_github_host_key(self) -> None:
         helper = PUSH_HELPER.read_text(encoding="utf-8")

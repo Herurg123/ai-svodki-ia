@@ -208,7 +208,7 @@ def main() -> int:
         ("site promotion", "promote_production_site.py"),
         ("publish change validation", "validate_publish_changes.py"),
         ("publish change report", "publish-changes.json"),
-        ("git push", "git push origin HEAD:main"),
+        ("protected main push", "bash automation/scripts/push_protected_main.sh HEAD:main"),
         ("commit SHA output", 'echo "commit_sha=${commit_sha}"'),
         ("reusable deployment", "uses: ./.github/workflows/deploy-posts.yml"),
         ("deployment dependency", "needs: production"),
