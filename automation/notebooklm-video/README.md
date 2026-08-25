@@ -54,6 +54,8 @@ RSS rybalka.one
 - `config.example.json`;
 - `ftp-access.example.json`;
 - `setup-local.ps1` и `configure-ftp-access.ps1`;
+- `install-ftp-support.cmd` для повторной установки npm-зависимостей в уже
+  развёрнутом рабочем каталоге;
 - portable `run-worker.cmd` и `run-worker-hidden.vbs`;
 - документация и безопасные offline smoke tests.
 
@@ -66,7 +68,9 @@ RSS rybalka.one
 Предпочтительный способ первичной настройки — `setup-local.ps1`. Он создаёт
 рабочий `config.json` из безопасного шаблона, подставляет выбранный каталог,
 текущий Windows-профиль, локальные пути, устанавливает npm-зависимости и
-проверяет `worker.js`.
+проверяет `worker.js`. Реальный FTP-доступ автоматически создаётся этим скриптом
+только при явном `-ConfigureFtp`; без этого ключа остаётся безопасный шаблон и
+отдельная команда `configure-ftp-access.ps1`.
 
 FTP-доступ создаётся отдельным `configure-ftp-access.ps1`. Поле `uuid` вводится
 скрыто. Файл создаётся с `protocol=0`; на ближайшем запуске worker при
