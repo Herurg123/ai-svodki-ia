@@ -65,12 +65,18 @@ RSS rybalka.one
 
 - `worker.js`;
 - `package.json` с фиксированными верхнеуровневыми версиями зависимостей;
+- `package-lock.json` с зафиксированным полным транзитивным npm-деревом;
 - `config.example.json`;
 - `ftp-access.example.json`;
 - `setup-local.ps1` и `configure-ftp-access.ps1`;
 - `install-ftp-support.cmd`;
 - portable `run-worker.cmd` и `run-worker-hidden.vbs`;
 - документация и безопасные offline smoke tests.
+
+`package.json` и `package-lock.json` являются одной версионируемой единицей.
+Изменение npm-зависимостей должно обновлять lockfile в том же pull request.
+Локальная установка выполняется через `npm ci`, поэтому произвольное новое
+разрешение транзитивных версий при развёртывании не допускается.
 
 Реальные локальные конфиги, доступы, state, журналы, скачанные медиафайлы,
 диагностические файлы и профиль браузера в Git не попадают. Правила закреплены
@@ -80,10 +86,15 @@ RSS rybalka.one
 
 Предпочтительный способ первичной настройки — `setup-local.ps1`. Он создаёт
 рабочую конфигурацию из безопасного шаблона, подставляет выбранный каталог,
-текущий Windows-профиль и локальные пути, устанавливает npm-зависимости и
-проверяет `worker.js`. Реальный FTP-доступ автоматически создаётся только при
-явном `-ConfigureFtp`; без него используется отдельная команда
+текущий Windows-профиль и локальные пути, копирует `package.json` вместе с
+`package-lock.json`, выполняет `npm ci --no-audit --no-fund` и проверяет
+`worker.js`. Реальный FTP-доступ автоматически создаётся только при явном
+`-ConfigureFtp`; без него используется отдельная команда
 `configure-ftp-access.ps1`.
+
+`npm ci` намеренно удаляет существующий `node_modules` и восстанавливает его
+строго по committed lockfile. Если manifest и lockfile рассинхронизированы, npm
+завершает установку ошибкой вместо тихого изменения dependency tree.
 
 Локальный FTP access создаётся отдельным `configure-ftp-access.ps1` и затем
 защищается Windows DPAPI `CurrentUser`. Защищённое значение привязано к
@@ -113,11 +124,18 @@ npm test
 ```
 
 Тесты не открывают NotebookLM, не подключаются к FTP, не используют production
-API и не пытаются эмулировать Windows DPAPI.
+API и не пытаются эмулировать Windows DPAPI. Отдельный lockfile contract smoke
+проверяет, что direct dependencies в `package.json` и `package-lock.json`
+совпадают, а локальные install entrypoints используют `npm ci`.
 
-Локально можно выполнить:
+Video CI намеренно не выполняет установку npm-зависимостей. Сам lockfile был
+сформирован штатным npm и отдельно проверен чистой установкой `npm ci` при его
+создании; ежедневные PR-проверки остаются независимыми от npm registry.
+
+Локально после получения исходников или изменения зависимостей выполнять:
 
 ```powershell
+npm ci --no-audit --no-fund
 node --check .\worker.js
 npm test
 ```
