@@ -19,8 +19,10 @@
     "recovery_rate": 0.6923076923
   },
   "offline_tests": {
-    "count": 16,
-    "passed": 16
+    "local_core_count": 16,
+    "local_core_passed": 16,
+    "pr_boundary_tests_added": 2,
+    "full_ci_required": true
   },
   "architecture_invariants": {
     "primary_12_12_unchanged": true,
@@ -40,5 +42,6 @@
     "snapshot_hash_included_volatile_latency",
     "redirect_target_was_not_prevalidated_before_follow"
   ],
+  "issue_found_and_fixed_during_pr_review": "unused_registry_limits_block_removed_to_avoid_false_runtime_contract",
   "verdict": "PASS_READY_FOR_RESEARCH_ONLY_PR"
 }
