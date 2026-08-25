@@ -98,9 +98,9 @@ them during refactoring.
   repurpose or delete it.
 - `posts/_footer-scr.png` is a permanent production asset and must not be removed
   by dated-content cleanup.
-- Repository hygiene may mutate only objects classified safe by its policy. It
-  must not edit tracked source, `main`, releases, tags, permanent archive
-  branches or published/editorial content.
+- Repository hygiene may mutate only explicitly classified ephemeral GitHub objects
+  that are safe under its policy. It must not edit tracked project files, `main`,
+  releases, tags, permanent archive branches or published/editorial content.
 - The 32-day repository/public-content cleanup is separate from repository
   hygiene. `posts/images/` remains mandatory; absent historical
   `posts/dzen-test/images/` is valid after the last legacy image expires.
