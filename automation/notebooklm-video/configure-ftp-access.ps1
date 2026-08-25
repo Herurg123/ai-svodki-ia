@@ -1,5 +1,5 @@
 param(
-    [string]$AccessFile = "C:\TRASH\NotebookLMBot\ftp-access.json"
+    [string]$AccessFile = "C:\NotebookLMBot\ftp-access.json"
 )
 
 $ErrorActionPreference = "Stop"
@@ -73,4 +73,4 @@ if (Test-Path $AccessFile) {
 Move-Item $tmp $AccessFile -Force
 
 Write-Host "Готово: $AccessFile"
-Write-Host "protocol=0. При следующем FTP-проходе worker локально переведёт файл в protocol=1."
+Write-Host "protocol=0. На ближайшем запуске worker при включённой FTP-доставке локально переведёт файл в protocol=1."
