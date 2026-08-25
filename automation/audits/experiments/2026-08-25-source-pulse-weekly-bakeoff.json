@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "experiment": "source_pulse_weekly_bakeoff",
+  "experiment_date": "2026-08-25",
+  "benchmark_start": "2026-08-19",
+  "benchmark_end": "2026-08-25",
+  "mode": "assistant_side_fixed_source_source_aware_replay",
+  "pure_terra_ab": false,
+  "production_api_used": false,
+  "production_behavior_changed": false,
+  "source_pulse_v0": {
+    "tier_a": [
+      {"id": "baidu_ir", "url": "https://ir.baidu.com/", "role": "official"},
+      {"id": "alibaba_hkex_ir", "url": "https://www.alibabagroup.com/en-US/ir-filings-hkex", "role": "official"},
+      {"id": "alibaba_cloud_blog", "url": "https://www.alibabacloud.com/blog", "role": "official"},
+      {"id": "marvell_current_reports", "url": "https://investor.marvell.com/sec-filings/current-reports", "role": "official"},
+      {"id": "nvidia_recent_news", "url": "https://blogs.nvidia.com/recent-news/", "role": "official"},
+      {"id": "yandex_ir", "url": "https://ir.yandex.ru/press-releases?year=2026", "role": "official"},
+      {"id": "xpeng_ir", "url": "https://ir.xiaopeng.com/rss-feeds", "role": "official", "health_note": "RSS replay returned HTTP 403; HTML/index fallback required"},
+      {"id": "fabricaone_investor", "role": "official"},
+      {"id": "deepseek_official", "role": "official", "health_note": "changelog/index can lag; do not use as sole discovery path"}
+    ],
+    "tier_b": [
+      {"id": "ithome", "role": "lead_only", "region": "china_asia"},
+      {"id": "cnews", "role": "lead_only", "region": "russia"}
+    ]
+  },
+  "canonical_strict_miss_day_instances": [
+    {"date": "2026-08-19", "event": "Round Hill copyright", "pulse_hit": false},
+    {"date": "2026-08-20", "event": "Google/Marvell custom AI chips", "pulse_hit": true},
+    {"date": "2026-08-20", "event": "Baidu/ERNIE AI-business", "pulse_hit": true},
+    {"date": "2026-08-21", "event": "Broadcom >$60B AI debt financing", "pulse_hit": false},
+    {"date": "2026-08-21", "event": "Alibaba AI/cloud earnings", "pulse_hit": true},
+    {"date": "2026-08-21", "event": "Google/Marvell custom AI chips repeat", "pulse_hit": true},
+    {"date": "2026-08-22", "event": "Broadcom >$60B AI debt financing repeat", "pulse_hit": false},
+    {"date": "2026-08-23", "event": "Nvidia AI server price hikes", "pulse_hit": false},
+    {"date": "2026-08-23", "event": "DeepSeek V4-Flash-Vision-Exp", "pulse_hit": true},
+    {"date": "2026-08-24", "event": "Alibaba HK$80B / $10.2B AI placement", "pulse_hit": true},
+    {"date": "2026-08-25", "event": "Alibaba Wan3.0 full launch", "pulse_hit": true},
+    {"date": "2026-08-25", "event": "XPENG robotics >$900M financing", "pulse_hit": true},
+    {"date": "2026-08-25", "event": "NVIDIA Groq 3 LPX full production", "pulse_hit": true}
+  ],
+  "historical_high_signal_controls_not_in_original_strict_denominator": [
+    {"date": "2026-08-19", "event": "Baidu/ERNIE AI-business", "pulse_hit": true, "reason": "later journal says it was already noted as Asia miss; original canonical 8/9 denominator is not revised"}
+  ],
+  "metrics": {
+    "strict_miss_day_instances": 13,
+    "strict_miss_day_hits": 9,
+    "strict_miss_day_recovery_rate": 0.6923076923,
+    "with_historical_high_signal_instances": 14,
+    "with_historical_high_signal_hits": 10,
+    "with_historical_high_signal_recovery_rate": 0.7142857143,
+    "unique_strict_missed_events": 11,
+    "unique_strict_missed_event_hits": 8,
+    "unique_strict_recovery_rate": 0.7272727273
+  },
+  "per_day": [
+    {"date": "2026-08-19", "published": 8, "additional": ["Baidu historical high-signal", "HappyShrimp beta consider", "MWS AI cost consider", "VK AI Space consider"], "still_missed": ["Round Hill strict"], "verdict": "better regional lead coverage; canonical strict miss remains"},
+    {"date": "2026-08-20", "published": 7, "additional": ["Google/Marvell strict", "Baidu strict"], "still_missed": [], "verdict": "strongly better; 2/2 strict miss leads"},
+    {"date": "2026-08-21", "published": 9, "additional": ["Alibaba earnings strict", "Google/Marvell strict repeat", "Russia/Yandex ecosystem consider leads"], "still_missed": ["Broadcom debt strict"], "verdict": "better; 2/3 strict miss-day leads"},
+    {"date": "2026-08-22", "published": 7, "additional": [], "still_missed": ["Broadcom debt strict"], "verdict": "neutral; useful no-quota negative control"},
+    {"date": "2026-08-23", "published": 4, "additional": ["DeepSeek Vision strict", "fabricaONE.AI borderline Russia"], "still_missed": ["Nvidia server pricing strict"], "verdict": "better; 1/2 strict plus Russia lead"},
+    {"date": "2026-08-24", "published": 1, "additional": ["Alibaba placement strict"], "still_missed": [], "verdict": "strongly better; independent lead for agency false-zero"},
+    {"date": "2026-08-25", "published": 3, "additional": ["Wan3.0 strict", "XPENG robotics strict", "NVIDIA Groq 3 LPX strict", "Sber anti-phishing consider", "Yandex official-source redundancy"], "still_missed": [], "verdict": "strongly better; 3/3 strict controls recovered as leads"}
+  ],
+  "unrecovered_unique_classes": [
+    "legal/news-agency event without participant newsroom pulse: Round Hill",
+    "private capital-markets financing: Broadcom debt",
+    "supply-chain/pricing report: Nvidia server price hikes"
+  ],
+  "architecture_guardrails": [
+    "Source Pulse is fail-open per source and overall",
+    "Primary 12/12 remains unchanged",
+    "agency rescue health/trigger remains independent of Pulse",
+    "do not inject raw Pulse leads into Primary per-pass caps",
+    "deduplicate Pulse leads after Primary/rescue",
+    "Tier B sources are lead-only",
+    "same effective window and normal freshness proof apply",
+    "archive URL and semantic/event dedupe remain mandatory",
+    "mutable sources use event fingerprint, not URL-only dedupe",
+    "same-day recovery reuses saved Pulse snapshot and does not silently repoll",
+    "no China/Russia publication quota",
+    "Web Search ceiling remains 24",
+    "future no-Web-Search model triage is separately budgeted and requires explicit production approval",
+    "fixed HTTPS/public-network source registry and bounded fetches are required"
+  ],
+  "freshness_followup": {
+    "separate_experiment_required": true,
+    "diagnosis": "Google/Verizon and Yandex Aug25 are extractor/alternate-source proof failures, not a blanket date-only rejection",
+    "do_not": "weaken Source Freshness Proof globally",
+    "test": "alternate authoritative source corroboration and publication metadata extractor coverage with cutoff-boundary negatives"
+  },
+  "architecture_verdict": {
+    "source_pulse_sidecar_prototype": "GO",
+    "replace_primary": "NO-GO",
+    "raw_primary_injection": "NO-GO",
+    "regional_quotas": "NO-GO",
+    "raise_web_search_ceiling_above_24": "NO-GO",
+    "weaken_freshness": "NO-GO",
+    "bundle_source_pulse_and_freshness_patch": "NO-GO"
+  }
+}
