@@ -20,6 +20,8 @@ class PrGateAndMainProtectionTests(unittest.TestCase):
         self.assertIn("uses: ./.github/workflows/video-ci.yml", gate)
         self.assertIn('path == ".github/workflows/pr-gate.yml"', gate)
         self.assertIn('path.startswith("automation/notebooklm-video/")', gate)
+        self.assertIn("if not changed:", gate)
+        self.assertIn("every path that is not proven video-only belongs to Main CI", gate)
         self.assertNotIn("OPENAI_API_KEY", gate)
         self.assertNotIn("contents: write", gate)
 
@@ -41,9 +43,12 @@ class PrGateAndMainProtectionTests(unittest.TestCase):
         }
         self.assertEqual(writers, {"daily-production.yml", "repository-cleanup.yml"})
 
-        for name in writers:
-            text = (WORKFLOW_ROOT / name).read_text(encoding="utf-8")
-            self.assertIn("automation/scripts/push_protected_main.sh HEAD:main", text)
+        for path in WORKFLOW_ROOT.glob("*.yml"):
+            text = path.read_text(encoding="utf-8")
+            self.assertNotIn("git push origin HEAD:main", text)
+            if path.name in writers:
+                self.assertIn("automation/scripts/push_protected_main.sh HEAD:main", text)
+                self.assertEqual(text.count("MAIN_PUSH_DEPLOY_KEY"), 1)
 
     def test_push_helper_is_narrow_and_pins_github_host_key(self) -> None:
         helper = PUSH_HELPER.read_text(encoding="utf-8")
