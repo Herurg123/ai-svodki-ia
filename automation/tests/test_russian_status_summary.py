@@ -114,6 +114,54 @@ class RussianStatusSummaryTests(unittest.TestCase):
         )
         self.assertIsNotNone(annotation)
 
+    def test_insufficient_quota_is_explicit_and_actionable(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            old = Path.cwd()
+            os.chdir(temporary)
+            try:
+                report_dir = Path("automation/preview/production-daily")
+                report_dir.mkdir(parents=True)
+                (report_dir / "research-error.json").write_text(
+                    json.dumps(
+                        {
+                            "status": "error",
+                            "stage": "primary_recall",
+                            "publication_date": "2026-08-25",
+                            "reason_code": "openai_insufficient_quota",
+                            "error_type": "PrimaryRecallResponseError",
+                            "error_message": (
+                                "Error code: 429 - {'error': {'message': "
+                                "'You have no credits remaining. Add credits to continue using the API.', "
+                                "'type': 'insufficient_quota', "
+                                "'code': 'credit_balance_exhausted'}}"
+                            ),
+                        },
+                        ensure_ascii=False,
+                    ),
+                    encoding="utf-8",
+                )
+                markdown, annotation = status.build_summary(
+                    job_status="failure",
+                    publication_date="2026-08-25",
+                    publish="true",
+                    recovery_run_id="",
+                    run_url="https://github.test/run",
+                    commit_sha="",
+                )
+            finally:
+                os.chdir(old)
+
+        self.assertIsNotNone(annotation)
+        self.assertIn("Research API / Primary Recall", markdown)
+        self.assertIn("Недостаточно средств на балансе OpenAI API", markdown)
+        self.assertIn("429", markdown)
+        self.assertIn("insufficient_quota", markdown)
+        self.assertIn("credit_balance_exhausted", markdown)
+        self.assertIn("publication_date=2026-08-25", markdown)
+        self.assertIn("publish=true", markdown)
+        self.assertIn("force_fresh_research=true", markdown)
+        self.assertIn("recovery_run_id", markdown)
+
 
 if __name__ == "__main__":
     unittest.main()
