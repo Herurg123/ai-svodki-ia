@@ -47,14 +47,13 @@
 
 Versioned implementation files such as `*_v1.py`, `*_v2.py` and `*_v8.py` are
 preserved compatibility/recovery layers, not arbitrary duplicates. Their
-lifecycle and refactor rules are described in
-[`ARCHITECTURE.md`](ARCHITECTURE.md#совместимость-и-versioned-реализации).
+lifecycle and refactor rules are described in [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## Workflows
 
 Основной production-код обслуживается `Main CI`, а локальный video-подпроект
 имеет отдельный `Video CI`. Полный workflow inventory и границы ответственности
-см. в [`ARCHITECTURE.md`](ARCHITECTURE.md#github-actions).
+см. в [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 Video-only изменения под `notebooklm-video/**` не являются изменениями nightly
 production и не должны запускать Main CI. В обратную сторону production
