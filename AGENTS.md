@@ -33,10 +33,12 @@ previous message asked to continue. Merge only after the project owner gives a
 separate explicit merge command for that prepared PR. Production recovery or
 publication that depends on the change must wait for that merge command.
 
-`main` is protected by the canonical repository ruleset described in
-`automation/config/main-branch-ruleset.json`. `Required PR Gate` is the only
-required status check. Do not make path-filtered Main CI or Video CI directly
-required, because a skipped required workflow remains pending.
+`main` must be protected by the canonical repository ruleset described in
+`automation/config/main-branch-ruleset.json`; operator activation is documented
+in `automation/MAIN_PROTECTION.md`. Presence of the JSON file alone does not
+activate GitHub settings. `Required PR Gate` is the only required status check.
+Do not make path-filtered Main CI or Video CI directly required, because a skipped
+required workflow remains pending.
 
 The only allowed direct pushes to protected `main` are the validated publication
 commit in `daily-production.yml` and validated retention commit in
