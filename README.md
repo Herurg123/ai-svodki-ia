@@ -79,10 +79,7 @@ commit и deploy. Для короткого выпуска сохраняетс�
 `recovery_run_id`. Текущие production defaults: `gpt-5.6-terra` для text/search и
 `gpt-image-2` для cover generation.
 
-Полностью завершённый нулевой candidate pool является normal successful
-`no-publish`, а не production failure. Technical partial/error audits remain
-fail-closed. Нулевая остановка требует актуальный `high_signal_recall_sentinel`
-версии 8 и завершённые обязательные quality/search стадии.
+Полностью завершённый нулевой candidate pool является normal successful `no-publish`, а не production failure. Technical partial/error audits remain fail-closed. Нулевая остановка требует актуальный `high_signal_recall_sentinel` версии 8 и завершённые обязательные quality/search стадии.
 
 ## Правила инженерной уборки GitHub
 
