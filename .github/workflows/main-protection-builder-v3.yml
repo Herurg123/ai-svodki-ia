@@ -1,0 +1,38 @@
+name: Main protection builder v3
+
+on:
+  push:
+    branches:
+      - agent/main-protection-pr-gate-2026-08-25
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.head_commit.message != 'Apply main protection wiring v3'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: agent/main-protection-pr-gate-2026-08-25
+          fetch-depth: 0
+
+      - name: Apply temporary patcher
+        run: python automation/scripts/_tmp_apply_main_protection.py
+
+      - name: Verify protection contracts
+        run: |
+          set -euo pipefail
+          python -m unittest automation.tests.test_video_ci_boundary automation.tests.test_pr_gate_and_main_protection -v
+          git diff --check
+
+      - name: Commit builder result
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/daily-production.yml .github/workflows/repository-cleanup.yml README.md AGENTS.md automation/README.md automation/ARCHITECTURE.md automation/notebooklm-video/README.md automation/notebooklm-video/AGENTS.md
+          git diff --cached --quiet && exit 0
+          git commit -m "Apply main protection wiring v3"
+          git push origin HEAD:agent/main-protection-pr-gate-2026-08-25
