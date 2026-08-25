@@ -13,6 +13,7 @@
 3. Разделять retrieval miss, editorial rejection, stale, duplicate, material update, after-cutoff, borderline и infrastructure/API failure.
 4. Отдельно проверять major agencies, China/Asia, Russia, Source Freshness Proof, Hybrid/Coverage и source concentration.
 5. Не менять production-архитектуру автоматически. Повторяющийся дефект сначала получает отдельный контролируемый experiment.
+6. Infrastructure/API failure, случившийся до meaningful execution retrieval pipeline, фиксировать в журнале как operational incident, но не включать в recall/completeness статистику архитектуры поиска. Первый последующий полноценный run за ту же publication date должен дать отдельный substantive audit и именно он учитывается в post-patch sample.
 
 ---
 
@@ -59,7 +60,7 @@
 
 ---
 
-## 2026-08-25 — post-patch день 1/7
+## 2026-08-25 — infrastructure/API exclusion до полноценного post-patch аудита
 
 ### Production
 - Scheduled GitHub Actions run: `32789961306`, conclusion `failure`.
@@ -73,6 +74,13 @@
 - Pipeline fail-closed остановил research. Primary не завершён; `major_agencies` не запускался; agency discovery rescue v3, Hybrid, Coverage, editorial, image и promotion не запускались.
 - Выпуск 25 августа не опубликован.
 - Artifact `daily-production-2026-08-25`, ID `9542780627`, сохранён, но он маленький preflight/failure artifact; полноценного Primary/rescue/editorial state в нём нет.
+
+### Статистический статус инцидента
+- **EXCLUDED FROM RETRIEVAL ARCHITECTURE STATISTICS.** Этот run не учитывается как плохой recall/completeness день и не ухудшает post-patch статистику поиска.
+- Причина непубликации внешняя по отношению к retrieval semantics: исчерпанный OpenAI API balance остановил pipeline до первого завершённого Primary search.
+- Формальное `0 published` и даже условное `0/1` нельзя использовать в сравнении качества v3 с предыдущими днями: поисковая архитектура не получила возможности исполниться.
+- Этот incident также **не расходует meaningful day post-patch sample**. До успешного полноценного run размер post-patch выборки остаётся `0/7`.
+- Если ручной fresh `Daily production digest` за `2026-08-25` успешно завершится после пополнения баланса, для архитектурной статистики именно его artifact/effective window и готовый выпуск должны быть проаудированы как первый meaningful post-patch день `1/7`; текущая quota-запись остаётся только operational incident.
 
 ### Фактический v3 contract на production SHA
 По `automation/scripts/agency_discovery_rescue.py` на SHA run:
@@ -96,8 +104,8 @@
 - AWS 24 августа объявила доступность OpenAI GPT-5.6 Terra/Luna в AWS GovCloud, но доступный source также даёт дату без точного времени; **borderline / timestamp-unresolved** для exact-window denominator.
 
 ### Strict recall
-- Production retrieval не завершил даже первый обязательный search, поэтому обычный `found / independently verified Must Include` recall для системы сегодня математически был бы `0/1`, но такой показатель не является оценкой качества retrieval-патча: причиной нуля был внешний API quota failure до исполнения поисковой архитектуры.
-- Каноническая оценка для post-patch experiment: **strict recall = N/A для оценки v3**; отдельно зафиксировано, что в окне был минимум один strict event, поэтому день нельзя считать «тихим нулём».
+- Production retrieval не завершил даже первый обязательный search. Условное `0/1` описывает только факт прерванного run, но **не является метрикой retrieval quality и не входит в статистический ряд архитектуры поиска**.
+- Каноническая оценка для post-patch experiment: **strict recall = N/A / excluded**; отдельно зафиксировано, что в окне был минимум один strict event, поэтому день нельзя считать «тихим нулём».
 
 ### Primary / Rescue / Hybrid / Coverage anatomy
 - Primary: started, `global_breaking` failed before completion with OpenAI 429; completed searches по artifact/log = 0.
@@ -110,9 +118,9 @@
 - Полного budget burn не было: failure произошёл на первом fresh Primary request, а не после 24 searches.
 
 ### v3 rescue verdict
-**INCONCLUSIVE / NOT TESTED.**
+**INCONCLUSIVE / NOT TESTED / EXCLUDED FROM SAMPLE.**
 
-Сегодняшний run не предоставляет evidence ни в пользу, ни против `search_context_size=high`: API quota failure случился на `global_breaking` до `major_agencies` и до самого rescue. Нельзя классифицировать этот день как повтор v2 false-zero и нельзя объявлять v3 сломанным.
+Сегодняшний scheduled run не предоставляет evidence ни в пользу, ни против `search_context_size=high`: API quota failure случился на `global_breaking` до `major_agencies` и до самого rescue. Нельзя классифицировать этот день как повтор v2 false-zero и нельзя объявлять v3 сломанным или улучшившимся.
 
 ### Freshness / noise / duplicates
 - Новых candidates и published stories нет, поэтому Source Freshness Proof, direct-Reuters acceptance, archive dedupe, semantic dedupe, source concentration и syndicated-source guards не получили runtime test.
@@ -132,34 +140,34 @@
 ### Recovery / cost / observability
 - Scheduled run корректно не использовал `force_fresh_research`; automatic recovery artifact для новой даты отсутствовал.
 - Неожиданного повторного research не было.
-- Ошибка хорошо видна в job log как `credit_balance_exhausted`, но финальный `pipeline-status.json`/русский summary классифицировал её как `Неопределённый этап` и сообщил, что точная причина не сохранена в JSON. Это отдельный **observability defect**: quota root cause не прокинут в канонический failure status.
-- Этот observability gap не менял production behavior: fail-closed сработал правильно и публикация была заблокирована.
+- Ошибка хорошо видна в job log как `credit_balance_exhausted`, но финальный `pipeline-status.json`/русский summary классифицировал её как `Неопределённый этап`. Это был отдельный **observability defect**, не retrieval defect.
+- После этого инцидента PR #79 добавил сохранение Primary API failure и явный русский Summary для `429 insufficient_quota / credit_balance_exhausted`; исправление диагностики не меняет retrieval architecture и не влияет на её статистику.
 
 ### Оценка дня
-- Freshness: **N/A — no published/retrieved candidates**.
-- Completeness: **N/A — research aborted before completion**.
-- Post-patch verdict относительно baseline 24 августа: **NEUTRAL / INCONCLUSIVE**.
+- Freshness: **N/A — excluded infrastructure/API incident**.
+- Completeness: **N/A — excluded infrastructure/API incident**.
+- Post-patch verdict относительно baseline 24 августа: **NEUTRAL / INCONCLUSIVE, вне статистической выборки**.
 - Причина: v3 architecture сегодня не исполнялась. Нельзя назвать patch лучше или хуже по run, который умер до relevant stage из-за исчерпанного OpenAI API balance.
 - Важное отличие от baseline false-zero: 24 августа pipeline технически выполнил searches и не нашёл известное событие; 25 августа search architecture не получила возможности работать вообще.
-- День post-patch наблюдения: **1/7**, но это **не meaningful v3 test day**. Следующий успешный scheduled production run с доступным API должен стать первым полноценным out-of-sample production test v3.
+- Meaningful post-patch наблюдения: **0/7**. Следующий успешный полный production run — включая ручной fresh rerun за 25 августа — должен стать первым полноценным out-of-sample production test v3.
 
 ### Что делать по результату
-- Production retrieval code не менять по сегодняшнему run.
-- После восстановления API balance дождаться обычного следующего production run; не делать платный rerun только ради аудита.
-- В следующем полноценном run особенно проверить новый strict control class: fresh Reuters/agency и China model-product events, `major_agencies raw/accepted`, v3 trigger/execution и source pool.
-- Отдельным reliability patch-кандидатом считать улучшение failure observability для `insufficient_quota / credit_balance_exhausted`, но не смешивать его с retrieval experiment.
+- Production retrieval code не менять по этому quota incident.
+- После пополнения API balance допустим ручной fresh `Daily production digest` за `2026-08-25`; его результат нужно проверить отдельным полноценным независимым аудитом completeness/freshness/retrieval anatomy.
+- В таком аудите особенно проверить новый strict control class: fresh Reuters/agency и China model-product events, `major_agencies raw/accepted`, v3 trigger/execution и source pool.
+- Quota-failure run оставить в журнале только как operational/reliability incident; не смешивать его с дальнейшим BETTER/NEUTRAL/WORSE анализом retrieval patch.
 
 ---
 
 ## Post-patch серия после PR #77
 
-| День | Дата | Production | v3 meaningful test | Verdict | Ключевой результат |
+| Статус | Дата | Production | v3 meaningful test | Verdict | Ключевой результат |
 |---|---|---|---|---|---|
-| 1/7 | 2026-08-25 | FAIL до Primary completion | нет | NEUTRAL / INCONCLUSIVE | API 429 `credit_balance_exhausted`; Reuters Wan3.0 был в окне, но retrieval не исполнялся |
+| excluded, sample остаётся 0/7 | 2026-08-25 scheduled | FAIL до Primary completion | нет | N/A / operational incident | API 429 `credit_balance_exhausted`; retrieval architecture не исполнялась |
 
 ## Что наблюдать дальше
 
-- Первый успешный production run после v3: `major_agencies` source pool и agency discovery rescue `high` против нового out-of-sample Reuters control.
+- Первый успешный production run после v3 — в том числе ручной rerun 25 августа: `major_agencies` source pool и agency discovery rescue `high` против нового out-of-sample Reuters control.
 - Не повторяется ли defect `fresh Reuters Must Include exists → provider source pool empty/stale → zero candidate`.
 - China/Asia model-product route после DeepSeek и нового Wan3.0 control отдельно от business/earnings.
 - Russia business/financing без региональной квоты; strict defect только при independently verified Must Include.
