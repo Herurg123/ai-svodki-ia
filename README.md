@@ -51,6 +51,50 @@ retrieval/editorial production. Эта граница закреплена пр�
 contract tests; подробности описаны в
 [`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md#4-github-actions).
 
+## Краткие production-инварианты
+
+Этот раздел намеренно сохраняет операторские и тестируемые маркеры текущего
+production-контракта, а подробное объяснение находится в `automation/ARCHITECTURE.md`.
+
+Основной cron запускается в `23:17 UTC`, то есть около `02:17 Europe/Moscow` даты
+выпуска; внешний резервный запуск обслуживается через cron-job.org. Время выпуска
+нормализуется к 06:00 МСК. Recovery выбирает наиболее полный пригодный artifact
+той же даты.
+
+Fresh Primary выполняет ровно 12 Web Search search operations. Coverage выполняет
+до 7 Coverage search operations, поэтому общий архитектурный потолок с conditional
+agency rescue и Hybrid равен 24 search operations. Каноническая continuity-точка
+остается `search_cutoff_at` последнего успешно опубликованного выпуска. После
+единственного search один Primary-pass может использовать `open_page` и
+`find_in_page` как навигацию, не увеличивая search-operation budget.
+
+Обязательные Coverage-направления сохраняют ids `security_world`,
+`security_russia`, `security_asia`, `legal_copyright_scraping`, `curiosity` и
+`general_coverage_gaps`; последний является авторитетный last-mile sweep
+оставшихся пробелов. `partial`, `budget_exhausted` и `error` блокируют Image API,
+commit и deploy. Для короткого выпуска сохраняется пометка «Новостей сегодня
+меньше, чем обычно».
+
+Ручной production dispatch имеет `publish=false` по умолчанию и отдельный
+`recovery_run_id`. Текущие production defaults: `gpt-5.6-terra` для text/search и
+`gpt-image-2` для cover generation.
+
+Полностью завершённый нулевой candidate pool является normal successful
+`no-publish`, а не production failure. Technical partial/error audits remain
+fail-closed. Нулевая остановка требует актуальный `high_signal_recall_sentinel`
+версии 8 и завершённые обязательные quality/search стадии.
+
+## Правила инженерной уборки GitHub
+
+`repository-hygiene.yml` работает отдельно от 32-дневной очистки выпусков. Он
+может изменять только безопасно классифицированные GitHub-объекты и не является
+механизмом очистки tracked source или опубликованного контента.
+
+Операторский отчёт доступен через `Actions → Repository hygiene → последний
+запуск → Summary`. Диагностический JSON каждого этапа прикладывается как Actions
+artifact с `retention: 2 дня`. Полные правила классификации и destructive safety
+описаны в [`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md) и `AGENTS.md`.
+
 ## Локальный NotebookLM-video
 
 Подпроект начинает работу только после появления уже опубликованного выпуска в
