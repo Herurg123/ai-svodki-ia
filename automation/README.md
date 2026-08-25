@@ -49,6 +49,10 @@ Archive-ветка не используется для разработки, н
   rescue перед Coverage;
 - `scripts/` — production, recovery, hybrid completeness, cleanup и validators;
 - `tests/` — офлайн-регрессии;
+- `notebooklm-video/` — отдельный локальный Windows downstream-подпроект для
+  NotebookLM-видео, PNG-превью и ограниченной FTP-доставки в `video`; он не
+  участвует в ночном retrieval/editorial GitHub Actions production и меняется
+  только задачами, явно адресованными этому подпроекту;
 - `preview/` — временные диагностические результаты production/CI, в Git не
   входят;
 - `recovery/` — временно восстановленные Actions artifacts, в Git не входят.
@@ -117,7 +121,6 @@ API domain route с date-free query
 24-часовым healing overlap перед anchor. Archive anchor назад не двигается,
 exact source URL уже опубликованных сюжетов отсекаются до merge, downstream
 semantic dedupe остаётся обязательным.
-
 Primary, bounded rescue, Hybrid и Coverage используют короткие date-free
 relative-freshness queries (`latest`/`recent`/`current`/`breaking`). Exact
 `search_window` является post-retrieval eligibility boundary, а не query text.
@@ -357,7 +360,6 @@ scanner только диагностирует и никогда не удал�
 ## Локальная проверка
 
 Основной бесплатный набор:
-
 ```bash
 python -m compileall automation/scripts automation/tests
 python -m unittest discover -s automation/tests -v
