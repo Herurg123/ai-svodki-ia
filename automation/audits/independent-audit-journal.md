@@ -1,298 +1,167 @@
 # Журнал независимых аудитов ИИ-Сводки
 
-Последнее обновление: 2026-08-23  
+Последнее обновление: 2026-08-25  
 Назначение: накопление независимых проверок полноты и свежести ежедневной ИИ-Сводки без расходования production API пользователя.
 
-> 22 августа 2026 историческая часть журнала была аккуратно сжата: сохранены ежедневные verdict, подтверждённые misses, повторяющиеся паттерны и принятые архитектурные решения. Детальный контролируемый эксперимент 21 августа остаётся в `automation/audits/experiments/2026-08-21-agency-asia-recall.md` и не дублируется здесь целиком.
+> Историческая часть журнала периодически сжимается: сохраняются ежедневные verdict, подтверждённые misses, повторяющиеся паттерны и принятые архитектурные решения. Детальные эксперименты хранятся в `automation/audits/experiments/` и не дублируются здесь целиком.
 
 ## Как использовать журнал
 
-После каждого успешного ежедневного выпуска:
-1. Определить фактическое effective news window по production artifact / archive.
-2. Независимо проверить выпуск на собственных поисковых ресурсах, не используя production API пользователя.
-3. Отдельно проверить freshness, completeness, Must Include misses, stale, source quality, major agencies, models/products/agents, infrastructure/chips/cloud, business/investment, legal/copyright, security, Russia и China/Asia.
-4. Различать retrieval miss, editorial rejection, stale, duplicate, material update, after-cutoff и borderline.
-5. Добавить новую запись в этот файл.
-6. Не менять production-архитектуру автоматически. Повторяющийся дефект сначала должен получить отдельный контролируемый эксперимент.
+После каждого production-дня:
+1. Определить фактический scheduled run, production SHA и effective news window.
+2. Независимо проверить окно на собственных поисковых ресурсах, не используя production API пользователя.
+3. Разделять retrieval miss, editorial rejection, stale, duplicate, material update, after-cutoff, borderline и infrastructure/API failure.
+4. Отдельно проверять major agencies, China/Asia, Russia, Source Freshness Proof, Hybrid/Coverage и source concentration.
+5. Не менять production-архитектуру автоматически. Повторяющийся дефект сначала получает отдельный контролируемый experiment.
 
 ---
 
-## 2026-08-17
-
-### Production / audit
-- Опубликовано 2 сюжета: Anthropic security и Stripe/OpenRouter.
-- Effective window: `2026-08-15 08:59:33 +03:00` → `2026-08-17 02:33:51 +03:00`.
-- Stripe/OpenRouter был свежим.
-- Anthropic оказался stale: основной AP-материал был опубликован 31 июля.
-- Must Include retrieval miss: Nvidia / SB Energy / OpenAI — Reuters о переговорах по инвестиции до $3 млрд в AI-data-center проект в Огайо.
-
-### Оценка
-- Freshness: FAIL, примерно 1/2.
-- Strict recall: примерно 1/2 = 50%.
-- После инцидента внедрён Source Freshness Proof v1: source timestamp должен подтверждаться машинно, stale/unverified источник не должен доходить до публикации.
-
----
-
-## 2026-08-18
-
-### Production / audit
-- Опубликовано 6 сюжетов: Nvidia/SB Energy/OpenAI; Gravis Robotics; Wispr; Groq; Serve Robotics/Grubhub; Alibaba/Lingxi Games.
-- Freshness: PASS.
-- Существенные misses: Higgsfield $400 млн; Round Hill copyright lawsuits против Anthropic/Suno; HappyShrimp launch как отдельная China product-launch blind spot, пока без независимо подтверждённого точного timestamp.
-- Google A2A → Agentic AI Foundation: borderline.
-
-### Оценка
-- Completeness: PARTIAL.
-- Ориентир recall: около 67% при включении HappyShrimp в расширенный reference set.
-- Главная проблема смещается от freshness к recall.
-
----
-
-## 2026-08-19
-
-### Production
-- Опубликовано 8 сюжетов.
-- Effective window: `2026-08-17 02:35:53 +03:00` → `2026-08-19 02:35:51 +03:00`.
-- Continuity anchor: `2026-08-18 02:35:53 +03:00`; первые 24 часа — healing overlap.
-- Primary: 12/12; Hybrid: 4/4; Primary pool: 10; editorial выбрал 8.
-- TechCrunch concentration: 6 кандидатов.
-
-### Audit
-- Freshness: PASS; Higgsfield успешно восстановлен через healing overlap.
-- Must Include retrieval miss: Round Hill copyright lawsuits, второй выпуск подряд; `legal_regulation` дал 0 кандидатов.
-- Velaura AI $110 млн: borderline retrieval miss.
-- Google A2A: borderline.
-- HappyShrimp: unresolved China product-launch blind spot.
-- WSJ OpenAI Q2 вышел примерно через 11 минут после cutoff: корректный after-cutoff negative control.
-
-### Оценка
-- Completeness: PARTIAL.
-- Strict recall: 8/9 ≈ 89%.
-- Legal/copyright стал первым подтверждённым повторяющимся тематическим recall-дефектом.
-
----
-
-## 2026-08-20
-
-### Production / audit
-- Опубликовано 7 сюжетов; Freshness: PASS.
-- Cutoff: `2026-08-20 02:36:13 +03:00`.
-- Must Include misses:
-  - Google / Marvell — custom AI chips, warrant до $12,2 млрд, Reuters.
-  - Baidu / ERNIE — AI-business earnings/strategy, Reuters; повторный Asia miss.
-- Россия: MWS AI / Rubytech вошли в выпуск, zero-region проблемы нет.
-- Asia: Baidu подтвердил, что blind spot шире models/integrations и включает business/earnings/strategy.
-
-### Оценка
-- Completeness: PARTIAL.
-- Freshness после Source Freshness Proof v1: третий последовательный PASS.
-- Healing overlap полезен, но не гарантирует recovery.
-
----
-
-## 2026-08-21
-
-### Production
-- Scheduled run `32429557166`, production commit `8dc8009197148d8b0346d0804e3b1ab113d811b8`.
-- Опубликовано 9 сюжетов.
-- Effective window: `2026-08-19 02:36:13 +03:00` → `2026-08-21 02:40:00 +03:00`.
-- Continuity anchor: `2026-08-20 02:36:13 +03:00`.
-- Primary 12/12, Hybrid 4/4, общий pool после Hybrid 12, editorial выбрал 9.
-- Coverage не выполнялся, потому что выпуск уже достиг количественной цели.
-- TechCrunch: 7/12 pool и 5/9 final stories.
-
-### Audit
-- Freshness: PASS.
-- Must Include retrieval misses:
-  1. Broadcom — >$60 млрд AI-chip debt financing, Reuters.
-  2. Alibaba — AI/cloud revenue +45%, AI capex +75%, Reuters/AP.
-  3. Google / Marvell — повторный miss в healing overlap.
-- Borderline: Brazil AI supercomputer push; Anthropic enterprise data-retention; Guidelight containment study.
-- QwenCloud rolling changelog выявил pipeline false-duplicate: новый Qwen event был отброшен exact-URL dedupe из-за общего mutable changelog URL.
-- Russia zero-pool независимо не подтвердился как miss.
-- Нового strict legal/copyright miss в текущем окне не было.
-
-### Оценка
-- Completeness: PARTIAL.
-- Strict recall: 9/12 = 75%.
-- Главные повторяющиеся классы: infrastructure/business high-signal recall, Asia business/earnings, source concentration, healing failures и mutable-source exact-URL dedupe.
-
-### Контролируемый experiment / архитектурное решение
-Подробности: `automation/audits/experiments/2026-08-21-agency-asia-recall.md`.
-
-- `major_agencies` query расширен внутри прежнего search budget до `latest AI chips infrastructure financing earnings business deals policy security`.
-- `china_asia_models` оставлен без изменений.
-- Второй China/Asia pass расширен до `latest China Asia AI business earnings revenue strategy cloud partnerships deployments`.
-- Russia, Hybrid, Coverage и Source Freshness Proof v1 не менялись.
-- От отдельного 13-го agency rescue отказались.
-- Зафиксировано заранее: если после этой правки тот же класс agency Must Include miss повторится, это основание для отдельного bounded-rescue / source-ranking эксперимента.
-
----
-
-## 2026-08-22
-
-### Production
-- Фактический scheduled production-run: GitHub Actions run `32537516584`, attempt 1, conclusion `success`.
-- Run стартовал на commit `847f925dd33d059068d7f9ed39adcb961c9e63d1` — вчерашней правке agency/Asia recall routing.
-- Production publish commit: `43f2a894e240ef3eac161aa1a0a128e21880d5d8` (`Publish AI digest for 2026-08-22`).
-- Опубликованный выпуск: `ИИ-Сводка на 22 августа 2026`, `published_at=2026-08-22T06:00:00+03:00`.
-- Effective window: `2026-08-20 02:40:00 +03:00` → `2026-08-22 02:37:50 +03:00`; continuity anchor `2026-08-21 02:40:00 +03:00`.
-- Primary: 12 fixed passes; Primary pool 7; Targeted Coverage добавил 1; merged pool 8; editorial выбрал 7.
-- `major_agencies`: raw=0 / accepted=0.
-
-### Audit
-- Freshness: PASS, пятый подряд после 17 августа.
-- Alibaba recovered и опубликована; это положительный сигнал для Asia business/earnings semantics.
-- Must Include miss: Broadcom >$60 млрд AI-chip debt financing, Reuters; повторный agency-class defect после semantic patch.
-- Russia: raw=0 / accepted=0, но независимый поиск не нашёл Must Include события.
-- Borderline: Brazil AI supercomputer push, BIPA voice-data lawsuits, US corporate AI debt surge, Anthropic retention.
-- Source concentration: Primary TechCrunch 4/7, final 3/7.
-
-### Оценка
-- Completeness: PARTIAL.
-- Strict reference set: 8 = 7 опубликованных + Broadcom.
-- Strict recall: 7/8 = 87,5%.
-- Вывод: semantic patch не устранил source-pool/ranking instability у `major_agencies`; отдельный bounded-rescue experiment оправдан.
-
----
-
-## Контролируемый bounded agency rescue experiment — 2026-08-22
-
-### Цель и ограничения
-- Trigger эксперимента выполнен: после semantic patch от 21 августа `major_agencies` снова дал `raw=0 / accepted=0`, а Broadcom >$60 млрд остался Must Include miss.
-- Production API пользователя не использовался; эксперимент выполнен на assistant-side web/GitHub ресурсах.
-- Standalone Terra в текущем интерактивном окружении не экспонирован, поэтому replay не выдаётся за чистый Terra A/B. Production evidence по-прежнему взята из фактических Terra artifacts.
-
-### Replay и вывод
-- Known controls: Google/Marvell, Broadcom, Alibaba, Nvidia/Cloverleaf.
-- Broad business/infrastructure formulations стабильно поднимают часть контролей, но Broadcom способен выпадать из общего agency sweep и восстанавливаться source-aware/event-class поиском.
-- Гипотеза **подтверждена**: оставшийся defect class не объясняется только semantics; source-pool/ranking instability реальна.
-- Existing `fresh_agency_rescue` не решает missing-event defect, потому что corroborates уже найденный candidate; Broadcom отсутствовал в pool целиком.
-- Рекомендованный patch-класс: `major_agencies zero-result -> one bounded source-aware discovery rescue`, независимо от итогового story count.
-- Наиболее чистая точка интеграции: quality/gap layer после Primary до решения «историй достаточно».
-- Search-budget: naive отдельная operation поднимет theoretical ceiling 23 → 24; перед patch надо проверить переиспользование условного quality slot либо явно обновить hard cap, README/AGENTS/tests.
-- Verdict: **PASS для bounded discovery rescue; FAIL для идеи ещё одной простой переформулировки `major_agencies` query.**
-- Production retrieval в рамках эксперимента не изменён.
-
----
-
-## 2026-08-23 — weekend / low-news-volume observation
-
-### Production
-- Production publish commit: `00e9720936c1fce1eead856d4f4277b69f090dca` (`Publish AI digest for 2026-08-23`).
-- Опубликовано 4 сюжета; short-digest marker установлен корректно:
-  1. Salesforce / Slack Code — командный workflow для coding-агентов.
-  2. Guidelight — независимая оценка публичных containment-планов frontier AI labs.
-  3. Inherent / Faraday — research agent для воспроизведения научных работ.
-  4. OpenAI / California SB 53 — новая policy-позиция по monitoring/cybersecurity frontier-моделей.
-- Effective window: `2026-08-21 02:37:50 +03:00` → `2026-08-23 02:35:04 +03:00`.
-- Continuity anchor: `2026-08-22 02:37:50 +03:00`.
-- Healing overlap: `2026-08-21 02:37:50` → `2026-08-22 02:37:50 +03:00`.
-- Main continuity: `2026-08-22 02:37:50` → `2026-08-23 02:35:04 +03:00`.
-- Primary завершил 12/12 searches и дал 5 candidates.
-- По направлениям: `global_breaking` 3/3, `infrastructure_chips_cloud` 1/1, `developer_tools` 1/1; остальные, включая `major_agencies`, оба China/Asia и `russia`, дали 0/0.
-- Hybrid завершил 4/4 searches, adaptive regional health-check выполнился, но новых candidates не добавил; merged pool остался 5.
-- Editorial выбрал 4/5. AMD 4x rack-scale energy-efficiency update исключён как корпоративная расчётная метрика без независимой валидации; это **editorial rejection**, не retrieval miss.
-- Committed artifact manifest содержит Primary/Hybrid/editorial, но не `coverage-audit.json`. Workflow contract при этом содержит обязательный coverage step для short digest. Пока классификация: **observability / possible fallback-persistence gap**, а не доказанный execution defect без run-level coverage artifact/log.
-
-### Weekend interpretation
-- 23 августа — воскресенье, и абсолютный поток corporate/earnings/deal news действительно ниже обычного.
-- Поэтому сам факт 4-story short digest **не считается доказательством плохого recall**.
-- Но independently verified события, существовавшие до cutoff и не попавшие в pool, считаются обычными retrieval misses без weekend discount.
-
-### Freshness
-- Все 4 опубликованных сюжета находятся внутри effective window.
-- Явных stale-сюжетов не обнаружено.
-- Slack Code относится к healing overlap; Guidelight, Faraday и OpenAI/SB53 — к main continuity.
-- Verdict: **PASS**.
-- Это шестой последовательный PASS после дефекта 17 августа (18–23 августа).
-
-### Явные Must Include misses
-1. **Nvidia — AI-server price hikes >15%.**
-   - Reuters опубликовал материал 22 августа примерно в `19:21 UTC`, то есть примерно за 4 часа 14 минут до cutoff.
-   - По сообщению Bloomberg, которое Reuters пересказал с оговоркой о невозможности независимой проверки, крупнейшим клиентам Nvidia сообщили о росте цен серверов с AI-чипами более чем на 15% из-за роста стоимости памяти; затрагиваются Vera Rubin и Grace Blackwell, а серверные поставщики для Microsoft, Google и Oracle уже передают новые цены клиентам.
-   - Событие находится в main continuity и является крупным AI-infrastructure/business signal.
-   - Production `major_agencies=0/0`; события нет и в общем pool.
-   - Классификация: **retrieval miss / Must Include / новый agency-class miss**.
-
-2. **DeepSeek V4-Flash-Vision-Exp — запуск мультимодальной API-модели.**
-   - 21 августа DeepSeek вывела в API экспериментальную V4-Flash-Vision-Exp с image input и 1M context; китайские источники фиксируют запуск около 20:42–20:51 China time.
-   - Событие находится в healing overlap.
-   - Это первая vision-модель в V4 line и конкретный product/model API launch крупного китайского AI-разработчика.
-   - Production `china_asia_models=0/0`, `china_asia_integrations=0/0`, Hybrid regional health-check также не добавил candidate.
-   - Классификация: **retrieval miss / Must Include / Asia model-product healing failure**.
-
-### Borderline / дополнительные misses
-- **fabricaONE.AI — дебютные облигации 4,7 млрд руб.** Официальный источник компании от 21 августа подтверждает техническое размещение и начало вторичных торгов на Мосбирже: 3,5 млрд руб. fixed-rate + 1,2 млрд floating-rate. Production Russia 0/0 и Hybrid regional 0. Это реальный свежий российский AI-business signal, но по масштабу не включён в strict Must Include denominator. Классификация: **Russia retrieval miss / borderline**.
-- **Apple — сокращения более 200 сотрудников Siri/Vision Pro/AI teams**, Bloomberg-derived report 21 августа. Заметный business signal, но смешанный scope и ограниченный масштаб: **borderline**.
-- **Nscale — возможный US IPO до $3 млрд**, Bloomberg report 21 августа. Крупный AI cloud/data-center сигнал, но пока план/переговоры без подтверждённого filing: **borderline**.
-- Reuters analysis о примерно $220 млрд AI-linked corporate debt issuance остаётся значимым market analysis, но не отдельным company event: **borderline**.
-
-### Russia
-- Production `russia`: raw=0 / accepted=0; Hybrid regional check тоже не добавил candidate.
-- В отличие от 21–22 августа, независимый контроль сегодня нашёл конкретное российское событие внутри окна: fabricaONE.AI, дебютные облигации 4,7 млрд руб.
-- По текущему strict significance threshold это **не Must Include**, поэтому strict Russia recall denominator остаётся без обязательного события.
-- Но zero-pool уже нельзя интерпретировать как «в российском AI-сегменте вообще ничего свежего не было»: regional retrieval пропустил как минимум один верифицированный business signal.
-- Решение: усилить наблюдение Russia business/financing semantics; отдельный production patch пока не обоснован одним borderline случаем.
-
-### Major agencies
-- `major_agencies` третий день подряд (21–23 августа) даёт `raw=0 / accepted=0`.
-- 21 августа при этом были Broadcom/Alibaba/Google-Marvell misses; 22 августа Broadcom; 23 августа Nvidia >15% server price hike.
-- Today's Reuters miss возник уже после проведённого bounded-rescue experiment и ещё раз подтверждает, что patch-класс нужен практически, а не как академическая страховка.
-- Это не повод ещё раз менять query semantics; ранее проверенный direction `zero-result -> bounded source-aware discovery rescue` получает дополнительный out-of-sample control.
-
-### China / Asia
-- Вчера Alibaba recovery показала, что business/earnings semantics улучшились.
-- Сегодня оба dedicated Asia routes нулевые и пропущен DeepSeek V4-Flash-Vision-Exp.
-- Это **не опровержение** business/earnings patch: пропуск относится к отдельному model/product route `china_asia_models`, который 21 августа намеренно не менялся.
-- Следовательно, появляется новый подтверждённый контроль для Asia model/product discovery; если аналогичный miss повторится на следующем свежем запуске, нужен отдельный bounded experiment именно этого route, не смешанный с earnings/business.
-
-### Source concentration
-- Final: TechCrunch 3/4 stories; TechRadar 1/4; agency primary sources в финале отсутствуют.
-- Editorial корректно записал diversity override из-за короткого verified pool.
-- Weekend low-volume частично объясняет высокую концентрацию, но она совпала с пропуском Reuters Nvidia, поэтому source-diversity риск остаётся содержательным.
-
-### Оценка
-- **Freshness: PASS.**
-- **Completeness: PARTIAL / weak for a small denominator.**
-- Conservative strict reference set: 6 событий = 4 опубликованных + 2 independently verified Must Include misses (Nvidia server pricing, DeepSeek V4-Flash-Vision-Exp).
-- Ориентировочный **strict recall: 4/6 ≈ 66,7%**.
-- Из-за воскресного low-news-volume denominator мал, поэтому долю нельзя напрямую сравнивать с буднями как статистически равнозначную. Однако оба misses являются class-level defects и учитываются полностью.
-
-### Повторяющиеся паттерны после семи дней
-1. **Freshness стабилизирована:** шесть PASS подряд после 17 августа; Source Freshness Proof v1 не трогать.
-2. **Major-agency defect подтверждается ещё сильнее:** dedicated route 0/0 третий день подряд; новый Reuters Nvidia Must Include miss является out-of-sample подтверждением bounded discovery rescue.
-3. **Asia разделяется на два разных класса:** business/earnings показал recovery на Alibaba; model/product route сегодня пропустил DeepSeek.
-4. **Russia zero-pool впервые совпал с independently verified свежим российским AI-business событием**, хотя оно пока borderline, а не strict Must Include.
-5. **Short digest сам по себе сегодня нормален:** низкий weekend volume не является дефектом; проблема только в конкретных misses.
-6. **Possible Coverage observability/persistence gap:** committed artifact не содержит coverage report при short pool; требует отдельной run-level проверки, прежде чем называть execution bug.
-
-### Решение
-- Не менять Source Freshness Proof.
-- Не вводить региональные квоты.
-- Bounded agency discovery rescue теперь имеет дополнительный свежий контроль Nvidia и должен переходить из экспериментальной рекомендации в конкретный code-patch design + offline regression, как уже предписано экспериментом 22 августа.
-- China model/product route пока не патчить по одному новому miss: добавить DeepSeek V4-Flash-Vision-Exp как regression control и ждать повторения класса либо провести отдельный диагностический replay без production change.
-- Russia: продолжить отдельный контроль и расширить независимый аудит business/financing сигналов; одного borderline fabricaONE.AI недостаточно для production patch.
-- Отдельно проверить, почему short-digest committed artifact не содержит `coverage-audit.json`, хотя workflow contract содержит обязательный coverage step.
-
-## Текущая серия наблюдений
+## Историческая серия 17–23 августа 2026
 
 | Дата | Freshness | Completeness | Strict recall / ключевой результат |
 |---|---|---|---|
-| 2026-08-17 | FAIL | FAIL | ~50%; stale Anthropic + Nvidia/SB Energy miss |
+| 2026-08-17 | FAIL | FAIL | ~50%; stale Anthropic + Nvidia/SB Energy Reuters miss |
 | 2026-08-18 | PASS | PARTIAL | ~67% extended; Higgsfield/Round Hill/China blind spot |
 | 2026-08-19 | PASS | PARTIAL | ~89%; Higgsfield healed, Round Hill repeated |
 | 2026-08-20 | PASS | PARTIAL | Google/Marvell + Baidu misses |
-| 2026-08-21 | PASS | PARTIAL | 75%; Broadcom + Alibaba + Google/Marvell; false duplicate QwenCloud |
-| 2026-08-22 | PASS | PARTIAL | 87,5%; Alibaba healed, Broadcom repeated after agency patch |
+| 2026-08-21 | PASS | PARTIAL | 75%; Broadcom + Alibaba + Google/Marvell; QwenCloud false duplicate |
+| 2026-08-22 | PASS | PARTIAL | 87,5%; Alibaba healed, Broadcom repeated after semantic patch |
 | 2026-08-23 | PASS | PARTIAL | ~66,7% on small weekend denominator; Nvidia Reuters + DeepSeek model misses; Russia borderline fabricaONE.AI |
+
+### Устойчивые выводы этой серии
+- Source Freshness Proof v1 стабилизировал freshness после 17 августа; без нового stale-defect его не ослаблять.
+- `major_agencies` несколько дней давал `raw=0 / accepted=0` при independently verified Reuters Must Include событиях.
+- Повторные agency misses Google/Marvell, Broadcom и Nvidia server pricing подтвердили source-pool/ranking instability, а не только слабую формулировку broad query.
+- Alibaba recovery показал улучшение China/Asia business/earnings semantics, но DeepSeek V4-Flash-Vision-Exp выявил отдельный model/product blind spot.
+- Russia zero-pool нельзя автоматически считать дефектом без strict Must Include denominator; fabricaONE.AI 4,7 млрд руб. остаётся borderline control.
+- Short digest сам по себе не является дефектом; конкретные independently verified misses учитываются полностью.
+- Возможный Coverage observability/persistence gap 23 августа остаётся отдельной reliability-линей и не смешивается с agency retrieval.
+
+---
+
+## Контроль 24 августа 2026 — false-zero и переход v2 → v3
+
+### Baseline false-zero
+- Production run `32674034063` израсходовал полный theoretical pipeline budget 24 search operations и завершился zero-pool `editorial_stop`.
+- Независимый контроль подтвердил как минимум Reuters Alibaba share placement примерно на $10,2 млрд с направлением proceeds на full-stack AI: chips, infrastructure и models.
+- Dedicated `major_agencies` уже имел provider-level Reuters/AP/Bloomberg/FT routing, но пригодного candidate не дал; Source Freshness Proof не был причиной miss, потому что Alibaba до него не дошёл.
+- Source-open agency discovery rescue получил polluted aggregator/syndication layer и также не восстановил событие.
+
+### v2
+- PR #76 ввёл `agency_discovery_rescue` v2: ровно один Reuters-only provider search, publisher-neutral date-free query, direct-Reuters acceptance, неизменные freshness/significance/dedupe и global ceiling 24.
+- Fresh run `32691255059` проверил v2 в production без reuse старого zero-pool artifact.
+- v2 действительно выполнил Reuters-only search с `search_context_size=medium`, но получил `consulted_sources=[]`, `raw_count=0`; Alibaba снова не дошёл до freshness/editorial.
+
+### v3
+- PR #77 изменил только `agency_discovery_rescue` version `2 → 3` и `search_context_size: medium → high`.
+- Query, `allowed_domains=["reuters.com"]`, one-search hard cap, direct-Reuters downstream acceptance, Source Freshness Proof, significance, archive/semantic dedupe, regional routes, Hybrid/Coverage и global ceiling 24 остались неизменны.
+- Эта правка является bounded production-supported reliability hypothesis, а не доказанным isolated Terra A/B.
+
+---
+
+## 2026-08-25 — post-patch день 1/7
+
+### Production
+- Scheduled GitHub Actions run: `32789961306`, conclusion `failure`.
+- Run работал на `main` SHA `aed73e362b770e31914d5c4230f274c429a84872`.
+- Publication date: `2026-08-25`.
+- Предыдущий опубликованный выпуск `2026-08-24` успешно проверен в repository и live; article/image HTTP 200.
+- Automatic recovery не нашёл reusable artifact для 25 августа; `force_fresh_research=false`, manual `recovery_run_id` отсутствовал.
+- Continuity validator: `search_window_start_at=2026-08-24T09:07:30+03:00`, policy `from_last_successful_research_cutoff`.
+- Первый свежий Primary direction `global_breaking` завершился transport/API failure до получения search result:
+  `429 insufficient_quota / credit_balance_exhausted` — `You have no credits remaining`.
+- Pipeline fail-closed остановил research. Primary не завершён; `major_agencies` не запускался; agency discovery rescue v3, Hybrid, Coverage, editorial, image и promotion не запускались.
+- Выпуск 25 августа не опубликован.
+- Artifact `daily-production-2026-08-25`, ID `9542780627`, сохранён, но он маленький preflight/failure artifact; полноценного Primary/rescue/editorial state в нём нет.
+
+### Фактический v3 contract на production SHA
+По `automation/scripts/agency_discovery_rescue.py` на SHA run:
+- `AGENCY_DISCOVERY_RESCUE_VERSION = 3`;
+- query: `latest AI chips infrastructure financing earnings business deals policy security`;
+- `allowed_domains = ("reuters.com",)`;
+- `search_context_size = "high"`;
+- rescue max Web Search operations = 1;
+- theoretical pipeline ceiling = `12 Primary + 1 rescue + 4 Hybrid + 7 Coverage = 24`.
+
+То есть run стартовал уже на ожидаемом v3 code contract. Однако сам v3 stage сегодня не был достигнут.
+
+### Effective window / independent reference set
+- Подтверждённый continuity start: `2026-08-24 09:07:30 +03:00` (`06:07:30 UTC`).
+- Запуск упал около `2026-08-25 02:35:17 +03:00` (`2026-08-24 23:35:17 UTC`); это практический верхний предел сегодняшней независимой проверки, поскольку authoritative research `search_window.end_at` не был сохранён после успешного Primary.
+- Внутри этого интервала независимо найден как минимум один сильный свежий AI event:
+  - Reuters, `2026-08-24 08:15:19 UTC`: Alibaba официально запустила AI video model `Wan3.0` с улучшенными возможностями после крупного AI financing event. Это находится после continuity start и до failure time; классификация: **strict Must Include candidate / China-Asia model-product + agency control**.
+- Reuters Nvidia/Perplexity investment report имеет timestamp `2026-08-24 03:18:37 UTC`, то есть находится **до** continuity start и не используется как strict control сегодняшнего main-continuity window.
+- Reuters Alibaba share-placement market update около `01:32–01:51 UTC` также находится до continuity start; исходное financing event уже относится к предыдущему release/healing history и не считается новым strict event сегодняшнего main window.
+- NVIDIA 24 августа объявила новые Vera Rubin/Groq 3 LPX platform/inference developments, но доступный official page даёт только calendar date без надёжного точного publication timestamp; сохраняется как **borderline / timestamp-unresolved**, а не в strict denominator.
+- AWS 24 августа объявила доступность OpenAI GPT-5.6 Terra/Luna в AWS GovCloud, но доступный source также даёт дату без точного времени; **borderline / timestamp-unresolved** для exact-window denominator.
+
+### Strict recall
+- Production retrieval не завершил даже первый обязательный search, поэтому обычный `found / independently verified Must Include` recall для системы сегодня математически был бы `0/1`, но такой показатель не является оценкой качества retrieval-патча: причиной нуля был внешний API quota failure до исполнения поисковой архитектуры.
+- Каноническая оценка для post-patch experiment: **strict recall = N/A для оценки v3**; отдельно зафиксировано, что в окне был минимум один strict event, поэтому день нельзя считать «тихим нулём».
+
+### Primary / Rescue / Hybrid / Coverage anatomy
+- Primary: started, `global_breaking` failed before completion with OpenAI 429; completed searches по artifact/log = 0.
+- `major_agencies`: not executed; raw/accepted = N/A.
+- `agency_discovery_rescue v3`: not triggered/not executed because mandatory Primary matrix did not reach completed `major_agencies`; search count contribution = 0.
+- Hybrid: not executed.
+- Coverage: not executed.
+- Editorial: not executed.
+- Published stories: 0.
+- Полного budget burn не было: failure произошёл на первом fresh Primary request, а не после 24 searches.
+
+### v3 rescue verdict
+**INCONCLUSIVE / NOT TESTED.**
+
+Сегодняшний run не предоставляет evidence ни в пользу, ни против `search_context_size=high`: API quota failure случился на `global_breaking` до `major_agencies` и до самого rescue. Нельзя классифицировать этот день как повтор v2 false-zero и нельзя объявлять v3 сломанным.
+
+### Freshness / noise / duplicates
+- Новых candidates и published stories нет, поэтому Source Freshness Proof, direct-Reuters acceptance, archive dedupe, semantic dedupe, source concentration и syndicated-source guards не получили runtime test.
+- Никаких stale/noise/duplicate regressions patch сегодня не продемонстрировал.
+
+### China / Asia
+- Production Asia routes не запускались.
+- Independently verified Reuters `Alibaba Wan3.0` внутри доступного окна даёт новый out-of-sample China/Asia model-product control.
+- Поскольку production был остановлен до этих routes, это **не retrieval miss v3**, а **unobserved due infrastructure/API failure**.
+- DeepSeek model/product line остаётся отдельной наблюдаемой проблемой из предыдущих дней; сегодняшний Wan3.0 повышает ценность следующего полноценного Asia route test, но сам по себе не оправдывает новый patch.
+
+### Russia
+- Production `russia` route и regional Hybrid не запускались.
+- Независимый поиск не дал уверенного strict Must Include с подтверждённым timestamp внутри exact доступного интервала; Russia strict recall = **N/A**.
+- Предыдущий borderline fabricaONE.AI остаётся историческим control, а не сегодняшним обязательным miss.
+
+### Recovery / cost / observability
+- Scheduled run корректно не использовал `force_fresh_research`; automatic recovery artifact для новой даты отсутствовал.
+- Неожиданного повторного research не было.
+- Ошибка хорошо видна в job log как `credit_balance_exhausted`, но финальный `pipeline-status.json`/русский summary классифицировал её как `Неопределённый этап` и сообщил, что точная причина не сохранена в JSON. Это отдельный **observability defect**: quota root cause не прокинут в канонический failure status.
+- Этот observability gap не менял production behavior: fail-closed сработал правильно и публикация была заблокирована.
+
+### Оценка дня
+- Freshness: **N/A — no published/retrieved candidates**.
+- Completeness: **N/A — research aborted before completion**.
+- Post-patch verdict относительно baseline 24 августа: **NEUTRAL / INCONCLUSIVE**.
+- Причина: v3 architecture сегодня не исполнялась. Нельзя назвать patch лучше или хуже по run, который умер до relevant stage из-за исчерпанного OpenAI API balance.
+- Важное отличие от baseline false-zero: 24 августа pipeline технически выполнил searches и не нашёл известное событие; 25 августа search architecture не получила возможности работать вообще.
+- День post-patch наблюдения: **1/7**, но это **не meaningful v3 test day**. Следующий успешный scheduled production run с доступным API должен стать первым полноценным out-of-sample production test v3.
+
+### Что делать по результату
+- Production retrieval code не менять по сегодняшнему run.
+- После восстановления API balance дождаться обычного следующего production run; не делать платный rerun только ради аудита.
+- В следующем полноценном run особенно проверить новый strict control class: fresh Reuters/agency и China model-product events, `major_agencies raw/accepted`, v3 trigger/execution и source pool.
+- Отдельным reliability patch-кандидатом считать улучшение failure observability для `insufficient_quota / credit_balance_exhausted`, но не смешивать его с retrieval experiment.
+
+---
+
+## Post-patch серия после PR #77
+
+| День | Дата | Production | v3 meaningful test | Verdict | Ключевой результат |
+|---|---|---|---|---|---|
+| 1/7 | 2026-08-25 | FAIL до Primary completion | нет | NEUTRAL / INCONCLUSIVE | API 429 `credit_balance_exhausted`; Reuters Wan3.0 был в окне, но retrieval не исполнялся |
 
 ## Что наблюдать дальше
 
-- Реализацию/регрессии bounded agency discovery rescue на новых Reuters/AP high-signal controls.
-- Asia model/product route после DeepSeek V4-Flash-Vision-Exp miss отдельно от уже исправленного business/earnings layer.
-- Russia business/financing: zero-pool считать strict defect только при Must Include miss, но сохранять borderline verified signals как ранние предупреждения.
-- Проверить Coverage artifact persistence/execution для short digest 23 августа.
-- Source concentration и корреляцию с agency misses.
-- Mutable changelog dedupe отдельной экспериментальной линией.
-- Source Freshness Proof v1 оставить без изменений, пока stale-дефект не повторится.
+- Первый успешный production run после v3: `major_agencies` source pool и agency discovery rescue `high` против нового out-of-sample Reuters control.
+- Не повторяется ли defect `fresh Reuters Must Include exists → provider source pool empty/stale → zero candidate`.
+- China/Asia model-product route после DeepSeek и нового Wan3.0 control отдельно от business/earnings.
+- Russia business/financing без региональной квоты; strict defect только при independently verified Must Include.
+- Coverage persistence для short digest и failure observability как отдельные reliability-линии.
+- Source Freshness Proof v1 оставить без изменений, пока stale-defect не повторится.
