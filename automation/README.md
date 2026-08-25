@@ -59,6 +59,13 @@ Video-only изменения под `notebooklm-video/**` не являются
 production и не должны запускать Main CI. В обратную сторону production
 workflows не должны читать или изменять video runtime.
 
+## Repository hygiene
+
+`repository-hygiene.yml` является отдельным operational workflow и не заменяет
+32-дневную очистку контента. Его policy, безопасные mutation boundaries,
+retention и operator diagnostics описаны в [`ARCHITECTURE.md`](ARCHITECTURE.md)
+и в root `AGENTS.md`.
+
 ## Бесплатная локальная проверка основного проекта
 
 ```bash
