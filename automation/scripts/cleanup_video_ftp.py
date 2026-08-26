@@ -38,12 +38,24 @@ class RemoteEntry:
 
 
 def safe_listing_name(raw: str) -> str | None:
-    """Reduce an FTP listing row to a safe basename, or reject it."""
+    """Accept only a basename or the same basename explicitly under ``video``."""
     value = raw.strip()
     if not value or "\x00" in value or "\\" in value:
         return None
-    name = PurePosixPath(value).name
-    if not name or name in {".", ".."}:
+
+    parts = PurePosixPath(value).parts
+    if len(parts) == 1:
+        name = parts[0]
+    elif len(parts) == 2 and parts[0] == REMOTE_DIR:
+        name = parts[1]
+    elif len(parts) == 3 and parts[0] == "/" and parts[1] == REMOTE_DIR:
+        name = parts[2]
+    else:
+        # NLST is allowed to prefix the current directory, but nested or foreign
+        # paths are not reduced to basenames because that would broaden scope.
+        return None
+
+    if not name or name in {".", ".."} or "/" in name:
         return None
     return name
 
