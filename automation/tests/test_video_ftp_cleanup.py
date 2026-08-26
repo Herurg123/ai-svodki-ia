@@ -163,6 +163,17 @@ class VideoFtpCleanupTests(unittest.TestCase):
         self.assertEqual(ftp.deleted, ["ai-svodka-2026-07-01.mp4"])
         self.assertNotIn("/", ftp.deleted[0])
 
+    def test_listing_path_confinement_rejects_nested_and_foreign_paths(self) -> None:
+        name = "ai-svodka-2026-07-01.mp4"
+        self.assertEqual(video_cleanup.safe_listing_name(name), name)
+        self.assertEqual(video_cleanup.safe_listing_name(f"video/{name}"), name)
+        self.assertEqual(video_cleanup.safe_listing_name(f"/video/{name}"), name)
+        self.assertIsNone(
+            video_cleanup.safe_listing_name(f"/video/archive/{name}")
+        )
+        self.assertIsNone(video_cleanup.safe_listing_name(f"/other/{name}"))
+        self.assertIsNone(video_cleanup.safe_listing_name(f"../video/{name}"))
+
     def test_post_delete_verification_fails_closed(self) -> None:
         ftp = FakeFtp(
             {"ai-svodka-2026-07-01.mp4": self.managed("old")},
