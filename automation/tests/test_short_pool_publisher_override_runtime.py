@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+# Regression coverage for the deterministic short-pool publisher override.
+
 import copy
 import json
 import sys
