@@ -18,6 +18,7 @@ class WorkflowInventoryTests(unittest.TestCase):
                 "video-ci.yml",
                 "daily-production.yml",
                 "deploy-posts.yml",
+                "video-rss-enrichment.yml",
                 "repository-cleanup.yml",
                 "repository-hygiene.yml",
             },

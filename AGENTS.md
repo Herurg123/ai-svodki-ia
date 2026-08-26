@@ -41,10 +41,14 @@ Do not make path-filtered Main CI or Video CI directly required, because a skipp
 required workflow remains pending.
 
 The only allowed direct pushes to protected `main` are the validated publication
-commit in `daily-production.yml` and validated retention commit in
-`repository-cleanup.yml`. They must use `automation/scripts/push_protected_main.sh`
-with the dedicated `MAIN_PUSH_DEPLOY_KEY` secret. Do not expose that secret to any
-other workflow or job, and do not grant broad GitHub Actions/admin bypass instead.
+commit in `daily-production.yml`, validated retention commit in
+`repository-cleanup.yml`, and the controlled validated RSS-only commit in
+`video-rss-enrichment.yml`. All three must use
+`automation/scripts/push_protected_main.sh` with the dedicated
+`MAIN_PUSH_DEPLOY_KEY` secret. Do not expose that secret to any other workflow or
+job, and do not grant broad GitHub Actions/admin bypass instead. The video RSS
+writer may commit only `posts/rss.xml` after proving that the expected public MP4
+and PNG are ready and the existing article item remains otherwise unchanged.
 
 ## CI ownership boundary
 
@@ -65,8 +69,11 @@ Main CI. Cross-cutting changes can route to both domains.
 
 Do not add `automation/notebooklm-video/` as an input, dependency, generated
 artifact, cleanup target or deploy source of `daily-production.yml`,
-`deploy-posts.yml`, `repository-cleanup.yml` or `repository-hygiene.yml` unless
-the project owner explicitly changes the architecture boundary.
+`deploy-posts.yml`, `repository-cleanup.yml`, `repository-hygiene.yml` or
+`video-rss-enrichment.yml`. The explicitly approved video-RSS bridge is one-way
+and public-only: it may probe already-published media under `/posts/video/`, but
+must not read local video runtime state or make daily production depend on video
+success.
 
 These boundaries are enforced by `automation/tests/test_video_ci_boundary.py`,
 `automation/tests/test_pr_gate_and_main_protection.py`, and the video subproject's
@@ -87,6 +94,13 @@ explicitly targets video. Conversely, a video task does not authorize unrelated
 production changes. Its own `AGENTS.md`, `README.md` and `DEPLOYMENT.md` are
 authoritative for local runtime behavior; the repository relationship is defined
 in `automation/ARCHITECTURE.md`.
+
+The controlled `video-rss-enrichment.yml` test is a narrow exception only for
+post-publication RSS metadata. It may observe the public MP4/PNG pair and attach a
+Media RSS group to the matching existing article item. It must preserve that
+item's `title`, `link`, `guid`, `pubDate` and `content:encoded`; missing media is a
+successful no-op and video failure must never change the digest publication
+status.
 
 Real `config.json`, `ftp-access.json`, state, logs, downloaded media and browser
 profiles must never be committed. FTP behavior must remain hard-confined to the

@@ -41,6 +41,9 @@
 - `scripts/recover_digest_artifact.py` — paid-stage recovery entrypoint;
 - `scripts/source_freshness.py` — deterministic source publication-date proof;
 - `scripts/build_site.py` / validators — site/RSS/publication contracts;
+- `scripts/video_rss_enrichment.py` — controlled post-publication bridge: проверяет
+  публичные MP4+PNG и идемпотентно добавляет Media RSS video group в существующий
+  item, не меняя публикационные поля и `content:encoded`;
 - `scripts/cleanup_repository_content.py` и `cleanup_public_posts.py` — 32-day
   content cleanup;
 - `scripts/repository_hygiene.py` — GitHub object hygiene.
@@ -58,9 +61,20 @@ required status для защиты `main`.
 
 Video-only изменения под `notebooklm-video/**` не являются изменениями nightly
 production и не запускают Main CI; их через PR Gate проверяет только Video CI.
-В обратную сторону production workflows не должны читать или изменять video
-runtime. Полный workflow inventory, ruleset и automated-writer boundary описаны
-в [`ARCHITECTURE.md`](ARCHITECTURE.md).
+В обратную сторону nightly production workflows не должны читать или изменять
+video runtime.
+
+На период controlled test отдельный `video-rss-enrichment.yml` образует только
+односторонний post-publication мост: он не читает локальное состояние
+`notebooklm-video`, а каждые пять минут проверяет уже публичные
+`/posts/video/ai-svodka-2026-08-27.mp4` и `.png`. Пока пара не готова, запуск
+успешно ничего не делает. После готовности он валидирует preview, добавляет
+`media:group` только в RSS item выпуска 2026-08-27, повторно проверяет RSS,
+фиксирует только `posts/rss.xml` и вызывает обычный FTP deploy. Ошибка или
+отсутствие video assets не может блокировать ежедневную публикацию ИИ-Сводки.
+
+Полный workflow inventory, ruleset и automated-writer boundary описаны в
+[`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 Операторская установка write deploy key, repository secret и самого GitHub
 ruleset описана в [`MAIN_PROTECTION.md`](MAIN_PROTECTION.md). Ruleset JSON в

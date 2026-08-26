@@ -30,11 +30,12 @@ production-автоматизации и операторских проверо
 | `automation/` | Основной production-конвейер: retrieval, editorial, recovery, validators, archive, audits и configuration. |
 | `posts/` | Сформированный публичный сайт, RSS, sitemap и постоянные публичные assets. |
 | `automation/notebooklm-video/` | Отдельный локальный Windows downstream-подпроект: после публикации выпуска создаёт NotebookLM-видео, MP4, PNG-превью и при включённой настройке доставляет их только в FTP-каталог `video`. |
-| `.github/workflows/` | Always-on PR Gate, два раздельных CI-домена, production, deploy и cleanup/hygiene. |
+| `.github/workflows/` | Always-on PR Gate, два раздельных CI-домена, production, deploy, controlled video-RSS enrichment и cleanup/hygiene. |
 
 ## CI и production
 
-В репозитории семь постоянных GitHub Actions workflow:
+В репозитории восемь постоянных GitHub Actions workflow на период контролируемого
+video-RSS теста:
 
 - `pr-gate.yml` — **PR Gate**, всегда запускается для pull request в `main`,
   определяет затронутые CI-домены и завершает единым `Required PR Gate`;
@@ -43,6 +44,10 @@ production-автоматизации и операторских проверо
   NotebookLM-video подпроекта;
 - `daily-production.yml` — ежедневное формирование ИИ-Сводки;
 - `deploy-posts.yml` — синхронизация `posts/` выбранного commit на FTP;
+- `video-rss-enrichment.yml` — контролируемый тест для выпуска 27 августа 2026:
+  после обычной публикации каждые пять минут проверяет публичную пару MP4+PNG и,
+  только когда оба файла готовы, добавляет `media:group` в уже существующий RSS
+  item без изменения `title`, `link`, `guid`, `pubDate` и `content:encoded`;
 - `repository-cleanup.yml` — 32-дневная очистка/компактация content и public
   posts;
 - `repository-hygiene.yml` — отдельная уборка безопасно классифицированных
@@ -55,10 +60,11 @@ CI/Video CI. Подробности описаны в
 [`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md#4-github-actions).
 
 Для `main` подготовлен repository ruleset: обычные изменения должны проходить
-через pull request, force-push и удаление запрещаются, а единственный direct-push
-bypass предназначен для отдельного write deploy key ночного production/cleanup.
-Наличие ruleset JSON в Git само по себе не включает GitHub setting; порядок
-активации описан в
+через pull request, force-push и удаление запрещаются, а direct-push bypass
+предназначен только для трёх узких validated writers: nightly production,
+retention cleanup и controlled video-RSS enrichment. Они используют один
+выделенный write deploy key только в своих финальных commit steps. Наличие ruleset
+JSON в Git само по себе не включает GitHub setting; порядок активации описан в
 [`automation/MAIN_PROTECTION.md`](automation/MAIN_PROTECTION.md).
 
 ## Краткие production-инварианты
@@ -90,6 +96,21 @@ commit и deploy. Для короткого выпуска сохраняетс�
 `gpt-image-2` для cover generation.
 
 Полностью завершённый нулевой candidate pool является normal successful `no-publish`, а не production failure. Technical partial/error audits remain fail-closed. Нулевая остановка требует актуальный `high_signal_recall_sentinel` версии 8 и завершённые обязательные quality/search стадии.
+
+## Controlled video-RSS enrichment
+
+Локальный NotebookLM-video по-прежнему не является стадией nightly production и
+не получает обратной зависимости на GitHub pipeline. Контролируемый мост работает
+только после публикации: GitHub проверяет уже публичные
+`/posts/video/ai-svodka-2026-08-27.mp4` и `.png`. Отсутствие любого файла является
+успешным no-op и не влияет на статус самой ИИ-Сводки.
+
+Когда оба файла доступны, PNG проходит проверку формата и минимального размера
+800×400, затем workflow добавляет к существующему RSS item Media RSS
+`media:group` с `media:content medium="video" type="video/mp4"` и
+`media:thumbnail`. Текст статьи и её публикационные поля не переписываются. После
+валидации изменяется только `posts/rss.xml`, commit синхронизируется на FTP через
+обычный `deploy-posts.yml`.
 
 ## Правила инженерной уборки GitHub
 
