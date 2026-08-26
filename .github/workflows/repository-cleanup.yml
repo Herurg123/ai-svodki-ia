@@ -354,10 +354,10 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Check out current main
+      - name: Check out maintenance revision
         uses: actions/checkout@v7
         with:
-          ref: main
+          ref: ${{ needs.cleanup.outputs.commit_sha || github.sha }}
           persist-credentials: false
 
       - name: Set up Python
