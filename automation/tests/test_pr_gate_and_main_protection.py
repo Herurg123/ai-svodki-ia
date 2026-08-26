@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
+import tempfile
+import textwrap
 import unittest
 from pathlib import Path
 
@@ -11,6 +15,58 @@ PUSH_HELPER = ROOT / "automation" / "scripts" / "push_protected_main.sh"
 
 
 class PrGateAndMainProtectionTests(unittest.TestCase):
+    @staticmethod
+    def _route_script() -> str:
+        gate = (WORKFLOW_ROOT / "pr-gate.yml").read_text(encoding="utf-8")
+        step = "      - name: Route changed paths to CI domains\n"
+        step_start = gate.index(step)
+        run_marker = "        run: |\n"
+        run_start = gate.index(run_marker, step_start) + len(run_marker)
+        run_end = gate.index("\n\n  main-ci:", run_start)
+        return textwrap.dedent(gate[run_start:run_end])
+
+    def _run_route_for_paths(self, changed_paths: list[str]) -> tuple[dict[str, str], str]:
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.name", "PR Gate test"], cwd=repo, check=True)
+
+            (repo / "seed.txt").write_text("base\n", encoding="utf-8")
+            subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-qm", "base"], cwd=repo, check=True)
+            base = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()
+
+            for relative in changed_paths:
+                target = repo / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text("changed\n", encoding="utf-8")
+            subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-qm", "head"], cwd=repo, check=True)
+            head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()
+
+            github_output = repo / "github-output.txt"
+            env = os.environ.copy()
+            env.update(
+                BASE_SHA=base,
+                HEAD_SHA=head,
+                GITHUB_OUTPUT=str(github_output),
+            )
+            completed = subprocess.run(
+                ["bash", "-c", self._route_script()],
+                cwd=repo,
+                env=env,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            outputs = dict(
+                line.split("=", 1)
+                for line in github_output.read_text(encoding="utf-8").splitlines()
+                if line
+            )
+            return outputs, completed.stdout
+
     def test_pr_gate_always_exists_for_pull_requests(self) -> None:
         gate = (WORKFLOW_ROOT / "pr-gate.yml").read_text(encoding="utf-8")
         self.assertIn("name: PR Gate", gate)
@@ -20,10 +76,24 @@ class PrGateAndMainProtectionTests(unittest.TestCase):
         self.assertIn("uses: ./.github/workflows/video-ci.yml", gate)
         self.assertIn('path == ".github/workflows/pr-gate.yml"', gate)
         self.assertIn('path.startswith("automation/notebooklm-video/")', gate)
+        self.assertIn('["git", "diff", "--name-only", "-z", "--diff-filter=ACMRD", base, head]', gate)
+        self.assertIn('raw.split(b"\\0")', gate)
+        self.assertIn("os.fsdecode(path)", gate)
         self.assertIn("if not changed:", gate)
         self.assertIn("every path that is not proven video-only belongs to Main CI", gate)
         self.assertNotIn("OPENAI_API_KEY", gate)
         self.assertNotIn("contents: write", gate)
+
+    def test_unicode_video_only_path_routes_only_video_ci(self) -> None:
+        outputs, stdout = self._run_route_for_paths(
+            ["automation/notebooklm-video/НАСТРОЙКИ.txt"]
+        )
+        self.assertEqual(outputs, {"main": "false", "video": "true"})
+        self.assertIn("automation/notebooklm-video/НАСТРОЙКИ.txt", stdout)
+
+    def test_unknown_path_still_routes_fail_safe_to_main_ci(self) -> None:
+        outputs, _ = self._run_route_for_paths(["unexpected/new-file.txt"])
+        self.assertEqual(outputs, {"main": "true", "video": "false"})
 
     def test_domain_ci_workflows_are_reusable_and_not_direct_pr_triggers(self) -> None:
         main = (WORKFLOW_ROOT / "ci.yml").read_text(encoding="utf-8")
