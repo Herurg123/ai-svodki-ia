@@ -1,0 +1,46 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-26",
+  "slug": "2026-08-26",
+  "title": "ИИ-Сводка на 26 августа 2026",
+  "description": "OpenAI раскрыла результаты inference-чипа Jalapeño, Claude связал память чата и Cowork, Stability AI привлекла стратегических инвесторов, а Gatik расширяет беспилотную грузовую логистику с PepsiCo.",
+  "published_at": "2026-08-26T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-26.png",
+  "topics": [
+    "OpenAI",
+    "Jalapeño",
+    "inference-чипы",
+    "ускорители ИИ",
+    "Anthropic",
+    "Claude",
+    "память ИИ",
+    "агенты ИИ",
+    "Stability AI",
+    "генеративные медиа",
+    "лицензирование контента",
+    "Gatik",
+    "беспилотные грузовики",
+    "physical AI",
+    "автономная логистика"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Три независимых подтверждённых сюжета из короткого пула опубликованы TechCrunch: обновление инфраструктуры OpenAI, продукт Claude и коммерческое расширение Gatik. Исключение любого из них только из-за мягкого лимита издателя необоснованно сократило бы и без того короткий выпуск."
+    }
+  ]
+}

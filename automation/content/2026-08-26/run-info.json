@@ -1,0 +1,157 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-08-26",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-08-26.json",
+  "warnings": [
+    "cand-002: источник показывает дату без точного времени.",
+    "Целевой пул — 7 кандидатов, но после проверки свежести осталось 6.",
+    "Кандидатов меньше обычной цели выпуска (7); разрешён короткий выпуск.",
+    "Исследовательский пул перегружен одним издателем: techcrunch (4)",
+    "Выбрано 4 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-08-26",
+  "started_at": "2026-08-26T04:07:53+00:00",
+  "finished_at": "2026-08-26T04:08:24+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 40,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "df410baf6c84fd32c4ee271bfd0a8ce171d8c72553fe9d7618f021079ade9591",
+    "candidates_sha256": "7513a6bf2f623a09a5eeed5a9c3f3156f9f6a9a3fbd68844f0a0f82bd722b96b",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-08-24T04:43:30+03:00",
+      "end_at": "2026-08-26T02:37:34+03:00",
+      "latest_archive_at": "2026-08-25T04:43:30+03:00",
+      "start_date": "2026-08-24",
+      "end_date": "2026-08-26",
+      "latest_archive_date": "2026-08-25"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "3f8e02347375ad2b3b0e46bf47c17deee092e541b015e08ba2f979a194ab706a",
+    "editorial_sha256": "f2bd9475a6f955caac34f804a90baa11e96f983fa97ebbac52932beebe0bdec6",
+    "digest_sha256": "6c392ec2a7689bcbc8ceda56b688828c68971591f7fd82f6070f1b16beec41ae",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-08-26.png",
+          "normalized_value": "ai-svodka-2026-08-26.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.h3[0]",
+          "model_value": "OpenAI опубликовала первые бенчмарки собственного inference-чипа Jalapeño",
+          "normalized_value": "Обновление: OpenAI опубликовала первые бенчмарки собственного inference-чипа Jalapeño"
+        },
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        }
+      ],
+      "changed_count": 2,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 4 сюжетов."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Три независимых подтверждённых сюжета из короткого пула опубликованы TechCrunch: обновление инфраструктуры OpenAI, продукт Claude и коммерческое расширение Gatik. Исключение любого из них только из-за мягкого лимита издателя необоснованно сократило бы и без того короткий выпуск."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_07190c0a53bb5c78016a8e669ae86487d0b0c54048f2419e0e",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 102556,
+        "input_tokens_details": {
+          "cache_write_tokens": 102553,
+          "cached_tokens": 0
+        },
+        "output_tokens": 3213,
+        "output_tokens_details": {
+          "reasoning_tokens": 762
+        },
+        "total_tokens": 105769
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 102556,
+    "output_tokens": 3213,
+    "total_tokens": 105769,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "f494652d2635f3f606f6cc3d4647bb0aa78ee875",
+    "run_id": "32928996611",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-08-26T02:37:34+03:00"
+}

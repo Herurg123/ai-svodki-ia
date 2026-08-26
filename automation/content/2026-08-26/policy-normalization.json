@@ -1,0 +1,34 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "article_html.h3[0]",
+      "model_value": "OpenAI опубликовала первые бенчмарки собственного inference-чипа Jalapeño",
+      "normalized_value": "Обновление: OpenAI опубликовала первые бенчмарки собственного inference-чипа Jalapeño"
+    },
+    {
+      "field": "article_html.short_digest_notice",
+      "model_value": null,
+      "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+    }
+  ],
+  "changed_count": 2,
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После проверки свежести и значимости выбрано 4 сюжетов."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Три независимых подтверждённых сюжета из короткого пула опубликованы TechCrunch: обновление инфраструктуры OpenAI, продукт Claude и коммерческое расширение Gatik. Исключение любого из них только из-за мягкого лимита издателя необоснованно сократило бы и без того короткий выпуск."
+    }
+  ]
+}

@@ -1,168 +1,16 @@
+Ты — редактор ежедневного аналитического выпуска «ИИ-сводка».
+
+Дата выпуска: 2026-08-26
+Обычная цель минимального числа сюжетов: 7
+Максимальное число сюжетов: 12
+
+Контекст предыдущих выпусков для проверки повторов:
+=== ARCHIVE_CONTEXT_BEGIN ===
 {
   "version": 2,
-  "generated_at": "2026-08-26T04:10:05+00:00",
+  "generated_at": "2026-08-26T04:07:50+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
-    {
-      "date": "2026-08-26",
-      "published_at": "2026-08-26T06:00:00+03:00",
-      "search_cutoff_at": "2026-08-26T02:37:34+03:00",
-      "title": "ИИ-Сводка на 26 августа 2026",
-      "link": "https://rybalka.one/posts/2026-08-26/",
-      "summary": "Главные новости искусственного интеллекта за 26 августа 2026 года Новостей сегодня меньше, чем обычно В короткой повестке дня — переход ИИ от отдельных моделей к управляемой инфраструктуре и реальным рабочим действиям. OpenAI раскрыла первые результаты собственного ускорителя, Anthropic связала память чата с агентным режимом Claude, а компании из генеративных медиа и автономной логистики получили новое финансирование для масштабирования. Общий мотив выпуска — ценность всё чаще создаётся не тольк",
-      "topics": [
-        "OpenAI",
-        "Jalapeño",
-        "inference-чипы",
-        "ускорители ИИ",
-        "Anthropic",
-        "Claude",
-        "память ИИ",
-        "агенты ИИ",
-        "Stability AI",
-        "генеративные медиа",
-        "лицензирование контента",
-        "Gatik",
-        "беспилотные грузовики",
-        "physical AI",
-        "автономная логистика"
-      ],
-      "source_urls": [
-        "https://openai.com/index/jalapeno-first-results/",
-        "https://techcrunch.com/2026/08/25/claude-cowork-finally-remembers-what-you-told-the-app-in-chat/",
-        "https://stability.ai/news-updates/stability-ai-latest-funding-backed-by-entertainment-industry-biggest-names",
-        "https://techcrunch.com/2026/08/25/self-driving-truck-startup-gatik-raises-200m-following-pepsico-deal/"
-      ],
-      "stories": [
-        {
-          "candidate_id": "cand-001",
-          "section": "world",
-          "headline": "Обновление: OpenAI опубликовала первые бенчмарки собственного inference-чипа Jalapeño",
-          "organization": "OpenAI; Broadcom",
-          "topic": "Инфраструктура ИИ и собственные ускорители для низколатентного и энергоэффективного inference агентных и языковых моделей.",
-          "event_type": "infrastructure benchmark and deployment update",
-          "status": "update",
-          "summary": "OpenAI раскрыла первые результаты тестов Jalapeño — своей собственной платформы inference-ускорителей — и сообщила о плане начать развёртывание в собственной вычислительной инфраструктуре до конца 2026 года.",
-          "published_at": "2026-08-25T14:22:04+00:00",
-          "published_date": "2026-08-25",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Jalapeño’s first results show industry-leading speed and efficiency in AI inference",
-              "publisher": "OpenAI",
-              "url": "https://openai.com/index/jalapeno-first-results/"
-            }
-          ],
-          "keywords": [
-            "OpenAI",
-            "Jalapeño",
-            "custom chip",
-            "AI inference",
-            "accelerator",
-            "performance per watt",
-            "Broadcom",
-            "agents"
-          ],
-          "geography": "world",
-          "category": "chips"
-        },
-        {
-          "candidate_id": "cand-004",
-          "section": "world",
-          "headline": "Anthropic объединила память Claude Chat и Claude Cowork",
-          "organization": "Anthropic; Claude",
-          "topic": "Потребительские и рабочие AI-агенты: постоянная кросс-продуктовая память, переход от чата к выполнению задач и пользовательский контроль сохранённых данных.",
-          "event_type": "product update",
-          "status": "new",
-          "summary": "Anthropic объединила систему памяти чата Claude и рабочего агентного режима Claude Cowork: контекст из чатов теперь доступен Cowork, а пользователи могут просматривать, редактировать и удалять сохранённую память.",
-          "published_at": "2026-08-25T17:50:33+00:00",
-          "published_date": "2026-08-25",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Claude Cowork finally remembers what you told the app in chat",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/08/25/claude-cowork-finally-remembers-what-you-told-the-app-in-chat/"
-            }
-          ],
-          "keywords": [
-            "Anthropic",
-            "Claude",
-            "Claude Cowork",
-            "memory",
-            "AI agents",
-            "privacy",
-            "consumer AI"
-          ],
-          "geography": "world",
-          "category": "agents"
-        },
-        {
-          "candidate_id": "cand-005",
-          "section": "world",
-          "headline": "Stability AI привлекла $76 млн от инвесторов из музыки, игр и технологий",
-          "organization": "Stability AI; Electronic Arts; Sony Music Group; Universal Music Group; Warner Music Group; AMD Ventures",
-          "topic": "Финансирование генеративного ИИ для профессионального производства изображений, музыки и видео, а также стратегическое сближение модели-провайдера с правообладателями.",
-          "event_type": "funding",
-          "status": "new",
-          "summary": "Stability AI объявила Series B на $76 млн; среди новых инвесторов — EA, Sony Music Group, Universal Music Group, Warner Music Group, AMD Ventures и Pacific Alliance Ventures. Компания направит средства на продукты для креативного производства, прикладные исследования и профессиональные сервисы.",
-          "published_at": "2026-08-25T14:59:22+00:00",
-          "published_date": "2026-08-25",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "The Entertainment Industry’s Biggest Names Back Stability AI in Latest Funding Round",
-              "publisher": "Stability AI",
-              "url": "https://stability.ai/news-updates/stability-ai-latest-funding-backed-by-entertainment-industry-biggest-names"
-            }
-          ],
-          "keywords": [
-            "Stability AI",
-            "Stable Diffusion",
-            "Series B",
-            "generative media",
-            "music",
-            "gaming",
-            "entertainment",
-            "licensed data"
-          ],
-          "geography": "world",
-          "category": "investment"
-        },
-        {
-          "candidate_id": "cand-006",
-          "section": "world",
-          "headline": "Gatik привлекла $200 млн для масштабирования беспилотных грузовиков после соглашения с PepsiCo",
-          "organization": "Gatik; PepsiCo; Qatar Investment Authority; Koch Disruptive Technologies",
-          "topic": "Physical AI и автономная логистика: коммерческое масштабирование беспилотных среднетоннажных грузовиков на фиксированных и динамических маршрутах.",
-          "event_type": "funding and commercial deployment expansion",
-          "status": "new",
-          "summary": "Gatik объявила раунд на $200 млн, последовавший за многолетним коммерческим соглашением с PepsiCo. Стартап планирует расширять эксплуатацию полностью беспилотных box trucks в сегменте middle-mile; по данным TechCrunch, у компании уже есть коммерческие операции в нескольких регионах и контракты на $600 млн выручки.",
-          "published_at": "2026-08-25T14:00:00+00:00",
-          "published_date": "2026-08-25",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Self-driving truck startup Gatik raises $200M following PepsiCo deal",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/08/25/self-driving-truck-startup-gatik-raises-200m-following-pepsico-deal/"
-            }
-          ],
-          "keywords": [
-            "Gatik",
-            "autonomous trucks",
-            "physical AI",
-            "driverless delivery",
-            "PepsiCo",
-            "middle-mile logistics",
-            "Qatar Investment Authority",
-            "Koch Disruptive Technologies"
-          ],
-          "geography": "world",
-          "category": "robotics"
-        }
-      ]
-    },
     {
       "date": "2026-08-25",
       "published_at": "2026-08-25T06:00:00+03:00",
@@ -7977,3 +7825,913 @@
     }
   ]
 }
+=== ARCHIVE_CONTEXT_END ===
+
+Проверенный исследовательский пул:
+=== CANDIDATES_CONTEXT_BEGIN ===
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-26",
+  "search_window": {
+    "start_at": "2026-08-24T04:43:30+03:00",
+    "end_at": "2026-08-26T02:37:34+03:00",
+    "latest_archive_at": "2026-08-25T04:43:30+03:00",
+    "start_date": "2026-08-24",
+    "end_date": "2026-08-26",
+    "latest_archive_date": "2026-08-25"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=3, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "OpenAI опубликовала первые бенчмарки собственного inference-чипа Jalapeño",
+      "organization": "OpenAI; Broadcom",
+      "published_date": "2026-08-25",
+      "published_at": "2026-08-25T14:22:04+00:00",
+      "time_precision": "datetime",
+      "topic": "Инфраструктура ИИ и собственные ускорители для низколатентного и энергоэффективного inference агентных и языковых моделей.",
+      "event_type": "infrastructure benchmark and deployment update",
+      "keywords": [
+        "OpenAI",
+        "Jalapeño",
+        "custom chip",
+        "AI inference",
+        "accelerator",
+        "performance per watt",
+        "Broadcom",
+        "agents"
+      ],
+      "geography": "world",
+      "category": "chips",
+      "source_type": "official",
+      "primary_source": {
+        "title": "OpenAI’s Jalapeño chip is built for fast inference at scale, benchmarks show",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/25/openais-jalapeno-chip-is-built-for-fast-inference-at-scale-benchmarks-show/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Jalapeño’s first results show industry-leading speed and efficiency in AI inference",
+          "publisher": "OpenAI",
+          "url": "https://openai.com/index/jalapeno-first-results/"
+        }
+      ],
+      "event_summary": "OpenAI раскрыла первые результаты тестов Jalapeño — своей собственной платформы inference-ускорителей — и сообщила о плане начать развёртывание в собственной вычислительной инфраструктуре до конца 2026 года.",
+      "verified_facts": [
+        "Официальная публикация OpenAI датирована 25 августа 2026 года.",
+        "OpenAI заявляет, что на публичном InferenceX Jalapeño показал более высокую производительность на ватт и меньшую задержку, чем сравнительные системы в тестируемом диапазоне.",
+        "Компания сообщила, что намерена начать развёртывание Jalapeño в своей инфраструктуре к концу 2026 года.",
+        "Jalapeño является первым поколением планируемой многопоколенной аппаратной платформы OpenAI."
+      ],
+      "significance": "Это существенное material update к стратегии OpenAI по вертикальной интеграции inference: компания впервые раскрыла измеряемые результаты собственного чипа и привязала их к ближайшему плану развёртывания. Событие влияет на стоимость, доступность и скорость агентных продуктов OpenAI, а также на конкурентный ландшафт AI-ускорителей.",
+      "significance_score": 4,
+      "limitations": "Заявленные преимущества основаны на измерениях и интерпретации самой OpenAI; чип ещё не развёрнут в значимых объёмах, а независимая оценка эксплуатационных характеристик отсутствует.",
+      "archive_status": "update",
+      "archive_reason": "Jalapeño был представлен ранее, но в архиве нет отдельного сюжета о первых публичных результатах бенчмарков и намеченном развёртывании.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Официальный материал OpenAI и независимая технологическая публикация согласуются по характеру обновления, тестам и сроку начала развёртывания.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-25T14:22:04+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-25T14:22:04+00:00; timestamp проверен Python против effective window. 25 августа опубликованы новые бенчмарки и конкретный ориентир по запуску в инфраструктуре, а не перепечатка первоначального анонса чипа.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является правовым событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран по инфраструктурной значимости.",
+      "id": "cand-001"
+    },
+    {
+      "title": "Cisco расширяет партнёрство с Nvidia: добавит серверы Supermicro в Secure AI Factory",
+      "organization": "Cisco; Nvidia; Supermicro",
+      "published_date": "2026-08-25",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Интегрированная инфраструктура для развёртывания крупных GPU-кластеров: серверы, сети, безопасность и observability в предвалидированной системе.",
+      "event_type": "partnership and infrastructure product expansion",
+      "keywords": [
+        "Cisco",
+        "Nvidia",
+        "Supermicro",
+        "Secure AI Factory",
+        "AI servers",
+        "GPU clusters",
+        "networking",
+        "liquid cooling",
+        "data centers"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Exclusive: Cisco expands Nvidia partnership for AI data center boom",
+        "publisher": "Axios",
+        "url": "https://www.axios.com/2026/08/25/exclusive-cisco-expands-nvidia-partnership-for-ai-data-center-boom"
+      },
+      "supporting_sources": [],
+      "event_summary": "Cisco сообщила Axios, что работает с Supermicro над добавлением высокоплотных серверных систем с воздушным и жидкостным охлаждением в своё предложение Secure AI Factory with Nvidia. Компания намерена продавать вычислительные системы совместно с сетевыми, security- и observability-продуктами как предвалидированный стек для упрощения развёртывания крупных GPU-кластеров; доступность систем ожидается в октябре.",
+      "verified_facts": [
+        "Axios сообщает, что Cisco сотрудничает с Supermicro для добавления высокоплотных AI-серверов в Secure AI Factory with Nvidia.",
+        "Системы будут поддерживать платформы Nvidia следующего поколения и, по данным Axios, должны стать доступными в октябре.",
+        "Cisco планирует объединять вычислительные системы с сетями, безопасностью и observability в предвалидированное предложение для крупных GPU-кластеров."
+      ],
+      "significance": "Событие показывает, что крупный поставщик корпоративных сетей расширяется в сторону интегрированных AI-систем уровня стойки и кластера, где ценность создаётся не только GPU, но и совместной поставкой серверов, охлаждения, сетей и эксплуатации.",
+      "significance_score": 3,
+      "limitations": "Основано на эксклюзивном сообщении Axios и заявлениях Cisco; независимые финансовые параметры, объём заказов и список первых клиентов не раскрыты.",
+      "archive_status": "none",
+      "archive_reason": "В текущем пуле и предоставленном архиве нет совпадающего сюжета о включении серверов Supermicro в Secure AI Factory with Nvidia.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Открытый материал Axios датирован 25 августа 2026 года и прямо описывает партнёрство, состав решения и ожидаемый срок доступности.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является судебным или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран по инфраструктурной значимости, а не как curiosity-сюжет.",
+      "id": "cand-002"
+    },
+    {
+      "title": "Gamma приобрела Accel-backed стартап Lica для создания исследовательского направления AI-дизайна",
+      "organization": "Gamma; Lica; Accel",
+      "published_date": "2026-08-25",
+      "published_at": "2026-08-25T15:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Консолидация в AI-инструментах для визуальной коммуникации и развитие мультимодальных, персонализируемых генеративных презентаций.",
+      "event_type": "acquisition",
+      "keywords": [
+        "Gamma",
+        "Lica",
+        "M&A",
+        "AI design",
+        "multimodal presentations",
+        "visual communication"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Gamma acquires Accel-backed design startup Lica",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/25/gamma-acquires-accel-backed-design-startup-lica/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Gamma сообщила о покупке Lica, стартапа, работавшего с AI-инструментами для превращения скриншотов и записей в презентации и видео. Сооснователи Lica возглавят новое исследовательское направление Gamma; компания заявила о намерении развивать мультимодальные и персонализируемые форматы визуальной коммуникации.",
+      "verified_facts": [
+        "TechCrunch датирует публикацию 25 августа 2026 года, 08:00 PDT.",
+        "Gamma приобрела Lica; сумма сделки не раскрыта.",
+        "Lica ранее привлекла $4 млн, в том числе от Accel, South Park Commons и Village Global.",
+        "Gamma заявила, что новое подразделение будет исследовать новые форматы визуальной коммуникации и AI-персонализацию презентаций."
+      ],
+      "significance": "Это самостоятельная M&A-сделка в быстро консолидирующемся сегменте AI-презентаций и design tooling, но нераскрытая сумма и сравнительно небольшой масштаб цели ограничивают редакционный приоритет.",
+      "significance_score": 2,
+      "limitations": "Сумма и условия сделки не раскрыты; подтверждение основано на эксклюзивной публикации TechCrunch и заявлениях участников сделки.",
+      "archive_status": "none",
+      "archive_reason": "Событие отсутствует среди предоставленных опубликованных архивных сюжетов и среди текущих найденных кандидатов.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Первичный новостной материал открыт; дата, факт приобретения, участники и заявленная цель нового исследовательского направления подтверждены текстом источника.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-25T15:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-25T15:00:00+00:00; timestamp проверен Python против effective window. Публикация и объявление датированы 25 августа 2026 года и попадают в effective editorial window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие не является судебным или регуляторным.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-рубрике.",
+      "id": "cand-003"
+    },
+    {
+      "title": "Anthropic объединила память Claude Chat и Claude Cowork",
+      "organization": "Anthropic; Claude",
+      "published_date": "2026-08-25",
+      "published_at": "2026-08-25T17:50:33+00:00",
+      "time_precision": "datetime",
+      "topic": "Потребительские и рабочие AI-агенты: постоянная кросс-продуктовая память, переход от чата к выполнению задач и пользовательский контроль сохранённых данных.",
+      "event_type": "product update",
+      "keywords": [
+        "Anthropic",
+        "Claude",
+        "Claude Cowork",
+        "memory",
+        "AI agents",
+        "privacy",
+        "consumer AI"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Claude Cowork finally remembers what you told the app in chat",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/25/claude-cowork-finally-remembers-what-you-told-the-app-in-chat/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Anthropic объединила систему памяти чата Claude и рабочего агентного режима Claude Cowork: контекст из чатов теперь доступен Cowork, а пользователи могут просматривать, редактировать и удалять сохранённую память.",
+      "verified_facts": [
+        "TechCrunch сообщает, что Anthropic анонсировала объединение памяти Claude Chat и Claude Cowork 25 августа 2026 года.",
+        "Память должна обновляться во время разговора, а не только после завершения чата.",
+        "Пользователи могут просматривать, редактировать и удалять сохранённую Claude информацию.",
+        "Функция включена по умолчанию для тарифов Free, Pro и Max; по умолчанию Claude не сохраняет ряд чувствительных категорий данных."
+      ],
+      "significance": "Обновление устраняет ключевой барьер для практического использования агентного режима: необходимость заново передавать контекст при переходе от обсуждения задачи к её выполнению. Одновременно оно повышает значимость privacy-контролей для persistent-memory ассистентов массового рынка.",
+      "significance_score": 3,
+      "limitations": "Доступное подтверждение — технологическое медиа; в проверенном материале отсутствует отдельная официальная страница Anthropic. Масштаб фактического использования и качество memory-механизма ещё не подтверждены независимыми данными.",
+      "archive_status": "none",
+      "archive_reason": "В недавнем архиве нет сюжета об объединении памяти Claude Chat и Cowork.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Публикация содержит конкретные продуктовые детали, тарифы, настройки чувствительных данных и описание изменения от Anthropic.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-25T17:50:33+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-25T17:50:33+00:00; timestamp проверен Python против effective window. Это самостоятельный свежий релиз продуктовой функции, опубликованный внутри effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является правовым событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат относится к основному направлению agents/products.",
+      "id": "cand-004"
+    },
+    {
+      "title": "Stability AI привлекла $76 млн от инвесторов из музыки, игр и технологий",
+      "organization": "Stability AI; Electronic Arts; Sony Music Group; Universal Music Group; Warner Music Group; AMD Ventures",
+      "published_date": "2026-08-25",
+      "published_at": "2026-08-25T14:59:22+00:00",
+      "time_precision": "datetime",
+      "topic": "Финансирование генеративного ИИ для профессионального производства изображений, музыки и видео, а также стратегическое сближение модели-провайдера с правообладателями.",
+      "event_type": "funding",
+      "keywords": [
+        "Stability AI",
+        "Stable Diffusion",
+        "Series B",
+        "generative media",
+        "music",
+        "gaming",
+        "entertainment",
+        "licensed data"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "official",
+      "primary_source": {
+        "title": "The Entertainment Industry’s Biggest Names Back Stability AI in Latest Funding Round",
+        "publisher": "Stability AI",
+        "url": "https://stability.ai/news-updates/stability-ai-latest-funding-backed-by-entertainment-industry-biggest-names"
+      },
+      "supporting_sources": [
+        {
+          "title": "Stability AI, maker of image generator Stable Diffusion, raises $76 million in fresh funding",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/08/25/stability-ai-maker-of-image-generator-stable-diffusion-raises-76-million-in-fresh-funding/"
+        }
+      ],
+      "event_summary": "Stability AI объявила Series B на $76 млн; среди новых инвесторов — EA, Sony Music Group, Universal Music Group, Warner Music Group, AMD Ventures и Pacific Alliance Ventures. Компания направит средства на продукты для креативного производства, прикладные исследования и профессиональные сервисы.",
+      "verified_facts": [
+        "Stability AI объявила о Series B объёмом $76 млн 25 августа 2026 года.",
+        "Компания указывает, что совокупное финансирование при нынешнем руководстве достигло $232 млн.",
+        "Среди названных инвесторов раунда — EA, Sony Music Group, Universal Music Group, Warner Music Group, AMD Ventures и Pacific Alliance Ventures.",
+        "Stability AI заявила о намерении финансировать развитие creative-production product suite, applied research и professional services."
+      ],
+      "significance": "Раунд меньше крупнейших AI-сделок, но выделяется составом стратегических инвесторов: крупные музыкальные и игровые правообладатели получают более тесную связь с разработчиком генеративных медиа-моделей. Это заметный сигнал о коммерциализации и лицензировании AI-инструментов для индустрии контента.",
+      "significance_score": 3,
+      "limitations": "Размер раунда относительно умеренный, а стратегическая ценность партнёрств и условия лицензирования не раскрыты. Большинство деталей исходит от самой Stability AI.",
+      "archive_status": "none",
+      "archive_reason": "Событие и этот раунд финансирования отсутствуют в предоставленном архиве.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Сумма, список ключевых инвесторов и назначение средств подтверждаются официальным сообщением Stability AI и независимым материалом TechCrunch.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:datepublished=2026-08-25T14:59:22+0000; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:datepublished=2026-08-25T14:59:22+0000; timestamp проверен Python против effective window. Новый раунд и новый состав стратегических инвесторов объявлены 25 августа внутри effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является правовым событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран по бизнес- и экосистемной значимости.",
+      "id": "cand-005"
+    },
+    {
+      "title": "Gatik привлекла $200 млн после коммерческого соглашения с PepsiCo для масштабирования беспилотных грузовиков",
+      "organization": "Gatik; PepsiCo; Qatar Investment Authority; Koch Disruptive Technologies",
+      "published_date": "2026-08-25",
+      "published_at": "2026-08-25T14:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Physical AI и автономная логистика: коммерческое масштабирование беспилотных среднетоннажных грузовиков на фиксированных и динамических маршрутах.",
+      "event_type": "funding and commercial deployment expansion",
+      "keywords": [
+        "Gatik",
+        "autonomous trucks",
+        "physical AI",
+        "driverless delivery",
+        "PepsiCo",
+        "middle-mile logistics",
+        "Qatar Investment Authority",
+        "Koch Disruptive Technologies"
+      ],
+      "geography": "world",
+      "category": "robotics",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Self-driving truck startup Gatik raises $200M following PepsiCo deal",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/25/self-driving-truck-startup-gatik-raises-200m-following-pepsico-deal/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Gatik объявила раунд на $200 млн, последовавший за многолетним коммерческим соглашением с PepsiCo. Стартап планирует расширять эксплуатацию полностью беспилотных box trucks в сегменте middle-mile; по данным TechCrunch, у компании уже есть коммерческие операции в нескольких регионах и контракты на $600 млн выручки.",
+      "verified_facts": [
+        "Материал TechCrunch опубликован 25 августа 2026 года в 7:00 AM PDT, что соответствует времени внутри effective editorial window.",
+        "Раунд на $200 млн возглавили Qatar Investment Authority и Koch Disruptive Technologies; также участвовали Millennium Management, ARK Invest и Intact Private Capital.",
+        "Gatik заявляет, что привлекла около $500 млн с момента выхода из stealth-режима в 2019 году.",
+        "По данным публикации, 41 беспилотный грузовик Gatik обслуживает маршруты PepsiCo в Далласе, Финиксе и северо-западном Арканзасе.",
+        "Компания сообщила о $600 млн законтрактированной выручки и намерении расширять парк, персонал и географию операций."
+      ],
+      "significance": "Это не только венчурный раунд, но и признак перехода автономной грузовой логистики к масштабируемым коммерческим операциям: Gatik сочетает крупное финансирование с уже действующими беспилотными маршрутами и крупным клиентом PepsiCo. Сюжет закрывает пробел в coverage по робототехнике и physical AI.",
+      "significance_score": 3,
+      "limitations": "Данные о размере парка, оценке компании, полном перечне клиентов и параметрах контрактов частично не раскрыты; сведения о коммерческой эксплуатации и выручке основаны на заявлениях Gatik, переданных TechCrunch.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве есть другие раунды в physical AI и робототехнике, но нет события о Gatik, её раунде на $200 млн и масштабировании коммерческих беспилотных middle-mile перевозок с PepsiCo.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Первичный новостной материал TechCrunch содержит точный timestamp, сумму, состав инвесторов, конкретные параметры коммерческого внедрения PepsiCo и заявления руководителя Gatik. Timestamp 25 августа 2026 года, 07:00 PDT, проверен относительно границ effective window.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-25T14:00:00+00:00; timestamp проверен Python против effective window. Новый раунд финансирования и описание следующего этапа коммерческого масштабирования опубликованы 25 августа 2026 года. Это не перепечатка предыдущего соглашения с PepsiCo: раунд, инвесторы и планы расширения являются новыми фактами.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является правовым, судебным или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-рубрике; отобрано по значимости для physical AI и коммерческой робототехники.",
+      "audit_direction": "general_coverage_gaps",
+      "id": "cand-006"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=5, validated unique=5, final candidates=5. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.\nTargeted coverage audit добавил кандидатов: 0.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota"
+  }
+}
+=== CANDIDATES_CONTEXT_END ===
+
+Утверждённая машиночитаемая редакционная политика:
+=== EDITORIAL_POLICY_BEGIN ===
+{
+  "spec_version": "2026-08-05",
+  "language": "ru",
+  "timezone": "Europe/Moscow",
+  "story_counts": {
+    "total_target_minimum": 7,
+    "total_target_maximum": 12,
+    "short_digest_minimum": 1,
+    "zero_stories_status": "error",
+    "regional_story_quotas_enabled": false,
+    "short_digest_notice": "Новостей сегодня меньше, чем обычно",
+    "short_digest_notice_html": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+  },
+  "diversity": {
+    "max_selected_per_publisher_soft": 2,
+    "max_selected_per_organization_soft": 2,
+    "override_requires_reason": true,
+    "short_pool_soft_limits_may_reduce_selection": false
+  },
+  "candidate_selection": {
+    "verification_required_for_selection": "verified",
+    "allowed_freshness_for_selection": [
+      "new_event",
+      "material_update"
+    ],
+    "legal_category": "legal",
+    "legal_scale_required_for_selection": "major",
+    "legal_minimum_significance_score": 4,
+    "curiosity_category": "curiosity",
+    "curiosity_optional": true,
+    "maximum_selected_curiosity_stories": 1,
+    "curiosity_requires_explicit_verification": true
+  },
+  "what_it_means": {
+    "required": true,
+    "minimum_items": 4,
+    "maximum_items": 6,
+    "html_heading": "<h2>Что это значит</h2>",
+    "list_tag": "ol"
+  },
+  "dzen": {
+    "required": true,
+    "heading": "Все ИИ-Сводки",
+    "url": "https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1",
+    "anchor_text": "Архив ИИ-Сводок",
+    "html": "<h2>Все ИИ-Сводки</h2><p><a href=\"https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1\">Архив ИИ-Сводок</a></p>"
+  },
+  "meta_marking": {
+    "enabled": true,
+    "visible_name": "Meta",
+    "first_visible_form": "Meta*",
+    "subsequent_visible_form": "Meta",
+    "footnote_html": "<p><em>*Meta и ее сервисы - в России запрещены</em></p>",
+    "footnote_position": "after_dzen_block",
+    "service_fields_use_asterisk": false
+  },
+  "updates": {
+    "headline_prefix": "Обновление: ",
+    "required_for_archive_status": "update",
+    "forbidden_for_archive_status": "new"
+  },
+  "article": {
+    "introduction_sentences_minimum": 2,
+    "introduction_sentences_maximum": 4,
+    "paragraphs_per_story_minimum": 2,
+    "paragraphs_per_story_maximum": 3,
+    "world_heading": "Мировые лидеры ИИ",
+    "russian_heading": "Российские лидеры ИИ",
+    "allow_missing_russian_section": true,
+    "forbidden_tags": [
+      "h1",
+      "img",
+      "html",
+      "head",
+      "body",
+      "script",
+      "style",
+      "iframe"
+    ],
+    "china_heading": "Китайские лидеры ИИ",
+    "allow_missing_china_section": true
+  },
+  "terminology": {
+    "prefer": {
+      "AI": "ИИ",
+      "AI agent": "агент ИИ"
+    },
+    "keep_untranslated": [
+      "LLM"
+    ],
+    "preserve_company_and_product_names": true,
+    "allow_ai_in_official_names": true
+  },
+  "style": [
+    "ясно",
+    "делово",
+    "живо",
+    "без воды",
+    "без чрезмерного хайпа"
+  ],
+  "tracked_world_organizations": [
+    "OpenAI",
+    "Google DeepMind",
+    "Anthropic",
+    "Meta AI",
+    "Microsoft",
+    "Nvidia",
+    "xAI",
+    "Amazon",
+    "Mistral",
+    "Hugging Face",
+    "Apple",
+    "Cohere"
+  ],
+  "tracked_asia_organizations": [
+    "DeepSeek",
+    "Alibaba",
+    "Qwen",
+    "Baidu",
+    "ERNIE",
+    "Tencent",
+    "Hunyuan",
+    "ByteDance",
+    "Doubao",
+    "Moonshot AI",
+    "Kimi",
+    "Z.ai",
+    "Zhipu AI",
+    "GLM",
+    "MiniMax",
+    "01.AI",
+    "SenseTime",
+    "Pony.ai",
+    "Huawei"
+  ],
+  "tracked_developer_tools": [
+    "IDE",
+    "coding agents",
+    "agentic development environments",
+    "CLI-агенты",
+    "Claude Code",
+    "Cursor",
+    "GitHub Copilot",
+    "OpenCode",
+    "Cline",
+    "GLM",
+    "Qwen",
+    "DeepSeek",
+    "Kimi",
+    "Claude",
+    "GPT",
+    "Gemini"
+  ],
+  "tracked_russian_organizations": [
+    "Яндекс",
+    "Сбер",
+    "VK",
+    "МТС AI",
+    "Т-Банк",
+    "Тинькофф",
+    "Газпромбанк",
+    "Ростелеком"
+  ],
+  "editorial_notes": {
+    "publish_in_article": false,
+    "publish_in_rss": false,
+    "allowed_types": [
+      "source_gap",
+      "low_news_volume",
+      "time_precision",
+      "diversity_override"
+    ]
+  },
+  "stories_file": {
+    "enabled": true,
+    "filename": "stories.json"
+  },
+  "image": {
+    "aspect_ratio": "16:9",
+    "title_template": "ИИ-Сводка на {human_date}",
+    "direct_prompt_to_image_api": true,
+    "restrictions": [
+      "без логотипов компаний",
+      "без дополнительного текста, кроме точного заголовка",
+      "без водяных знаков",
+      "без мелких интерфейсных надписей",
+      "без пустой половины кадра",
+      "без стокового корпоративного клипарта",
+      "без узнаваемых лиц реальных людей",
+      "нейтральные силуэты без идентифицируемых черт допустимы"
+    ]
+  }
+}
+=== EDITORIAL_POLICY_END ===
+
+## 1. Источники данных
+
+Используй только сведения и URL из `CANDIDATES_CONTEXT`. На этом этапе не ищи новые материалы и не добавляй факты по памяти.
+
+Не выбирай кандидатов с `recommendation: exclude`. Не выбирай полноценные дубли.
+Не выбирай include/consider без `verification_status: verified`.
+Не выбирай `freshness_status: old_reprint`: текущая дата перепечатки без нового
+события не делает старый материал новой новостью.
+
+Кандидат с `archive_status: update` допустим только тогда, когда в статье ясно описано существенное новое развитие, а его заголовок начинается с `Обновление:`.
+
+## 2. Отбор
+
+Выбери лучшие подтверждённые сюжеты, но не заполняй выпуск слабыми или старыми материалами ради количества.
+
+Редакционные цели:
+
+- 7–12 сюжетов всего;
+- выбрать все действительно важные сюжеты, которые подтверждены пулом;
+- не добавлять слабые или старые материалы ради объёма.
+
+Legal-кандидат допустим только с `category: legal`, `legal_scale: major`,
+конкретным объяснением масштаба и `significance_score` не ниже 4. Мелкий
+бытовой или локальный спор не выбирай. Из кандидатов `category: curiosity`
+можно выбрать не более одного: только проверяемый, самостоятельно значимый и
+не вытесняющий более важную серьёзную новость.
+
+Числовых квот для китайских и российских новостей нет. Если в
+`CANDIDATES_CONTEXT` есть достойные сюжеты этих направлений, включи столько
+значимых сюжетов, сколько действительно есть. Если подходящих сюжетов нет,
+не создавай соответствующий раздел.
+
+Если исследовательский пул не позволяет собрать обычный объём, выбери всё
+действительно важное. Автоматизация может выполнить ограниченный coverage
+audit, но отсутствие дополнений не является ошибкой и не должно мешать
+публикации короткого выпуска.
+
+Когда после базовых eligibility-проверок достойный пул остаётся меньше
+`MINIMUM_SELECTED_STORIES`, мягкие лимиты разнообразия издателей и организаций
+не могут сами по себе уменьшать число выбранных сюжетов. Не исключай иначе
+достойный `include`/`consider` только ради соблюдения soft publisher/organization
+cap. Для такого исключения нужна самостоятельная содержательная причина,
+не связанная с diversity: недостаточная значимость самого события, слабое
+подтверждение, дубль, устаревание или другое редакционное основание. Если
+достойный сюжет приводит к превышению soft cap, выбери его и зафиксируй
+обоснованный `diversity_override`.
+
+Если найдено от 1 до 6 достойных сюжетов:
+
+- верни `status: ok`;
+- поставь `digest.short_digest: true`;
+- первым элементом `article_html` поставь точный абзац:
+
+```html
+<p><em>Новостей сегодня меньше, чем обычно</em></p>
+```
+
+- добавь в `editorial_notes` запись `low_news_volume`.
+
+Если не найдено ни одного достойного сюжета, верни `status: error` и ясную причину.
+
+Не добавляй фразы вида «по компании новостей нет».
+
+## 3. Разнообразие
+
+Мягкие цели:
+
+- не более двух выбранных сюжетов от одного издателя;
+- не более двух выбранных сюжетов одной компании или организации.
+
+Превышение допустимо только для независимых событий высокой значимости. В таком случае добавь объект в `diversity_overrides`:
+
+- `type`: `publisher` или `organization`;
+- `value`: точное название;
+- `reason`: конкретное объяснение.
+
+Без причины превышение недопустимо.
+
+Для короткого пула меньше обычной минимальной цели эти лимиты являются только
+балансирующим сигналом: превышение всё ещё требует `diversity_override`, но
+сам soft limit не является основанием удалить иначе достойный сюжет. Для пула,
+который позволяет выбрать обычные 7–12 сюжетов, применяй мягкие цели как обычно
+при сравнении сопоставимых по значимости кандидатов.
+
+Если в пуле есть достойные российские или китайские кандидаты, не исключай их
+ради упрощения структуры. Выбирай по значимости и качеству без числовой квоты.
+Если подходящих кандидатов направления нет, соответствующий раздел не нужен.
+
+## 4. Структура article_html
+
+`article_html` содержит полный готовый текст статьи в чистом HTML.
+
+Разрешены только теги:
+
+- `p`;
+- `h2`;
+- `h3`;
+- `ul`;
+- `ol`;
+- `li`;
+- `strong`;
+- `em`;
+- `a`;
+- `blockquote`.
+
+У тега `a` разрешён только атрибут `href`.
+
+Не добавляй:
+
+- `h1`;
+- обложку;
+- `html`, `head` или `body`;
+- `script`, `style` или `iframe`;
+- Markdown;
+- служебные комментарии;
+- упоминания GitHub, RSS, Blogger, автоматизации или внутреннего архива;
+- отдельный раздел со списком источников.
+
+Обычный выпуск начинается с 2–4 предложений вступления.
+
+Короткий выпуск сначала содержит точную курсивную пометку о меньшем числе новостей, затем обычное вступление.
+
+Далее:
+
+1. `<h2>Мировые лидеры ИИ</h2>`;
+2. мировые сюжеты, не относящиеся к китайским компаниям;
+3. `<h2>Китайские лидеры ИИ</h2>`, только если выбраны сюжеты о китайских компаниях или моделях;
+4. китайские сюжеты;
+5. `<h2>Российские лидеры ИИ</h2>`, только если выбраны российские сюжеты;
+6. российские сюжеты;
+7. `<h2>Что это значит</h2>`;
+8. `<ol>` с 4–6 выводами;
+9. точный блок Дзена, указанный ниже;
+10. сноска Meta, если она требуется.
+
+Не создавай пустые разделы «Китайские лидеры ИИ» и «Российские лидеры ИИ».
+
+## 5. Структура каждой новости
+
+Каждый сюжет содержит:
+
+```html
+<h3>Заголовок новости</h3>
+<p>Первый содержательный абзац.</p>
+<p>Второй содержательный абзац.</p>
+```
+
+Допускается третий содержательный абзац. Итого 2–3 абзаца на сюжет.
+
+Для каждой новости объясни:
+
+- что произошло;
+- что подтверждено;
+- почему это важно;
+- ограничения и неопределённости;
+- применимые последствия для рынка, продуктов, исследований, бизнеса, автоматизации, маркетинга, разработки и создателей ИИ-контента.
+
+Не нужно искусственно затрагивать все направления в каждом сюжете.
+
+Каждая новость должна содержать хотя бы одну ссылку вида:
+
+```html
+<a href="https://точный-url-из-кандидата">Название источника</a>
+```
+
+Не изменяй URL и не добавляй URL, которых нет в `CANDIDATES_CONTEXT`.
+
+Если утверждение подтверждено только лендингом, пресс-релизом или соцсетями, называй его продуктовым анонсом или заявлением компании, а не независимой оценкой.
+
+## 6. Раздел «Что это значит»
+
+Используй точную структуру:
+
+```html
+<h2>Что это значит</h2>
+<ol>
+  <li>...</li>
+</ol>
+```
+
+Количество выводов: 4–6. Они должны вытекать из выбранных сюжетов.
+
+## 7. Блок Дзена
+
+В конце статьи обязателен точный блок:
+
+```html
+<h2>Все ИИ-Сводки</h2>
+<p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>
+```
+
+Заголовок `<h2>Все ИИ-Сводки</h2>` не изменяй. Текст ссылки должен быть `Архив ИИ-Сводок`.
+
+Ссылка Дзена является навигационной и не включается в массив `sources`.
+
+## 8. Маркировка Meta
+
+Правило применяется только к видимому тексту `article_html`:
+
+- первое видимое упоминание должно быть `Meta*`;
+- все последующие видимые упоминания должны быть `Meta` без звёздочки;
+- после блока Дзена добавь ровно одну сноску:
+
+```html
+<p><em>*Meta и ее сервисы - в России запрещены</em></p>
+```
+
+Если Meta в статье отсутствует, сноску не добавляй.
+
+В `sources`, `topics`, служебных полях, URL и названиях организаций пиши `Meta` без звёздочки.
+
+## 9. Обновления
+
+Если выбранный кандидат имеет `archive_status: update`, соответствующий `<h3>` обязан начинаться с:
+
+```text
+Обновление:
+```
+
+Для кандидата с `archive_status: none` такой префикс запрещён.
+
+Порядок `<h3>` должен точно совпадать с порядком `selected_candidate_ids`.
+
+## 10. Стиль и терминология
+
+Пиши на русском языке: ясно, делово, живо, без воды и чрезмерного хайпа.
+
+Пиши:
+
+- `ИИ`, а не `AI`;
+- `агент ИИ`, а не `AI agent` или `AI-агент`;
+- `LLM` без перевода.
+
+Названия компаний и продуктов не переводи. `AI` допустимо внутри официального названия, например `Mistral AI`.
+
+Не представляй заявление компании как независимо доказанный факт. Не копируй длинные фрагменты источников.
+
+## 11. Описание, темы и заметки
+
+`description`:
+
+- от 150 до 300 символов;
+- без HTML и ссылок;
+- отражает главные темы выпуска.
+
+`topics`:
+
+- от 5 до 20 коротких тем;
+- без дублей;
+- только по выбранным сюжетам;
+- без `Meta*`.
+
+`sources`:
+
+- содержит каждый новостной URL из `article_html`;
+- не содержит ссылку Дзена;
+- не содержит URL, отсутствующих в статье;
+- использует точные `title`, `publisher` и `url` из исследовательского пула.
+
+`editorial_notes` — внутренний массив. Он не публикуется в статье и RSS. Используй объекты с полями `type`, `area`, `message`.
+
+## 12. Промпт обложки
+
+`image_prompt` должен быть полноценным самостоятельным заданием для прямой генерации изображения.
+
+Он обязан иметь четыре смысловых абзаца в таком порядке:
+
+1. `Изображение 16:9: ...` — назначение и точный единственный читаемый заголовок `ИИ-Сводка на D месяца YYYY`;
+2. `Главные визуальные темы: ...` — конкретные сцены из выбранных новостей;
+3. `Композиция: ...` — центральный фокус, окружающие сцены и нижняя зона;
+4. `Стиль: ...` — палитра, детализация и запреты.
+
+Постоянные требования:
+
+- современная футуристическая редакционная обложка;
+- крупный и единственный читаемый текст — точный заголовок выпуска;
+- число визуальных мотивов соответствует реальному числу сюжетов;
+- без логотипов компаний;
+- без дополнительного текста;
+- без водяных знаков;
+- без мелких интерфейсных надписей;
+- без технического имени файла;
+- без пустой половины кадра;
+- без стокового корпоративного клипарта;
+- без узнаваемых лиц реальных людей;
+- нейтральные силуэты без идентифицируемых черт допустимы.
+
+## 13. Технические метаданные
+
+Поля `date`, `slug`, `title`, `published_at`, `author` и `cover_filename` всё равно будут принудительно нормализованы кодом. Заполни их по схеме, но не меняй редакционную дату и название выпуска.
+
+## 14. Результат
+
+Верни только строгий JSON по переданной схеме. Никакого Markdown, пояснений до JSON или текста после JSON.
