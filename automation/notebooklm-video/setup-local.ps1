@@ -30,6 +30,7 @@ $files = @(
     "configure-ftp-access.ps1",
     "README.md",
     "DEPLOYMENT.md",
+    "НАСТРОЙКИ.txt",
     "config.example.json",
     "ftp-access.example.json"
 )
