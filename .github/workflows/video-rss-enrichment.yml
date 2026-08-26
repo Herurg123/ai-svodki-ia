@@ -1,0 +1,185 @@
+name: Video RSS enrichment
+run-name: Video RSS enrichment ${{ github.run_id }}
+
+on:
+  schedule:
+    # Controlled test for the 2026-08-27 digest. Cron is UTC; the runtime guard
+    # below keeps the schedule inert outside the intended Moscow-time window.
+    - cron: "*/5 * 27 8 *"
+    - cron: "*/5 0-2 28 8 *"
+  workflow_run:
+    workflows:
+      - Daily production digest
+      - Repository content cleanup
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: video-rss-enrichment-main
+  cancel-in-progress: false
+
+env:
+  VIDEO_RSS_TEST_DATE: "2026-08-27"
+  VIDEO_RSS_RESTORE_THROUGH: "2026-09-28"
+
+jobs:
+  enrich:
+    name: Attach ready video to existing RSS item
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      changed: ${{ steps.enrich.outputs.changed }}
+      commit_sha: ${{ steps.commit.outputs.commit_sha }}
+      should_deploy: ${{ steps.commit.outputs.should_deploy }}
+
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Guard controlled test window
+        id: window
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          current_date="$(TZ=Europe/Moscow date +%F)"
+          active="false"
+          if [[ "${EVENT_NAME}" == "workflow_dispatch" ]]; then
+            active="true"
+          elif [[ "${EVENT_NAME}" == "schedule" ]]; then
+            # Poll every five minutes on the target Moscow date, with a small
+            # after-midnight grace window for a late NotebookLM upload.
+            if [[ "${current_date}" == "${VIDEO_RSS_TEST_DATE}" ]]; then
+              active="true"
+            elif [[ "${current_date}" == "2026-08-28" ]]; then
+              current_hour="$(TZ=Europe/Moscow date +%H)"
+              if (( 10#${current_hour} <= 5 )); then
+                active="true"
+              fi
+            fi
+          elif [[ "${EVENT_NAME}" == "workflow_run" ]]; then
+            # Daily production or retention cleanup can regenerate rss.xml.
+            # Restore the controlled-test media group while the article remains
+            # inside its 32-day retention window.
+            if [[ "${current_date}" < "${VIDEO_RSS_TEST_DATE}" || "${current_date}" > "${VIDEO_RSS_RESTORE_THROUGH}" ]]; then
+              active="false"
+            else
+              active="true"
+            fi
+          fi
+          echo "active=${active}" >> "${GITHUB_OUTPUT}"
+          echo "Controlled video RSS window: event=${EVENT_NAME}; date=${current_date}; active=${active}"
+
+      - name: Probe public video assets and enrich RSS candidate
+        id: enrich
+        if: steps.window.outputs.active == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p automation/preview/video-rss-enrichment
+          python automation/scripts/video_rss_enrichment.py \
+            --rss posts/rss.xml \
+            --site-config automation/config/site.json \
+            --publication-date "${VIDEO_RSS_TEST_DATE}" \
+            --report automation/preview/video-rss-enrichment/report.json \
+            --github-output "${GITHUB_OUTPUT}" \
+            --apply
+
+      - name: Validate changed RSS
+        if: steps.enrich.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/validate_dzen_feed.py \
+            --rss posts/rss.xml \
+            --site-base-url https://rybalka.one/posts \
+            --report automation/preview/video-rss-enrichment/dzen-feed.json
+          git diff --check
+          changed="$(git diff --name-only)"
+          if [[ "${changed}" != "posts/rss.xml" ]]; then
+            echo "Video RSS enrichment changed an unexpected path:" >&2
+            printf '%s\n' "${changed}" >&2
+            exit 1
+          fi
+
+      - name: Commit validated RSS enrichment
+        id: commit
+        if: steps.enrich.outputs.changed == 'true'
+        shell: bash
+        env:
+          MAIN_PUSH_DEPLOY_KEY: ${{ secrets.MAIN_PUSH_DEPLOY_KEY }}
+        run: |
+          set -euo pipefail
+          checkout_sha="$(git rev-parse HEAD)"
+          git fetch --no-tags origin main
+          remote_sha="$(git rev-parse origin/main)"
+          if [[ "${checkout_sha}" != "${remote_sha}" ]]; then
+            echo "main moved during enrichment; leaving this run as a safe no-op so a later trigger can retry."
+            git restore -- posts/rss.xml
+            echo "commit_sha=" >> "${GITHUB_OUTPUT}"
+            echo "should_deploy=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- posts/rss.xml
+          git commit -m "Attach video to AI digest ${VIDEO_RSS_TEST_DATE}"
+          commit_sha="$(git rev-parse HEAD)"
+          bash automation/scripts/push_protected_main.sh HEAD:main
+          echo "commit_sha=${commit_sha}" >> "${GITHUB_OUTPUT}"
+          echo "should_deploy=true" >> "${GITHUB_OUTPUT}"
+
+      - name: Summary
+        if: always()
+        shell: bash
+        env:
+          ACTIVE: ${{ steps.window.outputs.active || 'false' }}
+          STATUS: ${{ steps.enrich.outputs.status || 'not-run' }}
+          CHANGED: ${{ steps.enrich.outputs.changed || 'false' }}
+          COMMIT_SHA: ${{ steps.commit.outputs.commit_sha || '' }}
+        run: |
+          {
+            echo "## Video RSS enrichment"
+            echo
+            echo "- Controlled date: ${VIDEO_RSS_TEST_DATE}"
+            echo "- Window active: ${ACTIVE}"
+            echo "- Probe/enrichment status: ${STATUS}"
+            echo "- RSS changed: ${CHANGED}"
+            echo "- Commit: ${COMMIT_SHA:-none}"
+            echo "- Paid APIs: 0"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: video-rss-enrichment-${{ github.run_id }}
+          path: automation/preview/video-rss-enrichment/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  deploy:
+    name: Deploy enriched RSS
+    needs: enrich
+    if: needs.enrich.result == 'success' && needs.enrich.outputs.should_deploy == 'true' && needs.enrich.outputs.commit_sha != ''
+    uses: ./.github/workflows/deploy-posts.yml
+    with:
+      ref: ${{ needs.enrich.outputs.commit_sha }}
+    secrets: inherit
