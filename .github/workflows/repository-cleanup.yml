@@ -33,6 +33,8 @@ jobs:
     timeout-minutes: 20
     outputs:
       mode: ${{ steps.mode.outputs.mode }}
+      retention_days: ${{ steps.mode.outputs.retention_days }}
+      reference_date: ${{ steps.public_cleanup.outputs.reference_date }}
       commit_sha: ${{ steps.commit.outputs.commit_sha }}
       public_changed: ${{ steps.public_cleanup.outputs.changed }}
 
@@ -140,6 +142,7 @@ jobs:
                   f"planned={'true' if report['changes_planned'] else 'false'}\n"
               )
               output.write(f"rss_items_after={report['rss_items_after']}\n")
+              output.write(f"reference_date={report['reference_date']}\n")
           PY
 
       - name: Validate applied cleanup
@@ -337,11 +340,103 @@ jobs:
       ref: ${{ needs.cleanup.outputs.commit_sha }}
     secrets: inherit
 
+  video_ftp_cleanup:
+    name: Prune expired video assets from FTP
+    needs:
+      - cleanup
+      - deploy
+    if: >-
+      always() &&
+      needs.cleanup.result == 'success' &&
+      (needs.deploy.result == 'success' || needs.deploy.result == 'skipped')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Plan or apply FTP video cleanup
+        id: video_cleanup
+        shell: bash
+        env:
+          CLEANUP_MODE: ${{ needs.cleanup.outputs.mode }}
+          RETENTION_DAYS: ${{ needs.cleanup.outputs.retention_days }}
+          REFERENCE_DATE: ${{ needs.cleanup.outputs.reference_date }}
+          REPORT_PATH: ${{ runner.temp }}/video-ftp-cleanup.json
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          test -n "${REFERENCE_DATE}"
+          args=(
+            --retention-days "${RETENTION_DAYS}"
+            --timezone Europe/Moscow
+            --reference-date "${REFERENCE_DATE}"
+            --report "${REPORT_PATH}"
+          )
+          if [[ "${CLEANUP_MODE}" == "apply" ]]; then
+            args+=(--apply)
+          fi
+          python automation/scripts/cleanup_video_ftp.py "${args[@]}"
+
+      - name: Publish FTP video cleanup summary
+        if: always()
+        shell: bash
+        env:
+          REPORT_PATH: ${{ runner.temp }}/video-ftp-cleanup.json
+          CLEANUP_OUTCOME: ${{ steps.video_cleanup.outcome }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          import sys
+          from pathlib import Path
+
+          sys.path.insert(0, "automation/scripts")
+          from cleanup_video_ftp import render_github_summary
+
+          report_path = Path(os.environ["REPORT_PATH"])
+          report = None
+          if report_path.is_file():
+              report = json.loads(report_path.read_text(encoding="utf-8"))
+          summary = render_github_summary(
+              report,
+              outcome=os.environ["CLEANUP_OUTCOME"],
+          )
+          with Path(os.environ["GITHUB_STEP_SUMMARY"]).open(
+              "a",
+              encoding="utf-8",
+          ) as output:
+              output.write(summary)
+          PY
+
+      - name: Upload FTP video cleanup report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: video-ftp-cleanup-${{ github.run_id }}
+          path: ${{ runner.temp }}/video-ftp-cleanup.json
+          if-no-files-found: warn
+          retention-days: 14
+
   final_status:
     name: Итог ночной очистки
     needs:
       - cleanup
       - deploy
+      - video_ftp_cleanup
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -352,6 +447,7 @@ jobs:
           CLEANUP_MODE: ${{ needs.cleanup.outputs.mode }}
           PUBLIC_CHANGED: ${{ needs.cleanup.outputs.public_changed }}
           DEPLOY_RESULT: ${{ needs.deploy.result }}
+          VIDEO_FTP_RESULT: ${{ needs.video_ftp_cleanup.result }}
           COMMIT_SHA: ${{ needs.cleanup.outputs.commit_sha }}
         run: |
           set -euo pipefail
@@ -366,12 +462,16 @@ jobs:
             echo "|---|---|"
             echo "| Проверка и GitHub | ${CLEANUP_RESULT} |"
             echo "| Режим | ${CLEANUP_MODE:-не определён} |"
-            echo "| FTP-синхронизация | ${ftp_result} |"
+            echo "| FTP-синхронизация posts | ${ftp_result} |"
+            echo "| FTP-очистка video | ${VIDEO_FTP_RESULT} |"
             echo "| Commit | ${COMMIT_SHA:-не создавался} |"
           } >> "${GITHUB_STEP_SUMMARY}"
           if [[ "${CLEANUP_RESULT}" == "failure" ]]; then
             echo "::error title=Ошибка ночной очистки::GitHub и FTP не приведены к новому состоянию. Открой подробную русскую Summary job cleanup."
           elif [[ "${PUBLIC_CHANGED}" == "true" && "${DEPLOY_RESULT}" != "success" ]]; then
-            echo "::error title=Ошибка FTP-синхронизации::GitHub уже очищен, но FTP не подтверждён. Повторно запусти deploy-posts.yml для commit ${COMMIT_SHA}."
+            echo "::error title=Ошибка FTP-синхронизации::GitHub уже очищен, но FTP posts не подтверждён. Повторно запусти deploy-posts.yml для commit ${COMMIT_SHA}."
+            exit 1
+          elif [[ "${VIDEO_FTP_RESULT}" != "success" ]]; then
+            echo "::error title=Ошибка FTP-очистки video::Основная очистка завершилась, но удаление старых MP4/PNG из video не подтверждено. Повторный запуск безопасен и удалит оставшиеся просроченные файлы."
             exit 1
           fi
