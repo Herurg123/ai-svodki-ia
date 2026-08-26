@@ -140,6 +140,7 @@ class VideoRssEnrichmentTests(unittest.TestCase):
             self.assertIn("<media:group>", rss.read_text(encoding="utf-8"))
 
         workflow = WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn('cron: "*/5 21-23 26 8 *"', workflow)
         self.assertIn('cron: "*/5 * 27 8 *"', workflow)
         self.assertIn('VIDEO_RSS_TEST_DATE: "2026-08-27"', workflow)
         self.assertIn("python automation/scripts/video_rss_enrichment.py", workflow)
