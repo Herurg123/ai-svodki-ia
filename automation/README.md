@@ -45,7 +45,9 @@
   публичные MP4+PNG и идемпотентно добавляет Media RSS video group в существующий
   item, не меняя публикационные поля и `content:encoded`;
 - `scripts/cleanup_repository_content.py` и `cleanup_public_posts.py` — 32-day
-  content cleanup;
+  tracked content/public cleanup;
+- `scripts/cleanup_video_ftp.py` — независимая от RSS 32-day очистка уже
+  опубликованных MP4/PNG в hard-confined FTP-каталоге `video`;
 - `scripts/repository_hygiene.py` — GitHub object hygiene.
 
 Versioned implementation files such as `*_v1.py`, `*_v2.py` and `*_v8.py` are
@@ -73,6 +75,14 @@ video runtime.
 фиксирует только `posts/rss.xml` и вызывает обычный FTP deploy. Ошибка или
 отсутствие video assets не может блокировать ежедневную публикацию ИИ-Сводки.
 
+`repository-cleanup.yml` сохраняет единый retention-контур, но FTP-video cleanup
+внутри него является отдельным job и не использует RSS как источник списка
+media. После успешной основной cleanup-цепочки он применяет тот же
+`reference_date`/`retention_days`, входит только в FTP `video/`, управляет лишь
+точными `ai-svodka-YYYY-MM-DD.mp4/.png` и подтверждает отсутствие удалённых
+файлов повторным listing. Manual dry-run только планирует; scheduled apply удаляет
+просроченные assets.
+
 Полный workflow inventory, ruleset и automated-writer boundary описаны в
 [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
@@ -84,9 +94,9 @@ ruleset описана в [`MAIN_PROTECTION.md`](MAIN_PROTECTION.md). Ruleset JS
 ## Repository hygiene
 
 `repository-hygiene.yml` является отдельным operational workflow и не заменяет
-32-дневную очистку контента. Его policy, безопасные mutation boundaries,
-retention и operator diagnostics описаны в [`ARCHITECTURE.md`](ARCHITECTURE.md)
-и в root `AGENTS.md`.
+32-дневную очистку контента и FTP-video assets. Его policy, безопасные mutation
+boundaries, retention и operator diagnostics описаны в
+[`ARCHITECTURE.md`](ARCHITECTURE.md) и в root `AGENTS.md`.
 
 ## Бесплатная локальная проверка основного проекта
 
