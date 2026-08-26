@@ -7,14 +7,17 @@ policy error, accept only the explicitly allowed Russian wording, classify the
 regional section from a story's primary subject rather than a secondary model
 reference, normalize one safe research-ranking metadata contradiction, restore
 source metadata from the paid research pool instead of asking the model to copy
-URLs perfectly, and repair the one mandatory world-section heading when the
-model omits it from an otherwise structurally valid short digest.
+URLs perfectly, repair the one mandatory world-section heading when the model
+omits it from an otherwise structurally valid short digest, and synthesize only
+the publisher diversity explanation already permitted by policy when the
+baseline-eligible pool itself is genuinely short.
 """
 from __future__ import annotations
 
 import copy
 import html
 import re
+from collections import Counter
 from typing import Any, Callable
 
 AGENT_ERROR = "Используй «агент ИИ», а не AI agent или AI-агент."
@@ -314,6 +317,153 @@ def normalize_editorial_sources(
     return changes
 
 
+def _baseline_selection_eligible(
+    candidate: dict[str, Any], policy: dict[str, Any]
+) -> bool:
+    """Apply only the deterministic baseline eligibility gates used by short-pool policy."""
+
+    selection = policy.get("candidate_selection")
+    if not isinstance(selection, dict):
+        return False
+    if candidate.get("recommendation") == "exclude":
+        return False
+    if candidate.get("verification_status") != selection.get(
+        "verification_required_for_selection"
+    ):
+        return False
+    allowed_freshness = selection.get("allowed_freshness_for_selection")
+    if not isinstance(allowed_freshness, list) or candidate.get(
+        "freshness_status"
+    ) not in allowed_freshness:
+        return False
+
+    if candidate.get("category") == selection.get("legal_category"):
+        if candidate.get("legal_scale") != selection.get(
+            "legal_scale_required_for_selection"
+        ):
+            return False
+        try:
+            score = int(candidate.get("significance_score", 0) or 0)
+            minimum_score = int(selection.get("legal_minimum_significance_score", 0) or 0)
+        except (TypeError, ValueError):
+            return False
+        if score < minimum_score:
+            return False
+
+    if (
+        candidate.get("category") == selection.get("curiosity_category")
+        and selection.get("curiosity_requires_explicit_verification") is True
+        and candidate.get("curiosity_eligible") is not True
+    ):
+        return False
+    return True
+
+
+def _editorial_policy_from_validate_args(
+    args: tuple[Any, ...], kwargs: dict[str, Any]
+) -> dict[str, Any] | None:
+    # validate_editorial(editorial, research, publication_date, config, archive,
+    # policy, target_selected_stories, maximum_selected_stories)
+    policy = args[3] if len(args) >= 4 else kwargs.get("policy")
+    return policy if isinstance(policy, dict) else None
+
+
+def normalize_short_pool_publisher_overrides(
+    editorial: dict[str, Any],
+    research: dict[str, Any],
+    policy: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Persist a publisher override only for a genuinely short eligible pool.
+
+    The canonical policy already says a short pool must not lose an otherwise
+    eligible story merely to satisfy the soft publisher cap. The model is still
+    expected to explain an override. This normalizer closes only the mechanical
+    omission seen in production: when the baseline-eligible research pool itself
+    is below the normal target, add the deterministic publisher explanation the
+    policy requires. Organization concentration is intentionally untouched.
+    """
+
+    diversity = policy.get("diversity")
+    story_counts = policy.get("story_counts")
+    if not isinstance(diversity, dict) or not isinstance(story_counts, dict):
+        return []
+    if diversity.get("short_pool_soft_limits_may_reduce_selection") is not False:
+        return []
+
+    candidates_raw = research.get("candidates")
+    selected_ids = editorial.get("selected_candidate_ids")
+    overrides = editorial.get("diversity_overrides")
+    if not isinstance(candidates_raw, list):
+        return []
+    if not isinstance(selected_ids, list) or not isinstance(overrides, list):
+        return []
+
+    candidates = [item for item in candidates_raw if isinstance(item, dict)]
+    eligible = [item for item in candidates if _baseline_selection_eligible(item, policy)]
+    try:
+        target = int(story_counts.get("total_target_minimum", 0) or 0)
+        publisher_cap = int(diversity.get("max_selected_per_publisher_soft", 0) or 0)
+    except (TypeError, ValueError):
+        return []
+    if target <= 0 or publisher_cap <= 0:
+        return []
+    if not (0 < len(eligible) < target and 0 < len(selected_ids) < target):
+        return []
+
+    candidate_map = {str(item.get("id")): item for item in candidates}
+    selected = [candidate_map[item] for item in selected_ids if item in candidate_map]
+    counts: Counter[str] = Counter()
+    display_values: dict[str, str] = {}
+    for candidate in selected:
+        primary = candidate.get("primary_source")
+        if not isinstance(primary, dict):
+            continue
+        publisher = str(primary.get("publisher", "")).strip()
+        if not publisher:
+            continue
+        key = publisher.casefold()
+        counts[key] += 1
+        display_values.setdefault(key, publisher)
+
+    existing = {
+        str(item.get("value", "")).strip().casefold()
+        for item in overrides
+        if isinstance(item, dict)
+        and item.get("type") == "publisher"
+        and str(item.get("reason", "")).strip()
+    }
+    changes: list[dict[str, Any]] = []
+    for key, count in sorted(counts.items()):
+        if count <= publisher_cap or key in existing:
+            continue
+        publisher = display_values[key]
+        override = {
+            "type": "publisher",
+            "value": publisher,
+            "reason": (
+                f"Короткий eligible-пул: {len(eligible)} достойных кандидатов "
+                f"при обычной цели {target}; soft publisher limit не должен "
+                "уменьшать selection."
+            ),
+        }
+        overrides.append(override)
+        existing.add(key)
+        changes.append(copy.deepcopy(override))
+
+        digest = editorial.get("digest")
+        if isinstance(digest, dict):
+            notes = digest.get("editorial_notes")
+            if isinstance(notes, list):
+                notes.append(
+                    {
+                        "type": "diversity_override",
+                        "area": "publisher",
+                        "message": f"{publisher}: {override['reason']}",
+                    }
+                )
+    return changes
+
+
 def wrap_editorial_validator(
     original: EditorialValidator,
     normalize_url: UrlNormalizer,
@@ -329,10 +479,28 @@ def wrap_editorial_validator(
         *args: Any,
         **kwargs: Any,
     ) -> Any:
+        override_changes: list[dict[str, Any]] = []
         if isinstance(editorial, dict) and isinstance(research, dict):
             normalize_editorial_structure(editorial)
             normalize_editorial_sources(editorial, research, normalize_url)
-        return original(editorial, research, *args, **kwargs)
+            policy = _editorial_policy_from_validate_args(args, kwargs)
+            if policy is not None:
+                override_changes = normalize_short_pool_publisher_overrides(
+                    editorial,
+                    research,
+                    policy,
+                )
+        result = original(editorial, research, *args, **kwargs)
+        if not override_changes or not isinstance(result, tuple) or len(result) != 3:
+            return result
+        errors, warnings, stories = result
+        updated_warnings = list(warnings) if isinstance(warnings, list) else []
+        publishers = ", ".join(item["value"] for item in override_changes)
+        updated_warnings.append(
+            "Автоматически сохранён publisher diversity override для короткого "
+            f"eligible-пула: {publishers}."
+        )
+        return errors, updated_warnings, stories
 
     setattr(corrected, "_ai_svodki_source_metadata_fixed", True)
     setattr(corrected, "__wrapped__", original)
