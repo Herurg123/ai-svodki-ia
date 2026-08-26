@@ -102,6 +102,16 @@ item's `title`, `link`, `guid`, `pubDate` and `content:encoded`; missing media i
 successful no-op and video failure must never change the digest publication
 status.
 
+The 32-day FTP video retention step in `repository-cleanup.yml` is a separate
+narrow exception that manages only already-published remote media. It may enter
+only the hard-coded FTP directory `video` and may delete only basenames that
+exactly match `ai-svodka-YYYY-MM-DD.mp4` or `ai-svodka-YYYY-MM-DD.png` and whose
+embedded date is strictly older than the shared cleanup cutoff. It must ignore
+all other remote names and directories, validate the complete managed inventory
+before the first delete, and must not read RSS or local NotebookLM runtime state.
+A preview/video pair is not required for deletion: an expired orphan matching the
+managed filename contract is independently eligible.
+
 Real `config.json`, `ftp-access.json`, state, logs, downloaded media and browser
 profiles must never be committed. FTP behavior must remain hard-confined to the
 remote directory `video` unless an explicit architecture change is approved.
@@ -137,7 +147,9 @@ them during refactoring.
   releases, tags, permanent archive branches or published/editorial content.
 - The 32-day repository/public-content cleanup is separate from repository
   hygiene. `posts/images/` remains mandatory; absent historical
-  `posts/dzen-test/images/` is valid after the last legacy image expires.
+  `posts/dzen-test/images/` is valid after the last legacy image expires. Its FTP
+  video step is independently hard-confined to `video/` and the exact dated
+  MP4/PNG filename contract above.
 - Repository hygiene retries only idempotent GitHub API GET requests after the
   documented transient failures. Do not automatically retry destructive
   DELETE/PUT operations.
