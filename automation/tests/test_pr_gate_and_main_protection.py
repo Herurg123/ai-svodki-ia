@@ -111,7 +111,14 @@ class PrGateAndMainProtectionTests(unittest.TestCase):
             for path in WORKFLOW_ROOT.glob("*.yml")
             if "MAIN_PUSH_DEPLOY_KEY" in path.read_text(encoding="utf-8")
         }
-        self.assertEqual(writers, {"daily-production.yml", "repository-cleanup.yml"})
+        self.assertEqual(
+            writers,
+            {
+                "daily-production.yml",
+                "repository-cleanup.yml",
+                "video-rss-enrichment.yml",
+            },
+        )
 
         for path in WORKFLOW_ROOT.glob("*.yml"):
             text = path.read_text(encoding="utf-8")
