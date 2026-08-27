@@ -217,12 +217,66 @@ def _persist_primary_failure(publication_date: Any, exc: Exception) -> None:
     )
 
 
+def _supplement_primary_research(
+    research_path: Path, report: dict[str, Any], *, publication_date: Any,
+    maximum_candidates: Any,
+) -> tuple[Path, dict[str, Any]]:
+    """Run zero-paid Source Pulse v1.1 before the first editorial call.
+
+    The Search-derived ``regional_health`` annotation is intentionally left
+    unchanged, so Pulse cannot mask a China/Asia or Russia Search gap and cannot
+    suppress the existing Hybrid regional-health pass.
+    """
+    if not isinstance(publication_date, str) or not publication_date.strip():
+        return research_path, report
+    try:
+        limit = int(maximum_candidates or 20)
+    except (TypeError, ValueError):
+        limit = 20
+    try:
+        from source_pulse_supplement import compact_supplement_report, run_source_pulse_supplement
+
+        pulse = run_source_pulse_supplement(
+            research_path=research_path,
+            archive_path=Path(ARCHIVE_PATH),
+            publication_date=publication_date.strip(),
+            output_root=Path(PRODUCTION_PREVIEW_ROOT),
+            maximum_candidates=limit,
+        )
+        updated = copy.deepcopy(report)
+        updated["source_pulse_supplement"] = compact_supplement_report(pulse)
+        try:
+            research = json.loads(research_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            research = None
+        if isinstance(research, dict) and isinstance(research.get("candidates"), list):
+            updated["final_candidate_count"] = len(research["candidates"])
+        return research_path, updated
+    except Exception as exc:
+        updated = copy.deepcopy(report)
+        updated["source_pulse_supplement"] = {
+            "version": 11,
+            "status": "complete_with_gaps",
+            "paid_api_calls": 0,
+            "web_search_operations": 0,
+            "promoted_count": 0,
+            "error": f"{type(exc).__name__}: {exc}",
+        }
+        return research_path, updated
+
+
 def run_primary_recall_search(*args: Any, **kwargs: Any) -> tuple[Path, dict[str, Any]]:
     _sync_paths()
     original = _base.run_primary_recall_matrix
     _base.run_primary_recall_matrix = run_primary_recall_matrix
     try:
-        return _BASE_RUN_SEARCH(*args, **kwargs)
+        research_path, report = _BASE_RUN_SEARCH(*args, **kwargs)
+        return _supplement_primary_research(
+            research_path,
+            report,
+            publication_date=kwargs.get("publication_date"),
+            maximum_candidates=kwargs.get("maximum_candidates", 20),
+        )
     except Exception as exc:
         _persist_primary_failure(kwargs.get("publication_date"), exc)
         raise
