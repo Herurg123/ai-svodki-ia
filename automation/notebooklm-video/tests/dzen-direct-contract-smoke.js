@@ -40,6 +40,7 @@ assert.strictEqual(
   "Missing fifth tag must remain a blocking preparation error"
 );
 assert.strictEqual(direct.DIRECT_FLOW_REVISION, 2, "Failed live resume semantics must force one clean direct-flow draft revision");
+assert.strictEqual(direct.STUDIO_CHANNEL_TIMEOUT_MS, 20_000, "Studio channel confirmation must tolerate bounded UI hydration delay");
 assert.strictEqual(direct.processingStageFromText("Загружаем видео: не закрывайте Дзен"), "uploading");
 assert.strictEqual(direct.processingStageFromText("Загрузили видео\nОбрабатываем..."), "processing");
 assert.strictEqual(
@@ -62,6 +63,8 @@ for (const marker of [
   "все 5 тегов уже подтверждены как плашки",
   "продолжаю существующий video draft без новой вкладки",
   "не трогаю клавиатурой",
+  "жду подтверждение канала",
+  "add-publication-button=",
 ]) {
   assert(source.includes(marker), `Missing direct-publish contract marker: ${marker}`);
 }
