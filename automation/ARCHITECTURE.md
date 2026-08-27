@@ -21,19 +21,29 @@ maintenance-операции над уже опубликованным FTP `vid
 scheduled/manual trigger
   -> previous-release / recovery gate
   -> Primary Recall
+  -> Source Pulse v1.1 fixed-source supplemental discovery
+  -> deterministic Source Freshness Proof for trusted Primary + Pulse research
+  -> first editorial
   -> conditional agency discovery rescue
   -> Source Freshness Proof for rescue additions
-  -> Source Pulse v1 shadow snapshot
+  -> saved Source Pulse snapshot/fusion reuse
   -> Hybrid completeness
+  -> editorial rerun when rescue/Hybrid adds a candidate
   -> fallback Coverage when required
-  -> Source Freshness Proof
-  -> editorial
+  -> Source Freshness Proof for merged trusted research
+  -> final editorial when Coverage adds a candidate
   -> cover
   -> site/RSS/sitemap
   -> validators
   -> commit to main
   -> FTP deploy of posts/
 ```
+
+Source Pulse v1.1 intentionally supplements fresh Primary **before the first
+editorial call**. This placement allows the second discovery plane to influence
+the normal editorial selection without introducing a dedicated extra model call.
+The later Hybrid stage reuses the saved Pulse snapshot only for fusion diagnostics
+and never silently repolls the mutable source set.
 
 Production работает из GitHub Actions, хранит результаты в репозитории и
 использует `posts/` как публичный deploy tree.
@@ -144,7 +154,8 @@ listing и проверяется отсутствие всех удалённы
 - `fixtures/research/.runtime/` является ignored trusted ingress для внутреннего
   fresh research;
 - `scripts/` содержит orchestration, retrieval, recovery, publication, cleanup и
-  validators, включая controlled `video_rss_enrichment.py`, точечный
+  validators, включая `source_pulse_supplement.py`, сохранённый
+  `source_pulse_shadow.py`, controlled `video_rss_enrichment.py`, точечный
   `repository_hygiene_video_rss_runs.py` и FTP-retention `cleanup_video_ftp.py`;
 - `tests/` содержит основной Python offline regression suite;
 - `notebooklm-video/` является отдельным локальным downstream-подпроектом;
@@ -353,8 +364,8 @@ Exact source URL уже опубликованного события отсек
 semantic archive dedupe остаётся обязательным.
 
 Exact `search_window.end_at` является authoritative current-time boundary для
-Primary, conditional agency rescue, Hybrid, Coverage и sentinel. Model/system
-calendar date не может переопределить эту временную границу.
+Primary, Source Pulse, conditional agency rescue, Hybrid, Coverage и sentinel.
+Model/system calendar date не может переопределить эту временную границу.
 
 Retrieval queries используют короткую date-free relative-freshness формулировку.
 Exact timestamp window применяется после retrieval как eligibility boundary.
@@ -391,11 +402,18 @@ Broad catch-all routes остаются source-neutral. China/Asia model и
 integration/business routes не схлопываются; Russia остаётся отдельным mandatory
 slot.
 
+После того как versioned Primary engine вернул trusted runtime research, public
+wrapper запускает Source Pulse v1.1 supplement на том же exact saved window и
+только затем возвращает research в `run_digest_preview.py` для Source Freshness
+Proof и первого editorial. Search-derived `regional_health` при этом намеренно не
+пересчитывается после Pulse promotion.
+
 ### 6.2. Conditional agency discovery rescue
 
-После Primary и до Hybrid может выполняться bounded missing-event rescue.
-Trigger зависит от технически завершённого `major_agencies` с `raw_count == 0`
-или `accepted_count == 0`, а не от общего количества candidates/stories.
+После первого editorial и перед Hybrid может выполняться bounded missing-event
+rescue. Trigger зависит от технически завершённого `major_agencies` с
+`raw_count == 0` или `accepted_count == 0`, а не от общего количества
+candidates/stories.
 
 Разрешена максимум одна дополнительная Web Search operation. Текущий provider
 route Reuters-only и acceptance требует прямого `reuters.com` primary URL.
@@ -407,19 +425,58 @@ State сохраняется до и после paid call. `search_started` ав
 `search_completed`/`merge_failed` могут продолжить merge из сохранённого response
 без второго search.
 
-### 6.3. Source Pulse v1 shadow
+### 6.3. Source Pulse v1.1 supplemental discovery и shadow fusion
 
-`source_pulse_shadow.py` работает после conditional rescue/freshness и до Hybrid.
-Текущий режим production-shadow:
+Source Pulse состоит из двух связанных режимов над одним сохранённым snapshot.
 
-- `candidate_influence=false`;
-- zero OpenAI calls;
-- zero Web Search operations;
-- source/network/parser failure fail-open;
-- сохранённый snapshot не repoll'ится молча при same-artifact recovery.
+**Pre-editorial supplement.** После fresh Primary public wrapper вызывает
+`source_pulse_supplement.py`. Он использует тот же фиксированный registry, обычный
+bounded HTTPS polling и **0 OpenAI / 0 Web Search operations**. V1.1 сохраняет
+hardening исходного collector и добавляет bounded видимую date-association для
+реальных article-like HTML containers. JSON-LD, RSS/Atom и `<time datetime>`
+семантика v1 сохраняется.
 
-Pulse даёт diagnostics `pulse_only / both / search_only` и source-health, но не
-добавляет, не удаляет и не ранжирует candidates.
+Candidate influence разрешён только по узкому контракту:
+
+- lead обязан иметь fusion disposition `pulse_only`;
+- только Tier A с `role=official`;
+- Tier B остаётся `lead_only` и никогда не мутирует candidate pool;
+- официальный lead URL повторно открывается обычным HTTPS;
+- publication evidence обязан детерминированно попадать в exact saved window;
+- title/page summary обязан пройти deterministic AI relevance gate;
+- candidate входит только как `recommendation=consider`;
+- Source Pulse не назначает `include`, legal/curiosity privilege или высокий
+  significance; текущий supplemental score консервативно равен 3;
+- обычный `story_coverage.merge_candidates` применяет schema/window/exact-URL
+  validation и общий candidate cap.
+
+После supplement штатный trusted-runtime Source Freshness Proof **ещё раз**
+проверяет уже merged Primary+Pulse research до первого editorial. Следовательно,
+внутренний Pulse parser не является публикационным authority и не обходит
+существующий freshness fail-closed boundary.
+
+**Поздний shadow/fusion.** Hybrid продолжает вызывать
+`source_pulse_shadow.py`, но normal fresh run находит уже сохранённый
+`source-pulse-<DATE>.json` и переиспользует snapshot без второго polling. Этот
+этап не добавляет новых Pulse candidates. После Hybrid тот же snapshot снова
+сравнивается с merged research для `fusion_post_hybrid`.
+
+Search-derived regional gaps сохраняются из Primary и не пересчитываются после
+Pulse. Поэтому найденная Pulse новость не может скрыть `asia/russia` Primary gap
+и не может подавить существующий fourth-slot Hybrid health check.
+
+Runtime diagnostics в `preview/production-daily/source-pulse-<DATE>.json`
+содержат source transport/parser health, v1.1 counters
+`parsed_items_before_v11 / parsed_items_after_v11 / dated_items_after_v11 /
+undated_items_after_v11 / visible_dates_recovered`, pre-promotion fusion,
+per-lead promotion/rejection disposition, page freshness evidence, promoted URLs,
+merge rejections, post-promotion fusion, reuse flag и позже post-Hybrid fusion.
+Весь `production-daily/` уже входит в обычный Actions artifact.
+
+Source/network/parser/promotion error fail-open только для уже валидного Primary:
+ошибка Pulse не должна превращать успешные обязательные Search passes в
+production failure. Она обязана остаться в diagnostics. Same-day recovery не
+repoll'ит mutable Pulse sources.
 
 ### 6.4. Hybrid completeness
 
@@ -430,8 +487,10 @@ adaptive/regional health slot. Hard ceiling равен 4 search operations. API 
 filter отсутствует. Russia/Asia health check не является publication quota.
 
 Новые candidates проходят обычную validation/dedupe chain. Editorial rerun
-происходит только после реально принятого нового candidate. Hybrid failure не
-должен уничтожать уже пригодный Primary/rescue artifact.
+происходит только после реально принятого rescue/Hybrid candidate. Pulse не
+требует отдельного rerun, потому что его bounded promotion происходит до первого
+editorial. Hybrid failure не должен уничтожать уже пригодный Primary/Pulse/rescue
+artifact.
 
 ### 6.5. Fallback Coverage
 
@@ -455,15 +514,20 @@ Coverage содержит шесть mandatory directions и максимум с
 = 24 Web Search operations
 ```
 
+Source Pulse не входит в search-operation budget: его collector и page/freshness
+verification используют только обычный HTTPS и не вызывают OpenAI/Web Search.
 Navigation hosted calls не повышают этот search-operation ceiling. Изменение
 ceiling требует отдельного controlled experiment и architecture-wide review.
 
 ## 7. Source freshness и editorial
 
 Trusted internal research перед публикацией проходит deterministic Source
-Freshness Proof. Verifier открывает только уже процитированные candidate URLs,
-извлекает machine-readable publication evidence и сравнивает его с exact saved
-window. `dateModified` не заменяет publication date.
+Freshness Proof. Для fresh run первый такой gate выполняется после
+Primary+Source-Pulse supplement и до первого editorial. Rescue/Hybrid/Coverage
+merged inputs проходят тот же proof по существующему rerun contract. Verifier
+открывает только уже процитированные candidate URLs, извлекает machine-readable
+publication evidence и сравнивает его с exact saved window. `dateModified` не
+заменяет publication date.
 
 Outside-window source исключается как stale/old reprint. Отсутствие проверяемой
 date evidence блокирует публикацию. Supporting source может стать primary, если
@@ -471,7 +535,9 @@ date evidence блокирует публикацию. Supporting source мож�
 
 Editorial применяется после discovery/validation. Короткий выпуск допустим:
 нельзя вводить искусственные региональные или тематические quotas только ради
-числа сюжетов. Подробные правила находятся в `specs/editorial-policy.md`.
+числа сюжетов. Source Pulse не имеет отдельной publication quota и не может
+обязать editorial выбрать promoted `consider`. Подробные правила находятся в
+`specs/editorial-policy.md`.
 
 ## 8. Recovery
 
@@ -483,7 +549,9 @@ same-day artifact и продолжает с первого незавершён
 
 Known-bad normalization/validation artifacts не переиспользуются. Modern saved
 Primary повторно проходит current source-health. Conditional agency rescue
-соблюдает собственную at-most-once state machine.
+соблюдает собственную at-most-once state machine. Сохранённый Source Pulse
+snapshot считается mutable-source evidence того же artifact и не repoll'ится при
+обычном same-day recovery; later fusion использует сохранённый snapshot.
 
 Manual `force_fresh_research=true` является отдельным operator override после
 retrieval hotfix. Он не эквивалентен обычному rerun и не является разрешением на
@@ -613,6 +681,10 @@ implementations, например:
 - source-inspection contract tests, которые защищают search/output budgets;
 - возможность semantic overlay без переписывания proven engine в том же change.
 
+Source Pulse v1.1 следует этому же принципу: production semantics добавлены новым
+supplement wrapper над hardening v1 collector, а исходный collector/shadow
+surface остаётся совместимым для replay, saved snapshots и regression hooks.
+
 Удаление или схлопывание versioned files требует отдельного semantic-neutral
 refactor с полным offline regression доказательством. Нельзя одновременно
 менять retrieval semantics и compatibility topology, иначе невозможно отделить
@@ -698,6 +770,15 @@ attached Actions artifacts. Сам Video RSS workflow остаётся canonical
 repository cleanup, FTP-video retention, retrieval/editorial и локальный video
 worker не меняются. Offline regressions дополнительно моделируют 900 runs, чтобы
 доказать пагинацию и latest-14/retention semantics без GitHub mutation.
+
+Для Source Pulse v1.1 dependency audit затрагивает fresh Primary wrapper,
+фиксированный source registry, trusted runtime research, Source Freshness Proof,
+первый editorial, сохранённый Pulse snapshot и позднюю Hybrid fusion. Paid
+Primary/agency/Hybrid/Coverage budgets не меняются. Региональные Search gaps
+сохраняются до Pulse, Tier B не получает candidate influence, а normal recovery
+переиспользует snapshot. Controlled experiment и regressions сохранены в
+`audits/experiments/2026-08-27-source-pulse-v11-supplement.md` и
+`tests/test_source_pulse_supplement.py`.
 
 Search/retrieval изменения сначала проверяются на assistant-owned resources.
 Production API пользователя не расходуется без явного разрешения.
