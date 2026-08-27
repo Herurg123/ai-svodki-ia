@@ -31,7 +31,12 @@ assert(runner.includes('"dzen-publish-live.js"'), "runner must invoke the live p
 assert(runner.includes("recoverDraftCreatedBeforeChildExit"), "runner must recover a draft created before Playwright child exit");
 assert(runner.includes("videoEditorPublicationId"), "draft recovery must key off videoEditorPublicationId");
 assert(runner.includes("recoveredAfterUploadTimeout"), "recovered draft must be recorded in state");
-assert(runner.includes("повторно запускаю Dzen flow"), "runner must continue the existing draft after recovery");
+assert(runner.includes("OPERATOR_WINDOW_MS = 10 * 60 * 1000"), "runner must keep a ten-minute operator recovery window");
+assert(runner.includes("while (Date.now() < deadline)"), "runner must retry within the recovery window instead of closing immediately");
+assert(runner.includes("resetClearlyEmptyDraft"), "runner must detect a clearly empty saved draft before reuse");
+assert(runner.includes('name: "Выбрать видео"'), "empty-draft detection must use the empty video-selection form");
+assert(runner.includes("previousDrafts"), "discarded empty draft metadata must be retained in local state history");
+assert(runner.includes("taskkill.exe"), "Windows child process tree must be bounded by the ten-minute operator window");
 assert(liveCmd.includes("dzen-browser-runner.js"), "live command must route through shared bootstrap");
 assert(dryCmd.includes("dzen-browser-runner.js"), "dry-run command must route through shared bootstrap");
 assert(!liveCmd.toLowerCase().includes("powershell"), "live command must not require a PowerShell launcher");
