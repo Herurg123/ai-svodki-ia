@@ -27,7 +27,7 @@ assert(!browserSession.includes("timeout: 3000"), "shared bootstrap must not res
 assert(!browserSession.includes("open-robot-browser"), "shared bootstrap must not depend on legacy launcher scripts");
 assert(!browserSession.includes("Sessions"), "Dzen bootstrap must not delete browser profile session files");
 assert(runner.includes('require("./browser-session")'), "runner must use browser-session.js");
-assert(runner.includes('"dzen-publish-live.js"'), "runner must invoke the live publisher");
+assert(runner.includes('"dzen-publish-direct.js"'), "runner must invoke the direct single-page live publisher");
 assert(runner.includes("recoverDraftCreatedBeforeChildExit"), "runner must recover a draft created before Playwright child exit");
 assert(runner.includes("videoEditorPublicationId"), "draft recovery must key off videoEditorPublicationId");
 assert(runner.includes("recoveredAfterUploadTimeout"), "recovered draft must be recorded in state");
