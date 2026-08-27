@@ -118,6 +118,7 @@ function runNodeScript(scriptName, args, timeoutMs) {
       windowsHide: false,
     });
 
+    let timer = null;
     const finish = (error = null) => {
       if (settled) return;
       settled = true;
@@ -138,7 +139,7 @@ function runNodeScript(scriptName, args, timeoutMs) {
       ));
     });
 
-    const timer = setTimeout(() => {
+    timer = setTimeout(() => {
       terminateChildTree(child);
       finish(new Error(
         `${scriptName} не завершился за оставшееся операторское окно ${timeoutMs} мс.`
