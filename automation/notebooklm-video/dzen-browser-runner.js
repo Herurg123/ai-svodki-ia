@@ -10,6 +10,7 @@ const CONFIG_PATH = path.join(ROOT, "config.json");
 const OPERATOR_WINDOW_MS = 10 * 60 * 1000;
 const RETRY_DELAY_MS = 5 * 1000;
 const EMPTY_DRAFT_MIN_AGE_MS = 60 * 1000;
+const DRAFT_PROBE_TIMEOUT_MS = 15 * 1000;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -205,6 +206,50 @@ function draftCreatedAtMs(dzenVideo) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+async function hasVideoEditorUi(page) {
+  const metadataSelectors = [
+    'textarea[maxlength="140"]',
+    'input[maxlength="140"]',
+    'textarea[maxlength="5000"]',
+    'textarea[placeholder*="Описание"]',
+    'textarea[placeholder*="описание"]',
+    '.ql-editor',
+  ];
+  for (const selector of metadataSelectors) {
+    const locator = page.locator(selector);
+    const count = await locator.count().catch(() => 0);
+    for (let i = 0; i < count; i += 1) {
+      if (await locator.nth(i).isVisible().catch(() => false)) return true;
+    }
+  }
+
+  for (const text of [
+    "Добавить обложку",
+    "Теги через запятую",
+    "Кто может комментировать",
+    "Загрузили и обработали видео",
+  ]) {
+    const locator = page.getByText(text, { exact: true });
+    const count = await locator.count().catch(() => 0);
+    for (let i = 0; i < count; i += 1) {
+      if (await locator.nth(i).isVisible().catch(() => false)) return true;
+    }
+  }
+
+  return false;
+}
+
+async function isStudioDashboard(page) {
+  const bodyText = await page.locator("body").innerText().catch(() => "");
+  const markers = [
+    "Статистика",
+    "Последние публикации",
+    "Последние комментарии",
+    "Важное",
+  ];
+  return markers.filter((marker) => bodyText.includes(marker)).length >= 2;
+}
+
 async function isClearlyEmptyRemoteDraft(session, dzenVideo) {
   if (!dzenVideo?.draftUrl || dzenVideo.status !== "DRAFT_CREATED") {
     return false;
@@ -221,31 +266,47 @@ async function isClearlyEmptyRemoteDraft(session, dzenVideo) {
       waitUntil: "domcontentloaded",
       timeout: 60_000,
     });
-    await page.waitForTimeout(1_500);
 
-    let currentUrlHasDraftId = false;
-    try {
-      currentUrlHasDraftId = new URL(page.url()).searchParams.has("videoEditorPublicationId");
-    } catch {}
+    const probeDeadline = Date.now() + DRAFT_PROBE_TIMEOUT_MS;
+    while (Date.now() < probeDeadline) {
+      let currentUrlHasDraftId = false;
+      try {
+        currentUrlHasDraftId = new URL(page.url()).searchParams.has("videoEditorPublicationId");
+      } catch {}
 
-    if (!currentUrlHasDraftId) {
-      return true;
+      if (!currentUrlHasDraftId) {
+        return true;
+      }
+
+      if (await hasVideoEditorUi(page)) {
+        return false;
+      }
+
+      const chooseVideo = page.getByRole("button", {
+        name: "Выбрать видео",
+        exact: true,
+      });
+      if (
+        (await chooseVideo.count().catch(() => 0)) > 0 &&
+        (await chooseVideo.first().isVisible().catch(() => false))
+      ) {
+        await page.waitForTimeout(2_000);
+        if (await chooseVideo.first().isVisible().catch(() => false)) {
+          return true;
+        }
+      }
+
+      if (await isStudioDashboard(page)) {
+        await page.waitForTimeout(2_000);
+        if (!(await hasVideoEditorUi(page)) && await isStudioDashboard(page)) {
+          return true;
+        }
+      }
+
+      await page.waitForTimeout(500);
     }
 
-    const chooseVideo = page.getByRole("button", {
-      name: "Выбрать видео",
-      exact: true,
-    });
-    const visibleOnce =
-      (await chooseVideo.count().catch(() => 0)) > 0 &&
-      (await chooseVideo.first().isVisible().catch(() => false));
-
-    if (!visibleOnce) {
-      return false;
-    }
-
-    await page.waitForTimeout(2_000);
-    return await chooseVideo.first().isVisible().catch(() => false);
+    return false;
   } catch {
     return false;
   } finally {
@@ -278,7 +339,7 @@ async function resetClearlyEmptyDraft(session, config, dateKey) {
     draftId: dzenVideo.draftId || null,
     draftUrl: dzenVideo.draftUrl || null,
     status: dzenVideo.status || null,
-    abandonedReason: "remote draft remained on the empty video-selection form",
+    abandonedReason: "remote draft did not resolve to a usable video editor",
     abandonedAt: new Date().toISOString(),
   });
 
@@ -291,7 +352,7 @@ async function resetClearlyEmptyDraft(session, config, dateKey) {
 
   warn(
     config,
-    `сохранённый draft ${dzenVideo.draftId || dzenVideo.draftUrl} спустя контрольное время остаётся пустой формой «Выбрать видео». Не переиспользую его и не удаляю в Дзене; следующий проход создаст новый video draft.`
+    `сохранённый draft ${dzenVideo.draftId || dzenVideo.draftUrl} не открыл пригодный видеоредактор Дзена. Не переиспользую его и не удаляю удалённый draft; следующий проход создаст новый video draft.`
   );
   return true;
 }
@@ -362,11 +423,14 @@ if (require.main === module) {
 }
 
 module.exports = {
+  DRAFT_PROBE_TIMEOUT_MS,
   EMPTY_DRAFT_MIN_AGE_MS,
   OPERATOR_WINDOW_MS,
   RETRY_DELAY_MS,
   findJobForDate,
+  hasVideoEditorUi,
   isClearlyEmptyRemoteDraft,
+  isStudioDashboard,
   main,
   parseArgs,
   recoverDraftCreatedBeforeChildExit,
