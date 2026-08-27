@@ -195,7 +195,7 @@ async function recoverDraftCreatedBeforeChildExit(session, config, dateKey) {
   saveJsonAtomic(config.stateFile, state);
   warn(
     config,
-    `Playwright-процесс завершился до сохранения draft, но Дзен уже создал videoEditorPublicationId=${draftId}. Draft сохранён в state.json; продолжаю тот же draft без создания нового.`
+    `Playwright-процесс завершился до сохранения draft, но Дзен уже создал videoEditorPublicationId=${draftId}. Draft сохранён в state.json; следующий явный запуск сможет решить, безопасно ли продолжать его без нового upload.`
   );
   return true;
 }
@@ -357,6 +357,36 @@ async function resetClearlyEmptyDraft(session, config, dateKey) {
   return true;
 }
 
+async function runDryRunWithRecovery(session, config, dateKey, target, targetArgs, deadline) {
+  let lastError = null;
+  while (Date.now() < deadline) {
+    await resetClearlyEmptyDraft(session, config, dateKey);
+
+    const remainingMs = Math.max(1_000, deadline - Date.now());
+    try {
+      await runNodeScript(target, targetArgs, remainingMs);
+      return;
+    } catch (error) {
+      lastError = error;
+      await recoverDraftCreatedBeforeChildExit(session, config, dateKey);
+
+      const stillRemainingMs = deadline - Date.now();
+      if (stillRemainingMs <= 0) break;
+
+      warn(
+        config,
+        `${target} завершился промежуточной диагностической ошибкой: ${error.message}. Для dry-run повторяю flow через ${Math.min(RETRY_DELAY_MS, stillRemainingMs)} мс.`
+      );
+      await sleep(Math.min(RETRY_DELAY_MS, stillRemainingMs));
+    }
+  }
+
+  throw new Error(
+    `Dzen dry-run не завершился за максимальное операторское окно 10 минут.` +
+    (lastError ? ` Последняя ошибка: ${lastError.message}` : "")
+  );
+}
+
 async function main(argv = process.argv.slice(2)) {
   if (!fs.existsSync(CONFIG_PATH)) {
     throw new Error(`Не найден config.json: ${CONFIG_PATH}`);
@@ -370,43 +400,38 @@ async function main(argv = process.argv.slice(2)) {
   const deadline = Date.now() + OPERATOR_WINDOW_MS;
 
   log(config, `запускаю ${target} через browser bootstrap рабочего worker.js.`);
-  log(config, "операторское окно восстановления: до 10 минут; до его истечения браузер не закрывается из-за промежуточной ошибки Dzen flow.");
+  if (mode === "publish") {
+    log(config, "live publish выполняется одним child-проходом без автоматического повторного запуска; при ошибке состояние сохраняется для следующего явного операторского запуска.");
+  } else {
+    log(config, "diagnostic dry-run сохраняет операторское окно восстановления до 10 минут.");
+  }
 
   const session = await browserSession.launchRobotBrowser(config, {
     log: (message) => log(config, message),
   });
 
-  let lastError = null;
   try {
-    while (Date.now() < deadline) {
-      await resetClearlyEmptyDraft(session, config, dateKey);
-
-      const remainingMs = Math.max(1_000, deadline - Date.now());
+    if (mode === "publish") {
       try {
-        await runNodeScript(target, targetArgs, remainingMs);
+        await runNodeScript(target, targetArgs, OPERATOR_WINDOW_MS);
         return;
       } catch (error) {
-        lastError = error;
-        await recoverDraftCreatedBeforeChildExit(
-          session,
-          config,
-          dateKey
-        );
-
-        const stillRemainingMs = deadline - Date.now();
-        if (stillRemainingMs <= 0) break;
-
+        await recoverDraftCreatedBeforeChildExit(session, config, dateKey);
         warn(
           config,
-          `${target} завершился промежуточной ошибкой: ${error.message}. Браузер оставляю открытым; повторяю тот же идемпотентный flow через ${Math.min(RETRY_DELAY_MS, stillRemainingMs)} мс.`
+          `${target} завершился ошибкой: ${error.message}. Автоматический повтор live-flow в этом запуске отключён; повтор возможен только новой явной операторской командой.`
         );
-        await sleep(Math.min(RETRY_DELAY_MS, stillRemainingMs));
+        throw error;
       }
     }
 
-    throw new Error(
-      `Dzen flow не завершился за максимальное операторское окно 10 минут.` +
-      (lastError ? ` Последняя ошибка: ${lastError.message}` : "")
+    return await runDryRunWithRecovery(
+      session,
+      config,
+      dateKey,
+      target,
+      targetArgs,
+      deadline
     );
   } finally {
     await browserSession.closeRobotBrowser(session, config);
@@ -435,4 +460,5 @@ module.exports = {
   parseArgs,
   recoverDraftCreatedBeforeChildExit,
   resetClearlyEmptyDraft,
+  runDryRunWithRecovery,
 };
