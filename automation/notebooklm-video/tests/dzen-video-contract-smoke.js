@@ -24,7 +24,11 @@ assert(description.includes("https://dzen.ru/suite/test"));
 
 const defaults = helpers.applyDzenConfigDefaults({});
 assert.strictEqual(defaults.dzenUpload.enabled, false, "Dzen upload не должен включаться по умолчанию");
-assert.strictEqual(defaults.dzenUpload.tags.length, 5, "Должно быть ровно пять тегов");
+assert.deepStrictEqual(
+  defaults.dzenUpload.tags,
+  ["ии", "ai", "полезныесоветы", "будущее", "лайфхак"],
+  "Dzen contract должен фиксировать ровно пять согласованных тегов"
+);
 assert.strictEqual(defaults.dzenUpload.commentsAudience, "Все пользователи");
 helpers.normalizeTags(defaults.dzenUpload.tags);
 
@@ -39,6 +43,10 @@ for (const marker of [
   "!!! DZEN:",
   "READY_TO_PUBLISH",
   "Финальная кнопка НЕ нажата",
+  "DZEN_FILE_TRANSFER_TIMEOUT_MS = 120000",
+  "DZEN_DRAFT_DISCOVERY_TIMEOUT_MS = 180000",
+  "Новый draft не создаю",
+  "повторно MP4 не отправляю",
 ]) {
   assert(source.includes(marker), `В dzen-publish.js отсутствует контрактный маркер: ${marker}`);
 }
@@ -46,6 +54,16 @@ for (const marker of [
 assert(source.includes("waitForEvent(\"filechooser\""), "MP4/PNG должны загружаться через Playwright filechooser");
 assert(source.includes("selected.length !== 5"), "Должна быть финальная проверка пяти тегов");
 assert(source.includes("Продолжаем подготовку публикации"), "Ошибка комментариев должна быть non-fatal и логироваться");
+assert.strictEqual(
+  helpers.readVideoDraftFromUrl("https://dzen.ru/profile/editor/rybv?videoEditorPublicationId=abc-123").draftId,
+  "abc-123",
+  "Draft recovery должен извлекать videoEditorPublicationId из текущего URL"
+);
+assert.strictEqual(
+  helpers.readVideoDraftFromUrl("https://dzen.ru/profile/editor/rybv"),
+  null,
+  "Обычный URL студии не должен считаться созданным draft"
+);
 assert.throws(() => helpers.parseArgs(["--publish"]), /не включён/i);
 assert.doesNotThrow(() => helpers.parseArgs(["--dry-run", "--date=2026-08-27"]));
 
