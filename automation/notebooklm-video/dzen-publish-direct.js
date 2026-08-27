@@ -11,6 +11,7 @@ const POLL_MS = 1500;
 const PUBLISH_VERIFY_TIMEOUT_MS = 90_000;
 const DIRECT_FLOW_REVISION = 2;
 const RESUME_PROBE_TIMEOUT_MS = 15_000;
+const STUDIO_CHANNEL_TIMEOUT_MS = 20_000;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -196,15 +197,41 @@ async function isLoginPage(page) {
   return (await page.locator('input[id="passp-field-login"], input[name="login"], input[type="password"]').count()) > 0;
 }
 
+async function waitForExpectedStudioChannel(page, config, timeoutMs = STUDIO_CHANNEL_TIMEOUT_MS) {
+  const deadline = Date.now() + timeoutMs;
+  let waitLogged = false;
+  let lastBody = "";
+
+  while (Date.now() < deadline) {
+    if (await isLoginPage(page)) {
+      throw new Error("Сессия Дзена в роботизированном профиле отсутствует или истекла.");
+    }
+
+    lastBody = await page.locator("body").innerText().catch(() => "");
+    if (lastBody.includes(config.dzenUpload.channelName)) {
+      return;
+    }
+
+    if (!waitLogged) {
+      log(config, `Студия открылась, жду подтверждение канала «${config.dzenUpload.channelName}» до ${Math.round(timeoutMs / 1000)} секунд.`);
+      waitLogged = true;
+    }
+    await page.waitForTimeout(500);
+  }
+
+  const addButtonVisible = await page.locator('[data-testid="add-publication-button"]').first()
+    .isVisible()
+    .catch(() => false);
+  throw new Error(
+    `Не подтверждён нужный канал Дзена: ${config.dzenUpload.channelName} за ${Math.round(timeoutMs / 1000)} секунд. ` +
+    `Текущий URL: ${page.url()}; add-publication-button=${addButtonVisible ? "visible" : "not-visible"}; bodyTextLength=${lastBody.length}.`
+  );
+}
+
 async function openStudio(page, config) {
   log(config, `открываю Студию: ${config.dzenUpload.studioUrl}`);
   await page.goto(config.dzenUpload.studioUrl, { waitUntil: "domcontentloaded", timeout: 60_000 });
-  await page.waitForTimeout(1200);
-  if (await isLoginPage(page)) throw new Error("Сессия Дзена в роботизированном профиле отсутствует или истекла.");
-  const body = await page.locator("body").innerText().catch(() => "");
-  if (!body.includes(config.dzenUpload.channelName)) {
-    throw new Error(`Не подтверждён нужный канал Дзена: ${config.dzenUpload.channelName}.`);
-  }
+  await waitForExpectedStudioChannel(page, config);
   log(config, `подтверждён канал «${config.dzenUpload.channelName}».`);
 }
 
@@ -904,6 +931,8 @@ async function main(argv = process.argv.slice(2)) {
 
 module.exports = {
   DIRECT_FLOW_REVISION,
+  RESUME_PROBE_TIMEOUT_MS,
+  STUDIO_CHANNEL_TIMEOUT_MS,
   compactComparableText,
   descriptionMatchesIgnoringWhitespace,
   draftIdFromUrl,
