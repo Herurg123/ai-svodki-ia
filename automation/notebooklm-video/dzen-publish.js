@@ -137,7 +137,7 @@ function applyDzenConfigDefaults(config) {
     seriesUrl: "https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1",
     tags: ["ии", "ai", "полезныесоветы", "будущее", "лайфхак"],
     commentsAudience: "Все пользователи",
-    processingTimeoutMs: 300000,
+    processingTimeoutMs: 600000,
   };
 
   for (const [key, value] of Object.entries(defaults)) {
@@ -169,6 +169,7 @@ function applyDzenConfigDefaults(config) {
   if (!Number.isInteger(dzen.processingTimeoutMs) || dzen.processingTimeoutMs < 30000) {
     throw new Error('dzenUpload.processingTimeoutMs должен быть целым числом не меньше 30000.');
   }
+  dzen.processingTimeoutMs = 600000;
 
   return { ...config, dzenUpload: dzen };
 }
@@ -440,25 +441,56 @@ async function openVideoUpload(page, config) {
 
 async function uploadVideoFile(page, config, videoPath) {
   log(config, `DZEN: передаю локальный MP4: ${videoPath}`);
-  const button = await getVisible(page.getByRole("button", { name: "Выбрать видео", exact: true }));
-  if (button) {
-    const chooserPromise = page.waitForEvent("filechooser", { timeout: 10000 });
+  const timeoutMs = config.dzenUpload.processingTimeoutMs || 600000;
+  let transferError = null;
+
+  const fileInput = page.locator('input[type="file"]').first();
+  if ((await fileInput.count().catch(() => 0)) > 0) {
+    log(config, "DZEN: MP4 передаю напрямую через input[type=file].");
+    try {
+      await fileInput.setInputFiles(videoPath, { timeout: timeoutMs });
+    } catch (error) {
+      transferError = error;
+      warn(
+        config,
+        `setInputFiles вернул ошибку до подтверждения draft: ${error.message}. Не считаю это доказательством провала загрузки; продолжаю ждать videoEditorPublicationId.`
+      );
+    }
+  } else {
+    const button = await getVisible(
+      page.getByRole("button", { name: "Выбрать видео", exact: true })
+    );
+    if (!button) {
+      throw new Error("Не найден ни input[type=file], ни кнопка «Выбрать видео» для MP4.");
+    }
+
+    const chooserPromise = page.waitForEvent("filechooser", { timeout: 60000 });
     await button.click();
     const chooser = await chooserPromise;
-    await chooser.setFiles(videoPath);
-  } else {
-    const fileInput = page.locator('input[type="file"]').first();
-    if ((await fileInput.count()) === 0) {
-      throw new Error("Не найден input для загрузки MP4.");
+    try {
+      await chooser.setFiles(videoPath, { timeout: timeoutMs });
+    } catch (error) {
+      transferError = error;
+      warn(
+        config,
+        `fileChooser.setFiles вернул ошибку до подтверждения draft: ${error.message}. Продолжаю ждать videoEditorPublicationId в том же окне.`
+      );
     }
-    await fileInput.setInputFiles(videoPath);
   }
 
-  await page.waitForFunction(
-    () => new URL(window.location.href).searchParams.has("videoEditorPublicationId"),
-    null,
-    { timeout: 60000 }
-  );
+  try {
+    await page.waitForFunction(
+      () => new URL(window.location.href).searchParams.has("videoEditorPublicationId"),
+      null,
+      { timeout: timeoutMs }
+    );
+  } catch (error) {
+    throw new Error(
+      `За 10 минут Дзен не создал URL с videoEditorPublicationId.` +
+      (transferError ? ` Первичная ошибка передачи файла: ${transferError.message}` : "")
+    );
+  }
+
   const draftUrl = page.url();
   const draftId = new URL(draftUrl).searchParams.get("videoEditorPublicationId");
   log(config, `DZEN: создан video draft id=${draftId}.`);
@@ -497,7 +529,7 @@ async function findMetadataInputs(page) {
   let descInput = null;
   for (const selector of descSelectors) {
     const candidate = await getVisible(page.locator(selector));
-    if (candidate && (!titleInput || (await candidate.evaluate((el) => el !== document.activeElement).catch(() => true)))) {
+    if (candidate) {
       descInput = candidate;
       break;
     }
@@ -517,8 +549,8 @@ async function findMetadataInputs(page) {
   return { titleInput, descInput };
 }
 
-async function waitForMetadataForm(page) {
-  const deadline = Date.now() + 60000;
+async function waitForMetadataForm(page, timeoutMs = 600000) {
+  const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     const inputs = await findMetadataInputs(page);
     if (inputs.titleInput && inputs.descInput) {
@@ -526,7 +558,7 @@ async function waitForMetadataForm(page) {
     }
     await page.waitForTimeout(1000);
   }
-  throw new Error("Форма метаданных видео не появилась за 60 секунд.");
+  throw new Error(`Форма метаданных видео не появилась за ${Math.round(timeoutMs / 1000)} секунд.`);
 }
 
 async function fillTextField(locator, value) {
@@ -540,22 +572,113 @@ async function fillTextField(locator, value) {
   });
 }
 
-async function fillMetadata(page, config, title, description) {
-  const { titleInput, descInput } = await waitForMetadataForm(page);
-  await fillTextField(titleInput, title);
-  await fillTextField(descInput, description);
+function canonicalEditorText(value) {
+  return String(value || "")
+    .replace(/\u00a0/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
-  const actualTitle = await titleInput.inputValue().catch(() => "");
-  const actualDescription = await descInput.inputValue().catch(async () =>
-    descInput.innerText().catch(() => "")
+async function readEditableText(locator) {
+  return locator.inputValue().catch(async () =>
+    locator.innerText().catch(async () => locator.textContent().catch(() => ""))
   );
-  if (actualTitle.trim() !== title.trim()) {
-    throw new Error(`Название не записалось полностью. Фактически: ${actualTitle}`);
+}
+
+async function fillMetadata(page, config, title, description) {
+  const timeoutMs = config.dzenUpload.processingTimeoutMs || 600000;
+  const deadline = Date.now() + timeoutMs;
+  const expectedTitle = canonicalEditorText(title);
+  const expectedDescription = canonicalEditorText(description);
+  let lastActualTitle = "";
+  let lastActualDescription = "";
+  let attempts = 0;
+  let lastProgressLogAt = 0;
+
+  while (Date.now() < deadline) {
+    const remainingMs = Math.max(1000, deadline - Date.now());
+    const formWaitMs = Math.min(15000, remainingMs);
+    let inputs;
+    try {
+      inputs = await waitForMetadataForm(page, formWaitMs);
+    } catch {
+      if (Date.now() - lastProgressLogAt >= 15000) {
+        log(config, "DZEN: форма метаданных ещё стабилизируется после загрузки MP4; продолжаю ждать.");
+        lastProgressLogAt = Date.now();
+      }
+      continue;
+    }
+
+    const { titleInput, descInput } = inputs;
+    lastActualTitle = await readEditableText(titleInput);
+    lastActualDescription = await readEditableText(descInput);
+
+    const titleReady = canonicalEditorText(lastActualTitle) === expectedTitle;
+    const descriptionReady =
+      canonicalEditorText(lastActualDescription) === expectedDescription;
+
+    if (titleReady && descriptionReady) {
+      log(
+        config,
+        `DZEN: название и описание подтверждены после стабилизации формы, ${description.length} символов описания.`
+      );
+      return;
+    }
+
+    attempts += 1;
+    try {
+      if (!titleReady) {
+        await fillTextField(titleInput, title);
+      }
+      if (!descriptionReady) {
+        await fillTextField(descInput, description);
+      }
+      await descInput.press("Tab").catch(() => {});
+    } catch (error) {
+      if (Date.now() - lastProgressLogAt >= 15000) {
+        log(config, `DZEN: форма метаданных перерисовалась во время ввода: ${error.message}. Повторяю после стабилизации.`);
+        lastProgressLogAt = Date.now();
+      }
+      await page.waitForTimeout(1000);
+      continue;
+    }
+
+    await page.waitForTimeout(1200);
+    const refreshed = await findMetadataInputs(page);
+    if (refreshed.titleInput && refreshed.descInput) {
+      lastActualTitle = await readEditableText(refreshed.titleInput);
+      lastActualDescription = await readEditableText(refreshed.descInput);
+
+      if (
+        canonicalEditorText(lastActualTitle) === expectedTitle &&
+        canonicalEditorText(lastActualDescription) === expectedDescription
+      ) {
+        log(
+          config,
+          `DZEN: название и описание заполнены и подтверждены, ${description.length} символов описания.`
+        );
+        return;
+      }
+    }
+
+    if (Date.now() - lastProgressLogAt >= 15000) {
+      log(
+        config,
+        `DZEN: жду устойчивого сохранения метаданных; попыток=${attempts}; ` +
+          `заголовок=${canonicalEditorText(lastActualTitle).length}/${expectedTitle.length}; ` +
+          `описание=${canonicalEditorText(lastActualDescription).length}/${expectedDescription.length}.`
+      );
+      lastProgressLogAt = Date.now();
+    }
+
+    await page.waitForTimeout(2000);
   }
-  if (actualDescription.trim() !== description.trim()) {
-    throw new Error("Описание не записалось полностью в форму Дзена.");
-  }
-  log(config, `DZEN: название и описание заполнены, ${description.length} символов описания.`);
+
+  throw new Error(
+    `За 10 минут форма Дзена не подтвердила полное сохранение метаданных. ` +
+      `Заголовок: ${canonicalEditorText(lastActualTitle).length}/${expectedTitle.length}; ` +
+      `описание: ${canonicalEditorText(lastActualDescription).length}/${expectedDescription.length}.`
+  );
 }
 
 async function uploadCover(page, config, previewPath) {
