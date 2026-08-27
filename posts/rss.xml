@@ -9,7 +9,7 @@
   <link>https://rybalka.one/posts/</link>
   <description>Десять полнотекстовых аналитических статей об искусственном интеллекте.</description>
   <language>ru</language>
-  <lastBuildDate>Thu, 27 Aug 2026 06:00:00 +0300</lastBuildDate>
+  <lastBuildDate>Thu, 27 Aug 2026 08:13:24 +0300</lastBuildDate>
   <dc:creator>ИИ-сводки</dc:creator>
   <atom:link href="https://rybalka.one/posts/rss.xml" rel="self" type="application/rss+xml" />
 
@@ -27,6 +27,10 @@
     <enclosure url="https://rybalka.one/posts/images/ai-svodka-2026-08-27.png" type="image/png" length="2357370" />
     <media:content url="https://rybalka.one/posts/images/ai-svodka-2026-08-27.png" medium="image" type="image/png" />
     <media:thumbnail url="https://rybalka.one/posts/images/ai-svodka-2026-08-27.png" />
+    <media:group>
+      <media:content url="https://rybalka.one/posts/video/ai-svodka-2026-08-27.mp4" medium="video" type="video/mp4" />
+      <media:thumbnail url="https://rybalka.one/posts/video/ai-svodka-2026-08-27.png" />
+    </media:group>
     <description><![CDATA[<p>AWS резко расширяет закупки GPU Nvidia, Anthropic бронирует вычисления на $45 млрд, а Nvidia подтверждает масштаб спроса отчётностью. В фокусе также безопасность агентных систем, physical AI и новая модель Z.ai.</p>]]></description>
     <content:encoded><![CDATA[<figure>
 <img src="https://rybalka.one/posts/images/ai-svodka-2026-08-27.png" alt="ИИ-Сводка на 27 августа 2026">
