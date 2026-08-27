@@ -6,6 +6,7 @@ const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
 const source = fs.readFileSync(path.join(ROOT, "dzen-publish-direct.js"), "utf8");
+const runner = fs.readFileSync(path.join(ROOT, "dzen-browser-runner.js"), "utf8");
 const direct = require(path.join(ROOT, "dzen-publish-direct.js"));
 
 const expected = [
@@ -27,21 +28,14 @@ assert.strictEqual(
   false,
   "Non-whitespace description changes must still be detected"
 );
-assert.strictEqual(
-  direct.processingStageFromText("Загружаем видео: не закрывайте Дзен"),
-  "uploading"
-);
-assert.strictEqual(
-  direct.processingStageFromText("Загрузили видео\nОбрабатываем..."),
-  "processing"
-);
+assert.strictEqual(direct.processingStageFromText("Загружаем видео: не закрывайте Дзен"), "uploading");
+assert.strictEqual(direct.processingStageFromText("Загрузили видео\nОбрабатываем..."), "processing");
 assert.strictEqual(
   direct.processingStageFromText("Загрузили и обработали видео\nГотово: можно публиковать и смотреть"),
   "ready"
 );
 
 for (const marker of [
-  "dzen-publish-direct.js",
   "Больше metadata не меняю",
   "Загрузили и обработали видео",
   "Готово: можно публиковать и смотреть",
@@ -53,6 +47,7 @@ for (const marker of [
   assert(source.includes(marker), `Missing direct-publish contract marker: ${marker}`);
 }
 
+assert(runner.includes('"dzen-publish-direct.js"'), "Canonical live runner must use dzen-publish-direct.js");
 assert(!source.includes("жду устойчивого сохранения метаданных"), "Direct live flow must not restore metadata rewrite loop");
 assert(!source.includes("первое отличие описания"), "Direct live flow must not block on character-by-character description diffs");
 
