@@ -35,7 +35,7 @@ class RepositoryHygieneWorkflowTests(unittest.TestCase):
         workflow = HYGIENE.read_text(encoding="utf-8")
         self.assertNotIn("--output", workflow)
         self.assertEqual(workflow.count("--report automation/preview/repository-hygiene/"), 3)
-        self.assertEqual(workflow.count("render_repository_hygiene_summary.py"), 5)
+        self.assertEqual(workflow.count("render_repository_hygiene_summary.py"), 3)
         self.assertEqual(workflow.count(' --summary "${GITHUB_STEP_SUMMARY}"'), 5)
         self.assertEqual(workflow.count("repository_hygiene_video_rss_runs.py"), 2)
         self.assertEqual(workflow.count("uses: actions/upload-artifact@v4"), 3)
