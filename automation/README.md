@@ -12,6 +12,8 @@
 - `content/YYYY-MM-DD/` — структурированные материалы выпусков;
 - `archive/index.json` — редакционная память и dedupe/material-update context;
 - `archive/search-baselines/` — manifests постоянных retrieval baselines;
+- `archive/video-rss-enrichment-2026-08/` — inert reference-only архив закрытого
+  Video → RSS эксперимента, не входящий в active workflow/scripts/tests paths;
 - `audits/independent-audit-journal.md` — канонический журнал независимых
   Freshness/Completeness аудитов;
 - `audits/experiments/` — сохранённые controlled architecture/retrieval
@@ -46,17 +48,16 @@
 - `scripts/recover_digest_artifact.py` — paid-stage recovery entrypoint;
 - `scripts/source_freshness.py` — deterministic source publication-date proof;
 - `scripts/build_site.py` / validators — site/RSS/publication contracts;
-- `scripts/video_rss_enrichment.py` — controlled post-publication bridge: проверяет
-  публичные MP4+PNG и идемпотентно добавляет Media RSS video group в существующий
-  item, не меняя публикационные поля и `content:encoded`;
 - `scripts/cleanup_repository_content.py` и `cleanup_public_posts.py` — 32-day
   tracked content/public cleanup;
 - `scripts/cleanup_video_ftp.py` — независимая от RSS 32-day очистка уже
   опубликованных MP4/PNG в hard-confined FTP-каталоге `video`;
-- `scripts/repository_hygiene.py` — общая GitHub object hygiene;
-- `scripts/repository_hygiene_video_rss_runs.py` — узкая retention-политика для
-  Actions runs канонического `video-rss-enrichment.yml`, вызываемая только из
-  ежедневного Repository hygiene.
+- `scripts/repository_hygiene.py` — общая GitHub object hygiene.
+
+Закрытые `video_rss_enrichment.py` и
+`repository_hygiene_video_rss_runs.py` сохранены только в
+`archive/video-rss-enrichment-2026-08/` как reference material. Они не являются
+active entrypoints.
 
 Versioned implementation files such as `*_v1.py`, `*_v2.py` and `*_v8.py` are
 preserved compatibility/recovery layers, not arbitrary duplicates. Their
@@ -93,14 +94,12 @@ production и не запускают Main CI; их через PR Gate пров�
 В обратную сторону nightly production workflows не должны читать или изменять
 video runtime.
 
-На период controlled test отдельный `video-rss-enrichment.yml` образует только
-односторонний post-publication мост: он не читает локальное состояние
-`notebooklm-video`, а каждые пять минут проверяет уже публичные
-`/posts/video/ai-svodka-2026-08-27.mp4` и `.png`. Пока пара не готова, запуск
-успешно ничего не делает. После готовности он валидирует preview, добавляет
-`media:group` только в RSS item выпуска 2026-08-27, повторно проверяет RSS,
-фиксирует только `posts/rss.xml` и вызывает обычный FTP deploy. Ошибка или
-отсутствие video assets не может блокировать ежедневную публикацию ИИ-Сводки.
+Video → RSS integration закрыта. Active workflows не должны добавлять локальные
+MP4/PNG в `posts/rss.xml`, а сам RSS не должен содержать `/posts/video/`,
+`medium="video"` или `type="video/*"`. Историческая реализация сохранена в
+`archive/video-rss-enrichment-2026-08/`, но архив не исполняется и не входит в
+production inventory. Возврат к этому пути требует нового изолированного
+эксперимента и отдельного PR.
 
 `repository-cleanup.yml` сохраняет единый retention-контур, но FTP-video cleanup
 внутри него является отдельным job и не использует RSS как источник списка
@@ -121,15 +120,10 @@ ruleset описана в [`MAIN_PROTECTION.md`](MAIN_PROTECTION.md). Ruleset JS
 ## Repository hygiene
 
 `repository-hygiene.yml` является отдельным operational workflow и не заменяет
-32-дневную очистку контента и FTP-video assets. В его Actions-job дополнительно
-работает только одна canonical-run retention policy: для
-`video-rss-enrichment.yml` success старше трёх дней можно удалить после
-безусловного сохранения последних 14 успешных runs; `failure`/`cancelled`
-сохраняются 14 дней, а active/неизвестные состояния автоматически не удаляются.
-Перед destructive phase заново проверяются `main`, workflow identity, отсутствие
-активной Daily production и отсутствие активного Video RSS run. Полная история
-этого workflow читается с пагинацией, поэтому policy не ограничена первыми 100
-runs. Остальные canonical workflows этой специальной политикой не затрагиваются.
+32-дневную очистку контента и FTP-video assets. Он управляет только безопасно
+классифицированными GitHub objects по общей policy. Специальная retention-политика
+для runs закрытого `video-rss-enrichment.yml` удалена из active workflow вместе с
+самим Video → RSS механизмом и сохранена лишь в reference-only архиве.
 
 Policy, безопасные mutation boundaries, retention и operator diagnostics описаны
 в [`ARCHITECTURE.md`](ARCHITECTURE.md) и в root `AGENTS.md`.
