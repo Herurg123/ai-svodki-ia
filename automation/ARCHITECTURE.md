@@ -9,9 +9,9 @@ README; если изменение затрагивает обязательн�
 
 ## 1. Границы системы
 
-Проект состоит из двух связанных, но технически независимых контуров, узкого
-post-publication bridge между уже опубликованными media и RSS и отдельной
-maintenance-операции над уже опубликованным FTP `video/`.
+Проект состоит из двух связанных, но технически независимых контуров и отдельной
+maintenance-операции над уже опубликованным FTP `video/`. Ранее существовавший
+Video → RSS post-publication bridge закрыт и сохранён только как inert archive.
 
 ### 1.1. Основной GitHub production
 
@@ -64,41 +64,37 @@ Video runtime не является prerequisite, stage, fallback или recover
 основного production. Ошибка video worker не должна менять статус ежедневной
 ИИ-Сводки и не должна блокировать её публикацию.
 
-### 1.3. Controlled video-RSS post-publication bridge
+### 1.3. RSS boundary и архив Video → RSS
 
-Для контролируемого теста выпуска `2026-08-27` существует отдельный
-`video-rss-enrichment.yml`. Это не обратная зависимость nightly production от
-локального worker: workflow не читает `automation/notebooklm-video/`, локальный
-state или FTP credentials video worker. Источником готовности служит только уже
-публичная пара:
+`posts/rss.xml` является article/image publication surface. Активные production
+workflow и scripts не должны использовать RSS как канал доставки локальных видео
+и не должны добавлять туда локальные video payloads или ссылки, включая:
 
 ```text
-https://rybalka.one/posts/video/ai-svodka-2026-08-27.mp4
-https://rybalka.one/posts/video/ai-svodka-2026-08-27.png
+/posts/video/
+medium="video"
+type="video/*"
 ```
 
-После обычной публикации статьи bridge каждые пять минут проверяет оба URL.
-Отсутствие или временная недоступность media является успешным no-op. После
-готовности MP4 и валидного PNG не меньше `800x400` workflow идемпотентно добавляет
-к уже существующему article item Media RSS `media:group`, не меняя `title`,
-`link`, `guid`, `pubDate` и `content:encoded`. Затем RSS повторно валидируется,
-commit может содержать только `posts/rss.xml`, после чего точный commit передаётся
-обычному `deploy-posts.yml`.
+Контролируемый эксперимент выпуска `2026-08-27`, который добавлял Media RSS
+`media:group` после появления публичной пары MP4+PNG, закрыт. Эксперимент не дал
+нужной нативной публикации видео в Дзене, поэтому его production workflow,
+script, tests и специальная retention-политика Actions runs удалены из active
+paths.
 
-Bridge дополнительно получает `workflow_run` после успешных `daily-production`
-и `repository-cleanup`. Это контролируемая компенсация текущего ограничения:
-`build_site.py`/`cleanup_public_posts.py` пересобирают RSS из своей article-модели
-и пока не сохраняют произвольный `media:group`. Если они временно удалят media
-группу выпуска 2026-08-27, bridge повторно добавит её из публичной пары в пределах
-32-дневного retention окна. Обобщение модели RSS на video metadata является
-отдельной будущей задачей, а не частью этого теста.
+Для сохранения наработки точные исходники перенесены в
+`automation/archive/video-rss-enrichment-2026-08/`. Этот каталог reference-only:
+он не находится в `.github/workflows/`, `automation/scripts/` или
+`automation/tests/`, не импортируется active runtime и не участвует в cron/test
+discovery. Повторное использование требует нового изолированного эксперимента,
+актуальной проверки платформы, architecture review и отдельного PR.
 
 ### 1.4. FTP video retention maintenance
 
-Удаление старых MP4/PNG не является частью video-RSS semantics и не зависит от
-наличия video metadata в content или RSS. В `repository-cleanup.yml` существует
-отдельный downstream job, который после успешной основной cleanup-цепочки работает
-только с уже опубликованным FTP-каталогом `video`.
+Удаление старых MP4/PNG не является частью RSS semantics и не зависит от наличия
+video metadata в content или RSS. В `repository-cleanup.yml` существует отдельный
+downstream job, который после успешной основной cleanup-цепочки работает только с
+уже опубликованным FTP-каталогом `video`.
 
 Канонический entrypoint — `automation/scripts/cleanup_video_ftp.py`. Он получает
 тот же `reference_date` и `retention_days`, которые использовала public cleanup,
@@ -132,8 +128,8 @@ listing и проверяется отсутствие всех удалённы
 | Controlled experiments | `automation/audits/experiments/` |
 | Retrieval regression contracts | `automation/fixtures/recall/` |
 | Video runtime/deployment | `automation/notebooklm-video/README.md` и `DEPLOYMENT.md` |
-| Controlled video-RSS test | `.github/workflows/video-rss-enrichment.yml` и `automation/scripts/video_rss_enrichment.py` |
-| Video RSS run retention | `.github/workflows/repository-hygiene.yml` и `automation/scripts/repository_hygiene_video_rss_runs.py` |
+| RSS no-video boundary | `automation/tests/test_rss_video_boundary.py` |
+| Retired Video → RSS reference | `automation/archive/video-rss-enrichment-2026-08/` |
 | FTP video retention | `.github/workflows/repository-cleanup.yml` и `automation/scripts/cleanup_video_ftp.py` |
 
 Документация должна описывать реализованный код, а не предполагаемую будущую
@@ -147,6 +143,8 @@ listing и проверяется отсутствие всех удалённы
 - `archive/index.json` хранит редакционную память, dedupe и material-update
   context;
 - `archive/search-baselines/` хранит manifests постоянных search baselines;
+- `archive/video-rss-enrichment-2026-08/` хранит inert reference-only snapshot
+  закрытого Video → RSS эксперимента;
 - `audits/` хранит независимые проверки и controlled experiments;
 - `config/` содержит production/editorial/site/image/Source Pulse config;
 - `prompts/` содержит active и исторические prompts;
@@ -155,9 +153,9 @@ listing и проверяется отсутствие всех удалённы
   fresh research;
 - `scripts/` содержит orchestration, retrieval, recovery, publication, cleanup и
   validators, включая `source_pulse_supplement.py`, сохранённый
-  `source_pulse_shadow.py`, controlled `video_rss_enrichment.py`, точечный
-  `repository_hygiene_video_rss_runs.py` и FTP-retention `cleanup_video_ftp.py`;
-- `tests/` содержит основной Python offline regression suite;
+  `source_pulse_shadow.py` и FTP-retention `cleanup_video_ftp.py`;
+- `tests/` содержит основной Python offline regression suite, включая no-video RSS
+  boundary;
 - `notebooklm-video/` является отдельным локальным downstream-подпроектом;
 - `preview/` и `recovery/` являются временными ignored runtime directories.
 
@@ -168,22 +166,22 @@ sitemap, изображения и постоянные assets. `posts/_footer-s
 постоянным production asset и не относится к dated retention cleanup.
 
 Публичный FTP-каталог `video` не является tracked subtree `posts/` репозитория:
-его MP4/PNG создаёт локальный downstream. Controlled RSS bridge использует media
-только как read-only public readiness signal. Отдельный retention job может
-удалять из `video` только строго классифицированные просроченные MP4/PNG по
-контракту раздела 1.4; никакой другой FTP path в его mutation scope не входит.
+его MP4/PNG создаёт локальный downstream. RSS не используется для доставки этих
+video assets и не должен ссылаться на локальный `/posts/video/` payload. Отдельный
+retention job может удалять из `video` только строго классифицированные
+просроченные MP4/PNG по контракту раздела 1.4; никакой другой FTP path в его
+mutation scope не входит.
 
 ### 3.3. `.github/workflows/`
 
-Содержит только постоянные production/maintenance/CI workflow. На период
-контролируемого video-RSS теста `video-rss-enrichment.yml` входит в постоянный
-inventory. One-shot, emergency и patch workflow после выполнения задачи в
-постоянном inventory не остаются.
+Содержит только постоянные production/maintenance/CI workflow. Закрытый
+`video-rss-enrichment.yml` не входит в active inventory и хранится только под
+`automation/archive/`. One-shot, emergency и patch workflow после выполнения
+задачи в постоянном inventory не остаются.
 
 ## 4. GitHub Actions
 
-Постоянный workflow inventory на период controlled video-RSS test состоит из
-восьми файлов.
+Постоянный workflow inventory состоит из семи файлов.
 
 | Workflow | Ответственность | Может менять production state |
 |---|---|---|
@@ -192,9 +190,8 @@ inventory. One-shot, emergency и patch workflow после выполнения
 | `video-ci.yml` | Video CI, dependency-free offline проверки video-подпроекта | Нет |
 | `daily-production.yml` | Ежедневный retrieval/editorial/build/publish pipeline | Да, по production contract |
 | `deploy-posts.yml` | FTP-синхронизация точного `posts/` выбранного commit | Да, только public deploy |
-| `video-rss-enrichment.yml` | Controlled polling публичных MP4+PNG и RSS-only enrichment item выпуска 2026-08-27 | Да, только validated `posts/rss.xml` |
 | `repository-cleanup.yml` | 32-day repository/public cleanup и отдельная FTP-video retention стадия | Да, только documented retention scope |
-| `repository-hygiene.yml` | Уборка безопасно классифицированных GitHub objects, включая узкую retention-политику Video RSS runs | Да, только GitHub-object policy scope |
+| `repository-hygiene.yml` | Уборка безопасно классифицированных GitHub objects | Да, только GitHub-object policy scope |
 
 ### 4.1. PR Gate
 
@@ -220,8 +217,8 @@ Main CI является reusable workflow для PR Gate и сохраняет 
 - `.github/workflows/video-ci.yml`.
 
 Video-only PR не становится зависимым от Python production CI. Изменения общей
-архитектуры, production workflow/tests и других main-domain paths, включая
-video-RSS bridge и FTP-video retention, маршрутизируются PR Gate в Main CI.
+архитектуры, production workflow/tests и других main-domain paths, включая RSS
+boundary и FTP-video retention, маршрутизируются PR Gate в Main CI.
 
 Main CI выполняет compileall, Python unit regressions и ключевые validators
 editorial/archive/production/RSS/sitemap/structured-data contracts.
@@ -244,18 +241,13 @@ npm-зависимостей должно обновлять lockfile в том 
 ### 4.4. Enforcement CI boundary
 
 `automation/tests/test_video_ci_boundary.py` проверяет разделение production/video,
-а `automation/tests/test_pr_gate_and_main_protection.py` проверяет always-on gate,
+`automation/tests/test_rss_video_boundary.py` запрещает video payload в committed
+RSS и повторное подключение закрытого Video → RSS production path, а
+`automation/tests/test_pr_gate_and_main_protection.py` проверяет always-on gate,
 reusable domain CI, узкий automated-writer secret scope и canonical ruleset.
-`automation/tests/test_video_rss_enrichment.py` проверяет fixed-date Media RSS
-contract, идемпотентность, неизменность article fields/content и отсутствие
-локального video-runtime/paid-API dependency в bridge workflow.
 `automation/tests/test_video_ftp_cleanup.py` проверяет strict 32-day cutoff,
 dry-run/apply, orphan semantics, MLSD/NLST listing, pre-delete validation,
 post-delete verification и hard `video` boundary без RSS/local-runtime dependency.
-`automation/tests/test_repository_hygiene_video_rss_runs.py` проверяет 3-day
-success retention, unconditional latest-14 success floor, 14-day diagnostic
-retention, active/unknown fail-safe behavior, deep pagination и exact-run recheck
-перед удалением.
 
 `automation/notebooklm-video/tests/video-boundary-smoke.js` проверяет hard FTP
 boundary и ignore rules. `lockfile-contract-smoke.js` проверяет синхронизацию
@@ -278,19 +270,14 @@ boundary и ignore rules. `lockfile-contract-smoke.js` проверяет син
 Нельзя заменять его repository-admin role или всем GitHub Actions App: это
 расширило бы прямой write bypass на несвязанные workflows.
 
-Три легитимных automated writer контура имеют direct-push по архитектурной
+Два легитимных automated writer контура имеют direct-push по архитектурной
 необходимости:
 
 - `daily-production.yml` публикует validated release;
-- `repository-cleanup.yml` фиксирует validated retention cleanup;
-- `video-rss-enrichment.yml` фиксирует только validated изменение
-  `posts/rss.xml` для controlled video-RSS bridge.
+- `repository-cleanup.yml` фиксирует validated retention cleanup.
 
 Только их финальные commit steps получают secret `MAIN_PUSH_DEPLOY_KEY` и
-вызывают `automation/scripts/push_protected_main.sh HEAD:main`. Video-RSS writer
-перед commit проверяет, что изменён ровно `posts/rss.xml`, и перед push
-сравнивает checkout SHA с текущим `origin/main`; race превращается в безопасный
-no-op с последующим retry от следующего schedule/workflow_run. Helper отвергает
+вызывают `automation/scripts/push_protected_main.sh HEAD:main`. Helper отвергает
 другой refspec, использует отдельный SSH key только на время push и pin'ит
 официальный GitHub Ed25519 host key.
 
@@ -304,26 +291,20 @@ cleanup step и не получает `MAIN_PUSH_DEPLOY_KEY`.
 после активации fallback больше не является рабочим путём. Repository hygiene,
 Video CI, Main CI, PR Gate и deploy-posts этот secret не получают.
 
-### 4.6. Video RSS enrichment schedule и safety
+### 4.6. RSS no-video safety
 
-Controlled workflow имеет fixed target `2026-08-27`. Scheduled polling идёт
-каждые пять минут в целевое окно и небольшой after-midnight grace window; runtime
-date guard делает ежегодные cron совпадения inert. `workflow_run` после успешных
-Daily production/Repository cleanup может восстановить media group до
-`2026-09-28`, пока controlled article находится в 32-day retention window.
-`workflow_dispatch` оставлен для операторской диагностики.
+Удаление Video → RSS bridge является production boundary, а не временным
+отключением schedule. Ни один active workflow не должен:
 
-Readiness contract:
+- запускать archived `video_rss_enrichment.py`;
+- проверять `/posts/video/` ради последующей мутации RSS;
+- коммитить video metadata в `posts/rss.xml`;
+- получать `MAIN_PUSH_DEPLOY_KEY` ради RSS-only video enrichment.
 
-- target article уже должен существовать в `posts/rss.xml`;
-- ожидаются только фиксированные HTTPS URL `/video/ai-svodka-DATE.mp4` и `.png`;
-- MP4 не должен возвращать HTML/zero-length response;
-- PNG обязан иметь корректный PNG/IHDR header и размер не меньше `800x400`;
-- отсутствие article/media или временная network ошибка означает no-op;
-- malformed/small preview или конфликтующий existing video group являются
-  fail-closed error;
-- повторный запуск с уже правильным group ничего не меняет;
-- paid OpenAI APIs не используются.
+Committed RSS проверяется offline regression test на отсутствие local video URLs,
+`medium="video"` и MIME `video/*`. Архив может содержать эти строки, потому что
+он сознательно хранит историческую реализацию, но archive path не входит в active
+workflow/runtime/test discovery.
 
 ### 4.7. FTP video cleanup ordering и safety
 
@@ -567,11 +548,11 @@ commit является источником для FTP sync; deploy не дол
 presence и при необходимости восстанавливает. Dated cleanup не удаляет этот
 файл.
 
-Video-RSS enrichment изменяет publication state только после исходного article
-publish/deploy. Он не генерирует и не загружает video assets; при успехе добавляет
-Media RSS metadata в существующий item, коммитит только `posts/rss.xml` и
-передаёт этот exact commit тому же `deploy-posts.yml`. Article publication date и
-content остаются исходными.
+RSS публикует article/image данные основного выпуска. Video assets и их нативная
+публикация являются отдельным downstream и не должны изменять RSS. Любое active
+production изменение, которое снова добавляет local video payload в
+`posts/rss.xml`, считается архитектурным изменением и должно быть заблокировано
+current no-video regression contract.
 
 FTP-video cleanup не является publish path: он ничего не создаёт и не меняет в
 RSS/content. Это maintenance над уже опубликованными remote media после истечения
@@ -604,46 +585,23 @@ Scheduled mode применяет удаление автоматически; m
 
 Repository hygiene работает с GitHub objects, а не с tracked production files.
 Он может удалять только объекты, которые policy доказуемо классифицировал как
-safe: stale merged/closed refs, safe artifacts, отдельные orphan workflow
-objects/runs и одну явно перечисленную retention-категорию canonical workflow
-runs для `video-rss-enrichment.yml`.
+safe: stale merged/closed refs, safe artifacts и отдельные orphan workflow
+objects/runs.
 
-Canonical `video-rss-enrichment.yml` при этом остаётся `protected` workflow и
-никогда не переводится в `safe_disable` ради очистки истории. Отдельный
-`repository_hygiene_video_rss_runs.py`, вызываемый только внутри ежедневного
-`repository-hygiene.yml`, классифицирует лишь runs exact workflow path:
+Специальная retention-политика для runs бывшего `video-rss-enrichment.yml`
+удалена из active `repository-hygiene.yml` вместе с закрытием workflow. Её
+реализация сохранена только в reference-only архиве и не вызывается ежедневной
+hygiene.
 
-- completed `success` моложе 3 дней защищены;
-- независимо от возраста всегда защищены последние 14 completed `success` runs;
-- остальные completed `success` на границе 3 дней или старше получают
-  `safe_delete`;
-- `failure` и `cancelled` защищены 14 дней и только после этого могут получить
-  `safe_delete`;
-- `queued`, `in_progress` и любые другие non-completed состояния защищены;
-- неизвестные completed conclusions получают `review_only`, а не автоматическое
-  удаление;
-- недавний rerun защищает старый run по более позднему `updated_at`.
+Перед destructive phase заново проверяются SHA `main`, актуальная policy и
+отсутствие активного Daily production run. Retry разрешён только для idempotent
+read-only GET после documented transient transport failures/HTTP
+`500/502/503/504`. Destructive DELETE/PUT автоматически не повторяются.
 
-История target workflow читается с REST-пагинацией по 100 элементов до конца.
-Это обязательно: при polling каждые пять минут за три дня может возникнуть до 864
-runs, поэтому чтение только первой страницы сделало бы retention фактически
-неработающим для старых объектов. Остальные canonical workflows этой специальной
-глубокой выборкой и retention-политикой не затрагиваются.
-
-Перед destructive phase заново проверяются SHA `main`, identity exact workflow,
-отсутствие активного Daily production run и отсутствие активного Video RSS run.
-Каждый кандидат перед DELETE повторно читается по exact run id и удаляется только
-если `status`, `conclusion`, `created_at`, `updated_at` и workflow id не изменились.
-Удаление GitHub Actions run удаляет и его attached Actions artifacts; отдельный
-artifact DELETE для этой категории не выполняется. Tracked files, RSS, FTP media,
-локальный NotebookLM runtime и production API в mutation scope не входят.
-
-Retry разрешён только для idempotent read-only GET после documented transient
-transport failures/HTTP `500/502/503/504`. Destructive DELETE/PUT автоматически
-не повторяются.
-
-Permanent archive branches, `main`, releases, tags и published/editorial content
-не входят в scope автоматической hygiene mutation.
+Tracked files, RSS, FTP media, локальный NotebookLM runtime и production API в
+mutation scope repository hygiene не входят. Permanent archive branches, `main`,
+releases, tags и published/editorial content также не входят в scope
+автоматической hygiene mutation.
 
 ## 11. Permanent search baseline и audits
 
@@ -730,11 +688,10 @@ FTP boundary реализован defense-in-depth:
 
 Ошибка локального video worker не должна инициировать recovery основного
 production, а repository cleanup/hygiene не должны управлять локальным runtime
-state пользователя. Controlled video-RSS bridge также не получает доступ к
-локальному runtime: единственная связь — чтение уже публичных MP4/PNG по HTTPS.
-FTP retention similarly не читает локальный runtime: он видит только remote
-listing `video/` и удаляет уже опубликованные exact-pattern assets после общего
-32-day cutoff.
+state пользователя. Video downstream читает RSS только как источник уже
+опубликованного выпуска, но не пишет video metadata обратно в RSS. FTP retention
+также не читает локальный runtime: он видит только remote listing `video/` и
+удаляет уже опубликованные exact-pattern assets после общего 32-day cutoff.
 
 ## 14. Правило изменений архитектуры
 
@@ -747,13 +704,13 @@ listing `video/` и удаляет уже опубликованные exact-pat
 4. Какие `ARCHITECTURE.md`, README, AGENTS и contract tests должны измениться в
    том же PR?
 
-Для controlled video-RSS test dependency audit показал три затронутые зоны:
-workflow inventory/protected-main writer scope, RSS mutation contract и
-последующие RSS re-renders в daily production/cleanup. Первые две зоны защищены
-contract tests и fail-closed writer validation; третья временно компенсируется
-`workflow_run` restoration без изменения nightly production semantics. Retrieval,
-editorial, search budgets, archive/recovery artifacts, sitemap/article pages и
-локальный video runtime не меняются.
+Для закрытия Video → RSS dependency audit затрагивает workflow inventory,
+protected-main writer scope, committed RSS, Repository hygiene и historical
+implementation. Active bridge и его special-run retention удалены, RSS возвращён
+к article/image состоянию, а исходники сохранены как inert archive. No-video RSS
+regression запрещает обратное подключение без отдельного архитектурного решения.
+Nightly retrieval/editorial, search budgets, recovery, FTP-video retention и
+локальная native-browser публикация не меняются.
 
 Для FTP-video retention dependency audit показал только maintenance boundary:
 `repository-cleanup.yml`, существующие FTP credentials, remote `video/` и общий
@@ -761,15 +718,6 @@ editorial, search budgets, archive/recovery artifacts, sitemap/article pages и
 retrieval/editorial, local video worker и deploy-posts payload не меняются.
 Offline fake-FTP regressions проверяют deletion scope и failure semantics; реальный
 FTP при разработке не используется.
-
-Для Video RSS run retention dependency audit ограничен GitHub-object maintenance
-boundary: `repository-hygiene.yml`, exact workflow path
-`.github/workflows/video-rss-enrichment.yml`, его historical Actions runs и
-attached Actions artifacts. Сам Video RSS workflow остаётся canonical/protected;
-его schedule, RSS mutation, deploy, `MAIN_PUSH_DEPLOY_KEY`, Daily production,
-repository cleanup, FTP-video retention, retrieval/editorial и локальный video
-worker не меняются. Offline regressions дополнительно моделируют 900 runs, чтобы
-доказать пагинацию и latest-14/retention semantics без GitHub mutation.
 
 Для Source Pulse v1.1 dependency audit затрагивает fresh Primary wrapper,
 фиксированный source registry, trusted runtime research, Source Freshness Proof,
