@@ -3,9 +3,12 @@
 const fs = require("fs");
 const path = require("path");
 const { spawn } = require("child_process");
+const { createBrowserSession } = require("./browser-session.js");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
+const DZEN_FILE_TRANSFER_TIMEOUT_MS = 120000;
+const DZEN_DRAFT_DISCOVERY_TIMEOUT_MS = 180000;
 const MONTHS_RU_GENITIVE = [
   "января",
   "февраля",
@@ -315,60 +318,79 @@ async function ensurePreview(config, job) {
   return previewPath;
 }
 
-async function tryConnectBrowser(config) {
-  const { chromium } = require("playwright");
-  const endpoint = `http://${config.browserDebugHost}:${config.browserDebugPort}`;
+function readVideoDraftFromUrl(url) {
   try {
-    const browser = await chromium.connectOverCDP(endpoint, { timeout: 3000 });
-    return { browser, endpoint, spawned: false };
+    const parsed = new URL(url);
+    const draftId = parsed.searchParams.get("videoEditorPublicationId");
+    return draftId ? { draftUrl: parsed.toString(), draftId } : null;
   } catch {
     return null;
   }
 }
 
-function spawnRobotBrowser(config) {
-  const args = [
-    `--user-data-dir=${config.browserProfile}`,
-    `--remote-debugging-address=${config.browserDebugHost}`,
-    `--remote-debugging-port=${config.browserDebugPort}`,
-    "--no-first-run",
-    "--no-default-browser-check",
-    "--disable-session-crashed-bubble",
-    "--disable-background-mode",
-    "--disable-backgrounding-occluded-windows",
-  ];
-  const child = spawn(config.browserExecutable, args, {
-    detached: true,
-    stdio: "ignore",
-    windowsHide: false,
-  });
-  child.unref();
+async function waitForVideoDraft(page, timeoutMs) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const draft = readVideoDraftFromUrl(page.url());
+    if (draft) return draft;
+    await page.waitForTimeout(1000);
+  }
+  return null;
 }
 
-async function connectOrLaunchBrowser(config) {
-  let connected = await tryConnectBrowser(config);
-  if (connected) {
-    log(config, `DZEN: подключился к уже запущенному Яндекс.Браузеру через ${connected.endpoint}.`);
-    return connected;
-  }
+async function uploadVideoFile(page, config, videoPath) {
+  log(config, `DZEN: передаю локальный MP4: ${videoPath}`);
+  let transferError = null;
+  const button = await getVisible(
+    page.getByRole("button", { name: "Выбрать видео", exact: true })
+  );
 
-  if (!fs.existsSync(config.browserExecutable)) {
-    throw new Error(`Яндекс.Браузер не найден: ${config.browserExecutable}`);
-  }
-  log(config, "DZEN: CDP недоступен, запускаю отдельный Яндекс.Браузер с защищённым профилем.");
-  spawnRobotBrowser(config);
-
-  const deadline = Date.now() + (config.browserStartupTimeoutMs || 45000);
-  while (Date.now() < deadline) {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    connected = await tryConnectBrowser(config);
-    if (connected) {
-      connected.spawned = true;
-      log(config, `DZEN: Яндекс.Браузер готов, CDP=${connected.endpoint}.`);
-      return connected;
+  try {
+    if (button) {
+      const chooserPromise = page.waitForEvent("filechooser", { timeout: 15000 });
+      await button.click();
+      const chooser = await chooserPromise;
+      await chooser.setFiles(videoPath, { timeout: DZEN_FILE_TRANSFER_TIMEOUT_MS });
+    } else {
+      const fileInput = page.locator('input[type="file"]').first();
+      if ((await fileInput.count()) === 0) {
+        throw new Error("Не найден input для загрузки MP4.");
+      }
+      await fileInput.setInputFiles(videoPath, { timeout: DZEN_FILE_TRANSFER_TIMEOUT_MS });
     }
+  } catch (error) {
+    transferError = error;
+    warn(
+      config,
+      `передача локального MP4 вернула ошибку/timeout: ${error.message}. Новый draft не создаю; проверяю, появился ли videoEditorPublicationId у уже начатой загрузки.`
+    );
   }
-  throw new Error("Не удалось подключиться к Яндекс.Браузеру по CDP после запуска.");
+
+  const draftTimeoutMs = Math.max(
+    DZEN_DRAFT_DISCOVERY_TIMEOUT_MS,
+    Number(config.dzenUpload.processingTimeoutMs) || 0
+  );
+  const draft = await waitForVideoDraft(page, draftTimeoutMs);
+  if (!draft) {
+    if (transferError) {
+      throw new Error(
+        `После ошибки передачи MP4 videoEditorPublicationId не появился за ${draftTimeoutMs} мс: ${transferError.message}`
+      );
+    }
+    throw new Error(
+      `После передачи MP4 videoEditorPublicationId не появился за ${draftTimeoutMs} мс.`
+    );
+  }
+
+  if (transferError) {
+    log(
+      config,
+      `DZEN: несмотря на timeout/ошибку setFiles, существующая загрузка создала video draft id=${draft.draftId}; продолжаю его, повторно MP4 не отправляю.`
+    );
+  } else {
+    log(config, `DZEN: создан video draft id=${draft.draftId}.`);
+  }
+  return draft;
 }
 
 function isLoginUrl(url) {
@@ -436,33 +458,6 @@ async function openVideoUpload(page, config) {
     timeout: 15000,
   });
   log(config, "DZEN: открыта форма «Публикация видео». ");
-}
-
-async function uploadVideoFile(page, config, videoPath) {
-  log(config, `DZEN: передаю локальный MP4: ${videoPath}`);
-  const button = await getVisible(page.getByRole("button", { name: "Выбрать видео", exact: true }));
-  if (button) {
-    const chooserPromise = page.waitForEvent("filechooser", { timeout: 10000 });
-    await button.click();
-    const chooser = await chooserPromise;
-    await chooser.setFiles(videoPath);
-  } else {
-    const fileInput = page.locator('input[type="file"]').first();
-    if ((await fileInput.count()) === 0) {
-      throw new Error("Не найден input для загрузки MP4.");
-    }
-    await fileInput.setInputFiles(videoPath);
-  }
-
-  await page.waitForFunction(
-    () => new URL(window.location.href).searchParams.has("videoEditorPublicationId"),
-    null,
-    { timeout: 60000 }
-  );
-  const draftUrl = page.url();
-  const draftId = new URL(draftUrl).searchParams.get("videoEditorPublicationId");
-  log(config, `DZEN: создан video draft id=${draftId}.`);
-  return { draftUrl, draftId };
 }
 
 async function findMetadataInputs(page) {
@@ -564,10 +559,10 @@ async function uploadCover(page, config, previewPath) {
     throw new Error("Не найдена команда «Добавить обложку».");
   }
   log(config, `DZEN: загружаю PNG-обложку: ${previewPath}`);
-  const chooserPromise = page.waitForEvent("filechooser", { timeout: 10000 });
+  const chooserPromise = page.waitForEvent("filechooser", { timeout: 15000 });
   await addCover.click();
   const chooser = await chooserPromise;
-  await chooser.setFiles(previewPath);
+  await chooser.setFiles(previewPath, { timeout: DZEN_FILE_TRANSFER_TIMEOUT_MS });
   await page.waitForTimeout(2500);
 }
 
@@ -774,7 +769,21 @@ async function saveScreenshot(page, config, dateKey, label) {
   return filePath;
 }
 
-async function prepareDzenVideoDryRun(config, state, job, dateKey) {
+function createDzenBrowserSession(config) {
+  return createBrowserSession(config, {
+    allowExisting: true,
+    closeAttachedBrowser: false,
+    log: (message) => log(config, `DZEN: ${message}`),
+  });
+}
+
+async function prepareDzenVideoDryRun(
+  config,
+  state,
+  job,
+  dateKey,
+  browserSession = null
+) {
   const videoPath = job.downloadedFile;
   const previewPath = await ensurePreview(config, job);
   saveJsonAtomic(config.stateFile, state);
@@ -787,86 +796,97 @@ async function prepareDzenVideoDryRun(config, state, job, dateKey) {
   );
   const tags = normalizeTags(config.dzenUpload.tags);
 
-  const connection = await connectOrLaunchBrowser(config);
-  const browser = connection.browser;
-  const contexts = browser.contexts();
-  const context = contexts[0] || await browser.newContext();
+  const session = browserSession || createDzenBrowserSession(config);
+  const ownsSession = !browserSession;
   let page;
 
-  const existingDraft = job.dzenVideo && job.dzenVideo.draftUrl;
-  if (existingDraft && job.dzenVideo.status === "READY_TO_PUBLISH") {
-    page = await context.newPage();
-    await page.goto(existingDraft, { waitUntil: "domcontentloaded", timeout: 60000 });
-    await page.bringToFront();
-    await waitForVideoReady(page, config);
-    const screenshotPath = await saveScreenshot(page, config, dateKey, "dzen-ready-repeat");
-    log(config, `DZEN: draft уже был подготовлен ранее, новый draft не создаю: ${existingDraft}`);
-    log(config, `DZEN: повторный диагностический скриншот: ${screenshotPath}`);
-    return { page, draftUrl: existingDraft, screenshotPath, comments: { ok: job.dzenVideo.commentsAudienceVerified === true, actual: job.dzenVideo.commentsAudienceActual || "не определено" } };
-  }
+  try {
+    await session.open();
+    const existingDraft = job.dzenVideo && job.dzenVideo.draftUrl;
 
-  if (existingDraft && job.dzenVideo.status !== "PUBLISHED") {
-    page = await context.newPage();
-    await page.goto(existingDraft, { waitUntil: "domcontentloaded", timeout: 60000 });
-    await page.bringToFront();
-    log(config, `DZEN: продолжаю существующий video draft: ${existingDraft}`);
-  } else {
-    page = await context.newPage();
-    await page.bringToFront();
-    await openStudio(page, config);
-    await openVideoUpload(page, config);
-    const draft = await uploadVideoFile(page, config, videoPath);
+    if (existingDraft && job.dzenVideo.status === "READY_TO_PUBLISH") {
+      page = await session.newPage();
+      await page.goto(existingDraft, { waitUntil: "domcontentloaded", timeout: 60000 });
+      await waitForVideoReady(page, config);
+      const screenshotPath = await saveScreenshot(page, config, dateKey, "dzen-ready-repeat");
+      log(config, `DZEN: draft уже был подготовлен ранее, новый draft не создаю: ${existingDraft}`);
+      log(config, `DZEN: повторный диагностический скриншот: ${screenshotPath}`);
+      return {
+        page,
+        draftUrl: existingDraft,
+        screenshotPath,
+        comments: {
+          ok: job.dzenVideo.commentsAudienceVerified === true,
+          actual: job.dzenVideo.commentsAudienceActual || "не определено",
+        },
+      };
+    }
+
+    if (existingDraft && job.dzenVideo.status !== "PUBLISHED") {
+      page = await session.newPage();
+      await page.goto(existingDraft, { waitUntil: "domcontentloaded", timeout: 60000 });
+      log(config, `DZEN: продолжаю существующий video draft: ${existingDraft}`);
+    } else {
+      page = await session.newPage();
+      await openStudio(page, config);
+      await openVideoUpload(page, config);
+      const draft = await uploadVideoFile(page, config, videoPath);
+      job.dzenVideo = {
+        ...(job.dzenVideo || {}),
+        status: "DRAFT_CREATED",
+        draftId: draft.draftId,
+        draftUrl: draft.draftUrl,
+        videoFile: videoPath,
+        coverFile: previewPath,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      saveJsonAtomic(config.stateFile, state);
+    }
+
+    if (await isLoginPage(page)) {
+      throw new Error("Сессия Дзена истекла после открытия video draft.");
+    }
+    await fillMetadata(page, config, title, description);
+    await uploadCover(page, config, previewPath);
+    await setFiveTags(page, config, tags);
+    const comments = await setCommentsAudience(page, config);
+    await waitForVideoReady(page, config);
+
+    const screenshotPath = await saveScreenshot(page, config, dateKey, "dzen-ready");
+    const draftUrl = page.url();
+    const draftId = new URL(draftUrl).searchParams.get("videoEditorPublicationId")
+      || job.dzenVideo?.draftId
+      || null;
+
     job.dzenVideo = {
       ...(job.dzenVideo || {}),
-      status: "DRAFT_CREATED",
-      draftId: draft.draftId,
-      draftUrl: draft.draftUrl,
+      status: "READY_TO_PUBLISH",
+      draftId,
+      draftUrl,
       videoFile: videoPath,
       coverFile: previewPath,
-      createdAt: new Date().toISOString(),
+      title,
+      description,
+      tags,
+      commentsAudienceExpected: config.dzenUpload.commentsAudience,
+      commentsAudienceActual: comments.actual,
+      commentsAudienceVerified: comments.ok,
+      readyAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      dryRun: true,
+      readyScreenshot: screenshotPath,
     };
     saveJsonAtomic(config.stateFile, state);
+
+    log(config, `DZEN: dry-run готов. Финальная кнопка НЕ нажата. Draft: ${draftUrl}`);
+    log(config, `DZEN: диагностический скриншот: ${screenshotPath}`);
+    return { page, draftUrl, screenshotPath, comments };
+  } finally {
+    if (ownsSession) {
+      await session.close().catch(() => {});
+    }
   }
-
-  if (await isLoginPage(page)) {
-    throw new Error("Сессия Дзена истекла после открытия video draft.");
-  }
-  await fillMetadata(page, config, title, description);
-  await uploadCover(page, config, previewPath);
-  await setFiveTags(page, config, tags);
-  const comments = await setCommentsAudience(page, config);
-  await waitForVideoReady(page, config);
-
-  const screenshotPath = await saveScreenshot(page, config, dateKey, "dzen-ready");
-  const draftUrl = page.url();
-  const draftId = new URL(draftUrl).searchParams.get("videoEditorPublicationId")
-    || job.dzenVideo?.draftId
-    || null;
-
-  job.dzenVideo = {
-    ...(job.dzenVideo || {}),
-    status: "READY_TO_PUBLISH",
-    draftId,
-    draftUrl,
-    videoFile: videoPath,
-    coverFile: previewPath,
-    title,
-    description,
-    tags,
-    commentsAudienceExpected: config.dzenUpload.commentsAudience,
-    commentsAudienceActual: comments.actual,
-    commentsAudienceVerified: comments.ok,
-    readyAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    dryRun: true,
-    readyScreenshot: screenshotPath,
-  };
-  saveJsonAtomic(config.stateFile, state);
-
-  log(config, `DZEN: dry-run готов. Финальная кнопка НЕ нажата. Draft: ${draftUrl}`);
-  log(config, `DZEN: диагностический скриншот: ${screenshotPath}`);
-  return { page, draftUrl, screenshotPath, comments };
 }
 
 async function main(argv = process.argv.slice(2)) {
@@ -899,11 +919,14 @@ module.exports = {
   applyDzenConfigDefaults,
   buildDzenDescription,
   buildDzenTitle,
+  createDzenBrowserSession,
   findJobForDate,
   formatRussianLongDate,
   formatRussianNumericDate,
   normalizeTags,
   parseArgs,
+  prepareDzenVideoDryRun,
+  readVideoDraftFromUrl,
 };
 
 if (require.main === module) {
