@@ -365,7 +365,7 @@ async function main(argv = process.argv.slice(2)) {
   const config = loadJson(CONFIG_PATH);
   const { mode, childArgs, date } = parseArgs(argv);
   const dateKey = date || formatDateKey(new Date(), config.timeZone);
-  const target = mode === "dry-run" ? "dzen-publish.js" : "dzen-publish-live.js";
+  const target = mode === "dry-run" ? "dzen-publish.js" : "dzen-publish-direct.js";
   const targetArgs = mode === "dry-run" ? ["--dry-run", ...childArgs] : childArgs;
   const deadline = Date.now() + OPERATOR_WINDOW_MS;
 
