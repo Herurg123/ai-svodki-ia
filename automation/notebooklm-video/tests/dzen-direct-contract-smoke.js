@@ -67,6 +67,26 @@ for (const marker of [
 }
 
 assert(runner.includes('"dzen-publish-direct.js"'), "Canonical live runner must use dzen-publish-direct.js");
+assert(
+  runner.includes("live publish выполняется одним child-проходом без автоматического повторного запуска"),
+  "Live publish must explicitly run as a single child attempt"
+);
+assert(
+  runner.includes("Автоматический повтор live-flow в этом запуске отключён"),
+  "A failed live child must stop instead of silently restarting the whole direct flow"
+);
+assert(
+  runner.includes("runDryRunWithRecovery"),
+  "Legacy retry window may remain isolated to diagnostic dry-run"
+);
+const mainStart = runner.indexOf("async function main");
+const liveStart = runner.indexOf('if (mode === "publish") {', mainStart);
+const dryRunDispatch = runner.indexOf("return await runDryRunWithRecovery", liveStart);
+assert(mainStart >= 0 && liveStart >= 0 && dryRunDispatch > liveStart, "Cannot locate live single-pass branch in runner");
+const liveBranch = runner.slice(liveStart, dryRunDispatch);
+assert(!liveBranch.includes("while ("), "Live publish branch must not contain an automatic retry loop");
+assert(!liveBranch.includes("RETRY_DELAY_MS"), "Live publish branch must not schedule delayed retries");
+
 assert(!source.includes('descriptionInput.press("Tab")'), "Resume path must not press Tab inside the controlled description textarea");
 assert(!source.includes('status: "PUBLISHING",\n      editorPublicationsUrl'), "New direct flow must not mark a pre-click baseline as PUBLISHING");
 assert(!source.includes("жду устойчивого сохранения метаданных"), "Direct live flow must not restore metadata rewrite loop");
