@@ -147,7 +147,7 @@ jobs:
           echo "commit_sha=${commit_sha}" >> "${GITHUB_OUTPUT}"
           echo "should_deploy=true" >> "${GITHUB_OUTPUT}"
 
-      - name: Summary
+      - name: Сводка
         if: always()
         shell: bash
         env:
@@ -156,15 +156,36 @@ jobs:
           CHANGED: ${{ steps.enrich.outputs.changed || 'false' }}
           COMMIT_SHA: ${{ steps.commit.outputs.commit_sha || '' }}
         run: |
+          case "${ACTIVE}" in
+            true) active_ru="да" ;;
+            false) active_ru="нет" ;;
+            *) active_ru="${ACTIVE}" ;;
+          esac
+          case "${CHANGED}" in
+            true) changed_ru="да" ;;
+            false) changed_ru="нет" ;;
+            *) changed_ru="${CHANGED}" ;;
+          esac
+          case "${STATUS}" in
+            waiting_article) status_ru="ожидание статьи в RSS" ;;
+            already_enriched) status_ru="видео уже добавлено в RSS" ;;
+            invalid_assets) status_ru="медиафайлы не прошли проверку" ;;
+            waiting_assets) status_ru="ожидание MP4 и PNG" ;;
+            ready_dry_run) status_ru="медиафайлы готовы, dry-run" ;;
+            enriched) status_ru="видео добавлено в RSS" ;;
+            error) status_ru="ошибка" ;;
+            not-run) status_ru="проверка не запускалась" ;;
+            *) status_ru="${STATUS}" ;;
+          esac
           {
-            echo "## Video RSS enrichment"
+            echo "## Обогащение RSS видео"
             echo
-            echo "- Controlled date: ${VIDEO_RSS_TEST_DATE}"
-            echo "- Window active: ${ACTIVE}"
-            echo "- Probe/enrichment status: ${STATUS}"
-            echo "- RSS changed: ${CHANGED}"
-            echo "- Commit: ${COMMIT_SHA:-none}"
-            echo "- Paid APIs: 0"
+            echo "- Контрольная дата: ${VIDEO_RSS_TEST_DATE}"
+            echo "- Контрольное окно активно: ${active_ru}"
+            echo "- Статус проверки/обогащения: ${status_ru}"
+            echo "- RSS изменён: ${changed_ru}"
+            echo "- Коммит: ${COMMIT_SHA:-нет}"
+            echo "- Платные API: 0"
           } >> "${GITHUB_STEP_SUMMARY}"
 
       - name: Upload validation report
