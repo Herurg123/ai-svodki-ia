@@ -28,6 +28,10 @@ assert(!browserSession.includes("open-robot-browser"), "shared bootstrap must no
 assert(!browserSession.includes("Sessions"), "Dzen bootstrap must not delete browser profile session files");
 assert(runner.includes('require("./browser-session")'), "runner must use browser-session.js");
 assert(runner.includes('"dzen-publish-live.js"'), "runner must invoke the live publisher");
+assert(runner.includes("recoverDraftCreatedBeforeChildExit"), "runner must recover a draft created before Playwright child exit");
+assert(runner.includes("videoEditorPublicationId"), "draft recovery must key off videoEditorPublicationId");
+assert(runner.includes("recoveredAfterUploadTimeout"), "recovered draft must be recorded in state");
+assert(runner.includes("повторно запускаю Dzen flow"), "runner must continue the existing draft after recovery");
 assert(liveCmd.includes("dzen-browser-runner.js"), "live command must route through shared bootstrap");
 assert(dryCmd.includes("dzen-browser-runner.js"), "dry-run command must route through shared bootstrap");
 assert(!liveCmd.toLowerCase().includes("powershell"), "live command must not require a PowerShell launcher");
