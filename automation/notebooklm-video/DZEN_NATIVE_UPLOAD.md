@@ -2,12 +2,39 @@
 
 Этот документ описывает **экспериментальный операторский** browser-upload путь
 для уже готового NotebookLM MP4. Он использует тот же защищённый профиль
-Яндекс.Браузера и Playwright/CDP, который уже применяется локальным video-worker.
+Яндекс.Браузера и тот же проверенный browser/CDP bootstrap, на котором работает
+локальный `worker.js`.
 
-Путь пока **не подключён** к `worker.js`, `run-worker.cmd`,
+Путь пока **не подключён** к обычному `worker.js`, `run-worker.cmd`,
 `run-worker-hidden.vbs` или Планировщику Windows. Обычный запуск NotebookLM worker
 не публикует видео в Дзен. Финальная публикация выполняется только отдельной
 явной операторской командой `run-dzen-publish.cmd`.
+
+## Browser bootstrap
+
+Операторские Dzen-команды больше не требуют предварительного ручного запуска
+Яндекс.Браузера и не используют `open-robot-browser.ps1` / `open-robot-browser.cmd`
+как основной путь.
+
+`run-dzen-publish.cmd` и `run-dzen-dry-run.cmd` запускают
+`dzen-browser-runner.js`, который использует `browser-session.js`. Этот модуль
+повторяет рабочий lifecycle `worker.js`:
+
+- тот же `browserExecutable`;
+- тот же защищённый `browserProfile`;
+- тот же `browserDebugHost` / `browserDebugPort`;
+- те же Chromium-флаги, включая background/renderer safeguards;
+- ожидание `/json/version` до `browserStartupTimeoutMs`;
+- `chromium.connectOverCDP(endpoint)` без прежнего 3-секундного timeout;
+- использование существующего persistent browser context;
+- закрытие браузера через CDP после завершения операторской команды.
+
+Dzen bootstrap **не удаляет и не пересоздаёт browser profile**, cookies, Google
+session, Dzen session или session-файлы профиля.
+
+Прямой запуск `dzen-publish.js` / `dzen-publish-live.js` остаётся внутренним
+implementation detail. Канонический операторский вход — только `.cmd`-команды
+через `dzen-browser-runner.js`.
 
 ## Подтверждённый ручной сценарий 27.08.2026
 
@@ -37,8 +64,8 @@
 - использует `job.downloadedFile` как локальный MP4;
 - использует `job.previewFile` или соседний PNG; если PNG отсутствует, создаёт его
   через уже установленный `ffmpeg-static`;
-- подключается к уже запущенному роботизированному Яндекс.Браузеру по CDP либо
-  запускает тот же `browserExecutable` с тем же `browserProfile`;
+- подключается к уже запущенному `browser-session.js` роботизированному
+  Яндекс.Браузеру по CDP;
 - проверяет авторизацию и имя канала;
 - выбирает «Загрузить видео» и передаёт локальный MP4 через Playwright;
 - сохраняет `videoEditorPublicationId` и draft URL в `state.json`;
@@ -71,6 +98,26 @@
 Проверка по увеличению числа одноимённых строк нужна потому, что тестовый выпуск
 27 августа уже имеет вручную опубликованное видео с тем же заголовком. Простая
 проверка «такой заголовок есть» дала бы ложный успех.
+
+## Восстановление после timeout загрузки MP4
+
+На Яндекс.Браузере через CDP наблюдалась ситуация, когда Playwright завершал
+`fileChooser.setFiles` по timeout, хотя сам MP4 продолжал загружаться и Дзен уже
+создавал рабочий video draft.
+
+Поэтому `dzen-browser-runner.js` не считает такой ранний exit автоматическим
+доказательством провала. Если дочерний Dzen-процесс завершился до того, как
+успел сохранить draft в `state.json`, runner проверяет уже открытые страницы
+persistent context. Если найден URL с `videoEditorPublicationId`, runner:
+
+1. сохраняет этот **уже существующий** draft в `job.dzenVideo`;
+2. выставляет `status=DRAFT_CREATED` и диагностический
+   `recoveredAfterUploadTimeout=true`;
+3. пишет заметный лог `!!! DZEN:`;
+4. повторно запускает flow, который продолжает тот же draft;
+5. не создаёт новый video draft только из-за преждевременного Playwright timeout.
+
+Если `videoEditorPublicationId` не появился, ошибка остаётся блокирующей.
 
 ## Защита от повторного клика
 
@@ -120,25 +167,22 @@ ai
 
 ## Ручной запуск
 
-До отдельной promotion-задачи helper-файлы нужно положить рядом с существующим
-`config.json` в локальный NotebookLMBot.
+Единственная команда реальной публикации:
 
-Реальная публикация:
-
-```cmd
-cd /d C:\TRASH\NotebookLMBot
-run-dzen-publish.cmd --date=2026-08-27
+```powershell
+cd "C:\TRASH\NotebookLMBot"
+.\run-dzen-publish.cmd --date=2026-08-27
 ```
 
 Если `--date` не указан, используется текущая дата по `timeZone`.
 
-Для диагностики без финального клика остаётся:
+Для диагностики без финального клика:
 
-```cmd
-run-dzen-dry-run.cmd --date=2026-08-27
+```powershell
+.\run-dzen-dry-run.cmd --date=2026-08-27
 ```
 
-Для ручного входа/проверки профиля используется `open-robot-browser.cmd`.
+Предварительно запускать браузер, CDP или PowerShell launcher вручную не нужно.
 
 ## Что смотреть после запуска
 
