@@ -134,6 +134,23 @@ The current search-operation ceilings and layer order are architectural
 invariants documented in `automation/ARCHITECTURE.md`; do not silently change
 them during refactoring.
 
+## Source Pulse supplemental boundary
+
+Source Pulse v1.1 may supplement a fresh Primary research artifact only through
+the bounded pre-editorial path documented in `automation/ARCHITECTURE.md`.
+It must use **zero OpenAI calls and zero Web Search operations** and must not
+reduce or suppress any mandatory Primary, agency-rescue, Hybrid or Coverage
+search obligation.
+
+Candidate influence is limited to `pulse_only` Tier-A official leads that pass
+both deterministic source-page freshness proof and the deterministic AI relevance
+gate. Such rows enter only as `recommendation=consider` with conservative
+significance. Tier B remains lead-only and must never influence publication.
+Search-derived China/Asia and Russia `regional_health` gaps must not be recomputed
+after Pulse promotion, because the second plane must not hide a degraded primary
+Search route. Same-day recovery must reuse the saved Pulse snapshot and must not
+silently repoll mutable sources.
+
 ## Permanent and safety invariants
 
 - The permanent pre-hybrid baseline is commit

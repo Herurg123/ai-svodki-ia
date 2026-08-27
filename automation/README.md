@@ -33,9 +33,14 @@
 - `scripts/run_digest_preview.py` — orchestration fresh/recovery research и
   editorial flow;
 - `scripts/primary_recall_search.py` — стабильный public Primary Recall
-  entrypoint;
+  entrypoint; после fresh Primary запускает zero-paid Source Pulse v1.1 supplement
+  до первого editorial;
 - `scripts/agency_discovery_rescue.py` — conditional missing-event rescue;
-- `scripts/source_pulse_shadow.py` — production-shadow Source Pulse перед Hybrid;
+- `scripts/source_pulse_supplement.py` — bounded Tier-A official supplemental
+  discovery: обычный HTTPS, deterministic date/relevance gate, `consider` only,
+  без OpenAI/Web Search;
+- `scripts/source_pulse_shadow.py` — сохранённый snapshot/fusion diagnostics перед
+  и после Hybrid без повторного polling;
 - `scripts/hybrid_search_completeness.py` — bounded Hybrid completeness;
 - `scripts/ensure_story_coverage.py` — fallback Coverage public entrypoint;
 - `scripts/recover_digest_artifact.py` — paid-stage recovery entrypoint;
@@ -56,6 +61,25 @@
 Versioned implementation files such as `*_v1.py`, `*_v2.py` and `*_v8.py` are
 preserved compatibility/recovery layers, not arbitrary duplicates. Their
 lifecycle and refactor rules are described in [`ARCHITECTURE.md`](ARCHITECTURE.md).
+
+## Source Pulse v1.1
+
+Fresh production сначала завершает Primary Recall, затем Source Pulse v1.1
+опрашивает фиксированный registry обычным HTTPS. Только `pulse_only` Tier-A
+official leads могут попасть в trusted research, причём только как
+`recommendation=consider`. Tier B остаётся diagnostic-only. Для каждого
+продвигаемого lead повторно открывается уже найденный официальный URL,
+детерминированно проверяется publication date против exact saved window и
+применяется AI-relevance gate. После merge штатный Source Freshness Proof всё
+равно повторно проверяет trusted research перед первым editorial.
+
+Pulse не вызывает OpenAI и Web Search. Search-derived `regional_health` для
+Russia/China после Pulse не пересчитывается, поэтому второй discovery-plane не
+может скрыть деградацию Primary и подавить существующий Hybrid health check.
+Общий потолок остаётся 24 Web Search operations. Runtime report
+`preview/production-daily/source-pulse-<DATE>.json` сохраняет source/parser health,
+fusion, каждую причину promotion/rejection, promoted URLs и snapshot reuse; весь
+`production-daily/` уже входит в стандартный Actions artifact.
 
 ## Workflows
 

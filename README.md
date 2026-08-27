@@ -85,6 +85,15 @@ agency rescue и Hybrid равен 24 search operations. Каноническа�
 единственного search один Primary-pass может использовать `open_page` и
 `find_in_page` как навигацию, не увеличивая search-operation budget.
 
+После fresh Primary Source Pulse v1.1 выполняет второй discovery-plane без
+дополнительного финансового retrieval: обычный HTTPS к фиксированному registry,
+**0 OpenAI calls и 0 Web Search operations**. В candidate pool могут попасть
+только свежие `pulse_only` Tier-A official leads, и только как `consider` после
+детерминированной проверки страницы/даты и AI relevance. Tier B остаётся
+диагностическим. Search-derived China/Asia и Russia gaps после Pulse не
+пересчитываются, поэтому механизм не может подавить существующий Hybrid
+health-check. Полная диагностика сохраняется в daily Actions artifact.
+
 Обязательные Coverage-направления сохраняют ids `security_world`,
 `security_russia`, `security_asia`, `legal_copyright_scraping`, `curiosity` и
 `general_coverage_gaps`; последний является авторитетный last-mile sweep
