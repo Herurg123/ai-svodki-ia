@@ -45,16 +45,12 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          mkdir -p automation/preview/repository-hygiene automation/preview/video-rss-hygiene
+          mkdir -p automation/preview/repository-hygiene
           python automation/scripts/repository_hygiene.py \
             --mode plan \
             --report automation/preview/repository-hygiene/plan.json
           python automation/scripts/render_repository_hygiene_summary.py \
             automation/preview/repository-hygiene/plan.json \
-            --summary "${GITHUB_STEP_SUMMARY}"
-          python automation/scripts/repository_hygiene_video_rss_runs.py \
-            --mode plan \
-            --report automation/preview/video-rss-hygiene/video-rss-runs-plan.json \
             --summary "${GITHUB_STEP_SUMMARY}"
 
       - name: Upload audit JSON
@@ -62,9 +58,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: repository-hygiene-audit-${{ github.run_id }}
-          path: |
-            automation/preview/repository-hygiene/plan.json
-            automation/preview/video-rss-hygiene/video-rss-runs-plan.json
+          path: automation/preview/repository-hygiene/plan.json
           if-no-files-found: ignore
           retention-days: 2
 
@@ -115,7 +109,7 @@ jobs:
           retention-days: 2
 
   prune-actions:
-    name: Prune safe Actions objects and retained Video RSS runs
+    name: Prune safe Actions objects
     needs:
       - audit
       - prune-branches
@@ -144,7 +138,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          mkdir -p automation/preview/repository-hygiene automation/preview/video-rss-hygiene
+          mkdir -p automation/preview/repository-hygiene
           python automation/scripts/repository_hygiene.py \
             --mode apply \
             --scope actions \
@@ -152,18 +146,12 @@ jobs:
           python automation/scripts/render_repository_hygiene_summary.py \
             automation/preview/repository-hygiene/actions.json \
             --summary "${GITHUB_STEP_SUMMARY}"
-          python automation/scripts/repository_hygiene_video_rss_runs.py \
-            --mode apply \
-            --report automation/preview/video-rss-hygiene/video-rss-runs-actions.json \
-            --summary "${GITHUB_STEP_SUMMARY}"
 
       - name: Upload Actions-cleanup JSON
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: repository-hygiene-actions-${{ github.run_id }}
-          path: |
-            automation/preview/repository-hygiene/actions.json
-            automation/preview/video-rss-hygiene/video-rss-runs-actions.json
+          path: automation/preview/repository-hygiene/actions.json
           if-no-files-found: ignore
           retention-days: 2
