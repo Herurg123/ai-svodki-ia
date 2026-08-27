@@ -26,6 +26,7 @@ const defaults = helpers.applyDzenConfigDefaults({});
 assert.strictEqual(defaults.dzenUpload.enabled, false, "Dzen upload не должен включаться по умолчанию");
 assert.strictEqual(defaults.dzenUpload.tags.length, 5, "Должно быть ровно пять тегов");
 assert.strictEqual(defaults.dzenUpload.commentsAudience, "Все пользователи");
+assert.strictEqual(defaults.dzenUpload.processingTimeoutMs, 600000, "Dzen operator wait должен быть 10 минут");
 helpers.normalizeTags(defaults.dzenUpload.tags);
 
 for (const marker of [
@@ -39,11 +40,17 @@ for (const marker of [
   "!!! DZEN:",
   "READY_TO_PUBLISH",
   "Финальная кнопка НЕ нажата",
+  'input[type="file"]',
+  "setInputFiles",
+  "canonicalEditorText",
+  "форма метаданных ещё стабилизируется",
+  "За 10 минут форма Дзена не подтвердила",
 ]) {
   assert(source.includes(marker), `В dzen-publish.js отсутствует контрактный маркер: ${marker}`);
 }
 
-assert(source.includes("waitForEvent(\"filechooser\""), "MP4/PNG должны загружаться через Playwright filechooser");
+assert(source.includes("waitForEvent(\"filechooser\""), "PNG и fallback MP4 должны оставаться Playwright filechooser-compatible");
+assert(source.includes("Не считаю это доказательством провала загрузки"), "setInputFiles timeout не должен автоматически считаться провалом upload");
 assert(source.includes("selected.length !== 5"), "Должна быть финальная проверка пяти тегов");
 assert(source.includes("Продолжаем подготовку публикации"), "Ошибка комментариев должна быть non-fatal и логироваться");
 assert.throws(() => helpers.parseArgs(["--publish"]), /не включён/i);
