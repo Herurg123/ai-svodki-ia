@@ -9,6 +9,8 @@ const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
 const POLL_MS = 1500;
 const PUBLISH_VERIFY_TIMEOUT_MS = 90_000;
+const DIRECT_FLOW_REVISION = 2;
+const RESUME_PROBE_TIMEOUT_MS = 15_000;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -114,6 +116,15 @@ function descriptionMatchesIgnoringWhitespace(actual, expected) {
   return compactComparableText(actual) === compactComparableText(expected);
 }
 
+function normalizeTag(value) {
+  return String(value || "").trim().toLocaleLowerCase("ru-RU");
+}
+
+function tagSetComplete(selected, expected) {
+  const selectedSet = new Set((selected || []).map(normalizeTag));
+  return expected.length === 5 && expected.every((tag) => selectedSet.has(normalizeTag(tag)));
+}
+
 function processingStageFromText(bodyText) {
   const text = String(bodyText || "");
   const processed = text.includes("Загрузили и обработали видео")
@@ -132,6 +143,20 @@ function publicationsUrlFromDraft(draftUrl) {
   const match = /^\/profile\/editor\/([^/?#]+)/.exec(parsed.pathname);
   if (!match) return null;
   return `${parsed.origin}/profile/editor/${match[1]}/publications`;
+}
+
+function draftIdFromUrl(value) {
+  try {
+    return new URL(String(value || "")).searchParams.get("videoEditorPublicationId");
+  } catch {
+    return null;
+  }
+}
+
+function findOpenDraftPage(context, draftUrl) {
+  const wantedId = draftIdFromUrl(draftUrl);
+  if (!wantedId) return null;
+  return context.pages().find((page) => !page.isClosed() && draftIdFromUrl(page.url()) === wantedId) || null;
 }
 
 async function getVisible(locator) {
@@ -317,17 +342,26 @@ async function setEditableOnce(locator, value) {
 
 async function fillMetadataOnce(page, config, title, description) {
   const { titleInput, descriptionInput } = await waitForMetadataInputs(page, 60_000);
+  let metadataChanged = false;
+
   const currentTitle = await readEditableText(titleInput);
   if (normalizeComparableText(currentTitle) !== normalizeComparableText(title)) {
     await setEditableOnce(titleInput, title);
+    metadataChanged = true;
   }
 
   const currentDescription = await readEditableText(descriptionInput);
   if (!descriptionMatchesIgnoringWhitespace(currentDescription, description)) {
     await setEditableOnce(descriptionInput, description);
+    metadataChanged = true;
   }
-  await descriptionInput.press("Tab").catch(() => {});
-  await page.waitForTimeout(1200);
+
+  if (metadataChanged) {
+    await descriptionInput.evaluate((element) => element.blur()).catch(() => {});
+    await page.waitForTimeout(1200);
+  } else {
+    await page.waitForTimeout(250);
+  }
 
   const refreshed = await findMetadataInputs(page);
   const actualTitle = refreshed.titleInput ? await readEditableText(refreshed.titleInput) : "";
@@ -345,9 +379,11 @@ async function fillMetadataOnce(page, config, title, description) {
   }
 
   if (normalizeComparableText(actualDescription) !== normalizeComparableText(description)) {
-    warn(config, "Дзен изменил только пробельное форматирование описания. Поле больше не переписываю; продолжаю flow.");
+    warn(config, "Дзен изменил только пробельное форматирование описания. Поле больше не переписываю и не трогаю клавиатурой; продолжаю flow.");
+  } else if (metadataChanged) {
+    log(config, "название и описание заполнены однократно. Повторных циклов переписывания metadata нет.");
   } else {
-    log(config, "название и описание заполнены. Повторных циклов переписывания metadata нет.");
+    log(config, "название и описание уже совпадают. При resume поля не трогаю.");
   }
 }
 
@@ -409,7 +445,27 @@ async function findTagInput(page) {
   return null;
 }
 
+async function collectVisibleConfiguredTags(page, expectedTags) {
+  const selected = [];
+  for (const tag of expectedTags) {
+    const matches = page.getByText(tag, { exact: true });
+    for (let i = 0; i < await matches.count(); i += 1) {
+      const candidate = matches.nth(i);
+      if (!(await candidate.isVisible().catch(() => false))) continue;
+      const isPopupOption = await candidate.evaluate((element) => Boolean(
+        element.closest('[role="listbox"], [role="option"]')
+      )).catch(() => false);
+      if (!isPopupOption) {
+        selected.push(tag);
+        break;
+      }
+    }
+  }
+  return selected;
+}
+
 async function collectSelectedTags(page, tagInput, expectedTags) {
+  if (!tagInput) return collectVisibleConfiguredTags(page, expectedTags);
   return tagInput.evaluate((input, tags) => {
     let root = input.parentElement;
     for (let i = 0; i < 8 && root; i += 1, root = root.parentElement) {
@@ -454,9 +510,18 @@ async function clickNearestTagSuggestion(page, tagInput, tag) {
 }
 
 async function ensureFiveTags(page, config, tags) {
-  const tagInput = await findTagInput(page);
-  if (!tagInput) throw new Error("Поле тегов не найдено.");
+  let tagInput = await findTagInput(page);
   let selected = await collectSelectedTags(page, tagInput, tags);
+
+  if (tagSetComplete(selected, tags)) {
+    log(config, `все 5 тегов уже подтверждены как плашки: ${tags.join(", ")}. При resume теги не трогаю.`);
+    return;
+  }
+
+  if (!tagInput) {
+    throw new Error(`Поле тегов не найдено и подтверждено только ${selected.length}/5 ожидаемых tag-chip.`);
+  }
+
   for (const tag of tags) {
     if (selected.includes(tag)) continue;
     await tagInput.click();
@@ -474,9 +539,13 @@ async function ensureFiveTags(page, config, tags) {
     if (!selected.includes(tag)) throw new Error(`Тег «${tag}» не подтвердился как отдельная плашка.`);
     log(config, `подтверждён тег: ${tag}`);
   }
+
+  tagInput = await findTagInput(page);
   selected = await collectSelectedTags(page, tagInput, tags);
   const missing = tags.filter((tag) => !selected.includes(tag));
-  if (selected.length !== 5 || missing.length) throw new Error(`После ввода тегов подтверждено ${selected.length}/5; отсутствуют: ${missing.join(", ") || "не определено"}`);
+  if (!tagSetComplete(selected, tags) || missing.length) {
+    throw new Error(`После ввода тегов подтверждено ${selected.length}/5; отсутствуют: ${missing.join(", ") || "не определено"}`);
+  }
   log(config, `подтверждены все 5 тегов: ${tags.join(", ")}.`);
 }
 
@@ -622,6 +691,7 @@ async function archiveUnusableDraft(config, state, job, reason) {
       draftId: dzen.draftId || null,
       draftUrl: dzen.draftUrl || null,
       status: dzen.status || null,
+      directFlowRevision: dzen.directFlowRevision || null,
       abandonedReason: reason,
       abandonedAt: new Date().toISOString(),
     });
@@ -634,21 +704,44 @@ async function archiveUnusableDraft(config, state, job, reason) {
 async function tryOpenUsableDraft(context, config, state, job) {
   const dzen = job.dzenVideo || {};
   if (!dzen.draftUrl) return null;
-  const page = await context.newPage();
+
+  if (dzen.directFlowRevision !== DIRECT_FLOW_REVISION) {
+    await archiveUnusableDraft(
+      config,
+      state,
+      job,
+      `draft создан до direct-flow revision ${DIRECT_FLOW_REVISION}; безопасный resume запрещён`
+    );
+    return null;
+  }
+
+  const existingPage = findOpenDraftPage(context, dzen.draftUrl);
+  const page = existingPage || await context.newPage();
+  const createdPage = !existingPage;
+
   try {
-    await page.goto(dzen.draftUrl, { waitUntil: "domcontentloaded", timeout: 60_000 });
-    await page.waitForTimeout(1200);
-    const chooseVideo = await getVisible(page.getByRole("button", { name: "Выбрать видео", exact: true }));
-    const inputs = await findMetadataInputs(page);
-    const body = await page.locator("body").innerText().catch(() => "");
-    const usable = !chooseVideo && !!inputs.titleInput && !!inputs.descriptionInput && body.includes("Публикация видео");
-    if (usable) {
-      log(config, `продолжаю существующий video draft: ${dzen.draftUrl}`);
-      return page;
+    if (draftIdFromUrl(page.url()) !== dzen.draftId) {
+      await page.goto(dzen.draftUrl, { waitUntil: "domcontentloaded", timeout: 60_000 });
+    } else {
+      await page.bringToFront();
+    }
+
+    const deadline = Date.now() + RESUME_PROBE_TIMEOUT_MS;
+    while (Date.now() < deadline) {
+      const chooseVideo = await getVisible(page.getByRole("button", { name: "Выбрать видео", exact: true }));
+      const inputs = await findMetadataInputs(page);
+      const body = await page.locator("body").innerText().catch(() => "");
+      const usable = !chooseVideo && !!inputs.titleInput && !!inputs.descriptionInput && body.includes("Публикация видео");
+      if (usable) {
+        log(config, `продолжаю существующий video draft без новой вкладки: ${dzen.draftUrl}`);
+        return page;
+      }
+      await page.waitForTimeout(500);
     }
   } catch {}
-  await page.close().catch(() => {});
-  await archiveUnusableDraft(config, state, job, "saved URL did not open a populated video editor");
+
+  if (createdPage) await page.close().catch(() => {});
+  await archiveUnusableDraft(config, state, job, "saved URL did not open a populated video editor after 15-second probe");
   return null;
 }
 
@@ -668,6 +761,7 @@ async function prepareDraftInSamePage(context, config, state, job, dateKey) {
     job.dzenVideo = {
       ...(job.dzenVideo || {}),
       status: "DRAFT_CREATED",
+      directFlowRevision: DIRECT_FLOW_REVISION,
       draftId: draft.draftId,
       draftUrl: draft.draftUrl,
       videoFile: job.downloadedFile,
@@ -688,6 +782,7 @@ async function prepareDraftInSamePage(context, config, state, job, dateKey) {
 
   Object.assign(job.dzenVideo, {
     status: "FORM_FILLED",
+    directFlowRevision: DIRECT_FLOW_REVISION,
     title,
     description,
     tags,
@@ -716,7 +811,7 @@ async function publishFromSamePage(context, config, state, job, dateKey, page, p
     await openVideoTab(verifyPage, publicationsUrl);
     const baselineCount = await countMatchingVideoRows(verifyPage, job.dzenVideo.title);
     Object.assign(job.dzenVideo, {
-      status: "PUBLISHING",
+      status: "READY_TO_PUBLISH",
       editorPublicationsUrl: publicationsUrl,
       baselineSameTitleVideoCount: baselineCount,
       publishAttemptStartedAt: new Date().toISOString(),
@@ -808,12 +903,15 @@ async function main(argv = process.argv.slice(2)) {
 }
 
 module.exports = {
+  DIRECT_FLOW_REVISION,
   compactComparableText,
   descriptionMatchesIgnoringWhitespace,
+  draftIdFromUrl,
   normalizeComparableText,
   parseArgs,
   processingStageFromText,
   publicationsUrlFromDraft,
+  tagSetComplete,
 };
 
 if (require.main === module) {
