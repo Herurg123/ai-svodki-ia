@@ -1,0 +1,52 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-27",
+  "slug": "2026-08-27",
+  "title": "ИИ-Сводка на 27 августа 2026",
+  "description": "AWS резко расширяет закупки GPU Nvidia, Anthropic бронирует вычисления на $45 млрд, а Nvidia подтверждает масштаб спроса отчётностью. В фокусе также безопасность агентных систем, physical AI и новая модель Z.ai.",
+  "published_at": "2026-08-27T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-27.png",
+  "topics": [
+    "AWS",
+    "Nvidia",
+    "GPU",
+    "ИИ-инфраструктура",
+    "Anthropic",
+    "Nscale",
+    "OpenAI",
+    "безопасность агентов ИИ",
+    "Generalist",
+    "physical AI",
+    "робототехника",
+    "Perceptron",
+    "Isaac 0.5",
+    "Z.ai",
+    "Ox Alpha",
+    "open-weight модели"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-002."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Шесть выбранных публикаций TechCrunch описывают независимые события высокой или средней значимости: закупку GPU AWS, отчётность Nvidia, финансирование Generalist, контракт Anthropic–Nscale, официальный отчёт OpenAI, запуск Isaac 0.5 и раскрытие разработчика Ox Alpha. В проверенном пуле нет сопоставимых альтернативных источников по этим конкретным событиям."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "Nvidia: Nvidia фигурирует в трёх независимых инфраструктурных сюжетах: расширении AWS, собственной квартальной отчётности и поставке систем для контракта Anthropic–Nscale. Это разные события с самостоятельной редакционной ценностью."
+    }
+  ]
+}

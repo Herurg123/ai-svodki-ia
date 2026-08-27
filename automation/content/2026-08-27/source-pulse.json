@@ -1,0 +1,412 @@
+{
+  "version": 1,
+  "strategy": "source_pulse_shadow",
+  "publication_date": "2026-08-27",
+  "status": "complete",
+  "state": "completed",
+  "candidate_influence": false,
+  "repoll_on_recovery": false,
+  "paid_api_calls": 0,
+  "web_search_operations": 0,
+  "reused_snapshot": false,
+  "snapshot": {
+    "version": 1,
+    "mode": "production_shadow",
+    "production_integration": true,
+    "paid_api_calls": 0,
+    "web_search_operations": 0,
+    "window": {
+      "start_at": "2026-08-25T02:37:34+03:00",
+      "end_at": "2026-08-27T06:55:27+03:00"
+    },
+    "sources": [
+      {
+        "source_id": "baidu_ir",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://ir.baidu.com/",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20228
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "alibaba_ir_hkex",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.alibabagroup.com/en-US/ir-filings-hkex",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1171
+          }
+        ],
+        "selected_url": "https://www.alibabagroup.com/en-US/ir-filings-hkex",
+        "parsed_items": 25,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0
+      },
+      {
+        "source_id": "alibaba_cloud_blog",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.alibabacloud.com/blog",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 2281
+          }
+        ],
+        "selected_url": "https://www.alibabacloud.com/blog",
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0
+      },
+      {
+        "source_id": "marvell_current_reports",
+        "tier": "A",
+        "region": "global",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://investor.marvell.com/sec-filings/current-reports",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 4897
+          }
+        ],
+        "selected_url": "https://investor.marvell.com/sec-filings/current-reports",
+        "parsed_items": 20,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0
+      },
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://blogs.nvidia.com/recent-news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 43
+          }
+        ],
+        "selected_url": "https://blogs.nvidia.com/recent-news",
+        "parsed_items": 20,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://ir.yandex.ru/press-releases?year=2026",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 2087
+          }
+        ],
+        "selected_url": "https://ir.yandex.ru/press-releases?year=2026",
+        "parsed_items": 25,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0
+      },
+      {
+        "source_id": "xpeng_ir",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://ir.xiaopeng.com/rss/news-releases.xml",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20429
+          },
+          {
+            "url": "https://ir.xiaopeng.com/news-events/news-releases",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20349
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://api-docs.deepseek.com/news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1067
+          }
+        ],
+        "selected_url": "https://api-docs.deepseek.com/news",
+        "parsed_items": 25,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0
+      },
+      {
+        "source_id": "mws_news",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://mws.ru/news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1694
+          }
+        ],
+        "selected_url": "https://mws.ru/news",
+        "parsed_items": 30,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0
+      },
+      {
+        "source_id": "vk_press",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://vk.company.ru/ru/press/releases/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 811
+          }
+        ],
+        "selected_url": "https://vk.company.ru/ru/press/releases",
+        "parsed_items": 25,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0
+      },
+      {
+        "source_id": "ithome_ai",
+        "tier": "B",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.ithome.com/tag/AI/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 2204
+          }
+        ],
+        "selected_url": "https://www.ithome.com/tags/AI",
+        "parsed_items": 29,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0
+      },
+      {
+        "source_id": "cnews_ai",
+        "tier": "B",
+        "region": "russia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://www.cnews.ru/news/line/",
+            "status": "error",
+            "http_status": 404,
+            "error": "HTTPError: HTTP Error 404: Not Found",
+            "elapsed_ms": 3626
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      }
+    ],
+    "leads": [],
+    "summary": {
+      "configured_sources": 12,
+      "sources_ok": 9,
+      "sources_unavailable": 3,
+      "sources_parse_error": 0,
+      "lead_count": 0,
+      "eligible_new_lead_count": 0,
+      "tier_a_leads": 0,
+      "tier_b_leads": 0,
+      "cutoff_ambiguous_leads": 0,
+      "archive_url_duplicates": 0,
+      "fetch_elapsed_ms_total": 80887,
+      "fetch_elapsed_ms_max": 20429
+    },
+    "fetched_at": "2026-08-27T04:01:15.153349+00:00",
+    "snapshot_hash": "d72b22b32ae7bd315912c2ed3bc825f184a4e57598f8001f8343d3d4fb56e5d0",
+    "candidate_influence": false,
+    "repoll_on_recovery": false
+  },
+  "fusion": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [],
+    "search_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-008",
+      "cand-009",
+      "cand-010"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-008",
+      "cand-009",
+      "cand-010"
+    ],
+    "summary": {
+      "pulse_total": 0,
+      "pulse_only_count": 0,
+      "both_count": 0,
+      "search_only_count": 8,
+      "cutoff_ambiguous_count": 0,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 0,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 0,
+      "pulse_only_china_asia_count": 0
+    }
+  },
+  "fusion_pre_hybrid": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [],
+    "search_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-008",
+      "cand-009",
+      "cand-010"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-008",
+      "cand-009",
+      "cand-010"
+    ],
+    "summary": {
+      "pulse_total": 0,
+      "pulse_only_count": 0,
+      "both_count": 0,
+      "search_only_count": 8,
+      "cutoff_ambiguous_count": 0,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 0,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 0,
+      "pulse_only_china_asia_count": 0
+    }
+  },
+  "error": null,
+  "fusion_post_hybrid": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [],
+    "search_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-008",
+      "cand-009",
+      "cand-010"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-008",
+      "cand-009",
+      "cand-010"
+    ],
+    "summary": {
+      "pulse_total": 0,
+      "pulse_only_count": 0,
+      "both_count": 0,
+      "search_only_count": 8,
+      "cutoff_ambiguous_count": 0,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 0,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 0,
+      "pulse_only_china_asia_count": 0
+    }
+  }
+}
