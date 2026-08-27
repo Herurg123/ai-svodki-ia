@@ -48,7 +48,10 @@
   tracked content/public cleanup;
 - `scripts/cleanup_video_ftp.py` — независимая от RSS 32-day очистка уже
   опубликованных MP4/PNG в hard-confined FTP-каталоге `video`;
-- `scripts/repository_hygiene.py` — GitHub object hygiene.
+- `scripts/repository_hygiene.py` — общая GitHub object hygiene;
+- `scripts/repository_hygiene_video_rss_runs.py` — узкая retention-политика для
+  Actions runs канонического `video-rss-enrichment.yml`, вызываемая только из
+  ежедневного Repository hygiene.
 
 Versioned implementation files such as `*_v1.py`, `*_v2.py` and `*_v8.py` are
 preserved compatibility/recovery layers, not arbitrary duplicates. Their
@@ -94,9 +97,18 @@ ruleset описана в [`MAIN_PROTECTION.md`](MAIN_PROTECTION.md). Ruleset JS
 ## Repository hygiene
 
 `repository-hygiene.yml` является отдельным operational workflow и не заменяет
-32-дневную очистку контента и FTP-video assets. Его policy, безопасные mutation
-boundaries, retention и operator diagnostics описаны в
-[`ARCHITECTURE.md`](ARCHITECTURE.md) и в root `AGENTS.md`.
+32-дневную очистку контента и FTP-video assets. В его Actions-job дополнительно
+работает только одна canonical-run retention policy: для
+`video-rss-enrichment.yml` success старше трёх дней можно удалить после
+безусловного сохранения последних 14 успешных runs; `failure`/`cancelled`
+сохраняются 14 дней, а active/неизвестные состояния автоматически не удаляются.
+Перед destructive phase заново проверяются `main`, workflow identity, отсутствие
+активной Daily production и отсутствие активного Video RSS run. Полная история
+этого workflow читается с пагинацией, поэтому policy не ограничена первыми 100
+runs. Остальные canonical workflows этой специальной политикой не затрагиваются.
+
+Policy, безопасные mutation boundaries, retention и operator diagnostics описаны
+в [`ARCHITECTURE.md`](ARCHITECTURE.md) и в root `AGENTS.md`.
 
 ## Бесплатная локальная проверка основного проекта
 

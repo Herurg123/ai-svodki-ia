@@ -123,6 +123,7 @@ listing и проверяется отсутствие всех удалённы
 | Retrieval regression contracts | `automation/fixtures/recall/` |
 | Video runtime/deployment | `automation/notebooklm-video/README.md` и `DEPLOYMENT.md` |
 | Controlled video-RSS test | `.github/workflows/video-rss-enrichment.yml` и `automation/scripts/video_rss_enrichment.py` |
+| Video RSS run retention | `.github/workflows/repository-hygiene.yml` и `automation/scripts/repository_hygiene_video_rss_runs.py` |
 | FTP video retention | `.github/workflows/repository-cleanup.yml` и `automation/scripts/cleanup_video_ftp.py` |
 
 Документация должна описывать реализованный код, а не предполагаемую будущую
@@ -143,8 +144,8 @@ listing и проверяется отсутствие всех удалённы
 - `fixtures/research/.runtime/` является ignored trusted ingress для внутреннего
   fresh research;
 - `scripts/` содержит orchestration, retrieval, recovery, publication, cleanup и
-  validators, включая controlled `video_rss_enrichment.py` и FTP-retention
-  `cleanup_video_ftp.py`;
+  validators, включая controlled `video_rss_enrichment.py`, точечный
+  `repository_hygiene_video_rss_runs.py` и FTP-retention `cleanup_video_ftp.py`;
 - `tests/` содержит основной Python offline regression suite;
 - `notebooklm-video/` является отдельным локальным downstream-подпроектом;
 - `preview/` и `recovery/` являются временными ignored runtime directories.
@@ -182,7 +183,7 @@ inventory. One-shot, emergency и patch workflow после выполнения
 | `deploy-posts.yml` | FTP-синхронизация точного `posts/` выбранного commit | Да, только public deploy |
 | `video-rss-enrichment.yml` | Controlled polling публичных MP4+PNG и RSS-only enrichment item выпуска 2026-08-27 | Да, только validated `posts/rss.xml` |
 | `repository-cleanup.yml` | 32-day repository/public cleanup и отдельная FTP-video retention стадия | Да, только documented retention scope |
-| `repository-hygiene.yml` | Уборка безопасно классифицированных GitHub objects | Да, только GitHub-object policy scope |
+| `repository-hygiene.yml` | Уборка безопасно классифицированных GitHub objects, включая узкую retention-политику Video RSS runs | Да, только GitHub-object policy scope |
 
 ### 4.1. PR Gate
 
@@ -240,6 +241,10 @@ contract, идемпотентность, неизменность article field
 `automation/tests/test_video_ftp_cleanup.py` проверяет strict 32-day cutoff,
 dry-run/apply, orphan semantics, MLSD/NLST listing, pre-delete validation,
 post-delete verification и hard `video` boundary без RSS/local-runtime dependency.
+`automation/tests/test_repository_hygiene_video_rss_runs.py` проверяет 3-day
+success retention, unconditional latest-14 success floor, 14-day diagnostic
+retention, active/unknown fail-safe behavior, deep pagination и exact-run recheck
+перед удалением.
 
 `automation/notebooklm-video/tests/video-boundary-smoke.js` проверяет hard FTP
 boundary и ignore rules. `lockfile-contract-smoke.js` проверяет синхронизацию
@@ -531,8 +536,39 @@ Scheduled mode применяет удаление автоматически; m
 
 Repository hygiene работает с GitHub objects, а не с tracked production files.
 Он может удалять только объекты, которые policy доказуемо классифицировал как
-safe: stale merged/closed refs, safe artifacts и отдельные orphan workflow
-objects/runs.
+safe: stale merged/closed refs, safe artifacts, отдельные orphan workflow
+objects/runs и одну явно перечисленную retention-категорию canonical workflow
+runs для `video-rss-enrichment.yml`.
+
+Canonical `video-rss-enrichment.yml` при этом остаётся `protected` workflow и
+никогда не переводится в `safe_disable` ради очистки истории. Отдельный
+`repository_hygiene_video_rss_runs.py`, вызываемый только внутри ежедневного
+`repository-hygiene.yml`, классифицирует лишь runs exact workflow path:
+
+- completed `success` моложе 3 дней защищены;
+- независимо от возраста всегда защищены последние 14 completed `success` runs;
+- остальные completed `success` на границе 3 дней или старше получают
+  `safe_delete`;
+- `failure` и `cancelled` защищены 14 дней и только после этого могут получить
+  `safe_delete`;
+- `queued`, `in_progress` и любые другие non-completed состояния защищены;
+- неизвестные completed conclusions получают `review_only`, а не автоматическое
+  удаление;
+- недавний rerun защищает старый run по более позднему `updated_at`.
+
+История target workflow читается с REST-пагинацией по 100 элементов до конца.
+Это обязательно: при polling каждые пять минут за три дня может возникнуть до 864
+runs, поэтому чтение только первой страницы сделало бы retention фактически
+неработающим для старых объектов. Остальные canonical workflows этой специальной
+глубокой выборкой и retention-политикой не затрагиваются.
+
+Перед destructive phase заново проверяются SHA `main`, identity exact workflow,
+отсутствие активного Daily production run и отсутствие активного Video RSS run.
+Каждый кандидат перед DELETE повторно читается по exact run id и удаляется только
+если `status`, `conclusion`, `created_at`, `updated_at` и workflow id не изменились.
+Удаление GitHub Actions run удаляет и его attached Actions artifacts; отдельный
+artifact DELETE для этой категории не выполняется. Tracked files, RSS, FTP media,
+локальный NotebookLM runtime и production API в mutation scope не входят.
 
 Retry разрешён только для idempotent read-only GET после documented transient
 transport failures/HTTP `500/502/503/504`. Destructive DELETE/PUT автоматически
@@ -653,6 +689,15 @@ editorial, search budgets, archive/recovery artifacts, sitemap/article pages и
 retrieval/editorial, local video worker и deploy-posts payload не меняются.
 Offline fake-FTP regressions проверяют deletion scope и failure semantics; реальный
 FTP при разработке не используется.
+
+Для Video RSS run retention dependency audit ограничен GitHub-object maintenance
+boundary: `repository-hygiene.yml`, exact workflow path
+`.github/workflows/video-rss-enrichment.yml`, его historical Actions runs и
+attached Actions artifacts. Сам Video RSS workflow остаётся canonical/protected;
+его schedule, RSS mutation, deploy, `MAIN_PUSH_DEPLOY_KEY`, Daily production,
+repository cleanup, FTP-video retention, retrieval/editorial и локальный video
+worker не меняются. Offline regressions дополнительно моделируют 900 runs, чтобы
+доказать пагинацию и latest-14/retention semantics без GitHub mutation.
 
 Search/retrieval изменения сначала проверяются на assistant-owned resources.
 Production API пользователя не расходуется без явного разрешения.
