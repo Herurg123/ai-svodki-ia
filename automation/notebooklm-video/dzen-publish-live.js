@@ -2,8 +2,6 @@
 
 const fs = require("fs");
 const path = require("path");
-const { spawn } = require("child_process");
-const { chromium } = require("playwright");
 const helpers = require("./dzen-publish.js");
 
 const ROOT = __dirname;
@@ -85,37 +83,6 @@ function parseArgs(argv) {
   return args;
 }
 
-function runPrepare(dateKey) {
-  return new Promise((resolve, reject) => {
-    const child = spawn(
-      process.execPath,
-      [path.join(ROOT, "dzen-publish.js"), "--dry-run", `--date=${dateKey}`],
-      { cwd: ROOT, stdio: "inherit", windowsHide: false }
-    );
-    child.once("error", reject);
-    child.once("exit", (code) => {
-      if (code === 0) resolve();
-      else reject(new Error(`Подготовка Dzen video draft завершилась с кодом ${code}.`));
-    });
-  });
-}
-
-async function connectBrowser(config) {
-  const endpoint = `http://${config.browserDebugHost}:${config.browserDebugPort}`;
-  const deadline = Date.now() + (config.browserStartupTimeoutMs || 45000);
-  let lastError = null;
-  while (Date.now() < deadline) {
-    try {
-      const browser = await chromium.connectOverCDP(endpoint, { timeout: 3000 });
-      return { browser, endpoint };
-    } catch (error) {
-      lastError = error;
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
-  }
-  throw new Error(`Не удалось подключиться к роботизированному браузеру по ${endpoint}: ${lastError?.message || "CDP недоступен"}`);
-}
-
 async function getVisible(locator) {
   const count = await locator.count();
   for (let i = 0; i < count; i += 1) {
@@ -194,12 +161,12 @@ async function waitForActivePublishButton(page, timeoutMs) {
   throw new Error("Перед финальной публикацией кнопка «Опубликовать» не стала активной.");
 }
 
-async function verifyPublishedVideo(context, config, job, dateKey) {
+async function verifyPublishedVideo(browserSession, config, job, dateKey) {
   const dzen = job.dzenVideo || {};
   const publicationsUrl = dzen.editorPublicationsUrl || publicationsUrlFromDraft(dzen.draftUrl);
   if (!publicationsUrl) throw new Error("Не удалось построить URL списка публикаций из draft URL.");
 
-  const page = await context.newPage();
+  const page = await browserSession.newPage();
   const deadline = Date.now() + 90000;
   let lastCount = 0;
   try {
@@ -220,19 +187,23 @@ async function verifyPublishedVideo(context, config, job, dateKey) {
   }
 }
 
-async function publishPreparedDraft(config, state, job, dateKey) {
+async function publishPreparedDraft(
+  config,
+  state,
+  job,
+  dateKey,
+  browserSession
+) {
   const dzen = job.dzenVideo || {};
   if (!dzen.draftUrl || !dzen.title) {
     throw new Error("В state.json нет подготовленного Dzen video draft.");
   }
 
-  const connection = await connectBrowser(config);
-  log(config, `DZEN: финальная публикация через CDP ${connection.endpoint}.`);
-  const context = connection.browser.contexts()[0] || await connection.browser.newContext();
+  log(config, `DZEN: финальная публикация через общий browser session ${browserSession.endpoint}.`);
 
   if (["PUBLISHING", "PUBLISH_CLICKED_UNVERIFIED"].includes(dzen.status)) {
     log(config, `DZEN: повторный клик запрещён, ранее уже начата публикация статуса ${dzen.status}. Проверяю результат.`);
-    const verification = await verifyPublishedVideo(context, config, job, dateKey);
+    const verification = await verifyPublishedVideo(browserSession, config, job, dateKey);
     if (!verification.verified) {
       throw new Error("Ранее кнопка публикации уже могла быть нажата, но новая запись во вкладке «Видео» пока не подтверждена. Повторный клик не выполняется.");
     }
@@ -250,8 +221,8 @@ async function publishPreparedDraft(config, state, job, dateKey) {
     return verification;
   }
 
-  const draftPage = await context.newPage();
-  const verifyPage = await context.newPage();
+  const draftPage = await browserSession.newPage();
+  const verifyPage = await browserSession.newPage();
   try {
     await draftPage.goto(dzen.draftUrl, { waitUntil: "domcontentloaded", timeout: 60000 });
     await draftPage.waitForTimeout(1000);
@@ -290,7 +261,7 @@ async function publishPreparedDraft(config, state, job, dateKey) {
     await draftPage.close().catch(() => {});
   }
 
-  const verification = await verifyPublishedVideo(context, config, job, dateKey);
+  const verification = await verifyPublishedVideo(browserSession, config, job, dateKey);
   if (!verification.verified) {
     job.dzenVideo.status = "PUBLISH_CLICKED_UNVERIFIED";
     job.dzenVideo.publishVerificationError = "Не подтверждено увеличение числа одноимённых записей во вкладке Видео за 90 секунд.";
@@ -331,17 +302,36 @@ async function main(argv = process.argv.slice(2)) {
     return job.dzenVideo;
   }
 
-  if (!["PUBLISHING", "PUBLISH_CLICKED_UNVERIFIED"].includes(job.dzenVideo?.status)) {
-    log(config, `DZEN: готовлю и публикую видео за ${dateKey}. Явный операторский запуск, Планировщик не затрагивается.`);
-    await runPrepare(dateKey);
-    state = loadJson(config.stateFile, { jobs: {} });
-    job = helpers.findJobForDate(state, dateKey);
-    if (job.dzenVideo?.status !== "READY_TO_PUBLISH") {
-      throw new Error(`После подготовки ожидался READY_TO_PUBLISH, получено: ${job.dzenVideo?.status || "нет статуса"}`);
-    }
-  }
+  const browserSession = helpers.createDzenBrowserSession(config);
+  try {
+    await browserSession.open();
 
-  return publishPreparedDraft(config, state, job, dateKey);
+    if (!["PUBLISHING", "PUBLISH_CLICKED_UNVERIFIED"].includes(job.dzenVideo?.status)) {
+      log(config, `DZEN: готовлю и публикую видео за ${dateKey}. Явный операторский запуск, Планировщик не затрагивается.`);
+      await helpers.prepareDzenVideoDryRun(
+        config,
+        state,
+        job,
+        dateKey,
+        browserSession
+      );
+      state = loadJson(config.stateFile, { jobs: {} });
+      job = helpers.findJobForDate(state, dateKey);
+      if (job.dzenVideo?.status !== "READY_TO_PUBLISH") {
+        throw new Error(`После подготовки ожидался READY_TO_PUBLISH, получено: ${job.dzenVideo?.status || "нет статуса"}`);
+      }
+    }
+
+    return await publishPreparedDraft(
+      config,
+      state,
+      job,
+      dateKey,
+      browserSession
+    );
+  } finally {
+    await browserSession.close().catch(() => {});
+  }
 }
 
 module.exports = {
