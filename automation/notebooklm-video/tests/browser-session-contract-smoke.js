@@ -35,6 +35,11 @@ assert(runner.includes("OPERATOR_WINDOW_MS = 10 * 60 * 1000"), "runner must keep
 assert(runner.includes("while (Date.now() < deadline)"), "runner must retry within the recovery window instead of closing immediately");
 assert(runner.includes("resetClearlyEmptyDraft"), "runner must detect a clearly empty saved draft before reuse");
 assert(runner.includes('name: "Выбрать видео"'), "empty-draft detection must use the empty video-selection form");
+assert(runner.includes("hasVideoEditorUi"), "saved draft reuse must require real video-editor UI, not only a draft id in the URL");
+assert(runner.includes("isStudioDashboard"), "saved draft detection must recognize Studio dashboard redirects");
+assert(runner.includes('"Последние публикации"'), "dashboard redirect detection must include a stable Studio marker");
+assert(runner.includes('"Статистика"'), "dashboard redirect detection must include a second stable Studio marker");
+assert(runner.includes("DRAFT_PROBE_TIMEOUT_MS = 15 * 1000"), "stale-draft probe must be bounded and not consume the ten-minute operator window");
 assert(runner.includes("previousDrafts"), "discarded empty draft metadata must be retained in local state history");
 assert(runner.includes("taskkill.exe"), "Windows child process tree must be bounded by the ten-minute operator window");
 assert(liveCmd.includes("dzen-browser-runner.js"), "live command must route through shared bootstrap");
