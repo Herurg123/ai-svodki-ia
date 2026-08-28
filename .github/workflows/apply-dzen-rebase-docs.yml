@@ -1,0 +1,74 @@
+name: Temporary apply Dzen rebase docs
+
+on:
+  push:
+    branches:
+      - rebase/automatic-dzen-worker-final
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.event.head_commit.message == 'Stage Dzen docs on current main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebase/automatic-dzen-worker-final
+          fetch-depth: 2
+      - name: Patch only video documentation
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def once(path, old, new, label):
+              p=Path(path); s=p.read_text(encoding='utf-8'); n=s.count(old)
+              if n != 1: raise SystemExit(f'{label}: expected 1 match, got {n}')
+              p.write_text(s.replace(old,new,1), encoding='utf-8')
+
+          once('README.md',
+            '| `automation/notebooklm-video/` | Отдельный локальный Windows downstream-подпроект: после публикации выпуска создаёт NotebookLM-видео, MP4, PNG-превью и при включённой настройке доставляет их только в FTP-каталог `video`. |',
+            '| `automation/notebooklm-video/` | Отдельный локальный Windows downstream-подпроект: после публикации выпуска создаёт NotebookLM-видео, MP4/PNG, при необходимости доставляет их в FTP `video`, а затем по тому же Task Scheduler автоматически публикует нативное видео в Дзен через защищённый браузерный профиль. |',
+            'root table')
+          once('README.md',
+            'Подпроект начинает работу только после появления уже опубликованного выпуска в\nRSS. Его runtime находится на Windows-машине пользователя и не является\nGitHub-production стадией.',
+            'Подпроект начинает работу только после появления уже опубликованного выпуска в\nRSS. Его runtime находится на Windows-машине пользователя и не является\nGitHub-production стадией. `run-worker.cmd` запускает единый scheduled flow:\nNotebookLM/MP4/PNG/FTP, затем Dzen duplicate guard и, для самого свежего\nлокального `DONE` выпуска с датой не позже текущей, один fresh publish с\nverification-only защитой от повторного клика.',
+            'root local section')
+
+          once('automation/README.md',
+            '- `notebooklm-video/` — отдельный локальный Windows downstream-подпроект;',
+            '- `notebooklm-video/` — отдельный локальный Windows downstream-подпроект с единым scheduled flow NotebookLM → media/FTP → native Dzen publish;',
+            'automation map')
+          once('automation/README.md',
+            'В обратную сторону nightly production workflows не должны читать или изменять\nvideo runtime.',
+            'В обратную сторону nightly production workflows не должны читать или изменять\nvideo runtime. Локальный Task Scheduler через `scheduled-worker.js` запускает\nсуществующий `worker.js`, а после его успешного выхода выбирает самый свежий\n`DONE` job с датой не позже текущей и выполняет Dzen duplicate guard, максимум\nодин fresh publish click и verification-only подтверждение.',
+            'automation workflow boundary')
+
+          once('automation/ARCHITECTURE.md',
+            '- при включённой настройке доставляет media только в FTP-каталог `video`.',
+            '- при включённой настройке доставляет media только в FTP-каталог `video`;\n- после успешного локального этапа автоматически выполняет native Dzen browser-upload через тот же защищённый профиль, но в отдельной последовательной browser-сессии.',
+            'architecture 1.2 bullets')
+          old_flow='''```text\nRSS\n -> Windows Task Scheduler\n -> run-worker-hidden.vbs / run-worker.cmd\n -> Node.js worker.js\n -> Yandex Browser + dedicated profile\n -> Playwright CDP\n -> NotebookLM\n -> local MP4\n -> PNG preview via ffmpeg-static\n -> optional FTP video/\n```'''
+          new_flow='''```text\nRSS\n -> Windows Task Scheduler\n -> run-worker-hidden.vbs / run-worker.cmd\n -> scheduled-worker.js\n -> existing worker.js\n -> Yandex Browser + dedicated profile\n -> Playwright CDP\n -> NotebookLM\n -> local MP4\n -> PNG preview via ffmpeg-static\n -> optional FTP video/\n -> close NotebookLM browser/CDP\n -> Dzen duplicate guard\n -> fresh native upload only when missing\n -> one publish click\n -> verification-only confirmation\n```'''
+          once('automation/ARCHITECTURE.md', old_flow, new_flow, 'architecture flow')
+          once('automation/ARCHITECTURE.md',
+            'Runtime state, real config, FTP access, logs, media и browser profile не хранятся\nв Git. Локальный `.gitignore` является частью safety contract.',
+            'Runtime state, real config, FTP access, logs, media и browser profile не хранятся\nв Git. Локальный `.gitignore` является частью safety contract. Внешний\n`scheduled-worker.lock` не допускает наложения scheduled runs. После успешного\n`worker.js` выбирается самый свежий локальный `DONE` job с датой не позже текущей,\nпоэтому delayed/catch-up выпуск предыдущего дня не теряется, а future-dated state\nне принимается. Состояния `PUBLISH_ARMED`, `CLICKED_UNVERIFIED` и\n`BLOCKED_AMBIGUOUS` разрешают только verification: новый upload и второй publish\nclick запрещены. Fresh retry допустим лишь при явном `publishClicked=false`.',
+            'architecture state safety')
+          PY
+      - name: Validate
+        run: |
+          set -euo pipefail
+          git diff --check
+          grep -q 'scheduled-worker.js' automation/ARCHITECTURE.md
+          grep -q 'verification-only' README.md
+      - name: Commit
+        run: |
+          set -euo pipefail
+          git config user.name "Herurg"
+          git config user.email "77099658+Herurg123@users.noreply.github.com"
+          git add README.md automation/README.md automation/ARCHITECTURE.md
+          git diff --cached --check
+          git commit -m "Document scheduled Dzen flow on current architecture"
+          git push origin HEAD:rebase/automatic-dzen-worker-final
