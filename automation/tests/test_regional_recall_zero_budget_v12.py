@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -48,7 +47,7 @@ def metadata(query: str) -> dict:
     }
 
 
-class RegionalHybridV2Tests(unittest.TestCase):
+class RegionalHybridV3Tests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         root = Path(self.temp.name)
@@ -88,8 +87,11 @@ class RegionalHybridV2Tests(unittest.TestCase):
         hybrid.run_source_pulse_shadow = self.old_pulse
         self.temp.cleanup()
 
-    def _run(self, *, asia: bool, russia: bool):
-        write_json(self.artifact / "candidates.json", research(asia=asia, russia=russia))
+    def _run(self, *, asia: bool, russia: bool, maximum_search_calls: int = 4):
+        write_json(
+            self.artifact / "candidates.json",
+            research(asia=asia, russia=russia),
+        )
         seen: list[tuple[str, str, str]] = []
 
         def request_fn(**kwargs):
@@ -116,27 +118,36 @@ class RegionalHybridV2Tests(unittest.TestCase):
             publication_date="2026-08-28",
             api_key="test-key",
             model="test-model",
-            maximum_search_calls=4,
+            maximum_search_calls=maximum_search_calls,
             request_fn=request_fn,
             output_root=self.output,
         )
         return report, seen
 
-    def test_both_regional_gaps_use_two_fixed_plus_two_dedicated_without_fifth_call(self):
+    def test_both_regional_gaps_preserve_three_fixed_and_add_one_fifth_call(self):
         report, seen = self._run(asia=True, russia=True)
-        self.assertEqual(len(seen), 4)
+        self.assertEqual(len(seen), 5)
         self.assertEqual(
-            [row[0] for row in seen[:2]],
-            [item["id"] for item in hybrid.COMPLETENESS_DIRECTIONS[:2]],
+            [row[0] for row in seen[:3]],
+            [item["id"] for item in hybrid.COMPLETENESS_DIRECTIONS],
         )
-        self.assertEqual(seen[2][1], hybrid.REGIONAL_QUERIES["asia"])
-        self.assertEqual(seen[3][1], hybrid.REGIONAL_QUERIES["russia"])
-        self.assertEqual(report["strategy"], "primary_plus_two_fixed_plus_split_russia_asia_health")
-        self.assertEqual(report["search_budget"]["maximum_calls"], 4)
-        self.assertEqual(report["search_budget"]["completed_calls"], 4)
+        self.assertEqual(seen[3][1], hybrid.REGIONAL_QUERIES["asia"])
+        self.assertEqual(seen[4][1], hybrid.REGIONAL_QUERIES["russia"])
+        self.assertEqual(
+            report["strategy"],
+            "primary_plus_three_fixed_plus_split_russia_asia_paid_extension",
+        )
+        self.assertEqual(report["search_budget"]["base_maximum_calls"], 4)
+        self.assertEqual(report["search_budget"]["maximum_calls"], 5)
+        self.assertEqual(report["search_budget"]["completed_calls"], 5)
+        self.assertTrue(report["conditional_paid_extension"]["used"])
+        self.assertEqual(report["pipeline_search_budget"]["base_maximum_total"], 24)
+        self.assertEqual(report["pipeline_search_budget"]["maximum_total"], 25)
         self.assertEqual(report["regional_health"]["gaps"], ["asia", "russia"])
         self.assertTrue(report["regional_health"]["split_when_both"])
         self.assertFalse(report["regional_health"]["publication_quota"])
+        self.assertEqual(report["retrieval_health"]["additional_paid_searches"], 1)
+        self.assertEqual(report["retrieval_health"]["coverage_additional_paid_searches"], 0)
 
     def test_one_regional_gap_keeps_three_fixed_plus_one_regional(self):
         report, seen = self._run(asia=False, russia=True)
@@ -147,13 +158,48 @@ class RegionalHybridV2Tests(unittest.TestCase):
         )
         self.assertEqual(seen[-1][1], hybrid.REGIONAL_QUERIES["russia"])
         self.assertEqual(report["search_budget"]["completed_calls"], 4)
+        self.assertEqual(report["pipeline_search_budget"]["maximum_total"], 24)
+        self.assertFalse(report["conditional_paid_extension"]["used"])
         self.assertEqual(report["regional_health"]["gaps"], ["russia"])
+        self.assertEqual(report["retrieval_health"]["additional_paid_searches"], 0)
 
     def test_no_regional_gap_preserves_normal_three_call_hybrid(self):
         report, seen = self._run(asia=False, russia=False)
         self.assertEqual(len(seen), 3)
         self.assertEqual(report["search_budget"]["completed_calls"], 3)
         self.assertFalse(report["adaptive_needed"])
+        self.assertFalse(report["conditional_paid_extension"]["used"])
+        self.assertEqual(report["pipeline_search_budget"]["maximum_total"], 24)
+
+    def test_lowered_baseline_cap_cannot_activate_paid_extension(self):
+        report, seen = self._run(
+            asia=True,
+            russia=True,
+            maximum_search_calls=3,
+        )
+        self.assertEqual(len(seen), 3)
+        self.assertFalse(report["conditional_paid_extension"]["used"])
+        self.assertLessEqual(report["search_budget"]["completed_calls"], 3)
+        self.assertEqual(report["pipeline_search_budget"]["maximum_total"], 24)
+
+    def test_oversized_config_is_clamped_to_five_only_on_double_gap(self):
+        report, seen = self._run(
+            asia=True,
+            russia=True,
+            maximum_search_calls=99,
+        )
+        self.assertEqual(len(seen), 5)
+        self.assertEqual(report["search_budget"]["maximum_calls"], 5)
+        self.assertEqual(report["pipeline_search_budget"]["maximum_total"], 25)
+
+        report_single, seen_single = self._run(
+            asia=True,
+            russia=False,
+            maximum_search_calls=99,
+        )
+        self.assertEqual(len(seen_single), 4)
+        self.assertFalse(report_single["conditional_paid_extension"]["used"])
+        self.assertEqual(report_single["pipeline_search_budget"]["maximum_total"], 24)
 
     def test_lifecycle_dedupe_rule_separates_preview_identity_from_final_release(self):
         prompt = hybrid.build_prompt(
@@ -179,6 +225,8 @@ class AgencyRescueV4Tests(unittest.TestCase):
         self.assertIn("Russia", query)
         self.assertNotIn("Reuters", query)
         self.assertEqual(agency_v4.MAXIMUM_SEARCH_OPERATIONS, 1)
+        # Agency rescue's own baseline remains 24; Hybrid v3 alone owns the
+        # conditional fifth-call extension to 25.
         self.assertEqual(agency_v4.PIPELINE_MAXIMUM_SEARCH_OPERATIONS, 24)
 
     def test_no_regional_gap_preserves_v3_query(self):
