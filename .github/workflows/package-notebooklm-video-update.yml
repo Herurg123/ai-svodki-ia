@@ -1,0 +1,97 @@
+name: Package NotebookLMBot update
+
+on:
+  push:
+    branches:
+      - build/notebooklm-video-update-2026-08-28
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out exact branch
+        uses: actions/checkout@v4
+
+      - name: Verify source commit and prepare safe update folder
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "ae898290520a7af250b71cbc57ecbf74588728a7"
+          mkdir -p package
+          cp -a automation/notebooklm-video/. package/
+          test ! -e package/config.json
+          test ! -e package/state.json
+          test ! -e package/ftp-access.json
+          test ! -d package/downloads
+          test ! -d package/node_modules
+          cat > package/VERIFY-UPDATE.cmd <<'EOF'
+          @echo off
+          setlocal
+          cd /d "%~dp0"
+          echo Checking NotebookLMBot update files...
+          node --check worker.js || exit /b 1
+          node --check browser-session.js || exit /b 1
+          node --check dzen-error-log.js || exit /b 1
+          node --check dzen-duplicate-guard.js || exit /b 1
+          node --check dzen-browser-runner.js || exit /b 1
+          node --check dzen-publish-direct.js || exit /b 1
+          echo.
+          echo VERIFY UPDATE: OK
+          exit /b 0
+          EOF
+          cat > package/UPDATE-README.txt <<'EOF'
+          NotebookLMBot update package
+          ============================
+
+          Source main commit:
+          ae898290520a7af250b71cbc57ecbf74588728a7
+
+          This ZIP is an UPDATE OVERLAY for an existing C:\TRASH\NotebookLMBot.
+
+          It contains the portable committed NotebookLM video worker sources,
+          including the live-verified Dzen pre-upload duplicate guard.
+
+          It intentionally DOES NOT contain local runtime/private data:
+          - config.json
+          - state.json
+          - ftp-access.json / real FTP credentials
+          - worker/error logs
+          - downloads
+          - node_modules
+          - protected Yandex Browser profile/session
+
+          Update procedure:
+          1. Stop the local worker and close the robotized Yandex Browser.
+          2. Keep the existing C:\TRASH\NotebookLMBot folder and its local data.
+          3. Extract this ZIP directly over C:\TRASH\NotebookLMBot and replace files.
+          4. Run VERIFY-UPDATE.cmd.
+          5. Existing node_modules may remain because package-lock.json dependencies are unchanged.
+
+          Dzen remains an explicit operator path:
+          run-dzen-publish.cmd --date=YYYY-MM-DD
+
+          Ordinary run-worker.cmd does NOT automatically publish to Dzen.
+          EOF
+
+      - name: Run offline source checks
+        working-directory: automation/notebooklm-video
+        run: |
+          node --check worker.js
+          node --check browser-session.js
+          node --check dzen-error-log.js
+          node --check dzen-duplicate-guard.js
+          node --check dzen-browser-runner.js
+          node --check dzen-publish-direct.js
+          npm test
+
+      - name: Upload update ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NotebookLMBot-update-ae898290
+          path: package/
+          if-no-files-found: error
+          retention-days: 1
