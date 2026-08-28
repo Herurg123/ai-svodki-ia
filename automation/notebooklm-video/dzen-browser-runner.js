@@ -4,10 +4,13 @@ const fs = require("fs");
 const path = require("path");
 const { spawn } = require("child_process");
 const browserSession = require("./browser-session");
+const { classifyBlockingError } = require("./dzen-error-log");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
+const FALLBACK_ERROR_LOG = path.join(ROOT, "dzen-bootstrap-errors.log");
 const OPERATOR_WINDOW_MS = 10 * 60 * 1000;
+const CHILD_OUTPUT_TAIL_LIMIT = 16_000;
 
 function stripBom(value) {
   return String(value || "").replace(/^\uFEFF/, "");
@@ -25,7 +28,7 @@ function appendLine(filePath, line) {
 
 function formatTime(timeZone) {
   return new Intl.DateTimeFormat("ru-RU", {
-    timeZone,
+    timeZone: timeZone || "Europe/Moscow",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -36,15 +39,29 @@ function formatTime(timeZone) {
 }
 
 function log(config, message) {
-  const line = `[${formatTime(config.timeZone)}] DZEN: ${message}`;
+  const line = `[${formatTime(config && config.timeZone)}] DZEN: ${message}`;
   console.log(line);
-  appendLine(config.regularLog, line);
+  appendLine(config && config.regularLog, line);
 }
 
 function warn(config, message) {
-  const line = `[${formatTime(config.timeZone)}] !!! DZEN: ${message}`;
+  const line = `[${formatTime(config && config.timeZone)}] !!! DZEN: ${message}`;
   console.warn(line);
-  appendLine(config.regularLog, line);
+  appendLine((config && config.regularLog) || FALLBACK_ERROR_LOG, line);
+}
+
+function fatalLog(config, message, error = null) {
+  const suffix = error && error.stack ? `\r\n${error.stack}` : "";
+  const line = `[${formatTime(config && config.timeZone)}] !!! DZEN: ${message}${suffix}`;
+  console.error(line);
+
+  const regularTarget = (config && config.regularLog) || FALLBACK_ERROR_LOG;
+  appendLine(regularTarget, line);
+
+  const errorTarget = config && config.errorLog;
+  if (errorTarget && errorTarget !== regularTarget) {
+    appendLine(errorTarget, line);
+  }
 }
 
 function parseArgs(argv) {
@@ -78,10 +95,25 @@ function terminateChildTree(child) {
 function runNodeScript(scriptName, args, timeoutMs) {
   return new Promise((resolve, reject) => {
     let settled = false;
+    let childOutput = "";
+
+    const rememberOutput = (chunk) => {
+      childOutput = `${childOutput}${chunk.toString("utf8")}`.slice(-CHILD_OUTPUT_TAIL_LIMIT);
+    };
+
     const child = spawn(process.execPath, [path.join(ROOT, scriptName), ...args], {
       cwd: ROOT,
-      stdio: "inherit",
+      stdio: ["inherit", "pipe", "pipe"],
       windowsHide: false,
+    });
+
+    child.stdout.on("data", (chunk) => {
+      rememberOutput(chunk);
+      process.stdout.write(chunk);
+    });
+    child.stderr.on("data", (chunk) => {
+      rememberOutput(chunk);
+      process.stderr.write(chunk);
     });
 
     let timer = null;
@@ -89,8 +121,12 @@ function runNodeScript(scriptName, args, timeoutMs) {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
-      if (error) reject(error);
-      else resolve();
+      if (error) {
+        error.childOutput = childOutput;
+        reject(error);
+      } else {
+        resolve();
+      }
     };
 
     child.once("error", (error) => finish(error));
@@ -113,36 +149,53 @@ function runNodeScript(scriptName, args, timeoutMs) {
 }
 
 async function main(argv = process.argv.slice(2)) {
-  if (!fs.existsSync(CONFIG_PATH)) {
-    throw new Error(`Не найден config.json: ${CONFIG_PATH}`);
-  }
-
-  const config = loadJson(CONFIG_PATH);
-  const { mode, childArgs } = parseArgs(argv);
-  const target = mode === "dry-run" ? "dzen-publish.js" : "dzen-publish-direct.js";
-  const targetArgs = mode === "dry-run" ? ["--dry-run", ...childArgs] : childArgs;
-
-  log(config, `запускаю ${target} через browser bootstrap рабочего worker.js.`);
-  if (mode === "publish") {
-    log(config, "live publish выполняется одним child-проходом без автоматического повторного запуска; inter-run resume отключён.");
-  } else {
-    log(config, "diagnostic dry-run выполняется одним child-проходом без recovery/retry loop.");
-  }
-
-  const session = await browserSession.launchRobotBrowser(config, {
-    log: (message) => log(config, message),
-  });
+  let config = null;
+  let session = null;
+  let primaryError = null;
 
   try {
+    if (!fs.existsSync(CONFIG_PATH)) {
+      throw new Error(`Не найден config.json: ${CONFIG_PATH}`);
+    }
+
+    config = loadJson(CONFIG_PATH);
+    const { mode, childArgs } = parseArgs(argv);
+    const target = mode === "dry-run" ? "dzen-publish.js" : "dzen-publish-direct.js";
+    const targetArgs = mode === "dry-run" ? ["--dry-run", ...childArgs] : childArgs;
+
+    log(config, `запускаю ${target} через browser bootstrap рабочего worker.js.`);
+    if (mode === "publish") {
+      log(config, "live publish выполняется одним child-проходом без автоматического повторного запуска; inter-run resume отключён.");
+    } else {
+      log(config, "diagnostic dry-run выполняется одним child-проходом без recovery/retry loop.");
+    }
+
+    session = await browserSession.launchRobotBrowser(config, {
+      log: (message) => log(config, message),
+    });
+
     await runNodeScript(target, targetArgs, OPERATOR_WINDOW_MS);
   } catch (error) {
+    primaryError = error;
+    fatalLog(config, classifyBlockingError(error), error);
     warn(
       config,
-      `${target} завершился ошибкой: ${error.message}. Новый child, reopen draft и автоматический retry не выполняются.`
+      "Задача остановлена. Новый child, reopen draft и автоматический retry не выполняются."
     );
     throw error;
   } finally {
-    await browserSession.closeRobotBrowser(session, config);
+    if (session) {
+      try {
+        await browserSession.closeRobotBrowser(session, config);
+      } catch (closeError) {
+        fatalLog(
+          config,
+          `ОШИБКА БРАУЗЕРА: не удалось штатно закрыть роботизированный Яндекс.Браузер: ${closeError.message}`,
+          closeError
+        );
+        if (!primaryError) throw closeError;
+      }
+    }
   }
 }
 
@@ -156,6 +209,8 @@ if (require.main === module) {
 }
 
 module.exports = {
+  CHILD_OUTPUT_TAIL_LIMIT,
+  FALLBACK_ERROR_LOG,
   OPERATOR_WINDOW_MS,
   main,
   parseArgs,
