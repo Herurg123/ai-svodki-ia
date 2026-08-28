@@ -71,7 +71,16 @@ def build_prompt(**kwargs: Any) -> str:
 
 
 def regional_health_query(gaps: tuple[str, ...]) -> str:
-    return _v2.regional_health_query(gaps)
+    """Preserve the historical combined-query helper without changing v3 execution.
+
+    Production v3 executes separate regional searches on the double-gap path, but
+    older diagnostics/tests still use this public helper to inspect a source-neutral
+    combined Russia/China-Asia query.  Keep that stable surface rather than making a
+    helper API break masquerade as retrieval architecture.
+    """
+    if len(gaps) == 1:
+        return _v2.regional_health_query(gaps)
+    return legacy.regional_health_query(gaps)
 
 
 def _regional_gaps(research: dict[str, Any]) -> tuple[str, ...]:
