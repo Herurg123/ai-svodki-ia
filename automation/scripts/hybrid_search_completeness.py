@@ -1,31 +1,31 @@
 #!/usr/bin/env python3
 """Stable public entrypoint for zero-budget Hybrid Completeness v2.
 
-Production behavior lives in ``hybrid_search_completeness_v2.py``.  The previous
+Production behavior lives in ``hybrid_search_completeness_v2.py``. The previous
 regional wrapper is retained as ``hybrid_search_completeness_regional_v1.py`` so
 recovery hooks and monkeypatch-oriented offline tests keep a stable compatibility
-surface.  Hybrid remains capped at four Web Search operations.
+surface. Hybrid remains capped at four Web Search operations; the pre-Hybrid
+Reuters rescue remains capped at one operation.
 """
 from __future__ import annotations
 
 from typing import Any
 
+import agency_discovery_rescue_v4 as _agency_v4
 import hybrid_search_completeness_v2 as _v2
 
 for _name in dir(_v2):
     if not _name.startswith("_"):
         globals()[_name] = getattr(_v2, _name)
 
-# Mutable compatibility hooks used by existing tests/recovery code.
 REPOSITORY_ROOT = _v2.legacy.REPOSITORY_ROOT
 PRODUCTION_PREVIEW_ROOT = _v2.legacy.PRODUCTION_PREVIEW_ROOT
 RUNTIME_RESEARCH_ROOT = _v2.legacy.RUNTIME_RESEARCH_ROOT
-run_agency_discovery_rescue = _v2.legacy.run_agency_discovery_rescue
+run_agency_discovery_rescue = _agency_v4.run_agency_discovery_rescue
 run_source_pulse_shadow = _v2.legacy.run_source_pulse_shadow
 refresh_post_hybrid_fusion = _v2.legacy.refresh_post_hybrid_fusion
 run_search_request = _v2.legacy.run_search_request
 
-# Contract literals intentionally remain visible at the stable entrypoint.
 DEFAULT_MAXIMUM_SEARCH_CALLS = 4
 FIXED_SEARCH_CALLS = 3
 PIPELINE_MAXIMUM_SEARCH_OPERATIONS = 24
