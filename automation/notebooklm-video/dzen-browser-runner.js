@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const { spawn } = require("child_process");
 const browserSession = require("./browser-session");
+const duplicateGuard = require("./dzen-duplicate-guard");
 const { classifyBlockingError } = require("./dzen-error-log");
 
 const ROOT = __dirname;
@@ -163,9 +164,13 @@ async function main(argv = process.argv.slice(2)) {
     const target = mode === "dry-run" ? "dzen-publish.js" : "dzen-publish-direct.js";
     const targetArgs = mode === "dry-run" ? ["--dry-run", ...childArgs] : childArgs;
 
-    log(config, `запускаю ${target} через browser bootstrap рабочего worker.js.`);
+    log(config, `готовлю ${target} через browser bootstrap рабочего worker.js.`);
     if (mode === "publish") {
-      log(config, "live publish выполняется одним child-проходом без автоматического повторного запуска; inter-run resume отключён.");
+      log(
+        config,
+        "до live child выполняется pre-upload duplicate guard во вкладке «Видео»; " +
+        "при совпадении заголовка upload не начинается."
+      );
     } else {
       log(config, "diagnostic dry-run выполняется одним child-проходом без recovery/retry loop.");
     }
@@ -173,6 +178,29 @@ async function main(argv = process.argv.slice(2)) {
     session = await browserSession.launchRobotBrowser(config, {
       log: (message) => log(config, message),
     });
+
+    if (mode === "publish") {
+      const duplicate = await duplicateGuard.checkBeforeUpload(
+        session.primaryPage,
+        config,
+        childArgs,
+        (message) => log(config, message)
+      );
+
+      if (duplicate.existing) {
+        log(
+          config,
+          `live child не запускается: Видео «${duplicate.titlePrefix}» уже существует.`
+        );
+        return;
+      }
+
+      log(
+        config,
+        "live publish выполняется одним child-проходом без автоматического повторного запуска; " +
+        "inter-run resume отключён."
+      );
+    }
 
     await runNodeScript(target, targetArgs, OPERATOR_WINDOW_MS);
   } catch (error) {
