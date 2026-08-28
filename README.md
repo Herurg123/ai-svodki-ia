@@ -75,27 +75,37 @@ production-контракта, а подробное объяснение нах
 той же даты.
 
 Fresh Primary выполняет ровно 12 Web Search search operations. Coverage выполняет
-до 7 Coverage search operations, поэтому общий архитектурный потолок с conditional
-agency rescue и Hybrid равен 24 search operations. Каноническая continuity-точка
-остается `search_cutoff_at` последнего успешно опубликованного выпуска. После
-единственного search один Primary-pass может использовать `open_page` и
-`find_in_page` как навигацию, не увеличивая search-operation budget.
+до 7 Coverage search operations. Hybrid сохраняет базовый потолок 4 search
+operations; только когда Search-derived health одновременно показывает нулевой
+recall для Russia и China/Asia, разрешён один дополнительный пятый Hybrid search,
+чтобы сохранить все три широких Hybrid-прохода и выполнить два отдельных
+региональных health-check. Поэтому обычный архитектурный потолок остаётся 24
+search operations, а условный double-gap потолок равен 25. Пятый Hybrid search не
+разрешён при одном или отсутствии региональных gaps.
 
-После fresh Primary Source Pulse v1.1 выполняет второй discovery-plane без
-дополнительного финансового retrieval: обычный HTTPS к фиксированному registry,
+Каноническая continuity-точка остается `search_cutoff_at` последнего успешно
+опубликованного выпуска. После единственного search один Primary-pass может
+использовать `open_page` и `find_in_page` как навигацию, не увеличивая
+search-operation budget.
+
+После fresh Primary Source Pulse v1.2 выполняет второй discovery-plane без
+дополнительного платного retrieval: обычный HTTPS к фиксированному registry,
 **0 OpenAI calls и 0 Web Search operations**. В candidate pool могут попасть
-только свежие `pulse_only` Tier-A official leads, и только как `consider` после
-детерминированной проверки страницы/даты и AI relevance. Tier B остаётся
-диагностическим. Search-derived China/Asia и Russia gaps после Pulse не
-пересчитываются, поэтому механизм не может подавить существующий Hybrid
+только свежие `pulse_only` Tier-A `official` или `trusted_news` leads, и только
+как `consider` после детерминированной проверки страницы/даты, host allowlist и
+AI relevance. ТАСС включён в российский Tier-A `trusted_news` registry через
+AI-tag surface; Yandex IR/MWS/VK остаются official, CNews остаётся Tier-B
+lead-only. Tier B не влияет на publication. Search-derived China/Asia и Russia
+gaps после Pulse не пересчитываются, поэтому механизм не может подавить Hybrid
 health-check. Полная диагностика сохраняется в daily Actions artifact.
 
 Обязательные Coverage-направления сохраняют ids `security_world`,
 `security_russia`, `security_asia`, `legal_copyright_scraping`, `curiosity` и
 `general_coverage_gaps`; последний является авторитетный last-mile sweep
-оставшихся пробелов. `partial`, `budget_exhausted` и `error` блокируют Image API,
-commit и deploy. Для короткого выпуска сохраняется пометка «Новостей сегодня
-меньше, чем обычно».
+оставшихся пробелов. Дополнительные региональные Coverage searches только из-за
+красного regional health сейчас не включены. `partial`, `budget_exhausted` и
+`error` блокируют Image API, commit и deploy. Для короткого выпуска сохраняется
+пометка «Новостей сегодня меньше, чем обычно».
 
 Ручной production dispatch имеет `publish=false` по умолчанию и отдельный
 `recovery_run_id`. Текущие production defaults: `gpt-5.6-terra` для text/search и
