@@ -1,12 +1,18 @@
 # Нативная загрузка видео в Дзен через локальный Яндекс.Браузер
 
-Этот документ описывает **экспериментальный операторский** browser-upload путь
-для уже готового NotebookLM MP4. Он использует тот же защищённый профиль
-Яндекс.Браузера и проверенный browser/CDP bootstrap локального `worker.js`.
+Документ описывает подтверждённый native browser-upload алгоритм и его два
+entrypoint: production scheduled orchestration через `scheduled-worker.js` и
+сохранённые ручные команды для оператора/диагностики. Все пути используют один
+защищённый профиль Яндекс.Браузера и общий CDP bootstrap.
 
-Путь **не подключён** к обычному `worker.js`, `run-worker.cmd`,
-`run-worker-hidden.vbs` или Планировщику Windows. Реальная публикация выполняется
-только отдельной явной операторской командой `run-dzen-publish.cmd`.
+Штатное расписание больше не вызывает отдельную Dzen-команду. Task Scheduler
+запускает `run-worker.cmd`, тот запускает `scheduled-worker.js`, а Dzen-фаза
+начинается только после успешного выхода существующего `worker.js` и выбора
+самого свежего локального `DONE` job с датой не позже текущей. Поэтому NotebookLM и Dzen никогда не конкурируют за один
+browser profile/CDP одновременно.
+
+`run-dzen-publish.cmd` и `run-dzen-dry-run.cmd` остаются ручными fallback и
+диагностическими entrypoint.
 
 ## Подтверждённый автоматический MVP
 
@@ -45,6 +51,13 @@ pre-upload duplicate guard на уже опубликованном выпуск
 
 Оба сценария вместе образуют текущий канонический live-flow: сначала duplicate
 guard, затем fresh-upload MVP только если существующее Видео не найдено.
+
+При scheduled promotion поверх этого live-verified child добавлена state-machine
+защита от второго клика. До запуска child в `state.json` атомарно сохраняется
+`PUBLISH_ARMED`. Успешный child переводится в `CLICKED_UNVERIFIED`, после чего
+оркестратор повторно открывает `Публикации -> Видео` и ждёт ожидаемый title
+prefix. Только найденное видео даёт `PUBLISHED`. Неоднозначный сбой после
+`PUBLISH_ARMED` оставляет future runs в verification-only режиме.
 
 ## Browser bootstrap
 
@@ -131,19 +144,21 @@ Studio -> Публикации -> Видео
 - повторное открытие старых drafts;
 - `previousDrafts`/`RETRY_NEW_DRAFT` в каноническом live-flow;
 - повторное заполнение уже заполненных metadata;
-- автоматический повтор child;
-- baseline перед кликом;
-- post-click verification после текущего publish click;
+- автоматический повтор direct child внутри одного live attempt;
+- baseline/count-based повторный publish алгоритм;
 - повторный клик публикации.
 
-Pre-upload duplicate guard является отдельной защитой следующего явного запуска.
-Он проверяет уже видимое опубликованное Видео до начала нового upload, а не
-пытается доказать результат только что выполненного клика.
+Сам `dzen-publish-direct.js` остаётся одноразовым child без post-click
+verification. В scheduled production verification выполняет внешний
+`scheduled-worker.js` через тот же pre-upload duplicate guard и сохраняемую
+state-machine. Ручной `run-dzen-publish.cmd` по-прежнему завершает работу после
+одного child и полагается на duplicate guard следующего ручного запуска.
 
-Если запуск падает **до** клика, следующая отдельная операторская команда снова
-начинается с duplicate guard. Новый upload создаётся только если опубликованное
-Видео с ожидаемым prefix не найдено. Старый remote draft автоматически не
-открывается и не удаляется.
+Если direct child явно падает **до** клика и лог содержит `publishClicked=false`,
+следующий scheduled/operator run снова начинает с duplicate guard. В scheduled
+режиме любой неоднозначный исход после `PUBLISH_ARMED` блокирует новый upload и
+оставляет только verification. Старый remote draft автоматически не открывается
+и не удаляется.
 
 ## Метаданные
 

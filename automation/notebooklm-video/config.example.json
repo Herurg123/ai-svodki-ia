@@ -19,6 +19,17 @@
     "previewEnabled": true,
     "connectTimeoutMs": 30000
   },
+  "dzenUpload": {
+    "enabled": true,
+    "automaticEnabled": true,
+    "studioUrl": "https://dzen.ru/profile/editor/create",
+    "channelName": "Заметки из подпространства",
+    "seriesUrl": "https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1",
+    "tags": ["ии", "ai", "полезныесоветы", "будущее", "лайфхак"],
+    "commentsAudience": "Все пользователи",
+    "processingTimeoutMs": 600000,
+    "verificationTimeoutMs": 90000
+  },
   "screenshotsDir": "C:\\NotebookLMBot\\screenshots",
   "tracesDir": "C:\\NotebookLMBot\\traces",
   "tempDir": "C:\\NotebookLMBot\\temp",

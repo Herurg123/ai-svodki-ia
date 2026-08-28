@@ -5,6 +5,7 @@ ftp-access.json
 # Runtime state and locks
 state.json
 worker.lock
+scheduled-worker.lock
 
 # Logs and diagnostics
 worker.log

@@ -274,6 +274,36 @@ sourceTimeoutMs
 downloadTimeoutMs
   Максимальное время ожидания начала скачивания готового видео.
 
+АВТОМАТИЧЕСКАЯ ПУБЛИКАЦИЯ В ДЗЕН
+----------------------------------
+
+run-worker.cmd
+  Теперь запускает scheduled-worker.js, то есть полный цикл по расписанию:
+  worker.js -> NotebookLM/MP4/PNG/FTP -> Dzen duplicate guard -> при необходимости
+  один fresh upload -> один publish click -> verification во вкладке «Видео».
+
+dzenUpload.automaticEnabled
+  true  = после локального job.status=DONE автоматически выполнить Dzen-фазу.
+          Это production default. Если параметр отсутствует в старом config.json,
+          он также трактуется как true.
+  false = оставить NotebookLM/FTP по расписанию, но не запускать Dzen автоматически.
+          Ручные Dzen-команды при этом остаются доступны.
+
+dzenUpload.verificationTimeoutMs
+  Сколько времени после publish child ждать появления ожидаемого заголовка во
+  вкладке Studio -> Публикации -> Видео. По умолчанию 90000 мс.
+
+Dzen safety state хранится внутри текущего job в state.json:
+  PENDING / RETRYABLE_PRE_CLICK = после duplicate guard допустим fresh upload;
+  PUBLISH_ARMED                 = live child уже вооружён, новый upload запрещён;
+  CLICKED_UNVERIFIED            = child завершился после клика, только verification;
+  BLOCKED_AMBIGUOUS             = исход клика не доказан, только verification;
+  PUBLISHED                     = публикация подтверждена во вкладке «Видео».
+
+Из PUBLISH_ARMED, CLICKED_UNVERIFIED и BLOCKED_AMBIGUOUS автоматический worker
+никогда не делает второй publish click. Повтор fresh upload допускается только
+после явного child-лога publishClicked=false.
+
 ПРИМЕР ВРЕМЕННОГО НАБЛЮДЕНИЯ
 ----------------------------
 
@@ -285,7 +315,9 @@ downloadTimeoutMs
 3. Запустить worker вручную:
 
    cd /d C:\TRASH\NotebookLMBot
-   node worker.js
+   run-worker.cmd
+
+   Команда node worker.js используется только для NotebookLM-only диагностики.
 
 4. После проверки вернуть:
 
