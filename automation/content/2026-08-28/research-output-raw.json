@@ -1,0 +1,675 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-28",
+  "search_window": {
+    "start_at": "2026-08-26T06:55:27+03:00",
+    "end_at": "2026-08-28T04:43:51+03:00",
+    "latest_archive_at": "2026-08-27T06:55:27+03:00",
+    "start_date": "2026-08-26",
+    "end_date": "2026-08-28",
+    "latest_archive_date": "2026-08-27"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=4, accepted=4, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=3, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Google расширила AI Mode: отслеживание цен на авиабилеты и бронирование отелей",
+      "organization": "Google",
+      "published_date": "2026-08-27",
+      "published_at": "2026-08-27T16:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Consumer AI agents and AI search",
+      "event_type": "product launch",
+      "keywords": [
+        "Google AI Mode",
+        "travel agent",
+        "flight-price tracking",
+        "hotel booking",
+        "Google Pay",
+        "AI search"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Google’s AI Mode can now track flight prices, help book hotels, and more",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/27/googles-ai-mode-can-now-track-flight-prices-help-book-hotels-and-more/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Google добавила в AI Mode отслеживание цен на перелёты, поиск вариантов с оплатой милями и баллами, а также бронирование отелей через интегрированных партнёров. Отслеживание перелётов доступно более чем в 180 странах, а гостиничное бронирование начинает разворачиваться в США на английском языке.",
+      "verified_facts": [
+        "TechCrunch указывает время публикации 27 августа 2026 года, 09:00 PDT.",
+        "Пользователь может запросить отслеживание стоимости выбранного перелёта и получать email-уведомления об изменении цены.",
+        "Google сообщает о доступности flight-price tracking более чем в 180 странах.",
+        "Бронирование отелей в AI Mode разворачивается в США с партнёрами, включая Booking.com, Expedia, Hilton, Marriott и другие."
+      ],
+      "significance": "Это заметный переход AI-поиска Google от ответов и планирования к выполнению части транзакционного пользовательского сценария, с широким международным охватом отслеживания перелётов.",
+      "significance_score": 3,
+      "limitations": "Материал описывает запуск и планы развёртывания; фактическая полнота доступа и качество выполнения бронирования могут различаться по региону и партнёру.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет этого запуска AI Mode.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Дата, время, география запуска и перечень ключевых функций прямо указаны в открытом материале TechCrunch.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-27T16:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-27T16:00:00+00:00; timestamp проверен Python против effective window. Публикация и анонс датированы 27 августа 2026 года и попадают в effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-001"
+    },
+    {
+      "title": "OpenAI начнёт показывать рекламу в бесплатном ChatGPT и тарифе Go в Индии",
+      "organization": "OpenAI; ChatGPT; WPP; Omnicom",
+      "published_date": "2026-08-27",
+      "published_at": "2026-08-27T11:35:59+00:00",
+      "time_precision": "datetime",
+      "topic": "Монетизация массового потребительского AI-сервиса и расширение рекламного бизнеса ChatGPT на одном из крупнейших рынков.",
+      "event_type": "product monetization rollout",
+      "keywords": [
+        "OpenAI",
+        "ChatGPT",
+        "ads",
+        "India",
+        "ChatGPT Go",
+        "WPP",
+        "Omnicom",
+        "monetization"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "OpenAI to start showing ads on ChatGPT's free and Go tiers in India",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/27/openai-to-start-showing-ads-on-chatgpts-free-and-go-tiers-in-india/"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI объявила о начале показа рекламы пользователям бесплатного ChatGPT и тарифа Go в Индии. Компания начинает с 50 брендов, работает с WPP и Omnicom и планирует запустить рекламный кабинет для маркетологов в следующем месяце.",
+      "verified_facts": [
+        "TechCrunch указывает точное время публикации: 27 августа 2026 года, 4:35 AM PDT.",
+        "OpenAI намерена показывать рекламу в Free и Go tiers ChatGPT в Индии.",
+        "На старте речь идёт о рекламе 50 брендов; также заявлены партнёрства с WPP и Omnicom.",
+        "По данным материала, OpenAI планирует запустить ad manager в следующем месяце."
+      ],
+      "significance": "Это существенное расширение рекламной модели OpenAI на рынке, где ChatGPT уже имеет очень большую аудиторию; событие влияет на стратегию выручки и пользовательский опыт массового AI-продукта.",
+      "significance_score": 3,
+      "limitations": "Это региональный запуск, а не глобальное изменение продукта; независимого подтверждения помимо сообщения компании и TechCrunch в данном проходе не найдено.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет истории о запуске рекламы ChatGPT в Индии.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Факт анонса и его параметры подробно изложены в свежем материале TechCrunch; событие находится внутри effective window.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-27T11:35:59+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-27T11:35:59+00:00; timestamp проверен Python против effective window. Материал опубликован 27 августа 2026 года и описывает новый запуск, отсутствующий в текущем пуле и архиве.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является судебным или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-002"
+    },
+    {
+      "title": "Instinct привлекла $250 млн в Series B; совокупное финансирование достигло $350 млн при оценке $2,5 млрд",
+      "organization": "Instinct; Spear Street Technology; Index Ventures; Benchmark",
+      "published_date": "2026-08-27",
+      "published_at": "2026-08-27T00:24:57+00:00",
+      "time_precision": "datetime",
+      "topic": "Consumer AI agents and investment",
+      "event_type": "funding",
+      "keywords": [
+        "Instinct",
+        "Spear Street Technology",
+        "AI assistant",
+        "Series B",
+        "Index Ventures",
+        "Benchmark",
+        "consumer agents"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Viral AI startup Instinct has raised $350M at a $2.5B valuation",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/26/viral-ai-startup-instinct-has-raised-350-million-at-a-2-5-billion-valuation/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Instinct raises $250 million in Series B funding",
+          "publisher": "The Wall Street Journal",
+          "url": "https://www.wsj.com/"
+        }
+      ],
+      "event_summary": "Spear Street Technology сообщила The Wall Street Journal о $250 млн Series B для Instinct — consumer AI-агента, который подключается к приложениям и устройствам пользователя и может получать задания через сообщения и звонки. По данным TechCrunch, раунд довёл совокупное финансирование до $350 млн, а оценку — до $2,5 млрд.",
+      "verified_facts": [
+        "TechCrunch датирует публикацию 26 августа 2026 года, 17:24 PDT.",
+        "По пересказу TechCrunch, Instinct сообщила WSJ о $250 млн в недавнем Series B.",
+        "Совокупное финансирование обозначено как $350 млн, а оценка — $2,5 млрд.",
+        "Раунд, согласно материалу, совместно возглавили Index Ventures и Benchmark.",
+        "Instinct остаётся в private beta; ранее уже обсуждались риски из-за широких запрашиваемых разрешений."
+      ],
+      "significance": "Крупный для потребительского агентного ИИ раунд и высокая оценка усиливают значение Instinct как нового игрока в сегменте ассистентов, способных действовать через подключённые сервисы.",
+      "significance_score": 3,
+      "limitations": "Сумма нового раунда и часть деталей исходно сообщены компанией через WSJ; продукт находится в закрытой бете, а практические возможности и безопасность остаются предметом вопросов.",
+      "archive_status": "none",
+      "archive_reason": "В архиве была история о privacy-рисках Instinct, но не о новом раунде финансирования.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "TechCrunch приводит конкретные параметры раунда и ссылается на заявление Instinct для WSJ; событие отделимо от архивной истории о конфиденциальности.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-27T00:24:57+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-27T00:24:57+00:00; timestamp проверен Python против effective window. Новый раунд опубликован 26 августа 2026 года в пределах effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-003"
+    },
+    {
+      "title": "Anthropic представила стандарт аппаратного интерфейса для управления физическими устройствами AI-агентами",
+      "organization": "Anthropic",
+      "published_date": "2026-08-27",
+      "published_at": "2026-08-27T22:15:43+00:00",
+      "time_precision": "datetime",
+      "topic": "Стандартизация взаимодействия AI-агентов с аппаратным обеспечением, устройствами и физическим миром.",
+      "event_type": "technical standard announcement",
+      "keywords": [
+        "Anthropic",
+        "AI agents",
+        "hardware standard",
+        "physical world",
+        "device control",
+        "robotics"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Anthropic's new hardware standard lets AI agents control the physical world",
+        "publisher": "Ars Technica",
+        "url": "https://arstechnica.com/ai/2026/08/anthropics-new-hardware-standard-lets-ai-agents-control-the-physical-world/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Anthropic's new hardware standard lets AI agents control the physical world",
+          "publisher": "CurrentWire (summary of Ars Technica reporting)",
+          "url": "https://currentwire.us/story/anthropics-new-hardware-standard-lets-ai-agents-control-the-physical-world-c0ed71679520b"
+        }
+      ],
+      "event_summary": "По сообщению Ars Technica, Anthropic представила стандартизированный драйверный интерфейс, призванный дать AI-агентам единый способ взаимодействовать с устройствами и позволить устройствам взаимодействовать с AI-системами.",
+      "verified_facts": [
+        "CurrentWire фиксирует публикацию оригинального материала Ars Technica 27 августа 2026 года в 6:15 PM ET.",
+        "Заголовок и описание Ars Technica характеризуют инициативу как новый hardware standard Anthropic для управления физическим миром AI-агентами.",
+        "Доступное описание называет подход стандартизированным драйверным интерфейсом для коммуникации устройств и AI."
+      ],
+      "significance": "Если стандарт получит внедрение, он может стать важным слоем интеграции AI-агентов с робототехникой, периферией и иным оборудованием; это самостоятельный шаг от software-agent workflows к physical AI.",
+      "significance_score": 3,
+      "limitations": "Оригинальная страница Ars Technica была недоступна для полного извлечения из-за 403; в этом проходе не подтверждены спецификация, лицензирование, список поддерживаемых устройств и партнёров.",
+      "archive_status": "none",
+      "archive_reason": "В архиве нет ранее опубликованной истории о данном стандарте Anthropic.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата, исходный издатель, заголовок и базовое описание подтверждены страницей-агрегатором, которая прямо ссылается на Ars Technica; для финальной редакции желательно проверить официальный анонс Anthropic.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-27T22:15:43+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-27T22:15:43+00:00; timestamp проверен Python против effective window. Первое покрытие датировано 27 августа 2026 года и не совпадает с архивными сюжетами.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-004"
+    },
+    {
+      "title": "Более 100 компаний, включая OpenAI, Anthropic и Google, призвали к коллективной защите от AI-киберугроз",
+      "organization": "OpenAI; Anthropic; Google; Microsoft; CrowdStrike; Okta; Fortinet",
+      "published_date": "2026-08-27",
+      "published_at": "2026-08-27T17:43:24+00:00",
+      "time_precision": "datetime",
+      "topic": "AI security and cyber policy",
+      "event_type": "industry initiative",
+      "keywords": [
+        "AI cyber threats",
+        "open letter",
+        "OpenAI",
+        "Anthropic",
+        "Google",
+        "Microsoft",
+        "critical infrastructure",
+        "cybersecurity"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "OpenAI, Anthropic, Google, and 100 other companies call for action to defend against rogue AI",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/27/openai-anthropic-google-and-100-other-companies-call-for-action-to-defend-against-rogue-ai/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Более ста технологических, кибербезопасностных, финансовых и инфраструктурных компаний подписали открытое письмо с призывом к совместной защите от AI-киберугроз и к координации между частным сектором и властями разных уровней.",
+      "verified_facts": [
+        "TechCrunch указывает время публикации 27 августа 2026 года, 10:43 PDT.",
+        "Среди подписантов названы OpenAI, Anthropic, Google, Microsoft, CrowdStrike, Okta и Fortinet.",
+        "Письмо призывает частный и государственный сектора совместно повышать стандарты киберзащиты.",
+        "В качестве потенциально уязвимой критической инфраструктуры в материале названы больницы, водоочистка и инфраструктура интернета."
+      ],
+      "significance": "Совместное обращение охватывает ведущие AI-лаборатории и крупный киберсектор и отражает усиление отраслевого ответа на риски AI-усиленных атак и автономного агентного поведения.",
+      "significance_score": 3,
+      "limitations": "Это добровольная отраслевая инициатива, а не обязательное регулирование; публикация не даёт полного текста письма и полного списка подписантов.",
+      "archive_status": "none",
+      "archive_reason": "Архив освещал отдельные инциденты и containment, но не данную межотраслевую инициативу.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "В открытом материале прямо указаны дата, характер письма, ключевые подписанты и заявленные цели.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-27T17:43:24+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-27T17:43:24+00:00; timestamp проверен Python против effective window. Публикация от 27 августа 2026 года находится в effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Инициатива не является судебным делом, законом или обязательным регуляторным актом.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-005"
+    },
+    {
+      "title": "Hugging Face представила Microduck — open-source робота за $399 для обучения через reinforcement learning",
+      "organization": "Hugging Face; Pollen Robotics",
+      "published_date": "2026-08-27",
+      "published_at": "2026-08-27T14:56:52+00:00",
+      "time_precision": "datetime",
+      "topic": "Open-source robotics and physical AI",
+      "event_type": "product launch",
+      "keywords": [
+        "Hugging Face",
+        "Pollen Robotics",
+        "Microduck",
+        "open-source robot",
+        "reinforcement learning",
+        "physical AI",
+        "robotics SDK"
+      ],
+      "geography": "world",
+      "category": "robotics",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Hugging Face is selling a cute $399 open source duck robot, Microduck",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/27/hugging-face-is-selling-a-cute-399-open-source-duck-robot-microduck/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Microduck",
+          "publisher": "Pollen Robotics",
+          "url": "https://pollen-robotics.com/"
+        }
+      ],
+      "event_summary": "Hugging Face и Pollen Robotics представили Microduck — 25-сантиметрового робота за $399 с камерой, lidar и инерциальными датчиками. Разработчики могут обучать его поведениям в симуляции, переносить их на устройство, дообучать и развёртывать заново; SDK, симулятор и RL-стек доступны через GitHub.",
+      "verified_facts": [
+        "TechCrunch указывает публикацию 27 августа 2026 года, 07:56 PDT.",
+        "Microduck продаётся за $399 и, согласно материалу, должен начать поставляться до Рождества.",
+        "Робот имеет камеру, lidar и два IMU; заявлены перемещение, захват предметов клювом до 800 г и другие базовые поведения.",
+        "Pollen Robotics заявляет о доступности SDK, симуляции и полного стека reinforcement-learning training на GitHub."
+      ],
+      "significance": "Недорогая open-source платформа делает обучение и экспериментирование с physical AI более доступным разработчикам и продолжает выход Hugging Face из роли исключительно платформы распространения моделей в робототехнику.",
+      "significance_score": 2,
+      "limitations": "Продукт ещё не начал поставляться; независимых испытаний заявленных возможностей и качества RL-стека в материале нет.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть Perceptron и Generalist, но нет Microduck или этого аппаратного запуска Hugging Face.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата, цена, аппаратные характеристики и заявление о доступности стека разработки приведены в открытом материале TechCrunch.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-27T14:56:52+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-27T14:56:52+00:00; timestamp проверен Python против effective window. Анонс опубликован 27 августа 2026 года в effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-006"
+    },
+    {
+      "title": "Meta сорвала связанную с Ираном операцию влияния с AI-контентом против американских политиков и журналистов",
+      "organization": "Meta; иранские операторы",
+      "published_date": "2026-08-27",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "AI-enabled influence operations, синтетический контент и координированное неаутентичное поведение в социальных сетях.",
+      "event_type": "security threat disruption",
+      "keywords": [
+        "Meta",
+        "Iran",
+        "AI-generated content",
+        "influence operation",
+        "Facebook",
+        "Instagram",
+        "disinformation"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Exclusive: Meta disrupts Iran-linked AI operation targeting politicians, journalists",
+        "publisher": "Axios",
+        "url": "https://www.axios.com/2026/08/27/facebook-instagram-iran-ai-disinformation"
+      },
+      "supporting_sources": [],
+      "event_summary": "Meta сообщила Axios, что удалила сеть аккаунтов Facebook и Instagram, связанную с иранской операцией, использовавшей AI для части контента и выдававшей себя за американских пользователей. Операторы пытались взаимодействовать с политиками, журналистами и медиа.",
+      "verified_facts": [
+        "Meta заявила, что сорвала четыре Facebook-аккаунта и 31 Instagram-аккаунт, связанные с операторами из Ирана.",
+        "По данным Meta, операторы использовали AI для создания части опубликованного контента, включая мемы.",
+        "Axios сообщает, что на один или несколько этих Instagram-аккаунтов были подписаны примерно 79 400 аккаунтов.",
+        "Meta сообщила о передаче информации об операции правоохранительным органам США."
+      ],
+      "significance": "Это свежий и конкретный пример применения генеративного AI в операции иностранного влияния против американской аудитории. Однако Meta сама оценила охват как умеренный, поэтому сюжет заметно уступает по масштабу крупным киберинцидентам и системным policy-решениям.",
+      "significance_score": 2,
+      "limitations": "Основные сведения исходят от Meta через Axios; AI использовался лишь для части контента, а не как автономный агентный механизм атаки. Meta характеризует вовлечённость как значимую, но ограниченную.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет этой операции Meta/Иран.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Axios опирается на опубликованный Meta threat report и приводит конкретные параметры ликвидированной сети.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это раскрытие и disruption платформой, а не судебное или регуляторное производство.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "id": "cand-007"
+    },
+    {
+      "title": "Delivering Vera: NVIDIA’s First CPU Built for Agents Is Shipping Now",
+      "organization": "NVIDIA",
+      "published_date": "2026-08-27",
+      "published_at": "2026-08-27T13:00:17+00:00",
+      "time_precision": "datetime",
+      "topic": "Delivering Vera: NVIDIA’s First CPU Built for Agents Is Shipping Now",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "Delivering",
+        "Vera",
+        "NVIDIA",
+        "First",
+        "CPU",
+        "Built",
+        "Agents",
+        "Is",
+        "Shipping",
+        "Now"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Delivering Vera: NVIDIA’s First CPU Built for Agents Is Shipping Now",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/vera-cpu-delivery"
+      },
+      "supporting_sources": [],
+      "event_summary": "Ian Buck hand-delivers the first NVIDIA Vera CPU systems to Anthropic, OpenAI, Oracle Cloud Infrastructure and SpaceXAI — marking the moment agentic CPUs move from announcement to production.",
+      "verified_facts": [
+        "Delivering Vera: NVIDIA’s First CPU Built for Agents Is Shipping Now",
+        "Ian Buck hand-delivers the first NVIDIA Vera CPU systems to Anthropic, OpenAI, Oracle Cloud Infrastructure and SpaceXAI — marking the moment agentic CPUs move from announcement to production."
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Source Pulse v1.1 + Source Freshness Proof: meta:article:published_time=2026-08-27T13:00:17+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-27T13:00:17+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-27T13:00:17+00:00; timestamp проверен Python против effective window. Source Pulse v1.1 + Source Freshness Proof: meta:article:published_time=2026-08-27T13:00:17+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v11",
+      "id": "cand-008"
+    },
+    {
+      "title": "Google выпустила Gemini 3.5 Transcribe — speech-to-text модель с поддержкой более 85 языков",
+      "organization": "Google; Gemini",
+      "published_date": "2026-08-26",
+      "published_at": "2026-08-26T19:04:30.726000+00:00",
+      "time_precision": "datetime",
+      "topic": "Мультимодальные модели и speech-to-text: новая модель транскрибации, доступная в Gemini API и Google AI Studio.",
+      "event_type": "model_release",
+      "keywords": [
+        "Gemini 3.5 Transcribe",
+        "speech-to-text",
+        "Gemini API",
+        "Google AI Studio",
+        "streaming",
+        "speaker attribution"
+      ],
+      "geography": "world",
+      "category": "multimodal",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Google Ships Gemini 3.5 Transcribe to Cut Transcription Time 70% Over Chirp 3",
+        "publisher": "HuggingNews (агрегация официальных сообщений Google)",
+        "url": "https://huggingnews.com/ai/google-ships-gemini-35-transcribe-to-cut-transcription-time-70percent-ov-25c56bda"
+      },
+      "supporting_sources": [],
+      "event_summary": "Google представила Gemini 3.5 Transcribe — новую модель распознавания речи с автоматическим удалением слов-паразитов, обработкой самокоррекций, поддержкой более 85 языков и разметкой до трёх спикеров. Согласно сообщению, модель доступна разработчикам через Gemini API и Google AI Studio, а также интегрирована в Gemini для macOS и Android-функцию Rambler.",
+      "verified_facts": [
+        "Релиз датирован 26 августа 2026 года и указан с временем 13:04 EDT, что соответствует 20:04 по UTC+3 и входит в effective window.",
+        "В карточке релиза приведены официальные сообщения аккаунта Google о запуске и доступности через Google AI Studio и Gemini API.",
+        "Заявлены автоматическое удаление filler words, поддержка более 85 языков и speaker attribution до трёх участников.",
+        "Указаны показатели WER 2,6% для non-streaming и 4% для streaming-режима; это заявления релиза, а не независимый бенчмарк."
+      ],
+      "significance": "Это самостоятельный запуск базовой мультимодальной/речевой модели крупного провайдера с одновременной доступностью в API и пользовательских продуктах. Релиз важен для голосовых агентов, транскрибации и real-time приложений.",
+      "significance_score": 4,
+      "limitations": "Доступная страница является агрегатором сообщений и фиксирует официальный пост Google, но не даёт прямой URL исходной публикации Google; независимая проверка заявленных метрик отсутствует.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет запуска Gemini 3.5 Transcribe или эквивалентного обновления модели транскрибации.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата, время и основные характеристики подтверждаются карточкой, которая ссылается на официальные сообщения Google, опубликованные в момент запуска. Данные о производительности следует подавать как заявления Google.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-26T19:04:30.726Z; timestamp проверен Python против effective window. Это новый релиз модели 26 августа 2026 года, а не пересказ прежнего запуска или обновление уже архивированной новости.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: это стандартный значимый продуктовый релиз, а не curiosity-материал.",
+      "audit_direction": "hybrid_models_products_research",
+      "id": "cand-009"
+    },
+    {
+      "title": "IREN сообщила о новом многолетнем контракте с frontier AI-лабораторией и $2,8 млрд финансирования GPU",
+      "organization": "IREN; Microsoft; Blue Owl; PIMCO; неназванная frontier AI-лаборатория",
+      "published_date": "2026-08-27",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "AI-облако, дата-центры, GPU-финансирование и коммерциализация вычислительных мощностей",
+      "event_type": "earnings and infrastructure financing",
+      "keywords": [
+        "AI cloud",
+        "GPU financing",
+        "data centers",
+        "frontier AI lab",
+        "Microsoft",
+        "GB300",
+        "ARR",
+        "neocloud"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "official",
+      "primary_source": {
+        "title": "IREN Reports FY26 Results",
+        "publisher": "IREN",
+        "url": "https://irisenergy.gcs-web.com/news-releases/news-release-details/iren-reports-fy26-results"
+      },
+      "supporting_sources": [],
+      "event_summary": "IREN в годовом отчёте сообщила о новом многолетнем контракте AI Cloud с неназванной frontier AI-лабораторией, $4 млрд законтрактированного ARR для мощностей 2026 года и новом пакете GPU-финансирования на $2,8 млрд. Компания также заявила, что передала Microsoft первую из четырёх 50-МВт жидкостно-охлаждаемых площадок в Childress и что её мощности 2026 года в основном распроданы.",
+      "verified_facts": [
+        "Официальный релиз IREN датирован 27 августа 2026 года и попадает в effective window.",
+        "IREN заявила о новом многолетнем контракте с неназванной frontier AI-лабораторией.",
+        "Компания раскрыла $2,8 млрд нового финансирования GPU; $2,4 млрд из этой суммы возглавили Blue Owl и PIMCO, а заявленная структура покрывает 90% соответствующего GPU capex.",
+        "IREN указала $4 млрд законтрактированного ARR для мощностей 2026 года и $1 млрд operating ARR на текущий момент.",
+        "IREN сообщила о передаче Microsoft первой из четырёх 50-МВт IT-площадок с жидкостным охлаждением."
+      ],
+      "significance": "Это заметный сигнал масштабирования независимого AI-cloud/неооблачного игрока: одновременно раскрыты новый контракт с frontier-лабораторией, многомиллиардная схема финансирования ускорителей и ввод мощностей для Microsoft. Событие иллюстрирует, как капиталоёмкое наращивание AI-инфраструктуры обеспечивается предоплатами клиентов и специализированным долговым финансированием.",
+      "significance_score": 1,
+      "limitations": "Контрагент нового frontier-контракта, срок и стоимость сделки не раскрыты. Показатели ARR являются операционными метриками и включают прогнозные допущения, а не признанную по GAAP выручку. Независимого подтверждения деталей финансирования и контракта в пределах найденных материалов не обнаружено, однако основные факты подтверждены первоисточником компании.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть другие сделки вокруг AI-дата-центров, Nvidia, Microsoft и неооблаков, но нет этого отчёта IREN, нового неназванного контракта и нового пакета GPU-финансирования.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Ключевые утверждения раскрыты в официальном релизе IREN. Точный timestamp публикации в доступной версии страницы не указан, поэтому использована дата без выдуманного времени.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран как инфраструктурно-финансовая новость, а не как curiosity-материал.",
+      "audit_direction": "hybrid_infrastructure_business",
+      "id": "cand-010"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=7, validated unique=7, final candidates=7. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.\nTargeted coverage audit добавил кандидатов: 2.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-global_breaking-01",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Nvidia closes in on Hugging Face acquisition",
+      "origin_direction": "global_breaking",
+      "reason_code": "unverified",
+      "evidence_reason": "Это потенциальный material update к архивной истории о переговорах по покупке Hugging Face, но источники в самом материале расходятся: The Information сообщает о согласованной сделке, тогда как Business Insider пишет об отсутствии подписанного соглашения. Nvidia и Hugging Face не подтвердили информацию.",
+      "likely_significance_score": 3,
+      "entities": [
+        "Nvidia",
+        "Hugging",
+        "Face"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-china_asia_models-01",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Z.ai / Zhipu: GLM-5.3-Flash",
+      "origin_direction": "china_asia_models",
+      "reason_code": "unverified",
+      "evidence_reason": "Свежий трекер указывает на релиз и open-source публикацию GLM-5.3-Flash 27 августа 2026 года, однако официальный документ Z.ai/BigModel не удалось открыть из-за timeout. Поэтому нельзя строго подтвердить дату и факты первоисточником в пределах effective window.",
+      "likely_significance_score": 1,
+      "entities": [
+        "Z.ai",
+        "Zhipu",
+        "GLM-5.3-Flash"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-independent_missing_events-01",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Nvidia closes in on Hugging Face acquisition",
+      "origin_direction": "independent_missing_events",
+      "reason_code": "unverified",
+      "evidence_reason": "Это потенциально крупный material update к архивному сюжету о переговорах, однако сам материал содержит противоречие: The Information сообщает о согласии Nvidia купить Hugging Face за $12,9 млрд, тогда как Business Insider сообщает об отсутствии подписанного соглашения. В рамках строгого контракта нельзя вернуть его как verified candidate.",
+      "likely_significance_score": 4,
+      "entities": [
+        "Nvidia",
+        "Hugging",
+        "Face"
+      ],
+      "anchors": [
+        "$12,9 млрд"
+      ],
+      "source_hint": null,
+      "resolution_required": true,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota"
+  }
+}

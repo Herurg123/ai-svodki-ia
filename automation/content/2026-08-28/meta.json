@@ -1,0 +1,38 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-28",
+  "slug": "2026-08-28",
+  "title": "ИИ-Сводка на 28 августа 2026",
+  "description": "Google переводит ИИ-поиск к бронированию, OpenAI запускает рекламу в ChatGPT в Индии, а NVIDIA поставляет Vera. В выпуске также — инвестиции в агентов, стандарты physical AI, робототехника и речевые модели.",
+  "published_at": "2026-08-28T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-28.png",
+  "topics": [
+    "Google AI Mode",
+    "агенты ИИ",
+    "ChatGPT",
+    "реклама в ChatGPT",
+    "Instinct",
+    "Anthropic",
+    "physical AI",
+    "Hugging Face",
+    "робототехника",
+    "NVIDIA Vera",
+    "Gemini 3.5 Transcribe",
+    "кибербезопасность ИИ"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Пять независимых событий TechCrunch относятся к разным редакционным темам — поисковые агенты, монетизация, финансирование потребительского агента, межотраслевая киберзащита и open-source робототехника. При коротком доступном пуле они подтверждены, самостоятельны и не являются дублями."
+    }
+  ]
+}

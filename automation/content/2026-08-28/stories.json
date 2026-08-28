@@ -1,0 +1,252 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Google расширила AI Mode: отслеживание цен на авиабилеты и бронирование отелей",
+    "organization": "Google",
+    "topic": "Consumer AI agents and AI search",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Google добавила в AI Mode отслеживание цен на перелёты, поиск вариантов с оплатой милями и баллами, а также бронирование отелей через интегрированных партнёров. Отслеживание перелётов доступно более чем в 180 странах, а гостиничное бронирование начинает разворачиваться в США на английском языке.",
+    "published_at": "2026-08-27T16:00:00+00:00",
+    "published_date": "2026-08-27",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google’s AI Mode can now track flight prices, help book hotels, and more",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/27/googles-ai-mode-can-now-track-flight-prices-help-book-hotels-and-more/"
+      }
+    ],
+    "keywords": [
+      "Google AI Mode",
+      "travel agent",
+      "flight-price tracking",
+      "hotel booking",
+      "Google Pay",
+      "AI search"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "OpenAI начнёт показывать рекламу в бесплатном ChatGPT и тарифе Go в Индии",
+    "organization": "OpenAI; ChatGPT; WPP; Omnicom",
+    "topic": "Монетизация массового потребительского AI-сервиса и расширение рекламного бизнеса ChatGPT на одном из крупнейших рынков.",
+    "event_type": "product monetization rollout",
+    "status": "new",
+    "summary": "OpenAI объявила о начале показа рекламы пользователям бесплатного ChatGPT и тарифа Go в Индии. Компания начинает с 50 брендов, работает с WPP и Omnicom и планирует запустить рекламный кабинет для маркетологов в следующем месяце.",
+    "published_at": "2026-08-27T11:35:59+00:00",
+    "published_date": "2026-08-27",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI to start showing ads on ChatGPT's free and Go tiers in India",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/27/openai-to-start-showing-ads-on-chatgpts-free-and-go-tiers-in-india/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ChatGPT",
+      "ads",
+      "India",
+      "ChatGPT Go",
+      "WPP",
+      "Omnicom",
+      "monetization"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Instinct привлекла $250 млн в Series B при оценке $2,5 млрд",
+    "organization": "Instinct; Spear Street Technology; Index Ventures; Benchmark",
+    "topic": "Consumer AI agents and investment",
+    "event_type": "funding",
+    "status": "new",
+    "summary": "Spear Street Technology сообщила The Wall Street Journal о $250 млн Series B для Instinct — consumer AI-агента, который подключается к приложениям и устройствам пользователя и может получать задания через сообщения и звонки. По данным TechCrunch, раунд довёл совокупное финансирование до $350 млн, а оценку — до $2,5 млрд.",
+    "published_at": "2026-08-27T00:24:57+00:00",
+    "published_date": "2026-08-27",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Viral AI startup Instinct has raised $350M at a $2.5B valuation",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/26/viral-ai-startup-instinct-has-raised-350-million-at-a-2-5-billion-valuation/"
+      }
+    ],
+    "keywords": [
+      "Instinct",
+      "Spear Street Technology",
+      "AI assistant",
+      "Series B",
+      "Index Ventures",
+      "Benchmark",
+      "consumer agents"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Anthropic представила стандарт аппаратного интерфейса для агентов ИИ",
+    "organization": "Anthropic",
+    "topic": "Стандартизация взаимодействия AI-агентов с аппаратным обеспечением, устройствами и физическим миром.",
+    "event_type": "technical standard announcement",
+    "status": "new",
+    "summary": "По сообщению Ars Technica, Anthropic представила стандартизированный драйверный интерфейс, призванный дать AI-агентам единый способ взаимодействовать с устройствами и позволить устройствам взаимодействовать с AI-системами.",
+    "published_at": "2026-08-27T22:15:43+00:00",
+    "published_date": "2026-08-27",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic's new hardware standard lets AI agents control the physical world",
+        "publisher": "Ars Technica",
+        "url": "https://arstechnica.com/ai/2026/08/anthropics-new-hardware-standard-lets-ai-agents-control-the-physical-world/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "AI agents",
+      "hardware standard",
+      "physical world",
+      "device control",
+      "robotics"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Более 100 компаний призвали к коллективной защите от ИИ-киберугроз",
+    "organization": "OpenAI; Anthropic; Google; Microsoft; CrowdStrike; Okta; Fortinet",
+    "topic": "AI security and cyber policy",
+    "event_type": "industry initiative",
+    "status": "new",
+    "summary": "Более ста технологических, кибербезопасностных, финансовых и инфраструктурных компаний подписали открытое письмо с призывом к совместной защите от AI-киберугроз и к координации между частным сектором и властями разных уровней.",
+    "published_at": "2026-08-27T17:43:24+00:00",
+    "published_date": "2026-08-27",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI, Anthropic, Google, and 100 other companies call for action to defend against rogue AI",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/27/openai-anthropic-google-and-100-other-companies-call-for-action-to-defend-against-rogue-ai/"
+      }
+    ],
+    "keywords": [
+      "AI cyber threats",
+      "open letter",
+      "OpenAI",
+      "Anthropic",
+      "Google",
+      "Microsoft",
+      "critical infrastructure",
+      "cybersecurity"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Hugging Face представила Microduck — open-source робота за $399",
+    "organization": "Hugging Face; Pollen Robotics",
+    "topic": "Open-source robotics and physical AI",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Hugging Face и Pollen Robotics представили Microduck — 25-сантиметрового робота за $399 с камерой, lidar и инерциальными датчиками. Разработчики могут обучать его поведениям в симуляции, переносить их на устройство, дообучать и развёртывать заново; SDK, симулятор и RL-стек доступны через GitHub.",
+    "published_at": "2026-08-27T14:56:52+00:00",
+    "published_date": "2026-08-27",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Hugging Face is selling a cute $399 open source duck robot, Microduck",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/27/hugging-face-is-selling-a-cute-399-open-source-duck-robot-microduck/"
+      }
+    ],
+    "keywords": [
+      "Hugging Face",
+      "Pollen Robotics",
+      "Microduck",
+      "open-source robot",
+      "reinforcement learning",
+      "physical AI",
+      "robotics SDK"
+    ],
+    "geography": "world",
+    "category": "robotics"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "NVIDIA начала поставки CPU Vera, рассчитанного на агентные нагрузки",
+    "organization": "NVIDIA",
+    "topic": "Delivering Vera: NVIDIA’s First CPU Built for Agents Is Shipping Now",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Ian Buck hand-delivers the first NVIDIA Vera CPU systems to Anthropic, OpenAI, Oracle Cloud Infrastructure and SpaceXAI — marking the moment agentic CPUs move from announcement to production.",
+    "published_at": "2026-08-27T13:00:17+00:00",
+    "published_date": "2026-08-27",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Delivering Vera: NVIDIA’s First CPU Built for Agents Is Shipping Now",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/vera-cpu-delivery"
+      }
+    ],
+    "keywords": [
+      "Delivering",
+      "Vera",
+      "NVIDIA",
+      "First",
+      "CPU",
+      "Built",
+      "Agents",
+      "Is",
+      "Shipping",
+      "Now"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "Google выпустила Gemini 3.5 Transcribe для распознавания речи",
+    "organization": "Google; Gemini",
+    "topic": "Мультимодальные модели и speech-to-text: новая модель транскрибации, доступная в Gemini API и Google AI Studio.",
+    "event_type": "model_release",
+    "status": "new",
+    "summary": "Google представила Gemini 3.5 Transcribe — новую модель распознавания речи с автоматическим удалением слов-паразитов, обработкой самокоррекций, поддержкой более 85 языков и разметкой до трёх спикеров. Согласно сообщению, модель доступна разработчикам через Gemini API и Google AI Studio, а также интегрирована в Gemini для macOS и Android-функцию Rambler.",
+    "published_at": "2026-08-26T19:04:30+00:00",
+    "published_date": "2026-08-26",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google Ships Gemini 3.5 Transcribe to Cut Transcription Time 70% Over Chirp 3",
+        "publisher": "HuggingNews (агрегация официальных сообщений Google)",
+        "url": "https://huggingnews.com/ai/google-ships-gemini-35-transcribe-to-cut-transcription-time-70percent-ov-25c56bda"
+      }
+    ],
+    "keywords": [
+      "Gemini 3.5 Transcribe",
+      "speech-to-text",
+      "Gemini API",
+      "Google AI Studio",
+      "streaming",
+      "speaker attribution"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  }
+]
