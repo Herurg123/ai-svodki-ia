@@ -67,7 +67,8 @@ Production работает из GitHub Actions, хранит результат
 - автоматизирует NotebookLM через отдельный Яндекс.Браузер/Playwright профиль;
 - скачивает MP4;
 - создаёт PNG первого кадра;
-- при включённой настройке доставляет media только в FTP-каталог `video`.
+- при включённой настройке доставляет media только в FTP-каталог `video`;
+- после успешного локального этапа автоматически выполняет native Dzen browser-upload через тот же защищённый профиль, но в отдельной последовательной browser-сессии.
 
 Video runtime не является prerequisite, stage, fallback или recovery-компонентом
 основного production. Ошибка video worker не должна менять статус ежедневной
@@ -765,17 +766,29 @@ Video worker использует:
 RSS
  -> Windows Task Scheduler
  -> run-worker-hidden.vbs / run-worker.cmd
- -> Node.js worker.js
+ -> scheduled-worker.js
+ -> existing worker.js
  -> Yandex Browser + dedicated profile
  -> Playwright CDP
  -> NotebookLM
  -> local MP4
  -> PNG preview via ffmpeg-static
  -> optional FTP video/
+ -> close NotebookLM browser/CDP
+ -> Dzen duplicate guard
+ -> fresh native upload only when missing
+ -> one publish click
+ -> verification-only confirmation
 ```
 
 Runtime state, real config, FTP access, logs, media и browser profile не хранятся
-в Git. Локальный `.gitignore` является частью safety contract.
+в Git. Локальный `.gitignore` является частью safety contract. Внешний
+`scheduled-worker.lock` не допускает наложения scheduled runs. После успешного
+`worker.js` выбирается самый свежий локальный `DONE` job с датой не позже текущей,
+поэтому delayed/catch-up выпуск предыдущего дня не теряется, а future-dated state
+не принимается. Состояния `PUBLISH_ARMED`, `CLICKED_UNVERIFIED` и
+`BLOCKED_AMBIGUOUS` разрешают только verification: новый upload и второй publish
+click запрещены. Fresh retry допустим лишь при явном `publishClicked=false`.
 
 Переносимые npm dependencies являются частью versioned runtime contract:
 

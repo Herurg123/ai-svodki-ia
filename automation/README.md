@@ -27,7 +27,7 @@
 - `scripts/` — production, retrieval, recovery, cleanup, site generation и
   validators;
 - `tests/` — основной Python offline regression suite;
-- `notebooklm-video/` — отдельный локальный Windows downstream-подпроект;
+- `notebooklm-video/` — отдельный локальный Windows downstream-подпроект с единым scheduled flow NotebookLM → media/FTP → native Dzen publish;
 - `preview/` и `recovery/` — временные ignored runtime/diagnostic каталоги.
 
 ## Основные entrypoints
@@ -123,7 +123,10 @@ required status для защиты `main`.
 Video-only изменения под `notebooklm-video/**` не являются изменениями nightly
 production и не запускают Main CI; их через PR Gate проверяет только Video CI.
 В обратную сторону nightly production workflows не должны читать или изменять
-video runtime.
+video runtime. Локальный Task Scheduler через `scheduled-worker.js` запускает
+существующий `worker.js`, а после его успешного выхода выбирает самый свежий
+`DONE` job с датой не позже текущей и выполняет Dzen duplicate guard, максимум
+один fresh publish click и verification-only подтверждение.
 
 Video → RSS integration закрыта. Active workflows не должны добавлять локальные
 MP4/PNG в `posts/rss.xml`, а сам RSS не должен содержать `/posts/video/`,

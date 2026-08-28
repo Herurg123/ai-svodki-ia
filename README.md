@@ -29,7 +29,7 @@ production-автоматизации и операторских проверо
 |---|---|
 | `automation/` | Основной production-конвейер: retrieval, editorial, recovery, validators, archive, audits и configuration. |
 | `posts/` | Сформированный публичный сайт, article/image RSS, sitemap и постоянные публичные assets. |
-| `automation/notebooklm-video/` | Отдельный локальный Windows downstream-подпроект: после публикации выпуска создаёт NotebookLM-видео, MP4, PNG-превью и при включённой настройке доставляет их только в FTP-каталог `video`. |
+| `automation/notebooklm-video/` | Отдельный локальный Windows downstream-подпроект: после публикации выпуска создаёт NotebookLM-видео, MP4/PNG, при необходимости доставляет их в FTP `video`, а затем по тому же Task Scheduler автоматически публикует нативное видео в Дзен через защищённый браузерный профиль. |
 | `automation/archive/video-rss-enrichment-2026-08/` | Reference-only архив закрытого Video → RSS эксперимента. Не является runtime/workflow path. |
 | `.github/workflows/` | Always-on PR Gate, два раздельных CI-домена, production, deploy и cleanup/hygiene. |
 
@@ -170,7 +170,10 @@ artifact с `retention: 2 дня`. Полные правила классифи�
 
 Подпроект начинает работу только после появления уже опубликованного выпуска в
 RSS. Его runtime находится на Windows-машине пользователя и не является
-GitHub-production стадией.
+GitHub-production стадией. `run-worker.cmd` запускает единый scheduled flow:
+NotebookLM/MP4/PNG/FTP, затем Dzen duplicate guard и, для самого свежего
+локального `DONE` выпуска с датой не позже текущей, один fresh publish с
+verification-only защитой от повторного клика.
 
 Инструкции:
 
