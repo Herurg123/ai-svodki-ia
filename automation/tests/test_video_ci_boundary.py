@@ -30,7 +30,6 @@ class VideoCiBoundaryTests(unittest.TestCase):
             "deploy-posts.yml",
             "repository-cleanup.yml",
             "repository-hygiene.yml",
-            "video-rss-enrichment.yml",
         ):
             text = (WORKFLOW_ROOT / name).read_text(encoding="utf-8")
             self.assertNotIn(

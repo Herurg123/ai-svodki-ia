@@ -6,8 +6,8 @@ ruleset — в [`config/main-branch-ruleset.json`](config/main-branch-ruleset.js
 
 Наличие JSON-файла в Git **не активирует** GitHub ruleset автоматически. Ruleset
 включается только после подготовки отдельного write deploy key, иначе nightly
-production, 32-дневный cleanup и controlled video-RSS enrichment потеряют право
-на свои узкие валидированные direct push в `main`.
+production и 32-дневный cleanup потеряют право на свои узкие валидированные
+direct push в `main`.
 
 ## 1. Что должно быть в `main` до активации
 
@@ -17,8 +17,7 @@ production, 32-дневный cleanup и controlled video-RSS enrichment пот�
 - reusable `ci.yml` и `video-ci.yml`;
 - `automation/scripts/push_protected_main.sh`;
 - передача `MAIN_PUSH_DEPLOY_KEY` только в финальные commit/push steps
-  `daily-production.yml`, `repository-cleanup.yml` и
-  `video-rss-enrichment.yml`;
+  `daily-production.yml` и `repository-cleanup.yml`;
 - contract tests защиты `main`.
 
 `Required PR Gate` должен хотя бы один раз успешно завершиться на реальном pull
@@ -50,11 +49,9 @@ ssh-keygen -t ed25519 -C "ai-svodki-main-writer" -f ai-svodki-main-writer -N ""
 Добавить **публичную** часть `ai-svodki-main-writer.pub`, задать понятное имя,
 например `AI Svodki protected-main writer`, и включить **Allow write access**.
 
-Этот ключ предназначен только для трёх автоматических writer-контуров проекта:
-validated daily publication, validated retention cleanup и controlled validated
-video-RSS enrichment. Последний writer имеет право фиксировать только
-`posts/rss.xml` после проверки публичных MP4+PNG и повторной валидации RSS. Не
-использовать ключ как обычный пользовательский SSH-ключ.
+Этот ключ предназначен только для двух автоматических writer-контуров проекта:
+validated daily publication и validated retention cleanup. Не использовать ключ
+как обычный пользовательский SSH-ключ и не передавать его другим workflows.
 
 ## 4. Добавить Actions secret
 
@@ -97,7 +94,7 @@ default branch (`main`). Требования канонического ruleset
 
 Не добавлять в bypass владельца репозитория, repository-admin role или весь
 GitHub Actions App. Иначе защита direct push становится существенно шире, чем
-нужно трём documented automated writers.
+нужно двум documented automated writers.
 
 ## 6. Проверка после активации
 
@@ -105,16 +102,17 @@ GitHub Actions App. Иначе защита direct push становится с�
 
 1. обычный пользовательский direct push в `main` блокируется ruleset;
 2. новый PR не может быть смержен до успешного `Required PR Gate`;
-3. очередной реальный publish/cleanup/video-RSS commit, когда он действительно
-   нужен, проходит через dedicated deploy key и не получает ruleset rejection.
-
-Для video-RSS writer дополнительно проверить, что commit содержит только
-`posts/rss.xml`: workflow обязан завершиться ошибкой до push, если изменён любой
-другой tracked path.
+3. очередной реальный publish/cleanup commit, когда он действительно нужен,
+   проходит через dedicated deploy key и не получает ruleset rejection.
 
 `push_protected_main.sh` pin'ит официальный GitHub Ed25519 host key и допускает
 только refspec `HEAD:main`. При наличии `MAIN_PUSH_DEPLOY_KEY` обычный HTTPS
 `origin` для writer push не используется.
+
+Закрытый Video → RSS эксперимент не является writer-контуром. Его исходники
+сохранены только как inert archive в
+`automation/archive/video-rss-enrichment-2026-08/`; возвращать archived workflow
+в `.github/workflows/` без нового отдельного архитектурного решения нельзя.
 
 ## 7. Безопасный откат
 

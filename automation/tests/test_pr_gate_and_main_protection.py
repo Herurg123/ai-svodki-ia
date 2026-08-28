@@ -116,7 +116,6 @@ class PrGateAndMainProtectionTests(unittest.TestCase):
             {
                 "daily-production.yml",
                 "repository-cleanup.yml",
-                "video-rss-enrichment.yml",
             },
         )
 

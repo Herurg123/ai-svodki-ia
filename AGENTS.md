@@ -41,14 +41,11 @@ Do not make path-filtered Main CI or Video CI directly required, because a skipp
 required workflow remains pending.
 
 The only allowed direct pushes to protected `main` are the validated publication
-commit in `daily-production.yml`, validated retention commit in
-`repository-cleanup.yml`, and the controlled validated RSS-only commit in
-`video-rss-enrichment.yml`. All three must use
+commit in `daily-production.yml` and the validated retention commit in
+`repository-cleanup.yml`. Both must use
 `automation/scripts/push_protected_main.sh` with the dedicated
 `MAIN_PUSH_DEPLOY_KEY` secret. Do not expose that secret to any other workflow or
-job, and do not grant broad GitHub Actions/admin bypass instead. The video RSS
-writer may commit only `posts/rss.xml` after proving that the expected public MP4
-and PNG are ready and the existing article item remains otherwise unchanged.
+job, and do not grant broad GitHub Actions/admin bypass instead.
 
 ## CI ownership boundary
 
@@ -69,17 +66,23 @@ Main CI. Cross-cutting changes can route to both domains.
 
 Do not add `automation/notebooklm-video/` as an input, dependency, generated
 artifact, cleanup target or deploy source of `daily-production.yml`,
-`deploy-posts.yml`, `repository-cleanup.yml`, `repository-hygiene.yml` or
-`video-rss-enrichment.yml`. The explicitly approved video-RSS bridge is one-way
-and public-only: it may probe already-published media under `/posts/video/`, but
-must not read local video runtime state or make daily production depend on video
-success.
+`deploy-posts.yml`, `repository-cleanup.yml` or `repository-hygiene.yml`.
+The local video downstream may consume an already-published digest but must not
+make nightly production depend on video success.
+
+`posts/rss.xml` is an article/image publication surface, not a video delivery
+channel. Active production code and workflows must not inject local video payloads
+or references into RSS, including `/posts/video/`, `medium="video"` or
+`type="video/*"`. The retired Video → RSS implementation is preserved only under
+`automation/archive/video-rss-enrichment-2026-08/` and must remain inert. Reusing
+it requires a new isolated experiment, architecture review and pull request.
 
 These boundaries are enforced by `automation/tests/test_video_ci_boundary.py`,
+`automation/tests/test_rss_video_boundary.py`,
 `automation/tests/test_pr_gate_and_main_protection.py`, and the video subproject's
 own dependency-free smoke tests. A future workflow change that re-couples the two
-CI domains or broadens protected-main bypass must update the architecture
-intentionally rather than bypassing those tests.
+CI domains, reintroduces Video → RSS mutation or broadens protected-main bypass
+must update the architecture intentionally rather than bypassing those tests.
 
 ## NotebookLM video subproject boundary
 
@@ -95,12 +98,11 @@ production changes. Its own `AGENTS.md`, `README.md` and `DEPLOYMENT.md` are
 authoritative for local runtime behavior; the repository relationship is defined
 in `automation/ARCHITECTURE.md`.
 
-The controlled `video-rss-enrichment.yml` test is a narrow exception only for
-post-publication RSS metadata. It may observe the public MP4/PNG pair and attach a
-Media RSS group to the matching existing article item. It must preserve that
-item's `title`, `link`, `guid`, `pubDate` and `content:encoded`; missing media is a
-successful no-op and video failure must never change the digest publication
-status.
+The former controlled `video-rss-enrichment.yml` route is closed and archived.
+It is not an exception to the video boundary anymore. Video assets may be stored
+and retained independently, and native video publication may use the separate
+operator-controlled browser path, but video work must not mutate RSS in order to
+publish video.
 
 The 32-day FTP video retention step in `repository-cleanup.yml` is a separate
 narrow exception that manages only already-published remote media. It may enter
@@ -159,6 +161,8 @@ silently repoll mutable sources.
   repurpose or delete it.
 - `posts/_footer-scr.png` is a permanent production asset and must not be removed
   by dated-content cleanup.
+- `posts/rss.xml` must remain free of local video payloads and local video URLs;
+  the archived Video → RSS experiment is not an active production dependency.
 - Repository hygiene may mutate only explicitly classified ephemeral GitHub objects
   that are safe under its policy. It must not edit tracked project files, `main`,
   releases, tags, permanent archive branches or published/editorial content.

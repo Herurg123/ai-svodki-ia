@@ -28,14 +28,14 @@ production-автоматизации и операторских проверо
 | Часть | Назначение |
 |---|---|
 | `automation/` | Основной production-конвейер: retrieval, editorial, recovery, validators, archive, audits и configuration. |
-| `posts/` | Сформированный публичный сайт, RSS, sitemap и постоянные публичные assets. |
+| `posts/` | Сформированный публичный сайт, article/image RSS, sitemap и постоянные публичные assets. |
 | `automation/notebooklm-video/` | Отдельный локальный Windows downstream-подпроект: после публикации выпуска создаёт NotebookLM-видео, MP4, PNG-превью и при включённой настройке доставляет их только в FTP-каталог `video`. |
-| `.github/workflows/` | Always-on PR Gate, два раздельных CI-домена, production, deploy, controlled video-RSS enrichment и cleanup/hygiene. |
+| `automation/archive/video-rss-enrichment-2026-08/` | Reference-only архив закрытого Video → RSS эксперимента. Не является runtime/workflow path. |
+| `.github/workflows/` | Always-on PR Gate, два раздельных CI-домена, production, deploy и cleanup/hygiene. |
 
 ## CI и production
 
-В репозитории восемь постоянных GitHub Actions workflow на период контролируемого
-video-RSS теста:
+В репозитории семь постоянных GitHub Actions workflow:
 
 - `pr-gate.yml` — **PR Gate**, всегда запускается для pull request в `main`,
   определяет затронутые CI-домены и завершает единым `Required PR Gate`;
@@ -44,10 +44,6 @@ video-RSS теста:
   NotebookLM-video подпроекта;
 - `daily-production.yml` — ежедневное формирование ИИ-Сводки;
 - `deploy-posts.yml` — синхронизация `posts/` выбранного commit на FTP;
-- `video-rss-enrichment.yml` — контролируемый тест для выпуска 27 августа 2026:
-  после обычной публикации каждые пять минут проверяет публичную пару MP4+PNG и,
-  только когда оба файла готовы, добавляет `media:group` в уже существующий RSS
-  item без изменения `title`, `link`, `guid`, `pubDate` и `content:encoded`;
 - `repository-cleanup.yml` — единая 32-дневная maintenance-цепочка: компактирует
   repository content, удаляет просроченные public posts и после безопасного
   public deploy отдельно удаляет просроченные MP4/PNG из FTP-каталога `video`;
@@ -62,10 +58,10 @@ CI/Video CI. Подробности описаны в
 
 Для `main` подготовлен repository ruleset: обычные изменения должны проходить
 через pull request, force-push и удаление запрещаются, а direct-push bypass
-предназначен только для трёх узких validated writers: nightly production,
-retention cleanup и controlled video-RSS enrichment. Они используют один
-выделенный write deploy key только в своих финальных commit steps. Наличие ruleset
-JSON в Git само по себе не включает GitHub setting; порядок активации описан в
+предназначен только для двух узких validated writers: nightly production и
+retention cleanup. Они используют один выделенный write deploy key только в своих
+финальных commit steps. Наличие ruleset JSON в Git само по себе не включает
+GitHub setting; порядок активации описан в
 [`automation/MAIN_PROTECTION.md`](automation/MAIN_PROTECTION.md).
 
 ## Краткие production-инварианты
@@ -107,20 +103,23 @@ commit и deploy. Для короткого выпуска сохраняетс�
 
 Полностью завершённый нулевой candidate pool является normal successful `no-publish`, а не production failure. Technical partial/error audits remain fail-closed. Нулевая остановка требует актуальный `high_signal_recall_sentinel` версии 8 и завершённые обязательные quality/search стадии.
 
-## Controlled video-RSS enrichment
+## Видео и RSS: закрытая ветвь
 
-Локальный NotebookLM-video по-прежнему не является стадией nightly production и
-не получает обратной зависимости на GitHub pipeline. Контролируемый мост работает
-только после публикации: GitHub проверяет уже публичные
-`/posts/video/ai-svodka-2026-08-27.mp4` и `.png`. Отсутствие любого файла является
-успешным no-op и не влияет на статус самой ИИ-Сводки.
+Video → RSS enrichment признан тупиковым способом получения нативной публикации
+видео в Дзене и удалён из production. Active workflow больше не проверяет MP4/PNG
+для последующего изменения `posts/rss.xml`, а RSS не должен содержать локальные
+video payloads `/posts/video/`, `medium="video"` или `type="video/*"`.
 
-Когда оба файла доступны, PNG проходит проверку формата и минимального размера
-800×400, затем workflow добавляет к существующему RSS item Media RSS
-`media:group` с `media:content medium="video" type="video/mp4"` и
-`media:thumbnail`. Текст статьи и её публикационные поля не переписываются. После
-валидации изменяется только `posts/rss.xml`, commit синхронизируется на FTP через
-обычный `deploy-posts.yml`.
+Исходная реализация не уничтожена. Workflow, script, его regression test и
+специальная retention-политика Actions runs сохранены в
+[`automation/archive/video-rss-enrichment-2026-08/`](automation/archive/video-rss-enrichment-2026-08/)
+как inert reference-only archive. Архив не импортируется, не планируется по cron и
+не входит в active test discovery. Возврат к этому подходу требует нового
+изолированного эксперимента и отдельного PR.
+
+Рабочая video-ветка остаётся независимой: локальный NotebookLM-video может
+создавать и хранить MP4/PNG и публиковать видео через отдельный операторский путь,
+но не модифицирует RSS ради видео.
 
 ## 32-дневная очистка видео на FTP
 
@@ -147,13 +146,10 @@ video cleanup не запускается, чтобы не добавлять в
 может изменять только безопасно классифицированные GitHub-объекты и не является
 механизмом очистки tracked source или опубликованного контента.
 
-В рамках того же ежедневного workflow действует точечная retention-политика
-только для runs канонического `video-rss-enrichment.yml`: успешные completed runs
-моложе трёх дней сохраняются, а независимо от возраста всегда сохраняются
-последние 14 успешных runs. `failure`/`cancelled` сохраняются 14 дней для
-диагностики. `queued`/`in_progress` и неизвестные conclusions автоматически не
-удаляются. Удаление run не затрагивает tracked файлы, RSS или опубликованные
-материалы; связанный с удалённым run Actions artifact исчезает вместе с ним.
+Специальная retention-политика только для runs бывшего
+`video-rss-enrichment.yml` больше не входит в active Repository hygiene, поскольку
+сам workflow закрыт. Её код сохранён в том же reference-only архиве для истории и
+возможного будущего исследования.
 
 Операторский отчёт доступен через `Actions → Repository hygiene → последний
 запуск → Summary`. Диагностический JSON каждого этапа прикладывается как Actions
