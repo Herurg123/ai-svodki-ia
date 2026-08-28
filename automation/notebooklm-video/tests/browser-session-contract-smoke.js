@@ -26,25 +26,29 @@ for (const required of [
 assert(!browserSession.includes("timeout: 3000"), "shared bootstrap must not restore the 3s CDP timeout");
 assert(!browserSession.includes("open-robot-browser"), "shared bootstrap must not depend on legacy launcher scripts");
 assert(!browserSession.includes("Sessions"), "Dzen bootstrap must not delete browser profile session files");
+
 assert(runner.includes('require("./browser-session")'), "runner must use browser-session.js");
-assert(runner.includes('"dzen-publish-direct.js"'), "runner must invoke the direct single-page live publisher");
-assert(runner.includes("recoverDraftCreatedBeforeChildExit"), "runner must recover a draft created before Playwright child exit");
-assert(runner.includes("videoEditorPublicationId"), "draft recovery must key off videoEditorPublicationId");
-assert(runner.includes("recoveredAfterUploadTimeout"), "recovered draft must be recorded in state");
-assert(runner.includes("OPERATOR_WINDOW_MS = 10 * 60 * 1000"), "runner must keep a ten-minute operator recovery window");
-assert(runner.includes("while (Date.now() < deadline)"), "runner must retry within the recovery window instead of closing immediately");
-assert(runner.includes("resetClearlyEmptyDraft"), "runner must detect a clearly empty saved draft before reuse");
-assert(runner.includes('name: "Выбрать видео"'), "empty-draft detection must use the empty video-selection form");
-assert(runner.includes("hasVideoEditorUi"), "saved draft reuse must require real video-editor UI, not only a draft id in the URL");
-assert(runner.includes("isStudioDashboard"), "saved draft detection must recognize Studio dashboard redirects");
-assert(runner.includes('"Последние публикации"'), "dashboard redirect detection must include a stable Studio marker");
-assert(runner.includes('"Статистика"'), "dashboard redirect detection must include a second stable Studio marker");
-assert(runner.includes("DRAFT_PROBE_TIMEOUT_MS = 15 * 1000"), "stale-draft probe must be bounded and not consume the ten-minute operator window");
-assert(runner.includes("previousDrafts"), "discarded empty draft metadata must be retained in local state history");
-assert(runner.includes("taskkill.exe"), "Windows child process tree must be bounded by the ten-minute operator window");
+assert(runner.includes('"dzen-publish-direct.js"'), "runner must invoke the direct live publisher");
+assert(runner.includes("OPERATOR_WINDOW_MS = 10 * 60 * 1000"), "runner must bound one operator child to ten minutes");
+assert(runner.includes("taskkill.exe"), "Windows child process tree must remain bounded by the operator window");
+assert(runner.includes("inter-run resume отключён"), "live runner must explicitly disable inter-run resume");
+assert(runner.includes("Новый child, reopen draft и автоматический retry не выполняются"), "failed live child must stop cleanly");
+
+for (const forbidden of [
+  "recoverDraftCreatedBeforeChildExit",
+  "resetClearlyEmptyDraft",
+  "isClearlyEmptyRemoteDraft",
+  "previousDrafts",
+  "DRAFT_PROBE_TIMEOUT_MS",
+  "RETRY_DELAY_MS",
+  "runDryRunWithRecovery",
+]) {
+  assert(!runner.includes(forbidden), `Simplified runner must not contain legacy draft recovery: ${forbidden}`);
+}
+
 assert(liveCmd.includes("dzen-browser-runner.js"), "live command must route through shared bootstrap");
 assert(dryCmd.includes("dzen-browser-runner.js"), "dry-run command must route through shared bootstrap");
 assert(!liveCmd.toLowerCase().includes("powershell"), "live command must not require a PowerShell launcher");
 assert(!dryCmd.toLowerCase().includes("powershell"), "dry-run command must not require a PowerShell launcher");
 
-console.log("browser session contract smoke: OK");
+console.log("browser session fresh-upload contract smoke: OK");
