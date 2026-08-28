@@ -25,7 +25,9 @@ class SourcePulseResearchBoundaryTests(unittest.TestCase):
         self.assertTrue(payload["production_integration"])
         self.assertFalse(payload["candidate_influence"])
         self.assertFalse(payload["repoll_on_recovery"])
-        self.assertEqual(len(sp.load_registry(config_path)), 12)
+        registry = sp.load_registry(config_path)
+        self.assertEqual(len(registry), 13)
+        self.assertIn("tass_ai", {row.id for row in registry})
 
         workflow = REPOSITORY_ROOT / ".github" / "workflows" / "daily-production.yml"
         preview = AUTOMATION_ROOT / "scripts" / "run_digest_preview.py"
