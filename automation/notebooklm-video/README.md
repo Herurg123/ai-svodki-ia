@@ -33,13 +33,19 @@ NotebookLM, скачать MP4, создать PNG-превью первого �
 RSS rybalka.one
   -> Windows Task Scheduler
   -> run-worker-hidden.vbs / run-worker.cmd
-  -> Node.js worker.js
+  -> scheduled-worker.js
+  -> worker.js
   -> отдельный Яндекс.Браузер + защищённый профиль
   -> Playwright connectOverCDP(127.0.0.1:9222)
   -> NotebookLM
   -> локальный MP4
   -> PNG первого кадра через ffmpeg-static
   -> FTP: только каталог video
+  -> закрыть NotebookLM browser/CDP
+  -> Dzen duplicate guard: Публикации -> Видео
+  -> если видео уже есть: DONE
+  -> иначе один fresh-upload child -> один publish click
+  -> post-click проверка через вкладку Видео
 ```
 
 Ключевые свойства текущей реализации:
@@ -58,81 +64,75 @@ RSS rybalka.one
 - обычный лог ротируется за 7 дней, error-log — за 30 дней;
 - принудительное сворачивание Яндекс.Браузера управляется конфигурацией.
 
-## Отдельный операторский Dzen upload
+## Автоматическая публикация видео в Дзен
 
-Для уже готового локального MP4 существует изолированный экспериментальный
-операторский путь публикации нативного видео в Дзен. Он **не подключён** к
-`worker.js` или Планировщику Windows и запускается только явно:
+`run-worker.cmd` теперь является единым production-entrypoint локального downstream.
+Он запускает `scheduled-worker.js`, а тот последовательно выполняет две фазы:
+сначала существующий `worker.js` (RSS -> NotebookLM -> MP4/PNG -> optional FTP),
+затем Dzen после выбора самого свежего локального `DONE` job с датой не позже текущей.
+Отдельная задача Планировщика Windows для Дзена не нужна.
 
-```powershell
-.\run-dzen-publish.cmd --date=YYYY-MM-DD
-```
+После успешного `worker.js` выбирается самый свежий `DONE` job с датой не позже
+текущей локальной даты. Поэтому delayed/catch-up выпуск предыдущего дня не
+теряется, а future-dated state никогда не запускает публикацию.
 
-После live-тестов 28.08.2026 канонический операторский flow состоит из двух
-подтверждённых частей: pre-upload duplicate guard и fresh-upload MVP.
+Dzen использует тот же защищённый профиль Яндекс.Браузера и тот же CDP-порт, но
+не одновременно с NotebookLM. `worker.js` сначала штатно закрывает свой browser;
+только после выхода child оркестратор запускает новый Dzen browser session.
 
-```text
-robot browser/CDP bootstrap
-  -> Studio -> Публикации -> Видео
-  -> проверить видимый title prefix до " | "
-  -> если найден:
-       log «ВИДЕО УЖЕ ЕСТЬ»
-       -> не запускать live child
-       -> не создавать draft/upload/publish click
-       -> закрыть browser
-  -> если не найден:
-       один dzen-publish-direct.js child
-       -> новый video upload
-       -> MP4
-       -> title/description один раз
-       -> PNG cover один раз
-       -> ровно 5 tag-chip
-       -> metadata/cover/tags больше не трогать
-       -> ждать финальный статус справа внизу
-       -> comments = «Все пользователи»
-       -> один клик «Опубликовать»/«Отправить»
-       -> лог
-       -> runner закрывает браузер
-```
-
-Duplicate guard использует реальный radio-control
-`input[type="radio"][aria-label="Видео"]`, подтверждает `checked=true` и только
-после этого ищет видимый prefix вроде `ИИ-Сводка на 27 августа 2026`. Клик по
-визуальному текстовому `<div>Видео</div>` не используется: живой тест показал,
-что radio-input перехватывает pointer events и такой клик приводит к повторным
-Playwright scroll/click retry и timeout.
-
-Канонический live-flow не переоткрывает и не resume-ит старые
-`videoEditorPublicationId`, не дозаполняет уже заполненные поля, не делает
-автоматический повтор child и не выполняет post-click verification. Если ошибка
-произошла до клика, следующая явная команда снова начинает с duplicate guard и
-только при отсутствии опубликованного Видео создаёт fresh upload.
-
-Финальный клик разрешается только когда форма показывает одновременно
-`Загрузили и обработали видео`, `Готово: можно публиковать и смотреть` и активную
-точную кнопку публикации. Раннее `Уже можно публиковать` недостаточно.
-
-Любая блокирующая ошибка canonical Dzen runner-а записывается с префиксом
-`!!! DZEN:` в обычный журнал и, если настроен `errorLog`, в журнал ошибок.
-Редирект на Yandex Passport/Dzen auth дополнительно помечается как
-`ОШИБКА АВТОРИЗАЦИИ`; уже запущенный роботизированный Яндекс.Браузер или занятый
-CDP-порт — как `ОШИБКА БРАУЗЕРА`. Отдельно классифицируются ошибки конфигурации,
-локального MP4/PNG/ffmpeg и тайм-ауты, а неизвестный blocker не теряется и
-получает `ОШИБКА DZEN FLOW`. Если ошибка возникает до чтения `config.json`, она
-пишется в резервный `dzen-bootstrap-errors.log` рядом с runner-ом.
-
-Описание после `Этот выпуск:` использует две отдельные bullet-строки:
+Перед любым upload выполняется live-проверенный duplicate guard:
 
 ```text
-Этот выпуск:
-
-- https://rybalka.one/posts/YYYY-MM-DD/
-- https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1
+Studio -> Публикации -> Видео
+  -> radio input[type="radio"][aria-label="Видео"]
+  -> checked=true
+  -> искать title prefix до " | "
 ```
 
-Практический журнал и закрытые гипотезы находятся в
-[`DZEN_VIDEO_EXPERIMENTS.md`](DZEN_VIDEO_EXPERIMENTS.md), подробный операторский
-контракт — в [`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md).
+Если ожидаемое видео уже видно, оркестратор записывает Dzen как `PUBLISHED` и
+ничего не загружает. Если совпадения нет, разрешается ровно один fresh-upload
+child `dzen-publish-direct.js`: MP4, metadata один раз, PNG cover, ровно пять
+tag-chip, финальная готовность, comments=`Все пользователи`, один publish click.
+
+Для автоматического режима поверх проверенного direct child добавлена fail-closed
+state machine в существующем `state.json`:
+
+```text
+PENDING / RETRYABLE_PRE_CLICK
+  -> duplicate guard
+  -> PUBLISH_ARMED (сохраняется ДО live child)
+  -> один live child
+  -> CLICKED_UNVERIFIED
+  -> verification через Публикации -> Видео
+  -> PUBLISHED
+
+PUBLISH_ARMED / CLICKED_UNVERIFIED / BLOCKED_AMBIGUOUS
+  -> только verification
+  -> НИКОГДА новый upload
+  -> НИКОГДА второй publish click
+```
+
+Повтор fresh upload допустим только когда предыдущий child явно успел сообщить
+`publishClicked=false`. Если процесс оборвался неоднозначно после `PUBLISH_ARMED`,
+следующие scheduled runs лишь проверяют список `Видео`.
+
+По умолчанию `dzenUpload.automaticEnabled=true`. Для аварийного отключения только
+автоматической Dzen-фазы установить:
+
+```json
+"dzenUpload": {
+  "automaticEnabled": false
+}
+```
+
+Отсутствие `automaticEnabled` в старом локальном `config.json` трактуется как
+`true`, потому что этот флаг появился именно при promotion в scheduled production.
+`verificationTimeoutMs` по умолчанию равен 90000 мс.
+
+Ручные `run-dzen-publish.cmd --date=YYYY-MM-DD` и `run-dzen-dry-run.cmd` сохранены
+как операторские/диагностические entrypoints, но штатное расписание их не вызывает.
+Подробный browser-upload контракт находится в
+[`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md).
 
 ## Антивирус: обязательное исключение рабочей папки
 
@@ -162,7 +162,8 @@ Windows-профиль пользователя или `C:\Program Files`. Ис�
 
 В репозитории находятся только переносимые исходники, шаблоны и инструкции:
 
-- `worker.js`;
+- `worker.js` и `scheduled-worker.js`;
+- Dzen runtime (`browser-session.js`, duplicate guard, runner и publishers);
 - `package.json` с фиксированными верхнеуровневыми версиями зависимостей;
 - `package-lock.json` с зафиксированным полным транзитивным npm-деревом;
 - `config.example.json`;
@@ -228,6 +229,7 @@ production API и не эмулируют Windows DPAPI. Отдельный lock
 ```powershell
 npm ci --no-audit --no-fund
 node --check .\worker.js
+node --check .\scheduled-worker.js
 npm test
 ```
 

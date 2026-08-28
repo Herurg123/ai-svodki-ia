@@ -22,14 +22,28 @@ New-Item -ItemType Directory -Path $TargetDir -Force | Out-Null
 
 $files = @(
     "worker.js",
+    "scheduled-worker.js",
+    "browser-session.js",
+    "dzen-error-log.js",
+    "dzen-duplicate-guard.js",
+    "dzen-browser-runner.js",
+    "dzen-publish.js",
+    "dzen-publish-live.js",
+    "dzen-publish-direct.js",
     "package.json",
     "package-lock.json",
     "run-worker.cmd",
     "run-worker-hidden.vbs",
+    "run-dzen-publish.cmd",
+    "run-dzen-dry-run.cmd",
+    "open-robot-browser.cmd",
+    "open-robot-browser.ps1",
     "install-ftp-support.cmd",
     "configure-ftp-access.ps1",
     "README.md",
     "DEPLOYMENT.md",
+    "DZEN_NATIVE_UPLOAD.md",
+    "DZEN_VIDEO_EXPERIMENTS.md",
     "НАСТРОЙКИ.txt",
     "config.example.json",
     "ftp-access.example.json"
@@ -74,6 +88,10 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "npm ci завершился ошибкой." }
     node --check worker.js
     if ($LASTEXITCODE -ne 0) { throw "node --check worker.js завершился ошибкой." }
+    node --check scheduled-worker.js
+    if ($LASTEXITCODE -ne 0) { throw "node --check scheduled-worker.js завершился ошибкой." }
+    node --check dzen-publish-direct.js
+    if ($LASTEXITCODE -ne 0) { throw "node --check dzen-publish-direct.js завершился ошибкой." }
 }
 finally {
     Pop-Location
@@ -88,5 +106,6 @@ else {
 }
 
 Write-Host "Локальная установка подготовлена: $TargetDir"
+Write-Host "run-worker.cmd теперь запускает полный scheduled flow: NotebookLM -> FTP -> Dzen."
 Write-Host "Защищённый профиль Яндекс.Браузера не создаётся и не копируется этим скриптом."
 Write-Host "Настройку Планировщика Windows выполните по DEPLOYMENT.md."

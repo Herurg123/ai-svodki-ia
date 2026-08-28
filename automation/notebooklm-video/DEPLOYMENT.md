@@ -80,8 +80,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\setup-local.ps1 `
 
 Скрипт:
 
-1. копирует переносимые runtime-файлы, включая `package.json`,
-   `package-lock.json` и `НАСТРОЙКИ.txt`;
+1. копирует переносимые runtime-файлы, включая `worker.js`, `scheduled-worker.js`,
+   Dzen browser-upload runtime, `package.json`, `package-lock.json` и `НАСТРОЙКИ.txt`;
 2. создаёт `config.json` из `config.example.json`;
 3. подставляет локальные каталоги;
 4. запрашивает разрешённый внешний IP, если он не передан параметром;
@@ -101,7 +101,10 @@ lockfile.
 - `allowedIp`;
 - `minimizeBrowserWindow`;
 - `ftpUpload.enabled`;
-- `ftpUpload.publicBaseUrl`.
+- `ftpUpload.publicBaseUrl`;
+- `dzenUpload.automaticEnabled`;
+- `dzenUpload.channelName`;
+- `dzenUpload.verificationTimeoutMs`.
 
 ## 4. Локальный FTP-доступ
 
@@ -140,29 +143,27 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File `
 
 ```powershell
 npm ci --no-audit --no-fund
+node --check .\worker.js
+node --check .\scheduled-worker.js
+npm test
 ```
 
-Временно установить:
-
-```json
-"minimizeBrowserWindow": false
-```
-
-Затем:
+Для наблюдения за полным scheduled flow временно установить
+`minimizeBrowserWindow=false`, затем запустить именно production-entrypoint:
 
 ```cmd
 cd /d C:\TRASH\NotebookLMBot
-node worker.js
+run-worker.cmd
 ```
 
-Проверить:
+`node worker.js` допустим только как NotebookLM-only диагностика и сам Dzen-фазу
+не запускает.
 
-- браузер стартует с нужным профилем;
-- IP совпадает;
-- RSS определяется;
-- NotebookLM доступен;
-- при готовом локальном media FTP-этап работает только в `video`;
-- в `worker.log` нет неожиданных ошибок.
+Проверить: browser стартует с нужным защищённым профилем; IP совпадает; RSS и
+NotebookLM доступны; после готового MP4/PNG и optional FTP первый browser закрыт;
+затем Dzen duplicate guard подтверждает вкладку `Видео`. Для уже опубликованного
+выпуска он обязан завершиться без upload. Fresh publish следует проверять на
+реальном новом выпуске уже после отдельного решения о live rollout.
 
 После проверки вернуть `minimizeBrowserWindow=true`, если нужен фоновый режим.
 
@@ -172,21 +173,23 @@ node worker.js
 
 ```text
 Task Scheduler -> wscript.exe -> run-worker-hidden.vbs
-               -> run-worker.cmd -> node.exe -> worker.js
+               -> run-worker.cmd -> scheduled-worker.js
+               -> worker.js -> NotebookLM -> MP4/PNG -> optional FTP
+               -> Dzen duplicate guard -> optional fresh publish -> verification
 ```
 
-Рекомендуемый production-контракт текущего развёртывания:
+Рекомендуемый production-контракт текущего развёртывания сохраняется: ежедневно,
+каждые 10 минут примерно с 06:30 до 11:00 Europe/Moscow, только при входе
+пользователя, без видимого console window, с запрещёнными параллельными
+экземплярами и выполнением пропущенного запуска после входа. Компьютер
+автоматически не пробуждается.
 
-- ежедневно;
-- каждые 10 минут примерно с 06:30 до 11:00 Europe/Moscow;
-- запуск только при входе пользователя;
-- без видимого console window;
-- параллельные экземпляры запрещены;
-- пропущенный запуск выполняется после входа;
-- компьютер автоматически не пробуждается.
+Дополнительно `scheduled-worker.lock` защищает всю двухфазную цепочку, поэтому
+новый 10-минутный trigger не может войти в Dzen, пока предыдущий full run ещё
+работает.
 
 После создания задачи выполнить один ручной запуск из Task Scheduler и проверить
-`worker.log`.
+`worker.log` и `state.json`.
 
 ## 8. Что переносить со старой машины
 
@@ -211,6 +214,7 @@ Windows-пользователями. На новом профиле локал�
 ```powershell
 npm ci --prefix C:\TRASH\NotebookLMBot --no-audit --no-fund
 node --check C:\TRASH\NotebookLMBot\worker.js
+node --check C:\TRASH\NotebookLMBot\scheduled-worker.js
 Get-Content -Raw C:\TRASH\NotebookLMBot\config.json | ConvertFrom-Json | Out-Null
 ```
 
@@ -221,7 +225,9 @@ Get-Content -Raw C:\TRASH\NotebookLMBot\config.json | ConvertFrom-Json | Out-Nul
 - реестр скачиваний;
 - локальный MP4/PNG;
 - FTP `video/`;
-- отсутствие повторной обработки `DONE`.
+- отсутствие повторной обработки NotebookLM `DONE`;
+- `job.dzenAutomation.status` и отсутствие второго upload/click после `PUBLISH_ARMED`;
+- подтверждение `PUBLISHED` через Studio `Видео` после успешного live publish.
 
 ## 10. Обновление npm-зависимостей
 
