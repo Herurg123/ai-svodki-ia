@@ -33,6 +33,17 @@ for (const [name, version] of Object.entries(manifest.dependencies || {})) {
   );
 }
 
+assert.deepStrictEqual(
+  manifest.allowScripts,
+  { "ffmpeg-static@5.3.0": true },
+  "install-script policy must approve only the reviewed ffmpeg-static@5.3.0 script"
+);
+assert.strictEqual(
+  lock.packages["node_modules/ffmpeg-static"].hasInstallScript,
+  true,
+  "ffmpeg-static must remain identified as an install-script dependency"
+);
+
 const setup = read("setup-local.ps1");
 assert.match(setup, /["']package-lock\.json["']/, "setup must copy package-lock.json");
 assert.match(setup, /\bnpm ci --no-audit --no-fund\b/, "setup must install from the lockfile with npm ci");
