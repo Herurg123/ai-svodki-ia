@@ -321,16 +321,155 @@ single-pass child после открытия Studio ждёт до 20 секун
 bounded startup wait без повторного запуска child и без ослабления проверки
 нужного канала. Требуется повторный живой single-pass тест.
 
+## Эксперимент 11: успешный fresh-upload MVP
+
+Дата подтверждения: **28 августа 2026**.
+
+После отказа от межзапускового resume старых drafts выполнен чистый live-test
+fresh-upload flow через защищённый профиль Яндекс.Браузера. Перед upload новый
+проход не пытался открывать сохранённый `videoEditorPublicationId`, не вызывал
+`tryOpenUsableDraft`/`archiveUnusableDraft` и не возвращал metadata retry-loop.
+
+Подтверждённый flow:
+
+1. открыть Studio и создать новый video upload;
+2. передать MP4;
+3. заполнить title и description один раз;
+4. description после `Этот выпуск:` содержит две отдельные bullet-строки:
+   `- <URL выпуска>` и `- <URL серии Dzen>`;
+5. установить PNG cover один раз;
+6. подтвердить ровно пять tag-chip: `ии`, `ai`, `полезныесоветы`, `будущее`,
+   `лайфхак`;
+7. после заполнения больше не трогать metadata, cover и tags;
+8. дождаться одновременно `Загрузили и обработали видео` и
+   `Готово: можно публиковать и смотреть`;
+9. установить comments = `Все пользователи`;
+10. нажать точную кнопку `Опубликовать` или `Отправить` ровно один раз.
+
+Auth detection в этой ревизии выполняется по URL, а ошибки direct-flow пишутся в
+классифицированном виде. Защищённый browser profile не удаляется и не
+пересоздаётся.
+
+**Результат:** fresh-upload MVP успешно создал нативную публикацию в разделе
+`Видео`. Гипотеза inter-run resume по `videoEditorPublicationId` после этого
+закрыта: штатный новый live-run начинается с fresh upload, если отдельная
+предварительная проверка не доказывает, что видео уже существует.
+
+## Эксперимент 12: успешный duplicate guard MVP2
+
+Дата подтверждения: **28 августа 2026**. Контроль: уже опубликованное видео за
+27 августа 2026 с заголовком
+`ИИ-Сводка на 27 августа 2026 | Подпишись, чтоб получать свежее!`.
+
+Перед любым upload automation открыла:
+
+```text
+https://dzen.ru/profile/editor/rybv/publications
+```
+
+Затем был активирован именно реальный radio control:
+
+```text
+input[type="radio"][aria-label="Видео"]
+```
+
+Automation подтвердила `checked=true` и искала в видимом списке title prefix до
+` | `. Клик по визуальному `<div>Видео</div>` больше не используется, поскольку
+реальный radio перехватывает pointer events.
+
+**Результат:** существующий prefix был найден, в лог записано `ВИДЕО УЖЕ ЕСТЬ`,
+после чего flow завершился без нового draft, без MP4 upload и без publish click.
+Duplicate guard тем самым подтверждён живым тестом как обязательная pre-upload
+граница.
+
+## Следующий этап: успешный scheduled end-to-end run
+
+Дата подтверждения: **28 августа 2026**.
+
+После MVP1/MVP2 native Dzen upload был включён в штатный локальный downstream.
+Рабочая цепочка:
+
+```text
+Windows Task Scheduler
+ -> run-worker-hidden.vbs
+ -> run-worker.cmd
+ -> scheduled-worker.js
+ -> worker.js
+ -> RSS / NotebookLM / MP4 / PNG / optional FTP
+ -> завершение NotebookLM browser/CDP
+ -> Dzen duplicate guard
+ -> fresh upload только если видео отсутствует
+ -> один publish click
+ -> post-click verification через Публикации -> Видео
+ -> PUBLISHED
+```
+
+`scheduled-worker.js` защищает всю цепочку `scheduled-worker.lock`, после
+`worker.js` выбирает самый свежий `DONE` job с датой не позже текущей и поэтому
+поддерживает delayed/catch-up публикацию, не используя future-dated job.
+`dzenUpload.automaticEnabled` по умолчанию равен `true`; старый `config.json` без
+этого поля также трактуется как automatic enabled.
+
+Для Dzen-фазы используется state machine:
+
+```text
+PENDING
+RETRYABLE_PRE_CLICK
+PUBLISH_ARMED
+CLICKED_UNVERIFIED
+BLOCKED_AMBIGUOUS
+PUBLISHED
+```
+
+`PUBLISH_ARMED` сохраняется **до** запуска live child. После
+`PUBLISH_ARMED`/`CLICKED_UNVERIFIED`/`BLOCKED_AMBIGUOUS` следующий запуск имеет
+право только проверять `Публикации -> Видео`: новый upload и второй publish click
+запрещены. Новый fresh upload после ошибки разрешён лишь тогда, когда direct child
+явно доказал `publishClicked=false`.
+
+Первый полностью автоматический живой запуск подтвердил всю цепочку: AUTO-WORKER
+сам нашёл подходящий `DONE` job за 28 августа, duplicate guard не обнаружил
+существующего видео, orchestrator сохранил `PUBLISH_ARMED`, выполнил fresh upload
+и ровно один publish click. После child exit он снова открыл
+`Публикации -> Видео`, нашёл опубликованный заголовок и завершил Dzen-фазу с
+подтверждением publication.
+
+Финальные наблюдаемые строки:
+
+```text
+Dzen-фаза полностью подтверждена: Видео за 2026-08-28 опубликовано.
+=== END scheduled full worker SUCCESS ===
+```
+
+В `state.json` итоговое состояние было:
+
+```text
+dzenAutomation.status = "PUBLISHED"
+confirmedBy = "post-click-verification"
+```
+
+**Результат:** scheduled NotebookLM -> optional FTP -> Dzen pipeline подтверждён
+реальным end-to-end запуском. Native Dzen upload больше не является только
+операторским экспериментом; он является штатной второй фазой локального
+scheduled downstream при включённом automatic mode.
+
 ## Текущий операторский контракт
 
-- `run-dzen-publish.cmd --date=YYYY-MM-DD` — реальный direct live-flow и один
-  финальный клик после подтверждённого `Готово`;
-- live-run выполняет один child-проход; bounded ожидания внутри этого child не
-  считаются повторным запуском flow;
-- `run-dzen-dry-run.cmd --date=YYYY-MM-DD` — старый диагностический dry-run без
+- основной штатный путь: `run-worker.cmd` -> `scheduled-worker.js` -> `worker.js`
+  -> Dzen duplicate guard -> optional fresh upload -> verification;
+- `run-worker-hidden.vbs` и Windows Task Scheduler используют тот же единый
+  entrypoint, отдельная scheduled task для Dzen не нужна;
+- `run-dzen-publish.cmd --date=YYYY-MM-DD` остаётся manual fallback и
+  диагностическим live-entrypoint, а не штатным расписанием;
+- `run-dzen-dry-run.cmd --date=YYYY-MM-DD` остаётся диагностическим dry-run без
   финального клика;
-- `PUBLISH_CLICKED_UNVERIFIED` запрещает второй автоматический клик;
-- пустые/stale drafts сохраняются в `previousDrafts`, но не удаляются удалённо;
-- native Dzen upload всё ещё не является обычной стадией NotebookLM worker.
+- перед новым upload всегда выполняется duplicate guard через реальный radio
+  `input[type="radio"][aria-label="Видео"]` и видимый title prefix;
+- fresh-upload не возобновляет старый `videoEditorPublicationId`, metadata и cover
+  не заполняются повторно;
+- после `PUBLISH_ARMED`, `CLICKED_UNVERIFIED` или `BLOCKED_AMBIGUOUS` разрешена
+  только verification, второй upload/click запрещён;
+- fresh retry разрешён только при явном `publishClicked=false`;
+- защищённый профиль Яндекс.Браузера не удаляется и не пересоздаётся.
 
 Подробный контракт: [`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md).
