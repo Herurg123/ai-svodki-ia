@@ -35,15 +35,18 @@
 - `scripts/run_digest_preview.py` — orchestration fresh/recovery research и
   editorial flow;
 - `scripts/primary_recall_search.py` — стабильный public Primary Recall
-  entrypoint; после fresh Primary запускает zero-paid Source Pulse v1.1 supplement
+  entrypoint; после fresh Primary запускает zero-paid Source Pulse v1.2 supplement
   до первого editorial;
-- `scripts/agency_discovery_rescue.py` — conditional missing-event rescue;
-- `scripts/source_pulse_supplement.py` — bounded Tier-A official supplemental
-  discovery: обычный HTTPS, deterministic date/relevance gate, `consider` only,
-  без OpenAI/Web Search;
+- `scripts/agency_discovery_rescue.py` / `agency_discovery_rescue_v4.py` —
+  conditional missing-event rescue, максимум один Web Search;
+- `scripts/source_pulse_supplement_v12.py` — bounded Tier-A official/trusted-news
+  supplemental discovery: обычный HTTPS, source-aware date parsing,
+  deterministic date/relevance/host gate, `consider` only, без OpenAI/Web Search;
 - `scripts/source_pulse_shadow.py` — сохранённый snapshot/fusion diagnostics перед
   и после Hybrid без повторного polling;
-- `scripts/hybrid_search_completeness.py` — bounded Hybrid completeness;
+- `scripts/hybrid_search_completeness.py` — stable Hybrid v3 entrypoint: baseline
+  максимум 4 searches и ровно один conditional fifth search только при
+  одновременных Search-derived Russia + China/Asia gaps;
 - `scripts/ensure_story_coverage.py` — fallback Coverage public entrypoint;
 - `scripts/recover_digest_artifact.py` — paid-stage recovery entrypoint;
 - `scripts/source_freshness.py` — deterministic source publication-date proof;
@@ -59,28 +62,56 @@
 `archive/video-rss-enrichment-2026-08/` как reference material. Они не являются
 active entrypoints.
 
-Versioned implementation files such as `*_v1.py`, `*_v2.py` and `*_v8.py` are
-preserved compatibility/recovery layers, not arbitrary duplicates. Their
-lifecycle and refactor rules are described in [`ARCHITECTURE.md`](ARCHITECTURE.md).
+Versioned implementation files such as `*_v1.py`, `*_v2.py`, `*_v3.py` и
+`*_v8.py` являются preserved compatibility/recovery layers, а не произвольными
+дубликатами. Их lifecycle и refactor rules описаны в
+[`ARCHITECTURE.md`](ARCHITECTURE.md).
 
-## Source Pulse v1.1
+## Source Pulse v1.2
 
-Fresh production сначала завершает Primary Recall, затем Source Pulse v1.1
+Fresh production сначала завершает Primary Recall, затем Source Pulse v1.2
 опрашивает фиксированный registry обычным HTTPS. Только `pulse_only` Tier-A
-official leads могут попасть в trusted research, причём только как
-`recommendation=consider`. Tier B остаётся diagnostic-only. Для каждого
-продвигаемого lead повторно открывается уже найденный официальный URL,
-детерминированно проверяется publication date против exact saved window и
-применяется AI-relevance gate. После merge штатный Source Freshness Proof всё
-равно повторно проверяет trusted research перед первым editorial.
+`official` или `trusted_news` leads могут попасть в trusted research, причём
+только как `recommendation=consider`. Tier B остаётся diagnostic-only.
+
+Для каждого продвигаемого lead повторно открывается уже найденный URL,
+детерминированно проверяется publication date против exact saved window,
+проверяется redirect/host allowlist и применяется AI-relevance gate. После merge
+штатный Source Freshness Proof всё равно повторно проверяет trusted research перед
+первым editorial. ТАСС включён в российский Tier-A `trusted_news` registry через
+`https://tass.ru/tag/iskusstvennyi-intellekt`; Yandex IR, MWS и VK остаются
+официальными Tier-A surfaces, CNews остаётся Tier-B lead-only.
 
 Pulse не вызывает OpenAI и Web Search. Search-derived `regional_health` для
 Russia/China после Pulse не пересчитывается, поэтому второй discovery-plane не
-может скрыть деградацию Primary и подавить существующий Hybrid health check.
-Общий потолок остаётся 24 Web Search operations. Runtime report
+может скрыть деградацию Primary и подавить Hybrid health check. Runtime report
 `preview/production-daily/source-pulse-<DATE>.json` сохраняет source/parser health,
 fusion, каждую причину promotion/rejection, promoted URLs и snapshot reuse; весь
-`production-daily/` уже входит в стандартный Actions artifact.
+`production-daily/` входит в стандартный Actions artifact.
+
+## Hybrid v3 и search budget
+
+Обычный Hybrid contract не подорожал: три fixed passes и максимум один
+adaptive/regional slot, то есть не более 4 Web Search operations. Если Primary
+Search одновременно помечает **оба** regional gaps, Russia и China/Asia, Hybrid
+v3 не отнимает общий broad slot: он выполняет три broad passes и два отдельных
+regional health-check, итого максимум 5 Hybrid searches.
+
+Пятый search является единственным одобренным платным расширением и включается
+только при double-gap. При одном regional gap остаётся 3+1, без regional gap —
+штатная baseline логика. Переданный завышенный `maximum_search_calls` не может
+создать шестой вызов; пониженный baseline не активирует conditional extension.
+
+Whole-pipeline theoretical ceiling:
+
+```text
+обычно:      12 Primary + 1 agency rescue + 4 Hybrid + 7 Coverage = 24
+оба gaps:    12 Primary + 1 agency rescue + 5 Hybrid + 7 Coverage = 25
+```
+
+Source Pulse в эти числа не входит: у него 0 OpenAI calls и 0 Web Search.
+Дополнительные региональные Coverage searches и отдельный LLM semantic-event
+matcher сейчас не включены; они остаются deferred options для будущих аудитов.
 
 ## Workflows
 

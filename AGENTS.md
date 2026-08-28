@@ -132,26 +132,46 @@ monkeypatch/test hooks, saved-artifact recovery and source-inspection contract
 tests remain compatible. A semantic retrieval change must not be mixed into a
 compatibility cleanup.
 
-The current search-operation ceilings and layer order are architectural
-invariants documented in `automation/ARCHITECTURE.md`; do not silently change
-them during refactoring.
+The normal Hybrid ceiling is four Web Search operations. One conditional fifth
+Hybrid operation is permitted **only** when Search-derived `regional_health`
+simultaneously marks both Russia and China/Asia as gaps. That double-gap path must
+preserve all three broad Hybrid passes and add exactly two dedicated regional
+checks, for an effective Hybrid maximum of five. A single regional gap remains
+3 broad + 1 regional; no regional gap does not authorize the fifth call.
+
+The ordinary whole-pipeline ceiling is 24 Web Search operations
+(12 Primary + 1 agency rescue + 4 Hybrid + 7 Coverage). The sole approved
+conditional extension raises the theoretical ceiling to 25 only on the double-gap
+path. A caller-provided oversized Hybrid limit must never create a sixth search;
+a lowered baseline must not silently enable the conditional extension.
+
+Additional regional Coverage searches and an LLM semantic-event matcher are not
+part of the active contract. They remain deferred options and require a future
+audit plus explicit approval before any implementation or spend.
 
 ## Source Pulse supplemental boundary
 
-Source Pulse v1.1 may supplement a fresh Primary research artifact only through
+Source Pulse v1.2 may supplement a fresh Primary research artifact only through
 the bounded pre-editorial path documented in `automation/ARCHITECTURE.md`.
 It must use **zero OpenAI calls and zero Web Search operations** and must not
 reduce or suppress any mandatory Primary, agency-rescue, Hybrid or Coverage
 search obligation.
 
-Candidate influence is limited to `pulse_only` Tier-A official leads that pass
-both deterministic source-page freshness proof and the deterministic AI relevance
-gate. Such rows enter only as `recommendation=consider` with conservative
-significance. Tier B remains lead-only and must never influence publication.
+Candidate influence is limited to `pulse_only` Tier-A sources whose role is
+`official` or `trusted_news` and that pass deterministic source-page freshness,
+host/redirect safety and deterministic AI relevance. Such rows enter only as
+`recommendation=consider` with conservative significance. `trusted_news` does not
+become an official company source and does not gain automatic `include` status.
+ТАСС is an approved Russian Tier-A `trusted_news` source; Yandex IR/MWS/VK are
+official Tier-A sources; CNews and other Tier B entries remain lead-only and must
+never influence publication.
+
 Search-derived China/Asia and Russia `regional_health` gaps must not be recomputed
-after Pulse promotion, because the second plane must not hide a degraded primary
+after Pulse promotion, because the second plane must not hide a degraded Primary
 Search route. Same-day recovery must reuse the saved Pulse snapshot and must not
-silently repoll mutable sources.
+silently repoll mutable sources. Source/network/parser errors, including HTTP
+anti-bot responses, must remain visible as degraded diagnostics rather than being
+reported as healthy success.
 
 ## Permanent and safety invariants
 
@@ -177,7 +197,10 @@ silently repoll mutable sources.
 - Exact saved research time boundaries, source freshness proof, archive dedupe,
   fail-closed mandatory search stages and recovery at-most-once semantics must
   not be weakened as incidental cleanup.
-- Production API spend is never authorized merely by a code-fix request.
+- Production API spend is never authorized merely by a generic code-fix request.
+  The conditional fifth Hybrid search described above is separately authorized
+  as an explicit architecture contract; any other new paid retrieval requires
+  separate approval.
 
 ## Independent audits and experiments
 

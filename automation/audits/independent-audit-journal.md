@@ -1,6 +1,6 @@
 # Журнал независимых аудитов ИИ-Сводки
 
-Последнее обновление: 2026-08-25  
+Последнее обновление: 2026-08-28  
 Назначение: накопление независимых проверок полноты и свежести ежедневной ИИ-Сводки без расходования production API пользователя.
 
 > Историческая часть журнала периодически сжимается: сохраняются ежедневные verdict, подтверждённые misses, повторяющиеся паттерны и принятые архитектурные решения. Детальные эксперименты хранятся в `automation/audits/experiments/` и не дублируются здесь целиком.
@@ -355,3 +355,47 @@ High-confidence strict reference set текущего main window: **3 собы�
 - Безопасный contour: Pulse fetch/snapshot отдельно; Primary 12/12 и agency rescue без изменений; после них dedupe unmatched leads; будущая bounded no-Web-Search triage только при отдельном разрешении production cost; затем обычные freshness/dedupe/editorial/Hybrid/Coverage.
 - Freshness diagnosis 25 августа уточнён: Google/Verizon и Yandex — это прежде всего проблема extractor/alternate-source proof, а не общий запрет date-only evidence. Отдельный freshness experiment должен тестировать alternate authoritative corroboration и boundary negatives, не ослабляя Source Freshness Proof.
 - README/automation README/AGENTS не менялись: этот experiment фиксирует результаты исследования и не меняет production behavior.
+
+---
+
+## 2026-08-28 — architecture audit: Source Pulse v1.2 + conditional fifth Hybrid
+
+Подробные материалы:
+- `automation/audits/2026-08-28-regional-recall-plus1-hybrid-audit.md`;
+- `automation/audits/experiments/2026-08-28-conditional-fifth-hybrid-regional-recall.md`.
+
+### Причина изменения
+- Повторные Russia/China-Asia blind spots и production-аудит Source Pulse показали, что один смешанный regional Hybrid query недостаточен, а zero-cost split `2 broad + Asia + Russia` отнимает третий общий Hybrid pass.
+- Пользователь отдельно разрешил один дополнительный paid search только для состояния, когда Search-derived health одновременно показывает gaps Russia и China/Asia.
+
+### Принятый контракт
+- Primary остаётся `12` mandatory Web Search operations.
+- Conditional agency rescue остаётся максимум `1`.
+- Source Pulse v1.2 остаётся `0 OpenAI calls / 0 Web Search operations`.
+- Hybrid normal path остаётся максимум `4`.
+- Single-gap path: `3 broad + 1 regional = 4`.
+- Double-gap path: `3 broad + China/Asia + Russia = 5`; это единственный новый paid call.
+- Coverage остаётся максимум `7`; дополнительных regional Coverage calls нет.
+- Ordinary theoretical ceiling остаётся `24`; double-gap theoretical ceiling становится `25`.
+- Oversized Hybrid limit не может создать шестой search; lowered baseline не активирует paid extension.
+- Regional health диагностируется отдельно от объёма выпуска и не является publication quota.
+
+### Source Pulse / российские источники
+- ТАСС добавлен как Tier-A `trusted_news`, прежде всего AI-tag `https://tass.ru/tag/iskusstvennyi-intellekt`.
+- Yandex IR/MWS/VK остаются Tier-A official; CNews остаётся Tier-B lead-only.
+- `trusted_news` может дать только `consider` после host allowlist, direct page freshness и deterministic AI relevance; он не получает automatic `include`.
+- Независимый direct fetch TASS AI-tag на момент проверки возвращает HTTP 403. Это ожидаемо трактуется как degraded/unavailable source health, а не как успешный poll.
+
+### Independent test
+- Assistant-owned state-machine test без production API пользователя проверил все четыре комбинации regional flags: no-gap, Russia-only, Asia-only, both. Пятый search появляется только в `both`.
+- Дополнительно проверены lowered baseline и oversized requested limit; sixth Hybrid search не возникает.
+- Независимый assistant web probe подтвердил ценность отдельного China/Asia query на свежих Reuters controls и наличие свежих российских first-party AI событий на Yandex company-news surface. Standalone Terra в среде не был доступен; ordinary assistant web search не назывался Terra.
+- Это targeted architecture/retrieval experiment, а не оценка global recall.
+
+### Deferred paid options
+Не реализованы и сохранены только для будущих аудитов:
+1. 1–2 regional Coverage searches, если regional health остаётся красным после Hybrid при достаточном объёме выпуска;
+2. отдельный LLM semantic-event matcher для сложного dedupe.
+
+### Verdict
+**Architecture PASS / merge только после green repository CI.** Изменение ограничено одним conditional paid search, сохраняет Source Freshness/recovery/dedupe boundaries и не увеличивает расходы на no-gap/single-gap днях.

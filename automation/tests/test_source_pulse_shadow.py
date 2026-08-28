@@ -238,7 +238,6 @@ class SourcePulseShadowRuntimeTests(unittest.TestCase):
         self.assertEqual(result["state"], "interrupted_no_repoll")
         self.assertTrue(result["reused_snapshot"])
 
-
     def test_invalid_shadow_contract_fails_open_without_polling(self):
         payload = json.loads(self.registry.read_text(encoding="utf-8"))
         payload["candidate_influence"] = True
@@ -287,14 +286,38 @@ class SourcePulseShadowRuntimeTests(unittest.TestCase):
 
 
 class SourcePulseShadowArchitectureTests(unittest.TestCase):
-    def test_hybrid_owns_shadow_integration_before_gap_planning(self):
-        text = (SCRIPTS_ROOT / "hybrid_search_completeness.py").read_text(encoding="utf-8")
-        self.assertIn("run_source_pulse_shadow", text)
-        rescue_position = text.index("_pre_hybrid_source_freshness_gate(", text.index("def run_hybrid_completeness"))
-        pulse_position = text.index("run_source_pulse_shadow(", rescue_position)
-        gaps_position = text.index("gaps = _regional_gaps(research)", pulse_position)
-        self.assertLess(rescue_position, pulse_position)
-        self.assertLess(pulse_position, gaps_position)
+    def test_hybrid_owns_shadow_integration_before_paid_search_execution(self):
+        stable = (SCRIPTS_ROOT / "hybrid_search_completeness.py").read_text(encoding="utf-8")
+        v2 = (SCRIPTS_ROOT / "hybrid_search_completeness_v2.py").read_text(encoding="utf-8")
+        v3 = (SCRIPTS_ROOT / "hybrid_search_completeness_v3.py").read_text(encoding="utf-8")
+
+        # The stable entrypoint must delegate production behavior to v3, while
+        # normal/single-gap paths remain owned by v2.
+        self.assertIn("hybrid_search_completeness_v3", stable)
+        self.assertIn("_v3.run_hybrid_completeness", stable)
+
+        # v2 preserves the historical quality order: rescue freshness, then one
+        # Pulse snapshot/reuse, then regional gap planning.
+        v2_run = v2.index("def run_hybrid_completeness")
+        v2_rescue = v2.index("_pre_hybrid_source_freshness_gate(", v2_run)
+        v2_pulse = v2.index("run_source_pulse_shadow(", v2_rescue)
+        v2_gaps = v2.index("gaps = _regional_gaps(research)", v2_pulse)
+        self.assertLess(v2_rescue, v2_pulse)
+        self.assertLess(v2_pulse, v2_gaps)
+
+        # v3 intentionally reads the Primary Search-derived regional flags to
+        # decide whether the *conditional* fifth search is eligible.  On that
+        # exceptional branch, rescue freshness and Pulse still complete before
+        # any of the five paid Hybrid requests are executed.
+        v3_run = v3.index("def run_hybrid_completeness")
+        v3_trigger = v3.index("gaps = v2._regional_gaps(research)", v3_run)
+        v3_rescue = v3.index("_pre_hybrid_source_freshness_gate(", v3_trigger)
+        v3_pulse = v3.index("run_source_pulse_shadow(", v3_rescue)
+        v3_paid = v3.index("_run_double_gap_with_fifth(", v3_pulse)
+        self.assertLess(v3_trigger, v3_rescue)
+        self.assertLess(v3_rescue, v3_pulse)
+        self.assertLess(v3_pulse, v3_paid)
+
         workflow = (AUTOMATION_ROOT.parent / ".github" / "workflows" / "daily-production.yml").read_text(encoding="utf-8")
         self.assertNotIn("source_pulse_shadow.py", workflow)
         self.assertNotIn("source_pulse.py", workflow)
