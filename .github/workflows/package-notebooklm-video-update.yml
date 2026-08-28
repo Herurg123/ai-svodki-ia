@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Check out exact branch
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Verify source commit and prepare safe update folder
         shell: bash
