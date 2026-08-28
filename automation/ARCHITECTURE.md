@@ -21,13 +21,15 @@ Video → RSS post-publication bridge закрыт и сохранён толь�
 scheduled/manual trigger
   -> previous-release / recovery gate
   -> Primary Recall
-  -> Source Pulse v1.1 fixed-source supplemental discovery
+  -> Source Pulse v1.2 fixed-source supplemental discovery
   -> deterministic Source Freshness Proof for trusted Primary + Pulse research
   -> first editorial
   -> conditional agency discovery rescue
   -> Source Freshness Proof for rescue additions
   -> saved Source Pulse snapshot/fusion reuse
-  -> Hybrid completeness
+  -> Hybrid completeness v3
+       -> normal: up to 4 searches
+       -> both Russia + China/Asia gaps: up to 5 searches
   -> editorial rerun when rescue/Hybrid adds a candidate
   -> fallback Coverage when required
   -> Source Freshness Proof for merged trusted research
@@ -39,11 +41,18 @@ scheduled/manual trigger
   -> FTP deploy of posts/
 ```
 
-Source Pulse v1.1 intentionally supplements fresh Primary **before the first
+Source Pulse v1.2 intentionally supplements fresh Primary **before the first
 editorial call**. This placement allows the second discovery plane to influence
-the normal editorial selection without introducing a dedicated extra model call.
+the normal editorial selection without introducing a dedicated model/search call.
 The later Hybrid stage reuses the saved Pulse snapshot only for fusion diagnostics
 and never silently repolls the mutable source set.
+
+Hybrid v3 сохраняет обычный четырёхоперационный потолок и имеет только одно
+одобренное платное исключение: если Search-derived `regional_health` одновременно
+показывает gaps для Russia и China/Asia, разрешается один пятый Hybrid search. Это
+нужно, чтобы не отнимать общий broad slot: выполняются три broad passes плюс два
+раздельных regional health-check. Пятый search не является новой ежедневной
+нормой и не активируется при одном или нуле региональных gaps.
 
 Production работает из GitHub Actions, хранит результаты в репозитории и
 использует `posts/` как публичный deploy tree.
@@ -152,10 +161,11 @@ listing и проверяется отсутствие всех удалённы
 - `fixtures/research/.runtime/` является ignored trusted ingress для внутреннего
   fresh research;
 - `scripts/` содержит orchestration, retrieval, recovery, publication, cleanup и
-  validators, включая `source_pulse_supplement.py`, сохранённый
-  `source_pulse_shadow.py` и FTP-retention `cleanup_video_ftp.py`;
+  validators, включая `source_pulse_supplement_v12.py`, сохранённый
+  `source_pulse_shadow.py`, versioned Hybrid v2/v3 implementations и FTP-retention
+  `cleanup_video_ftp.py`;
 - `tests/` содержит основной Python offline regression suite, включая no-video RSS
-  boundary;
+  boundary и retrieval budget/regional regressions;
 - `notebooklm-video/` является отдельным локальным downstream-подпроектом;
 - `preview/` и `recovery/` являются временными ignored runtime directories.
 
@@ -248,6 +258,8 @@ reusable domain CI, узкий automated-writer secret scope и canonical rulese
 `automation/tests/test_video_ftp_cleanup.py` проверяет strict 32-day cutoff,
 dry-run/apply, orphan semantics, MLSD/NLST listing, pre-delete validation,
 post-delete verification и hard `video` boundary без RSS/local-runtime dependency.
+Retrieval tests отдельно защищают Source Pulse safety, regional Hybrid allocation,
+search ceilings и compatibility wrappers.
 
 `automation/notebooklm-video/tests/video-boundary-smoke.js` проверяет hard FTP
 boundary и ignore rules. `lockfile-contract-smoke.js` проверяет синхронизацию
@@ -384,7 +396,7 @@ integration/business routes не схлопываются; Russia остаётс
 slot.
 
 После того как versioned Primary engine вернул trusted runtime research, public
-wrapper запускает Source Pulse v1.1 supplement на том же exact saved window и
+wrapper запускает Source Pulse v1.2 supplement на том же exact saved window и
 только затем возвращает research в `run_digest_preview.py` для Source Freshness
 Proof и первого editorial. Search-derived `regional_health` при этом намеренно не
 пересчитывается после Pulse promotion.
@@ -396,43 +408,70 @@ rescue. Trigger зависит от технически завершённог�
 `raw_count == 0` или `accepted_count == 0`, а не от общего количества
 candidates/stories.
 
-Разрешена максимум одна дополнительная Web Search operation. Текущий provider
-route Reuters-only и acceptance требует прямого `reuters.com` primary URL.
+Разрешена максимум одна дополнительная Web Search operation. Provider route
+остаётся Reuters-only и acceptance требует прямого `reuters.com` primary URL.
 Syndication/aggregator URL не заменяет прямой источник. Rescue не повышает
 significance и не гарантирует публикацию.
+
+V4 делает единственный query gap-aware: Search-derived Russia/China-Asia gaps
+могут добавить региональные retrieval hints в ту же одну source-neutral phrase.
+Это не создаёт второго rescue search и не превращает Reuters в региональную
+публикационную квоту.
 
 State сохраняется до и после paid call. `search_started` автоматически не
 ретраится, потому что consumption единственного search может быть неизвестен.
 `search_completed`/`merge_failed` могут продолжить merge из сохранённого response
 без второго search.
 
-### 6.3. Source Pulse v1.1 supplemental discovery и shadow fusion
+### 6.3. Source Pulse v1.2 supplemental discovery и shadow fusion
 
 Source Pulse состоит из двух связанных режимов над одним сохранённым snapshot.
 
 **Pre-editorial supplement.** После fresh Primary public wrapper вызывает
-`source_pulse_supplement.py`. Он использует тот же фиксированный registry, обычный
-bounded HTTPS polling и **0 OpenAI / 0 Web Search operations**. V1.1 сохраняет
-hardening исходного collector и добавляет bounded видимую date-association для
-реальных article-like HTML containers. JSON-LD, RSS/Atom и `<time datetime>`
-семантика v1 сохраняется.
+`source_pulse_supplement_v12.py`. Он использует фиксированный registry, обычный
+bounded HTTPS polling и **0 OpenAI / 0 Web Search operations**. V1.2 сохраняет
+hardening исходного collector, видимую bounded date-association V1.1 и добавляет:
+
+- source-aware обработку распространённых Russian/English/Chinese date shapes;
+- узкие host-specific response caps для известных крупных first-party/news
+  indexes вместо глобального безлимитного увеличения;
+- явную диагностику HTTP-success с parsed items, но без пригодной date evidence;
+- `complete_with_gaps`, когда transport/parser/source health деградирован;
+- Tier-A `trusted_news` как отдельную роль, не равную официальному источнику
+  компании.
+
+JSON-LD, RSS/Atom и `<time datetime>` semantics исходного collector сохраняются.
 
 Candidate influence разрешён только по узкому контракту:
 
 - lead обязан иметь fusion disposition `pulse_only`;
-- только Tier A с `role=official`;
+- только Tier A с `role=official` или `role=trusted_news`;
 - Tier B остаётся `lead_only` и никогда не мутирует candidate pool;
-- официальный lead URL повторно открывается обычным HTTPS;
+- lead URL повторно открывается обычным HTTPS;
+- final URL для `trusted_news` обязан остаться в source allowlist;
 - publication evidence обязан детерминированно попадать в exact saved window;
 - title/page summary обязан пройти deterministic AI relevance gate;
 - candidate входит только как `recommendation=consider`;
 - Source Pulse не назначает `include`, legal/curiosity privilege или высокий
-  significance; текущий supplemental score консервативно равен 3;
+  significance; supplemental score остаётся консервативным;
 - обычный `story_coverage.merge_candidates` применяет schema/window/exact-URL
   validation и общий candidate cap.
 
+Российский registry включает Yandex IR, MWS и VK как Tier-A official surfaces.
+ТАСС включён как Tier-A `trusted_news`, прежде всего через
+`https://tass.ru/tag/iskusstvennyi-intellekt`; это не делает ТАСС «official
+company source» и не даёт автоматического `include`. При антиботе/403 такой
+источник обязан отображаться как degraded/unavailable diagnostic, а не как
+успешно проверенный. CNews остаётся Tier-B `lead_only` и не может напрямую влиять
+на publication.
+
+China/Asia registry включает first-party Baidu, Alibaba Group/Alibaba Cloud,
+XPeng и DeepSeek surfaces; IT之家 остаётся Tier-B lead-only. Alibaba Cloud имеет
+bounded community fallbacks, чтобы HTML/payload drift одного index не означал
+автоматический нулевой discovery.
+
 После supplement штатный trusted-runtime Source Freshness Proof **ещё раз**
-проверяет уже merged Primary+Pulse research до первого editorial. Следовательно,
+проверяет merged Primary+Pulse research до первого editorial. Следовательно,
 внутренний Pulse parser не является публикационным authority и не обходит
 существующий freshness fail-closed boundary.
 
@@ -443,15 +482,14 @@ Candidate influence разрешён только по узкому контра
 сравнивается с merged research для `fusion_post_hybrid`.
 
 Search-derived regional gaps сохраняются из Primary и не пересчитываются после
-Pulse. Поэтому найденная Pulse новость не может скрыть `asia/russia` Primary gap
-и не может подавить существующий fourth-slot Hybrid health check.
+Pulse. Поэтому найденная Pulse новость не может скрыть `asia/russia` Primary gap,
+подавить regional Hybrid check или предотвратить условный пятый Hybrid search,
+если оба Search-derived gaps действительно открыты.
 
 Runtime diagnostics в `preview/production-daily/source-pulse-<DATE>.json`
-содержат source transport/parser health, v1.1 counters
-`parsed_items_before_v11 / parsed_items_after_v11 / dated_items_after_v11 /
-undated_items_after_v11 / visible_dates_recovered`, pre-promotion fusion,
+содержат transport/parser/source health, v1.2 counters, pre-promotion fusion,
 per-lead promotion/rejection disposition, page freshness evidence, promoted URLs,
-merge rejections, post-promotion fusion, reuse flag и позже post-Hybrid fusion.
+merge rejections, post-promotion fusion, reuse flag и later post-Hybrid fusion.
 Весь `production-daily/` уже входит в обычный Actions artifact.
 
 Source/network/parser/promotion error fail-open только для уже валидного Primary:
@@ -459,19 +497,53 @@ Source/network/parser/promotion error fail-open только для уже ва�
 production failure. Она обязана остаться в diagnostics. Same-day recovery не
 repoll'ит mutable Pulse sources.
 
-### 6.4. Hybrid completeness
+### 6.4. Hybrid completeness v3
 
-Stable public entrypoint: `hybrid_search_completeness.py`.
+Stable public entrypoint: `hybrid_search_completeness.py`. Public wrapper сидит
+поверх preserved Hybrid implementations, включая V2/V3, чтобы не ломать stable
+imports, saved-artifact recovery и monkeypatch-oriented tests.
 
-Hybrid выполняет три fixed one-search passes и может использовать один optional
-adaptive/regional health slot. Hard ceiling равен 4 search operations. API domain
-filter отсутствует. Russia/Asia health check не является publication quota.
+Базовый контракт остаётся прежним: три fixed one-search passes и максимум один
+optional adaptive/regional health slot, то есть обычный hard ceiling равен **4
+Hybrid Web Search operations**. API domain filter для Hybrid отсутствует.
+Russia/Asia health check не является publication quota.
+
+Regional allocation:
+
+- **нет Search-derived regional gap** — штатные три broad passes и только прежний
+  adaptive fourth slot при обычной cluster-gap необходимости;
+- **один gap** (`russia` или `asia`) — три broad passes + один dedicated regional
+  health-check, максимум 4 Hybrid searches;
+- **оба gaps одновременно** — единственный одобренный paid extension: три broad
+  passes + dedicated China/Asia + dedicated Russia = максимум 5 Hybrid searches.
+
+Пятый search существует именно для сохранения третьего broad pass. Старый
+zero-budget компромисс `2 broad + Asia + Russia` больше не является production
+allocation на double-gap path. Завышенный caller limit, например 99, не может
+создать шестой search. Пониженный baseline limit не активирует conditional
+extension автоматически.
+
+China/Asia и Russia используют разные source-neutral queries. Russia query
+русскоязычный; China/Asia query не объединяется с Russia в один англоязычный
+поисковый запрос. Названия компаний в hints не являются AND/whitelist contract.
+
+Lifecycle-dedupe prompt отдельно запрещает склеивать разные материальные стадии
+только из-за общей сущности и даты: раскрытие автора анонимного preview не равно
+финальному именованному релизу; объявление финансирования не равно закрытию
+сделки; preview не равно публикации весов/production availability. Обычная
+schema/window/archive validation chain сохраняется и остаётся publication
+authority.
 
 Новые candidates проходят обычную validation/dedupe chain. Editorial rerun
 происходит только после реально принятого rescue/Hybrid candidate. Pulse не
 требует отдельного rerun, потому что его bounded promotion происходит до первого
 editorial. Hybrid failure не должен уничтожать уже пригодный Primary/Pulse/rescue
 artifact.
+
+Hybrid report хранит отдельно `conditional_paid_extension`, effective budget и
+`retrieval_health`. Выпуск может быть volume-full и одновременно иметь
+`complete_with_regional_gaps`; это диагностическая truthfulness, а не требование
+добивать регион квотой.
 
 ### 6.5. Fallback Coverage
 
@@ -483,9 +555,14 @@ Coverage содержит шесть mandatory directions и максимум с
 завершённый search с пустым publishable pool может завершиться успешным
 `editorial_stop` без искусственного наполнения выпуска.
 
+Отдельные 1–2 regional Coverage searches только потому, что после Hybrid
+`regional_health` всё ещё красный, **не входят в active contract**. Это сохранённая
+future option, которую можно повторно обсуждать после следующих production
+аудитов и только после отдельного разрешения на дополнительный spend.
+
 ### 6.6. Search ceiling
 
-Текущий theoretical maximum:
+Обычный theoretical maximum:
 
 ```text
 12 Primary
@@ -495,10 +572,28 @@ Coverage содержит шесть mandatory directions и максимум с
 = 24 Web Search operations
 ```
 
-Source Pulse не входит в search-operation budget: его collector и page/freshness
-verification используют только обычный HTTPS и не вызывают OpenAI/Web Search.
-Navigation hosted calls не повышают этот search-operation ceiling. Изменение
-ceiling требует отдельного controlled experiment и architecture-wide review.
+Единственный одобренный условный paid extension:
+
+```text
+12 Primary
++ up to 1 conditional agency discovery
++ up to 5 Hybrid, only when Russia AND China/Asia Search gaps are open
++ up to 7 Coverage
+= 25 Web Search operations
+```
+
+Разница между двумя потолками всегда не более одной Search operation. Пятый
+Hybrid search не должен становиться обычным default через config/caller drift.
+Шестой Hybrid search архитектурно запрещён текущим контрактом.
+
+Source Pulse не входит в search-operation budget: collector, parser и
+page/freshness verification используют только обычный HTTPS и не вызывают
+OpenAI/Web Search. Navigation hosted calls не повышают этот search-operation
+ceiling.
+
+Отдельный LLM semantic-event matcher для сложного dedupe сейчас не активирован.
+Он остаётся future option после следующих аудитов. Его внедрение требует нового
+architecture review и отдельного разрешения на оплачиваемые model calls.
 
 ## 7. Source freshness и editorial
 
@@ -516,9 +611,9 @@ date evidence блокирует публикацию. Supporting source мож�
 
 Editorial применяется после discovery/validation. Короткий выпуск допустим:
 нельзя вводить искусственные региональные или тематические quotas только ради
-числа сюжетов. Source Pulse не имеет отдельной publication quota и не может
-обязать editorial выбрать promoted `consider`. Подробные правила находятся в
-`specs/editorial-policy.md`.
+числа сюжетов. Source Pulse и regional Hybrid health-check не имеют отдельной
+publication quota и не могут обязать editorial выбрать promoted/returned
+`consider`. Подробные правила находятся в `specs/editorial-policy.md`.
 
 ## 8. Recovery
 
@@ -534,9 +629,15 @@ Primary повторно проходит current source-health. Conditional age
 snapshot считается mutable-source evidence того же artifact и не repoll'ится при
 обычном same-day recovery; later fusion использует сохранённый snapshot.
 
+Hybrid v3 обязан сохранять в report, использовался ли conditional fifth search.
+Recovery не должен трактовать уже выполненный пятый double-gap search как
+разрешение на шестой или повторный региональный paid pass. Compatibility wrappers
+сохраняют historical stable imports и existing recovery hooks.
+
 Manual `force_fresh_research=true` является отдельным operator override после
 retrieval hotfix. Он не эквивалентен обычному rerun и не является разрешением на
-production API spend без явного решения владельца.
+любой новый production API spend. Одобрен только текущий условный пятый Hybrid
+search; остальные новые paid stages требуют отдельного решения владельца.
 
 ## 9. Publication и public deploy
 
@@ -619,7 +720,9 @@ releases, tags и published/editorial content также не входят в sc
 
 Один retrieval miss является evidence, но не автоматическим разрешением менять
 архитектуру. Сначала формируется независимый reference set, затем bounded
-experiment, dependency audit и regression proof.
+experiment, dependency audit и regression proof. Для conditional fifth Hybrid
+search controlled experiment и architecture-wide audit датированы 2026-08-28 и
+выполнены на assistant-owned resources без пользовательского production API.
 
 ## 12. Совместимость и versioned реализации
 
@@ -627,7 +730,7 @@ experiment, dependency audit и regression proof.
 implementations, например:
 
 - `primary_recall_search.py` над `primary_recall_search_v2.py`;
-- `hybrid_search_completeness.py` над preserved Hybrid implementation;
+- `hybrid_search_completeness.py` над preserved Hybrid v2/v3 implementations;
 - `ensure_story_coverage.py` над preserved Coverage implementation;
 - `recover_digest_artifact.py` над preserved recovery implementation.
 
@@ -639,9 +742,15 @@ implementations, например:
 - source-inspection contract tests, которые защищают search/output budgets;
 - возможность semantic overlay без переписывания proven engine в том же change.
 
-Source Pulse v1.1 следует этому же принципу: production semantics добавлены новым
-supplement wrapper над hardening v1 collector, а исходный collector/shadow
-surface остаётся совместимым для replay, saved snapshots и regression hooks.
+Source Pulse v1.2 следует тому же принципу: production semantics добавлены
+versioned supplement wrapper поверх hardened collector/V1.1 logic, а исходный
+collector/shadow surface остаётся совместимым для replay, saved snapshots и
+regression hooks.
+
+Hybrid v3 также не уничтожает v2/regional-v1 implementations: stable public
+entrypoint переключает production semantics на v3, а preserved layers остаются
+compatibility/recovery assets. Это особенно важно для saved-artifact recovery и
+старых tests, которые monkeypatch'ят исторические hooks.
 
 Удаление или схлопывание versioned files требует отдельного semantic-neutral
 refactor с полным offline regression доказательством. Нельзя одновременно
@@ -719,14 +828,33 @@ retrieval/editorial, local video worker и deploy-posts payload не меняю�
 Offline fake-FTP regressions проверяют deletion scope и failure semantics; реальный
 FTP при разработке не используется.
 
-Для Source Pulse v1.1 dependency audit затрагивает fresh Primary wrapper,
+Для Source Pulse v1.2 dependency audit затрагивает fresh Primary wrapper,
 фиксированный source registry, trusted runtime research, Source Freshness Proof,
-первый editorial, сохранённый Pulse snapshot и позднюю Hybrid fusion. Paid
-Primary/agency/Hybrid/Coverage budgets не меняются. Региональные Search gaps
-сохраняются до Pulse, Tier B не получает candidate influence, а normal recovery
-переиспользует snapshot. Controlled experiment и regressions сохранены в
-`audits/experiments/2026-08-27-source-pulse-v11-supplement.md` и
-`tests/test_source_pulse_supplement.py`.
+первый editorial, сохранённый Pulse snapshot и позднюю Hybrid fusion. Source
+Pulse не увеличивает paid budget. Региональные Search gaps сохраняются до Pulse,
+Tier B не получает candidate influence, Tier-A trusted-news остаётся `consider`
+only после deterministic gates, а normal recovery переиспользует snapshot.
+
+Для Hybrid v3 conditional paid extension dependency audit затрагивает stable
+Hybrid entrypoint, preserved v2/v3 layers, `regional_health` из Primary,
+pre-Hybrid rescue/Pulse reuse, merged research handoff, recovery metadata,
+Coverage boundary, README/AGENTS и audit/experiment contracts. Primary остаётся
+12, agency rescue остаётся максимум 1, Coverage остаётся максимум 7, Source Pulse
+остаётся 0 Search. Обычный потолок остаётся 24, conditional double-gap потолок
+равен 25. Дополнительные regional Coverage searches и LLM semantic-event matcher
+в этот change не входят и сохранены только как deferred future options.
+
+Controlled experiment для Hybrid v3 обязан отдельно доказать:
+
+- no-gap path не получает пятый search;
+- single-gap path не получает пятый search;
+- double-gap path выполняет максимум 5 Hybrid searches;
+- lowered baseline не включает paid extension;
+- oversized caller limit не создаёт шестой search;
+- Source Pulse и recovery не создают скрытого дополнительного spend.
 
 Search/retrieval изменения сначала проверяются на assistant-owned resources.
-Production API пользователя не расходуется без явного разрешения.
+Production API пользователя не расходуется без явного разрешения. Для текущего
+изменения отдельное разрешение относится только к одному conditional fifth
+Hybrid search на double-gap path; любые иные новые paid calls требуют нового
+решения владельца.
