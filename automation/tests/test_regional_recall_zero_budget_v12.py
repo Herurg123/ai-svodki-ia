@@ -163,11 +163,14 @@ class RegionalHybridV3Tests(unittest.TestCase):
         self.assertEqual(report["regional_health"]["gaps"], ["russia"])
         self.assertEqual(report["retrieval_health"]["additional_paid_searches"], 0)
 
-    def test_no_regional_gap_preserves_normal_three_call_hybrid(self):
+    def test_no_regional_gap_preserves_legacy_adaptive_fourth_slot(self):
         report, seen = self._run(asia=False, russia=False)
-        self.assertEqual(len(seen), 3)
-        self.assertEqual(report["search_budget"]["completed_calls"], 3)
-        self.assertFalse(report["adaptive_needed"])
+        # Empty Primary fixtures leave ordinary thematic completeness gaps open,
+        # so the pre-existing adaptive fourth Hybrid slot is expected to run.
+        # The new paid extension must not alter or add to that baseline behavior.
+        self.assertEqual(len(seen), 4)
+        self.assertEqual(report["search_budget"]["completed_calls"], 4)
+        self.assertTrue(report["adaptive_needed"])
         self.assertFalse(report["conditional_paid_extension"]["used"])
         self.assertEqual(report["pipeline_search_budget"]["maximum_total"], 24)
 
