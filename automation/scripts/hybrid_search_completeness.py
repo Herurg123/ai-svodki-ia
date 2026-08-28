@@ -80,11 +80,73 @@ def _run_pre_hybrid_agency_rescue(**kwargs: Any) -> dict[str, Any]:
     return _v2.legacy._run_pre_hybrid_agency_rescue(**kwargs)
 
 
+def _annotate_retrieval_health(report: dict[str, Any]) -> dict[str, Any]:
+    regional = report.get("regional_health")
+    if not isinstance(regional, dict) or not regional.get("gaps"):
+        report["retrieval_health"] = {
+            "status": "complete_no_regional_gap",
+            "regional_gaps": [],
+            "unresolved_regional_gaps": [],
+            "volume_completion_independent": True,
+            "coverage_paid_search_trigger_unchanged": True,
+            "additional_paid_searches": 0,
+            "publication_quota": False,
+        }
+        return report
+    gaps = [str(item) for item in regional.get("gaps") or [] if str(item)]
+    checks = regional.get("checks")
+    if not isinstance(checks, dict):
+        checked = bool(regional.get("checked"))
+        candidate_count = int(regional.get("candidate_count", 0) or 0)
+        checks = {
+            gap: {"checked": checked, "candidate_count": candidate_count}
+            for gap in gaps
+        }
+    incomplete = [
+        gap for gap in gaps
+        if not isinstance(checks.get(gap), dict) or checks[gap].get("checked") is not True
+    ]
+    unresolved = [
+        gap for gap in gaps
+        if isinstance(checks.get(gap), dict)
+        and checks[gap].get("checked") is True
+        and int(checks[gap].get("candidate_count", 0) or 0) == 0
+    ]
+    if incomplete:
+        status = "incomplete_regional_health_check"
+    elif unresolved:
+        status = "complete_with_regional_gaps"
+    else:
+        status = "regional_candidate_evidence_found"
+    report["retrieval_health"] = {
+        "status": status,
+        "regional_gaps": gaps,
+        "unresolved_regional_gaps": unresolved,
+        "incomplete_regional_checks": incomplete,
+        "volume_completion_independent": True,
+        "coverage_paid_search_trigger_unchanged": True,
+        "additional_paid_searches": 0,
+        "publication_quota": False,
+        "policy": (
+            "A full-volume digest may still carry unresolved regional retrieval gaps. "
+            "Zero-budget mode records the gap but does not launch extra Coverage searches."
+        ),
+    }
+    return report
+
+
 def run_hybrid_completeness(*args: Any, **kwargs: Any) -> dict[str, Any]:
     _sync_compatibility_hooks()
     if "request_fn" not in kwargs:
         kwargs["request_fn"] = globals().get("run_search_request", _v2.legacy.run_search_request)
-    return _v2.run_hybrid_completeness(*args, **kwargs)
+    report = _v2.run_hybrid_completeness(*args, **kwargs)
+    report = _annotate_retrieval_health(report)
+    artifact_dir = kwargs.get("artifact_dir")
+    if artifact_dir is None and args:
+        artifact_dir = args[0]
+    if artifact_dir is not None:
+        persist_report(artifact_dir, report)
+    return report
 
 
 def persist_report(artifact_dir, report):
