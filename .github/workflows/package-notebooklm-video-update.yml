@@ -13,16 +13,17 @@ jobs:
   package:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out exact branch
+      - name: Check out exact merged main commit
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          ref: ae898290520a7af250b71cbc57ecbf74588728a7
+          fetch-depth: 1
 
       - name: Verify source commit and prepare safe update folder
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "ae898290520a7af250b71cbc57ecbf74588728a7"
+          test "$(git rev-parse HEAD)" = "ae898290520a7af250b71cbc57ecbf74588728a7"
           mkdir -p package
           cp -a automation/notebooklm-video/. package/
           test ! -e package/config.json
