@@ -4,7 +4,7 @@
   "production_integration": true,
   "candidate_influence": false,
   "supplemental_candidate_influence": true,
-  "supplemental_policy": "tier_a_official_pulse_only_consider_after_deterministic_page_and_freshness_gate",
+  "supplemental_policy": "tier_a_official_or_trusted_news_pulse_only_consider_after_deterministic_page_and_freshness_gate",
   "repoll_on_recovery": false,
   "sources": [
     {
@@ -30,7 +30,7 @@
       "adapter": "html_index",
       "url": "https://www.alibabagroup.com/en-US/ir-filings-hkex",
       "allowed_hosts": ["alibabagroup.com"],
-      "include_url_regex": "alibaba|ir|filing|announcement|news",
+      "include_url_regex": "alibaba|ir|filing|announcement|news|document",
       "max_items": 25
     },
     {
@@ -42,9 +42,13 @@
       "organization": "Alibaba Cloud",
       "adapter": "html_index",
       "url": "https://www.alibabacloud.com/blog",
-      "allowed_hosts": ["alibabacloud.com"],
-      "include_url_regex": "blog|news|product",
-      "max_items": 25
+      "fallback_urls": [
+        "https://community.alibabacloud.com/tags/type_blog-tagid_16441/",
+        "https://community.alibabacloud.com/tags/type_blog-tagid_36919"
+      ],
+      "allowed_hosts": ["alibabacloud.com", "community.alibabacloud.com"],
+      "include_url_regex": "blog|news|product|article|qwen|ai",
+      "max_items": 30
     },
     {
       "id": "marvell_current_reports",
@@ -81,9 +85,24 @@
       "organization": "Яндекс",
       "adapter": "html_index",
       "url": "https://ir.yandex.ru/press-releases?year=2026",
+      "fallback_urls": ["https://yandex.ru/company/news"],
       "allowed_hosts": ["ir.yandex.ru", "yandex.ru"],
-      "include_url_regex": "press|release|2026|yandex",
-      "max_items": 25
+      "include_url_regex": "press|release|2026|yandex|company|news",
+      "max_items": 30
+    },
+    {
+      "id": "tass_ai",
+      "tier": "A",
+      "region": "russia",
+      "role": "trusted_news",
+      "publisher": "ТАСС",
+      "organization": "ТАСС",
+      "adapter": "html_index",
+      "url": "https://tass.ru/tag/iskusstvennyi-intellekt",
+      "fallback_urls": ["https://tass.ru/feed"],
+      "allowed_hosts": ["tass.ru"],
+      "include_url_regex": "tass|iskusstven|intellekt|ekonomika|nauka|obschestvo|novosti",
+      "max_items": 30
     },
     {
       "id": "xpeng_ir",
@@ -108,9 +127,10 @@
       "organization": "DeepSeek",
       "adapter": "html_index",
       "url": "https://api-docs.deepseek.com/news/",
+      "fallback_urls": ["https://api-docs.deepseek.com/zh-cn/news/"],
       "allowed_hosts": ["api-docs.deepseek.com"],
       "include_url_regex": "news|deepseek",
-      "max_items": 25
+      "max_items": 30
     },
     {
       "id": "mws_news",

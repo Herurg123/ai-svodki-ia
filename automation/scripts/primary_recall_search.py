@@ -221,11 +221,11 @@ def _supplement_primary_research(
     research_path: Path, report: dict[str, Any], *, publication_date: Any,
     maximum_candidates: Any,
 ) -> tuple[Path, dict[str, Any]]:
-    """Run zero-paid Source Pulse v1.1 before the first editorial call.
+    """Run zero-paid Source Pulse v1.2 before the first editorial call.
 
     The Search-derived ``regional_health`` annotation is intentionally left
     unchanged, so Pulse cannot mask a China/Asia or Russia Search gap and cannot
-    suppress the existing Hybrid regional-health pass.
+    suppress the existing Hybrid regional-health passes.
     """
     if not isinstance(publication_date, str) or not publication_date.strip():
         return research_path, report
@@ -234,7 +234,7 @@ def _supplement_primary_research(
     except (TypeError, ValueError):
         limit = 20
     try:
-        from source_pulse_supplement import compact_supplement_report, run_source_pulse_supplement
+        from source_pulse_supplement_v12 import compact_supplement_report, run_source_pulse_supplement
 
         pulse = run_source_pulse_supplement(
             research_path=research_path,
@@ -255,7 +255,7 @@ def _supplement_primary_research(
     except Exception as exc:
         updated = copy.deepcopy(report)
         updated["source_pulse_supplement"] = {
-            "version": 11,
+            "version": 12,
             "status": "complete_with_gaps",
             "paid_api_calls": 0,
             "web_search_operations": 0,
