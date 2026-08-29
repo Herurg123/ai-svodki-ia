@@ -45,21 +45,36 @@ retrieval обязательно проверь фактическую дату/
 против полного effective window. Материал из healing overlap допустим только как
 важный ранее пропущенный сюжет и всё равно проходит архивный dedupe.
 
-### Event-time contract
+### Event-origin freshness contract
 
-`published_date`, `published_at` и `time_precision` описывают **само событие**:
-момент его наступления либо первого существенного публичного анонса. Они не
-описывают дату более поздней статьи, перепечатки, обзора или corroborating page.
-Свежая вторичная публикация не делает старое событие свежим. Если event-origin
-дату установить нельзя, не подставляй вместо неё дату страницы и не выдумывай
-время. Последующий deterministic Event Freshness Proof проверит возраст события,
-а Source Freshness Proof отдельно проверит возраст цитируемой страницы.
+`published_date`, `published_at` и `time_precision` по-прежнему описывают дату и
+время **цитируемой source/article page** для Source Freshness Proof.
 
-Если доступна только календарная дата события на частичном boundary day exact
-window, это не доказывает попадание по времени. Ищи точный timezone-aware event
-timestamp в уже открытых доказательствах; если его нет, кандидат может быть
-отклонён fail-closed. Это лучше, чем превращать свежую перепечатку в новую
-новость, как человечество почему-то регулярно пытается делать с календарём.
+Отдельно заполняй:
+
+- `event_date` — дата самого события или первого существенного публичного
+  анонса/релиза;
+- `event_at` — точный timezone-aware event timestamp, только если он проверен;
+- `event_time_precision` — `datetime`, `date` или `unknown`;
+- `event_origin_url` — URL, доказывающий origin date события;
+- `event_evidence_kind` — класс доказательства;
+- `event_date_evidence` — короткое объяснение, откуда взята дата события.
+
+Приоритет event-origin evidence: официальный announcement/release/research;
+filing/court docket/release note/changelog; однозначный first-party timestamp;
+авторитетный secondary source только когда primary origin недоступен. Дата
+перепечатки, syndicated copy, tracker/documentation update или search result сама
+по себе не доказывает дату события.
+
+Свежая вторичная публикация не делает старое событие свежим. Если надёжный
+origin показывает событие раньше effective window, используй реальную event date
+и не маскируй её датой статьи. Если origin date установить нельзя или доказательство
+неоднозначно, используй `event_date=null`, `event_at=null`,
+`event_time_precision=unknown`, `event_origin_url=null`,
+`event_evidence_kind=unknown`, `event_date_evidence=""`. Не выдумывай дату и не
+отклоняй candidate только ради заполнения этих полей: deterministic Event
+Freshness Proof сохраняет recall для `unknown`, а Source Freshness Proof отдельно
+fail-closed проверяет дату самой цитируемой страницы.
 
 ### High-signal source routing
 
@@ -157,11 +172,10 @@ Financial Times и авторитетные деловые, технологич
 подтверждение продуктового анонса, но не превращай заявление компании в
 независимую оценку.
 
-Событие и основной источник должны попадать в effective window. Для event-time
-полей используй правила раздела Event-time contract выше. Если для самого
-события подтверждено точное время, сохрани его в `published_at` с часовым поясом
-и `time_precision=datetime`. Если доступна только календарная дата события,
-используй `published_at=null` и `time_precision=date`. Время не выдумывай.
+Событие и основной источник должны независимо пройти freshness checks. Для
+цитируемой страницы сохраняй её фактические `published_date`/`published_at` и
+`time_precision`. Для самого события используй отдельные `event_*` поля из
+Event-origin freshness contract. Не заменяй один timestamp другим.
 
 Для legal-кандидата соблюдай существующий строгий контракт: только масштаб
 `major`, высокая значимость и надёжный судебный, регуляторный или новостной
