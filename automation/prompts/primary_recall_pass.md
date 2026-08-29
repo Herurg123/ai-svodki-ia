@@ -85,14 +85,21 @@ products business infrastructure`, не привязываясь к компан
 
 `major_agencies` остаётся отдельным дополнительным high-signal каналом с API
 filter Reuters/AP/Bloomberg/FT. Для этого прохода фактический query должен быть
-ровно `latest AI chips infrastructure financing earnings business deals policy security`.
+ровно `latest AI models research chips infrastructure financing earnings business deals policy security`.
 Он остаётся коротким, date-free и не кодирует издателя в query text; publisher
-routing задаётся API domain filter. Формулировка намеренно включает business,
-earnings и financing: независимые проверки 13 и 21 августа показали, что прежний
-вариант с `data centers investments` систематически недопокрывал крупные
-AI-business/earnings события и мог возвращать stale agency pool. Это
-дополнительный шанс ranking, а не доказательство отсутствия события вне этих
-издателей и не повод увеличивать базовый 12-search Primary budget.
+routing задаётся API domain filter. P3 сохраняет прежние business/earnings/
+financing semantics, но возвращает `models research`: production-artifact 29
+августа показал, что finance-heavy agency query не включил свежий Tencent Hy4 в
+provider source pool. Это дополнительный шанс ranking, а не доказательство
+отсутствия события вне этих издателей и не повод увеличивать базовый 12-search
+Primary budget.
+
+`china_asia_models` остаётся отдельным model/product/release маршрутом. Для него
+фактический query должен быть ровно `latest China AI models releases Tencent Hunyuan Qwen DeepSeek GLM open source`.
+Guidance по-прежнему шире этой фразы и включает других крупных игроков; короткий
+query использует representative anchors, потому что production-artifact 29
+августа при общей формулировке поднял старый Tencent Hy3, но не включил свежий
+Hy4 в source pool. Это ranking anchor, не whitelist компаний.
 
 `china_asia_integrations` сохраняется как отдельный второй China/Asia pass и не
 сливается с `china_asia_models`. Его роль расширена: помимо integrations,
@@ -100,12 +107,14 @@ partnerships и deployments он обязан искать крупные AI-bus
 earnings, revenue и strategy. Для этого прохода фактический query должен быть
 ровно `latest China Asia AI business earnings revenue strategy cloud partnerships deployments`.
 Это не географическая квота на публикацию: проход лишь даёт значимым азиатским
-событиям независимый путь в candidate pool. `china_asia_models` остаётся
-отдельным model/product/release маршрутом без изменений.
+событиям независимый путь в candidate pool.
 
-`russia` остаётся отдельным обязательным Primary-направлением. Изменения agency
-и China/Asia routing не должны заменять, пропускать или расходовать его search
-operation. Нулевой российский pool допустим, если обязательный проход завершён и
+`russia` остаётся отдельным обязательным Primary-направлением. Для него
+фактический query должен быть ровно `последние новости ИИ Россия Яндекс Сбер VK МТС продукты регулирование авторское право данные обучение моделей`.
+Фраза одновременно сохраняет product/company recall и добавляет policy/training-
+data surface, который production-artifact 29 августа недопокрыл. Это не whitelist:
+другие российские компании, исследовательские команды и госисточники остаются
+допустимы. Нулевой российский pool допустим, если обязательный проход завершён и
 достойных событий действительно нет.
 
 `independent_missing_events` становится source-neutral адаптивным last-mile
@@ -114,10 +123,10 @@ operation. Нулевой российский pool допустим, если �
 оставаться broad и date-free, например `latest major artificial intelligence
 news missing events`.
 
-Остальные девять тематических направлений также остаются широкими. Domain
-filters не являются проектным whitelist: финальный кандидат может использовать
-любой более сильный официальный или авторитетный источник, прошедший обычные
-правила проверки.
+Остальные тематические направления также остаются широкими. Domain filters не
+являются проектным whitelist: финальный кандидат может использовать любой более
+сильный официальный или авторитетный источник, прошедший обычные правила
+проверки.
 
 Для `models_products_agents` отдельно не забывай consumer-AI: крупный запуск
 телефона, устройства, ОС или массового сервиса является релевантным, если ИИ
