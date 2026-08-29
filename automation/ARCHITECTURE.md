@@ -68,11 +68,12 @@ Production работает из GitHub Actions, хранит результат
 - скачивает MP4;
 - создаёт PNG первого кадра;
 - при включённой настройке доставляет media только в FTP-каталог `video`;
-- после успешного локального этапа автоматически выполняет native Dzen browser-upload через тот же защищённый профиль, но в отдельной последовательной browser-сессии.
+- после успешного локального этапа автоматически выполняет native Dzen browser-upload через тот же защищённый профиль, но в отдельной последовательной browser-сессии;
+- после подтверждённого `PUBLISHED` выполняет отдельную post-publication фазу Дзен-подборок: same-day видео назначается в `Видеосводки по ИИ`, а same-day ежедневная сводка — в `Сводки по ИИ`; подтверждение хранится раздельно по обеим целям в локальном `state.json`.
 
 Video runtime не является prerequisite, stage, fallback или recovery-компонентом
-основного production. Ошибка video worker не должна менять статус ежедневной
-ИИ-Сводки и не должна блокировать её публикацию.
+основного production. Ошибка video worker или collections stage не должна менять
+статус ежедневной ИИ-Сводки и не должна блокировать её публикацию.
 
 ### 1.3. RSS boundary и архив Video → RSS
 
@@ -94,7 +95,7 @@ paths.
 
 Для сохранения наработки точные исходники перенесены в
 `automation/archive/video-rss-enrichment-2026-08/`. Этот каталог reference-only:
-он не находится в `.github/workflows/`, `automation/scripts/` или
+он не находится в `.github/workflows/`, `automation/scripts` или
 `automation/tests/`, не импортируется active runtime и не участвует в cron/test
 discovery. Повторное использование требует нового изолированного эксперимента,
 актуальной проверки платформы, architecture review и отдельного PR.
@@ -138,6 +139,7 @@ listing и проверяется отсутствие всех удалённы
 | Controlled experiments | `automation/audits/experiments/` |
 | Retrieval regression contracts | `automation/fixtures/recall/` |
 | Video runtime/deployment | `automation/notebooklm-video/README.md` и `DEPLOYMENT.md` |
+| Dzen collections runtime | `automation/notebooklm-video/dzen-collections.js` и `DZEN_COLLECTIONS_DEBUG_README.txt` |
 | RSS no-video boundary | `automation/tests/test_rss_video_boundary.py` |
 | Retired Video → RSS reference | `automation/archive/video-rss-enrichment-2026-08/` |
 | FTP video retention | `.github/workflows/repository-cleanup.yml` и `automation/scripts/cleanup_video_ftp.py` |
@@ -249,6 +251,12 @@ setup/dependency entrypoints устанавливают зависимости �
 npm-зависимостей должно обновлять lockfile в том же PR и отдельно доказывать
 чистую `npm ci` установку; обычный Video CI от npm registry по-прежнему не зависит.
 
+Collections promotion добавляет два offline contracts: один проверяет
+per-target `ADDED`/`PENDING` persistence, fixed collection targets, already-added
+no-click marker и фильтрацию завершённых целей до browser launch; второй защищает
+ordering `scheduled-worker.js` -> `dzen-collections.js`, outer full-flow lock и
+no-browser skip после `COMPLETE`.
+
 ### 4.4. Enforcement CI boundary
 
 `automation/tests/test_video_ci_boundary.py` проверяет разделение production/video,
@@ -265,6 +273,8 @@ search ceilings и compatibility wrappers.
 `automation/notebooklm-video/tests/video-boundary-smoke.js` проверяет hard FTP
 boundary и ignore rules. `lockfile-contract-smoke.js` проверяет синхронизацию
 `package.json`/`package-lock.json` и локальный `npm ci` contract.
+`dzen-collections-contract-smoke.js` и `full-worker-contract-smoke.js` защищают
+третью Dzen-фазу и её persistent no-repeat semantics.
 
 ### 4.5. Защита `main` и automated writers
 
@@ -661,11 +671,11 @@ commit является источником для FTP sync; deploy не дол
 presence и при необходимости восстанавливает. Dated cleanup не удаляет этот
 файл.
 
-RSS публикует article/image данные основного выпуска. Video assets и их нативная
-публикация являются отдельным downstream и не должны изменять RSS. Любое active
-production изменение, которое снова добавляет local video payload в
-`posts/rss.xml`, считается архитектурным изменением и должно быть заблокировано
-current no-video regression contract.
+RSS публикует article/image данные основного выпуска. Video assets, их нативная
+публикация и post-publication Dzen collections являются отдельным downstream и не
+должны изменять RSS. Любое active production изменение, которое снова добавляет
+local video payload в `posts/rss.xml`, считается архитектурным изменением и должно
+быть заблокировано current no-video regression contract.
 
 FTP-video cleanup не является publish path: он ничего не создаёт и не меняет в
 RSS/content. Это maintenance над уже опубликованными remote media после истечения
@@ -777,6 +787,7 @@ Video worker использует:
 RSS
  -> Windows Task Scheduler
  -> run-worker-hidden.vbs / run-worker.cmd
+ -> full-worker.js
  -> scheduled-worker.js
  -> existing worker.js
  -> Yandex Browser + dedicated profile
@@ -789,17 +800,49 @@ RSS
  -> Dzen duplicate guard
  -> fresh native upload only when missing
  -> one publish click
- -> verification-only confirmation
+ -> verification-only confirmation -> PUBLISHED
+ -> dzen-collections.js
+ -> same-day video -> «Видеосводки по ИИ»
+ -> same-day digest -> «Сводки по ИИ»
+ -> per-target persistent ADDED/PENDING state
 ```
 
 Runtime state, real config, FTP access, logs, media и browser profile не хранятся
-в Git. Локальный `.gitignore` является частью safety contract. Внешний
-`scheduled-worker.lock` не допускает наложения scheduled runs. После успешного
-`worker.js` выбирается самый свежий локальный `DONE` job с датой не позже текущей,
-поэтому delayed/catch-up выпуск предыдущего дня не теряется, а future-dated state
-не принимается. Состояния `PUBLISH_ARMED`, `CLICKED_UNVERIFIED` и
-`BLOCKED_AMBIGUOUS` разрешают только verification: новый upload и второй publish
-click запрещены. Fresh retry допустим лишь при явном `publishClicked=false`.
+в Git. Локальный `.gitignore` является частью safety contract.
+
+`full-worker.lock` является внешним lock всего трёхфазного scheduled flow и не
+допускает, чтобы следующий 10-минутный trigger вошёл в новый browser этап до
+завершения предыдущего. Внутри него существующий `scheduled-worker.lock` остаётся
+защитой первых двух проверенных фаз. После успешного `worker.js` выбирается самый
+свежий локальный `DONE` job с датой не позже текущей, поэтому delayed/catch-up
+выпуск предыдущего дня не теряется, а future-dated state не принимается.
+Состояния `PUBLISH_ARMED`, `CLICKED_UNVERIFIED` и `BLOCKED_AMBIGUOUS` разрешают
+только verification: новый upload и второй publish click запрещены. Fresh retry
+допустим лишь при явном `publishClicked=false`.
+
+Третья фаза допускается только для `dzenAutomation.status=PUBLISHED`. Она
+обрабатывает ровно две потенциальные same-day публикации и не заменяет отсутствующую
+цель любой другой строкой Studio. Ее локальный state:
+
+```text
+job.dzenCollections.video.status  = PENDING | ADDED
+job.dzenCollections.digest.status = PENDING | ADDED
+job.dzenCollections.status        = PENDING | PARTIAL | COMPLETE
+```
+
+`ADDED` записывается только после одного подтверждённого UI click либо после
+подтверждения, что target tile уже находится в muted already-added state.
+Live-тест 29.08.2026 показал точный marker этого состояния: title коллекции имеет
+`rgba(6, 6, 15, 0.6)` даже при формально рабочем hit-test и отсутствии обычных
+`disabled`/ARIA атрибутов. Поэтому title alpha `<= 0.70` является доказательством
+`already-added`, и второй click не выполняется.
+
+Если обе цели `ADDED`, `full-worker.js` завершает третью фазу до запуска
+`dzen-collections.js`, то есть browser для подборок не открывается вообще. Если
+`ADDED` только одна, child также фильтрует завершённую цель до browser bootstrap и
+обрабатывает лишь вторую. Missing/error цель остаётся `PENDING` и может быть
+проверена следующим scheduled trigger. Ошибка логируется, browser закрывается,
+а автоматический второй click после неоднозначного результата запрещён.
 
 Переносимые npm dependencies являются частью versioned runtime contract:
 
@@ -822,9 +865,10 @@ FTP boundary реализован defense-in-depth:
 Ошибка локального video worker не должна инициировать recovery основного
 production, а repository cleanup/hygiene не должны управлять локальным runtime
 state пользователя. Video downstream читает RSS только как источник уже
-опубликованного выпуска, но не пишет video metadata обратно в RSS. FTP retention
-также не читает локальный runtime: он видит только remote listing `video/` и
-удаляет уже опубликованные exact-pattern assets после общего 32-day cutoff.
+опубликованного выпуска, но не пишет video metadata или collection state обратно
+в RSS. FTP retention также не читает локальный runtime: он видит только remote
+listing `video/` и удаляет уже опубликованные exact-pattern assets после общего
+32-day cutoff.
 
 ## 14. Правило изменений архитектуры
 
@@ -851,6 +895,16 @@ Nightly retrieval/editorial, search budgets, recovery, FTP-video retention и
 retrieval/editorial, local video worker и deploy-posts payload не меняются.
 Offline fake-FTP regressions проверяют deletion scope и failure semantics; реальный
 FTP при разработке не используется.
+
+Для post-publication Dzen collections dependency audit ограничен локальным
+NotebookLM-video downstream: `run-worker.cmd`, новый outer `full-worker.js`,
+существующий `scheduled-worker.js`, `browser-session.js`, локальный `state.json`,
+Studio `Публикации` и две фиксированные collection targets. Nightly GitHub
+production, RSS, FTP delivery semantics, retrieval/editorial, paid API budgets и
+защищённый browser profile не меняются. Live evidence получено на целевой Windows
+среде 29.08.2026: обе новые назначения прошли одним кликом, а повторный apply
+подтвердил alpha=0.6 already-added state без второго клика. Offline contracts
+защищают ordering, state persistence и no-browser skip после COMPLETE.
 
 Для Source Pulse v1.2 dependency audit затрагивает fresh Primary wrapper,
 фиксированный source registry, trusted runtime research, Source Freshness Proof,
