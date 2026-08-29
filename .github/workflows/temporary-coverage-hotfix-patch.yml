@@ -1,12 +1,13 @@
 name: Temporary apply Aug 29 Coverage hotfix
 on:
-  push:
+  pull_request:
     branches:
-      - fix/coverage-unverified-exhaustion-2026-08-29
+      - main
 permissions:
   contents: write
 jobs:
   patch:
+    if: github.head_ref == 'fix/coverage-unverified-exhaustion-2026-08-29'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
