@@ -11,13 +11,20 @@ from __future__ import annotations
 
 import argparse
 import copy
+import importlib.util
 import json
+import sys
 from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
-import source_freshness_v1 as _v1
+_V1_PATH = Path(__file__).with_name("source_freshness_v1.py")
+_V1_SPEC = importlib.util.spec_from_file_location("source_freshness_v1", _V1_PATH)
+assert _V1_SPEC and _V1_SPEC.loader
+_v1 = importlib.util.module_from_spec(_V1_SPEC)
+sys.modules[_V1_SPEC.name] = _v1
+_V1_SPEC.loader.exec_module(_v1)
 
 for _name in dir(_v1):
     if not _name.startswith("_"):
