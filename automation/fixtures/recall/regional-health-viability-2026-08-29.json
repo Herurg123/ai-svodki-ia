@@ -1,0 +1,110 @@
+{
+  "source_artifact": {
+    "workflow_run_id": 33231413963,
+    "job_id": 99044815870,
+    "code_sha": "ccacc65ee24a2a1159985c9a26b45bdb08002f6f",
+    "artifact_id": 9708618496,
+    "artifact_sha256": "b44c096424badb504e9e04be83db589f98cd80699ad4125cbedc051f0b6fe4e0"
+  },
+  "search_window": {
+    "start_at": "2026-08-27T04:43:51+03:00",
+    "end_at": "2026-08-29T05:16:40+03:00"
+  },
+  "primary_report": {
+    "directions": [
+      {
+        "direction_id": "china_asia_models",
+        "status": "complete",
+        "accepted_count": 2,
+        "raw_candidates": [
+          {
+            "title": "Z.ai / Zhipu выпустила GLM-5.3-Flash — нативно мультимодальную open-weight модель для coding и агентных задач",
+            "primary_source": {
+              "url": "https://docs.bigmodel.cn/cn/guide/models/vlm/glm-5.3-flash"
+            }
+          },
+          {
+            "title": "Alibaba Cloud добавила Qwen-MT-Image 2.0 — модель перевода изображений с сохранением макета",
+            "primary_source": {
+              "url": "https://www.alibabacloud.com/help/en/model-studio/newly-released-models"
+            }
+          }
+        ]
+      },
+      {
+        "direction_id": "china_asia_integrations",
+        "status": "complete_with_gaps",
+        "accepted_count": 0,
+        "raw_candidates": []
+      },
+      {
+        "direction_id": "russia",
+        "status": "complete_with_gaps",
+        "accepted_count": 0,
+        "raw_candidates": []
+      }
+    ],
+    "final_candidates": [
+      {
+        "title": "Z.ai / Zhipu выпустила GLM-5.3-Flash — нативно мультимодальную open-weight модель для coding и агентных задач",
+        "primary_url": "https://docs.bigmodel.cn/cn/guide/models/vlm/glm-5.3-flash"
+      },
+      {
+        "title": "Alibaba Cloud добавила Qwen-MT-Image 2.0 — модель перевода изображений с сохранением макета",
+        "primary_url": "https://www.alibabacloud.com/help/en/model-studio/newly-released-models"
+      }
+    ]
+  },
+  "current_research": {
+    "regional_health": {
+      "version": 1,
+      "asia": {
+        "directions": ["china_asia_models", "china_asia_integrations"],
+        "primary_completed": true,
+        "accepted_candidates": 2,
+        "health_check_needed": false
+      },
+      "russia": {
+        "directions": ["russia"],
+        "primary_completed": true,
+        "accepted_candidates": 0,
+        "health_check_needed": true
+      },
+      "policy": "zero candidates triggers a completeness health-check, never a publication quota"
+    },
+    "candidates": [
+      {
+        "title": "Z.ai / Zhipu выпустила GLM-5.3-Flash — нативно мультимодальную open-weight модель для coding и агентных задач",
+        "recommendation": "exclude",
+        "event_freshness_status": "stale",
+        "freshness_status": "old_reprint",
+        "primary_source": {
+          "url": "https://docs.bigmodel.cn/cn/guide/models/vlm/glm-5.3-flash"
+        },
+        "supporting_sources": []
+      },
+      {
+        "title": "Alibaba Cloud добавила Qwen-MT-Image 2.0 — модель перевода изображений с сохранением макета",
+        "recommendation": "exclude",
+        "event_freshness_status": "unknown",
+        "freshness_status": "new_event",
+        "verification_status": "unconfirmed",
+        "primary_source": {
+          "url": "https://www.alibabacloud.com/help/en/model-studio/newly-released-models"
+        },
+        "supporting_sources": []
+      }
+    ]
+  },
+  "expected": {
+    "asia_health_check_needed_before": false,
+    "asia_health_check_needed_after": true,
+    "asia_viable_candidates": 0,
+    "russia_health_check_needed_after": true,
+    "effective_gaps_after": ["asia", "russia"],
+    "ordinary_pipeline_maximum": 24,
+    "double_regional_gap_maximum": 25,
+    "new_coverage_directions": 0,
+    "new_search_slots": 0
+  }
+}
