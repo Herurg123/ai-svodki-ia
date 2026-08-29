@@ -4,8 +4,10 @@
 общего проекта ИИ-Сводок. Он не участвует в ночном GitHub Actions production и
 не формирует новости. Его работа начинается после публикации ежедневной
 ИИ-Сводки: найти сегодняшний выпуск в RSS, создать видеоповествование в
-NotebookLM, скачать MP4, создать PNG-превью первого кадра и при включённой
-настройке доставить оба файла в строго ограниченный FTP-каталог `video`.
+NotebookLM, скачать MP4, создать PNG-превью первого кадра, при включённой
+настройке доставить оба файла в строго ограниченный FTP-каталог `video`,
+опубликовать нативное видео в Дзен и затем добавить обе публикации текущего дня в
+свои Дзен-подборки.
 
 Общая граница подпроекта относительно production и CI описана в
 [`../ARCHITECTURE.md`](../ARCHITECTURE.md). Локальные правила изменений находятся
@@ -33,6 +35,7 @@ NotebookLM, скачать MP4, создать PNG-превью первого �
 RSS rybalka.one
   -> Windows Task Scheduler
   -> run-worker-hidden.vbs / run-worker.cmd
+  -> full-worker.js
   -> scheduled-worker.js
   -> worker.js
   -> отдельный Яндекс.Браузер + защищённый профиль
@@ -43,9 +46,13 @@ RSS rybalka.one
   -> FTP: только каталог video
   -> закрыть NotebookLM browser/CDP
   -> Dzen duplicate guard: Публикации -> Видео
-  -> если видео уже есть: DONE
+  -> если видео уже есть: PUBLISHED
   -> иначе один fresh-upload child -> один publish click
-  -> post-click проверка через вкладку Видео
+  -> post-click проверка через вкладку Видео -> PUBLISHED
+  -> dzen-collections.js
+  -> видео дня -> «Видеосводки по ИИ»
+  -> ежедневная сводка -> «Сводки по ИИ»
+  -> сохранить отдельные статусы video/digest
 ```
 
 Ключевые свойства текущей реализации:
@@ -62,15 +69,20 @@ RSS rybalka.one
 - FTP-доставка идемпотентна и не запускает повторную генерацию/скачивание;
 - worker работает на FTP только внутри `video` и не изменяет остальные файлы;
 - обычный лог ротируется за 7 дней, error-log — за 30 дней;
-- принудительное сворачивание Яндекс.Браузера управляется конфигурацией.
+- принудительное сворачивание Яндекс.Браузера управляется конфигурацией;
+- завершённые Dzen-подборки фиксируются в `state.json`, поэтому browser для этого
+  этапа не открывается снова после полного подтверждения.
 
 ## Автоматическая публикация видео в Дзен
 
-`run-worker.cmd` теперь является единым production-entrypoint локального downstream.
-Он запускает `scheduled-worker.js`, а тот последовательно выполняет две фазы:
-сначала существующий `worker.js` (RSS -> NotebookLM -> MP4/PNG -> optional FTP),
-затем Dzen после выбора самого свежего локального `DONE` job с датой не позже текущей.
-Отдельная задача Планировщика Windows для Дзена не нужна.
+`run-worker.cmd` является единым production-entrypoint локального downstream. Он
+запускает внешний `full-worker.js`. Тот держит lock всего scheduled flow и сначала
+вызывает существующий `scheduled-worker.js`, который последовательно выполняет
+две уже проверенные фазы: `worker.js` (RSS -> NotebookLM -> MP4/PNG -> optional
+FTP), затем Dzen publish после выбора самого свежего локального `DONE` job с датой
+не позже текущей. После подтверждённого `PUBLISHED` внешний worker может выполнить
+третью фазу подборок. Отдельные задачи Планировщика Windows для Дзена или подборок
+не нужны.
 
 После успешного `worker.js` выбирается самый свежий `DONE` job с датой не позже
 текущей локальной даты. Поэтому delayed/catch-up выпуск предыдущего дня не
@@ -78,7 +90,7 @@ RSS rybalka.one
 
 Dzen использует тот же защищённый профиль Яндекс.Браузера и тот же CDP-порт, но
 не одновременно с NotebookLM. `worker.js` сначала штатно закрывает свой browser;
-только после выхода child оркестратор запускает новый Dzen browser session.
+только после выхода child оркестратор запускает новую Dzen browser session.
 
 Перед любым upload выполняется live-проверенный duplicate guard:
 
@@ -134,6 +146,67 @@ PUBLISH_ARMED / CLICKED_UNVERIFIED / BLOCKED_AMBIGUOUS
 Подробный browser-upload контракт находится в
 [`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md).
 
+## Автоматическое добавление в Дзен-подборки
+
+После подтверждённого `job.dzenAutomation.status=PUBLISHED` внешний
+`full-worker.js` выполняет отдельную третью фазу `dzen-collections.js`. Она
+работает только с публикациями той же даты, что и выбранный локальный job, и знает
+ровно две цели:
+
+```text
+Видео:
+  ИИ-Сводка на <дата> | Подпишись, чтоб получать свежее!
+  -> Видеосводки по ИИ
+  -> https://dzen.ru/suite/a899d818-52b3-4f87-8e49-4a4bac375244
+
+Ежедневная сводка:
+  ИИ-Сводка на <дата>
+  -> Сводки по ИИ
+  -> https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1
+```
+
+Если в конкретный момент видна только одна или ни одной из двух публикаций,
+никакая чужая публикация не используется как замена. Отсутствующая цель остаётся
+`PENDING` и может быть проверена следующим 10-минутным запуском.
+
+Факт успешного назначения хранится отдельно по каждой цели:
+
+```text
+job.dzenCollections.video.status = ADDED
+job.dzenCollections.digest.status = ADDED
+
+0 ADDED -> dzenCollections.status = PENDING
+1 ADDED -> dzenCollections.status = PARTIAL
+2 ADDED -> dzenCollections.status = COMPLETE
+```
+
+Если обе цели `ADDED`, следующий scheduled run завершает третью фазу **до запуска
+browser child**. Если `ADDED` только одна, `dzen-collections.js` открывает browser
+и обрабатывает только вторую цель. Уже завершённая цель не переоткрывается.
+
+Live-тест 29.08.2026 подтвердил необычный Dzen UI contract для уже добавленной
+подборки: tile остаётся формально hit-testable и не получает нормальный
+`disabled`/ARIA marker, но точное название приглушается до
+`rgba(6, 6, 15, 0.6)`. Поэтому alpha `<= 0.70` считается подтверждённым
+`already-added`, и повторный клик запрещён.
+
+Для новой цели выполняется один физический клик по подтверждённой плашке
+подборки. После клика требуется success-text или переход tile в уже подтверждённое
+muted-состояние. При неоднозначности второй автоматический клик не выполняется:
+этап пишет ошибку, делает screenshot при возможности, закрывает браузер и оставляет
+только эту цель незавершённой.
+
+Ручные команды сохранены под теми же именами, которые использовались во время
+отладки, чтобы локальный каталог не обрастал версиями:
+
+```cmd
+run-dzen-collections-debug.cmd --date=YYYY-MM-DD
+run-dzen-collections-apply.cmd --date=YYYY-MM-DD
+```
+
+Первая команда не кликает по подборке, вторая применяет тот же production
+алгоритм вручную. Канонический исходник — `dzen-collections.js`.
+
 ## Антивирус: обязательное исключение рабочей папки
 
 До первого запуска, восстановления или обновления локального образа необходимо
@@ -162,8 +235,10 @@ Windows-профиль пользователя или `C:\Program Files`. Ис�
 
 В репозитории находятся только переносимые исходники, шаблоны и инструкции:
 
-- `worker.js` и `scheduled-worker.js`;
-- Dzen runtime (`browser-session.js`, duplicate guard, runner и publishers);
+- `worker.js`, `scheduled-worker.js` и внешний `full-worker.js`;
+- Dzen runtime (`browser-session.js`, duplicate guard, runner, publishers и
+  `dzen-collections.js`);
+- совместимый `dzen-collections-debug.js` и две ручные команды подборок;
 - `package.json` с фиксированными верхнеуровневыми версиями зависимостей;
 - `package-lock.json` с зафиксированным полным транзитивным npm-деревом;
 - `config.example.json`;
@@ -187,9 +262,10 @@ Windows-профиль пользователя или `C:\Program Files`. Ис�
 Предпочтительный способ первичной настройки — `setup-local.ps1`. Он создаёт
 рабочую конфигурацию из безопасного шаблона, подставляет выбранный каталог,
 текущий Windows-профиль и локальные пути, копирует `package.json` вместе с
-`package-lock.json`, выполняет `npm ci --no-audit --no-fund` и проверяет
-`worker.js`. Реальный FTP-доступ создаётся только при явном `-ConfigureFtp`; без
-него используется отдельная команда `configure-ftp-access.ps1`.
+`package-lock.json`, выполняет `npm ci --no-audit --no-fund` и проверяет основные
+worker entrypoints. Реальный FTP-доступ создаётся только при явном
+`-ConfigureFtp`; без него используется отдельная команда
+`configure-ftp-access.ps1`.
 
 `npm ci` намеренно удаляет существующий `node_modules` и восстанавливает его
 строго по committed lockfile. Локальный FTP access защищается Windows DPAPI
@@ -209,12 +285,15 @@ Windows-профиль пользователя или `C:\Program Files`. Ис�
 
 ## Проверка в GitHub
 
-На pull request always-on `PR Gate` вызывает Video CI только когда затронут
-video-домен; Main CI для video-only изменений не запускается. Video CI выполняет
-переносимые dependency-free проверки:
+На pull request always-on `PR Gate` вызывает Video CI для video-домена; изменение
+общей `automation/ARCHITECTURE.md` также может потребовать Main CI как
+cross-cutting documentation contract. Video CI выполняет переносимые
+dependency-free проверки:
 
 ```text
 node --check worker.js
+node --check full-worker.js
+node --check dzen-collections.js
 node --check tests/*.js
 npm test
 ```
@@ -229,7 +308,9 @@ production API и не эмулируют Windows DPAPI. Отдельный lock
 ```powershell
 npm ci --no-audit --no-fund
 node --check .\worker.js
+node --check .\full-worker.js
 node --check .\scheduled-worker.js
+node --check .\dzen-collections.js
 npm test
 ```
 
