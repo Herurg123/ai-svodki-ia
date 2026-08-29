@@ -22,17 +22,17 @@ scheduled/manual trigger
   -> previous-release / recovery gate
   -> Primary Recall
   -> Source Pulse v1.2 fixed-source supplemental discovery
-  -> deterministic Source Freshness Proof for trusted Primary + Pulse research
+  -> deterministic Event Freshness + Source Freshness Proof for trusted Primary + Pulse research
   -> first editorial
   -> conditional agency discovery rescue
-  -> Source Freshness Proof for rescue additions
+  -> Event Freshness + Source Freshness Proof for rescue additions
   -> saved Source Pulse snapshot/fusion reuse
   -> Hybrid completeness v3
        -> normal: up to 4 searches
        -> both Russia + China/Asia gaps: up to 5 searches
   -> editorial rerun when rescue/Hybrid adds a candidate
   -> fallback Coverage when required
-  -> Source Freshness Proof for merged trusted research
+  -> Event Freshness + Source Freshness Proof for merged trusted research
   -> final editorial when Coverage adds a candidate
   -> cover
   -> site/RSS/sitemap
@@ -164,11 +164,12 @@ listing и проверяется отсутствие всех удалённы
 - `fixtures/research/.runtime/` является ignored trusted ingress для внутреннего
   fresh research;
 - `scripts/` содержит orchestration, retrieval, recovery, publication, cleanup и
-  validators, включая `source_pulse_supplement_v12.py`, сохранённый
+  validators, включая `event_freshness.py`, `source_freshness.py`, preserved
+  `source_freshness_v1.py`, `source_pulse_supplement_v12.py`, сохранённый
   `source_pulse_shadow.py`, versioned Hybrid v2/v3 implementations и FTP-retention
   `cleanup_video_ftp.py`;
-- `tests/` содержит основной Python offline regression suite, включая no-video RSS
-  boundary и retrieval budget/regional regressions;
+- `tests/` содержит основной Python offline regression suite, включая event/source
+  freshness, no-video RSS boundary и retrieval budget/regional regressions;
 - `notebooklm-video/` является отдельным локальным downstream-подпроектом;
 - `preview/` и `recovery/` являются временными ignored runtime directories.
 
@@ -267,8 +268,8 @@ reusable domain CI, узкий automated-writer secret scope и canonical rulese
 `automation/tests/test_video_ftp_cleanup.py` проверяет strict 32-day cutoff,
 dry-run/apply, orphan semantics, MLSD/NLST listing, pre-delete validation,
 post-delete verification и hard `video` boundary без RSS/local-runtime dependency.
-Retrieval tests отдельно защищают Source Pulse safety, regional Hybrid allocation,
-search ceilings и compatibility wrappers.
+Retrieval tests отдельно защищают Event/Source Freshness, Source Pulse safety,
+regional Hybrid allocation, search ceilings и compatibility wrappers.
 
 `automation/notebooklm-video/tests/video-boundary-smoke.js` проверяет hard FTP
 boundary и ignore rules. `lockfile-contract-smoke.js` проверяет синхронизацию
@@ -406,11 +407,18 @@ Broad catch-all routes остаются source-neutral. China/Asia model и
 integration/business routes не схлопываются; Russia остаётся отдельным mandatory
 slot.
 
+Paid retrieval strict schema хранит page publication time отдельно от
+event-origin evidence. `published_date`/`published_at`/`time_precision` относятся
+к цитируемой странице. Nullable поля `event_date`, `event_at`,
+`event_time_precision`, `event_origin_url`, `event_evidence_kind` и
+`event_date_evidence` относятся к событию. Retrieval не обязан выдумывать origin:
+при неоднозначном доказательстве event fields возвращаются как `unknown`/`null`.
+
 После того как versioned Primary engine вернул trusted runtime research, public
 wrapper запускает Source Pulse v1.2 supplement на том же exact saved window и
-только затем возвращает research в `run_digest_preview.py` для Source Freshness
-Proof и первого editorial. Search-derived `regional_health` при этом намеренно не
-пересчитывается после Pulse promotion.
+только затем возвращает research в `run_digest_preview.py` для Event Freshness +
+Source Freshness Proof и первого editorial. Search-derived `regional_health` при
+этом намеренно не пересчитывается после Pulse promotion.
 
 ### 6.2. Conditional agency discovery rescue
 
@@ -427,7 +435,8 @@ significance и не гарантирует публикацию.
 V4 делает единственный query gap-aware: Search-derived Russia/China-Asia gaps
 могут добавить региональные retrieval hints в ту же одну source-neutral phrase.
 Это не создаёт второго rescue search и не превращает Reuters в региональную
-публикационную квоту.
+публикационную квоту. Rescue использует ту же strict event-origin schema, что и
+Primary, и не получает отдельного freshness search.
 
 State сохраняется до и после paid call. `search_started` автоматически не
 ретраится, потому что consumption единственного search может быть неизвестен.
@@ -481,10 +490,12 @@ XPeng и DeepSeek surfaces; IT之家 остаётся Tier-B lead-only. Alibaba 
 bounded community fallbacks, чтобы HTML/payload drift одного index не означал
 автоматический нулевой discovery.
 
-После supplement штатный trusted-runtime Source Freshness Proof **ещё раз**
-проверяет merged Primary+Pulse research до первого editorial. Следовательно,
-внутренний Pulse parser не является публикационным authority и не обходит
-существующий freshness fail-closed boundary.
+После supplement штатный trusted-runtime Event Freshness + Source Freshness Proof
+**ещё раз** проверяет merged Primary+Pulse research до первого editorial.
+Source Pulse deterministic candidates, которые не имеют отдельного event-origin
+evidence, получают `event_freshness_status=unknown`, сохраняют recall и всё равно
+обязаны пройти existing fail-closed source-page proof. Следовательно, внутренний
+Pulse parser не является публикационным authority и не обходит freshness boundary.
 
 **Поздний shadow/fusion.** Hybrid продолжает вызывать
 `source_pulse_shadow.py`, но normal fresh run находит уже сохранённый
@@ -543,7 +554,8 @@ Lifecycle-dedupe prompt отдельно запрещает склеивать �
 финальному именованному релизу; объявление финансирования не равно закрытию
 сделки; preview не равно публикации весов/production availability. Обычная
 schema/window/archive validation chain сохраняется и остаётся publication
-authority.
+authority. Hybrid strict schema и prompt используют тот же event-origin contract,
+не меняя search query или budget.
 
 Новые candidates проходят обычную validation/dedupe chain. Editorial rerun
 происходит только после реально принятого rescue/Hybrid candidate. Pulse не
@@ -565,6 +577,11 @@ Coverage содержит шесть mandatory directions и максимум с
 неограниченный поиск. Technical partial/error audit fail-closed. Полностью
 завершённый search с пустым publishable pool может завершиться успешным
 `editorial_stop` без искусственного наполнения выпуска.
+
+Coverage normal/resolution candidate schema получает те же nullable event-origin
+fields, что Primary/Hybrid/rescue. Это не создаёт нового search. Надёжный stale
+event будет отсеян deterministic freshness gate до editorial; неизвестный origin
+не становится автоматическим false negative и продолжает к source-page proof.
 
 Retrieval Quality использует свободный седьмой slot для одного source-neutral
 resolution search по high-signal evidence. `unverified` не становится
@@ -610,26 +627,62 @@ Hybrid search не должен становиться обычным default ч
 
 Source Pulse не входит в search-operation budget: collector, parser и
 page/freshness verification используют только обычный HTTPS и не вызывают
-OpenAI/Web Search. Navigation hosted calls не повышают этот search-operation
-ceiling.
+OpenAI/Web Search. Event Freshness Proof также является локальным deterministic
+сравнением уже сохранённых полей и не вызывает OpenAI/Web Search. Navigation
+hosted calls не повышают этот search-operation ceiling.
 
 Отдельный LLM semantic-event matcher для сложного dedupe сейчас не активирован.
 Он остаётся future option после следующих аудитов. Его внедрение требует нового
 architecture review и отдельного разрешения на оплачиваемые model calls.
 
-## 7. Source freshness и editorial
+## 7. Event/source freshness и editorial
 
-Trusted internal research перед публикацией проходит deterministic Source
-Freshness Proof. Для fresh run первый такой gate выполняется после
-Primary+Source-Pulse supplement и до первого editorial. Rescue/Hybrid/Coverage
-merged inputs проходят тот же proof по существующему rerun contract. Verifier
-открывает только уже процитированные candidate URLs, извлекает machine-readable
-publication evidence и сравнивает его с exact saved window. `dateModified` не
-заменяет publication date.
+Trusted internal research перед editorial проходит два независимых freshness
+слоя.
+
+**Event Freshness Proof** не открывает сеть и не вызывает модель. Он использует
+структурированные event-origin fields:
+
+- `event_date`, `event_at`, `event_time_precision`;
+- `event_origin_url`, `event_evidence_kind`, `event_date_evidence`.
+
+Надёжным origin evidence считается официальный announcement/release/research,
+filing/court docket/release note/changelog, однозначный first-party timestamp или
+authoritative secondary evidence, если первичный origin недоступен. Если такой
+origin однозначно находится раньше/после exact saved window, candidate получает
+`event_freshness_status=stale`, rejection code `event_freshness_stale` и
+исключается до editorial и до source fetch.
+
+Если origin отсутствует, неоднозначен, ненадёжен или доступна только календарная
+дата на partial exact boundary day, Event Freshness возвращает `unknown`.
+`unknown` **не отклоняет candidate автоматически**: это recall-preserving
+состояние, а не доказательство свежести. Оно специально не позволяет превратить
+неполные origin metadata в false-negative machine.
+
+**Source Freshness Proof** остаётся отдельным fail-closed слоем. Stable
+`source_freshness.py` v2 использует preserved `source_freshness_v1.py` как
+authority для safe HTTPS fetch, machine-readable publication parsing и exact
+window comparison. `published_date`, `published_at`, `time_precision` относятся
+к цитируемой source/article page. Verifier открывает только уже процитированные
+candidate URLs; `dateModified` не заменяет publication date.
 
 Outside-window source исключается как stale/old reprint. Отсутствие проверяемой
-date evidence блокирует публикацию. Supporting source может стать primary, если
-именно он доказывает freshness.
+source date evidence блокирует публикацию. Supporting source может стать primary,
+если именно он доказывает source freshness. После source proof diagnostics отдельно
+хранят `source_published_date`, `source_published_at`, source evidence и event
+freshness status, поэтому page timestamp больше не используется как доказательство
+возраста события.
+
+Порядок является принципиальным: reliable stale event origin отсекается без
+source fetch; fresh/unknown event origin передаётся в прежний fail-closed source
+gate. Таким образом свежая перепечатка не может омолодить старое доказанное
+событие, а отсутствие event-origin evidence не может само по себе уничтожить
+recall.
+
+Для fresh run первый двухслойный gate выполняется после Primary+Source-Pulse
+supplement и до первого editorial. Rescue/Hybrid/Coverage merged inputs проходят
+тот же contract до соответствующего editorial rerun. P1 не добавляет ни LLM call,
+ни Web Search, ни платный second pass.
 
 Editorial применяется после discovery/validation. Короткий выпуск допустим:
 нельзя вводить искусственные региональные или тематические quotas только ради
@@ -646,10 +699,16 @@ Stable public recovery entrypoint: `recover_digest_artifact.py`.
 same-day artifact и продолжает с первого незавершённого этапа.
 
 Known-bad normalization/validation artifacts не переиспользуются. Modern saved
-Primary повторно проходит current source-health. Conditional agency rescue
-соблюдает собственную at-most-once state machine. Сохранённый Source Pulse
-snapshot считается mutable-source evidence того же artifact и не repoll'ится при
-обычном same-day recovery; later fusion использует сохранённый snapshot.
+Primary повторно проходит current source-health. Legacy saved candidates без
+`event_*` fields считаются `event_freshness_status=unknown`: они не отклоняются
+только из-за отсутствия нового metadata и не заставляют повторять уже оплаченный
+research. Existing source freshness/reuse checks сохраняются.
+
+Conditional agency rescue соблюдает собственную at-most-once state machine.
+Новые rescue rows на recovery проходят текущий Event + Source Freshness Proof;
+report хранит event fresh/unknown/stale counters. Сохранённый Source Pulse snapshot
+считается mutable-source evidence того же artifact и не repoll'ится при обычном
+same-day recovery; later fusion использует сохранённый snapshot.
 
 Hybrid v3 обязан сохранять в report, использовался ли conditional fifth search.
 Recovery не должен трактовать уже выполненный пятый double-gap search как
@@ -746,12 +805,20 @@ experiment, dependency audit и regression proof. Для conditional fifth Hybri
 search controlled experiment и architecture-wide audit датированы 2026-08-28 и
 выполнены на assistant-owned resources без пользовательского production API.
 
+P1 Event Freshness controlled replay за 2026-08-29 сохранён в
+`audits/experiments/2026-08-29-event-freshness-p1.md`, а machine-readable controls
+в `fixtures/recall/event-freshness-2026-08-29.json`. Replay использует saved
+production artifact SHA-256
+`b44c096424badb504e9e04be83db589f98cd80699ad4125cbedc051f0b6fe4e0` и не
+вызывает пользовательский production Search/API.
+
 ## 12. Совместимость и versioned реализации
 
 Некоторые stable public files являются wrappers над сохранёнными versioned
 implementations, например:
 
 - `primary_recall_search.py` над `primary_recall_search_v2.py`;
+- `source_freshness.py` v2 над preserved `source_freshness_v1.py`;
 - `hybrid_search_completeness.py` над preserved Hybrid v2/v3 implementations;
 - `ensure_story_coverage.py` над preserved Coverage implementation;
 - `recover_digest_artifact.py` над preserved recovery implementation.
@@ -763,6 +830,11 @@ implementations, например:
 - saved-artifact recovery compatibility;
 - source-inspection contract tests, которые защищают search/output budgets;
 - возможность semantic overlay без переписывания proven engine в том же change.
+
+P1 следует этому принципу: existing source-page parser/fetch/fail-closed logic
+сохранён в `source_freshness_v1.py`; public v2 добавляет только event-age
+orchestration и diagnostics. Это отделяет новый correctness gate от proven
+network/publication-date parsing и уменьшает regression surface.
 
 Source Pulse v1.2 следует тому же принципу: production semantics добавлены
 versioned supplement wrapper поверх hardened collector/V1.1 logic, а исходный
@@ -907,11 +979,12 @@ production, RSS, FTP delivery semantics, retrieval/editorial, paid API budgets �
 защищают ordering, state persistence и no-browser skip после COMPLETE.
 
 Для Source Pulse v1.2 dependency audit затрагивает fresh Primary wrapper,
-фиксированный source registry, trusted runtime research, Source Freshness Proof,
-первый editorial, сохранённый Pulse snapshot и позднюю Hybrid fusion. Source
-Pulse не увеличивает paid budget. Региональные Search gaps сохраняются до Pulse,
-Tier B не получает candidate influence, Tier-A trusted-news остаётся `consider`
-only после deterministic gates, а normal recovery переиспользует snapshot.
+фиксированный source registry, trusted runtime research, Event/Source Freshness
+Proof, первый editorial, сохранённый Pulse snapshot и позднюю Hybrid fusion.
+Source Pulse не увеличивает paid budget. Региональные Search gaps сохраняются до
+Pulse, Tier B не получает candidate influence, Tier-A trusted-news остаётся
+`consider` only после deterministic gates, а normal recovery переиспользует
+snapshot.
 
 Для Hybrid v3 conditional paid extension dependency audit затрагивает stable
 Hybrid entrypoint, preserved v2/v3 layers, `regional_health` из Primary,
@@ -921,6 +994,16 @@ Coverage boundary, README/AGENTS и audit/experiment contracts. Primary оста
 остаётся 0 Search. Обычный потолок остаётся 24, conditional double-gap потолок
 равен 25. Дополнительные regional Coverage searches и LLM semantic-event matcher
 в этот change не входят и сохранены только как deferred future options.
+
+Для P1 Event Freshness dependency audit затрагивает strict candidate schema и
+prompts Primary/agency/Hybrid/Coverage, Source Pulse handoff, stable
+`source_freshness.py`, preserved v1 source proof, recovery bridge, editorial
+handoff, README/AGENTS и regression fixtures. P1 не меняет search query,
+retrieval routing, candidate cap или paid budget. Reliable stale origin блокируется
+до editorial; unknown origin сохраняет recall и передаётся существующему
+fail-closed source gate; legacy saved artifacts без event fields остаются
+reusable. Controlled replay 2026-08-29 доказывает три stale-event negatives,
+три positive/recall controls, exact boundary и no-paid-call semantics.
 
 Controlled experiment для Hybrid v3 обязан отдельно доказать:
 
