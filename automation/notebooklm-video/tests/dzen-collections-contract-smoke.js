@@ -22,6 +22,15 @@ const complete = { dzenCollections: { video: { status: "ADDED" }, digest: { stat
 assert.strictEqual(collections.collectionsStatus(complete), "COMPLETE");
 assert.strictEqual(collections.collectionsComplete(complete), true);
 
+// Regression for the 2026-08-29 scheduled screenshot: the modal shell was visible
+// with a spinner, so zero collection-title matches before the deadline is WAIT,
+// not an immediate error. Neighboring terminal states remain fail-closed.
+assert.strictEqual(collections.classifyCollectionCardLookup(0, false), "WAIT");
+assert.strictEqual(collections.classifyCollectionCardLookup(1, false), "FOUND");
+assert.strictEqual(collections.classifyCollectionCardLookup(0, true), "TIMEOUT");
+assert.strictEqual(collections.classifyCollectionCardLookup(2, false), "AMBIGUOUS");
+assert.strictEqual(collections.COLLECTION_CARD_TIMEOUT_MS, 15_000);
+
 for (const marker of [
   'alpha <= 0.70',
   'status: "ADDED"',
@@ -29,6 +38,8 @@ for (const marker of [
   'Браузер НЕ открываю',
   'existing-muted-tile',
   'Повторный клик НЕ выполняю',
+  'жду загрузку плашки',
+  'Не дождался загрузки подборки',
 ]) assert(source.includes(marker), `Missing collections marker: ${marker}`);
 
 const pendingIndex = source.indexOf("const pending = TARGETS.filter");
