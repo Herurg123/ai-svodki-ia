@@ -17,11 +17,15 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from event_freshness import (
-    EVENT_FRESHNESS_VERSION,
-    EventFreshnessResult,
-    apply_event_freshness,
-)
+_EVENT_PATH = Path(__file__).with_name("event_freshness.py")
+_EVENT_SPEC = importlib.util.spec_from_file_location("event_freshness", _EVENT_PATH)
+assert _EVENT_SPEC and _EVENT_SPEC.loader
+_event = importlib.util.module_from_spec(_EVENT_SPEC)
+sys.modules[_EVENT_SPEC.name] = _event
+_EVENT_SPEC.loader.exec_module(_event)
+EVENT_FRESHNESS_VERSION = _event.EVENT_FRESHNESS_VERSION
+EventFreshnessResult = _event.EventFreshnessResult
+apply_event_freshness = _event.apply_event_freshness
 
 _V1_PATH = Path(__file__).with_name("source_freshness_v1.py")
 _V1_SPEC = importlib.util.spec_from_file_location("source_freshness_v1", _V1_PATH)
