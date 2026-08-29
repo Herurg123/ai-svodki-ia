@@ -1,0 +1,31 @@
+name: Temporary apply Aug 29 Coverage hotfix
+on:
+  push:
+    branches:
+      - fix/coverage-unverified-exhaustion-2026-08-29
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: fix/coverage-unverified-exhaustion-2026-08-29
+          fetch-depth: 0
+      - name: Apply reviewed patch and focused regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python .hotfix/apply_coverage_aug29.py
+          python -m py_compile automation/scripts/ensure_story_coverage.py automation/tests/test_aug29_coverage_unverified_exhaustion.py
+          python -m unittest automation.tests.test_aug29_coverage_unverified_exhaustion -v
+          rm -rf .hotfix
+          rm .github/workflows/temporary-coverage-hotfix-patch.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git diff --cached --check
+          git diff --cached --stat
+          git commit -m "Fix bounded unverified Coverage resolution recovery"
+          git push origin HEAD:fix/coverage-unverified-exhaustion-2026-08-29
