@@ -22,6 +22,7 @@ New-Item -ItemType Directory -Path $TargetDir -Force | Out-Null
 
 $files = @(
     "worker.js",
+    "full-worker.js",
     "scheduled-worker.js",
     "browser-session.js",
     "dzen-error-log.js",
@@ -30,12 +31,16 @@ $files = @(
     "dzen-publish.js",
     "dzen-publish-live.js",
     "dzen-publish-direct.js",
+    "dzen-collections.js",
+    "dzen-collections-debug.js",
     "package.json",
     "package-lock.json",
     "run-worker.cmd",
     "run-worker-hidden.vbs",
     "run-dzen-publish.cmd",
     "run-dzen-dry-run.cmd",
+    "run-dzen-collections-debug.cmd",
+    "run-dzen-collections-apply.cmd",
     "open-robot-browser.cmd",
     "open-robot-browser.ps1",
     "install-ftp-support.cmd",
@@ -44,6 +49,7 @@ $files = @(
     "DEPLOYMENT.md",
     "DZEN_NATIVE_UPLOAD.md",
     "DZEN_VIDEO_EXPERIMENTS.md",
+    "DZEN_COLLECTIONS_DEBUG_README.txt",
     "НАСТРОЙКИ.txt",
     "config.example.json",
     "ftp-access.example.json"
@@ -88,10 +94,14 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "npm ci завершился ошибкой." }
     node --check worker.js
     if ($LASTEXITCODE -ne 0) { throw "node --check worker.js завершился ошибкой." }
+    node --check full-worker.js
+    if ($LASTEXITCODE -ne 0) { throw "node --check full-worker.js завершился ошибкой." }
     node --check scheduled-worker.js
     if ($LASTEXITCODE -ne 0) { throw "node --check scheduled-worker.js завершился ошибкой." }
     node --check dzen-publish-direct.js
     if ($LASTEXITCODE -ne 0) { throw "node --check dzen-publish-direct.js завершился ошибкой." }
+    node --check dzen-collections.js
+    if ($LASTEXITCODE -ne 0) { throw "node --check dzen-collections.js завершился ошибкой." }
 }
 finally {
     Pop-Location
@@ -106,6 +116,6 @@ else {
 }
 
 Write-Host "Локальная установка подготовлена: $TargetDir"
-Write-Host "run-worker.cmd теперь запускает полный scheduled flow: NotebookLM -> FTP -> Dzen."
+Write-Host "run-worker.cmd запускает полный scheduled flow: NotebookLM -> FTP -> Dzen -> подборки."
 Write-Host "Защищённый профиль Яндекс.Браузера не создаётся и не копируется этим скриптом."
 Write-Host "Настройку Планировщика Windows выполните по DEPLOYMENT.md."
