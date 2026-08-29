@@ -1,360 +1,167 @@
 #!/usr/bin/env python3
-"""Deterministically verify publication freshness from cited source pages.
+"""Stable Source Freshness v2 with independent event-age proof.
 
-This module never calls OpenAI or any paid API. It fetches only source URLs that
-already exist in a trusted runtime research artifact, extracts publication time
-from machine-readable page metadata, compares it with the saved editorial
-window using Python timezone arithmetic, and fails closed for candidates whose
-freshness cannot be independently proved.
+The preserved v1 module owns page parsing, safe HTTPS fetching and publication
+metadata extraction. v2 keeps those mechanics byte-for-byte compatible while
+separating candidate event time from source-page publication time. Candidate
+``published_*`` fields are event occurrence / first material announcement time
+and are never overwritten by source metadata.
 """
 from __future__ import annotations
 
 import argparse
 import copy
-import ipaddress
 import json
-import re
-import time
-import urllib.error
-import urllib.request
 from dataclasses import dataclass
 from datetime import date, datetime
-from email.utils import parsedate_to_datetime
-from html.parser import HTMLParser
 from pathlib import Path
-from typing import Any, Callable
-from urllib.parse import urlsplit
+from typing import Any
 
-SOURCE_FRESHNESS_VERSION = 1
-MAX_RESPONSE_BYTES = 2_000_000
-FETCH_TIMEOUT_SECONDS = 20
-FETCH_ATTEMPTS = 2
-USER_AGENT = "ai-svodki-source-freshness/1.0 (+https://rybalka.one/posts/)"
+import source_freshness_v1 as _v1
 
-_HIGH_META_KEYS = {
-    "article:published_time",
-    "og:published_time",
-    "datepublished",
-    "parsely-pub-date",
-    "dc.date.issued",
-    "sailthru.date",
-}
-_LOW_META_KEYS = {
-    "date",
-    "pubdate",
-    "publishdate",
-    "publication_date",
-    "publicationdate",
-}
-_ARTICLE_TYPES = {
-    "article",
-    "newsarticle",
-    "report",
-    "blogposting",
-    "analysisnewsarticle",
-}
-_DATE_ONLY_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+for _name in dir(_v1):
+    if not _name.startswith("_"):
+        globals()[_name] = getattr(_v1, _name)
 
+# Existing tests and compatibility callers use these private helpers directly.
+_parse_aware = _v1._parse_aware
+_source_rows = _v1._source_rows
+_promote_source = _v1._promote_source
+_safe_public_url = _v1._safe_public_url
+_parse_publication_value = _v1._parse_publication_value
+_collect_jsonld_dates = _v1._collect_jsonld_dates
+_jsonld_types = _v1._jsonld_types
+_stage_name = _v1._stage_name
 
-class SourceFreshnessError(RuntimeError):
-    pass
+SOURCE_FRESHNESS_VERSION = 2
+EVENT_FRESHNESS_VERSION = 1
+USER_AGENT = "ai-svodki-source-freshness/2.0 (+https://rybalka.one/posts/)"
 
 
 @dataclass(frozen=True)
-class PublicationEvidence:
+class EventFreshnessEvidence:
     raw: str
-    published_date: date
-    published_at: datetime | None
+    event_date: date
+    event_at: datetime | None
     time_precision: str
-    locator: str
-    confidence_rank: int
-
-
-class _PublicationMetadataParser(HTMLParser):
-    def __init__(self) -> None:
-        super().__init__(convert_charrefs=True)
-        self.values: list[tuple[int, int, str, str]] = []
-        self._order = 0
-        self._ldjson = False
-        self._ldjson_parts: list[str] = []
-        self.ldjson_blocks: list[str] = []
-
-    def _add(self, rank: int, locator: str, value: Any) -> None:
-        if not isinstance(value, str) or not value.strip():
-            return
-        self._order += 1
-        self.values.append((rank, self._order, locator, value.strip()))
-
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        values = {str(key).casefold(): value for key, value in attrs if key}
-        if tag.casefold() == "meta":
-            key = str(
-                values.get("property")
-                or values.get("name")
-                or values.get("itemprop")
-                or ""
-            ).strip().casefold()
-            content = values.get("content")
-            if key in _HIGH_META_KEYS:
-                self._add(0, f"meta:{key}", content)
-            elif key in _LOW_META_KEYS:
-                self._add(3, f"meta:{key}", content)
-        elif tag.casefold() == "time":
-            raw = values.get("datetime")
-            itemprop = str(values.get("itemprop") or "").casefold()
-            marker = " ".join(
-                str(values.get(key) or "") for key in ("class", "id", "data-testid")
-            ).casefold()
-            if itemprop == "datepublished":
-                self._add(1, "time:itemprop=datePublished", raw)
-            elif "publish" in marker or "article-date" in marker:
-                self._add(2, "time:published-marker", raw)
-        elif tag.casefold() == "script":
-            script_type = str(values.get("type") or "").split(";", 1)[0].strip().casefold()
-            if script_type == "application/ld+json":
-                self._ldjson = True
-                self._ldjson_parts = []
-
-    def handle_data(self, data: str) -> None:
-        if self._ldjson:
-            self._ldjson_parts.append(data)
-
-    def handle_endtag(self, tag: str) -> None:
-        if tag.casefold() == "script" and self._ldjson:
-            self.ldjson_blocks.append("".join(self._ldjson_parts))
-            self._ldjson = False
-            self._ldjson_parts = []
-
-
-def _jsonld_types(value: Any) -> set[str]:
-    if isinstance(value, str):
-        return {value.casefold()}
-    if isinstance(value, list):
-        return {str(item).casefold() for item in value}
-    return set()
-
-
-def _collect_jsonld_dates(value: Any, output: list[tuple[int, int, str, str]], order: list[int], depth: int = 0) -> None:
-    if isinstance(value, dict):
-        published = value.get("datePublished")
-        if isinstance(published, str) and published.strip():
-            types = _jsonld_types(value.get("@type"))
-            article_typed = bool(types & _ARTICLE_TYPES)
-            order[0] += 1
-            output.append(
-                (
-                    1 if article_typed else 2,
-                    order[0],
-                    f"jsonld:datePublished:depth={depth}",
-                    published.strip(),
-                )
-            )
-        for child in value.values():
-            _collect_jsonld_dates(child, output, order, depth + 1)
-    elif isinstance(value, list):
-        for child in value:
-            _collect_jsonld_dates(child, output, order, depth + 1)
-
-
-def _parse_publication_value(raw: str) -> tuple[date, datetime | None, str] | None:
-    value = " ".join(str(raw).strip().split())
-    if not value:
-        return None
-    if _DATE_ONLY_RE.fullmatch(value):
-        try:
-            parsed_date = date.fromisoformat(value)
-        except ValueError:
-            return None
-        return parsed_date, None, "date"
-
-    normalized = value.replace("Z", "+00:00")
-    try:
-        parsed = datetime.fromisoformat(normalized)
-    except ValueError:
-        parsed = None
-    if parsed is not None:
-        if parsed.tzinfo is not None:
-            return parsed.date(), parsed, "datetime"
-        return parsed.date(), None, "date"
-
-    try:
-        parsed_rfc = parsedate_to_datetime(value)
-    except (TypeError, ValueError, OverflowError):
-        parsed_rfc = None
-    if parsed_rfc is not None:
-        if parsed_rfc.tzinfo is not None:
-            return parsed_rfc.date(), parsed_rfc, "datetime"
-        return parsed_rfc.date(), None, "date"
-
-    for pattern in ("%B %d, %Y", "%b %d, %Y", "%Y/%m/%d"):
-        try:
-            parsed_date = datetime.strptime(value, pattern).date()
-        except ValueError:
-            continue
-        return parsed_date, None, "date"
-    return None
-
-
-def extract_publication_evidence(html: str) -> PublicationEvidence | None:
-    parser = _PublicationMetadataParser()
-    try:
-        parser.feed(html)
-        parser.close()
-    except Exception:
-        # Malformed publisher HTML must not turn into a guessed timestamp.
-        pass
-
-    values = list(parser.values)
-    order = [max((item[1] for item in values), default=0)]
-    for block in parser.ldjson_blocks:
-        try:
-            payload = json.loads(block)
-        except (json.JSONDecodeError, TypeError):
-            continue
-        _collect_jsonld_dates(payload, values, order)
-
-    for rank, _order, locator, raw in sorted(values, key=lambda item: (item[0], item[1])):
-        parsed = _parse_publication_value(raw)
-        if parsed is None:
-            continue
-        published_date, published_at, precision = parsed
-        return PublicationEvidence(
-            raw=raw,
-            published_date=published_date,
-            published_at=published_at,
-            time_precision=precision,
-            locator=locator,
-            confidence_rank=rank,
-        )
-    return None
-
-
-def _parse_aware(value: Any, field: str) -> datetime:
-    if not isinstance(value, str) or not value.strip():
-        raise SourceFreshnessError(f"{field} отсутствует")
-    try:
-        parsed = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
-    except ValueError as exc:
-        raise SourceFreshnessError(f"{field} имеет некорректный timestamp") from exc
-    if parsed.tzinfo is None:
-        raise SourceFreshnessError(f"{field} должен содержать timezone")
-    return parsed
 
 
 def evidence_in_window(
     evidence: PublicationEvidence, *, start_at: datetime, end_at: datetime
 ) -> bool:
+    """Source-page proof with fail-closed exact boundary-day semantics."""
     if evidence.published_at is not None:
         return start_at <= evidence.published_at <= end_at
     published = evidence.published_date
     if not (start_at.date() <= published <= end_at.date()):
         return False
-    # Date-only evidence on the exact cutoff day cannot prove the source existed
-    # before the saved cutoff timestamp. This mirrors the recovery safety rule.
-    if published == end_at.date():
+    if published == start_at.date() and start_at.time() != datetime.min.time():
+        return False
+    if published == end_at.date() and end_at.time() != datetime.max.time():
         return False
     return True
 
 
-def _safe_public_url(url: Any) -> str:
-    if not isinstance(url, str) or not url.strip():
-        raise SourceFreshnessError("source URL отсутствует")
-    value = url.strip()
-    parsed = urlsplit(value)
-    if parsed.scheme.casefold() != "https" or not parsed.hostname:
-        raise SourceFreshnessError("source URL должен быть публичным HTTPS URL")
-    host = parsed.hostname.casefold().strip(".")
-    if host == "localhost" or host.endswith(".local"):
-        raise SourceFreshnessError("локальные source URL запрещены")
+def extract_event_freshness_evidence(
+    candidate: dict[str, Any],
+) -> EventFreshnessEvidence | None:
+    """Read the event timestamp from candidate metadata without guessing."""
+    raw_date = candidate.get("published_date")
+    precision = candidate.get("time_precision")
+    raw_at = candidate.get("published_at")
+    if not isinstance(raw_date, str) or not _v1._DATE_ONLY_RE.fullmatch(raw_date):
+        return None
     try:
-        address = ipaddress.ip_address(host)
+        event_date = date.fromisoformat(raw_date)
     except ValueError:
-        address = None
-    if address is not None and not address.is_global:
-        raise SourceFreshnessError("непубличные IP source URL запрещены")
-    return value
+        return None
+    if precision == "date":
+        if raw_at is not None:
+            return None
+        return EventFreshnessEvidence(raw_date, event_date, None, "date")
+    if precision != "datetime" or not isinstance(raw_at, str) or not raw_at.strip():
+        return None
+    try:
+        event_at = datetime.fromisoformat(raw_at.strip().replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if event_at.tzinfo is None or event_at.date() != event_date:
+        return None
+    return EventFreshnessEvidence(raw_at, event_date, event_at, "datetime")
 
 
-FetchResult = tuple[str, str, int]
-Fetcher = Callable[[str], FetchResult]
+def event_evidence_status(
+    evidence: EventFreshnessEvidence, *, start_at: datetime, end_at: datetime
+) -> str:
+    """Return fresh/stale/unknown for an event against the exact saved window."""
+    if evidence.event_at is not None:
+        return "fresh" if start_at <= evidence.event_at <= end_at else "stale"
+    day = evidence.event_date
+    if day < start_at.date() or day > end_at.date():
+        return "stale"
+    if day == start_at.date() and start_at.time() != datetime.min.time():
+        return "unknown"
+    if day == end_at.date() and end_at.time() != datetime.max.time():
+        return "unknown"
+    return "fresh"
 
 
-def fetch_source_html(url: str) -> FetchResult:
-    safe_url = _safe_public_url(url)
-    last_error: Exception | None = None
-    for attempt in range(FETCH_ATTEMPTS):
-        request = urllib.request.Request(
-            safe_url,
-            headers={
-                "User-Agent": USER_AGENT,
-                "Accept": "text/html,application/xhtml+xml;q=0.9,*/*;q=0.1",
-                "Accept-Language": "en-US,en;q=0.8",
-                "Accept-Encoding": "identity",
-                "Cache-Control": "no-cache",
-            },
+def _event_gate(
+    candidate: dict[str, Any], *, start_at: datetime, end_at: datetime,
+    record: dict[str, Any],
+) -> bool:
+    evidence = extract_event_freshness_evidence(candidate)
+    if evidence is None:
+        candidate["recommendation"] = "exclude"
+        candidate["verification_status"] = "unconfirmed"
+        candidate["freshness_reason"] = (
+            f"Event Freshness Proof v{EVENT_FRESHNESS_VERSION}: event timestamp "
+            "отсутствует или внутренне противоречив; публикация fail-closed."
         )
-        try:
-            with urllib.request.urlopen(request, timeout=FETCH_TIMEOUT_SECONDS) as response:
-                status = int(getattr(response, "status", 200) or 200)
-                final_url = _safe_public_url(response.geturl())
-                raw = response.read(MAX_RESPONSE_BYTES + 1)
-                if len(raw) > MAX_RESPONSE_BYTES:
-                    raw = raw[:MAX_RESPONSE_BYTES]
-                charset = response.headers.get_content_charset() or "utf-8"
-                return raw.decode(charset, errors="replace"), final_url, status
-        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, OSError, SourceFreshnessError) as exc:
-            last_error = exc
-            if attempt + 1 < FETCH_ATTEMPTS:
-                time.sleep(0.25)
-    raise SourceFreshnessError(
-        f"source fetch failed: {type(last_error).__name__}: {last_error}"
+        record["status"] = "excluded_unverified_event_freshness"
+        record["event_freshness_status"] = "unknown"
+        return False
+
+    status = event_evidence_status(evidence, start_at=start_at, end_at=end_at)
+    record.update(
+        {
+            "event_freshness_status": status,
+            "event_date": evidence.event_date.isoformat(),
+            "event_at": (
+                evidence.event_at.isoformat()
+                if evidence.event_at is not None
+                else None
+            ),
+            "event_time_precision": evidence.time_precision,
+        }
     )
+    if status == "fresh":
+        return True
 
-
-def _source_rows(candidate: dict[str, Any]) -> list[dict[str, Any]]:
-    rows: list[dict[str, Any]] = []
-    seen: set[str] = set()
-    for raw in [candidate.get("primary_source"), *(candidate.get("supporting_sources") or [])]:
-        if not isinstance(raw, dict):
-            continue
-        url = str(raw.get("url") or "").strip()
-        if not url or url in seen:
-            continue
-        seen.add(url)
-        rows.append(copy.deepcopy(raw))
-    return rows
-
-
-def _apply_evidence(candidate: dict[str, Any], evidence: PublicationEvidence) -> None:
-    candidate["published_date"] = evidence.published_date.isoformat()
-    candidate["published_at"] = (
-        evidence.published_at.isoformat() if evidence.published_at is not None else None
-    )
-    candidate["time_precision"] = evidence.time_precision
-
-
-def _promote_source(candidate: dict[str, Any], source: dict[str, Any]) -> None:
-    current = candidate.get("primary_source")
-    source_url = str(source.get("url") or "")
-    current_url = str(current.get("url") or "") if isinstance(current, dict) else ""
-    if source_url == current_url:
-        return
-    supporting: list[dict[str, Any]] = []
-    if isinstance(current, dict) and current_url and current_url != source_url:
-        supporting.append(copy.deepcopy(current))
-    for raw in candidate.get("supporting_sources") or []:
-        if not isinstance(raw, dict):
-            continue
-        url = str(raw.get("url") or "")
-        if url and url != source_url and url not in {str(item.get("url") or "") for item in supporting}:
-            supporting.append(copy.deepcopy(raw))
-    candidate["primary_source"] = copy.deepcopy(source)
-    candidate["supporting_sources"] = supporting[:2]
+    candidate["recommendation"] = "exclude"
+    if status == "stale":
+        candidate["freshness_status"] = "old_reprint"
+        candidate["freshness_reason"] = (
+            f"Event Freshness Proof v{EVENT_FRESHNESS_VERSION}: candidate event "
+            f"timestamp {evidence.raw} находится вне effective window."
+        )
+        record["status"] = "excluded_event_outside_window"
+    else:
+        candidate["verification_status"] = "unconfirmed"
+        candidate["freshness_reason"] = (
+            f"Event Freshness Proof v{EVENT_FRESHNESS_VERSION}: date-only event "
+            f"{evidence.raw} лежит на частичном boundary day exact window; "
+            "точное попадание не доказано, публикация fail-closed."
+        )
+        record["status"] = "excluded_unverified_event_freshness"
+    return False
 
 
 def verify_candidate(
-    candidate: dict[str, Any], *, start_at: datetime, end_at: datetime, fetcher: Fetcher
+    candidate: dict[str, Any], *, start_at: datetime, end_at: datetime,
+    fetcher: Fetcher,
 ) -> dict[str, Any]:
+    """Require event-age proof first, then preserved v1 source-page proof."""
     title = str(candidate.get("title") or "Кандидат без заголовка")
     original_recommendation = str(candidate.get("recommendation") or "")
     record: dict[str, Any] = {
@@ -367,11 +174,12 @@ def verify_candidate(
     if original_recommendation not in {"include", "consider"}:
         record["reason"] = "candidate_not_eligible_before_freshness_gate"
         return record
+    if not _event_gate(candidate, start_at=start_at, end_at=end_at, record=record):
+        return record
 
-    source_rows = _source_rows(candidate)
     fresh_matches: list[tuple[dict[str, Any], PublicationEvidence, str]] = []
     dated_matches: list[tuple[dict[str, Any], PublicationEvidence, str]] = []
-    for source in source_rows:
+    for source in _source_rows(candidate):
         source_url = str(source.get("url") or "")
         source_record: dict[str, Any] = {
             "publisher": source.get("publisher"),
@@ -414,38 +222,63 @@ def verify_candidate(
     if fresh_matches:
         source, evidence, _final_url = fresh_matches[0]
         _promote_source(candidate, source)
-        _apply_evidence(candidate, evidence)
-        proof = (
+        event_value = candidate.get("published_at") or candidate.get("published_date")
+        event_proof = (
+            f"Event Freshness Proof v{EVENT_FRESHNESS_VERSION}: candidate event "
+            f"timestamp {event_value} проверен отдельно и не был заменён "
+            "source-page timestamp."
+        )
+        source_proof = (
             f"Source Freshness Proof v{SOURCE_FRESHNESS_VERSION}: "
-            f"{evidence.locator}={evidence.raw}; timestamp проверен Python против effective window."
+            f"{evidence.locator}={evidence.raw}; source timestamp проверен Python "
+            "против effective window."
         )
         previous = str(candidate.get("freshness_reason") or "").strip()
-        candidate["freshness_reason"] = f"{proof} {previous}".strip()
-        record["status"] = "verified_fresh"
-        record["selected_source_url"] = str(source.get("url") or "")
-        record["published_date"] = candidate.get("published_date")
-        record["published_at"] = candidate.get("published_at")
+        candidate["freshness_reason"] = (
+            f"{event_proof} {source_proof} {previous}".strip()
+        )
+        record.update(
+            {
+                "status": "verified_fresh",
+                "selected_source_url": str(source.get("url") or ""),
+                "source_published_date": evidence.published_date.isoformat(),
+                "source_published_at": (
+                    evidence.published_at.isoformat()
+                    if evidence.published_at is not None
+                    else None
+                ),
+            }
+        )
         return record
 
     candidate["recommendation"] = "exclude"
     if dated_matches:
         source, evidence, _final_url = dated_matches[0]
-        _apply_evidence(candidate, evidence)
         candidate["freshness_status"] = "old_reprint"
         candidate["freshness_reason"] = (
             f"Source Freshness Proof v{SOURCE_FRESHNESS_VERSION}: подтверждённая "
-            f"дата основного/цитируемого источника {evidence.raw} находится вне effective window."
+            f"дата основного/цитируемого источника {evidence.raw} находится вне "
+            "effective window. Event timestamp сохранён и не перезаписан."
         )
-        record["status"] = "excluded_outside_window"
-        record["selected_source_url"] = str(source.get("url") or "")
-        record["published_date"] = candidate.get("published_date")
-        record["published_at"] = candidate.get("published_at")
+        record.update(
+            {
+                "status": "excluded_outside_window",
+                "selected_source_url": str(source.get("url") or ""),
+                "source_published_date": evidence.published_date.isoformat(),
+                "source_published_at": (
+                    evidence.published_at.isoformat()
+                    if evidence.published_at is not None
+                    else None
+                ),
+            }
+        )
         return record
 
     candidate["verification_status"] = "unconfirmed"
     candidate["freshness_reason"] = (
-        f"Source Freshness Proof v{SOURCE_FRESHNESS_VERSION}: ни один уже цитируемый "
-        "source URL не отдал независимо проверяемую дату публикации; публикация fail-closed."
+        f"Source Freshness Proof v{SOURCE_FRESHNESS_VERSION}: ни один уже "
+        "цитируемый source URL не отдал независимо проверяемую дату публикации; "
+        "публикация fail-closed."
     )
     record["status"] = "excluded_unverified_freshness"
     return record
@@ -485,45 +318,52 @@ def verify_research_payload(
     )
     summary = {
         "version": SOURCE_FRESHNESS_VERSION,
+        "event_freshness_version": EVENT_FRESHNESS_VERSION,
         "status": "complete",
         "search_window": copy.deepcopy(window),
-        "candidate_count": len([item for item in result["candidates"] if isinstance(item, dict)]),
+        "candidate_count": len(
+            [item for item in result["candidates"] if isinstance(item, dict)]
+        ),
         "eligible_before": eligible_before,
         "eligible_after": eligible_after,
-        "verified_fresh": sum(item.get("status") == "verified_fresh" for item in records),
-        "excluded_outside_window": sum(item.get("status") == "excluded_outside_window" for item in records),
-        "excluded_unverified_freshness": sum(item.get("status") == "excluded_unverified_freshness" for item in records),
+        "verified_fresh": sum(
+            item.get("status") == "verified_fresh" for item in records
+        ),
+        "excluded_event_outside_window": sum(
+            item.get("status") == "excluded_event_outside_window"
+            for item in records
+        ),
+        "excluded_unverified_event_freshness": sum(
+            item.get("status") == "excluded_unverified_event_freshness"
+            for item in records
+        ),
+        "excluded_outside_window": sum(
+            item.get("status") == "excluded_outside_window" for item in records
+        ),
+        "excluded_unverified_freshness": sum(
+            item.get("status") == "excluded_unverified_freshness"
+            for item in records
+        ),
         "paid_api_calls": 0,
         "candidates": records,
     }
     return result, summary
 
 
-def _stage_name(path: Path) -> str:
-    name = path.name
-    if name.startswith("primary-recall-research-"):
-        return "primary"
-    if "hybrid" in name:
-        return "hybrid"
-    if name.startswith(".coverage-audit-"):
-        return "coverage"
-    return "trusted_runtime"
-
-
 def verify_research_file(
-    research_path: Path,
-    *,
-    publication_date: str,
-    report_path: Path,
+    research_path: Path, *, publication_date: str, report_path: Path,
     fetcher: Fetcher = fetch_source_html,
 ) -> dict[str, Any]:
     try:
         research = json.loads(research_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
-        raise SourceFreshnessError(f"не удалось прочитать research artifact: {exc}") from exc
+        raise SourceFreshnessError(
+            f"не удалось прочитать research artifact: {exc}"
+        ) from exc
     verified, run = verify_research_payload(research, fetcher=fetcher)
     research_path.write_text(
-        json.dumps(verified, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        json.dumps(verified, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
     )
 
     report: dict[str, Any] = {
@@ -548,16 +388,18 @@ def verify_research_file(
     run["stage"] = _stage_name(research_path)
     run["research_path"] = str(research_path)
     report["runs"].append(run)
-    report["paid_api_calls"] = 0
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(
-        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
     )
     return run
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Verify source publication freshness without paid APIs")
+    parser = argparse.ArgumentParser(
+        description="Verify event and source publication freshness without paid APIs"
+    )
     parser.add_argument("--research", type=Path, required=True)
     parser.add_argument("--publication-date", required=True)
     parser.add_argument("--report", type=Path, required=True)
@@ -569,7 +411,9 @@ def main() -> int:
             report_path=args.report,
         )
     except Exception as exc:
-        print(f"Source freshness verification failed: {type(exc).__name__}: {exc}")
+        print(
+            f"Source freshness verification failed: {type(exc).__name__}: {exc}"
+        )
         return 1
     print(json.dumps(run, ensure_ascii=False, indent=2))
     return 0
