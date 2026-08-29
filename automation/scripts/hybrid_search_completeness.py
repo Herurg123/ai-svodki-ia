@@ -7,12 +7,17 @@ Russia *and* China/Asia gaps are both open may v3 spend one additional fifth
 Hybrid search, preserving all three broad passes plus two dedicated regional
 health checks.  The pre-Hybrid agency rescue remains capped at one operation and
 Source Pulse remains zero-OpenAI/zero-Web-Search.
+
+P3 changes only routing semantics inside already-existing slots: regional health
+queries carry representative company/policy anchors and the pre-Hybrid Reuters
+rescue uses v5's global publisher route. Trigger semantics and the 24/25 whole-
+pipeline ceilings are unchanged.
 """
 from __future__ import annotations
 
 from typing import Any
 
-import agency_discovery_rescue_v4 as _agency_v4
+import agency_discovery_rescue_v5 as _agency_v5
 import hybrid_search_completeness_v3 as _v3
 from event_freshness_contract import (
     append_event_freshness_prompt,
@@ -31,7 +36,7 @@ apply_candidate_schema_contract(legacy.AUDIT_CANDIDATE_SCHEMA)
 REPOSITORY_ROOT = legacy.REPOSITORY_ROOT
 PRODUCTION_PREVIEW_ROOT = legacy.PRODUCTION_PREVIEW_ROOT
 RUNTIME_RESEARCH_ROOT = legacy.RUNTIME_RESEARCH_ROOT
-run_agency_discovery_rescue = _agency_v4.run_agency_discovery_rescue
+run_agency_discovery_rescue = _agency_v5.run_agency_discovery_rescue
 run_source_pulse_shadow = legacy.run_source_pulse_shadow
 refresh_post_hybrid_fusion = legacy.refresh_post_hybrid_fusion
 run_search_request = legacy.run_search_request
@@ -44,13 +49,31 @@ PIPELINE_DOUBLE_GAP_MAXIMUM_SEARCH_OPERATIONS = 25
 HYBRID_COMPLETENESS_VERSION = 3
 REGIONAL_HEALTH_VERSION = 3
 
+REGIONAL_QUERIES = {
+    "asia": (
+        "latest China AI models releases Tencent Hunyuan Qwen DeepSeek GLM "
+        "Huawei products research"
+    ),
+    "russia": (
+        "последние новости ИИ Россия Яндекс Сбер VK МТС продукты регулирование "
+        "авторское право данные обучение моделей"
+    ),
+}
+
 
 def __getattr__(name: str) -> Any:
     return getattr(_v3, name)
 
 
+def _sync_regional_queries() -> None:
+    """Apply P3 query text without rewriting preserved v2/v3 source modules."""
+    _v2.REGIONAL_QUERIES = REGIONAL_QUERIES
+    _v3.REGIONAL_QUERIES = REGIONAL_QUERIES
+
+
 def _sync_compatibility_hooks() -> None:
     """Mirror public monkeypatch/recovery hooks through all preserved layers."""
+    _sync_regional_queries()
     for name in (
         "REPOSITORY_ROOT",
         "PRODUCTION_PREVIEW_ROOT",
@@ -84,6 +107,7 @@ def regional_health_query(gaps: tuple[str, ...]) -> str:
     combined Russia/China-Asia query.  Keep that stable surface rather than making a
     helper API break masquerade as retrieval architecture.
     """
+    _sync_regional_queries()
     if len(gaps) == 1:
         return _v2.regional_health_query(gaps)
     return legacy.regional_health_query(gaps)
