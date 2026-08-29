@@ -7,6 +7,10 @@ from pathlib import Path
 from typing import Any, Callable
 
 import agency_discovery_rescue as v3
+from event_freshness_contract import (
+    append_event_freshness_prompt,
+    apply_candidate_schema_contract,
+)
 from story_coverage import read_json, write_json
 
 AGENCY_DISCOVERY_RESCUE_VERSION = 4
@@ -16,6 +20,9 @@ AGENCY_DISCOVERY_ALLOWED_DOMAINS = v3.AGENCY_DISCOVERY_ALLOWED_DOMAINS
 AGENCY_DISCOVERY_SEARCH_CONTEXT_SIZE = v3.AGENCY_DISCOVERY_SEARCH_CONTEXT_SIZE
 MAXIMUM_SEARCH_OPERATIONS = 1
 PIPELINE_MAXIMUM_SEARCH_OPERATIONS = v3.PIPELINE_MAXIMUM_SEARCH_OPERATIONS
+PRODUCTION_PREVIEW_ROOT = v3.PRODUCTION_PREVIEW_ROOT
+
+apply_candidate_schema_contract(v3.AUDIT_CANDIDATE_SCHEMA)
 
 _BASE_QUERY = v3.AGENCY_DISCOVERY_RESCUE_QUERY
 _GAP_QUERIES = {
@@ -65,6 +72,19 @@ def _persist_v4(
     write_json(output_root / f"agency-discovery-rescue-{publication_date}.json", report)
 
 
+def _persist_report(
+    report: dict[str, Any], *, artifact_dir: Path, output_root: Path,
+    publication_date: str
+) -> None:
+    """Compatibility surface used by same-day recovery."""
+    _persist_v4(
+        report,
+        artifact_dir=artifact_dir,
+        output_root=output_root,
+        publication_date=publication_date,
+    )
+
+
 def run_agency_discovery_rescue(
     *, artifact_dir: Path, archive_path: Path, publication_date: str,
     api_key: str, model: str, maximum_candidates: int = 20,
@@ -74,7 +94,13 @@ def run_agency_discovery_rescue(
     primary = _primary_report(artifact_dir, output_root, publication_date)
     query, gaps = gap_aware_query(primary)
     previous_query = v3.AGENCY_DISCOVERY_RESCUE_QUERY
+    previous_build_prompt = v3.build_prompt
+
+    def build_prompt_with_event_contract(**kwargs: Any) -> str:
+        return append_event_freshness_prompt(previous_build_prompt(**kwargs))
+
     v3.AGENCY_DISCOVERY_RESCUE_QUERY = query
+    v3.build_prompt = build_prompt_with_event_contract
     try:
         kwargs: dict[str, Any] = {
             "artifact_dir": artifact_dir,
@@ -90,6 +116,7 @@ def run_agency_discovery_rescue(
         report = v3.run_agency_discovery_rescue(**kwargs)
     finally:
         v3.AGENCY_DISCOVERY_RESCUE_QUERY = previous_query
+        v3.build_prompt = previous_build_prompt
 
     result = copy.deepcopy(report)
     result["version"] = AGENCY_DISCOVERY_RESCUE_VERSION
