@@ -51,13 +51,21 @@ def _source_urls(candidate: Any) -> frozenset[str]:
 
 
 def _same_candidate(left: Any, right: Any) -> bool:
-    left_title = _title_key(left)
-    right_title = _title_key(right)
-    if left_title and left_title == right_title:
-        return True
+    """Match exact provenance conservatively.
+
+    When both rows expose source URLs, URL overlap is authoritative. A same-title
+    row on a different source is not enough, because a Pulse-only/later candidate
+    must not impersonate the Primary candidate whose survival is being assessed.
+    Title equality is only the compatibility fallback when at least one side lacks
+    source identity.
+    """
     left_urls = _source_urls(left)
     right_urls = _source_urls(right)
-    return bool(left_urls and right_urls and left_urls.intersection(right_urls))
+    if left_urls and right_urls:
+        return bool(left_urls.intersection(right_urls))
+    left_title = _title_key(left)
+    right_title = _title_key(right)
+    return bool(left_title and left_title == right_title)
 
 
 def candidate_viable(candidate: Any) -> bool:
