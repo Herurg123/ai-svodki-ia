@@ -79,7 +79,9 @@ provenance rather than geographic keyword heuristics:
    direction `accepted_count` cannot hide a candidate dropped by the Primary
    final cap;
 3. match those exact final Primary regional candidates against current
-   `candidates.json` by normalized title or shared source URL;
+   `candidates.json`; when both rows expose source URLs, shared source URL is
+   authoritative, while normalized-title equality is only a compatibility
+   fallback when source identity is absent on at least one side;
 4. count a current row as viable only when its recommendation remains
    `include|consider` and it is not explicitly event-stale / `old_reprint`;
 5. if all exact Primary regional candidates are deterministically matched and none
@@ -87,6 +89,10 @@ provenance rather than geographic keyword heuristics:
 6. if provenance/identity is incomplete, preserve the prior state instead of
    spending an extra search on uncertainty;
 7. if a Primary Search gap was already open, never close it.
+
+The source-first identity rule is deliberate. A Pulse-only or later copy with the
+same title but a different URL cannot impersonate the Primary candidate and keep
+a weak Search route marked healthy.
 
 The stable `hybrid_search_completeness.py` runs this refresh immediately before
 calling preserved Hybrid v3. It persists only the updated regional-health
@@ -101,6 +107,7 @@ Regression scenarios:
 | --- | --- |
 | Asia early healthy; GLM stale; Qwen excluded | Asia re-opens |
 | One exact Asia Primary candidate remains `consider` | Asia stays healthy |
+| Same title but different source URL appears later | cannot impersonate Primary; prior state is preserved if identity is incomplete |
 | Russia already Search-gap; later unrelated/Pulse Russia candidate exists | Russia stays gap |
 | Primary/current identity cannot be proven | prior healthy state preserved |
 | regional candidate accepted by a pass but absent from Primary final cap | region re-opens |
@@ -151,8 +158,9 @@ Source Freshness remain authoritative.
 An already-open Search-derived gap is immutable in P4. A Pulse-only or unrelated
 later candidate cannot close it. For an early-healthy region, only the exact
 Primary regional candidates used for provenance can keep the region healthy.
-This preserves the two-plane architecture and prevents Pulse from masking a weak
-Primary route.
+When source URLs exist, a later same-title copy on a different URL is not treated
+as that Primary candidate. This preserves the two-plane architecture and prevents
+Pulse from masking a weak Primary route.
 
 ### P2 Yandex interaction
 
