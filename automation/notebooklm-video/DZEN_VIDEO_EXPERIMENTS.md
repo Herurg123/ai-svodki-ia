@@ -453,16 +453,68 @@ confirmedBy = "post-click-verification"
 операторским экспериментом; он является штатной второй фазой локального
 scheduled downstream при включённом automatic mode.
 
+## Эксперимент 13: same-day Дзен-подборки и повторный no-click
+
+Дата подтверждения: **29 августа 2026**. Контрольный выпуск: **2026-08-29**.
+
+После подтверждения нативного видео была проверена отдельная post-publication
+операция `Публикации -> … -> Добавить в подборку` для двух same-day целей:
+
+- видео `ИИ-Сводка на 29 августа 2026 | Подпишись, чтоб получать свежее!`
+  -> `Видеосводки по ИИ`
+  (`https://dzen.ru/suite/a899d818-52b3-4f87-8e49-4a4bac375244`);
+- ежедневная публикация `ИИ-Сводка на 29 августа 2026`
+  -> `Сводки по ИИ`
+  (`https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1`).
+
+Первый apply после отладки корректно нашёл обе строки текущего дня, открыл
+collection modal и сделал по одному физическому клику по нужной плашке. Оба
+действия получили UI `success-text` и фактически появились в своих подборках.
+
+Затем был выполнен повторный apply по уже завершённым назначениям. Дзен не даёт
+нормальный `disabled`/ARIA marker: tile остаётся формально hit-testable. Реальный
+признак already-added оказался в computed style точного title:
+
+```text
+color = rgba(6, 6, 15, 0.6)
+alpha = 0.6
+```
+
+После добавления проверки alpha `<= 0.70` повторный live-run зафиксировал для
+обеих целей:
+
+```text
+already-selected=true
+visual-muted=true
+title-alpha=0.6
+result: already-added
+```
+
+и **не выполнил повторный click**.
+
+**Результат:** same-day collections flow и idempotency подтверждены на целевой
+Windows/Dzen среде. Для production promotion факт назначения хранится отдельно
+для `video` и `digest` в `job.dzenCollections`. `ADDED`-цель больше не должна
+обрабатываться, а после двух `ADDED` aggregate `COMPLETE` должен останавливать
+третью фазу до открытия browser. При одной завершённой цели следующий run
+проверяет только вторую.
+
 ## Текущий операторский контракт
 
-- основной штатный путь: `run-worker.cmd` -> `scheduled-worker.js` -> `worker.js`
-  -> Dzen duplicate guard -> optional fresh upload -> verification;
+- основной штатный путь: `run-worker.cmd` -> `full-worker.js` ->
+  `scheduled-worker.js` -> `worker.js` -> Dzen duplicate guard -> optional fresh
+  upload -> verification -> `dzen-collections.js`;
+- `full-worker.lock` покрывает весь трёхфазный scheduled flow; внутренний
+  `scheduled-worker.lock` остаётся защитой NotebookLM/FTP + Dzen publish;
 - `run-worker-hidden.vbs` и Windows Task Scheduler используют тот же единый
-  entrypoint, отдельная scheduled task для Dzen не нужна;
+  entrypoint, отдельные scheduled tasks для Dzen и подборок не нужны;
 - `run-dzen-publish.cmd --date=YYYY-MM-DD` остаётся manual fallback и
   диагностическим live-entrypoint, а не штатным расписанием;
 - `run-dzen-dry-run.cmd --date=YYYY-MM-DD` остаётся диагностическим dry-run без
   финального клика;
+- `run-dzen-collections-debug.cmd --date=YYYY-MM-DD` выполняет ручную диагностику
+  подборок без apply, `run-dzen-collections-apply.cmd` применяет тот же production
+  алгоритм вручную;
 - перед новым upload всегда выполняется duplicate guard через реальный radio
   `input[type="radio"][aria-label="Видео"]` и видимый title prefix;
 - fresh-upload не возобновляет старый `videoEditorPublicationId`, metadata и cover
@@ -470,6 +522,12 @@ scheduled downstream при включённом automatic mode.
 - после `PUBLISH_ARMED`, `CLICKED_UNVERIFIED` или `BLOCKED_AMBIGUOUS` разрешена
   только verification, второй upload/click запрещён;
 - fresh retry разрешён только при явном `publishClicked=false`;
+- collections stage запускается только после `PUBLISHED`, хранит отдельные
+  `video/digest` statuses, пропускает `ADDED` цель и не открывает browser после
+  `COMPLETE`;
+- already-added collection tile с title alpha `<=0.70` не кликается повторно;
 - защищённый профиль Яндекс.Браузера не удаляется и не пересоздаётся.
 
-Подробный контракт: [`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md).
+Подробный native-upload контракт: [`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md).
+Подробности collections stage и ручной диагностики:
+[`DZEN_COLLECTIONS_DEBUG_README.txt`](DZEN_COLLECTIONS_DEBUG_README.txt).
