@@ -22,9 +22,26 @@ class PrimaryRecallQueryDisciplineTests(unittest.TestCase):
         self.assertIn("`global_breaking` теперь снова является **source-neutral broad discovery**", text)
         self.assertIn("`major_agencies` остаётся", text)
         self.assertIn("Reuters/AP/Bloomberg/FT", text)
-        self.assertIn("latest AI chips infrastructure financing earnings business deals policy security", text)
+        self.assertIn(
+            "latest AI models research chips infrastructure financing earnings business deals policy security",
+            text,
+        )
         self.assertIn("`independent_missing_events` становится source-neutral", text)
         self.assertIn("latest major artificial intelligence", text)
+
+    def test_regional_primary_queries_have_representative_not_exhaustive_anchors(self):
+        text = PROMPT.read_text(encoding="utf-8")
+        self.assertIn(
+            "latest China AI models releases Tencent Hunyuan Qwen DeepSeek GLM open source",
+            text,
+        )
+        self.assertIn(
+            "последние новости ИИ Россия Яндекс Сбер VK МТС продукты регулирование "
+            "авторское право данные обучение моделей",
+            text,
+        )
+        self.assertIn("ranking anchor, не whitelist", text)
+        self.assertIn("Это не whitelist", text)
 
 
 if __name__ == "__main__":
