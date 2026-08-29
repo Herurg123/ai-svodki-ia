@@ -21,7 +21,7 @@
 - `config/` — production, editorial, site, image и Source Pulse configuration;
 - `prompts/` — active prompts и сохранённые legacy prompts;
 - `fixtures/recall/` — machine-readable retrieval regressions, включая P1
-  event-freshness controls;
+  event-freshness controls и P2 Yandex Source Pulse date controls;
 - `fixtures/research/.runtime/` — ignored trusted runtime ingress для fresh
   research;
 - `specs/` — редакционные и технические спецификации;
@@ -36,13 +36,16 @@
 - `scripts/run_digest_preview.py` — orchestration fresh/recovery research и
   editorial flow;
 - `scripts/primary_recall_search.py` — стабильный public Primary Recall
-  entrypoint; после fresh Primary запускает zero-paid Source Pulse v1.2 supplement
+  entrypoint; после fresh Primary запускает zero-paid Source Pulse v1.3 supplement
   до первого editorial;
 - `scripts/agency_discovery_rescue.py` / `agency_discovery_rescue_v4.py` —
   conditional missing-event rescue, максимум один Web Search;
-- `scripts/source_pulse_supplement_v12.py` — bounded Tier-A official/trusted-news
-  supplemental discovery: обычный HTTPS, source-aware date parsing,
+- `scripts/source_pulse_supplement_v13.py` — bounded Tier-A official/trusted-news
+  supplemental discovery поверх сохранённого v1.2: обычный HTTPS,
+  source-aware date parsing, узкий Yandex URL+visible-date repair,
   deterministic date/relevance/host gate, `consider` only, без OpenAI/Web Search;
+- `scripts/source_pulse_supplement_v12.py` — сохранённый предыдущий Source Pulse
+  implementation для rollback/replay compatibility;
 - `scripts/source_pulse_shadow.py` — сохранённый snapshot/fusion diagnostics перед
   и после Hybrid без повторного polling;
 - `scripts/hybrid_search_completeness.py` — stable Hybrid v3 entrypoint: baseline
@@ -97,9 +100,9 @@ Regression fixture находится в
 или Web Search operations и сохраняет recovery старых artifacts без `event_*`
 полей через `event=unknown`.
 
-## Source Pulse v1.2
+## Source Pulse v1.3
 
-Fresh production сначала завершает Primary Recall, затем Source Pulse v1.2
+Fresh production сначала завершает Primary Recall, затем Source Pulse v1.3
 опрашивает фиксированный registry обычным HTTPS. Только `pulse_only` Tier-A
 `official` или `trusted_news` leads могут попасть в trusted research, причём
 только как `recommendation=consider`. Tier B остаётся diagnostic-only.
@@ -113,6 +116,19 @@ research перед первым editorial. Pulse rows без отдельног
 в российский Tier-A `trusted_news` registry через
 `https://tass.ru/tag/iskusstvennyi-intellekt`; Yandex IR, MWS и VK остаются
 официальными Tier-A surfaces, CNews остаётся Tier-B lead-only.
+
+P2 добавляет только Yandex-specific publication-date repair. Generic Source
+Freshness parser по-прежнему не извлекает случайные даты из body text. Если у
+Yandex IR/company-news страницы нет обычной machine-readable publication date,
+v1.3 принимает fallback только при согласии двух first-party сигналов: dated
+Yandex URL/id и совпадающей видимой даты в верхней части страницы или index item.
+Конфликтующая ненулевая parser-date не получает приоритет только потому, что она
+уже заполнена. Existing machine-readable publication metadata остаётся
+authoritative. Same-day recovery чинит сохранённый Pulse snapshot из уже
+сохранённых Yandex URL/title evidence и не repoll'ит mutable indexes.
+
+Regression fixture: `fixtures/recall/source-pulse-yandex-2026-08-29.json`.
+Controlled replay/audit: `audits/experiments/2026-08-29-yandex-source-pulse-date-p2.md`.
 
 Pulse не вызывает OpenAI и Web Search. Search-derived `regional_health` для
 Russia/China после Pulse не пересчитывается, поэтому второй discovery-plane не
