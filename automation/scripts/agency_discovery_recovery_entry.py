@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """Resume the bounded agency discovery stage when Coverage follows recovery.
 
-Fresh runs execute agency discovery before Hybrid.  Recovery intentionally does
+Fresh runs execute agency discovery before Hybrid. Recovery intentionally does
 not repeat Hybrid, so a recovered Primary checkpoint needs one idempotent entry
 before Coverage: reuse/repair a saved rescue response, never retry an uncertain
 ``search_started`` state, or perform the first rescue search if the crash
 happened before the rescue began.
 
 If a rescue-origin candidate is present, this helper verifies only those new
-supplemental rows through Source Freshness Proof.  Previously accepted Primary/
-Hybrid rows are preserved rather than re-fetched on recovery.  Fresh rescue rows
-are then merged back into the unchanged base pool and sent through the normal
-editorial rerun before Coverage decides whether the numerical target is met.
+supplemental rows through Event + Source Freshness Proof. Previously accepted
+Primary/Hybrid rows are preserved rather than re-fetched on recovery. Fresh
+rescue rows are then merged back into the unchanged base pool and sent through
+the normal editorial rerun before Coverage decides whether the numerical target
+is met.
 """
 from __future__ import annotations
 
@@ -23,8 +24,15 @@ from pathlib import Path
 from typing import Any, Callable
 
 import agency_discovery_rescue as rescue
+from event_freshness_contract import apply_candidate_schema_contract
 from source_freshness import verify_research_file
 from story_coverage import read_json, write_json
+
+# Coverage v8/runtime loaded ensure_story_coverage_policy before importing this
+# recovery bridge. Mutating the shared candidate schema here therefore updates
+# both normal Coverage and recovery requests without editing preserved versioned
+# implementations. Nullable/unknown event fields keep old saved artifacts valid.
+apply_candidate_schema_contract(rescue.AUDIT_CANDIDATE_SCHEMA)
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 RECOVERY_REPORT = REPOSITORY_ROOT / "automation" / "preview" / "production-daily" / "recovery.json"
@@ -235,6 +243,11 @@ def run_recovery_entry(
             "status": "complete",
             "eligible_before": freshness_run.get("eligible_before"),
             "eligible_after": freshness_run.get("eligible_after"),
+            "event_fresh": freshness_run.get("event_fresh"),
+            "event_unknown": freshness_run.get("event_unknown"),
+            "excluded_event_freshness_stale": freshness_run.get(
+                "excluded_event_freshness_stale"
+            ),
             "verified_fresh": freshness_run.get("verified_fresh"),
             "excluded_outside_window": freshness_run.get("excluded_outside_window"),
             "excluded_unverified_freshness": freshness_run.get("excluded_unverified_freshness"),

@@ -173,6 +173,37 @@ Additional regional Coverage searches and an LLM semantic-event matcher are not
 part of the active contract. They remain deferred options and require a future
 audit plus explicit approval before any implementation or spend.
 
+## Event/source freshness boundary
+
+Event age and source-page age are separate production contracts. New paid
+retrieval responses must expose structured nullable event-origin evidence
+(`event_date`, `event_at`, `event_time_precision`, `event_origin_url`,
+`event_evidence_kind`, `event_date_evidence`) while keeping
+`published_date`/`published_at`/`time_precision` as the cited source publication
+time used by Source Freshness Proof.
+
+A reliable event origin that is clearly outside the exact saved window must be
+rejected deterministically with `event_freshness_stale` before editorial. A
+missing, ambiguous or untrusted event origin, including date-only evidence on a
+partial exact boundary day, must remain `event_freshness_status=unknown` and must
+not by itself exclude the candidate. Unknown preserves recall only: the existing
+Source Freshness Proof still independently fails closed when the cited page is
+stale or its publication date cannot be verified.
+
+Do not use a fresh reprint, syndicated copy, tracker update, documentation update
+or search-result publication date as event-origin evidence. Prefer official
+announcement/release/research, filing/court docket/release note/changelog,
+unambiguous first-party timestamp, then authoritative secondary evidence only if
+a primary origin is unavailable. Do not add a new LLM/Web Search second pass just
+to populate event freshness; P1 must reuse evidence from the existing retrieval
+call or leave event origin unknown.
+
+Legacy saved artifacts without the new event-origin fields remain reusable and
+must be interpreted as `event=unknown`; this compatibility path must not force an
+already-paid research stage to rerun. Same-day recovery may apply the current
+deterministic event gate to newly added rescue rows, but may not repeat completed
+paid retrieval merely to backfill event metadata.
+
 ## Source Pulse supplemental boundary
 
 Source Pulse v1.2 may supplement a fresh Primary research artifact only through
@@ -218,9 +249,9 @@ reported as healthy success.
 - Repository hygiene retries only idempotent GitHub API GET requests after the
   documented transient failures. Do not automatically retry destructive
   DELETE/PUT operations.
-- Exact saved research time boundaries, source freshness proof, archive dedupe,
-  fail-closed mandatory search stages and recovery at-most-once semantics must
-  not be weakened as incidental cleanup.
+- Exact saved research time boundaries, event freshness proof, source freshness
+  proof, archive dedupe, fail-closed mandatory search stages and recovery
+  at-most-once semantics must not be weakened as incidental cleanup.
 - Production API spend is never authorized merely by a generic code-fix request.
   The conditional fifth Hybrid search described above is separately authorized
   as an explicit architecture contract; any other new paid retrieval requires

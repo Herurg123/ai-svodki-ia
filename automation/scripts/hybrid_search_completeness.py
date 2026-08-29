@@ -14,6 +14,10 @@ from typing import Any
 
 import agency_discovery_rescue_v4 as _agency_v4
 import hybrid_search_completeness_v3 as _v3
+from event_freshness_contract import (
+    append_event_freshness_prompt,
+    apply_candidate_schema_contract,
+)
 
 _v2 = _v3.v2
 legacy = _v2.legacy
@@ -21,6 +25,8 @@ legacy = _v2.legacy
 for _name in dir(_v3):
     if not _name.startswith("_"):
         globals()[_name] = getattr(_v3, _name)
+
+apply_candidate_schema_contract(legacy.AUDIT_CANDIDATE_SCHEMA)
 
 REPOSITORY_ROOT = legacy.REPOSITORY_ROOT
 PRODUCTION_PREVIEW_ROOT = legacy.PRODUCTION_PREVIEW_ROOT
@@ -67,7 +73,7 @@ def _sync_compatibility_hooks() -> None:
 def build_prompt(**kwargs: Any) -> str:
     _sync_compatibility_hooks()
     _v2._ensure_original_prompt_hook()
-    return _v2.build_prompt(**kwargs)
+    return append_event_freshness_prompt(_v2.build_prompt(**kwargs))
 
 
 def regional_health_query(gaps: tuple[str, ...]) -> str:

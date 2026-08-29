@@ -54,32 +54,44 @@ UTC-даты запуска API или календарной даты сред�
    технологические издания; затем прозрачные вторичные источники с указанными
    ограничениями. Не считай отсутствие материала у одного конкретного издателя
    доказательством отсутствия события.
-7. Событие и основной источник должны попадать в полное effective окно. Если
-   источник показывает только подходящую календарную дату, используй
-   `published_at: null`, `time_precision: "date"`; код сохранит предупреждение
-   `time_precision`. Не придумывай часы, минуты или часовой пояс.
-8. Старый материал, перепечатанный сегодня без нового развития, не является
-   новым событием. Ставь `freshness_status: "old_reprint"` и exclude. Старый
-   документ допустим только как supporting source. Для нового события или
-   существенного развития используй `new_event` либо `material_update` и
-   конкретно заполни `freshness_reason`.
-9. Не возвращай уже найденное событие, полный дубль архива, слух, вымышленный
-   запуск модели, мелкое обновление, рекламу или материал, где ИИ — приманка.
-10. Для `legal_copyright_scraping` кандидат с recommendation include/consider
+7. `published_date`, `published_at` и `time_precision` описывают публикацию
+   цитируемой source/article page и сохраняются для отдельного Source Freshness
+   Proof. Не подменяй ими дату самого события.
+8. Для события отдельно заполняй `event_date`, `event_at`,
+   `event_time_precision`, `event_origin_url`, `event_evidence_kind` и
+   `event_date_evidence`. Приоритет доказательства: официальный
+   announcement/release/research; filing/court docket/release note/changelog;
+   однозначный first-party timestamp; authoritative secondary только если primary
+   origin недоступен. Свежая перепечатка или tracker update не делает старое
+   событие свежим.
+9. Если надёжная event-origin date неизвестна или неоднозначна, используй
+   `event_date=null`, `event_at=null`, `event_time_precision=unknown`,
+   `event_origin_url=null`, `event_evidence_kind=unknown`,
+   `event_date_evidence=""`. Не копируй туда дату статьи и не отклоняй candidate
+   только из-за неизвестного origin: Event Freshness Proof сохраняет recall для
+   `unknown`, а Source Freshness Proof остаётся fail-closed по source page.
+10. Старый материал, перепечатанный сегодня без нового развития, не является
+    новым событием. Ставь `freshness_status: "old_reprint"` и exclude. Старый
+    документ допустим только как supporting source. Для нового события или
+    существенного развития используй `new_event` либо `material_update` и
+    конкретно заполни `freshness_reason`.
+11. Не возвращай уже найденное событие, полный дубль архива, слух, вымышленный
+    запуск модели, мелкое обновление, рекламу или материал, где ИИ — приманка.
+12. Для `legal_copyright_scraping` кандидат с recommendation include/consider
     обязан иметь `category: "legal"`, `legal_scale: "major"` и конкретное
     объяснение масштаба: значимый суд/регулятор, крупный участник или группа,
     прецедент, существенная сумма либо влияние на обучение, данные, продукт или
     отрасль. Сам факт подачи бытового или локального иска недостаточен.
-11. Для `curiosity` кандидат обязан иметь `category: "curiosity"`,
+13. Для `curiosity` кандидат обязан иметь `category: "curiosity"`,
     `curiosity_eligible: true`, проверяемое объяснение и самостоятельную
     новостную ценность. Отсутствие достойного курьёза — нормальный пробел.
-12. Для любого include/consider укажи `verification_status: "verified"` и
+14. Для любого include/consider укажи `verification_status: "verified"` и
     объясни проверку. Неподтверждённое оставляй exclude и перечисляй в
     `rejections` с причиной.
-13. Не добивай количество слабым материалом. Если достойной новости нет,
+15. Не добивай количество слабым материалом. Если достойной новости нет,
     верни пустой `candidates`, перечисли проверенные, но отклонённые материалы
     в `rejections` и используй status `complete_with_gaps`.
-14. `direction_id` должен быть точно `{{DIRECTION_ID}}`. Фактический поисковый
+16. `direction_id` должен быть точно `{{DIRECTION_ID}}`. Фактический поисковый
     запрос и просмотренные источники автоматика возьмёт из raw API response —
     не выдумывай отдельный список якобы выполненных запросов.
-15. Верни только строгий JSON по заданной схеме.
+17. Верни только строгий JSON по заданной схеме.

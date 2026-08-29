@@ -27,7 +27,7 @@ production-автоматизации и операторских проверо
 
 | Часть | Назначение |
 |---|---|
-| `automation/` | Основной production-конвейер: retrieval, editorial, recovery, validators, archive, audits и configuration. |
+| `automation/` | Основной production-конвейер: retrieval, event/source freshness, editorial, recovery, validators, archive, audits и configuration. |
 | `posts/` | Сформированный публичный сайт, article/image RSS, sitemap и постоянные публичные assets. |
 | `automation/notebooklm-video/` | Отдельный локальный Windows downstream-подпроект: после публикации выпуска создаёт NotebookLM-видео, MP4/PNG, при необходимости доставляет их в FTP `video`, автоматически публикует нативное видео в Дзен, а затем назначает видео и ежедневную сводку текущего дня в две фиксированные Дзен-подборки с persistent per-target state. |
 | `automation/archive/video-rss-enrichment-2026-08/` | Reference-only архив закрытого Video → RSS эксперимента. Не является runtime/workflow path. |
@@ -89,6 +89,14 @@ search operations, а условный double-gap потолок равен 25. 
 опубликованного выпуска. После единственного search один Primary-pass может
 использовать `open_page` и `find_in_page` как навигацию, не увеличивая
 search-operation budget.
+
+Event-age freshness теперь проверяется отдельно от source-page freshness.
+Надёжно доказанное событие вне exact saved window отклоняется deterministic gate
+с кодом `event_freshness_stale` до editorial. Неизвестный или неоднозначный
+origin не является автоматической причиной исключения и остаётся `unknown`, но
+это не обход freshness: цитируемая страница затем обязана пройти прежний
+fail-closed Source Freshness Proof. P1 не добавляет новый LLM/Web Search pass и не
+увеличивает paid search ceiling.
 
 После fresh Primary Source Pulse v1.2 выполняет второй discovery-plane без
 дополнительного платного retrieval: обычный HTTPS к фиксированному registry,
