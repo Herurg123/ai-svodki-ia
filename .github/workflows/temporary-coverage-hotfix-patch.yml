@@ -22,9 +22,10 @@ jobs:
           python -m py_compile automation/scripts/ensure_story_coverage.py automation/tests/test_aug29_coverage_unverified_exhaustion.py
           python -m unittest automation.tests.test_aug29_coverage_unverified_exhaustion -v
           rm -rf .hotfix
+          rm -f automation/audits/experiments/.pr-trigger-note*
           rm .github/workflows/temporary-coverage-hotfix-patch.yml
           git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git config user.email 41898258+github-actions[bot]@users.noreply.github.com
           git add -A
           git diff --cached --check
           git diff --cached --stat
