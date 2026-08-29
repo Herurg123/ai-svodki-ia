@@ -83,7 +83,8 @@ assert.throws(
 );
 
 const runWorkerCmd = fs.readFileSync(path.join(ROOT, "run-worker.cmd"), "utf8");
-assert.match(runWorkerCmd, /scheduled-worker\.js/i);
+assert.match(runWorkerCmd, /full-worker\.js/i);
+assert.doesNotMatch(runWorkerCmd, /node\s+"?%~dp0scheduled-worker\.js/i);
 assert.doesNotMatch(runWorkerCmd, /node\s+"?%~dp0worker\.js/i);
 
 const source = fs.readFileSync(path.join(ROOT, "scheduled-worker.js"), "utf8");
