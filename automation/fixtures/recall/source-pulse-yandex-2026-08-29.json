@@ -1,0 +1,85 @@
+{
+  "source_artifact": {
+    "workflow_run_id": 33231413963,
+    "artifact_id": 9708618496,
+    "artifact_sha256": "b44c096424badb504e9e04be83db589f98cd80699ad4125cbedc051f0b6fe4e0",
+    "source_pulse_supplement_version": 12
+  },
+  "search_window": {
+    "start_at": "2026-08-27T04:43:51+03:00",
+    "end_at": "2026-08-29T05:16:40+03:00",
+    "start_date": "2026-08-27",
+    "end_date": "2026-08-29",
+    "latest_archive_at": "2026-08-28T04:43:51+03:00",
+    "latest_archive_date": "2026-08-28"
+  },
+  "source_id": "yandex_ir",
+  "observed_failure": "eight distinct Yandex releases were all assigned 2026-08-28 and all direct pages were rejected with source_freshness_no_publication_date",
+  "cases": [
+    {
+      "id": "yandex-maps-road-cameras",
+      "title": "18 августа 2026Яндекс Карты начали показывать сигналы автомобильных светофоров",
+      "url": "https://ir.yandex.ru/press-releases?year=2026&id=18-08-2026-01",
+      "observed_published_date": "2026-08-28",
+      "expected_published_date": "2026-08-18",
+      "expected_window_status": "outside"
+    },
+    {
+      "id": "yandex-tracker-accessibility",
+      "title": "20 августа 2026Яндекс Трекер стал доступнее для незрячих пользователей",
+      "url": "https://ir.yandex.ru/press-releases?year=2026&id=20-08-2026-01",
+      "observed_published_date": "2026-08-28",
+      "expected_published_date": "2026-08-20",
+      "expected_window_status": "outside"
+    },
+    {
+      "id": "yandex-smart-ad-discounts",
+      "title": "21 августа 2026Яндекс Маркет запустил умные скидки для рекламных кампаний",
+      "url": "https://ir.yandex.ru/press-releases?year=2026&id=21-08-2026-02",
+      "observed_published_date": "2026-08-28",
+      "expected_published_date": "2026-08-21",
+      "expected_window_status": "outside"
+    },
+    {
+      "id": "yandex-sellers-alice-ai",
+      "title": "21 августа 2026Продавцам Маркета стал доступен ИИ-помощник на базе Алисы AI",
+      "url": "https://ir.yandex.ru/press-releases?year=2026&id=21-08-2026-01",
+      "observed_published_date": "2026-08-28",
+      "expected_published_date": "2026-08-21",
+      "expected_window_status": "outside"
+    },
+    {
+      "id": "yandex-medical-ai-assistant",
+      "title": "24 августа 2026В Яндексе появился медицинский ИИ-помощник",
+      "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-08-2026-01",
+      "observed_published_date": "2026-08-28",
+      "expected_published_date": "2026-08-24",
+      "expected_window_status": "outside"
+    },
+    {
+      "id": "yandex-maps-scooters",
+      "title": "24 августа 2026Яндекс Карты начали показывать самокаты",
+      "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-08-2026-02",
+      "observed_published_date": "2026-08-28",
+      "expected_published_date": "2026-08-24",
+      "expected_window_status": "outside"
+    },
+    {
+      "id": "yandex-teachers-ai-program",
+      "title": "26 августа 2026Яндекс запускает федеральную программу по ИИ для учителей",
+      "url": "https://ir.yandex.ru/press-releases?year=2026&id=26-08-2026-01",
+      "observed_published_date": "2026-08-28",
+      "expected_published_date": "2026-08-26",
+      "expected_window_status": "outside"
+    },
+    {
+      "id": "yandex-sim",
+      "title": "28 августа 2026ИИ-помощник Яндекса встроится в мобильную связь",
+      "url": "https://ir.yandex.ru/press-releases?year=2026&id=28-08-2026-01",
+      "company_news_url": "https://yandex.ru/company/news/28-08-2026-01",
+      "observed_published_date": "2026-08-28",
+      "expected_published_date": "2026-08-28",
+      "expected_window_status": "inside"
+    }
+  ]
+}

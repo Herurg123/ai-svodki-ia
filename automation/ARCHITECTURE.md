@@ -21,7 +21,7 @@ Video → RSS post-publication bridge закрыт и сохранён толь�
 scheduled/manual trigger
   -> previous-release / recovery gate
   -> Primary Recall
-  -> Source Pulse v1.2 fixed-source supplemental discovery
+  -> Source Pulse v1.3 fixed-source supplemental discovery
   -> deterministic Event Freshness + Source Freshness Proof for trusted Primary + Pulse research
   -> first editorial
   -> conditional agency discovery rescue
@@ -41,7 +41,7 @@ scheduled/manual trigger
   -> FTP deploy of posts/
 ```
 
-Source Pulse v1.2 intentionally supplements fresh Primary **before the first
+Source Pulse v1.3 intentionally supplements fresh Primary **before the first
 editorial call**. This placement allows the second discovery plane to influence
 the normal editorial selection without introducing a dedicated model/search call.
 The later Hybrid stage reuses the saved Pulse snapshot only for fusion diagnostics
@@ -165,11 +165,12 @@ listing и проверяется отсутствие всех удалённы
   fresh research;
 - `scripts/` содержит orchestration, retrieval, recovery, publication, cleanup и
   validators, включая `event_freshness.py`, `source_freshness.py`, preserved
-  `source_freshness_v1.py`, `source_pulse_supplement_v12.py`, сохранённый
-  `source_pulse_shadow.py`, versioned Hybrid v2/v3 implementations и FTP-retention
-  `cleanup_video_ftp.py`;
+  `source_freshness_v1.py`, active `source_pulse_supplement_v13.py`, preserved
+  `source_pulse_supplement_v12.py`, сохранённый `source_pulse_shadow.py`,
+  versioned Hybrid v2/v3 implementations и FTP-retention `cleanup_video_ftp.py`;
 - `tests/` содержит основной Python offline regression suite, включая event/source
-  freshness, no-video RSS boundary и retrieval budget/regional regressions;
+  freshness, Source Pulse Yandex date regression, no-video RSS boundary и
+  retrieval budget/regional regressions;
 - `notebooklm-video/` является отдельным локальным downstream-подпроектом;
 - `preview/` и `recovery/` являются временными ignored runtime directories.
 
@@ -415,7 +416,7 @@ event-origin evidence. `published_date`/`published_at`/`time_precision` отно
 при неоднозначном доказательстве event fields возвращаются как `unknown`/`null`.
 
 После того как versioned Primary engine вернул trusted runtime research, public
-wrapper запускает Source Pulse v1.2 supplement на том же exact saved window и
+wrapper запускает Source Pulse v1.3 supplement на том же exact saved window и
 только затем возвращает research в `run_digest_preview.py` для Event Freshness +
 Source Freshness Proof и первого editorial. Search-derived `regional_health` при
 этом намеренно не пересчитывается после Pulse promotion.
@@ -443,24 +444,38 @@ State сохраняется до и после paid call. `search_started` ав
 `search_completed`/`merge_failed` могут продолжить merge из сохранённого response
 без второго search.
 
-### 6.3. Source Pulse v1.2 supplemental discovery и shadow fusion
+### 6.3. Source Pulse v1.3 supplemental discovery и shadow fusion
 
 Source Pulse состоит из двух связанных режимов над одним сохранённым snapshot.
 
 **Pre-editorial supplement.** После fresh Primary public wrapper вызывает
-`source_pulse_supplement_v12.py`. Он использует фиксированный registry, обычный
-bounded HTTPS polling и **0 OpenAI / 0 Web Search operations**. V1.2 сохраняет
-hardening исходного collector, видимую bounded date-association V1.1 и добавляет:
+`source_pulse_supplement_v13.py`. V1.3 является узким versioned wrapper поверх
+сохранённого v1.2, использует фиксированный registry, обычный bounded HTTPS
+polling и **0 OpenAI / 0 Web Search operations**. V1.2 hardening и source-aware
+visible-date parsing сохраняются, а P2 добавляет только Yandex publication-date
+repair.
 
-- source-aware обработку распространённых Russian/English/Chinese date shapes;
+Базовые свойства, унаследованные из v1.2:
+
+- source-aware обработка распространённых Russian/English/Chinese date shapes;
 - узкие host-specific response caps для известных крупных first-party/news
   indexes вместо глобального безлимитного увеличения;
-- явную диагностику HTTP-success с parsed items, но без пригодной date evidence;
+- явная диагностика HTTP-success с parsed items, но без пригодной date evidence;
 - `complete_with_gaps`, когда transport/parser/source health деградирован;
-- Tier-A `trusted_news` как отдельную роль, не равную официальному источнику
+- Tier-A `trusted_news` как отдельная роль, не равную официальному источнику
   компании.
 
 JSON-LD, RSS/Atom и `<time datetime>` semantics исходного collector сохраняются.
+
+P2 Yandex adapter намеренно не расширяет generic Source Freshness parser. Для
+Yandex IR/company-news article допустимы только одобренные first-party URL shapes,
+где URL/id содержит валидную дату `DD-MM-YYYY`. Эта дата становится пригодным
+fallback только при втором независимом first-party сигнале: совпадающей видимой
+дате в локальном index item/neighborhood или в верхней части direct article page.
+Если старый parser уже заполнил конфликтующую ненулевую дату, наличие значения
+само по себе не даёт ему приоритет; без corroboration конфликт становится
+undated/fail-closed. Existing generic machine-readable publication metadata
+остаётся authority и не заменяется Yandex fallback.
 
 Candidate influence разрешён только по узкому контракту:
 
@@ -495,7 +510,8 @@ bounded community fallbacks, чтобы HTML/payload drift одного index н
 Source Pulse deterministic candidates, которые не имеют отдельного event-origin
 evidence, получают `event_freshness_status=unknown`, сохраняют recall и всё равно
 обязаны пройти existing fail-closed source-page proof. Следовательно, внутренний
-Pulse parser не является публикационным authority и не обходит freshness boundary.
+Pulse parser не является единоличным публикационным authority и не обходит
+freshness boundary.
 
 **Поздний shadow/fusion.** Hybrid продолжает вызывать
 `source_pulse_shadow.py`, но normal fresh run находит уже сохранённый
@@ -509,15 +525,19 @@ Pulse. Поэтому найденная Pulse новость не может с
 если оба Search-derived gaps действительно открыты.
 
 Runtime diagnostics в `preview/production-daily/source-pulse-<DATE>.json`
-содержат transport/parser/source health, v1.2 counters, pre-promotion fusion,
-per-lead promotion/rejection disposition, page freshness evidence, promoted URLs,
-merge rejections, post-promotion fusion, reuse flag и later post-Hybrid fusion.
-Весь `production-daily/` уже входит в обычный Actions artifact.
+содержат transport/parser/source health, v1.3 counters, Yandex repair diagnostics,
+pre-promotion fusion, per-lead promotion/rejection disposition, page freshness
+evidence, promoted URLs, merge rejections, post-promotion fusion, reuse flag и
+later post-Hybrid fusion. Весь `production-daily/` уже входит в обычный Actions
+artifact.
 
 Source/network/parser/promotion error fail-open только для уже валидного Primary:
 ошибка Pulse не должна превращать успешные обязательные Search passes в
 production failure. Она обязана остаться в diagnostics. Same-day recovery не
-repoll'ит mutable Pulse sources.
+repoll'ит mutable Pulse sources. V1.3 может детерминированно исправить Yandex
+URL/title date evidence уже сохранённого v1.2 snapshot и удалить Yandex rows,
+которые после такого исправления оказываются вне exact saved window; это не
+является новым polling или paid retrieval.
 
 ### 6.4. Hybrid completeness v3
 
@@ -708,7 +728,9 @@ Conditional agency rescue соблюдает собственную at-most-once
 Новые rescue rows на recovery проходят текущий Event + Source Freshness Proof;
 report хранит event fresh/unknown/stale counters. Сохранённый Source Pulse snapshot
 считается mutable-source evidence того же artifact и не repoll'ится при обычном
-same-day recovery; later fusion использует сохранённый snapshot.
+same-day recovery; later fusion использует сохранённый snapshot. V1.3 разрешает
+только deterministic normalization уже сохранённого Yandex URL/title date
+evidence и exact-window filtering без сетевого repoll.
 
 Hybrid v3 обязан сохранять в report, использовался ли conditional fifth search.
 Recovery не должен трактовать уже выполненный пятый double-gap search как
@@ -812,6 +834,13 @@ production artifact SHA-256
 `b44c096424badb504e9e04be83db589f98cd80699ad4125cbedc051f0b6fe4e0` и не
 вызывает пользовательский production Search/API.
 
+P2 Yandex Source Pulse date replay использует тот же сохранённый production
+artifact, fixture `fixtures/recall/source-pulse-yandex-2026-08-29.json` и audit
+`audits/experiments/2026-08-29-yandex-source-pulse-date-p2.md`. Он фиксирует
+восемь Yandex rows, ошибочно получивших одну дату в v1.2, и требует, чтобы семь
+старых releases после deterministic repair не попадали в окно, а свежий Yandex
+Sim 28 августа мог пройти page freshness. P2 не использует production API.
+
 ## 12. Совместимость и versioned реализации
 
 Некоторые stable public files являются wrappers над сохранёнными versioned
@@ -836,10 +865,11 @@ P1 следует этому принципу: existing source-page parser/fetch
 orchestration и diagnostics. Это отделяет новый correctness gate от proven
 network/publication-date parsing и уменьшает regression surface.
 
-Source Pulse v1.2 следует тому же принципу: production semantics добавлены
-versioned supplement wrapper поверх hardened collector/V1.1 logic, а исходный
-collector/shadow surface остаётся совместимым для replay, saved snapshots и
-regression hooks.
+Source Pulse v1.3 следует тому же принципу: active production wrapper добавляет
+узкий Yandex publication-date repair поверх preserved v1.2, который сам остаётся
+wrapper поверх hardened collector/V1.1 logic. Исходный collector, v1.2 и shadow
+surface сохраняются для rollback, replay, saved snapshots и regression hooks.
+Generic Source Freshness parser при этом не переписывается.
 
 Hybrid v3 также не уничтожает v2/regional-v1 implementations: stable public
 entrypoint переключает production semantics на v3, а preserved layers остаются
@@ -978,13 +1008,14 @@ production, RSS, FTP delivery semantics, retrieval/editorial, paid API budgets �
 подтвердил alpha=0.6 already-added state без второго клика. Offline contracts
 защищают ordering, state persistence и no-browser skip после COMPLETE.
 
-Для Source Pulse v1.2 dependency audit затрагивает fresh Primary wrapper,
+Для Source Pulse v1.3 dependency audit затрагивает fresh Primary wrapper,
 фиксированный source registry, trusted runtime research, Event/Source Freshness
 Proof, первый editorial, сохранённый Pulse snapshot и позднюю Hybrid fusion.
-Source Pulse не увеличивает paid budget. Региональные Search gaps сохраняются до
-Pulse, Tier B не получает candidate influence, Tier-A trusted-news остаётся
-`consider` only после deterministic gates, а normal recovery переиспользует
-snapshot.
+P2 не меняет generic Source Freshness parser, search query/routing, search budget,
+regional-health semantics или editorial policy. Yandex repair ограничен
+corroborated first-party URL+visible-date evidence; same-day recovery использует
+только сохранённый snapshot и не repoll'ит source. Tier B не получает candidate
+influence, Tier-A trusted-news остаётся `consider` only после deterministic gates.
 
 Для Hybrid v3 conditional paid extension dependency audit затрагивает stable
 Hybrid entrypoint, preserved v2/v3 layers, `regional_health` из Primary,
