@@ -196,7 +196,9 @@ logRotation.maxFileSizeMb
   - резервные копии worker.js и config.json.
 
 stateFile
-  Текущее состояние выпусков и этапов обработки.
+  Текущее состояние выпусков и этапов обработки. Кроме NotebookLM/FTP и
+  dzenAutomation здесь хранится отдельный job.dzenCollections с независимыми
+  status для video и digest.
 
 descriptionFile
   Текстовый файл с описанием последнего выпуска.
@@ -274,19 +276,28 @@ sourceTimeoutMs
 downloadTimeoutMs
   Максимальное время ожидания начала скачивания готового видео.
 
-АВТОМАТИЧЕСКАЯ ПУБЛИКАЦИЯ В ДЗЕН
-----------------------------------
+АВТОМАТИЧЕСКАЯ ПУБЛИКАЦИЯ В ДЗЕН И ПОДБОРКИ
+--------------------------------------------
 
 run-worker.cmd
-  Теперь запускает scheduled-worker.js, то есть полный цикл по расписанию:
-  worker.js -> NotebookLM/MP4/PNG/FTP -> Dzen duplicate guard -> при необходимости
-  один fresh upload -> один publish click -> verification во вкладке «Видео».
+  Запускает full-worker.js, то есть полный трёхфазный цикл по расписанию:
+  1) scheduled-worker.js -> worker.js -> NotebookLM/MP4/PNG/FTP;
+  2) Dzen duplicate guard -> при необходимости один fresh upload -> один publish
+     click -> verification во вкладке «Видео» -> PUBLISHED;
+  3) dzen-collections.js -> видео дня в «Видеосводки по ИИ» и ежедневная сводка
+     в «Сводки по ИИ».
+
+full-worker.lock
+  Внешний lock всего трёхфазного запуска. Следующий 10-минутный trigger не входит
+  в новую browser-фазу, пока предыдущий полный запуск ещё работает.
+  scheduled-worker.lock остаётся внутренним lock первых двух фаз.
 
 dzenUpload.automaticEnabled
   true  = после локального job.status=DONE автоматически выполнить Dzen-фазу.
           Это production default. Если параметр отсутствует в старом config.json,
           он также трактуется как true.
   false = оставить NotebookLM/FTP по расписанию, но не запускать Dzen автоматически.
+          Подборки также не запускаются, потому что ждут PUBLISHED.
           Ручные Dzen-команды при этом остаются доступны.
 
 dzenUpload.verificationTimeoutMs
@@ -304,10 +315,28 @@ Dzen safety state хранится внутри текущего job в state.js
 никогда не делает второй publish click. Повтор fresh upload допускается только
 после явного child-лога publishClicked=false.
 
+Dzen collections state:
+  job.dzenCollections.video.status  = PENDING или ADDED;
+  job.dzenCollections.digest.status = PENDING или ADDED;
+  aggregate status = PENDING / PARTIAL / COMPLETE.
+
+  video  -> «Видеосводки по ИИ»
+            https://dzen.ru/suite/a899d818-52b3-4f87-8e49-4a4bac375244
+  digest -> «Сводки по ИИ»
+            https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1
+
+  При COMPLETE браузер для подборок больше не открывается. При PARTIAL следующий
+  запуск обрабатывает только PENDING цель. Отсутствующая same-day публикация
+  остаётся PENDING и может появиться к следующему запуску.
+
+  Live-проверенный already-added marker Дзен: точное название подборки имеет
+  computed color rgba(6, 6, 15, 0.6). Alpha <= 0.70 означает already-added и
+  запрещает повторный click.
+
 ПРИМЕР ВРЕМЕННОГО НАБЛЮДЕНИЯ
 ----------------------------
 
-1. Убедиться, что worker.js сейчас не запущен.
+1. Убедиться, что full-worker/worker сейчас не запущен.
 2. Поставить в config.json:
 
    "minimizeBrowserWindow": false
@@ -318,10 +347,19 @@ Dzen safety state хранится внутри текущего job в state.js
    run-worker.cmd
 
    Команда node worker.js используется только для NotebookLM-only диагностики.
+   Команда node scheduled-worker.js используется только для диагностики первых
+   двух фаз и не запускает подборки.
 
 4. После проверки вернуть:
 
    "minimizeBrowserWindow": true
+
+Ручная диагностика подборок:
+
+  run-dzen-collections-debug.cmd --date=YYYY-MM-DD
+  run-dzen-collections-apply.cmd --date=YYYY-MM-DD
+
+Первая команда не кликает по плашке, вторая применяет тот же production-код.
 
 FTP-ДОСТАВКА ВИДЕО
 ------------------
@@ -418,4 +456,7 @@ ftpUpload.connectTimeoutMs
   После установки полезно проверить:
 
     node --check worker.js
+    node --check full-worker.js
+    node --check scheduled-worker.js
+    node --check dzen-collections.js
     npm test

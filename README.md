@@ -29,7 +29,7 @@ production-автоматизации и операторских проверо
 |---|---|
 | `automation/` | Основной production-конвейер: retrieval, editorial, recovery, validators, archive, audits и configuration. |
 | `posts/` | Сформированный публичный сайт, article/image RSS, sitemap и постоянные публичные assets. |
-| `automation/notebooklm-video/` | Отдельный локальный Windows downstream-подпроект: после публикации выпуска создаёт NotebookLM-видео, MP4/PNG, при необходимости доставляет их в FTP `video`, а затем по тому же Task Scheduler автоматически публикует нативное видео в Дзен через защищённый браузерный профиль. |
+| `automation/notebooklm-video/` | Отдельный локальный Windows downstream-подпроект: после публикации выпуска создаёт NotebookLM-видео, MP4/PNG, при необходимости доставляет их в FTP `video`, автоматически публикует нативное видео в Дзен, а затем назначает видео и ежедневную сводку текущего дня в две фиксированные Дзен-подборки с persistent per-target state. |
 | `automation/archive/video-rss-enrichment-2026-08/` | Reference-only архив закрытого Video → RSS эксперимента. Не является runtime/workflow path. |
 | `.github/workflows/` | Always-on PR Gate, два раздельных CI-домена, production, deploy и cleanup/hygiene. |
 
@@ -134,8 +134,8 @@ video payloads `/posts/video/`, `medium="video"` или `type="video/*"`.
 изолированного эксперимента и отдельного PR.
 
 Рабочая video-ветка остаётся независимой: локальный NotebookLM-video может
-создавать и хранить MP4/PNG и публиковать видео через отдельный операторский путь,
-но не модифицирует RSS ради видео.
+создавать и хранить MP4/PNG и публиковать видео через отдельный browser path, но
+не модифицирует RSS ради видео или назначения Дзен-подборок.
 
 ## 32-дневная очистка видео на FTP
 
@@ -176,10 +176,16 @@ artifact с `retention: 2 дня`. Полные правила классифи�
 
 Подпроект начинает работу только после появления уже опубликованного выпуска в
 RSS. Его runtime находится на Windows-машине пользователя и не является
-GitHub-production стадией. `run-worker.cmd` запускает единый scheduled flow:
-NotebookLM/MP4/PNG/FTP, затем Dzen duplicate guard и, для самого свежего
-локального `DONE` выпуска с датой не позже текущей, один fresh publish с
-verification-only защитой от повторного клика.
+GitHub-production стадией. `run-worker.cmd` запускает единый scheduled flow через
+`full-worker.js`: NotebookLM/MP4/PNG/FTP, затем Dzen duplicate guard и один fresh
+publish при необходимости с verification-only защитой от повторного клика, затем
+отдельный этап назначения same-day видео и ежедневной сводки в две фиксированные
+Дзен-подборки.
+
+Факт назначения хранится раздельно как `job.dzenCollections.video.status` и
+`job.dzenCollections.digest.status`. После двух `ADDED` агрегат становится
+`COMPLETE`, и следующие scheduled runs не открывают браузер для этапа подборок.
+При `PARTIAL` повторяется только недостающая цель.
 
 Инструкции:
 
