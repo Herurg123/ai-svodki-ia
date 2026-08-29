@@ -1,5 +1,5 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-node "%~dp0scheduled-worker.js"
+node "%~dp0full-worker.js"
 exit /b %errorlevel%
