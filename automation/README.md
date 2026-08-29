@@ -20,12 +20,13 @@
   эксперименты;
 - `config/` — production, editorial, site, image и Source Pulse configuration;
 - `prompts/` — active prompts и сохранённые legacy prompts;
-- `fixtures/recall/` — machine-readable retrieval regressions;
+- `fixtures/recall/` — machine-readable retrieval regressions, включая P1
+  event-freshness controls;
 - `fixtures/research/.runtime/` — ignored trusted runtime ingress для fresh
   research;
 - `specs/` — редакционные и технические спецификации;
-- `scripts/` — production, retrieval, recovery, cleanup, site generation и
-  validators;
+- `scripts/` — production, retrieval, event/source freshness, recovery, cleanup,
+  site generation и validators;
 - `tests/` — основной Python offline regression suite;
 - `notebooklm-video/` — отдельный локальный Windows downstream-подпроект с единым scheduled flow NotebookLM → media/FTP → native Dzen publish;
 - `preview/` и `recovery/` — временные ignored runtime/diagnostic каталоги.
@@ -51,7 +52,12 @@
   evidence-rich unverified exhaustion может завершить bounded quality check
   без публикации слуха и без повторного search при same-day recovery;
 - `scripts/recover_digest_artifact.py` — paid-stage recovery entrypoint;
-- `scripts/source_freshness.py` — deterministic source publication-date proof;
+- `scripts/event_freshness.py` — zero-network deterministic event-age gate по
+  уже сохранённому origin evidence;
+- `scripts/source_freshness.py` — stable двухслойный freshness entrypoint:
+  Event Freshness перед preserved fail-closed Source Freshness v1;
+- `scripts/source_freshness_v1.py` — сохранённая authority для безопасного fetch
+  и доказательства publication date цитируемой страницы;
 - `scripts/build_site.py` / validators — site/RSS/publication contracts;
 - `scripts/cleanup_repository_content.py` и `cleanup_public_posts.py` — 32-day
   tracked content/public cleanup;
@@ -69,6 +75,28 @@ Versioned implementation files such as `*_v1.py`, `*_v2.py`, `*_v3.py` и
 дубликатами. Их lifecycle и refactor rules описаны в
 [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
+## Event Freshness P1
+
+Paid retrieval candidates сохраняют два независимых времени. Поля
+`published_date`/`published_at`/`time_precision` относятся к цитируемой странице,
+а nullable `event_date`/`event_at`/`event_time_precision` вместе с
+`event_origin_url`, `event_evidence_kind` и `event_date_evidence` относятся к
+самому событию или его первому существенному публичному анонсу.
+
+`event_freshness.py` не открывает сеть и не вызывает OpenAI/Web Search. Надёжный
+origin вне exact saved window получает `event_freshness_stale` и отсекается до
+editorial. Неизвестный/неоднозначный origin остаётся `unknown` и сохраняет recall,
+но после этого candidate всё равно обязан пройти прежний fail-closed Source
+Freshness Proof по странице. Поэтому свежая перепечатка не омолаживает старое
+доказанное событие, а отсутствие origin evidence не становится самостоятельным
+false-negative gate.
+
+Regression fixture находится в
+`fixtures/recall/event-freshness-2026-08-29.json`, controlled offline replay — в
+`audits/experiments/2026-08-29-event-freshness-p1.md`. P1 не добавляет paid calls
+или Web Search operations и сохраняет recovery старых artifacts без `event_*`
+полей через `event=unknown`.
+
 ## Source Pulse v1.2
 
 Fresh production сначала завершает Primary Recall, затем Source Pulse v1.2
@@ -79,8 +107,10 @@ Fresh production сначала завершает Primary Recall, затем So
 Для каждого продвигаемого lead повторно открывается уже найденный URL,
 детерминированно проверяется publication date против exact saved window,
 проверяется redirect/host allowlist и применяется AI-relevance gate. После merge
-штатный Source Freshness Proof всё равно повторно проверяет trusted research перед
-первым editorial. ТАСС включён в российский Tier-A `trusted_news` registry через
+штатный Event + Source Freshness Proof всё равно повторно проверяет trusted
+research перед первым editorial. Pulse rows без отдельного event-origin evidence
+остаются `event=unknown`, но не обходят fail-closed page freshness. ТАСС включён
+в российский Tier-A `trusted_news` registry через
 `https://tass.ru/tag/iskusstvennyi-intellekt`; Yandex IR, MWS и VK остаются
 официальными Tier-A surfaces, CNews остаётся Tier-B lead-only.
 
@@ -111,9 +141,10 @@ Whole-pipeline theoretical ceiling:
 оба gaps:    12 Primary + 1 agency rescue + 5 Hybrid + 7 Coverage = 25
 ```
 
-Source Pulse в эти числа не входит: у него 0 OpenAI calls и 0 Web Search.
-Дополнительные региональные Coverage searches и отдельный LLM semantic-event
-matcher сейчас не включены; они остаются deferred options для будущих аудитов.
+Source Pulse и Event Freshness в эти числа не входят: у них 0 OpenAI calls и 0
+Web Search. Дополнительные региональные Coverage searches и отдельный LLM
+semantic-event matcher сейчас не включены; они остаются deferred options для
+будущих аудитов.
 
 ## Workflows
 
