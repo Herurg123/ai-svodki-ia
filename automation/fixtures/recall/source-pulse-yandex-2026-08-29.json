@@ -7,7 +7,11 @@
   },
   "search_window": {
     "start_at": "2026-08-27T04:43:51+03:00",
-    "end_at": "2026-08-29T05:16:40+03:00"
+    "end_at": "2026-08-29T05:16:40+03:00",
+    "start_date": "2026-08-27",
+    "end_date": "2026-08-29",
+    "latest_archive_at": "2026-08-28T04:43:51+03:00",
+    "latest_archive_date": "2026-08-28"
   },
   "source_id": "yandex_ir",
   "observed_failure": "eight distinct Yandex releases were all assigned 2026-08-28 and all direct pages were rejected with source_freshness_no_publication_date",
