@@ -47,6 +47,24 @@ commit in `daily-production.yml` and the validated retention commit in
 `MAIN_PUSH_DEPLOY_KEY` secret. Do not expose that secret to any other workflow or
 job, and do not grant broad GitHub Actions/admin bypass instead.
 
+## Incident/fix verification gate
+
+Production incident fixes require evidence beyond a plausible diff or green CI.
+Before merge, the agent must inspect the exact failing run/job and saved artifact;
+reproduce the failure offline from that artifact when possible; define and test
+neighboring success/failure/recovery cases; verify architecture, search-budget,
+source-freshness, publication and at-most-once recovery invariants; inspect the
+final PR diff and CI on the exact head SHA; and verify the resulting `main` after
+merge. A required check that remains `not verified` blocks a claim of full
+verification and blocks merge.
+
+For paid production pipelines, independent regression work must use assistant-owned
+or saved artifacts and must not spend the owner's production API budget without
+separate explicit permission. Recovery after a late-stage failure must prefer the
+already-paid same-day artifact and prove that completed paid stages will not be
+repeated. Merge must use the exact reviewed head SHA (`expected_head_sha` or an
+equivalent race-safe guard). Green CI by itself is never sufficient evidence.
+
 ## CI ownership boundary
 
 `PR Gate` (`.github/workflows/pr-gate.yml`) is the always-on pull-request
