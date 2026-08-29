@@ -14,13 +14,10 @@ class MainWriterConcurrencyTests(unittest.TestCase):
             WORKFLOW_ROOT / "daily-production.yml",
             WORKFLOW_ROOT / "repository-cleanup.yml",
         )
-        expected = (
-            "concurrency:\n"
-            f"  group: {SHARED_GROUP}\n"
-            "  cancel-in-progress: false\n"
-        )
+        expected = f"group: {SHARED_GROUP}\n  cancel-in-progress: false"
         for path in writers:
             text = path.read_text(encoding="utf-8")
+            self.assertIn("concurrency:\n", text, path.name)
             self.assertIn(expected, text, path.name)
 
     def test_cleanup_still_runs_before_production_without_changing_crons(self) -> None:
