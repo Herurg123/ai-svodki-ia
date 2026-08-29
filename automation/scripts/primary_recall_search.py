@@ -10,6 +10,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from event_freshness_contract import apply_candidate_schema_contract
+
 _BASE_PATH = Path(__file__).with_name("primary_recall_search_v2.py")
 _BASE_SPEC = importlib.util.spec_from_file_location("primary_recall_search_v2", _BASE_PATH)
 assert _BASE_SPEC and _BASE_SPEC.loader
@@ -20,6 +22,8 @@ _BASE_SPEC.loader.exec_module(_base)
 for _name in dir(_base):
     if not _name.startswith("_"):
         globals()[_name] = getattr(_base, _name)
+
+apply_candidate_schema_contract(_base.AUDIT_CANDIDATE_SCHEMA)
 
 
 def __getattr__(name: str) -> Any:
