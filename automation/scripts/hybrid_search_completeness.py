@@ -10,11 +10,14 @@ Source Pulse remains zero-OpenAI/zero-Web-Search.
 
 P3 changes only routing semantics inside already-existing slots: regional health
 queries carry representative company/policy anchors and the pre-Hybrid Reuters
-rescue uses v5's global publisher route. Trigger semantics and the 24/25 whole-
-pipeline ceilings are unchanged.
+rescue uses v5's global publisher route. P4 adds a deterministic pre-Hybrid
+viability refresh: an early healthy Primary region may re-open only when its own
+Primary regional candidates no longer have a viable post-freshness/editorial
+survivor. Existing Search gaps never close here. The 24/25 ceilings are unchanged.
 """
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 import agency_discovery_rescue_v5 as _agency_v5
@@ -23,6 +26,8 @@ from event_freshness_contract import (
     append_event_freshness_prompt,
     apply_candidate_schema_contract,
 )
+from regional_health_viability import refresh_regional_health
+from story_coverage import read_json, write_json
 
 _v2 = _v3.v2
 legacy = _v2.legacy
@@ -127,6 +132,43 @@ def _run_pre_hybrid_agency_rescue(**kwargs: Any) -> dict[str, Any]:
     return legacy._run_pre_hybrid_agency_rescue(**kwargs)
 
 
+def _refresh_pre_hybrid_regional_health(artifact_dir: Any) -> dict[str, Any]:
+    """Refresh only false-negative regional health before any Hybrid search."""
+    root = Path(artifact_dir)
+    primary_path = root / "primary-recall.json"
+    candidates_path = root / "candidates.json"
+    try:
+        primary = read_json(primary_path)
+        research = read_json(candidates_path)
+    except Exception as exc:
+        return {
+            "version": 1,
+            "status": "not_available",
+            "changed": False,
+            "reason": f"{type(exc).__name__}: {exc}",
+            "paid_api_calls": 0,
+            "web_search_operations": 0,
+        }
+    if not isinstance(primary, dict) or not isinstance(research, dict):
+        return {
+            "version": 1,
+            "status": "not_available",
+            "changed": False,
+            "reason": "primary-recall.json or candidates.json has unexpected structure",
+            "paid_api_calls": 0,
+            "web_search_operations": 0,
+        }
+    updated, diagnostics = refresh_regional_health(
+        primary_report=primary,
+        current_research=research,
+    )
+    if diagnostics.get("status") == "complete":
+        # Persist metadata even when no gap changes so the artifact proves which
+        # post-filter viability decision fed Hybrid routing.
+        write_json(candidates_path, updated)
+    return diagnostics
+
+
 def _annotate_retrieval_health(report: dict[str, Any]) -> dict[str, Any]:
     extension = report.get("conditional_paid_extension")
     extension_used = bool(
@@ -201,11 +243,24 @@ def run_hybrid_completeness(*args: Any, **kwargs: Any) -> dict[str, Any]:
     _sync_compatibility_hooks()
     if "request_fn" not in kwargs:
         kwargs["request_fn"] = globals().get("run_search_request", legacy.run_search_request)
-    report = _v3.run_hybrid_completeness(*args, **kwargs)
-    report = _annotate_retrieval_health(report)
     artifact_dir = kwargs.get("artifact_dir")
     if artifact_dir is None and args:
         artifact_dir = args[0]
+    viability = (
+        _refresh_pre_hybrid_regional_health(artifact_dir)
+        if artifact_dir is not None
+        else {
+            "version": 1,
+            "status": "not_available",
+            "changed": False,
+            "reason": "artifact_dir not supplied",
+            "paid_api_calls": 0,
+            "web_search_operations": 0,
+        }
+    )
+    report = _v3.run_hybrid_completeness(*args, **kwargs)
+    report["regional_health_viability"] = viability
+    report = _annotate_retrieval_health(report)
     if artifact_dir is not None:
         persist_report(artifact_dir, report)
     return report

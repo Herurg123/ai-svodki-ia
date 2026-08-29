@@ -229,14 +229,22 @@ it exists. Do not broaden the generic Source Freshness parser to arbitrary body
 text, and do not treat a Yandex URL date alone as sufficient publication proof.
 Existing machine-readable publication metadata remains authoritative.
 
-Search-derived China/Asia and Russia `regional_health` gaps must not be recomputed
-after Pulse promotion, because the second plane must not hide a degraded Primary
-Search route. Same-day recovery must reuse the saved Pulse snapshot and must not
-silently repoll mutable sources. Current deterministic adapters may repair a
-saved snapshot from evidence already present in that snapshot, but may not fetch
-mutable indexes again. Source/network/parser errors, including HTTP anti-bot
-responses, must remain visible as degraded diagnostics rather than being reported
-as healthy success.
+Source Pulse promotion must never close an existing Search-derived China/Asia or
+Russia `regional_health` gap, because the second discovery plane must not mask a
+degraded Primary Search route. Immediately before fresh Hybrid retrieval, a
+zero-paid deterministic viability refresh may only **re-open** an early healthy
+Primary region when the exact Primary regional candidates that survived the
+Primary final cap no longer have a viable `include|consider` survivor after the
+existing Event/Source Freshness and first editorial filtering. It must never turn
+`health_check_needed=true` into false, must not use Pulse-only or unrelated later
+candidates as proof of Primary health, must preserve the prior state when Primary
+provenance/identity is ambiguous, and must not create a regional publication quota
+or any new search slot. Same-day recovery must reuse the saved Pulse snapshot and
+must not silently repoll mutable sources. Current deterministic adapters may
+repair a saved snapshot from evidence already present in that snapshot, but may
+not fetch mutable indexes again. Source/network/parser errors, including HTTP
+anti-bot responses, must remain visible as degraded diagnostics rather than being
+reported as healthy success.
 
 ## Permanent and safety invariants
 
