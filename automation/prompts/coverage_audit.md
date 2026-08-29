@@ -54,40 +54,44 @@ UTC-даты запуска API или календарной даты сред�
    технологические издания; затем прозрачные вторичные источники с указанными
    ограничениями. Не считай отсутствие материала у одного конкретного издателя
    доказательством отсутствия события.
-7. `published_date`, `published_at` и `time_precision` описывают **само событие**:
-   момент его наступления либо первого существенного публичного анонса, а не дату
-   более поздней статьи, перепечатки, обзора или corroborating page. Свежая
-   вторичная страница не делает старое событие свежим. Если event-origin дату
-   установить нельзя, не подставляй дату страницы и не выдумывай время. Если для
-   события есть только календарная дата на частичном boundary day exact window,
-   ищи точный timezone-aware timestamp; без него deterministic Event Freshness
-   Proof может fail-closed отклонить кандидата.
-8. Само событие и хотя бы один пригодный цитируемый источник должны независимо
-   попадать в полное effective окно. Для события используй поля из правила 7.
-   Source-page publication time последующий Source Freshness Proof проверяет
-   отдельно и никогда не должен заменять event-time поля.
-9. Старый материал, перепечатанный сегодня без нового развития, не является
-   новым событием. Ставь `freshness_status: "old_reprint"` и exclude. Старый
-   документ допустим только как supporting source. Для нового события или
-   существенного развития используй `new_event` либо `material_update` и
-   конкретно заполни `freshness_reason`.
-10. Не возвращай уже найденное событие, полный дубль архива, слух, вымышленный
+7. `published_date`, `published_at` и `time_precision` описывают публикацию
+   цитируемой source/article page и сохраняются для отдельного Source Freshness
+   Proof. Не подменяй ими дату самого события.
+8. Для события отдельно заполняй `event_date`, `event_at`,
+   `event_time_precision`, `event_origin_url`, `event_evidence_kind` и
+   `event_date_evidence`. Приоритет доказательства: официальный
+   announcement/release/research; filing/court docket/release note/changelog;
+   однозначный first-party timestamp; authoritative secondary только если primary
+   origin недоступен. Свежая перепечатка или tracker update не делает старое
+   событие свежим.
+9. Если надёжная event-origin date неизвестна или неоднозначна, используй
+   `event_date=null`, `event_at=null`, `event_time_precision=unknown`,
+   `event_origin_url=null`, `event_evidence_kind=unknown`,
+   `event_date_evidence=""`. Не копируй туда дату статьи и не отклоняй candidate
+   только из-за неизвестного origin: Event Freshness Proof сохраняет recall для
+   `unknown`, а Source Freshness Proof остаётся fail-closed по source page.
+10. Старый материал, перепечатанный сегодня без нового развития, не является
+    новым событием. Ставь `freshness_status: "old_reprint"` и exclude. Старый
+    документ допустим только как supporting source. Для нового события или
+    существенного развития используй `new_event` либо `material_update` и
+    конкретно заполни `freshness_reason`.
+11. Не возвращай уже найденное событие, полный дубль архива, слух, вымышленный
     запуск модели, мелкое обновление, рекламу или материал, где ИИ — приманка.
-11. Для `legal_copyright_scraping` кандидат с recommendation include/consider
+12. Для `legal_copyright_scraping` кандидат с recommendation include/consider
     обязан иметь `category: "legal"`, `legal_scale: "major"` и конкретное
     объяснение масштаба: значимый суд/регулятор, крупный участник или группа,
     прецедент, существенная сумма либо влияние на обучение, данные, продукт или
     отрасль. Сам факт подачи бытового или локального иска недостаточен.
-12. Для `curiosity` кандидат обязан иметь `category: "curiosity"`,
+13. Для `curiosity` кандидат обязан иметь `category: "curiosity"`,
     `curiosity_eligible: true`, проверяемое объяснение и самостоятельную
     новостную ценность. Отсутствие достойного курьёза — нормальный пробел.
-13. Для любого include/consider укажи `verification_status: "verified"` и
+14. Для любого include/consider укажи `verification_status: "verified"` и
     объясни проверку. Неподтверждённое оставляй exclude и перечисляй в
     `rejections` с причиной.
-14. Не добивай количество слабым материалом. Если достойной новости нет,
+15. Не добивай количество слабым материалом. Если достойной новости нет,
     верни пустой `candidates`, перечисли проверенные, но отклонённые материалы
     в `rejections` и используй status `complete_with_gaps`.
-15. `direction_id` должен быть точно `{{DIRECTION_ID}}`. Фактический поисковый
+16. `direction_id` должен быть точно `{{DIRECTION_ID}}`. Фактический поисковый
     запрос и просмотренные источники автоматика возьмёт из raw API response —
     не выдумывай отдельный список якобы выполненных запросов.
-16. Верни только строгий JSON по заданной схеме.
+17. Верни только строгий JSON по заданной схеме.
