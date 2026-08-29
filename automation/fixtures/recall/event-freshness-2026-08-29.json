@@ -1,0 +1,85 @@
+{
+  "search_window": {
+    "start_at": "2026-08-27T04:43:51+03:00",
+    "end_at": "2026-08-29T05:16:40+03:00"
+  },
+  "cases": [
+    {
+      "id": "claudeforce",
+      "title": "Salesforce + Anthropic / Claudeforce",
+      "event_date": "2026-08-26",
+      "event_at": "2026-08-26T20:21:00+00:00",
+      "event_time_precision": "datetime",
+      "event_origin_url": "https://investor.salesforce.com/news/news-details/2026/Salesforce-and-Anthropic-Announce-Claudeforce-The-1-AI-Meets-the-1-AI-CRM/default.aspx",
+      "event_evidence_kind": "official_announcement",
+      "event_date_evidence": "Salesforce investor announcement dated August 26, 2026; BusinessWire timestamp 16:21 EDT",
+      "expected_status": "stale"
+    },
+    {
+      "id": "gemini-enterprise-legal-finance",
+      "title": "Google Gemini Enterprise Legal/Finance",
+      "event_date": "2026-08-25",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://cloud.google.com/blog/products/ai-machine-learning/introducing-gemini-enterprise-for-legal",
+      "event_evidence_kind": "official_announcement",
+      "event_date_evidence": "Google Cloud first-party launch page dated August 25, 2026",
+      "expected_status": "stale"
+    },
+    {
+      "id": "glm-5-3-flash",
+      "title": "Z.ai GLM-5.3-Flash",
+      "event_date": "2026-08-26",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://z.ai/blog/glm-5.3-flash",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Z.ai first-party release page dated 2026-08-26",
+      "expected_status": "stale"
+    },
+    {
+      "id": "anthropic-court",
+      "title": "Anthropic Pentagon supply-chain risk court ruling",
+      "event_date": "2026-08-27",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.courtlistener.com/docket/72379655/250/anthropic-pbc-v-us-department-of-war/",
+      "event_evidence_kind": "court_docket",
+      "event_date_evidence": "Court filing 250 filed on 2026-08-27",
+      "expected_status": "unknown"
+    },
+    {
+      "id": "anthropic-alignment",
+      "title": "Anthropic Automated Alignment Researcher",
+      "event_date": "2026-08-28",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.anthropic.com/research/automated-researchers-mitigate-alignment-failures",
+      "event_evidence_kind": "official_research",
+      "event_date_evidence": "Anthropic first-party research publication dated Aug 28, 2026",
+      "expected_status": "fresh"
+    },
+    {
+      "id": "lambda-debt",
+      "title": "Lambda $1B debt / Nvidia GPU / Microsoft",
+      "event_date": "2026-08-28",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/08/28/neocloud-lambda-secures-1b-in-debt-to-buy-more-chips/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch report on the newly raised $1B private debt, published August 28, 2026",
+      "expected_status": "fresh"
+    },
+    {
+      "id": "unknown-origin",
+      "title": "Potentially fresh event with unknown origin",
+      "event_date": null,
+      "event_at": null,
+      "event_time_precision": "unknown",
+      "event_origin_url": null,
+      "event_evidence_kind": "unknown",
+      "event_date_evidence": "",
+      "expected_status": "unknown"
+    }
+  ]
+}
