@@ -206,7 +206,7 @@ paid retrieval merely to backfill event metadata.
 
 ## Source Pulse supplemental boundary
 
-Source Pulse v1.2 may supplement a fresh Primary research artifact only through
+Source Pulse v1.3 may supplement a fresh Primary research artifact only through
 the bounded pre-editorial path documented in `automation/ARCHITECTURE.md`.
 It must use **zero OpenAI calls and zero Web Search operations** and must not
 reduce or suppress any mandatory Primary, agency-rescue, Hybrid or Coverage
@@ -221,12 +221,22 @@ become an official company source and does not gain automatic `include` status.
 official Tier-A sources; CNews and other Tier B entries remain lead-only and must
 never influence publication.
 
+The Yandex-specific publication-date repair must remain narrower than generic
+Source Freshness. A Yandex fallback may be used only for approved first-party
+Yandex IR/company-news URL shapes where the dated URL/id and the visible page or
+index date agree. A conflicting non-null parser date must not win merely because
+it exists. Do not broaden the generic Source Freshness parser to arbitrary body
+text, and do not treat a Yandex URL date alone as sufficient publication proof.
+Existing machine-readable publication metadata remains authoritative.
+
 Search-derived China/Asia and Russia `regional_health` gaps must not be recomputed
 after Pulse promotion, because the second plane must not hide a degraded Primary
 Search route. Same-day recovery must reuse the saved Pulse snapshot and must not
-silently repoll mutable sources. Source/network/parser errors, including HTTP
-anti-bot responses, must remain visible as degraded diagnostics rather than being
-reported as healthy success.
+silently repoll mutable sources. Current deterministic adapters may repair a
+saved snapshot from evidence already present in that snapshot, but may not fetch
+mutable indexes again. Source/network/parser errors, including HTTP anti-bot
+responses, must remain visible as degraded diagnostics rather than being reported
+as healthy success.
 
 ## Permanent and safety invariants
 
