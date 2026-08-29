@@ -111,13 +111,23 @@ function runNodeScript(scriptName, args = []) {
   });
 }
 
-function collectionsPhaseEligible(job) {
-  return scheduled.getAutomationStatus(job) === "PUBLISHED";
+function selectCollectionsJob(state, currentDateKey, phasesError = null) {
+  // On a failed phases-1/2 attempt, prefer today's job even when it has not
+  // reached DONE. That lets the independent collections stage still process the
+  // same-day digest while the video side remains broken/retryable.
+  if (phasesError) {
+    const sameDayJob = collections.findJobForDate(state, currentDateKey);
+    if (sameDayJob) return sameDayJob;
+  }
+  return scheduled.findLatestDoneJob(state, currentDateKey);
 }
 
 async function main() {
   let config = null;
   let lockHandle = null;
+  let phasesError = null;
+  let collectionsError = null;
+
   try {
     if (!fs.existsSync(CONFIG_PATH)) throw new Error(`Не найден config.json: ${CONFIG_PATH}`);
     config = loadJson(CONFIG_PATH);
@@ -130,53 +140,63 @@ async function main() {
 
     log(config, "=== START full scheduled flow ===");
     log(config, "Фазы 1-2/3: запускаю существующий scheduled-worker.js (NotebookLM/FTP -> Dzen publish).");
-    await runNodeScript("scheduled-worker.js");
+    try {
+      await runNodeScript("scheduled-worker.js");
+    } catch (error) {
+      phasesError = error;
+      fatalLog(
+        config,
+        `Фазы 1-2 завершились ошибкой: ${error.message}. ` +
+          "Третья фаза всё равно проверит доступные same-day публикации; общий exit останется ошибочным.",
+        error
+      );
+    }
 
     const state = loadJson(config.stateFile, { jobs: {} });
     const currentDateKey = scheduled.formatDateKey(new Date(), config.timeZone || "Europe/Moscow");
-    const job = scheduled.findLatestDoneJob(state, currentDateKey);
+    const job = selectCollectionsJob(state, currentDateKey, phasesError);
+
     if (!job) {
-      log(config, `Фаза 3/3: нет DONE job с датой не позже ${currentDateKey}; подборки не нужны.`);
-      log(config, "=== END full scheduled flow SUCCESS ===");
-      return;
-    }
-
-    if (!collectionsPhaseEligible(job)) {
-      log(
-        config,
-        `Фаза 3/3: Dzen video status=${scheduled.getAutomationStatus(job)} для ${job.date}; ` +
-          "этап подборок ждёт подтверждённую публикацию видео. Браузер для подборок НЕ открываю."
-      );
-      log(config, "=== END full scheduled flow SUCCESS ===");
-      return;
-    }
-
-    if (collections.collectionsComplete(job)) {
+      log(config, `Фаза 3/3: нет подходящего локального job с датой не позже ${currentDateKey}; подборки не запускаю.`);
+    } else if (collections.collectionsComplete(job)) {
       log(
         config,
         `Фаза 3/3: обе подборки за ${job.date} уже подтверждены в state.json ` +
           `(video=ADDED, digest=ADDED). Браузер для подборок НЕ открываю.`
       );
-      log(config, "=== END full scheduled flow SUCCESS ===");
-      return;
+    } else {
+      log(
+        config,
+        `Фаза 3/3: запускаю отдельный этап подборок за ${job.date}; ` +
+          `state=${collections.collectionsStatus(job)}; ` +
+          `dzenVideo=${scheduled.getAutomationStatus(job)}.`
+      );
+      try {
+        await runNodeScript("dzen-collections.js", ["--apply", `--date=${job.date}`]);
+        const refreshed = loadJson(config.stateFile, { jobs: {} });
+        const refreshedJob = collections.findJobForDate(refreshed, job.date);
+        log(
+          config,
+          `Фаза 3/3 завершена: dzenCollections.status=${collections.collectionsStatus(refreshedJob)}.`
+        );
+      } catch (error) {
+        collectionsError = error;
+        fatalLog(config, `Фаза 3/3 завершилась ошибкой: ${error.message}`, error);
+      }
     }
 
-    log(
-      config,
-      `Фаза 3/3: запускаю отдельный этап подборок за ${job.date}; ` +
-        `state=${collections.collectionsStatus(job)}.`
-    );
-    await runNodeScript("dzen-collections.js", ["--apply", `--date=${job.date}`]);
+    if (phasesError || collectionsError) {
+      const parts = [];
+      if (phasesError) parts.push(`фазы 1-2: ${phasesError.message}`);
+      if (collectionsError) parts.push(`фаза 3: ${collectionsError.message}`);
+      throw new Error(`Полный scheduled flow завершён с ошибкой (${parts.join("; ")}).`);
+    }
 
-    const refreshed = loadJson(config.stateFile, { jobs: {} });
-    const refreshedJob = collections.findJobForDate(refreshed, job.date);
-    log(
-      config,
-      `Фаза 3/3 завершена: dzenCollections.status=${collections.collectionsStatus(refreshedJob)}.`
-    );
     log(config, "=== END full scheduled flow SUCCESS ===");
   } catch (error) {
-    fatalLog(config, error.message, error);
+    if (error !== phasesError && error !== collectionsError) {
+      fatalLog(config, error.message, error);
+    }
     process.exitCode = process.exitCode || 1;
   } finally {
     releaseFullWorkerLock(lockHandle);
@@ -186,10 +206,10 @@ async function main() {
 module.exports = {
   FULL_WORKER_LOCK_PATH,
   acquireFullWorkerLock,
-  collectionsPhaseEligible,
   main,
   releaseFullWorkerLock,
   runNodeScript,
+  selectCollectionsJob,
 };
 
 if (require.main === module) main();
