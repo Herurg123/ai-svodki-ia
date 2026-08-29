@@ -18,6 +18,10 @@ Terra отдельно не запускалась: дефект находит�
 
 Saved completed resolution переклассифицируется детерминированно до удаления supplemental attempt. Recovery возвращает `completed_usable/complete_with_gaps`, сохраняет `completed_calls=7`, `remaining_calls=0` и не вызывает V8/search повторно. Primary=12, agency rescue<=1, Hybrid<=4/conditional5, Coverage<=7 и whole-pipeline ceilings 24/25 не меняются. Source Freshness, candidate verification, editorial, image/publication gates и regional policy не ослабляются.
 
+## Финальный merge-gate
+
+Временный branch applicator и его служебные файлы должны отсутствовать в итоговом PR diff. После их удаления обязателен новый `PR Gate`/Main CI именно на окончательном head SHA; старые проверки промежуточного head не считаются доказательством. Перед merge повторно сверяются exact head SHA, итоговый diff и отсутствие unresolved review threads; merge выполняется с `expected_head_sha`. После merge отдельно проверяются SHA и содержимое `main`.
+
 ## Вердикт
 
 PASS для узкого hotfix при условии полного Main CI на точном PR head. Изменение исправляет ложный production failure после уже выполненного evidence-rich resolution и одновременно сохраняет запрет публиковать неподтверждённый сюжет.
