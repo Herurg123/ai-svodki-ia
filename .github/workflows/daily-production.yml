@@ -2,6 +2,8 @@ name: Daily production digest
 run-name: Daily production digest ${{ github.run_id }}
 on:
   schedule:
+    # Single native GitHub schedule: 02:17 Europe/Moscow (23:17 UTC).
+    # Availability backup is external (cron-job.org) and uses workflow_dispatch.
     - cron: "17 23 * * *"
   workflow_dispatch:
     inputs:
