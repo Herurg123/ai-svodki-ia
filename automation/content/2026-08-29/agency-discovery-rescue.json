@@ -1,0 +1,120 @@
+{
+  "version": 4,
+  "search_strategy": "agency_discovery_rescue",
+  "publication_date": "2026-08-29",
+  "triggered": true,
+  "trigger_reason": "major_agencies_raw_zero",
+  "major_agencies_status": "complete_with_gaps",
+  "major_agencies_raw_count": 0,
+  "major_agencies_accepted_count": 0,
+  "candidate_pool_count_at_trigger": 8,
+  "candidate_count_independent_trigger": true,
+  "executed": true,
+  "state": "completed_no_addition",
+  "status": "complete",
+  "query": "latest AI Russia chips infrastructure financing earnings business deals policy security",
+  "allowed_domains": [
+    "reuters.com"
+  ],
+  "required_direct_source_hosts": [
+    "reuters.com"
+  ],
+  "search_context_size": "high",
+  "search_operation_limit": 1,
+  "search_operation_reserved": 1,
+  "search_operation_count_contribution": 1,
+  "search_retry_allowed": false,
+  "raw_count": 0,
+  "validated_count": 0,
+  "accepted_count": 0,
+  "added_count": 0,
+  "duplicate_count": 0,
+  "archive_duplicate_count": 0,
+  "rejections": [],
+  "model_rejections": [],
+  "api": {
+    "response_id": "resp_080e1db82a6d73da016a924271059087d1a24f768021f0309e",
+    "status": "completed",
+    "model": "gpt-5.6-terra",
+    "configured_max_tool_calls": 1,
+    "configured_web_search_limit": 1,
+    "observed_web_search_calls": 1,
+    "budget_overrun": false,
+    "web_search_calls": 1,
+    "web_search_calls_completed": 1,
+    "web_search_search_operations_total": 1,
+    "web_search_search_operations_performed": 1,
+    "web_search_search_operations_incomplete": 0,
+    "web_search_navigation_items_total": 0,
+    "web_search_call_items_total": 1,
+    "web_search_call_statuses": {
+      "completed": 1
+    },
+    "web_search_search_statuses": {
+      "completed": 1
+    },
+    "web_search_action_type_counts": {
+      "search": 1
+    },
+    "web_search_call_items": [
+      {
+        "id": "ws_080e1db82a6d73da016a924271c05487d1b9d90749ccaafff9",
+        "status": "completed",
+        "action_type": "search",
+        "action": {
+          "type": "search",
+          "queries": [
+            "latest AI Russia chips infrastructure financing earnings business deals policy security"
+          ],
+          "query": "latest AI Russia chips infrastructure financing earnings business deals policy security",
+          "sources": null
+        }
+      }
+    ],
+    "actual_queries": [
+      "latest AI Russia chips infrastructure financing earnings business deals policy security"
+    ],
+    "consulted_sources": [],
+    "completed_call_limit_exceeded": false,
+    "output_item_limit_exceeded": false,
+    "usage": {
+      "input_tokens": 17177,
+      "input_tokens_details": {
+        "cache_write_tokens": 16921,
+        "cached_tokens": 0
+      },
+      "output_tokens": 226,
+      "output_tokens_details": {
+        "reasoning_tokens": 67
+      },
+      "total_tokens": 17403
+    },
+    "error": null,
+    "incomplete_details": null,
+    "configured_search_operations": 1,
+    "configured_total_tool_calls": 4,
+    "navigation_tool_allowance": 3,
+    "allowed_domains": [
+      "reuters.com"
+    ],
+    "search_context_size": "high"
+  },
+  "resumed": true,
+  "recovered_from_artifact": true,
+  "pipeline_search_budget": {
+    "primary_maximum": 12,
+    "agency_discovery_rescue_maximum": 1,
+    "hybrid_maximum": 4,
+    "coverage_maximum": 7,
+    "maximum_total": 24
+  },
+  "raw_candidates": [],
+  "notes": "Единственная разрешённая Web Search операция выполнена строго с заданным date-free query через Reuters-only route. Прямых результатов Reuters не найдено, поэтому в effective window 2026-08-27T04:43:51+03:00 → 2026-08-29T05:16:40+03:00 не удалось верифицировать самостоятельное свежее AI-событие высокой новостной ценности с прямым primary_source URL на reuters.com. Кандидаты не добавлены.",
+  "accepted_candidates": [],
+  "query_policy": "gap_aware_reuters_one_slot",
+  "regional_gaps_at_trigger": [
+    "russia"
+  ],
+  "coverage_recovery_entry": true,
+  "coverage_recovery_editorial_rerun": "not_needed"
+}

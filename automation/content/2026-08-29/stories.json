@@ -1,0 +1,190 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Salesforce и Anthropic расширили партнёрство: Claudeforce и интеграция Claude в Agentforce и Slack",
+    "organization": "Salesforce; Anthropic; Claude; Slack",
+    "topic": "Enterprise AI agents and model-platform integration",
+    "event_type": "partnership_product_launch",
+    "status": "new",
+    "summary": "Salesforce и Anthropic объявили Claudeforce — расширение интеграции Claude с данными, правилами и workflow Salesforce. Одновременно запущен плагин Salesforce in Claude с 37 готовыми sales skills, а Claude должен стать моделью рассуждений в компонентах Agentforce и моделью по умолчанию для Slack.",
+    "published_at": "2026-08-27T08:57:33+00:00",
+    "published_date": "2026-08-27",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Salesforce reveals 'Claudeforce' in major new Anthropic AI deal as CEO Marc Benioff pushes back against SaaSpocalypse",
+        "publisher": "TechRadar",
+        "url": "https://www.techradar.com/pro/salesforce-reveals-claudeforce-in-major-new-anthropic-ai-deal-as-ceo-marc-benioff-pushes-back-against-saaspocalypse"
+      }
+    ],
+    "keywords": [
+      "Claudeforce",
+      "Claude",
+      "Salesforce",
+      "Agentforce",
+      "Slack",
+      "enterprise agents",
+      "CRM"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Федеральный суд признал незаконным присвоение Anthropic Пентагоном статуса supply-chain risk",
+    "organization": "Anthropic; U.S. Department of Defense; U.S. District Court for the Northern District of California",
+    "topic": "Судебное ограничение полномочий правительства США по исключению поставщика frontier-AI из федеральных контрактов на основании ярлыка риска цепочки поставок.",
+    "event_type": "court ruling",
+    "status": "new",
+    "summary": "Судья федерального окружного суда Рита Лин постановила, что присвоение Anthropic администрацией США статуса риска цепочки поставок было незаконным. Суд квалифицировал действия как произвольные, нарушающие due process и представляющие собой незаконную ответную меру за публичную критику компании.",
+    "published_at": "2026-08-28T12:46:12+00:00",
+    "published_date": "2026-08-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic gets its first court win over the Pentagon’s supply-chain risk label",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/28/anthropic-gets-its-first-court-win-over-the-pentagons-supply-chain-risk-label/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Pentagon",
+      "Department of Defense",
+      "supply-chain risk",
+      "First Amendment",
+      "AI policy",
+      "federal procurement"
+    ],
+    "geography": "world",
+    "category": "legal"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Anthropic опубликовала результаты Automated Alignment Researcher",
+    "organization": "Anthropic; Claude",
+    "topic": "AI for AI safety и автоматизация alignment-исследований: агентная система ищет литературу, предлагает методы post-training, обучает и оценивает модели.",
+    "event_type": "research release",
+    "status": "new",
+    "summary": "Anthropic выпустила исследование и open-source harness Automated Alignment Researcher, в котором Claude выполняет циклы поиска, разработки, обучения и тестирования методов устранения alignment-сбоев. Компания сообщает об улучшениях по всем десяти исследованным категориям без деградации заданных capability-метрик.",
+    "published_at": "2026-08-28T19:30:38+00:00",
+    "published_date": "2026-08-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "An Anthropic researcher just gave us a peek at self-improving AI",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/28/an-anthropic-researcher-just-gave-us-a-peek-at-self-improving-ai/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "alignment",
+      "automated research",
+      "post-training",
+      "AI safety",
+      "recursive self-improvement"
+    ],
+    "geography": "world",
+    "category": "research"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Neocloud Lambda привлекла $1 млрд долга для закупки Nvidia-чипов под аренду Microsoft",
+    "organization": "Lambda; Microsoft; Nvidia; JPMorgan Chase",
+    "topic": "Финансирование AI-инфраструктуры и долговое наращивание GPU-мощностей neocloud-провайдером для крупного корпоративного клиента.",
+    "event_type": "debt financing",
+    "status": "new",
+    "summary": "AI-cloud-провайдер Lambda, по сообщению TechCrunch со ссылкой на Bloomberg, привлёк $1 млрд частного краткосрочного долга для покупки Nvidia AI-чипов, которые предполагается сдать в аренду Microsoft. Сделка продолжает серию крупных долговых привлечений Lambda для финансирования GPU-развёртываний.",
+    "published_at": "2026-08-28T20:24:11+00:00",
+    "published_date": "2026-08-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Neocloud Lambda secures $1B in debt to buy more chips",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/28/neocloud-lambda-secures-1b-in-debt-to-buy-more-chips/"
+      }
+    ],
+    "keywords": [
+      "Lambda",
+      "neocloud",
+      "Nvidia",
+      "Microsoft",
+      "GPU",
+      "AI infrastructure",
+      "debt financing",
+      "JPMorgan"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Google Cloud представила отраслевые Gemini Enterprise для юридических и финансовых организаций",
+    "organization": "Google Cloud; Google",
+    "topic": "Enterprise AI agents and regulated-industry productization",
+    "event_type": "product_launch",
+    "status": "new",
+    "summary": "Google Cloud запустила preview-версии Gemini Enterprise для legal и financial services. Финансовый пакет включает управляемого Google исследовательского агента с более чем 50 skills и 13 коннекторами к лицензированным источникам; юридический пакет добавляет специализированные skills и интеграции с профильными системами.",
+    "published_at": "2026-08-27T23:25:00+00:00",
+    "published_date": "2026-08-27",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google unveils Gemini AI plans specifically for legal and finance workers",
+        "publisher": "TechRadar",
+        "url": "https://www.techradar.com/pro/google-unveils-gemini-plans-specifically-for-legal-and-finance-workers"
+      }
+    ],
+    "keywords": [
+      "Gemini Enterprise",
+      "legal",
+      "financial services",
+      "Financial Research agent",
+      "data connectors",
+      "governance"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Z.ai / Zhipu выпустила GLM-5.3-Flash — нативно мультимодальную open-weight модель для coding и агентных задач",
+    "organization": "Z.ai; Zhipu AI; GLM",
+    "topic": "Мультимодальная open-weight модель, visual coding и агентные рабочие процессы",
+    "event_type": "model release",
+    "status": "new",
+    "summary": "Z.ai вывела GLM-5.3-Flash в полный доступ через API и GLM Coding Plan. Компания позиционирует её как первую нативно мультимодальную модель семейства GLM-5: она принимает текст, изображения, видео и файлы, поддерживает 1 млн токенов контекста, tool calling, context caching и structured output.",
+    "published_at": null,
+    "published_date": "2026-08-28",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "China AI Model Updates — Release Timeline",
+        "publisher": "ChinaAPI",
+        "url": "https://chinaapi.ai/model-updates/"
+      }
+    ],
+    "keywords": [
+      "GLM-5.3-Flash",
+      "Z.ai",
+      "Zhipu AI",
+      "open-weight",
+      "multimodal",
+      "visual coding",
+      "agents",
+      "1M context",
+      "Chinese chips"
+    ],
+    "geography": "world",
+    "category": "models"
+  }
+]

@@ -1,0 +1,29 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-004",
+    "cand-005",
+    "cand-006",
+    "cand-008",
+    "cand-003"
+  ],
+  "excluded_candidate_ids": [
+    "cand-002",
+    "cand-007"
+  ],
+  "selection_summary": "Отобраны шесть подтверждённых самостоятельных событий из доступного пула: корпоративные агентные интеграции Salesforce и Google Cloud, крупное судебное решение в пользу Anthropic, исследование автоматизации alignment, долговое финансирование GPU-инфраструктуры Lambda и мультимодальный open-weight релиз Z.ai. Два кандидата исключены из-за fail-closed статуса свежести.",
+  "diversity_overrides": [
+    {
+      "type": "publisher",
+      "value": "TechCrunch",
+      "reason": "Три независимых высокозначимых сюжета опубликованы TechCrunch: судебное решение по Anthropic, исследование Automated Alignment Researcher и долговое финансирование Lambda. Короткий подтверждённый пул не позволяет исключить один из них только ради мягкого лимита издателя."
+    },
+    {
+      "type": "organization",
+      "value": "Anthropic",
+      "reason": "Три выбранных сюжета с участием Anthropic относятся к разным самостоятельным событиям: партнёрству с Salesforce, федеральному судебному решению и новой alignment-публикации. Они не дублируют друг друга и важны для понимания рынка."
+    }
+  ]
+}

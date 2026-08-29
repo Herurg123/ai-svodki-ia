@@ -1,0 +1,585 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-29",
+  "search_window": {
+    "start_at": "2026-08-27T04:43:51+03:00",
+    "end_at": "2026-08-29T05:16:40+03:00",
+    "latest_archive_at": "2026-08-28T04:43:51+03:00",
+    "start_date": "2026-08-27",
+    "end_date": "2026-08-29",
+    "latest_archive_date": "2026-08-28"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=3, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Salesforce и Anthropic расширили партнёрство: Claudeforce и интеграция Claude в Agentforce и Slack",
+      "organization": "Salesforce; Anthropic; Claude; Slack",
+      "published_date": "2026-08-27",
+      "published_at": "2026-08-27T08:57:33+00:00",
+      "time_precision": "datetime",
+      "topic": "Enterprise AI agents and model-platform integration",
+      "event_type": "partnership_product_launch",
+      "keywords": [
+        "Claudeforce",
+        "Claude",
+        "Salesforce",
+        "Agentforce",
+        "Slack",
+        "enterprise agents",
+        "CRM"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Salesforce reveals 'Claudeforce' in major new Anthropic AI deal as CEO Marc Benioff pushes back against SaaSpocalypse",
+        "publisher": "TechRadar",
+        "url": "https://www.techradar.com/pro/salesforce-reveals-claudeforce-in-major-new-anthropic-ai-deal-as-ceo-marc-benioff-pushes-back-against-saaspocalypse"
+      },
+      "supporting_sources": [],
+      "event_summary": "Salesforce и Anthropic объявили Claudeforce — расширение интеграции Claude с данными, правилами и workflow Salesforce. Одновременно запущен плагин Salesforce in Claude с 37 готовыми sales skills, а Claude должен стать моделью рассуждений в компонентах Agentforce и моделью по умолчанию для Slack.",
+      "verified_facts": [
+        "Публикация TechRadar датирована 27 августа 2026 года.",
+        "Анонс включает Salesforce in Claude — плагин с 37 предварительно собранными навыками для sales-задач.",
+        "Claude заявлен как reasoning model для Atlas Reasoning Engine и для Agentforce Vibes, Agentforce Coworker и Agent Builder.",
+        "Salesforce сообщила, что Claude станет моделью по умолчанию для Slack."
+      ],
+      "significance": "Это крупная интеграция frontier-модели Anthropic в CRM, корпоративные workflow и Slack, которая расширяет дистрибуцию Claude и соединяет агентное рассуждение с корпоративными данными и управляемыми действиями.",
+      "significance_score": 3,
+      "limitations": "Проверка опирается на один авторитетный технологический источник, пересказывающий корпоративный анонс; коммерческие условия, сроки и фактическая доступность по регионам не раскрыты в доступном материале.",
+      "archive_status": "none",
+      "archive_reason": "В недавнем архиве нет совпадающего сюжета о Claudeforce или о новой интеграции Claude в Agentforce и Slack.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Источник прямо описывает совместный анонс Salesforce и Anthropic и его конкретные продуктовые компоненты; дата публикации находится в effective window.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-27T08:57:33Z; timestamp проверен Python против effective window. Источник опубликован 27 августа 2026 года; это новый самостоятельный продуктово-партнёрский анонс, не найденный в текущем пуле или архиве.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие относится к корпоративному партнёрству и продуктовой интеграции.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не curiosity-сюжет: кандидат соответствует основной тематике enterprise AI agents.",
+      "id": "cand-001"
+    },
+    {
+      "title": "OpenAI запускает второй корпоративный венчурный фонд на $400 млн",
+      "organization": "OpenAI",
+      "published_date": "2026-08-28",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Корпоративные инвестиции OpenAI в ранние AI-стартапы",
+      "event_type": "corporate venture fund",
+      "keywords": [
+        "OpenAI",
+        "venture fund",
+        "$400 million",
+        "AI startups",
+        "corporate investment"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "business_media",
+      "primary_source": {
+        "title": "OpenAI Is the Sole Investor in Its Latest Venture Fund",
+        "publisher": "The Wall Street Journal",
+        "url": "https://www.wsj.com/pro/venture-capital/openai-is-the-sole-investor-in-its-latest-venture-fund-ed1dd447"
+      },
+      "supporting_sources": [
+        {
+          "title": "Axios Pro Rata: Requiem for an office park",
+          "publisher": "Axios",
+          "url": "https://www.axios.com/newsletters/axios-pro-rata-348b8ec6-f9a1-4bca-9f25-c7880cfa1e5c"
+        }
+      ],
+      "event_summary": "OpenAI, согласно материалу WSJ и записи SEC, сформировала второй стартап-фонд объёмом $400 млн, полностью профинансированный самой компанией. Фонд предназначен для ранних инвестиций в компании AI-экосистемы; первый OpenAI Startup Fund в 2021 году привлёк $175 млн внешнего капитала.",
+      "verified_facts": [
+        "Аффилированная с OpenAI структура подала в SEC документы, указывающие на привлечение $400 млн для второго фонда.",
+        "По данным WSJ, единственным инвестором фонда выступает сама OpenAI, в отличие от первого фонда с внешними LP.",
+        "Фонд ориентирован на инвестиции в ранние AI-компании."
+      ],
+      "significance": "Это заметное расширение роли OpenAI как инвестора: компания направляет собственный баланс на формирование экосистемы поставщиков и будущих партнёров, а размер фонда существенно превышает объём первого OpenAI Startup Fund.",
+      "significance_score": 2,
+      "limitations": "Доступный текст WSJ не показывает точный timestamp публикации; дата 28 августа подтверждается свежей сводкой Axios. Не раскрыты полный список портфельных компаний, юридическая структура и инвестиционная стратегия фонда.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет сюжета о втором корпоративном фонде OpenAI; это не повтор ранее опубликованных новостей о продуктах, инфраструктуре или инвестициях OpenAI.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "WSJ сообщает о $400 млн и подтверждает сведения ссылкой на SEC filing; Axios независимо фиксирует запуск фонда в свежем выпуске Pro Rata.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие является корпоративным финансированием, а не судебным или регуляторным делом.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат относится к основной теме бизнес-инвестиций.",
+      "id": "cand-002"
+    },
+    {
+      "title": "Z.ai / Zhipu выпустила GLM-5.3-Flash — нативно мультимодальную open-weight модель для coding и агентных задач",
+      "organization": "Z.ai; Zhipu AI; GLM",
+      "published_date": "2026-08-28",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Мультимодальная open-weight модель, visual coding и агентные рабочие процессы",
+      "event_type": "model release",
+      "keywords": [
+        "GLM-5.3-Flash",
+        "Z.ai",
+        "Zhipu AI",
+        "open-weight",
+        "multimodal",
+        "visual coding",
+        "agents",
+        "1M context",
+        "Chinese chips"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "official",
+      "primary_source": {
+        "title": "China AI Model Updates — Release Timeline",
+        "publisher": "ChinaAPI",
+        "url": "https://chinaapi.ai/model-updates/"
+      },
+      "supporting_sources": [
+        {
+          "title": "GLM-5.3-Flash",
+          "publisher": "Zhipu AI Open Documentation",
+          "url": "https://docs.bigmodel.cn/cn/guide/models/vlm/glm-5.3-flash"
+        }
+      ],
+      "event_summary": "Z.ai вывела GLM-5.3-Flash в полный доступ через API и GLM Coding Plan. Компания позиционирует её как первую нативно мультимодальную модель семейства GLM-5: она принимает текст, изображения, видео и файлы, поддерживает 1 млн токенов контекста, tool calling, context caching и structured output.",
+      "verified_facts": [
+        "Официальная документация называет GLM-5.3-Flash первой нативно мультимодальной моделью серии GLM-5.",
+        "Документация указывает архитектуру на 320 млрд параметров с 18 млрд активных параметров и поддержку входов видео, изображений, текста и файлов.",
+        "Для API указан идентификатор glm-5.3-flash, контекст 1M и максимальный вывод 128K.",
+        "Модель полностью доступна в GLM Coding Plan; в документации также заявлена работа на крупных кластерах отечественных ускорителей.",
+        "Сторонний отраслевой трекер датирует релиз и open-source публикацию 27 августа 2026 года."
+      ],
+      "significance": "Крупный самостоятельный релиз одного из ведущих китайских AI-разработчиков: сочетает open-weight архитектуру, мультимодальность, длинный контекст, coding/GUI-агентность и заявленное production-развёртывание на китайских чипах.",
+      "significance_score": 4,
+      "limitations": "Дата 27 августа подтверждена отраслевым трекером, тогда как открытая официальная документация подтверждает характеристики и доступность, но не показывает собственный timestamp публикации. Бенчмарки и ценовые сопоставления в документации являются заявлениями компании.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве есть сюжет о раскрытии Z.ai как разработчика Ox Alpha, но нет GLM-5.3-Flash или его мультимодального релиза.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверены официальная страница модели и независимый отраслевой timeline, связывающий релиз с 27 августа. Основные продуктовые характеристики подтверждаются первоисточником.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: jsonld:datePublished:depth=4=2026-08-28; timestamp проверен Python против effective window. Релиз датирован 27 августа 2026 года, попадает в effective window и не найден среди текущего пула или архивных сюжетов.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: это основной продуктовый кандидат.",
+      "id": "cand-003"
+    },
+    {
+      "title": "Федеральный суд признал незаконным присвоение Anthropic Пентагоном статуса supply-chain risk",
+      "organization": "Anthropic; U.S. Department of Defense; U.S. District Court for the Northern District of California",
+      "published_date": "2026-08-28",
+      "published_at": "2026-08-28T12:46:12+00:00",
+      "time_precision": "datetime",
+      "topic": "Судебное ограничение полномочий правительства США по исключению поставщика frontier-AI из федеральных контрактов на основании ярлыка риска цепочки поставок.",
+      "event_type": "court ruling",
+      "keywords": [
+        "Anthropic",
+        "Pentagon",
+        "Department of Defense",
+        "supply-chain risk",
+        "First Amendment",
+        "AI policy",
+        "federal procurement"
+      ],
+      "geography": "world",
+      "category": "legal",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Anthropic gets its first court win over the Pentagon’s supply-chain risk label",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/28/anthropic-gets-its-first-court-win-over-the-pentagons-supply-chain-risk-label/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Anthropic PBC v. U.S. Department of War, docket document 250",
+          "publisher": "CourtListener",
+          "url": "https://www.courtlistener.com/docket/72379655/250/anthropic-pbc-v-us-department-of-war/"
+        }
+      ],
+      "event_summary": "Судья федерального окружного суда Рита Лин постановила, что присвоение Anthropic администрацией США статуса риска цепочки поставок было незаконным. Суд квалифицировал действия как произвольные, нарушающие due process и представляющие собой незаконную ответную меру за публичную критику компании.",
+      "verified_facts": [
+        "TechCrunch датирует публикацию 28 августа 2026 года, 5:46 AM PDT.",
+        "Суд признал designation незаконным и указал на First Amendment, Fifth Amendment и произвольность действий администрации.",
+        "Решение относится к запрету федеральным ведомствам работать с Anthropic после конфликта вокруг ограничений на использование моделей для автономного оружия и массовой внутренней слежки."
+      ],
+      "significance": "Крупное судебное решение на стыке frontier-AI, национальной безопасности и федеральных закупок: оно напрямую затрагивает возможность правительства США отстранять AI-поставщика из контрактов и формирует важный прецедент для отрасли.",
+      "significance_score": 4,
+      "limitations": "Доступ к тексту судебного документа через CourtListener был технически ограничен; факты решения сверены по подробному сообщению TechCrunch, которое ссылается на сам ruling.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть связанные события о взаимодействии Anthropic и правительства, но нет этого судебного решения.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Дата, время, судья, предмет designation и основные выводы решения приведены в опубликованном в окне сообщении TechCrunch; ссылка на судебный документ идентифицирована.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-28T12:46:12+00:00; timestamp проверен Python против effective window. Судебное постановление было вынесено вечером 27 августа, а сообщение о нём опубликовано 28 августа внутри effective window.",
+      "legal_scale": "major",
+      "legal_scale_reason": "Решение касается федеральной политики закупок и национальной безопасности в отношении одного из ведущих разработчиков frontier-AI, а также конституционных ограничений действий исполнительной власти.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран как крупное legal/policy-событие.",
+      "id": "cand-004"
+    },
+    {
+      "title": "Anthropic опубликовала результаты Automated Alignment Researcher: Claude автономно находит методы исправления alignment-сбоев",
+      "organization": "Anthropic; Claude",
+      "published_date": "2026-08-28",
+      "published_at": "2026-08-28T19:30:38+00:00",
+      "time_precision": "datetime",
+      "topic": "AI for AI safety и автоматизация alignment-исследований: агентная система ищет литературу, предлагает методы post-training, обучает и оценивает модели.",
+      "event_type": "research release",
+      "keywords": [
+        "Anthropic",
+        "Claude",
+        "alignment",
+        "automated research",
+        "post-training",
+        "AI safety",
+        "recursive self-improvement"
+      ],
+      "geography": "world",
+      "category": "research",
+      "source_type": "research",
+      "primary_source": {
+        "title": "An Anthropic researcher just gave us a peek at self-improving AI",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/28/an-anthropic-researcher-just-gave-us-a-peek-at-self-improving-ai/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Automated researchers can reliably mitigate alignment failures",
+          "publisher": "Anthropic",
+          "url": "https://www.anthropic.com/research/automated-researchers-mitigate-alignment-failures"
+        }
+      ],
+      "event_summary": "Anthropic выпустила исследование и open-source harness Automated Alignment Researcher, в котором Claude выполняет циклы поиска, разработки, обучения и тестирования методов устранения alignment-сбоев. Компания сообщает об улучшениях по всем десяти исследованным категориям без деградации заданных capability-метрик.",
+      "verified_facts": [
+        "Первичный материал Anthropic датирован 28 августа 2026 года.",
+        "В эксперименте система исследовала десять категорий alignment failures и применяла мониторинг агента к предлагаемым методам.",
+        "Anthropic сообщает, что методы улучшали целевые бенчмарки без ухудшения выбранных capability-оценок, а также сохраняли эффект на withheld evaluations и на более крупных моделях.",
+        "Компания прямо указывает ограничения: узость тестируемых сбоев, неполноту бенчмарков и то, что оценки являются прокси реального misalignment."
+      ],
+      "significance": "Это заметная публикация одного из ведущих AI-лабораторий о переносе исследовательского цикла alignment на агентов: направление важно и для масштабирования safety-практик, и для дискуссии об automated AI research.",
+      "significance_score": 3,
+      "limitations": "Результаты представлены самой Anthropic и относятся к ограниченному набору внутренних/публичных оценок; они не доказывают безопасность production-моделей в реальных условиях.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть новости о safety Anthropic, но нет этой новой исследовательской публикации и open-source harness.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Первичный исследовательский материал Anthropic опубликован в effective window; независимое описание TechCrunch согласуется с содержанием первоисточника.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-28T19:30:38+00:00; timestamp проверен Python против effective window. Первичная публикация датирована 28 августа 2026 года.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: это самостоятельный research/safety-кандидат.",
+      "id": "cand-005"
+    },
+    {
+      "title": "Neocloud Lambda привлекла $1 млрд краткосрочного частного долга для закупки Nvidia AI-чипов под аренду Microsoft",
+      "organization": "Lambda; Microsoft; Nvidia; JPMorgan Chase",
+      "published_date": "2026-08-28",
+      "published_at": "2026-08-28T20:24:11+00:00",
+      "time_precision": "datetime",
+      "topic": "Финансирование AI-инфраструктуры и долговое наращивание GPU-мощностей neocloud-провайдером для крупного корпоративного клиента.",
+      "event_type": "debt financing",
+      "keywords": [
+        "Lambda",
+        "neocloud",
+        "Nvidia",
+        "Microsoft",
+        "GPU",
+        "AI infrastructure",
+        "debt financing",
+        "JPMorgan"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Neocloud Lambda secures $1B in debt to buy more chips",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/28/neocloud-lambda-secures-1b-in-debt-to-buy-more-chips/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Lambda closes $926 million loan to fund NVIDIA GB300 GPUs",
+          "publisher": "Lambda",
+          "url": "https://lambda.ai/"
+        }
+      ],
+      "event_summary": "AI-cloud-провайдер Lambda, по сообщению TechCrunch со ссылкой на Bloomberg, привлёк $1 млрд частного краткосрочного долга для покупки Nvidia AI-чипов, которые предполагается сдать в аренду Microsoft. Сделка продолжает серию крупных долговых привлечений Lambda для финансирования GPU-развёртываний.",
+      "verified_facts": [
+        "TechCrunch опубликовал материал 28 августа 2026 года в 1:24 PM PDT.",
+        "По данным материала, объём нового частного долга составляет $1 млрд, а организатором выступил JPMorgan Chase.",
+        "Средства предназначены для закупки Nvidia AI-чипов, которые Lambda планирует сдавать в аренду Microsoft.",
+        "В публикации также указано, что на этой неделе Lambda объявила о закрытии займа на $926 млн для финансирования развёртывания Nvidia GB300 GPUs."
+      ],
+      "significance": "Сделка иллюстрирует масштаб и финансовую механику AI-инфраструктурного бума: крупный neocloud-провайдер использует миллиардный долг для ускоренного расширения GPU-парка под hyperscale-клиента.",
+      "significance_score": 3,
+      "limitations": "Ключевые параметры сделки в статье основаны на сообщении Bloomberg; компания не приведена как подтверждающая именно этот $1 млрд транш в доступном материале.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть другие крупные GPU- и дата-центровые сделки, но не финансирование Lambda для Microsoft.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Дата и базовые параметры подтверждены опубликованным в окне материалом TechCrunch; происхождение сведений Bloomberg и отсутствие публичного подтверждения Lambda для конкретного транша явно учтены.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-28T20:24:11+00:00; timestamp проверен Python против effective window. Материал о новом $1 млрд долговом привлечении опубликован 28 августа 2026 года внутри effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат относится к значимому инфраструктурному финансированию.",
+      "id": "cand-006"
+    },
+    {
+      "title": "Alibaba Cloud добавила Qwen-MT-Image 2.0 — модель перевода изображений с сохранением макета",
+      "organization": "Alibaba Cloud; Qwen",
+      "published_date": "2026-08-28",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Мультимодальный перевод и локализация визуального контента",
+      "event_type": "model release",
+      "keywords": [
+        "Qwen-MT-Image-2.0",
+        "Alibaba Cloud",
+        "image translation",
+        "localization",
+        "55 languages",
+        "multimodal"
+      ],
+      "geography": "world",
+      "category": "multimodal",
+      "source_type": "documentation",
+      "primary_source": {
+        "title": "Explore Qwen3, Wan2.6 & Latest Models on Model Studio",
+        "publisher": "Alibaba Cloud Model Studio Documentation",
+        "url": "https://www.alibabacloud.com/help/en/model-studio/newly-released-models"
+      },
+      "supporting_sources": [],
+      "event_summary": "Alibaba Cloud указала в каталоге Model Studio выпуск qwen-mt-image-2.0 28 августа. Сервис предназначен для перевода изображений на 55 исходных языках с сохранением исходного макета и типографики, а также предлагает пользовательские терминологические словари и фильтрацию чувствительных слов.",
+      "verified_facts": [
+        "В официальном каталоге Alibaba Cloud дата qwen-mt-image-2.0 указана как 28 августа 2026 года.",
+        "Модель описана как движок image translation с поддержкой 55 исходных языков.",
+        "Alibaba Cloud заявляет сохранение исходной компоновки и типографики, а также custom terminology и sensitive-word filtering."
+      ],
+      "significance": "Свежий мультимодальный релиз от Qwen/Alibaba Cloud для локализации визуальных материалов. Практическая ценность понятна, но по масштабу он уступает новым flagship-LLM и агентным платформам.",
+      "significance_score": 2,
+      "limitations": "Доступна только карточка в официальном каталоге; подробные технические характеристики, география доступности и независимые оценки качества не найдены в пределах этого discovery-прохода.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет выпуска Qwen-MT-Image 2.0 или идентичного продукта.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Дата и базовые возможности подтверждены официальной документацией Alibaba Cloud Model Studio.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: продукт соответствует тематике мультимодальных релизов, но не выделен как curiosity-сюжет.",
+      "id": "cand-007"
+    },
+    {
+      "title": "Google Cloud представила отраслевые версии Gemini Enterprise для юридических и финансовых организаций",
+      "organization": "Google Cloud; Google",
+      "published_date": "2026-08-27",
+      "published_at": "2026-08-27T23:25:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Enterprise AI agents and regulated-industry productization",
+      "event_type": "product_launch",
+      "keywords": [
+        "Gemini Enterprise",
+        "legal",
+        "financial services",
+        "Financial Research agent",
+        "data connectors",
+        "governance"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Google unveils Gemini AI plans specifically for legal and finance workers",
+        "publisher": "TechRadar",
+        "url": "https://www.techradar.com/pro/google-unveils-gemini-plans-specifically-for-legal-and-finance-workers"
+      },
+      "supporting_sources": [],
+      "event_summary": "Google Cloud запустила preview-версии Gemini Enterprise для legal и financial services. Финансовый пакет включает управляемого Google исследовательского агента с более чем 50 skills и 13 коннекторами к лицензированным источникам; юридический пакет добавляет специализированные skills и интеграции с профильными системами.",
+      "verified_facts": [
+        "Публикация TechRadar датирована 27 августа 2026 года.",
+        "Обе отраслевые версии находятся в preview; цены не раскрыты.",
+        "Для финансового направления заявлены Financial Research agent, более 50 skills и 13 коннекторов.",
+        "Для legal-направления заявлены функции подготовки документов, проверки цитирования, contract lifecycle management и regulatory scanning."
+      ],
+      "significance": "Это самостоятельное расширение Gemini Enterprise в высокорегулируемые вертикали: Google продаёт не только базовую модель, но и агентный слой с коннекторами, разграничением доступа и отраслевыми workflow.",
+      "significance_score": 2,
+      "limitations": "Доступный источник — технологическое медиа; первичный анонс Google Cloud при навигации из страницы не был извлечён. Цены, регионы доступности и полный список условий preview требуют дальнейшей проверки.",
+      "archive_status": "none",
+      "archive_reason": "Не совпадает с архивным сюжетом о consumer-функциях Google AI Mode для отслеживания авиабилетов и бронирования отелей.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата и ключевые параметры запуска подтверждены открытой публикацией TechRadar; событие описано как запуск Google Cloud.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-27T23:25:00Z; timestamp проверен Python против effective window. Источник опубликован 27 августа 2026 года, в пределах заданного effective window, и описывает новый отраслевой продуктовый пакет.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это продуктовый запуск, а не судебное или регуляторное событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не является curiosity-сюжетом; релевантность основана на существенном enterprise-agent обновлении.",
+      "id": "cand-008"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=8, validated unique=8, final candidates=8. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-global_breaking-01",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Nvidia reportedly agrees to acquire Hugging Face for $12.9 billion",
+      "origin_direction": "global_breaking",
+      "reason_code": "unverified",
+      "evidence_reason": "Материал от 27 августа 2026 года описывает сделку только со ссылкой на неназванный источник The Information и прямо оговаривает, что она может не состояться. Это потенциально крупный material update к архивному сюжету о переговорах Hugging Face, но для include/consider не хватает подтверждения от компаний или второго надёжного независимого источника.",
+      "likely_significance_score": 4,
+      "entities": [
+        "Nvidia",
+        "Hugging",
+        "Face"
+      ],
+      "anchors": [
+        "$12.9 b"
+      ],
+      "source_hint": null,
+      "resolution_required": true,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-models_products_agents-01",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Nvidia to buy Hugging Face for $12.9 billion, report claims",
+      "origin_direction": "models_products_agents",
+      "reason_code": "unverified",
+      "evidence_reason": "Хотя материал от 27 августа 2026 года описывает возможное соглашение Nvidia о покупке Hugging Face, он опирается на единственный ненаблюдаемый источник The Information и не даёт независимого подтверждения. Кроме того, архив уже содержит предыдущий сюжет о переговорах о продаже Hugging Face; для material update нужна более сильная верификация.",
+      "likely_significance_score": 4,
+      "entities": [
+        "Nvidia",
+        "Hugging",
+        "Face"
+      ],
+      "anchors": [
+        "$12.9 b"
+      ],
+      "source_hint": null,
+      "resolution_required": true,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-business_investment_partnerships-01",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Nvidia wants to buy Hugging Face in $13 billion blockbuster AI deal",
+      "origin_direction": "business_investment_partnerships",
+      "reason_code": "unverified",
+      "evidence_reason": "Материал от 27 августа является развитием уже архивного сюжета о возможной продаже Hugging Face, но прямо сообщает, что соглашение ещё не достигнуто; он основан на неназванном источнике и не даёт подтверждённого нового факта для кандидата.",
+      "likely_significance_score": 4,
+      "entities": [
+        "Nvidia",
+        "Hugging",
+        "Face"
+      ],
+      "anchors": [
+        "$13 b"
+      ],
+      "source_hint": null,
+      "resolution_required": true,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 2,
+      "health_check_needed": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota"
+  }
+}

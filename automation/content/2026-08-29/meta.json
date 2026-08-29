@@ -1,0 +1,58 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-29",
+  "slug": "2026-08-29",
+  "title": "ИИ-Сводка на 29 августа 2026",
+  "description": "Anthropic получила судебную защиту от Пентагона и показала автоматизацию alignment-исследований, Salesforce и Google расширяют корпоративных агентов, а Lambda наращивает GPU-парк в долг. Z.ai выпустила мультимодальную GLM-5.3-Flash.",
+  "published_at": "2026-08-29T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-29.png",
+  "topics": [
+    "Anthropic",
+    "Salesforce",
+    "Claudeforce",
+    "Agentforce",
+    "корпоративные агенты ИИ",
+    "судебное регулирование ИИ",
+    "alignment",
+    "ИИ-безопасность",
+    "Lambda",
+    "Nvidia",
+    "GPU-инфраструктура",
+    "Microsoft",
+    "Gemini Enterprise",
+    "Z.ai",
+    "GLM-5.3-Flash",
+    "open-weight модели",
+    "мультимодальные модели"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-003."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: global_breaking, major_agencies, infrastructure_chips_cloud, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Три независимых высокозначимых сюжета опубликованы TechCrunch: судебное решение по Anthropic, исследование Automated Alignment Researcher и долговое финансирование Lambda. Короткий подтверждённый пул не позволяет исключить один из них только ради мягкого лимита издателя."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "Anthropic: Три выбранных сюжета с участием Anthropic относятся к разным самостоятельным событиям: партнёрству с Salesforce, федеральному судебному решению и новой alignment-публикации. Они не дублируют друг друга и важны для понимания рынка."
+    }
+  ]
+}
