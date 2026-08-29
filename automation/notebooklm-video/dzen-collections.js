@@ -6,6 +6,8 @@ const path = require("path");
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
 const PUBLICATIONS_URL = "https://dzen.ru/profile/editor/rybv/publications";
+const COLLECTION_CARD_TIMEOUT_MS = 15_000;
+const COLLECTION_CARD_POLL_MS = 300;
 const MONTHS = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
 const MONTHS_SHORT = ["янв", "фев", "мар", "апр", "мая", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"];
 
@@ -122,6 +124,12 @@ function updateCollectionTarget(config, state, job, target, fields) {
   job.updatedAt = now;
   saveJsonAtomic(config.stateFile, state);
   return job.dzenCollections.status;
+}
+function classifyCollectionCardLookup(visibleCount, timedOut) {
+  if (!Number.isInteger(visibleCount) || visibleCount < 0) throw new Error(`Некорректное число видимых подборок: ${visibleCount}`);
+  if (visibleCount === 1) return "FOUND";
+  if (visibleCount > 1) return "AMBIGUOUS";
+  return timedOut ? "TIMEOUT" : "WAIT";
 }
 function isLoginUrl(url) {
   const v = String(url || "").toLowerCase();
@@ -246,22 +254,50 @@ async function openCollectionModal(page, row, title) {
   if (!heading) throw new Error("После выбора действия не открылось окно «Добавление публикации в подборку».");
   return findCollectionsModal(page, heading);
 }
-async function findCollectionCard(modal, name) {
-  const text = modal.getByText(name, { exact: true });
-  const visible = [];
-  for (let i = 0; i < await text.count().catch(() => 0); i += 1) if (await text.nth(i).isVisible().catch(() => false)) visible.push(text.nth(i));
-  if (visible.length !== 1) throw new Error(`Ожидалась одна видимая подборка «${name}», найдено ${visible.length}.`);
-  const marker = `ai-svodki-card-${Date.now()}`;
-  const ok = await visible[0].evaluate((el, markerValue) => {
-    let node = el, best = null;
-    for (let d = 0; node && d < 8; d += 1, node = node.parentElement) {
-      const r = node.getBoundingClientRect();
-      if (r.width >= 280 && r.height >= 45 && r.height <= 145) { best = node; break; }
+async function findCollectionCard(page, modal, name, logger, timeoutMs = COLLECTION_CARD_TIMEOUT_MS) {
+  const deadline = Date.now() + timeoutMs;
+  let waitLogged = false;
+
+  while (true) {
+    if (!(await modal.isVisible().catch(() => false))) {
+      throw new Error(`Окно подборок закрылось до появления «${name}».`);
     }
-    if (!best) return false; best.setAttribute("data-ai-svodki-card", markerValue); return true;
-  }, marker);
-  if (!ok) throw new Error(`Не определена плашка «${name}».`);
-  return modal.locator(`[data-ai-svodki-card="${marker}"]`).first();
+
+    const text = modal.getByText(name, { exact: true });
+    const visible = [];
+    for (let i = 0; i < await text.count().catch(() => 0); i += 1) {
+      if (await text.nth(i).isVisible().catch(() => false)) visible.push(text.nth(i));
+    }
+
+    const lookupState = classifyCollectionCardLookup(visible.length, Date.now() >= deadline);
+    if (lookupState === "AMBIGUOUS") {
+      throw new Error(`Ожидалась одна видимая подборка «${name}», найдено ${visible.length}.`);
+    }
+    if (lookupState === "TIMEOUT") {
+      throw new Error(`Не дождался загрузки подборки «${name}» за ${timeoutMs} мс: видимых точных совпадений 0.`);
+    }
+    if (lookupState === "WAIT") {
+      if (!waitLogged) {
+        logger.log(`Окно подборок открыто; жду загрузку плашки «${name}» до ${timeoutMs} мс.`);
+        waitLogged = true;
+      }
+      await page.waitForTimeout(COLLECTION_CARD_POLL_MS);
+      continue;
+    }
+
+    const marker = `ai-svodki-card-${Date.now()}`;
+    const ok = await visible[0].evaluate((el, markerValue) => {
+      let node = el, best = null;
+      for (let d = 0; node && d < 8; d += 1, node = node.parentElement) {
+        const r = node.getBoundingClientRect();
+        if (r.width >= 280 && r.height >= 45 && r.height <= 145) { best = node; break; }
+      }
+      if (!best) return false; best.setAttribute("data-ai-svodki-card", markerValue); return true;
+    }, marker);
+    if (!ok) throw new Error(`Не определена плашка «${name}».`);
+    if (waitLogged) logger.log(`Плашка «${name}» загрузилась; продолжаю.`);
+    return modal.locator(`[data-ai-svodki-card="${marker}"]`).first();
+  }
 }
 async function alreadyAdded(card, name) {
   return card.evaluate((el, expected) => {
@@ -296,7 +332,7 @@ async function processTarget(page, config, dateKey, target, apply, logger) {
   const title = titleFor(target, dateKey); const row = await findPublicationRow(page, target, dateKey, logger);
   if (!row) return { status: "missing", title };
   const modal = await openCollectionModal(page, row, title);
-  const card = await findCollectionCard(modal, target.collectionName);
+  const card = await findCollectionCard(page, modal, target.collectionName, logger);
   const before = await alreadyAdded(card, target.collectionName);
   logger.log(`Подборка «${target.collectionName}»: already-selected=${before.selected}; title-color=${before.color}; title-alpha=${before.alpha}.`);
   if (!apply) { await closeOverlay(page); return { status: "dry-run", title }; }
@@ -317,6 +353,10 @@ function runSelfTest() {
   const job = { dzenCollections: { video: { status: "ADDED" }, digest: { status: "PENDING" } } };
   if (collectionsStatus(job) !== "PARTIAL" || collectionsComplete(job)) throw new Error("partial state");
   job.dzenCollections.digest.status = "ADDED"; if (!collectionsComplete(job)) throw new Error("complete state");
+  if (classifyCollectionCardLookup(0, false) !== "WAIT") throw new Error("loading modal must wait");
+  if (classifyCollectionCardLookup(1, false) !== "FOUND") throw new Error("one collection must be found");
+  if (classifyCollectionCardLookup(0, true) !== "TIMEOUT") throw new Error("empty modal after deadline must time out");
+  if (classifyCollectionCardLookup(2, false) !== "AMBIGUOUS") throw new Error("duplicate collection matches must fail closed");
   console.log("Dzen collections contract self-test: OK");
 }
 async function main(argv = process.argv.slice(2)) {
@@ -358,5 +398,5 @@ async function main(argv = process.argv.slice(2)) {
   }
 }
 
-module.exports = { TARGETS, collectionsComplete, collectionsStatus, findJobForDate, main, parseDateKey, targetIsAdded, titleFor, updateCollectionTarget };
+module.exports = { COLLECTION_CARD_TIMEOUT_MS, TARGETS, classifyCollectionCardLookup, collectionsComplete, collectionsStatus, findJobForDate, main, parseDateKey, targetIsAdded, titleFor, updateCollectionTarget };
 if (require.main === module) main().catch((e) => { console.error(e.stack || e.message); process.exitCode = 1; });
