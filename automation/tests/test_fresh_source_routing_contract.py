@@ -19,7 +19,10 @@ class FreshSourceRoutingContractTests(unittest.TestCase):
         self.assertIn("календарные даты, годы, названия", text)
         self.assertIn("source-neutral broad discovery", text)
         self.assertIn("Reuters/AP/Bloomberg/FT", text)
-        self.assertIn("latest AI chips infrastructure financing earnings business deals policy security", text)
+        self.assertIn(
+            "latest AI models research chips infrastructure financing earnings business deals policy security",
+            text,
+        )
         self.assertIn("source-neutral адаптивным last-mile", text)
 
     def test_coverage_prompt_is_date_free_but_window_strict(self) -> None:
