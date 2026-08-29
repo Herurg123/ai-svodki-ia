@@ -69,10 +69,12 @@ GitHub setting; порядок активации описан в
 Этот раздел намеренно сохраняет операторские и тестируемые маркеры текущего
 production-контракта, а подробное объяснение находится в `automation/ARCHITECTURE.md`.
 
-Основной cron запускается в `23:17 UTC`, то есть около `02:17 Europe/Moscow` даты
-выпуска; внешний резервный запуск обслуживается через cron-job.org. Время выпуска
-нормализуется к 06:00 МСК. Recovery выбирает наиболее полный пригодный artifact
-той же даты.
+У `daily-production.yml` намеренно ровно один нативный GitHub `schedule`:
+`23:17 UTC`, то есть `02:17 Europe/Moscow` даты выпуска. Внутрисуточных повторных
+GitHub cron нет. Внешняя страховка обслуживается через cron-job.org и вызывает
+workflow через `workflow_dispatch`, поэтому такой запуск в Actions отображается
+как manual/dispatch, а не как scheduled run. Время выпуска нормализуется к
+06:00 МСК. Recovery выбирает наиболее полный пригодный artifact той же даты.
 
 Fresh Primary выполняет ровно 12 Web Search search operations. Coverage выполняет
 до 7 Coverage search operations. Hybrid сохраняет базовый потолок 4 search
