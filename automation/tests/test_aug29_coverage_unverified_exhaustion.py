@@ -10,6 +10,7 @@ from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "automation" / "scripts"
+sys.path.insert(0, str(SCRIPTS))
 FIXTURE = ROOT / "automation" / "fixtures" / "recall" / "2026-08-29-coverage-unverified-exhaustion.json"
 
 spec = importlib.util.spec_from_file_location(
