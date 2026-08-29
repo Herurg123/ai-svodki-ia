@@ -120,6 +120,12 @@ matcher сейчас не включены; они остаются deferred opt
 домена. Финальный job `Required PR Gate` является единственным стабильным
 required status для защиты `main`.
 
+`daily-production.yml` имеет ровно один нативный GitHub schedule:
+`17 23 * * *`, то есть `02:17 Europe/Moscow`. Внутрисуточные повторные cron в
+GitHub не используются. Резервный запуск выполняет cron-job.org через
+`workflow_dispatch`; поэтому такой внешний вызов отображается как manual/dispatch
+и не является scheduled run.
+
 Video-only изменения под `notebooklm-video/**` не являются изменениями nightly
 production и не запускают Main CI; их через PR Gate проверяет только Video CI.
 В обратную сторону nightly production workflows не должны читать или изменять

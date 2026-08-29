@@ -64,6 +64,12 @@ offline checks for the local NotebookLM video subproject. It remains reusable fo
 PR Gate and dependency-free. Video-only source or test changes must not require
 Main CI. Cross-cutting changes can route to both domains.
 
+`daily-production.yml` must keep exactly one native GitHub schedule,
+`17 23 * * *` (`02:17 Europe/Moscow`). Do not add intra-day retry crons. The
+availability backup is external and must enter through `workflow_dispatch`
+(currently cron-job.org), so backup/manual runs remain operationally
+distinguishable from the native scheduled run.
+
 Do not add `automation/notebooklm-video/` as an input, dependency, generated
 artifact, cleanup target or deploy source of `daily-production.yml`,
 `deploy-posts.yml`, `repository-cleanup.yml` or `repository-hygiene.yml`.
