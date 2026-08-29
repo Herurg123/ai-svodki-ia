@@ -78,12 +78,18 @@ workflow через `workflow_dispatch`, поэтому такой запуск 
 
 Fresh Primary выполняет ровно 12 Web Search search operations. Coverage выполняет
 до 7 Coverage search operations. Hybrid сохраняет базовый потолок 4 search
-operations; только когда Search-derived health одновременно показывает нулевой
-recall для Russia и China/Asia, разрешён один дополнительный пятый Hybrid search,
+operations; только когда effective Search-derived health одновременно показывает
+gap для Russia и China/Asia, разрешён один дополнительный пятый Hybrid search,
 чтобы сохранить все три широких Hybrid-прохода и выполнить два отдельных
-региональных health-check. Поэтому обычный архитектурный потолок остаётся 24
-search operations, а условный double-gap потолок равен 25. Пятый Hybrid search не
-разрешён при одном или отсутствии региональных gaps.
+региональных health-check. Перед fresh Hybrid P4 выполняет zero-paid deterministic
+viability refresh: он может только переоткрыть early healthy регион, если exact
+Primary regional candidates после Primary final cap, Event/Source Freshness и
+первого editorial больше не имеют viable `include|consider` survivor. Уже
+открытый Search-gap никогда не закрывается, Pulse-only candidate не считается
+доказательством здоровья Primary, а неоднозначная provenance не тратит новый
+search. Поэтому обычный архитектурный потолок остаётся 24 search operations, а
+условный double-gap потолок равен 25; P4 не добавляет шестой или новый постоянный
+search.
 
 Каноническая continuity-точка остается `search_cutoff_at` последнего успешно
 опубликованного выпуска. После единственного search один Primary-pass может
@@ -108,9 +114,11 @@ dated first-party URL/id и видимой даты может дополнит�
 machine-readable publication date; сам общий Source Freshness parser body text не
 сканирует. ТАСС включён в российский Tier-A `trusted_news` registry через AI-tag
 surface; Yandex IR/MWS/VK остаются official, CNews остаётся Tier-B lead-only.
-Tier B не влияет на publication. Search-derived China/Asia и Russia gaps после
-Pulse не пересчитываются, поэтому механизм не может подавить Hybrid health-check.
-Полная диагностика сохраняется в daily Actions artifact.
+Tier B не влияет на publication. Source Pulse никогда не закрывает Search-derived
+China/Asia или Russia gap. После freshness/editorial P4 может только переоткрыть
+ранний false-healthy gap по exact Primary provenance, поэтому второй discovery-
+plane по-прежнему не может подавить Hybrid regional recovery. Полная диагностика
+сохраняется в daily Actions artifact.
 
 Обязательные Coverage-направления сохраняют ids `security_world`,
 `security_russia`, `security_asia`, `legal_copyright_scraping`, `curiosity` и
