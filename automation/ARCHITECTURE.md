@@ -556,6 +556,17 @@ Coverage содержит шесть mandatory directions и максимум с
 завершённый search с пустым publishable pool может завершиться успешным
 `editorial_stop` без искусственного наполнения выпуска.
 
+Retrieval Quality использует свободный седьмой slot для одного source-neutral
+resolution search по high-signal evidence. `unverified` не становится
+`verified` и не попадает в publication. Но завершённый resolution считается
+`bounded_unverified_exhausted`, если каждый required signal поддержан минимум
+тремя matching `unverified` rejection с трёх разных source hosts, search
+завершил ровно одну operation, сохранил ровно один query и не использовал
+domain filter. Один/два host, same-host repetition, unrelated evidence,
+multiple search operations или technical/API ambiguity остаются fail-closed.
+Same-day recovery детерминированно переиспользует такой сохранённый seventh
+slot без повторной Web Search operation.
+
 Отдельные 1–2 regional Coverage searches только потому, что после Hybrid
 `regional_health` всё ещё красный, **не входят в active contract**. Это сохранённая
 future option, которую можно повторно обсуждать после следующих production

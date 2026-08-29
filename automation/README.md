@@ -48,6 +48,8 @@
   максимум 4 searches и ровно один conditional fifth search только при
   одновременных Search-derived Russia + China/Asia gaps;
 - `scripts/ensure_story_coverage.py` — fallback Coverage public entrypoint;
+  evidence-rich unverified exhaustion может завершить bounded quality check
+  без публикации слуха и без повторного search при same-day recovery;
 - `scripts/recover_digest_artifact.py` — paid-stage recovery entrypoint;
 - `scripts/source_freshness.py` — deterministic source publication-date proof;
 - `scripts/build_site.py` / validators — site/RSS/publication contracts;

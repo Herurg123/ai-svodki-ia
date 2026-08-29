@@ -18,6 +18,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 _BASE_PATH = Path(__file__).with_name("ensure_story_coverage_v8.py")
 _BASE_SPEC = importlib.util.spec_from_file_location("ensure_story_coverage_v8", _BASE_PATH)
@@ -56,6 +57,7 @@ TERMINAL_NEGATIVE_REASON_CODES = frozenset({
     "satire_or_fiction",
     "not_ai_news",
 })
+BOUNDED_UNVERIFIED_MIN_DISTINCT_HOSTS = 3
 
 # Stable v8 transport still uses OpenAI(..., max_retries=2). Keep this literal
 # at the public entrypoint because repository contract tests inspect it.
@@ -375,6 +377,48 @@ def _terminal_negative_signal_ids(
     return resolved
 
 
+def _source_host(url: Any) -> str:
+    host = (urlparse(str(url or "")).hostname or "").casefold()
+    return host[4:] if host.startswith("www.") else host
+
+
+def _bounded_unverified_signal_ids(
+    rejections: Any,
+    signals: list[dict[str, Any]],
+    *,
+    api: Any,
+    actual_queries: Any,
+    allowed_domains: Any,
+) -> set[str]:
+    """Close only a fully spent, evidence-rich unverified quality check."""
+    if allowed_domains or not isinstance(api, dict) or api.get("status") != "completed":
+        return set()
+    if int(api.get("web_search_calls_completed", 0) or 0) != 1:
+        return set()
+    if not isinstance(actual_queries, list) or len(actual_queries) != 1:
+        return set()
+    if not isinstance(rejections, list):
+        return set()
+    hosts_by_signal: dict[str, set[str]] = {
+        str(signal.get("signal_id") or ""): set()
+        for signal in signals if signal.get("signal_id")
+    }
+    for rejection in rejections:
+        if not isinstance(rejection, dict) or rejection.get("reason_code") != "unverified":
+            continue
+        host = _source_host(rejection.get("url"))
+        if not host:
+            continue
+        for signal in signals:
+            signal_id = str(signal.get("signal_id") or "")
+            if signal_id and _rejection_matches_signal(rejection, signal):
+                hosts_by_signal.setdefault(signal_id, set()).add(host)
+    return {
+        signal_id for signal_id, hosts in hosts_by_signal.items()
+        if len(hosts) >= BOUNDED_UNVERIFIED_MIN_DISTINCT_HOSTS
+    }
+
+
 def _latest_resolution_attempt(plan: dict[str, Any]) -> dict[str, Any] | None:
     attempts = plan.get("attempts")
     if not isinstance(attempts, list):
@@ -412,10 +456,18 @@ def _quality_from_resolution_attempt(
         item for item in attempt.get("candidates") or [] if isinstance(item, dict)
     ]
     terminal_ids = _terminal_negative_signal_ids(attempt.get("rejections"), cluster)
+    bounded_unverified_ids = _bounded_unverified_signal_ids(
+        attempt.get("rejections"), cluster, api=attempt.get("api"),
+        actual_queries=attempt.get("actual_queries"),
+        allowed_domains=attempt.get("allowed_domains"),
+    )
     cluster_ids = {
         str(item.get("signal_id") or "") for item in cluster if item.get("signal_id")
     }
-    negative_complete = bool(cluster_ids and cluster_ids.issubset(terminal_ids))
+    noncandidate_complete_ids = terminal_ids | bounded_unverified_ids
+    negative_complete = bool(
+        cluster_ids and cluster_ids.issubset(noncandidate_complete_ids)
+    )
     cluster_resolved = bool(candidates) or negative_complete
     unresolved_outside = len(signal_ids - cluster_ids)
     complete = bool(cluster_resolved and unresolved_outside == 0)
@@ -423,10 +475,16 @@ def _quality_from_resolution_attempt(
     query = str(attempt.get("required_query") or "") or None
     if complete and candidates:
         reason = "verified candidate evidence found"
-    elif complete and negative_complete:
+    elif complete and cluster_ids.issubset(terminal_ids):
         reason = (
             "resolution search conclusively rejected the signal under existing "
             "freshness, deduplication, legal/fiction, or AI-relevance rules"
+        )
+    elif complete and cluster_ids.issubset(noncandidate_complete_ids):
+        reason = (
+            "bounded source-neutral resolution completed; at least three distinct "
+            "reporting hosts matched every required signal, but none provided "
+            "verified candidate evidence, so the event remains excluded"
         )
     else:
         reason = "high-confidence unresolved evidence remains after the single resolution slot"
@@ -497,6 +555,24 @@ def _prepare_prior_for_quality(
     prepared = _V8_PREPARE_PRIOR(prior_plan, search_window)
     if not isinstance(prepared, dict):
         return prepared
+    publication_date = str(prepared.get("publication_date") or "")
+    signals = _required_signals(publication_date) if publication_date else []
+    saved_attempt = _latest_resolution_attempt(prepared) if signals else None
+    if saved_attempt is not None:
+        recomputed = _quality_from_resolution_attempt(signals, saved_attempt)
+        if recomputed.get("status") == "complete":
+            prepared["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
+            prepared["retrieval_quality"] = recomputed
+            prepared["unresolved_resolution"] = copy.deepcopy(recomputed)
+            prepared["audit_status"] = "complete_with_gaps"
+            prepared["audit_state"] = "completed_usable"
+            prepared["audit_error"] = None
+            prepared["validation_error"] = None
+            prepared["error"] = None
+            prepared["status"] = "ok"
+            budget = prepared.get("search_budget")
+            if isinstance(budget, dict):
+                budget["stop_reason"] = "saved_quality_resolution_reclassified"
     quality = prepared.get("retrieval_quality")
     if (
         prepared.get("retrieval_quality_contract_version") == RETRIEVAL_QUALITY_CONTRACT_VERSION
@@ -608,9 +684,15 @@ def _run_resolution(
     terminal_negative_ids = _terminal_negative_signal_ids(
         payload.get("rejections"), cluster
     )
+    bounded_unverified_ids = _bounded_unverified_signal_ids(
+        payload.get("rejections"), cluster, api=metadata,
+        actual_queries=metadata.get("actual_queries"),
+        allowed_domains=UNRESOLVED_RESOLUTION_DOMAINS,
+    )
     cluster_ids = {item for item in signal_ids if item}
+    noncandidate_complete_ids = terminal_negative_ids | bounded_unverified_ids
     negative_complete = bool(
-        cluster_ids and cluster_ids.issubset(terminal_negative_ids)
+        cluster_ids and cluster_ids.issubset(noncandidate_complete_ids)
     )
     cluster_resolved = bool(accepted) or negative_complete
 
@@ -640,9 +722,14 @@ def _run_resolution(
         "resolution_disposition": (
             "positive"
             if accepted
-            else ("terminal_negative" if negative_complete else "unresolved")
+            else (
+                "terminal_negative"
+                if cluster_ids and cluster_ids.issubset(terminal_negative_ids)
+                else ("bounded_unverified_exhausted" if negative_complete else "unresolved")
+            )
         ),
         "terminal_negative_signal_ids": sorted(terminal_negative_ids),
+        "bounded_unverified_signal_ids": sorted(bounded_unverified_ids),
         "actual_queries": list(metadata.get("actual_queries") or []),
         "sources": list(metadata.get("consulted_sources") or []),
         "candidate_count": len(accepted),
@@ -675,12 +762,24 @@ def _run_resolution(
             else (
                 "resolution search conclusively rejected the signal under existing "
                 "freshness, deduplication, legal/fiction, or AI-relevance rules"
-                if complete and negative_complete
-                else "high-confidence unresolved evidence remains after the single resolution slot"
+                if complete and cluster_ids.issubset(terminal_negative_ids)
+                else (
+                    "bounded source-neutral resolution completed; at least three distinct "
+                    "reporting hosts matched every required signal, but none provided "
+                    "verified candidate evidence, so the event remains excluded"
+                    if complete and negative_complete
+                    else "high-confidence unresolved evidence remains after the single resolution slot"
+                )
             )
         ),
     )
     plan["unresolved_resolution"] = copy.deepcopy(plan["retrieval_quality"])
+    budget = plan.get("search_budget")
+    if isinstance(budget, dict):
+        budget["stop_reason"] = (
+            "retrieval_quality_resolution_completed"
+            if complete else "retrieval_quality_resolution_unresolved"
+        )
     if not complete:
         plan["audit_status"] = "partial"
     return plan
@@ -721,6 +820,8 @@ def execute_audit_plan(
         return _annotate_no_signal_quality(result)
 
     prepared = _prepare_prior_for_quality(prior_plan, search_window)
+    if completed_quality_audit(prepared):
+        return copy.deepcopy(prepared)
     # Let v8 finish/retry all mandatory directions first. A synthetic non-zero
     # pool suppresses only v8's supplemental sentinel while this higher-priority
     # unresolved resolution is pending.

@@ -106,8 +106,12 @@ health-check. Полная диагностика сохраняется в dail
 `general_coverage_gaps`; последний является авторитетный last-mile sweep
 оставшихся пробелов. Дополнительные региональные Coverage searches только из-за
 красного regional health сейчас не включены. `partial`, `budget_exhausted` и
-`error` блокируют Image API, commit и deploy. Для короткого выпуска сохраняется
-пометка «Новостей сегодня меньше, чем обычно».
+`error` блокируют Image API, commit и deploy. Один evidence-rich source-neutral
+Retrieval Quality resolution может завершиться `complete_with_gaps`, если
+минимум три разных source hosts подтверждают наличие того же high-signal
+сообщения, но ни один не даёт verified evidence; такой сюжет остаётся
+исключённым, а thin/ambiguous evidence остаётся fail-closed. Для короткого
+выпуска сохраняется пометка «Новостей сегодня меньше, чем обычно».
 
 Ручной production dispatch имеет `publish=false` по умолчанию и отдельный
 `recovery_run_id`. Текущие production defaults: `gpt-5.6-terra` для text/search и
