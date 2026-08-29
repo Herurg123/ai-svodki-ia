@@ -45,8 +45,8 @@ class P4RetrievalArchitectureContractTests(unittest.TestCase):
     def test_p4_is_one_way_and_zero_paid(self) -> None:
         architecture = ARCHITECTURE.read_text(encoding="utf-8")
         agents = AGENTS.read_text(encoding="utf-8")
-        for text in (architecture, agents):
-            self.assertIn("может только переоткрыть", text)
+        self.assertIn("может только переоткрыть", architecture)
+        self.assertIn("may only **re-open**", agents)
         self.assertIn("true никогда не становится false", architecture)
         self.assertIn("0 OpenAI/Web Search operations", architecture)
         self.assertIn("must never turn\n`health_check_needed=true` into false", agents)
