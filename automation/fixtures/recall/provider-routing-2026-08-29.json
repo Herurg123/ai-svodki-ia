@@ -1,0 +1,146 @@
+{
+  "source_artifact": {
+    "workflow_run_id": 33231413963,
+    "job_id": 99044815870,
+    "code_sha": "ccacc65ee24a2a1159985c9a26b45bdb08002f6f",
+    "artifact_id": 9708618496,
+    "artifact_sha256": "b44c096424badb504e9e04be83db589f98cd80699ad4125cbedc051f0b6fe4e0"
+  },
+  "search_window": {
+    "start_at": "2026-08-27T04:43:51+03:00",
+    "end_at": "2026-08-29T05:16:40+03:00"
+  },
+  "controls": {
+    "yandex-sim": {
+      "title": "ИИ-помощник Яндекса встроится в мобильную связь",
+      "published_date": "2026-08-28",
+      "control_urls": [
+        "https://yandex.ru/company/news/28-08-2026-01"
+      ],
+      "required_anchor_groups": [
+        ["яндекс", "yandex"],
+        ["продукт", "sim", "мобильн"]
+      ]
+    },
+    "ai-alliance-copyright": {
+      "title": "Альянс в сфере ИИ предложил правила обучения моделей на авторском контенте",
+      "event_date": "2026-08-27",
+      "published_date": "2026-08-28",
+      "control_urls": [
+        "https://www.vedomosti.ru/technology/articles/2026/08/28/1224303-kak-razrabotchiki-ii-hotyat-reshit-problemu-viplat-za-obuchenie-na-avtorskom-kontente"
+      ],
+      "required_anchor_groups": [
+        ["россия", "russia"],
+        ["авторск", "copyright"],
+        ["данн", "обучен", "training"]
+      ]
+    },
+    "tencent-hy4": {
+      "title": "Tencent releases and open-sources Tencent Hy4 preview",
+      "published_date": "2026-08-28",
+      "control_urls": [
+        "https://www.tencent.com/tencent-releases-and-open-sources-tencent-hy4-preview/"
+      ],
+      "required_anchor_groups": [
+        ["tencent", "hunyuan"],
+        ["model", "release", "open source"]
+      ]
+    }
+  },
+  "production_observations": [
+    {
+      "route": "primary:russia",
+      "query": "последние новости ИИ Яндекс Сбер VK МТС российский рынок",
+      "search_completed": true,
+      "source_metadata_available": true,
+      "consulted_sources_count": 30,
+      "candidate_count": 0,
+      "control_id": "yandex-sim",
+      "control_source_pool_hit": false
+    },
+    {
+      "route": "primary:russia",
+      "query": "последние новости ИИ Яндекс Сбер VK МТС российский рынок",
+      "search_completed": true,
+      "source_metadata_available": true,
+      "consulted_sources_count": 30,
+      "candidate_count": 0,
+      "control_id": "ai-alliance-copyright",
+      "control_source_pool_hit": false
+    },
+    {
+      "route": "primary:legal_regulation",
+      "query": "latest major AI regulation copyright court rulings policy enforcement",
+      "search_completed": true,
+      "source_metadata_available": true,
+      "consulted_sources_count": 42,
+      "candidate_count": 0,
+      "control_id": "ai-alliance-copyright",
+      "control_source_pool_hit": false
+    },
+    {
+      "route": "primary:china_asia_models",
+      "query": "latest China Asia AI model releases agents open source",
+      "search_completed": true,
+      "source_metadata_available": true,
+      "consulted_sources_count": 13,
+      "candidate_count": 2,
+      "control_id": "tencent-hy4",
+      "control_source_pool_hit": false,
+      "neighbor_source_seen": "https://www.tencent.com/tencent-hunyuan-officially-releases-hy3-advancing-agent-capabilities-and-deeper-product-integration/"
+    },
+    {
+      "route": "primary:major_agencies",
+      "query": "latest AI chips infrastructure financing earnings business deals policy security",
+      "search_completed": true,
+      "source_metadata_available": true,
+      "consulted_sources_count": 18,
+      "candidate_count": 0,
+      "control_id": "tencent-hy4",
+      "control_source_pool_hit": false
+    },
+    {
+      "route": "agency:reuters_rescue_v4",
+      "query": "latest AI Russia chips infrastructure financing earnings business deals policy security",
+      "search_completed": true,
+      "source_metadata_available": false,
+      "consulted_sources_count": 0,
+      "candidate_count": 0,
+      "control_id": "tencent-hy4",
+      "control_source_pool_hit": null,
+      "raw_action_sources": null
+    },
+    {
+      "route": "hybrid:russia_health",
+      "query": "последние новости ИИ Россия модели продукты агенты инвестиции облако инфраструктура кибербезопасность регулирование",
+      "search_completed": true,
+      "source_metadata_available": true,
+      "consulted_sources_count": 23,
+      "candidate_count": 0,
+      "control_id": "ai-alliance-copyright",
+      "control_source_pool_hit": false
+    }
+  ],
+  "proposed_query_contract": {
+    "primary:major_agencies": "latest AI models research chips infrastructure financing earnings business deals policy security",
+    "primary:china_asia_models": "latest China AI models releases Tencent Hunyuan Qwen DeepSeek GLM open source",
+    "primary:russia": "последние новости ИИ Россия Яндекс Сбер VK МТС продукты регулирование авторское право данные обучение моделей",
+    "agency:reuters_rescue_v5": "latest AI models research chips infrastructure financing earnings business deals policy security",
+    "hybrid:asia_health": "latest China AI models releases Tencent Hunyuan Qwen DeepSeek GLM Huawei products research",
+    "hybrid:russia_health": "последние новости ИИ Россия Яндекс Сбер VK МТС продукты регулирование авторское право данные обучение моделей"
+  },
+  "query_control_routes": {
+    "yandex-sim": ["primary:russia", "hybrid:russia_health"],
+    "ai-alliance-copyright": ["primary:russia", "hybrid:russia_health"],
+    "tencent-hy4": ["primary:china_asia_models", "hybrid:asia_health", "agency:reuters_rescue_v5"]
+  },
+  "search_budget": {
+    "primary": 12,
+    "agency_rescue": 1,
+    "hybrid_normal": 4,
+    "coverage": 7,
+    "ordinary_pipeline_maximum": 24,
+    "double_regional_gap_maximum": 25,
+    "p3_additional_searches": 0
+  }
+}
