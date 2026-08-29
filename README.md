@@ -98,16 +98,19 @@ origin не является автоматической причиной ис�
 fail-closed Source Freshness Proof. P1 не добавляет новый LLM/Web Search pass и не
 увеличивает paid search ceiling.
 
-После fresh Primary Source Pulse v1.2 выполняет второй discovery-plane без
+После fresh Primary Source Pulse v1.3 выполняет второй discovery-plane без
 дополнительного платного retrieval: обычный HTTPS к фиксированному registry,
 **0 OpenAI calls и 0 Web Search operations**. В candidate pool могут попасть
 только свежие `pulse_only` Tier-A `official` или `trusted_news` leads, и только
 как `consider` после детерминированной проверки страницы/даты, host allowlist и
-AI relevance. ТАСС включён в российский Tier-A `trusted_news` registry через
-AI-tag surface; Yandex IR/MWS/VK остаются official, CNews остаётся Tier-B
-lead-only. Tier B не влияет на publication. Search-derived China/Asia и Russia
-gaps после Pulse не пересчитываются, поэтому механизм не может подавить Hybrid
-health-check. Полная диагностика сохраняется в daily Actions artifact.
+AI relevance. Yandex IR/company-news имеет узкий P2 fallback: только совпадение
+dated first-party URL/id и видимой даты может дополнить отсутствующую generic
+machine-readable publication date; сам общий Source Freshness parser body text не
+сканирует. ТАСС включён в российский Tier-A `trusted_news` registry через AI-tag
+surface; Yandex IR/MWS/VK остаются official, CNews остаётся Tier-B lead-only.
+Tier B не влияет на publication. Search-derived China/Asia и Russia gaps после
+Pulse не пересчитываются, поэтому механизм не может подавить Hybrid health-check.
+Полная диагностика сохраняется в daily Actions artifact.
 
 Обязательные Coverage-направления сохраняют ids `security_world`,
 `security_russia`, `security_asia`, `legal_copyright_scraping`, `curiosity` и
