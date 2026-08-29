@@ -21,7 +21,8 @@
 - `config/` — production, editorial, site, image и Source Pulse configuration;
 - `prompts/` — active prompts и сохранённые legacy prompts;
 - `fixtures/recall/` — machine-readable retrieval regressions, включая P1
-  event-freshness controls и P2 Yandex Source Pulse date controls;
+  event-freshness controls, P2 Yandex Source Pulse date controls и P3
+  provider/source-routing controls;
 - `fixtures/research/.runtime/` — ignored trusted runtime ingress для fresh
   research;
 - `specs/` — редакционные и технические спецификации;
@@ -39,7 +40,12 @@
   entrypoint; после fresh Primary запускает zero-paid Source Pulse v1.3 supplement
   до первого editorial;
 - `scripts/agency_discovery_rescue.py` / `agency_discovery_rescue_v4.py` —
-  conditional missing-event rescue, максимум один Web Search;
+  preserved previous rescue implementations для replay/rollback;
+  `scripts/agency_discovery_rescue_v5.py` — active conditional Reuters-only
+  missing-event rescue: максимум один Web Search, global publisher route без
+  regional-gap подмены query;
+- `scripts/retrieval_routing_audit.py` — zero-network P3 classifier/replay для
+  provider source-pool miss vs missing source metadata и query-control coverage;
 - `scripts/source_pulse_supplement_v13.py` — bounded Tier-A official/trusted-news
   supplemental discovery поверх сохранённого v1.2: обычный HTTPS,
   source-aware date parsing, узкий Yandex URL+visible-date repair,
@@ -50,7 +56,8 @@
   и после Hybrid без повторного polling;
 - `scripts/hybrid_search_completeness.py` — stable Hybrid v3 entrypoint: baseline
   максимум 4 searches и ровно один conditional fifth search только при
-  одновременных Search-derived Russia + China/Asia gaps;
+  одновременных Search-derived Russia + China/Asia gaps; P3 меняет только тексты
+  уже существующих regional query slots и routing pre-Hybrid rescue на v5;
 - `scripts/ensure_story_coverage.py` — fallback Coverage public entrypoint;
   evidence-rich unverified exhaustion может завершить bounded quality check
   без публикации слуха и без повторного search при same-day recovery;
@@ -136,6 +143,32 @@ Russia/China после Pulse не пересчитывается, поэтом�
 `preview/production-daily/source-pulse-<DATE>.json` сохраняет source/parser health,
 fusion, каждую причину promotion/rejection, promoted URLs и snapshot reuse; весь
 `production-daily/` входит в стандартный Actions artifact.
+
+## Provider routing P3
+
+P3 не добавляет новый discovery stage. Saved production replay показал, что
+Yandex Sim, AI Alliance copyright/training-data и Tencent Hy4 в контрольных
+маршрутах терялись до candidate normalization: при доступной source metadata их
+control URLs отсутствовали в provider source pool. Отдельно Reuters rescue v4
+завершил search с `action.sources=null`; это трактуется как
+`source_metadata_unavailable`, а не как доказательство нулевого source pool.
+
+Primary сохраняет те же 12 slots, но `russia`, `china_asia_models` и
+`major_agencies` получают короткие representative query contracts, покрывающие
+product/policy, Tencent/Hunyuan и model/research surfaces. Это ranking anchors,
+не company whitelist. Hybrid сохраняет свои прежние trigger semantics и лишь
+расширяет текст уже существующих regional health queries.
+
+Agency rescue v5 сохраняет один Reuters-only high-context search и возвращает
+ему global publisher-route роль: Search-derived regional gaps записываются в
+диагностику, но больше не подменяют query словом Russia/Asia. Same-day recovery
+использует тот же v5 entrypoint. Versioned v4 остаётся preserved replay/rollback
+asset.
+
+Offline fixture: `fixtures/recall/provider-routing-2026-08-29.json`.
+Classifier: `scripts/retrieval_routing_audit.py`. Controlled audit:
+`audits/experiments/2026-08-29-provider-routing-p3.md`. P3 добавляет 0 search
+operations; ordinary ceiling остаётся 24, conditional double-gap ceiling — 25.
 
 ## Hybrid v3 и search budget
 

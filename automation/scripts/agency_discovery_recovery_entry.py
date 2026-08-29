@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 from typing import Any, Callable
 
-import agency_discovery_rescue as rescue
+import agency_discovery_rescue_v5 as rescue
 from event_freshness_contract import apply_candidate_schema_contract
 from source_freshness import verify_research_file
 from story_coverage import read_json, write_json

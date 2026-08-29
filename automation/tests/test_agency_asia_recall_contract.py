@@ -6,10 +6,10 @@ PRIMARY = ROOT / "automation" / "scripts" / "primary_recall_search_v2.py"
 HYBRID = ROOT / "automation" / "scripts" / "hybrid_search_completeness_v1.py"
 
 
-def test_major_agencies_query_covers_business_and_earnings_without_new_slot():
+def test_major_agencies_query_covers_models_research_and_business_without_new_slot():
     text = PROMPT.read_text(encoding="utf-8")
     assert (
-        "latest AI chips infrastructure financing earnings business deals policy security"
+        "latest AI models research chips infrastructure financing earnings business deals policy security"
         in text
     )
     assert "ровно `latest AI chips data centers investments deals policy security`" not in text
@@ -33,6 +33,19 @@ def test_second_asia_pass_adds_business_semantics_but_preserves_two_passes():
     assert '"id": "china_asia_integrations"' in primary
     assert primary.index('"id": "china_asia_models"') < primary.index(
         '"id": "china_asia_integrations"'
+    )
+
+
+def test_p3_primary_regional_queries_cover_fixed_control_surfaces():
+    text = PROMPT.read_text(encoding="utf-8")
+    assert (
+        "latest China AI models releases Tencent Hunyuan Qwen DeepSeek GLM open source"
+        in text
+    )
+    assert (
+        "последние новости ИИ Россия Яндекс Сбер VK МТС продукты регулирование "
+        "авторское право данные обучение моделей"
+        in text
     )
 
 
