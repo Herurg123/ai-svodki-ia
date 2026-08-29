@@ -49,6 +49,21 @@ class RegionalHealthViabilityTests(unittest.TestCase):
         self.assertEqual(updated["regional_health"]["asia"]["viable_candidates"], 1)
         self.assertEqual(report["regions"]["asia"]["status"], "viable")
 
+    def test_same_title_different_source_cannot_impersonate_primary_candidate(self) -> None:
+        research = copy.deepcopy(self.fixture["current_research"])
+        qwen = research["candidates"][1]
+        qwen["recommendation"] = "consider"
+        qwen["verification_status"] = "verified"
+        qwen["primary_source"] = {"url": "https://pulse.example.test/qwen-copy"}
+        updated, report = self._refresh(research=research)
+        self.assertFalse(updated["regional_health"]["asia"]["health_check_needed"])
+        self.assertEqual(
+            updated["regional_health"]["asia"]["viability_status"],
+            "identity_incomplete_preserved",
+        )
+        self.assertEqual(report["regions"]["asia"]["unmatched"], 1)
+        self.assertEqual(updated["regional_health"]["asia"]["viable_candidates"], 0)
+
     def test_existing_search_gap_never_closes_from_later_candidate(self) -> None:
         research = copy.deepcopy(self.fixture["current_research"])
         research["candidates"].append({
