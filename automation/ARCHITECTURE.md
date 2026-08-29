@@ -27,6 +27,7 @@ scheduled/manual trigger
   -> conditional agency discovery rescue
   -> Event Freshness + Source Freshness Proof for rescue additions
   -> saved Source Pulse snapshot/fusion reuse
+  -> deterministic post-filter regional-health viability refresh (false -> true only)
   -> Hybrid completeness v3
        -> normal: up to 4 searches
        -> both Russia + China/Asia gaps: up to 5 searches
@@ -47,12 +48,23 @@ the normal editorial selection without introducing a dedicated model/search call
 The later Hybrid stage reuses the saved Pulse snapshot only for fusion diagnostics
 and never silently repolls the mutable source set.
 
+Immediately before fresh Hybrid retrieval P4 performs a zero-paid viability
+refresh over the saved Primary provenance and the current post-freshness/editorial
+candidate pool. It may only re-open an early healthy Russia/China-Asia region when
+the exact Primary regional candidates that survived the Primary final cap no
+longer have a viable `include|consider` survivor. An already-open Search-derived
+gap can never be closed by this step; Pulse-only or unrelated later candidates do
+not become evidence that Primary was healthy. Ambiguous provenance preserves the
+prior state rather than spending an extra search.
+
 Hybrid v3 сохраняет обычный четырёхоперационный потолок и имеет только одно
-одобренное платное исключение: если Search-derived `regional_health` одновременно
-показывает gaps для Russia и China/Asia, разрешается один пятый Hybrid search. Это
-нужно, чтобы не отнимать общий broad slot: выполняются три broad passes плюс два
-раздельных regional health-check. Пятый search не является новой ежедневной
-нормой и не активируется при одном или нуле региональных gaps.
+одобренное платное исключение: если effective Search-derived `regional_health`
+одновременно показывает gaps для Russia и China/Asia, разрешается один пятый
+Hybrid search. Это нужно, чтобы не отнимать общий broad slot: выполняются три
+broad passes плюс два раздельных regional health-check. Пятый search не является
+новой ежедневной нормой и не активируется при одном или нуле региональных gaps.
+P4 не создаёт новый slot; он только делает уже существующий double-gap branch
+достижимым, когда ранний healthy-флаг стал ложным после filtering.
 
 Production работает из GitHub Actions, хранит результаты в репозитории и
 использует `posts/` как публичный deploy tree.
@@ -167,10 +179,11 @@ listing и проверяется отсутствие всех удалённы
   validators, включая `event_freshness.py`, `source_freshness.py`, preserved
   `source_freshness_v1.py`, active `source_pulse_supplement_v13.py`, preserved
   `source_pulse_supplement_v12.py`, сохранённый `source_pulse_shadow.py`,
-  versioned Hybrid v2/v3 implementations и FTP-retention `cleanup_video_ftp.py`;
+  `regional_health_viability.py`, versioned Hybrid v2/v3 implementations и
+  FTP-retention `cleanup_video_ftp.py`;
 - `tests/` содержит основной Python offline regression suite, включая event/source
-  freshness, Source Pulse Yandex date regression, no-video RSS boundary и
-  retrieval budget/regional regressions;
+  freshness, Source Pulse Yandex date regression, provider routing, P4 regional
+  viability, no-video RSS boundary и retrieval budget/regional regressions;
 - `notebooklm-video/` является отдельным локальным downstream-подпроектом;
 - `preview/` и `recovery/` являются временными ignored runtime directories.
 
@@ -270,7 +283,8 @@ reusable domain CI, узкий automated-writer secret scope и canonical rulese
 dry-run/apply, orphan semantics, MLSD/NLST listing, pre-delete validation,
 post-delete verification и hard `video` boundary без RSS/local-runtime dependency.
 Retrieval tests отдельно защищают Event/Source Freshness, Source Pulse safety,
-regional Hybrid allocation, search ceilings и compatibility wrappers.
+provider routing, P4 regional viability, regional Hybrid allocation, search
+ceilings и compatibility wrappers.
 
 `automation/notebooklm-video/tests/video-boundary-smoke.js` проверяет hard FTP
 boundary и ignore rules. `lockfile-contract-smoke.js` проверяет синхронизацию
@@ -418,8 +432,10 @@ event-origin evidence. `published_date`/`published_at`/`time_precision` отно
 После того как versioned Primary engine вернул trusted runtime research, public
 wrapper запускает Source Pulse v1.3 supplement на том же exact saved window и
 только затем возвращает research в `run_digest_preview.py` для Event Freshness +
-Source Freshness Proof и первого editorial. Search-derived `regional_health` при
-этом намеренно не пересчитывается после Pulse promotion.
+Source Freshness Proof и первого editorial. Source Pulse promotion не имеет права
+закрывать Search-derived `regional_health` gap. После freshness/editorial P4 может
+только переоткрыть ранний false-healthy регион по exact Primary provenance; это
+не является пересчётом здоровья по Pulse-кандидатам.
 
 ### 6.2. Conditional agency discovery rescue
 
@@ -428,16 +444,19 @@ rescue. Trigger зависит от технически завершённог�
 `raw_count == 0` или `accepted_count == 0`, а не от общего количества
 candidates/stories.
 
-Разрешена максимум одна дополнительная Web Search operation. Provider route
-остаётся Reuters-only и acceptance требует прямого `reuters.com` primary URL.
-Syndication/aggregator URL не заменяет прямой источник. Rescue не повышает
-significance и не гарантирует публикацию.
+Разрешена максимум одна дополнительная Web Search operation. Active provider
+route в v5 остаётся Reuters-only и acceptance требует прямого `reuters.com`
+primary URL. Syndication/aggregator URL не заменяет прямой источник. Rescue не
+повышает significance и не гарантирует публикацию.
 
-V4 делает единственный query gap-aware: Search-derived Russia/China-Asia gaps
-могут добавить региональные retrieval hints в ту же одну source-neutral phrase.
-Это не создаёт второго rescue search и не превращает Reuters в региональную
-публикационную квоту. Rescue использует ту же strict event-origin schema, что и
-Primary, и не получает отдельного freshness search.
+P3 вернул единственному rescue slot global publisher-route роль. Query v5 остаётся
+global и source-neutral по тематике AI models/research/business/infrastructure;
+Search-derived Russia/China-Asia gaps сохраняются только в diagnostics и больше
+не подменяют query словом Russia/Asia. Это не создаёт второго rescue search и не
+превращает Reuters в региональную публикационную квоту. Preserved v4 остаётся
+replay/rollback implementation исторической gap-aware semantics. Rescue использует
+ту же strict event-origin schema, что и Primary, и не получает отдельного
+freshness search.
 
 State сохраняется до и после paid call. `search_started` автоматически не
 ретраится, потому что consumption единственного search может быть неизвестен.
@@ -519,10 +538,11 @@ freshness boundary.
 этап не добавляет новых Pulse candidates. После Hybrid тот же snapshot снова
 сравнивается с merged research для `fusion_post_hybrid`.
 
-Search-derived regional gaps сохраняются из Primary и не пересчитываются после
-Pulse. Поэтому найденная Pulse новость не может скрыть `asia/russia` Primary gap,
-подавить regional Hybrid check или предотвратить условный пятый Hybrid search,
-если оба Search-derived gaps действительно открыты.
+Source Pulse никогда не закрывает Search-derived regional gap. P4 pre-Hybrid
+viability refresh использует только exact Primary regional provenance для решения
+о false-healthy `false -> true`; Pulse-only или unrelated later candidates не
+могут сделать Primary healthy и не могут подавить regional Hybrid check. Поэтому
+двухплоскостная discovery architecture сохраняется.
 
 Runtime diagnostics в `preview/production-daily/source-pulse-<DATE>.json`
 содержат transport/parser/source health, v1.3 counters, Yandex repair diagnostics,
@@ -545,15 +565,33 @@ Stable public entrypoint: `hybrid_search_completeness.py`. Public wrapper сид
 поверх preserved Hybrid implementations, включая V2/V3, чтобы не ломать stable
 imports, saved-artifact recovery и monkeypatch-oriented tests.
 
-Базовый контракт остаётся прежним: три fixed one-search passes и максимум один
-optional adaptive/regional health slot, то есть обычный hard ceiling равен **4
-Hybrid Web Search operations**. API domain filter для Hybrid отсутствует.
+Перед вызовом preserved v3 stable wrapper запускает
+`regional_health_viability.py`. Он читает `primary-recall.json` и текущий
+post-freshness/editorial `candidates.json`, берёт raw candidates только из
+original Primary region directions и пересекает их с `final_candidates`, поэтому
+ранний per-direction accepted count не может скрыть candidate, выпавший из
+Primary final cap. Exact Primary regional candidates затем сопоставляются по
+normalized title или shared source URL с текущим pool. Если все доказуемо
+сопоставлены и viable `include|consider` survivors нет, ранний healthy-флаг
+переоткрывается. `event_freshness_status=unknown` сам по себе не делает candidate
+непригодным. При неполной provenance/identity прежнее состояние сохраняется и
+новый search из одной неоднозначности не разрешается.
+
+Это strictly one-way safety transform: `health_check_needed=false` может стать
+true; true никогда не становится false. Таким образом Source Pulse или поздняя
+fusion не могут замаскировать слабый Search route. P4 не меняет query text,
+provider/domain routing, candidate schema, editorial ranking, Coverage directions
+или search ceilings и выполняет 0 OpenAI/Web Search operations.
+
+Базовый контракт Hybrid остаётся прежним: три fixed one-search passes и максимум
+один optional adaptive/regional health slot, то есть обычный hard ceiling равен
+**4 Hybrid Web Search operations**. API domain filter для Hybrid отсутствует.
 Russia/Asia health check не является publication quota.
 
 Regional allocation:
 
-- **нет Search-derived regional gap** — штатные три broad passes и только прежний
-  adaptive fourth slot при обычной cluster-gap необходимости;
+- **нет effective Search-derived regional gap** — штатные три broad passes и
+  только прежний adaptive fourth slot при обычной cluster-gap необходимости;
 - **один gap** (`russia` или `asia`) — три broad passes + один dedicated regional
   health-check, максимум 4 Hybrid searches;
 - **оба gaps одновременно** — единственный одобренный paid extension: три broad
@@ -567,7 +605,9 @@ extension автоматически.
 
 China/Asia и Russia используют разные source-neutral queries. Russia query
 русскоязычный; China/Asia query не объединяется с Russia в один англоязычный
-поисковый запрос. Названия компаний в hints не являются AND/whitelist contract.
+поисковый запрос. P3 representative anchors Tencent/Hunyuan/Qwen/DeepSeek/GLM и
+Яндекс/Сбер/VK/МТС/copyright-training-data сохраняются. Названия компаний в hints
+не являются AND/whitelist contract.
 
 Lifecycle-dedupe prompt отдельно запрещает склеивать разные материальные стадии
 только из-за общей сущности и даты: раскрытие автора анонимного preview не равно
@@ -583,10 +623,10 @@ authority. Hybrid strict schema и prompt используют тот же event
 editorial. Hybrid failure не должен уничтожать уже пригодный Primary/Pulse/rescue
 artifact.
 
-Hybrid report хранит отдельно `conditional_paid_extension`, effective budget и
-`retrieval_health`. Выпуск может быть volume-full и одновременно иметь
-`complete_with_regional_gaps`; это диагностическая truthfulness, а не требование
-добивать регион квотой.
+Hybrid report хранит отдельно P4 `regional_health_viability`,
+`conditional_paid_extension`, effective budget и `retrieval_health`. Выпуск может
+быть volume-full и одновременно иметь `complete_with_regional_gaps`; это
+диагностическая truthfulness, а не требование добивать регион квотой.
 
 ### 6.5. Fallback Coverage
 
@@ -615,9 +655,10 @@ Same-day recovery детерминированно переиспользует 
 slot без повторной Web Search operation.
 
 Отдельные 1–2 regional Coverage searches только потому, что после Hybrid
-`regional_health` всё ещё красный, **не входят в active contract**. Это сохранённая
-future option, которую можно повторно обсуждать после следующих production
-аудитов и только после отдельного разрешения на дополнительный spend.
+`regional_health` всё ещё красный, **не входят в active contract**. P4 намеренно
+чинит существующий Hybrid regional recovery, а не превращает Coverage в новый
+региональный breadth layer. Дополнительные Coverage searches остаются future
+option и требуют нового аудита плюс отдельного разрешения на spend.
 
 ### 6.6. Search ceiling
 
@@ -643,13 +684,16 @@ future option, которую можно повторно обсуждать п�
 
 Разница между двумя потолками всегда не более одной Search operation. Пятый
 Hybrid search не должен становиться обычным default через config/caller drift.
-Шестой Hybrid search архитектурно запрещён текущим контрактом.
+Шестой Hybrid search архитектурно запрещён текущим контрактом. P4 может увеличить
+фактическую частоту уже разрешённого fifth slot только в случае доказанного
+false-healthy второго региона; theoretical ceiling не меняется.
 
 Source Pulse не входит в search-operation budget: collector, parser и
 page/freshness verification используют только обычный HTTPS и не вызывают
-OpenAI/Web Search. Event Freshness Proof также является локальным deterministic
-сравнением уже сохранённых полей и не вызывает OpenAI/Web Search. Navigation
-hosted calls не повышают этот search-operation ceiling.
+OpenAI/Web Search. Event Freshness Proof и P4 regional viability также являются
+локальными deterministic операциями над уже сохранёнными полями и не вызывают
+OpenAI/Web Search. Navigation hosted calls не повышают этот search-operation
+ceiling.
 
 Отдельный LLM semantic-event matcher для сложного dedupe сейчас не активирован.
 Он остаётся future option после следующих аудитов. Его внедрение требует нового
@@ -706,9 +750,10 @@ supplement и до первого editorial. Rescue/Hybrid/Coverage merged input
 
 Editorial применяется после discovery/validation. Короткий выпуск допустим:
 нельзя вводить искусственные региональные или тематические quotas только ради
-числа сюжетов. Source Pulse и regional Hybrid health-check не имеют отдельной
-publication quota и не могут обязать editorial выбрать promoted/returned
-`consider`. Подробные правила находятся в `specs/editorial-policy.md`.
+числа сюжетов. Source Pulse, P4 regional viability и regional Hybrid health-check
+не имеют отдельной publication quota и не могут обязать editorial выбрать
+promoted/returned `consider`. Подробные правила находятся в
+`specs/editorial-policy.md`.
 
 ## 8. Recovery
 
@@ -731,6 +776,13 @@ report хранит event fresh/unknown/stale counters. Сохранённый S
 same-day recovery; later fusion использует сохранённый snapshot. V1.3 разрешает
 только deterministic normalization уже сохранённого Yandex URL/title date
 evidence и exact-window filtering без сетевого repoll.
+
+P4 viability refresh сам не выполняет paid operation и не является разрешением
+повторять Hybrid. Он применяется на fresh path непосредственно перед первым
+Hybrid retrieval. Если Hybrid уже завершён и recovery продолжает более позднюю
+стадию, сохранённый Hybrid result остаётся authoritative; recovery не запускает
+новый regional search только потому, что текущая deterministic логика могла бы
+иначе оценить старый pre-Hybrid flag.
 
 Hybrid v3 обязан сохранять в report, использовался ли conditional fifth search.
 Recovery не должен трактовать уже выполненный пятый double-gap search как
@@ -841,6 +893,20 @@ artifact, fixture `fixtures/recall/source-pulse-yandex-2026-08-29.json` и audit
 старых releases после deterministic repair не попадали в окно, а свежий Yandex
 Sim 28 августа мог пройти page freshness. P2 не использует production API.
 
+P3 provider/source-routing replay сохранён в
+`audits/experiments/2026-08-29-provider-routing-p3.md`, fixture
+`fixtures/recall/provider-routing-2026-08-29.json`. Он отделяет provider
+source-pool misses от post-retrieval rejection, фиксирует v5 global Reuters route
+и representative Primary/Hybrid query anchors при неизменном числе search slots.
+P3 не использует production API.
+
+P4 regional-health viability replay и architecture-wide non-regression audit
+сохранены в `audits/experiments/2026-08-29-regional-health-viability-p4.md`,
+fixture `fixtures/recall/regional-health-viability-2026-08-29.json`. Replay
+проверяет false-healthy Asia, положительный viable survivor, already-open gap,
+Primary final-cap drop и ambiguous identity. P4 использует только сохранённые
+артефакты и 0 production API/Web Search.
+
 ## 12. Совместимость и versioned реализации
 
 Некоторые stable public files являются wrappers над сохранёнными versioned
@@ -873,8 +939,9 @@ Generic Source Freshness parser при этом не переписываетс�
 
 Hybrid v3 также не уничтожает v2/regional-v1 implementations: stable public
 entrypoint переключает production semantics на v3, а preserved layers остаются
-compatibility/recovery assets. Это особенно важно для saved-artifact recovery и
-старых tests, которые monkeypatch'ят исторические hooks.
+compatibility/recovery assets. P3 routing и P4 pre-Hybrid viability добавлены в
+stable wrapper, не переписывая proven v2/v3 engines. Это особенно важно для
+saved-artifact recovery и старых tests, которые monkeypatch'ят исторические hooks.
 
 Удаление или схлопывание versioned files требует отдельного semantic-neutral
 refactor с полным offline regression доказательством. Нельзя одновременно
@@ -992,7 +1059,7 @@ Nightly retrieval/editorial, search budgets, recovery, FTP-video retention и
 локальная native-browser публикация не меняются.
 
 Для FTP-video retention dependency audit показал только maintenance boundary:
-`repository-cleanup.yml`, существующие FTP credentials, remote `video/` и общий
+`repository-cleanup.yml`, существующие FTP credentials, remote `video` и общий
 32-day cutoff. Workflow inventory, protected-main writer set, RSS/content model,
 retrieval/editorial, local video worker и deploy-posts payload не меняются.
 Offline fake-FTP regressions проверяют deletion scope и failure semantics; реальный
@@ -1012,10 +1079,19 @@ production, RSS, FTP delivery semantics, retrieval/editorial, paid API budgets �
 фиксированный source registry, trusted runtime research, Event/Source Freshness
 Proof, первый editorial, сохранённый Pulse snapshot и позднюю Hybrid fusion.
 P2 не меняет generic Source Freshness parser, search query/routing, search budget,
-regional-health semantics или editorial policy. Yandex repair ограничен
-corroborated first-party URL+visible-date evidence; same-day recovery использует
-только сохранённый snapshot и не repoll'ит source. Tier B не получает candidate
-influence, Tier-A trusted-news остаётся `consider` only после deterministic gates.
+regional-health publication semantics или editorial policy. Yandex repair
+ограничен corroborated first-party URL+visible-date evidence; same-day recovery
+использует только сохранённый snapshot и не repoll'ит source. Tier B не получает
+candidate influence, Tier-A trusted-news остаётся `consider` only после
+deterministic gates.
+
+Для P3 provider-routing dependency audit затрагивает Primary query contracts,
+stable Hybrid query overlay, active agency rescue v5, same-day rescue recovery,
+provider metadata diagnostics и saved routing fixtures. P3 не добавляет search
+slot: Primary остаётся 12, rescue максимум 1, Hybrid 4/5, Coverage максимум 7.
+V4 сохраняется только для replay/rollback, active v5 Reuters route остаётся global
+и regional gaps больше не подменяют его query. Generic freshness/editorial и
+Coverage semantics P3 не меняет.
 
 Для Hybrid v3 conditional paid extension dependency audit затрагивает stable
 Hybrid entrypoint, preserved v2/v3 layers, `regional_health` из Primary,
@@ -1036,6 +1112,16 @@ fail-closed source gate; legacy saved artifacts без event fields остают
 reusable. Controlled replay 2026-08-29 доказывает три stale-event negatives,
 три positive/recall controls, exact boundary и no-paid-call semantics.
 
+Для P4 regional-health viability dependency audit затрагивает stable Hybrid
+entrypoint, saved `primary-recall.json`, post-freshness/editorial `candidates.json`,
+Primary final-cap provenance, Source Pulse non-masking boundary, existing Hybrid
+double-gap allocation, recovery at-most-once semantics, README/AGENTS и
+regression fixtures. P4 не меняет ни одного query/provider/domain filter,
+Coverage direction, candidate schema, freshness/editorial policy или budget.
+One-way transform может только переоткрыть false-healthy gap; ambiguous identity
+сохраняет prior state. Production-derived replay 2026-08-29 и neighboring
+controls подтверждают 0 новых search slots, обычный максимум 24 и double-gap 25.
+
 Controlled experiment для Hybrid v3 обязан отдельно доказать:
 
 - no-gap path не получает пятый search;
@@ -1043,10 +1129,10 @@ Controlled experiment для Hybrid v3 обязан отдельно доказ�
 - double-gap path выполняет максимум 5 Hybrid searches;
 - lowered baseline не включает paid extension;
 - oversized caller limit не создаёт шестой search;
-- Source Pulse и recovery не создают скрытого дополнительного spend.
+- Source Pulse, P4 viability и recovery не создают скрытого дополнительного spend.
 
 Search/retrieval изменения сначала проверяются на assistant-owned resources.
-Production API пользователя не расходуется без явного разрешения. Для текущего
-изменения отдельное разрешение относится только к одному conditional fifth
+Production API пользователя не расходуется без явного разрешения. Для текущей
+архитектуры отдельное разрешение относится только к одному conditional fifth
 Hybrid search на double-gap path; любые иные новые paid calls требуют нового
 решения владельца.
