@@ -79,9 +79,13 @@
         "event_freshness_status": "stale",
         "freshness_status": "old_reprint",
         "primary_source": {
-          "url": "https://docs.bigmodel.cn/cn/guide/models/vlm/glm-5.3-flash"
+          "url": "https://chinaapi.ai/model-updates/"
         },
-        "supporting_sources": []
+        "supporting_sources": [
+          {
+            "url": "https://docs.bigmodel.cn/cn/guide/models/vlm/glm-5.3-flash"
+          }
+        ]
       },
       {
         "title": "Alibaba Cloud добавила Qwen-MT-Image 2.0 — модель перевода изображений с сохранением макета",
