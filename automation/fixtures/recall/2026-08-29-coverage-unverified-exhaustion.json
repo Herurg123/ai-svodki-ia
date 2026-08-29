@@ -1,0 +1,30 @@
+{
+  "run_id": 33228526922,
+  "publication_date": "2026-08-29",
+  "expected_query": "Hugging Face Nvidia billion latest",
+  "expected_signal_ids": [
+    "sig-business_investment_partnerships-01",
+    "sig-global_breaking-01",
+    "sig-models_products_agents-01"
+  ],
+  "rejections": [
+    {
+      "title": "Nvidia closes in on Hugging Face acquisition",
+      "url": "https://techcrunch.com/example",
+      "reason_code": "unverified",
+      "reason": "Nvidia Hugging Face $12.9 billion report lacks independent confirmation."
+    },
+    {
+      "title": "Nvidia wants to buy Hugging Face in $13 billion deal",
+      "url": "https://www.techradar.com/example",
+      "reason_code": "unverified",
+      "reason": "Nvidia Hugging Face $13 billion report remains unconfirmed."
+    },
+    {
+      "title": "Nvidia agrees to buy Hugging Face for $12.9 billion, reports",
+      "url": "https://fortune.com/example",
+      "reason_code": "unverified",
+      "reason": "Nvidia Hugging Face $12.9 billion report repeats an unconfirmed claim."
+    }
+  ]
+}
