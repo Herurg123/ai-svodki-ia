@@ -12,6 +12,9 @@ const CONFIG_PATH = path.join(ROOT, "config.json");
 const FALLBACK_ERROR_LOG = path.join(ROOT, "dzen-bootstrap-errors.log");
 const OPERATOR_WINDOW_MS = 10 * 60 * 1000;
 const CHILD_OUTPUT_TAIL_LIMIT = 16_000;
+const POST_CLICK_CHALLENGE_PROBE_MS = 4_000;
+const POST_CLICK_CHALLENGE_WAIT_MS = 120_000;
+const POST_CLICK_CHALLENGE_POLL_MS = 500;
 
 function stripBom(value) {
   return String(value || "").replace(/^\uFEFF/, "");
@@ -75,6 +78,104 @@ function parseArgs(argv) {
   return { mode, childArgs: args };
 }
 
+function textLooksLikeManualAntiBotChallenge(value) {
+  const text = String(value || "")
+    .normalize("NFKC")
+    .replace(/[\u200B-\u200D\u2060\uFEFF]/g, "")
+    .replace(/[\u00A0\u202F]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLocaleLowerCase("ru-RU");
+  return text.includes("подтвердите, что вы не робот") ||
+    (text.includes("подтвердите") && text.includes("я не робот"));
+}
+
+async function antiBotChallengeVisible(browser) {
+  const texts = [];
+  for (const context of browser.contexts()) {
+    for (const page of context.pages()) {
+      if (page.isClosed()) continue;
+      for (const frame of page.frames()) {
+        const body = await frame.locator("body").innerText({ timeout: 1000 }).catch(() => "");
+        if (body) texts.push(body);
+      }
+    }
+  }
+  return textLooksLikeManualAntiBotChallenge(texts.join("\n"));
+}
+
+async function waitForOptionalPostClickChallenge() {
+  if (!fs.existsSync(CONFIG_PATH)) return { seen: false, resolved: false, reason: "no-config" };
+  const config = loadJson(CONFIG_PATH);
+  const endpoint = `http://${config.browserDebugHost}:${config.browserDebugPort}`;
+  let browser = null;
+
+  try {
+    const { chromium } = require("playwright");
+    browser = await chromium.connectOverCDP(endpoint, { timeout: 3000 });
+  } catch (error) {
+    warn(
+      config,
+      `post-click антибот-проверку не удалось проверить через ${endpoint}: ${error.message}. ` +
+        "Продолжаю штатную verification-only защиту без дополнительных кликов."
+    );
+    return { seen: false, resolved: false, reason: "cdp-unavailable" };
+  }
+
+  const probeDeadline = Date.now() + POST_CLICK_CHALLENGE_PROBE_MS;
+  let seen = false;
+  while (Date.now() < probeDeadline) {
+    if (await antiBotChallengeVisible(browser)) {
+      seen = true;
+      break;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+
+  if (!seen) {
+    log(
+      config,
+      `post-click антибот-проверка не обнаружена за ${POST_CLICK_CHALLENGE_PROBE_MS} мс.`
+    );
+    return { seen: false, resolved: true };
+  }
+
+  warn(
+    config,
+    "ПОСЛЕ PUBLISH ПОЯВИЛАСЬ АНТИБОТ-ПРОВЕРКА «Я НЕ РОБОТ». " +
+      "Автоматизация НЕ нажимает checkbox и НЕ выполняет других кликов. " +
+      `Ожидаю ручного подтверждения до ${POST_CLICK_CHALLENGE_WAIT_MS} мс.`
+  );
+
+  for (const context of browser.contexts()) {
+    const page = context.pages().find((candidate) => !candidate.isClosed());
+    if (page) {
+      await page.bringToFront().catch(() => {});
+      break;
+    }
+  }
+
+  const deadline = Date.now() + POST_CLICK_CHALLENGE_WAIT_MS;
+  while (Date.now() < deadline) {
+    if (!(await antiBotChallengeVisible(browser))) {
+      log(
+        config,
+        "Антибот-проверка исчезла. Автоматизация не взаимодействовала с ней; " +
+          "продолжаю обычный post-click путь без дополнительных кликов."
+      );
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      return { seen: true, resolved: true };
+    }
+    await new Promise((resolve) => setTimeout(resolve, POST_CLICK_CHALLENGE_POLL_MS));
+  }
+
+  throw new Error(
+    `После publish click антибот-проверка «Я не робот» не исчезла за ` +
+      `${POST_CLICK_CHALLENGE_WAIT_MS} мс. Publish click уже выполнен; ` +
+      "повторный click запрещён, дальнейшие запуски должны остаться verification-only."
+  );
+}
+
 function terminateChildTree(child) {
   if (!child || !child.pid) return;
 
@@ -131,9 +232,17 @@ function runNodeScript(scriptName, args, timeoutMs) {
     };
 
     child.once("error", (error) => finish(error));
-    child.once("exit", (code, signal) => {
+    child.once("exit", async (code, signal) => {
       if (code === 0) {
-        finish();
+        clearTimeout(timer);
+        try {
+          if (scriptName === "dzen-publish-direct.js") {
+            await waitForOptionalPostClickChallenge();
+          }
+          finish();
+        } catch (error) {
+          finish(error);
+        }
         return;
       }
       finish(new Error(
@@ -240,7 +349,10 @@ module.exports = {
   CHILD_OUTPUT_TAIL_LIMIT,
   FALLBACK_ERROR_LOG,
   OPERATOR_WINDOW_MS,
+  POST_CLICK_CHALLENGE_PROBE_MS,
+  POST_CLICK_CHALLENGE_WAIT_MS,
   main,
   parseArgs,
   runNodeScript,
+  textLooksLikeManualAntiBotChallenge,
 };
