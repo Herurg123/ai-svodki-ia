@@ -48,6 +48,7 @@ RSS rybalka.one
   -> Dzen duplicate guard: Публикации -> Видео
   -> если видео уже есть: PUBLISHED
   -> иначе один fresh-upload child -> один publish click
+  -> при редком post-click «Я не робот»: только ручное подтверждение, без auto-click
   -> post-click проверка через вкладку Видео -> PUBLISHED
   -> dzen-collections.js
   -> видео дня -> «Видеосводки по ИИ»
@@ -105,6 +106,17 @@ Studio -> Публикации -> Видео
 ничего не загружает. Если совпадения нет, разрешается ровно один fresh-upload
 child `dzen-publish-direct.js`: MP4, metadata один раз, PNG cover, ровно пять
 tag-chip, финальная готовность, comments=`Все пользователи`, один publish click.
+
+После единственного publish click `dzen-browser-runner.js` в течение 4 секунд
+проверяет, не появилось ли редкое окно `Подтвердите, что вы не робот` / `Я не
+робот`. Это human-only challenge: автоматизация **никогда не нажимает checkbox и
+не пытается обходить проверку**. Если окно появилось, runner восстанавливает
+свёрнутое окно Яндекс.Браузера, выводит страницу на передний план и до 120 секунд
+только ждёт ручного подтверждения. Пока challenge видим, других UI-click нет.
+После его исчезновения выполняется обычная post-click verification. Если окно не
+исчезло за лимит, исход считается post-click неопределённостью: новый upload и
+второй publish click остаются запрещены, дальнейшие scheduled runs работают
+только в verification-only режиме.
 
 Для автоматического режима поверх проверенного direct child добавлена fail-closed
 state machine в существующем `state.json`:
