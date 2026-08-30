@@ -8,6 +8,7 @@ const ROOT = path.resolve(__dirname, "..");
 const source = fs.readFileSync(path.join(ROOT, "dzen-publish-direct.js"), "utf8");
 const runner = fs.readFileSync(path.join(ROOT, "dzen-browser-runner.js"), "utf8");
 const direct = require(path.join(ROOT, "dzen-publish-direct.js"));
+const runnerModule = require(path.join(ROOT, "dzen-browser-runner.js"));
 
 const expectedDescription = direct.buildLiveDescription(
   "2026-08-27",
@@ -47,6 +48,26 @@ assert.strictEqual(
   "ready"
 );
 
+assert.strictEqual(runnerModule.POST_CLICK_CHALLENGE_PROBE_MS, 4_000);
+assert.strictEqual(runnerModule.POST_CLICK_CHALLENGE_WAIT_MS, 120_000);
+assert.strictEqual(
+  runnerModule.textLooksLikeManualAntiBotChallenge(
+    "Подтвердите,\nчто вы не робот\nЯ не робот\nУсловия использования"
+  ),
+  true,
+  "Observed post-click challenge must be detected"
+);
+assert.strictEqual(
+  runnerModule.textLooksLikeManualAntiBotChallenge("Готово: можно публиковать и смотреть"),
+  false,
+  "Normal ready state must not be classified as anti-bot challenge"
+);
+assert.strictEqual(
+  runnerModule.textLooksLikeManualAntiBotChallenge("Я не робот"),
+  false,
+  "A bare phrase without the confirmation prompt is not sufficient"
+);
+
 for (const marker of [
   "только новый upload; previous drafts/state resume полностью игнорируются",
   "metadata заполнены один раз",
@@ -72,6 +93,32 @@ for (const forbidden of [
 ]) {
   assert(!source.includes(forbidden), `Fresh-upload MVP must not contain legacy resume/verify code: ${forbidden}`);
 }
+
+for (const marker of [
+  "ПОСЛЕ PUBLISH ПОЯВИЛАСЬ АНТИБОТ-ПРОВЕРКА",
+  "Автоматизация НЕ нажимает checkbox и НЕ выполняет других кликов",
+  "Антибот-проверка исчезла",
+  "verification-only",
+]) {
+  assert(runner.includes(marker), `Missing post-click challenge contract marker: ${marker}`);
+}
+
+const challengeStart = runner.indexOf("async function waitForOptionalPostClickChallenge");
+const challengeEnd = runner.indexOf("function terminateChildTree", challengeStart);
+assert(challengeStart >= 0 && challengeEnd > challengeStart, "Post-click challenge wait helper must exist");
+const challengeSource = runner.slice(challengeStart, challengeEnd);
+assert(
+  !challengeSource.includes(".click("),
+  "Post-click anti-bot handling must never click the challenge or any other UI"
+);
+assert(
+  runner.includes('if (scriptName === "dzen-publish-direct.js")'),
+  "Challenge wait must be limited to the live publish child"
+);
+assert(
+  runner.includes("await waitForOptionalPostClickChallenge();"),
+  "Successful live publish child must enter the optional challenge wait before the runner resolves"
+);
 
 assert(runner.includes('"dzen-publish-direct.js"'), "Canonical live runner must use dzen-publish-direct.js");
 assert(
