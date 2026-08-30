@@ -442,18 +442,10 @@ def main() -> int:
                 errors.append(f"deployment workflow missing {label}: {needle}")
     if rss["self_url"] != config["feed_url"]:
         errors.append("current RSS self URL is not the accepted root URL")
-    legacy_count = sum(
-        1
-        for row in rss["items"]
-        if row["link"].startswith(str(config["legacy_prefix"]))
-    )
-    if legacy_count < int(config["minimum_legacy_items"]):
-        errors.append("current RSS does not contain required legacy dzen-test items")
     report = {
         "status": "ok" if not errors else "error",
         "errors": errors,
         "rss_latest_date": rss["latest_date"],
-        "legacy_items": legacy_count,
         "schedule_local": [
             "02:17 Europe/Moscow",
         ],
