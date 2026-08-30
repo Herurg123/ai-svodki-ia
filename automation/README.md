@@ -65,7 +65,11 @@
   не имеют viable post-filter survivor;
 - `scripts/ensure_story_coverage.py` — fallback Coverage public entrypoint;
   evidence-rich unverified exhaustion может завершить bounded quality check
-  без публикации слуха и без повторного search при same-day recovery;
+  без публикации слуха и без повторного search при same-day recovery; fresh-agency
+  source-health rescue использует свободный седьмой slot только когда в текущем
+  пуле существует допустимый funding/M&A/investment/infrastructure/chips/partnership
+  target, а при реальном source-health gap без такого target фиксируется
+  `not_applicable` без дополнительного search и без ложной блокировки выпуска;
 - `scripts/recover_digest_artifact.py` — paid-stage recovery entrypoint;
 - `scripts/event_freshness.py` — zero-network deterministic event-age gate по
   уже сохранённому origin evidence;
