@@ -53,6 +53,39 @@ never execute concurrently: the later workflow waits instead of invalidating the
 other workflow's race-safe `main` commit guard after paid work has already run.
 Do not change either writer to `cancel-in-progress: true`.
 
+## Legacy and compatibility lifecycle
+
+Legacy, compatibility, migration and transitional behavior is temporary technical
+debt unless a narrower repository contract explicitly preserves it as an active
+compatibility, recovery, replay or reference asset.
+
+When adding, preserving or modifying a legacy path:
+
+- prefer the canonical implementation and do not introduce new legacy behavior
+  without a concrete active compatibility requirement;
+- document why the legacy path is still required, which active dependency or
+  consumer requires it, the condition that will allow removal, and a review or
+  removal date when practical;
+- treat work in the same area as a trigger to re-audit whether the legacy path can
+  now be removed instead of carrying it forward automatically;
+- before removal, trace production, workflow, configuration, tests, recovery,
+  replay, migration, documentation and external-consumer dependencies and keep
+  regression coverage for the surviving canonical behavior;
+- once the last real dependency disappears, remove the executable legacy code,
+  configuration, tests, workflow steps, documentation and static artifacts rather
+  than leaving an inert compatibility layer indefinitely;
+- preserve historical fixtures and audit evidence when they remain useful for
+  reproducibility, but keep them clearly inert and outside active imports,
+  workflow discovery, deployment and publication paths;
+- after retirement, prefer canonical-only fail-closed validation so a removed
+  format cannot silently re-enter production.
+
+A passed review date is a cleanup signal, not permission to extend legacy by
+silence. Any extension must update the reason, active dependency and removal
+condition. This section does not authorize deleting assets protected by a more
+specific compatibility boundary below; those assets require the dependency proof
+specified by that boundary before removal.
+
 ## Incident/fix verification gate
 
 Production incident fixes require evidence beyond a plausible diff or green CI.
