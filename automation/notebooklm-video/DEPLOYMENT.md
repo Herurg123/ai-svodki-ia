@@ -175,6 +175,16 @@ NotebookLM доступны; после готового MP4/PNG и optional FTP
 найти только две same-day цели и добавить их в свои подборки либо подтвердить,
 что они уже добавлены.
 
+Редко после единственного клика `Опубликовать`/`Отправить` Дзен может показать
+модальное окно `Подтвердите, что вы не робот` с checkbox `Я не робот` в светлой
+или тёмной теме. Это **ручная** антибот-проверка. Worker сам checkbox не нажимает
+и не выполняет других UI-click, пока окно видно. Он восстанавливает свёрнутый
+Яндекс.Браузер, выводит страницу на передний план и ждёт до 120 секунд. Оператору
+нужно вручную поставить только флажок `Я не робот`; после исчезновения окна
+публикация обычно продолжает обычный post-click путь. Если окно не исчезло за
+лимит, worker завершает Dzen-фазу как post-click неопределённость, и следующие
+запуски остаются verification-only без второго upload/click.
+
 После проверки вернуть `minimizeBrowserWindow=true`, если нужен фоновый режим.
 
 ## 7. Планировщик Windows
@@ -186,7 +196,8 @@ Task Scheduler -> wscript.exe -> run-worker-hidden.vbs
                -> run-worker.cmd -> full-worker.js
                -> scheduled-worker.js
                -> worker.js -> NotebookLM -> MP4/PNG -> optional FTP
-               -> Dzen duplicate guard -> optional fresh publish -> verification
+               -> Dzen duplicate guard -> optional fresh publish
+               -> optional manual «Я не робот» wait -> verification
                -> dzen-collections.js
                -> video -> «Видеосводки по ИИ»
                -> digest -> «Сводки по ИИ»
@@ -201,7 +212,9 @@ Task Scheduler -> wscript.exe -> run-worker-hidden.vbs
 `full-worker.lock` защищает всю трёхфазную цепочку, поэтому новый 10-минутный
 trigger не может войти в следующий browser этап, пока предыдущий full run ещё
 работает. Внутри него существующий `scheduled-worker.lock` дополнительно защищает
-проверенные NotebookLM/FTP + Dzen publish фазы.
+проверенные NotebookLM/FTP + Dzen publish фазы. Если post-click challenge требует
+ручного подтверждения, lock остаётся занятым на всё время ожидания и не допускает
+параллельный scheduled run.
 
 После создания задачи выполнить один ручной запуск из Task Scheduler и проверить
 `worker.log` и `state.json`.
@@ -276,6 +289,8 @@ Get-Content -Raw C:\TRASH\NotebookLMBot\config.json | ConvertFrom-Json | Out-Nul
 - FTP `video/`;
 - отсутствие повторной обработки NotebookLM `DONE`;
 - `job.dzenAutomation.status` и отсутствие второго upload/click после `PUBLISH_ARMED`;
+- при появлении post-click `Я не робот` ручное подтверждение без автоматического
+  checkbox-click и последующее продолжение verification;
 - подтверждение `PUBLISHED` через Studio `Видео` после успешного live publish;
 - `job.dzenCollections.video.status` и `job.dzenCollections.digest.status`;
 - при `dzenCollections.status=COMPLETE` отсутствие новых запусков browser для
