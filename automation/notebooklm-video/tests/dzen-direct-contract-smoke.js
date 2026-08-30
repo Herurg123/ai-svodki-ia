@@ -3,12 +3,12 @@
 const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
+const vm = require("vm");
 
 const ROOT = path.resolve(__dirname, "..");
 const source = fs.readFileSync(path.join(ROOT, "dzen-publish-direct.js"), "utf8");
 const runner = fs.readFileSync(path.join(ROOT, "dzen-browser-runner.js"), "utf8");
 const direct = require(path.join(ROOT, "dzen-publish-direct.js"));
-const runnerModule = require(path.join(ROOT, "dzen-browser-runner.js"));
 
 const expectedDescription = direct.buildLiveDescription(
   "2026-08-27",
@@ -48,22 +48,37 @@ assert.strictEqual(
   "ready"
 );
 
-assert.strictEqual(runnerModule.POST_CLICK_CHALLENGE_PROBE_MS, 4_000);
-assert.strictEqual(runnerModule.POST_CLICK_CHALLENGE_WAIT_MS, 120_000);
+function readNumericRunnerConstant(name) {
+  const match = new RegExp(`const ${name} = ([0-9_]+);`).exec(runner);
+  assert(match, `Missing runner constant: ${name}`);
+  return Number(match[1].replace(/_/g, ""));
+}
+
+assert.strictEqual(readNumericRunnerConstant("POST_CLICK_CHALLENGE_PROBE_MS"), 4_000);
+assert.strictEqual(readNumericRunnerConstant("POST_CLICK_CHALLENGE_WAIT_MS"), 120_000);
+
+const classifierStart = runner.indexOf("function textLooksLikeManualAntiBotChallenge");
+const classifierEnd = runner.indexOf("async function findAntiBotChallengePage", classifierStart);
+assert(classifierStart >= 0 && classifierEnd > classifierStart, "Challenge classifier source must exist");
+const classifierSource = runner.slice(classifierStart, classifierEnd).trim();
+const textLooksLikeManualAntiBotChallenge = vm.runInNewContext(
+  `(${classifierSource.replace(/^function\s+textLooksLikeManualAntiBotChallenge/, "function")})`
+);
+
 assert.strictEqual(
-  runnerModule.textLooksLikeManualAntiBotChallenge(
+  textLooksLikeManualAntiBotChallenge(
     "Подтвердите,\nчто вы не робот\nЯ не робот\nУсловия использования"
   ),
   true,
   "Observed post-click challenge must be detected"
 );
 assert.strictEqual(
-  runnerModule.textLooksLikeManualAntiBotChallenge("Готово: можно публиковать и смотреть"),
+  textLooksLikeManualAntiBotChallenge("Готово: можно публиковать и смотреть"),
   false,
   "Normal ready state must not be classified as anti-bot challenge"
 );
 assert.strictEqual(
-  runnerModule.textLooksLikeManualAntiBotChallenge("Я не робот"),
+  textLooksLikeManualAntiBotChallenge("Я не робот"),
   false,
   "A bare phrase without the confirmation prompt is not sufficient"
 );
@@ -97,6 +112,7 @@ for (const forbidden of [
 for (const marker of [
   "ПОСЛЕ PUBLISH ПОЯВИЛАСЬ АНТИБОТ-ПРОВЕРКА",
   "Автоматизация НЕ нажимает checkbox и НЕ выполняет других кликов",
+  "Окно Яндекс.Браузера восстановлено для ручного подтверждения",
   "Антибот-проверка исчезла",
   "verification-only",
 ]) {
