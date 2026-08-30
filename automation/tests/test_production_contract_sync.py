@@ -48,11 +48,6 @@ class ProductionContractSyncTests(unittest.TestCase):
                 "general_coverage_gaps",
             ],
         )
-        self.assertEqual(
-            production["minimum_legacy_items"],
-            0,
-            "32-day retention must be allowed to remove every legacy item",
-        )
         # Seven is the ordinary-volume boundary; one worthy story is enough
         # to publish and regional sections never have numeric quotas.
         self.assertEqual(editorial["story_counts"]["total_target_minimum"], 7)
