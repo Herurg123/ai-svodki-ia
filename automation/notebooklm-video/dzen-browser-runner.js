@@ -90,18 +90,92 @@ function textLooksLikeManualAntiBotChallenge(value) {
     (text.includes("подтвердите") && text.includes("я не робот"));
 }
 
-async function antiBotChallengeVisible(browser) {
-  const texts = [];
+async function findAntiBotChallengePage(browser) {
   for (const context of browser.contexts()) {
     for (const page of context.pages()) {
       if (page.isClosed()) continue;
+      const texts = [];
       for (const frame of page.frames()) {
         const body = await frame.locator("body").innerText({ timeout: 1000 }).catch(() => "");
         if (body) texts.push(body);
       }
+      if (textLooksLikeManualAntiBotChallenge(texts.join("\n"))) return page;
     }
   }
-  return textLooksLikeManualAntiBotChallenge(texts.join("\n"));
+  return null;
+}
+
+function encodePowerShellCommand(command) {
+  return Buffer.from(command, "utf16le").toString("base64");
+}
+
+function quotePowerShellLiteral(value) {
+  return `'${String(value || "").replace(/'/g, "''")}'`;
+}
+
+async function restoreRobotBrowserWindow(config) {
+  if (process.platform !== "win32" || !config.browserExecutable) {
+    return { ok: false, skipped: true };
+  }
+
+  const processName = path.parse(config.browserExecutable).name;
+  const command = [
+    "$ErrorActionPreference = 'Stop'",
+    "Add-Type -TypeDefinition @'",
+    "using System;",
+    "using System.Runtime.InteropServices;",
+    "public static class AiSvodkiWindowApi {",
+    "  [DllImport(\"user32.dll\")] public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);",
+    "  [DllImport(\"user32.dll\")] public static extern bool SetForegroundWindow(IntPtr hWnd);",
+    "}",
+    "'@",
+    `$name = ${quotePowerShellLiteral(processName)}`,
+    "$windows = @(Get-Process -Name $name -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 })",
+    "foreach ($p in $windows) {",
+    "  [AiSvodkiWindowApi]::ShowWindowAsync($p.MainWindowHandle, 9) | Out-Null",
+    "  [AiSvodkiWindowApi]::SetForegroundWindow($p.MainWindowHandle) | Out-Null",
+    "}",
+    "Write-Output $windows.Count",
+  ].join("\r\n");
+
+  return new Promise((resolve) => {
+    let settled = false;
+    let stdout = "";
+    let stderr = "";
+    let timer = null;
+    const finish = (result) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(result);
+    };
+    const child = spawn(
+      "powershell.exe",
+      [
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-EncodedCommand",
+        encodePowerShellCommand(command),
+      ],
+      { windowsHide: true, stdio: ["ignore", "pipe", "pipe"] }
+    );
+    child.stdout.on("data", (chunk) => { stdout += chunk.toString(); });
+    child.stderr.on("data", (chunk) => { stderr += chunk.toString(); });
+    child.once("error", (error) => finish({ ok: false, error: error.message }));
+    child.once("close", (code) => finish({
+      ok: code === 0,
+      code,
+      stdout: stdout.trim(),
+      error: code === 0 ? null : stderr.trim() || `PowerShell завершился с кодом ${code}`,
+    }));
+    timer = setTimeout(() => {
+      try { child.kill(); } catch {}
+      finish({ ok: false, error: "Не удалось восстановить окно браузера за 10 секунд." });
+    }, 10_000);
+  });
 }
 
 async function waitForOptionalPostClickChallenge() {
@@ -123,16 +197,14 @@ async function waitForOptionalPostClickChallenge() {
   }
 
   const probeDeadline = Date.now() + POST_CLICK_CHALLENGE_PROBE_MS;
-  let seen = false;
+  let challengePage = null;
   while (Date.now() < probeDeadline) {
-    if (await antiBotChallengeVisible(browser)) {
-      seen = true;
-      break;
-    }
+    challengePage = await findAntiBotChallengePage(browser);
+    if (challengePage) break;
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
 
-  if (!seen) {
+  if (!challengePage) {
     log(
       config,
       `post-click антибот-проверка не обнаружена за ${POST_CLICK_CHALLENGE_PROBE_MS} мс.`
@@ -147,17 +219,18 @@ async function waitForOptionalPostClickChallenge() {
       `Ожидаю ручного подтверждения до ${POST_CLICK_CHALLENGE_WAIT_MS} мс.`
   );
 
-  for (const context of browser.contexts()) {
-    const page = context.pages().find((candidate) => !candidate.isClosed());
-    if (page) {
-      await page.bringToFront().catch(() => {});
-      break;
-    }
+  const restored = await restoreRobotBrowserWindow(config);
+  if (restored.ok) {
+    log(config, "Окно Яндекс.Браузера восстановлено для ручного подтверждения антибот-проверки.");
+  } else if (!restored.skipped) {
+    warn(config, `Не удалось восстановить окно Яндекс.Браузера: ${restored.error || "неизвестная ошибка"}.`);
   }
+  await challengePage.bringToFront().catch(() => {});
 
   const deadline = Date.now() + POST_CLICK_CHALLENGE_WAIT_MS;
   while (Date.now() < deadline) {
-    if (!(await antiBotChallengeVisible(browser))) {
+    challengePage = await findAntiBotChallengePage(browser);
+    if (!challengePage) {
       log(
         config,
         "Антибот-проверка исчезла. Автоматизация не взаимодействовала с ней; " +
