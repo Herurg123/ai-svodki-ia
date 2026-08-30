@@ -18,8 +18,6 @@ def config(**overrides):
         "timezone": "Europe/Moscow",
         "first_publication_date": "2026-07-24",
         "feed_url": "https://rybalka.one/posts/rss.xml",
-        "legacy_prefix": "https://rybalka.one/posts/dzen-test/",
-        "minimum_legacy_items": 1,
         "site_base_url": "https://rybalka.one/posts",
         "publication_hour_local": 6,
         "require_previous_day_in_rss": False,
@@ -41,10 +39,6 @@ def rss(latest_date: str):
             {
                 "date": latest_date,
                 "link": f"https://rybalka.one/posts/{latest_date}/",
-            },
-            {
-                "date": "2026-07-01",
-                "link": "https://rybalka.one/posts/dzen-test/item/",
             },
         ],
     }
@@ -68,7 +62,7 @@ class SkippedPublicationDaysTests(unittest.TestCase):
             "2026-07-25",
         )
 
-    def test_legacy_strict_mode_still_rejects_gap(self) -> None:
+    def test_strict_mode_still_rejects_gap(self) -> None:
         with self.assertRaisesRegex(
             RuntimeError,
             "previous calendar day",
