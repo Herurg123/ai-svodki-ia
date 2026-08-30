@@ -670,15 +670,6 @@ jobs:
           python automation/scripts/validate_cover_contract.py \
             --artifact-dir "${image_dir}" \
             --report "${image_dir}/cover-validation.json"
-      - name: Stage accepted legacy images under canonical posts/images
-        if: steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          python automation/scripts/stage_legacy_images.py \
-            --source posts/dzen-test/images \
-            --target posts/images \
-            --report automation/preview/production-daily/legacy-images.json
       - name: Build and validate candidate site
         if: steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true'
         shell: bash
