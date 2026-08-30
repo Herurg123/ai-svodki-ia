@@ -3,6 +3,7 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 import sys
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -100,7 +101,53 @@ class HybridSearchCompletenessTests(unittest.TestCase):
         self.artifact_dir.mkdir(parents=True)
         write_json(self.archive_path, {"items": []})
 
+        self.old_rescue = hc.run_agency_discovery_rescue
+        self.old_pulse = hc.run_source_pulse_shadow
+        hc.run_agency_discovery_rescue = lambda **kwargs: {
+            "version": 5,
+            "search_strategy": "agency_discovery_rescue",
+            "publication_date": "2026-08-09",
+            "triggered": False,
+            "executed": False,
+            "state": "not_triggered",
+            "status": "complete",
+            "search_operation_count_contribution": 0,
+            "added_count": 0,
+            "accepted_count": 0,
+        }
+        hc.run_source_pulse_shadow = lambda **kwargs: {
+            "version": 1,
+            "strategy": "source_pulse_shadow",
+            "publication_date": "2026-08-09",
+            "state": "reused_snapshot",
+            "status": "complete_with_gaps",
+            "fusion": {"summary": {"pulse_only_count": 0, "both_count": 0}},
+            "promotion": {"promoted_count": 0},
+            "paid_api_calls": 0,
+            "web_search_operations": 0,
+        }
+
+        # This suite is part of Main CI's offline contract. Fail immediately if a
+        # future orchestration change leaks DNS or HTTPS through these unit tests.
+        self.network_patchers = (
+            patch(
+                "socket.getaddrinfo",
+                side_effect=AssertionError("offline Hybrid unit test attempted DNS"),
+            ),
+            patch(
+                "socket.create_connection",
+                side_effect=AssertionError("offline Hybrid unit test attempted network I/O"),
+            ),
+        )
+        for patcher in self.network_patchers:
+            patcher.start()
+
     def tearDown(self):
+        hc.run_agency_discovery_rescue = self.old_rescue
+        hc.run_source_pulse_shadow = self.old_pulse
+        hc._sync_compatibility_hooks()
+        for patcher in reversed(self.network_patchers):
+            patcher.stop()
         self.tmp.cleanup()
 
     def _run(self, base_candidates, request_fn):
