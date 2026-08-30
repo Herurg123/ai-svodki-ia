@@ -140,19 +140,6 @@ def runtime_context(
             f"received {rss['self_url']!r}"
         )
 
-    legacy_prefix = str(config["legacy_prefix"])
-    legacy_count = sum(
-        1
-        for row in rss["items"]
-        if str(row["link"]).startswith(legacy_prefix)
-    )
-    minimum_legacy = int(config["minimum_legacy_items"])
-    if legacy_count < minimum_legacy:
-        raise RuntimeError(
-            f"RSS must preserve at least {minimum_legacy} legacy items; "
-            f"got {legacy_count}"
-        )
-
     target_url = (
         f"{str(config['site_base_url']).rstrip('/')}/{target.isoformat()}/"
     )
@@ -200,7 +187,6 @@ def runtime_context(
         "target_url": target_url,
         "digest_request_id": f"production-digest-{target.isoformat()}",
         "image_request_id": f"production-image-{target.isoformat()}",
-        "legacy_items": legacy_count,
         "rss_latest_date": rss["latest_date"],
         "rss_latest_url": str(rss["latest_item"]["link"]),
         "timezone": timezone_name,

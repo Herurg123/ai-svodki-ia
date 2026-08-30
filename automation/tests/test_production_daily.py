@@ -16,7 +16,7 @@ import promote_production_site as promote
 ATOM = "http://www.w3.org/2005/Atom"
 CONTENT = "http://purl.org/rss/1.0/modules/content/"
 
-def write_rss(path: Path, dates: list[str], prefix: str = "https://rybalka.one/posts/dzen-test/") -> None:
+def write_rss(path: Path, dates: list[str], prefix: str = "https://rybalka.one/posts/") -> None:
     ET.register_namespace("atom", ATOM)
     rss = ET.Element("rss", {"version": "2.0"})
     channel = ET.SubElement(rss, "channel")
@@ -47,8 +47,6 @@ class ProductionDailyTests(unittest.TestCase):
             "first_publication_date": "2026-07-24",
             "feed_url": "https://rybalka.one/posts/rss.xml",
             "site_base_url": "https://rybalka.one/posts",
-            "legacy_prefix": "https://rybalka.one/posts/dzen-test/",
-            "minimum_legacy_items": 10,
             "require_previous_day_in_rss": True,
             "publication_hour_local": 6,
             "content_root": "automation/content",
