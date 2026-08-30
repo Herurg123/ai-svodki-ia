@@ -22,7 +22,9 @@ permissions:
   contents: write
 
 concurrency:
-  group: repository-content-cleanup-main
+  # Serialize both workflows that may write protected main. A delayed cleanup
+  # must finish before daily production starts spending paid API budget.
+  group: daily-production-main
   cancel-in-progress: false
 
 jobs:

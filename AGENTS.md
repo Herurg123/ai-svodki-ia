@@ -47,6 +47,12 @@ commit in `daily-production.yml` and the validated retention commit in
 `MAIN_PUSH_DEPLOY_KEY` secret. Do not expose that secret to any other workflow or
 job, and do not grant broad GitHub Actions/admin bypass instead.
 
+Those two `main` writers must also share one non-cancelling GitHub Actions
+concurrency group. A delayed retention run and the paid daily production run must
+never execute concurrently: the later workflow waits instead of invalidating the
+other workflow's race-safe `main` commit guard after paid work has already run.
+Do not change either writer to `cancel-in-progress: true`.
+
 ## Incident/fix verification gate
 
 Production incident fixes require evidence beyond a plausible diff or green CI.
