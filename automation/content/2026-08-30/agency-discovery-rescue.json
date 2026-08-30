@@ -1,0 +1,59 @@
+{
+  "version": 5,
+  "search_strategy": "agency_discovery_rescue",
+  "publication_date": "2026-08-30",
+  "triggered": false,
+  "trigger_reason": null,
+  "major_agencies_status": "complete_with_gaps",
+  "major_agencies_raw_count": 2,
+  "major_agencies_accepted_count": 1,
+  "candidate_pool_count_at_trigger": 4,
+  "candidate_count_independent_trigger": true,
+  "executed": false,
+  "state": "not_triggered",
+  "status": "complete",
+  "query": "latest AI models research chips infrastructure financing earnings business deals policy security",
+  "allowed_domains": [
+    "reuters.com"
+  ],
+  "required_direct_source_hosts": [
+    "reuters.com"
+  ],
+  "search_context_size": "high",
+  "search_operation_limit": 1,
+  "search_operation_reserved": 0,
+  "search_operation_count_contribution": 0,
+  "search_retry_allowed": false,
+  "raw_count": 0,
+  "validated_count": 0,
+  "accepted_count": 0,
+  "added_count": 0,
+  "duplicate_count": 0,
+  "archive_duplicate_count": 0,
+  "rejections": [],
+  "model_rejections": [],
+  "api": {},
+  "resumed": true,
+  "recovered_from_artifact": true,
+  "pipeline_search_budget": {
+    "primary_maximum": 12,
+    "agency_discovery_rescue_maximum": 1,
+    "hybrid_maximum": 4,
+    "coverage_maximum": 7,
+    "maximum_total": 24
+  },
+  "query_policy": "global_reuters_one_slot",
+  "regional_gaps_at_trigger": [
+    "asia",
+    "russia"
+  ],
+  "regional_gaps_affect_query": false,
+  "source_metadata_available": false,
+  "source_metadata_diagnostics": {
+    "source_metadata_available": false,
+    "search_actions_with_source_metadata": 0,
+    "search_actions_missing_source_metadata": 0
+  },
+  "coverage_recovery_entry": true,
+  "coverage_recovery_editorial_rerun": "not_needed"
+}

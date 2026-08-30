@@ -1,0 +1,68 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Sony Music Publishing и Warner Chappell подали иск к Anthropic из-за обучения Claude",
+    "organization": "Sony Music Publishing; Warner Chappell; Anthropic; Claude",
+    "topic": "Крупный copyright-иск против разработчика frontier-моделей, связанный с приобретением и использованием музыкальных произведений при обучении ИИ.",
+    "event_type": "lawsuit filed",
+    "status": "new",
+    "summary": "Sony Music Publishing, Warner Chappell и другие музыкальные издатели подали в Северном округе Калифорнии иск к Anthropic и её сооснователям. Они утверждают, что компания незаконно получала и использовала защищённые произведения, включая материалы с текстами и нотами, для обучения Claude; Anthropic заявила, что не согласна с претензиями и будет защищаться.",
+    "published_at": "2026-08-29T18:41:59+00:00",
+    "published_date": "2026-08-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Sony Music, Warner sue Anthropic, alleging a “brazen campaign” of intellectual property theft",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/29/sony-music-warner-sue-anthropic-alleging-a-brazen-campaign-of-intellectual-property-theft/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "Sony Music Publishing",
+      "Warner Chappell",
+      "copyright",
+      "training data",
+      "music publishing",
+      "AI legal"
+    ],
+    "geography": "world",
+    "category": "legal"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Anthropic обновила Claude Code: контроль смены моделей, наблюдение за субагентами и защита файловых операций",
+    "organization": "Anthropic; Claude Code",
+    "topic": "CLI coding agent: наблюдаемость субагентов, управление сменой моделей, лимиты расходов и безопасность инструментов разработки",
+    "event_type": "product release / developer-tool update",
+    "status": "new",
+    "summary": "В версии 2.1.251 Claude Code добавлены хуки PreModelSwitch и PostModelSwitch для блокировки, подтверждения или аннотирования смены модели; Remote Control получил потоковую трансляцию вызовов инструментов и результатов foreground-субагента. Релиз также добавляет видимость spend limit и метрики prompt cache, команды управления фоновыми сессиями и исправляет несколько проблем, связанных с обходом разрешений через симлинки, плагины и пути Workflow.",
+    "published_at": "2026-08-28T15:34:26+00:00",
+    "published_date": "2026-08-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Claude Code changelog",
+        "publisher": "Anthropic",
+        "url": "https://code.claude.com/docs/en/changelog"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "coding agent",
+      "subagents",
+      "Remote Control",
+      "PreModelSwitch",
+      "PostModelSwitch",
+      "prompt cache",
+      "security",
+      "symlink",
+      "CLI"
+    ],
+    "geography": "world",
+    "category": "coding"
+  }
+]

@@ -1,0 +1,68 @@
+{
+  "status": "ok",
+  "request_id": "production-image-2026-08-30",
+  "model": "gpt-image-2",
+  "endpoint": "/v1/images/generations",
+  "http_status": 200,
+  "openai_request_id": "req_c94b25cd843e4069acd1d2a3ba72a46c",
+  "source_editorial_request_id": "production-digest-2026-08-30",
+  "request": {
+    "size": "1536x864",
+    "quality": "high",
+    "output_format": "png",
+    "background": "opaque",
+    "n": 1,
+    "prompt_sha256": "954840ac558fa6ccf3b42ad4a542c194deb4152e37fbde9a1a0ec3add154132d"
+  },
+  "response": {
+    "created": 1788069407,
+    "background": "opaque",
+    "output_format": "png",
+    "quality": "high",
+    "size": "1536x864",
+    "usage": {
+      "input_tokens": 398,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 398
+      },
+      "output_tokens": 4312,
+      "output_tokens_details": {
+        "image_tokens": 4312,
+        "text_tokens": 0
+      },
+      "total_tokens": 4710
+    },
+    "data_count": 1,
+    "revised_prompt": null
+  },
+  "cover_sha256": "a0a1c106d4a10237ec3dc02e7393ef631ac1fcd1f261341688f28789795b648d",
+  "cover_bytes": 2338435,
+  "base64_stored": false,
+  "copied_source_files": [
+    "agency-discovery-rescue.json",
+    "article.html",
+    "artifact-normalization.json",
+    "artifact-validation.json",
+    "candidates.json",
+    "digest.json",
+    "editorial-output-raw.json",
+    "editorial-output.json",
+    "editorial-prompt-input.txt",
+    "image-prompt.txt",
+    "meta.json",
+    "metadata-normalization.json",
+    "policy-normalization.json",
+    "primary-recall.json",
+    "research-filtered-out.json",
+    "research-input-info.json",
+    "research-output-raw.json",
+    "research-prompt-input.txt",
+    "run-info.json",
+    "selection.json",
+    "sources.json",
+    "stories.json"
+  ],
+  "started_at": "2026-08-30T05:55:17+00:00",
+  "finished_at": "2026-08-30T05:56:48+00:00"
+}

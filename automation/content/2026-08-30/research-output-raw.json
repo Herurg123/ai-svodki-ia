@@ -1,0 +1,376 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-30",
+  "search_window": {
+    "start_at": "2026-08-28T05:16:40+03:00",
+    "end_at": "2026-08-30T04:15:21+03:00",
+    "latest_archive_at": "2026-08-29T05:16:40+03:00",
+    "start_date": "2026-08-28",
+    "end_date": "2026-08-30",
+    "latest_archive_date": "2026-08-29"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=1, rejected=1."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Sony Music Publishing и Warner Chappell подали иск против Anthropic из-за предполагаемого незаконного использования защищённых произведений для обучения Claude",
+      "organization": "Sony Music Publishing; Warner Chappell; Anthropic; Claude",
+      "published_date": "2026-08-29",
+      "published_at": "2026-08-29T18:41:59+00:00",
+      "time_precision": "datetime",
+      "topic": "Крупный copyright-иск против разработчика frontier-моделей, связанный с приобретением и использованием музыкальных произведений при обучении ИИ.",
+      "event_type": "lawsuit filed",
+      "keywords": [
+        "Anthropic",
+        "Claude",
+        "Sony Music Publishing",
+        "Warner Chappell",
+        "copyright",
+        "training data",
+        "music publishing",
+        "AI legal"
+      ],
+      "geography": "world",
+      "category": "legal",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Sony Music, Warner sue Anthropic, alleging a “brazen campaign” of intellectual property theft",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/29/sony-music-warner-sue-anthropic-alleging-a-brazen-campaign-of-intellectual-property-theft/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Sony Music Publishing, Warner Chappell и другие музыкальные издатели подали в Северном округе Калифорнии иск к Anthropic и её сооснователям. Они утверждают, что компания незаконно получала и использовала защищённые произведения, включая материалы с текстами и нотами, для обучения Claude; Anthropic заявила, что не согласна с претензиями и будет защищаться.",
+      "verified_facts": [
+        "TechCrunch сообщил, что иск был подан поздно в пятницу, 29 августа 2026 года, в U.S. District Court for the Northern District of California.",
+        "Истцами выступают Sony Music Publishing, Warner Chappell и другие музыкальные издатели.",
+        "Иск касается предполагаемого torrenting, scraping и скачивания защищённых произведений для обучения модели Claude.",
+        "Anthropic передала TechCrunch заявление о намерении энергично защищаться в суде."
+      ],
+      "significance": "Это масштабный новый спор о training data для одной из ведущих frontier-AI лабораторий, поданный крупными музыкальными правообладателями. Он способен повлиять на риски лицензирования, приобретения датасетов и судебную практику вокруг обучения генеративных моделей.",
+      "significance_score": 4,
+      "limitations": "Факты и формулировки претензий подтверждены авторитетным вторичным источником и комментарием Anthropic; текст судебной жалобы и docket в этом проходе отдельно не открывались. Обвинения остаются недоказанными до судебного рассмотрения.",
+      "archive_status": "none",
+      "archive_reason": "В недавнем архиве есть прежние иски и правовые сюжеты вокруг Anthropic, но нет этого нового иска музыкальных издателей Sony Music Publishing и Warner Chappell.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Свежая публикация TechCrunch содержит дату подачи, стороны, суд, описание обвинений и комментарий Anthropic. Событие самостоятельно подтверждено как подача иска, без утверждения истинности самих обвинений.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-29T18:41:59+00:00; timestamp проверен Python против effective window. Иск был подан 29 августа 2026 года; страница-источник опубликована 29 августа 2026 года в 11:41 PDT, что соответствует 30 августа 2026 года в 01:41 по UTC+03:00 и попадает в effective editorial window.",
+      "legal_scale": "major",
+      "legal_scale_reason": "Иск подан несколькими крупными музыкальными издателями против Anthropic и затрагивает предполагаемое массовое получение произведений и обучение широко используемой frontier-модели Claude.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не является curiosity-кандидатом: это самостоятельное крупное legal-событие.",
+      "event_date": "2026-08-29",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/08/29/sony-music-warner-sue-anthropic-alleging-a-brazen-campaign-of-intellectual-property-theft/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch прямо сообщает, что иск был подан поздно в пятницу, 29 августа 2026 года, в федеральный суд Северного округа Калифорнии.",
+      "id": "cand-001",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/08/29/sony-music-warner-sue-anthropic-alleging-a-brazen-campaign-of-intellectual-property-theft/",
+      "source_published_date": "2026-08-29",
+      "source_published_at": "2026-08-29T18:41:59+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-08-29T18:41:59+00:00"
+    },
+    {
+      "title": "Tencent представила новую модель Hunyuan HY4, заявив о превосходстве над моделями Z.ai и Moonshot",
+      "organization": "Tencent; Hunyuan; Z.ai; Moonshot AI",
+      "published_date": "2026-08-28",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Китайские frontier-модели и конкурентная динамика open/коммерческих AI-моделей",
+      "event_type": "model release",
+      "keywords": [
+        "Tencent",
+        "Hunyuan HY4",
+        "AI model",
+        "China",
+        "Z.ai",
+        "Moonshot AI"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "business_media",
+      "primary_source": {
+        "title": "The AI Race: Trending News, Latest Updates, Analysis",
+        "publisher": "Bloomberg",
+        "url": "https://www.bloomberg.com/latest/the-ai-race"
+      },
+      "supporting_sources": [],
+      "event_summary": "В ленте Bloomberg AI Race от 28 августа обозначено сообщение «Tencent Touts New AI Model It Claims Outperforms Z.AI, Moonshot». Это выглядит как самостоятельный свежий релиз крупного китайского разработчика моделей и потенциально важный конкурентный сигнал для рынка foundation-моделей.",
+      "verified_facts": [
+        "Bloomberg включил материал о новой AI-модели Tencent в AI Race за 28 августа 2026 года.",
+        "Заголовок Bloomberg прямо указывает, что Tencent заявляет о превосходстве модели над системами Z.ai и Moonshot.",
+        "Событие не совпадает с уже найденными в текущем пуле сюжетами о Z.ai/Ox Alpha и GLM-5.3-Flash."
+      ],
+      "significance": "Крупный провайдер представил новую модель в быстро меняющемся китайском frontier-сегменте; заявленное сравнение с Z.ai и Moonshot делает событие редакционно самостоятельным, хотя параметры и независимая оценка заявления в доступном результате не раскрыты.",
+      "significance_score": 3,
+      "limitations": "Доступная Bloomberg-лента подтверждает дату и заголовок, но инструмент не предоставил отдельную актуальную карточку статьи с названием модели, техническими характеристиками и точным временем публикации; часть ссылок ленты разрешалась в устаревшие материалы.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть связанные китайские model-сюжеты Z.ai, но нет релиза Tencent Hunyuan HY4 или эквивалентного события.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Подтверждено авторитетной Bloomberg AI-лентой с датировкой 28 августа 2026 года; отдельный article URL не был надёжно извлечён из-за некорректного разрешения ссылок инструментом.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не legal-событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран как модельный релиз, а не curiosity-материал.",
+      "event_date": "2026-08-28",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.bloomberg.com/latest/the-ai-race",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Bloomberg AI Race помечает материал о новой модели Tencent датой 28 августа 2026 года; первичный релиз Tencent в данном проходе не был доступен.",
+      "id": "cand-002",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    },
+    {
+      "title": "Anthropic выпустила Claude Code 2.1.251: хуки переключения моделей, live-стриминг действий субагентов и усиление изоляции файловых операций",
+      "organization": "Anthropic; Claude Code",
+      "published_date": "2026-08-28",
+      "published_at": "2026-08-28T15:34:26.421000+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agent: наблюдаемость субагентов, управление сменой моделей, лимиты расходов и безопасность инструментов разработки",
+      "event_type": "product release / developer-tool update",
+      "keywords": [
+        "Claude Code",
+        "coding agent",
+        "subagents",
+        "Remote Control",
+        "PreModelSwitch",
+        "PostModelSwitch",
+        "prompt cache",
+        "security",
+        "symlink",
+        "CLI"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "documentation",
+      "primary_source": {
+        "title": "Claude Code v2.1.251",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/claude-code-2.1.251"
+      },
+      "supporting_sources": [
+        {
+          "title": "Claude Code changelog",
+          "publisher": "Anthropic",
+          "url": "https://code.claude.com/docs/en/changelog"
+        }
+      ],
+      "event_summary": "В версии 2.1.251 Claude Code добавлены хуки PreModelSwitch и PostModelSwitch для блокировки, подтверждения или аннотирования смены модели; Remote Control получил потоковую трансляцию вызовов инструментов и результатов foreground-субагента. Релиз также добавляет видимость spend limit и метрики prompt cache, команды управления фоновыми сессиями и исправляет несколько проблем, связанных с обходом разрешений через симлинки, плагины и пути Workflow.",
+      "verified_facts": [
+        "Официальный changelog датирует версию 2.1.251 28 августа 2026 года.",
+        "Добавлены события хуков PreModelSwitch и PostModelSwitch; resume-хуки SessionStart получают сведения о давности сессии и предполагаемой стоимости повторного кэширования.",
+        "Remote Control теперь показывает в реальном времени tool calls и результаты foreground-субагента; background-субагенты по-прежнему показывают только статус.",
+        "В /usage добавлена шкала лимита расходов, а в /cost — построчная статистика prompt cache на сессию.",
+        "Исправлены уязвимости, при которых файловые инструменты могли следовать подменённому после permission-check симлинку за пределы разрешённой локации."
+      ],
+      "significance": "Это содержательное обновление одного из ведущих CLI-агентов для разработки: оно улучшает контроль model routing, наблюдаемость многоагентных рабочих процессов и защиту файловой песочницы. Событие самостоятельное, но по масштабу скорее крупный продуктовый релиз, а не новый запуск платформы.",
+      "significance_score": 3,
+      "limitations": "Это changelog-релиз, а не отдельный корпоративный анонс; часть изменений является исправлениями и операционными улучшениями. Независимой оценки влияния на пользователей нет.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть более ранние истории о Claude Code и Anthropic, но нет выпуска Claude Code 2.1.251 или его новых механизмов model-switch hooks, live subagent streaming и исправлений sandbox/file-access.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Версия, дата и перечисленные возможности подтверждены официальной документацией Anthropic; вторичный релиз-трекер согласуется с ней.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-28T15:34:26.421Z; timestamp проверен Python против effective window. Первичный релиз Claude Code 2.1.251 опубликован 28 августа 2026 года и попадает в effective window; это не перепечатка ранее опубликованного архивного сюжета.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: релевантность основана на прямом влиянии на developer tooling.",
+      "event_date": "2026-08-28",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://code.claude.com/docs/en/changelog",
+      "event_evidence_kind": "release_note",
+      "event_date_evidence": "Официальный Claude Code changelog содержит отдельную запись для версии 2.1.251 с датой August 28, 2026.",
+      "id": "cand-003",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.havoptic.com/r/claude-code-2.1.251",
+      "source_published_date": "2026-08-28",
+      "source_published_at": "2026-08-28T15:34:26.421000+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-08-28T15:34:26.421Z"
+    },
+    {
+      "title": "OpenAI обновила Codex CLI до rust-v0.151.0: расширения получили перехват и замену результатов MCP-инструментов",
+      "organization": "OpenAI; Codex CLI",
+      "published_date": "2026-08-29",
+      "published_at": "2026-08-29T09:55:39+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agent: расширяемость MCP, песочница удалённых исполнителей и управление инструментами",
+      "event_type": "product release / developer-tool update",
+      "keywords": [
+        "OpenAI Codex",
+        "Codex CLI",
+        "MCP",
+        "extensions",
+        "tool results",
+        "sandbox",
+        "plugins",
+        "subagents",
+        "permissions"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "OpenAI Codex CLI rust-v0.151.0",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/openai-codex-rust-v0.151.0"
+      },
+      "supporting_sources": [
+        {
+          "title": "AI Coding Tool Releases — Timeline",
+          "publisher": "Havoptic",
+          "url": "https://www.havoptic.com/"
+        }
+      ],
+      "event_summary": "Codex CLI rust-v0.151.0 добавляет возможность расширениям инспектировать или заменять результаты MCP-инструментов до передачи модели. В релиз также вошли настраиваемая задержка discovery для optional MCP servers, улучшения конфигурации plugin catalog и исправления, связанные с профилями разрешений, model switching, песочницей remote executor и учётом токенов субагентов.",
+      "verified_facts": [
+        "Релиз-трекер датирует Codex CLI rust-v0.151.0 29 августа 2026 года.",
+        "Среди новых возможностей указана обработка расширениями результатов MCP-инструментов до их поступления модели.",
+        "Добавлена настройка grace period для discovery инструментов optional MCP servers.",
+        "В release notes перечислены исправления сохранения permission profiles, model-specific tool plans и remote sandbox enforcement.",
+        "Также заявлен учёт использования токенов вложенных субагентов в бюджете корневой цели."
+      ],
+      "significance": "Изменение затрагивает ключевой слой расширяемости и контроля agentic development environment: плагины могут фильтровать или преобразовывать результаты внешних инструментов до модельного контекста. Однако это инкрементальный CLI-релиз, поэтому требуется редакционная оценка относительно более крупных сюжетов дня.",
+      "significance_score": 2,
+      "limitations": "Проверка выполнена по специализированному релиз-трекеру, который указывает на оригинальный GitHub release, но первичная GitHub-страница не была дополнительно открыта из-за лимита навигационных вызовов. Влияние функции на стабильный публичный API и её доступность по планам не проверены.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть Codex CLI rust-v0.149.0 от 20 августа, но отсутствует релиз rust-v0.151.0 и его новый extension/MCP interception слой.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата и набор изменений подтверждены свежей специализированной страницей релиз-трекера, воспроизводящей release notes и ссылающейся на оригинальный GitHub release.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-29T09:55:39Z; timestamp проверен Python против effective window. Релиз датирован 29 августа 2026 года, находится внутри effective window и не совпадает с архивным обновлением Codex CLI от 20 августа.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: это тематически прямое обновление инструмента разработки.",
+      "event_date": "2026-08-29",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.havoptic.com/r/openai-codex-rust-v0.151.0",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Страница релиз-трекера прямо указывает, что rust-v0.151.0 был выпущен August 29, 2026, и приводит release notes с номером версии.",
+      "id": "cand-004",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.havoptic.com/r/openai-codex-rust-v0.151.0",
+      "source_published_date": "2026-08-29",
+      "source_published_at": "2026-08-29T09:55:39+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-08-29T09:55:39Z"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=5, validated unique=4, final candidates=4. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota"
+  }
+}
