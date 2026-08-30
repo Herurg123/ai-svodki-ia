@@ -47,7 +47,8 @@ RECALL_SENTINEL_MINIMUM_BUDGET = 7
 AGENCY_RESCUE_STRATEGY = "fresh_agency_rescue"
 AGENCY_RESCUE_VERSION = 7
 AGENCY_RESCUE_DOMAINS: tuple[str, ...] = ()
-SOURCE_HEALTH_CONTRACT_VERSION = _policy.SOURCE_HEALTH_CONTRACT_VERSION
+SOURCE_HEALTH_CONTRACT_VERSION = _policy.SOURCE_HEALTH_CONTRACT_VERSION + 1
+_policy.SOURCE_HEALTH_CONTRACT_VERSION = SOURCE_HEALTH_CONTRACT_VERSION
 
 # Transport remains implemented by the preserved runtime base. Keep this
 # literal here because the repository contract verifies transient retries at
@@ -797,12 +798,38 @@ def execute_audit_plan(
     ) + _base._eligible_candidate_count(plan.get("candidates"))
     remaining_calls = int(budget.get("remaining_calls", 0) or 0)
     combined_candidates = list(existing_candidates) + list(plan.get("candidates") or [])
-    agency_rescue_needed = bool(
+    source_health_gap_detected = bool(
         final_eligible > 0
         and not _policy._candidates_have_fresh_agency_source(
             combined_candidates, search_window
         )
     )
+    corroboration_target = _select_agency_corroboration_target(combined_candidates)
+    agency_rescue_applicable = corroboration_target is not None
+    agency_rescue_needed = bool(
+        source_health_gap_detected and agency_rescue_applicable
+    )
+    if (
+        maximum_web_search_calls >= RECALL_SENTINEL_MINIMUM_BUDGET
+        and mandatory_complete
+        and source_health_rescue_needed
+        and source_health_gap_detected
+        and not agency_rescue_applicable
+    ):
+        _set_last_agency_rescue(
+            {
+                "status": "not_applicable",
+                "version": AGENCY_RESCUE_VERSION,
+                "search_strategy": AGENCY_RESCUE_STRATEGY,
+                "allowed_domains": list(AGENCY_RESCUE_DOMAINS),
+                "source_health_gap_detected": True,
+                "reason": (
+                    "current pool has no targetable funding, M&A, investment, "
+                    "data-center, infrastructure, chips, or partnership event"
+                ),
+            }
+        )
+        budget["stop_reason"] = "agency_rescue_not_applicable"
     if (
         maximum_web_search_calls >= RECALL_SENTINEL_MINIMUM_BUDGET
         and mandatory_complete
@@ -1022,12 +1049,24 @@ def _finalize_source_health_report(report_path: Path | None) -> None:
         payload["agency_rescue"] = copy.deepcopy(_LAST_AGENCY_RESCUE)
         status = str(_LAST_AGENCY_RESCUE.get("status") or "")
         if status in {"complete", "complete_with_gaps", "reused"}:
+            payload["source_health_rescue_applicable"] = True
             payload["audit_notes"] = (
                 "Шесть обязательных Coverage-проходов завершены; свободный "
                 "седьмой search operation использован как Reuters/AP fresh-agency "
                 "rescue для ненулевого пула без свежего agency-кандидата."
             )
+        elif status == "not_applicable":
+            payload["source_health_gap_detected"] = True
+            payload["source_health_rescue_applicable"] = False
+            payload["source_health_rescue_needed"] = False
+            payload["audit_notes"] = (
+                "Шесть обязательных Coverage-проходов завершены; свежего "
+                "Reuters/AP/Bloomberg/FT primary source в пуле нет, но текущий "
+                "пул не содержит события из классов, для которых предусмотрено "
+                "agency corroboration. Седьмой search не требуется и не выполняется."
+            )
         elif status == "error":
+            payload["source_health_rescue_applicable"] = True
             payload["audit_notes"] = (
                 "Шесть обязательных Coverage-проходов завершены, но требуемый "
                 "fresh-agency rescue технически не завершён; публикация заблокирована."
