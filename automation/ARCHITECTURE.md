@@ -654,6 +654,19 @@ multiple search operations или technical/API ambiguity остаются fail-
 Same-day recovery детерминированно переиспользует такой сохранённый seventh
 slot без повторной Web Search operation.
 
+Fresh-agency source health использует тот же свободный seventh slot только когда
+ненулевой пригодный пул одновременно (a) не имеет свежего прямого
+Reuters/AP/Bloomberg/FT primary source и (b) содержит событие, которое уже
+разрешено узким corroboration selector: funding/M&A/investment,
+data-center/infrastructure/chips или partnership. Сам факт отсутствия agency
+primary не расширяет selector и не превращает legal/model/coding событие в
+обязательный Reuters-target. Если source-health gap существует, но допустимого
+target нет, rescue фиксируется как `not_applicable`, seventh search не выполняется
+и уже завершённые шесть mandatory Coverage directions остаются пригодным
+доказательством полноты. Если допустимый target есть, обычный bounded one-search
+rescue остаётся обязательным; его technical/API failure по-прежнему fail-closed.
+Active source-health contract version — 8.
+
 Отдельные 1–2 regional Coverage searches только потому, что после Hybrid
 `regional_health` всё ещё красный, **не входят в active contract**. P4 намеренно
 чинит существующий Hybrid regional recovery, а не превращает Coverage в новый
@@ -768,6 +781,14 @@ Primary повторно проходит current source-health. Legacy saved ca
 `event_*` fields считаются `event_freshness_status=unknown`: они не отклоняются
 только из-за отсутствия нового metadata и не заставляют повторять уже оплаченный
 research. Existing source freshness/reuse checks сохраняются.
+
+Coverage recovery сохраняет уже завершённые mandatory direction attempts и не
+повторяет их только из-за смены source-health contract. После загрузки same-day
+artifact текущая deterministic source-health логика заново решает, применим ли
+fresh-agency corroboration к сохранённому пулу. Если gap есть, но permitted target
+нет, старые six-pass evidence переиспользуются и новый search не выполняется. Если
+permitted target есть, остаётся доступен только штатный свободный seventh slot и
+он не разрешает повторять уже оплаченные mandatory passes.
 
 Conditional agency rescue соблюдает собственную at-most-once state machine.
 Новые rescue rows на recovery проходят текущий Event + Source Freshness Proof;
@@ -906,6 +927,13 @@ fixture `fixtures/recall/regional-health-viability-2026-08-29.json`. Replay
 проверяет false-healthy Asia, положительный viable survivor, already-open gap,
 Primary final-cap drop и ambiguous identity. P4 использует только сохранённые
 артефакты и 0 production API/Web Search.
+
+Aug-30 source-health targetability replay сохранён в
+`audits/experiments/2026-08-30-source-health-targetability.md`. Он использует
+saved run `33285232043` / artifact `9724285083`, воспроизводит противоречие
+`source_health_rescue_needed=true` при нулевом permitted corroboration target и
+проверяет исправленный `not_applicable` путь без седьмого search. Replay выполнен
+на assistant-owned resources, без production API/Web Search/Terra spend.
 
 ## 12. Совместимость и versioned реализации
 
@@ -1121,6 +1149,18 @@ Coverage direction, candidate schema, freshness/editorial policy или budget.
 One-way transform может только переоткрыть false-healthy gap; ambiguous identity
 сохраняет prior state. Production-derived replay 2026-08-29 и neighboring
 controls подтверждают 0 новых search slots, обычный максимум 24 и double-gap 25.
+
+Для Aug-30 source-health targetability dependency audit затрагивает только
+Coverage v8 supplemental orchestration, source-health diagnostics, same-day
+Coverage recovery и соответствующие offline regressions/docs. Selector scope не
+расширяется, Primary/agency-discovery/P1/P2/P3/P4/Hybrid semantics не меняются,
+mandatory Coverage directions остаются шестью, максимум Coverage остаётся семь,
+а whole-pipeline ceilings остаются 24/25. Saved six-pass Coverage evidence можно
+переиспользовать после current deterministic applicability check; Source Pulse не
+repoll'ится. Technical failure применимого agency corroboration остаётся
+fail-closed, а отсутствие permitted target больше не является технической
+ошибкой. Controlled replay 2026-08-30 использует saved artifact и 0 production
+API/Web Search/Terra spend.
 
 Controlled experiment для Hybrid v3 обязан отдельно доказать:
 
