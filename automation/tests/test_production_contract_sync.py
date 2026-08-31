@@ -23,6 +23,9 @@ class ProductionContractSyncTests(unittest.TestCase):
         workflow = (
             ROOT / ".github/workflows/daily-production.yml"
         ).read_text(encoding="utf-8")
+        promotion = (
+            ROOT / "automation/scripts/promote_production_site.py"
+        ).read_text(encoding="utf-8")
         self.assertEqual(production["schedule_crons_utc"], EXPECTED_CRONS)
         self.assertEqual(production["schedule_cron_utc"], EXPECTED_CRONS[0])
         self.assertEqual(production["minimum_selected_stories"], 7)
@@ -48,6 +51,11 @@ class ProductionContractSyncTests(unittest.TestCase):
                 "general_coverage_gaps",
             ],
         )
+        self.assertNotIn("legacy_prefix", production)
+        self.assertNotIn("minimum_legacy_items", production)
+        self.assertNotIn('config["legacy_prefix"]', promotion)
+        self.assertNotIn("dzen-test", promotion)
+        self.assertIn("existing_links - candidate_links", promotion)
         # Seven is the ordinary-volume boundary; one worthy story is enough
         # to publish and regional sections never have numeric quotas.
         self.assertEqual(editorial["story_counts"]["total_target_minimum"], 7)
