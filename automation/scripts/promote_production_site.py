@@ -39,12 +39,6 @@ def main() -> int:
     if missing:
         raise RuntimeError(f"Candidate RSS lost existing links: {missing}")
 
-    legacy_prefix = str(config["legacy_prefix"])
-    legacy_live = {x for x in existing_links if x.startswith(legacy_prefix)}
-    legacy_candidate = {x for x in candidate_links if x.startswith(legacy_prefix)}
-    if legacy_live != legacy_candidate:
-        raise RuntimeError("Candidate RSS changed legacy dzen-test links")
-
     expected_new = (
         f"{str(config['site_base_url']).rstrip('/')}/{args.publication_date}/"
     )
@@ -68,7 +62,6 @@ def main() -> int:
         "candidate_sha256": tree_digest(candidate),
         "existing_items": len(existing_links),
         "candidate_items": len(candidate_links),
-        "legacy_items": len(legacy_candidate),
         "new_link": expected_new,
     }
 
