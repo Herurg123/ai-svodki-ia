@@ -1,0 +1,276 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-08-31",
+  "search_window": {
+    "start_at": "2026-08-29T04:15:21+03:00",
+    "end_at": "2026-08-31T04:22:46+03:00",
+    "latest_archive_at": "2026-08-30T04:15:21+03:00",
+    "start_date": "2026-08-29",
+    "end_date": "2026-08-31",
+    "latest_archive_date": "2026-08-30"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=0, rejected=1."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "OpenAI выпустила Codex CLI rust-v0.151.0 с обработкой результатов MCP-инструментов расширениями",
+      "organization": "OpenAI; Codex CLI",
+      "published_date": "2026-08-29",
+      "published_at": "2026-08-29T09:55:39+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agent, расширения и MCP-интеграции, sandboxing и контроль многоагентных расходов",
+      "event_type": "product release",
+      "keywords": [
+        "OpenAI",
+        "Codex CLI",
+        "MCP",
+        "extensions",
+        "plugins",
+        "sandbox",
+        "subagents",
+        "coding agents"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "OpenAI Codex CLI rust-v0.151.0",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/openai-codex-rust-v0.151.0"
+      },
+      "supporting_sources": [
+        {
+          "title": "Release rust-v0.151.0",
+          "publisher": "OpenAI / GitHub",
+          "url": "https://github.com/openai/codex/releases/tag/rust-v0.151.0"
+        }
+      ],
+      "event_summary": "В релизе Codex CLI rust-v0.151.0 расширения получили возможность просматривать или заменять результаты MCP-инструментов до передачи модели. Также добавлены настраиваемая задержка обнаружения инструментов опциональных MCP-серверов и объединение конфигураций plugin catalog на уровне репозитория; исправления затрагивают сохранение permission profiles, sandboxing удалённых исполнителей, смену моделей и учёт токенов субагентов в бюджете основной задачи.",
+      "verified_facts": [
+        "Официальный GitHub-релиз помечен датой 2026-08-29.",
+        "Расширения могут inspect или replace результаты MCP tool до того, как их получит модель.",
+        "Релиз добавляет configurable grace period для обнаружения tools от optional MCP servers.",
+        "Исправления включают сохранение permission profiles, усиление sandbox enforcement и учёт расхода токенов вложенных субагентов в root-goal budgets."
+      ],
+      "significance": "Это не просто исправление интерфейса: релиз расширяет поверхность контроля над агентными инструментами и одновременно укрепляет permissions/sandboxing в terminal-based coding agent. Изменения релевантны разработчикам, использующим MCP и плагины для production agentic workflows.",
+      "significance_score": 3,
+      "limitations": "Это инкрементальный релиз CLI, а не запуск новой модели или платформы; независимой оценки влияния изменений на безопасность и практику разработки в источниках нет.",
+      "archive_status": "none",
+      "archive_reason": "В недавнем архиве есть Codex CLI rust-v0.149.0 от 2026-08-21, но релиз rust-v0.151.0 является отдельным новым обновлением с новыми MCP-extension и sandboxing-функциями.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Дата и список изменений проверены по официальной странице GitHub Release; сторонний трекер использован только как вспомогательное подтверждение контекста.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-29T09:55:39Z; timestamp проверен Python против effective window. Официальный релиз опубликован 2026-08-29 и попадает в effective window; он не совпадает с уже архивированным релизом Codex rust-v0.149.0.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран по прямой значимости для developer tools.",
+      "event_date": "2026-08-29",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.com/openai/codex/releases/tag/rust-v0.151.0",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Официальная страница GitHub Release указывает дату 2026-08-29; отображаемое время не сопровождается проверяемым timezone, поэтому точный event_at не заполняется.",
+      "id": "cand-001",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.havoptic.com/r/openai-codex-rust-v0.151.0",
+      "source_published_date": "2026-08-29",
+      "source_published_at": "2026-08-29T09:55:39+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-08-29T09:55:39Z"
+    },
+    {
+      "title": "Илон Маск подтвердил, что SpaceX строит литейное производство лопаток газовых турбин для ускорения ввода энергомощностей под ИИ",
+      "organization": "SpaceX; Tesla; Elon Musk",
+      "published_date": "2026-08-30",
+      "published_at": "2026-08-30T16:54:25+00:00",
+      "time_precision": "datetime",
+      "topic": "AI-инфраструктура и энергоснабжение дата-центров",
+      "event_type": "infrastructure strategy announcement",
+      "keywords": [
+        "SpaceX",
+        "Tesla",
+        "Elon Musk",
+        "gas turbines",
+        "turbine blades",
+        "power generation",
+        "AI data centers",
+        "energy infrastructure"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Musk’s faster path to more gas turbines comes with pollution problem",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/30/musks-faster-path-to-more-gas-turbines-comes-with-pollution-problem/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Маск публично подтвердил, что SpaceX строит в Бастропе, штат Техас, литейное производство лопаток и направляющих аппаратов газовых турбин. По его заявлению, собственное производство этого дефицитного компонента может сократить ввод новых газовых турбин примерно на 18 месяцев; спрос на такие установки связан с быстрым подключением энергомощностей для ИИ-дата-центров.",
+      "verified_facts": [
+        "TechCrunch датирует публикацию 30 августа 2026 года, 09:54 PDT.",
+        "В материале указано, что Маск в субботу подтвердил назначение строящегося SpaceX производства в Бастропе.",
+        "Согласно приведённой в статье публикации Маска, узким местом выпуска газовых турбин являются отливки лопаток и направляющих аппаратов, а собственное производство способно ускорить ввод турбин до 18 месяцев.",
+        "Статья прямо связывает дефицит газотурбинных мощностей с растущей потребностью AI-инфраструктуры в электроэнергии."
+      ],
+      "significance": "Это самостоятельный инфраструктурный сюжет: SpaceX пытается вертикально интегрировать выпуск крайне дефицитного компонента энергогенерации, который стал одним из ограничений при строительстве AI-дата-центров. Шаг заметен из-за масштаба потенциального влияния на сроки ввода частной генерации и концентрации AI-инфраструктуры у компаний Маска.",
+      "significance_score": 3,
+      "limitations": "Первичный пост Маска доступен из материала, но точный URL и timestamp этого поста не были независимо извлечены. Заявленный эффект в 18 месяцев является оценкой Маска, а не подтверждённым результатом производства.",
+      "archive_status": "none",
+      "archive_reason": "Среди предоставленного текущего пула и недавнего архива нет отдельного сюжета о литейном производстве SpaceX для лопаток газовых турбин; он не является дублем публикаций о дата-центрах OpenAI, Nvidia или энергоснабжении AI-инфраструктуры.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Свежая статья TechCrunch содержит точный timestamp, описывает публичное подтверждение Маска и отделяет его заявление от контекста журналистского анализа.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-30T16:54:25+00:00; timestamp проверен Python против effective window. Первое существенное публичное подтверждение назначения строящегося производства относится к 30 августа 2026 года и находится внутри effective editorial window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Сюжет касается промышленной и энергетической стратегии, а не самостоятельного судебного либо регуляторного действия.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не является curiosity-кандидатом: значимость основана на AI-энергетической инфраструктуре.",
+      "event_date": "2026-08-30",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/08/30/musks-faster-path-to-more-gas-turbines-comes-with-pollution-problem/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch сообщает, что Маск в субботу, 30 августа 2026 года, подтвердил назначение литейного производства SpaceX; точное время исходного поста не установлено.",
+      "id": "cand-002",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/08/30/musks-faster-path-to-more-gas-turbines-comes-with-pollution-problem/",
+      "source_published_date": "2026-08-30",
+      "source_published_at": "2026-08-30T16:54:25+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-08-30T16:54:25+00:00"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=3, validated unique=2, final candidates=2. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-infrastructure_chips_cloud-05",
+      "version": 1,
+      "status": "unresolved",
+      "title": "NVIDIA BlueField-4 Powers New Scale-In Network Infrastructure for Agentic AI Factories",
+      "origin_direction": "infrastructure_chips_cloud",
+      "reason_code": "unverified",
+      "evidence_reason": "Официальный технический пост описывает Scale-In с BlueField-4, DOCA и Spectrum-X, однако на доступной странице не удалось подтвердить точную дату публикации/происхождения события для строгой Source Freshness Proof внутри effective window.",
+      "likely_significance_score": 1,
+      "entities": [
+        "NVIDIA",
+        "BlueField-4",
+        "Powers",
+        "Scale-In",
+        "Network",
+        "Infrastructure",
+        "Agentic",
+        "Factories"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  }
+}

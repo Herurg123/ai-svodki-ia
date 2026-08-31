@@ -1,0 +1,66 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "OpenAI выпустила Codex CLI rust-v0.151.0 с обработкой результатов MCP-инструментов расширениями",
+    "organization": "OpenAI; Codex CLI",
+    "topic": "CLI coding agent, расширения и MCP-интеграции, sandboxing и контроль многоагентных расходов",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "В релизе Codex CLI rust-v0.151.0 расширения получили возможность просматривать или заменять результаты MCP-инструментов до передачи модели. Также добавлены настраиваемая задержка обнаружения инструментов опциональных MCP-серверов и объединение конфигураций plugin catalog на уровне репозитория; исправления затрагивают сохранение permission profiles, sandboxing удалённых исполнителей, смену моделей и учёт токенов субагентов в бюджете основной задачи.",
+    "published_at": "2026-08-29T09:55:39+00:00",
+    "published_date": "2026-08-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release rust-v0.151.0",
+        "publisher": "OpenAI / GitHub",
+        "url": "https://github.com/openai/codex/releases/tag/rust-v0.151.0"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Codex CLI",
+      "MCP",
+      "extensions",
+      "plugins",
+      "sandbox",
+      "subagents",
+      "coding agents"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Илон Маск подтвердил, что SpaceX строит литейное производство лопаток газовых турбин для ускорения ввода энергомощностей под ИИ",
+    "organization": "SpaceX; Tesla; Elon Musk",
+    "topic": "AI-инфраструктура и энергоснабжение дата-центров",
+    "event_type": "infrastructure strategy announcement",
+    "status": "new",
+    "summary": "Маск публично подтвердил, что SpaceX строит в Бастропе, штат Техас, литейное производство лопаток и направляющих аппаратов газовых турбин. По его заявлению, собственное производство этого дефицитного компонента может сократить ввод новых газовых турбин примерно на 18 месяцев; спрос на такие установки связан с быстрым подключением энергомощностей для ИИ-дата-центров.",
+    "published_at": "2026-08-30T16:54:25+00:00",
+    "published_date": "2026-08-30",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Musk’s faster path to more gas turbines comes with pollution problem",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/30/musks-faster-path-to-more-gas-turbines-comes-with-pollution-problem/"
+      }
+    ],
+    "keywords": [
+      "SpaceX",
+      "Tesla",
+      "Elon Musk",
+      "gas turbines",
+      "turbine blades",
+      "power generation",
+      "AI data centers",
+      "energy infrastructure"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  }
+]

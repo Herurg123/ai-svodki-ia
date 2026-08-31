@@ -1,0 +1,36 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-08-31",
+  "slug": "2026-08-31",
+  "title": "ИИ-Сводка на 31 августа 2026",
+  "description": "OpenAI расширила контроль над MCP-инструментами и изоляцией в Codex CLI, а SpaceX строит производство дефицитных компонентов газовых турбин. Оба сюжета показывают, что развитие ИИ всё сильнее зависит от управляемости агентов и доступности энергии.",
+  "published_at": "2026-08-31T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-08-31.png",
+  "topics": [
+    "OpenAI",
+    "Codex CLI",
+    "MCP",
+    "агенты ИИ",
+    "ИИ-кодинг",
+    "safety sandboxing",
+    "SpaceX",
+    "газовые турбины",
+    "энергоснабжение дата-центров",
+    "ИИ-инфраструктура"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: global_breaking, major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    }
+  ]
+}
