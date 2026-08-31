@@ -7,9 +7,9 @@ Production behavior: **не изменён**
 
 ## Вопрос
 
-Может ли простое добавление точных дат текущего effective window к существующим 12 Primary Recall query заметно повысить event-level recall без ухудшения freshness/precision?
+Может ли простое добавление дат к существующим 12 Primary Recall query заметно повысить event-level recall без ухудшения freshness/precision?
 
-Гипотеза B была намеренно простой: сохранить текущие направления и сущности, но заменить неопределённое `latest` на явное указание `August 29 2026 August 30 2026` (для российского направления: `29 августа 2026 30 августа 2026`).
+Гипотеза B была намеренно простой: сохранить текущие направления и сущности, но заменить неопределённое `latest` на явное указание `August 29 2026 August 30 2026` (для российского направления: `29 августа 2026 30 августа 2026`). Это охватывает два основных календарных дня окна, но не его короткий хвост раннего 31 августа; этот boundary trade-off учитывается в verdict и сам по себе является недостатком blanket calendar-date anchoring.
 
 ## Почему тест нужен
 
@@ -25,7 +25,7 @@ Production за 31 августа выполнил 12 mandatory Primary searches
 - end: `2026-08-31T04:22:46+03:00`;
 - continuity anchor: `2026-08-30T04:15:21+03:00`.
 
-После search discovery каждый lead проверялся на **event origin**, а не только на дату найденной страницы. Архивные дубли и события до окна не считались улучшением recall.
+После search discovery каждый lead проверялся на **event origin**, а не только на дату найденной страницы. Архивные дубли и события до окна не считались улучшением recall. B не объявляется точным кодированием всего timestamp window: календарные даты используются только как ranking/discovery intervention, а точная временная допустимость остаётся downstream criterion.
 
 ## Варианты
 
@@ -46,7 +46,7 @@ Production за 31 августа выполнил 12 mandatory Primary searches
 
 ### B — date-anchored family
 
-Для каждого направления сохранена его тема, но добавлено явное окно `August 29 2026 August 30 2026`; для российского направления — `29 августа 2026 30 августа 2026`.
+Для каждого направления сохранена его тема, но добавлены календарные даты `August 29 2026 August 30 2026`; для российского направления — `29 августа 2026 30 августа 2026`.
 
 Это deliberately narrow intervention: не менялись source allowlists, downstream significance, freshness, dedupe, число направлений или budget.
 
@@ -132,15 +132,15 @@ https://edu.gov.ru/press/11954/sergey-kravcov-v-shkolah-poyavitsya-novyy-kurs-vn
 
 ## Event-level score
 
-На conservative strict reference set независимого аудита присутствуют три high-confidence события:
+На conservative eligible reference set независимого аудита присутствуют три high-confidence события:
 
-1. Codex CLI rust-v0.151.0 — production selected;
+1. Codex CLI rust-v0.151.0 — production selected; source freshness точная, event origin date-only boundary и потому `event_freshness_status=unknown`;
 2. SpaceX gas-turbine component foundry — production selected;
-3. CLTR loss-of-control report — production missed.
+3. CLTR loss-of-control report — production missed и классифицирован как strict Must Include.
 
 Для задачи **recovery пропущенного hard event** A и B дают одинаковый результат: оба находят CLTR на security lane.
 
-B дополнительно улучшает surfaced lead position для Codex и CLTR в некоторых других lanes, но не добавляет новый validated unique strict event к контрольному набору. Одновременно B повышает число false-fresh leads с old event origin.
+B дополнительно улучшает surfaced lead position для Codex и CLTR в некоторых других lanes, но не добавляет новый validated unique Must Include event к контрольному набору. Одновременно B повышает число false-fresh leads с old event origin и имеет calendar-boundary blind spot для раннего 31 августа.
 
 Поэтому утверждать `B recall > A recall` на validated event-level данных нельзя.
 
@@ -153,8 +153,9 @@ B дополнительно улучшает surfaced lead position для Code
 1. Главный production miss CLTR восстанавливается и A, и B.
 2. B не дал доказанного прироста unique validated Must Include events.
 3. B создаёт дополнительный false-fresh pressure на Cursor, Tencent Hy4 и российские повторные страницы.
-4. Production уже имеет строгий downstream Event Freshness contract; перенос календарных дат в broad query не решает provider/ranking failure, а только меняет ranking surface.
-5. Исторические аудиты уже показывали zero-result/stale source-pool failures при семантически подходящих query. Результат 31 августа согласуется с этой линией.
+4. B как calendar-date encoding не совпадает с timestamp continuity window и создаёт дополнительный boundary trade-off.
+5. Production уже имеет строгий downstream Event Freshness contract; перенос календарных дат в broad query не решает provider/ranking failure, а только меняет ranking surface.
+6. Исторические аудиты уже показывали zero-result/stale source-pool failures при семантически подходящих query. Результат 31 августа согласуется с этой линией.
 
 ## Что этот A/B говорит о root cause
 
