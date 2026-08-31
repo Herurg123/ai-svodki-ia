@@ -9,14 +9,14 @@ Production publication commit: `ad94737b1d15a8ddfc501b0a98fcd179b5f8f6f2`
 - Freshness опубликованных сюжетов: **PASS**.
 - Dedupe: **PASS**.
 - Completeness: **FAIL / PARTIAL RECALL** из-за одного independently verified high-confidence miss.
-- Консервативный independently verified reference set: **3 события**.
-- Production выбрал 2 из этих 3: **2/3 = 66,7% demonstrated strict recall** на этом bounded контрольном наборе.
+- Консервативный independently verified eligible reference set: **3 события**.
+- Production выбрал 2 из этих 3: **2/3 = 66,7% demonstrated eligible-event recall** на этом bounded контрольном наборе.
 - Russia: отдельного strict Must Include miss не подтверждено.
 - China/Asia: отдельного strict Must Include miss не подтверждено.
 - Major agencies: отдельного Reuters/AP/Bloomberg/FT strict miss в окне не подтверждено.
 - Ключевой дефект дня относится к **security/safety discovery recall**, а не к freshness или editorial rejection.
 
-Эта оценка не утверждает, что во всём мире существовало ровно три достойных события. Деноминатор намеренно консервативный: только события, для которых удалось независимо подтвердить событие, дату/время или допустимую date-only границу, AI relevance, отсутствие архивного дубля и достаточную значимость.
+Эта оценка не утверждает, что во всём мире существовало ровно три достойных события. Набор намеренно консервативный: только события, для которых удалось независимо подтвердить событие, источник и временную допустимость по production freshness policy, AI relevance, отсутствие архивного дубля и достаточную значимость. Codex остаётся eligible control, но не strict exact-window control: event origin у него date-only на частичном boundary day, что production корректно трактует как `event_freshness_status=unknown`.
 
 ## Production baseline
 
@@ -102,7 +102,7 @@ Primary source: https://edu.gov.ru/press/11954/sergey-kravcov-v-shkolah-poyavits
 
 Date-anchored search поднимал Tencent Hy4 pages как будто это событие 29–30 августа, однако Tencent first-party announcement датирован **28 августа 2026**, то есть до effective-window start.
 
-Primary source: https://www.tencent.com/tencent-releases-and-open-sources-tencent-hy4-preview/
+Primary source: https://www.tencent.com/tencent-releases-and-opensources-tencent-hy4-preview/
 
 Другие China/Asia leads после event-origin проверки также не дали high-confidence внутривоконного Must Include. Поэтому zero selected Asia stories в этом аудите не объявляется самостоятельным recall failure.
 
@@ -139,7 +139,7 @@ Freshness guard на этом дне работает полезно:
 | Published-story freshness | PASS |
 | Dedupe | PASS |
 | Editorial precision | PASS на выбранных 2 сюжетах |
-| Strict completeness | FAIL / 2 из 3 conservative controls |
+| Bounded completeness | FAIL / 2 из 3 conservative eligible controls |
 | Security recall | FAIL: CLTR missed before editorial |
 | Major agencies | N/A: independent strict agency miss не подтверждён |
 | China/Asia | N/A: strict miss не подтверждён |
