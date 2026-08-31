@@ -102,7 +102,7 @@ Primary source: https://edu.gov.ru/press/11954/sergey-kravcov-v-shkolah-poyavits
 
 Date-anchored search поднимал Tencent Hy4 pages как будто это событие 29–30 августа, однако Tencent first-party announcement датирован **28 августа 2026**, то есть до effective-window start.
 
-Primary source: https://www.tencent.com/tencent-releases-and-opensources-tencent-hy4-preview/
+Primary source: https://www.tencent.com/tencent-releases-and-open-sources-tencent-hy4-preview/
 
 Другие China/Asia leads после event-origin проверки также не дали high-confidence внутривоконного Must Include. Поэтому zero selected Asia stories в этом аудите не объявляется самостоятельным recall failure.
 
