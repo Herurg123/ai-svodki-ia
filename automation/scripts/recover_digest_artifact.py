@@ -213,7 +213,10 @@ def agency_discovery_upgrade_needed(
         return False, "major_agencies_not_triggered"
     state = _agency_state(source_dir, recovery_root, publication_date)
     if not isinstance(state, dict):
-        return True, f"agency_discovery_first_attempt_pending:{trigger_reason}"
+        # Preserve the stable recovery reason consumed by historical tests and
+        # diagnostics. The more specific health trigger remains available in the
+        # v5 agency-health report once the first legitimate attempt runs.
+        return True, "agency_discovery_first_attempt_pending"
     value = str(state.get("state") or "")
     if value == "not_triggered" and prior_not_triggered_recheck_allowed(state):
         return True, f"agency_discovery_not_triggered_recheck:{trigger_reason}"
