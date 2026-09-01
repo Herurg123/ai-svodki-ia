@@ -6,13 +6,13 @@ current retrieval-quality contract is downgraded to partial editorial recovery.
 This makes production run Coverage again, where the six already-paid mandatory
 passes can be reused and only the missing quality-resolution slot is executed.
 
-Agency-discovery rescue recovery is deliberately at-most-once.  A saved
+Agency-discovery rescue recovery is deliberately at-most-once. A saved
 ``search_completed``/``merge_failed`` response may finish merge without an API
-call.  A saved ``search_started`` state is never retried automatically because
-whether the provider consumed the one allowed search is unknowable.  If Primary
-was saved but the rescue had not started yet, recovery marks the full artifact
-partial so the normal text-runtime prerequisites are available for the one
-legitimate first attempt before Coverage.
+call. A saved ``search_started`` state is never retried automatically because
+whether the provider consumed the one allowed search is unknowable. A zero-spend
+``not_triggered`` state may be deterministically reconsidered when the current
+post-freshness/editorial pool proves that the formerly accepted Primary
+major-agency candidate no longer has a viable survivor.
 """
 from __future__ import annotations
 
@@ -21,6 +21,12 @@ import importlib.util
 import sys
 from pathlib import Path
 from typing import Any
+
+from agency_health_viability import (
+    AGENCY_HEALTH_TRIGGER_VERSION,
+    evaluate_agency_health,
+    prior_not_triggered_recheck_allowed,
+)
 
 _BASE_PATH = Path(__file__).with_name("recover_digest_artifact_v1.py")
 _BASE_SPEC = importlib.util.spec_from_file_location("recover_digest_artifact_v1", _BASE_PATH)
@@ -107,6 +113,7 @@ def _primary_report(
 
 
 def _major_agencies_requires_discovery(primary: dict[str, Any] | None) -> bool:
+    """Preserved early-trigger helper used by older tests/recovery artifacts."""
     if not isinstance(primary, dict):
         return False
     rows = primary.get("directions")
@@ -122,6 +129,49 @@ def _major_agencies_requires_discovery(primary: dict[str, Any] | None) -> bool:
         accepted_count = int(row.get("accepted_count", 0) or 0)
         return raw_count == 0 or accepted_count == 0
     return False
+
+
+def _current_research(source_dir: Path) -> dict[str, Any] | None:
+    path = source_dir / "candidates.json"
+    if not path.is_file():
+        return None
+    try:
+        payload = read_json(path)
+    except Exception:
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
+def _agency_health_requires_discovery(
+    primary: dict[str, Any] | None,
+    current_research: dict[str, Any] | None,
+) -> tuple[bool, str, dict[str, Any]]:
+    if not isinstance(primary, dict):
+        return False, "major_agencies_not_triggered", {
+            "version": AGENCY_HEALTH_TRIGGER_VERSION,
+            "status": "primary_missing",
+            "paid_api_calls": 0,
+            "web_search_operations": 0,
+        }
+    if isinstance(current_research, dict):
+        triggered, reason, _facts, diagnostics = evaluate_agency_health(
+            primary_report=primary,
+            current_research=current_research,
+        )
+        return (
+            triggered,
+            reason or "major_agencies_not_triggered",
+            diagnostics,
+        )
+    early = _major_agencies_requires_discovery(primary)
+    return early, (
+        "major_agencies_early_gap" if early else "major_agencies_not_triggered"
+    ), {
+        "version": AGENCY_HEALTH_TRIGGER_VERSION,
+        "status": "current_research_missing_early_trigger_only",
+        "paid_api_calls": 0,
+        "web_search_operations": 0,
+    }
 
 
 def _agency_state(
@@ -156,12 +206,17 @@ def agency_discovery_upgrade_needed(
 ) -> tuple[bool, str]:
     """Whether full recovery still needs text runtime for agency discovery work."""
     primary = _primary_report(source_dir, recovery_root, publication_date)
-    if not _major_agencies_requires_discovery(primary):
+    triggered, trigger_reason, _health = _agency_health_requires_discovery(
+        primary, _current_research(source_dir)
+    )
+    if not triggered:
         return False, "major_agencies_not_triggered"
     state = _agency_state(source_dir, recovery_root, publication_date)
     if not isinstance(state, dict):
-        return True, "agency_discovery_first_attempt_pending"
+        return True, f"agency_discovery_first_attempt_pending:{trigger_reason}"
     value = str(state.get("state") or "")
+    if value == "not_triggered" and prior_not_triggered_recheck_allowed(state):
+        return True, f"agency_discovery_not_triggered_recheck:{trigger_reason}"
     if value in _AGENCY_DISCOVERY_TERMINAL_STATES:
         return False, f"agency_discovery_terminal:{value}"
     if value == "search_started":
@@ -195,7 +250,8 @@ def choose_source(
             downgrade_reasons.append(
                 {
                     "status": "agency-discovery-contract-upgrade",
-                    "agency_discovery_rescue_version": 2,
+                    "agency_discovery_rescue_version": 5,
+                    "agency_health_trigger_version": AGENCY_HEALTH_TRIGGER_VERSION,
                     "reason": agency_reason,
                 }
             )
