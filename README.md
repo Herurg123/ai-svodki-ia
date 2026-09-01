@@ -91,6 +91,17 @@ search. Поэтому обычный архитектурный потолок 
 условный double-gap потолок равен 25; P4 не добавляет шестой или новый постоянный
 search.
 
+Перед единственным Reuters-only Agency Rescue v5 теперь выполняется аналогичный
+zero-paid health-check для Search-derived `major_agencies`. Ранний
+`accepted_count > 0` больше не считается вечным доказательством здоровья: если
+exact Primary agency candidates после Primary final cap, freshness и первого
+editorial доказуемо не имеют viable `include|consider` survivor, может быть
+использован тот же существующий один rescue slot. Pulse-only/поздний кандидат не
+может подменить Primary provenance, неоднозначная identity не разрешает search.
+Same-day recovery может заново оценить только сохранённый zero-spend
+`not_triggered`; `search_started`, spent/terminal и indeterminate состояния
+никогда не получают второй rescue search. Потолки 24/25 от этого не меняются.
+
 Каноническая continuity-точка остается `search_cutoff_at` последнего успешно
 опубликованного выпуска. После единственного search один Primary-pass может
 использовать `open_page` и `find_in_page` как навигацию, не увеличивая

@@ -24,6 +24,7 @@ scheduled/manual trigger
   -> Source Pulse v1.3 fixed-source supplemental discovery
   -> deterministic Event Freshness + Source Freshness Proof for trusted Primary + Pulse research
   -> first editorial
+  -> deterministic post-filter major-agency health viability
   -> conditional agency discovery rescue
   -> Event Freshness + Source Freshness Proof for rescue additions
   -> saved Source Pulse snapshot/fusion reuse
@@ -47,6 +48,21 @@ editorial call**. This placement allows the second discovery plane to influence
 the normal editorial selection without introducing a dedicated model/search call.
 The later Hybrid stage reuses the saved Pulse snapshot only for fusion diagnostics
 and never silently repolls the mutable source set.
+
+Immediately before the existing Reuters-only Agency Rescue v5, a zero-paid
+agency-health viability bridge reconstructs Search-derived `major_agencies`
+provenance from `primary-recall.json` and compares the exact Primary agency rows
+that survived the Primary final cap with the current post-freshness/editorial
+`candidates.json`. Early `raw=0`/`accepted=0` remain direct triggers. When early
+accepted count was positive, it suppresses rescue only while at least one exact
+Primary agency candidate still has a viable `include|consider` survivor. If all
+provenance is complete and none survives, the already-existing one Reuters slot
+may open with reason `major_agencies_no_viable_survivor_after_filtering`.
+Shared source URL is authoritative identity when both rows expose URLs; title is
+only a compatibility fallback when one side lacks source identity. Pulse-only or
+unrelated later candidates cannot impersonate Primary agency health. Ambiguous or
+unmatched provenance preserves the prior no-search state. The bridge itself uses
+0 OpenAI calls and 0 Web Search operations.
 
 Immediately before fresh Hybrid retrieval P4 performs a zero-paid viability
 refresh over the saved Primary provenance and the current post-freshness/editorial
@@ -179,11 +195,12 @@ listing и проверяется отсутствие всех удалённы
   validators, включая `event_freshness.py`, `source_freshness.py`, preserved
   `source_freshness_v1.py`, active `source_pulse_supplement_v13.py`, preserved
   `source_pulse_supplement_v12.py`, сохранённый `source_pulse_shadow.py`,
-  `regional_health_viability.py`, versioned Hybrid v2/v3 implementations и
-  FTP-retention `cleanup_video_ftp.py`;
+  `agency_health_viability.py`, `regional_health_viability.py`, versioned Hybrid
+  v2/v3 implementations и FTP-retention `cleanup_video_ftp.py`;
 - `tests/` содержит основной Python offline regression suite, включая event/source
-  freshness, Source Pulse Yandex date regression, provider routing, P4 regional
-  viability, no-video RSS boundary и retrieval budget/regional regressions;
+  freshness, Source Pulse Yandex date regression, provider routing, agency
+  post-filter viability/recovery, P4 regional viability, no-video RSS boundary и
+  retrieval budget/regional regressions;
 - `notebooklm-video/` является отдельным локальным downstream-подпроектом;
 - `preview/` и `recovery/` являются временными ignored runtime directories.
 
@@ -283,8 +300,8 @@ reusable domain CI, узкий automated-writer secret scope и canonical rulese
 dry-run/apply, orphan semantics, MLSD/NLST listing, pre-delete validation,
 post-delete verification и hard `video` boundary без RSS/local-runtime dependency.
 Retrieval tests отдельно защищают Event/Source Freshness, Source Pulse safety,
-provider routing, P4 regional viability, regional Hybrid allocation, search
-ceilings и compatibility wrappers.
+provider routing, post-filter agency viability/recovery, P4 regional viability,
+regional Hybrid allocation, search ceilings и compatibility wrappers.
 
 `automation/notebooklm-video/tests/video-boundary-smoke.js` проверяет hard FTP
 boundary и ignore rules. `lockfile-contract-smoke.js` проверяет синхронизацию
@@ -440,9 +457,29 @@ Source Freshness Proof и первого editorial. Source Pulse promotion не 
 ### 6.2. Conditional agency discovery rescue
 
 После первого editorial и перед Hybrid может выполняться bounded missing-event
-rescue. Trigger зависит от технически завершённого `major_agencies` с
-`raw_count == 0` или `accepted_count == 0`, а не от общего количества
-candidates/stories.
+rescue. Early Search-derived trigger сохраняется: технически завершённый
+`major_agencies` с `raw_count == 0` или `accepted_count == 0` открывает rescue
+независимо от общего количества candidates/stories. Положительный early
+`accepted_count`, однако, больше не является постоянным доказательством здоровья.
+
+Перед paid rescue active v5 вызывает `agency_health_viability.py`. Bridge берёт
+raw candidates только из original Primary `major_agencies`, пересекает их с
+`primary_report.final_candidates`, а затем сопоставляет эти exact Primary agency
+rows с текущим post-freshness/editorial `candidates.json`. Если accepted Primary
+agency candidate выпал из final cap либо все его доказуемые current matches стали
+непригодны (`recommendation` не `include|consider`, explicit
+`event_freshness_status=stale` или `freshness_status=old_reprint`), trigger
+получает `major_agencies_no_viable_survivor_after_filtering`. Если хотя бы один
+exact viable Primary agency survivor остаётся, rescue подавляется.
+
+Identity deliberately conservative. Когда обе стороны имеют source URLs, нужен
+shared URL; same-title на другом источнике недостаточен. Title fallback разрешён
+только если у одной стороны отсутствует source identity. Если часть expected
+Primary agency provenance не сопоставляется однозначно, prior no-search state
+сохраняется: неоднозначность сама по себе не разрешает paid call. Source Pulse,
+Hybrid/Coverage или иной later candidate не может выдать себя за здоровье
+Search-derived `major_agencies` только благодаря общей теме/заголовку. Agency
+health bridge выполняет 0 OpenAI calls и 0 Web Search operations.
 
 Разрешена максимум одна дополнительная Web Search operation. Active provider
 route в v5 остаётся Reuters-only и acceptance требует прямого `reuters.com`
@@ -452,8 +489,8 @@ primary URL. Syndication/aggregator URL не заменяет прямой ис�
 P3 вернул единственному rescue slot global publisher-route роль. Query v5 остаётся
 global и source-neutral по тематике AI models/research/business/infrastructure;
 Search-derived Russia/China-Asia gaps сохраняются только в diagnostics и больше
-не подменяют query словом Russia/Asia. Это не создаёт второго rescue search и не
-превращает Reuters в региональную публикационную квоту. Preserved v4 остаётся
+не подменяют query словом Russia/Asia. Новый post-filter health trigger не меняет
+query, domain/provider routing или число slots. Preserved v4 остаётся
 replay/rollback implementation исторической gap-aware semantics. Rescue использует
 ту же strict event-origin schema, что и Primary, и не получает отдельного
 freshness search.
@@ -461,7 +498,13 @@ freshness search.
 State сохраняется до и после paid call. `search_started` автоматически не
 ретраится, потому что consumption единственного search может быть неизвестен.
 `search_completed`/`merge_failed` могут продолжить merge из сохранённого response
-без второго search.
+без второго search. Единственное исключение для старого terminal-looking state —
+saved `not_triggered`, который доказуемо имеет `executed=false`, reserved=0 и
+`search_operation_count_contribution=0`: его разрешено только детерминированно
+переоценить по current agency-health contract. Если новый health trigger красный,
+используется ранее не потраченный единственный slot. Любой started/spent/failed/
+completed/indeterminate search остаётся at-most-once и не получает повторной
+операции.
 
 ### 6.3. Source Pulse v1.3 supplemental discovery и shadow fusion
 
@@ -538,11 +581,12 @@ freshness boundary.
 этап не добавляет новых Pulse candidates. После Hybrid тот же snapshot снова
 сравнивается с merged research для `fusion_post_hybrid`.
 
-Source Pulse никогда не закрывает Search-derived regional gap. P4 pre-Hybrid
-viability refresh использует только exact Primary regional provenance для решения
-о false-healthy `false -> true`; Pulse-only или unrelated later candidates не
-могут сделать Primary healthy и не могут подавить regional Hybrid check. Поэтому
-двухплоскостная discovery architecture сохраняется.
+Source Pulse никогда не закрывает Search-derived regional gap и не может
+имитировать Search-derived `major_agencies` health. P4 pre-Hybrid regional
+viability refresh и agency-health bridge используют только exact Primary
+provenance. Pulse-only или unrelated later candidates не могут сделать
+соответствующий Primary route healthy и не могут подавить conditional recovery.
+Поэтому двухплоскостная discovery architecture сохраняется.
 
 Runtime diagnostics в `preview/production-daily/source-pulse-<DATE>.json`
 содержат transport/parser/source health, v1.3 counters, Yandex repair diagnostics,
@@ -699,14 +743,17 @@ option и требуют нового аудита плюс отдельного
 Hybrid search не должен становиться обычным default через config/caller drift.
 Шестой Hybrid search архитектурно запрещён текущим контрактом. P4 может увеличить
 фактическую частоту уже разрешённого fifth slot только в случае доказанного
-false-healthy второго региона; theoretical ceiling не меняется.
+false-healthy второго региона; theoretical ceiling не меняется. Agency-health
+viability может увеличить фактическую частоту уже существующего единственного
+Reuters rescue только после доказанной поздней потери Primary agency survivor;
+она не создаёт второй rescue slot и не меняет theoretical ceiling.
 
 Source Pulse не входит в search-operation budget: collector, parser и
 page/freshness verification используют только обычный HTTPS и не вызывают
-OpenAI/Web Search. Event Freshness Proof и P4 regional viability также являются
-локальными deterministic операциями над уже сохранёнными полями и не вызывают
-OpenAI/Web Search. Navigation hosted calls не повышают этот search-operation
-ceiling.
+OpenAI/Web Search. Event Freshness Proof, P4 regional viability и agency-health
+viability также являются локальными deterministic операциями над уже сохранёнными
+полями и не вызывают OpenAI/Web Search. Navigation hosted calls не повышают этот
+search-operation ceiling.
 
 Отдельный LLM semantic-event matcher для сложного dedupe сейчас не активирован.
 Он остаётся future option после следующих аудитов. Его внедрение требует нового
@@ -757,16 +804,18 @@ gate. Таким образом свежая перепечатка не мож�
 recall.
 
 Для fresh run первый двухслойный gate выполняется после Primary+Source-Pulse
-supplement и до первого editorial. Rescue/Hybrid/Coverage merged inputs проходят
-тот же contract до соответствующего editorial rerun. P1 не добавляет ни LLM call,
-ни Web Search, ни платный second pass.
+supplement и до первого editorial. Agency-health viability после первого
+editorial использует уже полученный post-filter state, но сама не меняет
+freshness evidence. Rescue/Hybrid/Coverage merged inputs проходят тот же contract
+до соответствующего editorial rerun. P1 не добавляет ни LLM call, ни Web Search,
+ни платный second pass.
 
 Editorial применяется после discovery/validation. Короткий выпуск допустим:
 нельзя вводить искусственные региональные или тематические quotas только ради
-числа сюжетов. Source Pulse, P4 regional viability и regional Hybrid health-check
-не имеют отдельной publication quota и не могут обязать editorial выбрать
-promoted/returned `consider`. Подробные правила находятся в
-`specs/editorial-policy.md`.
+числа сюжетов. Source Pulse, agency-health viability, P4 regional viability и
+regional Hybrid health-check не имеют отдельной publication quota и не могут
+обязать editorial выбрать promoted/returned `consider`. Подробные правила
+находятся в `specs/editorial-policy.md`.
 
 ## 8. Recovery
 
@@ -792,11 +841,22 @@ permitted target есть, остаётся доступен только шта
 
 Conditional agency rescue соблюдает собственную at-most-once state machine.
 Новые rescue rows на recovery проходят текущий Event + Source Freshness Proof;
-report хранит event fresh/unknown/stale counters. Сохранённый Source Pulse snapshot
-считается mutable-source evidence того же artifact и не repoll'ится при обычном
-same-day recovery; later fusion использует сохранённый snapshot. V1.3 разрешает
-только deterministic normalization уже сохранённого Yandex URL/title date
-evidence и exact-window filtering без сетевого repoll.
+report хранит event fresh/unknown/stale counters. Если saved rescue имеет
+`state=not_triggered`, `executed=false`, reserved=0 и нулевой search contribution,
+recovery может заново вычислить current agency health по saved Primary provenance
+и текущему post-filter `candidates.json`. Если прежний accepted agency candidate
+теперь доказуемо не имеет viable survivor, full artifact понижается до
+`partial_editorial`, чтобы normal text runtime выполнил первую и единственную
+попытку ранее неиспользованного Reuters slot. Это не retry оплаченной операции.
+`search_started`, spent/completed/failed и indeterminate states никогда не
+получают второй search; `search_completed`/`merge_failed` могут только продолжить
+сохранённый merge без нового search.
+
+Сохранённый Source Pulse snapshot считается mutable-source evidence того же
+artifact и не repoll'ится при обычном same-day recovery; later fusion использует
+сохранённый snapshot. V1.3 разрешает только deterministic normalization уже
+сохранённого Yandex URL/title date evidence и exact-window filtering без сетевого
+repoll.
 
 P4 viability refresh сам не выполняет paid operation и не является разрешением
 повторять Hybrid. Он применяется на fresh path непосредственно перед первым
@@ -935,6 +995,15 @@ saved run `33285232043` / artifact `9724285083`, воспроизводит пр
 проверяет исправленный `not_applicable` путь без седьмого search. Replay выполнен
 на assistant-owned resources, без production API/Web Search/Terra spend.
 
+Sep-1 post-freshness agency-rescue A/B сохранён в
+`audits/experiments/2026-09-01-post-freshness-agency-rescue-ab.md`. Saved release
+показал lifecycle defect: early `major_agencies accepted_count=1` подавлял
+Reuters rescue, хотя поздний Source Freshness исключал тот Primary agency
+candidate. Controlled zero-paid replay проверяет альтернативу, где exact
+post-filter Primary agency viability заново открывает ранее неиспользованный
+rescue slot. Эта правка не требует live production API для доказательства trigger
+семантики.
+
 ## 12. Совместимость и versioned реализации
 
 Некоторые stable public files являются wrappers над сохранёнными versioned
@@ -964,6 +1033,13 @@ Source Pulse v1.3 следует тому же принципу: active producti
 wrapper поверх hardened collector/V1.1 logic. Исходный collector, v1.2 и shadow
 surface сохраняются для rollback, replay, saved snapshots и regression hooks.
 Generic Source Freshness parser при этом не переписывается.
+
+Agency health change также сохраняет compatibility topology: historical v3/v4
+rescue implementations не переписываются. Active v5 временно подключает новый
+zero-paid trigger и loader semantics вокруг proven v3 state machine и затем
+восстанавливает historical monkeypatch surfaces. Отдельный trigger contract
+version позволяет изменить post-filter health/recovery semantics, не создавая
+второй provider route и не уничтожая replay assets.
 
 Hybrid v3 также не уничтожает v2/regional-v1 implementations: stable public
 entrypoint переключает production semantics на v3, а preserved layers остаются
@@ -1121,6 +1197,18 @@ V4 сохраняется только для replay/rollback, active v5 Reuters
 и regional gaps больше не подменяют его query. Generic freshness/editorial и
 Coverage semantics P3 не меняет.
 
+Для post-freshness agency-health fix dependency audit затрагивает active rescue
+v5, preserved v3/v4 state machine, saved `primary-recall.json`, post-filter
+`candidates.json`, first editorial/freshness handoff, pre-Hybrid integration,
+`recover_digest_artifact.py`, recovery entry, README/architecture и offline
+regressions. Query text, Reuters domain route, candidate schema, Source/Event
+Freshness, regional P4, Hybrid allocation и Coverage не меняются. Bridge выполняет
+0 OpenAI/Web Search operations и может только сделать существующий один rescue
+slot достижимым после доказанной потери exact Primary agency survivor. Saved
+zero-spend `not_triggered` разрешено deterministic re-evaluate; любая
+started/spent/indeterminate operation остаётся at-most-once. Sep-1 A/B использует
+saved evidence и не расходует production API.
+
 Для Hybrid v3 conditional paid extension dependency audit затрагивает stable
 Hybrid entrypoint, preserved v2/v3 layers, `regional_health` из Primary,
 pre-Hybrid rescue/Pulse reuse, merged research handoff, recovery metadata,
@@ -1169,7 +1257,8 @@ Controlled experiment для Hybrid v3 обязан отдельно доказ�
 - double-gap path выполняет максимум 5 Hybrid searches;
 - lowered baseline не включает paid extension;
 - oversized caller limit не создаёт шестой search;
-- Source Pulse, P4 viability и recovery не создают скрытого дополнительного spend.
+- Source Pulse, P4 viability, agency-health viability и recovery не создают
+  скрытого дополнительного spend.
 
 Search/retrieval изменения сначала проверяются на assistant-owned resources.
 Production API пользователя не расходуется без явного разрешения. Для текущей

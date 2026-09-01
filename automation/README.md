@@ -43,7 +43,11 @@
   preserved previous rescue implementations для replay/rollback;
   `scripts/agency_discovery_rescue_v5.py` — active conditional Reuters-only
   missing-event rescue: максимум один Web Search, global publisher route без
-  regional-gap подмены query;
+  regional-gap подмены query и с post-freshness/editorial health trigger;
+- `scripts/agency_health_viability.py` — zero-network deterministic bridge перед
+  active v5 rescue: по exact Search-derived Primary `major_agencies` provenance
+  проверяет, остался ли viable survivor после Primary final cap, freshness и
+  первого editorial; ambiguous identity не разрешает search;
 - `scripts/retrieval_routing_audit.py` — zero-network P3 classifier/replay для
   provider source-pool miss vs missing source metadata и query-control coverage;
 - `scripts/regional_health_viability.py` — zero-network P4 pre-Hybrid viability
@@ -70,7 +74,9 @@
   пуле существует допустимый funding/M&A/investment/infrastructure/chips/partnership
   target, а при реальном source-health gap без такого target фиксируется
   `not_applicable` без дополнительного search и без ложной блокировки выпуска;
-- `scripts/recover_digest_artifact.py` — paid-stage recovery entrypoint;
+- `scripts/recover_digest_artifact.py` — paid-stage recovery entrypoint; текущий
+  agency-health contract разрешает повторно оценить только zero-spend saved
+  `not_triggered`, но никогда не повторяет started/spent/indeterminate rescue;
 - `scripts/event_freshness.py` — zero-network deterministic event-age gate по
   уже сохранённому origin evidence;
 - `scripts/source_freshness.py` — stable двухслойный freshness entrypoint:
@@ -170,11 +176,13 @@ product/policy, Tencent/Hunyuan и model/research surfaces. Это ranking ancho
 не company whitelist. Hybrid сохраняет свои прежние trigger semantics и лишь
 расширяет текст уже существующих regional health queries.
 
-Agency rescue v5 сохраняет один Reuters-only high-context search и возвращает
-ему global publisher-route роль: Search-derived regional gaps записываются в
-диагностику, но больше не подменяют query словом Russia/Asia. Same-day recovery
-использует тот же v5 entrypoint. Versioned v4 остаётся preserved replay/rollback
-asset.
+Agency rescue v5 сохраняет один Reuters-only high-context search и его global
+publisher-route роль: Search-derived regional gaps записываются в диагностику, но
+не подменяют query словом Russia/Asia. Теперь перед этим слотом отдельный
+zero-paid agency-health bridge проверяет post-filter survival exact Primary
+`major_agencies`; он меняет только trigger semantics, а не query/provider route
+или число slots. Same-day recovery использует тот же v5 entrypoint. Versioned v4
+остаётся preserved replay/rollback asset.
 
 Offline fixture: `fixtures/recall/provider-routing-2026-08-29.json`.
 Classifier: `scripts/retrieval_routing_audit.py`. Controlled audit:
@@ -203,6 +211,30 @@ Controlled replay + architecture audit:
 OpenAI/Web Search calls и не добавляет query slot. Он лишь позволяет существующему
 Hybrid v3 regional recovery сработать после поздней потери ранних candidates.
 
+## Agency health viability
+
+`agency_health_viability.py` решает аналогичный lifecycle-state defect для
+`major_agencies`. Early Primary `raw=0`/`accepted=0` по-прежнему немедленно
+открывает rescue. Если же early accepted count был положительным, bridge сначала
+пересекает raw agency candidates с Primary `final_candidates`, а затем ищет эти же
+provenance в текущем post-freshness/editorial pool. Shared source URL является
+authoritative identity; title fallback используется только когда у одной стороны
+нет source identity.
+
+Если все exact Primary agency rows доказуемо сопоставлены и viable survivor нет,
+trigger получает reason `major_agencies_no_viable_survivor_after_filtering` и
+может использовать существующий единственный Reuters slot. Pulse-only или
+unrelated later candidate с тем же заголовком не считается доказательством
+здоровья Primary. Любая unmatched/ambiguous identity сохраняет no-search state.
+Bridge сам выполняет 0 OpenAI/Web Search operations.
+
+Recovery переоценивает только saved `not_triggered`, который доказуемо не
+резервировал и не выполнил search. Если health после filtering теперь красный,
+full recovery понижается до `partial_editorial`, чтобы text runtime мог выполнить
+первую и единственную попытку существующего slot. `search_started`, completed,
+failed и indeterminate состояния не получают второй search. Controlled A/B audit:
+`audits/experiments/2026-09-01-post-freshness-agency-rescue-ab.md`.
+
 ## Hybrid v3 и search budget
 
 Обычный Hybrid contract не подорожал: три fixed passes и максимум один
@@ -226,10 +258,10 @@ Whole-pipeline theoretical ceiling:
 оба gaps:    12 Primary + 1 agency rescue + 5 Hybrid + 7 Coverage = 25
 ```
 
-Source Pulse, Event Freshness и P4 viability refresh в эти числа не входят: у них
-0 OpenAI calls и 0 Web Search. Дополнительные региональные Coverage searches и
-отдельный LLM semantic-event matcher сейчас не включены; они остаются deferred
-options для будущих аудитов.
+Source Pulse, Event Freshness, P4 regional viability и agency-health viability в
+эти числа не входят: у них 0 OpenAI calls и 0 Web Search. Дополнительные
+региональные Coverage searches и отдельный LLM semantic-event matcher сейчас не
+включены; они остаются deferred options для будущих аудитов.
 
 ## Workflows
 
