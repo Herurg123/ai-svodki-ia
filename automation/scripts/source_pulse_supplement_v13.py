@@ -29,6 +29,7 @@ SOURCE_PULSE_REPORT_VERSION = v12.SOURCE_PULSE_REPORT_VERSION
 SOURCE_PULSE_REPORT_STRATEGY = v12.SOURCE_PULSE_REPORT_STRATEGY
 DEFAULT_OUTPUT_ROOT = v12.DEFAULT_OUTPUT_ROOT
 DEFAULT_REGISTRY_PATH = v12.DEFAULT_REGISTRY_PATH
+_V12_PARSE_HTML_INDEX = v12.parse_html_index_v12
 
 _YANDEX_ID_RE = re.compile(r"^(?P<d>\d{2})-(?P<m>\d{2})-(?P<y>20\d{2})(?:-\d+)?$")
 _YANDEX_NEWS_PATH_RE = re.compile(
@@ -132,7 +133,7 @@ def _sequential_date_map(body: str, base: str) -> dict[str, set[date]]:
 
 def parse_html_index_v13(body: str, base: str) -> list[source_pulse.ParsedItem]:
     """Repair only corroborated Yandex dates and collapse duplicate Yandex URLs."""
-    original = v12.parse_html_index_v12(body, base)
+    original = _V12_PARSE_HTML_INDEX(body, base)
     if (urllib.parse.urlsplit(base).hostname or "").casefold() not in {"ir.yandex.ru", "yandex.ru"}:
         return original
 
