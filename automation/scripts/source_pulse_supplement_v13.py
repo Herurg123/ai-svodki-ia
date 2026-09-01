@@ -133,7 +133,10 @@ def _sequential_date_map(body: str, base: str) -> dict[str, set[date]]:
 
 def parse_html_index_v13(body: str, base: str) -> list[source_pulse.ParsedItem]:
     """Repair only corroborated Yandex dates and collapse duplicate Yandex URLs."""
-    original = _V12_PARSE_HTML_INDEX(body, base)
+    parent_parser = v12.parse_html_index_v12
+    if parent_parser is parse_html_index_v13:
+        parent_parser = _V12_PARSE_HTML_INDEX
+    original = parent_parser(body, base)
     if (urllib.parse.urlsplit(base).hostname or "").casefold() not in {"ir.yandex.ru", "yandex.ru"}:
         return original
 
