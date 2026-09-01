@@ -1,0 +1,398 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-09-01",
+  "search_window": {
+    "start_at": "2026-08-30T04:22:46+03:00",
+    "end_at": "2026-09-01T04:49:39+03:00",
+    "latest_archive_at": "2026-08-31T04:22:46+03:00",
+    "start_date": "2026-08-30",
+    "end_date": "2026-09-01",
+    "latest_archive_date": "2026-08-31"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=1, rejected=1."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Nvidia инвестирует $3,5 млрд в MediaTek и расширяет NVLink Fusion для кастомных AI-чипов",
+      "organization": "Nvidia; MediaTek",
+      "published_date": "2026-08-31",
+      "published_at": "2026-08-31T15:15:25+00:00",
+      "time_precision": "datetime",
+      "topic": "AI-инфраструктура, кастомные ASIC и межсоединение для hyperscaler- и AI-lab дата-центров",
+      "event_type": "investment_and_infrastructure_partnership",
+      "keywords": [
+        "Nvidia",
+        "MediaTek",
+        "$3.5 billion",
+        "NVLink Fusion",
+        "custom AI chips",
+        "AI data centers",
+        "ASIC"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Nvidia’s $3.5B MediaTek bet reveals its plan for tackling Big Tech’s AI chip buildout",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/31/nvidias-3-5b-mediatek-bet-reveals-its-plan-for-tackling-big-techs-ai-chip-buildout/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Nvidia инвестирует $3,5 млрд в тайваньского производителя чипов MediaTek. В рамках сделки MediaTek получит доступ к технологиям Nvidia, включая NVLink Fusion, чтобы проектировать кастомные AI-чипы, совместимые с rack-scale инфраструктурой Nvidia для облачных провайдеров и AI-лабораторий.",
+      "verified_facts": [
+        "TechCrunch указывает, что Nvidia инвестирует $3,5 млрд в MediaTek.",
+        "MediaTek будет использовать технологии Nvidia для разработки кастомных чипов для AI-компаний и hyperscalers.",
+        "Сделка включает доступ к экосистеме NVLink Fusion, позволяющей интегрировать сторонние чипы с Nvidia-ориентированной инфраструктурой дата-центров.",
+        "MediaTek ранее прогнозировала около $2 млрд выручки от своего направления кастомных дата-центровых ASIC в 2026 году."
+      ],
+      "significance": "Крупная инвестиция и стратегический ответ Nvidia на переход крупнейших AI-заказчиков к собственному кремнию: Nvidia стремится сохранить NVLink и rack-scale стек базовой инфраструктурой даже при использовании не-Nvidia ускорителей.",
+      "significance_score": 4,
+      "limitations": "Детали юридической структуры инвестиции, сроки закрытия и конкретные клиенты MediaTek для кастомных AI-чипов публично не раскрыты в цитируемом материале.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть новости о закупках Nvidia GPU и других сделках Nvidia, но нет этого отдельного вложения в MediaTek и расширения NVLink Fusion.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Авторитетный технологический источник опубликован внутри окна и приводит прямое описание сделки и комментарии Nvidia.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-31T15:15:25+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-31T15:15:25+00:00; timestamp проверен Python против effective window. Цитируемый материал опубликован 31 августа 2026 года; описывает новую инвестицию и партнёрство, отсутствующие в предоставленном архиве.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: событие отобрано по инфраструктурной и рыночной значимости.",
+      "event_date": "2026-08-31",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/08/31/nvidias-3-5b-mediatek-bet-reveals-its-plan-for-tackling-big-techs-ai-chip-buildout/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch сообщает о сделке 31 августа 2026 года и передаёт заявление представителя Nvidia, сделанное в понедельник; отдельный первичный релиз с проверяемым timestamp не найден в этом проходе.",
+      "id": "cand-001",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/08/31/nvidias-3-5b-mediatek-bet-reveals-its-plan-for-tackling-big-techs-ai-chip-buildout/",
+      "source_published_date": "2026-08-31",
+      "source_published_at": "2026-08-31T15:15:25+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-08-31T15:15:25+00:00"
+    },
+    {
+      "title": "Пентагон запустил Grok for Government и ChatGPT Mil на портале GenAI.mil",
+      "organization": "U.S. Department of War; Starshield AI; xAI; OpenAI",
+      "published_date": "2026-08-31",
+      "published_at": "2026-08-31T20:13:45+00:00",
+      "time_precision": "datetime",
+      "topic": "Государственное развёртывание frontier-моделей для миллионов военных и гражданских сотрудников США",
+      "event_type": "government AI deployment",
+      "keywords": [
+        "GenAI.mil",
+        "Grok for Government",
+        "ChatGPT Mil",
+        "Department of War",
+        "Starshield AI",
+        "CUI",
+        "IL5"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "official",
+      "primary_source": {
+        "title": "The Pentagon now has its own version of ChatGPT and Grok",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/31/the-pentagon-now-has-its-own-version-of-chatgpt-and-grok/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Department of War Launches Starshield AI's Grok for Government on GenAI.mil",
+          "publisher": "U.S. Department of War",
+          "url": "https://www.war.gov/News/Releases/Release/Article/4586482/department-of-war-launches-starshield-ais-grok-for-government-on-genaimil/"
+        }
+      ],
+      "event_summary": "Министерство войны США объявило о запуске Starshield AI Grok for Government на GenAI.mil; TechCrunch также сообщает, что на защищённом портале стали доступны кастомные ChatGPT Mil и Grok для Government.",
+      "verified_facts": [
+        "Официальный релиз датирован 31 августа 2026 года и подтверждает запуск Grok for Government на GenAI.mil.",
+        "Решение аккредитовано для Controlled Unclassified Information на уровне Impact Level 5, согласно релизу ведомства.",
+        "Ведомство заявляет, что GenAI.mil за девять месяцев привлёк более 1,7 млн уникальных пользователей из более чем 3 млн сотрудников.",
+        "TechCrunch сообщает, что ChatGPT Mil и Grok for Government стали частью этого централизованного защищённого портала."
+      ],
+      "significance": "Крупное государственное внедрение frontier-AI в оборонном ведомстве США: оно расширяет доступ к коммерческим моделям для многомиллионной аудитории и формализует их использование для защищённых рабочих процессов.",
+      "significance_score": 4,
+      "limitations": "Официальный релиз прямо описывает запуск Grok; наличие ChatGPT Mil подтверждается вторичным авторитетным источником. Точная дата-время публикации официального релиза на странице отсутствует.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет отдельного сюжета о запуске Grok for Government и ChatGPT Mil на GenAI.mil.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Запуск Grok подтверждён первичным релизом ведомства; внедрение ChatGPT Mil и масштаб портала подтверждены TechCrunch со ссылкой на Министерство войны США.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-31T20:13:45+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-08-31T20:13:45+00:00; timestamp проверен Python против effective window. Официальное объявление и вторичная публикация относятся к 31 августа 2026 года и попадают в effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это государственное продуктовое развёртывание, а не судебное или регуляторное дело.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "event_date": "2026-08-31",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.war.gov/News/Releases/Release/Article/4586482/department-of-war-launches-starshield-ais-grok-for-government-on-genaimil/",
+      "event_evidence_kind": "official_announcement",
+      "event_date_evidence": "Официальный релиз Министерства войны США помечен датой Aug. 31, 2026 и сообщает о запуске Grok for Government на GenAI.mil.",
+      "id": "cand-002",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/08/31/the-pentagon-now-has-its-own-version-of-chatgpt-and-grok/",
+      "source_published_date": "2026-08-31",
+      "source_published_at": "2026-08-31T20:13:45+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-08-31T20:13:45+00:00"
+    },
+    {
+      "title": "Apple представила новые обвинения о предполагаемом использовании её секретных данных сотрудником OpenAI",
+      "organization": "Apple; OpenAI; Chang Liu; Yu-Ting Peng",
+      "published_date": "2026-09-01",
+      "published_at": "2026-09-01T00:13:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Судебный спор о trade secrets, аппаратных разработках и предполагаемом использовании конфиденциальных инженерных данных Apple в OpenAI",
+      "event_type": "material court filing and trade-secrets allegations",
+      "keywords": [
+        "Apple",
+        "OpenAI",
+        "trade secrets",
+        "hardware",
+        "court filing",
+        "Chang Liu",
+        "preliminary injunction"
+      ],
+      "geography": "world",
+      "category": "legal",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Apple shares ‘shocking evidence’ against former employee accused of stealing company data for OpenAI",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/31/apple-shares-shocking-evidence-against-former-employee-accused-of-stealing-company-data-for-openai/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Apple сообщила суду о новых материалах в споре с OpenAI и бывшим сотрудником Chang Liu. По данным TechCrunch, Apple утверждает, что Liu использовал конфиденциальную схему Apple в работе в OpenAI, а также что при расследовании были выявлены признаки уничтожения доказательств. Компания добивается предварительного запрета на разработку оборудования, основанного на её технологиях, и ускоренного раскрытия доказательств.",
+      "verified_facts": [
+        "Страница TechCrunch опубликована 31 августа 2026 года в 5:13 PM PDT, что соответствует 1 сентября 2026 года 00:13 UTC и попадает в effective window.",
+        "TechCrunch передаёт, что Apple подала новые материалы в своём иске против OpenAI и бывшего сотрудника Chang Liu.",
+        "Согласно статье, Apple утверждает, что конфиденциальная схема Apple использовалась в работе Liu в OpenAI.",
+        "Apple запрашивает preliminary injunction и expedited discovery, поскольку считает, что дело может касаться и других бывших сотрудников."
+      ],
+      "significance": "Это существенное развитие в споре между двумя крупнейшими технологическими компаниями вокруг аппаратного ИИ: запрошенный Apple судебный запрет потенциально затрагивает разработку OpenAI аппаратных продуктов, а новые утверждения усиливают конфликт вокруг найма инженеров и защиты инженерных секретов.",
+      "significance_score": 4,
+      "limitations": "Публично доступное изложение опирается на вторичный материал TechCrunch; описанные Apple обстоятельства являются утверждениями стороны в судебном споре и не установлены судом. Точный timestamp исходной подачи в суд в доступном разрешённом источнике не указан.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет отдельного сюжета об иске Apple к OpenAI, новых доказательствах или попытке добиться запрета на аппаратные разработки.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Свежая публикация TechCrunch содержит точный timestamp внутри окна и описывает конкретное процессуальное развитие, включая характер заявлений Apple и запрашиваемые меры.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-01T00:13:00+00:00; timestamp проверен Python против effective window. Это не перепечатка исходного спора: материал сообщает о новых доказательствах, переданных после исследования рабочего ноутбука бывшего сотрудника, и о текущем ходатайстве Apple о срочных мерах.",
+      "legal_scale": "major",
+      "legal_scale_reason": "Спор затрагивает Apple и OpenAI, предполагаемое использование технических секретов в разработке ИИ-оборудования и запрашиваемый запрет на дальнейшую работу с потенциально затронутыми технологиями.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется.",
+      "event_date": null,
+      "event_at": null,
+      "event_time_precision": "unknown",
+      "event_origin_url": null,
+      "event_evidence_kind": "unknown",
+      "event_date_evidence": "",
+      "audit_direction": "general_coverage_gaps",
+      "id": "cand-003",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/08/31/apple-shares-shocking-evidence-against-former-employee-accused-of-stealing-company-data-for-openai/",
+      "source_published_date": "2026-09-01",
+      "source_published_at": "2026-09-01T00:13:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-01T00:13:00+00:00"
+    },
+    {
+      "title": "Instagram начнёт снижать охват нераскрытых профилей с ИИ-сгенерированными людьми",
+      "organization": "Instagram; Meta",
+      "published_date": "2026-08-31",
+      "published_at": "2026-08-31T19:16:59+00:00",
+      "time_precision": "datetime",
+      "topic": "Маркировка синтетических персон в соцсетях, прозрачность AI-generated identity и модерация охвата",
+      "event_type": "platform policy and product-labeling update",
+      "keywords": [
+        "Instagram",
+        "Meta",
+        "AI-generated profile",
+        "AI creator",
+        "disclosure",
+        "reach reduction",
+        "synthetic influencers"
+      ],
+      "geography": "world",
+      "category": "regulation",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Instagram puts new limits on undisclosed AI profiles",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/08/31/instagram-puts-new-limits-on-undisclosed-ai-profiles/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Instagram меняет маркировку AI-аккаунтов: прежняя метка AI creator будет переименована в AI-generated profile. Платформа также заявила, что будет ограничивать охват аккаунтов с ИИ-сгенерированными людьми, если создатели не раскрывают синтетическую природу изображённого человека.",
+      "verified_facts": [
+        "TechCrunch указывает точное время публикации: 31 августа 2026 года, 12:16 PM PDT; это 19:16 UTC и входит в effective window.",
+        "Instagram объявил о переименовании метки AI creator в AI-generated profile.",
+        "По описанию политики, аккаунты с ИИ-сгенерированными людьми без надлежащего раскрытия могут получить пониженный охват.",
+        "Метка не предназначена для обычного применения ИИ при редактировании фотографий, написании подписей или создании графики."
+      ],
+      "significance": "Обновление переводит маркировку синтетических персон из преимущественно информационного механизма в механизм дистрибуции контента. Для крупной социальной платформы это заметный шаг в регулировании AI-инфлюенсеров, вводящей в заблуждение идентичности и прозрачности генеративного контента.",
+      "significance_score": 3,
+      "limitations": "Первичное сообщение Instagram упомянуто и процитировано TechCrunch, но URL первоисточника находится за пределами разрешённого доменного набора этого прохода. Не раскрыты точные критерии снижения охвата, географический охват и механизм правоприменения.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть сюжеты о маркировке синтетического контента и других правилах Meta, но нет этого отдельного изменения Instagram, связывающего раскрытие AI-generated profile с ограничением охвата.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "TechCrunch опубликовал материал с точным timestamp внутри окна и прямо сообщает о заявлении Instagram, новом названии метки и последствиях нераскрытия.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-31T19:16:59+00:00; timestamp проверен Python против effective window. Материал описывает объявленное 31 августа 2026 года новое правило Instagram и новый механизм уменьшения охвата для нераскрытых AI-generated profiles.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это правило частной платформы, а не судебное или регуляторное производство.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется.",
+      "event_date": "2026-08-31",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/08/31/instagram-puts-new-limits-on-undisclosed-ai-profiles/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch датирует публикацию 31 августа 2026 года и сообщает, что Instagram объявил об изменении в понедельник; 31 августа 2026 года приходится на понедельник.",
+      "audit_direction": "general_coverage_gaps",
+      "id": "cand-004",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/08/31/instagram-puts-new-limits-on-undisclosed-ai-profiles/",
+      "source_published_date": "2026-08-31",
+      "source_published_at": "2026-08-31T19:16:59+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-08-31T19:16:59+00:00"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=4, validated unique=3, final candidates=3. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 2.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-business_investment_partnerships-04",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Nvidia reportedly considering investment in Perplexity",
+      "origin_direction": "business_investment_partnerships",
+      "reason_code": "unverified",
+      "evidence_reason": "Материал описывает лишь возможное вложение со ссылкой на сторонний непроверенный отчёт; не найдено подтверждения сделки или надёжного event-origin evidence в пределах окна.",
+      "likely_significance_score": 3,
+      "entities": [
+        "Nvidia",
+        "Perplexity"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  }
+}

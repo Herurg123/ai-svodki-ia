@@ -1,0 +1,44 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-01",
+  "slug": "2026-09-01",
+  "title": "ИИ-Сводка на 1 сентября 2026",
+  "description": "Nvidia инвестирует в MediaTek для кастомных ИИ-чипов, Пентагон разворачивает Grok и ChatGPT, Apple усиливает спор с OpenAI, а Instagram ограничит охват нераскрытых синтетических профилей.",
+  "published_at": "2026-09-01T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-01.png",
+  "topics": [
+    "Nvidia",
+    "MediaTek",
+    "NVLink Fusion",
+    "кастомные ИИ-чипы",
+    "GenAI.mil",
+    "Grok for Government",
+    "ChatGPT Mil",
+    "Apple",
+    "OpenAI",
+    "технические секреты",
+    "Instagram",
+    "синтетические профили",
+    "маркировка ИИ-контента"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Три материала TechCrunch относятся к независимым событиям высокой значимости: инфраструктурной сделке Nvidia, крупному судебному спору Apple и OpenAI и новому правилу Instagram. В коротком подтверждённом пуле нет сопоставимых альтернативных публикаций для их замены."
+    }
+  ]
+}

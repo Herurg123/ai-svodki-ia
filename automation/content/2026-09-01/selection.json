@@ -1,0 +1,19 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-002",
+    "cand-003",
+    "cand-004"
+  ],
+  "excluded_candidate_ids": [],
+  "selection_summary": "Выбраны четыре подтверждённых и самостоятельных сюжета: инвестиция Nvidia в MediaTek и NVLink Fusion, защищённое развёртывание Grok и ChatGPT для Пентагона, существенное процессуальное развитие в споре Apple и OpenAI, а также новые правила Instagram для нераскрытых синтетических профилей. Пул не позволяет набрать обычный объём выпуска.",
+  "diversity_overrides": [
+    {
+      "type": "publisher",
+      "value": "TechCrunch",
+      "reason": "Три материала TechCrunch относятся к независимым событиям высокой значимости: инфраструктурной сделке Nvidia, крупному судебному спору Apple и OpenAI и новому правилу Instagram. В коротком подтверждённом пуле нет сопоставимых альтернативных публикаций для их замены."
+    }
+  ]
+}
