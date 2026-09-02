@@ -83,6 +83,12 @@
   Event Freshness перед preserved fail-closed Source Freshness v1;
 - `scripts/source_freshness_v1.py` — сохранённая authority для безопасного fetch
   и доказательства publication date цитируемой страницы;
+- `scripts/discovery_health.py` — zero-network volume-independent reducer уже
+  сохранённых Primary/Pulse/Agency/Hybrid/Coverage diagnostics в
+  `healthy | degraded | indeterminate`; не меняет publication и не вызывает API;
+- `scripts/summarize_production_status.py` — финальный production summary; кроме
+  обычного operational статуса встраивает Discovery Health v1 в
+  `pipeline-status.json` и GitHub Actions Summary;
 - `scripts/build_site.py` / validators — site/RSS/publication contracts;
 - `scripts/cleanup_repository_content.py` и `cleanup_public_posts.py` — 32-day
   tracked content/public cleanup;
@@ -235,6 +241,29 @@ full recovery понижается до `partial_editorial`, чтобы text run
 failed и indeterminate состояния не получают второй search. Controlled A/B audit:
 `audits/experiments/2026-09-01-post-freshness-agency-rescue-ab.md`.
 
+## Discovery Health v1
+
+`discovery_health.py` объединяет уже сохранённые diagnostics пяти discovery-lanes:
+Primary, Source Pulse, Major agencies, Hybrid и Coverage. Статусы только три:
+`healthy`, `degraded`, `indeterminate`.
+
+Ключевой инвариант: **story volume не является входом health-scoring**. Полный
+выпуск не может автоматически стать healthy только потому, что editorial выбрал
+7+ историй. Explicit Source Pulse source/parser gaps и unresolved Hybrid regional
+gaps дают `degraded`; missing/ambiguous provider/provenance evidence даёт
+`indeterminate`. Primary `raw=0` сам по себе не является degradation. Coverage с
+`complete_with_gaps` может оставаться healthy, когда все обязательные направления
+завершены и текущий Retrieval Quality имеет `status=complete`.
+
+Финальный `summarize_production_status.py` сохраняет этот объект внутри
+`pipeline-status.json` и выводит lane-by-lane verdict в Actions Summary. V1
+publication-neutral: он не меняет editorial, не блокирует Image/commit/deploy и
+не управляет публичной short-digest пометкой. Controlled production-derived replay:
+`audits/experiments/2026-09-02-discovery-health-v1.md`.
+
+Discovery Health выполняет 0 OpenAI calls, 0 Web Search operations и 0 network
+calls.
+
 ## Hybrid v3 и search budget
 
 Обычный Hybrid contract не подорожал: три fixed passes и максимум один
@@ -258,10 +287,10 @@ Whole-pipeline theoretical ceiling:
 оба gaps:    12 Primary + 1 agency rescue + 5 Hybrid + 7 Coverage = 25
 ```
 
-Source Pulse, Event Freshness, P4 regional viability и agency-health viability в
-эти числа не входят: у них 0 OpenAI calls и 0 Web Search. Дополнительные
-региональные Coverage searches и отдельный LLM semantic-event matcher сейчас не
-включены; они остаются deferred options для будущих аудитов.
+Source Pulse, Event Freshness, P4 regional viability, agency-health viability и
+Discovery Health в эти числа не входят: у них 0 OpenAI calls и 0 Web Search.
+Дополнительные региональные Coverage searches и отдельный LLM semantic-event
+matcher сейчас не включены; они остаются deferred options для будущих аудитов.
 
 ## Workflows
 
@@ -271,7 +300,7 @@ Source Pulse, Event Freshness, P4 regional viability и agency-health viability 
 required status для защиты `main`.
 
 `daily-production.yml` имеет ровно один нативный GitHub schedule:
-`17 23 * * *`, то есть `02:17 Europe/Moscow`. Внутрисуточные повторные cron в
+`17 23 * * *`, то есть `02:17 Europe/Moscow`. Внутрисуточных повторных cron в
 GitHub не используются. Резервный запуск выполняет cron-job.org через
 `workflow_dispatch`; поэтому такой внешний вызов отображается как manual/dispatch
 и не является scheduled run.

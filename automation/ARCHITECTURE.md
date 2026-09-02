@@ -40,6 +40,7 @@ scheduled/manual trigger
   -> site/RSS/sitemap
   -> validators
   -> commit to main
+  -> final volume-independent Discovery Health v1 / pipeline status
   -> FTP deploy of posts/
 ```
 
@@ -81,6 +82,16 @@ broad passes плюс два раздельных regional health-check. Пят�
 новой ежедневной нормой и не активируется при одном или нуле региональных gaps.
 P4 не создаёт новый slot; он только делает уже существующий double-gap branch
 достижимым, когда ранний healthy-флаг стал ложным после filtering.
+
+После production mutation финальный `summarize_production_status.py` вычисляет
+**Discovery Health v1** только из уже сохранённых Primary, Source Pulse, Agency
+Rescue, Hybrid и Coverage diagnostics. Story count намеренно не входит в
+health-scoring: полный 7+ story release может быть `degraded`. V1 имеет три
+состояния `healthy | degraded | indeterminate`, сохраняется внутри
+`pipeline-status.json` и показывается в Actions Summary. Это purely diagnostic
+layer: он не меняет editorial, Image API, commit/deploy decision, public short-
+digest marker или recovery semantics и выполняет 0 OpenAI calls, 0 Web Search
+operations и 0 network calls.
 
 Production работает из GitHub Actions, хранит результаты в репозитории и
 использует `posts/` как публичный deploy tree.
@@ -171,6 +182,7 @@ listing и проверяется отсутствие всех удалённы
 | RSS no-video boundary | `automation/tests/test_rss_video_boundary.py` |
 | Retired Video → RSS reference | `automation/archive/video-rss-enrichment-2026-08/` |
 | FTP video retention | `.github/workflows/repository-cleanup.yml` и `automation/scripts/cleanup_video_ftp.py` |
+| Final retrieval observability | `automation/scripts/discovery_health.py` и `pipeline-status.json` |
 
 Документация должна описывать реализованный код, а не предполагаемую будущую
 схему.
@@ -195,12 +207,13 @@ listing и проверяется отсутствие всех удалённы
   validators, включая `event_freshness.py`, `source_freshness.py`, preserved
   `source_freshness_v1.py`, active `source_pulse_supplement_v13.py`, preserved
   `source_pulse_supplement_v12.py`, сохранённый `source_pulse_shadow.py`,
-  `agency_health_viability.py`, `regional_health_viability.py`, versioned Hybrid
-  v2/v3 implementations и FTP-retention `cleanup_video_ftp.py`;
+  `agency_health_viability.py`, `regional_health_viability.py`,
+  `discovery_health.py`, versioned Hybrid v2/v3 implementations и FTP-retention
+  `cleanup_video_ftp.py`;
 - `tests/` содержит основной Python offline regression suite, включая event/source
   freshness, Source Pulse Yandex date regression, provider routing, agency
-  post-filter viability/recovery, P4 regional viability, no-video RSS boundary и
-  retrieval budget/regional regressions;
+  post-filter viability/recovery, P4 regional viability, Discovery Health,
+  no-video RSS boundary и retrieval budget/regional regressions;
 - `notebooklm-video/` является отдельным локальным downstream-подпроектом;
 - `preview/` и `recovery/` являются временными ignored runtime directories.
 
@@ -301,7 +314,8 @@ dry-run/apply, orphan semantics, MLSD/NLST listing, pre-delete validation,
 post-delete verification и hard `video` boundary без RSS/local-runtime dependency.
 Retrieval tests отдельно защищают Event/Source Freshness, Source Pulse safety,
 provider routing, post-filter agency viability/recovery, P4 regional viability,
-regional Hybrid allocation, search ceilings и compatibility wrappers.
+Discovery Health truthfulness, regional Hybrid allocation, search ceilings и
+compatibility wrappers.
 
 `automation/notebooklm-video/tests/video-boundary-smoke.js` проверяет hard FTP
 boundary и ignore rules. `lockfile-contract-smoke.js` проверяет синхронизацию
@@ -750,14 +764,61 @@ Reuters rescue только после доказанной поздней по�
 
 Source Pulse не входит в search-operation budget: collector, parser и
 page/freshness verification используют только обычный HTTPS и не вызывают
-OpenAI/Web Search. Event Freshness Proof, P4 regional viability и agency-health
-viability также являются локальными deterministic операциями над уже сохранёнными
-полями и не вызывают OpenAI/Web Search. Navigation hosted calls не повышают этот
+OpenAI/Web Search. Event Freshness Proof, P4 regional viability, agency-health
+viability и Discovery Health также являются локальными deterministic операциями
+над уже сохранёнными полями и не вызывают OpenAI/Web Search. Discovery Health
+дополнительно не открывает сеть. Navigation hosted calls не повышают этот
 search-operation ceiling.
 
 Отдельный LLM semantic-event matcher для сложного dedupe сейчас не активирован.
 Он остаётся future option после следующих аудитов. Его внедрение требует нового
 architecture review и отдельного разрешения на оплачиваемые model calls.
+
+### 6.7. Discovery Health v1
+
+Stable implementation: `automation/scripts/discovery_health.py`. Production
+integration находится в уже существующем финальном
+`summarize_production_status.py`; новый workflow/job не добавляется.
+
+Health reducer читает пять сохранённых lane reports:
+
+- `primary-recall-<DATE>.json`;
+- `source-pulse-<DATE>.json`;
+- `agency-discovery-rescue-<DATE>.json`;
+- `hybrid-completeness-<DATE>.json`;
+- `coverage-audit.json`.
+
+Статусы:
+
+- `healthy` — текущие обязательные diagnostics не доказывают retrieval defect;
+- `degraded` — есть явное завершённое evidence деградации, например Source Pulse
+  `complete_with_gaps`/degraded sources, незавершённый mandatory search или
+  unresolved Hybrid regional retrieval gap;
+- `indeterminate` — lane health невозможно честно установить из saved evidence,
+  например report отсутствует, agency provenance неоднозначна или выполненный
+  Reuters rescue не получил provider source metadata.
+
+Overall policy: явный `degraded` имеет приоритет над `indeterminate`; если
+explicit degradation нет, но хотя бы одна lane indeterminate, overall становится
+`indeterminate`; только полностью determinate набор без degradation даёт
+`healthy`.
+
+Primary `raw_candidates=[]` сам по себе **не** является degradation: тихий
+направленческий проход возможен. Coverage historical `audit_status=complete_with_gaps`
+также не обязан делать Discovery Health красным, если audit state
+`completed_usable`, все mandatory directions checked, partial/unchecked пусты и
+current Retrieval Quality имеет `status=complete`.
+
+Story count, `short_digest` и число selected stories не участвуют в reducer. Это
+ключевой результат production audit 2026-09-02: полный 7-story выпуск имел
+материальные independently verified hard misses и одновременно явные saved
+Source Pulse/Hybrid gaps. Поэтому volume нельзя использовать как proxy discovery
+health.
+
+V1 publication-neutral. Он только встраивается в финальный `pipeline-status.json`
+и GitHub Actions Summary. Использование `discovery_health` как будущего gate для
+public `low_news_volume`, Image API, commit/deploy или recovery является отдельным
+policy change и требует отдельного PR/audit.
 
 ## 7. Event/source freshness и editorial
 
@@ -814,8 +875,9 @@ Editorial применяется после discovery/validation. Коротки
 нельзя вводить искусственные региональные или тематические quotas только ради
 числа сюжетов. Source Pulse, agency-health viability, P4 regional viability и
 regional Hybrid health-check не имеют отдельной publication quota и не могут
-обязать editorial выбрать promoted/returned `consider`. Подробные правила
-находятся в `specs/editorial-policy.md`.
+обязать editorial выбрать promoted/returned `consider`. Discovery Health вообще
+исполняется после production mutation и не участвует в editorial selection.
+Подробные правила находятся в `specs/editorial-policy.md`.
 
 ## 8. Recovery
 
@@ -870,6 +932,11 @@ Recovery не должен трактовать уже выполненный п
 разрешение на шестой или повторный региональный paid pass. Compatibility wrappers
 сохраняют historical stable imports и existing recovery hooks.
 
+Discovery Health не меняет recovery planning. На recovered artifact финальный
+status может классифицировать отсутствующую/legacy lane как `indeterminate`, но
+сам reducer не repoll'ит Pulse, не повторяет paid stages и не понижает/повышает
+recovery mode.
+
 Manual `force_fresh_research=true` является отдельным operator override после
 retrieval hotfix. Он не эквивалентен обычному rerun и не является разрешением на
 любой новый production API spend. Одобрен только текущий условный пятый Hybrid
@@ -890,6 +957,11 @@ RSS публикует article/image данные основного выпус�
 должны изменять RSS. Любое active production изменение, которое снова добавляет
 local video payload в `posts/rss.xml`, считается архитектурным изменением и должно
 быть заблокировано current no-video regression contract.
+
+Discovery Health v1 является post-production diagnostic и не отменяет уже
+validated publication. `degraded` или `indeterminate` в v1 должны быть видны
+оператору и сохранены в artifact, но не являются автоматическим Image/commit/deploy
+blocker. Автоматический blocker потребует нового policy decision.
 
 FTP-video cleanup не является publish path: он ничего не создаёт и не меняет в
 RSS/content. Это maintenance над уже опубликованными remote media после истечения
@@ -1004,6 +1076,14 @@ post-filter Primary agency viability заново открывает ранее 
 rescue slot. Эта правка не требует live production API для доказательства trigger
 семантики.
 
+Sep-2 full-release audit сохранён в
+`audits/2026-09-02-independent-release-audit.md`. Run `33577674132` подтвердил оба
+Sep-1 P0 в production, но независимо verified reference set дал bounded recall
+`7/11 = 63.6%`: полный 7-story выпуск всё ещё имел четыре hard upstream misses.
+Это production evidence для разделения story volume и retrieval health.
+Controlled zero-paid replay Discovery Health v1 сохранён в
+`audits/experiments/2026-09-02-discovery-health-v1.md`.
+
 ## 12. Совместимость и versioned реализации
 
 Некоторые stable public files являются wrappers над сохранёнными versioned
@@ -1046,6 +1126,10 @@ entrypoint переключает production semantics на v3, а preserved lay
 compatibility/recovery assets. P3 routing и P4 pre-Hybrid viability добавлены в
 stable wrapper, не переписывая proven v2/v3 engines. Это особенно важно для
 saved-artifact recovery и старых tests, которые monkeypatch'ят исторические hooks.
+
+Discovery Health не создаёт новую versioned retrieval engine: это отдельный
+post-production reducer над saved reports. Он не monkeypatch'ит retrieval runtime
+и потому не меняет compatibility/recovery topology существующих engines.
 
 Удаление или схлопывание versioned files требует отдельного semantic-neutral
 refactor с полным offline regression доказательством. Нельзя одновременно
@@ -1250,6 +1334,16 @@ fail-closed, а отсутствие permitted target больше не явля
 ошибкой. Controlled replay 2026-08-30 использует saved artifact и 0 production
 API/Web Search/Terra spend.
 
+Для Discovery Health v1 dependency audit затрагивает только saved diagnostic
+artifacts пяти retrieval lanes, новый zero-network reducer,
+`summarize_production_status.py`, final `pipeline-status.json`, Actions Summary,
+README/architecture и offline regressions. Daily workflow topology, retrieval
+queries/routing, Event/Source Freshness, editorial, Image API, commit/deploy,
+recovery modes и ceilings 24/25 не меняются. Production-derived replay
+2026-09-02 проверяет full-volume-but-degraded case; neighboring controls защищают
+healthy, indeterminate, zero-raw и bounded Coverage semantics. Использование этого
+status как будущего publication/short-volume gate намеренно не входит в v1.
+
 Controlled experiment для Hybrid v3 обязан отдельно доказать:
 
 - no-gap path не получает пятый search;
@@ -1257,8 +1351,8 @@ Controlled experiment для Hybrid v3 обязан отдельно доказ�
 - double-gap path выполняет максимум 5 Hybrid searches;
 - lowered baseline не включает paid extension;
 - oversized caller limit не создаёт шестой search;
-- Source Pulse, P4 viability, agency-health viability и recovery не создают
-  скрытого дополнительного spend.
+- Source Pulse, P4 viability, agency-health viability, Discovery Health и recovery
+  не создают скрытого дополнительного spend.
 
 Search/retrieval изменения сначала проверяются на assistant-owned resources.
 Production API пользователя не расходуется без явного разрешения. Для текущей

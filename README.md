@@ -131,6 +131,16 @@ China/Asia или Russia gap. После freshness/editorial P4 может то�
 plane по-прежнему не может подавить Hybrid regional recovery. Полная диагностика
 сохраняется в daily Actions artifact.
 
+Финальный production status теперь также вычисляет zero-paid **Discovery Health
+v1** по уже сохранённым Primary, Source Pulse, Agency Rescue, Hybrid и Coverage
+отчётам. Статус `healthy | degraded | indeterminate` не зависит от количества
+опубликованных историй: полный выпуск из 7+ сюжетов не считается доказательством
+здорового retrieval. Explicit parser/source gaps и unresolved Hybrid regional
+gaps дают `degraded`; отсутствующая или неоднозначная source/provenance
+диагностика даёт `indeterminate`. Результат сохраняется в `pipeline-status.json`
+и показывается в Actions Summary, но v1 **не блокирует публикацию** и выполняет
+0 OpenAI calls / 0 Web Search operations.
+
 Обязательные Coverage-направления сохраняют ids `security_world`,
 `security_russia`, `security_asia`, `legal_copyright_scraping`, `curiosity` и
 `general_coverage_gaps`; последний является авторитетный last-mile sweep
