@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "experiment": "primary_raw_zero_outcome_diagnostics",
+  "production_run_id": 33577674132,
+  "publication_date": "2026-09-02",
+  "artifact_id": 9827509780,
+  "primary_status": "complete",
+  "completed_primary_searches": 12,
+  "raw_zero_direction_count": 8,
+  "expected_raw_zero_outcome": "model_rejections_only",
+  "event_level_causality_claim": false,
+  "directions": [
+    {"direction_id": "major_agencies", "raw_count": 0, "accepted_count": 0, "model_rejection_count": 3, "consulted_source_count": 18},
+    {"direction_id": "models_products_agents", "raw_count": 0, "accepted_count": 0, "model_rejection_count": 2, "consulted_source_count": 47},
+    {"direction_id": "infrastructure_chips_cloud", "raw_count": 0, "accepted_count": 0, "model_rejection_count": 4, "consulted_source_count": 34},
+    {"direction_id": "business_investment_partnerships", "raw_count": 0, "accepted_count": 0, "model_rejection_count": 4, "consulted_source_count": 21},
+    {"direction_id": "china_asia_models", "raw_count": 0, "accepted_count": 0, "model_rejection_count": 3, "consulted_source_count": 27},
+    {"direction_id": "china_asia_integrations", "raw_count": 0, "accepted_count": 0, "model_rejection_count": 4, "consulted_source_count": 41},
+    {"direction_id": "security_safety", "raw_count": 0, "accepted_count": 0, "model_rejection_count": 3, "consulted_source_count": 40},
+    {"direction_id": "legal_regulation", "raw_count": 0, "accepted_count": 0, "model_rejection_count": 3, "consulted_source_count": 40}
+  ],
+  "interpretation": "Every raw-zero Primary lane in the saved Sep-2 artifact had non-empty consulted source metadata and one or more model rejection rows. This distinguishes the saved lane outcome from an empty provider source pool, but it does not prove that any specific independently missed event was present in that source pool or explicitly rejected by the model.",
+  "paid_api_calls_for_replay": 0,
+  "web_search_operations_for_replay": 0
+}

@@ -11,6 +11,8 @@ from __future__ import annotations
 import copy
 from typing import Any
 
+from primary_zero_outcome import build_primary_outcome_diagnostics
+
 DISCOVERY_HEALTH_VERSION = 1
 HEALTHY = "healthy"
 DEGRADED = "degraded"
@@ -37,11 +39,8 @@ def _primary_health(primary: Any) -> dict[str, Any]:
         for row in directions
         if row.get("status") not in {"complete", "complete_with_gaps"}
     ]
-    zero_raw = [
-        str(row.get("direction_id") or "unknown")
-        for row in directions
-        if isinstance(row.get("raw_candidates"), list) and len(row.get("raw_candidates") or []) == 0
-    ]
+    outcomes = build_primary_outcome_diagnostics(directions)
+    zero_raw = list(outcomes.get("raw_zero_directions") or [])
     reasons: list[str] = []
     if primary.get("status") != "complete":
         reasons.append(f"primary_status:{primary.get('status') or 'missing'}")
@@ -57,6 +56,7 @@ def _primary_health(primary: Any) -> dict[str, Any]:
         direction_count=len(directions),
         zero_raw_directions=zero_raw,
         zero_raw_alone_is_not_degradation=True,
+        primary_outcome_diagnostics=outcomes,
     )
 
 
