@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "experiment": "source_pulse_official_newsroom_feasibility",
+  "publication_date": "2026-09-02",
+  "saved_window": {
+    "start_at": "2026-08-31T04:49:39+03:00",
+    "end_at": "2026-09-02T04:01:28+03:00"
+  },
+  "production_registry_mutation": false,
+  "paid_api_calls": 0,
+  "web_search_operations_in_production": 0,
+  "cases": [
+    {
+      "id": "openai_newsroom",
+      "publisher": "OpenAI",
+      "index_url": "https://openai.com/news/",
+      "article_url": "https://openai.com/index/expanding-access-to-ai-with-chatgpt-ads/",
+      "title": "A milestone in expanding access to AI",
+      "published_date": "2026-08-31",
+      "index_visible_entry_confirmed": true,
+      "direct_page_visible_date_confirmed": true,
+      "saved_production_risk": "OpenAI first-party fetch returned HTTP 403 on a Sep-2 freshness path; direct promotion cannot assume stable page access.",
+      "decision": "not_ready_for_registry"
+    },
+    {
+      "id": "anthropic_newsroom",
+      "publisher": "Anthropic",
+      "index_url": "https://www.anthropic.com/news",
+      "article_url": "https://www.anthropic.com/news/improving-alignment-security-efforts",
+      "title": "Improving our alignment and security efforts",
+      "published_date": "2026-08-31",
+      "index_visible_entry_confirmed": true,
+      "direct_page_visible_date_confirmed": true,
+      "saved_production_risk": "A Sep-2 Anthropic first-party page produced HTTP 200 but generic machine-readable publication evidence was not reliably available; generic visible-body scraping remains forbidden.",
+      "decision": "not_ready_for_registry"
+    },
+    {
+      "id": "eu_digital_strategy_news",
+      "publisher": "European Commission",
+      "index_url": "https://digital-strategy.ec.europa.eu/en/news",
+      "article_url": "https://digital-strategy.ec.europa.eu/en/news/commission-designates-chatgpt-reddit-roblox-under-digital-services-act",
+      "title": "Commission designates ChatGPT, Reddit, Roblox under Digital Services Act",
+      "published_date": "2026-08-31",
+      "index_visible_entry_confirmed": false,
+      "direct_page_visible_date_confirmed": true,
+      "saved_production_risk": "The generic landing page did not expose the Aug-31 item in the first extracted result set; a stable targeted listing/pagination contract is not yet proved.",
+      "decision": "not_ready_for_registry"
+    }
+  ],
+  "offline_contract": {
+    "bounded_article_card_visible_date_should_parse": true,
+    "visible_date_only_direct_page_must_not_bypass_source_freshness": true,
+    "machine_readable_direct_page_date_may_pass_existing_source_freshness": true,
+    "no_source_specific_repair_is_authorized_by_this_experiment": true
+  }
+}
