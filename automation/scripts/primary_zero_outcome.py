@@ -85,9 +85,12 @@ def classify_direction(report: Any) -> dict[str, Any]:
         else:
             outcome = "raw_candidate_not_accepted"
     elif model_rejections:
-        outcome = "model_rejected_all"
+        # This means the model emitted rejection rows and no candidate rows. It
+        # does NOT prove that a particular independently missed event appeared in
+        # the provider pool or that the model inspected that exact event.
+        outcome = "model_rejections_only"
     elif metadata_state == "present":
-        outcome = "provider_sources_present_no_candidate"
+        outcome = "provider_sources_present_no_candidate_or_rejection"
     elif metadata_state == "empty":
         outcome = "provider_source_pool_empty"
     else:
@@ -126,7 +129,7 @@ def build_primary_outcome_diagnostics(direction_reports: Any) -> dict[str, Any]:
         "raw_zero_directions": [str(row["direction_id"]) for row in zero_rows],
         "directions": rows,
         "policy": (
-            "diagnostic only: story volume and raw=0 never imply a specific provider/model cause "
-            "without saved source/rejection evidence"
+            "diagnostic only: story volume and raw=0 never imply that a specific missed event "
+            "was absent from the provider pool or rejected by the model without exact saved evidence"
         ),
     }
