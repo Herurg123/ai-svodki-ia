@@ -1,0 +1,45 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-02",
+  "slug": "2026-09-02",
+  "title": "ИИ-Сводка на 2 сентября 2026",
+  "description": "OpenAI ограничивает доступ к кибервозможностям Astra, Anthropic обновляет модели и защиту корпоративных данных, а генеративный ИИ глубже входит в медицину, офисные продукты и российскую политику поддержки моделей.",
+  "published_at": "2026-09-02T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-02.png",
+  "topics": [
+    "OpenAI Astra",
+    "кибербезопасность ИИ",
+    "Daybreak Blue",
+    "Cursor",
+    "ChatGPT Health",
+    "Epic",
+    "Anthropic Fable 5.1",
+    "Enterprise Frontier Safeguards",
+    "Google Pics",
+    "Google Workspace",
+    "NVIDIA Nemotron",
+    "CrowdStrike SafeMind",
+    "российские foundation-модели",
+    "налоговые льготы"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Четыре отобранных кандидата первоначально подтверждены публикациями TechCrunch, однако это независимые и более значимые события разных типов: безопасность Astra, клиническая интеграция Epic, релиз Anthropic и продукт Google. Ограничение по издателю не должно сокращать короткий, но достаточный пул ниже целевого объёма."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "OpenAI: Три сюжета OpenAI относятся к разным самостоятельным изменениям: режиму выпуска Astra, прекращению прежнего прямого доступа Cursor и интеграции ChatGPT Health с Epic. Они имеют отдельные практические последствия и не дублируют друг друга."
+    }
+  ]
+}

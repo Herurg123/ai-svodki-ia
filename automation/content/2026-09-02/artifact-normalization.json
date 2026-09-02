@@ -1,0 +1,25 @@
+{
+  "status": "ok",
+  "artifact_dir": "automation/preview/2026-09-02",
+  "changed_files": [
+    "run-info.json"
+  ],
+  "changes": [
+    {
+      "file": "run-info.json",
+      "field": "$.pipeline",
+      "from": "editorial_from_saved_research",
+      "to": "primary_recall_v2_then_editorial"
+    },
+    {
+      "file": "run-info.json",
+      "field": "$.research.settings.source",
+      "from": "saved_fixture",
+      "to": "trusted_runtime_primary_recall"
+    }
+  ],
+  "warnings": [
+    "Primary Recall source-health warning: обязательный major_agencies pass и последующий Coverage/rescue завершились технически, но validated candidate pool не подтвердил свежий Reuters/AP/Bloomberg/FT материал в effective window. Нулевая выдача после успешно выполненного ограниченного поиска считается недетерминированным retrieval outcome, а не самостоятельной причиной блокировки публикации."
+  ],
+  "removed_stale_validation": false
+}

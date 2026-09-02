@@ -1,0 +1,862 @@
+{
+  "version": 1,
+  "strategy": "source_pulse_shadow",
+  "supplement_version": 13,
+  "publication_date": "2026-09-02",
+  "status": "complete_with_gaps",
+  "state": "completed_supplemental",
+  "candidate_influence": false,
+  "supplemental_candidate_influence": true,
+  "supplemental_policy": "tier_a_official_or_trusted_news_pulse_only_consider_after_deterministic_page_and_freshness_gate",
+  "repoll_on_recovery": false,
+  "paid_api_calls": 0,
+  "web_search_operations": 0,
+  "reused_snapshot": false,
+  "snapshot": {
+    "version": 1,
+    "mode": "production_shadow",
+    "production_integration": true,
+    "paid_api_calls": 0,
+    "web_search_operations": 0,
+    "window": {
+      "start_at": "2026-08-31T04:49:39+03:00",
+      "end_at": "2026-09-02T04:01:28+03:00"
+    },
+    "sources": [
+      {
+        "source_id": "baidu_ir",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://ir.baidu.com/",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20236
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "alibaba_ir_hkex",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.alibabagroup.com/en-US/ir-filings-hkex",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 323
+          }
+        ],
+        "selected_url": "https://www.alibabagroup.com/en-US/ir-filings-hkex",
+        "parsed_items": 25,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 51,
+        "parsed_items_after_v12": 51,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 51,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "alibaba_cloud_blog",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.alibabacloud.com/blog",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 2073
+          }
+        ],
+        "selected_url": "https://www.alibabacloud.com/blog",
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 0,
+        "parsed_items_after_v12": 0,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 0,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "marvell_current_reports",
+        "tier": "A",
+        "region": "global",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://investor.marvell.com/sec-filings/current-reports",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 61
+          }
+        ],
+        "selected_url": "https://investor.marvell.com/sec-filings/current-reports",
+        "parsed_items": 20,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 105,
+        "parsed_items_after_v12": 105,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 105,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://blogs.nvidia.com/recent-news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 35
+          }
+        ],
+        "selected_url": "https://blogs.nvidia.com/recent-news",
+        "parsed_items": 20,
+        "window_items": 2,
+        "accepted_leads": 2,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 23,
+        "parsed_items_after_v12": 23,
+        "dated_items_after_v12": 10,
+        "undated_items_after_v12": 13,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://ir.yandex.ru/press-releases?year=2026",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 3222
+          }
+        ],
+        "selected_url": "https://ir.yandex.ru/press-releases?year=2026",
+        "parsed_items": 30,
+        "window_items": 1,
+        "accepted_leads": 1,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 209,
+        "parsed_items_after_v12": 212,
+        "dated_items_after_v12": 186,
+        "undated_items_after_v12": 26,
+        "visible_dates_recovered": 3,
+        "yandex_dates_corrected_v13": 180,
+        "yandex_conflicts_nulled_v13": 0,
+        "yandex_duplicate_urls_collapsed_v13": 180
+      },
+      {
+        "source_id": "tass_ai",
+        "tier": "A",
+        "region": "russia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://tass.ru/tag/iskusstvennyi-intellekt",
+            "status": "error",
+            "http_status": 403,
+            "error": "HTTPError: HTTP Error 403: Forbidden",
+            "elapsed_ms": 1904
+          },
+          {
+            "url": "https://tass.ru/feed",
+            "status": "error",
+            "http_status": 403,
+            "error": "HTTPError: HTTP Error 403: Forbidden",
+            "elapsed_ms": 1724
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "xpeng_ir",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://ir.xiaopeng.com/rss/news-releases.xml",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20358
+          },
+          {
+            "url": "https://ir.xiaopeng.com/news-events/news-releases",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20354
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://api-docs.deepseek.com/news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 682
+          }
+        ],
+        "selected_url": "https://api-docs.deepseek.com/news",
+        "parsed_items": 26,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 30,
+        "parsed_items_after_v12": 30,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 30,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "mws_news",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://mws.ru/news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 2908
+          }
+        ],
+        "selected_url": "https://mws.ru/news",
+        "parsed_items": 30,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 120,
+        "parsed_items_after_v12": 121,
+        "dated_items_after_v12": 2,
+        "undated_items_after_v12": 119,
+        "visible_dates_recovered": 1
+      },
+      {
+        "source_id": "vk_press",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://vk.company.ru/ru/press/releases/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1311
+          }
+        ],
+        "selected_url": "https://vk.company.ru/ru/press/releases",
+        "parsed_items": 25,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 52,
+        "parsed_items_after_v12": 53,
+        "dated_items_after_v12": 1,
+        "undated_items_after_v12": 52,
+        "visible_dates_recovered": 1
+      },
+      {
+        "source_id": "ithome_ai",
+        "tier": "B",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.ithome.com/tag/AI/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 988
+          }
+        ],
+        "selected_url": "https://www.ithome.com/tags/AI",
+        "parsed_items": 26,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 34,
+        "parsed_items_after_v12": 34,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 34,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "cnews_ai",
+        "tier": "B",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.cnews.ru/news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 2902
+          }
+        ],
+        "selected_url": "https://www.cnews.ru/news",
+        "parsed_items": 30,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 127,
+        "parsed_items_after_v12": 127,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 127,
+        "visible_dates_recovered": 0
+      }
+    ],
+    "leads": [
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "GeForce NOW Gives Gamers More Ways to Play at Gamescom 2026",
+        "url": "https://blogs.nvidia.com/blog/geforce-now-thursday-gamescom-2026",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "cutoff_ambiguous": false,
+        "source_item_id": "https://blogs.nvidia.com/blog/geforce-now-thursday-gamescom-2026",
+        "event_fingerprint": "e4c25512bb8ffa215d7c33e8",
+        "exact_fingerprint": "a2ddf2c1ed7032ece03e836b",
+        "archive_url_duplicate": false
+      },
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "NVIDIA and CrowdStrike Strengthen Agentic Cybersecurity Frontier",
+        "url": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "cutoff_ambiguous": false,
+        "source_item_id": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026",
+        "event_fingerprint": "64a4afa3aa40552dcc9710f0",
+        "exact_fingerprint": "253e1f46db5321a66934eaf9",
+        "archive_url_duplicate": false
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "1 сентября 2026ИИ в Яндексе: главное за август",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=digest-0826",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "cutoff_ambiguous": false,
+        "source_item_id": "https://ir.yandex.ru/press-releases?year=2026&id=digest-0826",
+        "event_fingerprint": "cfd021fa769c162d77c924d0",
+        "exact_fingerprint": "6cc614371a0b1f5ea2e03d22",
+        "archive_url_duplicate": false
+      }
+    ],
+    "summary": {
+      "configured_sources": 13,
+      "sources_ok": 10,
+      "sources_unavailable": 3,
+      "sources_parse_error": 0,
+      "lead_count": 3,
+      "eligible_new_lead_count": 3,
+      "tier_a_leads": 3,
+      "tier_b_leads": 0,
+      "cutoff_ambiguous_leads": 0,
+      "archive_url_duplicates": 0,
+      "fetch_elapsed_ms_total": 79081,
+      "fetch_elapsed_ms_max": 20358,
+      "degraded_source_ids": [
+        "alibaba_ir_hkex",
+        "baidu_ir",
+        "cnews_ai",
+        "deepseek_official_news",
+        "ithome_ai",
+        "marvell_current_reports",
+        "tass_ai",
+        "xpeng_ir"
+      ],
+      "source_health_status": "complete_with_gaps"
+    },
+    "fetched_at": "2026-09-02T01:08:01.275133+00:00",
+    "snapshot_hash": "2309ae552845bf4f63252a82894fdf16019937f47490338d4250eb7cf2a9f888",
+    "collector_version": 13,
+    "candidate_influence": false,
+    "repoll_on_recovery": false
+  },
+  "fusion": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "GeForce NOW Gives Gamers More Ways to Play at Gamescom 2026",
+        "url": "https://blogs.nvidia.com/blog/geforce-now-thursday-gamescom-2026",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "e4c25512bb8ffa215d7c33e8",
+        "exact_fingerprint": "a2ddf2c1ed7032ece03e836b",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "NVIDIA and CrowdStrike Strengthen Agentic Cybersecurity Frontier",
+        "url": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "64a4afa3aa40552dcc9710f0",
+        "exact_fingerprint": "253e1f46db5321a66934eaf9",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "1 сентября 2026ИИ в Яндексе: главное за август",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=digest-0826",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "cfd021fa769c162d77c924d0",
+        "exact_fingerprint": "6cc614371a0b1f5ea2e03d22",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      }
+    ],
+    "search_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-008"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-008"
+    ],
+    "summary": {
+      "pulse_total": 3,
+      "pulse_only_count": 3,
+      "both_count": 0,
+      "search_only_count": 8,
+      "cutoff_ambiguous_count": 0,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 3,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 1,
+      "pulse_only_china_asia_count": 0
+    }
+  },
+  "fusion_pre_hybrid": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "GeForce NOW Gives Gamers More Ways to Play at Gamescom 2026",
+        "url": "https://blogs.nvidia.com/blog/geforce-now-thursday-gamescom-2026",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "e4c25512bb8ffa215d7c33e8",
+        "exact_fingerprint": "a2ddf2c1ed7032ece03e836b",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "NVIDIA and CrowdStrike Strengthen Agentic Cybersecurity Frontier",
+        "url": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "64a4afa3aa40552dcc9710f0",
+        "exact_fingerprint": "253e1f46db5321a66934eaf9",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "1 сентября 2026ИИ в Яндексе: главное за август",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=digest-0826",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "cfd021fa769c162d77c924d0",
+        "exact_fingerprint": "6cc614371a0b1f5ea2e03d22",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      }
+    ],
+    "search_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-008"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-008"
+    ],
+    "summary": {
+      "pulse_total": 3,
+      "pulse_only_count": 3,
+      "both_count": 0,
+      "search_only_count": 8,
+      "cutoff_ambiguous_count": 0,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 3,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 1,
+      "pulse_only_china_asia_count": 0
+    }
+  },
+  "promotion": {
+    "proposed_count": 1,
+    "promoted_count": 1,
+    "rejected_by_merge_count": 0,
+    "candidate_count_before": 8,
+    "candidate_count_after": 9,
+    "accepted_candidate_urls": [
+      "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026"
+    ],
+    "merge_rejections": [],
+    "lead_dispositions": [
+      {
+        "source_id": "nvidia_recent_news",
+        "title": "GeForce NOW Gives Gamers More Ways to Play at Gamescom 2026",
+        "url": "https://blogs.nvidia.com/blog/geforce-now-thursday-gamescom-2026",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "fusion_disposition": "pulse_only",
+        "promotion_status": "rejected",
+        "reason": "source_freshness_outside_window",
+        "final_url": "https://blogs.nvidia.com/blog/geforce-now-thursday-gamescom-2026/",
+        "http_status": 200,
+        "evidence_date": "2026-08-27"
+      },
+      {
+        "source_id": "nvidia_recent_news",
+        "title": "NVIDIA and CrowdStrike Strengthen Agentic Cybersecurity Frontier",
+        "url": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "fusion_disposition": "pulse_only",
+        "promotion_status": "promoted",
+        "reason": "tier_a_official_fresh_ai_relevant",
+        "final_url": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026/",
+        "http_status": 200,
+        "evidence_locator": "meta:article:published_time",
+        "evidence_raw": "2026-09-01T21:19:20+00:00"
+      },
+      {
+        "source_id": "yandex_ir",
+        "title": "1 сентября 2026ИИ в Яндексе: главное за август",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=digest-0826",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "fusion_disposition": "pulse_only",
+        "promotion_status": "rejected",
+        "reason": "source_freshness_no_publication_date",
+        "final_url": "https://ir.yandex.ru/press-releases?year=2026&id=digest-0826",
+        "http_status": 200
+      }
+    ]
+  },
+  "fusion_after_promotion": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "GeForce NOW Gives Gamers More Ways to Play at Gamescom 2026",
+        "url": "https://blogs.nvidia.com/blog/geforce-now-thursday-gamescom-2026",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "e4c25512bb8ffa215d7c33e8",
+        "exact_fingerprint": "a2ddf2c1ed7032ece03e836b",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "NVIDIA and CrowdStrike Strengthen Agentic Cybersecurity Frontier",
+        "url": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "64a4afa3aa40552dcc9710f0",
+        "exact_fingerprint": "253e1f46db5321a66934eaf9",
+        "disposition": "both_exact_url",
+        "matched_candidate_ids": [
+          "cand-009"
+        ],
+        "actionable_shadow_lead": false
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "1 сентября 2026ИИ в Яндексе: главное за август",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=digest-0826",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "cfd021fa769c162d77c924d0",
+        "exact_fingerprint": "6cc614371a0b1f5ea2e03d22",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      }
+    ],
+    "search_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-008",
+      "cand-009"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-008"
+    ],
+    "summary": {
+      "pulse_total": 3,
+      "pulse_only_count": 2,
+      "both_count": 1,
+      "search_only_count": 8,
+      "cutoff_ambiguous_count": 0,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 2,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 1,
+      "pulse_only_china_asia_count": 0
+    }
+  },
+  "error": null,
+  "yandex_date_repair": {
+    "version": 1,
+    "strategy": "dated_yandex_url_plus_matching_visible_date",
+    "generic_source_freshness_parser_changed": false,
+    "paid_api_calls": 0,
+    "web_search_operations": 0,
+    "direct_page_fallback_count": 0,
+    "saved_snapshot_dates_corrected": 0,
+    "saved_snapshot_rows_filtered_outside_window": 0,
+    "saved_snapshot_rows_ambiguous": 0
+  },
+  "fusion_post_hybrid": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "GeForce NOW Gives Gamers More Ways to Play at Gamescom 2026",
+        "url": "https://blogs.nvidia.com/blog/geforce-now-thursday-gamescom-2026",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "e4c25512bb8ffa215d7c33e8",
+        "exact_fingerprint": "a2ddf2c1ed7032ece03e836b",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "NVIDIA and CrowdStrike Strengthen Agentic Cybersecurity Frontier",
+        "url": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "64a4afa3aa40552dcc9710f0",
+        "exact_fingerprint": "253e1f46db5321a66934eaf9",
+        "disposition": "both_exact_url",
+        "matched_candidate_ids": [
+          "cand-009"
+        ],
+        "actionable_shadow_lead": false
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "1 сентября 2026ИИ в Яндексе: главное за август",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=digest-0826",
+        "published_date": "2026-09-01",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "cfd021fa769c162d77c924d0",
+        "exact_fingerprint": "6cc614371a0b1f5ea2e03d22",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      }
+    ],
+    "search_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-009"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007"
+    ],
+    "summary": {
+      "pulse_total": 3,
+      "pulse_only_count": 2,
+      "both_count": 1,
+      "search_only_count": 7,
+      "cutoff_ambiguous_count": 0,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 2,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 1,
+      "pulse_only_china_asia_count": 0
+    }
+  }
+}

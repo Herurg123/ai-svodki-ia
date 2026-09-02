@@ -1,0 +1,144 @@
+{
+  "version": 5,
+  "search_strategy": "agency_discovery_rescue",
+  "publication_date": "2026-09-02",
+  "triggered": true,
+  "trigger_reason": "major_agencies_raw_zero",
+  "major_agencies_status": "complete_with_gaps",
+  "major_agencies_raw_count": 0,
+  "major_agencies_accepted_count": 0,
+  "agency_health_trigger_version": 2,
+  "major_agencies_primary_final_count": 0,
+  "major_agencies_post_filter_matched_count": 0,
+  "major_agencies_post_filter_unmatched_count": 0,
+  "major_agencies_post_filter_viable_count": 0,
+  "candidate_pool_count_at_trigger": 9,
+  "candidate_count_independent_trigger": true,
+  "executed": true,
+  "state": "completed_no_addition",
+  "status": "complete",
+  "query": "latest AI models research chips infrastructure financing earnings business deals policy security",
+  "allowed_domains": [
+    "reuters.com"
+  ],
+  "required_direct_source_hosts": [
+    "reuters.com"
+  ],
+  "search_context_size": "high",
+  "search_operation_limit": 1,
+  "search_operation_reserved": 1,
+  "search_operation_count_contribution": 1,
+  "search_retry_allowed": false,
+  "raw_count": 0,
+  "validated_count": 0,
+  "accepted_count": 0,
+  "added_count": 0,
+  "duplicate_count": 0,
+  "archive_duplicate_count": 0,
+  "rejections": [],
+  "model_rejections": [],
+  "api": {
+    "response_id": "resp_0b8c5a551d10481f016a97772bc23c87d085bc7d60e87318db",
+    "status": "completed",
+    "model": "gpt-5.6-terra",
+    "configured_max_tool_calls": 1,
+    "configured_web_search_limit": 1,
+    "observed_web_search_calls": 1,
+    "budget_overrun": false,
+    "web_search_calls": 1,
+    "web_search_calls_completed": 1,
+    "web_search_search_operations_total": 1,
+    "web_search_search_operations_performed": 1,
+    "web_search_search_operations_incomplete": 0,
+    "web_search_navigation_items_total": 0,
+    "web_search_call_items_total": 1,
+    "web_search_call_statuses": {
+      "completed": 1
+    },
+    "web_search_search_statuses": {
+      "completed": 1
+    },
+    "web_search_action_type_counts": {
+      "search": 1
+    },
+    "web_search_call_items": [
+      {
+        "id": "ws_0b8c5a551d10481f016a97772e114487d08f44d2138ca99082",
+        "status": "completed",
+        "action_type": "search",
+        "action": {
+          "type": "search",
+          "queries": [
+            "latest AI models research chips infrastructure financing earnings business deals policy security"
+          ],
+          "query": "latest AI models research chips infrastructure financing earnings business deals policy security",
+          "sources": null
+        }
+      }
+    ],
+    "actual_queries": [
+      "latest AI models research chips infrastructure financing earnings business deals policy security"
+    ],
+    "consulted_sources": [],
+    "completed_call_limit_exceeded": false,
+    "output_item_limit_exceeded": false,
+    "usage": {
+      "input_tokens": 18530,
+      "input_tokens_details": {
+        "cache_write_tokens": 18232,
+        "cached_tokens": 0
+      },
+      "output_tokens": 238,
+      "output_tokens_details": {
+        "reasoning_tokens": 135
+      },
+      "total_tokens": 18768
+    },
+    "error": null,
+    "incomplete_details": null,
+    "configured_search_operations": 1,
+    "configured_total_tool_calls": 4,
+    "navigation_tool_allowance": 3,
+    "allowed_domains": [
+      "reuters.com"
+    ],
+    "search_context_size": "high"
+  },
+  "resumed": false,
+  "recovered_from_artifact": false,
+  "pipeline_search_budget": {
+    "primary_maximum": 12,
+    "agency_discovery_rescue_maximum": 1,
+    "hybrid_maximum": 4,
+    "coverage_maximum": 7,
+    "maximum_total": 24
+  },
+  "raw_candidates": [],
+  "notes": "Единственная разрешённая Reuters-only поисковая операция с заданным точным query не вернула результатов. Поэтому не найдено прямых Reuters-материалов, для которых можно подтвердить source timestamp внутри effective window и сформировать новый самостоятельный AI candidate.",
+  "accepted_candidates": [],
+  "query_policy": "global_reuters_one_slot",
+  "regional_gaps_at_trigger": [
+    "asia"
+  ],
+  "regional_gaps_affect_query": false,
+  "agency_health": {
+    "version": 2,
+    "stage": "post_freshness_editorial_pre_hybrid",
+    "status": "early_gap",
+    "triggered": true,
+    "trigger_reason": "major_agencies_raw_zero",
+    "paid_api_calls": 0,
+    "web_search_operations": 0,
+    "policy": "Only Search-derived Primary major-agency candidates may prove lane health. Ambiguous identity preserves the prior state and never spends the Reuters slot.",
+    "major_agencies_status": "complete_with_gaps",
+    "raw_count": 0,
+    "accepted_count": 0
+  },
+  "prior_not_triggered_rechecked": false,
+  "source_metadata_available": false,
+  "source_metadata_diagnostics": {
+    "source_metadata_available": false,
+    "search_actions_with_source_metadata": 0,
+    "search_actions_missing_source_metadata": 1
+  }
+}

@@ -1,0 +1,232 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "OpenAI объявила, что Astra достигла критического порога кибервозможностей и будет выпущена с ограниченным доступом",
+    "organization": "OpenAI; Astra; Daybreak Blue",
+    "topic": "Frontier-модель с критическими кибервозможностями, safeguards, monitoring и ограниченное развёртывание",
+    "event_type": "model safety announcement",
+    "status": "new",
+    "summary": "OpenAI сообщила, что её готовящаяся модель Astra впервые достигла уровня Critical по кибербезопасности в Preparedness Framework. Компания заявляет, что модель может находить ранее неизвестные уязвимости и строить цепочки эксплуатации против защищённых систем; наиболее продвинутые cyber-возможности сначала будут доступны ограниченной группе тестеров и через Daybreak Blue.",
+    "published_at": "2026-09-01T21:06:24+00:00",
+    "published_date": "2026-09-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Path to Astra: critical capabilities and frontier safeguards",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/path-to-astra/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Astra",
+      "cybersecurity",
+      "critical capability",
+      "zero-day",
+      "Preparedness Framework",
+      "alignment",
+      "Daybreak Blue"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "OpenAI прекратит прежний прямой доступ Cursor к своим моделям",
+    "organization": "OpenAI; Cursor; Codex",
+    "topic": "Доступ к моделям OpenAI в AI-IDE Cursor и миграционные пути для разработчиков",
+    "event_type": "platform_partnership_change",
+    "status": "new",
+    "summary": "Tom's Guide сообщило, что OpenAI предложила завершить действующее соглашение о прямом model-access с Cursor 12 ноября 2026 года после смены контроля над Cursor. Официальная справка OpenAI описывает альтернативы: собственный API-ключ для локальных Cursor Chat и Agent, отдельное расширение Codex IDE внутри Cursor и совместимые AI gateways; при этом BYOK не распространяется на Cursor Tab, Auto, cloud/background agents, CLI, API и SDK.",
+    "published_at": "2026-08-31T11:47:20+00:00",
+    "published_date": "2026-08-31",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI is leaving Cursor in November — here are your 3 options",
+        "publisher": "Tom's Guide",
+        "url": "https://www.tomsguide.com/ai/openai-is-leaving-cursor-in-november-here-are-your-3-options"
+      },
+      {
+        "title": "Using OpenAI models in Cursor",
+        "publisher": "OpenAI Help Center",
+        "url": "https://help.openai.com/en/articles/20001506-using-openai-models-in-cursor"
+      }
+    ],
+    "keywords": [
+      "Cursor",
+      "OpenAI",
+      "Codex IDE extension",
+      "API key",
+      "AI gateway",
+      "coding agents"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "OpenAI интегрировала ChatGPT Health с Epic для клиницистов",
+    "organization": "OpenAI; ChatGPT Health; Epic",
+    "topic": "Интеграция генеративного ИИ с электронными медицинскими картами и клиническими workflow",
+    "event_type": "product integration",
+    "status": "new",
+    "summary": "OpenAI объявила об интеграции ChatGPT Health с Epic: клиницисты смогут импортировать данные из EHR, включая заметки, лабораторные результаты, лекарства и документацию специалистов, а в части развёртываний — обращаться к ChatGPT прямо из интерфейса карты пациента. Доступ к данным заявлен как read-only.",
+    "published_at": "2026-09-01T17:00:00+00:00",
+    "published_date": "2026-09-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "ChatGPT Health adds Epic integration for clinicians to import patient data",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/01/chatgpt-health-adds-epic-integration-for-clinicians-to-import-patient-data/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ChatGPT Health",
+      "Epic",
+      "EHR",
+      "healthcare",
+      "clinicians",
+      "patient data"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Anthropic выпустила Fable и Mythos 5.1 и представила Enterprise Frontier Safeguards",
+    "organization": "Anthropic; Claude Fable 5.1; Claude Mythos 5.1",
+    "topic": "Frontier-модели, agentic coding, корпоративная privacy-архитектура и misuse monitoring",
+    "event_type": "model release and enterprise safety product announcement",
+    "status": "new",
+    "summary": "Anthropic выпустила Fable 5.1 в общий доступ и сохранила Mythos 5.1 для проверенных партнёров в cybersecurity и life sciences. Одновременно компания анонсировала Enterprise Frontier Safeguards: архитектуру, в которой данные мониторинга могут храниться в облачной среде клиента под его ключами, при сохранении автоматического выявления серьёзного misuse.",
+    "published_at": "2026-09-01T19:39:22+00:00",
+    "published_date": "2026-09-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic’s new Fable release is cheaper, less restrictive",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/01/anthropics-new-fable-release-is-cheaper-less-restrictive/"
+      },
+      {
+        "title": "Developing Enterprise Frontier Safeguards with our customers",
+        "publisher": "Anthropic",
+        "url": "https://www.anthropic.com/news/enterprise-frontier-safeguards"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "Fable 5.1",
+      "Mythos 5.1",
+      "Enterprise Frontier Safeguards",
+      "zero data retention",
+      "enterprise AI",
+      "agent costs",
+      "cybersecurity"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Google запустила Google Pics для создания дизайна в Workspace",
+    "organization": "Google; Google Workspace; Google Pics; Nano Banana",
+    "topic": "Генеративный дизайн и AI-интеграции в офисные продукты",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Google представила Google Pics — инструмент генерации и редактирования изображений на базе модели Nano Banana. Он будет доступен клиентам Google Workspace и подписчикам Google AI Pro/Ultra, сначала в Docs и Slides, а затем в Drive.",
+    "published_at": "2026-09-01T17:35:37+00:00",
+    "published_date": "2026-09-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google's answer to Canva is an AI tool where you prompt instead of design",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/01/googles-answer-to-canva-is-an-ai-tool-where-you-prompt-instead-of-design/"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Google Pics",
+      "Google Workspace",
+      "Nano Banana",
+      "image generation",
+      "AI design",
+      "Docs",
+      "Slides"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "NVIDIA и CrowdStrike расширяют сотрудничество в агентной киберзащите",
+    "organization": "NVIDIA",
+    "topic": "NVIDIA and CrowdStrike Strengthen Agentic Cybersecurity Frontier",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "New CrowdStrike SafeMind agentic cybersecurity system built with NVIDIA Nemotron open models delivers greater protection and cost savings for cyber defense.",
+    "published_at": "2026-09-01T21:19:20+00:00",
+    "published_date": "2026-09-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "NVIDIA and CrowdStrike Strengthen Agentic Cybersecurity Frontier",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026"
+      }
+    ],
+    "keywords": [
+      "NVIDIA",
+      "CrowdStrike",
+      "Strengthen",
+      "Agentic",
+      "Cybersecurity",
+      "Frontier"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "russia",
+    "headline": "Власти обсуждают налоговые льготы для разработчиков отечественных суверенных и национальных ИИ-моделей",
+    "organization": "АНО «Цифровая экономика»; Минцифры России; российские разработчики больших фундаментальных моделей",
+    "topic": "Государственная поддержка и экономическое регулирование российских больших фундаментальных ИИ-моделей",
+    "event_type": "policy proposal",
+    "status": "new",
+    "summary": "«Ведомости» сообщили, что в рамках подготовки подзаконных актов к вступившему в июле закону об ИИ обсуждаются меры стимулирования создателей национальных и суверенных больших фундаментальных моделей: региональный инвестиционный вычет по налогу на прибыль для расходов на создание моделей и оборудование, а также пониженные социальные взносы. В предложениях АНО «Цифровая экономика», направленных в Минцифры в конце июля, предполагается лимит льготы до 20 млрд руб. на одну организацию до 2030 года при пятикратном объеме собственных вложений.",
+    "published_at": "2026-09-02T00:50:23+03:00",
+    "published_date": "2026-09-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Власти обсуждают налоговые льготы разработчикам отечественных ИИ-моделей",
+        "publisher": "Ведомости",
+        "url": "https://www.vedomosti.ru/technology/articles/2026/09/02/1225447-vlasti-obsuzhdayut-lgoti-razrabotchikam-otechestvennih-ii-modelei?from=newsline"
+      }
+    ],
+    "keywords": [
+      "Россия",
+      "ИИ",
+      "суверенные модели",
+      "национальные модели",
+      "Минцифры",
+      "налоговый вычет",
+      "социальные взносы",
+      "господдержка"
+    ],
+    "geography": "russia",
+    "category": "regulation"
+  }
+]
