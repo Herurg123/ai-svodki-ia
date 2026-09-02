@@ -64,10 +64,12 @@ class PrimaryZeroOutcomeTests(unittest.TestCase):
     def test_nonempty_source_pool_with_zero_model_rows_is_distinct(self):
         sources = [{"title": "Source", "url": "https://example.com/a"}]
         result = pzo.classify_direction(row(sources=sources))
-        self.assertEqual(result["outcome"], "provider_sources_present_no_candidate")
+        self.assertEqual(
+            result["outcome"], "provider_sources_present_no_candidate_or_rejection"
+        )
         self.assertEqual(result["consulted_source_count"], 1)
 
-    def test_model_rejections_win_over_generic_raw_zero(self):
+    def test_model_rejections_are_reported_without_event_level_causality_claim(self):
         result = pzo.classify_direction(
             row(
                 sources=[{"url": "https://example.com/a"}],
@@ -81,7 +83,8 @@ class PrimaryZeroOutcomeTests(unittest.TestCase):
                 ],
             )
         )
-        self.assertEqual(result["outcome"], "model_rejected_all")
+        self.assertEqual(result["outcome"], "model_rejections_only")
+        self.assertEqual(result["source_metadata_state"], "present")
 
     def test_raw_candidate_validator_rejection_is_not_raw_zero(self):
         result = pzo.classify_direction(
@@ -138,7 +141,7 @@ class PrimaryZeroOutcomeTests(unittest.TestCase):
             diag["raw_zero_outcome_counts"],
             {
                 "provider_source_metadata_unavailable": 1,
-                "provider_sources_present_no_candidate": 1,
+                "provider_sources_present_no_candidate_or_rejection": 1,
             },
         )
 
