@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import argparse
@@ -7,6 +6,8 @@ import os
 import re
 from pathlib import Path
 from typing import Any
+
+from discovery_health import evaluate_discovery_health
 
 REPORT_ROOT = Path("automation/preview/production-daily")
 
@@ -304,8 +305,63 @@ def completed_editorial_stop() -> bool:
     )
 
 
+def build_discovery_health(publication_date: str) -> dict[str, Any]:
+    """Read existing retrieval reports and compute zero-paid health diagnostics."""
+    publication_dir = find_publication_dir(publication_date)
+
+    def report(name: str) -> Any:
+        dated = read_json_if_exists(REPORT_ROOT / f"{name}-{publication_date}.json")
+        if dated is not None:
+            return dated
+        if publication_dir is not None:
+            return read_json_if_exists(publication_dir / f"{name}.json")
+        return None
+
+    return evaluate_discovery_health(
+        primary=report("primary-recall"),
+        pulse=report("source-pulse"),
+        agency=report("agency-discovery-rescue"),
+        hybrid=report("hybrid-completeness"),
+        coverage=read_json_if_exists(REPORT_ROOT / "coverage-audit.json"),
+    )
+
+
 def markdown_bool(value: bool) -> str:
     return "✅ завершён" if value else "➖ не завершён"
+
+
+def discovery_health_summary_lines(publication_date: str) -> list[str]:
+    health = build_discovery_health(publication_date)
+    status = str(health.get("status") or "indeterminate")
+    labels = {
+        "healthy": "✅ healthy",
+        "degraded": "⚠️ degraded",
+        "indeterminate": "❓ indeterminate",
+    }
+    lane_labels = {
+        "primary": "Primary",
+        "source_pulse": "Source Pulse",
+        "major_agencies": "Major agencies",
+        "hybrid": "Hybrid",
+        "coverage": "Coverage",
+    }
+    lines = [
+        "",
+        "### Discovery health",
+        f"- **Общий статус:** `{labels.get(status, status)}`",
+        "- **Story volume:** не используется как доказательство здоровья retrieval",
+        "- **Дополнительные API/Web Search:** 0 / 0",
+    ]
+    lanes = health.get("lanes") if isinstance(health.get("lanes"), dict) else {}
+    for name in ("primary", "source_pulse", "major_agencies", "hybrid", "coverage"):
+        lane = lanes.get(name) if isinstance(lanes.get(name), dict) else {}
+        lane_status = str(lane.get("status") or "indeterminate")
+        reasons = [str(item) for item in lane.get("reasons") or [] if str(item)]
+        suffix = f"; {', '.join(reasons)}" if reasons else ""
+        lines.append(
+            f"- **{lane_labels[name]}:** `{labels.get(lane_status, lane_status)}`{suffix}"
+        )
+    return lines
 
 
 def coverage_audit_summary_lines() -> list[str]:
@@ -423,6 +479,7 @@ def build_summary(
             f"- Изображение: {markdown_bool(states['image'])}",
             f"- Promotion: {markdown_bool(states['promoted'])}",
         ]
+        lines.extend(discovery_health_summary_lines(publication_date))
         lines.extend(coverage_audit_summary_lines())
         return "\n".join(lines) + "\n", None
 
@@ -450,6 +507,7 @@ def build_summary(
             f"- Изображение: {markdown_bool(states['image'])}",
             f"- Promotion: {markdown_bool(states['promoted'])}",
         ]
+        lines.extend(discovery_health_summary_lines(publication_date))
         lines.extend(coverage_audit_summary_lines())
         return "\n".join(lines) + "\n", None
 
@@ -512,6 +570,7 @@ def build_summary(
         "### Безопасное следующее действие",
         action,
     ]
+    lines.extend(discovery_health_summary_lines(publication_date))
     lines.extend(coverage_audit_summary_lines())
     annotation = f"{stage}: {reason}"
     return "\n".join(lines) + "\n", annotation
@@ -537,6 +596,7 @@ def main() -> int:
             run_url=args.run_url,
             commit_sha=args.commit_sha,
         )
+        discovery_health = build_discovery_health(args.publication_date)
         report = {
             "status": (
                 "editorial_stop"
@@ -547,6 +607,7 @@ def main() -> int:
             "job_status": args.job_status,
             "annotation": annotation,
             "run_url": args.run_url,
+            "discovery_health": discovery_health,
         }
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(
