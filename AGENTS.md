@@ -20,8 +20,9 @@ Before declaring a material change complete:
    change;
 3. run the relevant offline checks;
 4. for retrieval/search architecture changes, perform the project-required
-   architecture-wide dependency/regression audit and controlled experiment before
-   production use.
+   architecture-wide dependency/regression audit and independently compare the
+   current baseline with the proposed version against
+   `automation/specs/search-change-validation-matrix.md` before production use.
 
 ## GitHub change workflow
 
@@ -194,6 +195,19 @@ merely as cleanup. Such a refactor requires proof that public imports,
 monkeypatch/test hooks, saved-artifact recovery and source-inspection contract
 tests remain compatible. A semantic retrieval change must not be mixed into a
 compatibility cleanup.
+
+Any semantic change to search/retrieval/news-collection architecture must be
+validated independently before production use against
+`automation/specs/search-change-validation-matrix.md`. The proposed version and
+the current production baseline must be exercised on the same controlled inputs
+or saved artifacts across relevant volume, overlap/identity, regional, freshness,
+degradation, budget, continuity, ordering and recovery states. Do not validate
+only a happy path: cover pairwise intersections for every dimension affected by
+the change and explicit critical three-way combinations for known incident
+shapes. A new retrieval incident must enrich the canonical matrix and reusable
+regression fixtures rather than being treated as a one-off exception. The matrix
+is a minimum baseline and must not be reduced without a separate explicit owner
+decision.
 
 The normal Hybrid ceiling is four Web Search operations. One conditional fifth
 Hybrid operation is permitted **only** when Search-derived `regional_health`
