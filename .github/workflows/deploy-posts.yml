@@ -14,12 +14,6 @@ on:
         required: false
         default: main
         type: string
-  push:
-    branches:
-      - main
-    paths:
-      - "posts/**"
-      - ".github/workflows/deploy-posts.yml"
 
 permissions:
   contents: read
