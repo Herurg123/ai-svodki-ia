@@ -15,7 +15,10 @@
     "max_selected_per_publisher_soft": 2,
     "max_selected_per_organization_soft": 2,
     "override_requires_reason": true,
-    "short_pool_soft_limits_may_reduce_selection": false
+    "short_pool_soft_limits_may_reduce_selection": false,
+    "publisher_identity_field": "primary_source.publisher",
+    "publisher_identity_rule": "Для publisher diversity каждый выбранный кандидат считается по primary_source.publisher; supporting_sources и источник, процитированный в article_html, не меняют издателя кандидата.",
+    "pre_response_publisher_check": "Перед возвратом JSON пересчитай selected_candidate_ids по primary_source.publisher. Если число сюжетов одного издателя превышает max_selected_per_publisher_soft, замени лишний сопоставимый сюжет либо добавь обоснованный publisher diversity_override только для независимых событий высокой значимости."
   },
   "candidate_selection": {
     "verification_required_for_selection": "verified",
