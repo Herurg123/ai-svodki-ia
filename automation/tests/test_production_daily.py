@@ -111,9 +111,10 @@ class ProductionDailyTests(unittest.TestCase):
         self.assertNotIn("starts automatically after the posts/** push", daily)
         self.assertNotIn("gh workflow run deploy-posts.yml", daily)
         self.assertIn("workflow_call:", deploy)
+        self.assertIn("workflow_dispatch:", deploy)
         self.assertIn("inputs.ref || github.sha", deploy)
+        self.assertNotIn("\n  push:\n", deploy)
         self.assertNotIn("dzen-test/**", deploy)
-        self.assertIn('".github/workflows/deploy-posts.yml"', deploy)
         self.assertIn("FTP-синхронизация posts", deploy)
 
     def test_short_digest_notice_follows_cover_in_rss(self):
