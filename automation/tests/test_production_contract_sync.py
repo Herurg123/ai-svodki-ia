@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 EXPECTED_CRONS = ["17 23 * * *"]
 
+
 class ProductionContractSyncTests(unittest.TestCase):
     def test_config_workflow_and_editorial_thresholds_are_synchronized(self) -> None:
         production = json.loads(
@@ -22,6 +23,9 @@ class ProductionContractSyncTests(unittest.TestCase):
         )
         workflow = (
             ROOT / ".github/workflows/daily-production.yml"
+        ).read_text(encoding="utf-8")
+        deploy_workflow = (
+            ROOT / ".github/workflows/deploy-posts.yml"
         ).read_text(encoding="utf-8")
         promotion = (
             ROOT / "automation/scripts/promote_production_site.py"
@@ -104,6 +108,9 @@ class ProductionContractSyncTests(unittest.TestCase):
             "data.get(\"audit_status\") in {\"complete\", \"complete_with_gaps\"}",
             workflow,
         )
+        self.assertIn("workflow_call:", deploy_workflow)
+        self.assertIn("workflow_dispatch:", deploy_workflow)
+        self.assertNotIn("\n  push:\n", deploy_workflow)
 
     def test_documentation_tracks_current_production_contract(self) -> None:
         root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
@@ -213,6 +220,7 @@ class ProductionContractSyncTests(unittest.TestCase):
                     "maximum_curiosity_stories": 1,
                 },
             )
+
 
 if __name__ == "__main__":
     unittest.main()
