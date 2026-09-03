@@ -79,6 +79,12 @@ def _sync_regional_queries() -> None:
 def _sync_compatibility_hooks() -> None:
     """Mirror public monkeypatch/recovery hooks through all preserved layers."""
     _sync_regional_queries()
+    # Hybrid v3's exceptional double-regional-gap branch calls v2.build_prompt
+    # directly.  A fresh production process therefore has to initialize v2's
+    # preserved original-prompt hook before v3 can enter that branch.  Normal
+    # v2 paths already do this internally; keeping the initialization here makes
+    # the public wrapper safe for both paths without changing search semantics.
+    _v2._ensure_original_prompt_hook()
     for name in (
         "REPOSITORY_ROOT",
         "PRODUCTION_PREVIEW_ROOT",
