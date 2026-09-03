@@ -5,8 +5,13 @@ The established validator remains byte-for-byte in
 ``validate_digest_artifact_base.py``. This entry point replaces only the final
 story/source identity check so a URL legitimately shared by multiple research
 candidates cannot make an otherwise explicit ``candidate_id`` mapping
-ambiguous. The split is an active compatibility seam and should be consolidated
-on the next material artifact-validator refactor or after 2026-10-03.
+ambiguous. It also rejects a narrower provenance conflict: a URL may not be used
+as a final source for one candidate when that same URL is identity-bearing
+(primary/event-origin/source-publication) for another candidate but only
+supporting evidence for the expected candidate.
+
+The split is an active compatibility seam and should be consolidated on the next
+material artifact-validator refactor or after 2026-10-03.
 """
 from __future__ import annotations
 
@@ -29,6 +34,27 @@ for _name in dir(_base):
         globals()[_name] = getattr(_base, _name)
 
 
+def candidate_identity_urls(candidate: Any) -> set[str]:
+    """Return URLs that carry candidate identity, not merely supporting evidence."""
+
+    if not isinstance(candidate, dict):
+        return set()
+
+    urls: set[str] = set()
+    primary = candidate.get("primary_source")
+    if isinstance(primary, dict):
+        primary_url = str(primary.get("url") or "").strip()
+        if primary_url:
+            urls.add(primary_url)
+
+    for field in ("event_origin_url", "source_publication_url"):
+        value = candidate.get(field)
+        if isinstance(value, str) and value.strip():
+            urls.add(value.strip())
+
+    return urls
+
+
 def validate_story_mapping(
     article_html: str,
     candidates_payload: Any,
@@ -44,6 +70,12 @@ def validate_story_mapping(
     while ``stories[].sources`` owns the exact source set selected for each final
     story. Raw candidate URLs remain a provenance boundary: final story sources
     still have to come from the expected candidate.
+
+    A shared supporting URL remains valid unless another candidate in the full
+    research pool owns that URL as primary/event-origin/source-publication
+    identity and the expected candidate does not. That asymmetric identity
+    conflict is rejected even when the contaminated URL was copied into the
+    expected candidate's supporting_sources.
     """
 
     candidates = json_list(candidates_payload, "candidates")
@@ -83,6 +115,7 @@ def validate_story_mapping(
         )
 
     candidate_map: dict[str, set[str]] = {}
+    identity_owners: dict[str, set[str]] = {}
     for candidate in candidates:
         cid = candidate_id(candidate)
         if cid is None:
@@ -101,6 +134,8 @@ def validate_story_mapping(
                 f"Повторяющийся candidate_id: {cid}.",
             )
         candidate_map[cid] = recursive_urls(candidate)
+        for url in candidate_identity_urls(candidate):
+            identity_owners.setdefault(url, set()).add(cid)
 
     missing = [cid for cid in selected_ids if cid not in candidate_map]
     if missing:
@@ -127,7 +162,11 @@ def validate_story_mapping(
 
     for index, block in enumerate(inspector.stories):
         expected_id = selected_ids[index]
-        story = stories[index] if index < len(stories) and isinstance(stories[index], dict) else {}
+        story = (
+            stories[index]
+            if index < len(stories) and isinstance(stories[index], dict)
+            else {}
+        )
 
         expected_headline = normalize_space(str(story.get("headline") or ""))
         actual_headline = normalize_space(str(block.headline or ""))
@@ -166,6 +205,23 @@ def validate_story_mapping(
                 "story_source_not_candidate",
                 f"Источники stories.json для {expected_id} отсутствуют у этого "
                 f"кандидата: {foreign_story_urls}.",
+            )
+
+        identity_conflicts: list[str] = []
+        for url in sorted(story_urls):
+            owners = identity_owners.get(url, set())
+            if owners and expected_id not in owners:
+                rendered_owners = ", ".join(sorted(owners))
+                identity_conflicts.append(f"{url} -> {rendered_owners}")
+        if identity_conflicts:
+            issue(
+                report,
+                "errors",
+                "story_source_identity_conflict",
+                f"Источники stories.json для {expected_id} несут identity другого "
+                "кандидата, но не текущего: "
+                + "; ".join(identity_conflicts)
+                + ".",
             )
 
         block_urls = set(block.links)
