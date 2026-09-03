@@ -1,0 +1,228 @@
+{
+  "fixture_version": 1,
+  "source_run_id": 33716335547,
+  "source_artifact_id": 9878662137,
+  "publication_date": "2026-09-03",
+  "openai_calls_for_replay": 0,
+  "web_search_operations_for_replay": 0,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-004",
+    "cand-005",
+    "cand-006",
+    "cand-008",
+    "cand-009",
+    "cand-002"
+  ],
+  "diversity_overrides": [],
+  "candidates": [
+    {
+      "id": "cand-001",
+      "organization": "Google; Google DeepMind; Gemini",
+      "category": "models",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 5,
+      "legal_scale": "not_applicable",
+      "curiosity_eligible": false,
+      "primary_source": {
+        "title": "Introducing Gemini 3.8 Flash and 3.8 Flash Cyber",
+        "publisher": "Google",
+        "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/3-8-flash-and-3-8-flash-cyber/"
+      }
+    },
+    {
+      "id": "cand-002",
+      "organization": "Tencent; Tencent Hunyuan",
+      "category": "open_source",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 4,
+      "legal_scale": "not_applicable",
+      "curiosity_eligible": false,
+      "primary_source": {
+        "title": "Tencent Open Sources 770B Parameter Hy4 AI Model With 1 Million Token Context",
+        "publisher": "HuggingNews",
+        "url": "https://huggingnews.com/ai/tencent-open-sources-770b-parameter-hy4-ai-model-with-1-million-token-co-949f3594"
+      }
+    },
+    {
+      "id": "cand-003",
+      "organization": "Anthropic; Claude Code",
+      "category": "agents",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 2,
+      "legal_scale": "not_applicable",
+      "curiosity_eligible": false,
+      "primary_source": {
+        "title": "Claude Code v2.1.259",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/claude-code-2.1.259"
+      }
+    },
+    {
+      "id": "cand-004",
+      "organization": "U.S. Department of Justice; OpenAI; The New York Times",
+      "category": "legal",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 4,
+      "legal_scale": "major",
+      "curiosity_eligible": false,
+      "primary_source": {
+        "title": "Trump administration backs OpenAI in New York Times copyright case over training of chatbots",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/justice-department-new-york-times-openai-copyright-dbb22e8e02c660ee5a8644915dec39a4"
+      }
+    },
+    {
+      "id": "cand-005",
+      "organization": "HiddenLayer; Delta-v Capital; Ten Eleven Ventures; Morgan Stanley; Microsoft M12; Booz Allen Hamilton",
+      "category": "security",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 3,
+      "legal_scale": "not_applicable",
+      "curiosity_eligible": false,
+      "primary_source": {
+        "title": "HiddenLayer nabs $100M as enterprises rush to secure their AI deployments",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/02/hiddenlayer-nabs-100m-as-enterprises-rush-to-secure-their-ai-deployments/"
+      }
+    },
+    {
+      "id": "cand-006",
+      "organization": "Meta; Meta AI; Muse",
+      "category": "agents",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 4,
+      "legal_scale": "not_applicable",
+      "curiosity_eligible": false,
+      "primary_source": {
+        "title": "Meta Muse Spark 1.3 Hits 88.8 Coding Score to Match GPT-5.6 Sol",
+        "publisher": "HuggingNews",
+        "url": "https://huggingnews.com/ai/update-meta-muse-spark-13-hits-888-coding-score-to-match-gpt-56-sol-1555bd83"
+      }
+    },
+    {
+      "id": "cand-007",
+      "organization": "Meta; Meta Superintelligence Labs; Muse",
+      "category": "multimodal",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 3,
+      "legal_scale": "not_applicable",
+      "curiosity_eligible": false,
+      "primary_source": {
+        "title": "Meta Launches First Real Time Audio Perception Model Muse Voice Transcribe",
+        "publisher": "HuggingNews",
+        "url": "https://huggingnews.com/ai/meta-launches-first-real-time-audio-perception-model-muse-voice-transcri-c183cb9b"
+      }
+    },
+    {
+      "id": "cand-008",
+      "organization": "Perplexity",
+      "category": "agents",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 3,
+      "legal_scale": "not_applicable",
+      "curiosity_eligible": false,
+      "primary_source": {
+        "title": "Perplexity Ships Hybrid Compute for Mac With Local 27B Model",
+        "publisher": "HuggingNews",
+        "url": "https://huggingnews.com/ai/perplexity-ships-hybrid-compute-for-mac-with-local-27b-model-fae0ac3a"
+      }
+    },
+    {
+      "id": "cand-009",
+      "organization": "Wonderful; Insight Partners; Salesforce; Index Ventures; IVP; Bessemer Venture Partners",
+      "category": "investment",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 3,
+      "legal_scale": "not_applicable",
+      "curiosity_eligible": false,
+      "primary_source": {
+        "title": "Wonderful more than doubles its valuation to $5B in under 6 months",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/02/wonderful-more-than-doubles-its-valuation-to-5b-in-under-6-months/"
+      }
+    },
+    {
+      "id": "cand-010",
+      "organization": "World Labs; Fei-Fei Li",
+      "category": "multimodal",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 3,
+      "legal_scale": "not_applicable",
+      "curiosity_eligible": false,
+      "primary_source": {
+        "title": "World Labs Debuts Atlas, First Multimodal World Model to Reconstruct 3D Space From 1 Photo",
+        "publisher": "HuggingNews",
+        "url": "https://huggingnews.com/ai/world-labs-debuts-atlas-first-multimodal-world-model-to-reconstruct-3d-s-adfc5e08"
+      }
+    },
+    {
+      "id": "cand-011",
+      "organization": "AIR; Sequoia; Greenoaks; Cognition; Wiz",
+      "category": "security",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 2,
+      "legal_scale": "not_applicable",
+      "curiosity_eligible": false,
+      "primary_source": {
+        "title": "AIR raises $50M to help companies vet the skills and add-ons AI agents use",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/01/air-raises-50m-to-help-companies-vet-the-skills-and-add-ons-ai-agents-use/"
+      }
+    },
+    {
+      "id": "cand-012",
+      "organization": "Aslan; Khosla Ventures; XYZ Venture Capital; FBI; Homeland Security Investigations",
+      "category": "security",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "freshness_status": "new_event",
+      "significance_score": 2,
+      "legal_scale": "not_applicable",
+      "curiosity_eligible": false,
+      "primary_source": {
+        "title": "Exclusive: Aslan raises $20.8M for AI undercover agents",
+        "publisher": "Axios",
+        "url": "https://www.axios.com/2026/09/01/aslan-agentic-ai-national-security-funding"
+      }
+    },
+    {
+      "id": "cand-013",
+      "organization": "Google; Gemini CLI",
+      "category": "security",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 2,
+      "legal_scale": "not_applicable",
+      "curiosity_eligible": false,
+      "primary_source": {
+        "title": "Gemini CLI v0.58.0",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/gemini-cli-v0.58.0"
+      }
+    }
+  ]
+}
