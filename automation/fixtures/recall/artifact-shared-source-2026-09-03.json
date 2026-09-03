@@ -1,5 +1,5 @@
 {
-  "fixture_version": 1,
+  "fixture_version": 2,
   "source_run_id": 33719317861,
   "source_artifact_id": 9879665731,
   "publication_date": "2026-09-03",
@@ -28,7 +28,9 @@
             "publisher": "Axios",
             "url": "https://www.axios.com/2026/09/02/meta-debuts-muse-spark-13-as-personal-agent-work-continues"
           }
-        ]
+        ],
+        "event_origin_url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/3-8-flash-and-3-8-flash-cyber/",
+        "source_publication_url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/3-8-flash-and-3-8-flash-cyber/"
       },
       {
         "id": "cand-006",
@@ -44,7 +46,9 @@
             "publisher": "Axios",
             "url": "https://www.axios.com/2026/09/02/meta-debuts-muse-spark-13-as-personal-agent-work-continues"
           }
-        ]
+        ],
+        "event_origin_url": "https://www.axios.com/2026/09/02/meta-debuts-muse-spark-13-as-personal-agent-work-continues",
+        "source_publication_url": "https://huggingnews.com/ai/update-meta-muse-spark-13-hits-888-coding-score-to-match-gpt-56-sol-1555bd83"
       }
     ]
   },
