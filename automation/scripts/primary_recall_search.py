@@ -31,8 +31,15 @@ def __getattr__(name: str) -> Any:
 
 _BASE_RUN_MATRIX = _base.run_primary_recall_matrix
 _BASE_RUN_SEARCH = _base.run_primary_recall_search
+_BASE_BUILD_PROMPT = _base.build_prompt
 RETRIEVAL_QUALITY_CONTRACT_VERSION = 1
 UNRESOLVED_SIGNAL_VERSION = 1
+BUSINESS_QUERY_TREATMENT_VERSION = 1
+BUSINESS_QUERY_DIRECTION_ID = "business_investment_partnerships"
+BUSINESS_QUERY_TREATMENT = (
+    "latest AI investment financing acquisitions partnerships enterprise deals "
+    "revenue monetization ads earnings"
+)
 
 # Stable v2 transport keeps these contracts. The literals remain at the public
 # entrypoint because offline repository tests intentionally guard them:
@@ -171,7 +178,35 @@ def _annotate(research: dict[str, Any], report: dict[str, Any]) -> tuple[dict[st
         target["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
         target["unresolved_signals"] = copy.deepcopy(signals)
         target["regional_health"] = copy.deepcopy(regions)
+        target["business_query_treatment"] = {
+            "version": BUSINESS_QUERY_TREATMENT_VERSION,
+            "direction_id": BUSINESS_QUERY_DIRECTION_ID,
+            "query": BUSINESS_QUERY_TREATMENT,
+            "additional_search_operations": 0,
+        }
     return research, report
+
+
+def build_prompt(*args: Any, **kwargs: Any) -> str:
+    """Apply the A/B-approved business query only to its existing Primary slot."""
+    prompt = _BASE_BUILD_PROMPT(*args, **kwargs)
+    direction = kwargs.get("direction")
+    if not isinstance(direction, dict) or direction.get("id") != BUSINESS_QUERY_DIRECTION_ID:
+        return prompt
+    return prompt + f"""
+
+### Business recall treatment v{BUSINESS_QUERY_TREATMENT_VERSION}
+
+Для направления `{BUSINESS_QUERY_DIRECTION_ID}` фактический query должен быть РОВНО:
+`{BUSINESS_QUERY_TREATMENT}`
+
+Это узкий ranking treatment внутри уже существующего business-прохода. Он сохраняет
+investment/financing/M&A/partnership/enterprise recall и дополнительно покрывает
+крупные AI-driven revenue, monetization, advertising и earnings/outlook события.
+Не превращай это в общий financial-market sweep: кандидат остаётся релевантным
+только если ИИ является существенным драйвером события. Search-operation budget
+не меняется: этот проход по-прежнему выполняет ровно один Web Search.
+"""
 
 
 def run_primary_recall_matrix(*args: Any, **kwargs: Any) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -272,7 +307,9 @@ def _supplement_primary_research(
 def run_primary_recall_search(*args: Any, **kwargs: Any) -> tuple[Path, dict[str, Any]]:
     _sync_paths()
     original = _base.run_primary_recall_matrix
+    original_build_prompt = _base.build_prompt
     _base.run_primary_recall_matrix = run_primary_recall_matrix
+    _base.build_prompt = build_prompt
     try:
         research_path, report = _BASE_RUN_SEARCH(*args, **kwargs)
         return _supplement_primary_research(
@@ -286,3 +323,4 @@ def run_primary_recall_search(*args: Any, **kwargs: Any) -> tuple[Path, dict[str
         raise
     finally:
         _base.run_primary_recall_matrix = original
+        _base.build_prompt = original_build_prompt
