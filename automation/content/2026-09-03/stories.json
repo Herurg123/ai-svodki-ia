@@ -1,0 +1,220 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Google представила Gemini 3.8 Flash и ограниченную для защитников Gemini 3.8 Flash Cyber",
+    "organization": "Google; Google DeepMind; Gemini",
+    "topic": "Новые модели для agentic coding, долгосрочных автономных задач и киберзащиты; API, enterprise и потребительское распространение Gemini 3.8 Flash.",
+    "event_type": "model release",
+    "status": "new",
+    "summary": "Google выпустила Gemini 3.8 Flash как новую основную reasoning- и coding-модель для агентных workflow, а также Gemini 3.8 Flash Cyber — вариант для поиска уязвимостей и автоматизированного исправления, доступный через программу Fairwind ограниченному кругу доверенных защитников.",
+    "published_at": null,
+    "published_date": "2026-09-02",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Introducing Gemini 3.8 Flash and 3.8 Flash Cyber",
+        "publisher": "Google",
+        "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/3-8-flash-and-3-8-flash-cyber/"
+      }
+    ],
+    "keywords": [
+      "Gemini 3.8 Flash",
+      "Gemini 3.8 Flash Cyber",
+      "agentic workflows",
+      "coding",
+      "cybersecurity",
+      "Fairwind Program",
+      "automated patching"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Минюст США поддержал позицию OpenAI о fair use в деле The New York Times",
+    "organization": "U.S. Department of Justice; OpenAI; The New York Times",
+    "topic": "Copyright, обучение LLM на новостных материалах и позиция федерального правительства США в ключевом споре издателей с разработчиком ИИ",
+    "event_type": "court filing / government legal intervention",
+    "status": "new",
+    "summary": "Минюст США подал в федеральный суд документы в поддержку аргумента OpenAI, что обучение языковых моделей на интернет-публикациях защищено доктриной fair use, в споре с The New York Times и другими издателями.",
+    "published_at": null,
+    "published_date": "2026-09-02",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Trump administration backs OpenAI in New York Times’ copyright case over training of chatbots",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/justice-department-new-york-times-openai-copyright-dbb22e8e02c660ee5a8644915dec39a4"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "The New York Times",
+      "U.S. Department of Justice",
+      "copyright",
+      "fair use",
+      "training data",
+      "LLM",
+      "publishers"
+    ],
+    "geography": "world",
+    "category": "legal"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "HiddenLayer привлекла $100 млн на защиту моделей и агентов ИИ",
+    "organization": "HiddenLayer; Delta-v Capital; Ten Eleven Ventures; Morgan Stanley; Microsoft M12; Booz Allen Hamilton",
+    "topic": "Финансирование AI-security компании, развивающей runtime-защиту от prompt injection, манипуляции агентами, вредоносных инструментов и рисков open-weight моделей.",
+    "event_type": "funding",
+    "status": "new",
+    "summary": "HiddenLayer привлекла $100 млн в Series B. Компания защищает AI-модели, агентов и workflows от adversarial-атак, уязвимостей, prompt injection и вредоносного кода; раунд должен поддержать продажи, исследования и выход в Европу и EMEA.",
+    "published_at": "2026-09-02T15:01:23+00:00",
+    "published_date": "2026-09-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "HiddenLayer nabs $100M as enterprises rush to secure their AI deployments",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/02/hiddenlayer-nabs-100m-as-enterprises-rush-to-secure-their-ai-deployments/"
+      }
+    ],
+    "keywords": [
+      "HiddenLayer",
+      "AI security",
+      "agent security",
+      "prompt injection",
+      "runtime protection",
+      "Series B",
+      "M12"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Meta выпустила Muse Spark 1.3 для программирования и агентных задач",
+    "organization": "Meta; Meta AI; Muse",
+    "topic": "Обновление модели Meta для агентного программирования, API-доступа и будущих персональных агентов.",
+    "event_type": "model release",
+    "status": "new",
+    "summary": "Meta выпустила Muse Spark 1.3, обновление своей модели для coding и агентных задач. По данным Axios, модель развёртывается в Muse Code и Meta API, а режим max reasoning компания намерена выпустить после дополнительного safety-тестирования.",
+    "published_at": "2026-09-02T20:54:48+00:00",
+    "published_date": "2026-09-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Meta debuts Muse Spark 1.3 as personal agent work continues",
+        "publisher": "Axios",
+        "url": "https://www.axios.com/2026/09/02/meta-debuts-muse-spark-13-as-personal-agent-work-continues"
+      }
+    ],
+    "keywords": [
+      "Meta",
+      "Muse Spark 1.3",
+      "Muse Code",
+      "Meta Model API",
+      "coding agents",
+      "personal agents",
+      "reasoning"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "Wonderful привлекла $550 млн для корпоративной платформы агентов ИИ",
+    "organization": "Wonderful; Insight Partners; Salesforce; Index Ventures; IVP; Bessemer Venture Partners",
+    "topic": "Финансирование и масштабирование enterprise-платформы Wonderful AI OS для координации AI-агентов, workflows и интеграций с данными компаний.",
+    "event_type": "funding",
+    "status": "new",
+    "summary": "Israeli-Dutch AI-стартап Wonderful объявил раунд Series C на $550 млн при оценке $5 млрд. Компания развивает Wonderful AI OS — платформу для соединения AI-агентов, корпоративных workflows, моделей, данных и существующих интеграций; средства предназначены для ускорения разработки и международного расширения.",
+    "published_at": "2026-09-02T16:04:10+00:00",
+    "published_date": "2026-09-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Wonderful more than doubles its valuation to $5B in under 6 months",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/02/wonderful-more-than-doubles-its-valuation-to-5b-in-under-6-months/"
+      }
+    ],
+    "keywords": [
+      "Wonderful",
+      "AI agents",
+      "enterprise AI",
+      "AI OS",
+      "Series C",
+      "funding",
+      "Salesforce"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Anthropic обновила Claude Code: централизованное управление MCP-серверами",
+    "organization": "Anthropic; Claude Code",
+    "topic": "Enterprise-управление MCP-интеграциями в CLI coding agent",
+    "event_type": "software release",
+    "status": "new",
+    "summary": "По данным release tracker, Claude Code v2.1.259 добавляет managed setting managedMcpServers. Это указывает на новый механизм централизованного управления доступными MCP-серверами в Claude Code.",
+    "published_at": "2026-09-02T21:21:42+00:00",
+    "published_date": "2026-09-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Claude Code v2.1.259",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/claude-code-2.1.259"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "Anthropic",
+      "MCP",
+      "managedMcpServers",
+      "enterprise controls",
+      "coding agent"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Tencent открыла веса Hunyuan Hy4 Preview с контекстом 1 млн токенов",
+    "organization": "Tencent; Tencent Hunyuan",
+    "topic": "Крупная китайская open-weight MoE-модель для coding и продуктивных агентных задач.",
+    "event_type": "model_release",
+    "status": "new",
+    "summary": "Согласно проверенной странице-агрегатору, команда Tencent Hunyuan выпустила open-weight preview Hy4: 770 млрд общих и около 49 млрд активных параметров, 256 routed experts и контекст до 1 млн токенов. Веса распространяются через Hugging Face и GitHub.",
+    "published_at": "2026-09-01T11:47:30+00:00",
+    "published_date": "2026-09-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Tencent Open Sources 770B Parameter Hy4 AI Model With 1 Million Token Context",
+        "publisher": "HuggingNews",
+        "url": "https://huggingnews.com/ai/tencent-open-sources-770b-parameter-hy4-ai-model-with-1-million-token-co-949f3594"
+      }
+    ],
+    "keywords": [
+      "Tencent",
+      "Hunyuan",
+      "Hy4",
+      "open weights",
+      "MoE",
+      "coding",
+      "agents",
+      "1M context"
+    ],
+    "geography": "world",
+    "category": "open_source"
+  }
+]

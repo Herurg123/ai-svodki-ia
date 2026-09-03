@@ -1,0 +1,38 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-03",
+  "slug": "2026-09-03",
+  "title": "ИИ-Сводка на 3 сентября 2026",
+  "description": "Google и Meta выпускают модели для агентов и программирования, Минюст США поддерживает позицию OpenAI в споре с NYT, а рынок вкладывается в защиту ИИ-агентов и корпоративные платформы.",
+  "published_at": "2026-09-03T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-03.png",
+  "topics": [
+    "Gemini 3.8 Flash",
+    "Gemini 3.8 Flash Cyber",
+    "OpenAI",
+    "The New York Times",
+    "fair use",
+    "HiddenLayer",
+    "Muse Spark 1.3",
+    "Wonderful AI OS",
+    "Claude Code",
+    "MCP",
+    "Tencent Hunyuan Hy4",
+    "open-weight модели"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-001, cand-004."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety."
+    }
+  ]
+}

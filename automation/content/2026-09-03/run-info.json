@@ -1,0 +1,142 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-09-03",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-09-03.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-004: источник показывает дату без точного времени.",
+    "cand-012: источник показывает дату без точного времени.",
+    "Одинаковые источники используются несколькими кандидатами: 1; это допустимо и будет проверено на редакторском этапе.",
+    "URL используется в нескольких кандидатах: https://www.axios.com/2026/09/02/meta-debuts-muse-spark-13-as-personal-agent-work-continues (cand-001, cand-006)",
+    "Исследовательский пул перегружен одним издателем: huggingnews (5)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-09-03",
+  "started_at": "2026-09-03T05:33:40+00:00",
+  "finished_at": "2026-09-03T05:34:20+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 48,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "460cb5bd0882073d1e948193787532fcf4c34d774a958a98adcda362ccc04def",
+    "candidates_sha256": "a9bb47d831334220552c5574674bcee8d717a3f71a2a1ef690d4c14b33f7f1e2",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-09-01T04:01:28+03:00",
+      "end_at": "2026-09-03T04:07:02+03:00",
+      "latest_archive_at": "2026-09-02T04:01:28+03:00",
+      "start_date": "2026-09-01",
+      "end_date": "2026-09-03",
+      "latest_archive_date": "2026-09-02"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "6c0adf22d266387b6a4a316cf8aeb1b822f14dc403212d3afeabb955f44dab80",
+    "editorial_sha256": "d1229fe0a535f0df23f9acbefc347ca5a78bebe962d66cf3d347a50fe19ccc8f",
+    "digest_sha256": "c252e97ed7bd7cf22751c37e3a7e04e3b0c23628d50f179c4514ca16c090ff29",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-09-03.png",
+          "normalized_value": "ai-svodka-2026-09-03.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-001, cand-004."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0276cc3a067a7788016a9906b624bc87d1a998e159520bd614",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 130848,
+        "input_tokens_details": {
+          "cache_write_tokens": 130845,
+          "cached_tokens": 0
+        },
+        "output_tokens": 3755,
+        "output_tokens_details": {
+          "reasoning_tokens": 516
+        },
+        "total_tokens": 134603
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 130848,
+    "output_tokens": 3755,
+    "total_tokens": 134603,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "c90ae0911e9fab77db9dd5bed21ae91ac8365b74",
+    "run_id": "33719317861",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-09-03T04:07:02+03:00"
+}
