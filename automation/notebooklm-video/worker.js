@@ -9,6 +9,7 @@ const { XMLParser } = require("fast-xml-parser");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
+const VIDEO_GENERATE_BUTTON_PATTERN = /^Сгенерировать(?: сейчас)?$/i;
 
 let stage = "START";
 let browser = null;
@@ -3533,12 +3534,12 @@ async function startVideoGeneration(config, page, publication, job, state) {
   stage = "START_VIDEO_GENERATION";
   await clickAnyVisible(
     [
-      dialog.getByRole("button", { name: /^Сгенерировать$/i }),
-      page.getByRole("button", { name: /^Сгенерировать$/i }),
-      page.getByText(/^Сгенерировать$/i),
+      dialog.getByRole("button", { name: VIDEO_GENERATE_BUTTON_PATTERN }),
+      page.getByRole("button", { name: VIDEO_GENERATE_BUTTON_PATTERN }),
+      page.getByText(VIDEO_GENERATE_BUTTON_PATTERN),
     ],
     config.uiTimeoutMs,
-    'кнопка "Сгенерировать"'
+    'кнопка "Сгенерировать" / "Сгенерировать сейчас"'
   );
 
   await waitForAnyVisible(
