@@ -1,0 +1,128 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Обновление: NVIDIA согласилась приобрести Hugging Face за $12,93 млрд",
+    "organization": "NVIDIA; Hugging Face",
+    "topic": "Крупная M&A-сделка вокруг основной платформы open-source и open-weight ИИ; контроль над экосистемой распространения моделей, данных и инструментов.",
+    "event_type": "acquisition_agreement",
+    "status": "update",
+    "summary": "NVIDIA объявила о соглашении по покупке Hugging Face за $12,930,300,000. Компания заявила, что Hugging Face останется открытой платформой с поддержкой моделей, фреймворков, облаков и ускорителей разных поставщиков.",
+    "published_at": "2026-09-03T11:56:49+00:00",
+    "published_date": "2026-09-03",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "NVIDIA to Acquire Hugging Face",
+        "publisher": "NVIDIA Blog",
+        "url": "https://blogs.nvidia.com/blog/nvidia-to-acquire-hugging-face/"
+      }
+    ],
+    "keywords": [
+      "NVIDIA",
+      "Hugging Face",
+      "M&A",
+      "open source",
+      "open weight",
+      "AI infrastructure",
+      "developer platform"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Crusoe, по данным Bloomberg, привлекла $3 млрд при оценке $30 млрд",
+    "organization": "Crusoe; Atreides Management; Valor Equity Partners; Mubadala Capital",
+    "topic": "Финансирование крупного AI-инфраструктурного и облачного провайдера, строящего hyperscale дата-центры и поставляющего GPU-мощности.",
+    "event_type": "funding_round",
+    "status": "new",
+    "summary": "TechCrunch со ссылкой на Bloomberg сообщило, что разработчик AI-дата-центров Crusoe привлёк $3 млрд при оценке $30 млрд. Раунд, по этим данным, совместно возглавляют Atreides Management и Valor Equity Partners; среди участников указана Mubadala Capital.",
+    "published_at": "2026-09-04T00:48:42+00:00",
+    "published_date": "2026-09-04",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Crusoe reportedly raises $3B at a $30B valuation",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/03/crusoe-reportedly-raises-3b-at-a-30b-valuation/"
+      }
+    ],
+    "keywords": [
+      "Crusoe",
+      "AI infrastructure",
+      "data centers",
+      "GPU cloud",
+      "funding",
+      "Atreides",
+      "Valor Equity"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Обновление: Meta предложила скидку на Muse Spark в обмен на данные для обучения",
+    "organization": "Meta; Meta AI; Muse Spark",
+    "topic": "Коммерческая политика и сбор данных для улучшения агентной модели Meta Muse Spark: скидка в обмен на разрешение использовать prompts и outputs.",
+    "event_type": "pricing_and_data_policy_update",
+    "status": "update",
+    "summary": "Meta предложила пользователям Muse Spark contributor-тариф: примерно 95%-ную скидку на токены в обмен на согласие передавать prompts и результаты модели для разработки будущих моделей. Muse Spark ориентирована на coding и другие агентные задачи.",
+    "published_at": "2026-09-03T18:19:56+00:00",
+    "published_date": "2026-09-03",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Meta is paying to peek at how you use their latest AI model",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/03/meta-is-paying-to-peek-at-how-you-use-their-latest-ai-model/"
+      }
+    ],
+    "keywords": [
+      "Meta",
+      "Muse Spark",
+      "agentic coding",
+      "training data",
+      "pricing",
+      "prompts",
+      "model outputs"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "Google DeepMind выпустила WeatherNext 3 для Search, Maps и Gemini",
+    "organization": "Google; Google DeepMind; Google Research",
+    "topic": "ИИ для прогнозирования погоды: новая модель высокого разрешения, работа с почасовыми прогнозами и последующая интеграция в массовые продукты Google и облачные сервисы.",
+    "event_type": "model_release_and_product_integration",
+    "status": "new",
+    "summary": "Google DeepMind и Google Research выпустили WeatherNext 3 — модель прогнозирования погоды, которую Google намерена использовать в погодной информации в Search, Google Maps и Gemini, а также предоставить через свои облачные платформы. По данным TechCrunch, модель выдаёт прогнозы с разрешением до 5 км, поддерживает почасовой прогноз и, по утверждению Google, улучшила метрики осадков на 60% относительно WeatherNext 2.",
+    "published_at": "2026-09-03T15:00:00+00:00",
+    "published_date": "2026-09-03",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google’s latest AI weather model gives you no excuse to forget your umbrella",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/03/googles-latest-ai-weather-model-gives-you-no-excuse-to-forget-your-umbrella/"
+      }
+    ],
+    "keywords": [
+      "Google DeepMind",
+      "Google Research",
+      "WeatherNext 3",
+      "weather forecasting",
+      "AI for science",
+      "Google Search",
+      "Google Maps",
+      "Gemini",
+      "Google Cloud"
+    ],
+    "geography": "world",
+    "category": "research"
+  }
+]

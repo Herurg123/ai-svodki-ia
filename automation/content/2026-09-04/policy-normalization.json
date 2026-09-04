@@ -1,0 +1,39 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "article_html.h3[2]",
+      "model_value": "Meta* предложила скидку на Muse Spark в обмен на данные для обучения",
+      "normalized_value": "Обновление: Meta* предложила скидку на Muse Spark в обмен на данные для обучения"
+    },
+    {
+      "field": "article_html.meta_marking",
+      "model_value": "inconsistent",
+      "normalized_value": "first Meta*, subsequent Meta"
+    },
+    {
+      "field": "article_html.short_digest_notice",
+      "model_value": null,
+      "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+    }
+  ],
+  "changed_count": 3,
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После проверки свежести и значимости выбрано 4 сюжетов."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Три выбранных материала TechCrunch описывают независимые значимые события разных типов — финансирование инфраструктуры, коммерческую политику агентной модели и специализированный научный релиз. При коротком пуле их исключение только ради мягкого лимита снизило бы содержательность выпуска."
+    }
+  ]
+}

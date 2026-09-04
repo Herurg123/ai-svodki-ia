@@ -9,9 +9,35 @@
   <link>https://rybalka.one/posts/</link>
   <description>Десять полнотекстовых аналитических статей об искусственном интеллекте.</description>
   <language>ru</language>
-  <lastBuildDate>Thu, 03 Sep 2026 06:00:00 +0300</lastBuildDate>
+  <lastBuildDate>Fri, 04 Sep 2026 06:00:00 +0300</lastBuildDate>
   <dc:creator>ИИ-сводки</dc:creator>
   <atom:link href="https://rybalka.one/posts/rss.xml" rel="self" type="application/rss+xml" />
+
+  <item>
+    <title>ИИ-Сводка на 4 сентября 2026</title>
+    <link>https://rybalka.one/posts/2026-09-04/</link>
+    <guid isPermaLink="true">https://rybalka.one/posts/2026-09-04/</guid>
+    <pubDate>Fri, 04 Sep 2026 06:00:00 +0300</pubDate>
+    <dc:creator>ИИ-сводки</dc:creator>
+    <category>Статья</category>
+    <category>ИИ</category>
+    <category>Технологии</category>
+    <category>native-yes</category>
+    <media:rating scheme="urn:simple">nonadult</media:rating>
+    <enclosure url="https://rybalka.one/posts/images/ai-svodka-2026-09-04.png" type="image/png" length="2315319" />
+    <media:content url="https://rybalka.one/posts/images/ai-svodka-2026-09-04.png" medium="image" type="image/png" />
+    <media:thumbnail url="https://rybalka.one/posts/images/ai-svodka-2026-09-04.png" />
+    <description><![CDATA[<p>NVIDIA покупает Hugging Face, Crusoe привлекает $3 млрд, Meta предлагает скидку за данные для обучения, а Google выводит WeatherNext 3 в массовые сервисы.</p>]]></description>
+    <content:encoded><![CDATA[<figure>
+<img src="https://rybalka.one/posts/images/ai-svodka-2026-09-04.png" alt="ИИ-Сводка на 4 сентября 2026">
+<figcaption>Главные новости искусственного интеллекта за 4 сентября 2026 года</figcaption>
+</figure>
+<p><em>Новостей сегодня меньше, чем обычно</em></p>
+<p>В центре повестки — контроль над инфраструктурой и данными, на которых строится следующий этап развития ИИ. NVIDIA закрепляет сделку вокруг Hugging Face, а облачные и модельные компании ищут капитал и реальные пользовательские следы для масштабирования.</p><p>Одновременно Google показывает, что специализированные модели всё активнее выходят из исследовательских лабораторий в массовые продукты — от поиска до карт и ассистентов.</p><h2>Мировые лидеры ИИ</h2><h3>Обновление: NVIDIA согласилась приобрести Hugging Face за $12,93 млрд</h3><p>NVIDIA объявила о соглашении по покупке Hugging Face за $12 930 300 000. Это существенное развитие августовских сообщений о возможной продаже платформы: теперь сделка и её сумма подтверждены самой NVIDIA в <a href="https://blogs.nvidia.com/blog/nvidia-to-acquire-hugging-face/">официальном объявлении</a>.</p><p>NVIDIA заявляет, что Hugging Face сохранит поддержку open-source и open-weight моделей, разных облаков и ускорителей. Однако структура интеграции, условия закрытия и необходимые регуляторные согласования пока не раскрыты. Для рынка сделка важна тем, что ключевая площадка распространения моделей и инструментов переходит к крупнейшему поставщику ИИ-ускорителей.</p><h3>Crusoe, по данным Bloomberg, привлекла $3 млрд при оценке $30 млрд</h3><p>Crusoe привлекла $3 млрд при оценке $30 млрд, сообщает <a href="https://techcrunch.com/2026/09/03/crusoe-reportedly-raises-3b-at-a-30b-valuation/">TechCrunch</a> со ссылкой на Bloomberg. По этим данным, раунд совместно возглавляют Atreides Management и Valor Equity Partners, а среди участников названа Mubadala Capital.</p><p>Crusoe строит дата-центры и предоставляет GPU-мощности для ИИ-нагрузок; издание называет среди её клиентов Meta*, Microsoft и OpenAI. Официального объявления компании о раунде в доступном пуле нет, поэтому параметры сделки следует считать данными СМИ. Но масштаб финансирования показывает, что капитал продолжает концентрироваться у операторов вычислительной инфраструктуры.</p><h3>Обновление: Meta предложила скидку на Muse Spark в обмен на данные для обучения</h3><p>Meta ввела для клиентов Muse Spark contributor-тариф: пользователи получают примерно 95%-ную скидку на токены, если разрешают использовать их запросы и ответы модели для разработки будущих систем. Как сообщает <a href="https://techcrunch.com/2026/09/03/meta-is-paying-to-peek-at-how-you-use-their-latest-ai-model/">TechCrunch</a>, стандартные цены составляют $1,25 за миллион входных и $4,25 за миллион выходных токенов, а на contributor-тарифе — $0,10 и $0,20 соответственно.</p><p>Это отдельное обновление после релиза Muse Spark 1.3: Meta превращает доступ к реальным следам агентного использования в прямой ценовой стимул. Такая схема может удешевить эксперименты разработчиков, но требует особенно внимательно читать условия обработки данных: речь идёт не просто о телеметрии, а о разрешении использовать prompts и outputs для обучения.</p><h3>Google DeepMind выпустила WeatherNext 3 для Search, Maps и Gemini</h3><p>Google DeepMind и Google Research выпустили WeatherNext 3 — модель прогнозирования погоды, которую компания намерена внедрить в погодные функции Search, Google Maps и Gemini, а также предоставить через облачные сервисы. По данным <a href="https://techcrunch.com/2026/09/03/googles-latest-ai-weather-model-gives-you-no-excuse-to-forget-your-umbrella/">TechCrunch</a>, модель строит прогнозы с разрешением до 5 км и поддерживает почасовой шаг.</p><p>Google заявляет, что WeatherNext 3 улучшила оценку осадков на 60% относительно WeatherNext 2. Это заявление компании, а не универсальная независимая оценка, и полное техническое описание в пуле не представлено. Важность релиза — в канале распространения: специализированная научная модель сразу становится частью продуктов, которыми пользуются массовая аудитория, исследователи и бизнес.</p><h2>Что это значит</h2><ol><li>Покупка Hugging Face делает NVIDIA влиятельнее не только в поставках ускорителей, но и в экосистеме моделей, датасетов и инструментов разработчиков.</li><li>Раунд Crusoe подтверждает, что инвестиционный спрос сохраняется на уровне операторов GPU-облаков и дата-центров, а не только разработчиков базовых моделей.</li><li>Льготный тариф Meta показывает новый рынок данных для post-training: компании начинают платить пользователям скидкой за доступ к практическим traces агентных задач.</li><li>Пользователям и организациям придётся разделять экономию на ИИ-сервисах и условия обработки своих запросов, результатов и рабочих данных.</li><li>WeatherNext 3 иллюстрирует расширение ИИ за пределы универсальных LLM: прикладные научные модели становятся потребительскими и облачными сервисами.</li></ol>
+<h2>Все ИИ-Сводки</h2><p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>
+<p><em>*Meta и ее сервисы - в России запрещены</em></p>
+<p class="digest-footer" style="text-align:center;margin:32px 0 0;"><a href="https://dzen.ru/rybv" target="_blank" rel="noopener noreferrer"><img src="https://rybalka.one/posts/_footer-scr.png" alt="Подписаться на канал" style="display:block;max-width:50%;width:auto;height:auto;margin:0 auto;"></a></p>]]></content:encoded>
+  </item>
 
   <item>
     <title>ИИ-Сводка на 3 сентября 2026</title>

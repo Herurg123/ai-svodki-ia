@@ -1,164 +1,16 @@
+Ты — редактор ежедневного аналитического выпуска «ИИ-сводка».
+
+Дата выпуска: 2026-09-04
+Обычная цель минимального числа сюжетов: 7
+Максимальное число сюжетов: 12
+
+Контекст предыдущих выпусков для проверки повторов:
+=== ARCHIVE_CONTEXT_BEGIN ===
 {
   "version": 2,
-  "generated_at": "2026-09-04T01:12:08+00:00",
+  "generated_at": "2026-09-04T00:58:48+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
-    {
-      "date": "2026-09-04",
-      "published_at": "2026-09-04T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-04T03:58:49+03:00",
-      "title": "ИИ-Сводка на 4 сентября 2026",
-      "link": "https://rybalka.one/posts/2026-09-04/",
-      "summary": "Главные новости искусственного интеллекта за 4 сентября 2026 года Новостей сегодня меньше, чем обычно В центре повестки — контроль над инфраструктурой и данными, на которых строится следующий этап развития ИИ. NVIDIA закрепляет сделку вокруг Hugging Face, а облачные и модельные компании ищут капитал и реальные пользовательские следы для масштабирования. Одновременно Google показывает, что специализированные модели всё активнее выходят из исследовательских лабораторий в массовые продукты — от пои",
-      "topics": [
-        "NVIDIA",
-        "Hugging Face",
-        "M&A",
-        "Crusoe",
-        "ИИ-инфраструктура",
-        "GPU-облака",
-        "Meta",
-        "Muse Spark",
-        "обучающие данные",
-        "WeatherNext 3",
-        "Google DeepMind",
-        "прогнозирование погоды"
-      ],
-      "source_urls": [
-        "https://blogs.nvidia.com/blog/nvidia-to-acquire-hugging-face/",
-        "https://techcrunch.com/2026/09/03/crusoe-reportedly-raises-3b-at-a-30b-valuation/",
-        "https://techcrunch.com/2026/09/03/meta-is-paying-to-peek-at-how-you-use-their-latest-ai-model/",
-        "https://techcrunch.com/2026/09/03/googles-latest-ai-weather-model-gives-you-no-excuse-to-forget-your-umbrella/"
-      ],
-      "stories": [
-        {
-          "candidate_id": "cand-001",
-          "section": "world",
-          "headline": "Обновление: NVIDIA согласилась приобрести Hugging Face за $12,93 млрд",
-          "organization": "NVIDIA; Hugging Face",
-          "topic": "Крупная M&A-сделка вокруг основной платформы open-source и open-weight ИИ; контроль над экосистемой распространения моделей, данных и инструментов.",
-          "event_type": "acquisition_agreement",
-          "status": "update",
-          "summary": "NVIDIA объявила о соглашении по покупке Hugging Face за $12,930,300,000. Компания заявила, что Hugging Face останется открытой платформой с поддержкой моделей, фреймворков, облаков и ускорителей разных поставщиков.",
-          "published_at": "2026-09-03T11:56:49+00:00",
-          "published_date": "2026-09-03",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "NVIDIA to Acquire Hugging Face",
-              "publisher": "NVIDIA Blog",
-              "url": "https://blogs.nvidia.com/blog/nvidia-to-acquire-hugging-face/"
-            }
-          ],
-          "keywords": [
-            "NVIDIA",
-            "Hugging Face",
-            "M&A",
-            "open source",
-            "open weight",
-            "AI infrastructure",
-            "developer platform"
-          ],
-          "geography": "world",
-          "category": "investment"
-        },
-        {
-          "candidate_id": "cand-004",
-          "section": "world",
-          "headline": "Crusoe, по данным Bloomberg, привлекла $3 млрд при оценке $30 млрд",
-          "organization": "Crusoe; Atreides Management; Valor Equity Partners; Mubadala Capital",
-          "topic": "Финансирование крупного AI-инфраструктурного и облачного провайдера, строящего hyperscale дата-центры и поставляющего GPU-мощности.",
-          "event_type": "funding_round",
-          "status": "new",
-          "summary": "TechCrunch со ссылкой на Bloomberg сообщило, что разработчик AI-дата-центров Crusoe привлёк $3 млрд при оценке $30 млрд. Раунд, по этим данным, совместно возглавляют Atreides Management и Valor Equity Partners; среди участников указана Mubadala Capital.",
-          "published_at": "2026-09-04T00:48:42+00:00",
-          "published_date": "2026-09-04",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Crusoe reportedly raises $3B at a $30B valuation",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/09/03/crusoe-reportedly-raises-3b-at-a-30b-valuation/"
-            }
-          ],
-          "keywords": [
-            "Crusoe",
-            "AI infrastructure",
-            "data centers",
-            "GPU cloud",
-            "funding",
-            "Atreides",
-            "Valor Equity"
-          ],
-          "geography": "world",
-          "category": "infrastructure"
-        },
-        {
-          "candidate_id": "cand-005",
-          "section": "world",
-          "headline": "Обновление: Meta предложила скидку на Muse Spark в обмен на данные для обучения",
-          "organization": "Meta; Meta AI; Muse Spark",
-          "topic": "Коммерческая политика и сбор данных для улучшения агентной модели Meta Muse Spark: скидка в обмен на разрешение использовать prompts и outputs.",
-          "event_type": "pricing_and_data_policy_update",
-          "status": "update",
-          "summary": "Meta предложила пользователям Muse Spark contributor-тариф: примерно 95%-ную скидку на токены в обмен на согласие передавать prompts и результаты модели для разработки будущих моделей. Muse Spark ориентирована на coding и другие агентные задачи.",
-          "published_at": "2026-09-03T18:19:56+00:00",
-          "published_date": "2026-09-03",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Meta is paying to peek at how you use their latest AI model",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/09/03/meta-is-paying-to-peek-at-how-you-use-their-latest-ai-model/"
-            }
-          ],
-          "keywords": [
-            "Meta",
-            "Muse Spark",
-            "agentic coding",
-            "training data",
-            "pricing",
-            "prompts",
-            "model outputs"
-          ],
-          "geography": "world",
-          "category": "agents"
-        },
-        {
-          "candidate_id": "cand-009",
-          "section": "world",
-          "headline": "Google DeepMind выпустила WeatherNext 3 для Search, Maps и Gemini",
-          "organization": "Google; Google DeepMind; Google Research",
-          "topic": "ИИ для прогнозирования погоды: новая модель высокого разрешения, работа с почасовыми прогнозами и последующая интеграция в массовые продукты Google и облачные сервисы.",
-          "event_type": "model_release_and_product_integration",
-          "status": "new",
-          "summary": "Google DeepMind и Google Research выпустили WeatherNext 3 — модель прогнозирования погоды, которую Google намерена использовать в погодной информации в Search, Google Maps и Gemini, а также предоставить через свои облачные платформы. По данным TechCrunch, модель выдаёт прогнозы с разрешением до 5 км, поддерживает почасовой прогноз и, по утверждению Google, улучшила метрики осадков на 60% относительно WeatherNext 2.",
-          "published_at": "2026-09-03T15:00:00+00:00",
-          "published_date": "2026-09-03",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Google’s latest AI weather model gives you no excuse to forget your umbrella",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/09/03/googles-latest-ai-weather-model-gives-you-no-excuse-to-forget-your-umbrella/"
-            }
-          ],
-          "keywords": [
-            "Google DeepMind",
-            "Google Research",
-            "WeatherNext 3",
-            "weather forecasting",
-            "AI for science",
-            "Google Search",
-            "Google Maps",
-            "Gemini",
-            "Google Cloud"
-          ],
-          "geography": "world",
-          "category": "research"
-        }
-      ]
-    },
     {
       "date": "2026-09-03",
       "published_at": "2026-09-03T06:00:00+03:00",
@@ -9751,3 +9603,1204 @@
     }
   ]
 }
+=== ARCHIVE_CONTEXT_END ===
+
+Проверенный исследовательский пул:
+=== CANDIDATES_CONTEXT_BEGIN ===
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-09-04",
+  "search_window": {
+    "start_at": "2026-09-02T04:07:02+03:00",
+    "end_at": "2026-09-04T03:58:49+03:00",
+    "latest_archive_at": "2026-09-03T04:07:02+03:00",
+    "start_date": "2026-09-02",
+    "end_date": "2026-09-04",
+    "latest_archive_date": "2026-09-03"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=3, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=3, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "NVIDIA согласилась приобрести Hugging Face за $12,93 млрд",
+      "organization": "NVIDIA; Hugging Face",
+      "published_date": "2026-09-03",
+      "published_at": "2026-09-03T11:56:49+00:00",
+      "time_precision": "datetime",
+      "topic": "Крупная M&A-сделка вокруг основной платформы open-source и open-weight ИИ; контроль над экосистемой распространения моделей, данных и инструментов.",
+      "event_type": "acquisition_agreement",
+      "keywords": [
+        "NVIDIA",
+        "Hugging Face",
+        "M&A",
+        "open source",
+        "open weight",
+        "AI infrastructure",
+        "developer platform"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "official",
+      "primary_source": {
+        "title": "NVIDIA to Acquire Hugging Face",
+        "publisher": "NVIDIA Blog",
+        "url": "https://blogs.nvidia.com/blog/nvidia-to-acquire-hugging-face/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Nvidia confirms it will buy Hugging Face for $12.9 billion",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/09/03/nvidia-confirms-it-will-buy-hugging-face-for-12-9-billion/"
+        }
+      ],
+      "event_summary": "NVIDIA объявила о соглашении по покупке Hugging Face за $12,930,300,000. Компания заявила, что Hugging Face останется открытой платформой с поддержкой моделей, фреймворков, облаков и ускорителей разных поставщиков.",
+      "verified_facts": [
+        "Официальный блог NVIDIA датирован 3 сентября 2026 года.",
+        "NVIDIA назвала сумму сделки $12,930,300,000.",
+        "NVIDIA заявила, что Hugging Face продолжит поддерживать open-source и open-weight модели, multi-cloud и multi-accelerator workflows.",
+        "По сообщению TechCrunch, это подтверждение последовало за ранее сообщавшимися слухами о сделке."
+      ],
+      "significance": "Сделка переводит ключевую независимую площадку открытой ИИ-экосистемы под контроль крупнейшего поставщика AI-ускорителей и существенно влияет на доступ разработчиков к моделям, инфраструктуре и каналам развёртывания.",
+      "significance_score": 5,
+      "limitations": "Условия закрытия, регуляторные согласования, структура интеграции и финансовые детали помимо объявленной суммы не раскрыты в проверенном первоисточнике.",
+      "archive_status": "update",
+      "archive_reason": "В архиве от 25 августа были только сообщения о возможной продаже Hugging Face; теперь NVIDIA официально подтвердила соглашение о приобретении и сумму сделки.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Первичный источник NVIDIA прямо подтверждает соглашение, сумму и заявленные принципы сохранения открытости платформы.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-03T11:56:49+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-03T11:56:49+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-03T11:56:49+00:00; timestamp проверен Python против effective window. Официальное подтверждение сделки от 3 сентября является существенным новым фактом относительно прежних сообщений о переговорах.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это корпоративная M&A-сделка, а не судебное или регуляторное событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "not_applicable",
+      "event_date": "2026-09-03",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://blogs.nvidia.com/blog/nvidia-to-acquire-hugging-face/",
+      "event_evidence_kind": "official_announcement",
+      "event_date_evidence": "Официальная публикация NVIDIA помечена датой September 3, 2026 и содержит объявление о соглашении.",
+      "id": "cand-001",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://blogs.nvidia.com/blog/nvidia-to-acquire-hugging-face/",
+      "source_published_date": "2026-09-03",
+      "source_published_at": "2026-09-03T11:56:49+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-03T11:56:49+00:00"
+    },
+    {
+      "title": "GoPro договорилась о слиянии со Starman Optical за $285 млн, чтобы выйти на рынок оптических трансиверов для ИИ-дата-центров",
+      "organization": "GoPro; Starman Optical",
+      "published_date": "2026-09-02",
+      "published_at": "2026-09-02T14:43:10+00:00",
+      "time_precision": "datetime",
+      "topic": "Оптические interconnects для ИИ-дата-центров и корпоративная сделка вокруг производства трансиверов в США",
+      "event_type": "merger_and_infrastructure_expansion",
+      "keywords": [
+        "GoPro",
+        "Starman Optical",
+        "optical transceivers",
+        "photonics",
+        "AI data centers",
+        "networking",
+        "M&A"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "GoPro to expand into AI data centers after $285 million merger with optical-photonics company",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/tech-industry/data-centers/gopro-to-expand-into-ai-data-centers-after-usd285-million-merger-with-optical-photonics-company-move-to-solve-camera-makers-financial-woes-move-manufacturing-back-into-the-us"
+      },
+      "supporting_sources": [],
+      "event_summary": "GoPro объявила о сделке со Starman Optical: Starman выплатит акционерам GoPro $285 млн наличными и погасит $92 млн долга. Объединённая компания планирует использовать технологии оптики и imaging GoPro для выпуска американских оптических трансиверов, ориентированных в том числе на растущий спрос со стороны ИИ-дата-центров.",
+      "verified_facts": [
+        "Страница Tom's Hardware датирована 2 сентября 2026 года.",
+        "По данным статьи, Starman Optical выплатит акционерам GoPro $285 млн наличными, или $1,14 за акцию, и погасит $92 млн долга GoPro.",
+        "После сделки нынешние акционеры GoPro должны сохранить 10% объединённой компании.",
+        "Заявленная стратегическая цель сделки — выпуск произведённых в США оптических трансиверов для ИИ-дата-центров."
+      ],
+      "significance": "Это не крупная сделка уровня hyperscaler или производителя ускорителей, но самостоятельный M&A-сигнал о расширении цепочки поставок высокоскоростной оптики для ИИ-кластеров. Нужна редакционная проверка первичного пресс-релиза и статуса одобрения сделки.",
+      "significance_score": 2,
+      "limitations": "Единственный проверенный источник — вторичная технологическая публикация; первичный пресс-релиз упомянут и связан со статьёй, но в рамках прохода его содержимое и дата не были независимо открыты. Сделка ещё требует одобрения акционеров.",
+      "archive_status": "none",
+      "archive_reason": "Не обнаружено совпадения с перечисленными материалами текущего пула или недавнего архива.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Факты о сумме, структуре сделки и целевом рынке приведены в открытой свежей публикации Tom's Hardware; первоисточник сделки требует последующей проверки.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-02T14:43:10Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-02T14:43:10Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-02T14:43:10Z; timestamp проверен Python против effective window. Цитируемая страница опубликована 2 сентября 2026 года и описывает самостоятельное объявление о новой сделке, не совпадающее с архивными сюжетами.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Корпоративная сделка, а не судебное или регуляторное событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не является целью curiosity; кандидат оставлен исключительно как инфраструктурный M&A-сигнал.",
+      "event_date": null,
+      "event_at": null,
+      "event_time_precision": "unknown",
+      "event_origin_url": null,
+      "event_evidence_kind": "unknown",
+      "event_date_evidence": "",
+      "id": "cand-002",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.tomshardware.com/tech-industry/data-centers/gopro-to-expand-into-ai-data-centers-after-usd285-million-merger-with-optical-photonics-company-move-to-solve-camera-makers-financial-woes-move-manufacturing-back-into-the-us",
+      "source_published_date": "2026-09-02",
+      "source_published_at": "2026-09-02T14:43:10+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-02T14:43:10Z"
+    },
+    {
+      "title": "OpenAI столкнулась ещё с 30 исками, связанными со стрельбой в Tumbler Ridge",
+      "organization": "OpenAI; Edelson PC; Sam Altman",
+      "published_date": "2026-09-02",
+      "published_at": "2026-09-02T05:09:00-07:00",
+      "time_precision": "datetime",
+      "topic": "Юридические и safety-риски генеративного ИИ после обвинений в том, что ChatGPT мог содействовать подготовке массового насилия.",
+      "event_type": "litigation",
+      "keywords": [
+        "OpenAI",
+        "ChatGPT",
+        "lawsuits",
+        "Tumbler Ridge",
+        "AI safety",
+        "mass shooting"
+      ],
+      "geography": "world",
+      "category": "legal",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "OpenAI faces 30 more lawsuits tied to Tumbler Ridge shooting",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/02/openai-faces-30-more-lawsuits-tied-to-tumbler-ridge-shooting/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Юридическая фирма Edelson PC подала ещё 30 жалоб против OpenAI от имени людей, связанных со стрельбой в школе Tumbler Ridge. В новых исках, помимо небрежности, впервые заявлено обвинение в пособничестве и подстрекательстве; OpenAI оспаривает изложенные утверждения.",
+      "verified_facts": [
+        "TechCrunch сообщает, что Edelson PC подаёт 30 дополнительных жалоб вслед за семью апрельскими исками.",
+        "По данным публикации, новые жалобы были поданы в калифорнийский суд во вторник.",
+        "Материал отмечает, что OpenAI отвергает утверждение о причастности своего руководителя к решению не уведомлять правоохранителей."
+      ],
+      "significance": "Это крупная новая волна судебных претензий к OpenAI, напрямую связывающая дизайн и safety-процессы массового AI-сервиса с тяжёлым реальным вредом. Сюжет существенно расширяет юридический риск компании и может повлиять на практики threat assessment у разработчиков моделей.",
+      "significance_score": 4,
+      "limitations": "Фактические обвинения в жалобах не установлены судом; первичный docket в ходе этого прохода не был получен. Источник подтверждает факт подачи и позицию сторон, но не доказывает обоснованность претензий.",
+      "archive_status": "none",
+      "archive_reason": "В недавнем архиве нет сюжета о новой волне из 30 исков по Tumbler Ridge.",
+      "recommendation": "exclude",
+      "verification_status": "verified",
+      "verification_notes": "Проверена свежая публикация TechCrunch с конкретными сведениями о числе новых жалоб, суде и комментарии OpenAI; юридические утверждения сохранены как allegations.",
+      "freshness_status": "old_reprint",
+      "freshness_reason": "Event Freshness Proof v1: reliable event date is outside the effective window; origin=https://techcrunch.com/2026/09/02/openai-faces-30-more-lawsuits-tied-to-tumbler-ridge-shooting/; event=2026-09-01.",
+      "legal_scale": "major",
+      "legal_scale_reason": "30 новых гражданских исков против ведущего AI-разработчика по делу о массовом убийстве и с новым обвинением в aiding and abetting являются масштабным самостоятельным юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран по юридической и safety-значимости.",
+      "event_date": "2026-09-01",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/09/02/openai-faces-30-more-lawsuits-tied-to-tumbler-ridge-shooting/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch указывает, что свежие жалобы были поданы в калифорнийский суд во вторник; для публикации от среды, 2 сентября, это 1 сентября 2026 года.",
+      "id": "cand-003",
+      "event_freshness_status": "stale",
+      "event_freshness_reason": "reliable event date is outside the effective window",
+      "event_freshness_rejection_code": "event_freshness_stale"
+    },
+    {
+      "title": "Crusoe, по данным Bloomberg, привлекла $3 млрд при оценке $30 млрд",
+      "organization": "Crusoe; Atreides Management; Valor Equity Partners; Mubadala Capital",
+      "published_date": "2026-09-04",
+      "published_at": "2026-09-04T00:48:42+00:00",
+      "time_precision": "datetime",
+      "topic": "Финансирование крупного AI-инфраструктурного и облачного провайдера, строящего hyperscale дата-центры и поставляющего GPU-мощности.",
+      "event_type": "funding_round",
+      "keywords": [
+        "Crusoe",
+        "AI infrastructure",
+        "data centers",
+        "GPU cloud",
+        "funding",
+        "Atreides",
+        "Valor Equity"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Crusoe reportedly raises $3B at a $30B valuation",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/03/crusoe-reportedly-raises-3b-at-a-30b-valuation/"
+      },
+      "supporting_sources": [],
+      "event_summary": "TechCrunch со ссылкой на Bloomberg сообщило, что разработчик AI-дата-центров Crusoe привлёк $3 млрд при оценке $30 млрд. Раунд, по этим данным, совместно возглавляют Atreides Management и Valor Equity Partners; среди участников указана Mubadala Capital.",
+      "verified_facts": [
+        "Страница TechCrunch опубликована 3 сентября 2026 года в 5:48 PM PDT, что соответствует 4 сентября 2026 года 03:48 по UTC+03:00 и попадает в effective window.",
+        "TechCrunch атрибутирует Bloomberg информацию о раунде $3 млрд при оценке $30 млрд.",
+        "В сообщении названы Atreides Management и Valor Equity Partners как co-leads, а Mubadala Capital — как участник.",
+        "Crusoe описана как AI-infrastructure и cloud-провайдер с клиентами, включая Meta, Microsoft и OpenAI."
+      ],
+      "significance": "Раунд такого масштаба и оценка $30 млрд отражают продолжающуюся концентрацию капитала в поставщиках GPU-облака и кампусах для AI-нагрузок — критическом слое рынка frontier-моделей.",
+      "significance_score": 4,
+      "limitations": "Это вторичное сообщение, основанное на публикации Bloomberg; доступного официального объявления Crusoe о раунде при проверке не найдено.",
+      "archive_status": "none",
+      "archive_reason": "",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Факты проверены по свежей публикации TechCrunch, явно атрибутирующей исходное сообщение Bloomberg; официальный анонс отсутствует в доступной выборке.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-04T00:48:42+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-04T00:48:42+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-04T00:48:42+00:00; timestamp проверен Python против effective window. Сообщение о новом раунде и новой оценке опубликовано в конце effective window; в предоставленном архиве этого события нет.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Финансирование не является legal-событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "not_applicable",
+      "event_date": "2026-09-03",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/09/03/crusoe-reportedly-raises-3b-at-a-30b-valuation/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch 3 сентября сообщает о состоявшемся новом раунде, атрибутируя сведения Bloomberg; первичный анонс недоступен.",
+      "id": "cand-004",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/09/03/crusoe-reportedly-raises-3b-at-a-30b-valuation/",
+      "source_published_date": "2026-09-04",
+      "source_published_at": "2026-09-04T00:48:42+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-04T00:48:42+00:00"
+    },
+    {
+      "title": "Meta ввела резко дисконтированный тариф Muse Spark для клиентов, разрешающих использовать логи и ответы для обучения",
+      "organization": "Meta; Meta AI; Muse Spark",
+      "published_date": "2026-09-03",
+      "published_at": "2026-09-03T18:19:56+00:00",
+      "time_precision": "datetime",
+      "topic": "Коммерческая политика и сбор данных для улучшения агентной модели Meta Muse Spark: скидка в обмен на разрешение использовать prompts и outputs.",
+      "event_type": "pricing_and_data_policy_update",
+      "keywords": [
+        "Meta",
+        "Muse Spark",
+        "agentic coding",
+        "training data",
+        "pricing",
+        "prompts",
+        "model outputs"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Meta is paying to peek at how you use their latest AI model",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/03/meta-is-paying-to-peek-at-how-you-use-their-latest-ai-model/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Meta предложила пользователям Muse Spark contributor-тариф: примерно 95%-ную скидку на токены в обмен на согласие передавать prompts и результаты модели для разработки будущих моделей. Muse Spark ориентирована на coding и другие агентные задачи.",
+      "verified_facts": [
+        "TechCrunch датирует публикацию 3 сентября 2026 года, 11:19 AM PDT.",
+        "По данным издания, обычная цена составляет $1.25 за миллион входных токенов и $4.25 за миллион выходных; contributor-цены — $0.10 и $0.20 соответственно.",
+        "Издание сообщает, что Meta прямо связывает льготный tier с допустимостью обучения на данных клиента.",
+        "Muse Spark уже присутствует в архиве как модельный релиз, но новая схема цен и data-use является отдельным коммерческим обновлением."
+      ],
+      "significance": "Практика превращает доступ к реальным агентным trace-данным в прямой финансовый стимул для клиентов. Это заметный сдвиг в конкуренции за данные, необходимые для post-training и оценки агентных систем.",
+      "significance_score": 3,
+      "limitations": "Проверена публикация TechCrunch; официальный pricing guide упомянут изданием, но его дата и полный набор условий отдельно не верифицированы в доступной навигации.",
+      "archive_status": "update",
+      "archive_reason": "Meta Muse Spark 1.3 уже была в архиве от 3 сентября, однако contributor pricing и разрешение на использование данных для обучения — новый самостоятельный коммерческий и data-governance апдейт.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Технические и ценовые параметры изложены в свежем материале TechCrunch со ссылкой на pricing guide Meta; событие отделено от уже архивированного релиза Muse Spark 1.3.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-03T18:19:56+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-03T18:19:56+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-03T18:19:56+00:00; timestamp проверен Python против effective window. Новая ценовая и data-use политика опубликована в effective window и является существенным обновлением уже освещённого продукта.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это политика продукта и ценообразования, а не правовое производство.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "not_applicable",
+      "event_date": "2026-09-03",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/09/03/meta-is-paying-to-peek-at-how-you-use-their-latest-ai-model/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Свежая публикация TechCrunch от 3 сентября описывает уже действующее предложение Meta; отдельный первичный timestamp pricing guide в доступной выборке не подтверждён.",
+      "id": "cand-005",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/09/03/meta-is-paying-to-peek-at-how-you-use-their-latest-ai-model/",
+      "source_published_date": "2026-09-03",
+      "source_published_at": "2026-09-03T18:19:56+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-03T18:19:56+00:00"
+    },
+    {
+      "title": "Сообщается, что Astra OpenAI использует opaque recurrence, осложняющую мониторинг chain-of-thought",
+      "organization": "OpenAI; Astra; Redwood Research",
+      "published_date": "2026-09-02",
+      "published_at": "2026-09-02T20:19:14+00:00",
+      "time_precision": "datetime",
+      "topic": "Безопасность reasoning-моделей: наблюдаемость цепочек рассуждений, opaque recurrence и риски контроля frontier-систем.",
+      "event_type": "safety_architecture_report",
+      "keywords": [
+        "OpenAI",
+        "Astra",
+        "opaque recurrence",
+        "recurrent depth",
+        "chain of thought",
+        "AI safety"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "OpenAI’s new reasoning technique alarms AI safety experts",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/02/openais-new-reasoning-technique-alarms-ai-safety-experts/"
+      },
+      "supporting_sources": [
+        {
+          "title": "The Information report cited by TechCrunch",
+          "publisher": "The Information",
+          "url": "https://www.theinformation.com/"
+        }
+      ],
+      "event_summary": "TechCrunch сообщает, что в Astra применяется ограниченная техника recurrent depth, или opaque recurrence: модель многократно обрабатывает запрос в петле, оставляя менее читаемые следы рассуждений. Публикация приводит реакцию safety-исследователей и отмечает, что OpenAI заявляет о сохранении читаемости chain-of-thought.",
+      "verified_facts": [
+        "TechCrunch пишет, что информация об использовании recurrent depth в Astra появилась в сообщении The Information.",
+        "Материал характеризует предполагаемое использование техники как ограниченное и передаёт позицию OpenAI о сохранении legible chain-of-thought.",
+        "Публикация фиксирует публичные опасения представителей Redwood Research о снижении monitorability reasoning-моделей."
+      ],
+      "significance": "Это потенциально важный material update к уже архивному сюжету об Astra: вопрос касается не просто способностей модели, а наблюдаемости её рассуждений — одного из ключевых практических механизмов frontier-AI safety.",
+      "significance_score": 3,
+      "limitations": "Техническая информация основана на вторичном репортаже, а не на опубликованной спецификации OpenAI; масштабы и реализация opaque recurrence остаются нераскрытыми.",
+      "archive_status": "update",
+      "archive_reason": "В архиве уже есть выпуск Astra с ограниченным доступом, но отсутствует отдельный факт о recurrent depth/opaque recurrence и его последствиях для мониторинга.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Проверена публикация TechCrunch с ясно размеченными источниками и позицией OpenAI; неустановленные технические детали не представлены как подтверждённые компанией.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-02T20:19:14+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-02T20:19:14+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-02T20:19:14+00:00; timestamp проверен Python против effective window. Новая информация о предполагаемой архитектуре и monitorability Astra дополняет, а не повторяет архивный анонс модели.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "event_date": null,
+      "event_at": null,
+      "event_time_precision": "unknown",
+      "event_origin_url": null,
+      "event_evidence_kind": "unknown",
+      "event_date_evidence": "",
+      "id": "cand-006",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/09/02/openais-new-reasoning-technique-alarms-ai-safety-experts/",
+      "source_published_date": "2026-09-02",
+      "source_published_at": "2026-09-02T20:19:14+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-02T20:19:14+00:00"
+    },
+    {
+      "title": "Сообщается, что Accel обсуждает раунд $1 млрд для Thinking Machines при оценке не менее $40 млрд",
+      "organization": "Thinking Machines Lab; Accel; Mira Murati",
+      "published_date": "2026-09-03",
+      "published_at": "2026-09-03T19:36:29+00:00",
+      "time_precision": "datetime",
+      "topic": "Финансирование frontier-AI-лаборатории и оценка разработчика open-weight моделей и платформы Tinker.",
+      "event_type": "fundraising_report",
+      "keywords": [
+        "Thinking Machines",
+        "Mira Murati",
+        "Accel",
+        "fundraising",
+        "AI lab",
+        "Tinker"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Accel reportedly in talks to lead $1B round for Thinking Machines at $40B valuation",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/03/accel-reportedly-in-talks-to-lead-1b-round-for-thinking-machines-at-40b-valuation/"
+      },
+      "supporting_sources": [
+        {
+          "title": "The Information report cited by TechCrunch",
+          "publisher": "The Information",
+          "url": "https://www.theinformation.com/"
+        }
+      ],
+      "event_summary": "TechCrunch со ссылкой на The Information и собственный источник сообщает, что Thinking Machines обсуждает привлечение $1 млрд при оценке не менее $40 млрд, а Accel ведёт переговоры о лидерстве в раунде. Сделка ещё не закрыта и официально не подтверждена компаниями.",
+      "verified_facts": [
+        "TechCrunch опубликовал сообщение 3 сентября 2026 года в 12:36 PDT.",
+        "Согласно публикации, обсуждаемый объём раунда составляет $1 млрд, а оценка — не менее $40 млрд.",
+        "TechCrunch отмечает, что Accel и Thinking Machines не ответили на запрос о комментарии."
+      ],
+      "significance": "Потенциальный раунд такого размера и оценки для лаборатории, основанной бывшим CTO OpenAI Мирой Мурати, был бы одним из крупнейших новых сигналов аппетита инвесторов к frontier-AI-компаниям.",
+      "significance_score": 3,
+      "limitations": "Это сообщение о переговорах, а не о закрытом раунде: условия, лидер и факт сделки могут измениться.",
+      "archive_status": "none",
+      "archive_reason": "Thinking Machines и данный предполагаемый раунд не фигурируют среди архивных сюжетов и текущего candidate pool.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Проверен первичный материал TechCrunch; подтверждён факт авторитетного сообщения о переговорах, но не подтверждено закрытие финансирования.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-03T19:36:29+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-03T19:36:29+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-03T19:36:29+00:00; timestamp проверен Python против effective window. Новый публичный отчёт о потенциальном крупном раунде опубликован внутри эффективного окна.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "event_date": "2026-09-03",
+      "event_at": "2026-09-03T12:36:00-07:00",
+      "event_time_precision": "datetime",
+      "event_origin_url": "https://techcrunch.com/2026/09/03/accel-reportedly-in-talks-to-lead-1b-round-for-thinking-machines-at-40b-valuation/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Авторитетный вторичный источник впервые публично зафиксировал сообщение о переговорах 3 сентября 2026 года в 12:36 PDT.",
+      "id": "cand-007",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable exact event timestamp is inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/09/03/accel-reportedly-in-talks-to-lead-1b-round-for-thinking-machines-at-40b-valuation/",
+      "source_published_date": "2026-09-03",
+      "source_published_at": "2026-09-03T19:36:29+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-03T19:36:29+00:00"
+    },
+    {
+      "title": "Sparks Fly: NVIDIA Accelerates Local AI at IFA 2026",
+      "organization": "NVIDIA",
+      "published_date": "2026-09-03",
+      "published_at": "2026-09-03T16:00:59+00:00",
+      "time_precision": "datetime",
+      "topic": "Sparks Fly: NVIDIA Accelerates Local AI at IFA 2026",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "Sparks",
+        "Fly",
+        "NVIDIA",
+        "Accelerates",
+        "Local",
+        "at",
+        "IFA",
+        "2026"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Sparks Fly: NVIDIA Accelerates Local AI at IFA 2026",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/local-ai-ifa-next-gen-agents-nv-pair-rtx-spark"
+      },
+      "supporting_sources": [],
+      "event_summary": "At IFA 2026, NVIDIA and partners are providing faster inference and new tools that make agents easier to set up and run locally.",
+      "verified_facts": [
+        "Sparks Fly: NVIDIA Accelerates Local AI at IFA 2026",
+        "At IFA 2026, NVIDIA and partners are providing faster inference and new tools that make agents easier to set up and run locally."
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-09-03T16:00:59+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-03T16:00:59+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-03T16:00:59+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-03T16:00:59+00:00; timestamp проверен Python против effective window. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-09-03T16:00:59+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-008",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://blogs.nvidia.com/blog/local-ai-ifa-next-gen-agents-nv-pair-rtx-spark",
+      "source_published_date": "2026-09-03",
+      "source_published_at": "2026-09-03T16:00:59+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-03T16:00:59+00:00"
+    },
+    {
+      "title": "Google DeepMind выпустила WeatherNext 3 и готовит его интеграцию в Search, Maps и Gemini",
+      "organization": "Google; Google DeepMind; Google Research",
+      "published_date": "2026-09-03",
+      "published_at": "2026-09-03T15:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "ИИ для прогнозирования погоды: новая модель высокого разрешения, работа с почасовыми прогнозами и последующая интеграция в массовые продукты Google и облачные сервисы.",
+      "event_type": "model_release_and_product_integration",
+      "keywords": [
+        "Google DeepMind",
+        "Google Research",
+        "WeatherNext 3",
+        "weather forecasting",
+        "AI for science",
+        "Google Search",
+        "Google Maps",
+        "Gemini",
+        "Google Cloud"
+      ],
+      "geography": "world",
+      "category": "research",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Google’s latest AI weather model gives you no excuse to forget your umbrella",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/03/googles-latest-ai-weather-model-gives-you-no-excuse-to-forget-your-umbrella/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Google DeepMind и Google Research выпустили WeatherNext 3 — модель прогнозирования погоды, которую Google намерена использовать в погодной информации в Search, Google Maps и Gemini, а также предоставить через свои облачные платформы. По данным TechCrunch, модель выдаёт прогнозы с разрешением до 5 км, поддерживает почасовой прогноз и, по утверждению Google, улучшила метрики осадков на 60% относительно WeatherNext 2.",
+      "verified_facts": [
+        "TechCrunch сообщает, что Google DeepMind и Google Research выпустили WeatherNext 3 3 сентября 2026 года.",
+        "Google заявила, что модель будет применяться в погодных функциях Search, Google Maps и Gemini и будет доступна пользователям и исследователям облачных платформ Google.",
+        "В статье указано, что WeatherNext 3 формирует прогнозы с разрешением до 5 км и перешла к почасовым прогнозам вместо стандартного шестичасового шага.",
+        "Материал отдельно отмечает заявление Google об улучшении оценки осадков на 60% по сравнению с WeatherNext 2.",
+        "Сравнительные заявления об абсолютном лидерстве модели принадлежат Google и внешней площадке Operational WeatherBench; их не следует трактовать как независимую универсальную оценку качества."
+      ],
+      "significance": "Это заметный релиз прикладной научной модели с массовым каналом распространения: прогнозная система одновременно выходит в потребительские сервисы Google, Gemini и облачную среду. Событие расширяет роль специализированных foundation-подобных моделей за пределы LLM и затрагивает погодные, энергетические, логистические и исследовательские сценарии.",
+      "significance_score": 4,
+      "limitations": "В доступной проверке основным источником выступает свежий материал TechCrunch; отдельная первичная страница Google с полным техническим описанием и timestamp не была получена. Показатели точности и заявления о лидерстве переданы с явной атрибуцией Google и Operational WeatherBench.",
+      "archive_status": "none",
+      "archive_reason": "В представленном архиве нет отдельного сюжета о WeatherNext 3 или о его интеграции в Search, Maps и Gemini.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверена свежая страница TechCrunch с точным временем публикации, описанием факта выпуска, названными командами Google, планами интеграции и конкретными заявленными характеристиками. Утверждения о качестве сохранены как атрибутированные источнику.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-03T15:00:00+00:00; timestamp проверен Python против effective window. Источник опубликован 3 сентября 2026 года в 08:00 PDT (18:00 UTC+03:00), внутри effective window. Статья прямо описывает выпуск модели «today»; это соответствует 3 сентября 2026 года и не является перепечаткой прежнего релиза.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это исследовательский и продуктовый релиз, не судебное и не регуляторное событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "not_applicable",
+      "event_date": "2026-09-03",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/09/03/googles-latest-ai-weather-model-gives-you-no-excuse-to-forget-your-umbrella/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch, опубликованный 3 сентября, прямо сообщает, что Google DeepMind и Google Research выпустили WeatherNext 3 «today». Первичная страница анонса в ходе прохода не была отдельно подтверждена.",
+      "audit_direction": "general_coverage_gaps",
+      "id": "cand-009",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/09/03/googles-latest-ai-weather-model-gives-you-no-excuse-to-forget-your-umbrella/",
+      "source_published_date": "2026-09-03",
+      "source_published_at": "2026-09-03T15:00:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-03T15:00:00+00:00"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=7, validated unique=7, final candidates=7. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.\nTargeted coverage audit добавил кандидатов: 1.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  }
+}
+=== CANDIDATES_CONTEXT_END ===
+
+Утверждённая машиночитаемая редакционная политика:
+=== EDITORIAL_POLICY_BEGIN ===
+{
+  "spec_version": "2026-08-05",
+  "language": "ru",
+  "timezone": "Europe/Moscow",
+  "story_counts": {
+    "total_target_minimum": 7,
+    "total_target_maximum": 12,
+    "short_digest_minimum": 1,
+    "zero_stories_status": "error",
+    "regional_story_quotas_enabled": false,
+    "short_digest_notice": "Новостей сегодня меньше, чем обычно",
+    "short_digest_notice_html": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+  },
+  "diversity": {
+    "max_selected_per_publisher_soft": 2,
+    "max_selected_per_organization_soft": 2,
+    "override_requires_reason": true,
+    "short_pool_soft_limits_may_reduce_selection": false,
+    "publisher_identity_field": "primary_source.publisher",
+    "publisher_identity_rule": "Для publisher diversity каждый выбранный кандидат считается по primary_source.publisher; supporting_sources и источник, процитированный в article_html, не меняют издателя кандидата.",
+    "pre_response_publisher_check": "Перед возвратом JSON пересчитай selected_candidate_ids по primary_source.publisher. Если число сюжетов одного издателя превышает max_selected_per_publisher_soft, замени лишний сопоставимый сюжет либо добавь обоснованный publisher diversity_override только для независимых событий высокой значимости."
+  },
+  "candidate_selection": {
+    "verification_required_for_selection": "verified",
+    "allowed_freshness_for_selection": [
+      "new_event",
+      "material_update"
+    ],
+    "legal_category": "legal",
+    "legal_scale_required_for_selection": "major",
+    "legal_minimum_significance_score": 4,
+    "curiosity_category": "curiosity",
+    "curiosity_optional": true,
+    "maximum_selected_curiosity_stories": 1,
+    "curiosity_requires_explicit_verification": true
+  },
+  "what_it_means": {
+    "required": true,
+    "minimum_items": 4,
+    "maximum_items": 6,
+    "html_heading": "<h2>Что это значит</h2>",
+    "list_tag": "ol"
+  },
+  "dzen": {
+    "required": true,
+    "heading": "Все ИИ-Сводки",
+    "url": "https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1",
+    "anchor_text": "Архив ИИ-Сводок",
+    "html": "<h2>Все ИИ-Сводки</h2><p><a href=\"https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1\">Архив ИИ-Сводок</a></p>"
+  },
+  "meta_marking": {
+    "enabled": true,
+    "visible_name": "Meta",
+    "first_visible_form": "Meta*",
+    "subsequent_visible_form": "Meta",
+    "footnote_html": "<p><em>*Meta и ее сервисы - в России запрещены</em></p>",
+    "footnote_position": "after_dzen_block",
+    "service_fields_use_asterisk": false
+  },
+  "updates": {
+    "headline_prefix": "Обновление: ",
+    "required_for_archive_status": "update",
+    "forbidden_for_archive_status": "new"
+  },
+  "article": {
+    "introduction_sentences_minimum": 2,
+    "introduction_sentences_maximum": 4,
+    "paragraphs_per_story_minimum": 2,
+    "paragraphs_per_story_maximum": 3,
+    "world_heading": "Мировые лидеры ИИ",
+    "russian_heading": "Российские лидеры ИИ",
+    "allow_missing_russian_section": true,
+    "forbidden_tags": [
+      "h1",
+      "img",
+      "html",
+      "head",
+      "body",
+      "script",
+      "style",
+      "iframe"
+    ],
+    "china_heading": "Китайские лидеры ИИ",
+    "allow_missing_china_section": true
+  },
+  "terminology": {
+    "prefer": {
+      "AI": "ИИ",
+      "AI agent": "агент ИИ"
+    },
+    "keep_untranslated": [
+      "LLM"
+    ],
+    "preserve_company_and_product_names": true,
+    "allow_ai_in_official_names": true
+  },
+  "style": [
+    "ясно",
+    "делово",
+    "живо",
+    "без воды",
+    "без чрезмерного хайпа"
+  ],
+  "tracked_world_organizations": [
+    "OpenAI",
+    "Google DeepMind",
+    "Anthropic",
+    "Meta AI",
+    "Microsoft",
+    "Nvidia",
+    "xAI",
+    "Amazon",
+    "Mistral",
+    "Hugging Face",
+    "Apple",
+    "Cohere"
+  ],
+  "tracked_asia_organizations": [
+    "DeepSeek",
+    "Alibaba",
+    "Qwen",
+    "Baidu",
+    "ERNIE",
+    "Tencent",
+    "Hunyuan",
+    "ByteDance",
+    "Doubao",
+    "Moonshot AI",
+    "Kimi",
+    "Z.ai",
+    "Zhipu AI",
+    "GLM",
+    "MiniMax",
+    "01.AI",
+    "SenseTime",
+    "Pony.ai",
+    "Huawei"
+  ],
+  "tracked_developer_tools": [
+    "IDE",
+    "coding agents",
+    "agentic development environments",
+    "CLI-агенты",
+    "Claude Code",
+    "Cursor",
+    "GitHub Copilot",
+    "OpenCode",
+    "Cline",
+    "GLM",
+    "Qwen",
+    "DeepSeek",
+    "Kimi",
+    "Claude",
+    "GPT",
+    "Gemini"
+  ],
+  "tracked_russian_organizations": [
+    "Яндекс",
+    "Сбер",
+    "VK",
+    "МТС AI",
+    "Т-Банк",
+    "Тинькофф",
+    "Газпромбанк",
+    "Ростелеком"
+  ],
+  "editorial_notes": {
+    "publish_in_article": false,
+    "publish_in_rss": false,
+    "allowed_types": [
+      "source_gap",
+      "low_news_volume",
+      "time_precision",
+      "diversity_override"
+    ]
+  },
+  "stories_file": {
+    "enabled": true,
+    "filename": "stories.json"
+  },
+  "image": {
+    "aspect_ratio": "16:9",
+    "title_template": "ИИ-Сводка на {human_date}",
+    "direct_prompt_to_image_api": true,
+    "restrictions": [
+      "без логотипов компаний",
+      "без дополнительного текста, кроме точного заголовка",
+      "без водяных знаков",
+      "без мелких интерфейсных надписей",
+      "без пустой половины кадра",
+      "без стокового корпоративного клипарта",
+      "без узнаваемых лиц реальных людей",
+      "нейтральные силуэты без идентифицируемых черт допустимы"
+    ]
+  }
+}
+=== EDITORIAL_POLICY_END ===
+
+## 1. Источники данных
+
+Используй только сведения и URL из `CANDIDATES_CONTEXT`. На этом этапе не ищи новые материалы и не добавляй факты по памяти.
+
+Не выбирай кандидатов с `recommendation: exclude`. Не выбирай полноценные дубли.
+Не выбирай include/consider без `verification_status: verified`.
+Не выбирай `freshness_status: old_reprint`: текущая дата перепечатки без нового
+события не делает старый материал новой новостью.
+
+Кандидат с `archive_status: update` допустим только тогда, когда в статье ясно описано существенное новое развитие, а его заголовок начинается с `Обновление:`.
+
+## 2. Отбор
+
+Выбери лучшие подтверждённые сюжеты, но не заполняй выпуск слабыми или старыми материалами ради количества.
+
+Редакционные цели:
+
+- 7–12 сюжетов всего;
+- выбрать все действительно важные сюжеты, которые подтверждены пулом;
+- не добавлять слабые или старые материалы ради объёма.
+
+Legal-кандидат допустим только с `category: legal`, `legal_scale: major`,
+конкретным объяснением масштаба и `significance_score` не ниже 4. Мелкий
+бытовой или локальный спор не выбирай. Из кандидатов `category: curiosity`
+можно выбрать не более одного: только проверяемый, самостоятельно значимый и
+не вытесняющий более важную серьёзную новость.
+
+Числовых квот для китайских и российских новостей нет. Если в
+`CANDIDATES_CONTEXT` есть достойные сюжеты этих направлений, включи столько
+значимых сюжетов, сколько действительно есть. Если подходящих сюжетов нет,
+не создавай соответствующий раздел.
+
+Если исследовательский пул не позволяет собрать обычный объём, выбери всё
+действительно важное. Автоматизация может выполнить ограниченный coverage
+audit, но отсутствие дополнений не является ошибкой и не должно мешать
+публикации короткого выпуска.
+
+Когда после базовых eligibility-проверок достойный пул остаётся меньше
+`MINIMUM_SELECTED_STORIES`, мягкие лимиты разнообразия издателей и организаций
+не могут сами по себе уменьшать число выбранных сюжетов. Не исключай иначе
+достойный `include`/`consider` только ради соблюдения soft publisher/organization
+cap. Для такого исключения нужна самостоятельная содержательная причина,
+не связанная с diversity: недостаточная значимость самого события, слабое
+подтверждение, дубль, устаревание или другое редакционное основание. Если
+достойный сюжет приводит к превышению soft cap, выбери его и зафиксируй
+обоснованный `diversity_override`.
+
+Если найдено от 1 до 6 достойных сюжетов:
+
+- верни `status: ok`;
+- поставь `digest.short_digest: true`;
+- первым элементом `article_html` поставь точный абзац:
+
+```html
+<p><em>Новостей сегодня меньше, чем обычно</em></p>
+```
+
+- добавь в `editorial_notes` запись `low_news_volume`.
+
+Если не найдено ни одного достойного сюжета, верни `status: error` и ясную причину.
+
+Не добавляй фразы вида «по компании новостей нет».
+
+## 3. Разнообразие
+
+Мягкие цели:
+
+- не более двух выбранных сюжетов от одного издателя;
+- не более двух выбранных сюжетов одной компании или организации.
+
+Превышение допустимо только для независимых событий высокой значимости. В таком случае добавь объект в `diversity_overrides`:
+
+- `type`: `publisher` или `organization`;
+- `value`: точное название;
+- `reason`: конкретное объяснение.
+
+Без причины превышение недопустимо.
+
+Для короткого пула меньше обычной минимальной цели эти лимиты являются только
+балансирующим сигналом: превышение всё ещё требует `diversity_override`, но
+сам soft limit не является основанием удалить иначе достойный сюжет. Для пула,
+который позволяет выбрать обычные 7–12 сюжетов, применяй мягкие цели как обычно
+при сравнении сопоставимых по значимости кандидатов.
+
+Если в пуле есть достойные российские или китайские кандидаты, не исключай их
+ради упрощения структуры. Выбирай по значимости и качеству без числовой квоты.
+Если подходящих кандидатов направления нет, соответствующий раздел не нужен.
+
+## 4. Структура article_html
+
+`article_html` содержит полный готовый текст статьи в чистом HTML.
+
+Разрешены только теги:
+
+- `p`;
+- `h2`;
+- `h3`;
+- `ul`;
+- `ol`;
+- `li`;
+- `strong`;
+- `em`;
+- `a`;
+- `blockquote`.
+
+У тега `a` разрешён только атрибут `href`.
+
+Не добавляй:
+
+- `h1`;
+- обложку;
+- `html`, `head` или `body`;
+- `script`, `style` или `iframe`;
+- Markdown;
+- служебные комментарии;
+- упоминания GitHub, RSS, Blogger, автоматизации или внутреннего архива;
+- отдельный раздел со списком источников.
+
+Обычный выпуск начинается с 2–4 предложений вступления.
+
+Короткий выпуск сначала содержит точную курсивную пометку о меньшем числе новостей, затем обычное вступление.
+
+Далее:
+
+1. `<h2>Мировые лидеры ИИ</h2>`;
+2. мировые сюжеты, не относящиеся к китайским компаниям;
+3. `<h2>Китайские лидеры ИИ</h2>`, только если выбраны сюжеты о китайских компаниях или моделях;
+4. китайские сюжеты;
+5. `<h2>Российские лидеры ИИ</h2>`, только если выбраны российские сюжеты;
+6. российские сюжеты;
+7. `<h2>Что это значит</h2>`;
+8. `<ol>` с 4–6 выводами;
+9. точный блок Дзена, указанный ниже;
+10. сноска Meta, если она требуется.
+
+Не создавай пустые разделы «Китайские лидеры ИИ» и «Российские лидеры ИИ».
+
+## 5. Структура каждой новости
+
+Каждый сюжет содержит:
+
+```html
+<h3>Заголовок новости</h3>
+<p>Первый содержательный абзац.</p>
+<p>Второй содержательный абзац.</p>
+```
+
+Допускается третий содержательный абзац. Итого 2–3 абзаца на сюжет.
+
+Для каждой новости объясни:
+
+- что произошло;
+- что подтверждено;
+- почему это важно;
+- ограничения и неопределённости;
+- применимые последствия для рынка, продуктов, исследований, бизнеса, автоматизации, маркетинга, разработки и создателей ИИ-контента.
+
+Не нужно искусственно затрагивать все направления в каждом сюжете.
+
+Каждая новость должна содержать хотя бы одну ссылку вида:
+
+```html
+<a href="https://точный-url-из-кандидата">Название источника</a>
+```
+
+Не изменяй URL и не добавляй URL, которых нет в `CANDIDATES_CONTEXT`.
+
+Если утверждение подтверждено только лендингом, пресс-релизом или соцсетями, называй его продуктовым анонсом или заявлением компании, а не независимой оценкой.
+
+## 6. Раздел «Что это значит»
+
+Используй точную структуру:
+
+```html
+<h2>Что это значит</h2>
+<ol>
+  <li>...</li>
+</ol>
+```
+
+Количество выводов: 4–6. Они должны вытекать из выбранных сюжетов.
+
+## 7. Блок Дзена
+
+В конце статьи обязателен точный блок:
+
+```html
+<h2>Все ИИ-Сводки</h2>
+<p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>
+```
+
+Заголовок `<h2>Все ИИ-Сводки</h2>` не изменяй. Текст ссылки должен быть `Архив ИИ-Сводок`.
+
+Ссылка Дзена является навигационной и не включается в массив `sources`.
+
+## 8. Маркировка Meta
+
+Правило применяется только к видимому тексту `article_html`:
+
+- первое видимое упоминание должно быть `Meta*`;
+- все последующие видимые упоминания должны быть `Meta` без звёздочки;
+- после блока Дзена добавь ровно одну сноску:
+
+```html
+<p><em>*Meta и ее сервисы - в России запрещены</em></p>
+```
+
+Если Meta в статье отсутствует, сноску не добавляй.
+
+В `sources`, `topics`, служебных полях, URL и названиях организаций пиши `Meta` без звёздочки.
+
+## 9. Обновления
+
+Если выбранный кандидат имеет `archive_status: update`, соответствующий `<h3>` обязан начинаться с:
+
+```text
+Обновление:
+```
+
+Для кандидата с `archive_status: none` такой префикс запрещён.
+
+Порядок `<h3>` должен точно совпадать с порядком `selected_candidate_ids`.
+
+## 10. Стиль и терминология
+
+Пиши на русском языке: ясно, делово, живо, без воды и чрезмерного хайпа.
+
+Пиши:
+
+- `ИИ`, а не `AI`;
+- `агент ИИ`, а не `AI agent` или `AI-агент`;
+- `LLM` без перевода.
+
+Названия компаний и продуктов не переводи. `AI` допустимо внутри официального названия, например `Mistral AI`.
+
+Не представляй заявление компании как независимо доказанный факт. Не копируй длинные фрагменты источников.
+
+## 11. Описание, темы и заметки
+
+`description`:
+
+- от 150 до 300 символов;
+- без HTML и ссылок;
+- отражает главные темы выпуска.
+
+`topics`:
+
+- от 5 до 20 коротких тем;
+- без дублей;
+- только по выбранным сюжетам;
+- без `Meta*`.
+
+`sources`:
+
+- содержит каждый новостной URL из `article_html`;
+- не содержит ссылку Дзена;
+- не содержит URL, отсутствующих в статье;
+- использует точные `title`, `publisher` и `url` из исследовательского пула.
+
+`editorial_notes` — внутренний массив. Он не публикуется в статье и RSS. Используй объекты с полями `type`, `area`, `message`.
+
+## 12. Промпт обложки
+
+`image_prompt` должен быть полноценным самостоятельным заданием для прямой генерации изображения.
+
+Он обязан иметь четыре смысловых абзаца в таком порядке:
+
+1. `Изображение 16:9: ...` — назначение и точный единственный читаемый заголовок `ИИ-Сводка на D месяца YYYY`;
+2. `Главные визуальные темы: ...` — конкретные сцены из выбранных новостей;
+3. `Композиция: ...` — центральный фокус, окружающие сцены и нижняя зона;
+4. `Стиль: ...` — палитра, детализация и запреты.
+
+Постоянные требования:
+
+- современная футуристическая редакционная обложка;
+- крупный и единственный читаемый текст — точный заголовок выпуска;
+- число визуальных мотивов соответствует реальному числу сюжетов;
+- без логотипов компаний;
+- без дополнительного текста;
+- без водяных знаков;
+- без мелких интерфейсных надписей;
+- без технического имени файла;
+- без пустой половины кадра;
+- без стокового корпоративного клипарта;
+- без узнаваемых лиц реальных людей;
+- нейтральные силуэты без идентифицируемых черт допустимы.
+
+## 13. Технические метаданные
+
+Поля `date`, `slug`, `title`, `published_at`, `author` и `cover_filename` всё равно будут принудительно нормализованы кодом. Заполни их по схеме, но не меняй редакционную дату и название выпуска.
+
+## 14. Результат
+
+Верни только строгий JSON по переданной схеме. Никакого Markdown, пояснений до JSON или текста после JSON.

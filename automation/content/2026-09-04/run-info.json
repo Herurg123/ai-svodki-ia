@@ -1,0 +1,160 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-09-04",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-09-04.json",
+  "warnings": [
+    "Одинаковые источники используются несколькими кандидатами: 1; это допустимо и будет проверено на редакторском этапе.",
+    "URL используется в нескольких кандидатах: https://www.theinformation.com/ (cand-006, cand-007)",
+    "Исследовательский пул перегружен одним издателем: techcrunch (6)",
+    "Выбрано 4 сюжетов при обычной цели 7; формируется короткий выпуск."
+  ],
+  "publication_date": "2026-09-04",
+  "started_at": "2026-09-04T01:10:07+00:00",
+  "finished_at": "2026-09-04T01:10:39+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 49,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "e0a8ba1e3be0b30f28e72ff31aa3659f07862853687858430f201a07087c1abf",
+    "candidates_sha256": "0b93f286c96bab29a22d3068fdb7de738aa993619870076f43c198be7697e648",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-09-02T04:07:02+03:00",
+      "end_at": "2026-09-04T03:58:49+03:00",
+      "latest_archive_at": "2026-09-03T04:07:02+03:00",
+      "start_date": "2026-09-02",
+      "end_date": "2026-09-04",
+      "latest_archive_date": "2026-09-03"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "dcdb6d7a78b54db4b2dbd698636ac857a3a40a8e783b6f95271182910d058d90",
+    "editorial_sha256": "5196e25da935290662018d7930fc0ae4337244e31660875c8c3a9da664c616d2",
+    "digest_sha256": "71dd1502b1297a5649d1feeeca7314990d71c5b7549c638decce4a809d84d108",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-09-04.png",
+          "normalized_value": "ai-svodka-2026-09-04.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.h3[2]",
+          "model_value": "Meta* предложила скидку на Muse Spark в обмен на данные для обучения",
+          "normalized_value": "Обновление: Meta* предложила скидку на Muse Spark в обмен на данные для обучения"
+        },
+        {
+          "field": "article_html.meta_marking",
+          "model_value": "inconsistent",
+          "normalized_value": "first Meta*, subsequent Meta"
+        },
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        }
+      ],
+      "changed_count": 3,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 4 сюжетов."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Три выбранных материала TechCrunch описывают независимые значимые события разных типов — финансирование инфраструктуры, коммерческую политику агентной модели и специализированный научный релиз. При коротком пуле их исключение только ради мягкого лимита снизило бы содержательность выпуска."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0cc070bec4b5ed80016a9a1a70355487d29f2eaae004bd4926",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 129489,
+        "input_tokens_details": {
+          "cache_write_tokens": 129486,
+          "cached_tokens": 0
+        },
+        "output_tokens": 2962,
+        "output_tokens_details": {
+          "reasoning_tokens": 543
+        },
+        "total_tokens": 132451
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 129489,
+    "output_tokens": 2962,
+    "total_tokens": 132451,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "6183efb0c013573c2b0e23800f3df83dd296ab92",
+    "run_id": "33823919741",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-09-04T03:58:49+03:00"
+}
