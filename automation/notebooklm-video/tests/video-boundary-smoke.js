@@ -36,6 +36,34 @@ assert.match(
   "worker must keep deterministic remote media naming"
 );
 
+const generateButtonPattern = /^Сгенерировать(?: сейчас)?$/i;
+assert.ok(
+  worker.includes(
+    "const VIDEO_GENERATE_BUTTON_PATTERN = /^Сгенерировать(?: сейчас)?$/i;"
+  ),
+  "worker must keep exact backward-compatible NotebookLM generate-button labels"
+);
+assert.strictEqual(
+  generateButtonPattern.test("Сгенерировать"),
+  true,
+  "legacy NotebookLM generate label must remain supported"
+);
+assert.strictEqual(
+  generateButtonPattern.test("Сгенерировать сейчас"),
+  true,
+  "current NotebookLM generate-now label must be supported"
+);
+assert.strictEqual(
+  generateButtonPattern.test("Сгенерировать позже"),
+  false,
+  "the adjacent generate-later action must never match the start-generation selector"
+);
+assert.strictEqual(
+  (worker.match(/VIDEO_GENERATE_BUTTON_PATTERN/g) || []).length,
+  4,
+  "generate-button compatibility pattern must be defined once and used by all three start locators"
+);
+
 const ignore = read(".gitignore");
 for (const required of [
   "config.json",
