@@ -1,0 +1,187 @@
+[
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Copilot CLI получил fallback между несколькими моделями для custom agents",
+    "organization": "GitHub; GitHub Copilot; Anthropic",
+    "topic": "CLI coding agents, multi-model orchestration, MCP и enterprise controls",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "GitHub выпустил Copilot CLI 1.0.83. В custom agents теперь можно задать несколько моделей с последовательной попыткой запуска до нахождения доступной, а model-policy: required удерживает выбор в заданном списке. Релиз также добавляет Claude Fable 5.1, MCP OAuth через CIMD, корпоративную привязку входа к разрешённым GitHub-организациям и ряд изменений sandbox/MCP.",
+    "published_at": "2026-09-04T15:38:08+00:00",
+    "published_date": "2026-09-04",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release 1.0.83",
+        "publisher": "GitHub",
+        "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.83"
+      }
+    ],
+    "keywords": [
+      "GitHub Copilot CLI",
+      "custom agents",
+      "multi-model fallback",
+      "Claude Fable 5.1",
+      "MCP OAuth",
+      "sandboxing",
+      "enterprise"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Accel, по сообщениям СМИ, обсуждает раунд Thinking Machines на $1 млрд",
+    "organization": "Thinking Machines Lab; Accel; Mira Murati",
+    "topic": "Потенциально крупное финансирование frontier-AI-лаборатории Thinking Machines, основанной Мирой Мурати; раунд может оценить компанию более чем в $40 млрд.",
+    "event_type": "financing_report",
+    "status": "new",
+    "summary": "TechCrunch сообщило, что Accel ведёт переговоры о лидерстве в раунде Thinking Machines на $1 млрд при оценке не ниже $40 млрд. Компания и Accel на момент публикации не ответили на запрос; это сообщение о переговорах, а не о закрытом раунде.",
+    "published_at": "2026-09-03T19:36:29+00:00",
+    "published_date": "2026-09-03",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Accel reportedly in talks to lead $1B round for Thinking Machines at $40B valuation",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/03/accel-reportedly-in-talks-to-lead-1b-round-for-thinking-machines-at-40b-valuation/"
+      }
+    ],
+    "keywords": [
+      "Thinking Machines",
+      "Accel",
+      "Mira Murati",
+      "fundraising",
+      "frontier AI",
+      "valuation"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Codex CLI добавил GPT-6-Astra в выбор моделей для Amazon Bedrock",
+    "organization": "OpenAI; Amazon Web Services; Amazon Bedrock; Codex",
+    "topic": "CLI coding agent и облачная модельная интеграция",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "OpenAI выпустила Codex CLI rust-v0.153.3: GPT-6-Astra появился в model picker для Amazon Bedrock Mantle и Runtime global/US routes. Релиз также исправляет guidance для асинхронных clarification questions у Astra.",
+    "published_at": "2026-09-04T19:01:32+00:00",
+    "published_date": "2026-09-04",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release 0.153.3",
+        "publisher": "OpenAI GitHub repository",
+        "url": "https://github.com/openai/codex/releases/tag/rust-v0.153.3"
+      }
+    ],
+    "keywords": [
+      "OpenAI Codex",
+      "Codex CLI",
+      "Amazon Bedrock",
+      "GPT-6-Astra",
+      "model picker",
+      "AWS"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "XDOF, по данным TechCrunch, обсуждает Series B при оценке около $1,2 млрд",
+    "organization": "XDOF; 8VC; UC Berkeley AI Research",
+    "topic": "Финансирование physical AI и поставка real-world data для обучения универсальных роботов: XDOF может привлечь Series B при оценке около $1,2 млрд.",
+    "event_type": "financing_report",
+    "status": "new",
+    "summary": "TechCrunch сообщило со ссылкой на несколько осведомлённых источников, что XDOF находится на поздней стадии переговоров о Series B, который может возглавить 8VC, при оценке около $1,2 млрд. Сумма раунда неизвестна, условия не окончательные, а XDOF и 8VC не прокомментировали информацию.",
+    "published_at": "2026-09-04T23:36:14+00:00",
+    "published_date": "2026-09-04",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "XDOF, just three months out of stealth, is in talks for a Series B at a $1.2B valuation",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/04/xdof-just-three-months-out-of-stealth-is-in-talks-for-a-series-b-at-a-1-2b-valuation/"
+      }
+    ],
+    "keywords": [
+      "XDOF",
+      "8VC",
+      "robotics",
+      "physical AI",
+      "teleoperation",
+      "robot training data",
+      "Series B"
+    ],
+    "geography": "world",
+    "category": "robotics"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Nscale, по данным Bloomberg, ищет $3,5 млрд пред-IPO финансирования",
+    "organization": "Nscale; NVIDIA",
+    "topic": "AI-инфраструктура и финансирование: британский compute-провайдер, ранее заключивший крупный контракт с Anthropic, обсуждает конвертируемые ноты и финансирование с NVIDIA перед потенциальным IPO.",
+    "event_type": "reported financing",
+    "status": "new",
+    "summary": "TechCrunch, ссылаясь на Bloomberg, сообщает, что Nscale ведёт переговоры о привлечении $3,5 млрд перед возможным IPO: $1,5 млрд через конвертируемые ноты и ещё $2 млрд финансирования от NVIDIA. Компания и NVIDIA на момент публикации не предоставили комментарий TechCrunch.",
+    "published_at": "2026-09-04T21:12:11+00:00",
+    "published_date": "2026-09-04",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "AI compute provider Nscale is looking for $3.5B in pre-IPO financing",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/04/ai-compute-provider-nscale-is-looking-for-3-5b-in-pre-ipo-financing/"
+      }
+    ],
+    "keywords": [
+      "Nscale",
+      "NVIDIA",
+      "pre-IPO",
+      "convertible notes",
+      "AI compute",
+      "AI infrastructure",
+      "$3.5 billion"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-010",
+    "section": "world",
+    "headline": "Microsoft: приём из prompt injection применили для обхода фишинговых фильтров",
+    "organization": "Microsoft Security; Microsoft Defender for Office 365; ActiveCampaign",
+    "topic": "Необычное перетекание AI-security техники ASCII smuggling в традиционный фишинг: невидимые Unicode tag characters разрывают слова для человека незаметно, но меняют обработку текста фильтрами и ML-классификаторами.",
+    "event_type": "security research finding",
+    "status": "new",
+    "summary": "Microsoft Security сообщила, что обнаружила высокообъёмную фишинговую активность, в которой использовались невидимые символы Unicode из блока Tags. Метод получил известность в исследованиях prompt injection: скрытые от человека инструкции остаются видимыми для LLM. В этой кампании злоумышленники применяли те же символы иначе — вставляли их внутрь финансовых слов-приманок вроде «funding», чтобы письмо визуально читалось нормально, но строковые, токенизационные и некоторые ML/NLP-проверки могли воспринимать слово иначе.",
+    "published_at": "2026-09-03T16:00:00+00:00",
+    "published_date": "2026-09-03",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "ASCII smuggling crosses over from AI prompt injection to phishing evasion",
+        "publisher": "Microsoft Security Blog",
+        "url": "https://www.microsoft.com/en-us/security/blog/2026/09/03/ascii-smuggling-crosses-over-from-ai-prompt-injection-to-phishing-evasion/"
+      }
+    ],
+    "keywords": [
+      "ASCII smuggling",
+      "Unicode Tags block",
+      "invisible characters",
+      "prompt injection",
+      "phishing",
+      "email security",
+      "Microsoft Defender",
+      "ActiveCampaign"
+    ],
+    "geography": "world",
+    "category": "curiosity"
+  }
+]

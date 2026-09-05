@@ -1,0 +1,43 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-05",
+  "slug": "2026-09-05",
+  "title": "ИИ-Сводка на 5 сентября 2026",
+  "description": "В фокусе выпуска — устойчивость агентной разработки, возможные крупные раунды Thinking Machines, XDOF и Nscale, а также исследование Microsoft о применении невидимых Unicode-символов для обхода фишинговых фильтров.",
+  "published_at": "2026-09-05T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-05.png",
+  "topics": [
+    "агентная разработка",
+    "GitHub Copilot",
+    "Codex CLI",
+    "Thinking Machines",
+    "ИИ-инвестиции",
+    "physical AI",
+    "робототехнические данные",
+    "Nscale",
+    "ИИ-инфраструктура",
+    "кибербезопасность",
+    "prompt injection",
+    "фишинг"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Три независимых сообщения TechCrunch относятся к разным самостоятельным процессам: потенциальному раунду Thinking Machines, Series B XDOF и пред-IPO финансированию Nscale. Короткий подтверждённый пул не содержит сопоставимых альтернативных источников для этих событий."
+    }
+  ]
+}

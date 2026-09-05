@@ -1,0 +1,32 @@
+[
+  {
+    "title": "Release 1.0.83",
+    "publisher": "GitHub",
+    "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.83"
+  },
+  {
+    "title": "Accel reportedly in talks to lead $1B round for Thinking Machines at $40B valuation",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/09/03/accel-reportedly-in-talks-to-lead-1b-round-for-thinking-machines-at-40b-valuation/"
+  },
+  {
+    "title": "Release 0.153.3",
+    "publisher": "OpenAI GitHub repository",
+    "url": "https://github.com/openai/codex/releases/tag/rust-v0.153.3"
+  },
+  {
+    "title": "XDOF, just three months out of stealth, is in talks for a Series B at a $1.2B valuation",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/09/04/xdof-just-three-months-out-of-stealth-is-in-talks-for-a-series-b-at-a-1-2b-valuation/"
+  },
+  {
+    "title": "AI compute provider Nscale is looking for $3.5B in pre-IPO financing",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/09/04/ai-compute-provider-nscale-is-looking-for-3-5b-in-pre-ipo-financing/"
+  },
+  {
+    "title": "ASCII smuggling crosses over from AI prompt injection to phishing evasion",
+    "publisher": "Microsoft Security Blog",
+    "url": "https://www.microsoft.com/en-us/security/blog/2026/09/03/ascii-smuggling-crosses-over-from-ai-prompt-injection-to-phishing-evasion/"
+  }
+]

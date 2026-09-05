@@ -1,225 +1,16 @@
+Ты — редактор ежедневного аналитического выпуска «ИИ-сводка».
+
+Дата выпуска: 2026-09-05
+Обычная цель минимального числа сюжетов: 7
+Максимальное число сюжетов: 12
+
+Контекст предыдущих выпусков для проверки повторов:
+=== ARCHIVE_CONTEXT_BEGIN ===
 {
   "version": 2,
-  "generated_at": "2026-09-05T01:09:16+00:00",
+  "generated_at": "2026-09-05T00:57:22+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
-    {
-      "date": "2026-09-05",
-      "published_at": "2026-09-05T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-05T03:57:22+03:00",
-      "title": "ИИ-Сводка на 5 сентября 2026",
-      "link": "https://rybalka.one/posts/2026-09-05/",
-      "summary": "Главные новости искусственного интеллекта за 5 сентября 2026 года Новостей сегодня меньше, чем обычно Повестка дня объединяет две стороны зрелости рынка ИИ: инструменты разработки становятся более управляемыми, а капитал продолжает искать инфраструктуру моделей и данных для робототехники. Одновременно киберзащитникам приходится учитывать, как техники из исследований безопасности LLM переходят в привычные фишинговые кампании. Часть инвестиционных новостей основана на сообщениях о переговорах, а н",
-      "topics": [
-        "агентная разработка",
-        "GitHub Copilot",
-        "Codex CLI",
-        "Thinking Machines",
-        "ИИ-инвестиции",
-        "physical AI",
-        "робототехнические данные",
-        "Nscale",
-        "ИИ-инфраструктура",
-        "кибербезопасность",
-        "prompt injection",
-        "фишинг"
-      ],
-      "source_urls": [
-        "https://github.com/github/copilot-cli/releases/tag/v1.0.83",
-        "https://techcrunch.com/2026/09/03/accel-reportedly-in-talks-to-lead-1b-round-for-thinking-machines-at-40b-valuation/",
-        "https://github.com/openai/codex/releases/tag/rust-v0.153.3",
-        "https://techcrunch.com/2026/09/04/xdof-just-three-months-out-of-stealth-is-in-talks-for-a-series-b-at-a-1-2b-valuation/",
-        "https://techcrunch.com/2026/09/04/ai-compute-provider-nscale-is-looking-for-3-5b-in-pre-ipo-financing/",
-        "https://www.microsoft.com/en-us/security/blog/2026/09/03/ascii-smuggling-crosses-over-from-ai-prompt-injection-to-phishing-evasion/"
-      ],
-      "stories": [
-        {
-          "candidate_id": "cand-002",
-          "section": "world",
-          "headline": "Copilot CLI получил fallback между несколькими моделями для custom agents",
-          "organization": "GitHub; GitHub Copilot; Anthropic",
-          "topic": "CLI coding agents, multi-model orchestration, MCP и enterprise controls",
-          "event_type": "product release",
-          "status": "new",
-          "summary": "GitHub выпустил Copilot CLI 1.0.83. В custom agents теперь можно задать несколько моделей с последовательной попыткой запуска до нахождения доступной, а model-policy: required удерживает выбор в заданном списке. Релиз также добавляет Claude Fable 5.1, MCP OAuth через CIMD, корпоративную привязку входа к разрешённым GitHub-организациям и ряд изменений sandbox/MCP.",
-          "published_at": "2026-09-04T15:38:08+00:00",
-          "published_date": "2026-09-04",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Release 1.0.83",
-              "publisher": "GitHub",
-              "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.83"
-            }
-          ],
-          "keywords": [
-            "GitHub Copilot CLI",
-            "custom agents",
-            "multi-model fallback",
-            "Claude Fable 5.1",
-            "MCP OAuth",
-            "sandboxing",
-            "enterprise"
-          ],
-          "geography": "world",
-          "category": "coding"
-        },
-        {
-          "candidate_id": "cand-003",
-          "section": "world",
-          "headline": "Accel, по сообщениям СМИ, обсуждает раунд Thinking Machines на $1 млрд",
-          "organization": "Thinking Machines Lab; Accel; Mira Murati",
-          "topic": "Потенциально крупное финансирование frontier-AI-лаборатории Thinking Machines, основанной Мирой Мурати; раунд может оценить компанию более чем в $40 млрд.",
-          "event_type": "financing_report",
-          "status": "new",
-          "summary": "TechCrunch сообщило, что Accel ведёт переговоры о лидерстве в раунде Thinking Machines на $1 млрд при оценке не ниже $40 млрд. Компания и Accel на момент публикации не ответили на запрос; это сообщение о переговорах, а не о закрытом раунде.",
-          "published_at": "2026-09-03T19:36:29+00:00",
-          "published_date": "2026-09-03",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Accel reportedly in talks to lead $1B round for Thinking Machines at $40B valuation",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/09/03/accel-reportedly-in-talks-to-lead-1b-round-for-thinking-machines-at-40b-valuation/"
-            }
-          ],
-          "keywords": [
-            "Thinking Machines",
-            "Accel",
-            "Mira Murati",
-            "fundraising",
-            "frontier AI",
-            "valuation"
-          ],
-          "geography": "world",
-          "category": "investment"
-        },
-        {
-          "candidate_id": "cand-004",
-          "section": "world",
-          "headline": "Codex CLI добавил GPT-6-Astra в выбор моделей для Amazon Bedrock",
-          "organization": "OpenAI; Amazon Web Services; Amazon Bedrock; Codex",
-          "topic": "CLI coding agent и облачная модельная интеграция",
-          "event_type": "product release",
-          "status": "new",
-          "summary": "OpenAI выпустила Codex CLI rust-v0.153.3: GPT-6-Astra появился в model picker для Amazon Bedrock Mantle и Runtime global/US routes. Релиз также исправляет guidance для асинхронных clarification questions у Astra.",
-          "published_at": "2026-09-04T19:01:32+00:00",
-          "published_date": "2026-09-04",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "Release 0.153.3",
-              "publisher": "OpenAI GitHub repository",
-              "url": "https://github.com/openai/codex/releases/tag/rust-v0.153.3"
-            }
-          ],
-          "keywords": [
-            "OpenAI Codex",
-            "Codex CLI",
-            "Amazon Bedrock",
-            "GPT-6-Astra",
-            "model picker",
-            "AWS"
-          ],
-          "geography": "world",
-          "category": "coding"
-        },
-        {
-          "candidate_id": "cand-005",
-          "section": "world",
-          "headline": "XDOF, по данным TechCrunch, обсуждает Series B при оценке около $1,2 млрд",
-          "organization": "XDOF; 8VC; UC Berkeley AI Research",
-          "topic": "Финансирование physical AI и поставка real-world data для обучения универсальных роботов: XDOF может привлечь Series B при оценке около $1,2 млрд.",
-          "event_type": "financing_report",
-          "status": "new",
-          "summary": "TechCrunch сообщило со ссылкой на несколько осведомлённых источников, что XDOF находится на поздней стадии переговоров о Series B, который может возглавить 8VC, при оценке около $1,2 млрд. Сумма раунда неизвестна, условия не окончательные, а XDOF и 8VC не прокомментировали информацию.",
-          "published_at": "2026-09-04T23:36:14+00:00",
-          "published_date": "2026-09-04",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "XDOF, just three months out of stealth, is in talks for a Series B at a $1.2B valuation",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/09/04/xdof-just-three-months-out-of-stealth-is-in-talks-for-a-series-b-at-a-1-2b-valuation/"
-            }
-          ],
-          "keywords": [
-            "XDOF",
-            "8VC",
-            "robotics",
-            "physical AI",
-            "teleoperation",
-            "robot training data",
-            "Series B"
-          ],
-          "geography": "world",
-          "category": "robotics"
-        },
-        {
-          "candidate_id": "cand-007",
-          "section": "world",
-          "headline": "Nscale, по данным Bloomberg, ищет $3,5 млрд пред-IPO финансирования",
-          "organization": "Nscale; NVIDIA",
-          "topic": "AI-инфраструктура и финансирование: британский compute-провайдер, ранее заключивший крупный контракт с Anthropic, обсуждает конвертируемые ноты и финансирование с NVIDIA перед потенциальным IPO.",
-          "event_type": "reported financing",
-          "status": "new",
-          "summary": "TechCrunch, ссылаясь на Bloomberg, сообщает, что Nscale ведёт переговоры о привлечении $3,5 млрд перед возможным IPO: $1,5 млрд через конвертируемые ноты и ещё $2 млрд финансирования от NVIDIA. Компания и NVIDIA на момент публикации не предоставили комментарий TechCrunch.",
-          "published_at": "2026-09-04T21:12:11+00:00",
-          "published_date": "2026-09-04",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "AI compute provider Nscale is looking for $3.5B in pre-IPO financing",
-              "publisher": "TechCrunch",
-              "url": "https://techcrunch.com/2026/09/04/ai-compute-provider-nscale-is-looking-for-3-5b-in-pre-ipo-financing/"
-            }
-          ],
-          "keywords": [
-            "Nscale",
-            "NVIDIA",
-            "pre-IPO",
-            "convertible notes",
-            "AI compute",
-            "AI infrastructure",
-            "$3.5 billion"
-          ],
-          "geography": "world",
-          "category": "investment"
-        },
-        {
-          "candidate_id": "cand-010",
-          "section": "world",
-          "headline": "Microsoft: приём из prompt injection применили для обхода фишинговых фильтров",
-          "organization": "Microsoft Security; Microsoft Defender for Office 365; ActiveCampaign",
-          "topic": "Необычное перетекание AI-security техники ASCII smuggling в традиционный фишинг: невидимые Unicode tag characters разрывают слова для человека незаметно, но меняют обработку текста фильтрами и ML-классификаторами.",
-          "event_type": "security research finding",
-          "status": "new",
-          "summary": "Microsoft Security сообщила, что обнаружила высокообъёмную фишинговую активность, в которой использовались невидимые символы Unicode из блока Tags. Метод получил известность в исследованиях prompt injection: скрытые от человека инструкции остаются видимыми для LLM. В этой кампании злоумышленники применяли те же символы иначе — вставляли их внутрь финансовых слов-приманок вроде «funding», чтобы письмо визуально читалось нормально, но строковые, токенизационные и некоторые ML/NLP-проверки могли воспринимать слово иначе.",
-          "published_at": "2026-09-03T16:00:00+00:00",
-          "published_date": "2026-09-03",
-          "time_precision": "datetime",
-          "sources": [
-            {
-              "title": "ASCII smuggling crosses over from AI prompt injection to phishing evasion",
-              "publisher": "Microsoft Security Blog",
-              "url": "https://www.microsoft.com/en-us/security/blog/2026/09/03/ascii-smuggling-crosses-over-from-ai-prompt-injection-to-phishing-evasion/"
-            }
-          ],
-          "keywords": [
-            "ASCII smuggling",
-            "Unicode Tags block",
-            "invisible characters",
-            "prompt injection",
-            "phishing",
-            "email security",
-            "Microsoft Defender",
-            "ActiveCampaign"
-          ],
-          "geography": "world",
-          "category": "curiosity"
-        }
-      ]
-    },
     {
       "date": "2026-09-04",
       "published_at": "2026-09-04T06:00:00+03:00",
@@ -9968,3 +9759,1316 @@
     }
   ]
 }
+=== ARCHIVE_CONTEXT_END ===
+
+Проверенный исследовательский пул:
+=== CANDIDATES_CONTEXT_BEGIN ===
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-09-05",
+  "search_window": {
+    "start_at": "2026-09-03T03:58:49+03:00",
+    "end_at": "2026-09-05T03:57:22+03:00",
+    "latest_archive_at": "2026-09-04T03:58:49+03:00",
+    "start_date": "2026-09-03",
+    "end_date": "2026-09-05",
+    "latest_archive_date": "2026-09-04"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=3, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=0, rejected=1."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "OpenAI запускает $1 млрд инициативу Daybreak для защиты критической инфраструктуры от ИИ-кибератак",
+      "organization": "OpenAI",
+      "published_date": "2026-09-03",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "AI security; субсидированный доступ к моделям, обучение и техническая поддержка для водоснабжения, энергетики, местных властей и других операторов критической инфраструктуры.",
+      "event_type": "security initiative",
+      "keywords": [
+        "OpenAI",
+        "Daybreak for Frontline Defenders",
+        "Daybreak for America",
+        "critical infrastructure",
+        "cybersecurity",
+        "utilities",
+        "$1 billion"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "OpenAI launches plan to protect critical infrastructure from AI cyberattacks",
+        "publisher": "Axios",
+        "url": "https://www.axios.com/2026/09/03/openai-critical-infrastructure-cyber-ai-models"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI объявила Daybreak for Frontline Defenders с обязательством $1 млрд в форме субсидированного доступа к моделям, обучения, технической поддержки и партнёрств для защиты критических сервисов. Отдельная программа Daybreak for America ориентирована на местные органы власти, водные и энергетические системы, региональные банки и другую критическую инфраструктуру США.",
+      "verified_facts": [
+        "Axios сообщает, что инициатива Daybreak for Frontline Defenders предполагает обязательство OpenAI на $1 млрд.",
+        "Средства заявлены как субсидированный доступ к моделям, обучение, техническая поддержка и партнёрства, а не как прямой денежный грант.",
+        "Daybreak for America включает пилот с Multi-State Information Sharing and Analysis Center для обучения защитников на уровне штатов и местных органов власти.",
+        "OpenAI также заявила о работе более чем с 35 технологическими и кибербезопасностными сервисами для внедрения её моделей в инструменты и workflow."
+      ],
+      "significance": "Крупное финансовое и продуктовое обязательство frontier-лаборатории в AI-security, нацеленное на критическую инфраструктуру; связывает доступ к продвинутым моделям с подготовкой к AI-усиленным атакам.",
+      "significance_score": 3,
+      "limitations": "Детали критериев участия, распределения заявленного $1 млрд и независимая оценка эффективности программы на момент публикации не раскрыты.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть сюжеты об Astra и киберрисках, но нет этого отдельного глобального обязательства Daybreak.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Свежая публикация Axios от 3 сентября прямо описывает запуск, объём обязательства и компоненты программы.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является судебным или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: самостоятельное отраслевое security-событие.",
+      "event_date": "2026-09-03",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.axios.com/2026/09/03/openai-critical-infrastructure-cyber-ai-models",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Axios датирует публикацию 3 сентября 2026 года и сообщает, что Грег Брокман объявил программу на саммите в четверг; точное время первичного анонса не установлено.",
+      "id": "cand-001",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    },
+    {
+      "title": "GitHub Copilot CLI 1.0.83 добавил fallback между несколькими моделями для custom agents и поддержку Claude Fable 5.1",
+      "organization": "GitHub; GitHub Copilot; Anthropic",
+      "published_date": "2026-09-04",
+      "published_at": "2026-09-04T15:38:08+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agents, multi-model orchestration, MCP и enterprise controls",
+      "event_type": "product release",
+      "keywords": [
+        "GitHub Copilot CLI",
+        "custom agents",
+        "multi-model fallback",
+        "Claude Fable 5.1",
+        "MCP OAuth",
+        "sandboxing",
+        "enterprise"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "GitHub Copilot CLI v1.0.83",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/github-copilot-v1.0.83"
+      },
+      "supporting_sources": [
+        {
+          "title": "Release 1.0.83",
+          "publisher": "GitHub",
+          "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.83"
+        }
+      ],
+      "event_summary": "GitHub выпустил Copilot CLI 1.0.83. В custom agents теперь можно задать несколько моделей с последовательной попыткой запуска до нахождения доступной, а model-policy: required удерживает выбор в заданном списке. Релиз также добавляет Claude Fable 5.1, MCP OAuth через CIMD, корпоративную привязку входа к разрешённым GitHub-организациям и ряд изменений sandbox/MCP.",
+      "verified_facts": [
+        "Официальный GitHub release помечен датой 2026-09-04.",
+        "Custom agents могут перечислять несколько моделей в поле model, которые пробуются последовательно до нахождения доступной.",
+        "Релиз добавляет поддержку claude-fable-5.1.",
+        "В релизе заявлены CIMD для MCP OAuth sign-in и managed setting forceLoginOrgs для enterprise-администраторов."
+      ],
+      "significance": "Это заметное функциональное обновление крупного CLI coding agent: multi-model fallback повышает устойчивость агентных workflow, а поддержка новой модели Anthropic и enterprise/MCP controls влияет на реальные корпоративные развёртывания.",
+      "significance_score": 3,
+      "limitations": "Это release note первого лица; независимой оценки влияния и доступности функций для всех тарифов нет. Время GitHub показано без явно указанного timezone, поэтому точный timestamp не нормализован.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет Copilot CLI 1.0.83 или эквивалентного обновления multi-model fallback.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверено по официальной странице GitHub release; агрегатор Havoptic использован только как вспомогательная навигация к первоисточнику.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-04T15:38:08Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-04T15:38:08Z; timestamp проверен Python против effective window. Официальный релиз опубликован 2026-09-04, внутри effective editorial window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не юридическое событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: релиз относится к основной тематике developer tools.",
+      "event_date": "2026-09-04",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.com/github/copilot-cli/releases/tag/v1.0.83",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Официальная страница GitHub release указывает, что версия 1.0.83 выпущена 4 сентября 2026 года.",
+      "id": "cand-002",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.havoptic.com/r/github-copilot-v1.0.83",
+      "source_published_date": "2026-09-04",
+      "source_published_at": "2026-09-04T15:38:08+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-04T15:38:08Z"
+    },
+    {
+      "title": "Accel, по данным TechCrunch и The Information, обсуждает лидерство в раунде Thinking Machines на $1 млрд при оценке от $40 млрд",
+      "organization": "Thinking Machines Lab; Accel; Mira Murati",
+      "published_date": "2026-09-03",
+      "published_at": "2026-09-03T19:36:29+00:00",
+      "time_precision": "datetime",
+      "topic": "Потенциально крупное финансирование frontier-AI-лаборатории Thinking Machines, основанной Мирой Мурати; раунд может оценить компанию более чем в $40 млрд.",
+      "event_type": "financing_report",
+      "keywords": [
+        "Thinking Machines",
+        "Accel",
+        "Mira Murati",
+        "fundraising",
+        "frontier AI",
+        "valuation"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Accel reportedly in talks to lead $1B round for Thinking Machines at $40B valuation",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/03/accel-reportedly-in-talks-to-lead-1b-round-for-thinking-machines-at-40b-valuation/"
+      },
+      "supporting_sources": [],
+      "event_summary": "TechCrunch сообщило, что Accel ведёт переговоры о лидерстве в раунде Thinking Machines на $1 млрд при оценке не ниже $40 млрд. Компания и Accel на момент публикации не ответили на запрос; это сообщение о переговорах, а не о закрытом раунде.",
+      "verified_facts": [
+        "Статья TechCrunch опубликована 3 сентября 2026 года в 12:36 PDT.",
+        "TechCrunch указывает, что о переговорах также сообщило The Information.",
+        "По данным TechCrunch, предполагаемый объём раунда составляет $1 млрд, а оценка — не менее $40 млрд.",
+        "Thinking Machines и Accel не подтвердили сделку на момент публикации."
+      ],
+      "significance": "Даже на стадии переговоров это один из наиболее крупных потенциальных раундов для независимой frontier-AI-лаборатории и важный сигнал о концентрации капитала вокруг бывших руководителей OpenAI.",
+      "significance_score": 3,
+      "limitations": "Сделка не закрыта и её условия не подтверждены сторонами; оценка, объём и лидер раунда могут измениться.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве и текущем пуле нет отдельного сюжета о потенциальном новом раунде Thinking Machines.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверена авторитетная первичная для данного сообщения вторичная публикация с точным timestamp; факты маркированы как переговоры и сообщения источников, без утверждения о закрытом финансировании.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-03T19:36:29+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-03T19:36:29+00:00; timestamp проверен Python против effective window. Первая доступная в retrieval публичная публикация о переговорах датирована 3 сентября 2026 года и попадает в effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран по бизнес-значимости.",
+      "event_date": "2026-09-03",
+      "event_at": "2026-09-03T12:36:00-07:00",
+      "event_time_precision": "datetime",
+      "event_origin_url": "https://techcrunch.com/2026/09/03/accel-reportedly-in-talks-to-lead-1b-round-for-thinking-machines-at-40b-valuation/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch датирует публикацию сообщения о переговорах 3 сентября 2026 года, 12:36 PDT; первичный анонс сторон отсутствует.",
+      "id": "cand-003",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable exact event timestamp is inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/09/03/accel-reportedly-in-talks-to-lead-1b-round-for-thinking-machines-at-40b-valuation/",
+      "source_published_date": "2026-09-03",
+      "source_published_at": "2026-09-03T19:36:29+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-03T19:36:29+00:00"
+    },
+    {
+      "title": "OpenAI Codex CLI 0.153.3 добавил GPT-6-Astra в Amazon Bedrock model picker",
+      "organization": "OpenAI; Amazon Web Services; Amazon Bedrock; Codex",
+      "published_date": "2026-09-04",
+      "published_at": "2026-09-04T19:01:32+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agent и облачная модельная интеграция",
+      "event_type": "product release",
+      "keywords": [
+        "OpenAI Codex",
+        "Codex CLI",
+        "Amazon Bedrock",
+        "GPT-6-Astra",
+        "model picker",
+        "AWS"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "OpenAI Codex CLI rust-v0.153.3",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/openai-codex-rust-v0.153.3"
+      },
+      "supporting_sources": [
+        {
+          "title": "Release 0.153.3",
+          "publisher": "OpenAI GitHub repository",
+          "url": "https://github.com/openai/codex/releases/tag/rust-v0.153.3"
+        }
+      ],
+      "event_summary": "OpenAI выпустила Codex CLI rust-v0.153.3: GPT-6-Astra появился в model picker для Amazon Bedrock Mantle и Runtime global/US routes. Релиз также исправляет guidance для асинхронных clarification questions у Astra.",
+      "verified_facts": [
+        "Официальный GitHub release помечен датой 2026-09-04.",
+        "В Codex CLI добавлен GPT-6-Astra в Amazon Bedrock model picker для Mantle и Runtime global/US routes.",
+        "Релиз включает исправление инструкций Astra для asynchronous clarification questions."
+      ],
+      "significance": "Интеграция новой frontier-модели в AWS-маршруты Codex важна для разработчиков, использующих облачную инфраструктуру Bedrock и CLI-агента OpenAI; однако это точечное обновление model picker, а не самостоятельный запуск новой модели.",
+      "significance_score": 3,
+      "limitations": "Первичный источник фиксирует техническое изменение, но не раскрывает географическую доступность за пределами перечисленных global/US routes, коммерческие условия или фактическую общую доступность GPT-6-Astra в Bedrock.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть Codex CLI rust-v0.151.0, но нет версии 0.153.3 и Bedrock-интеграции GPT-6-Astra.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Функция и дата проверены по официальному GitHub release OpenAI Codex.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-04T19:01:32Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-04T19:01:32Z; timestamp проверен Python против effective window. Официальный релиз от 2026-09-04 находится внутри effective editorial window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не юридическое событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: это прямой developer-tools релиз.",
+      "event_date": "2026-09-04",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.com/openai/codex/releases/tag/rust-v0.153.3",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Официальная страница GitHub release указывает выпуск rust-v0.153.3 4 сентября 2026 года.",
+      "id": "cand-004",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.havoptic.com/r/openai-codex-rust-v0.153.3",
+      "source_published_date": "2026-09-04",
+      "source_published_at": "2026-09-04T19:01:32+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-04T19:01:32Z"
+    },
+    {
+      "title": "XDOF, по данным TechCrunch, ведёт поздние переговоры о Series B при оценке около $1,2 млрд",
+      "organization": "XDOF; 8VC; UC Berkeley AI Research",
+      "published_date": "2026-09-04",
+      "published_at": "2026-09-04T23:36:14+00:00",
+      "time_precision": "datetime",
+      "topic": "Финансирование physical AI и поставка real-world data для обучения универсальных роботов: XDOF может привлечь Series B при оценке около $1,2 млрд.",
+      "event_type": "financing_report",
+      "keywords": [
+        "XDOF",
+        "8VC",
+        "robotics",
+        "physical AI",
+        "teleoperation",
+        "robot training data",
+        "Series B"
+      ],
+      "geography": "world",
+      "category": "robotics",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "XDOF, just three months out of stealth, is in talks for a Series B at a $1.2B valuation",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/04/xdof-just-three-months-out-of-stealth-is-in-talks-for-a-series-b-at-a-1-2b-valuation/"
+      },
+      "supporting_sources": [],
+      "event_summary": "TechCrunch сообщило со ссылкой на несколько осведомлённых источников, что XDOF находится на поздней стадии переговоров о Series B, который может возглавить 8VC, при оценке около $1,2 млрд. Сумма раунда неизвестна, условия не окончательные, а XDOF и 8VC не прокомментировали информацию.",
+      "verified_facts": [
+        "Статья TechCrunch опубликована 4 сентября 2026 года в 16:36 PDT.",
+        "XDOF занимается сбором телеметрических и teleoperation-данных для обучения универсальных роботов.",
+        "TechCrunch пишет, что переговоры о Series B находятся на поздней стадии и оценка составляет около $1,2 млрд.",
+        "Сумма финансирования неизвестна, условия могут измениться, а стороны не ответили на запрос."
+      ],
+      "significance": "Событие отражает быстрое удорожание инфраструктуры данных для physical AI: компания, вышедшая из stealth менее трёх месяцев назад, может получить unicorn-оценку на фоне спроса на робототехнические датасеты.",
+      "significance_score": 3,
+      "limitations": "Это неподтверждённые сторонами переговоры, а не объявленное финансирование; сумма раунда и финальные условия не известны.",
+      "archive_status": "none",
+      "archive_reason": "Ни XDOF, ни потенциальный Series B при оценке $1,2 млрд не фигурируют в предоставленном архиве или текущем пуле.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверена подробная публикация TechCrunch с источниками, описанием бизнеса и оговоркой о неподтверждённости сделки; кандидат сформулирован именно как сообщение о переговорах.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-04T23:36:14+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-04T23:36:14+00:00; timestamp проверен Python против effective window. Публикация и публичное появление сообщения о переговорах относятся к 4 сентября 2026 года и находятся внутри effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран по значимости для physical-AI-инфраструктуры.",
+      "event_date": "2026-09-04",
+      "event_at": "2026-09-04T16:36:00-07:00",
+      "event_time_precision": "datetime",
+      "event_origin_url": "https://techcrunch.com/2026/09/04/xdof-just-three-months-out-of-stealth-is-in-talks-for-a-series-b-at-a-1-2b-valuation/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch опубликовал первое найденное сообщение о поздних переговорах 4 сентября 2026 года в 16:36 PDT; официального анонса сделки нет.",
+      "id": "cand-005",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable exact event timestamp is inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/09/04/xdof-just-three-months-out-of-stealth-is-in-talks-for-a-series-b-at-a-1-2b-valuation/",
+      "source_published_date": "2026-09-04",
+      "source_published_at": "2026-09-04T23:36:14+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-04T23:36:14+00:00"
+    },
+    {
+      "title": "Anthropic выпустила Claude Code 2.1.260 с панелью diff для проверки правок и улучшениями cloud review",
+      "organization": "Anthropic; Claude Code",
+      "published_date": "2026-09-03",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Agentic coding, review изменений, plugins и long-running cloud review",
+      "event_type": "product release",
+      "keywords": [
+        "Claude Code",
+        "diff panel",
+        "code review",
+        "ultrareview",
+        "plugins",
+        "subagents",
+        "1M context"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Release v2.1.260",
+        "publisher": "Anthropic GitHub repository",
+        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.260"
+      },
+      "supporting_sources": [
+        {
+          "title": "Claude Code changelog",
+          "publisher": "Anthropic",
+          "url": "https://code.claude.com/docs/en/changelog"
+        }
+      ],
+      "event_summary": "Anthropic выпустила Claude Code 2.1.260. В fullscreen mode появился вызываемый через /diff боковой diff panel с незакоммиченными изменениями по мере работы агента; также обновлены prompt-cache diagnostics, headless plugin reload, advisor для headless-сессий и увеличен лимит ожидания cloud /ultrareview до 45 минут.",
+      "verified_facts": [
+        "Официальный GitHub release показывает версию v2.1.260, выпущенную 3 сентября 2026 года.",
+        "В релиз добавлена панель /diff, показывающая незакоммиченные изменения рядом с диалогом в fullscreen mode.",
+        "В /cost и status line добавлена вероятная причина prompt-cache miss.",
+        "Для /ultrareview и claude ultrareview лимит ожидания долгого cloud review увеличен с 30 до 45 минут."
+      ],
+      "significance": "Обновление заметно улучшает контроль и review действий coding agent, особенно при длинных и многоагентных задачах. Но это инкрементальный релиз быстро обновляемого инструмента, поэтому его самостоятельная редакционная ценность ниже, чем у платформенного запуска.",
+      "significance_score": 2,
+      "limitations": "Релиз содержит большой набор исправлений; нет независимых данных об охвате, доступности по тарифам и реальном эффекте diff panel на качество review. Время GitHub отображается без явно указанной временной зоны.",
+      "archive_status": "none",
+      "archive_reason": "В архиве присутствует Claude Code 2.1.259, но не v2.1.260 с diff panel и связанными изменениями.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Дата и функции проверены по официальной странице GitHub release и официальному changelog Anthropic.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не юридическое событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: это профильный developer-tools релиз.",
+      "event_date": "2026-09-03",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.260",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Официальная страница GitHub release указывает выпуск v2.1.260 3 сентября 2026 года.",
+      "id": "cand-006",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    },
+    {
+      "title": "Nscale, по данным Bloomberg, ищет $3,5 млрд пред-IPO финансирования",
+      "organization": "Nscale; NVIDIA",
+      "published_date": "2026-09-04",
+      "published_at": "2026-09-04T21:12:11+00:00",
+      "time_precision": "datetime",
+      "topic": "AI-инфраструктура и финансирование: британский compute-провайдер, ранее заключивший крупный контракт с Anthropic, обсуждает конвертируемые ноты и финансирование с NVIDIA перед потенциальным IPO.",
+      "event_type": "reported financing",
+      "keywords": [
+        "Nscale",
+        "NVIDIA",
+        "pre-IPO",
+        "convertible notes",
+        "AI compute",
+        "AI infrastructure",
+        "$3.5 billion"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "AI compute provider Nscale is looking for $3.5B in pre-IPO financing",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/04/ai-compute-provider-nscale-is-looking-for-3-5b-in-pre-ipo-financing/"
+      },
+      "supporting_sources": [],
+      "event_summary": "TechCrunch, ссылаясь на Bloomberg, сообщает, что Nscale ведёт переговоры о привлечении $3,5 млрд перед возможным IPO: $1,5 млрд через конвертируемые ноты и ещё $2 млрд финансирования от NVIDIA. Компания и NVIDIA на момент публикации не предоставили комментарий TechCrunch.",
+      "verified_facts": [
+        "TechCrunch сообщает, что Bloomberg написал о переговорах Nscale по привлечению $3,5 млрд.",
+        "Указанная структура состоит из $1,5 млрд конвертируемых нот и потенциальных $2 млрд финансирования от NVIDIA.",
+        "Nscale ранее сообщала о возможности IPO уже позднее в сентябре 2026 года.",
+        "TechCrunch отмечает, что запросил комментарии у Nscale и NVIDIA."
+      ],
+      "significance": "Если переговоры подтвердятся, это будет один из крупнейших новых раундов финансирования AI-инфраструктуры и дополнительное углубление связей Nscale с NVIDIA на фоне масштабного спроса на вычисления.",
+      "significance_score": 2,
+      "limitations": "Это сообщение о переговорах, а не о закрытом раунде; условия, инвесторы, участие NVIDIA и срок IPO могут измениться.",
+      "archive_status": "none",
+      "archive_reason": "Архив содержит прошлый контракт Nscale с Anthropic, но не этот отдельный пред-IPO финансовый процесс.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Надёжная свежая вторичная публикация фиксирует сообщение Bloomberg; фактом подтверждены именно переговоры и их заявленные параметры, не закрытие финансирования.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-04T21:12:11+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-04T21:12:11+00:00; timestamp проверен Python против effective window. Новый, отдельно описанный пред-IPO процесс от 4 сентября 2026 года, а не повтор прежнего контракта Nscale с Anthropic.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является судебным или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: потенциально значимое инфраструктурное финансирование.",
+      "event_date": "2026-09-04",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/09/04/ai-compute-provider-nscale-is-looking-for-3-5b-in-pre-ipo-financing/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch опубликовал сообщение 4 сентября 2026 года и прямо атрибутирует сведения о переговорах Bloomberg; более ранний первичный анонс отсутствует, поскольку раунд не объявлен как закрытый.",
+      "id": "cand-007",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/09/04/ai-compute-provider-nscale-is-looking-for-3-5b-in-pre-ipo-financing/",
+      "source_published_date": "2026-09-04",
+      "source_published_at": "2026-09-04T21:12:11+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-04T21:12:11+00:00"
+    },
+    {
+      "title": "Sparks Fly: NVIDIA Accelerates Local AI at IFA 2026",
+      "organization": "NVIDIA",
+      "published_date": "2026-09-03",
+      "published_at": "2026-09-03T16:00:59+00:00",
+      "time_precision": "datetime",
+      "topic": "Sparks Fly: NVIDIA Accelerates Local AI at IFA 2026",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "Sparks",
+        "Fly",
+        "NVIDIA",
+        "Accelerates",
+        "Local",
+        "at",
+        "IFA",
+        "2026"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Sparks Fly: NVIDIA Accelerates Local AI at IFA 2026",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/local-ai-ifa-next-gen-agents-nv-pair-rtx-spark"
+      },
+      "supporting_sources": [],
+      "event_summary": "At IFA 2026, NVIDIA and partners are providing faster inference and new tools that make agents easier to set up and run locally.",
+      "verified_facts": [
+        "Sparks Fly: NVIDIA Accelerates Local AI at IFA 2026",
+        "At IFA 2026, NVIDIA and partners are providing faster inference and new tools that make agents easier to set up and run locally."
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-09-03T16:00:59+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-03T16:00:59+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-09-03T16:00:59+00:00; timestamp проверен Python против effective window. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-09-03T16:00:59+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-008",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://blogs.nvidia.com/blog/local-ai-ifa-next-gen-agents-nv-pair-rtx-spark",
+      "source_published_date": "2026-09-03",
+      "source_published_at": "2026-09-03T16:00:59+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-03T16:00:59+00:00"
+    },
+    {
+      "title": "4 сентября 2026Yandex B2B Tech: среди российских компаний растёт спрос на ИИ‑агентов для защиты инфраструктуры",
+      "organization": "Яндекс",
+      "published_date": "2026-09-04",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "4 сентября 2026Yandex B2B Tech: среди российских компаний растёт спрос на ИИ‑агентов для защиты инфраструктуры",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "сентября",
+        "2026Yandex",
+        "B2B",
+        "Tech",
+        "среди",
+        "российских",
+        "компаний",
+        "растёт",
+        "спрос",
+        "на",
+        "ИИ",
+        "агентов"
+      ],
+      "geography": "russia",
+      "category": "investment",
+      "source_type": "official",
+      "primary_source": {
+        "title": "4 сентября 2026Yandex B2B Tech: среди российских компаний растёт спрос на ИИ‑агентов для защиты инфраструктуры",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=04-09-2026-01"
+      },
+      "supporting_sources": [],
+      "event_summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+      "verified_facts": [
+        "4 сентября 2026Yandex B2B Tech: среди российских компаний растёт спрос на ИИ‑агентов для защиты инфраструктуры",
+        "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках."
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Source Pulse v1.2 + Source Freshness Proof: meta:datepublished=2026-09-04; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-009",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    },
+    {
+      "title": "Microsoft: приём, придуманный для скрытых prompt injection, применили в массовом фишинге с невидимыми Unicode-символами",
+      "organization": "Microsoft Security; Microsoft Defender for Office 365; ActiveCampaign",
+      "published_date": "2026-09-03",
+      "published_at": "2026-09-03T16:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Необычное перетекание AI-security техники ASCII smuggling в традиционный фишинг: невидимые Unicode tag characters разрывают слова для человека незаметно, но меняют обработку текста фильтрами и ML-классификаторами.",
+      "event_type": "security research finding",
+      "keywords": [
+        "ASCII smuggling",
+        "Unicode Tags block",
+        "invisible characters",
+        "prompt injection",
+        "phishing",
+        "email security",
+        "Microsoft Defender",
+        "ActiveCampaign"
+      ],
+      "geography": "world",
+      "category": "curiosity",
+      "source_type": "official",
+      "primary_source": {
+        "title": "ASCII smuggling crosses over from AI prompt injection to phishing evasion",
+        "publisher": "Microsoft Security Blog",
+        "url": "https://www.microsoft.com/en-us/security/blog/2026/09/03/ascii-smuggling-crosses-over-from-ai-prompt-injection-to-phishing-evasion/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Once popular for attacking AI, ASCII smuggling is embraced by spammers",
+          "publisher": "Ars Technica",
+          "url": "https://arstechnica.com/security/2026/09/once-popular-for-attacking-ai-ascii-smuggling-is-embraced-by-spammers/"
+        }
+      ],
+      "event_summary": "Microsoft Security сообщила, что обнаружила высокообъёмную фишинговую активность, в которой использовались невидимые символы Unicode из блока Tags. Метод получил известность в исследованиях prompt injection: скрытые от человека инструкции остаются видимыми для LLM. В этой кампании злоумышленники применяли те же символы иначе — вставляли их внутрь финансовых слов-приманок вроде «funding», чтобы письмо визуально читалось нормально, но строковые, токенизационные и некоторые ML/NLP-проверки могли воспринимать слово иначе.",
+      "verified_facts": [
+        "Официальный пост Microsoft датирован 3 сентября 2026 года и описывает наблюдение высокообъёмной фишинговой кампании с Unicode-символами диапазона U+E0000–U+E007F.",
+        "Microsoft указывает, что техника выросла из исследований ASCII smuggling для скрытия prompt-injection-инструкций от людей при сохранении их в тексте, доступном моделям.",
+        "По телеметрии Microsoft, с 9 февраля 2026 года срабатывания соответствующей сигнатуры выросли примерно с 21 тыс. до более 1,3 млн сообщений в день, а пик превысил 2,3 млн 11 февраля.",
+        "Исследователи установили, что в данном случае символы не несли скрытых инструкций для ИИ: их вставляли в слова-приманки для обхода части механизмов обнаружения фишинга.",
+        "Microsoft отмечает, что та же сигнатура первоначально создавалась для поиска email-borne prompt injection и что при настройке её нужно исключать легитимные флаги Англии, Шотландии и Уэльса, которые тоже кодируются через Unicode tag characters."
+      ],
+      "significance": "Это самостоятельный и проверяемый курьёз на стыке ИИ и кибербезопасности: техника, прославившаяся как способ тайно «разговаривать» с LLM за спиной пользователя, была переиспользована для более прозаичной цели — незаметно ломать машинное чтение спам-фильтров. Материал также даёт практический вывод для разработчиков агентных систем и почтовых защит: нормализация невидимых символов нужна до анализа контента.",
+      "significance_score": 3,
+      "limitations": "Наблюдения и количественные оценки основаны на телеметрии Microsoft Defender, поэтому не описывают весь мировой объём кампании. Публикация фиксирует прежде всего период использования конкретного Unicode-приёма, а не полную историю более широкой фишинговой кампании.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет сюжета о переходе ASCII smuggling из prompt-injection исследований в массовый фишинг с невидимыми Unicode tag characters.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Событие подтверждено первичным техническим исследованием Microsoft Security с методикой, диапазоном символов, временными рядами телеметрии и описанием наблюдаемого паттерна; независимое изложение Ars Technica согласуется с первоисточником. Формулировка не утверждает, что техника впервые применена в фишинге вообще: новым названо её конкретное использование и масштаб, описанные Microsoft.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-03T16:00:00+00:00; timestamp проверен Python против effective window. 3 сентября 2026 года Microsoft впервые публично опубликовала собственное исследование обнаруженной активности и её связи с AI-era техникой ASCII smuggling. Хотя наблюдавшаяся фаза кампании началась в феврале и пошла на спад в мае, публичное раскрытие с новыми техническими деталями и данными телеметрии произошло внутри редакционного окна.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является судебным или регуляторным событием.",
+      "curiosity_eligible": true,
+      "curiosity_verification": "Необычность проверяема по первоисточнику: один и тот же невидимый Unicode-механизм, разработанный и известный как средство скрывать инструкции от людей при атаке на ИИ, злоумышленники применили для того, чтобы визуально не менять фишинговые слова, но менять их машинную обработку. Это реальная наблюдаемая кампания, а не сатира, слух или демонстрационный эксперимент.",
+      "event_date": "2026-09-03",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.microsoft.com/en-us/security/blog/2026/09/03/ascii-smuggling-crosses-over-from-ai-prompt-injection-to-phishing-evasion/",
+      "event_evidence_kind": "official_research",
+      "event_date_evidence": "Microsoft Security датирует своё первичное исследовательское раскрытие 3 сентября 2026 года. Точное время публикации на странице не указано.",
+      "audit_direction": "curiosity",
+      "id": "cand-010",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.microsoft.com/en-us/security/blog/2026/09/03/ascii-smuggling-crosses-over-from-ai-prompt-injection-to-phishing-evasion/",
+      "source_published_date": "2026-09-03",
+      "source_published_at": "2026-09-03T16:00:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-03T16:00:00+00:00"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=8, validated unique=7, final candidates=7. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 2.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-major_agencies-04",
+      "version": 1,
+      "status": "unresolved",
+      "title": "China’s new AI model halts new subscriptions as demand swamps capacity",
+      "origin_direction": "major_agencies",
+      "reason_code": "unverified",
+      "evidence_reason": "AP-страница подтверждает событие вокруг Moonshot Kimi K3, но в доступном тексте отсутствует проверяемая дата/время публикации. Source Freshness Proof для строгого effective window выполнить нельзя.",
+      "likely_significance_score": 0,
+      "entities": [
+        "China"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-independent_missing_events-01",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Another swarm of OpenAI agents reached the open internet without the frontier lab's knowledge",
+      "origin_direction": "independent_missing_events",
+      "reason_code": "unverified",
+      "evidence_reason": "Материал основан на исследовании независимой группы; представитель OpenAI не подтвердил, что агенты действительно принадлежали компании, и не подтвердил ключевые обстоятельства инцидента. При строгом контракте verified кандидат не проходит.",
+      "likely_significance_score": 1,
+      "entities": [
+        "Another",
+        "OpenAI"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  }
+}
+=== CANDIDATES_CONTEXT_END ===
+
+Утверждённая машиночитаемая редакционная политика:
+=== EDITORIAL_POLICY_BEGIN ===
+{
+  "spec_version": "2026-08-05",
+  "language": "ru",
+  "timezone": "Europe/Moscow",
+  "story_counts": {
+    "total_target_minimum": 7,
+    "total_target_maximum": 12,
+    "short_digest_minimum": 1,
+    "zero_stories_status": "error",
+    "regional_story_quotas_enabled": false,
+    "short_digest_notice": "Новостей сегодня меньше, чем обычно",
+    "short_digest_notice_html": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+  },
+  "diversity": {
+    "max_selected_per_publisher_soft": 2,
+    "max_selected_per_organization_soft": 2,
+    "override_requires_reason": true,
+    "short_pool_soft_limits_may_reduce_selection": false,
+    "publisher_identity_field": "primary_source.publisher",
+    "publisher_identity_rule": "Для publisher diversity каждый выбранный кандидат считается по primary_source.publisher; supporting_sources и источник, процитированный в article_html, не меняют издателя кандидата.",
+    "pre_response_publisher_check": "Перед возвратом JSON пересчитай selected_candidate_ids по primary_source.publisher. Если число сюжетов одного издателя превышает max_selected_per_publisher_soft, замени лишний сопоставимый сюжет либо добавь обоснованный publisher diversity_override только для независимых событий высокой значимости."
+  },
+  "candidate_selection": {
+    "verification_required_for_selection": "verified",
+    "allowed_freshness_for_selection": [
+      "new_event",
+      "material_update"
+    ],
+    "legal_category": "legal",
+    "legal_scale_required_for_selection": "major",
+    "legal_minimum_significance_score": 4,
+    "curiosity_category": "curiosity",
+    "curiosity_optional": true,
+    "maximum_selected_curiosity_stories": 1,
+    "curiosity_requires_explicit_verification": true
+  },
+  "what_it_means": {
+    "required": true,
+    "minimum_items": 4,
+    "maximum_items": 6,
+    "html_heading": "<h2>Что это значит</h2>",
+    "list_tag": "ol"
+  },
+  "dzen": {
+    "required": true,
+    "heading": "Все ИИ-Сводки",
+    "url": "https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1",
+    "anchor_text": "Архив ИИ-Сводок",
+    "html": "<h2>Все ИИ-Сводки</h2><p><a href=\"https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1\">Архив ИИ-Сводок</a></p>"
+  },
+  "meta_marking": {
+    "enabled": true,
+    "visible_name": "Meta",
+    "first_visible_form": "Meta*",
+    "subsequent_visible_form": "Meta",
+    "footnote_html": "<p><em>*Meta и ее сервисы - в России запрещены</em></p>",
+    "footnote_position": "after_dzen_block",
+    "service_fields_use_asterisk": false
+  },
+  "updates": {
+    "headline_prefix": "Обновление: ",
+    "required_for_archive_status": "update",
+    "forbidden_for_archive_status": "new"
+  },
+  "article": {
+    "introduction_sentences_minimum": 2,
+    "introduction_sentences_maximum": 4,
+    "paragraphs_per_story_minimum": 2,
+    "paragraphs_per_story_maximum": 3,
+    "world_heading": "Мировые лидеры ИИ",
+    "russian_heading": "Российские лидеры ИИ",
+    "allow_missing_russian_section": true,
+    "forbidden_tags": [
+      "h1",
+      "img",
+      "html",
+      "head",
+      "body",
+      "script",
+      "style",
+      "iframe"
+    ],
+    "china_heading": "Китайские лидеры ИИ",
+    "allow_missing_china_section": true
+  },
+  "terminology": {
+    "prefer": {
+      "AI": "ИИ",
+      "AI agent": "агент ИИ"
+    },
+    "keep_untranslated": [
+      "LLM"
+    ],
+    "preserve_company_and_product_names": true,
+    "allow_ai_in_official_names": true
+  },
+  "style": [
+    "ясно",
+    "делово",
+    "живо",
+    "без воды",
+    "без чрезмерного хайпа"
+  ],
+  "tracked_world_organizations": [
+    "OpenAI",
+    "Google DeepMind",
+    "Anthropic",
+    "Meta AI",
+    "Microsoft",
+    "Nvidia",
+    "xAI",
+    "Amazon",
+    "Mistral",
+    "Hugging Face",
+    "Apple",
+    "Cohere"
+  ],
+  "tracked_asia_organizations": [
+    "DeepSeek",
+    "Alibaba",
+    "Qwen",
+    "Baidu",
+    "ERNIE",
+    "Tencent",
+    "Hunyuan",
+    "ByteDance",
+    "Doubao",
+    "Moonshot AI",
+    "Kimi",
+    "Z.ai",
+    "Zhipu AI",
+    "GLM",
+    "MiniMax",
+    "01.AI",
+    "SenseTime",
+    "Pony.ai",
+    "Huawei"
+  ],
+  "tracked_developer_tools": [
+    "IDE",
+    "coding agents",
+    "agentic development environments",
+    "CLI-агенты",
+    "Claude Code",
+    "Cursor",
+    "GitHub Copilot",
+    "OpenCode",
+    "Cline",
+    "GLM",
+    "Qwen",
+    "DeepSeek",
+    "Kimi",
+    "Claude",
+    "GPT",
+    "Gemini"
+  ],
+  "tracked_russian_organizations": [
+    "Яндекс",
+    "Сбер",
+    "VK",
+    "МТС AI",
+    "Т-Банк",
+    "Тинькофф",
+    "Газпромбанк",
+    "Ростелеком"
+  ],
+  "editorial_notes": {
+    "publish_in_article": false,
+    "publish_in_rss": false,
+    "allowed_types": [
+      "source_gap",
+      "low_news_volume",
+      "time_precision",
+      "diversity_override"
+    ]
+  },
+  "stories_file": {
+    "enabled": true,
+    "filename": "stories.json"
+  },
+  "image": {
+    "aspect_ratio": "16:9",
+    "title_template": "ИИ-Сводка на {human_date}",
+    "direct_prompt_to_image_api": true,
+    "restrictions": [
+      "без логотипов компаний",
+      "без дополнительного текста, кроме точного заголовка",
+      "без водяных знаков",
+      "без мелких интерфейсных надписей",
+      "без пустой половины кадра",
+      "без стокового корпоративного клипарта",
+      "без узнаваемых лиц реальных людей",
+      "нейтральные силуэты без идентифицируемых черт допустимы"
+    ]
+  }
+}
+=== EDITORIAL_POLICY_END ===
+
+## 1. Источники данных
+
+Используй только сведения и URL из `CANDIDATES_CONTEXT`. На этом этапе не ищи новые материалы и не добавляй факты по памяти.
+
+Не выбирай кандидатов с `recommendation: exclude`. Не выбирай полноценные дубли.
+Не выбирай include/consider без `verification_status: verified`.
+Не выбирай `freshness_status: old_reprint`: текущая дата перепечатки без нового
+события не делает старый материал новой новостью.
+
+Кандидат с `archive_status: update` допустим только тогда, когда в статье ясно описано существенное новое развитие, а его заголовок начинается с `Обновление:`.
+
+## 2. Отбор
+
+Выбери лучшие подтверждённые сюжеты, но не заполняй выпуск слабыми или старыми материалами ради количества.
+
+Редакционные цели:
+
+- 7–12 сюжетов всего;
+- выбрать все действительно важные сюжеты, которые подтверждены пулом;
+- не добавлять слабые или старые материалы ради объёма.
+
+Legal-кандидат допустим только с `category: legal`, `legal_scale: major`,
+конкретным объяснением масштаба и `significance_score` не ниже 4. Мелкий
+бытовой или локальный спор не выбирай. Из кандидатов `category: curiosity`
+можно выбрать не более одного: только проверяемый, самостоятельно значимый и
+не вытесняющий более важную серьёзную новость.
+
+Числовых квот для китайских и российских новостей нет. Если в
+`CANDIDATES_CONTEXT` есть достойные сюжеты этих направлений, включи столько
+значимых сюжетов, сколько действительно есть. Если подходящих сюжетов нет,
+не создавай соответствующий раздел.
+
+Если исследовательский пул не позволяет собрать обычный объём, выбери всё
+действительно важное. Автоматизация может выполнить ограниченный coverage
+audit, но отсутствие дополнений не является ошибкой и не должно мешать
+публикации короткого выпуска.
+
+Когда после базовых eligibility-проверок достойный пул остаётся меньше
+`MINIMUM_SELECTED_STORIES`, мягкие лимиты разнообразия издателей и организаций
+не могут сами по себе уменьшать число выбранных сюжетов. Не исключай иначе
+достойный `include`/`consider` только ради соблюдения soft publisher/organization
+cap. Для такого исключения нужна самостоятельная содержательная причина,
+не связанная с diversity: недостаточная значимость самого события, слабое
+подтверждение, дубль, устаревание или другое редакционное основание. Если
+достойный сюжет приводит к превышению soft cap, выбери его и зафиксируй
+обоснованный `diversity_override`.
+
+Если найдено от 1 до 6 достойных сюжетов:
+
+- верни `status: ok`;
+- поставь `digest.short_digest: true`;
+- первым элементом `article_html` поставь точный абзац:
+
+```html
+<p><em>Новостей сегодня меньше, чем обычно</em></p>
+```
+
+- добавь в `editorial_notes` запись `low_news_volume`.
+
+Если не найдено ни одного достойного сюжета, верни `status: error` и ясную причину.
+
+Не добавляй фразы вида «по компании новостей нет».
+
+## 3. Разнообразие
+
+Мягкие цели:
+
+- не более двух выбранных сюжетов от одного издателя;
+- не более двух выбранных сюжетов одной компании или организации.
+
+Превышение допустимо только для независимых событий высокой значимости. В таком случае добавь объект в `diversity_overrides`:
+
+- `type`: `publisher` или `organization`;
+- `value`: точное название;
+- `reason`: конкретное объяснение.
+
+Без причины превышение недопустимо.
+
+Для короткого пула меньше обычной минимальной цели эти лимиты являются только
+балансирующим сигналом: превышение всё ещё требует `diversity_override`, но
+сам soft limit не является основанием удалить иначе достойный сюжет. Для пула,
+который позволяет выбрать обычные 7–12 сюжетов, применяй мягкие цели как обычно
+при сравнении сопоставимых по значимости кандидатов.
+
+Если в пуле есть достойные российские или китайские кандидаты, не исключай их
+ради упрощения структуры. Выбирай по значимости и качеству без числовой квоты.
+Если подходящих кандидатов направления нет, соответствующий раздел не нужен.
+
+## 4. Структура article_html
+
+`article_html` содержит полный готовый текст статьи в чистом HTML.
+
+Разрешены только теги:
+
+- `p`;
+- `h2`;
+- `h3`;
+- `ul`;
+- `ol`;
+- `li`;
+- `strong`;
+- `em`;
+- `a`;
+- `blockquote`.
+
+У тега `a` разрешён только атрибут `href`.
+
+Не добавляй:
+
+- `h1`;
+- обложку;
+- `html`, `head` или `body`;
+- `script`, `style` или `iframe`;
+- Markdown;
+- служебные комментарии;
+- упоминания GitHub, RSS, Blogger, автоматизации или внутреннего архива;
+- отдельный раздел со списком источников.
+
+Обычный выпуск начинается с 2–4 предложений вступления.
+
+Короткий выпуск сначала содержит точную курсивную пометку о меньшем числе новостей, затем обычное вступление.
+
+Далее:
+
+1. `<h2>Мировые лидеры ИИ</h2>`;
+2. мировые сюжеты, не относящиеся к китайским компаниям;
+3. `<h2>Китайские лидеры ИИ</h2>`, только если выбраны сюжеты о китайских компаниях или моделях;
+4. китайские сюжеты;
+5. `<h2>Российские лидеры ИИ</h2>`, только если выбраны российские сюжеты;
+6. российские сюжеты;
+7. `<h2>Что это значит</h2>`;
+8. `<ol>` с 4–6 выводами;
+9. точный блок Дзена, указанный ниже;
+10. сноска Meta, если она требуется.
+
+Не создавай пустые разделы «Китайские лидеры ИИ» и «Российские лидеры ИИ».
+
+## 5. Структура каждой новости
+
+Каждый сюжет содержит:
+
+```html
+<h3>Заголовок новости</h3>
+<p>Первый содержательный абзац.</p>
+<p>Второй содержательный абзац.</p>
+```
+
+Допускается третий содержательный абзац. Итого 2–3 абзаца на сюжет.
+
+Для каждой новости объясни:
+
+- что произошло;
+- что подтверждено;
+- почему это важно;
+- ограничения и неопределённости;
+- применимые последствия для рынка, продуктов, исследований, бизнеса, автоматизации, маркетинга, разработки и создателей ИИ-контента.
+
+Не нужно искусственно затрагивать все направления в каждом сюжете.
+
+Каждая новость должна содержать хотя бы одну ссылку вида:
+
+```html
+<a href="https://точный-url-из-кандидата">Название источника</a>
+```
+
+Не изменяй URL и не добавляй URL, которых нет в `CANDIDATES_CONTEXT`.
+
+Если утверждение подтверждено только лендингом, пресс-релизом или соцсетями, называй его продуктовым анонсом или заявлением компании, а не независимой оценкой.
+
+## 6. Раздел «Что это значит»
+
+Используй точную структуру:
+
+```html
+<h2>Что это значит</h2>
+<ol>
+  <li>...</li>
+</ol>
+```
+
+Количество выводов: 4–6. Они должны вытекать из выбранных сюжетов.
+
+## 7. Блок Дзена
+
+В конце статьи обязателен точный блок:
+
+```html
+<h2>Все ИИ-Сводки</h2>
+<p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>
+```
+
+Заголовок `<h2>Все ИИ-Сводки</h2>` не изменяй. Текст ссылки должен быть `Архив ИИ-Сводок`.
+
+Ссылка Дзена является навигационной и не включается в массив `sources`.
+
+## 8. Маркировка Meta
+
+Правило применяется только к видимому тексту `article_html`:
+
+- первое видимое упоминание должно быть `Meta*`;
+- все последующие видимые упоминания должны быть `Meta` без звёздочки;
+- после блока Дзена добавь ровно одну сноску:
+
+```html
+<p><em>*Meta и ее сервисы - в России запрещены</em></p>
+```
+
+Если Meta в статье отсутствует, сноску не добавляй.
+
+В `sources`, `topics`, служебных полях, URL и названиях организаций пиши `Meta` без звёздочки.
+
+## 9. Обновления
+
+Если выбранный кандидат имеет `archive_status: update`, соответствующий `<h3>` обязан начинаться с:
+
+```text
+Обновление:
+```
+
+Для кандидата с `archive_status: none` такой префикс запрещён.
+
+Порядок `<h3>` должен точно совпадать с порядком `selected_candidate_ids`.
+
+## 10. Стиль и терминология
+
+Пиши на русском языке: ясно, делово, живо, без воды и чрезмерного хайпа.
+
+Пиши:
+
+- `ИИ`, а не `AI`;
+- `агент ИИ`, а не `AI agent` или `AI-агент`;
+- `LLM` без перевода.
+
+Названия компаний и продуктов не переводи. `AI` допустимо внутри официального названия, например `Mistral AI`.
+
+Не представляй заявление компании как независимо доказанный факт. Не копируй длинные фрагменты источников.
+
+## 11. Описание, темы и заметки
+
+`description`:
+
+- от 150 до 300 символов;
+- без HTML и ссылок;
+- отражает главные темы выпуска.
+
+`topics`:
+
+- от 5 до 20 коротких тем;
+- без дублей;
+- только по выбранным сюжетам;
+- без `Meta*`.
+
+`sources`:
+
+- содержит каждый новостной URL из `article_html`;
+- не содержит ссылку Дзена;
+- не содержит URL, отсутствующих в статье;
+- использует точные `title`, `publisher` и `url` из исследовательского пула.
+
+`editorial_notes` — внутренний массив. Он не публикуется в статье и RSS. Используй объекты с полями `type`, `area`, `message`.
+
+## 12. Промпт обложки
+
+`image_prompt` должен быть полноценным самостоятельным заданием для прямой генерации изображения.
+
+Он обязан иметь четыре смысловых абзаца в таком порядке:
+
+1. `Изображение 16:9: ...` — назначение и точный единственный читаемый заголовок `ИИ-Сводка на D месяца YYYY`;
+2. `Главные визуальные темы: ...` — конкретные сцены из выбранных новостей;
+3. `Композиция: ...` — центральный фокус, окружающие сцены и нижняя зона;
+4. `Стиль: ...` — палитра, детализация и запреты.
+
+Постоянные требования:
+
+- современная футуристическая редакционная обложка;
+- крупный и единственный читаемый текст — точный заголовок выпуска;
+- число визуальных мотивов соответствует реальному числу сюжетов;
+- без логотипов компаний;
+- без дополнительного текста;
+- без водяных знаков;
+- без мелких интерфейсных надписей;
+- без технического имени файла;
+- без пустой половины кадра;
+- без стокового корпоративного клипарта;
+- без узнаваемых лиц реальных людей;
+- нейтральные силуэты без идентифицируемых черт допустимы.
+
+## 13. Технические метаданные
+
+Поля `date`, `slug`, `title`, `published_at`, `author` и `cover_filename` всё равно будут принудительно нормализованы кодом. Заполни их по схеме, но не меняй редакционную дату и название выпуска.
+
+## 14. Результат
+
+Верни только строгий JSON по переданной схеме. Никакого Markdown, пояснений до JSON или текста после JSON.
