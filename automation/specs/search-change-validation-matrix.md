@@ -92,6 +92,7 @@ semantic delta существующими regressions.
 | F4 | Freshness | Date-only event на partial boundary day | Неоднозначная граница остаётся unknown, а не ложно stale/fresh. |
 | F5 | Freshness | Source page stale при свежем/unknown event | Source Freshness fail-closed не обходится. |
 | F6 | Freshness | Material update старого event | Update не смешивается с old reprint и проходит archive/material-update contract. |
+| F7 | Freshness | Timezone-aware source timestamp на календарной границе | Exact instant сохраняется; ручной model-side conversion не может создать ложный +1-day `outside_window`; окончательное exact-window решение остаётся за deterministic Source Freshness. |
 | D1 | Degradation | Mandatory search возвращает 0 | Ноль отличается от technical error и отражается в diagnostics. |
 | D2 | Degradation | Mandatory search timeout/error | Fail-closed stage не маскируется пустым successful result. |
 | D3 | Degradation | Partial provider/tool result | Partial/budget_exhausted/error не допускают ложный complete. |
@@ -119,6 +120,7 @@ semantic delta существующими regressions.
 - both regional gaps + degraded/empty regional search;
 - stale event + fresh reprint/source publication;
 - date-only boundary + recovery from saved artifact;
+- **timezone-aware source timestamp + boundary date + model-side conversion + deterministic Source Freshness**: exact instant обязан сохраниться, ложный календарный rollover не должен стать final rejection, а реально outside-window source по-прежнему должен блокироваться downstream;
 - unselected candidate identity + supporting-source contamination;
 - provider ordering perturbation + multi-URL same-event duplicate;
 - double regional gap + oversized caller budget;
@@ -132,6 +134,24 @@ semantic delta существующими regressions.
 измерений. Полный декартов продукт не требуется, если он не несёт дополнительного
 риска, но известный incident shape или plausible three-way interaction нельзя
 выкидывать ради сокращения числа тестов.
+
+### Permanent regression: 2026-09-05 timezone rollover
+
+Production run `33934617471` добавил постоянный F7 incident-case. Два source
+instant (`2026-09-04T09:21:00-07:00` и `2026-09-04T07:47:00-07:00`) находились
+внутри exact saved window, но model-side reasoning ошибочно перенесло их на 5
+сентября и вернуло `outside_window` до candidate normalization. Reusable fixture:
+`automation/fixtures/recall/primary-temporal-boundary-2026-09-05.json`; offline
+contract: `automation/tests/test_primary_temporal_boundary_guard.py`.
+
+Для этого case baseline/proposed сравниваются на одном exact artifact corpus:
+baseline имеет `2/2` ложных calendar-rollover rejection, proposed prompt contract
+запрещает manual conversion как final authority и передаёт иначе пригодный exact
+instant в существующий deterministic freshness layer. Query delta = 0, Primary
+search-budget delta = 0. Assistant-side Terra в этой сессии не exposed; это не
+мешает deterministic timezone proof, поскольку treatment не меняет query/ranking,
+но любые последующие query wording changes всё равно требуют отдельного
+Terra-equivalent A/B по правилу раздела 2.
 
 ## 5. Критерий допуска
 
