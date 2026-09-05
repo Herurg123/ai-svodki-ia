@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 import unittest
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "automation" / "scripts"
+FIXTURE = ROOT / "automation" / "fixtures" / "recall" / "primary-temporal-boundary-2026-09-05.json"
 
 
 def load(name: str, filename: str):
@@ -45,6 +48,22 @@ class PrimaryTemporalBoundaryGuardTests(unittest.TestCase):
             self.assertIn("deterministic Source Freshness Proof", prompt)
             self.assertIn("2026-09-04T19:21:00+03:00", prompt)
             self.assertIn("а НЕ 5 сентября", prompt)
+
+    def test_sep5_saved_timezone_rollovers_are_mathematically_wrong(self):
+        fixture = json.loads(FIXTURE.read_text(encoding="utf-8"))
+        start = datetime.fromisoformat(fixture["effective_window"]["start_at"])
+        end = datetime.fromisoformat(fixture["effective_window"]["end_at"])
+        for row in fixture["observed_model_timezone_errors"]:
+            source = datetime.fromisoformat(row["source_timestamp"])
+            correct = datetime.fromisoformat(row["correct_converted_timestamp"])
+            erroneous = datetime.fromisoformat(
+                row["erroneous_converted_timestamp_from_saved_rejection"]
+            )
+            self.assertEqual(source, correct)
+            self.assertLessEqual(start, source)
+            self.assertLessEqual(source, end)
+            self.assertGreater(erroneous, end)
+            self.assertEqual(row["saved_reason_code"], "outside_window")
 
     def test_guard_does_not_change_search_budget_or_business_query(self):
         self.assertEqual(primary.DEFAULT_MAXIMUM_SEARCH_CALLS, 12)
