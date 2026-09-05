@@ -40,6 +40,30 @@ BUSINESS_QUERY_TREATMENT = (
     "latest AI investment financing acquisitions partnerships enterprise deals "
     "revenue monetization ads earnings"
 )
+TEMPORAL_BOUNDARY_GUARD_VERSION = 1
+TEMPORAL_BOUNDARY_GUARD = f"""
+
+### Temporal boundary guard v{TEMPORAL_BOUNDARY_GUARD_VERSION}
+
+Не отклоняй потенциально значимое событие как `outside_window` только из-за
+ручного пересчёта часового пояса на пограничной календарной дате. Если source
+показывает точный timestamp с timezone/UTC offset, сохраняй этот instant в
+`published_at` без выдуманного сдвига даты. Если событие иначе пригодно, верни
+его candidate и позволь последующему deterministic Source Freshness Proof строго
+сравнить timezone-aware instant с effective window.
+
+Не прибавляй календарные сутки, если арифметика offset реально не пересекает
+полночь. Контрольный пример, который НЕ является текущей датой поиска:
+`2026-09-04 09:21 PDT (UTC-07:00)` = `2026-09-04T19:21:00+03:00`, а НЕ 5 сентября.
+Аналогично `2026-09-04 07:47 PDT` = `2026-09-04T17:47:00+03:00`.
+
+Если timezone/timestamp неоднозначен, не выдумывай converted datetime и не ставь
+`outside_window` только на основании сомнительного ручного пересчёта. Сохрани
+доказанный source timestamp/date с корректной precision; downstream freshness
+остаётся fail-closed и сам отклонит источник, который действительно позже cutoff
+или раньше effective window. Эта защита не меняет search query, число Web Search
+operations, significance, dedupe или freshness thresholds.
+"""
 
 # Stable v2 transport keeps these contracts. The literals remain at the public
 # entrypoint because offline repository tests intentionally guard them:
@@ -184,12 +208,19 @@ def _annotate(research: dict[str, Any], report: dict[str, Any]) -> tuple[dict[st
             "query": BUSINESS_QUERY_TREATMENT,
             "additional_search_operations": 0,
         }
+        target["temporal_boundary_guard"] = {
+            "version": TEMPORAL_BOUNDARY_GUARD_VERSION,
+            "scope": "all_primary_directions",
+            "query_changed": False,
+            "additional_search_operations": 0,
+            "downstream_freshness_fail_closed": True,
+        }
     return research, report
 
 
 def build_prompt(*args: Any, **kwargs: Any) -> str:
-    """Apply the A/B-approved business query only to its existing Primary slot."""
-    prompt = _BASE_BUILD_PROMPT(*args, **kwargs)
+    """Apply universal temporal guard and the approved business query treatment."""
+    prompt = _BASE_BUILD_PROMPT(*args, **kwargs) + TEMPORAL_BOUNDARY_GUARD
     direction = kwargs.get("direction")
     if not isinstance(direction, dict) or direction.get("id") != BUSINESS_QUERY_DIRECTION_ID:
         return prompt
