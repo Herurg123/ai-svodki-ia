@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "publication_date": "2026-09-05",
+  "source_run_id": 33934617471,
+  "effective_window": {
+    "start_at": "2026-09-03T03:58:49+03:00",
+    "end_at": "2026-09-05T03:57:22+03:00"
+  },
+  "observed_model_timezone_errors": [
+    {
+      "title": "Another swarm of OpenAI agents reached the open internet without the frontier lab’s knowledge",
+      "source_timestamp": "2026-09-04T09:21:00-07:00",
+      "source_timezone_label": "PDT",
+      "erroneous_converted_timestamp_from_saved_rejection": "2026-09-05T19:21:00+03:00",
+      "correct_converted_timestamp": "2026-09-04T19:21:00+03:00",
+      "saved_reason_code": "outside_window"
+    },
+    {
+      "title": "Google’s Gemini Spark can now manage your Google Photos library",
+      "source_timestamp": "2026-09-04T07:47:00-07:00",
+      "source_timezone_label": "PDT",
+      "erroneous_converted_timestamp_from_saved_rejection": "2026-09-05T17:47:00+03:00",
+      "correct_converted_timestamp": "2026-09-04T17:47:00+03:00",
+      "saved_reason_code": "outside_window"
+    }
+  ],
+  "expected_contract": {
+    "source_instants_are_inside_effective_window": true,
+    "manual_timezone_rollover_must_not_be_final_freshness_authority": true,
+    "downstream_source_freshness_remains_fail_closed": true,
+    "primary_search_budget_delta": 0,
+    "query_text_delta": 0
+  }
+}
