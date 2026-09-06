@@ -822,6 +822,44 @@ policy change и требует отдельного PR/audit.
 
 ## 7. Event/source freshness и editorial
 
+### Наблюдаемый расход API: независимая диагностика
+
+`usage_observer.py` охватывает существующие Responses API transports Primary,
+agency rescue, Hybrid, Coverage, legacy research/editorial и Images transport.
+Opt-in `AI_DIGEST_USAGE_DIR` включён только в production job; дата берётся из
+`AI_DIGEST_PUBLICATION_DATE`. Наблюдатель передаёт исходные kwargs без изменений,
+вызывает transport ровно один раз и возвращает исходный объект/исключение. Он не
+меняет SDK retry policy. Метаданные attempt сохраняются атомарно перед вызовом и
+сразу после ответа, до JSON/editorial validation, поэтому поздний сбой не должен
+уничтожать usage. Промпты, тексты ответов, credentials и image base64 не пишутся.
+Ошибка записи диагностируется предупреждением и не вызывает новый платный запрос.
+
+Always-run шаг `Account for observed release and recovery usage` перед финальной
+сводкой запускает `usage_ledger.py`. Он читает только локальные текущие и уже
+скачанные выбранные same-day recovery roots, переносит предыдущий canonical ledger
+для полной цепочки recovery, исключает чужие даты и дедуплицирует response IDs.
+Image provider request ID, либо уникальный UUID попытки `usage_attempt_id`,
+связывает живое наблюдение с копиями image report. Локальный номер выпуска
+не является ключом дедупликации оплаченных вызовов. Неидентифицируемый historical image
+остаётся явно неопределённым. Реестр также восстанавливает usage старых артефактов
+без нового observer; это read-only совместимость с сохранёнными оплачёнными данными.
+
+`preview/production-daily/usage-ledger.json` содержит записи, provenance, итог по
+стадиям, input/output/cache-read/cache-write, число завершённых search operations,
+сценарную оценку USD и accounting gaps. В нём нет account-invoice утверждения:
+незагруженные runs, SDK retries без возвращённого usage и оборванные вызовы могут
+иметь неизвестный расход. Начатый вызов без ответа, неверные cache counts,
+неизвестная модель/тариф, повреждённый JSON и конфликтующие копии не трактуются как
+нулевые расходы. Standard list-price reference версионирован датой в `PRICING`;
+неизвестные цены остаются null. Для Terra учитывается надбавка после 272K input.
+
+Шаг добавляет 0 OpenAI calls, 0 Web Search, 0 network requests. Он не участвует в
+search-slot allocation, freshness, dedupe, editorial, recovery planning, Image
+admission, commit или deploy и не блокирует исходный результат. Журнал входит в
+уже существующий production artifact. Public content и локальный video downstream
+не меняются. Версионированные transports сохраняют прежние import/test hooks;
+их lifecycle не изменён, требуется тот же preserved recovery compatibility.
+
 Trusted internal research перед editorial проходит два независимых freshness
 слоя.
 

@@ -154,6 +154,8 @@ jobs:
     env:
       PYTHONUNBUFFERED: "1"
       PIPELINE_MODE: full
+      AI_DIGEST_USAGE_DIR: automation/preview/production-daily/usage-events
+      AI_DIGEST_PUBLICATION_DATE: ${{ needs.gate.outputs.publication_date }}
 
     steps:
       - name: Check out main
@@ -768,6 +770,21 @@ jobs:
           commit_sha="$(git rev-parse HEAD)"
           bash automation/scripts/push_protected_main.sh HEAD:main
           echo "commit_sha=${commit_sha}" >> "${GITHUB_OUTPUT}"
+      - name: Account for observed release and recovery usage
+        if: always()
+        continue-on-error: true
+        shell: bash
+        env:
+          PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date || needs.gate.outputs.publication_date }}
+          RECOVERY_RUN_ID: ${{ steps.recovery_source.outputs.run_id || '' }}
+        run: |
+          args=(--root automation/preview/production-daily --root "automation/preview/${PUBLICATION_DATE}")
+          if [[ -n "${RECOVERY_RUN_ID}" ]]; then
+            args+=(--root "automation/recovery/${RECOVERY_RUN_ID}")
+          fi
+          python automation/scripts/usage_ledger.py \
+            "${args[@]}" --publication-date "${PUBLICATION_DATE}" \
+            --output automation/preview/production-daily/usage-ledger.json
       - name: Publish Russian pipeline status
         if: always() && steps.terminal_reuse.outputs.stop != 'true'
         continue-on-error: true

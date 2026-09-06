@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from discovery_health import evaluate_discovery_health
+from usage_ledger import summary_lines as usage_summary_lines
 
 REPORT_ROOT = Path("automation/preview/production-daily")
 
@@ -597,6 +598,9 @@ def main() -> int:
             commit_sha=args.commit_sha,
         )
         discovery_health = build_discovery_health(args.publication_date)
+        usage = read_json_if_exists(REPORT_ROOT / "usage-ledger.json")
+        if isinstance(usage, dict):
+            markdown += "\n".join(usage_summary_lines(usage)) + "\n"
         report = {
             "status": (
                 "editorial_stop"
@@ -608,6 +612,8 @@ def main() -> int:
             "annotation": annotation,
             "run_url": args.run_url,
             "discovery_health": discovery_health,
+            "usage_accounting": ({k: v for k, v in usage.items() if k != "records"}
+                                 if isinstance(usage, dict) else {"accounting_status": "not_observed"}),
         }
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(

@@ -330,6 +330,12 @@ reported as healthy success.
 
 ## Independent audits and experiments
 
+Usage accounting is diagnostic only: preserve the existing one-cover generation
+and paid-stage recovery gates. Deduplicate paid responses by provider identity or
+the UUID shared with their saved report, never by a reusable release/request ID.
+Unknown charges and missing evidence must remain explicit; accounting must not
+retry a transport, alter its request, or discard its returned response.
+
 The canonical independent audit journal is
 `automation/audits/independent-audit-journal.md`; controlled architecture and
 retrieval experiments belong under `automation/audits/experiments/`, and

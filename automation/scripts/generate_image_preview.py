@@ -8,6 +8,8 @@ metadata, and never touches production posts/ or FTP.
 
 from __future__ import annotations
 
+from usage_observer import call_with_usage
+
 import argparse
 import base64
 import hashlib
@@ -341,7 +343,10 @@ def generate_image_artifact(
     }
     started_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
     print("Image preflight: ok; calling Images API once.")
-    response_payload = transport(
+    usage_metadata: dict[str, Any] = {}
+    response_payload = call_with_usage(
+        "image", transport, usage_model=model, usage_kind="image", usage_identity=request_id,
+        usage_metadata=usage_metadata,
         api_url=api_url,
         api_key=api_key,
         request_payload=api_request,
@@ -412,6 +417,7 @@ def generate_image_artifact(
     }
     image_response = {
         "status": "ok",
+        "usage_attempt_id": usage_metadata.get("attempt_id"),
         "request_id": request_id,
         "model": model,
         "endpoint": "/v1/images/generations",

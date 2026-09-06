@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from usage_observer import call_with_usage
+
 import copy
 import importlib.util
 import json
@@ -97,7 +99,7 @@ def run_audit_request(
         if maximum_web_search_calls == 1
         else maximum_web_search_calls
     )
-    response = client.responses.create(
+    response = call_with_usage("coverage", client.responses.create,
         model=model,
         input=prompt,
         tools=[web_search_tool],
