@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from usage_observer import call_with_usage
+
 import argparse
 import copy
 import json
@@ -660,7 +662,7 @@ def run_audit_request(
         web_search_tool["filters"] = {
             "allowed_domains": list(allowed_domains),
         }
-    response = client.responses.create(
+    response = call_with_usage("coverage", client.responses.create,
         model=model,
         input=prompt,
         tools=[web_search_tool],

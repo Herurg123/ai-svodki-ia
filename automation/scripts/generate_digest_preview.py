@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from usage_observer import call_with_usage
+
 import argparse
 import copy
 import hashlib
@@ -2435,7 +2437,7 @@ def main() -> int:
         research_calls = 0
 
         if research_input_path is None:
-            research_response = client.responses.create(
+            research_response = call_with_usage("research", client.responses.create,
                 model=model,
                 input=research_prompt,
                 tools=[
@@ -2613,7 +2615,7 @@ def main() -> int:
             editorial_prompt.rstrip() + "\n",
         )
 
-        editorial_response = client.responses.create(
+        editorial_response = call_with_usage("editorial", client.responses.create,
             model=model,
             input=editorial_prompt,
             reasoning={"effort": "medium"},

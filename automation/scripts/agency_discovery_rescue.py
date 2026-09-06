@@ -13,6 +13,8 @@ outcome of the first call is uncertain.
 """
 from __future__ import annotations
 
+from usage_observer import call_with_usage
+
 import copy
 import json
 from pathlib import Path
@@ -274,7 +276,7 @@ def run_search_request(
     from openai import OpenAI
 
     client = OpenAI(api_key=api_key, timeout=1200.0, max_retries=2)
-    response = client.responses.create(
+    response = call_with_usage("agency", client.responses.create,
         model=model,
         input=prompt,
         tools=[_web_search_tool()],

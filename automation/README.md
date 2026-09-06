@@ -9,6 +9,13 @@
 
 ## Карта каталога
 
+Полный наблюдаемый расход выпуска: `scripts/usage_observer.py` сохраняет безопасные
+метаданные каждого существующего платного вызова, `scripts/usage_ledger.py`
+объединяет текущие и загруженные recovery-артефакты без повторного счёта копий.
+Итог — `preview/production-daily/usage-ledger.json` и Actions Summary. Начатый вызов
+без ответа, неполный usage, конфликтующие копии и отсутствующая стадия означают
+неизвестность, а не нулевую стоимость. Политика поиска и публикации не изменяется.
+
 - `content/YYYY-MM-DD/` — структурированные материалы выпусков;
 - `archive/index.json` — редакционная память и dedupe/material-update context;
 - `archive/search-baselines/` — manifests постоянных retrieval baselines;

@@ -10,6 +10,8 @@ becoming a licence to republish yesterday's stories.
 """
 from __future__ import annotations
 
+from usage_observer import call_with_usage
+
 import copy
 import json
 from datetime import date, datetime, timedelta, timezone
@@ -427,7 +429,7 @@ def run_search_request(
     }
     if allowed_domains:
         web_tool["filters"] = {"allowed_domains": list(allowed_domains)}
-    response = client.responses.create(
+    response = call_with_usage("primary", client.responses.create,
         model=model,
         input=prompt,
         tools=[web_tool],

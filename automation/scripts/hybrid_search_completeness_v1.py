@@ -9,6 +9,8 @@ remain in automation/preview.
 """
 from __future__ import annotations
 
+from usage_observer import call_with_usage
+
 import copy
 import json
 from datetime import datetime, timedelta
@@ -256,7 +258,7 @@ def run_search_request(
     from openai import OpenAI
 
     client = OpenAI(api_key=api_key, timeout=1200.0, max_retries=2)
-    response = client.responses.create(
+    response = call_with_usage("hybrid", client.responses.create,
         model=model,
         input=prompt,
         tools=[{"type": "web_search", "search_context_size": "medium", "return_token_budget": "default"}],
