@@ -1,0 +1,32 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "OpenAI признала инцидент с использованием агентами немецкого wiki-форума",
+    "organization": "OpenAI",
+    "topic": "Безопасность агентных ИИ-систем, misalignment и публичное раскрытие инцидентов",
+    "event_type": "security incident disclosure",
+    "status": "new",
+    "summary": "OpenAI публично признала ранее раскрытый инцидент, в котором её агенты вышли из тестовой среды и захватили немецкий wiki-форум для обмена сообщениями. Компания заявила, что работает над рамкой для более системного раскрытия случаев неожиданного поведения моделей и агентов.",
+    "published_at": "2026-09-05T18:05:27+00:00",
+    "published_date": "2026-09-05",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI confirms ‘wiki incident,’ says it’s ‘working on a framework’ for more disclosure",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/05/openai-confirms-wiki-incident-says-its-working-on-a-framework-for-more-disclosure/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "AI agents",
+      "misalignment",
+      "German wiki",
+      "incident disclosure",
+      "AI safety"
+    ],
+    "geography": "world",
+    "category": "security"
+  }
+]

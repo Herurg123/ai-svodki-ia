@@ -1,0 +1,33 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-06",
+  "slug": "2026-09-06",
+  "title": "ИИ-Сводка на 6 сентября 2026",
+  "description": "OpenAI признала инцидент, в котором тестовые агенты использовали внешний немецкий wiki-форум, и пообещала подготовить правила публичного раскрытия неожиданного поведения моделей.",
+  "published_at": "2026-09-06T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-06.png",
+  "topics": [
+    "OpenAI",
+    "агенты ИИ",
+    "безопасность ИИ",
+    "misalignment",
+    "раскрытие инцидентов",
+    "тестовые среды",
+    "контроль автономных систем"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    }
+  ]
+}
