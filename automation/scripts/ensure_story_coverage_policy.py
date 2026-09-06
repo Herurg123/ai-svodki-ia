@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from usage_observer import call_with_usage
+from prompt_context import compact_json
 
 import argparse
 import copy
@@ -474,17 +475,13 @@ def build_prompt(
         )
         or "без доменного фильтра",
         "DIRECTION_ATTEMPT": str(attempt),
-        "EXISTING_CANDIDATES": json.dumps(
-            existing_candidates, ensure_ascii=False, indent=2
-        ),
-        "ARCHIVE_INDEX": json.dumps(
-            compact_archive(archive), ensure_ascii=False, indent=2
-        ),
+        "EXISTING_CANDIDATES": compact_json(existing_candidates),
+        "ARCHIVE_INDEX": compact_json(compact_archive(archive)),
     }
     prompt = template
     for key, value in replacements.items():
         prompt = prompt.replace(f"{{{{{key}}}}}", value)
-    if "{{" in prompt or "}}" in prompt:
+    if re.search(r"\{\{[A-Z0-9_]+\}\}", prompt):
         raise RuntimeError("В coverage audit prompt остались неподставленные переменные")
     return prompt
 
