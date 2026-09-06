@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from usage_observer import call_with_usage
+from prompt_context import compact_json, editorial_input
 
 import argparse
 import copy
@@ -2601,11 +2602,11 @@ def main() -> int:
             editorial_template,
             {
                 "CURRENT_DATE": publication_date_text,
-                "ARCHIVE_CONTEXT": archive_context,
-                "CANDIDATES_CONTEXT": candidates_serialized.strip(),
+                "ARCHIVE_CONTEXT": compact_json(archive),
+                "CANDIDATES_CONTEXT": compact_json(research),
                 "MINIMUM_SELECTED_STORIES": str(args.minimum_selected_stories),
                 "MAXIMUM_SELECTED_STORIES": str(args.maximum_selected_stories),
-                "EDITORIAL_POLICY_CONTEXT": policy_context,
+                "EDITORIAL_POLICY_CONTEXT": compact_json(policy),
             },
         )
 
@@ -2617,7 +2618,7 @@ def main() -> int:
 
         editorial_response = call_with_usage("editorial", client.responses.create,
             model=model,
-            input=editorial_prompt,
+            **editorial_input(editorial_prompt, model),
             reasoning={"effort": "medium"},
             max_output_tokens=18000,
             text={

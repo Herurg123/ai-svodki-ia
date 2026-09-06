@@ -375,3 +375,8 @@ python automation/scripts/validate_archive.py
 или video integration сначала обновляется `ARCHITECTURE.md`, затем affected
 README/AGENTS и regression tests. Retrieval experiments выполняются отдельно от
 production API и фиксируются в `audits/experiments/`.
+
+Редактор и обычный Coverage получают JSON без форматирующих отступов, со всеми
+исходными данными. Редактор Terra отмечает архив явной границей кэша, сохраняя
+implicit caching полного запроса. Измеренная экономия API определяется по
+`usage-ledger.json`; офлайн-сокращение токенов не является счётом провайдера.

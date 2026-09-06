@@ -822,6 +822,28 @@ policy change и требует отдельного PR/audit.
 
 ## 7. Event/source freshness и editorial
 
+### Формат контекста и повторное использование кэша
+
+`prompt_context.py` уплотняет JSON только на входе редактора и обычного Coverage:
+убирает форматирующие пробелы, сохраняя все ключи, значения, порядок массивов,
+внутренние пробелы строк, URL, даты и exclude-кандидатов. Canonical artifacts,
+их hashes и recovery compatibility используют прежний pretty JSON. Coverage
+проверяет оставшиеся `{{VARIABLE}}`, а не соседние закрывающие скобки JSON.
+
+Для `gpt-5.6-terra` редакционный transport передаёт то же содержимое одним user
+message в двух input_text blocks с явной cache boundary после ARCHIVE_CONTEXT_END.
+Implicit mode сохраняется: полный одинаковый запрос по-прежнему может быть
+переиспользован, а при изменении кандидатов доступен общий архивный prefix.
+Роли и порядок текста не повышаются/не меняются; schema, reasoning, retries,
+max_output_tokens, search budgets и recovery decisions прежние. Другие модели
+или неоднозначный marker используют прежнюю строку. Production SDK 2.45.0
+передаёт cache options через extra_body; offline MockTransport проверяет wire JSON.
+
+Это не обещание денежной экономии: tokenizer replay измеряет proxy token count,
+а фактический cache read/write и USD контролируются реестром пункта 1. Редактор
+остаётся стохастическим; равенство данных не доказывает тождество нового ответа
+модели. Legacy research, sentinel и прочие discovery lanes не изменены.
+
 ### Наблюдаемый расход API: независимая диагностика
 
 `usage_observer.py` охватывает существующие Responses API transports Primary,
