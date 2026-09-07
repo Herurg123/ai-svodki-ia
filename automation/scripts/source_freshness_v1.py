@@ -353,7 +353,8 @@ def _promote_source(candidate: dict[str, Any], source: dict[str, Any]) -> None:
 
 
 def verify_candidate(
-    candidate: dict[str, Any], *, start_at: datetime, end_at: datetime, fetcher: Fetcher
+    candidate: dict[str, Any], *, start_at: datetime, end_at: datetime, fetcher: Fetcher,
+    evidence_resolver=None,
 ) -> dict[str, Any]:
     title = str(candidate.get("title") or "Кандидат без заголовка")
     original_recommendation = str(candidate.get("recommendation") or "")
@@ -381,6 +382,8 @@ def verify_candidate(
         try:
             html, final_url, http_status = fetcher(source_url)
             evidence = extract_publication_evidence(html)
+            if evidence is None and evidence_resolver is not None and http_status == 200:
+                evidence = evidence_resolver(html, source_url, final_url)
         except Exception as exc:
             source_record["error"] = f"{type(exc).__name__}: {exc}"
         else:

@@ -168,3 +168,14 @@ Terra-equivalent A/B по правилу раздела 2.
 
 Green CI без такой независимой матрицы не является достаточным доказательством
 безопасности semantic retrieval/search architecture change.
+
+### Permanent regression: 2026-09-07 first-party proof handoff
+
+F1/F4/F5/F7 and D4/P4 include saved Yandex URL+visible-date proof and exact GitHub
+release published_at. Wrong host/article/tag, draft, missing timezone, created_at
+only, redirect, stale generic metadata and old event with fresh page remain
+negative controls. Sparse/dense + regional data + shared URL/status combinations
+compare complete baseline/proposed payloads. Artifacts:
+`publication-proof-2026-09-05.json`, `yandex-date-proof-2026-09-04.html`; replay:
+`replay_publication_proof_2026_09_07.py`. Only previously unproved fresh source
+dates gain eligibility; no query, paid search slot, quota or recovery change.

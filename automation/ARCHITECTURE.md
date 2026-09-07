@@ -822,6 +822,38 @@ policy change и требует отдельного PR/audit.
 
 ## 7. Event/source freshness и editorial
 
+### Непрерывность доказательства даты первоисточника
+
+После generic HTML publication metadata source v2 допускает узкие fallback
+adapters из `publication_evidence_adapters.py`. Yandex использует тот же
+`extract_yandex_publication_evidence`, что и Pulse v1.3: датированный URL плюс
+подтверждающая видимая дата. Requested/final HTTPS URL обязаны относиться к одной
+и той же статье (host/path/query); чужая страница или другой same-day release не
+могут передать дату. Дополнительного запроса для Yandex нет.
+
+Для точного `https://github.com/OWNER/REPO/releases/tag/TAG` без query/fragment,
+если успешная HTML-страница не содержит generic даты, допускается один derived
+public Releases API fetch `/repos/OWNER/REPO/releases/tags/TAG` через существующий
+safe bounded fetcher и его retry policy. API redirect запрещает proof; совпасть
+должны html_url, tag_name, draft=false и timezone-aware published_at. created_at
+не считается датой публикации. API error остаётся source diagnostic error,
+не открывает paid search и не превращается в healthy. HTML 403 этим изменением
+не обходится. Это дополнительный публичный HTTP, но 0 OpenAI/Web Search calls.
+
+V2 передаёт per-call evidence_resolver в preserved v1.verify_candidate; default
+None сохраняет историческую семантику без глобальных monkeypatch. Generic дата
+имеет приоритет; Event Freshness stale блокируется прежде любого fetch. Existing
+source selection, exact-window arithmetic, date-only boundary, source report и
+candidate diagnostic fields переиспользуются. Evidence locator сохраняет тип
+и API endpoint. Неподтверждённые утверждения модели не являются доказательством.
+
+Dependency review: затронут только source proof после уже найденного источника;
+query/routing, candidate cap, health triggers, budget 24/25, archive dedupe,
+editorial, publication и recovery planners не меняются. Existing exclude не
+оживляется. Совместимые сохранённые artifacts по-прежнему принимаются прежними
+entrypoints. Reusable fixtures и независимый baseline replay находятся под
+`automation/fixtures/recall/` и `automation/audits/experiments/` (2026-09-07).
+
 ### Формат контекста и повторное использование кэша
 
 `prompt_context.py` уплотняет JSON только на входе редактора и обычного Coverage:
