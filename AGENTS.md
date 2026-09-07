@@ -350,3 +350,11 @@ First-party date fallbacks must bind evidence to the exact cited article or
 repository/tag. Never replace a generic publication date with a fallback or use
 release created_at as published_at. Preserve the independent event-age gate,
 existing exclusions and exact-window/date-only boundary checks.
+
+For source-resolution changes, preserve the pre-exclusion diagnostic evidence
+without promoting the excluded candidate. Recover evidence only from the selected
+artifact lineage and exact search window; candidate IDs alone are not identity.
+Persist an indeterminate supplemental attempt before transport, including release
+date/window, and never erase it during quality migration or missing-file recovery.
+An OpenAI RSS fallback must match the exact cited article and its visible hero
+date; it cannot override generic metadata or the independent event-age gate.

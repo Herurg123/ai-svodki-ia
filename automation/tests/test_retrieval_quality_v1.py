@@ -107,7 +107,7 @@ class RetrievalQualityQueryTests(unittest.TestCase):
 
 
 class RetrievalQualityRecoveryTests(unittest.TestCase):
-    def test_quality_migration_reuses_six_mandatory_and_frees_one_slot(self):
+    def test_quality_migration_preserves_all_seven_paid_attempts(self):
         attempts = []
         for direction in coverage.AUDIT_DIRECTION_IDS:
             attempts.append({
@@ -131,9 +131,9 @@ class RetrievalQualityRecoveryTests(unittest.TestCase):
             "search_budget": {"maximum_calls": 7, "completed_calls": 7, "remaining_calls": 0},
         }
         prepared = coverage._prepare_prior_for_quality(prior, None)
-        self.assertEqual(len(prepared["attempts"]), 6)
-        self.assertEqual(prepared["search_budget"]["completed_calls"], 6)
-        self.assertEqual(prepared["search_budget"]["remaining_calls"], 1)
+        self.assertEqual(len(prepared["attempts"]), 7)
+        self.assertEqual(prepared["search_budget"]["completed_calls"], 7)
+        self.assertEqual(prepared["search_budget"]["remaining_calls"], 0)
 
     def test_old_modern_full_artifact_is_downgraded_not_discarded(self):
         with tempfile.TemporaryDirectory() as raw:

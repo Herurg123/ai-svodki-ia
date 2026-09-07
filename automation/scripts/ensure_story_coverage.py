@@ -125,6 +125,19 @@ def completed_quality_audit(payload: Any) -> bool:
     )
 
 
+def _quality_aware_completed_prior(payload: Any) -> bool:
+    """Production reuse gate; preserve the public historical v8 helper."""
+    if not completed_prior_audit(payload):
+        return False
+    publication_date = str(payload.get("publication_date") or "")
+    signals = _required_signals(publication_date) if publication_date else []
+    if not signals:
+        return True
+    attempt = _latest_resolution_attempt(payload)
+    return bool(attempt is not None
+                and _quality_from_resolution_attempt(signals, attempt).get("status") == "complete")
+
+
 def _primary_quality_report(publication_date: str) -> dict[str, Any] | None:
     path = (
         Path(REPOSITORY_ROOT) / "automation" / "preview" / "production-daily"
@@ -149,13 +162,22 @@ def _required_signals(publication_date: str) -> list[dict[str, Any]]:
     # Rebuild legacy diagnostics from already-paid raw rejections only. Never
     # rerun Primary to backfill the evidence that v1 compact signals dropped.
     if isinstance(report.get("directions"), list) and (
-        not isinstance(rows, list)
+        not rows
         or any(isinstance(item, dict) and item.get("version") != 2 for item in rows)
     ):
         from primary_recall_search import collect_unresolved_signals
         rows = collect_unresolved_signals(report["directions"], report.get("search_window"))
     if not isinstance(rows, list):
-        return []
+        rows = []
+    from source_resolution_evidence import collect_source_failure_signals
+    source_path = (Path(REPOSITORY_ROOT) / "automation" / "preview" / "production-daily"
+                   / f"source-freshness-{publication_date}.json")
+    if source_path.is_file():
+        source_report = read_json(source_path)
+        if isinstance(source_report, dict) and source_report.get("publication_date") == publication_date:
+            rows = list(rows) + collect_source_failure_signals(
+                source_report, report, search_window=report.get("search_window") or {},
+            )
     result = [
         copy.deepcopy(item)
         for item in rows
@@ -190,6 +212,11 @@ def _content_tokens(signal: dict[str, Any]) -> set[str]:
 
 
 def _signals_related(left: dict[str, Any], right: dict[str, Any]) -> bool:
+    for source, other in ((left, right), (right, left)):
+        anchors = set(source.get("event_identity_tokens") or [])
+        if source.get("origin_direction") == "source_freshness" and anchors:
+            if not anchors.intersection(_content_tokens(other)):
+                return False
     entities = _normalized_entities(left) & _normalized_entities(right)
     tokens = _content_tokens(left) & _content_tokens(right)
     return bool(len(entities) >= 2 or (entities and len(tokens) >= 2))
@@ -272,7 +299,7 @@ def build_resolution_prompt(
         {key: item.get(key) for key in (
             "signal_id", "title", "origin_direction", "evidence_reason", "entities",
             "anchors", "source_hint", "likely_significance_score",
-            "reason_code", "url", "rejection_evidence", "source_window_status",
+            "reason_code", "url", "rejection_evidence", "source_window_status", "event_identity_tokens",
         )}
         for item in cluster
     ]
@@ -302,6 +329,9 @@ Reuters из-за source_hint. Подтверди дату/timestamp, событ
 не обходит archive dedupe и независимые deterministic Event/Source Freshness gates.
 Для rejected результата сохрани URL, published_date, published_at, time_precision,
 date_evidence; неизвестное = null, не выдумывай недостающее.
+Если найден доступный подтверждающий источник, укажи его как primary_source;
+исходный недоступный URL может остаться supporting source. Новая публикация
+должна подтверждать именно исходное событие, а не просто другую новость той же компании.
 Для include/consider обязательны verification_status=verified и freshness_status
 new_event/material_update. Верни до 3 кандидатов из этого evidence cluster.
 
@@ -332,6 +362,16 @@ def _candidate_matches_cluster(candidate: dict[str, Any], cluster: list[dict[str
         if token.casefold() not in _TOKEN_STOP
     }
     for signal in cluster:
+        if signal.get("origin_direction") == "source_freshness":
+            anchors = set(signal.get("event_identity_tokens") or [])
+            if anchors and not anchors.intersection(tokens):
+                continue
+            # A different event at the same company cannot resolve a failed
+            # source. Require title-level corroboration, not generic event terms.
+            title_tokens = {token.casefold() for token in _TOKEN_RE.findall(str(signal.get("title") or ""))}
+            if len(tokens & title_tokens) >= 2:
+                return True
+            continue
         if len(tokens & _content_tokens(signal)) >= 2:
             return True
         if (
@@ -367,6 +407,10 @@ def _rejection_matches_signal(
         for token in _TOKEN_RE.findall(text)
         if token.casefold() not in _TOKEN_STOP and not token.isdigit()
     }
+    if signal.get("origin_direction") == "source_freshness":
+        anchors = set(signal.get("event_identity_tokens") or [])
+        if anchors and not anchors.intersection(tokens):
+            return False
     overlap = tokens & _content_tokens(signal)
     if len(overlap) < 2:
         return False
@@ -570,7 +614,12 @@ def _prepare_prior_for_quality(
     prior_plan: dict[str, Any] | None,
     search_window: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
-    prepared = _V8_PREPARE_PRIOR(prior_plan, search_window)
+    # Never erase a consumed or indeterminate adaptive operation during migration.
+    # This must precede v8 preparation, which can strip a historical sentinel.
+    spent = isinstance(prior_plan, dict) and any(
+        _is_quality_supplemental(item) for item in prior_plan.get("attempts", [])
+    )
+    prepared = copy.deepcopy(prior_plan) if spent else _V8_PREPARE_PRIOR(prior_plan, search_window)
     if not isinstance(prepared, dict):
         return prepared
     publication_date = str(prepared.get("publication_date") or "")
@@ -598,6 +647,12 @@ def _prepare_prior_for_quality(
         and quality.get("status") == "complete"
         and completed_prior_audit(prepared)
     ):
+        return prepared
+    if spent:
+        prepared["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
+        prepared["retrieval_quality"] = _quality(
+            "degraded", signals, [], reason="saved adaptive slot is consumed or indeterminate; no paid replay",
+        )
         return prepared
     attempts = [
         copy.deepcopy(item)
@@ -663,6 +718,39 @@ def _run_resolution(
     query = build_resolution_query(cluster)
     prompt = build_resolution_prompt(search_window=search_window, cluster=cluster, archive=archive)
     _sync_direct_hooks()
+    original_audit_status = plan.get("audit_status", "complete_with_gaps")
+    attempts = plan.setdefault("attempts", [])
+    attempt_number = 1 + max([
+        int(item.get("attempt", 0) or 0) for item in attempts
+        if isinstance(item, dict) and item.get("direction_id") == "general_coverage_gaps"
+    ] or [0])
+    record = {
+        "direction_id": "general_coverage_gaps", "attempt": attempt_number,
+        "search_strategy": UNRESOLVED_RESOLUTION_STRATEGY,
+        "unresolved_resolution_version": UNRESOLVED_RESOLUTION_VERSION,
+        "signal_ids": [str(item.get("signal_id") or "") for item in cluster],
+        "required_query": query, "allowed_domains": [],
+        "status": "search_started", "candidates": [], "rejections": [],
+        "api": {"status": "indeterminate", "web_search_calls_completed": 0},
+        "error": "resolution started; consumption not yet known",
+    }
+    attempts.append(record)
+    # Reserve before transport. On interruption this same slot cannot be bought
+    # again; a completed response replaces the marker below.
+    plan["audit_status"] = "partial"
+    plan["web_search_requested"] = True
+    plan["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
+    plan["retrieval_quality"] = _quality("incomplete", signals, cluster, reason=record["error"])
+    plan.setdefault("search_budget", {})["remaining_calls"] = 0
+    plan["search_budget"]["reserved_calls"] = 1
+    checkpoint = _runtime._report_path()
+    def persist() -> None:
+        if checkpoint is not None:
+            checkpoint.parent.mkdir(parents=True, exist_ok=True)
+            temporary = checkpoint.with_name(checkpoint.name + ".resolution.tmp")
+            write_json(temporary, plan)
+            temporary.replace(checkpoint)
+    persist()
     try:
         result = _runtime._policy_audit_request(
             api_key=api_key,
@@ -676,12 +764,15 @@ def _run_resolution(
         if payload.get("status") not in {"complete", "complete_with_gaps"}:
             raise RuntimeError(f"unusable resolution status={payload.get('status')!r}")
     except Exception as exc:
+        record["status"] = "indeterminate_after_error"
+        record["error"] = f"{type(exc).__name__}: {exc}"
         plan["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
         plan["retrieval_quality"] = _quality(
             "incomplete", signals, cluster, query=query,
             reason=f"technical resolution failure: {type(exc).__name__}: {exc}",
         )
         plan["audit_status"] = "partial"
+        persist()
         return plan
 
     signal_ids = [str(item.get("signal_id") or "") for item in cluster]
@@ -714,13 +805,7 @@ def _run_resolution(
     )
     cluster_resolved = bool(accepted) or negative_complete
 
-    attempts = plan.setdefault("attempts", [])
-    attempt_number = 1 + max([
-        int(item.get("attempt", 0) or 0)
-        for item in attempts
-        if isinstance(item, dict) and item.get("direction_id") == "general_coverage_gaps"
-    ] or [0])
-    attempts.append({
+    record.update({
         "direction_id": "general_coverage_gaps",
         "label": "Unresolved high-signal resolution v1",
         "required": True,
@@ -800,6 +885,9 @@ def _run_resolution(
         )
     if not complete:
         plan["audit_status"] = "partial"
+    else:
+        plan["audit_status"] = original_audit_status
+    persist()
     return plan
 
 
@@ -820,6 +908,12 @@ def execute_audit_plan(
     """Run v8 unchanged unless current Primary evidence requires resolution."""
     _sync_direct_hooks()
     signals = _required_signals(publication_date)
+    if not signals and isinstance(prior_plan, dict) and any(
+        isinstance(item, dict) and item.get("search_strategy") == UNRESOLVED_RESOLUTION_STRATEGY
+        for item in prior_plan.get("attempts", [])
+    ):
+        # Losing a diagnostic file during recovery never restores a paid slot.
+        return copy.deepcopy(prior_plan)
     if not signals:
         result = _V8_EXECUTE(
             api_key=api_key,
@@ -897,6 +991,10 @@ def execute_audit_plan(
         )
         base["audit_status"] = "partial"
         return base
+    # The preserved engine's plan omits these outer report fields. A checkpoint
+    # must carry the date/window so artifact recovery can recognize the attempt.
+    base["publication_date"] = publication_date
+    base["search_window"] = copy.deepcopy(search_window)
     return _run_resolution(
         plan=base,
         signals=signals,
@@ -917,7 +1015,17 @@ def _finalize_quality_report(report_path: Path | None, recovery_entry: dict[str,
     publication_date = str(payload.get("publication_date") or "")
     signals = _required_signals(publication_date) if publication_date else []
     if not signals:
-        payload = _annotate_no_signal_quality(payload)
+        unresolved_attempt = any(
+            isinstance(item, dict) and item.get("search_strategy") == UNRESOLVED_RESOLUTION_STRATEGY
+            for item in payload.get("attempts", [])
+        ) and _latest_resolution_attempt(payload) is None
+        if unresolved_attempt:
+            payload["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
+            payload["retrieval_quality"] = _quality(
+                "incomplete", [], [], reason="saved resolution is indeterminate; missing signals cannot make it complete",
+            )
+        else:
+            payload = _annotate_no_signal_quality(payload)
     else:
         attempt = _latest_resolution_attempt(payload)
         payload["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
@@ -968,9 +1076,12 @@ def _finalize_quality_report(report_path: Path | None, recovery_entry: dict[str,
 def main() -> int:
     _sync_direct_hooks()
     _v8.execute_audit_plan = execute_audit_plan
-    _v8.completed_prior_audit = completed_prior_audit
+    _v8.completed_prior_audit = _quality_aware_completed_prior
     recovery_entry = run_recovery_entry(rerun_editorial_fn=rerun_editorial)
-    result = int(_v8.main())
+    try:
+        result = int(_v8.main())
+    finally:
+        _v8.completed_prior_audit = completed_prior_audit
     _sync_state_from_v8()
     _finalize_quality_report(_runtime._report_path(), recovery_entry)
     return result

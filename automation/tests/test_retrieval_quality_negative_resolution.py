@@ -213,7 +213,7 @@ class NegativeResolutionRecoveryTests(unittest.TestCase):
             for direction in coverage.AUDIT_DIRECTION_IDS
         ]
 
-    def test_bogus_complete_diagnostics_do_not_block_quality_retry(self):
+    def test_bogus_complete_diagnostics_never_free_a_paid_quality_slot(self):
         attempts = self.mandatory_attempts()
         attempts.append(
             {
@@ -252,10 +252,10 @@ class NegativeResolutionRecoveryTests(unittest.TestCase):
             },
         }
         prepared = coverage._prepare_prior_for_quality(prior, None)
-        self.assertEqual(len(prepared["attempts"]), 6)
-        self.assertEqual(prepared["search_budget"]["completed_calls"], 6)
-        self.assertEqual(prepared["search_budget"]["remaining_calls"], 1)
-        self.assertNotIn("retrieval_quality", prepared)
+        self.assertEqual(len(prepared["attempts"]), 7)
+        self.assertEqual(prepared["search_budget"]["completed_calls"], 7)
+        self.assertEqual(prepared["search_budget"]["remaining_calls"], 0)
+        self.assertEqual(prepared["retrieval_quality"]["status"], "degraded")
 
     def test_finalizer_reconstructs_negative_resolution_diagnostics(self):
         with tempfile.TemporaryDirectory() as raw:

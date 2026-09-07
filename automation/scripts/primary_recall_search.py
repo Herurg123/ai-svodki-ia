@@ -169,9 +169,12 @@ def collect_unresolved_signals(
                     source_window_status = "inside" if start <= instant <= end else "outside"
             except (TypeError, ValueError):
                 pass
-            required = score >= 4 and not (
-                rejection.get("reason_code") == "outside_window"
-                and source_window_status == "outside"
+            # An undated historical outside_window rejection is not proof of a
+            # timezone mistake. Preserve it, but do not displace a useful slot
+            # with old news merely because the old schema lacked date fields.
+            required = score >= 4 and (
+                rejection.get("reason_code") == "unverified"
+                or source_window_status == "inside"
             )
             signals.append({
                 "signal_id": f"sig-{direction_id}-{index:02d}",

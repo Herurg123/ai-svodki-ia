@@ -43,7 +43,7 @@ class EvidenceHandoffTests(unittest.TestCase):
                 with self.subTest(code=code, timestamp=timestamp):
                     signal = primary.collect_unresolved_signals(reports(rejection(code, timestamp)), WINDOW)[0]
                     self.assertEqual(signal["source_window_status"], status)
-                    self.assertEqual(signal["resolution_required"], not (code == "outside_window" and status == "outside"))
+                    self.assertEqual(signal["resolution_required"], code == "unverified" or status == "inside")
                     self.assertNotIn("recommendation", signal)
 
     def test_date_only_never_becomes_exact(self):

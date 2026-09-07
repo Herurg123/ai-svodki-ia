@@ -1,0 +1,631 @@
+{
+  "status": "passed",
+  "baseline": "b474b06bc00f365b9737ece4dd0912c1892489e7",
+  "checks": [
+    {
+      "name": "original Axios 403 stays excluded with identical candidate payload",
+      "passed": true
+    },
+    {
+      "name": "baseline has no required Daybreak signal",
+      "passed": true
+    },
+    {
+      "name": "proposal has exactly Daybreak, not obsolete May news",
+      "passed": true
+    },
+    {
+      "name": "known alternative fails old parser",
+      "passed": true
+    },
+    {
+      "name": "known alternative gains exact source proof",
+      "passed": true
+    },
+    {
+      "name": "one extra public RSS fetch, zero paid operations",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/world/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/world/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/world/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/world/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/world/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/world/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/world/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/world/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/russia/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/russia/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/russia/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/russia/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/russia/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/russia/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/russia/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/russia/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/asia/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/asia/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/asia/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/asia/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/asia/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/asia/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/asia/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 0/asia/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/world/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/world/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/world/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/world/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/world/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/world/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/world/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/world/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/russia/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/russia/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/russia/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/russia/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/russia/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/russia/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/russia/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/russia/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/asia/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/asia/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/asia/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/asia/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/asia/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/asia/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/asia/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 1/asia/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/world/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/world/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/world/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/world/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/world/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/world/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/world/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/world/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/russia/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/russia/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/russia/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/russia/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/russia/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/russia/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/russia/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/russia/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/asia/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/asia/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/asia/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/asia/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/asia/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/asia/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/asia/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 3/asia/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/world/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/world/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/world/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/world/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/world/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/world/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/world/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/world/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/russia/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/russia/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/russia/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/russia/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/russia/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/russia/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/russia/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/russia/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/asia/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/asia/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/asia/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/asia/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/asia/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/asia/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/asia/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 6/asia/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/world/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/world/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/world/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/world/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/world/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/world/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/world/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/world/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/russia/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/russia/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/russia/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/russia/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/russia/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/russia/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/russia/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/russia/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/asia/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/asia/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/asia/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/asia/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/asia/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/asia/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/asia/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 12/asia/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/world/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/world/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/world/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/world/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/world/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/world/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/world/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/world/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/russia/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/russia/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/russia/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/russia/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/russia/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/russia/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/russia/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/russia/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/asia/fresh/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/asia/fresh/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/asia/stale/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/asia/stale/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/asia/undated/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/asia/undated/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/asia/blocked/False",
+      "passed": true
+    },
+    {
+      "name": "unchanged source matrix 25/asia/blocked/True",
+      "passed": true
+    },
+    {
+      "name": "unchanged regional health 0/0",
+      "passed": true
+    },
+    {
+      "name": "unchanged regional health 0/1",
+      "passed": true
+    },
+    {
+      "name": "unchanged regional health 1/0",
+      "passed": true
+    },
+    {
+      "name": "unchanged regional health 1/1",
+      "passed": true
+    },
+    {
+      "name": "migration no longer erases an already paid slot",
+      "passed": true
+    }
+  ],
+  "count": 155,
+  "matrix_cases": 144,
+  "network_calls_during_replay": 0,
+  "paid_api_calls": 0,
+  "limitation": "Known-alternative control is manually supplied. Terra discovery/selection and final independent architecture acceptance are not performed."
+}

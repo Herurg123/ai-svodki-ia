@@ -1,0 +1,534 @@
+{
+  "provenance": {
+    "run_id": 33934617471,
+    "artifact_id": 9959942686,
+    "artifact_sha256": "7a41c86c4e6365981e156aa861a88a3b2b1eaec72ea2e4d7d9291d07a12a53de",
+    "source_file_sha256": {
+      "primary-recall-2026-09-05.json": "2bd68eb273b61e55391108e5cfd59f54d818d5f2f1124d862ee7343e40c2537b",
+      "source-freshness-2026-09-05.json": "b12511a577e793213986789ccea5bff95455a2afe7bb7d36e05a8c94f947b278"
+    }
+  },
+  "primary": {
+    "publication_date": "2026-09-05",
+    "search_window": {
+      "start_at": "2026-09-03T03:58:49+03:00",
+      "end_at": "2026-09-05T03:57:22+03:00",
+      "latest_archive_at": "2026-09-04T03:58:49+03:00",
+      "start_date": "2026-09-03",
+      "end_date": "2026-09-05",
+      "latest_archive_date": "2026-09-04"
+    },
+    "retrieval_quality_contract_version": 1,
+    "unresolved_signals": [
+      {
+        "signal_id": "sig-major_agencies-04",
+        "version": 1,
+        "status": "unresolved",
+        "title": "China’s new AI model halts new subscriptions as demand swamps capacity",
+        "origin_direction": "major_agencies",
+        "reason_code": "unverified",
+        "evidence_reason": "AP-страница подтверждает событие вокруг Moonshot Kimi K3, но в доступном тексте отсутствует проверяемая дата/время публикации. Source Freshness Proof для строгого effective window выполнить нельзя.",
+        "likely_significance_score": 0,
+        "entities": [
+          "China"
+        ],
+        "anchors": [],
+        "source_hint": null,
+        "resolution_required": false,
+        "query_terms_are_hints_not_filters": true
+      },
+      {
+        "signal_id": "sig-independent_missing_events-01",
+        "version": 1,
+        "status": "unresolved",
+        "title": "Another swarm of OpenAI agents reached the open internet without the frontier lab's knowledge",
+        "origin_direction": "independent_missing_events",
+        "reason_code": "unverified",
+        "evidence_reason": "Материал основан на исследовании независимой группы; представитель OpenAI не подтвердил, что агенты действительно принадлежали компании, и не подтвердил ключевые обстоятельства инцидента. При строгом контракте verified кандидат не проходит.",
+        "likely_significance_score": 1,
+        "entities": [
+          "Another",
+          "OpenAI"
+        ],
+        "anchors": [],
+        "source_hint": null,
+        "resolution_required": false,
+        "query_terms_are_hints_not_filters": true
+      }
+    ],
+    "accepted_events": [
+      {
+        "title": "OpenAI запускает $1 млрд инициативу Daybreak для защиты критической инфраструктуры от ИИ-кибератак",
+        "organization": "OpenAI",
+        "published_date": "2026-09-03",
+        "published_at": null,
+        "time_precision": "date",
+        "topic": "AI security; субсидированный доступ к моделям, обучение и техническая поддержка для водоснабжения, энергетики, местных властей и других операторов критической инфраструктуры.",
+        "event_type": "security initiative",
+        "keywords": [
+          "OpenAI",
+          "Daybreak for Frontline Defenders",
+          "Daybreak for America",
+          "critical infrastructure",
+          "cybersecurity",
+          "utilities",
+          "$1 billion"
+        ],
+        "geography": "world",
+        "category": "security",
+        "source_type": "technology_media",
+        "primary_source": {
+          "title": "OpenAI launches plan to protect critical infrastructure from AI cyberattacks",
+          "publisher": "Axios",
+          "url": "https://www.axios.com/2026/09/03/openai-critical-infrastructure-cyber-ai-models"
+        },
+        "supporting_sources": [],
+        "event_summary": "OpenAI объявила Daybreak for Frontline Defenders с обязательством $1 млрд в форме субсидированного доступа к моделям, обучения, технической поддержки и партнёрств для защиты критических сервисов. Отдельная программа Daybreak for America ориентирована на местные органы власти, водные и энергетические системы, региональные банки и другую критическую инфраструктуру США.",
+        "verified_facts": [
+          "Axios сообщает, что инициатива Daybreak for Frontline Defenders предполагает обязательство OpenAI на $1 млрд.",
+          "Средства заявлены как субсидированный доступ к моделям, обучение, техническая поддержка и партнёрства, а не как прямой денежный грант.",
+          "Daybreak for America включает пилот с Multi-State Information Sharing and Analysis Center для обучения защитников на уровне штатов и местных органов власти.",
+          "OpenAI также заявила о работе более чем с 35 технологическими и кибербезопасностными сервисами для внедрения её моделей в инструменты и workflow."
+        ],
+        "significance": "Крупное финансовое и продуктовое обязательство frontier-лаборатории в AI-security, нацеленное на критическую инфраструктуру; связывает доступ к продвинутым моделям с подготовкой к AI-усиленным атакам.",
+        "significance_score": 3,
+        "limitations": "Детали критериев участия, распределения заявленного $1 млрд и независимая оценка эффективности программы на момент публикации не раскрыты.",
+        "archive_status": "none",
+        "archive_reason": "В архиве есть сюжеты об Astra и киберрисках, но нет этого отдельного глобального обязательства Daybreak.",
+        "recommendation": "include",
+        "verification_status": "verified",
+        "verification_notes": "Свежая публикация Axios от 3 сентября прямо описывает запуск, объём обязательства и компоненты программы.",
+        "freshness_status": "new_event",
+        "freshness_reason": "Анонс программы относится к 3 сентября 2026 года и не является перепечаткой ранее архивированного события.",
+        "legal_scale": "not_applicable",
+        "legal_scale_reason": "Не является судебным или регуляторным событием.",
+        "curiosity_eligible": false,
+        "curiosity_verification": "Не применимо: самостоятельное отраслевое security-событие.",
+        "event_date": "2026-09-03",
+        "event_at": null,
+        "event_time_precision": "date",
+        "event_origin_url": "https://www.axios.com/2026/09/03/openai-critical-infrastructure-cyber-ai-models",
+        "event_evidence_kind": "authoritative_secondary",
+        "event_date_evidence": "Axios датирует публикацию 3 сентября 2026 года и сообщает, что Грег Брокман объявил программу на саммите в четверг; точное время первичного анонса не установлено.",
+        "id": "cand-001"
+      }
+    ],
+    "final_candidates": [
+      {
+        "title": "OpenAI запускает $1 млрд инициативу Daybreak для защиты критической инфраструктуры от ИИ-кибератак",
+        "organization": "OpenAI",
+        "published_date": "2026-09-03",
+        "category": "security",
+        "geography": "world",
+        "primary_url": "https://www.axios.com/2026/09/03/openai-critical-infrastructure-cyber-ai-models"
+      }
+    ],
+    "directions": [
+      {
+        "direction_id": "global_breaking",
+        "model_rejections": [
+          {
+            "title": "Another swarm of OpenAI agents reached the open internet without the frontier lab’s knowledge",
+            "url": "https://techcrunch.com/2026/09/04/another-swarm-of-openai-agents-reached-the-open-internet-without-the-frontier-labs-knowledge/",
+            "reason_code": "outside_window",
+            "reason": "Страница опубликована 4 сентября в 09:21 PDT, то есть 5 сентября в 19:21+03:00 — позже авторитетного cutoff 2026-09-05T03:57:22+03:00; кроме того, OpenAI не подтвердила атрибуцию агентов."
+          },
+          {
+            "title": "Google’s Gemini Spark can now manage your Google Photos library",
+            "url": "https://techcrunch.com/2026/09/04/googles-gemini-spark-can-now-manage-your-google-photos-library/",
+            "reason_code": "outside_window",
+            "reason": "Страница опубликована 4 сентября в 07:47 PDT, то есть 5 сентября в 17:47+03:00 — позже cutoff; сама публикация также характеризует обновление как узкую потребительскую функцию."
+          },
+          {
+            "title": "Alibaba Qwen3.8-Max-0902 Sets 1,691 Point Record to Lead Code Arena",
+            "url": "https://huggingnews.com/ai/update-alibaba-qwen38-max-0902-sets-1691-point-record-to-lead-code-arena-3121a746",
+            "reason_code": "outside_window",
+            "reason": "Указанный origin timestamp — 1 сентября 2026 года, что раньше эффективного окна; доступный источник является агрегатором сообщений из X."
+          },
+          {
+            "title": "Uber and Wayve Launch London’s First Commercial Robotaxi Service",
+            "url": "https://huggingnews.com/tech/uber-and-wayve-launch-londons-first-commercial-robotaxi-service-1acfc66c",
+            "reason_code": "weak_source",
+            "reason": "Доступная страница — агрегатор, опирающийся на посты в соцсетях и пересказ; пригодный первичный или авторитетный новостной источник в рамках прохода не был подтверждён."
+          }
+        ]
+      },
+      {
+        "direction_id": "major_agencies",
+        "model_rejections": [
+          {
+            "title": "Alibaba Unveils New AI Chip for Training and Inferencing",
+            "url": "https://www.bloomberg.com/news/articles/2026-05-20/alibaba-unveils-new-ai-chip-for-training-and-inferencing",
+            "reason_code": "outside_window",
+            "reason": "Bloomberg указывает публикацию 2026-05-20T03:43:00Z; это существенно раньше effective window 2026-09-03T03:58:49+03:00 → 2026-09-05T03:57:22+03:00."
+          },
+          {
+            "title": "AI Data Center Borrowing Rapidly Climbs Wall Street’s Risk List",
+            "url": "https://www.bloomberg.com/news/articles/2026-05-19/ai-data-center-borrowing-rapidly-climbs-wall-street-s-risk-list",
+            "reason_code": "outside_window",
+            "reason": "Bloomberg указывает публикацию 2026-05-19T18:48:00Z; материал вне редакционного окна."
+          },
+          {
+            "title": "Former Citadel Quants Raise $78 Million for AI Fintech Moment",
+            "url": "https://www.bloomberg.com/news/articles/2026-05-19/former-citadel-quants-raise-78-million-for-ai-fintech-moment",
+            "reason_code": "outside_window",
+            "reason": "Bloomberg указывает публикацию 2026-05-19T12:30:00Z; материал вне редакционного окна."
+          },
+          {
+            "title": "China’s new AI model halts new subscriptions as demand swamps capacity",
+            "url": "https://apnews.com/article/kimi-k3-china-ai-model-us-4c66a2e0f557ce79d3cc2d769c9a6226",
+            "reason_code": "unverified",
+            "reason": "AP-страница подтверждает событие вокруг Moonshot Kimi K3, но в доступном тексте отсутствует проверяемая дата/время публикации. Source Freshness Proof для строгого effective window выполнить нельзя."
+          }
+        ]
+      },
+      {
+        "direction_id": "models_products_agents",
+        "model_rejections": [
+          {
+            "title": "Meta debuts Muse Spark 1.3 as personal agent work continues",
+            "url": "https://www.axios.com/2026/09/02/meta-debuts-muse-spark-13-as-personal-agent-work-continues",
+            "reason_code": "duplicate",
+            "reason": "Точный дубль уже найденного и опубликованного архивного сюжета: Meta выпустила Muse Spark 1.3 для coding и агентных задач."
+          },
+          {
+            "title": "Anthropic releases new models, cost structures and safeguards",
+            "url": "https://www.axios.com/2026/09/01/anthropic-releases-new-models-cost-structures-and-safeguards",
+            "reason_code": "duplicate",
+            "reason": "Точный дубль архивного сюжета о выпуске Claude Fable 5.1, Mythos 5.1 и Enterprise Frontier Safeguards."
+          },
+          {
+            "title": "Research finds AI agents haven't quite mastered real-world browsing tasks despite claiming they can",
+            "url": "https://www.techradar.com/pro/research-finds-ai-agents-havent-quite-mastered-real-world-browsing-tasks-despite-claiming-they-can",
+            "reason_code": "insufficient_significance",
+            "reason": "Страница TechRadar опубликована 2026-09-03 и описывает исследование Decodo 45 браузерных агентов, но это корпоративное исследование с ограниченной самостоятельной новостной значимостью; не обнаружено значимого нового релиза, продукта или первичного research-результата уровня сводки."
+          }
+        ]
+      },
+      {
+        "direction_id": "infrastructure_chips_cloud",
+        "model_rejections": [
+          {
+            "title": "Amazon is buying 2 million Nvidia GPUs for AWS data center expansion",
+            "url": "https://www.techradar.com/pro/amazon-is-buying-2-million-nvidia-gpus-for-aws-data-center-expansion",
+            "reason_code": "duplicate",
+            "reason": "Страница опубликована 2026-08-30, то есть находится в healing overlap, но описывает уже опубликованный в архиве сюжет от 2026-08-27: расширение AWS закупок/развёртывания на 2 млн GPU NVIDIA. Нового самостоятельного факта, отличающего событие, не установлено."
+          },
+          {
+            "title": "Microsoft expands Azure AI and HPC infrastructure with AMD",
+            "url": "https://blogs.microsoft.com/blog/2026/07/20/microsoft-expands-azure-ai-and-hpc-infrastructure-with-amd/",
+            "reason_code": "outside_window",
+            "reason": "Официальное объявление Microsoft датировано 2026-07-20 — существенно раньше effective editorial window."
+          },
+          {
+            "title": "Reports: Anthropic signs $45bn cloud computing deal with Nscale",
+            "url": "https://www.itpro.com/infrastructure/reports-anthropic-signs-usd45bn-cloud-computing-deal-with-nscale",
+            "reason_code": "duplicate",
+            "reason": "Материал опубликован 2026-08-27 и повторяет уже опубликованный архивный сюжет о соглашении Anthropic и Nscale примерно на $45 млрд."
+          }
+        ]
+      },
+      {
+        "direction_id": "business_investment_partnerships",
+        "model_rejections": [
+          {
+            "title": "NVIDIA Partners with Apollo, BlackRock, Blackstone, Brookfield, Goldman Sachs and KKR to Establish AI Compute Infrastructure Financing Platforms",
+            "url": "https://media.kkr.com/news-details?news_id=2fdd2c1c-a052-4552-aa58-90d7a3d997e0",
+            "reason_code": "outside_window",
+            "reason": "Первичный пресс-релиз датирован 2026-08-10, что существенно раньше effective editorial window 2026-09-03T03:58:49+03:00 → 2026-09-05T03:57:22+03:00."
+          },
+          {
+            "title": "Rackspace Technology Announces Plans to Accelerate Enterprise AI Growth Vector; Provides Preliminary 2Q26 Results and Updates FY26 Outlook",
+            "url": "https://www.sec.gov/Archives/edgar/data/1810019/000181001926000078/ex991-pressrelease.htm",
+            "reason_code": "outside_window",
+            "reason": "Официальный релиз и анонс партнёрства Rackspace—Palantir датированы 2026-07-09; свежий результат поиска не является новым событием."
+          },
+          {
+            "title": "IREN FY26 results and GPU financing update",
+            "url": "https://www.sec.gov/Archives/edgar/data/1878848/000187884826000051/irenreportsfy26results.htm",
+            "reason_code": "outside_window",
+            "reason": "Материал относится к результатам за год, завершившийся 2026-06-30, и Form 10-K, поданной 2026-08-27; доказательств нового самостоятельного business-события внутри текущего окна не найдено."
+          },
+          {
+            "title": "The State of AI Deals: Investment, Acquisition & Partnership Data Report",
+            "url": "https://www.racetoagi.org/research/reports/state-of-ai-deals",
+            "reason_code": "weak_source",
+            "reason": "Свежая страница является агрегирующим tracker/report, а не пригодным первичным или авторитетным независимым подтверждением нового события в окне."
+          }
+        ]
+      },
+      {
+        "direction_id": "china_asia_models",
+        "model_rejections": [
+          {
+            "title": "Tencent Releases and Open-Sources Tencent Hy4 preview",
+            "url": "https://www.tencent.com/tencent-releases-and-open-sources-tencent-hy4-preview/",
+            "reason_code": "duplicate",
+            "reason": "Официальный анонс Tencent датирован 2026-08-28, то есть находится до effective window. Сюжет уже опубликован в архиве выпуска от 2026-09-03 как запуск Tencent Hunyuan Hy4 Preview."
+          },
+          {
+            "title": "Should businesses consider using Chinese AI models?",
+            "url": "https://www.itpro.com/technology/artificial-intelligence/should-businesses-consider-using-chinese-ai-models",
+            "reason_code": "not_ai_news",
+            "reason": "Статья опубликована 2026-09-03 и находится в source window, но представляет собой обзор/мнение об использовании китайских моделей, а не самостоятельный новый релиз, продуктовый анонс или другое дискретное событие."
+          },
+          {
+            "title": "China AI model release timeline",
+            "url": "https://chinaapi.ai/model-updates/",
+            "reason_code": "old_reprint",
+            "reason": "Свежая страница-трекер не доказывает новое событие в effective window: её наиболее новые релизы — Tencent Hy4 Preview от 2026-08-28, GLM-5.3-Flash от 2026-08-27 и DeepSeek V4 Flash Vision Exp от 2026-08-21 — предшествуют окну; Hy4 уже есть в архиве."
+          }
+        ]
+      },
+      {
+        "direction_id": "china_asia_integrations",
+        "model_rejections": [
+          {
+            "title": "Alibaba’s Full-Stack AI Accelerates Monetization with 22-Quarter-High Cloud Growth",
+            "url": "https://www.alibabagroup.com/en-US/document-2027233133950140416",
+            "reason_code": "outside_window",
+            "reason": "Официальная страница Alibaba датирована 2026-08-20, что раньше effective window 2026-09-03T03:58:49+03:00. Кроме того, AI-cloud earnings/strategy Alibaba уже отражены в архиве выпуска за 2026-08-22."
+          },
+          {
+            "title": "Alibaba quarterly profit drops 75% as AI investment spending grows",
+            "url": "https://apnews.com/article/china-alibaba-earnings-ai-cloud-8a30302d23a96fc7b9aab664b9c1897d",
+            "reason_code": "duplicate",
+            "reason": "Свежая вторичная публикация AP пересказывает квартальные результаты Alibaba за апрель—июнь и инвестиции в AI-инфраструктуру; первичный анонс Alibaba от 2026-08-20 находится вне окна, а сюжет об ускорении AI-cloud уже есть в архиве за 2026-08-22."
+          },
+          {
+            "title": "Alibaba’s Cloud Revenue Growth Accelerates to 40% as AI Strategy Delivers",
+            "url": "https://www.alibabagroup.com/en-US/document-1991364841188622336",
+            "reason_code": "outside_window",
+            "reason": "Официальная страница датирована 2026-05-13 и описывает прежний квартальный этап AI-cloud стратегии и интеграций Qwen; это старый материал, не новый event-origin."
+          }
+        ]
+      },
+      {
+        "direction_id": "russia",
+        "model_rejections": [
+          {
+            "title": "Как разработчики ИИ хотят решить вопрос выплат за обучение на авторском контенте",
+            "url": "https://www.vedomosti.ru/technology/articles/2026/08/28/1224303-kak-razrabotchiki-ii-hotyat-reshit-problemu-viplat-za-obuchenie-na-avtorskom-kontente",
+            "reason_code": "outside_window",
+            "reason": "Авторитетный материал «Ведомостей» опубликован 2026-08-28 00:38; письмо Альянса в сфере ИИ датировано 2026-08-27. Это значимое регулирование обучения моделей на авторском контенте, но и страница, и событие находятся до effective window, начинающегося 2026-09-03T03:58:49+03:00."
+          },
+          {
+            "title": "Разработчики ИИ хотят обучать модели на материалах из открытого доступа",
+            "url": "https://1prime.ru/20260828/gk-872755210.html",
+            "reason_code": "old_reprint",
+            "reason": "Публикация ПРАЙМ от 2026-08-28T05:56+03:00 пересказывает сообщение «Ведомостей» об уже произошедшем 2026-08-27 обращении Альянса в сфере ИИ; нового существенного факта не содержит и находится вне effective window."
+          },
+          {
+            "title": "Сбер, Яндекс, VK и Авито попросили Минцифры разрешить обучать ИИ на персданных без согласия россиян",
+            "url": "https://axioma-ai.ru/ai-russia/sber-yandex-vk-personal-data-ai-training-no-consent-mintsifry-aug6-2026-20260820",
+            "reason_code": "outside_window",
+            "reason": "Материал и описываемое обращение относятся к августу 2026 года, до effective window; источник также недостаточно силён для самостоятельного подтверждения нового major legal/regulatory candidate."
+          }
+        ]
+      },
+      {
+        "direction_id": "developer_tools",
+        "model_rejections": [
+          {
+            "title": "OpenAI is leaving Cursor in November — here are your 3 options",
+            "url": "https://www.tomsguide.com/ai/openai-is-leaving-cursor-in-november-here-are-your-3-options",
+            "reason_code": "duplicate",
+            "reason": "Событие о прекращении прежнего прямого доступа Cursor к моделям OpenAI уже опубликовано в архиве выпуска от 2026-09-02."
+          },
+          {
+            "title": "GitHub Copilot in Visual Studio Code, July 2026 releases",
+            "url": "https://github.blog/changelog/2026-07-30-github-copilot-in-visual-studio-code-july-2026-releases/",
+            "reason_code": "outside_window",
+            "reason": "Официальная страница относится к июльским релизам 2026 года и находится вне effective editorial window."
+          },
+          {
+            "title": "Claude Code v2.1.261",
+            "url": "https://www.havoptic.com/r/claude-code-2.1.261",
+            "reason_code": "weak_source",
+            "reason": "Свежесть версии отмечена агрегатором, но доступный результат обрывает описание изменений; первичный release/changelog для содержательной проверки релиза в рамках прохода не был получен."
+          }
+        ]
+      },
+      {
+        "direction_id": "security_safety",
+        "model_rejections": [
+          {
+            "title": "Anthropic paused some AI training after Claude took unauthorized actions",
+            "url": "https://www.axios.com/2026/09/01/anthropic-paused-some-ai-training-after-claude-took-unauthorized-actions",
+            "reason_code": "outside_window",
+            "reason": "Страница Axios датирована 31 августа 2026 года, то есть раньше effective window, начинающегося 3 сентября 2026 года в 03:58:49+03:00. Кроме того, событие уже связано с ранее раскрытыми инцидентами и не содержит в проверенном материале нового события внутри окна."
+          },
+          {
+            "title": "Hackers ran up a $600,000 AI bill after swiping API keys, says METR",
+            "url": "https://www.itpro.com/security/cyber-attacks/hackers-ran-up-a-usd600-000-ai-bill-after-swiping-api-keys-says-metr-and-nobody-realized-for-weeks",
+            "reason_code": "outside_window",
+            "reason": "Страница IT Pro опубликована 2 сентября 2026 года, до начала effective window. Сам описанный компромисс API-ключа произошёл ещё в марте, поэтому свежая публикация не делает инцидент новым для текущего выпуска."
+          }
+        ]
+      },
+      {
+        "direction_id": "legal_regulation",
+        "model_rejections": [
+          {
+            "title": "Trump administration backs OpenAI in New York Times’ copyright case over training of chatbots",
+            "url": "https://apnews.com/article/justice-department-new-york-times-openai-copyright-dbb22e8e02c660ee5a8644915dec39a4",
+            "reason_code": "duplicate",
+            "reason": "Это уже опубликованный архивный сюжет от 2026-09-03: Минюст США поддержал позицию OpenAI о fair use в деле The New York Times. AP подтверждает, что DOJ подал позицию в поддержку аргумента OpenAI о fair use для обучения на интернет-текстах."
+          },
+          {
+            "title": "Judge approves a $1.5B Anthropic settlement over pirated books used to train the Claude chatbot",
+            "url": "https://apnews.com/article/ai-anthropic-copyright-settlement-claude-books-bartz-74b140444023898aeba8579b6e9f0d63",
+            "reason_code": "outside_window",
+            "reason": "Существенное событие — окончательное одобрение федеральным судьёй мирового соглашения Anthropic с авторами на $1,5 млрд — является крупным, но найденная AP-страница опубликована примерно месяц назад, то есть вне effective editorial window 2026-09-03T03:58:49+03:00 → 2026-09-05T03:57:22+03:00."
+          }
+        ]
+      },
+      {
+        "direction_id": "independent_missing_events",
+        "model_rejections": [
+          {
+            "title": "Another swarm of OpenAI agents reached the open internet without the frontier lab's knowledge",
+            "url": "https://techcrunch.com/2026/09/04/another-swarm-of-openai-agents-reached-the-open-internet-without-the-frontier-labs-knowledge/",
+            "reason_code": "unverified",
+            "reason": "Материал основан на исследовании независимой группы; представитель OpenAI не подтвердил, что агенты действительно принадлежали компании, и не подтвердил ключевые обстоятельства инцидента. При строгом контракте verified кандидат не проходит."
+          },
+          {
+            "title": "Google’s Gemini Spark can now manage your Google Photos library",
+            "url": "https://techcrunch.com/2026/09/04/googles-gemini-spark-can-now-manage-your-google-photos-library/",
+            "reason_code": "insufficient_significance",
+            "reason": "Новая интеграция Gemini Spark с Google Photos подтверждена, но это ограниченный rollout для подходящих подписчиков AI Pro и Ultra в США; самостоятельная значимость ниже порога основного missing-events кандидата."
+          }
+        ]
+      }
+    ]
+  },
+  "source_freshness": {
+    "publication_date": "2026-09-05",
+    "version": 2,
+    "runs": [
+      {
+        "stage": "primary",
+        "search_window": {
+          "start_at": "2026-09-03T03:58:49+03:00",
+          "end_at": "2026-09-05T03:57:22+03:00",
+          "latest_archive_at": "2026-09-04T03:58:49+03:00",
+          "start_date": "2026-09-03",
+          "end_date": "2026-09-05",
+          "latest_archive_date": "2026-09-04"
+        },
+        "candidates": [
+          {
+            "title": "OpenAI запускает $1 млрд инициативу Daybreak для защиты критической инфраструктуры от ИИ-кибератак",
+            "candidate_id": "cand-001",
+            "original_recommendation": "include",
+            "status": "excluded_unverified_freshness",
+            "sources": [
+              {
+                "publisher": "Axios",
+                "url": "https://www.axios.com/2026/09/03/openai-critical-infrastructure-cyber-ai-models",
+                "status": "error",
+                "error": "SourceFreshnessError: source fetch failed: HTTPError: HTTP Error 403: Forbidden"
+              }
+            ],
+            "event_freshness_status": "unknown",
+            "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+            "event_date": "2026-09-03",
+            "event_at": null,
+            "event_time_precision": "date",
+            "event_origin_url": "https://www.axios.com/2026/09/03/openai-critical-infrastructure-cyber-ai-models",
+            "event_evidence_kind": "authoritative_secondary",
+            "event_date_evidence": "Axios датирует публикацию 3 сентября 2026 года и сообщает, что Грег Брокман объявил программу на саммите в четверг; точное время первичного анонса не установлено.",
+            "event_freshness_rejection_code": null
+          }
+        ]
+      },
+      {
+        "stage": "coverage",
+        "search_window": {
+          "start_at": "2026-09-03T03:58:49+03:00",
+          "end_at": "2026-09-05T03:57:22+03:00",
+          "latest_archive_at": "2026-09-04T03:58:49+03:00",
+          "start_date": "2026-09-03",
+          "end_date": "2026-09-05",
+          "latest_archive_date": "2026-09-04"
+        },
+        "candidates": [
+          {
+            "title": "OpenAI запускает $1 млрд инициативу Daybreak для защиты критической инфраструктуры от ИИ-кибератак",
+            "candidate_id": "cand-001",
+            "original_recommendation": "exclude",
+            "status": "skipped",
+            "sources": [],
+            "reason": "candidate_not_eligible_before_freshness_gate"
+          }
+        ]
+      }
+    ]
+  },
+  "daybreak": {
+    "title": "OpenAI запускает $1 млрд инициативу Daybreak для защиты критической инфраструктуры от ИИ-кибератак",
+    "organization": "OpenAI",
+    "published_date": "2026-09-03",
+    "published_at": null,
+    "time_precision": "date",
+    "topic": "AI security; субсидированный доступ к моделям, обучение и техническая поддержка для водоснабжения, энергетики, местных властей и других операторов критической инфраструктуры.",
+    "event_type": "security initiative",
+    "keywords": [
+      "OpenAI",
+      "Daybreak for Frontline Defenders",
+      "Daybreak for America",
+      "critical infrastructure",
+      "cybersecurity",
+      "utilities",
+      "$1 billion"
+    ],
+    "geography": "world",
+    "category": "security",
+    "source_type": "technology_media",
+    "primary_source": {
+      "title": "OpenAI launches plan to protect critical infrastructure from AI cyberattacks",
+      "publisher": "Axios",
+      "url": "https://www.axios.com/2026/09/03/openai-critical-infrastructure-cyber-ai-models"
+    },
+    "supporting_sources": [],
+    "event_summary": "OpenAI объявила Daybreak for Frontline Defenders с обязательством $1 млрд в форме субсидированного доступа к моделям, обучения, технической поддержки и партнёрств для защиты критических сервисов. Отдельная программа Daybreak for America ориентирована на местные органы власти, водные и энергетические системы, региональные банки и другую критическую инфраструктуру США.",
+    "verified_facts": [
+      "Axios сообщает, что инициатива Daybreak for Frontline Defenders предполагает обязательство OpenAI на $1 млрд.",
+      "Средства заявлены как субсидированный доступ к моделям, обучение, техническая поддержка и партнёрства, а не как прямой денежный грант.",
+      "Daybreak for America включает пилот с Multi-State Information Sharing and Analysis Center для обучения защитников на уровне штатов и местных органов власти.",
+      "OpenAI также заявила о работе более чем с 35 технологическими и кибербезопасностными сервисами для внедрения её моделей в инструменты и workflow."
+    ],
+    "significance": "Крупное финансовое и продуктовое обязательство frontier-лаборатории в AI-security, нацеленное на критическую инфраструктуру; связывает доступ к продвинутым моделям с подготовкой к AI-усиленным атакам.",
+    "significance_score": 3,
+    "limitations": "Детали критериев участия, распределения заявленного $1 млрд и независимая оценка эффективности программы на момент публикации не раскрыты.",
+    "archive_status": "none",
+    "archive_reason": "В архиве есть сюжеты об Astra и киберрисках, но нет этого отдельного глобального обязательства Daybreak.",
+    "recommendation": "include",
+    "verification_status": "verified",
+    "verification_notes": "Свежая публикация Axios от 3 сентября прямо описывает запуск, объём обязательства и компоненты программы.",
+    "freshness_status": "new_event",
+    "freshness_reason": "Анонс программы относится к 3 сентября 2026 года и не является перепечаткой ранее архивированного события.",
+    "legal_scale": "not_applicable",
+    "legal_scale_reason": "Не является судебным или регуляторным событием.",
+    "curiosity_eligible": false,
+    "curiosity_verification": "Не применимо: самостоятельное отраслевое security-событие.",
+    "event_date": "2026-09-03",
+    "event_at": null,
+    "event_time_precision": "date",
+    "event_origin_url": "https://www.axios.com/2026/09/03/openai-critical-infrastructure-cyber-ai-models",
+    "event_evidence_kind": "authoritative_secondary",
+    "event_date_evidence": "Axios датирует публикацию 3 сентября 2026 года и сообщает, что Грег Брокман объявил программу на саммите в четверг; точное время первичного анонса не установлено.",
+    "id": "cand-001"
+  },
+  "official_url": "https://openai.com/index/daybreak-for-frontline-defenders/",
+  "official_page_status": "Exact RSS timestamp binds to same article and matches visible hero publication date; full-body local adapter check passed.",
+  "official_proof": {
+    "retrieved_at_utc": "2026-09-07T19:16:45Z",
+    "page_sha256": "5efe4e48fd3f1a7993ad870917a541a390da16a89ed294119d718a4d8b30797b",
+    "feed_sha256": "9cf85bc72df07e8d1d3a61016aaac595042f0604a15542d350d59303136fd599",
+    "html_extract": "<div data-article-hero-copy-region=\"meta\" class=\"mb-8 flex flex-wrap gap-4 justify-center\"><p class=\"text-meta text-primary-100\">September 3, 2026</p><a class=\"transition ease-curve-a duration-250 text-meta text-primary-60 hover:text-primary-100\" href=\"/news/security/\">Security</a></div>",
+    "rss_extract": "<rss><channel><item><title>Daybreak for Frontline Defenders: $1B to protect essential services</title><link>https://openai.com/index/daybreak-for-frontline-defenders</link><pubDate>Thu, 03 Sep 2026 13:15:00 GMT</pubDate></item></channel></rss>",
+    "published_at": "2026-09-03T13:15:00+00:00",
+    "note": "Current first-party page/feed snapshot, not part of the Sep-5 paid artifact. Minimal extracts preserve the relevant original date fields."
+  }
+}

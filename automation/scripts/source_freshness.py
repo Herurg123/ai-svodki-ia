@@ -108,6 +108,7 @@ def verify_candidate(
             candidate, start_at=start_at, end_at=end_at, fetcher=fetcher
         )
 
+    original = copy.deepcopy(candidate)
     event_result = apply_event_freshness(
         candidate, start_at=start_at, end_at=end_at
     )
@@ -130,6 +131,10 @@ def verify_candidate(
     )
     _annotate_source_diagnostics(candidate, record)
     record.update(_event_record_fields(event_result))
+    if record.get("status") == "excluded_unverified_freshness":
+        # Preserve evidence before the gate mutates recommendation/verification.
+        # This is a diagnostic lead only; the excluded row is never resurrected.
+        record["candidate_evidence"] = original
     return record
 
 

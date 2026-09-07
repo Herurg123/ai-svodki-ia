@@ -369,12 +369,81 @@ def recover(
         timezone_name,
         image_target_dir,
     )
+    report["source_resolution_evidence_recovery"] = _restore_source_resolution_evidence(
+        recovery_root=recovery_root, target_dir=target_dir,
+        publication_date=publication_date, report_path=report_path,
+        selected_source=Path(report.get("selected_source") or target_dir),
+    )
     report["agency_discovery_rescue_recovery"] = _resume_agency_discovery_without_search(
         target_dir=target_dir,
         publication_date=publication_date,
     )
     write_json(report_path, report)
     return report
+
+
+def _restore_source_resolution_evidence(
+    *, recovery_root: Path, target_dir: Path, publication_date: str,
+    report_path: Path, selected_source: Path,
+) -> dict[str, Any]:
+    """Copy exact saved provenance from the selected artifact, without polling."""
+    # Walk only the selected artifact's ancestors, bounded by recovery_root;
+    # never mix sibling workflow runs with an equal calendar date.
+    selected = selected_source.resolve()
+    boundary = recovery_root.resolve()
+    if selected != boundary and boundary not in selected.parents:
+        return {"status": "unavailable", "reason": "selected artifact outside recovery root"}
+    lineage = []
+    parent = selected
+    while True:
+        diagnostic = parent if parent.name == "production-daily" else parent / "production-daily"
+        if diagnostic.is_dir():
+            lineage.append(diagnostic)
+        if parent == boundary:
+            break
+        parent = parent.parent
+    try:
+        research = read_json(target_dir / "candidates.json")
+        window = research.get("search_window") or {}
+        primary_path = target_dir / "primary-recall.json"
+        primary = read_json(primary_path) if primary_path.is_file() else None
+        if not isinstance(primary, dict):
+            for directory in lineage:
+                candidate_path = directory / f"primary-recall-{publication_date}.json"
+                if candidate_path.is_file():
+                    primary_path = candidate_path
+                    primary = read_json(candidate_path)
+                    break
+        if not isinstance(primary, dict):
+            return {"status": "unavailable", "reason": "selected Primary evidence missing"}
+        if any((primary.get("search_window") or {}).get(k) != window.get(k) for k in ("start_at", "end_at")):
+            return {"status": "unavailable", "reason": "Primary window mismatch"}
+        name = f"source-freshness-{publication_date}.json"
+        for directory in lineage:
+            source_path = directory / name
+            if not source_path.is_file():
+                continue
+            saved = read_json(source_path)
+            if not isinstance(saved, dict) or saved.get("publication_date") != publication_date:
+                continue
+            runs = saved.get("runs")
+            if not isinstance(runs, list) or not runs or any(
+                not isinstance(run, dict) or any(
+                    (run.get("search_window") or {}).get(k) != window.get(k)
+                    for k in ("start_at", "end_at")
+                ) for run in runs
+            ):
+                continue
+            source_target = report_path.parent / name
+            primary_target = report_path.parent / f"primary-recall-{publication_date}.json"
+            write_json(source_target, saved)
+            write_json(primary_target, primary)
+            return {"status": "restored", "source": str(source_path),
+                    "target": str(source_target), "primary_source": str(primary_path),
+                    "network_calls": 0, "paid_api_calls": 0}
+        return {"status": "unavailable", "reason": "same-lineage freshness evidence missing"}
+    except Exception as exc:
+        return {"status": "unavailable", "reason": f"{type(exc).__name__}: {exc}"}
 
 
 def main() -> int:
