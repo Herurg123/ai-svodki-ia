@@ -33,7 +33,7 @@ _BASE_RUN_MATRIX = _base.run_primary_recall_matrix
 _BASE_RUN_SEARCH = _base.run_primary_recall_search
 _BASE_BUILD_PROMPT = _base.build_prompt
 RETRIEVAL_QUALITY_CONTRACT_VERSION = 1
-UNRESOLVED_SIGNAL_VERSION = 1
+UNRESOLVED_SIGNAL_VERSION = 2
 BUSINESS_QUERY_TREATMENT_VERSION = 1
 BUSINESS_QUERY_DIRECTION_ID = "business_investment_partnerships"
 BUSINESS_QUERY_TREATMENT = (
@@ -136,8 +136,10 @@ def _score(title: str, reason: str) -> tuple[int, str | None, list[str]]:
     return min(score, 5), source, anchors
 
 
-def collect_unresolved_signals(direction_reports: Any) -> list[dict[str, Any]]:
-    """Preserve unverified evidence; only strict high-signal rows require rescue."""
+def collect_unresolved_signals(
+    direction_reports: Any, search_window: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
+    """Preserve disputed evidence, not publication eligibility or verified facts."""
     signals: list[dict[str, Any]] = []
     if not isinstance(direction_reports, list):
         return signals
@@ -149,25 +151,44 @@ def collect_unresolved_signals(direction_reports: Any) -> list[dict[str, Any]]:
         if not isinstance(rows, list):
             continue
         for index, rejection in enumerate(rows, start=1):
-            if not isinstance(rejection, dict) or rejection.get("reason_code") != "unverified":
+            if not isinstance(rejection, dict) or rejection.get("reason_code") not in {"unverified", "outside_window"}:
                 continue
             title, reason = _clean(rejection.get("title")), _clean(rejection.get("reason"))
             if not title or not reason:
                 continue
             score, source, anchors = _score(title, reason)
+            # Only exact aware evidence can settle this diagnostic comparison.
+            # Date-only/missing/invalid evidence never becomes a fabricated instant.
+            source_window_status = "unknown"
+            try:
+                window = search_window or {}
+                start = _base._parse_aware(str(window.get("start_at") or ""))
+                end = _base._parse_aware(str(window.get("end_at") or ""))
+                instant = _base._parse_aware(str(rejection.get("published_at") or ""))
+                if start < end and rejection.get("time_precision") == "datetime":
+                    source_window_status = "inside" if start <= instant <= end else "outside"
+            except (TypeError, ValueError):
+                pass
+            required = score >= 4 and not (
+                rejection.get("reason_code") == "outside_window"
+                and source_window_status == "outside"
+            )
             signals.append({
                 "signal_id": f"sig-{direction_id}-{index:02d}",
                 "version": UNRESOLVED_SIGNAL_VERSION,
                 "status": "unresolved",
                 "title": title,
                 "origin_direction": direction_id,
-                "reason_code": "unverified",
+                "reason_code": rejection.get("reason_code"),
                 "evidence_reason": reason,
+                "url": copy.deepcopy(rejection.get("url")),
+                "rejection_evidence": copy.deepcopy(rejection),
+                "source_window_status": source_window_status,
                 "likely_significance_score": score,
                 "entities": _entities(title),
                 "anchors": anchors,
                 "source_hint": source,
-                "resolution_required": score >= 4,
+                "resolution_required": required,
                 "query_terms_are_hints_not_filters": True,
             })
     return signals
@@ -196,7 +217,7 @@ def regional_health(direction_reports: Any) -> dict[str, Any]:
 
 def _annotate(research: dict[str, Any], report: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
     research, report = copy.deepcopy(research), copy.deepcopy(report)
-    signals = collect_unresolved_signals(report.get("directions"))
+    signals = collect_unresolved_signals(report.get("directions"), report.get("search_window"))
     regions = regional_health(report.get("directions"))
     for target in (research, report):
         target["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
@@ -221,6 +242,15 @@ def _annotate(research: dict[str, Any], report: dict[str, Any]) -> tuple[dict[st
 def build_prompt(*args: Any, **kwargs: Any) -> str:
     """Apply universal temporal guard and the approved business query treatment."""
     prompt = _BASE_BUILD_PROMPT(*args, **kwargs) + TEMPORAL_BOUNDARY_GUARD
+    prompt += """
+
+Для rejections сохраняй точный URL и доступные source publication evidence:
+published_date, published_at (исходный timezone-aware instant), time_precision,
+date_evidence (краткое свидетельство со страницы). Неизвестные значения = null.
+Не выводи дату из URL или ручного пересчёта без доказательства. reason сохраняет
+все независимые сомнения: факты, significance, доступность и freshness. Это
+диагностика для существующего resolution, не разрешение публиковать событие.
+"""
     direction = kwargs.get("direction")
     if not isinstance(direction, dict) or direction.get("id") != BUSINESS_QUERY_DIRECTION_ID:
         return prompt

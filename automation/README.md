@@ -1,5 +1,9 @@
 # Автоматизация ИИ-Сводок
 
+Черновик этой ветки: пункт 4 сохраняет URL/временные evidence спорных rejection
+для существующего resolution. Это НЕ принятое production-изменение: см.
+`audits/experiments/2026-09-07-step04-evidence-draft.md` (блокеры и реальные проверки).
+
 `automation/` содержит основной production-конвейер ежедневной ИИ-Сводки,
 редакционный архив, offline regressions, recovery и эксплуатационные инструменты.
 

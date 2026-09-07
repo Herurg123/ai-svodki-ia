@@ -387,6 +387,10 @@ AUDIT_REJECTION_SCHEMA: dict[str, Any] = {
     "properties": {
         "title": {"type": "string", "minLength": 1},
         "url": {"type": ["string", "null"]},
+        "published_date": {"type": ["string", "null"]},
+        "published_at": {"type": ["string", "null"]},
+        "time_precision": {"type": ["string", "null"], "enum": ["datetime", "date", "unknown", None]},
+        "date_evidence": {"type": ["string", "null"]},
         "reason_code": {
             "type": "string",
             "enum": [
@@ -404,7 +408,7 @@ AUDIT_REJECTION_SCHEMA: dict[str, Any] = {
         },
         "reason": {"type": "string", "minLength": 1},
     },
-    "required": ["title", "url", "reason_code", "reason"],
+    "required": ["title", "url", "reason_code", "reason", "published_date", "published_at", "time_precision", "date_evidence"],
 }
 
 AUDIT_SCHEMA: dict[str, Any] = {
