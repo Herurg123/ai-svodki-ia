@@ -1,0 +1,168 @@
+{
+  "status": "FAIL",
+  "case": "source-freshness event identity must not accept a same-company different event",
+  "saved_source_failure_title": "OpenAI launches new model for science",
+  "event_identity_tokens": [],
+  "alternative_title": "OpenAI launches new model for coding",
+  "candidate_matches_cluster": true,
+  "signals_related": true,
+  "expected_candidate_matches_cluster": false,
+  "invariant": "Alternative source must corroborate the original event, not merely another news item about the same organization.",
+  "synthetic_admissible_control": {
+    "observed_production": false,
+    "source_failure_event": {
+      "title": "OpenAI launches new model for science",
+      "event_summary": "A model for scientific research.",
+      "event_date": "2026-09-05",
+      "event_at": "2026-09-05T07:00:00+03:00",
+      "primary_source": {
+        "title": "Science-model release",
+        "publisher": "Example",
+        "url": "https://example.test/openai/science-model"
+      }
+    },
+    "source_failure_gate_record": {
+      "status": "excluded_unverified_freshness",
+      "event_freshness_status": "fresh",
+      "source_url": "https://example.test/openai/science-model",
+      "source_error": "SourceFreshnessError: HTTP 403"
+    },
+    "alternative_event": {
+      "title": "OpenAI launches new model for coding",
+      "event_summary": "OpenAI released a coding model for software-development workflows on 5 September.",
+      "event_date": "2026-09-05",
+      "event_at": "2026-09-05T08:00:00+03:00",
+      "published_date": "2026-09-05",
+      "published_at": "2026-09-05T08:05:00+03:00",
+      "primary_source": {
+        "title": "Coding-model release",
+        "publisher": "Different authoritative publisher",
+        "url": "https://authority.test/openai/coding-model"
+      },
+      "recommendation": "include",
+      "verification_status": "verified",
+      "freshness_status": "new_event"
+    },
+    "coverage_candidate_schema_errors": [],
+    "raw_api_response_is_distinct_event": true,
+    "actual_query_equals_build_resolution_query": true,
+    "event_and_source_gate_record": {
+      "title": "OpenAI launches new model for coding",
+      "candidate_id": null,
+      "original_recommendation": "include",
+      "status": "verified_fresh",
+      "sources": [
+        {
+          "publisher": "Different authoritative publisher",
+          "url": "https://authority.test/openai/coding-model",
+          "status": "fresh",
+          "final_url": "https://authority.test/openai/coding-model",
+          "http_status": 200,
+          "published_date": "2026-09-05",
+          "published_at": "2026-09-05T08:05:00+03:00",
+          "time_precision": "datetime",
+          "locator": "meta:article:published_time",
+          "raw_date": "2026-09-05T08:05:00+03:00"
+        }
+      ],
+      "selected_source_url": "https://authority.test/openai/coding-model",
+      "published_date": "2026-09-05",
+      "published_at": "2026-09-05T08:05:00+03:00",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable exact event timestamp is inside the effective window",
+      "event_date": "2026-09-05",
+      "event_at": "2026-09-05T08:00:00+03:00",
+      "event_time_precision": "datetime",
+      "event_origin_url": "https://authority.test/openai/coding-model",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Official release timestamp: 2026-09-05T08:00:00+03:00",
+      "event_freshness_rejection_code": null
+    },
+    "post_resolution_source_gate_record": {
+      "title": "OpenAI launches new model for coding",
+      "candidate_id": null,
+      "original_recommendation": "include",
+      "status": "verified_fresh",
+      "sources": [
+        {
+          "publisher": "Different authoritative publisher",
+          "url": "https://authority.test/openai/coding-model",
+          "status": "fresh",
+          "final_url": "https://authority.test/openai/coding-model",
+          "http_status": 200,
+          "published_date": "2026-09-05",
+          "published_at": "2026-09-05T08:05:00+03:00",
+          "time_precision": "datetime",
+          "locator": "meta:article:published_time",
+          "raw_date": "2026-09-05T08:05:00+03:00"
+        }
+      ],
+      "selected_source_url": "https://authority.test/openai/coding-model",
+      "published_date": "2026-09-05",
+      "published_at": "2026-09-05T08:05:00+03:00",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable exact event timestamp is inside the effective window",
+      "event_date": "2026-09-05",
+      "event_at": "2026-09-05T08:00:00+03:00",
+      "event_time_precision": "datetime",
+      "event_origin_url": "https://authority.test/openai/coding-model",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Official release timestamp: 2026-09-05T08:00:00+03:00",
+      "event_freshness_rejection_code": null
+    },
+    "quality_after_source_gate": {
+      "version": 1,
+      "status": "complete",
+      "required_signal_count": 1,
+      "cluster_signal_ids": [
+        "sig-source-3e87edbc6cf5d1b94c92"
+      ],
+      "resolved_candidate_count": 1,
+      "remaining_required_signal_count": 0,
+      "query": "OpenAI model release latest",
+      "domain_filter": false,
+      "publisher_whitelist": false,
+      "company_whitelist": false,
+      "reason": "verified candidate evidence found"
+    },
+    "resolution_candidate_count": 1,
+    "resolution_outcome": "candidates_found",
+    "resolution_disposition": "positive",
+    "quality": {
+      "version": 1,
+      "status": "complete",
+      "required_signal_count": 1,
+      "cluster_signal_ids": [
+        "sig-source-3e87edbc6cf5d1b94c92"
+      ],
+      "resolved_candidate_count": 1,
+      "remaining_required_signal_count": 0,
+      "query": "OpenAI model release latest",
+      "domain_filter": false,
+      "publisher_whitelist": false,
+      "company_whitelist": false,
+      "reason": "verified candidate evidence found"
+    },
+    "budget": {
+      "maximum_calls": 7,
+      "minimum_required_calls": 6,
+      "response_attempts": 7,
+      "observed_call_items": 7,
+      "completed_calls": 7,
+      "remaining_calls": 0,
+      "exhausted": true,
+      "search_budget_exhausted": true,
+      "response_attempt_limit_exhausted": false,
+      "provider_overrun": false,
+      "stop_reason": "retrieval_quality_resolution_completed"
+    }
+  },
+  "baseline_comparison": {
+    "baseline_commit": "b474b06bc00f365b9737ece4dd0912c1892489e7",
+    "baseline_source_failure_bridge_exists": false,
+    "same_source_failure_lead_reachable_in_baseline": false,
+    "reason": "The baseline has no source_resolution_evidence module, so a Source Freshness 403 cannot enter the Coverage resolution cluster through this new route."
+  },
+  "network_calls": 0,
+  "paid_api_calls": 0
+}
