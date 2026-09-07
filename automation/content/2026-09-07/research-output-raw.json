@@ -1,0 +1,226 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-09-07",
+  "search_window": {
+    "start_at": "2026-09-05T03:57:07+03:00",
+    "end_at": "2026-09-07T04:01:03+03:00",
+    "latest_archive_at": "2026-09-06T03:57:07+03:00",
+    "start_date": "2026-09-05",
+    "end_date": "2026-09-07",
+    "latest_archive_date": "2026-09-06"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Google выпустила Antigravity CLI 1.1.27: разовые консультации с другой моделью и зависимости кастомных агентов",
+      "organization": "Google; Antigravity CLI",
+      "published_date": "2026-09-05",
+      "published_at": "2026-09-05T04:23:25+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agents, мультимодельная разработка и оркестрация кастомных субагентов",
+      "event_type": "product release",
+      "keywords": [
+        "Antigravity CLI",
+        "coding agent",
+        "multi-model",
+        "custom agents",
+        "subagents",
+        "MCP",
+        "headless"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Antigravity CLI v1.1.27",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/antigravity-cli-1.1.27"
+      },
+      "supporting_sources": [
+        {
+          "title": "Release 1.1.27 · google-antigravity/antigravity-cli",
+          "publisher": "Google Antigravity / GitHub",
+          "url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.1.27"
+        }
+      ],
+      "event_summary": "В Antigravity CLI 1.1.27 добавлена команда `/model <name> <prompt>`: агент может выполнить один запрос другой моделью и затем вернуться к исходной модели с сохранением контекста сессии. Релиз также позволяет кастомным агентам объявлять зависимости от субагентов в frontmatter, а для headless-запусков явно сообщает о запрещённых действиях инструментов в JSON-выводе.",
+      "verified_facts": [
+        "Официальный GitHub-релиз 1.1.27 датирован 5 сентября 2026 года.",
+        "Команда `/model <name> <prompt>` запускает одиночный prompt на другой модели, не меняя сохранённую модель сессии.",
+        "В Markdown-frontmatter кастомных агентов появился список `agents` для объявления зависимых субагентов.",
+        "В headless-режиме `-p` запрещённые tool actions теперь завершаются уведомлением и отражаются как `denied_actions` в JSON-выводе."
+      ],
+      "significance": "Это самостоятельное функциональное обновление CLI coding agent: оно снижает friction мультимодельных рабочих процессов и формализует композицию субагентов. Однако это инкрементальный релиз, а не запуск новой модели или крупной платформы.",
+      "significance_score": 2,
+      "limitations": "Публикация GitHub отображает время релиза «05 Sep 04:23», но без явного timezone offset; поэтому точный event_at и published_at не заполняются. Значимость нуждается в последующем сравнении с другими релизами дня.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет Antigravity CLI 1.1.27 или эквивалентного сюжета о мультимодельном prompt-routing и agent dependencies.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Функции и дата релиза подтверждены официальной страницей GitHub-релиза; Havoptic использован только как вторичный навигационный источник.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-05T04:23:25Z; timestamp проверен Python против effective window. Первичный релиз опубликован 5 сентября 2026 года; это новый самостоятельный релиз в effective window и он не совпадает с уже архивированными событиями.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к отдельной curiosity-категории; релевантен непосредственно как обновление developer tool.",
+      "event_date": "2026-09-05",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.1.27",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Официальная страница GitHub-релиза указывает, что версия 1.1.27 была выпущена 05 Sep; точный offset времени не показан.",
+      "id": "cand-001",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.havoptic.com/r/antigravity-cli-1.1.27",
+      "source_published_date": "2026-09-05",
+      "source_published_at": "2026-09-05T04:23:25+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-05T04:23:25Z"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=1, validated unique=1, final candidates=1. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-global_breaking-03",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Travis Kalanick’s Atoms might be getting into the robotaxi business",
+      "origin_direction": "global_breaking",
+      "reason_code": "unverified",
+      "evidence_reason": "Материал сформулирован как спекулятивная возможность, а не как подтверждённый запуск, сделка, финансирование или развёртывание роботакси.",
+      "likely_significance_score": 3,
+      "entities": [
+        "Travis",
+        "Kalanick",
+        "Atoms"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-legal_regulation-02",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Judge approves a $1.5B Anthropic settlement over books used to train Claude",
+      "origin_direction": "legal_regulation",
+      "reason_code": "unverified",
+      "evidence_reason": "Событие потенциально крупное, но найденная страница не предоставляет проверяемой абсолютной даты или timestamp публикации/судебного решения для строгого сопоставления с effective window; поисковая выдача маркирует материал как опубликованный около месяца назад.",
+      "likely_significance_score": 2,
+      "entities": [
+        "Judge",
+        "Anthropic",
+        "Claude"
+      ],
+      "anchors": [
+        "$1.5B"
+      ],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota"
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

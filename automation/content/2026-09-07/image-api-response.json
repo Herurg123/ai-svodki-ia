@@ -1,0 +1,71 @@
+{
+  "status": "ok",
+  "usage_attempt_id": "f7619b02460a41f4a219376f9ccd7dcc",
+  "request_id": "production-image-2026-09-07",
+  "model": "gpt-image-2",
+  "endpoint": "/v1/images/generations",
+  "http_status": 200,
+  "openai_request_id": "req_39bb7473d64a45ea849c1f33885af31d",
+  "source_editorial_request_id": "production-digest-2026-09-07",
+  "request": {
+    "size": "1536x864",
+    "quality": "high",
+    "output_format": "png",
+    "background": "opaque",
+    "n": 1,
+    "prompt_sha256": "a3efe2c2585393e69529ce3736c96dc180444b814ff629d03fb52dbb6bdcbdc6"
+  },
+  "response": {
+    "created": 1788743435,
+    "background": "opaque",
+    "output_format": "png",
+    "quality": "high",
+    "size": "1536x864",
+    "usage": {
+      "input_tokens": 311,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 311
+      },
+      "output_tokens": 4312,
+      "output_tokens_details": {
+        "image_tokens": 4312,
+        "text_tokens": 0
+      },
+      "total_tokens": 4623
+    },
+    "data_count": 1,
+    "revised_prompt": null
+  },
+  "cover_sha256": "8b01326794d53b1c7e2305e283842df325cce00d0ec6cd4cc1250b6c99b882be",
+  "cover_bytes": 1974207,
+  "base64_stored": false,
+  "copied_source_files": [
+    "agency-discovery-rescue.json",
+    "article.html",
+    "artifact-normalization.json",
+    "artifact-validation.json",
+    "candidates.json",
+    "digest.json",
+    "editorial-output-raw.json",
+    "editorial-output.json",
+    "editorial-prompt-input.txt",
+    "hybrid-completeness.json",
+    "image-prompt.txt",
+    "meta.json",
+    "metadata-normalization.json",
+    "policy-normalization.json",
+    "primary-recall.json",
+    "research-filtered-out.json",
+    "research-input-info.json",
+    "research-output-raw.json",
+    "research-prompt-input.txt",
+    "run-info.json",
+    "selection.json",
+    "source-pulse.json",
+    "sources.json",
+    "stories.json"
+  ],
+  "started_at": "2026-09-07T01:09:13+00:00",
+  "finished_at": "2026-09-07T01:10:35+00:00"
+}
