@@ -186,3 +186,17 @@ Permanent regression:
 - Repeated high-signal miss важнее одиночного provider ranking sample.
 - Любой новый query treatment требует Terra-equivalent A/B; при отсутствии Terra query wording не меняется.
 - Следующий системный target после temporal guard: **provider/source routing + source resolution**, а не добавление ещё одного ежедневного search без отдельного разрешения и experiment.
+
+## 2026-09-07 — Step 3: first-party publication evidence handoff
+
+Baseline `4fc0c164dd5159522047b7b457add1bac0a91f0c`. Independent saved-evidence
+replay passed 66 checks, including 36 matrix combinations; full captured Yandex
+HTML was exercised as well as the reduced fixture. Both previously lost
+Yandex/GitHub publication-date proofs now establish eligibility. Generic metadata,
+stale events, cutoff boundaries and exact identity negatives remain protected.
+614 offline tests and six canonical validators passed. Experiment used no network
+or paid API. No query/routing/budget/recovery/publication changes. GitHub fallback
+can add one public HTTP fetch through the existing bounded transport per matching
+release lacking HTML publication metadata; this is not a paid search. See
+`experiments/2026-09-07-step03-preregistration.md` and
+`experiments/replay_publication_proof_2026_09_07.py` for scope and limitations.

@@ -5,7 +5,8 @@ The preserved v1 module remains the authority for safe source fetching,
 publication-metadata parsing and fail-closed source-page freshness. v2 adds a
 separate zero-paid deterministic event-origin check before that source proof.
 Reliable stale event evidence rejects immediately; unknown event origin preserves
-recall and still has to pass the unchanged source-page proof.
+recall and still has to pass source-page proof, including bounded first-party
+fallbacks after generic HTML metadata.
 """
 from __future__ import annotations
 
@@ -33,6 +34,8 @@ assert _V1_SPEC and _V1_SPEC.loader
 _v1 = importlib.util.module_from_spec(_V1_SPEC)
 sys.modules[_V1_SPEC.name] = _v1
 _V1_SPEC.loader.exec_module(_v1)
+
+from publication_evidence_adapters import first_party_evidence as _first_party_evidence
 
 for _name in dir(_v1):
     if not _name.startswith("_"):
@@ -120,7 +123,10 @@ def verify_candidate(
         }
 
     record = _v1.verify_candidate(
-        candidate, start_at=start_at, end_at=end_at, fetcher=fetcher
+        candidate, start_at=start_at, end_at=end_at, fetcher=fetcher,
+        evidence_resolver=lambda body, requested, final: _first_party_evidence(
+            body, requested, final, fetcher
+        ),
     )
     _annotate_source_diagnostics(candidate, record)
     record.update(_event_record_fields(event_result))

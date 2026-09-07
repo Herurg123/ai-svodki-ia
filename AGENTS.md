@@ -345,3 +345,8 @@ Retrieval/search experiments use assistant-owned resources. When the project
 requires Terra, use assistant-side Terra when actually available and state the
 limitation if it is not exposed. Never spend the user's production API budget to
 fill that tooling gap without explicit permission.
+
+First-party date fallbacks must bind evidence to the exact cited article or
+repository/tag. Never replace a generic publication date with a fallback or use
+release created_at as published_at. Preserve the independent event-age gate,
+existing exclusions and exact-window/date-only boundary checks.
