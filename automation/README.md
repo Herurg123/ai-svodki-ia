@@ -150,7 +150,14 @@ promotion decisions и exact-URL merge acceptance. Опция `--release-dir` ч
 Связь Pulse → candidate требует точных URL, title и Pulse provenance; связка
 candidate → story требует ID, источника, event fields и полного editorial ID
 partition. Неоднозначность и отсутствие данных остаются `null`. Собранные stories
-не доказывают публикацию; `published` пока неизвестен. Пункт 5 не принят.
+не доказывают публикацию; `published` (FTP delivery) пока неизвестен.
+Опции `--published-repo PATH --published-commit FULL_SHA` вместо `--release-dir`
+читают immutable Git objects: commit обязан быть достижим из локального
+`origin/main`, Pulse input должен побайтно совпасть с committed report, и
+committed `posts/DATE/index.html` обязан содержать заголовки и точные source URLs
+всех stories. Результат `repository_published` относится только к публикации
+файлов в репозитории; CLI не делает fetch и не проверяет удалённый FTP.
+Пункт 5 не принят.
 Это диагностический CLI, не production stage. Междневное сравнение и дедупликация
 recovery-снимков ещё не реализованы. Нулевые counts не служат основанием удалять
 источник. Условия продолжения: `audits/experiments/2026-09-08-step05-source-value-checkpoint.md`.

@@ -141,7 +141,10 @@ plane по-прежнему не может подавить Hybrid regional rec
 сохранённый Source Pulse JSON и разделяет source health, прочитанные записи,
 leads и подтверждённое добавление кандидатов. С `--release-dir` он прослеживает
 точную связь с сохранёнными freshness/editorial/stories. Неоднозначность остаётся
-`null`; сборка файла не считается публикацией. Пункт 5 ещё не принят.
+`null`; сборка файла не считается публикацией. Опциональный `--published-repo`
+с конкретным `--published-commit` подтверждает `repository_published` по истории
+`origin/main` и committed странице; доставка на FTP отдельно остаётся неизвестной.
+Пункт 5 ещё не принят.
 Отчёт не подключён к production и не меняет набор источников или поиск.
 
 Финальный production status теперь также вычисляет zero-paid **Discovery Health

@@ -2,6 +2,25 @@
 
 Статус: **частично подготовлен, НЕ принят**. База `54d07e84bcc2ceb0c63f54122183d3cb5641e183`.
 
+## Третий checkpoint: подтверждение публикации в репозитории
+
+Второй checkpoint сохранён коммитом `e109e92e863852bdd44cda77eb0adf9c1572fd4d`.
+Добавлен `source_value_publication.py`: по явным repo/full SHA он читает только
+committed canonical artifacts и страницу. SHA должен быть ancestor локального
+`origin/main`, Pulse input совпадает побайтно, страница содержит заголовки и
+точные source URLs всех stories. Draft worktree, unmerged commit, чужая/пустая
+страница, другой Pulse input не могут подтверждать `repository_published`.
+`published`/FTP delivery остаётся unknown; сетевых запросов этот reader не делает.
+
+Реальный replay NVIDIA 2 сентября по main commit `54d07e8`: promoted=1,
+post_freshness=1, editorial_selected=1, assembled_stories=1,
+repository_published=1. FTP данным опытом не проверялся. Добавлены 5 offline Git/
+page-provenance tests, включая hidden script text. Вместе с Pulse suite — 66 tests.
+
+До приёмки остаются multi-release/recovery aggregation, явная политика отсутствия
+данных и нулей, независимая оценка реализации, полный архитектурный/regression
+gate. Поисковой runtime не менялся; пункт 5 ещё НЕ принят.
+
 ## Второй checkpoint: связка с редакционным отбором
 
 Добавлен optional `--release-dir` и консервативный `source_pulse_trace.py`.

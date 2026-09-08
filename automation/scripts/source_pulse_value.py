@@ -111,7 +111,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pulse", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
-    parser.add_argument("--release-dir", type=Path, help="Saved candidate/editorial/story artifacts from the same release")
+    inputs = parser.add_mutually_exclusive_group()
+    inputs.add_argument("--release-dir", type=Path, help="Saved candidate/editorial/story artifacts from the same release")
+    inputs.add_argument("--published-repo", type=Path, help="Local Git repository; reads committed artifacts, never fetches")
+    parser.add_argument("--published-commit", help="Full commit SHA reachable from the local origin/main reference")
     args = parser.parse_args()
     if args.pulse.resolve() == args.output.resolve():
         parser.error("output must not overwrite the source report")
@@ -120,7 +123,18 @@ def main() -> None:
     if not isinstance(pulse, dict):
         parser.error("source report must be a JSON object")
     bundle = None
+    publication = None
     input_hashes = {}
+    if bool(args.published_repo) != bool(args.published_commit):
+        parser.error("published-repo and published-commit must be provided together")
+    if args.published_repo:
+        from source_value_publication import load_publication
+        try:
+            committed_pulse, bundle, publication = load_publication(args.published_repo, args.published_commit, pulse.get("publication_date", ""))
+            if committed_pulse != raw:
+                raise ValueError("Pulse input differs from the committed release; cross-run attribution rejected")
+        except (ValueError, TypeError, OSError) as exc:
+            parser.error(str(exc))
     if args.release_dir:
         bundle = {}
         for key, name in [("candidates", "candidates.json"), ("editorial", "editorial-output.json"), ("stories", "stories.json")]:
@@ -132,6 +146,12 @@ def main() -> None:
                 bundle[key] = json.loads(data)
                 input_hashes[name] = hashlib.sha256(data).hexdigest()
     report = build_report(pulse, bundle)
+    if publication is not None:
+        report["repository_publication_evidence"] = publication
+        for row in report["sources"]:
+            row["repository_published"] = row.get("assembled_stories")
+        # Retain published=null: this offline reader cannot attest FTP delivery.
+        report["unobserved_stages"] = ["ftp_publication" if stage == "publication" else stage for stage in report["unobserved_stages"]]
     report["input_sha256"] = hashlib.sha256(raw).hexdigest()
     report["release_input_sha256"] = input_hashes
     args.output.parent.mkdir(parents=True, exist_ok=True)

@@ -834,7 +834,13 @@ candidate → consistent editorial ID partition → story с совпавшим�
 organization/topic/event type и датой. Перенумерованный или конфликтующий ID не
 доказывает отбор. Сохранённые source/event freshness states читаются без повторной
 проверки страниц; unknown не превращается в ноль. Собранные stories не означают
-publication, это поле пока `null`. CLI не выполняет сеть, не меняет входной report, source
+publication, это поле пока `null`. `source_value_publication.py` по явным repo/SHA
+читает canonical committed artifacts и страницу из истории локального
+`origin/main`; input Pulse связывается побайтно, заголовки и exact source URLs
+проверяются в странице (script/style/template не являются видимым контентом).
+Только эта ветка CLI заполняет `repository_published`; наличие draft в worktree
+или unmerged commit не подтверждает публикацию. FTP delivery остаётся unknown.
+CLI не выполняет сеть, не меняет входной report, source
 registry, budget, freshness, prompts, recovery или publication. Пункт 5 ещё не
 принят; trace до редакционного отбора и независимая приёмка остаются обязательными.
 
