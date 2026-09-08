@@ -137,6 +137,12 @@ China/Asia или Russia gap. После freshness/editorial P4 может то�
 plane по-прежнему не может подавить Hybrid regional recovery. Полная диагностика
 сохраняется в daily Actions artifact.
 
+Черновой автономный отчёт `automation/scripts/source_pulse_value.py` читает
+сохранённый Source Pulse JSON и разделяет source health, прочитанные записи,
+leads и подтверждённое добавление кандидатов. Пункт 5 ещё не принят: последующие
+freshness/editorial/publication результаты пока обозначаются `null`.
+Отчёт не подключён к production и не меняет набор источников или поиск.
+
 Финальный production status теперь также вычисляет zero-paid **Discovery Health
 v1** по уже сохранённым Primary, Source Pulse, Agency Rescue, Hybrid и Coverage
 отчётам. Статус `healthy | degraded | indeterminate` не зависит от количества

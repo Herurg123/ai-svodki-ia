@@ -137,6 +137,20 @@ Regression fixture находится в
 
 ## Source Pulse v1.3
 
+Пункт 5, промежуточный автономный отчёт: `scripts/source_pulse_value.py` читает
+один сохранённый Source Pulse report. Пример запуска без сети:
+
+```bash
+python automation/scripts/source_pulse_value.py --pulse automation/fixtures/recall/source-value-2026-09-08.json --output /tmp/source-value.json
+```
+
+Он разделяет parser/source health, parsed/window items, accepted leads,
+promotion decisions и exact-URL merge acceptance. Последующие freshness,
+editorial selection и publication пока возвращают `null`; пункт 5 не принят.
+Это диагностический CLI, не production stage. Междневное сравнение и дедупликация
+recovery-снимков ещё не реализованы. Нулевые counts не служат основанием удалять
+источник. Условия продолжения: `audits/experiments/2026-09-08-step05-source-value-checkpoint.md`.
+
 Fresh production сначала завершает Primary Recall, затем Source Pulse v1.3
 опрашивает фиксированный registry обычным HTTPS. Только `pulse_only` Tier-A
 `official` или `trusted_news` leads могут попасть в trusted research, причём

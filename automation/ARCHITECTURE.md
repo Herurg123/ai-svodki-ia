@@ -822,6 +822,17 @@ policy change и требует отдельного PR/audit.
 
 ## 7. Event/source freshness и editorial
 
+### Отдельный офлайн-инвентарь вклада Source Pulse — черновик пункта 5
+
+`scripts/source_pulse_value.py` — автономный читатель сохранённого Pulse report,
+не импортируемый production. Он сохраняет source health отдельно от количества
+leads и подтверждает promotion только точным совпадением `record.url` с
+`accepted_candidate_urls`, как текущий v1.2/v1.3 merge contract. Fetch `final_url`
+сам по себе не заменяет идентичность кандидата. Следующие стадии пока неизвестны
+(`null`), а не нулевые. CLI не выполняет сеть, не меняет входной report, source
+registry, budget, freshness, prompts, recovery или publication. Пункт 5 ещё не
+принят; trace до редакционного отбора и независимая приёмка остаются обязательными.
+
 ### Непрерывность доказательства даты первоисточника
 
 После generic HTML publication metadata source v2 допускает узкие fallback
