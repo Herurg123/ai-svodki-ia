@@ -145,8 +145,12 @@ python automation/scripts/source_pulse_value.py --pulse automation/fixtures/reca
 ```
 
 Он разделяет parser/source health, parsed/window items, accepted leads,
-promotion decisions и exact-URL merge acceptance. Последующие freshness,
-editorial selection и publication пока возвращают `null`; пункт 5 не принят.
+promotion decisions и exact-URL merge acceptance. Опция `--release-dir` читает
+`candidates.json`, `editorial-output.json`, `stories.json` того же выпуска.
+Связь Pulse → candidate требует точных URL, title и Pulse provenance; связка
+candidate → story требует ID, источника, event fields и полного editorial ID
+partition. Неоднозначность и отсутствие данных остаются `null`. Собранные stories
+не доказывают публикацию; `published` пока неизвестен. Пункт 5 не принят.
 Это диагностический CLI, не production stage. Междневное сравнение и дедупликация
 recovery-снимков ещё не реализованы. Нулевые counts не служат основанием удалять
 источник. Условия продолжения: `audits/experiments/2026-09-08-step05-source-value-checkpoint.md`.

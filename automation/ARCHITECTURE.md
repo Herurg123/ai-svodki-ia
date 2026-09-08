@@ -828,8 +828,13 @@ policy change и требует отдельного PR/audit.
 не импортируемый production. Он сохраняет source health отдельно от количества
 leads и подтверждает promotion только точным совпадением `record.url` с
 `accepted_candidate_urls`, как текущий v1.2/v1.3 merge contract. Fetch `final_url`
-сам по себе не заменяет идентичность кандидата. Следующие стадии пока неизвестны
-(`null`), а не нулевые. CLI не выполняет сеть, не меняет входной report, source
+сам по себе не заменяет идентичность кандидата. Опциональный `--release-dir`
+включает `source_pulse_trace.py`: exact Pulse title/URL/provenance → unique
+candidate → consistent editorial ID partition → story с совпавшими ID, source,
+organization/topic/event type и датой. Перенумерованный или конфликтующий ID не
+доказывает отбор. Сохранённые source/event freshness states читаются без повторной
+проверки страниц; unknown не превращается в ноль. Собранные stories не означают
+publication, это поле пока `null`. CLI не выполняет сеть, не меняет входной report, source
 registry, budget, freshness, prompts, recovery или publication. Пункт 5 ещё не
 принят; trace до редакционного отбора и независимая приёмка остаются обязательными.
 

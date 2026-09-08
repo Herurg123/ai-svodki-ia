@@ -139,8 +139,9 @@ plane по-прежнему не может подавить Hybrid regional rec
 
 Черновой автономный отчёт `automation/scripts/source_pulse_value.py` читает
 сохранённый Source Pulse JSON и разделяет source health, прочитанные записи,
-leads и подтверждённое добавление кандидатов. Пункт 5 ещё не принят: последующие
-freshness/editorial/publication результаты пока обозначаются `null`.
+leads и подтверждённое добавление кандидатов. С `--release-dir` он прослеживает
+точную связь с сохранёнными freshness/editorial/stories. Неоднозначность остаётся
+`null`; сборка файла не считается публикацией. Пункт 5 ещё не принят.
 Отчёт не подключён к production и не меняет набор источников или поиск.
 
 Финальный production status теперь также вычисляет zero-paid **Discovery Health

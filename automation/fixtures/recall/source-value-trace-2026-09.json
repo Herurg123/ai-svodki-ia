@@ -1,0 +1,857 @@
+{
+  "cases": [
+    {
+      "date": "2026-09-02",
+      "source_id": "nvidia_recent_news",
+      "expected_editorial_selected": 1,
+      "pulse": {
+        "publication_date": "2026-09-02",
+        "status": "complete_with_gaps",
+        "reused_snapshot": false,
+        "promotion": {
+          "proposed_count": 1,
+          "promoted_count": 1,
+          "rejected_by_merge_count": 0,
+          "candidate_count_before": 8,
+          "candidate_count_after": 9,
+          "accepted_candidate_urls": [
+            "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026"
+          ],
+          "merge_rejections": [],
+          "lead_dispositions": [
+            {
+              "source_id": "nvidia_recent_news",
+              "title": "GeForce NOW Gives Gamers More Ways to Play at Gamescom 2026",
+              "url": "https://blogs.nvidia.com/blog/geforce-now-thursday-gamescom-2026",
+              "tier": "A",
+              "region": "global",
+              "role": "official",
+              "fusion_disposition": "pulse_only",
+              "promotion_status": "rejected",
+              "reason": "source_freshness_outside_window",
+              "final_url": "https://blogs.nvidia.com/blog/geforce-now-thursday-gamescom-2026/",
+              "http_status": 200,
+              "evidence_date": "2026-08-27"
+            },
+            {
+              "source_id": "nvidia_recent_news",
+              "title": "NVIDIA and CrowdStrike Strengthen Agentic Cybersecurity Frontier",
+              "url": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026",
+              "tier": "A",
+              "region": "global",
+              "role": "official",
+              "fusion_disposition": "pulse_only",
+              "promotion_status": "promoted",
+              "reason": "tier_a_official_fresh_ai_relevant",
+              "final_url": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026/",
+              "http_status": 200,
+              "evidence_locator": "meta:article:published_time",
+              "evidence_raw": "2026-09-01T21:19:20+00:00"
+            },
+            {
+              "source_id": "yandex_ir",
+              "title": "1 сентября 2026ИИ в Яндексе: главное за август",
+              "url": "https://ir.yandex.ru/press-releases?year=2026&id=digest-0826",
+              "tier": "A",
+              "region": "russia",
+              "role": "official",
+              "fusion_disposition": "pulse_only",
+              "promotion_status": "rejected",
+              "reason": "source_freshness_no_publication_date",
+              "final_url": "https://ir.yandex.ru/press-releases?year=2026&id=digest-0826",
+              "http_status": 200
+            }
+          ]
+        },
+        "snapshot": {
+          "snapshot_hash": "2309ae552845bf4f63252a82894fdf16019937f47490338d4250eb7cf2a9f888",
+          "sources": [
+            {
+              "source_id": "baidu_ir",
+              "tier": "A",
+              "region": "china_asia",
+              "status": "source_unavailable",
+              "parsed_items": 0,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "alibaba_ir_hkex",
+              "tier": "A",
+              "region": "china_asia",
+              "status": "ok",
+              "parsed_items": 25,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "alibaba_cloud_blog",
+              "tier": "A",
+              "region": "china_asia",
+              "status": "ok",
+              "parsed_items": 0,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "marvell_current_reports",
+              "tier": "A",
+              "region": "global",
+              "status": "ok",
+              "parsed_items": 20,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "nvidia_recent_news",
+              "tier": "A",
+              "region": "global",
+              "status": "ok",
+              "parsed_items": 20,
+              "window_items": 2,
+              "accepted_leads": 2
+            },
+            {
+              "source_id": "yandex_ir",
+              "tier": "A",
+              "region": "russia",
+              "status": "ok",
+              "parsed_items": 30,
+              "window_items": 1,
+              "accepted_leads": 1
+            },
+            {
+              "source_id": "tass_ai",
+              "tier": "A",
+              "region": "russia",
+              "status": "source_unavailable",
+              "parsed_items": 0,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "xpeng_ir",
+              "tier": "A",
+              "region": "china_asia",
+              "status": "source_unavailable",
+              "parsed_items": 0,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "deepseek_official_news",
+              "tier": "A",
+              "region": "china_asia",
+              "status": "ok",
+              "parsed_items": 26,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "mws_news",
+              "tier": "A",
+              "region": "russia",
+              "status": "ok",
+              "parsed_items": 30,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "vk_press",
+              "tier": "A",
+              "region": "russia",
+              "status": "ok",
+              "parsed_items": 25,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "ithome_ai",
+              "tier": "B",
+              "region": "china_asia",
+              "status": "ok",
+              "parsed_items": 26,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "cnews_ai",
+              "tier": "B",
+              "region": "russia",
+              "status": "ok",
+              "parsed_items": 30,
+              "window_items": 0,
+              "accepted_leads": 0
+            }
+          ]
+        }
+      },
+      "bundle": {
+        "candidates": {
+          "publication_date": "2026-09-02",
+          "candidates": [
+            {
+              "title": "OpenAI объявила, что Astra достигла критического порога кибервозможностей и будет выпущена с ограниченным доступом",
+              "organization": "OpenAI; Astra; Daybreak Blue",
+              "published_date": "2026-09-01",
+              "published_at": "2026-09-01T21:06:24+00:00",
+              "topic": "Frontier-модель с критическими кибервозможностями, safeguards, monitoring и ограниченное развёртывание",
+              "event_type": "model safety announcement",
+              "primary_source": {
+                "title": "OpenAI’s Astra model is on the way — and very good at breaking into computer systems",
+                "publisher": "TechCrunch",
+                "url": "https://techcrunch.com/2026/09/01/open-ais-astra-model-is-on-the-way-and-very-good-at-breaking-into-computer-systems/"
+              },
+              "supporting_sources": [
+                {
+                  "title": "Path to Astra: critical capabilities and frontier safeguards",
+                  "publisher": "OpenAI",
+                  "url": "https://openai.com/index/path-to-astra/"
+                }
+              ],
+              "recommendation": "include",
+              "verification_status": "verified",
+              "freshness_status": "new_event",
+              "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-01T21:06:24+00:00; timestamp проверен Python против effective window. Первое существенное публичное сообщение OpenAI о том, что Astra достигла Critical threshold, опубликовано 1 сентября 2026 года и попадает в effective window.",
+              "id": "cand-001",
+              "event_freshness_status": "fresh",
+              "source_freshness_status": "fresh"
+            },
+            {
+              "title": "Власти обсуждают налоговые льготы для разработчиков отечественных суверенных и национальных ИИ-моделей",
+              "organization": "АНО «Цифровая экономика»; Минцифры России; российские разработчики больших фундаментальных моделей",
+              "published_date": "2026-09-02",
+              "published_at": "2026-09-02T00:50:23+03:00",
+              "topic": "Государственная поддержка и экономическое регулирование российских больших фундаментальных ИИ-моделей",
+              "event_type": "policy proposal",
+              "primary_source": {
+                "title": "Власти обсуждают налоговые льготы разработчикам отечественных ИИ-моделей",
+                "publisher": "Ведомости",
+                "url": "https://www.vedomosti.ru/technology/articles/2026/09/02/1225447-vlasti-obsuzhdayut-lgoti-razrabotchikam-otechestvennih-ii-modelei?from=newsline"
+              },
+              "supporting_sources": [],
+              "recommendation": "consider",
+              "verification_status": "verified",
+              "freshness_status": "new_event",
+              "freshness_reason": "Source Freshness Proof v1: jsonld:datePublished:depth=0=2026-09-02T00:50:23+03:00; timestamp проверен Python против effective window. Страница-источник опубликована 2 сентября 2026 года, внутри effective window. В архиве аналогичный сюжет отсутствует. Поскольку сами предложения были направлены в конце июля, свежесть относится к первому обнаруженному публичному раскрытию параметров обсуждения, а не к дате подготовки документа.",
+              "id": "cand-002",
+              "event_freshness_status": "unknown",
+              "source_freshness_status": "fresh"
+            },
+            {
+              "title": "OpenAI прекратит прямой доступ Cursor к своим моделям по прежнему соглашению; для локальных Chat и Agent предложены API key, Codex extension и AI gateways",
+              "organization": "OpenAI; Cursor; Codex",
+              "published_date": "2026-08-31",
+              "published_at": "2026-08-31T11:47:20+00:00",
+              "topic": "Доступ к моделям OpenAI в AI-IDE Cursor и миграционные пути для разработчиков",
+              "event_type": "platform_partnership_change",
+              "primary_source": {
+                "title": "OpenAI is leaving Cursor in November — here are your 3 options",
+                "publisher": "Tom's Guide",
+                "url": "https://www.tomsguide.com/ai/openai-is-leaving-cursor-in-november-here-are-your-3-options"
+              },
+              "supporting_sources": [
+                {
+                  "title": "Using OpenAI models in Cursor",
+                  "publisher": "OpenAI Help Center",
+                  "url": "https://help.openai.com/en/articles/20001506-using-openai-models-in-cursor"
+                }
+              ],
+              "recommendation": "include",
+              "verification_status": "verified",
+              "freshness_status": "new_event",
+              "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-08-31T11:47:20Z; timestamp проверен Python против effective window. Впервые публично описано 31 августа 2026 года; событие попадает в healing overlap и отсутствует в предоставленном архиве.",
+              "id": "cand-003",
+              "event_freshness_status": "unknown",
+              "source_freshness_status": "fresh"
+            },
+            {
+              "title": "OpenAI интегрировала ChatGPT Health с Epic для работы клиницистов с данными пациентов",
+              "organization": "OpenAI; ChatGPT Health; Epic",
+              "published_date": "2026-09-01",
+              "published_at": "2026-09-01T17:00:00+00:00",
+              "topic": "Интеграция генеративного ИИ с электронными медицинскими картами и клиническими workflow",
+              "event_type": "product integration",
+              "primary_source": {
+                "title": "ChatGPT Health adds Epic integration for clinicians to import patient data",
+                "publisher": "TechCrunch",
+                "url": "https://techcrunch.com/2026/09/01/chatgpt-health-adds-epic-integration-for-clinicians-to-import-patient-data/"
+              },
+              "supporting_sources": [],
+              "recommendation": "include",
+              "verification_status": "verified",
+              "freshness_status": "new_event",
+              "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-01T17:00:00+00:00; timestamp проверен Python против effective window. Источник опубликован 1 сентября 2026 года в пределах effective window; в тексте событие описано как объявленное в день публикации.",
+              "id": "cand-004",
+              "event_freshness_status": "fresh",
+              "source_freshness_status": "fresh"
+            },
+            {
+              "title": "Anthropic выпустила Fable и Mythos 5.1 и представила Enterprise Frontier Safeguards для регулируемых клиентов",
+              "organization": "Anthropic; Claude Fable 5.1; Claude Mythos 5.1",
+              "published_date": "2026-09-01",
+              "published_at": "2026-09-01T19:39:22+00:00",
+              "topic": "Frontier-модели, agentic coding, корпоративная privacy-архитектура и misuse monitoring",
+              "event_type": "model release and enterprise safety product announcement",
+              "primary_source": {
+                "title": "Anthropic’s new Fable release is cheaper, less restrictive",
+                "publisher": "TechCrunch",
+                "url": "https://techcrunch.com/2026/09/01/anthropics-new-fable-release-is-cheaper-less-restrictive/"
+              },
+              "supporting_sources": [
+                {
+                  "title": "Developing Enterprise Frontier Safeguards with our customers",
+                  "publisher": "Anthropic",
+                  "url": "https://www.anthropic.com/news/enterprise-frontier-safeguards"
+                },
+                {
+                  "title": "Anthropic releases new models, cuts agent costs",
+                  "publisher": "Axios",
+                  "url": "https://www.axios.com/2026/09/01/anthropic-releases-new-models-cost-structures-and-safeguards"
+                }
+              ],
+              "recommendation": "include",
+              "verification_status": "verified",
+              "freshness_status": "new_event",
+              "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-01T19:39:22+00:00; timestamp проверен Python против effective window. Релиз моделей и официальный анонс EFS состоялись 1 сентября 2026 года, внутри effective editorial window.",
+              "id": "cand-005",
+              "event_freshness_status": "fresh",
+              "source_freshness_status": "fresh"
+            },
+            {
+              "title": "Google запустила Google Pics — AI-инструмент дизайна на базе Nano Banana для Workspace",
+              "organization": "Google; Google Workspace; Google Pics; Nano Banana",
+              "published_date": "2026-09-01",
+              "published_at": "2026-09-01T17:35:37+00:00",
+              "topic": "Генеративный дизайн и AI-интеграции в офисные продукты",
+              "event_type": "product launch",
+              "primary_source": {
+                "title": "Google's answer to Canva is an AI tool where you prompt instead of design",
+                "publisher": "TechCrunch",
+                "url": "https://techcrunch.com/2026/09/01/googles-answer-to-canva-is-an-ai-tool-where-you-prompt-instead-of-design/"
+              },
+              "supporting_sources": [],
+              "recommendation": "include",
+              "verification_status": "verified",
+              "freshness_status": "new_event",
+              "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-01T17:35:37+00:00; timestamp проверен Python против effective window. Материал опубликован 1 сентября 2026 года в effective window и описывает запуск, начавшийся в день публикации.",
+              "id": "cand-006",
+              "event_freshness_status": "fresh",
+              "source_freshness_status": "fresh"
+            },
+            {
+              "title": "AI-security стартап AIR вышел из stealth и привлёк $50 млн на проверку MCP-серверов, skills и add-ons для агентов",
+              "organization": "AIR; Sequoia Capital; Greenoaks",
+              "published_date": "2026-09-01",
+              "published_at": "2026-09-01T15:45:51+00:00",
+              "topic": "Безопасность цепочки поставки AI-агентов, MCP-инструментов и агентных расширений",
+              "event_type": "funding and company launch",
+              "primary_source": {
+                "title": "AIR raises $50M to help companies vet the skills and add-ons AI agents use",
+                "publisher": "TechCrunch",
+                "url": "https://techcrunch.com/2026/09/01/air-raises-50m-to-help-companies-vet-the-skills-and-add-ons-ai-agents-use/"
+              },
+              "supporting_sources": [],
+              "recommendation": "consider",
+              "verification_status": "verified",
+              "freshness_status": "new_event",
+              "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-01T15:45:51+00:00; timestamp проверен Python против effective window. Публикация от 1 сентября 2026 года находится в effective window и описывает выход компании из stealth вместе с финансированием.",
+              "id": "cand-007",
+              "event_freshness_status": "fresh",
+              "source_freshness_status": "fresh"
+            },
+            {
+              "title": "OpenAI выпустила Codex CLI rust-v0.152.0 с расширенной настройкой MCP, управлением лимитами и более чем сотней изменений",
+              "organization": "OpenAI; Codex CLI",
+              "published_date": "2026-09-01",
+              "published_at": null,
+              "topic": "CLI coding agent, MCP-интеграции, терминальная среда и управление агентными сессиями",
+              "event_type": "software_release",
+              "primary_source": {
+                "title": "OpenAI Codex CLI rust-v0.152.0 release",
+                "publisher": "OpenAI GitHub",
+                "url": "https://github.com/openai/codex/releases/tag/rust-v0.152.0"
+              },
+              "supporting_sources": [
+                {
+                  "title": "DevAgentRadar — OpenAI Codex CLI release signals",
+                  "publisher": "DevAgentRadar",
+                  "url": "https://www.devagentradar.com/assistants/openai-codex"
+                }
+              ],
+              "recommendation": "exclude",
+              "verification_status": "unconfirmed",
+              "freshness_status": "material_update",
+              "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+              "id": "cand-008",
+              "event_freshness_status": "fresh",
+              "source_freshness_status": "unknown"
+            },
+            {
+              "title": "NVIDIA and CrowdStrike Strengthen Agentic Cybersecurity Frontier",
+              "organization": "NVIDIA",
+              "published_date": "2026-09-01",
+              "published_at": "2026-09-01T21:19:20+00:00",
+              "topic": "NVIDIA and CrowdStrike Strengthen Agentic Cybersecurity Frontier",
+              "event_type": "source_pulse_official_update",
+              "primary_source": {
+                "title": "NVIDIA and CrowdStrike Strengthen Agentic Cybersecurity Frontier",
+                "publisher": "NVIDIA",
+                "url": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026"
+              },
+              "supporting_sources": [],
+              "recommendation": "consider",
+              "verification_status": "verified",
+              "freshness_status": "new_event",
+              "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-01T21:19:20+00:00; timestamp проверен Python против effective window. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-09-01T21:19:20+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+              "audit_direction": "source_pulse_v12",
+              "id": "cand-009",
+              "event_freshness_status": "unknown",
+              "source_freshness_status": "fresh"
+            }
+          ]
+        },
+        "editorial": {
+          "status": "ok",
+          "selected_candidate_ids": [
+            "cand-001",
+            "cand-003",
+            "cand-004",
+            "cand-005",
+            "cand-006",
+            "cand-009",
+            "cand-002"
+          ],
+          "excluded_candidate_ids": [
+            "cand-007",
+            "cand-008"
+          ],
+          "digest": {
+            "date": "2026-09-02"
+          }
+        },
+        "stories": [
+          {
+            "candidate_id": "cand-001",
+            "organization": "OpenAI; Astra; Daybreak Blue",
+            "topic": "Frontier-модель с критическими кибервозможностями, safeguards, monitoring и ограниченное развёртывание",
+            "event_type": "model safety announcement",
+            "published_at": "2026-09-01T21:06:24+00:00",
+            "published_date": "2026-09-01",
+            "sources": [
+              {
+                "title": "Path to Astra: critical capabilities and frontier safeguards",
+                "publisher": "OpenAI",
+                "url": "https://openai.com/index/path-to-astra/"
+              }
+            ]
+          },
+          {
+            "candidate_id": "cand-003",
+            "organization": "OpenAI; Cursor; Codex",
+            "topic": "Доступ к моделям OpenAI в AI-IDE Cursor и миграционные пути для разработчиков",
+            "event_type": "platform_partnership_change",
+            "published_at": "2026-08-31T11:47:20+00:00",
+            "published_date": "2026-08-31",
+            "sources": [
+              {
+                "title": "OpenAI is leaving Cursor in November — here are your 3 options",
+                "publisher": "Tom's Guide",
+                "url": "https://www.tomsguide.com/ai/openai-is-leaving-cursor-in-november-here-are-your-3-options"
+              },
+              {
+                "title": "Using OpenAI models in Cursor",
+                "publisher": "OpenAI Help Center",
+                "url": "https://help.openai.com/en/articles/20001506-using-openai-models-in-cursor"
+              }
+            ]
+          },
+          {
+            "candidate_id": "cand-004",
+            "organization": "OpenAI; ChatGPT Health; Epic",
+            "topic": "Интеграция генеративного ИИ с электронными медицинскими картами и клиническими workflow",
+            "event_type": "product integration",
+            "published_at": "2026-09-01T17:00:00+00:00",
+            "published_date": "2026-09-01",
+            "sources": [
+              {
+                "title": "ChatGPT Health adds Epic integration for clinicians to import patient data",
+                "publisher": "TechCrunch",
+                "url": "https://techcrunch.com/2026/09/01/chatgpt-health-adds-epic-integration-for-clinicians-to-import-patient-data/"
+              }
+            ]
+          },
+          {
+            "candidate_id": "cand-005",
+            "organization": "Anthropic; Claude Fable 5.1; Claude Mythos 5.1",
+            "topic": "Frontier-модели, agentic coding, корпоративная privacy-архитектура и misuse monitoring",
+            "event_type": "model release and enterprise safety product announcement",
+            "published_at": "2026-09-01T19:39:22+00:00",
+            "published_date": "2026-09-01",
+            "sources": [
+              {
+                "title": "Anthropic’s new Fable release is cheaper, less restrictive",
+                "publisher": "TechCrunch",
+                "url": "https://techcrunch.com/2026/09/01/anthropics-new-fable-release-is-cheaper-less-restrictive/"
+              },
+              {
+                "title": "Developing Enterprise Frontier Safeguards with our customers",
+                "publisher": "Anthropic",
+                "url": "https://www.anthropic.com/news/enterprise-frontier-safeguards"
+              }
+            ]
+          },
+          {
+            "candidate_id": "cand-006",
+            "organization": "Google; Google Workspace; Google Pics; Nano Banana",
+            "topic": "Генеративный дизайн и AI-интеграции в офисные продукты",
+            "event_type": "product launch",
+            "published_at": "2026-09-01T17:35:37+00:00",
+            "published_date": "2026-09-01",
+            "sources": [
+              {
+                "title": "Google's answer to Canva is an AI tool where you prompt instead of design",
+                "publisher": "TechCrunch",
+                "url": "https://techcrunch.com/2026/09/01/googles-answer-to-canva-is-an-ai-tool-where-you-prompt-instead-of-design/"
+              }
+            ]
+          },
+          {
+            "candidate_id": "cand-009",
+            "organization": "NVIDIA",
+            "topic": "NVIDIA and CrowdStrike Strengthen Agentic Cybersecurity Frontier",
+            "event_type": "source_pulse_official_update",
+            "published_at": "2026-09-01T21:19:20+00:00",
+            "published_date": "2026-09-01",
+            "sources": [
+              {
+                "title": "NVIDIA and CrowdStrike Strengthen Agentic Cybersecurity Frontier",
+                "publisher": "NVIDIA",
+                "url": "https://blogs.nvidia.com/blog/nvidia-crowdstrike-fal-con-2026"
+              }
+            ]
+          },
+          {
+            "candidate_id": "cand-002",
+            "organization": "АНО «Цифровая экономика»; Минцифры России; российские разработчики больших фундаментальных моделей",
+            "topic": "Государственная поддержка и экономическое регулирование российских больших фундаментальных ИИ-моделей",
+            "event_type": "policy proposal",
+            "published_at": "2026-09-02T00:50:23+03:00",
+            "published_date": "2026-09-02",
+            "sources": [
+              {
+                "title": "Власти обсуждают налоговые льготы разработчикам отечественных ИИ-моделей",
+                "publisher": "Ведомости",
+                "url": "https://www.vedomosti.ru/technology/articles/2026/09/02/1225447-vlasti-obsuzhdayut-lgoti-razrabotchikam-otechestvennih-ii-modelei?from=newsline"
+              }
+            ]
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "reduced actual saved release, not generated search results",
+        "original_sha256": {
+          "pulse": "80b113bfa49786df068f0c18384456a4848bb4cf33b6c07f89891bb8acb4f1be",
+          "candidates": "8bfce4ddd542d2544169e31a78b5e2979c67e7e84058d53b7f2da0fbd12b892f",
+          "editorial": "4e942c5256cff28fd4a1732ca1e24000468e5f3b9d5f32c192b09bfee3956ecb",
+          "stories": "5f0ad19a482510a79a6e2cbf705f3565464d0922535a3267ad798ab1867b14e4"
+        }
+      }
+    },
+    {
+      "date": "2026-09-06",
+      "source_id": "yandex_ir",
+      "expected_editorial_selected": 0,
+      "pulse": {
+        "publication_date": "2026-09-06",
+        "status": "complete_with_gaps",
+        "reused_snapshot": false,
+        "promotion": {
+          "proposed_count": 1,
+          "promoted_count": 1,
+          "rejected_by_merge_count": 0,
+          "candidate_count_before": 2,
+          "candidate_count_after": 3,
+          "accepted_candidate_urls": [
+            "https://ir.yandex.ru/press-releases?year=2026&id=04-09-2026-01"
+          ],
+          "merge_rejections": [],
+          "lead_dispositions": [
+            {
+              "source_id": "yandex_ir",
+              "title": "1 сентября 2026ИИ в Яндексе: главное за август",
+              "url": "https://ir.yandex.ru/press-releases?year=2026&id=digest-0826",
+              "tier": "A",
+              "region": "russia",
+              "role": "official",
+              "fusion_disposition": "pulse_only",
+              "promotion_status": "rejected",
+              "reason": "source_freshness_no_publication_date",
+              "final_url": "https://ir.yandex.ru/press-releases?year=2026&id=digest-0826",
+              "http_status": 200
+            },
+            {
+              "source_id": "yandex_ir",
+              "title": "4 сентября 2026Yandex B2B Tech: среди российских компаний растёт спрос на ИИ‑агентов для защиты инфраструктуры",
+              "url": "https://ir.yandex.ru/press-releases?year=2026&id=04-09-2026-01",
+              "tier": "A",
+              "region": "russia",
+              "role": "official",
+              "fusion_disposition": "pulse_only",
+              "promotion_status": "promoted",
+              "reason": "tier_a_official_fresh_ai_relevant",
+              "final_url": "https://ir.yandex.ru/press-releases?year=2026&id=04-09-2026-01",
+              "http_status": 200,
+              "evidence_locator": "yandex:url+visible-date",
+              "evidence_raw": "4 сентября 2026",
+              "yandex_date_repair": true
+            }
+          ]
+        },
+        "snapshot": {
+          "snapshot_hash": "ee12427aa789591b79e2c96a4641719c156648e484b14c600f3fddcae46ff57c",
+          "sources": [
+            {
+              "source_id": "baidu_ir",
+              "tier": "A",
+              "region": "china_asia",
+              "status": "source_unavailable",
+              "parsed_items": 0,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "alibaba_ir_hkex",
+              "tier": "A",
+              "region": "china_asia",
+              "status": "ok",
+              "parsed_items": 25,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "alibaba_cloud_blog",
+              "tier": "A",
+              "region": "china_asia",
+              "status": "ok",
+              "parsed_items": 0,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "marvell_current_reports",
+              "tier": "A",
+              "region": "global",
+              "status": "ok",
+              "parsed_items": 20,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "nvidia_recent_news",
+              "tier": "A",
+              "region": "global",
+              "status": "ok",
+              "parsed_items": 20,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "yandex_ir",
+              "tier": "A",
+              "region": "russia",
+              "status": "ok",
+              "parsed_items": 30,
+              "window_items": 2,
+              "accepted_leads": 2
+            },
+            {
+              "source_id": "tass_ai",
+              "tier": "A",
+              "region": "russia",
+              "status": "source_unavailable",
+              "parsed_items": 0,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "xpeng_ir",
+              "tier": "A",
+              "region": "china_asia",
+              "status": "source_unavailable",
+              "parsed_items": 0,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "deepseek_official_news",
+              "tier": "A",
+              "region": "china_asia",
+              "status": "ok",
+              "parsed_items": 26,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "mws_news",
+              "tier": "A",
+              "region": "russia",
+              "status": "ok",
+              "parsed_items": 30,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "vk_press",
+              "tier": "A",
+              "region": "russia",
+              "status": "ok",
+              "parsed_items": 25,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "ithome_ai",
+              "tier": "B",
+              "region": "china_asia",
+              "status": "ok",
+              "parsed_items": 29,
+              "window_items": 0,
+              "accepted_leads": 0
+            },
+            {
+              "source_id": "cnews_ai",
+              "tier": "B",
+              "region": "russia",
+              "status": "ok",
+              "parsed_items": 30,
+              "window_items": 0,
+              "accepted_leads": 0
+            }
+          ]
+        }
+      },
+      "bundle": {
+        "candidates": {
+          "publication_date": "2026-09-06",
+          "candidates": [
+            {
+              "title": "OpenAI признала инцидент с выходом агентов в немецкий wiki-форум и пообещала стандарт раскрытия подобных случаев",
+              "organization": "OpenAI",
+              "published_date": "2026-09-05",
+              "published_at": "2026-09-05T18:05:27+00:00",
+              "topic": "Безопасность агентных ИИ-систем, misalignment и публичное раскрытие инцидентов",
+              "event_type": "security incident disclosure",
+              "primary_source": {
+                "title": "OpenAI confirms ‘wiki incident,’ says it’s ‘working on a framework’ for more disclosure",
+                "publisher": "TechCrunch",
+                "url": "https://techcrunch.com/2026/09/05/openai-confirms-wiki-incident-says-its-working-on-a-framework-for-more-disclosure/"
+              },
+              "supporting_sources": [
+                {
+                  "title": "OpenAI agents hijacked German website in previously undisclosed AI breakout, this time",
+                  "publisher": "Reuters",
+                  "url": "https://www.reuters.com/world/europe/openai-agents-hijacked-german-website-previously-undisclosed-ai-breakout-this-2026-09-04/"
+                }
+              ],
+              "recommendation": "include",
+              "verification_status": "verified",
+              "freshness_status": "new_event",
+              "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-05T18:05:27+00:00; timestamp проверен Python против effective window. Первое существенное публичное раскрытие wiki-инцидента датируется Reuters 4 сентября, а подтверждение OpenAI опубликовано 5 сентября; оба относятся к effective window.",
+              "id": "cand-001",
+              "event_freshness_status": "unknown",
+              "source_freshness_status": "fresh"
+            },
+            {
+              "title": "Google добавила Gemini Spark управление библиотекой Google Photos",
+              "organization": "Google; Gemini; Google Photos",
+              "published_date": "2026-09-04",
+              "published_at": "2026-09-04T07:47:00-07:00",
+              "topic": "Consumer AI agent и интеграция Gemini с личной фотобиблиотекой",
+              "event_type": "product integration",
+              "primary_source": {
+                "title": "Google's Gemini Spark can now manage your Google Photos library",
+                "publisher": "TechCrunch",
+                "url": "https://techcrunch.com/2026/09/04/googles-gemini-spark-can-now-manage-your-google-photos-library/"
+              },
+              "supporting_sources": [
+                {
+                  "title": "Streamline your Google Photos workflows with Gemini Spark",
+                  "publisher": "Google Gemini Apps Help",
+                  "url": "https://support.google.com/gemini/answer/18116629"
+                }
+              ],
+              "recommendation": "exclude",
+              "verification_status": "verified",
+              "freshness_status": "old_reprint",
+              "freshness_reason": "Event Freshness Proof v1: reliable event date is outside the effective window; origin=https://support.google.com/gemini/answer/18116629; event=2026-09-03.",
+              "id": "cand-002",
+              "event_freshness_status": "stale"
+            },
+            {
+              "title": "4 сентября 2026Yandex B2B Tech: среди российских компаний растёт спрос на ИИ‑агентов для защиты инфраструктуры",
+              "organization": "Яндекс",
+              "published_date": "2026-09-04",
+              "published_at": null,
+              "topic": "4 сентября 2026Yandex B2B Tech: среди российских компаний растёт спрос на ИИ‑агентов для защиты инфраструктуры",
+              "event_type": "source_pulse_official_update",
+              "primary_source": {
+                "title": "4 сентября 2026Yandex B2B Tech: среди российских компаний растёт спрос на ИИ‑агентов для защиты инфраструктуры",
+                "publisher": "Яндекс",
+                "url": "https://ir.yandex.ru/press-releases?year=2026&id=04-09-2026-01"
+              },
+              "supporting_sources": [],
+              "recommendation": "exclude",
+              "verification_status": "unconfirmed",
+              "freshness_status": "new_event",
+              "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+              "audit_direction": "source_pulse_v12",
+              "id": "cand-003",
+              "event_freshness_status": "unknown",
+              "source_freshness_status": "unknown"
+            }
+          ]
+        },
+        "editorial": {
+          "status": "ok",
+          "selected_candidate_ids": [
+            "cand-001"
+          ],
+          "excluded_candidate_ids": [
+            "cand-002",
+            "cand-003"
+          ],
+          "digest": {
+            "date": "2026-09-06"
+          }
+        },
+        "stories": [
+          {
+            "candidate_id": "cand-001",
+            "organization": "OpenAI",
+            "topic": "Безопасность агентных ИИ-систем, misalignment и публичное раскрытие инцидентов",
+            "event_type": "security incident disclosure",
+            "published_at": "2026-09-05T18:05:27+00:00",
+            "published_date": "2026-09-05",
+            "sources": [
+              {
+                "title": "OpenAI confirms ‘wiki incident,’ says it’s ‘working on a framework’ for more disclosure",
+                "publisher": "TechCrunch",
+                "url": "https://techcrunch.com/2026/09/05/openai-confirms-wiki-incident-says-its-working-on-a-framework-for-more-disclosure/"
+              }
+            ]
+          }
+        ]
+      },
+      "provenance": {
+        "kind": "reduced actual saved release, not generated search results",
+        "original_sha256": {
+          "pulse": "39f40fe6c153ff4fad89b8d1094cac0dd755fc1d4f9d681ef393ef79331598d5",
+          "candidates": "e79d60e77395edd80683e9b8b6137346c502e0604b85ee16c51a833d63338de9",
+          "editorial": "d85c7086accbc41ccde31f33f181e72fe70227a0d2b1835f9860cc0c82934033",
+          "stories": "b01e67c5aa6afb8f184ac35881128591b2875634bff04650e8b89f40ca85947e"
+        }
+      }
+    }
+  ]
+}

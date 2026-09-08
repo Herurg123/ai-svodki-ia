@@ -1,7 +1,7 @@
 """Offline Source Pulse contribution inventory; does not rank or disable sources.
 
-Reads one saved report. Candidate acceptance is distinct from editorial selection
-and publication, which this first checkpoint deliberately leaves unknown.
+Reads one saved report and optional final release artifacts. Candidate acceptance,
+editorial selection, assembly and publication remain distinct evidence stages.
 """
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ def records(value: Any) -> list[dict[str, Any]]:
     return [row for row in value if isinstance(row, dict)] if isinstance(value, list) else []
 
 
-def build_report(pulse: dict[str, Any]) -> dict[str, Any]:
+def build_report(pulse: dict[str, Any], bundle: dict[str, Any] | None = None) -> dict[str, Any]:
     snapshot = pulse.get("snapshot") or {}
     promotion = pulse.get("promotion")
     if not isinstance(snapshot, dict):
@@ -57,15 +57,17 @@ def build_report(pulse: dict[str, Any]) -> dict[str, Any]:
         # Title/company/host matches must never establish candidate acceptance.
         decision_counts = Counter(row.get("promotion_status") or "unknown" for row in decisions)
         verified_urls = set()
+        promotion_complete = promotion_available and accepted_available
         for row in decisions:
             if row.get("promotion_status") != "promoted":
                 continue
             # v1.2/v1.3 set promoted by membership of record.url in the
             # merge result. final_url is fetch evidence, not candidate identity.
             url = row.get("url")
-            if accepted_available and url in accepted_urls:
+            if accepted_available and isinstance(url, str) and url and url in accepted_urls:
                 verified_urls.add(url)
             else:
+                promotion_complete = False
                 gaps.append(f"promoted_url_not_confirmed:{sid}:{url}")
         rows.append({
             "source_id": sid,
@@ -79,12 +81,13 @@ def build_report(pulse: dict[str, Any]) -> dict[str, Any]:
             "promotion_reasons": dict(sorted(Counter(str(row.get("reason") or "unspecified") for row in decisions if row.get("promotion_status") != "promoted").items())) if promotion_available else None,
             "confirmed_promoted_urls": sorted(verified_urls) if promotion_available and accepted_available else None,
             "confirmed_promoted_count": len(verified_urls) if promotion_available and accepted_available else None,
+            "promotion_evidence_complete": promotion_complete,
             "post_freshness_survivors": None,
             "editorial_selected": None,
             "published": None,
         })
-    return {
-        "version": 1,
+    result = {
+        "version": 2,
         "status": "partial_checkpoint",
         "publication_date": pulse.get("publication_date"),
         "snapshot_hash": snapshot.get("snapshot_hash"),
@@ -98,12 +101,17 @@ def build_report(pulse: dict[str, Any]) -> dict[str, Any]:
         "network_calls": 0,
         "paid_api_calls": 0,
     }
+    if bundle is not None:
+        from source_pulse_trace import add_trace
+        add_trace(result, pulse, bundle)
+    return result
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pulse", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--release-dir", type=Path, help="Saved candidate/editorial/story artifacts from the same release")
     args = parser.parse_args()
     if args.pulse.resolve() == args.output.resolve():
         parser.error("output must not overwrite the source report")
@@ -111,8 +119,21 @@ def main() -> None:
     pulse = json.loads(raw)
     if not isinstance(pulse, dict):
         parser.error("source report must be a JSON object")
-    report = build_report(pulse)
+    bundle = None
+    input_hashes = {}
+    if args.release_dir:
+        bundle = {}
+        for key, name in [("candidates", "candidates.json"), ("editorial", "editorial-output.json"), ("stories", "stories.json")]:
+            path = args.release_dir / name
+            if args.output.resolve() == path.resolve():
+                parser.error("output must not overwrite an input artifact")
+            if path.is_file():
+                data = path.read_bytes()
+                bundle[key] = json.loads(data)
+                input_hashes[name] = hashlib.sha256(data).hexdigest()
+    report = build_report(pulse, bundle)
     report["input_sha256"] = hashlib.sha256(raw).hexdigest()
+    report["release_input_sha256"] = input_hashes
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 

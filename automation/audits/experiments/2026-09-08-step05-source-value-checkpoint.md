@@ -1,6 +1,26 @@
 # Пункт 5 — сохранённый промежуточный результат, 8 сентября 2026
 
 Статус: **частично подготовлен, НЕ принят**. База `54d07e84bcc2ceb0c63f54122183d3cb5641e183`.
+
+## Второй checkpoint: связка с редакционным отбором
+
+Добавлен optional `--release-dir` и консервативный `source_pulse_trace.py`.
+Проверяются дата выпуска, уникальность кандидатов, Pulse title/URL/provenance,
+полный partition selected/excluded IDs и совпадение selected stories по ID,
+источнику и полям события. Конфликты, отсутствующие artifacts и недостаточные
+freshness states сохраняют unknown. Assembled stories не объявляются опубликованными.
+
+Реальные положительный и отрицательный случаи сохранены независимо от retention
+в `fixtures/recall/source-value-trace-2026-09.json`: NVIDIA 2 сентября — один Pulse
+кандидат отобран; Yandex 6 сентября — кандидат добавлен, но не отобран. Fixture
+явно сокращён, SHA256 оригиналов сохранены. Есть проверки recycled ID, same URL
+different event, неполного partition, missing stories, unknown promotion и
+отсутствия мутаций входных данных. Прошёл набор из 61 Source Pulse tests.
+
+Следующее: доказательство publication отдельно от assembly, сравнение выпусков и
+дедупликация recovery, затем независимая приёмка и полная проверка зависимостей.
+Старые разделы ниже описывают первый checkpoint; его downstream-null ограничение
+частично закрыто новым optional trace. Пункт 5 целиком по-прежнему НЕ принят.
 Ветка `architecture/step05-source-value-20260907`. Пункт 4 отложен по команде
 пользователя и сохранён отдельно в `architecture/step04-evidence-20260907`.
 Изменения пункта 4 сюда не переносились. Пункт 6 не начат.
