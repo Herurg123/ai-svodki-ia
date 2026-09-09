@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "experiment": "source_pulse_global_official_p5",
+  "production_change": "add three zero-paid Tier-A official routes to the existing Source Pulse registry",
+  "paid_api_calls": 0,
+  "web_search_operations": 0,
+  "search_budget_delta": 0,
+  "source_routes": [
+    {
+      "id": "openai_news_rss",
+      "adapter": "rss_atom",
+      "index_url": "https://openai.com/news/rss.xml",
+      "allowed_hosts": ["openai.com"],
+      "max_items": 16
+    },
+    {
+      "id": "qualcomm_news_ai",
+      "adapter": "html_index",
+      "index_url": "https://www.qualcomm.com/news",
+      "allowed_hosts": ["qualcomm.com"],
+      "max_items": 15
+    },
+    {
+      "id": "nsa_ai_news",
+      "adapter": "html_index",
+      "index_url": "https://www.nsa.gov/Press-Room/News-Highlights/Tag/116894/",
+      "allowed_hosts": ["nsa.gov"],
+      "max_items": 15
+    }
+  ],
+  "historical_strict_controls": {
+    "baseline_total": 13,
+    "baseline_found": 6,
+    "baseline_recall": 0.4615384615,
+    "proposed_found": 10,
+    "proposed_recall": 0.7692307692,
+    "newly_recovered": [
+      "openai-research-safety-cluster-sep6",
+      "openai-chatgpt-images-2-5-sep8",
+      "qualcomm-amazon-ai-silicon-sep8",
+      "nsa-china-ai-distillation-sep8"
+    ],
+    "still_missed": [
+      "tcs-hypervault-sep5",
+      "reuters-openai-eu-incident-report-sep7",
+      "firmus-openai-malaysia-sep8"
+    ],
+    "note": "The 13-control denominator is the union of the conservative strict controls already recorded by independent release audits for Sep 6, Sep 7, Sep 8 and Sep 9. The OpenAI Sep-6 research/safety pair counts as one event cluster."
+  },
+  "positive_cases": [
+    {
+      "id": "openai-research-acceleration",
+      "source_id": "openai_news_rss",
+      "title": "Research acceleration: The view inside OpenAI",
+      "url": "https://openai.com/index/research-acceleration-view-inside-openai/",
+      "published_date": "2026-09-06",
+      "historical_release": "2026-09-07",
+      "expected": "surface"
+    },
+    {
+      "id": "openai-alien-mind",
+      "source_id": "openai_news_rss",
+      "title": "An Alien Mind",
+      "url": "https://openai.com/index/an-alien-mind/",
+      "published_date": "2026-09-06",
+      "historical_release": "2026-09-07",
+      "expected": "surface"
+    },
+    {
+      "id": "openai-images-2-5",
+      "source_id": "openai_news_rss",
+      "title": "Introducing ChatGPT Images 2.5",
+      "url": "https://openai.com/index/introducing-chatgpt-images-2-5/",
+      "published_date": "2026-09-08",
+      "historical_release": "2026-09-09",
+      "expected": "surface"
+    },
+    {
+      "id": "qualcomm-amazon-ai-data-center",
+      "source_id": "qualcomm_news_ai",
+      "title": "Qualcomm Announces Multi-Generational Product Collaboration with Amazon to Build Next-Generation AI Data Center Infrastructure",
+      "url": "https://www.qualcomm.com/news/releases/2026/09/qualcomm-announces-multi-generational-product-collaboration-with",
+      "published_date": "2026-09-08",
+      "historical_release": "2026-09-09",
+      "expected": "surface"
+    },
+    {
+      "id": "nsa-china-ai-distillation",
+      "source_id": "nsa_ai_news",
+      "title": "NSA and Others Warn China-Based AI Companies are Distilling U.S. Frontier AI Models",
+      "url": "https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4592113/nsa-and-others-warn-china-based-ai-companies-are-distilling-us-frontier-ai-mode/",
+      "published_date": "2026-09-08",
+      "historical_release": "2026-09-09",
+      "expected": "surface"
+    }
+  ],
+  "negative_cases": [
+    {
+      "id": "qualcomm-emea-executive",
+      "source_id": "qualcomm_news_ai",
+      "title": "Qualcomm Appoints Wassim Chourbaji as SVP and President, Qualcomm EMEA",
+      "url": "https://www.qualcomm.com/news/releases/2026/08/qualcomm-appoints-wassim-chourbaji",
+      "published_date": "2026-08-04",
+      "expected": "reject_title_filter"
+    },
+    {
+      "id": "nsa-zimbra-russia-phishing",
+      "source_id": "nsa_ai_news",
+      "title": "NSA and Partners Alert Zimbra Collaboration Suite Users of a Russian State-Supported Phishing Campaign",
+      "url": "https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/0000000/zimbra-guidance/",
+      "published_date": "2026-07-23",
+      "expected": "reject_title_filter"
+    },
+    {
+      "id": "stale-qualcomm-ai",
+      "source_id": "qualcomm_news_ai",
+      "title": "The next frontier in AI inference infrastructure: Bringing compute near data with high bandwidth compute",
+      "url": "https://www.qualcomm.com/news/onq/2026/07/the-next-frontier-in-ai-inference-infrastructure",
+      "published_date": "2026-07-09",
+      "expected": "reject_outside_window"
+    }
+  ],
+  "representative_payloads": {
+    "openai_rss": "<?xml version=\"1.0\"?><rss><channel><item><title>Research acceleration: The view inside OpenAI</title><link>https://openai.com/index/research-acceleration-view-inside-openai/</link><pubDate>Sun, 06 Sep 2026 15:14:00 GMT</pubDate></item><item><title>An Alien Mind</title><link>https://openai.com/index/an-alien-mind/</link><pubDate>Sun, 06 Sep 2026 16:10:00 GMT</pubDate></item><item><title>Introducing ChatGPT Images 2.5</title><link>https://openai.com/index/introducing-chatgpt-images-2-5/</link><pubDate>Tue, 08 Sep 2026 12:00:00 GMT</pubDate></item></channel></rss>",
+    "qualcomm_html": "<html><body><article class=\"news-card\"><a href=\"https://www.qualcomm.com/news/releases/2026/09/qualcomm-announces-multi-generational-product-collaboration-with\">Qualcomm Announces Multi-Generational Product Collaboration with Amazon to Build Next-Generation AI Data Center Infrastructure</a><time datetime=\"2026-09-08\">Sep 8, 2026</time></article><article class=\"news-card\"><a href=\"https://www.qualcomm.com/news/releases/2026/08/qualcomm-appoints-wassim-chourbaji\">Qualcomm Appoints Wassim Chourbaji as SVP and President, Qualcomm EMEA</a><time datetime=\"2026-08-04\">Aug 4, 2026</time></article></body></html>",
+    "nsa_html": "<html><body><article class=\"news-card\"><time datetime=\"2026-09-08\">Sept. 8, 2026</time><a href=\"https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4592113/nsa-and-others-warn-china-based-ai-companies-are-distilling-us-frontier-ai-mode/\">NSA and Others Warn China-Based AI Companies are Distilling U.S. Frontier AI Models</a></article><article class=\"news-card\"><time datetime=\"2026-07-23\">July 23, 2026</time><a href=\"https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/0000000/zimbra-guidance/\">NSA and Partners Alert Zimbra Collaboration Suite Users of a Russian State-Supported Phishing Campaign</a></article></body></html>"
+  },
+  "invariants": {
+    "source_freshness_stays_fail_closed": true,
+    "event_freshness_contract_unchanged": true,
+    "pulse_candidates_remain_consider_only": true,
+    "pulse_does_not_close_search_regional_gaps": true,
+    "recovery_reuses_saved_snapshot_without_repoll": true,
+    "maximum_candidates_unchanged": 20,
+    "primary_searches_unchanged": 12,
+    "agency_rescue_searches_max_unchanged": 1,
+    "hybrid_searches_max_unchanged": 5,
+    "coverage_searches_max_unchanged": 7,
+    "whole_pipeline_ceiling_unchanged": 25
+  }
+}
