@@ -161,6 +161,8 @@ class GlobalOfficialHistoricalReplayTests(unittest.TestCase):
                 "status": "ok",
                 "publication_date": "2026-09-09",
                 "search_window": {
+                    "start_date": "2026-09-06",
+                    "end_date": "2026-09-09",
                     "start_at": "2026-09-06T04:01:03+03:00",
                     "end_at": "2026-09-09T04:15:13+03:00",
                     "latest_archive_at": "2026-09-07T04:01:03+03:00",
