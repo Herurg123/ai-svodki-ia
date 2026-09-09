@@ -71,8 +71,14 @@ class GlobalOfficialParserTests(unittest.TestCase):
             "An Alien Mind",
             "Introducing ChatGPT Images 2.5",
         })
-        self.assertEqual(by_title["Research acceleration: The view inside OpenAI"].published_date, date(2026, 9, 6))
-        self.assertEqual(by_title["Introducing ChatGPT Images 2.5"].published_date, date(2026, 9, 8))
+        self.assertEqual(
+            by_title["Research acceleration: The view inside OpenAI"].published_date,
+            date(2026, 9, 6),
+        )
+        self.assertEqual(
+            by_title["Introducing ChatGPT Images 2.5"].published_date,
+            date(2026, 9, 8),
+        )
 
     def test_qualcomm_card_parser_keeps_ai_event_and_rejects_executive_noise(self):
         payload = fixture()["representative_payloads"]["qualcomm_html"]
@@ -95,8 +101,14 @@ class GlobalOfficialParserTests(unittest.TestCase):
     def test_stale_ai_item_stays_outside_exact_window(self):
         source = source_map()["qualcomm_news_ai"]
         item = sp.ParsedItem(
-            title="The next frontier in AI inference infrastructure: Bringing compute near data with high bandwidth compute",
-            url="https://www.qualcomm.com/news/onq/2026/07/the-next-frontier-in-ai-inference-infrastructure",
+            title=(
+                "The next frontier in AI inference infrastructure: Bringing compute near data "
+                "with high bandwidth compute"
+            ),
+            url=(
+                "https://www.qualcomm.com/news/onq/2026/07/"
+                "the-next-frontier-in-ai-inference-infrastructure"
+            ),
             published_date=date(2026, 7, 9),
             published_at=None,
             time_precision="date",
@@ -117,7 +129,9 @@ class GlobalOfficialHistoricalReplayTests(unittest.TestCase):
         self.assertEqual((controls["baseline_found"], controls["baseline_total"]), (6, 13))
         self.assertEqual((controls["proposed_found"], controls["baseline_total"]), (10, 13))
         self.assertGreater(controls["proposed_recall"], controls["baseline_recall"])
-        self.assertAlmostEqual(controls["proposed_recall"] - controls["baseline_recall"], 4 / 13, places=9)
+        self.assertAlmostEqual(
+            controls["proposed_recall"] - controls["baseline_recall"], 4 / 13, places=9
+        )
         self.assertEqual(set(controls["still_missed"]), {
             "tcs-hypervault-sep5",
             "reuters-openai-eu-incident-report-sep7",
@@ -165,6 +179,7 @@ class GlobalOfficialHistoricalReplayTests(unittest.TestCase):
             }, ensure_ascii=False) + "\n", encoding="utf-8")
 
             def fetcher(url: str, hosts: tuple[str, ...]) -> sp.FetchOutcome:
+                del hosts
                 body = by_url[url]
                 return sp.FetchOutcome(url, url, "ok", 200, body, None, 1)
 
@@ -183,19 +198,6 @@ class GlobalOfficialHistoricalReplayTests(unittest.TestCase):
                     f'content="{day}T12:00:00+00:00">'
                     '<meta name="description" content="Artificial intelligence AI model research, '
                     'security, inference and data center infrastructure update."></head>'
-                    '<body><p>Artificial intelligence model research and AI infrastructure details '</n                    'are described in this official publication.</p></body></html>'
-                )
-                return body, url, 200
-
-            # Keep the body construction ordinary Python rather than relying on
-            # any network or production API during regression.
-            def clean_page_fetcher(url: str):
-                day = dates[url]
-                body = (
-                    '<html><head><meta property="article:published_time" '
-                    f'content="{day}T12:00:00+00:00">'
-                    '<meta name="description" content="Artificial intelligence AI model research, '
-                    'security, inference and data center infrastructure update."></head>'
                     '<body><p>Artificial intelligence model research and AI infrastructure details '
                     'are described in this official publication.</p></body></html>'
                 )
@@ -208,7 +210,7 @@ class GlobalOfficialHistoricalReplayTests(unittest.TestCase):
                 output_root=output,
                 registry_path=registry,
                 collector_fn=collector,
-                page_fetcher=clean_page_fetcher,
+                page_fetcher=page_fetcher,
             )
             payload = json.loads(research.read_text(encoding="utf-8"))
             self.assertEqual(first["promotion"]["promoted_count"], 5)
@@ -228,7 +230,7 @@ class GlobalOfficialHistoricalReplayTests(unittest.TestCase):
                 output_root=output,
                 registry_path=registry,
                 collector_fn=must_not_repoll,
-                page_fetcher=clean_page_fetcher,
+                page_fetcher=page_fetcher,
             )
             payload_after = json.loads(research.read_text(encoding="utf-8"))
             self.assertTrue(second["reused_snapshot"])
