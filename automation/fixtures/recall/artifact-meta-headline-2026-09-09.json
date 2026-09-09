@@ -1,0 +1,59 @@
+{
+  "fixture_version": 1,
+  "source_run_id": 34307360855,
+  "source_artifact_id": 10087148289,
+  "publication_date": "2026-09-09",
+  "openai_calls_for_replay": 0,
+  "web_search_operations_for_replay": 0,
+  "candidate_id": "cand-003",
+  "selection": {
+    "selected_candidate_ids": [
+      "cand-003"
+    ]
+  },
+  "candidates": {
+    "candidates": [
+      {
+        "id": "cand-003",
+        "title": "Meta запустила Muse — потребительского ИИ-агента для действий в приложениях, браузере и сервисах",
+        "primary_source": {
+          "title": "Meta debuts its Muse AI agent. Will consumers trust it?",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/09/08/meta-debuts-its-muse-ai-agent-will-consumers-trust-it/"
+        },
+        "supporting_sources": [
+          {
+            "title": "How We Designed Muse",
+            "publisher": "Muse / Meta",
+            "url": "https://introducing.muse.ai/"
+          }
+        ],
+        "event_origin_url": "https://techcrunch.com/2026/09/08/meta-debuts-its-muse-ai-agent-will-consumers-trust-it/",
+        "source_publication_url": "https://techcrunch.com/2026/09/08/meta-debuts-its-muse-ai-agent-will-consumers-trust-it/"
+      }
+    ]
+  },
+  "stories": [
+    {
+      "candidate_id": "cand-003",
+      "headline": "Meta запустила потребительского агента Muse",
+      "sources": [
+        {
+          "title": "Meta debuts its Muse AI agent. Will consumers trust it?",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/09/08/meta-debuts-its-muse-ai-agent-will-consumers-trust-it/"
+        },
+        {
+          "title": "How We Designed Muse",
+          "publisher": "Muse / Meta",
+          "url": "https://introducing.muse.ai/"
+        }
+      ]
+    }
+  ],
+  "article_html": "<h2>Мировые лидеры ИИ</h2><h3>Meta* запустила потребительского агента Muse</h3><p>Meta* представила Muse. <a href=\"https://techcrunch.com/2026/09/08/meta-debuts-its-muse-ai-agent-will-consumers-trust-it/\">TechCrunch</a>. <a href=\"https://introducing.muse.ai/\">Muse</a>.</p>",
+  "saved_validation_error": {
+    "code": "story_headline_order",
+    "message": "HTML-сюжет #3 не соответствует cand-003: 'Meta* запустила потребительского агента Muse' != 'Meta запустила потребительского агента Muse'."
+  }
+}
