@@ -40,12 +40,16 @@ _MONTHS_RU = {
     "января": 1, "февраля": 2, "марта": 3, "апреля": 4, "мая": 5, "июня": 6,
     "июля": 7, "августа": 8, "сентября": 9, "октября": 10, "ноября": 11, "декабря": 12,
 }
+_MONTHS_EN = {
+    "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
+    "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12,
+}
 _DATE_PATTERNS = (
     re.compile(r"\b(20\d{2})[-/.](0?[1-9]|1[0-2])[-/.](0?[1-9]|[12]\d|3[01])\b"),
     re.compile(r"\b(0?[1-9]|[12]\d|3[01])[.](0?[1-9]|1[0-2])[.](20\d{2})\b"),
     re.compile(r"\b(0?[1-9]|[12]\d|3[01])\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)\s+(20\d{2})(?:\s*г\.?)?\b", re.I),
     re.compile(r"\b(20\d{2})年(0?[1-9]|1[0-2])月(0?[1-9]|[12]\d|3[01])日\b"),
-    re.compile(r"\b(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(0?[1-9]|[12]\d|3[01]),\s*(20\d{2})\b", re.I),
+    re.compile(r"\b(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?\s+(0?[1-9]|[12]\d|3[01]),\s*(20\d{2})\b", re.I),
 )
 _CONTAINER_MARKER_RE = re.compile(r"news|release|press|post|article|item|card|row|entry|result", re.I)
 _BASE_PARSE_HTML = source_pulse.parse_html
@@ -72,8 +76,8 @@ def _parse_visible_date(text: str) -> date | None:
                 return date(int(match.group(3)), _MONTHS_RU[match.group(2).casefold()], int(match.group(1)))
             if index == 3:
                 return date(int(match.group(1)), int(match.group(2)), int(match.group(3)))
-            parsed, _dt, _precision = source_pulse.parse_date(match.group(0))
-            return parsed
+            month_key = match.group(1).casefold().rstrip(".")[:3]
+            return date(int(match.group(3)), _MONTHS_EN[month_key], int(match.group(2)))
         except (ValueError, KeyError):
             continue
     return None
