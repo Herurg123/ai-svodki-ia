@@ -87,6 +87,7 @@ semantic delta существующими regressions.
 | A1 | Agency | Early accepted agency candidate остаётся viable | Reuters rescue не тратится. |
 | A2 | Agency | Early agency accepted, но все exact survivors отфильтрованы | Открывается только существующий один rescue slot. |
 | A3 | Agency | Agency provenance ambiguous/unmatched | Неоднозначность не разрешает новый paid search. |
+| S1 | Supplemental routing | Paid search пропустил high-signal first-party event, но bounded Tier-A official Source Pulse route видит его | На том же historical corpus source visibility/recall может вырасти без нового OpenAI/Web Search; Pulse-кандидат остаётся `consider`, direct Source Freshness обязателен, Search-derived regional gaps не закрываются, recovery не repoll'ит mutable source. Контроль: `source-pulse-global-official-2026-09-09.json`. |
 | F1 | Freshness | Event точно внутри окна, source свежий | Кандидат сохраняется. |
 | F2 | Freshness | Event точно вне окна, source свежий reprint | Fresh reprint не делает старое событие новым. |
 | F3 | Freshness | Event origin unknown, source свежий | Recall сохраняется, Source Freshness остаётся независимым gate. |
@@ -127,6 +128,7 @@ semantic delta существующими regressions.
 - double regional gap + oversized caller budget;
 - agency candidate lost after filtering + simultaneous regional gap;
 - Search-derived regional gap + Pulse-only candidate;
+- paid-search hard miss + Pulse-only Tier-A official recovery + simultaneous Search-derived regional gap + same-day recovery;
 - mandatory-stage partial/error + same-day recovery;
 - short digest + one degraded discovery-plane.
 
@@ -153,6 +155,25 @@ search-budget delta = 0. Assistant-side Terra в этой сессии не expo
 мешает deterministic timezone proof, поскольку treatment не меняет query/ranking,
 но любые последующие query wording changes всё равно требуют отдельного
 Terra-equivalent A/B по правилу раздела 2.
+
+### Permanent regression: 2026-09-09 global official source-pool misses
+
+Sep-6 through Sep-9 independent audits show repeated upstream hard misses even
+near or at the paid search ceiling. The conservative union contains `13` strict
+high-signal controls: production baseline found `6/13`, while the bounded P5
+Source Pulse treatment exposes four additional controls/clusters through three
+first-party routes (OpenAI RSS, Qualcomm newsroom, NSA AI-tagged news), for
+`10/13`, without a paid search delta.
+
+S1 is not permission to add arbitrary company feeds. A route must be Tier-A,
+first-party, bounded by host/item filters, independently tied to a recorded
+high-signal miss, and remain behind the existing direct-page Source Freshness and
+AI-relevance gates. Source failure/anti-bot remains degraded; `consider` is the
+maximum automatic recommendation; Search-derived regional health is unchanged;
+same-day recovery reuses the saved snapshot and never repolls. Reusable fixture:
+`automation/fixtures/recall/source-pulse-global-official-2026-09-09.json`; offline
+contract: `automation/tests/test_source_pulse_global_official_p5.py`; controlled
+report: `automation/audits/experiments/2026-09-09-source-pulse-global-official-p5.md`.
 
 ## 5. Критерий допуска
 
