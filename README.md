@@ -147,6 +147,11 @@ gaps дают `degraded`; отсутствующая или неоднознач
 и показывается в Actions Summary, но v1 **не блокирует публикацию** и выполняет
 0 OpenAI calls / 0 Web Search operations.
 
+Редакционный отбор не имеет региональной квоты: предварительные research
+`include|consider` и score не обязывают включать российскую карточку, если
+редактор отклонил её по содержанию. Такое исключение видно в диагностике;
+если российский сюжет выбран, его раздел по-прежнему обязателен.
+
 Обязательные Coverage-направления сохраняют ids `security_world`,
 `security_russia`, `security_asia`, `legal_copyright_scraping`, `curiosity` и
 `general_coverage_gaps`; последний является авторитетный last-mile sweep

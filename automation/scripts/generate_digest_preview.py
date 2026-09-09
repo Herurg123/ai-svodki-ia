@@ -2136,7 +2136,7 @@ def validate_editorial(
         1 for item in selected_candidates if item.get("geography") == "russia"
     )
 
-    worthy_russian = [
+    russian_leads = [
         candidate
         for candidate in candidates
         if isinstance(candidate, dict)
@@ -2145,9 +2145,14 @@ def validate_editorial(
         and candidate["significance_score"] >= 3
         and candidate.get("recommendation") in {"include", "consider"}
     ]
-    if worthy_russian and selected_russian == 0:
-        errors.append(
-            "В пуле есть достойные российские кандидаты, но ни один не выбран."
+    if russian_leads and selected_russian == 0:
+        # Research scores/recommendations are preliminary; editorial may reject
+        # a lead on content grounds. Regional discovery is mandatory, but the
+        # canonical policy has no regional publication quota.
+        warnings.append(
+            "Редактор не выбрал российские кандидаты "
+            + ", ".join(str(item.get("id")) for item in russian_leads)
+            + "; региональная квота публикации не применяется."
         )
 
     allowed_sources: dict[str, dict[str, Any]] = {}

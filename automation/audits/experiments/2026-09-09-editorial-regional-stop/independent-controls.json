@@ -1,0 +1,124 @@
+{
+  "baseline_exact_replay": {
+    "errors": [
+      "В пуле есть достойные российские кандидаты, но ни один не выбран."
+    ],
+    "warnings": [
+      "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+    ],
+    "story_count": 7,
+    "inputs_unchanged": true,
+    "digest_sha256": "692faa835741c45ec94439d1a93649714a6a10f278ead2ecae7e0ac485c15898"
+  },
+  "candidate_exact_replay": {
+    "errors": [],
+    "warnings": [
+      "Редактор не выбрал российские кандидаты cand-008; региональная квота публикации не применяется.",
+      "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+    ],
+    "story_count": 7,
+    "inputs_unchanged": true,
+    "digest_sha256": "692faa835741c45ec94439d1a93649714a6a10f278ead2ecae7e0ac485c15898"
+  },
+  "selected_regional": {
+    "errors": [],
+    "warnings": [
+      "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+    ],
+    "story_count": 7
+  },
+  "excluded_high_score_regional": {
+    "errors": [],
+    "warnings": [
+      "Редактор не выбрал российские кандидаты cand-008; региональная квота публикации не применяется.",
+      "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+    ],
+    "story_count": 7
+  },
+  "weak_regional": {
+    "errors": [],
+    "warnings": [
+      "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+    ],
+    "story_count": 7
+  },
+  "stale_excluded_regional": {
+    "errors": [],
+    "warnings": [
+      "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+    ],
+    "story_count": 7
+  },
+  "all_excluded": {
+    "errors": [
+      "Редактор не выбрал ни одного достойного сюжета.",
+      "Сюжет h3[1] не удалось сопоставить с кандидатом по ссылкам.",
+      "Сюжет h3[2] не удалось сопоставить с кандидатом по ссылкам.",
+      "Сюжет h3[3] не удалось сопоставить с кандидатом по ссылкам.",
+      "Сюжет h3[4] не удалось сопоставить с кандидатом по ссылкам.",
+      "Сюжет h3[5] не удалось сопоставить с кандидатом по ссылкам.",
+      "Сюжет h3[6] не удалось сопоставить с кандидатом по ссылкам.",
+      "Сюжет h3[7] не удалось сопоставить с кандидатом по ссылкам.",
+      "Число сюжетных блоков со ссылками (7) не равно числу выбранных кандидатов (0).",
+      "Источник отсутствует в исследовательском пуле: https://cognition.com/blog/series-e",
+      "Источник отсутствует в исследовательском пуле: https://www.trendforce.com/presscenter/news/20260907-13219.html",
+      "Источник отсутствует в исследовательском пуле: https://techcrunch.com/2026/09/08/meta-debuts-its-muse-ai-agent-will-consumers-trust-it/",
+      "Источник отсутствует в исследовательском пуле: https://techcrunch.com/2026/09/08/mistral-raises-e3b-as-sovereign-ai-becomes-big-business/",
+      "Источник отсутствует в исследовательском пуле: https://newsroom.accenture.com/news/2026/accenture-and-google-cloud-deepen-partnership-with-formation-of-new-accenture-gemini-enterprise-business-group",
+      "Источник отсутствует в исследовательском пуле: https://techcrunch.com/2026/09/08/hackers-are-stealing-claude-tokens-from-subscribers/",
+      "Источник отсутствует в исследовательском пуле: https://techcrunch.com/2026/09/08/openai-fought-dirty-on-career-making-math-problem-says-nyu-mathematician/",
+      "Число h3 (7) не равно числу выбранных сюжетов (0).",
+      "Число сюжетных <h3> (7) не равно числу selected_candidate_ids (0)."
+    ],
+    "warnings": [
+      "Редактор не выбрал российские кандидаты cand-008; региональная квота публикации не применяется.",
+      "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+    ],
+    "story_count": 0
+  },
+  "unknown_id": {
+    "errors": [
+      "Выбраны неизвестные candidate ID: unknown",
+      "Не все кандидаты распределены между selected и excluded: ",
+      "Порядок selected_candidate_ids не совпадает с порядком сюжетов в article_html.",
+      "Число сюжетных <h3> (7) не равно числу selected_candidate_ids (8)."
+    ],
+    "warnings": [
+      "Редактор не выбрал российские кандидаты cand-008; региональная квота публикации не применяется.",
+      "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+    ],
+    "story_count": 7
+  },
+  "diversity_unchanged": {
+    "errors": [
+      "Издатель 'techcrunch' представлен 5 сюжетами без diversity override с причиной."
+    ],
+    "warnings": [
+      "Редактор не выбрал российские кандидаты cand-008; региональная квота публикации не применяется.",
+      "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+    ],
+    "story_count": 7
+  },
+  "html_provenance_unchanged": {
+    "errors": [
+      "Сюжет h3[1] не удалось сопоставить с кандидатом по ссылкам.",
+      "Не удалось сопоставить с article_html кандидатов: cand-001.",
+      "В article_html отсутствуют ссылки из sources: https://cognition.com/blog/series-e",
+      "В article_html есть ссылки, которых нет в sources: https://unrelated.example/not-a-source",
+      "У cand-001 отсутствуют процитированные источники."
+    ],
+    "warnings": [
+      "Редактор не выбрал российские кандидаты cand-008; региональная квота публикации не применяется.",
+      "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+    ],
+    "story_count": 7
+  },
+  "provenance": {
+    "run_id": 34298397080,
+    "base_sha": "d3ed784ec8a9f3450d723e2565b3ab1509d0facf",
+    "fixture_zip_sha256": "71bdd4f1c2427f91ed800ff8477df9ddcfd3941c9fb761ce997d3af02d536c90",
+    "fixture_research_sha256": "a0b89693aedcbf4452630d7440255fbdcbb0c65c24fdfbb3f97c9ea8f8b96c17",
+    "fixture_editorial_sha256": "9d9de44150eed38643f7b7e4f89d55ae26b7b937f094c09f42f9dcae2a135578",
+    "full_archive_sha256": "d57cf5dafd189373dc058b003b2bfd21d8f634b9f02873febf4220df5fd18150"
+  }
+}

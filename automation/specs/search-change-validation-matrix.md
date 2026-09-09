@@ -83,6 +83,7 @@ semantic delta существующими regressions.
 | R4 | Регион | Одновременно Russia + China/Asia gaps | Разрешается только утверждённый double-gap path: 3 broad + 2 regional, максимум 5 Hybrid searches. |
 | R5 | Регион | Регион был early healthy, но viable survivor исчез после filtering | P4 может только re-open gap по exact Primary provenance. |
 | R6 | Регион | Pulse-only кандидат существует при Search-derived gap | Supplemental plane не закрывает Search gap. |
+| R7 | Регион и editorial | Нормальный пул плюс российский Pulse lead с include/consider, отклонённый по содержанию | Предварительная оценка не создаёт региональную квоту публикации; отбор остальных сюжетов сохраняется, отказ виден в warning. Контроль: `2026-09-09-editorial-regional-stop.json`. |
 | A1 | Agency | Early accepted agency candidate остаётся viable | Reuters rescue не тратится. |
 | A2 | Agency | Early agency accepted, но все exact survivors отфильтрованы | Открывается только существующий один rescue slot. |
 | A3 | Agency | Agency provenance ambiguous/unmatched | Неоднозначность не разрешает новый paid search. |
