@@ -868,7 +868,9 @@ publication имеет приоритет над draft trace. Observed sums со
 observed/unknown releases, complete_total остаётся null при неполноте. Ни один
 наблюдаемый выпуск означает observed_total=null, а не ноль. Данные этих reports
 не являются рейтинговой функцией, не отключают источники и не меняют production.
-Пункт 5 ещё не принят; повторная независимая приёмка остаётся обязательной.
+Независимая приёмка этого автономного diagnostic scope пройдена 9 сентября:
+16 controls Terra, полный offline gate и шесть saved observations. Controlled
+evidence находится в `audits/experiments/2026-09-09-step05-acceptance/`.
 
 ### Непрерывность доказательства даты первоисточника
 

@@ -162,7 +162,9 @@ committed `posts/DATE/index.html` обязан содержать каждый �
 `Meta*`/`Meta` совпадает с действующим display contract.
 Результат `repository_published` относится только к публикации
 файлов в репозитории; CLI не делает fetch и не проверяет удалённый FTP.
-Пункт 5 не принят.
+Независимая приёмка автономного модуля пройдена: 16 controls Terra, 675 штатных
+tests, 6 validators и 6 сохранённых наблюдений. Доказательства:
+`audits/experiments/2026-09-09-step05-acceptance/`.
 Это диагностический CLI, не production stage. `source_value_period.py` принимает
 несколько `--report PATH` и один `--output PATH`. Он считает каждую дату один раз,
 дедуплицирует копии snapshot/promotion и явно сохраняет конфликтующие observations

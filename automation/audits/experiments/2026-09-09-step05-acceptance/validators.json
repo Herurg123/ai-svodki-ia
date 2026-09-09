@@ -1,0 +1,26 @@
+[
+  {
+    "validator": "validate_editorial_contract.py",
+    "exit_code": 0
+  },
+  {
+    "validator": "validate_archive.py",
+    "exit_code": 0
+  },
+  {
+    "validator": "validate_production_daily_contract.py",
+    "exit_code": 0
+  },
+  {
+    "validator": "validate_dzen_feed.py",
+    "exit_code": 0
+  },
+  {
+    "validator": "validate_posts_sitemap.py",
+    "exit_code": 0
+  },
+  {
+    "validator": "validate_structured_data.py",
+    "exit_code": 0
+  }
+]
