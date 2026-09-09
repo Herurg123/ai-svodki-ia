@@ -187,12 +187,12 @@ class GlobalOfficialHistoricalReplayTests(unittest.TestCase):
                 return v12.run_source_pulse_v12(**kwargs, fetcher=fetcher)
 
             dates = {
-                row["url"]: row["published_date"]
+                sp.norm_url(row["url"]): row["published_date"]
                 for row in data["positive_cases"]
             }
 
             def page_fetcher(url: str):
-                day = dates[url]
+                day = dates[sp.norm_url(url)]
                 body = (
                     '<html><head><meta property="article:published_time" '
                     f'content="{day}T12:00:00+00:00">'
