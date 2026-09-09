@@ -77,6 +77,47 @@
       "max_items": 25
     },
     {
+      "id": "openai_news_rss",
+      "tier": "A",
+      "region": "global",
+      "role": "official",
+      "publisher": "OpenAI",
+      "organization": "OpenAI",
+      "adapter": "rss_atom",
+      "url": "https://openai.com/news/rss.xml",
+      "allowed_hosts": ["openai.com"],
+      "include_url_regex": "openai\\.com/(index|research|news)",
+      "max_items": 16
+    },
+    {
+      "id": "qualcomm_news_ai",
+      "tier": "A",
+      "region": "global",
+      "role": "official",
+      "publisher": "Qualcomm",
+      "organization": "Qualcomm",
+      "adapter": "html_index",
+      "url": "https://www.qualcomm.com/news",
+      "allowed_hosts": ["qualcomm.com"],
+      "include_url_regex": "qualcomm\\.com/news/(releases|onq|blog)",
+      "include_title_regex": "AI|artificial intelligence|data cent(?:er|re)|inference|Dragonfly|agentic",
+      "max_items": 15
+    },
+    {
+      "id": "nsa_ai_news",
+      "tier": "A",
+      "region": "global",
+      "role": "official",
+      "publisher": "NSA",
+      "organization": "National Security Agency",
+      "adapter": "html_index",
+      "url": "https://www.nsa.gov/Press-Room/News-Highlights/Tag/116894/",
+      "allowed_hosts": ["nsa.gov"],
+      "include_url_regex": "Press-Release-View|Press-Room|News-Highlights",
+      "include_title_regex": "\\bAI\\b|artificial intelligence|machine learning|frontier model|model distill|distill(?:ing|ation)|agentic",
+      "max_items": 15
+    },
+    {
       "id": "yandex_ir",
       "tier": "A",
       "region": "russia",
