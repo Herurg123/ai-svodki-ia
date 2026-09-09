@@ -731,6 +731,16 @@ Active source-health contract version — 8.
 региональный breadth layer. Дополнительные Coverage searches остаются future
 option и требуют нового аудита плюс отдельного разрешения на spend.
 
+Редакционный отбор не превращает найденный региональный lead в обязательный
+сюжет. В `generate_digest_preview.validate_editorial` предварительные research
+`include|consider` и score ≥ 3 для невыбранных российских карточек дают только
+предупреждение с ID. Это согласует runtime с `regional_story_quotas_enabled=false`:
+содержательный отказ, включая недостаток проверяемых деталей Pulse lead, не
+блокирует остальные валидные сюжеты. Выбор и текст редактора не переписываются.
+Проверки пустого выпуска, partition IDs, exclude, diversity, ссылок, числа
+сюжетов и раздела выбранных российских новостей сохраняются. Поисковые бюджеты,
+freshness gates, workflow и recovery этим исправлением не меняются.
+
 ### 6.6. Search ceiling
 
 Обычный theoretical maximum:
