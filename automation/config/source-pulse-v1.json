@@ -114,7 +114,7 @@
       "url": "https://www.nsa.gov/Press-Room/News-Highlights/Tag/116894/",
       "allowed_hosts": ["nsa.gov"],
       "include_url_regex": "Press-Release-View|Press-Room|News-Highlights",
-      "include_title_regex": "AI|artificial intelligence|model|agentic",
+      "include_title_regex": "\\bAI\\b|artificial intelligence|machine learning|frontier model|model distill|distill(?:ing|ation)|agentic",
       "max_items": 15
     },
     {
