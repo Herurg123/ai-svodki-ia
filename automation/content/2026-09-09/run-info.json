@@ -1,0 +1,139 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-09-09",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-09-09.json",
+  "warnings": [
+    "cand-008: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: techcrunch (5)",
+    "Редактор не выбрал российские кандидаты cand-008; региональная квота публикации не применяется.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-09-09",
+  "started_at": "2026-09-09T03:30:47+00:00",
+  "finished_at": "2026-09-09T03:31:32+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 53,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "039c748152f568dbff8d293172d5244200db03fab8c236a26b089ab8875243f1",
+    "candidates_sha256": "a0b89693aedcbf4452630d7440255fbdcbb0c65c24fdfbb3f97c9ea8f8b96c17",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-09-06T04:01:03+03:00",
+      "end_at": "2026-09-09T04:15:13+03:00",
+      "latest_archive_at": "2026-09-07T04:01:03+03:00",
+      "start_date": "2026-09-06",
+      "end_date": "2026-09-09",
+      "latest_archive_date": "2026-09-07"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "0e1e8e6110c2c44ed5a23b1f88af221b6ffdbf80fd532eec011de64634b212a1",
+    "editorial_sha256": "b70af4a5d3f03332f7e260e39794b543a0ff7b685f4d5a9cc9fef621e1134b45",
+    "digest_sha256": "6a773d8226f97d69c8a8a4af63046c2e9265aa389804901b92a541d3df395986",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-09-09-ai-digest-cover.png",
+          "normalized_value": "ai-svodka-2026-09-09.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Пять материалов TechCrunch относятся к независимым событиям высокой или самостоятельной значимости в разных сегментах — consumer-агенты, европейское финансирование, корпоративное внедрение, безопасность аккаунтов и ИИ для науки. В коротком пуле нет сопоставимых альтернативных источников с достаточной фактологией для замены этих сюжетов."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0f099f419ecab84e016aa0d2e8529887d1b9622cf2e7760e4d",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 107984,
+        "input_tokens_details": {
+          "cache_write_tokens": 107981,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4320,
+        "output_tokens_details": {
+          "reasoning_tokens": 798
+        },
+        "total_tokens": 112304
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 107984,
+    "output_tokens": 4320,
+    "total_tokens": 112304,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "ab3995a6d8eb5f9afb75f6bfee49b64d6bb3269a",
+    "run_id": "34307360855",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-09-09T04:15:13+03:00"
+}
