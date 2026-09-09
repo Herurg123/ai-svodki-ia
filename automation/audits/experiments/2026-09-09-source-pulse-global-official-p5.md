@@ -127,11 +127,12 @@ representative saved payloads:
 - a second same-day supplement invocation reuses the saved Pulse snapshot and
   does not repoll the three mutable sources.
 
-## First PR Gate findings and corrections
+## PR Gate findings and corrections
 
 The first `PR Gate` run, `34320193885`, was intentionally treated as experiment
 evidence rather than something to silence. It ran 639 tests and found four
-failures:
+failures. A later exact-head run, `34322375475`, isolated one additional defect in
+the synthetic replay contract. Together they identified five issues:
 
 1. the historical supplement replay used raw fixture URLs while fusion normalizes
    trailing slashes; this made the synthetic direct-page freshness fetcher raise a
@@ -142,17 +143,24 @@ failures:
    while the bounded article-card parser recognized full English month names but
    not standard abbreviations;
 4. an older boundary test froze the source registry size at 13 instead of checking
-   the registry contract semantically.
+   the registry contract semantically;
+5. the synthetic end-to-end research artifact supplied `start_at/end_at` but
+   omitted the canonical `start_date/end_date` fields required by the existing
+   shared `merge_candidates` window validator, so valid proposed rows were all
+   rejected by the test fixture rather than by production Source Pulse logic.
 
 Corrections were deliberately narrow:
 
 - replay URL lookup now uses the same deterministic `norm_url()` as fusion;
 - NSA uses a word-bounded `\bAI\b` plus explicit AI/model/distillation terms;
 - the existing bounded article-card date parser now accepts standard English
-  month abbreviations such as `Sep`; generic body scraping and direct-page
-  freshness rules were not broadened;
+  abbreviations including `Sep`, `Sept.` and dotted variants; generic body
+  scraping and direct-page freshness rules were not broadened;
 - the old registry test now checks configured/loaded identity, uniqueness and
-  shadow/recovery invariants rather than a permanent magic count.
+  shadow/recovery invariants rather than a permanent magic count;
+- the synthetic replay now carries the same complete saved window contract as a
+  production research artifact, including `start_date/end_date` alongside the
+  authoritative timezone-aware `start_at/end_at` timestamps.
 
 No failure was fixed by lowering significance, weakening Event/Source Freshness,
 turning a source error into success, closing regional gaps from Pulse, increasing
