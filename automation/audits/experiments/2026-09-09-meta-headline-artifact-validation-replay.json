@@ -1,0 +1,24 @@
+{
+  "status": "pass",
+  "source_run_id": 34307360855,
+  "source_artifact_id": 10087148289,
+  "source_artifact_sha256": "61ebaf90ae81ebcd12c171af0f341e972a54271586117f7569d3da3b214e16cf",
+  "publication_date": "2026-09-09",
+  "exact_story_count": 7,
+  "headline_identity_matches": 7,
+  "original_saved_error_codes": [
+    "story_headline_order"
+  ],
+  "controls": {
+    "exact_meta_display_marker": "pass",
+    "real_headline_change_rejected": "pass",
+    "some_meta_star_not_normalized": "pass",
+    "double_star_not_normalized": "pass",
+    "saved_story_headline_order_revalidation_allowed": "pass",
+    "unrelated_saved_error_rejected": "pass"
+  },
+  "openai_calls": 0,
+  "web_search_operations": 0,
+  "network_calls": 0,
+  "note": "Independent offline replay over the downloaded exact recovery artifact; full repository integration remains gated by Required PR Gate."
+}

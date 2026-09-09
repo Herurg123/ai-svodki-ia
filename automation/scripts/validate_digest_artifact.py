@@ -10,12 +10,19 @@ as a final source for one candidate when that same URL is identity-bearing
 (primary/event-origin/source-publication) for another candidate but only
 supporting evidence for the expected candidate.
 
+Public article headlines may contain the required ``Meta*`` display marker while
+service JSON keeps the canonical organization name ``Meta``. Story identity
+comparison therefore strips only that exact display marker before comparing the
+HTML headline with ``stories[].headline``; all other headline differences remain
+fail-closed.
+
 The split is an active compatibility seam and should be consolidated on the next
 material artifact-validator refactor or after 2026-10-03.
 """
 from __future__ import annotations
 
 import importlib.util
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -32,6 +39,14 @@ _BASE_SPEC.loader.exec_module(_base)
 for _name in dir(_base):
     if not _name.startswith("_"):
         globals()[_name] = getattr(_base, _name)
+
+_META_DISPLAY_MARKER_RE = re.compile(r"(?<!\w)Meta\*(?![\w*])")
+
+
+def headline_identity_text(value: str) -> str:
+    """Normalize only the public Meta footnote marker for story identity checks."""
+
+    return _META_DISPLAY_MARKER_RE.sub("Meta", normalize_space(value))
 
 
 def candidate_identity_urls(candidate: Any) -> set[str]:
@@ -177,7 +192,7 @@ def validate_story_mapping(
                 "story_headline_missing",
                 f"У stories.json[{index}] отсутствует headline для {expected_id}.",
             )
-        elif actual_headline != expected_headline:
+        elif headline_identity_text(actual_headline) != expected_headline:
             issue(
                 report,
                 "errors",
