@@ -45,7 +45,7 @@ _DATE_PATTERNS = (
     re.compile(r"\b(0?[1-9]|[12]\d|3[01])[.](0?[1-9]|1[0-2])[.](20\d{2})\b"),
     re.compile(r"\b(0?[1-9]|[12]\d|3[01])\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)\s+(20\d{2})(?:\s*г\.?)?\b", re.I),
     re.compile(r"\b(20\d{2})年(0?[1-9]|1[0-2])月(0?[1-9]|[12]\d|3[01])日\b"),
-    re.compile(r"\b(January|February|March|April|May|June|July|August|September|October|November|December)\s+(0?[1-9]|[12]\d|3[01]),\s*(20\d{2})\b", re.I),
+    re.compile(r"\b(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+(0?[1-9]|[12]\d|3[01]),\s*(20\d{2})\b", re.I),
 )
 _CONTAINER_MARKER_RE = re.compile(r"news|release|press|post|article|item|card|row|entry|result", re.I)
 _BASE_PARSE_HTML = source_pulse.parse_html
