@@ -127,6 +127,37 @@ representative saved payloads:
 - a second same-day supplement invocation reuses the saved Pulse snapshot and
   does not repoll the three mutable sources.
 
+## First PR Gate findings and corrections
+
+The first `PR Gate` run, `34320193885`, was intentionally treated as experiment
+evidence rather than something to silence. It ran 639 tests and found four
+failures:
+
+1. the historical supplement replay used raw fixture URLs while fusion normalizes
+   trailing slashes; this made the synthetic direct-page freshness fetcher raise a
+   lookup error and produced `0` promotions;
+2. the NSA title filter used bare case-insensitive `AI`, which also matched normal
+   words containing those letters, so one unrelated security card survived;
+3. Qualcomm's live newsroom card date shape is abbreviated English (`Sep 8, 2026`),
+   while the bounded article-card parser recognized full English month names but
+   not standard abbreviations;
+4. an older boundary test froze the source registry size at 13 instead of checking
+   the registry contract semantically.
+
+Corrections were deliberately narrow:
+
+- replay URL lookup now uses the same deterministic `norm_url()` as fusion;
+- NSA uses a word-bounded `\bAI\b` plus explicit AI/model/distillation terms;
+- the existing bounded article-card date parser now accepts standard English
+  month abbreviations such as `Sep`; generic body scraping and direct-page
+  freshness rules were not broadened;
+- the old registry test now checks configured/loaded identity, uniqueness and
+  shadow/recovery invariants rather than a permanent magic count.
+
+No failure was fixed by lowering significance, weakening Event/Source Freshness,
+turning a source error into success, closing regional gaps from Pulse, increasing
+candidate/search budgets or enabling recovery repoll.
+
 ## Matrix coverage
 
 Relevant permanent cases:
@@ -154,8 +185,8 @@ The treatment is intentionally narrow:
 - OpenAI uses its official RSS and remains bounded to 16 items;
 - Qualcomm is limited to AI / data-center / inference / Dragonfly / agentic
   titles and 15 items;
-- NSA uses the official AI-tag surface plus an AI/model/agentic title filter and
-  15 items;
+- NSA uses the official AI-tag surface plus a word-bounded AI/model/distillation
+  title filter and 15 items;
 - all promoted rows remain `recommendation=consider`, score is not elevated by
   source identity, and normal editorial remains authoritative;
 - direct article freshness is still mandatory;
@@ -198,4 +229,5 @@ The controlled treatment improves the bounded historical strict recall from
 `46.2%` to `76.9%` while adding no paid search operation and preserving freshness,
 regional-health, candidate-cap and recovery-at-most-once contracts.
 
-**GO for production registry activation of these three routes.**
+**GO for production registry activation of these three routes, conditional on a
+green exact-head PR Gate after the corrections above.**
