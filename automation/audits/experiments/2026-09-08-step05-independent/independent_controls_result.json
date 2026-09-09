@@ -1,0 +1,58 @@
+{
+  "scope": "offline independent controls only",
+  "cases": [
+    {
+      "name": "malformed_disposition_becomes_confirmed_zero",
+      "observed": {
+        "confirmed_promoted_count": 0,
+        "promotion_evidence_complete": true,
+        "evidence_gaps": []
+      },
+      "fails_control": true
+    },
+    {
+      "name": "duplicate_promotion_artifacts_are_accepted",
+      "observed": {
+        "confirmed_promoted_count": 1,
+        "promotion_evidence_complete": true,
+        "evidence_gaps": []
+      },
+      "fails_control": true
+    },
+    {
+      "name": "null_story_identity_is_counted_as_selected",
+      "observed": {
+        "editorial_selected": 1,
+        "assembled_stories": 1,
+        "candidate_trace": [
+          {
+            "url": "https://vendor.example/news?id=one",
+            "candidate_id": "recycled",
+            "status": "exact_candidate_matched",
+            "source_freshness_status": "fresh",
+            "event_freshness_status": "unknown",
+            "recommendation": null,
+            "verification_status": null,
+            "freshness_reason": null,
+            "editorial_selected": true
+          }
+        ],
+        "evidence_gaps": []
+      },
+      "fails_control": true
+    },
+    {
+      "name": "page_story_source_association_is_not_verified",
+      "observed": {
+        "cross_wired_page_accepted": true
+      },
+      "fails_control": true
+    }
+  ],
+  "failed_controls": [
+    "malformed_disposition_becomes_confirmed_zero",
+    "duplicate_promotion_artifacts_are_accepted",
+    "null_story_identity_is_counted_as_selected",
+    "page_story_source_association_is_not_verified"
+  ]
+}
