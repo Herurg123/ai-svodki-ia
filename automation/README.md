@@ -137,7 +137,7 @@ Regression fixture находится в
 
 ## Source Pulse v1.3
 
-Пункт 5, промежуточный автономный отчёт: `scripts/source_pulse_value.py` читает
+Пункт 5, автономный отчёт v3: `scripts/source_pulse_value.py` читает
 один сохранённый Source Pulse report. Пример запуска без сети:
 
 ```bash
@@ -148,19 +148,33 @@ python automation/scripts/source_pulse_value.py --pulse automation/fixtures/reca
 promotion decisions и exact-URL merge acceptance. Опция `--release-dir` читает
 `candidates.json`, `editorial-output.json`, `stories.json` того же выпуска.
 Связь Pulse → candidate требует точных URL, title и Pulse provenance; связка
-candidate → story требует ID, источника, event fields и полного editorial ID
-partition. Неоднозначность и отсутствие данных остаются `null`. Собранные stories
+candidate → story требует ID, точных источников, содержательных типизированных
+event fields и полного упорядоченного editorial ID partition. Повреждённые и
+дублирующиеся disposition/accepted URL rows не дают подтверждённого нуля.
+Неоднозначность и отсутствие данных остаются `null`. Собранные stories
 не доказывают публикацию; `published` (FTP delivery) пока неизвестен.
 Опции `--published-repo PATH --published-commit FULL_SHA` вместо `--release-dir`
 читают immutable Git objects: commit обязан быть достижим из локального
 `origin/main`, Pulse input должен побайтно совпасть с committed report, и
-committed `posts/DATE/index.html` обязан содержать заголовки и точные source URLs
-всех stories. Результат `repository_published` относится только к публикации
+committed `posts/DATE/index.html` обязан содержать каждый заголовок и все его
+точные source URLs в соответствующем видимом `<h3>` блоке, в порядке stories.
+Соседний сюжет, hidden content и footer не подтверждают ссылку. Узкое правило
+`Meta*`/`Meta` совпадает с действующим display contract.
+Результат `repository_published` относится только к публикации
 файлов в репозитории; CLI не делает fetch и не проверяет удалённый FTP.
 Пункт 5 не принят.
-Это диагностический CLI, не production stage. Междневное сравнение и дедупликация
-recovery-снимков ещё не реализованы. Нулевые counts не служат основанием удалять
-источник. Условия продолжения: `audits/experiments/2026-09-08-step05-source-value-checkpoint.md`.
+Это диагностический CLI, не production stage. `source_value_period.py` принимает
+несколько `--report PATH` и один `--output PATH`. Он считает каждую дату один раз,
+дедуплицирует копии snapshot/promotion и явно сохраняет конфликтующие observations
+как unknown. Идентичность вычисляется по содержимому, а не доверяет snapshot_hash.
+Отдельный trace ID связывает те же source inputs с конкретным final bundle;
+проверенный committed bundle имеет приоритет над draft. Для каждой метрики есть
+observed_total, observed_releases, unknown_releases и complete_total (null при
+неполном наблюдении). При нуле наблюдаемых выпусков observed_total также null.
+Недоступный source не получает наблюдаемые parser counts; исходные нули collector
+сохранены отдельно в reported_counts. Старые отчёты нужно пересоздать офлайн.
+Нулевые counts не служат основанием удалять источник. Условия продолжения:
+`audits/experiments/2026-09-09-step05-resumed.md`.
 
 Fresh production сначала завершает Primary Recall, затем Source Pulse v1.3
 опрашивает фиксированный registry обычным HTTPS. Только `pulse_only` Tier-A
@@ -323,6 +337,12 @@ Source Pulse, Event Freshness, P4 regional viability, agency-health viability и
 Discovery Health в эти числа не входят: у них 0 OpenAI calls и 0 Web Search.
 Дополнительные региональные Coverage searches и отдельный LLM semantic-event
 matcher сейчас не включены; они остаются deferred options для будущих аудитов.
+
+Редакционный validator применяет действующую политику без региональных квот.
+Российский research lead с `include|consider` и score ≥ 3 может быть исключён
+редактором по содержательному основанию; это диагностическое предупреждение,
+а не блокировка всего выпуска. Выбранные региональные сюжеты сохраняют проверки
+своих разделов, источников и всех остальных правил публикации.
 
 ## Workflows
 

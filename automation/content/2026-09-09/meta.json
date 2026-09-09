@@ -1,0 +1,42 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-09",
+  "slug": "2026-09-09",
+  "title": "ИИ-Сводка на 9 сентября 2026",
+  "description": "Cognition и Mistral AI привлекли многомиллиардное финансирование, Meta запустила персонального агента Muse, а Google Cloud усиливает внедрение Gemini Enterprise. Также — дефицит памяти, защита Claude и спор о математическом результате OpenAI.",
+  "published_at": "2026-09-09T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-09.png",
+  "topics": [
+    "Cognition",
+    "Devin",
+    "ИИ-кодинг",
+    "Mistral AI",
+    "суверенный ИИ",
+    "Meta",
+    "Muse",
+    "агенты ИИ",
+    "Gemini Enterprise",
+    "HBM",
+    "серверная память",
+    "Anthropic",
+    "Claude",
+    "безопасность аккаунтов",
+    "ИИ для математики",
+    "Навье—Стокс"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Пять материалов TechCrunch относятся к независимым событиям высокой или самостоятельной значимости в разных сегментах — consumer-агенты, европейское финансирование, корпоративное внедрение, безопасность аккаунтов и ИИ для науки. В коротком пуле нет сопоставимых альтернативных источников с достаточной фактологией для замены этих сюжетов."
+    }
+  ]
+}

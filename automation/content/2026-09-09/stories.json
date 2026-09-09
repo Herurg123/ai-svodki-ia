@@ -1,0 +1,225 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Cognition привлекла более $2 млрд при оценке $48 млрд",
+    "organization": "Cognition; Devin; Andreessen Horowitz; Accel; Founders Fund; General Catalyst; Avenir",
+    "topic": "Финансирование AI coding agents и масштабирование Devin",
+    "event_type": "funding",
+    "status": "new",
+    "summary": "Cognition, разработчик coding-агента Devin, объявила о Series E: свыше $2 млрд при оценке $48 млрд. Компания также заявила о росте annualized run-rate revenue примерно с $492 млн до почти $900 млн после предыдущего раунда.",
+    "published_at": "2026-09-08T10:00:00-07:00",
+    "published_date": "2026-09-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Do it all with Devin: Announcing our Series E",
+        "publisher": "Cognition",
+        "url": "https://cognition.com/blog/series-e"
+      }
+    ],
+    "keywords": [
+      "Cognition",
+      "Devin",
+      "Series E",
+      "$2 billion",
+      "$48 billion valuation",
+      "AI coding agents"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "TrendForce: спрос ИИ-серверов поддерживает дефицит HBM и серверной DRAM",
+    "organization": "Samsung Electronics; SK hynix; Micron; TrendForce",
+    "topic": "HBM, серверная DRAM и ограничения поставок памяти для AI-тренировки и inference",
+    "event_type": "industry market report",
+    "status": "new",
+    "summary": "TrendForce 7 сентября сообщила, что совокупная выручка DRAM-индустрии в 2Q26 выросла на 59,5% квартал к кварталу почти до $154,73 млрд. Аналитики связывают рост поставок HBM3e, LPDDR5X и высокоёмких RDIMM с расширением LLM training и AI inference, при этом запасы поставщиков остаются исторически низкими; Samsung, по оценке TrendForce, получила поддержку от раннего массового выпуска и поставок HBM4.",
+    "published_at": "2026-09-07T15:02:56+08:00",
+    "published_date": "2026-09-07",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "DRAM Industry Revenue Rises 59.5% QoQ in 2Q26 as Supply Expansion Continues to Lag Demand Growth, Says TrendForce",
+        "publisher": "TrendForce",
+        "url": "https://www.trendforce.com/presscenter/news/20260907-13219.html"
+      }
+    ],
+    "keywords": [
+      "HBM3e",
+      "HBM4",
+      "DRAM",
+      "AI servers",
+      "inference",
+      "LLM training",
+      "Samsung",
+      "SK hynix",
+      "Micron",
+      "memory supply"
+    ],
+    "geography": "world",
+    "category": "chips"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Meta запустила потребительского агента Muse",
+    "organization": "Meta; Muse; Muse Spark; Stripe; WhatsApp",
+    "topic": "Потребительские автономные ИИ-агенты, доступ к подключённым сервисам, браузерное выполнение задач и контроль критических действий",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Meta представила Muse — отдельный персональный ИИ-агент, который подключается к почте, календарям, платежам и другим сервисам, может работать в браузере, выполнять фоновые задачи и запрашивать подтверждение для необратимых действий. Сервис заявлен для США через веб, iOS, Android и WhatsApp; предусмотрены бесплатный и платные тарифы.",
+    "published_at": "2026-09-08T19:00:00+00:00",
+    "published_date": "2026-09-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Meta debuts its Muse AI agent. Will consumers trust it?",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/08/meta-debuts-its-muse-ai-agent-will-consumers-trust-it/"
+      },
+      {
+        "title": "How We Designed Muse",
+        "publisher": "Muse / Meta",
+        "url": "https://introducing.muse.ai/"
+      }
+    ],
+    "keywords": [
+      "Meta",
+      "Muse",
+      "consumer AI agent",
+      "browser agent",
+      "payments",
+      "WhatsApp",
+      "Muse Spark",
+      "secure VM"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Mistral AI привлекла €3 млрд при оценке выше €21 млрд",
+    "organization": "Mistral AI; Samsung Electronics; EQT; PSG Equity",
+    "topic": "Финансирование frontier-AI и суверенная AI-инфраструктура Европы",
+    "event_type": "funding",
+    "status": "new",
+    "summary": "Французская AI-лаборатория Mistral AI объявила о Series D на €3 млрд при post-money оценке более €21 млрд. Раунд возглавила Samsung Electronics; компания заявила, что направит капитал на вычислительные мощности, инфраструктуру, коммерческое развитие и международную экспансию.",
+    "published_at": "2026-09-08T14:17:48+00:00",
+    "published_date": "2026-09-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Mistral raises €3B as sovereign AI becomes big business",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/08/mistral-raises-e3b-as-sovereign-ai-becomes-big-business/"
+      }
+    ],
+    "keywords": [
+      "Mistral AI",
+      "Series D",
+      "€3 billion",
+      "Samsung",
+      "sovereign AI",
+      "compute infrastructure"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Google Cloud и Accenture создают группу Gemini Enterprise с 1 000 инженеров внедрения",
+    "organization": "Google Cloud; Accenture; Gemini Enterprise",
+    "topic": "Enterprise AI deployment, агентные внедрения и консалтинговая инфраструктура",
+    "event_type": "partnership",
+    "status": "new",
+    "summary": "Google Cloud и Accenture запустили Accenture Gemini Enterprise Business Group — глобальную структуру для внедрения Gemini Enterprise и агентных AI-решений. В рамках инициативы планируется сформировать команду из 1 000 forward-deployed engineers.",
+    "published_at": "2026-09-08T16:20:31+00:00",
+    "published_date": "2026-09-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Accenture and Google Cloud Deepen Partnership with Formation of New Accenture Gemini Enterprise Business Group",
+        "publisher": "Accenture",
+        "url": "https://newsroom.accenture.com/news/2026/accenture-and-google-cloud-deepen-partnership-with-formation-of-new-accenture-gemini-enterprise-business-group"
+      }
+    ],
+    "keywords": [
+      "Google Cloud",
+      "Accenture",
+      "Gemini Enterprise",
+      "forward-deployed engineers",
+      "FDE",
+      "enterprise AI"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Anthropic предупредила о краже сессионных данных Claude infostealer-малварью",
+    "organization": "Anthropic; Claude; Claude Code",
+    "topic": "Безопасность аккаунтов AI-сервисов, кража сессий и несанкционированное потребление токенов",
+    "event_type": "security_incident",
+    "status": "new",
+    "summary": "TechCrunch сообщил о случаях, когда злоумышленники использовали infostealer-малварь для кражи сессионных данных Claude, после чего расходовали лимиты пользователей. По данным издания, Anthropic уведомляла затронутых пользователей, аннулировала сессии и авторизации, а в отдельных случаях возвращала деньги.",
+    "published_at": "2026-09-08T21:10:27+00:00",
+    "published_date": "2026-09-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Hackers are stealing Claude tokens from subscribers",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/08/hackers-are-stealing-claude-tokens-from-subscribers/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "infostealer",
+      "session theft",
+      "OAuth tokens",
+      "account security"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "OpenAI заявила о доказательстве по Навье—Стоксу; математики NYU оспорили происхождение подхода",
+    "organization": "OpenAI; Tristan Buckmaster; Levent Alpöge; Codex; Claude",
+    "topic": "ИИ для математических исследований, агентное доказательство теорем, происхождение исследовательских идей и возможное использование данных взаимодействия с моделью",
+    "event_type": "research announcement and controversy",
+    "status": "new",
+    "summary": "По сообщению TechCrunch, OpenAI опубликовала полный proof по проблеме существования и гладкости решений Навье—Стокса, заявив, что результат был найден нераскрытой моделью следующего поколения. Одновременно профессор NYU Тристан Бакмастер заявил, что параллельная работа OpenAI могла опираться на сведения о его ещё не опубликованном подходе; OpenAI отвергла доступ к конкретным пользовательским данным, но не исключила влияние обезличенных данных, использованных для улучшения моделей.",
+    "published_at": "2026-09-08T17:32:15+00:00",
+    "published_date": "2026-09-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI fought dirty on career-making math problem, says NYU mathematician",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/08/openai-fought-dirty-on-career-making-math-problem-says-nyu-mathematician/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Navier-Stokes",
+      "Millennium Prize",
+      "mathematics",
+      "AI research",
+      "Codex",
+      "Claude",
+      "research provenance"
+    ],
+    "geography": "world",
+    "category": "research"
+  }
+]

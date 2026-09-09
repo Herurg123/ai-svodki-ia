@@ -26,8 +26,12 @@ class SourcePulseResearchBoundaryTests(unittest.TestCase):
         self.assertFalse(payload["candidate_influence"])
         self.assertFalse(payload["repoll_on_recovery"])
         registry = sp.load_registry(config_path)
-        self.assertEqual(len(registry), 13)
-        self.assertIn("tass_ai", {row.id for row in registry})
+        configured_ids = [str(row.get("id") or "") for row in payload.get("sources") or []]
+        loaded_ids = [row.id for row in registry]
+        self.assertEqual(len(registry), len(configured_ids))
+        self.assertEqual(len(loaded_ids), len(set(loaded_ids)))
+        self.assertEqual(set(loaded_ids), set(configured_ids))
+        self.assertIn("tass_ai", set(loaded_ids))
 
         workflow = REPOSITORY_ROOT / ".github" / "workflows" / "daily-production.yml"
         preview = AUTOMATION_ROOT / "scripts" / "run_digest_preview.py"

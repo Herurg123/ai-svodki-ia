@@ -21,7 +21,9 @@ class PublicationEvidenceTests(unittest.TestCase):
             (base / name).write_text("[]" if name == "stories.json" else "{}")
         post = self.repo / "posts/2026-09-08/index.html"
         post.parent.mkdir(parents=True)
-        post.write_text("<html>Committed release</html>")
+        story = {"headline": "Committed release", "sources": [{"url": "https://vendor.example/committed"}]}
+        (base / "stories.json").write_text(json.dumps([story]))
+        post.write_text('<h3>Committed release</h3><a href="https://vendor.example/committed">Source</a>')
         self.commit = self.commit_all()
         self.git("update-ref", "refs/remotes/origin/main", self.commit)
 
@@ -57,7 +59,7 @@ class PublicationEvidenceTests(unittest.TestCase):
         self.git("update-ref", "refs/remotes/origin/main", commit)
         with self.assertRaises(ValueError):
             load_publication(self.repo, commit, "2026-09-08")
-        (self.repo / "posts/2026-09-08/index.html").write_text('<h2>Correct story</h2><a href="https://vendor.example/one">Source</a>')
+        (self.repo / "posts/2026-09-08/index.html").write_text('<h3>Correct story</h3><a href="https://vendor.example/one">Source</a>')
         commit = self.commit_all()
         self.git("update-ref", "refs/remotes/origin/main", commit)
         self.assertEqual(load_publication(self.repo, commit, "2026-09-08")[2]["commit"], commit)

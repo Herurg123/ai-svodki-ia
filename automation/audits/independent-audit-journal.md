@@ -1,6 +1,6 @@
 # Журнал независимых аудитов ИИ-Сводки
 
-Последнее обновление: 2026-09-05  
+Последнее обновление: 2026-09-09
 Назначение: накопление независимых проверок полноты и свежести ежедневной ИИ-Сводки без расходования production API пользователя.
 
 > Историческая часть журнала периодически сжимается: сохраняются ежедневные verdict, подтверждённые misses, повторяющиеся паттерны и принятые архитектурные решения. Детальные отчёты и controlled experiments хранятся в `automation/audits/` и `automation/audits/experiments/` и не дублируются здесь целиком.
@@ -16,6 +16,20 @@
 5. новый retrieval incident превращать в permanent fixture/test и отражать в `automation/specs/search-change-validation-matrix.md`;
 6. query wording/ranking changes проверять на Terra-equivalent assistant tool, когда он exposed; ordinary assistant web search нельзя выдавать за Terra;
 7. infrastructure/API failure до meaningful retrieval execution не включать в recall/completeness статистику.
+
+---
+
+## 9 сентября 2026 — ложная региональная блокировка editorial
+
+Run `34298397080` остановился после подготовки семи сюжетов: старое условие
+обязательного российского отбора не принимало содержательный отказ от слабой
+Pulse-карточки. Точный offline A/B воспроизвёл причину; замена ошибки на diagnostic
+warning сохранила семь selected IDs и digest SHA. Terra PASS, 52 целевых теста;
+полный штатный прогон 624 tests и 6 validators PASS. Новых production API calls нет.
+
+Доказательства и переносимый replay:
+[`experiments/2026-09-09-editorial-regional-stop/README.md`](experiments/2026-09-09-editorial-regional-stop/README.md).
+Это проверка устранения ложной остановки, не отдельный аудит полноты новостей дня.
 
 ---
 

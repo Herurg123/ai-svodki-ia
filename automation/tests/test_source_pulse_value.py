@@ -27,7 +27,7 @@ class SourcePulseValueTest(unittest.TestCase):
         data = self.fixture()
         data["promotion"]["accepted_candidate_urls"] = ["https://ir.yandex.ru/news?id=b"]
         result = build_report(data)
-        self.assertEqual(result["sources"][0]["confirmed_promoted_count"], 0)
+        self.assertIsNone(result["sources"][0]["confirmed_promoted_count"])
         self.assertTrue(result["evidence_gaps"])
 
     def test_redirect_does_not_replace_candidate_identity(self):
@@ -39,7 +39,7 @@ class SourcePulseValueTest(unittest.TestCase):
         data = self.fixture()
         data["promotion"]["lead_dispositions"][0]["final_url"] = "https://ir.yandex.ru/article/a"
         data["promotion"]["accepted_candidate_urls"] = ["https://ir.yandex.ru/article/a"]
-        self.assertEqual(build_report(data)["sources"][0]["confirmed_promoted_count"], 0)
+        self.assertIsNone(build_report(data)["sources"][0]["confirmed_promoted_count"])
 
     def test_missing_promotion_remains_unknown(self):
         data = self.fixture()

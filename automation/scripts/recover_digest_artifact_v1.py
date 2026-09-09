@@ -3,12 +3,16 @@
 
 The established implementation remains byte-for-byte in
 ``recover_digest_artifact_v1_base.py``. This compatibility layer changes only
-one saved-stage decision: the obsolete ``ambiguous_story_mapping`` error emitted
-by the pre-#145 artifact validator may be revalidated by current code. Every
-other saved normalization/validation error remains fail-closed.
+saved-stage decisions for validator errors made obsolete by current deterministic
+contracts: the pre-#145 ``ambiguous_story_mapping`` error and the Sep-9
+``story_headline_order`` false positive caused solely by the required public
+``Meta*`` display marker. These artifacts may be restored so current validators
+can re-check them. Every non-revalidatable saved normalization/validation error
+remains fail-closed.
 
 Consolidate this layer on the next material recovery refactor or after
-2026-10-03, after replaying the Sep-3 shared-source recovery regression.
+2026-10-03, after replaying the Sep-3 shared-source and Sep-9 Meta-headline
+recovery regressions.
 """
 from __future__ import annotations
 
@@ -35,11 +39,13 @@ def __getattr__(name: str) -> Any:
     return getattr(_base, name)
 
 
-REVALIDATABLE_ARTIFACT_VALIDATION_CODES = frozenset({"ambiguous_story_mapping"})
+REVALIDATABLE_ARTIFACT_VALIDATION_CODES = frozenset(
+    {"ambiguous_story_mapping", "story_headline_order"}
+)
 
 
 def _saved_stage_reports_are_reusable(source_dir: Path) -> tuple[bool, str | None]:
-    """Allow only the validator error made obsolete by the current mapping contract."""
+    """Allow only saved validator errors that current code can safely re-check."""
 
     normalization_path = source_dir / "artifact-normalization.json"
     if normalization_path.is_file():
@@ -57,11 +63,16 @@ def _saved_stage_reports_are_reusable(source_dir: Path) -> tuple[bool, str | Non
             return False, "artifact-validation.json должен содержать объект"
         if payload.get("status") == "error":
             errors = payload.get("errors")
-            codes = {
-                str(item.get("code") or "")
-                for item in errors
-                if isinstance(item, dict) and str(item.get("code") or "").strip()
-            } if isinstance(errors, list) else set()
+            codes = (
+                {
+                    str(item.get("code") or "")
+                    for item in errors
+                    if isinstance(item, dict)
+                    and str(item.get("code") or "").strip()
+                }
+                if isinstance(errors, list)
+                else set()
+            )
             if not codes or not codes.issubset(REVALIDATABLE_ARTIFACT_VALIDATION_CODES):
                 detail = payload.get("error") or errors or "status=error"
                 return False, f"artifact-validation.json уже сообщил ошибку: {detail}"

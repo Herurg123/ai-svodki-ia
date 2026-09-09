@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from source_value_identity import meaningful_identity, nonempty, valid_url
+
 
 def primary_url(candidate: dict[str, Any]) -> str | None:
     primary = candidate.get("primary_source")
@@ -10,20 +12,25 @@ def primary_url(candidate: dict[str, Any]) -> str | None:
 
 
 def source_urls(candidate: dict[str, Any]) -> set[str]:
-    values = [candidate.get("primary_source"), *(candidate.get("supporting_sources") or [])]
-    return {v["url"] for v in values if isinstance(v, dict) and isinstance(v.get("url"), str)}
+    supporting = candidate.get("supporting_sources", [])
+    if not isinstance(supporting, list):
+        return set()
+    values = [candidate.get("primary_source"), *supporting]
+    return {v["url"] for v in values if isinstance(v, dict) and valid_url(v.get("url"))}
 
 
 def story_matches(candidate: dict[str, Any], story: dict[str, Any]) -> bool:
     """An ID alone can be recycled by a later editorial run."""
     fields = ("organization", "topic", "event_type", "published_date", "published_at")
+    sources = story.get("sources")
+    if not isinstance(sources, list) or not sources or any(not isinstance(v, dict) or not valid_url(v.get("url")) for v in sources):
+        return False
+    urls = [v["url"] for v in sources]
     return bool(
-        candidate.get("id") == story.get("candidate_id")
+        meaningful_identity(candidate) and meaningful_identity(story)
+        and nonempty(candidate.get("id")) and candidate["id"] == story.get("candidate_id")
         and all(k in candidate and k in story and candidate[k] == story[k] for k in fields)
-        and source_urls(candidate).intersection(
-            v["url"] for v in story.get("sources", [])
-            if isinstance(v, dict) and isinstance(v.get("url"), str)
-        )
+        and len(set(urls)) == len(urls) and set(urls).issubset(source_urls(candidate))
     )
 
 
@@ -46,11 +53,14 @@ def editorial_evidence(
             or set(selected) & set(excluded) or set(selected) | set(excluded) != set(ids)):
         return None, ["editorial_partition_conflict"]
     story_ids = [s.get("candidate_id") if isinstance(s, dict) else None for s in stories]
-    if any(not isinstance(i, str) for i in story_ids) or len(set(story_ids)) != len(story_ids) or set(story_ids) != set(selected):
+    if any(not nonempty(i) for i in story_ids) or len(set(story_ids)) != len(story_ids) or story_ids != selected:
         return None, ["selected_story_ids_conflict"]
     by_id = {c["id"]: c for c in candidates}
     if any(not story_matches(by_id[s["candidate_id"]], s) for s in stories):
         return None, ["selected_story_identity_conflict"]
+    if any(by_id[i].get("recommendation") == "exclude" or by_id[i].get("event_freshness_status") == "stale"
+           or by_id[i].get("source_freshness_status") in {"stale", "unverified"} for i in selected):
+        return None, ["selected_candidate_ineligible"]
     return set(selected), []
 
 
@@ -67,7 +77,10 @@ def add_trace(report: dict[str, Any], pulse: dict[str, Any], bundle: dict[str, A
         return
     selected, gaps = editorial_evidence(candidates, bundle.get("editorial"), bundle.get("stories"), date)
     report["evidence_gaps"].extend(gaps)
-    promoted = (pulse.get("promotion") or {}).get("lead_dispositions") or []
+    promotion = pulse.get("promotion")
+    promoted = promotion.get("lead_dispositions", []) if isinstance(promotion, dict) else []
+    if not isinstance(promoted, list):
+        promoted = []
     report["trace_scope"] = "Final saved candidate state and assembled stories; not FTP delivery or proof of publication."
     for row in report["sources"]:
         urls = row["confirmed_promoted_urls"]
@@ -80,7 +93,8 @@ def add_trace(report: dict[str, Any], pulse: dict[str, Any], bundle: dict[str, A
             matches = [c for c in candidates if primary_url(c) == url]
             candidate = matches[0] if len(matches) == 1 else None
             title = decisions[0].get("title") if len(decisions) == 1 else None
-            proven = (candidate is not None and isinstance(title, str) and bool(title)
+            proven = (candidate is not None and meaningful_identity(candidate) and nonempty(candidate.get("id"))
+                      and isinstance(title, str) and bool(title.strip())
                       and candidate.get("title") == title
                       and str(candidate.get("audit_direction", "")).startswith("source_pulse_"))
             if not proven:
@@ -91,7 +105,8 @@ def add_trace(report: dict[str, Any], pulse: dict[str, Any], bundle: dict[str, A
                 continue
             source_state = candidate.get("source_freshness_status")
             event_state = candidate.get("event_freshness_status")
-            fresh = (False if event_state == "stale" else True if source_state == "fresh" and event_state in {"fresh", "unknown"} else None)
+            fresh = (False if event_state == "stale" or source_state in {"stale", "unverified"}
+                     else True if source_state == "fresh" and event_state in {"fresh", "unknown"} else None)
             chosen = candidate.get("id") in selected if selected is not None else None
             freshness.append(fresh)
             selection.append(chosen)

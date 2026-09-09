@@ -12,28 +12,31 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+from source_value_identity import digest, nonempty, valid_url
+
 
 def count(value: Any) -> int | None:
     return value if type(value) is int and value >= 0 else None
 
 
-def records(value: Any) -> list[dict[str, Any]]:
-    return [row for row in value if isinstance(row, dict)] if isinstance(value, list) else []
-
-
 def build_report(pulse: dict[str, Any], bundle: dict[str, Any] | None = None) -> dict[str, Any]:
-    snapshot = pulse.get("snapshot") or {}
+    if not isinstance(pulse, dict):
+        raise ValueError("Pulse report must be an object")
+    snapshot = pulse.get("snapshot", {})
     promotion = pulse.get("promotion")
     if not isinstance(snapshot, dict):
         raise ValueError("snapshot must be an object")
-    sources = records(snapshot.get("sources"))
-    dispositions = records(promotion.get("lead_dispositions")) if isinstance(promotion, dict) else []
-    promotion_available = isinstance(promotion, dict) and isinstance(promotion.get("lead_dispositions"), list)
+    sources = snapshot.get("sources", [])
+    if not isinstance(sources, list) or any(not isinstance(s, dict) for s in sources):
+        raise ValueError("snapshot sources must be an array of objects")
+    raw_dispositions = promotion.get("lead_dispositions") if isinstance(promotion, dict) else None
+    dispositions_valid = isinstance(raw_dispositions, list) and all(isinstance(d, dict) for d in raw_dispositions)
+    dispositions = raw_dispositions if dispositions_valid else []
     accepted = promotion.get("accepted_candidate_urls") if isinstance(promotion, dict) else None
-    accepted_available = isinstance(accepted, list) and all(isinstance(url, str) for url in accepted)
+    accepted_available = isinstance(accepted, list) and all(valid_url(url) for url in accepted)
     accepted_urls = set(accepted) if accepted_available else set()
     source_ids = [row.get("source_id") for row in sources]
-    if any(not isinstance(s, str) or not s for s in source_ids):
+    if any(not nonempty(s) for s in source_ids):
         raise ValueError("source_id is missing")
     if len(set(source_ids)) != len(source_ids):
         raise ValueError("duplicate source_id in snapshot")
@@ -44,10 +47,26 @@ def build_report(pulse: dict[str, Any], bundle: dict[str, Any] | None = None) ->
         gaps.append("promotion_source_absent_from_snapshot:" + ",".join(unknown_sources))
     if not isinstance(snapshot.get("sources"), list):
         gaps.append("snapshot_sources_missing")
-    if not promotion_available:
-        gaps.append("promotion_dispositions_missing")
+    if not dispositions_valid:
+        gaps.append("promotion_dispositions_missing_or_malformed")
     if not accepted_available:
-        gaps.append("accepted_candidate_urls_missing")
+        gaps.append("accepted_candidate_urls_missing_or_malformed")
+    if accepted_available and len(accepted_urls) != len(accepted):
+        gaps.append("accepted_candidate_urls_duplicated")
+    if any(not valid_url(d.get("url")) or not isinstance(d.get("promotion_status"), str)
+           or d["promotion_status"] not in {"promoted", "rejected", "not_eligible"} for d in dispositions):
+        gaps.append("promotion_disposition_identity_or_status_invalid")
+    disposition_urls = [d.get("url") for d in dispositions if valid_url(d.get("url"))]
+    if len(set(disposition_urls)) != len(disposition_urls):
+        gaps.append("promotion_disposition_url_duplicated")
+    promoted_urls = {d["url"] for d in dispositions if d.get("promotion_status") == "promoted" and valid_url(d.get("url"))}
+    if dispositions_valid and accepted_available and promoted_urls != accepted_urls:
+        gaps.append("promotion_and_accepted_urls_conflict")
+    if isinstance(promotion, dict) and "promoted_count" in promotion and count(promotion["promoted_count"]) != len(accepted_urls):
+        gaps.append("promotion_count_conflict")
+    # A damaged global merge/disposition ledger cannot prove attribution to any
+    # one source. Keep the gap instead of silently dropping rows or duplicates.
+    promotion_available = not gaps
 
     rows = []
     for source in sources:
@@ -55,9 +74,12 @@ def build_report(pulse: dict[str, Any], bundle: dict[str, Any] | None = None) ->
         decisions = [row for row in dispositions if row.get("source_id") == sid]
         # Preserve query parameters: Yandex article IDs live in the query string.
         # Title/company/host matches must never establish candidate acceptance.
-        decision_counts = Counter(row.get("promotion_status") or "unknown" for row in decisions)
+        decision_counts = Counter(str(row.get("promotion_status") or "unknown") for row in decisions)
         verified_urls = set()
-        promotion_complete = promotion_available and accepted_available
+        promotion_complete = promotion_available
+        if count(source.get("accepted_leads")) is not None and source["accepted_leads"] != len(decisions):
+            promotion_complete = False
+            gaps.append(f"source_lead_disposition_count_conflict:{sid}")
         for row in decisions:
             if row.get("promotion_status") != "promoted":
                 continue
@@ -69,41 +91,54 @@ def build_report(pulse: dict[str, Any], bundle: dict[str, Any] | None = None) ->
             else:
                 promotion_complete = False
                 gaps.append(f"promoted_url_not_confirmed:{sid}:{url}")
-        rows.append({
+        reported_counts = {k: count(source.get(k)) for k in ("parsed_items", "window_items", "accepted_leads")}
+        observed_counts = reported_counts.copy()
+        if source.get("status") != "ok":
+            observed_counts = dict.fromkeys(reported_counts)
+            gaps.append(f"source_observation_unavailable:{sid}")
+        for key, value in reported_counts.items():
+            if value is None:
+                gaps.append(f"source_count_missing_or_invalid:{sid}:{key}")
+        row = {
             "source_id": sid,
             "tier": source.get("tier"),
             "region": source.get("region"),
             "source_status": source.get("status", "unknown"),
-            "parsed_items": count(source.get("parsed_items")),
-            "window_items": count(source.get("window_items")),
-            "accepted_leads": count(source.get("accepted_leads")),
+            **observed_counts,
+            "reported_counts": reported_counts,
             "promotion_decision_counts": dict(sorted(decision_counts.items())) if promotion_available else None,
             "promotion_reasons": dict(sorted(Counter(str(row.get("reason") or "unspecified") for row in decisions if row.get("promotion_status") != "promoted").items())) if promotion_available else None,
-            "confirmed_promoted_urls": sorted(verified_urls) if promotion_available and accepted_available else None,
-            "confirmed_promoted_count": len(verified_urls) if promotion_available and accepted_available else None,
+            "confirmed_promoted_urls": sorted(verified_urls) if promotion_complete else None,
+            "confirmed_promoted_count": len(verified_urls) if promotion_complete else None,
             "promotion_evidence_complete": promotion_complete,
             "post_freshness_survivors": None,
             "editorial_selected": None,
+            "assembled_stories": None,
+            "repository_published": None,
             "published": None,
-        })
+        }
+        rows.append(row)
     result = {
-        "version": 2,
-        "status": "partial_checkpoint",
+        "version": 3,
+        "status": "diagnostic_only",
         "publication_date": pulse.get("publication_date"),
         "snapshot_hash": snapshot.get("snapshot_hash"),
         "snapshot_reused": pulse.get("reused_snapshot"),
         "source_report_status": pulse.get("status"),
+        "source_observation_id": digest({"publication_date": pulse.get("publication_date"), "snapshot": snapshot, "promotion": promotion}),
+        "trace_observation_id": None,
         "source_count": len(rows),
         "sources": sorted(rows, key=lambda row: row["source_id"]),
         "evidence_gaps": sorted(set(gaps)),
         "unobserved_stages": ["post_freshness", "editorial_selection", "publication"],
-        "policy": "Single saved snapshot only. Unknown is null. Counts are not source usefulness scores; unavailable sources are not evidence of no news. No cross-release or recovery aggregation.",
+        "policy": "Unknown is null. Raw collector counters remain separately reported. Exact snapshot/promotion identity excludes later fusion/reuse metadata. Counts are not usefulness scores; unavailable sources are not evidence of no news.",
         "network_calls": 0,
         "paid_api_calls": 0,
     }
     if bundle is not None:
         from source_pulse_trace import add_trace
         add_trace(result, pulse, bundle)
+        result["trace_observation_id"] = digest({"source_observation_id": result["source_observation_id"], "bundle": bundle})
     return result
 
 
