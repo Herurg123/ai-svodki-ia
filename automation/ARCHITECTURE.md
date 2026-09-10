@@ -832,6 +832,46 @@ policy change и требует отдельного PR/audit.
 
 ## 7. Event/source freshness и editorial
 
+### Отдельный офлайн-инвентарь вклада Source Pulse
+
+`scripts/source_pulse_value.py` — автономный читатель сохранённого Pulse report,
+не импортируемый production. Он сохраняет source health отдельно от количества
+leads и подтверждает promotion только точным совпадением `record.url` с
+`accepted_candidate_urls`, как текущий v1.2/v1.3 merge contract. Fetch `final_url`
+сам по себе не заменяет идентичность кандидата. Опциональный `--release-dir`
+включает `source_pulse_trace.py`: exact Pulse title/URL/provenance → unique
+candidate → consistent editorial ID partition → story с совпавшими ID, source,
+содержательными organization/topic/event type и валидной датой. Равенство null
+не является идентичностью. Перенумерованный или конфликтующий ID не
+доказывает отбор. Сохранённые source/event freshness states читаются без повторной
+проверки страниц; unknown не превращается в ноль. Собранные stories не означают
+publication, это поле пока `null`. `source_value_publication.py` по явным repo/SHA
+читает canonical committed artifacts и страницу из истории локального
+`origin/main`; input Pulse связывается побайтно, каждый заголовок и все его exact
+source URLs проверяются в своём видимом `<h3>` блоке, в порядке stories.
+Hidden markup, script/style/template, навигация и соседний сюжет не дают proof.
+Узкая нормализация display marker `Meta*` повторяет действующую editorial policy.
+Только эта ветка CLI заполняет `repository_published`; наличие draft в worktree
+или unmerged commit не подтверждает публикацию. FTP delivery остаётся unknown.
+CLI не выполняет сеть, не меняет входной report, source
+registry, budget, freshness, prompts, recovery или publication. Повреждённые,
+дублирующиеся и несогласованные disposition/accepted URL records дают gaps и
+null downstream. Нули unavailable collector сохраняются отдельно как raw
+reported_counts и не становятся доказательством отсутствия новостей.
+
+`source_value_identity.py` вычисляет source observation ID по точному содержимому
+publication date, snapshot и promotion; изменяемые later fusion/reuse diagnostics
+в него не входят. Trace ID связывает этот source observation с final bundle.
+`source_value_period.py` агрегирует v3 reports максимум один раз на дату выпуска.
+Конфликты snapshots или final traces сохраняются unknown; проверенная repository
+publication имеет приоритет над draft trace. Observed sums сопровождаются числом
+observed/unknown releases, complete_total остаётся null при неполноте. Ни один
+наблюдаемый выпуск означает observed_total=null, а не ноль. Данные этих reports
+не являются рейтинговой функцией, не отключают источники и не меняют production.
+Независимая приёмка этого автономного diagnostic scope пройдена 9 сентября:
+16 controls Terra, полный offline gate и шесть saved observations. Controlled
+evidence находится в `audits/experiments/2026-09-09-step05-acceptance/`.
+
 ### Непрерывность доказательства даты первоисточника
 
 После generic HTML publication metadata source v2 допускает узкие fallback

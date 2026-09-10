@@ -137,6 +137,47 @@ Regression fixture находится в
 
 ## Source Pulse v1.3
 
+Пункт 5, автономный отчёт v3: `scripts/source_pulse_value.py` читает
+один сохранённый Source Pulse report. Пример запуска без сети:
+
+```bash
+python automation/scripts/source_pulse_value.py --pulse automation/fixtures/recall/source-value-2026-09-08.json --output /tmp/source-value.json
+```
+
+Он разделяет parser/source health, parsed/window items, accepted leads,
+promotion decisions и exact-URL merge acceptance. Опция `--release-dir` читает
+`candidates.json`, `editorial-output.json`, `stories.json` того же выпуска.
+Связь Pulse → candidate требует точных URL, title и Pulse provenance; связка
+candidate → story требует ID, точных источников, содержательных типизированных
+event fields и полного упорядоченного editorial ID partition. Повреждённые и
+дублирующиеся disposition/accepted URL rows не дают подтверждённого нуля.
+Неоднозначность и отсутствие данных остаются `null`. Собранные stories
+не доказывают публикацию; `published` (FTP delivery) пока неизвестен.
+Опции `--published-repo PATH --published-commit FULL_SHA` вместо `--release-dir`
+читают immutable Git objects: commit обязан быть достижим из локального
+`origin/main`, Pulse input должен побайтно совпасть с committed report, и
+committed `posts/DATE/index.html` обязан содержать каждый заголовок и все его
+точные source URLs в соответствующем видимом `<h3>` блоке, в порядке stories.
+Соседний сюжет, hidden content и footer не подтверждают ссылку. Узкое правило
+`Meta*`/`Meta` совпадает с действующим display contract.
+Результат `repository_published` относится только к публикации
+файлов в репозитории; CLI не делает fetch и не проверяет удалённый FTP.
+Независимая приёмка автономного модуля пройдена: 16 controls Terra, 675 штатных
+tests, 6 validators и 6 сохранённых наблюдений. Доказательства:
+`audits/experiments/2026-09-09-step05-acceptance/`.
+Это диагностический CLI, не production stage. `source_value_period.py` принимает
+несколько `--report PATH` и один `--output PATH`. Он считает каждую дату один раз,
+дедуплицирует копии snapshot/promotion и явно сохраняет конфликтующие observations
+как unknown. Идентичность вычисляется по содержимому, а не доверяет snapshot_hash.
+Отдельный trace ID связывает те же source inputs с конкретным final bundle;
+проверенный committed bundle имеет приоритет над draft. Для каждой метрики есть
+observed_total, observed_releases, unknown_releases и complete_total (null при
+неполном наблюдении). При нуле наблюдаемых выпусков observed_total также null.
+Недоступный source не получает наблюдаемые parser counts; исходные нули collector
+сохранены отдельно в reported_counts. Старые отчёты нужно пересоздать офлайн.
+Нулевые counts не служат основанием удалять источник. Условия продолжения:
+`audits/experiments/2026-09-09-step05-resumed.md`.
+
 Fresh production сначала завершает Primary Recall, затем Source Pulse v1.3
 опрашивает фиксированный registry обычным HTTPS. Только `pulse_only` Tier-A
 `official` или `trusted_news` leads могут попасть в trusted research, причём

@@ -1,0 +1,1978 @@
+{
+  "version": 1,
+  "status": "diagnostic_only",
+  "supplied_reports": 8,
+  "exact_duplicate_reports_ignored": 1,
+  "release_count": 6,
+  "days": [
+    {
+      "publication_date": "2026-08-27",
+      "distinct_reports": 1,
+      "source_observation_ids": [
+        "7920e996584f443fe250cc8746b3937d8198397f583266152178057de4bdfec9"
+      ],
+      "trace_selection": "committed_repository_bundle",
+      "evidence_gaps": [
+        "accepted_candidate_urls_missing_or_malformed",
+        "promotion_dispositions_missing_or_malformed",
+        "source_absent_from_observation:tass_ai",
+        "source_observation_unavailable:baidu_ir",
+        "source_observation_unavailable:cnews_ai",
+        "source_observation_unavailable:xpeng_ir"
+      ],
+      "sources": [
+        {
+          "source_id": "alibaba_cloud_blog",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 0,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": null,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "alibaba_ir_hkex",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 25,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": null,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "baidu_ir",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": null,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "cnews_ai",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": null,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "deepseek_official_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 25,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": null,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "ithome_ai",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 29,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": null,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "marvell_current_reports",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 20,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": null,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "mws_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": null,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "nvidia_recent_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 20,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": null,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "tass_ai",
+          "source_present": false,
+          "source_statuses": [],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": null,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "vk_press",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 25,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": null,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "xpeng_ir",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": null,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "yandex_ir",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 25,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": null,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        }
+      ]
+    },
+    {
+      "publication_date": "2026-08-29",
+      "distinct_reports": 1,
+      "source_observation_ids": [
+        "8f2c4b92108bd3985c8b2d2f25011a38274cb203294cd07079761e89734b4383"
+      ],
+      "trace_selection": "committed_repository_bundle",
+      "evidence_gaps": [
+        "source_observation_unavailable:baidu_ir",
+        "source_observation_unavailable:tass_ai",
+        "source_observation_unavailable:xpeng_ir"
+      ],
+      "sources": [
+        {
+          "source_id": "alibaba_cloud_blog",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 0,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "alibaba_ir_hkex",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 25,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "baidu_ir",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "cnews_ai",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "deepseek_official_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 26,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "ithome_ai",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "marvell_current_reports",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 20,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "mws_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "nvidia_recent_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 20,
+          "window_items": 2,
+          "accepted_leads": 2,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "tass_ai",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "vk_press",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 25,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "xpeng_ir",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "yandex_ir",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 8,
+          "accepted_leads": 8,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        }
+      ]
+    },
+    {
+      "publication_date": "2026-09-02",
+      "distinct_reports": 2,
+      "source_observation_ids": [
+        "67c217bb349c22b8d09c266d581c6bdb84e6244987cf5dd06559a0f949103ed3"
+      ],
+      "trace_selection": "committed_repository_bundle",
+      "evidence_gaps": [
+        "source_observation_unavailable:baidu_ir",
+        "source_observation_unavailable:tass_ai",
+        "source_observation_unavailable:xpeng_ir"
+      ],
+      "sources": [
+        {
+          "source_id": "alibaba_cloud_blog",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 0,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "alibaba_ir_hkex",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 25,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "baidu_ir",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "cnews_ai",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "deepseek_official_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 26,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "ithome_ai",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 26,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "marvell_current_reports",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 20,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "mws_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "nvidia_recent_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 20,
+          "window_items": 2,
+          "accepted_leads": 2,
+          "confirmed_promoted_count": 1,
+          "post_freshness_survivors": 1,
+          "editorial_selected": 1,
+          "assembled_stories": 1,
+          "repository_published": 1
+        },
+        {
+          "source_id": "tass_ai",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "vk_press",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 25,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "xpeng_ir",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "yandex_ir",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 1,
+          "accepted_leads": 1,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        }
+      ]
+    },
+    {
+      "publication_date": "2026-09-06",
+      "distinct_reports": 1,
+      "source_observation_ids": [
+        "b72683aafaee0b5bdb27b77d7c16bf4d18ffa7e5a6b0ebacc2e045584d15f9db"
+      ],
+      "trace_selection": "committed_repository_bundle",
+      "evidence_gaps": [
+        "source_observation_unavailable:baidu_ir",
+        "source_observation_unavailable:tass_ai",
+        "source_observation_unavailable:xpeng_ir"
+      ],
+      "sources": [
+        {
+          "source_id": "alibaba_cloud_blog",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 0,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "alibaba_ir_hkex",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 25,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "baidu_ir",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "cnews_ai",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "deepseek_official_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 26,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "ithome_ai",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 29,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "marvell_current_reports",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 20,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "mws_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "nvidia_recent_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 20,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "tass_ai",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "vk_press",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 25,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "xpeng_ir",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "yandex_ir",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 2,
+          "accepted_leads": 2,
+          "confirmed_promoted_count": 1,
+          "post_freshness_survivors": null,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        }
+      ]
+    },
+    {
+      "publication_date": "2026-09-07",
+      "distinct_reports": 1,
+      "source_observation_ids": [
+        "933ca3097200bb25340f3ddcf7cdb83962f1edae49b5d1d70a7d5e165abc0008"
+      ],
+      "trace_selection": "committed_repository_bundle",
+      "evidence_gaps": [
+        "source_observation_unavailable:baidu_ir",
+        "source_observation_unavailable:tass_ai",
+        "source_observation_unavailable:xpeng_ir"
+      ],
+      "sources": [
+        {
+          "source_id": "alibaba_cloud_blog",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 0,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "alibaba_ir_hkex",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 25,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "baidu_ir",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "cnews_ai",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "deepseek_official_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 26,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "ithome_ai",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 29,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "marvell_current_reports",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 20,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "mws_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "nvidia_recent_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 20,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "tass_ai",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "vk_press",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 25,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "xpeng_ir",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        },
+        {
+          "source_id": "yandex_ir",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": 0,
+          "editorial_selected": 0,
+          "assembled_stories": 0,
+          "repository_published": 0
+        }
+      ]
+    },
+    {
+      "publication_date": "2026-09-08",
+      "distinct_reports": 1,
+      "source_observation_ids": [
+        "65ed5d93f3b766f10f2c6c1d3c1e7eff5d7a638ba7dc68fa3d51640c58b88a3e"
+      ],
+      "trace_selection": "saved_release_bundle",
+      "evidence_gaps": [
+        "final_trace_conflict_or_missing_identity",
+        "source_observation_unavailable:baidu_ir",
+        "source_observation_unavailable:tass_ai",
+        "source_observation_unavailable:xpeng_ir"
+      ],
+      "sources": [
+        {
+          "source_id": "alibaba_cloud_blog",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "alibaba_ir_hkex",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 25,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "baidu_ir",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "cnews_ai",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "deepseek_official_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 26,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "ithome_ai",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 29,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "marvell_current_reports",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 20,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "mws_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "nvidia_recent_news",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 20,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "tass_ai",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "vk_press",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 25,
+          "window_items": 0,
+          "accepted_leads": 0,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "xpeng_ir",
+          "source_present": true,
+          "source_statuses": [
+            "source_unavailable"
+          ],
+          "parsed_items": null,
+          "window_items": null,
+          "accepted_leads": null,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        },
+        {
+          "source_id": "yandex_ir",
+          "source_present": true,
+          "source_statuses": [
+            "ok"
+          ],
+          "parsed_items": 30,
+          "window_items": 2,
+          "accepted_leads": 2,
+          "confirmed_promoted_count": 0,
+          "post_freshness_survivors": null,
+          "editorial_selected": null,
+          "assembled_stories": null,
+          "repository_published": null
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "alibaba_cloud_blog",
+      "source_present_releases": 6,
+      "metrics": {
+        "parsed_items": {
+          "observed_total": 30,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 30
+        },
+        "window_items": {
+          "observed_total": 0,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 0
+        },
+        "accepted_leads": {
+          "observed_total": 0,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 0
+        },
+        "confirmed_promoted_count": {
+          "observed_total": 0,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "post_freshness_survivors": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "editorial_selected": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "assembled_stories": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "repository_published": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        }
+      }
+    },
+    {
+      "source_id": "alibaba_ir_hkex",
+      "source_present_releases": 6,
+      "metrics": {
+        "parsed_items": {
+          "observed_total": 150,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 150
+        },
+        "window_items": {
+          "observed_total": 0,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 0
+        },
+        "accepted_leads": {
+          "observed_total": 0,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 0
+        },
+        "confirmed_promoted_count": {
+          "observed_total": 0,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "post_freshness_survivors": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "editorial_selected": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "assembled_stories": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "repository_published": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        }
+      }
+    },
+    {
+      "source_id": "baidu_ir",
+      "source_present_releases": 6,
+      "metrics": {
+        "parsed_items": {
+          "observed_total": null,
+          "observed_releases": 0,
+          "unknown_releases": 6,
+          "complete_total": null
+        },
+        "window_items": {
+          "observed_total": null,
+          "observed_releases": 0,
+          "unknown_releases": 6,
+          "complete_total": null
+        },
+        "accepted_leads": {
+          "observed_total": null,
+          "observed_releases": 0,
+          "unknown_releases": 6,
+          "complete_total": null
+        },
+        "confirmed_promoted_count": {
+          "observed_total": 0,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "post_freshness_survivors": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "editorial_selected": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "assembled_stories": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "repository_published": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        }
+      }
+    },
+    {
+      "source_id": "cnews_ai",
+      "source_present_releases": 6,
+      "metrics": {
+        "parsed_items": {
+          "observed_total": 150,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "window_items": {
+          "observed_total": 0,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "accepted_leads": {
+          "observed_total": 0,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "confirmed_promoted_count": {
+          "observed_total": 0,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "post_freshness_survivors": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "editorial_selected": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "assembled_stories": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "repository_published": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        }
+      }
+    },
+    {
+      "source_id": "deepseek_official_news",
+      "source_present_releases": 6,
+      "metrics": {
+        "parsed_items": {
+          "observed_total": 155,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 155
+        },
+        "window_items": {
+          "observed_total": 0,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 0
+        },
+        "accepted_leads": {
+          "observed_total": 0,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 0
+        },
+        "confirmed_promoted_count": {
+          "observed_total": 0,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "post_freshness_survivors": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "editorial_selected": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "assembled_stories": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "repository_published": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        }
+      }
+    },
+    {
+      "source_id": "ithome_ai",
+      "source_present_releases": 6,
+      "metrics": {
+        "parsed_items": {
+          "observed_total": 172,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 172
+        },
+        "window_items": {
+          "observed_total": 0,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 0
+        },
+        "accepted_leads": {
+          "observed_total": 0,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 0
+        },
+        "confirmed_promoted_count": {
+          "observed_total": 0,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "post_freshness_survivors": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "editorial_selected": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "assembled_stories": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "repository_published": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        }
+      }
+    },
+    {
+      "source_id": "marvell_current_reports",
+      "source_present_releases": 6,
+      "metrics": {
+        "parsed_items": {
+          "observed_total": 120,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 120
+        },
+        "window_items": {
+          "observed_total": 0,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 0
+        },
+        "accepted_leads": {
+          "observed_total": 0,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 0
+        },
+        "confirmed_promoted_count": {
+          "observed_total": 0,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "post_freshness_survivors": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "editorial_selected": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "assembled_stories": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "repository_published": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        }
+      }
+    },
+    {
+      "source_id": "mws_news",
+      "source_present_releases": 6,
+      "metrics": {
+        "parsed_items": {
+          "observed_total": 180,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 180
+        },
+        "window_items": {
+          "observed_total": 0,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 0
+        },
+        "accepted_leads": {
+          "observed_total": 0,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 0
+        },
+        "confirmed_promoted_count": {
+          "observed_total": 0,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "post_freshness_survivors": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "editorial_selected": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "assembled_stories": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "repository_published": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        }
+      }
+    },
+    {
+      "source_id": "nvidia_recent_news",
+      "source_present_releases": 6,
+      "metrics": {
+        "parsed_items": {
+          "observed_total": 120,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 120
+        },
+        "window_items": {
+          "observed_total": 4,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 4
+        },
+        "accepted_leads": {
+          "observed_total": 4,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 4
+        },
+        "confirmed_promoted_count": {
+          "observed_total": 1,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "post_freshness_survivors": {
+          "observed_total": 1,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "editorial_selected": {
+          "observed_total": 1,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "assembled_stories": {
+          "observed_total": 1,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "repository_published": {
+          "observed_total": 1,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        }
+      }
+    },
+    {
+      "source_id": "tass_ai",
+      "source_present_releases": 5,
+      "metrics": {
+        "parsed_items": {
+          "observed_total": null,
+          "observed_releases": 0,
+          "unknown_releases": 6,
+          "complete_total": null
+        },
+        "window_items": {
+          "observed_total": null,
+          "observed_releases": 0,
+          "unknown_releases": 6,
+          "complete_total": null
+        },
+        "accepted_leads": {
+          "observed_total": null,
+          "observed_releases": 0,
+          "unknown_releases": 6,
+          "complete_total": null
+        },
+        "confirmed_promoted_count": {
+          "observed_total": 0,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "post_freshness_survivors": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "editorial_selected": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "assembled_stories": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "repository_published": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        }
+      }
+    },
+    {
+      "source_id": "vk_press",
+      "source_present_releases": 6,
+      "metrics": {
+        "parsed_items": {
+          "observed_total": 150,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 150
+        },
+        "window_items": {
+          "observed_total": 0,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 0
+        },
+        "accepted_leads": {
+          "observed_total": 0,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 0
+        },
+        "confirmed_promoted_count": {
+          "observed_total": 0,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "post_freshness_survivors": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "editorial_selected": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "assembled_stories": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "repository_published": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        }
+      }
+    },
+    {
+      "source_id": "xpeng_ir",
+      "source_present_releases": 6,
+      "metrics": {
+        "parsed_items": {
+          "observed_total": null,
+          "observed_releases": 0,
+          "unknown_releases": 6,
+          "complete_total": null
+        },
+        "window_items": {
+          "observed_total": null,
+          "observed_releases": 0,
+          "unknown_releases": 6,
+          "complete_total": null
+        },
+        "accepted_leads": {
+          "observed_total": null,
+          "observed_releases": 0,
+          "unknown_releases": 6,
+          "complete_total": null
+        },
+        "confirmed_promoted_count": {
+          "observed_total": 0,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "post_freshness_survivors": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "editorial_selected": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "assembled_stories": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "repository_published": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        }
+      }
+    },
+    {
+      "source_id": "yandex_ir",
+      "source_present_releases": 6,
+      "metrics": {
+        "parsed_items": {
+          "observed_total": 175,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 175
+        },
+        "window_items": {
+          "observed_total": 13,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 13
+        },
+        "accepted_leads": {
+          "observed_total": 13,
+          "observed_releases": 6,
+          "unknown_releases": 0,
+          "complete_total": 13
+        },
+        "confirmed_promoted_count": {
+          "observed_total": 1,
+          "observed_releases": 5,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "post_freshness_survivors": {
+          "observed_total": 0,
+          "observed_releases": 3,
+          "unknown_releases": 3,
+          "complete_total": null
+        },
+        "editorial_selected": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "assembled_stories": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        },
+        "repository_published": {
+          "observed_total": 0,
+          "observed_releases": 4,
+          "unknown_releases": 2,
+          "complete_total": null
+        }
+      }
+    }
+  ],
+  "network_calls": 0,
+  "paid_api_calls": 0,
+  "policy": "One observation per release date. Conflicts remain unknown. Observed sums exclude unknowns; complete_total is null when any release is unknown. Repository publication is not FTP delivery. No causal source ranking or automatic source changes."
+}

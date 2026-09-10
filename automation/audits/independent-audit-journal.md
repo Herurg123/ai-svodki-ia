@@ -33,6 +33,22 @@ warning сохранила семь selected IDs и digest SHA. Terra PASS, 52 �
 
 ---
 
+## 9 сентября 2026 — пункт 5 учёт вклада Source Pulse
+
+Автономный Source Value checkpoint `b328d41` прошёл повторную независимую
+приёмку Terra после исторического FAIL 8 сентября. Закрыты false zero/positive
+на malformed/duplicate records, null event identity и cross-wired story URLs.
+Добавлены content observation IDs и period aggregation с явными unknown totals.
+16 независимых controls, 675 штатных tests и 6 validators PASS. Replay шести
+сохранённых наблюдений подтверждает NVIDIA Sep2 selected/published 1, Yandex
+Sep6 selected/published 0 и отсутствие double count на recovery copies.
+Production не импортирует новые CLI; search/freshness/recovery/budgets и
+публикация не меняются, реального API расхода нет.
+
+Доказательства: [`experiments/2026-09-09-step05-acceptance/README.md`](experiments/2026-09-09-step05-acceptance/README.md).
+
+---
+
 ## Сжатая историческая серия 17–28 августа 2026
 
 | Дата/серия | Verdict | Ключевой результат |

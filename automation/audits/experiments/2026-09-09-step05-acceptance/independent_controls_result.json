@@ -1,0 +1,235 @@
+{
+  "checkpoint": "b328d4169d719f3367b1c0e15daafe3d58175329",
+  "scope": "independent offline controls; no network/API/git mutation",
+  "cases": [
+    {
+      "name": "historical_malformed_disposition_no_false_zero",
+      "passed": true,
+      "observed": {
+        "count": null,
+        "complete": false,
+        "gaps": [
+          "promotion_dispositions_missing_or_malformed",
+          "source_lead_disposition_count_conflict:vendor"
+        ]
+      }
+    },
+    {
+      "name": "historical_duplicate_promotion_no_false_positive",
+      "passed": true,
+      "observed": {
+        "count": null,
+        "complete": false,
+        "gaps": [
+          "accepted_candidate_urls_duplicated",
+          "promotion_disposition_url_duplicated"
+        ]
+      }
+    },
+    {
+      "name": "historical_null_identity_no_selected_story",
+      "passed": true,
+      "observed": {
+        "selected": null,
+        "gaps": [
+          "pulse_candidate_identity_unresolved:vendor:https://vendor.example/news?id=one",
+          "selected_story_identity_conflict"
+        ]
+      }
+    },
+    {
+      "name": "historical_crosswired_h3_rejected",
+      "passed": true,
+      "observed": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "invalid_disposition_url_unknown",
+      "passed": true,
+      "observed": {
+        "count": null,
+        "gaps": [
+          "promoted_url_not_confirmed:vendor:not-url",
+          "promotion_and_accepted_urls_conflict",
+          "promotion_disposition_identity_or_status_invalid"
+        ]
+      }
+    },
+    {
+      "name": "accepted_disposition_conflict_unknown",
+      "passed": true,
+      "observed": {
+        "count": null,
+        "gaps": [
+          "promoted_url_not_confirmed:vendor:https://vendor.example/news?id=one",
+          "promotion_and_accepted_urls_conflict"
+        ]
+      }
+    },
+    {
+      "name": "hidden_link_not_publication_evidence",
+      "passed": true,
+      "observed": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "neighbor_link_not_publication_evidence",
+      "passed": true,
+      "observed": {
+        "accepted": false
+      }
+    },
+    {
+      "name": "saved_fixture_2026-09-02",
+      "passed": true,
+      "observed": {
+        "source": "nvidia_recent_news",
+        "got": 1,
+        "expected": 1
+      }
+    },
+    {
+      "name": "saved_fixture_2026-09-06",
+      "passed": true,
+      "observed": {
+        "source": "yandex_ir",
+        "got": 0,
+        "expected": 0
+      }
+    },
+    {
+      "name": "saved_yandex_sep6_negative_keeps_confirmed_zero",
+      "passed": true,
+      "observed": {
+        "count": 0,
+        "complete": true,
+        "gaps": [
+          "source_observation_unavailable:baidu_ir",
+          "source_observation_unavailable:tass_ai",
+          "source_observation_unavailable:xpeng_ir"
+        ]
+      }
+    },
+    {
+      "name": "same_day_exact_copy_and_recovery_not_double_counted",
+      "passed": true,
+      "observed": {
+        "duplicates": 1,
+        "metric": {
+          "observed_total": 1,
+          "observed_releases": 1,
+          "unknown_releases": 0,
+          "complete_total": 1
+        }
+      }
+    },
+    {
+      "name": "conflicting_snapshots_preserve_unknown",
+      "passed": true,
+      "observed": {
+        "metric": {
+          "observed_total": null,
+          "observed_releases": 0,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "gaps": [
+          "metric_conflict:vendor:parsed_items",
+          "source_observation_conflict_or_missing_identity"
+        ]
+      }
+    },
+    {
+      "name": "conflicting_traces_preserve_unknown",
+      "passed": true,
+      "observed": {
+        "metric": {
+          "observed_total": null,
+          "observed_releases": 0,
+          "unknown_releases": 1,
+          "complete_total": null
+        },
+        "gaps": [
+          "final_trace_conflict_or_missing_identity",
+          "metric_conflict:vendor:editorial_selected"
+        ]
+      }
+    },
+    {
+      "name": "committed_publication_priority_over_local_draft",
+      "passed": true,
+      "observed": {
+        "source": {
+          "source_id": "vendor",
+          "source_present_releases": 1,
+          "metrics": {
+            "parsed_items": {
+              "observed_total": 2,
+              "observed_releases": 1,
+              "unknown_releases": 0,
+              "complete_total": 2
+            },
+            "window_items": {
+              "observed_total": 1,
+              "observed_releases": 1,
+              "unknown_releases": 0,
+              "complete_total": 1
+            },
+            "accepted_leads": {
+              "observed_total": 1,
+              "observed_releases": 1,
+              "unknown_releases": 0,
+              "complete_total": 1
+            },
+            "confirmed_promoted_count": {
+              "observed_total": 1,
+              "observed_releases": 1,
+              "unknown_releases": 0,
+              "complete_total": 1
+            },
+            "post_freshness_survivors": {
+              "observed_total": 1,
+              "observed_releases": 1,
+              "unknown_releases": 0,
+              "complete_total": 1
+            },
+            "editorial_selected": {
+              "observed_total": 1,
+              "observed_releases": 1,
+              "unknown_releases": 0,
+              "complete_total": 1
+            },
+            "assembled_stories": {
+              "observed_total": 1,
+              "observed_releases": 1,
+              "unknown_releases": 0,
+              "complete_total": 1
+            },
+            "repository_published": {
+              "observed_total": 1,
+              "observed_releases": 1,
+              "unknown_releases": 0,
+              "complete_total": 1
+            }
+          }
+        },
+        "selection": "committed_repository_bundle"
+      }
+    },
+    {
+      "name": "null_not_zero_for_unobserved_total",
+      "passed": true,
+      "observed": {
+        "metric": {
+          "observed_total": null,
+          "observed_releases": 0,
+          "unknown_releases": 1,
+          "complete_total": null
+        }
+      }
+    }
+  ],
+  "failed_controls": []
+}

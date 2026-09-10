@@ -1,0 +1,126 @@
+{
+  "baseline_main": "8c50ca04068d23cef20917598bfa78f4f1da6536",
+  "status": "pass",
+  "cases": [
+    {
+      "date": "2026-08-27",
+      "input_sha256": {
+        "pulse": "5647469ca4d54b1126307b31921f193aea54e228a8f39c00384ef624a2f40bf8",
+        "candidates": "1b8b2986de02b4b30cce58042d6a6cbaebc03050512030757aaae8800fc16ac9",
+        "editorial": "ea5d69d220ed9826e64a58bf71aa22f8d82d46a038634f8b53f5d481bd4b05e3",
+        "stories": "7969e641a06897c3d92eb8ab32ee2c9f059af9b09aa1cbe94b049398955ae1e9"
+      },
+      "post_sha256": "fa2db85d72e6bdba6c6eec9a390bb5e7b64dd41dc5eb45b75113c817dd006c97",
+      "source_count": 12,
+      "evidence_gaps": [
+        "accepted_candidate_urls_missing_or_malformed",
+        "promotion_dispositions_missing_or_malformed",
+        "source_observation_unavailable:baidu_ir",
+        "source_observation_unavailable:cnews_ai",
+        "source_observation_unavailable:xpeng_ir"
+      ],
+      "positive_promotions": []
+    },
+    {
+      "date": "2026-08-29",
+      "input_sha256": {
+        "pulse": "2f794b2154e1fa58f8b1423675818ad7cd9fa062f626140be6f3a2031b916746",
+        "candidates": "f090babe9e9ec13ea80c718ca843ecac0d183f1d2be1fed23c515616aae79b0c",
+        "editorial": "dde3d10bd19aad04971f822dcb7f4b948f930014d86ef096358b4a62e78e0cec",
+        "stories": "0b34e7c6ca6ed40a4a96b2bf0397d280cf40ea56229f7664bf0f1f52e00b46ee"
+      },
+      "post_sha256": "e9eee446f2ffd388a759f5f43cf64dea984e69a6851f662da621bb8b4bd956d0",
+      "source_count": 13,
+      "evidence_gaps": [
+        "source_observation_unavailable:baidu_ir",
+        "source_observation_unavailable:tass_ai",
+        "source_observation_unavailable:xpeng_ir"
+      ],
+      "positive_promotions": []
+    },
+    {
+      "date": "2026-09-02",
+      "input_sha256": {
+        "pulse": "80b113bfa49786df068f0c18384456a4848bb4cf33b6c07f89891bb8acb4f1be",
+        "candidates": "8bfce4ddd542d2544169e31a78b5e2979c67e7e84058d53b7f2da0fbd12b892f",
+        "editorial": "4e942c5256cff28fd4a1732ca1e24000468e5f3b9d5f32c192b09bfee3956ecb",
+        "stories": "5f0ad19a482510a79a6e2cbf705f3565464d0922535a3267ad798ab1867b14e4"
+      },
+      "post_sha256": "5ca75f9559afc637b262047eca1d791dd469a364c3568737314bd6a492dc20ec",
+      "source_count": 13,
+      "evidence_gaps": [
+        "source_observation_unavailable:baidu_ir",
+        "source_observation_unavailable:tass_ai",
+        "source_observation_unavailable:xpeng_ir"
+      ],
+      "positive_promotions": [
+        {
+          "source_id": "nvidia_recent_news",
+          "confirmed_promoted_count": 1,
+          "post_freshness_survivors": 1,
+          "editorial_selected": 1,
+          "repository_published": 1
+        }
+      ]
+    },
+    {
+      "date": "2026-09-06",
+      "input_sha256": {
+        "pulse": "39f40fe6c153ff4fad89b8d1094cac0dd755fc1d4f9d681ef393ef79331598d5",
+        "candidates": "e79d60e77395edd80683e9b8b6137346c502e0604b85ee16c51a833d63338de9",
+        "editorial": "d85c7086accbc41ccde31f33f181e72fe70227a0d2b1835f9860cc0c82934033",
+        "stories": "b01e67c5aa6afb8f184ac35881128591b2875634bff04650e8b89f40ca85947e"
+      },
+      "post_sha256": "a6a14d3b0525f093b9e5453bfbacfde3e224bcd2949ddd480b13b908c597122e",
+      "source_count": 13,
+      "evidence_gaps": [
+        "source_observation_unavailable:baidu_ir",
+        "source_observation_unavailable:tass_ai",
+        "source_observation_unavailable:xpeng_ir"
+      ],
+      "positive_promotions": [
+        {
+          "source_id": "yandex_ir",
+          "confirmed_promoted_count": 1,
+          "post_freshness_survivors": null,
+          "editorial_selected": 0,
+          "repository_published": 0
+        }
+      ]
+    },
+    {
+      "date": "2026-09-07",
+      "input_sha256": {
+        "pulse": "c7a27d13106cc9a38b65f342921c41d25acb7e92fab9c57d9207cfd6c2c1a4f2",
+        "candidates": "debeb27f0b5405ff16d6635848529d2c6f926c06959f3769259e1b3669708e46",
+        "editorial": "83cd74b5ea681fd1b2643881df5650c75f715aa86ec787843829694016347f65",
+        "stories": "b87074dc1b847d7bc077c025bdbee34342e2f92b180b211ca8f73dd5e3357a56"
+      },
+      "post_sha256": "d720c23c55d85798690f51f4500a47795e1ca29e0d668ad0d9c48797789464e8",
+      "source_count": 13,
+      "evidence_gaps": [
+        "source_observation_unavailable:baidu_ir",
+        "source_observation_unavailable:tass_ai",
+        "source_observation_unavailable:xpeng_ir"
+      ],
+      "positive_promotions": []
+    },
+    {
+      "date": "2026-09-08",
+      "input_sha256": "64c90a6811bfcd3ea169cd9b4bb1b958b4388eb76fe127ba0a4e9a2fb86283a6",
+      "source_count": 13,
+      "scope": "Saved Pulse only; editorial and publication unknown",
+      "evidence_gaps": [
+        "source_observation_unavailable:baidu_ir",
+        "source_observation_unavailable:tass_ai",
+        "source_observation_unavailable:xpeng_ir"
+      ]
+    }
+  ],
+  "supplied_with_copies": 8,
+  "release_count": 6,
+  "exact_duplicate_reports_ignored": 1,
+  "copy_and_recovery_totals_unchanged": true,
+  "network_calls": 0,
+  "paid_api_calls": 0
+}

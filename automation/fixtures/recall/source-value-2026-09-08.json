@@ -1,0 +1,387 @@
+{
+  "publication_date": "2026-09-08",
+  "status": "complete_with_gaps",
+  "reused_snapshot": false,
+  "promotion": {
+    "proposed_count": 0,
+    "promoted_count": 0,
+    "rejected_by_merge_count": 0,
+    "candidate_count_before": 0,
+    "candidate_count_after": 0,
+    "accepted_candidate_urls": [],
+    "merge_rejections": [],
+    "lead_dispositions": [
+      {
+        "source_id": "yandex_ir",
+        "title": "1 сентября 2026ИИ в Яндексе: главное за август",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=digest-0826",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "fusion_disposition": "pulse_only",
+        "promotion_status": "rejected",
+        "reason": "source_freshness_no_publication_date",
+        "final_url": "https://ir.yandex.ru/press-releases?year=2026&id=digest-0826",
+        "http_status": 200
+      },
+      {
+        "source_id": "yandex_ir",
+        "title": "7 сентября 2026Яндекс Go предложит скидку тем, кто готов подождать такси дольше",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=07-09-2026-01",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "fusion_disposition": "pulse_only",
+        "promotion_status": "rejected",
+        "reason": "deterministic_ai_relevance_gate",
+        "final_url": "https://ir.yandex.ru/press-releases?year=2026&id=07-09-2026-01",
+        "http_status": 200,
+        "evidence_locator": "yandex:url+visible-date",
+        "evidence_raw": "7 сентября 2026",
+        "yandex_date_repair": true
+      }
+    ]
+  },
+  "snapshot": {
+    "snapshot_hash": "78a670ec8e704cef50ad2861e2a044e304132b0f6aa4d216f4702b096b607bb8",
+    "sources": [
+      {
+        "source_id": "baidu_ir",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://ir.baidu.com/",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20246
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "alibaba_ir_hkex",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.alibabagroup.com/en-US/ir-filings-hkex",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1020
+          }
+        ],
+        "selected_url": "https://www.alibabagroup.com/en-US/ir-filings-hkex",
+        "parsed_items": 25,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 52,
+        "parsed_items_after_v12": 52,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 52,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "alibaba_cloud_blog",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.alibabacloud.com/blog",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1789
+          }
+        ],
+        "selected_url": "https://www.alibabacloud.com/blog",
+        "parsed_items": 30,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 56,
+        "parsed_items_after_v12": 56,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 56,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "marvell_current_reports",
+        "tier": "A",
+        "region": "global",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://investor.marvell.com/sec-filings/current-reports",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 50
+          }
+        ],
+        "selected_url": "https://investor.marvell.com/sec-filings/current-reports",
+        "parsed_items": 20,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 105,
+        "parsed_items_after_v12": 105,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 105,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://blogs.nvidia.com/recent-news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 44
+          }
+        ],
+        "selected_url": "https://blogs.nvidia.com/recent-news",
+        "parsed_items": 20,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 23,
+        "parsed_items_after_v12": 23,
+        "dated_items_after_v12": 10,
+        "undated_items_after_v12": 13,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://ir.yandex.ru/press-releases?year=2026",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 2316
+          }
+        ],
+        "selected_url": "https://ir.yandex.ru/press-releases?year=2026",
+        "parsed_items": 30,
+        "window_items": 2,
+        "accepted_leads": 2,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 212,
+        "parsed_items_after_v12": 215,
+        "dated_items_after_v12": 189,
+        "undated_items_after_v12": 26,
+        "visible_dates_recovered": 3,
+        "yandex_dates_corrected_v13": 182,
+        "yandex_conflicts_nulled_v13": 0,
+        "yandex_duplicate_urls_collapsed_v13": 183
+      },
+      {
+        "source_id": "tass_ai",
+        "tier": "A",
+        "region": "russia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://tass.ru/tag/iskusstvennyi-intellekt",
+            "status": "error",
+            "http_status": 403,
+            "error": "HTTPError: HTTP Error 403: Forbidden",
+            "elapsed_ms": 1312
+          },
+          {
+            "url": "https://tass.ru/feed",
+            "status": "error",
+            "http_status": 403,
+            "error": "HTTPError: HTTP Error 403: Forbidden",
+            "elapsed_ms": 1063
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "xpeng_ir",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://ir.xiaopeng.com/rss/news-releases.xml",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20673
+          },
+          {
+            "url": "https://ir.xiaopeng.com/news-events/news-releases",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20352
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://api-docs.deepseek.com/news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 420
+          }
+        ],
+        "selected_url": "https://api-docs.deepseek.com/news",
+        "parsed_items": 26,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 30,
+        "parsed_items_after_v12": 30,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 30,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "mws_news",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://mws.ru/news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1963
+          }
+        ],
+        "selected_url": "https://mws.ru/news",
+        "parsed_items": 30,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 120,
+        "parsed_items_after_v12": 121,
+        "dated_items_after_v12": 1,
+        "undated_items_after_v12": 120,
+        "visible_dates_recovered": 1
+      },
+      {
+        "source_id": "vk_press",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://vk.company.ru/ru/press/releases/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1062
+          }
+        ],
+        "selected_url": "https://vk.company.ru/ru/press/releases",
+        "parsed_items": 25,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 52,
+        "parsed_items_after_v12": 53,
+        "dated_items_after_v12": 1,
+        "undated_items_after_v12": 52,
+        "visible_dates_recovered": 1
+      },
+      {
+        "source_id": "ithome_ai",
+        "tier": "B",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.ithome.com/tag/AI/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1353
+          }
+        ],
+        "selected_url": "https://www.ithome.com/tags/AI",
+        "parsed_items": 29,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 37,
+        "parsed_items_after_v12": 37,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 37,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "cnews_ai",
+        "tier": "B",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.cnews.ru/news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 2150
+          }
+        ],
+        "selected_url": "https://www.cnews.ru/news",
+        "parsed_items": 30,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 127,
+        "parsed_items_after_v12": 127,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 127,
+        "visible_dates_recovered": 0
+      }
+    ]
+  },
+  "_provenance": {
+    "kind": "reduced saved production fixture",
+    "run_url": "https://github.com/Herurg123/ai-svodki-ia/actions/runs/34175843146",
+    "original_report_sha256": "64c90a6811bfcd3ea169cd9b4bb1b958b4388eb76fe127ba0a4e9a2fb86283a6",
+    "omitted": "snapshot leads/fusion/fetch body; no values in retained fields modified"
+  }
+}
