@@ -1,0 +1,18 @@
+{
+  "status": "applied",
+  "changed_fields": [],
+  "changed_count": 0,
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, china_asia_models, china_asia_integrations, russia, developer_tools, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Три сюжета TechCrunch описывают независимые события высокой редакционной значимости: массовые аудиофункции Apple Watch, новые энергетические требования к крупным дата-центрам Массачусетса и переход Suno к заявленному лицензированному обучению музыкальных моделей. Сопоставимых подтверждённых альтернатив в пуле недостаточно для замены без потери существенных тем выпуска."
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-10",
+  "slug": "2026-09-10",
+  "title": "ИИ-Сводка на 10 сентября 2026",
+  "description": "Arm обновляет серверную платформу, Apple переносит ИИ-обработку разговоров в часы, Массачусетс регулирует энергопотребление дата-центров, а Suno заявляет о переходе музыкальных моделей на лицензированные данные.",
+  "published_at": "2026-09-10T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-10.png",
+  "topics": [
+    "Arm",
+    "Neoverse CSS N4",
+    "Apple Watch",
+    "Audio Intelligence",
+    "дата-центры",
+    "чистая энергия",
+    "OpenAI Foundation",
+    "безопасность ИИ",
+    "Suno v6",
+    "лицензированные данные",
+    "агенты ИИ",
+    "управление доступом",
+    "Runway",
+    "world models",
+    "робототехника"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, china_asia_models, china_asia_integrations, russia, developer_tools, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Три сюжета TechCrunch описывают независимые события высокой редакционной значимости: массовые аудиофункции Apple Watch, новые энергетические требования к крупным дата-центрам Массачусетса и переход Suno к заявленному лицензированному обучению музыкальных моделей. Сопоставимых подтверждённых альтернатив в пуле недостаточно для замены без потери существенных тем выпуска."
+    }
+  ]
+}

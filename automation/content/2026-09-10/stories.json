@@ -1,0 +1,221 @@
+[
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Arm представила полузаказную серверную платформу Neoverse CSS N4",
+    "organization": "Arm; TSMC; Microsoft Azure; Google Cloud; Oracle; ByteDance",
+    "topic": "Серверные Arm-процессоры и полузаказной кремний для облачной и AI-инфраструктуры",
+    "event_type": "product announcement",
+    "status": "new",
+    "summary": "Arm анонсировала Neoverse CSS N4 — полузаказную серверную платформу на TSMC N3P, позволяющую партнёрам конфигурировать чипы с 8–128 ядрами, до 256 МБ L3, DDR5 или LPDDR6, PCIe 7/6, CXL 4.0 и UCIe. Одновременно компания раскрыла дополнительные развёртывания собственного AGI CPU у Oracle и ByteDance.",
+    "published_at": "2026-09-08T02:00:00+00:00",
+    "published_date": "2026-09-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Arm debuts next-gen semi-custom Neoverse CSS N4 ‘Falcon' platform — compute subsystem packs up to 128 cores per die on TSMC N3P",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/pc-components/cpus/arm-debuts-next-gen-semi-custom-neoverse-css-n4-ranger-platform-compute-subsystem-packs-up-to-128-cores-per-die-on-tsmc-n3p"
+      }
+    ],
+    "keywords": [
+      "Arm",
+      "Neoverse CSS N4",
+      "Falcon",
+      "cloud CPUs",
+      "AI infrastructure",
+      "TSMC N3P",
+      "UCIe",
+      "CXL 4.0"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Apple представила для Apple Watch функции Audio Intelligence, Live Rewind и Siri Recap",
+    "organization": "Apple; Apple Watch; Apple Intelligence; Siri",
+    "topic": "Consumer AI в массовых носимых устройствах: локальная обработка звука, транскрибация и AI-сводки разговоров",
+    "event_type": "consumer product announcement",
+    "status": "new",
+    "summary": "На мероприятии Surprise and Shine Apple анонсировала для новых Apple Watch набор Audio Intelligence: Live Rewind выводит текст предыдущих 15 секунд разговора, а Siri Recap формирует заголовок, сводку и ключевые пункты из выбранных пользователем разговоров. Компания заявляет, что функции не сохраняют аудиозаписи, не идентифицируют говорящих, а транскрипты и сводки защищены end-to-end encryption.",
+    "published_at": "2026-09-09T20:24:48+00:00",
+    "published_date": "2026-09-09",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Apple Watch’s new AI features are normalizing the idea that technology is always listening",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/09/apple-watchs-new-ai-features-are-normalizing-the-idea-that-technology-is-always-listening/"
+      }
+    ],
+    "keywords": [
+      "Apple Watch",
+      "Apple Intelligence",
+      "Audio Intelligence",
+      "Live Rewind",
+      "Siri Recap",
+      "on-device AI",
+      "wearables"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Массачусетс установил новые требования к энергоснабжению крупных дата-центров",
+    "organization": "Администрация губернатора Массачусетса; Gov. Maura Healey; операторы дата-центров",
+    "topic": "Регулирование энергоснабжения дата-центров, критичное для расширения AI-инфраструктуры",
+    "event_type": "executive order / infrastructure policy",
+    "status": "new",
+    "summary": "Администрация Массачусетса установила новые требования для дата-центров с пиковым спросом свыше 25 МВт: они должны обеспечить собственное энергоснабжение, соответствующее стандартам чистой энергии, либо финансировать новую генерацию поблизости или платить в специальный фонд. По разъяснению администрации, требование охватывает 100% потребления электроэнергии дата-центром; штат также приостановил заявки на новую налоговую льготу для дата-центров.",
+    "published_at": "2026-09-09T21:43:34+00:00",
+    "published_date": "2026-09-09",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Massachusetts hits data centers with new clean power rules",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/09/massachusetts-hits-data-centers-with-new-clean-power-rules/"
+      }
+    ],
+    "keywords": [
+      "AI infrastructure",
+      "data centers",
+      "clean power",
+      "Massachusetts",
+      "electricity",
+      "regulation"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "OpenAI назначила Пола Кристиано в совет OpenAI Foundation и комитет по безопасности",
+    "organization": "OpenAI; OpenAI Foundation; Paul Christiano; Alignment Research Center; CAISI; NIST",
+    "topic": "Governance и safety oversight frontier-AI разработчика",
+    "event_type": "board appointment",
+    "status": "new",
+    "summary": "OpenAI объявила о назначении исследователя alignment Пола Кристиано в совет OpenAI Foundation как наблюдателя без права голоса в совете OpenAI Group PBC. Он также войдёт в Safety and Security Committee, который осуществляет governance над практиками безопасности и защиты OpenAI.",
+    "published_at": "2026-09-09T22:25:22+00:00",
+    "published_date": "2026-09-09",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Paul Christiano joins OpenAI Foundation Board",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/paul-christiano-joins-openai-foundation-board/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Paul Christiano",
+      "OpenAI Foundation",
+      "Safety and Security Committee",
+      "AI alignment",
+      "governance",
+      "CAISI",
+      "NIST"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Suno выпустила музыкальные модели v6 и заявила обучение на лицензированных данных",
+    "organization": "Suno; Warner Music Group; BMG; Believe; TuneCore",
+    "topic": "Генеративная музыка, лицензирование training data и переход AI-моделей к сотрудничеству с правообладателями",
+    "event_type": "model release",
+    "status": "new",
+    "summary": "Suno представила v6 — новое семейство генеративных музыкальных моделей, которое, по её заявлению, обучалось на лицензированных данных Warner Music Group, BMG и Believe. Компания заявила, что v6 не использует данные, применявшиеся для обучения прежних моделей, выпустила базовую, experimental и ускоренную версии и планирует вывести старые модели из эксплуатации.",
+    "published_at": "2026-09-09T12:05:34+00:00",
+    "published_date": "2026-09-09",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Suno replaces its AI models with a new one trained on licensed music as copyright suits pile up",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/09/suno-replaces-its-ai-models-with-a-new-one-trained-on-licensed-music-as-copyright-suits-pile-up/"
+      }
+    ],
+    "keywords": [
+      "Suno v6",
+      "AI music",
+      "licensed data",
+      "copyright",
+      "Warner Music Group",
+      "BMG",
+      "Believe"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "Cymphony вышла из stealth с $30 млн на защиту доступов агентов ИИ",
+    "organization": "Cymphony; Sequoia Capital; SMBC Fin Atlas Beyond Fund; KKR; Syngenta",
+    "topic": "Enterprise AI-agent security, управление доступом и не-человеческими идентичностями",
+    "event_type": "funding round and company emergence",
+    "status": "new",
+    "summary": "TechCrunch сообщает, что Cymphony вышла из stealth с общим финансированием $30 млн, включая Series A на $25 млн от Sequoia и SMBC Fin Atlas Beyond Fund. Компания строит платформу для инвентаризации и контроля доступов сотрудников, AI-агентов и других не-человеческих идентичностей к корпоративным системам и данным.",
+    "published_at": "2026-09-09T13:00:00+00:00",
+    "published_date": "2026-09-09",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Sequoia doubles down on Cymphony as AI agents create new enterprise security risks",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/09/sequoia-doubles-down-on-cymphony-as-ai-agents-create-new-enterprise-security-risks/"
+      }
+    ],
+    "keywords": [
+      "Cymphony",
+      "Sequoia",
+      "agent security",
+      "nonhuman identity",
+      "enterprise security",
+      "AI agents",
+      "Series A",
+      "data access"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-010",
+    "section": "world",
+    "headline": "Runway объявила о присоединении команды Kinetix для исследований world models и робототехники",
+    "organization": "Runway; Kinetix",
+    "topic": "Acqui-hire/стратегическое усиление AI-видеогенерации, physically grounded motion и исследований world models для робототехники",
+    "event_type": "acqui-hire",
+    "status": "new",
+    "summary": "Runway сообщила, что команда парижской AI-лаборатории Kinetix присоединяется к компании. Runway связывает сделку с развитием physically grounded motion и video generation, исследованиями world models для робототехники и расширением своего парижского исследовательского хаба.",
+    "published_at": "2026-09-08T19:37:00+00:00",
+    "published_date": "2026-09-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "The Kinetix Team is Joining Runway",
+        "publisher": "Runway",
+        "url": "https://runway.com/news/company-news/kinetix-joins-runway"
+      }
+    ],
+    "keywords": [
+      "Runway",
+      "Kinetix",
+      "acqui-hire",
+      "world models",
+      "robotics",
+      "video generation",
+      "Paris"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  }
+]
