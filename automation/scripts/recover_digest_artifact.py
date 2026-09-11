@@ -70,6 +70,8 @@ def _sync_public_hooks() -> None:
     """Preserve historical monkeypatch hooks exposed by the public entrypoint."""
     current = globals()
     for name, value in list(current.items()):
+        if name.startswith("__") and name.endswith("__"):
+            continue
         if name in _DELEGATE_EXCLUSIONS or name.startswith("_PRE_"):
             continue
         if name in _pre.__dict__:
@@ -104,17 +106,19 @@ def _read_optional_json(path: Path) -> dict[str, Any] | None:
 def _coverage_may_require_editorial(
     evidence_root: Path, publication_date: str
 ) -> bool:
-    """Whether Coverage can still legitimately enter saved-research editorial.
+    """Whether Coverage positively proves a same-day text runtime obligation.
 
     This is a runtime-readiness decision only. Returning True installs/validates
     the text runtime; it does not itself authorize or execute an API call.
+    Missing optional Coverage diagnostics are not positive evidence and must not
+    downgrade an otherwise current full recovery artifact.
     """
     state_dir = evidence_root / "production-daily"
     report = _read_optional_json(state_dir / "coverage-audit.json")
     if report is None:
-        return True
+        return False
     if report.get("publication_date") not in {None, publication_date}:
-        return True
+        return False
     if (
         report.get("editorial_rerun_required") is True
         and report.get("editorial_rerun_performed") is not True
@@ -177,8 +181,8 @@ def choose_source(
             {
                 "status": "editorial-runtime-required",
                 "reason": (
-                    "selected artifact bundle has no completed current Coverage "
-                    "state, so Coverage may still require saved-research editorial completion"
+                    "selected artifact bundle has positive same-day Coverage "
+                    "evidence that saved-research editorial completion may still run"
                 ),
             }
         )
