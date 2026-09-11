@@ -1,0 +1,37 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-11",
+  "slug": "2026-09-11",
+  "title": "ИИ-Сводка на 11 сентября 2026",
+  "description": "AWS и Qualcomm закрепляют сотрудничество по кастомному кремнию, OpenAI ограничивает продажи Pro из-за спроса на Astra, а музыкальная и медиарынки ищут рабочую экономику генеративного ИИ.",
+  "published_at": "2026-09-11T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-11.png",
+  "topics": [
+    "Qualcomm",
+    "AWS",
+    "кастомные ИИ-чипы",
+    "оптические соединения",
+    "NVIDIA NVLink Fusion",
+    "d-Matrix",
+    "ChatGPT Pro",
+    "Astra",
+    "лицензированная ИИ-музыка",
+    "ElevenLabs",
+    "Pocket FM",
+    "генеративный аудиоконтент",
+    "Codex",
+    "ИИ для биоинформатики",
+    "GigaChat 3.5 Reasoning",
+    "открытые модели"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, business_investment_partnerships, china_asia_models, china_asia_integrations, legal_regulation."
+    }
+  ]
+}

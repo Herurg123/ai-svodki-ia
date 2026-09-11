@@ -1,0 +1,225 @@
+[
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Qualcomm и AWS договорились о разработке кастомных ИИ-чипов и оптических соединений",
+    "organization": "Qualcomm; Amazon; Amazon Web Services",
+    "topic": "Кастомный AI-кремний, оптические соединения и расширение инфраструктуры hyperscaler-дата-центров",
+    "event_type": "partnership_and_infrastructure_supply_agreement",
+    "status": "new",
+    "summary": "Qualcomm и AWS договорились совместно развивать несколько поколений кастомного кремния для крупных AI-дата-центров Amazon, а также высокопроизводительные оптические соединения. По данным IT Pro, соглашение включает оптические решения на базе SerDes и optical DSP Qualcomm с пропускной способностью до 1.6T и выше; Qualcomm также расширит использование AWS AI-инфраструктуры, включая Bedrock, для EDA-нагрузок.",
+    "published_at": "2026-09-09T10:33:59+00:00",
+    "published_date": "2026-09-09",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Qualcomm and Amazon team up on AI chip development, optical networking",
+        "publisher": "IT Pro",
+        "url": "https://www.itpro.com/infrastructure/qualcomm-and-amazon-team-up-on-ai-chip-development-optical-networking"
+      }
+    ],
+    "keywords": [
+      "Qualcomm",
+      "AWS",
+      "Amazon",
+      "custom silicon",
+      "AI data centers",
+      "optical networking",
+      "SerDes",
+      "optical DSP",
+      "1.6T",
+      "inference infrastructure"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-015",
+    "section": "world",
+    "headline": "d-Matrix подключит будущие inference-ускорители к экосистеме NVIDIA NVLink Fusion",
+    "organization": "NVIDIA",
+    "topic": "d-Matrix Adopts NVIDIA NVLink Fusion for Rack-Scale XPU Deployment",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "AI inference chipmaker d-Matrix today announced it will use NVLink Fusion to connect its next-generation Raptor XPUs to NVIDIA’s AI infrastructure platform — joining a growing roster of partners building on the NVIDIA AI platform. By connecting Raptor to NVIDIA NVLink scale-up and Spectrum-X scale-out networking, the NVIDIA MGX rack architecture and the broader NVIDIA […]",
+    "published_at": "2026-09-10T13:00:21+00:00",
+    "published_date": "2026-09-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "d-Matrix Adopts NVIDIA NVLink Fusion for Rack-Scale XPU Deployment",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/d-matrix-nvlink-fusion"
+      }
+    ],
+    "keywords": [
+      "d-Matrix",
+      "Adopts",
+      "NVIDIA",
+      "NVLink",
+      "Fusion",
+      "Rack-Scale",
+      "XPU",
+      "Deployment"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Обновление: OpenAI временно остановила новые подписки ChatGPT Pro из-за спроса на Astra",
+    "organization": "OpenAI; ChatGPT; Astra",
+    "topic": "Ограничение доступа к дорогому потребительскому AI-тарифу вследствие инфраструктурной нагрузки после запуска frontier-модели Astra",
+    "event_type": "product availability and infrastructure capacity restriction",
+    "status": "update",
+    "summary": "OpenAI временно отключила оформление новых подписок на тариф ChatGPT Pro за $200 в месяц. По данным TechCrunch, руководитель продуктов OpenAI Тибо Соттьо объяснил меру беспрецедентным спросом на Astra и нагрузкой на инфраструктуру; API, Go и Plus остаются доступными.",
+    "published_at": "2026-09-10T20:59:51+00:00",
+    "published_date": "2026-09-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI puts Pro subscriptions on hold due to Astra demand",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/10/openai-puts-pro-subscriptions-on-hold-due-to-astra-demand/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ChatGPT Pro",
+      "Astra",
+      "subscriptions",
+      "capacity",
+      "infrastructure demand"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Universal Music Group и ElevenLabs создадут платформу для лицензированных ИИ-ремиксов",
+    "organization": "Universal Music Group; ElevenLabs",
+    "topic": "Генеративная музыка, лицензирование каталога и потребительская AI-платформа для ремиксов, mashup-работ и новых версий треков",
+    "event_type": "partnership_product_announcement",
+    "status": "new",
+    "summary": "Universal Music Group объявила о многолетнем лицензионном соглашении с ElevenLabs для разработки отдельной AI-музыкальной платформы. По данным The Verge, пользователи смогут создавать ремиксы, mashup-композиции и новые интерпретации треков из каталога UMG, а артисты смогут выбирать, участвовать ли в платформе.",
+    "published_at": "2026-09-10T15:38:19+00:00",
+    "published_date": "2026-09-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Universal Music is launching an AI music platform with ElevenLabs",
+        "publisher": "The Verge",
+        "url": "https://www.theverge.com/ai-artificial-intelligence/993465/universal-music-elevenlabs-ai"
+      }
+    ],
+    "keywords": [
+      "Universal Music Group",
+      "UMG",
+      "ElevenLabs",
+      "AI music",
+      "licensed music",
+      "remixes",
+      "mashups",
+      "music generation"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Pocket FM связала рост выручки с почти полным переходом нового аудиоконтента на ИИ",
+    "organization": "Pocket FM; Pocket Entertainment",
+    "topic": "AI-driven media business: масштабирование генеративного производства аудиосериалов, экономика контента и выручка индийской платформы",
+    "event_type": "business metrics and AI content-production strategy",
+    "status": "new",
+    "summary": "Индийская аудиоплатформа Pocket FM заявила, что удвоила годовой revenue run rate до $500 млн. По данным, переданным CEO TechCrunch, ИИ обеспечивает 93% всего каталога и 99% нового контента; компания использует собственные модели для творческого письма и синтеза речи и оценивает удешевление производства примерно в 80 раз.",
+    "published_at": "2026-09-10T17:45:00+00:00",
+    "published_date": "2026-09-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "India's Pocket FM doubles revenue run rate to $500M as AI powers 93% of audio content",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/10/indias-pocket-fm-doubles-revenue-run-rate-to-500m-as-ai-powers-93-of-audio-content/"
+      }
+    ],
+    "keywords": [
+      "Pocket FM",
+      "India",
+      "generative AI",
+      "audio",
+      "text-to-speech",
+      "content production",
+      "revenue",
+      "media"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-010",
+    "section": "world",
+    "headline": "OpenAI показала использование Codex и ChatGPT в поиске антимикробных молекул",
+    "organization": "OpenAI; César de la Fuente Lab; ChatGPT; Codex",
+    "topic": "Применение генеративного ИИ и coding-агентов в биоинформатике и раннем поиске кандидатов на антимикробные препараты",
+    "event_type": "applied_research_product_use_case",
+    "status": "new",
+    "summary": "OpenAI опубликовала кейс лаборатории Сесара де ла Фуэнте, которая использует ChatGPT и Codex наряду с собственными deep-learning моделями для работы с геномными и белковыми наборами данных, формулирования гипотез, написания кода и анализа результатов при поиске антимикробных кандидатов.",
+    "published_at": "2026-09-10T16:00:00+00:00",
+    "published_date": "2026-09-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "How a researcher uses Codex and ChatGPT to search for new antimicrobial molecules",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/using-codex-chatgpt-to-search-for-new-antimicrobials/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ChatGPT",
+      "Codex",
+      "antimicrobials",
+      "drug discovery",
+      "biology",
+      "genomics",
+      "César de la Fuente"
+    ],
+    "geography": "world",
+    "category": "research"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "russia",
+    "headline": "Сбер представил открытую reasoning-модель GigaChat 3.5 Reasoning",
+    "organization": "Сбер; GigaChat",
+    "topic": "Открытая российская языковая модель с режимом рассуждений, доступом в GigaChat и планируемым API для бизнеса",
+    "event_type": "model_release",
+    "status": "new",
+    "summary": "Сбер представил GigaChat 3.5 Reasoning — модель с режимом последовательного рассуждения. По данным компании, модель станет доступна пользователям GigaChat, её исходный код будет опубликован по лицензии MIT, а для бизнеса планируется API-доступ.",
+    "published_at": "2026-09-10T09:00:00+03:00",
+    "published_date": "2026-09-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "«Сбер» выпустил первую в России открытую модель ИИ с режимом рассуждений",
+        "publisher": "Ведомости",
+        "url": "https://www.vedomosti.ru/technology/news/2026/09/10/1227662-sber-vipustil-ii-s-rezhimom?from=newsline"
+      }
+    ],
+    "keywords": [
+      "Сбер",
+      "GigaChat 3.5 Reasoning",
+      "reasoning",
+      "open source",
+      "MIT",
+      "API",
+      "российские модели"
+    ],
+    "geography": "russia",
+    "category": "models"
+  }
+]
