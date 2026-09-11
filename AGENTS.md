@@ -26,27 +26,37 @@ Before declaring a material change complete:
 
 ## GitHub change workflow
 
-Do not commit project changes directly to `main`. Use a dedicated branch and a
-pull request, run CI, and inspect the resulting diff before merge.
+For assistant/project changes, use a dedicated branch and a pull request, run CI,
+and inspect the resulting diff before merge unless the project owner explicitly
+instructs otherwise for the current task.
 
 A pull request must not be merged merely because checks are green or because a
 previous message asked to continue. Merge only after the project owner gives a
 separate explicit merge command for that prepared PR. Production recovery or
 publication that depends on the change must wait for that merge command.
 
-`main` must be protected by the canonical repository ruleset described in
-`automation/config/main-branch-ruleset.json`; operator activation is documented
-in `automation/MAIN_PROTECTION.md`. Presence of the JSON file alone does not
-activate GitHub settings. `Required PR Gate` is the only required status check.
-Do not make path-filtered Main CI or Video CI directly required, because a skipped
-required workflow remains pending.
+The technical ability to push directly to `main` is an accepted repository state.
+Absence of branch protection or an active repository ruleset, `protected: false`,
+or the mere fact that a direct push is technically possible must **not** by itself
+be classified as a defect, security incident, production risk, technical debt or
+audit finding. Do not recommend enabling branch protection solely to eliminate
+direct-push capability.
 
-The only allowed direct pushes to protected `main` are the validated publication
-commit in `daily-production.yml` and the validated retention commit in
-`repository-cleanup.yml`. Both must use
+`automation/config/main-branch-ruleset.json` and `automation/MAIN_PROTECTION.md`
+remain an optional hardening reference if the project owner later chooses to
+activate GitHub-side enforcement. Their presence in Git does not imply that such
+enforcement is required. If that optional ruleset is activated, `Required PR Gate`
+remains the only required status check; do not make path-filtered Main CI or Video
+CI directly required, because a skipped required workflow remains pending.
+
+The validated publication commit in `daily-production.yml` and the validated
+retention commit in `repository-cleanup.yml` remain intentional automated direct
+pushes to `main`. Their credential boundary is unchanged: both use
 `automation/scripts/push_protected_main.sh` with the dedicated
-`MAIN_PUSH_DEPLOY_KEY` secret. Do not expose that secret to any other workflow or
-job, and do not grant broad GitHub Actions/admin bypass instead.
+`MAIN_PUSH_DEPLOY_KEY` when configured. Do not expose that secret to any other
+workflow or job. This narrow automated-writer credential rule does not make
+manual direct-push capability a project defect; the normal assistant change
+workflow above still uses PRs unless the owner explicitly says otherwise.
 
 Those two `main` writers must also share one non-cancelling GitHub Actions
 concurrency group. A delayed retention run and the paid daily production run must
