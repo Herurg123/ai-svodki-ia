@@ -54,6 +54,26 @@ _PRE_CHOOSE_SOURCE = _pre.choose_source
 _PRE_RESTORE_MERGED = _pre._base.restore_merged_coverage_research
 _PRE_RESTORE_AUDIT = _pre._base.restore_prior_coverage_audit
 _ACTIVE_EVIDENCE_ROOT: Path | None = None
+_DELEGATE_EXCLUSIONS = {
+    "main",
+    "recover",
+    "choose_source",
+    "_sync_p0",
+    "_sync_public_hooks",
+    "_restore_merged_same_bundle",
+    "_restore_audit_same_bundle",
+    "_restore_durable_p0_state",
+}
+
+
+def _sync_public_hooks() -> None:
+    """Preserve historical monkeypatch hooks exposed by the public entrypoint."""
+    current = globals()
+    for name, value in list(current.items()):
+        if name in _DELEGATE_EXCLUSIONS or name.startswith("_PRE_"):
+            continue
+        if name in _pre.__dict__:
+            setattr(_pre, name, value)
 
 
 def _selected_evidence_root(source_dir: Path, recovery_root: Path) -> Path:
@@ -120,6 +140,7 @@ def choose_source(
     publication_date: str,
 ) -> tuple[Path, str, list[dict[str, Any]]]:
     global _ACTIVE_EVIDENCE_ROOT
+    _sync_public_hooks()
     source_dir, mode, diagnostics = _PRE_CHOOSE_SOURCE(
         recovery_root, publication_date
     )
@@ -214,6 +235,7 @@ def _restore_audit_same_bundle(
 
 
 def _sync_p0() -> None:
+    _sync_public_hooks()
     _pre.choose_source = choose_source
     _pre._sync_base()
     _pre._base.restore_merged_coverage_research = _restore_merged_same_bundle
@@ -221,12 +243,34 @@ def _sync_p0() -> None:
     _pre._base.restore_completed_coverage_audit = _restore_audit_same_bundle
 
 
+def _bundle_has_p0_journal(recovery_root: Path, publication_date: str) -> bool:
+    name = f"editorial-repair-{publication_date}.json"
+    return any(path.is_file() for path in recovery_root.rglob(name))
+
+
 def _restore_durable_p0_state(
-    report: dict[str, Any], publication_date: str, report_path: Path
+    report: dict[str, Any],
+    publication_date: str,
+    report_path: Path,
+    recovery_root: Path,
 ) -> dict[str, Any]:
     evidence_root = _ACTIVE_EVIDENCE_ROOT
     if evidence_root is None:
-        raise RecoveryError("selected recovery evidence root was not recorded")
+        # Historical and ordinary recovery artifacts predate the P0 journal. Do
+        # not make those fixtures unusable merely because they have nothing P0
+        # to restore. If a P0 journal is actually present, however, source
+        # identity is mandatory and recovery remains fail-closed.
+        if _bundle_has_p0_journal(recovery_root, publication_date):
+            raise RecoveryError("selected recovery evidence root was not recorded")
+        return {
+            "repair_state": {
+                "status": "not_present",
+                "copied": [],
+                "publication_date": publication_date,
+            },
+            "persisted_merged_research": None,
+        }
+
     state_dir = report_path.parent.resolve()
     try:
         repair = restore_state_from_bundle(
@@ -281,7 +325,7 @@ def recover(
         image_target_dir,
     )
     report["editorial_repair_recovery"] = _restore_durable_p0_state(
-        report, publication_date, report_path
+        report, publication_date, report_path, recovery_root
     )
     write_json(report_path, report)
     return report
@@ -319,7 +363,7 @@ def main() -> int:
         "agency_discovery_rescue="
         f"{report.get('agency_discovery_rescue_recovery', {}).get('status')}; "
         "editorial_repair_state="
-        f"{report.get('editorial_repair_recovery', {}).get('repair_state', {}).get('copied')}"
+        f"{report.get('editorial_repair_recovery', {}).get('repair_state', {}).get('status')}"
     )
     return 0
 
