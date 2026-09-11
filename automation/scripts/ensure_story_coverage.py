@@ -80,6 +80,10 @@ _DELEGATE_EXCLUSIONS = {
     "_sync_p0",
     "_sync_public_hooks",
     "_pull_runtime_state",
+    # Runtime diagnostics flow only outward. Pushing a stale value from this
+    # public compatibility seam back into v8 can erase the current sentinel.
+    "_LAST_RECALL_SENTINEL",
+    "_LAST_AGENCY_RESCUE",
 }
 
 
@@ -333,6 +337,24 @@ def _pull_runtime_state() -> None:
 def _sync_p0() -> None:
     _sync_public_hooks()
     _pre.rerun_editorial = rerun_editorial
+
+    # Private recall-sentinel hooks are not materialized in the Retrieval
+    # Quality wrapper's __dict__; they are exposed through __getattr__. Generic
+    # hook copying therefore cannot see them. Wire the two historical public
+    # override points explicitly all the way to v8/base before delegation.
+    base_execute = globals().get("_BASE_EXECUTE_AUDIT_PLAN")
+    if base_execute is not None:
+        _pre._BASE_EXECUTE_AUDIT_PLAN = base_execute
+        if hasattr(_pre, "_v8"):
+            _pre._v8._BASE_EXECUTE_AUDIT_PLAN = base_execute
+    transport = globals().get("run_audit_request")
+    if transport is not None:
+        _pre.run_audit_request = transport
+        if hasattr(_pre, "_v8"):
+            _pre._v8.run_audit_request = transport
+            if hasattr(_pre._v8, "_base"):
+                _pre._v8._base.run_audit_request = transport
+
     if hasattr(_pre, "_v8"):
         _pre._v8.rerun_editorial = rerun_editorial
     if hasattr(_pre, "_sync_direct_hooks"):
