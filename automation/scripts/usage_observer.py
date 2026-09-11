@@ -2,11 +2,6 @@
 
 Never retries, changes arguments, or stores prompts, credentials or response text.
 The directory is opt-in so historical imports and offline callers remain inert.
-
-Coverage-triggered editorial repair is the one deliberate exception to the
-"observer only" role: it is guarded by a durable at-most-once journal. The
-journal stores only hashes of request arguments and the authoritative editorial
-response needed for crash-safe replay; it never stores the request prompt.
 """
 from __future__ import annotations
 
@@ -17,16 +12,6 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
-
-from editorial_repair_journal import (
-    EditorialRepairJournalError,
-    begin_request,
-    mark_failed_terminal,
-    prepare_and_check_replay,
-    repair_context_from_argv,
-    request_binding_sha256,
-    save_response,
-)
 
 
 def plain(value: Any) -> Any:
@@ -77,67 +62,14 @@ def _save(path: Path, record: dict[str, Any]) -> None:
               file=sys.stderr)
 
 
-def _editorial_repair_callback_without_retries(callback: Callable[..., Any]) -> Callable[..., Any]:
-    """Clone the bound OpenAI client with transport auto-retries disabled.
-
-    Once a repair request is marked ``request_started``, retrying it after an
-    exception would violate at-most-once semantics because provider outcome can
-    be unknowable. If the client cannot be cloned safely, fail before the
-    request is journaled as started.
-    """
-    resource = getattr(callback, "__self__", None)
-    client = getattr(resource, "_client", None)
-    with_options = getattr(client, "with_options", None)
-    if not callable(with_options):
-        raise EditorialRepairJournalError(
-            "cannot create no-retry OpenAI client for editorial repair"
-        )
-    strict_client = with_options(max_retries=0)
-    responses = getattr(strict_client, "responses", None)
-    strict_callback = getattr(responses, "create", None)
-    if not callable(strict_callback):
-        raise EditorialRepairJournalError(
-            "no-retry OpenAI client does not expose responses.create"
-        )
-    return strict_callback
-
-
 def call_with_usage(
     stage: str, callback: Callable[..., Any], *, usage_model: str | None = None,
     usage_kind: str = "text", usage_identity: str | None = None,
     usage_metadata: dict[str, Any] | None = None, **kwargs: Any,
 ) -> Any:
     directory = os.environ.get("AI_DIGEST_USAGE_DIR")
-    repair_context = repair_context_from_argv(
-        stage,
-        kwargs,
-        argv=sys.argv,
-        usage_dir=directory,
-    )
-    if repair_context is not None:
-        binding = request_binding_sha256(kwargs)
-        replay = prepare_and_check_replay(repair_context, binding_sha256=binding)
-        if replay is not None:
-            return replay
-        strict_callback = _editorial_repair_callback_without_retries(callback)
-        begin_request(repair_context, binding_sha256=binding)
-        callback = strict_callback
-
     if not directory:
-        try:
-            response = callback(**kwargs)
-        except BaseException as exc:
-            if repair_context is not None:
-                mark_failed_terminal(
-                    repair_context, failure_type=type(exc).__name__
-                )
-            raise
-        if repair_context is not None:
-            save_response(
-                repair_context, binding_sha256=binding, response=response
-            )
-        return response
-
+        return callback(**kwargs)
     attempt = uuid.uuid4().hex
     if usage_metadata is not None:
         usage_metadata["attempt_id"] = attempt
@@ -157,21 +89,9 @@ def call_with_usage(
     try:
         response = callback(**kwargs)
     except BaseException as exc:
-        if repair_context is not None:
-            mark_failed_terminal(
-                repair_context, failure_type=type(exc).__name__
-            )
         record.update(state="outcome_unknown", error_type=type(exc).__name__)
         _save(path, record)
         raise
-
-    if repair_context is not None:
-        # This fsynced response is authoritative before any later accounting or
-        # artifact processing. A restart can replay it without another API call.
-        save_response(
-            repair_context, binding_sha256=binding, response=response
-        )
-
     try:
         transport = field(response, "_transport", {}) or {}
         record.update(
