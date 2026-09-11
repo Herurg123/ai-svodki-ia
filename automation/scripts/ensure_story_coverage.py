@@ -56,6 +56,13 @@ _PRE_RERUN = _pre.rerun_editorial
 _PRE_EXECUTE_AUDIT_PLAN = _pre.execute_audit_plan
 _PRE_PRIMARY_SEARCH_DIAGNOSTICS = _pre._primary_search_diagnostics
 _PRE_FINALIZE_QUALITY_REPORT = _pre._finalize_quality_report
+_PRE_PREPARE_PRIOR_FOR_QUALITY = _pre._prepare_prior_for_quality
+# This private hook is intentionally materialized because historical tests and
+# downstream wrappers monkeypatch it on the public module. Leaving it behind
+# __getattr__ makes unittest.mock restore/probe the compatibility chain itself.
+_BASE_EXECUTE_AUDIT_PLAN = _pre._BASE_EXECUTE_AUDIT_PLAN
+_LAST_RECALL_SENTINEL = getattr(_pre, "_LAST_RECALL_SENTINEL", None)
+_LAST_AGENCY_RESCUE = getattr(_pre, "_LAST_AGENCY_RESCUE", None)
 _ATTEMPTED_THIS_PROCESS = False
 
 # Stable Coverage transport remains OpenAI(..., max_retries=2). The P0 repair
@@ -69,6 +76,7 @@ _DELEGATE_EXCLUSIONS = {
     "execute_audit_plan",
     "_primary_search_diagnostics",
     "_finalize_quality_report",
+    "_prepare_prior_for_quality",
     "_sync_p0",
     "_sync_public_hooks",
     "_pull_runtime_state",
@@ -305,6 +313,11 @@ def _sync_public_hooks() -> None:
     """Propagate public monkeypatch/source-inspection hooks into the preserved module."""
     current = globals()
     for name, value in list(current.items()):
+        # Never copy module protocol hooks into the preserved module. In
+        # particular, copying this wrapper's __getattr__ there creates a
+        # recursive compatibility loop when unittest.mock probes private hooks.
+        if name.startswith("__") and name.endswith("__"):
+            continue
         if name in _DELEGATE_EXCLUSIONS or name.startswith("_PRE_"):
             continue
         if name in _pre.__dict__:
@@ -330,6 +343,14 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
     _sync_p0()
     try:
         return _PRE_EXECUTE_AUDIT_PLAN(*args, **kwargs)
+    finally:
+        _pull_runtime_state()
+
+
+def _prepare_prior_for_quality(*args: Any, **kwargs: Any) -> Any:
+    _sync_p0()
+    try:
+        return _PRE_PREPARE_PRIOR_FOR_QUALITY(*args, **kwargs)
     finally:
         _pull_runtime_state()
 
