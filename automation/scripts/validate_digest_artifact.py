@@ -1,271 +1,95 @@
 #!/usr/bin/env python3
-"""Public digest-artifact validator with shared-source story mapping.
+"""P0 publication guard layered over the established artifact validator.
 
-The established validator remains byte-for-byte in
-``validate_digest_artifact_base.py``. This entry point replaces only the final
-story/source identity check so a URL legitimately shared by multiple research
-candidates cannot make an otherwise explicit ``candidate_id`` mapping
-ambiguous. It also rejects a narrower provenance conflict: a URL may not be used
-as a final source for one candidate when that same URL is identity-bearing
-(primary/event-origin/source-publication) for another candidate but only
-supporting evidence for the expected candidate.
+The pre-P0 validator is retained verbatim in
+``validate_digest_artifact_pre_p0.py``. After all established artifact checks
+pass, this wrapper refuses publication while Mandatory Coverage still has an
+unvalidated editorial repair/completion obligation. A saved response counts as
+safe only after it exactly matches the final raw editorial artifact.
 
-Public article headlines may contain the required ``Meta*`` display marker while
-service JSON keeps the canonical organization name ``Meta``. Story identity
-comparison therefore strips only that exact display marker before comparing the
-HTML headline with ``stories[].headline``; all other headline differences remain
-fail-closed.
-
-The split is an active compatibility seam and should be consolidated on the next
-material artifact-validator refactor or after 2026-10-03.
+Compatibility seam removal target: after 2026-10-03, once the consolidated
+validator has preserved all current public import and source-inspection hooks.
 """
 from __future__ import annotations
 
 import importlib.util
-import re
+import json
 import sys
 from pathlib import Path
 from typing import Any
 
-_BASE_PATH = Path(__file__).with_name("validate_digest_artifact_base.py")
-_BASE_SPEC = importlib.util.spec_from_file_location(
-    "validate_digest_artifact_base", _BASE_PATH
+from editorial_repair_guard import EditorialRepairError, publication_safe
+
+_PRE_PATH = Path(__file__).with_name("validate_digest_artifact_pre_p0.py")
+_PRE_SPEC = importlib.util.spec_from_file_location(
+    "validate_digest_artifact_pre_p0", _PRE_PATH
 )
-assert _BASE_SPEC and _BASE_SPEC.loader
-_base = importlib.util.module_from_spec(_BASE_SPEC)
-sys.modules[_BASE_SPEC.name] = _base
-_BASE_SPEC.loader.exec_module(_base)
+assert _PRE_SPEC and _PRE_SPEC.loader
+_pre = importlib.util.module_from_spec(_PRE_SPEC)
+sys.modules[_PRE_SPEC.name] = _pre
+_PRE_SPEC.loader.exec_module(_pre)
 
-for _name in dir(_base):
+for _name in dir(_pre):
     if not _name.startswith("_"):
-        globals()[_name] = getattr(_base, _name)
-
-_META_DISPLAY_MARKER_RE = re.compile(r"(?<!\w)Meta\*(?![\w*])")
+        globals()[_name] = getattr(_pre, _name)
 
 
-def headline_identity_text(value: str) -> str:
-    """Normalize only the public Meta footnote marker for story identity checks."""
-
-    return _META_DISPLAY_MARKER_RE.sub("Meta", normalize_space(value))
+def __getattr__(name: str) -> Any:
+    return getattr(_pre, name)
 
 
-def candidate_identity_urls(candidate: Any) -> set[str]:
-    """Return URLs that carry candidate identity, not merely supporting evidence."""
-
-    if not isinstance(candidate, dict):
-        return set()
-
-    urls: set[str] = set()
-    primary = candidate.get("primary_source")
-    if isinstance(primary, dict):
-        primary_url = str(primary.get("url") or "").strip()
-        if primary_url:
-            urls.add(primary_url)
-
-    for field in ("event_origin_url", "source_publication_url"):
-        value = candidate.get(field)
-        if isinstance(value, str) and value.strip():
-            urls.add(value.strip())
-
-    return urls
+def _arg_value(flag: str) -> str | None:
+    for index, value in enumerate(sys.argv):
+        if value == flag and index + 1 < len(sys.argv):
+            return sys.argv[index + 1]
+        prefix = flag + "="
+        if value.startswith(prefix):
+            return value[len(prefix):]
+    return None
 
 
-def validate_story_mapping(
-    article_html: str,
-    candidates_payload: Any,
-    selection_payload: Any,
-    stories_payload: Any,
-    report: dict[str, Any],
-) -> None:
-    """Validate HTML stories against explicit story IDs and final story sources.
-
-    Candidate research may legitimately reuse one source URL across several
-    candidates. Identity therefore comes from the already-validated
-    ``selection.selected_candidate_ids`` / ``stories[].candidate_id`` order,
-    while ``stories[].sources`` owns the exact source set selected for each final
-    story. Raw candidate URLs remain a provenance boundary: final story sources
-    still have to come from the expected candidate.
-
-    A shared supporting URL remains valid unless another candidate in the full
-    research pool owns that URL as primary/event-origin/source-publication
-    identity and the expected candidate does not. That asymmetric identity
-    conflict is rejected even when the contaminated URL was copied into the
-    expected candidate's supporting_sources.
-    """
-
-    candidates = json_list(candidates_payload, "candidates")
-    stories = json_list(stories_payload, "stories")
-    selected_raw = (
-        selection_payload.get("selected_candidate_ids")
-        if isinstance(selection_payload, dict)
-        else None
-    )
-    if not isinstance(selected_raw, list):
-        issue(
-            report,
-            "errors",
-            "selected_ids_missing",
-            "selection.json не содержит selected_candidate_ids[].",
-        )
+def _record_guard_failure(report_path: Path | None, error: Exception) -> None:
+    if report_path is None:
         return
-
-    selected_ids = [str(value) for value in selected_raw]
-    story_ids = [
-        value for value in (story_id(story) for story in stories) if value is not None
-    ]
-    if len(story_ids) != len(stories):
-        issue(
-            report,
-            "errors",
-            "story_candidate_id",
-            "Каждая запись stories.json должна содержать candidate_id.",
+    try:
+        payload: dict[str, Any] = {}
+        if report_path.is_file():
+            loaded = json.loads(report_path.read_text(encoding="utf-8"))
+            if isinstance(loaded, dict):
+                payload = loaded
+        payload["status"] = "error"
+        payload["editorial_repair_guard"] = {
+            "status": "error",
+            "error_type": type(error).__name__,
+            "error": str(error),
+        }
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
         )
-    if story_ids != selected_ids:
-        issue(
-            report,
-            "errors",
-            "story_order",
-            "Порядок candidate_id в stories.json не совпадает с "
-            f"selected_candidate_ids: {story_ids} != {selected_ids}.",
-        )
-
-    candidate_map: dict[str, set[str]] = {}
-    identity_owners: dict[str, set[str]] = {}
-    for candidate in candidates:
-        cid = candidate_id(candidate)
-        if cid is None:
-            issue(
-                report,
-                "errors",
-                "candidate_id",
-                "У кандидата отсутствует candidate_id/id.",
-            )
-            continue
-        if cid in candidate_map:
-            issue(
-                report,
-                "errors",
-                "duplicate_candidate_id",
-                f"Повторяющийся candidate_id: {cid}.",
-            )
-        candidate_map[cid] = recursive_urls(candidate)
-        for url in candidate_identity_urls(candidate):
-            identity_owners.setdefault(url, set()).add(cid)
-
-    missing = [cid for cid in selected_ids if cid not in candidate_map]
-    if missing:
-        issue(
-            report,
-            "errors",
-            "selected_candidate_missing",
-            f"Выбранные кандидаты отсутствуют в candidates.json: {missing}.",
-        )
-
-    inspector = ArticleInspector()
-    inspector.feed(article_html)
-    inspector.close()
-    if len(inspector.stories) != len(selected_ids):
-        issue(
-            report,
-            "errors",
-            "html_story_count",
-            "Число сюжетов <h3> "
-            f"({len(inspector.stories)}) не совпадает с selected_candidate_ids "
-            f"({len(selected_ids)}).",
-        )
-        return
-
-    for index, block in enumerate(inspector.stories):
-        expected_id = selected_ids[index]
-        story = (
-            stories[index]
-            if index < len(stories) and isinstance(stories[index], dict)
-            else {}
-        )
-
-        expected_headline = normalize_space(str(story.get("headline") or ""))
-        actual_headline = normalize_space(str(block.headline or ""))
-        if not expected_headline:
-            issue(
-                report,
-                "errors",
-                "story_headline_missing",
-                f"У stories.json[{index}] отсутствует headline для {expected_id}.",
-            )
-        elif headline_identity_text(actual_headline) != expected_headline:
-            issue(
-                report,
-                "errors",
-                "story_headline_order",
-                f"HTML-сюжет #{index + 1} не соответствует {expected_id}: "
-                f"{actual_headline!r} != {expected_headline!r}.",
-            )
-
-        story_urls = recursive_urls(story.get("sources", []))
-        if not story_urls:
-            issue(
-                report,
-                "errors",
-                "story_sources_missing",
-                f"У stories.json[{index}] для {expected_id} нет source URL.",
-            )
-            continue
-
-        candidate_urls = candidate_map.get(expected_id, set())
-        foreign_story_urls = sorted(story_urls - candidate_urls)
-        if foreign_story_urls:
-            issue(
-                report,
-                "errors",
-                "story_source_not_candidate",
-                f"Источники stories.json для {expected_id} отсутствуют у этого "
-                f"кандидата: {foreign_story_urls}.",
-            )
-
-        identity_conflicts: list[str] = []
-        for url in sorted(story_urls):
-            owners = identity_owners.get(url, set())
-            if owners and expected_id not in owners:
-                rendered_owners = ", ".join(sorted(owners))
-                identity_conflicts.append(f"{url} -> {rendered_owners}")
-        if identity_conflicts:
-            issue(
-                report,
-                "errors",
-                "story_source_identity_conflict",
-                f"Источники stories.json для {expected_id} несут identity другого "
-                "кандидата, но не текущего: "
-                + "; ".join(identity_conflicts)
-                + ".",
-            )
-
-        block_urls = set(block.links)
-        if not block_urls:
-            issue(
-                report,
-                "errors",
-                "story_source_links",
-                f"У сюжета «{block.headline}» нет цитируемых ссылок для сопоставления.",
-            )
-            continue
-
-        unexpected_links = sorted(block_urls - story_urls)
-        if unexpected_links:
-            issue(
-                report,
-                "errors",
-                "article_story_source_mismatch",
-                f"Сюжет «{block.headline}» содержит ссылки, которых нет в "
-                f"stories.json для {expected_id}: {unexpected_links}.",
-            )
-
-
-_base.validate_story_mapping = validate_story_mapping
+    except Exception:
+        # Validation already failed. Diagnostics must never convert failure into
+        # publication permission.
+        pass
 
 
 def main() -> int:
-    _base.validate_story_mapping = validate_story_mapping
-    return int(_base.main())
+    result = int(_pre.main())
+    if result != 0:
+        return result
+    artifact_value = _arg_value("--artifact-dir")
+    if not artifact_value:
+        return result
+    report_value = _arg_value("--report")
+    report_path = Path(report_value).resolve() if report_value else None
+    try:
+        publication_safe(Path(artifact_value))
+    except EditorialRepairError as exc:
+        _record_guard_failure(report_path, exc)
+        print(f"Digest artifact validation failed: {exc}", file=sys.stderr)
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

@@ -7,6 +7,11 @@
 [`ARCHITECTURE.md`](ARCHITECTURE.md). Этот README остаётся короткой навигационной
 картой и не должен повторять подробные retrieval/recovery контракты.
 
+Активный P0-контракт durable Coverage editorial-repair recovery после инцидента
+11 сентября 2026 года отдельно зафиксирован в
+[`P0_EDITORIAL_REPAIR_ARCHITECTURE.md`](P0_EDITORIAL_REPAIR_ARCHITECTURE.md).
+Он не меняет search budgets, Freshness или editorial ranking.
+
 ## Карта каталога
 
 Полный наблюдаемый расход выпуска: `scripts/usage_observer.py` сохраняет безопасные
