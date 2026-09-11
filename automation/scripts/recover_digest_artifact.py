@@ -2,19 +2,35 @@
 """P0 recovery guard layered over the established recovery wrapper.
 
 The pre-P0 wrapper is retained verbatim in ``recover_digest_artifact_pre_p0.py``.
-This seam narrows recovery evidence to the same artifact bundle that supplied
-``candidates.json`` and makes unresolved Coverage editorial repair force
-``partial_editorial`` mode, which in turn makes the pinned text runtime available.
+This seam keeps all existing retrieval-quality and agency-rescue recovery behavior
+while adding three fail-closed rules:
+
+* Coverage evidence must come from the same extracted artifact bundle that
+  supplied the selected dated artifact;
+* a full artifact is downgraded to ``partial_editorial`` whenever its saved
+  Coverage state can still require editorial completion, which makes the
+  workflow install/validate the pinned text runtime without repeating research;
+* durable repair journal/response/merged research are restored only from that
+  same selected bundle.
+
+Compatibility seam removal target: after 2026-10-03, once saved-artifact recovery
+fixtures prove the consolidated implementation preserves public import hooks.
 """
 from __future__ import annotations
 
 import copy
 import importlib.util
+import json
+import shutil
 import sys
 from pathlib import Path
 from typing import Any
 
-from editorial_repair_journal import recovery_has_pending_editorial_repair
+from editorial_repair_guard import (
+    EditorialRepairError,
+    recovery_pending,
+    restore_state_from_bundle,
+)
 
 _PRE_PATH = Path(__file__).with_name("recover_digest_artifact_pre_p0.py")
 _PRE_SPEC = importlib.util.spec_from_file_location(
@@ -49,10 +65,54 @@ def _selected_evidence_root(source_dir: Path, recovery_root: Path) -> Path:
         raise RecoveryError(
             "Selected recovery source is outside the requested recovery root"
         ) from exc
-    # The artifact upload stores preview/YYYY-MM-DD and preview/production-daily
-    # as siblings. Evidence used to continue this source must come from that
-    # exact preview bundle, never from another same-date subtree.
+    # Artifact uploads store preview/YYYY-MM-DD and preview/production-daily as
+    # siblings. Any Coverage/journal evidence used to continue this source must
+    # come from that exact preview bundle, never a second same-date subtree.
     return source.parent
+
+
+def _read_optional_json(path: Path) -> dict[str, Any] | None:
+    if not path.is_file():
+        return None
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return value if isinstance(value, dict) else None
+
+
+def _coverage_may_require_editorial(
+    evidence_root: Path, publication_date: str
+) -> bool:
+    """Whether Coverage can still legitimately enter saved-research editorial.
+
+    This is a runtime-readiness decision only. Returning True installs/validates
+    the text runtime; it does not itself authorize or execute an API call.
+    """
+    state_dir = evidence_root / "production-daily"
+    report = _read_optional_json(state_dir / "coverage-audit.json")
+    if report is None:
+        return True
+    if report.get("publication_date") not in {None, publication_date}:
+        return True
+    if (
+        report.get("editorial_rerun_required") is True
+        and report.get("editorial_rerun_performed") is not True
+    ) or (
+        report.get("editorial_completion_required") is True
+        and report.get("editorial_completion_performed") is not True
+    ):
+        return True
+    if report.get("audit_status") not in {"complete", "complete_with_gaps"}:
+        return True
+    quality = report.get("retrieval_quality")
+    if (
+        report.get("retrieval_quality_contract_version") != 1
+        or not isinstance(quality, dict)
+        or quality.get("status") != "complete"
+    ):
+        return True
+    return False
 
 
 def choose_source(
@@ -89,9 +149,20 @@ def choose_source(
                 }
             )
 
-    if mode == "full" and recovery_has_pending_editorial_repair(
+    if mode == "full" and _coverage_may_require_editorial(
         evidence_root, publication_date
     ):
+        reasons.append(
+            {
+                "status": "editorial-runtime-required",
+                "reason": (
+                    "selected artifact bundle has no completed current Coverage "
+                    "state, so Coverage may still require saved-research editorial completion"
+                ),
+            }
+        )
+
+    if mode == "full" and recovery_pending(evidence_root, publication_date):
         reasons.append(
             {
                 "status": "editorial-repair-pending",
@@ -143,15 +214,51 @@ def _restore_audit_same_bundle(
 
 
 def _sync_p0() -> None:
-    # Let the established wrapper wire all of its current recovery hooks first.
     _pre.choose_source = choose_source
     _pre._sync_base()
-    # Then constrain the two historically global evidence restorers to the
-    # bundle selected by choose_source(). This is deliberately fail-closed:
-    # another same-date subtree can no longer lend candidates/audit state.
     _pre._base.restore_merged_coverage_research = _restore_merged_same_bundle
     _pre._base.restore_prior_coverage_audit = _restore_audit_same_bundle
     _pre._base.restore_completed_coverage_audit = _restore_audit_same_bundle
+
+
+def _restore_durable_p0_state(
+    report: dict[str, Any], publication_date: str, report_path: Path
+) -> dict[str, Any]:
+    evidence_root = _ACTIVE_EVIDENCE_ROOT
+    if evidence_root is None:
+        raise RecoveryError("selected recovery evidence root was not recorded")
+    state_dir = report_path.parent.resolve()
+    try:
+        repair = restore_state_from_bundle(
+            bundle_root=evidence_root,
+            target_state_dir=state_dir,
+            publication_date=publication_date,
+        )
+    except EditorialRepairError as exc:
+        raise RecoveryError(str(exc)) from exc
+
+    merged = report.get("merged_coverage_research")
+    copied_research = None
+    if isinstance(merged, dict):
+        source_value = merged.get("source")
+        if isinstance(source_value, str) and source_value.strip():
+            source = Path(source_value)
+            source = source.resolve() if source.is_absolute() else (Path.cwd() / source).resolve()
+            try:
+                source.relative_to(evidence_root.resolve())
+            except ValueError as exc:
+                raise RecoveryError(
+                    "merged Coverage research came from a different artifact bundle"
+                ) from exc
+            if source.is_file():
+                target = state_dir / f"coverage-audit-merged-candidates-{publication_date}.json"
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source, target)
+                copied_research = str(target)
+    return {
+        "repair_state": repair,
+        "persisted_merged_research": copied_research,
+    }
 
 
 def recover(
@@ -162,8 +269,10 @@ def recover(
     timezone_name: str = "Europe/Moscow",
     image_target_dir: Path | None = None,
 ) -> dict[str, Any]:
+    global _ACTIVE_EVIDENCE_ROOT
+    _ACTIVE_EVIDENCE_ROOT = None
     _sync_p0()
-    return _pre.recover(
+    report = _pre.recover(
         recovery_root,
         target_dir,
         publication_date,
@@ -171,13 +280,48 @@ def recover(
         timezone_name,
         image_target_dir,
     )
+    report["editorial_repair_recovery"] = _restore_durable_p0_state(
+        report, publication_date, report_path
+    )
+    write_json(report_path, report)
+    return report
 
 
 def main() -> int:
+    global _ACTIVE_EVIDENCE_ROOT
+    _ACTIVE_EVIDENCE_ROOT = None
     _sync_p0()
-    # _pre.main() performs the stable argument parsing, error reporting and
-    # diagnostics. Its own _sync_base() sees our overridden choose_source.
-    return int(_pre.main())
+    args = _pre._base.parse_args()
+    try:
+        report = recover(
+            args.recovery_root,
+            args.target_dir,
+            args.publication_date,
+            args.report,
+            args.timezone,
+            args.image_target_dir,
+        )
+    except RecoveryError as exc:
+        write_json(
+            args.report,
+            {
+                "status": "error",
+                "publication_date": args.publication_date,
+                "recovery_root": str(args.recovery_root),
+                "error": str(exc),
+            },
+        )
+        print(f"Digest recovery failed: {exc}")
+        return 1
+    print(
+        "Digest recovery: ok; "
+        f"mode={report['recovery_mode']}; selected {report['selected_source']}; "
+        "agency_discovery_rescue="
+        f"{report.get('agency_discovery_rescue_recovery', {}).get('status')}; "
+        "editorial_repair_state="
+        f"{report.get('editorial_repair_recovery', {}).get('repair_state', {}).get('copied')}"
+    )
+    return 0
 
 
 if __name__ == "__main__":
