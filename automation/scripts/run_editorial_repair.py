@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Run Coverage editorial completion with durable at-most-once semantics.
 
-The parent Coverage wrapper must create the durable obligation first. This child
-accepts only saved research, patches the generator's existing usage observer at
-runtime, disables SDK retries for the one protected editorial request, persists
+The parent Coverage wrapper creates the durable obligation first. This child
+accepts only saved research, binds the exact pool after the existing
+Source-Freshness pass, patches the generator's imported usage observer only in
+this process, disables SDK retries for the protected editorial request, persists
 the response before parsing, and marks the obligation validated only after the
 normal generator finishes successfully.
 """
@@ -16,6 +17,7 @@ from typing import Any
 from editorial_repair_guard import (
     EditorialRepairError,
     begin_request,
+    bind_post_freshness_pool,
     clone_no_retry_callback,
     journal_state,
     load_required,
@@ -92,6 +94,9 @@ def main() -> int:
     )
     archive = _required_path(archive_value, "repair archive")
     artifact_dir = _required_path(artifact_value, "repair artifact dir")
+    runtime_research = _required_path(
+        _argv_value(forwarded, "--research-input"), "Coverage runtime research"
+    )
 
     context = load_required(
         publication_date=publication_date,
@@ -136,6 +141,10 @@ def main() -> int:
             raise EditorialRepairError(
                 "protected editorial completion attempted more than one editorial transport"
             )
+        # run_digest_preview has already executed the ordinary deterministic
+        # Source-Freshness pass on this transient file. Bind that exact pool now,
+        # before request admission, without a duplicate fetch or search.
+        bind_post_freshness_pool(context, runtime_research)
         binding = request_sha256(kwargs)
         replay = prepare_request(context, binding)
         if replay is not None:
