@@ -4,8 +4,11 @@
 The pre-P0 validator is retained verbatim in
 ``validate_digest_artifact_pre_p0.py``. After all established artifact checks
 pass, this wrapper refuses publication while Mandatory Coverage still has an
-unapplied editorial repair/completion obligation. A saved repair response is
-marked applied only when it exactly matches the current raw editorial artifact.
+unvalidated editorial repair/completion obligation. A saved response counts as
+safe only after it exactly matches the final raw editorial artifact.
+
+Compatibility seam removal target: after 2026-10-03, once the consolidated
+validator has preserved all current public import and source-inspection hooks.
 """
 from __future__ import annotations
 
@@ -15,10 +18,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from editorial_repair_journal import (
-    EditorialRepairJournalError,
-    assert_publication_safe,
-)
+from editorial_repair_guard import EditorialRepairError, publication_safe
 
 _PRE_PATH = Path(__file__).with_name("validate_digest_artifact_pre_p0.py")
 _PRE_SPEC = importlib.util.spec_from_file_location(
@@ -69,8 +69,8 @@ def _record_guard_failure(report_path: Path | None, error: Exception) -> None:
             encoding="utf-8",
         )
     except Exception:
-        # Validation already failed. A diagnostics write must never convert that
-        # failure into publication permission.
+        # Validation already failed. Diagnostics must never convert failure into
+        # publication permission.
         pass
 
 
@@ -78,17 +78,14 @@ def main() -> int:
     result = int(_pre.main())
     if result != 0:
         return result
-
     artifact_value = _arg_value("--artifact-dir")
     if not artifact_value:
-        # The established parser owns the CLI contract; reaching this point
-        # without artifact-dir would already have failed there.
         return result
     report_value = _arg_value("--report")
     report_path = Path(report_value).resolve() if report_value else None
     try:
-        assert_publication_safe(Path(artifact_value))
-    except EditorialRepairJournalError as exc:
+        publication_safe(Path(artifact_value))
+    except EditorialRepairError as exc:
         _record_guard_failure(report_path, exc)
         print(f"Digest artifact validation failed: {exc}", file=sys.stderr)
         return 1
