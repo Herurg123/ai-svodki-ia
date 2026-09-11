@@ -1,289 +1,436 @@
 # Независимый аудит выпуска 2026-09-10
 
+> Исправленная версия после дополнительной сверки exact recovery artifact. Первоначальный PR #164 зафиксировал предварительный denominator `11` и `Coverage 6/7`. Это оказалось методологически неверно: три опубликованных/контрольных события относились к healing overlap до `latest_archive_at`, а финальный recovery artifact действительно завершил Coverage `7/7`. Ниже приведён исправленный event-identity audit.
+
 ## Итог
 
-**Publication mechanics: PASS.**
+- **Publication mechanics:** PASS.
+- **Recovery / paid stages at-most-once:** PASS.
+- **Source/Event Freshness fail-closed:** PASS как контракт, но **Source Freshness proof coverage:** FAIL по практической полноте.
+- **High-signal completeness:** FAIL.
+- **Strict Must Include main-window publication recall:** **`2/8 = 25.0%`**.
+- **Strict Must Include final candidate recall:** **`3/8 = 37.5%`**.
+- **Strict Must Include reached editor input:** **`3/8 = 37.5%`**, но после Source Freshness пригодными к выбору остались только `2/8`.
+- **Search spend:** `12 Primary + 1 Agency Rescue + 5 Hybrid + 7 Coverage = 25/25`.
+- **Discovery Health v1:** `degraded`.
+- **Ни одного strict Must Include не потерял сам editor после того, как событие осталось fresh + eligible.**
 
-**Recovery / at-most-once: PASS.**
+Ключевой вывод: проблема 10 сентября не сводится к одному ranking/editorial miss. Она раскладывается на три проверяемых слоя:
 
-**Freshness policy: PASS как fail-closed, но Source Freshness coverage: FAIL по практической полноте.**
+1. hard upstream discovery misses;
+2. source-resolution/source-upgrade miss для уже замеченного события;
+3. Source Freshness Proof miss для уже найденного, verified, high-signal кандидата.
 
-**High-signal completeness: FAIL.**
+Поэтому править editor/ranking первым сейчас неправильно: два score-4 кандидата, которые выглядели как «ошибочно excluded», в Primary первоначально были `include + verified`. Их eligibility разрушил поздний source-freshness слой.
 
-Выпуск опубликован с 7 сюжетами и технически корректен, однако независимый контроль на свежем окне показывает, что несколько событий существенно выше части опубликованных материалов не дошли до публикации. Главный новый вывод: сегодня проблема делится на два разных слоя, причём первый уже можно считать доказанным повторными наблюдениями:
+## Production evidence и recovery
 
-1. **source resolution / Source Freshness теряет уже найденные сильные события;**
-2. **upstream discovery / Reuters rescue продолжает не доставлять ряд крупных событий вообще.**
+Исходный scheduled run `34423913431`:
 
-Это важное уточнение относительно промежуточной гипотезы о ranking/editorial: два сильных кандидата были не проигнорированы редактором, а сняты техническим freshness-gate до финального отбора.
+- успешно выполнил full research + editorial;
+- остановился на `Complete mandatory coverage audit for a short digest`;
+- сохранил paid artifact `daily-production-2026-09-10`, artifact ID `10132209897`.
 
-## Production evidence
+Recovery run `34428040410`:
 
-Фактическая цепочка выпуска:
+- artifact ID `10133444947`;
+- digest `sha256:61a6fec5664216697a264e144151134d2a02db39449db53b4b10a8ea7fc28185`;
+- восстановил сохранённый paid artifact;
+- `Run full research and editorial` был **skipped**;
+- Coverage был завершён;
+- normalize/validate, image, site build, promote, commit и FTP deploy завершились успешно;
+- release commit: `ced45730a586a0a3e439214efb3b448f0abdca6e`.
 
-- scheduled production run `34423913431` выполнил full research/editorial, но остановился на mandatory coverage audit со `retrieval_quality_resolution_unresolved`;
-- recovery run `34428040410` восстановил уже оплаченный artifact, не повторял full research/editorial, завершил coverage audit, сгенерировал обложку и опубликовал выпуск;
-- повторный dispatch `34432025380` корректно завершился как no-op, потому что выпуск уже был опубликован;
-- release commit: `ced45730a586a0a3e439214efb3b448f0abdca6e`;
-- последующий PR #163 не менял опубликованный bundle и находится уже поверх release commit.
+Последующий dispatch `34432025380` увидел уже опубликованный выпуск и корректно завершился no-op.
 
-Это подтверждает, что recovery/at-most-once сейчас выполняет свою функцию: ошибка downstream не заставила повторно оплачивать основной research/editorial.
+**Вердикт:** recovery и at-most-once поведение здоровы. Downstream failure не вызвал повторный full research/editorial.
 
-### Search budget
+## Exact research window
 
-Сохранённый production artifact показывает:
+Saved Primary artifact:
 
-- Primary: `12/12`;
-- Agency Rescue: `1/1`;
-- Hybrid: `5/5` из допустимых `4 + 1` при двойном regional gap;
-- Coverage: `6/7`;
-- всего: `24` Web Search operations при допустимом double-gap ceiling `25`.
+- effective start: `2026-09-08T04:15:13+03:00`;
+- saved cutoff: `2026-09-10T04:04:18+03:00`;
+- canonical continuity boundary `latest_archive_at`: `2026-09-09T04:15:13+03:00`.
 
-Один формально свободный Coverage slot не объясняет масштаб пропусков: независимый контроль находит несколько крупных событий в разных категориях, а Reuters-only rescue уже потратил свой единственный специализированный slot и вернул `raw_count=0`, `accepted_count=0`, `consulted_sources=[]`, при этом source metadata для поисковой операции отсутствует.
+Для strict main-window denominator используются только independently verified high-signal события после `latest_archive_at` и до saved cutoff. События 8 сентября могут быть корректно опубликованы благодаря healing overlap, но не считаются strict hits 10 сентября.
 
-## Выпущенные 7 сюжетов
+Именно это исправляет главный методологический дефект первоначального PR #164: Arm и Massachusetts являются нормальными сюжетами выпуска, но их core events относятся к 8 сентября. Они не должны улучшать strict main-window recall.
+
+## Опубликованные 7 сюжетов
 
 1. Arm Neoverse CSS N4.
 2. Apple Watch Audio Intelligence / Live Rewind / Siri Recap.
 3. Massachusetts clean-power requirements for large data centers.
-4. Paul Christiano joins OpenAI Foundation Board / SSC.
-5. Suno v6 on licensed training data.
+4. Paul Christiano joins OpenAI Foundation Board / Safety & Security Committee.
+5. Suno v6.
 6. Cymphony funding / AI-agent identity security.
-7. Runway + Kinetix team / world models / robotics.
+7. Runway + Kinetix.
 
-Технически все 7 прошли текущий publication gate.
+Все семь прошли действующие publication validators. В final story sources четыре сюжета используют TechCrunch как publisher source; это диагностический signal концентрации, но не основание вводить publisher quota.
 
-## Независимый B-control
+## Независимый B/reference control
 
-Использован assistant-owned ordinary web search, без production API budget владельца. Standalone Terra в этой сессии не экспонирована, поэтому обычный web search не выдаётся за Terra. Search-query wording production в рамках этого аудита не менялся.
+Проверка выполнена assistant-owned ordinary web/reference search, без production API/Web Search бюджета владельца. Standalone assistant-side Terra в этой сессии не exposed, поэтому эта проверка **не называется Terra A/B**. Она является независимой Terra-emulation/reference проверкой по exact historical window.
 
-Консервативный strict control set состоит из 11 событий. В него включались только материалы, подтверждённые авторитетным secondary либо first-party source и попадающие в текущее main window `2026-09-09T04:15:13+03:00 → 2026-09-10T04:04:18+03:00`, либо непосредственно связанные с material update внутри этого окна.
+Сравнение ведётся по event identity, а не по совпадению headline string.
 
-### Контроли, которые production опубликовал
+### Strict Must Include set: 8 событий
 
-1. **Suno v6 / licensed music** — опубликован.
-   - https://suno.com/blog/introducing-v6
-   - https://techcrunch.com/2026/09/09/suno-replaces-its-ai-models-with-a-new-one-trained-on-licensed-music-as-copyright-suits-pile-up/
-2. **Massachusetts data-center clean-power requirements** — опубликован.
-   - https://techcrunch.com/2026/09/09/massachusetts-hits-data-centers-with-new-clean-power-rules/
-3. **Paul Christiano joins OpenAI Foundation Board / SSC** — опубликован.
-   - https://openai.com/index/paul-christiano-joins-openai-foundation-board/
+| # | Event | Независимое время | Production path | Verdict |
+|---|---|---|---|---|
+| 1 | Google: €13B AI infrastructure в Финляндии | Reuters `2026-09-09 07:01:30 UTC` | замечен только weak-source model rejection (HuggingNews), authoritative source не повышен до candidate | **MISS: source resolution / source upgrade** |
+| 2 | DeepSeek привлёк CITIC для подготовки IPO на STAR Market | Reuters `2026-09-09 06:11:50 UTC` | current event отсутствует в saved surface | **MISS: discovery** |
+| 3 | Harvey: $550M при valuation $15.5B | Reuters `2026-09-09 16:56:08 UTC` | отсутствует в saved surface | **MISS: discovery** |
+| 4 | OpenAI rogue agents: >10 дополнительных сайтов с unauthorized communications | Reuters `2026-09-09 16:03:28 UTC` | Coverage видел старые/смежные материалы, но этот material update не стал candidate | **MISS: discovery / coverage** |
+| 5 | Anthropic: четвёртый real-system incident / alignment assessment | Reuters `2026-09-09 19:40:20 UTC`; first-party page датирована Sep 9 | Primary: `include`, `verified`, score 4; final candidate `exclude/unconfirmed` из-за отсутствия machine-verifiable source publication date | **MISS: Source Freshness Proof** |
+| 6 | NVIDIA + Australian partners: до 2 GW AI capacity | Reuters `2026-09-10 00:22:02 UTC`, то есть примерно за 42 минуты до cutoff | отсутствует в saved surface | **MISS: discovery, late-window** |
+| 7 | Apple Watch Audio Intelligence / Live Rewind / Siri Recap | Sep 9 | final candidate include, опубликовано | **HIT** |
+| 8 | Suno v6 / licensed-data transition | Sep 9 | final candidate include, опубликовано | **HIT** |
 
-### Контроли, которые production нашёл, но потерял до публикации
+Reference URLs:
 
-4. **Anthropic: alignment assessment of four real-world cybersecurity incidents**.
-   - production candidate `cand-004`, initial recommendation `include`, significance `4`;
-   - event freshness: `fresh`;
-   - Source Freshness: `unknown`;
-   - direct Anthropic page returned HTTP 200, but current source parser reported `no_publication_date`;
-   - independent page visibly states `Sep 9, 2026`.
-   - https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents
+- Google: https://www.reuters.com/business/media-telecom/google-invest-15-billion-ai-infrastructure-finland-2026-09-09/
+- DeepSeek: https://www.reuters.com/world/chinas-deepseek-taps-citic-securities-domestic-ipo-sources-say-2026-09-09/
+- Harvey: https://www.reuters.com/legal/government/legal-ai-startup-harvey-reaches-155-billion-valuation-new-funding-round-2026-09-09/
+- OpenAI rogue agents: https://www.reuters.com/world/openais-rogue-agents-used-least-10-more-sites-unauthorized-comms-researchers-say-2026-09-09/
+- Anthropic: https://www.reuters.com/legal/litigation/anthropic-reports-fourth-cybersecurity-incident-with-early-version-claude-2026-09-09/
+- NVIDIA Australia: https://www.reuters.com/world/asia-pacific/nvidia-teams-up-with-australian-partners-build-ai-factory-capacity-2026-09-10/
+- Apple: https://www.apple.com/newsroom/2026/09/apple-unveils-apple-watch-ultra-4/
+- Suno: https://suno.com/blog/introducing-v6
 
-5. **China response / U.S. NSA-FBI-CISA distillation advisory**.
-   - production candidate `cand-001`, initial recommendation `include`, significance `4`;
-   - event freshness: `fresh`;
-   - Source Freshness: `unknown` because AP direct fetch returned HTTP 403;
-   - independent verification finds the AP update plus dated official NSA/CISA material.
-   - https://apnews.com/article/0f6ca61301630134607551b1dab0d632
-   - https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4592113/nsa-and-others-warn-china-based-ai-companies-are-distilling-us-frontier-ai-mode/
-   - CISA advisory AA26-251A, release date 2026-09-08.
+### Strong Include / borderline, вне strict denominator
 
-### Strong controls missing from validated candidate surface
+- Paul Christiano joins OpenAI Foundation Board / SSC: опубликован, но governance/personnel significance ниже strict set.
+- OpenAI AI-policy push: материал Sep 9, Source Pulse его обнаружил, но это policy advocacy, а не enacted regulatory action; поэтому не раздувает denominator.
+- Massachusetts data-center clean-power story: допустимый и сильный сюжет, но underlying executive-order event датирован Sep 8 и относится к healing overlap.
+- Arm Neoverse CSS N4 и Runway/Kinetix: также overlap events.
+- China response / U.S. distillation advisory (`cand-001`): сильный follow-up, но core U.S. advisory был Sep 8. Дополнительно сохранённый `event_date_evidence` ошибочно выводит «Tuesday → 2026-09-09», хотя 9 сентября 2026 года была среда. Этот кандидат не используется в strict denominator.
 
-6. **Google: €13 billion AI/digital infrastructure investment in Finland**.
-   - production did notice the event only as a HuggingNews model rejection and discarded it as `weak_source`;
-   - exact first-party Google Press Corner release exists and is dated Sep 9;
-   - Reuters independently covered the same investment.
-   - https://www.googlecloudpresscorner.com/2026-09-09-Google-Deepens-Commitment-to-Finland-with-Two-Year-EUR13-Billion-investment-in-AI-Infrastructure
-   - https://www.reuters.com/business/media-telecom/google-invest-15-billion-ai-infrastructure-finland-2026-09-09/
+### Not Required для strict Sep10 denominator
 
-7. **Harvey: $550M round at $15.5B valuation**.
-   - absent from final production candidate surface;
-   - first-party + Reuters verification.
-   - https://www.harvey.ai/blog/harvey-raises-dollar550m-at-a-dollar155b-valuation-to-help-legal-teams-own-their-intelligence
-   - https://www.reuters.com/legal/government/legal-ai-startup-harvey-reaches-155-billion-valuation-new-funding-round-2026-09-09/
+- DeepSeek V4.1 Flash launch: Reuters publication вышла после saved cutoff.
+- GPT-6 Astra launch: core release был Sep 3; более свежий RSS appearance не превращает его в новый Sep9 launch.
+- прочие analysis/features без нового material event.
 
-8. **DeepSeek taps CITIC Securities for domestic IPO preparation**.
-   - absent from final production candidate surface;
-   - Reuters dated Sep 9.
-   - https://www.reuters.com/world/chinas-deepseek-taps-citic-securities-domestic-ipo-sources-say-2026-09-09/
+## A/B / recall по слоям
 
-9. **OpenAI rogue agents used 10+ additional sites for unauthorized communications**.
-   - production Coverage saw older/tangential OpenAI incident pages but did not create this new Reuters event as candidate;
-   - Reuters dated Sep 9.
-   - https://www.reuters.com/world/openais-rogue-agents-used-least-10-more-sites-unauthorized-comms-researchers-say-2026-09-09/
+Strict denominator: **8 Must Include**.
 
-10. **NVIDIA + Australian partners: up to 2 GW AI-factory capacity by 2027**.
-    - absent from final candidate surface;
-    - NVIDIA announcement and Reuters both fall before the production end cutoff.
-    - https://www.reuters.com/world/asia-pacific/nvidia-teams-up-with-australian-partners-build-ai-factory-capacity-2026-09-10/
+- independently verified controls: `8/8`;
+- production retrieval awareness, включая saved weak-source rejection: `4/8 = 50.0%` (`Google`, `Anthropic`, `Apple`, `Suno`);
+- final production candidate surface: `3/8 = 37.5%` (`Anthropic`, `Apple`, `Suno`);
+- reached editor input: `3/8 = 37.5%`;
+- fresh + eligible к реальному editorial choice: `2/8 = 25.0%`;
+- selected: `2/8 = 25.0%`;
+- published: **`2/8 = 25.0%`**.
 
-11. **OpenAI pushes for mandatory national AI safety requirements and supports four California bills**.
-    - absent from final candidate surface;
-    - OpenAI first-party + Reuters dated Sep 9.
-    - https://openai.com/index/ai-policy-window/
+Loss accounting:
 
-## A/B metrics
+- **Google Finland:** source-resolution/source-upgrade before candidate;
+- **DeepSeek IPO/CITIC:** discovery;
+- **Harvey funding:** discovery;
+- **OpenAI rogue agents:** discovery/coverage;
+- **Anthropic incident:** Source Freshness Proof;
+- **NVIDIA Australia:** discovery, с оговоркой late-window;
+- **Apple:** HIT;
+- **Suno:** HIT;
+- **editor:** `0` strict losses после fresh+eligible;
+- **validator/recovery/publication:** `0` strict losses после editorial selection.
 
-На этом conservative strict set:
+Таким образом, preliminary hypothesis «ranking/editor выбросил сильные найденные новости» для strict Sep10 set **не подтверждается**. Видимый `exclude` у Anthropic возник после freshness, а не из-за editorial preference.
 
-- **A, validated candidate recall:** `5/11 = 45.5%`;
-- **A, published strict recall:** `3/11 = 27.3%`;
-- **independent awareness/control discovery:** `11/11` controls independently verified;
-- production дополнительно **видел Google Finland как weak-source rejection**, то есть часть missing recall является не discovery miss, а source-resolution miss.
+## Retrieval anatomy
 
-Нельзя интерпретировать `11/11` как точность независимого поисковика: controls по определению собраны после независимой проверки. Полезная метрика здесь — разница между существованием подтверждённых high-signal событий и тем, сколько из них дошло до validated candidate/published stages.
+### Primary
 
-### Narrow source-resolution treatment
+Primary выполнил `12/12` mandatory searches.
 
-Без изменения editorial policy можно отдельно рассмотреть уже наблюдавшиеся production события:
+Raw-zero directions:
 
-- Google Finland: weak-source-only → существует exact first-party Google release;
-- Anthropic cyber incidents: HTTP 200 + visible `Sep 9, 2026` → current parser не извлекает дату;
-- China/US distillation: AP fetch 403, но существуют dated official NSA/CISA sources и Reuters coverage.
+- `major_agencies`;
+- `models_products_agents`;
+- `china_asia_models`;
+- `china_asia_integrations`;
+- `russia`;
+- `legal_regulation`.
 
-Следовательно, как минимум часть recall loss находится **после discovery и до editorial**. Это уже доказанный слой для следующего controlled treatment. До фактического replay с production parser нельзя честно объявлять точное число recovered candidates, поэтому данный audit не записывает гипотетическое улучшение как достигнутый recall.
+`developer_tools` вернул raw candidates, но все были validator-rejected.
 
-## Source Pulse P5: первый live reality check
+Сильный положительный сигнал: Anthropic был найден в `security_safety` и первоначально имел `include + verified + score 4`.
 
-PR #162 ожидал, что три новых zero-paid official routes улучшат исторический bounded recall. Первый live production после merge показывает, что treatment **архитектурно полезен, но фактически ещё не принят live-средой**:
+Сильный отрицательный сигнал: Google Finland был замечен в model rejection только через слабый агрегатор и остановлен `weak_source`, хотя exact-window Reuters и first-party material существовали. Это не оправдание для ослабления weak-source fail-closed. Наоборот, это доказательство необходимости bounded authoritative source upgrade для уже замеченного high-signal event.
 
-### OpenAI official RSS
+### Agency Rescue
 
-- registry/source fetch: `ok`;
+- trigger: `major_agencies_raw_zero`;
+- executed: `true`;
+- Reuters-only;
+- `1/1` search operation;
+- raw / validated / accepted / added: `0 / 0 / 0 / 0`;
+- `consulted_sources=[]`;
+- source metadata unavailable;
+- final state `completed_no_addition`.
+
+В exact main window Reuters имел Google, DeepSeek, Harvey, OpenAI rogue-agent follow-up, Anthropic и NVIDIA Australia. На Sep9 Reuters-only rescue уже показывал тот же паттерн `0 additions` при наличии релевантных Reuters controls.
+
+**Вывод:** Agency/provider routing является recurring defect signal. Это уже не аргумент за «ещё один search», а за controlled repair текущего Reuters slot/routing/provider behavior.
+
+### Hybrid
+
+- `5/5`, включая conditional +1 при double Asia + Russia gap;
+- additions: `0`;
+- Asia и Russia остались unresolved.
+
+### Coverage
+
+Финальный recovery artifact, а не preliminary scheduled state:
+
+- maximum `7`;
+- completed calls: **`7/7`**;
+- all six required directions checked;
+- additions: `0`;
+- final status `complete_with_gaps`.
+
+Это исправляет вторую ошибку первоначального PR #164. Общий paid search contour действительно использовал полный conditional ceiling:
+
+**`12 + 1 + 5 + 7 = 25/25`.**
+
+При таком расходе пропуски нельзя объяснять недостатком количества запросов. Нужна лучшая gap-awareness/source-resolution внутри существующего бюджета.
+
+## Source Freshness
+
+Критический Sep10 case: Anthropic.
+
+В Primary событие было:
+
+- recommendation `include`;
+- verification `verified`;
+- significance `4`;
+- event date Sep 9.
+
+После Source Freshness Proof final candidate стал:
+
+- recommendation `exclude`;
+- verification `unconfirmed`;
+- `source_published_at = null`;
+- reason: ни один already-cited source URL не отдал independently verifiable publication date.
+
+При этом independent check подтверждает first-party Anthropic page Sep 9 и Reuters timestamp `19:40:20 UTC`.
+
+Это **не** основание разрешить unknown freshness. Fail-closed контракт правильный. Исправлять нужно extractor/evidence propagation так, чтобы реально существующая authoritative date могла быть доказана машинно.
+
+`cand-001` (China response / U.S. distillation) показывает похожий technical pattern, но не используется как strict main-window MISS из-за Sep8 core event и сомнительного saved date reasoning.
+
+## Source Pulse: live effect PR #162
+
+Saved Source Pulse:
+
+- configured sources: `16`;
+- source status OK: `12`;
+- unavailable: `4`;
+- accepted leads: `15`;
+- promoted candidates: `3`;
+- paid OpenAI calls: `0`;
+- Web Search operations: `0`.
+
+Три новых route из PR #162:
+
+### OpenAI RSS
+
+- HTTP `200`;
 - `parsed_items=16`;
 - `window_items=8`;
 - `accepted_leads=8`;
-- несколько релевантных OpenAI items реально обнаружены;
-- все pulse-only OpenAI leads были отклонены promotion как `source_fetch_error: HTTP 403` при direct-page Source Freshness Proof;
-- Paul Christiano не является доказательством пользы нового route, потому что он уже был найден Primary и имел `fusion_both_exact_url`.
+- RSS реально обнаружил `Introducing ChatGPT Images 2.5`, policy material, Paul Christiano и другие items;
+- все `pulse_only` OpenAI leads при promotion получили `source_fetch_error` / HTTP `403` при direct-page freshness fetch;
+- Paul Christiano имел `fusion_disposition=both_exact_url`, то есть уже был найден Primary и не доказывает новый contribution.
 
-**Realized new-candidate contribution from OpenAI P5 route: 0.**
+**Новых promoted candidates от нового OpenAI route: 0.**
 
-### Qualcomm official newsroom
+Это важный частичный успех: discovery plane работает, но downstream freshness transport не позволяет реализовать ценность.
 
-- index HTTP 200;
-- source status `ok`;
-- `parsed_items=0`, `window_items=0`, `accepted_leads=0`.
+### Qualcomm newsroom
 
-Это особенно важный диагностический дефект: route фактически не работает, но source-level status выглядит как `ok`. Для fixed HTML source `200 + parsed_items=0` при заведомо непустой newsroom нельзя считать надёжным healthy signal.
+- index HTTP `200`;
+- status `ok`;
+- `parsed_items=0`;
+- `window_items=0`;
+- `accepted_leads=0`.
 
-**Realized new-candidate contribution: 0.**
+**Contribution: 0.**
+
+Для newsroom, который заведомо содержит материалы, `HTTP 200 + parsed 0` является parser-health signal, даже если transport-level status формально `ok`.
 
 ### NSA AI route
 
-- HTTP 403;
-- source status `source_unavailable`;
+- HTTP `403`;
+- `source_unavailable`;
 - `accepted_leads=0`.
 
-Независимый web path видит тот же NSA AI page и direct press release с датой Sep 8, то есть событие существует, но production transport не может его получить.
+**Contribution: 0.**
 
-**Realized new-candidate contribution: 0.**
+### Реальный production uplift #162
 
-### Вывод по P5
+На Sep10 новые routes #162 дали **0 доказанных новых promoted candidates и 0 опубликованных stories**.
 
-На первом live production все три новых routes дали **0 новых promoted candidates**. Это не означает, что идея fixed official Source Pulse неверна: OpenAI RSS отлично обнаруживает события. Но offline A/B PR #162 был слишком оптимистичен относительно реального transport/freshness layer. Теперь это подтверждено фактическим production artifact, и дальнейшее добавление новых source rows без live acceptance treatment не имеет смысла.
+Следовательно, ответ на главный вопрос аудита:
 
-## Reuters / Agency Rescue
+**#162 не продемонстрировал реальный publication uplift на первом live production после merge.**
 
-Agency Rescue снова является наиболее явным recurring failure:
+Но это не опровергает саму идею Source Pulse. OpenAI RSS доказал полезный discovery. Проблема сейчас в acceptance/transport/parser слоях, поэтому добавлять новые source rows вместо исправления существующих routes не следует.
 
-- triggered because `major_agencies_raw_zero`;
-- one Reuters-only search executed;
-- exact configured query сохранён;
-- `raw_count=0`;
-- `accepted_count=0`;
-- `consulted_sources=[]`;
-- source metadata unavailable.
+PR #163 полезен именно здесь: offline trace contract отделяет source health, leads, promotion, candidate/editorial/story/publication и не позволяет считать сам факт RSS discovery публикационным вкладом.
 
-При этом независимый Reuters control в том же main window подтверждает как минимум:
+## Publisher / organization diversity
 
-- Google Finland €13B;
-- Harvey $550M / $15.5B;
-- DeepSeek IPO / CITIC;
-- OpenAI rogue agents on 10+ sites;
-- NVIDIA Australia up to 2GW;
-- OpenAI mandatory safety requirements.
+В final seven-story digest четыре source blocks используют TechCrunch. Это высокая концентрация для одного publisher.
 
-После Sep 8–10 это уже нельзя считать случайным плохим днём. Специализированный Reuters rescue выполняется, тратит slot и неоднократно не обеспечивает свою функцию.
+Однако вводить publisher quota нельзя. Независимые misses одновременно показывают доступные Reuters и first-party surfaces, поэтому правильное направление — улучшить source acquisition и resolution. Diversity должна улучшаться как следствие лучшего retrieval, а не административной квоты.
 
-## Что хорошо
+## Историческая серия
 
-1. **Recovery работает правильно.** Full paid research/editorial не повторился; сохранённый artifact был переиспользован.
-2. **At-most-once publication работает.** Следующий dispatch корректно стал no-op.
-3. **Freshness остаётся fail-closed.** Pipeline не опубликовал кандидатов, для которых не смог доказать source freshness.
-4. **Source Pulse действительно умеет обнаруживать OpenAI через RSS.** Проблема теперь локализована после discovery, а не в самом RSS collection.
-5. **Primary увидел Google Finland хотя бы как weak-source event.** Это доказывает, что часть потерь можно исправлять source resolution, не только большим поиском.
-6. **Search ceilings не нарушены.** Никакого budget overrun.
+Из предыдущих независимых аудитов:
 
-## Что плохо
+- Sep6: strict recall `1/2 = 50%`;
+- Sep7: `0/1 = 0%`;
+- Sep8: подтверждён hard upstream miss при полном/почти полном search budget;
+- Sep9: `5/9 = 55.6%`;
+- historical controlled fixture treatment после #162: `10/13 = 76.9%`;
+- Sep10 live: **publication strict recall `2/8 = 25.0%`**.
 
-1. **Validated high-signal recall остаётся низким: 45.5% на conservative control set.**
-2. **Published strict recall ещё ниже: 27.3%.**
-3. **Source Freshness теряет сильные официальные материалы:** Anthropic HTTP 200 с видимой датой всё равно получает `no_publication_date`; AP и OpenAI direct pages часто упираются в 403.
-4. **Weak-source rejection слишком легко становится окончательной потерей события.** Google Finland найден, но exact first-party source не был разрешён до исключения.
-5. **Agency Rescue фактически не выполняет Reuters rescue.** Повторный `0` при наличии множества Reuters событий уже является системным сигналом.
-6. **P5 official routes пока не дали live contribution.** Qualcomm `200 + parsed=0` выглядит ложным healthy; NSA 403; OpenAI discovery блокируется direct-page 403.
-7. **Publisher concentration остаётся следствием upstream source availability.** В выпуске снова три TechCrunch story, потому что альтернативные сильные источники не доходят до publishable state.
-8. **Coverage использовал 6 операций и всё равно не восстановил новый Reuters OpenAI incident.** Ещё один общий slot не выглядит адекватным лекарством.
+Denominators между днями различаются, поэтому это не time-series KPI в статистическом смысле. Но направление достаточно ясное: fixture uplift #162 пока не подтвердился live.
 
-## Что уже точно пора менять
+## Что уже достаточно доказано для runtime work
 
-### P0 — Source Freshness / source resolution
+### P0. Source-date proof extraction / propagation без ослабления freshness
 
-Это следующий runtime treatment с самым сильным доказательством.
+**Почему доказательств достаточно**
 
-Нужно отдельно A/B проверить и затем, если проходит gate, внедрить:
+- Anthropic был найден, verified и score 4, но потерян только потому, что current source-date proof не смог машинно подтвердить реально существующую Sep9 дату.
+- OpenAI RSS нашёл 8 in-window leads, но все pulse-only items заблокированы direct-page HTTP 403 на freshness proof.
 
-1. **publisher-specific visible-date extraction для Anthropic** из bounded article header / structured page surface, не generic body scraping;
-2. **first-party feed freshness proof для exact-bound official RSS item**, прежде всего OpenAI: если RSS от официального домена содержит exact article URL + authoritative publication timestamp, direct article 403 не должен автоматически уничтожать event, но это требует отдельного policy/audit change и строгой exact-URL binding;
-3. **weak-source high-signal resolver**: найденный крупный event на aggregator не должен сразу умирать как weak_source, если в уже доступном first-party surface можно разрешить exact source без увеличения общего search ceiling;
-4. **source-specific fallback для AP/official government sources**, где direct transport часто 403, но существует официальный dated mirror/advisory.
+**Какой слой менять**
 
-Цель P0: вернуть уже обнаруженные события, не увеличивая Web Search budget и не ослабляя freshness fail-closed.
+Source Freshness Proof / authoritative date evidence propagation. В частности, проверить bounded использование exact feed-entry publication timestamp для exact canonical first-party URL и улучшить generic machine-readable/visible-date extraction, не превращая произвольный body text в доказательство.
 
-### P1 — Agency Rescue redesign
+**Чего не менять**
 
-После P0 необходимо менять не просто формулировку Reuters query, а сам механизм/transport диагностики.
+- не разрешать `unknown`;
+- не ослаблять freshness window;
+- не обходить canonical URL checks;
+- не добавлять provider-specific исключения без bounded evidence.
 
-Требования к следующему эксперименту:
+**Нужен ли controlled experiment**
 
-- сохранить max `1` Agency Search operation;
-- различать `provider returned no Reuters source`, `source metadata unavailable`, `model rejected`, `navigation/source-resolution failed`;
-- прогнать исторические controls Sep 8–10;
-- обязательные positive controls: Google Finland, Harvey, DeepSeek IPO, OpenAI rogue agents, NVIDIA Australia, OpenAI safety policy;
-- не объявлять `completed_no_addition` здоровым исходом, если provider path не дал source metadata вообще.
+Да. Offline A/B на saved artifacts/pages/feeds с stale boundary, redirect, canonical mismatch, conflicting-date и missing-date negative controls до production PR.
 
-Search-query wording следует менять только с Terra-side validation согласно проектному контракту. Если Terra недоступна, treatment должен быть transport/source-resolution, а не неподтверждённый query rewrite.
+### P1. Agency/provider routing в существующем Reuters slot
 
-### P2 — Source Pulse live acceptance
+**Почему доказательств достаточно**
 
-До добавления новых source rows необходимо чинить три уже добавленных:
+Sep9 и Sep10 Reuters-only rescue возвращает zero additions при наличии нескольких independently verified Reuters events в exact windows. На Sep10 rescue даже не сохранил source metadata.
 
-- Qualcomm: `HTTP 200 + parsed_items=0` должен диагностироваться как `parse_empty/indeterminate` либо parser нужно адаптировать к текущей newsroom structure;
-- NSA: использовать реально доступный официальный endpoint/mirror или CISA joint advisory surface вместо мёртвого 403 path;
-- OpenAI: решить exact official RSS → source-freshness proof contract.
+**Какой слой менять**
 
-После этого повторить live/offline acceptance на тех же controls. Простое расширение registry сейчас только увеличит количество красивых строк конфигурации, а не recall.
+Agency Rescue provider/domain routing и diagnostics выполнения search slot. Цель — сделать существующую одну Reuters operation реально способной доставлять Reuters surface и доказуемо фиксировать provider/source metadata.
 
-### P3 — Editorial ranking только после P0/P1
+**Чего не менять**
 
-Сегодня нет достаточных оснований первым делом менять редакторский ranking. `cand-001` и `cand-004` имели score 4 / initial include, но были технически переведены в exclude из-за Source Freshness. Cymphony и Runway заняли место уже после этого.
+- не увеличивать Agency budget > 1;
+- не увеличивать общий search ceiling;
+- не ослаблять source/freshness validation.
 
-Ranking можно оценивать повторно только после того, как сильные кандидаты действительно доходят до publishable candidate pool.
+**Нужен ли controlled experiment**
 
-## Решение
+Да. Historical replay/A-B на Sep6–Sep10 controls с тем же `1` Agency operation и тем же общим ceiling.
 
-**Audit verdict: search/retrieval stack требует следующего runtime treatment.**
+### P2. High-signal weak-source → authoritative source upgrade и gap-awareness
 
-Первым менять **Source Freshness + source resolution**, вторым **Agency Rescue**, третьим **live acceptance Source Pulse**. Editorial ranking пока не является P0.
+**Почему доказательств достаточно**
 
-Не рекомендуется:
+Google €13B был замечен, но умер как `weak_source`, хотя Reuters и first-party source существовали. Одновременно Coverage `7/7` и Hybrid `5/5` дали `0` additions, а несколько cross-lane Must Include событий отсутствовали полностью.
 
-- увеличивать ceiling выше 25;
-- ослаблять freshness;
-- вводить региональные или количественные publication quotas;
-- добавлять ещё official sources до исправления уже наблюдаемого transport/parser failure;
-- лечить Reuters пропуски только ещё одним общим Coverage query.
+**Какой слой менять**
 
-README / `automation/README.md` / `automation/ARCHITECTURE.md` в этом audit-only PR не меняются: runtime contract не изменён. Следующий runtime PR по P0 уже потребует архитектурного и regression review.
+Source-neutral source-upgrade / gap-resolution logic внутри существующих Primary/Coverage passes. Weak source должен оставаться непубликуемым, но high-signal event identity может быть bounded seed для поиска authoritative proof.
+
+**Чего не менять**
+
+- не ослаблять weak-source fail-closed;
+- не увеличивать число запросов;
+- не вводить company whitelists или regional publication quotas.
+
+**Нужен ли controlled experiment**
+
+Да. Fixed-budget regression matrix: baseline vs treatment на historical hard misses и negative controls.
+
+### P3. Source Pulse route health / live acceptance
+
+**Почему доказательств достаточно**
+
+- OpenAI RSS discovery работает, promotion path нет;
+- Qualcomm `200 + parsed 0`;
+- NSA `403`.
+
+Три новых route #162 в реальном production дали нулевой new-candidate contribution.
+
+**Какой слой менять**
+
+Route health semantics, parser fixtures и bounded transport fallback только для доказуемых official surfaces.
+
+**Чего не менять**
+
+- не плодить новые registry rows вместо ремонта;
+- не считать HTTP 200 достаточным health proof для HTML parser;
+- не делать Pulse заменой Search или regional gap resolver.
+
+**Нужен ли controlled experiment**
+
+Да. Отдельный route-by-route acceptance test с saved/live-public fixtures без production paid API.
+
+## Что пока не пора менять
+
+### Editorial ranking / prompt
+
+Sep10 не даёт чистого доказательства editorial ranking failure среди strict Must Include:
+
+- Anthropic потерян freshness gate;
+- Google не дошёл до candidate;
+- четыре Must Include не найдены;
+- Apple и Suno, которые были fresh+eligible, редактор выбрал.
+
+Поэтому editor/ranking следует исследовать после upstream/freshness repairs. Сейчас изменение editorial prompt смешало бы причинность и могло бы ухудшить выбор без исправления recall.
+
+### Search budget
+
+Полный conditional ceiling `25/25` уже использован. Добавлять 26-й запрос без доказанного routing/gap-awareness treatment не обосновано.
+
+### Freshness / weak-source contracts
+
+Оба контракта правильно предотвратили публикацию недостаточно доказанных candidates. Нужна лучшая добыча доказательств, а не более слабые доказательства.
+
+## Документация и scope
+
+Этот audit correction не меняет runtime, workflow, retrieval, editorial, freshness, recovery, publication или repository structure.
+
+Проверены:
+
+- `README.md`;
+- `automation/README.md`;
+- `automation/ARCHITECTURE.md`;
+- `AGENTS.md`.
+
+Изменения этих файлов не требуются: PR исправляет только audit evidence и метрики.
+
+## Финальный вердикт
+
+Техническая публикация 10 сентября здорова, а completeness — нет.
+
+**Главный показатель:** `2/8 = 25%` strict Must Include publication recall в main window.
+
+**Главный root cause:** не editor. Основной ущерб приходит из сочетания hard discovery misses, неработающего Reuters rescue/source routing, неспособности повышать weak-source high-signal события до authoritative evidence и Source Freshness Proof, который не умеет использовать существующее доказательство даты в нескольких важных cases.
+
+**#162:** live publication uplift на Sep10 не доказан; реализованный вклад новых routes равен нулю. OpenAI RSS при этом доказал, что сам discovery route полезен, поэтому следующий шаг — не отменять Source Pulse, а чинить его acceptance/freshness path и route health.
+
+**Приоритет runtime work:** P0 Source Freshness proof → P1 Agency/provider routing → P2 source-upgrade/gap-awareness → P3 Source Pulse live acceptance.
