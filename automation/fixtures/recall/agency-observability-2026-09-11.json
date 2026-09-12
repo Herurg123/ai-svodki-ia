@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "scope": "P2 diagnostics-only controls from Sep6-Sep11 saved evidence and offline wire probes",
+  "request_contract": {
+    "query": "latest AI models research chips infrastructure financing earnings business deals policy security",
+    "allowed_domains": ["reuters.com"],
+    "search_context_size": "high",
+    "maximum_search_operations": 1,
+    "maximum_tool_calls": 4,
+    "include": ["web_search_call.action.sources"],
+    "reasoning_effort": "medium",
+    "maximum_output_tokens": 5000,
+    "sdk_max_retries": 2
+  },
+  "source_metadata_controls": [
+    {"input": "sources field missing", "expected_state": "missing"},
+    {"input": "sources=null", "expected_state": "null"},
+    {"input": "sources=[]", "expected_state": "empty"},
+    {"input": "sources=[one Reuters source]", "expected_state": "nonempty"},
+    {"input": "sources has non-list value", "expected_state": "malformed"},
+    {"input": "no observed search action", "expected_state": "unknown"}
+  ],
+  "historical_saved_reports": [
+    {
+      "date": "2026-09-06",
+      "availability": "committed_report",
+      "state": "completed_no_addition",
+      "raw_count": 0,
+      "validated_count": 0,
+      "added_count": 0,
+      "source_metadata_available": false
+    },
+    {
+      "date": "2026-09-07",
+      "availability": "committed_report",
+      "state": "completed_no_addition",
+      "raw_count": 0,
+      "validated_count": 0,
+      "added_count": 0,
+      "source_metadata_available": false
+    },
+    {
+      "date": "2026-09-08",
+      "availability": "missing_committed_report"
+    },
+    {
+      "date": "2026-09-09",
+      "availability": "committed_report",
+      "state": "diagnostics_missing",
+      "raw_count": 0,
+      "validated_count": 0,
+      "added_count": 0,
+      "source_metadata_available": false
+    },
+    {
+      "date": "2026-09-10",
+      "availability": "committed_report",
+      "state": "completed_no_addition",
+      "raw_count": 0,
+      "validated_count": 0,
+      "added_count": 0,
+      "source_metadata_available": false
+    },
+    {
+      "date": "2026-09-11",
+      "availability": "committed_report",
+      "state": "completed_no_addition",
+      "raw_count": 0,
+      "validated_count": 0,
+      "added_count": 0,
+      "source_metadata_available": false
+    }
+  ],
+  "invariants": {
+    "new_web_search_operations": 0,
+    "query_change": false,
+    "routing_change": false,
+    "ranking_change": false,
+    "freshness_change": false,
+    "missing_diagnostics_authorize_retry": false,
+    "unknown_is_not_zero": true
+  },
+  "interpretation": "Historical completed_no_addition plus unavailable source metadata does not establish a provider-routing failure or a healthy provider zero. P2 records independent axes; query/routing changes remain blocked pending an equal-budget empirical experiment."
+}
