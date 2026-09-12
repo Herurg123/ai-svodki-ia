@@ -118,6 +118,17 @@ validation, dedupe/cap и фактическое addition. Старый `validat
 `post_validation_count`. Отсутствующая диагностика остаётся unknown и не даёт
 права повторять search. Это наблюдаемость, а не routing-fix.
 
+P3a сохраняет ещё один ранее терявшийся диагностический класс: квалифицированный
+Primary `weak_source` для product/model события теперь может остаться в
+`unresolved_signals` вместе с исходными URL/reason, organization,
+version/model и lifecycle/action anchors. Это **evidence-only** очередь:
+`resolution_required=false`, `candidate_eligible=false`, новый search не
+резервируется, существующий седьмой Coverage slot не вытесняется, а слабый
+источник не становится публикационно пригодным. Exact authoritative binding и
+автоматическое закрытие такого сигнала относятся к отдельному P3b и в текущий
+контракт не входят. Потолки 24/25, Freshness, archive dedupe и editorial ranking
+не меняются.
+
 Каноническая continuity-точка остается `search_cutoff_at` последнего успешно
 опубликованного выпуска. После единственного search один Primary-pass может
 использовать `open_page` и `find_in_page` как навигацию, не увеличивая
