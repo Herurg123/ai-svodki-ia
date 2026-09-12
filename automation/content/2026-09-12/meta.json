@@ -1,0 +1,35 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-12",
+  "slug": "2026-09-12",
+  "title": "ИИ-Сводка на 12 сентября 2026",
+  "description": "Новые модели DeepSeek и Cohere, обновление Devin, изменения в Copilot CLI, расследование активности агентов OpenAI и инвестиции в данные для гуманоидных роботов. Также — планы роста Moonshot AI.",
+  "published_at": "2026-09-12T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-12.png",
+  "topics": [
+    "GitHub Copilot CLI",
+    "Devin",
+    "SWE-2",
+    "Cohere",
+    "машинный перевод",
+    "OpenAI",
+    "безопасность агентов ИИ",
+    "Mecka AI",
+    "physical AI",
+    "Skild AI",
+    "DeepSeek V4.1-Flash",
+    "Moonshot AI",
+    "Kimi",
+    "open-weight модели"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, legal_regulation."
+    }
+  ]
+}

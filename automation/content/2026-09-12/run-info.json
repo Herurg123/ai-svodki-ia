@@ -1,0 +1,142 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-09-12",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-09-12.json",
+  "warnings": [
+    "cand-002: источник показывает дату без точного времени.",
+    "cand-004: источник показывает дату без точного времени.",
+    "cand-006: источник показывает дату без точного времени.",
+    "cand-007: источник показывает дату без точного времени.",
+    "cand-010: источник показывает дату без точного времени.",
+    "cand-016: источник показывает дату без точного времени.",
+    "cand-017: источник показывает дату без точного времени.",
+    "cand-018: источник показывает дату без точного времени.",
+    "Одинаковые источники используются несколькими кандидатами: 2; это допустимо и будет проверено на редакторском этапе.",
+    "URL используется в нескольких кандидатах: https://benchlm.ai/model-updates (cand-009, cand-010); https://openai.com/index/introducing-gpt-live-1-in-the-api (cand-002, cand-010)",
+    "Редактор не выбрал российские кандидаты cand-016, cand-017; региональная квота публикации не применяется.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-09-12",
+  "started_at": "2026-09-12T01:16:40+00:00",
+  "finished_at": "2026-09-12T01:17:16+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 56,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "d4d47b259b916596a715161e485b5709d548f5412de5230a3286bbd1dd5c1ebb",
+    "candidates_sha256": "b2bbdcf1475f1de95cef29f5e565dd414238d2fdb580597390161f7cd3382d2e",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-09-10T04:05:09+03:00",
+      "end_at": "2026-09-12T04:06:48+03:00",
+      "latest_archive_at": "2026-09-11T04:05:09+03:00",
+      "start_date": "2026-09-10",
+      "end_date": "2026-09-12",
+      "latest_archive_date": "2026-09-11"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "0d3555ee2fab79d413c83b1093342338946d110353ff6e2758e215250b9d87bf",
+    "editorial_sha256": "9afd244a511d5611107c89419ef3d56205f5bc8375227f18e16691b0d0cdbcc4",
+    "digest_sha256": "3a7cc811ea085dda7edcb057b94cdba099fdf296acfa2d126ec8d751ce804992",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-09-12-ai-digest.png",
+          "normalized_value": "ai-svodka-2026-09-12.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, legal_regulation."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0a93945fc8235723016aa4a7f98e2c87d2a42088b829d76f47",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 124742,
+        "input_tokens_details": {
+          "cache_write_tokens": 21736,
+          "cached_tokens": 103003
+        },
+        "output_tokens": 4274,
+        "output_tokens_details": {
+          "reasoning_tokens": 516
+        },
+        "total_tokens": 129016
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 124742,
+    "output_tokens": 4274,
+    "total_tokens": 129016,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "e9f1b5279d02ea5b327ee0988965d5850a6c6401",
+    "run_id": "34663796113",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-09-12T04:06:48+03:00"
+}
