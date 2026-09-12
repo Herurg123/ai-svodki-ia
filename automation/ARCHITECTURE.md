@@ -21,11 +21,11 @@ Video → RSS post-publication bridge закрыт и сохранён толь�
 scheduled/manual trigger
   -> previous-release / recovery gate
   -> Primary Recall
-  -> Source Pulse v1.3 fixed-source supplemental discovery
+  -> Source Pulse v1.4 fixed-source supplemental discovery
   -> deterministic Event Freshness + Source Freshness Proof for trusted Primary + Pulse research
   -> first editorial
   -> deterministic post-filter major-agency health viability
-  -> conditional agency discovery rescue
+  -> conditional agency discovery rescue v6 + additive observability
   -> Event Freshness + Source Freshness Proof for rescue additions
   -> saved Source Pulse snapshot/fusion reuse
   -> deterministic post-filter regional-health viability refresh (false -> true only)
@@ -44,13 +44,15 @@ scheduled/manual trigger
   -> FTP deploy of posts/
 ```
 
-Source Pulse v1.3 intentionally supplements fresh Primary **before the first
-editorial call**. This placement allows the second discovery plane to influence
-the normal editorial selection without introducing a dedicated model/search call.
-The later Hybrid stage reuses the saved Pulse snapshot only for fusion diagnostics
-and never silently repolls the mutable source set.
+Source Pulse v1.4 intentionally supplements fresh Primary **before the first
+editorial call**. V1.4 preserves the v1.3 Yandex publication-date repair and adds
+one narrower saved first-party feed publication proof for explicitly approved
+Tier-A official RSS/Atom items. This placement allows the second discovery plane
+to influence the normal editorial selection without introducing a dedicated
+model/search call. The later Hybrid stage reuses the saved Pulse snapshot only for
+fusion diagnostics and never silently repolls the mutable source set.
 
-Immediately before the existing Reuters-only Agency Rescue v5, a zero-paid
+Immediately before the existing Reuters-only Agency Rescue v6, a zero-paid
 agency-health viability bridge reconstructs Search-derived `major_agencies`
 provenance from `primary-recall.json` and compares the exact Primary agency rows
 that survived the Primary final cap with the current post-freshness/editorial
@@ -64,6 +66,16 @@ only a compatibility fallback when one side lacks source identity. Pulse-only or
 unrelated later candidates cannot impersonate Primary agency health. Ambiguous or
 unmatched provenance preserves the prior no-search state. The bridge itself uses
 0 OpenAI calls and 0 Web Search operations.
+
+P2 Agency observability does not create a new discovery stage or change this
+trigger. Active v6 runs the same one-slot Reuters request contract inherited from
+v5, but persists a bounded redacted request contract before transport and a
+bounded sanitized response capture before parsing. The final report records
+transport/parse state, provider source metadata as
+`missing|null|empty|nonempty|malformed|mixed|unknown`, model candidate/rejection
+counts, route/host rejection, merge schema/window validation, dedupe/cap and final
+addition as independent axes. Missing diagnostics never become a zero and never
+authorize a retry.
 
 Immediately before fresh Hybrid retrieval P4 performs a zero-paid viability
 refresh over the saved Primary provenance and the current post-freshness/editorial
@@ -183,6 +195,7 @@ listing и проверяется отсутствие всех удалённы
 | Retired Video → RSS reference | `automation/archive/video-rss-enrichment-2026-08/` |
 | FTP video retention | `.github/workflows/repository-cleanup.yml` и `automation/scripts/cleanup_video_ftp.py` |
 | Final retrieval observability | `automation/scripts/discovery_health.py` и `pipeline-status.json` |
+| Agency rescue observability | `automation/scripts/agency_discovery_rescue_v6.py` и `agency-discovery-rescue-transport*.json` |
 
 Документация должна описывать реализованный код, а не предполагаемую будущую
 схему.
@@ -204,15 +217,16 @@ listing и проверяется отсутствие всех удалённы
 - `fixtures/research/.runtime/` является ignored trusted ingress для внутреннего
   fresh research;
 - `scripts/` содержит orchestration, retrieval, recovery, publication, cleanup и
-  validators, включая `event_freshness.py`, `source_freshness.py`, preserved
-  `source_freshness_v1.py`, active `source_pulse_supplement_v13.py`, preserved
-  `source_pulse_supplement_v12.py`, сохранённый `source_pulse_shadow.py`,
-  `agency_health_viability.py`, `regional_health_viability.py`,
-  `discovery_health.py`, versioned Hybrid v2/v3 implementations и FTP-retention
-  `cleanup_video_ftp.py`;
+  validators, включая `event_freshness.py`, active `source_freshness.py` v3,
+  preserved `source_freshness_v2.py`/`source_freshness_v1.py`, active
+  `source_pulse_supplement_v14.py`, preserved v1.3/v1.2 Pulse layers,
+  `source_pulse_shadow.py`, `agency_discovery_rescue_v6.py`, preserved
+  `agency_discovery_rescue_v5_base.py`, `agency_health_viability.py`,
+  `regional_health_viability.py`, `discovery_health.py`, versioned Hybrid v2/v3
+  implementations и FTP-retention `cleanup_video_ftp.py`;
 - `tests/` содержит основной Python offline regression suite, включая event/source
-  freshness, Source Pulse Yandex date regression, provider routing, agency
-  post-filter viability/recovery, P4 regional viability, Discovery Health,
+  freshness, Source Pulse Yandex/trusted-feed regressions, provider routing,
+  Agency observability/viability/recovery, P4 regional viability, Discovery Health,
   no-video RSS boundary и retrieval budget/regional regressions;
 - `notebooklm-video/` является отдельным локальным downstream-подпроектом;
 - `preview/` и `recovery/` являются временными ignored runtime directories.
@@ -313,9 +327,9 @@ reusable domain CI, узкий automated-writer secret scope и canonical rulese
 dry-run/apply, orphan semantics, MLSD/NLST listing, pre-delete validation,
 post-delete verification и hard `video` boundary без RSS/local-runtime dependency.
 Retrieval tests отдельно защищают Event/Source Freshness, Source Pulse safety,
-provider routing, post-filter agency viability/recovery, P4 regional viability,
-Discovery Health truthfulness, regional Hybrid allocation, search ceilings и
-compatibility wrappers.
+provider routing, Agency observability/post-filter viability/recovery, P4 regional
+viability, Discovery Health truthfulness, regional Hybrid allocation, search
+ceilings и compatibility wrappers.
 
 `automation/notebooklm-video/tests/video-boundary-smoke.js` проверяет hard FTP
 boundary и ignore rules. `lockfile-contract-smoke.js` проверяет синхронизацию
@@ -461,14 +475,14 @@ event-origin evidence. `published_date`/`published_at`/`time_precision` отно
 при неоднозначном доказательстве event fields возвращаются как `unknown`/`null`.
 
 После того как versioned Primary engine вернул trusted runtime research, public
-wrapper запускает Source Pulse v1.3 supplement на том же exact saved window и
+wrapper запускает Source Pulse v1.4 supplement на том же exact saved window и
 только затем возвращает research в `run_digest_preview.py` для Event Freshness +
 Source Freshness Proof и первого editorial. Source Pulse promotion не имеет права
 закрывать Search-derived `regional_health` gap. После freshness/editorial P4 может
 только переоткрыть ранний false-healthy регион по exact Primary provenance; это
 не является пересчётом здоровья по Pulse-кандидатам.
 
-### 6.2. Conditional agency discovery rescue
+### 6.2. Conditional agency discovery rescue v6
 
 После первого editorial и перед Hybrid может выполняться bounded missing-event
 rescue. Early Search-derived trigger сохраняется: технически завершённый
@@ -476,7 +490,7 @@ rescue. Early Search-derived trigger сохраняется: техническ�
 независимо от общего количества candidates/stories. Положительный early
 `accepted_count`, однако, больше не является постоянным доказательством здоровья.
 
-Перед paid rescue active v5 вызывает `agency_health_viability.py`. Bridge берёт
+Перед paid rescue active v6 вызывает `agency_health_viability.py`. Bridge берёт
 raw candidates только из original Primary `major_agencies`, пересекает их с
 `primary_report.final_candidates`, а затем сопоставляет эти exact Primary agency
 rows с текущим post-freshness/editorial `candidates.json`. Если accepted Primary
@@ -496,18 +510,20 @@ Search-derived `major_agencies` только благодаря общей те�
 health bridge выполняет 0 OpenAI calls и 0 Web Search operations.
 
 Разрешена максимум одна дополнительная Web Search operation. Active provider
-route в v5 остаётся Reuters-only и acceptance требует прямого `reuters.com`
-primary URL. Syndication/aggregator URL не заменяет прямой источник. Rescue не
-повышает significance и не гарантирует публикацию.
+route в v6 остаётся тем же Reuters-only route, который был доказан в v5, и
+acceptance требует прямого `reuters.com` primary URL. Syndication/aggregator URL
+не заменяет прямой источник. Rescue не повышает significance и не гарантирует
+публикацию.
 
-P3 вернул единственному rescue slot global publisher-route роль. Query v5 остаётся
-global и source-neutral по тематике AI models/research/business/infrastructure;
-Search-derived Russia/China-Asia gaps сохраняются только в diagnostics и больше
-не подменяют query словом Russia/Asia. Новый post-filter health trigger не меняет
-query, domain/provider routing или число slots. Preserved v4 остаётся
-replay/rollback implementation исторической gap-aware semantics. Rescue использует
-ту же strict event-origin schema, что и Primary, и не получает отдельного
-freshness search.
+P3 вернул единственному rescue slot global publisher-route роль. Query v6
+побайтно сохраняет v5 global source-neutral формулировку по тематике AI
+models/research/business/infrastructure; Search-derived Russia/China-Asia gaps
+сохраняются только в diagnostics и больше не подменяют query словом Russia/Asia.
+Новый post-filter health trigger и P2 observability не меняют query,
+domain/provider routing или число slots. Preserved v4 и побайтно сохранённый
+`agency_discovery_rescue_v5_base.py` остаются replay/rollback implementations.
+Rescue использует ту же strict event-origin schema, что и Primary, и не получает
+отдельного freshness search.
 
 State сохраняется до и после paid call. `search_started` автоматически не
 ретраится, потому что consumption единственного search может быть неизвестен.
@@ -520,18 +536,27 @@ saved `not_triggered`, который доказуемо имеет `executed=fa
 completed/indeterminate search остаётся at-most-once и не получает повторной
 операции.
 
-### 6.3. Source Pulse v1.3 supplemental discovery и shadow fusion
+P2 observability сохраняет исторический `validated_count` без изменения
+семантики и публикует его явный alias `pre_merge_eligible_count`. Отдельный
+`post_validation_count` отражает кандидатов после schema/window validation до
+последующего dedupe/cap. Provider source metadata не сворачивается в bool: report
+различает missing, explicit null, explicit empty list, nonempty list, malformed и
+unknown. Transport capture диагностический, а не replay journal: legacy/injected
+пути без capture остаются `legacy_or_injected_unobserved`, что не разрешает новый
+wire call.
+
+### 6.3. Source Pulse v1.4 supplemental discovery и shadow fusion
 
 Source Pulse состоит из двух связанных режимов над одним сохранённым snapshot.
 
 **Pre-editorial supplement.** После fresh Primary public wrapper вызывает
-`source_pulse_supplement_v13.py`. V1.3 является узким versioned wrapper поверх
-сохранённого v1.2, использует фиксированный registry, обычный bounded HTTPS
-polling и **0 OpenAI / 0 Web Search operations**. V1.2 hardening и source-aware
-visible-date parsing сохраняются, а P2 добавляет только Yandex publication-date
-repair.
+`source_pulse_supplement_v14.py`. V1.4 является узким versioned wrapper поверх
+сохранённого v1.3. Он использует фиксированный registry, обычный bounded HTTPS
+polling и **0 OpenAI / 0 Web Search operations**. V1.3 сохраняет Yandex
+publication-date repair поверх v1.2; v1.4 добавляет только trusted first-party
+feed publication fallback для явно одобренных Tier-A official RSS/Atom items.
 
-Базовые свойства, унаследованные из v1.2:
+Базовые свойства, унаследованные из v1.2/v1.3:
 
 - source-aware обработка распространённых Russian/English/Chinese date shapes;
 - узкие host-specific response caps для известных крупных first-party/news
@@ -539,7 +564,8 @@ repair.
 - явная диагностика HTTP-success с parsed items, но без пригодной date evidence;
 - `complete_with_gaps`, когда transport/parser/source health деградирован;
 - Tier-A `trusted_news` как отдельная роль, не равную официальному источнику
-  компании.
+  компании;
+- Yandex first-party URL+visible-date repair остаётся узким и source-specific.
 
 JSON-LD, RSS/Atom и `<time datetime>` semantics исходного collector сохраняются.
 
@@ -552,6 +578,16 @@ fallback только при втором независимом first-party с�
 само по себе не даёт ему приоритет; без corroboration конфликт становится
 undated/fail-closed. Existing generic machine-readable publication metadata
 остаётся authority и не заменяется Yandex fallback.
+
+P1 trusted-feed repair v1.4 разрешает saved feed timestamp как publication proof
+только для источника, явно одобренного в коде и всё ещё зарегистрированного как
+Tier-A `official` + `rss_atom`. Начальный allowlist содержит только
+`openai_news_rss`; допустимы RSS `pubDate` и Atom `published`, но не Atom
+`updated`. Feed и item должны быть HTTPS exact same-host, normalized
+`source_item_id` обязан совпасть с normalized item URL, timestamp должен быть
+aware и попадать в exact saved window. Direct page publication metadata остаётся
+authority; конфликт даты или redirect/canonical drift fail-closed отклоняют
+fallback. Feed для этого доказательства повторно не запрашивается.
 
 Candidate influence разрешён только по узкому контракту:
 
@@ -581,13 +617,15 @@ XPeng и DeepSeek surfaces; IT之家 остаётся Tier-B lead-only. Alibaba 
 bounded community fallbacks, чтобы HTML/payload drift одного index не означал
 автоматический нулевой discovery.
 
-После supplement штатный trusted-runtime Event Freshness + Source Freshness Proof
-**ещё раз** проверяет merged Primary+Pulse research до первого editorial.
-Source Pulse deterministic candidates, которые не имеют отдельного event-origin
-evidence, получают `event_freshness_status=unknown`, сохраняют recall и всё равно
-обязаны пройти existing fail-closed source-page proof. Следовательно, внутренний
-Pulse parser не является единоличным публикационным authority и не обходит
-freshness boundary.
+После supplement штатный trusted-runtime Event Freshness + Source Freshness v3
+**ещё раз** проверяет merged Primary+Pulse research до первого editorial. Source
+Freshness v3 сохраняет direct-page/first-party v2 behavior и отдельно валидирует
+candidate-local persisted trusted-feed proof против текущего registry и exact
+primary URL. Feed при этом не repoll'ится. Source Pulse deterministic candidates,
+которые не имеют отдельного event-origin evidence, получают
+`event_freshness_status=unknown`, сохраняют recall и всё равно обязаны пройти
+fail-closed source proof. Следовательно, внутренний Pulse parser не является
+единоличным публикационным authority и не обходит freshness boundary.
 
 **Поздний shadow/fusion.** Hybrid продолжает вызывать
 `source_pulse_shadow.py`, но normal fresh run находит уже сохранённый
@@ -603,19 +641,20 @@ provenance. Pulse-only или unrelated later candidates не могут сде�
 Поэтому двухплоскостная discovery architecture сохраняется.
 
 Runtime diagnostics в `preview/production-daily/source-pulse-<DATE>.json`
-содержат transport/parser/source health, v1.3 counters, Yandex repair diagnostics,
-pre-promotion fusion, per-lead promotion/rejection disposition, page freshness
-evidence, promoted URLs, merge rejections, post-promotion fusion, reuse flag и
-later post-Hybrid fusion. Весь `production-daily/` уже входит в обычный Actions
-artifact.
+содержат transport/parser/source health, v1.4 counters, v1.3 Yandex repair
+следы, trusted-feed publication evidence, pre-promotion fusion, per-lead
+promotion/rejection disposition, page freshness evidence, promoted URLs, merge
+rejections, post-promotion fusion, reuse flag и later post-Hybrid fusion. Весь
+`production-daily/` уже входит в обычный Actions artifact.
 
 Source/network/parser/promotion error fail-open только для уже валидного Primary:
 ошибка Pulse не должна превращать успешные обязательные Search passes в
 production failure. Она обязана остаться в diagnostics. Same-day recovery не
-repoll'ит mutable Pulse sources. V1.3 может детерминированно исправить Yandex
-URL/title date evidence уже сохранённого v1.2 snapshot и удалить Yandex rows,
-которые после такого исправления оказываются вне exact saved window; это не
-является новым polling или paid retrieval.
+repoll'ит mutable Pulse sources. V1.4 может детерминированно использовать только
+сохранённый snapshot/proof: v1.3 Yandex normalization исправляет сохранённый
+URL/title date evidence и exact-window filtering, а trusted-feed path валидирует
+уже сохранённое exact-item доказательство. Ни один из путей не делает новый feed
+polling или paid retrieval.
 
 ### 6.4. Hybrid completeness v3
 
@@ -770,7 +809,9 @@ Hybrid search не должен становиться обычным default ч
 false-healthy второго региона; theoretical ceiling не меняется. Agency-health
 viability может увеличить фактическую частоту уже существующего единственного
 Reuters rescue только после доказанной поздней потери Primary agency survivor;
-она не создаёт второй rescue slot и не меняет theoretical ceiling.
+она не создаёт второй rescue slot и не меняет theoretical ceiling. P2 Agency
+observability только записывает evidence вокруг этого существующего вызова и
+также не меняет theoretical ceiling.
 
 Source Pulse не входит в search-operation budget: collector, parser и
 page/freshness verification используют только обычный HTTPS и не вызывают
@@ -837,7 +878,7 @@ policy change и требует отдельного PR/audit.
 `scripts/source_pulse_value.py` — автономный читатель сохранённого Pulse report,
 не импортируемый production. Он сохраняет source health отдельно от количества
 leads и подтверждает promotion только точным совпадением `record.url` с
-`accepted_candidate_urls`, как текущий v1.2/v1.3 merge contract. Fetch `final_url`
+`accepted_candidate_urls`, как текущий v1.4 merge contract. Fetch `final_url`
 сам по себе не заменяет идентичность кандидата. Опциональный `--release-dir`
 включает `source_pulse_trace.py`: exact Pulse title/URL/provenance → unique
 candidate → consistent editorial ID partition → story с совпавшими ID, source,
@@ -987,11 +1028,20 @@ origin однозначно находится раньше/после exact sav
 неполные origin metadata в false-negative machine.
 
 **Source Freshness Proof** остаётся отдельным fail-closed слоем. Stable
-`source_freshness.py` v2 использует preserved `source_freshness_v1.py` как
-authority для safe HTTPS fetch, machine-readable publication parsing и exact
-window comparison. `published_date`, `published_at`, `time_precision` относятся
-к цитируемой source/article page. Verifier открывает только уже процитированные
-candidate URLs; `dateModified` не заменяет publication date.
+`source_freshness.py` v3 сохраняет preserved direct-page/first-party v2 semantics
+поверх `source_freshness_v2.py`/`source_freshness_v1.py` и добавляет только
+candidate-local проверку сохранённого trusted-feed proof. Generic page verifier
+по-прежнему является authority для safe HTTPS fetch, machine-readable publication
+parsing и exact window comparison. `published_date`, `published_at`,
+`time_precision` относятся к цитируемой source/article page; `dateModified` не
+заменяет publication date.
+
+Для кандидата с trusted-feed evidence v3 сначала валидирует exact proof against
+current registry/primary URL. При direct fetch failure или undated direct page
+валидный saved RSS `pubDate`/Atom `published` может дать synthetic publication
+proof только для одобренного exact same-host item. Parseable direct page date
+остаётся authority; conflict и redirect/canonical drift fail-closed. Feed не
+repoll'ится, Atom `updated` не является original-publication evidence.
 
 Outside-window source исключается как stale/old reprint. Отсутствие проверяемой
 source date evidence блокирует публикацию. Supporting source может стать primary,
@@ -1056,11 +1106,19 @@ recovery может заново вычислить current agency health по s
 получают второй search; `search_completed`/`merge_failed` могут только продолжить
 сохранённый merge без нового search.
 
-Сохранённый Source Pulse snapshot считается mutable-source evidence того же
+P2 transport/source-metadata capture не меняет эту state machine. Capture может
+помочь установить, вернулся ли response и как выглядел provider metadata, но он
+не является новой authority для расхода search slot и сам не разрешает replay.
+Legacy report без capture остаётся наблюдательно неполным. Stable v5 compatibility
+surface и private `_persist_report` hook сохранены, а active v6 использует тот же
+saved report/state lifecycle.
+
+Сохранённый Source Pulse v1.4 snapshot считается mutable-source evidence того же
 artifact и не repoll'ится при обычном same-day recovery; later fusion использует
-сохранённый snapshot. V1.3 разрешает только deterministic normalization уже
-сохранённого Yandex URL/title date evidence и exact-window filtering без сетевого
-repoll.
+сохранённый snapshot. V1.3 Yandex repair разрешает только deterministic
+normalization уже сохранённого URL/title date evidence и exact-window filtering;
+trusted-feed proof также валидируется из сохранённого candidate evidence без
+нового feed poll.
 
 P4 viability refresh сам не выполняет paid operation и не является разрешением
 повторять Hybrid. Он применяется на fresh path непосредственно перед первым
@@ -1226,13 +1284,30 @@ Sep-1 P0 в production, но независимо verified reference set дал 
 Controlled zero-paid replay Discovery Health v1 сохранён в
 `audits/experiments/2026-09-02-discovery-health-v1.md`.
 
+Sep-12 OpenAI trusted-feed freshness P1 сохранён в
+`audits/experiments/2026-09-12-openai-feed-freshness-p1/`, fixture
+`fixtures/recall/openai-feed-freshness-2026-09-11.json`. Он воспроизводит
+двухворотный loss path direct 403/undated page в Source Pulse и Source Freshness,
+доказывает exact same-host saved RSS publication proof и negative controls без
+нового feed polling, OpenAI call или Web Search.
+
+Sep-12 Agency observability P2 сохранён в
+`audits/experiments/2026-09-12-agency-observability-p2/`, fixture
+`fixtures/recall/agency-observability-2026-09-11.json`. Historical Sep6-Sep11
+matrix сохраняет missing report/diagnostics_missing как unknown evidence, а
+offline wire controls различают missing/null/empty/nonempty/malformed source
+metadata. Этот audit не утверждает provider cause и не разрешает routing/query
+change; он фиксирует диагностический baseline при нулевом дополнительном spend.
+
 ## 12. Совместимость и versioned реализации
 
 Некоторые stable public files являются wrappers над сохранёнными versioned
 implementations, например:
 
 - `primary_recall_search.py` над `primary_recall_search_v2.py`;
-- `source_freshness.py` v2 над preserved `source_freshness_v1.py`;
+- `source_freshness.py` v3 над preserved `source_freshness_v2.py` и v1;
+- `agency_discovery_rescue_v5.py` как stable compatibility surface над active v6
+  и побайтно сохранённым `agency_discovery_rescue_v5_base.py`;
 - `hybrid_search_completeness.py` над preserved Hybrid v2/v3 implementations;
 - `ensure_story_coverage.py` над preserved Coverage implementation;
 - `recover_digest_artifact.py` над preserved recovery implementation.
@@ -1245,23 +1320,29 @@ implementations, например:
 - source-inspection contract tests, которые защищают search/output budgets;
 - возможность semantic overlay без переписывания proven engine в том же change.
 
-P1 следует этому принципу: existing source-page parser/fetch/fail-closed logic
-сохранён в `source_freshness_v1.py`; public v2 добавляет только event-age
-orchestration и diagnostics. Это отделяет новый correctness gate от proven
-network/publication-date parsing и уменьшает regression surface.
+Event Freshness P1 следует этому принципу: existing source-page parser/fetch/
+fail-closed logic сохранён в `source_freshness_v1.py`; v2 добавил event-age
+orchestration и first-party adapters. Sep-12 Source Freshness v3 сохраняет
+побайтно прежний v2 engine и накладывает только candidate-local trusted-feed proof
+для Source Pulse v1.4. Это отделяет новый correctness fallback от proven network/
+publication-date parsing и уменьшает regression surface.
 
-Source Pulse v1.3 следует тому же принципу: active production wrapper добавляет
-узкий Yandex publication-date repair поверх preserved v1.2, который сам остаётся
-wrapper поверх hardened collector/V1.1 logic. Исходный collector, v1.2 и shadow
+Source Pulse v1.4 следует тому же принципу: active production wrapper добавляет
+trusted first-party feed proof поверх preserved v1.3. Сам v1.3 добавляет узкий
+Yandex publication-date repair поверх preserved v1.2, который остаётся wrapper
+поверх hardened collector/V1.1 logic. Исходный collector, v1.2/v1.3 и shadow
 surface сохраняются для rollback, replay, saved snapshots и regression hooks.
 Generic Source Freshness parser при этом не переписывается.
 
-Agency health change также сохраняет compatibility topology: historical v3/v4
-rescue implementations не переписываются. Active v5 временно подключает новый
-zero-paid trigger и loader semantics вокруг proven v3 state machine и затем
-восстанавливает historical monkeypatch surfaces. Отдельный trigger contract
-version позволяет изменить post-filter health/recovery semantics, не создавая
-второй provider route и не уничтожая replay assets.
+Agency topology также сохраняет compatibility layers. Historical v3/v4 rescue
+implementations не переписываются; exact former v5 хранится как
+`agency_discovery_rescue_v5_base.py`. Stable `agency_discovery_rescue_v5.py`
+временно является compatibility shim для Hybrid/recovery consumers и направляет
+active runtime в v6. V6 накладывает только instrumentation/diagnostic fields на
+тот же one-slot request/state contract и сохраняет private `_persist_report` hook.
+Удалять shim/base можно только отдельным semantic-neutral refactor после
+переезда consumers и saved-artifact compatibility audit; review не ранее
+2026-10-12.
 
 Hybrid v3 также не уничтожает v2/regional-v1 implementations: stable public
 entrypoint переключает production semantics на v3, а preserved layers остаются
@@ -1405,35 +1486,48 @@ production, RSS, FTP delivery semantics, retrieval/editorial, paid API budgets �
 подтвердил alpha=0.6 already-added state без второго клика. Offline contracts
 защищают ordering, state persistence и no-browser skip после COMPLETE.
 
-Для Source Pulse v1.3 dependency audit затрагивает fresh Primary wrapper,
+Для Source Pulse v1.4 dependency audit затрагивает fresh Primary wrapper,
 фиксированный source registry, trusted runtime research, Event/Source Freshness
 Proof, первый editorial, сохранённый Pulse snapshot и позднюю Hybrid fusion.
-P2 не меняет generic Source Freshness parser, search query/routing, search budget,
-regional-health publication semantics или editorial policy. Yandex repair
-ограничен corroborated first-party URL+visible-date evidence; same-day recovery
-использует только сохранённый snapshot и не repoll'ит source. Tier B не получает
-candidate influence, Tier-A trusted-news остаётся `consider` only после
-deterministic gates.
+V1.4 сохраняет v1.3 Yandex repair и добавляет narrow exact-item trusted-feed proof;
+generic RSS bypass отсутствует. Search query/routing, search budget,
+regional-health publication semantics и editorial policy не меняются. Same-day
+recovery использует только сохранённый snapshot/proof и не repoll'ит feed/source
+ради fallback. Tier B не получает candidate influence, Tier-A trusted-news
+остаётся `consider` only после deterministic gates.
 
 Для P3 provider-routing dependency audit затрагивает Primary query contracts,
-stable Hybrid query overlay, active agency rescue v5, same-day rescue recovery,
+stable Hybrid query overlay, один Reuters rescue route, same-day rescue recovery,
 provider metadata diagnostics и saved routing fixtures. P3 не добавляет search
 slot: Primary остаётся 12, rescue максимум 1, Hybrid 4/5, Coverage максимум 7.
-V4 сохраняется только для replay/rollback, active v5 Reuters route остаётся global
-и regional gaps больше не подменяют его query. Generic freshness/editorial и
-Coverage semantics P3 не меняет.
+V4 сохраняется для replay/rollback, Reuters route остаётся global и regional gaps
+не подменяют его query. Current v6 только наблюдает этот route и не меняет P3
+query/provider contract. Generic freshness/editorial и Coverage semantics P3 не
+меняет.
 
 Для post-freshness agency-health fix dependency audit затрагивает active rescue
-v5, preserved v3/v4 state machine, saved `primary-recall.json`, post-filter
-`candidates.json`, first editorial/freshness handoff, pre-Hybrid integration,
-`recover_digest_artifact.py`, recovery entry, README/architecture и offline
-regressions. Query text, Reuters domain route, candidate schema, Source/Event
-Freshness, regional P4, Hybrid allocation и Coverage не меняются. Bridge выполняет
-0 OpenAI/Web Search operations и может только сделать существующий один rescue
-slot достижимым после доказанной потери exact Primary agency survivor. Saved
-zero-spend `not_triggered` разрешено deterministic re-evaluate; любая
-started/spent/indeterminate operation остаётся at-most-once. Sep-1 A/B использует
-saved evidence и не расходует production API.
+v6 поверх preserved v5/v3/v4 state machine, saved `primary-recall.json`,
+post-filter `candidates.json`, first editorial/freshness handoff, pre-Hybrid
+integration, `recover_digest_artifact.py`, recovery entry, README/architecture и
+offline regressions. Query text, Reuters domain route, candidate schema,
+Source/Event Freshness, regional P4, Hybrid allocation и Coverage не меняются.
+Bridge выполняет 0 OpenAI/Web Search operations и может только сделать
+существующий один rescue slot достижимым после доказанной потери exact Primary
+agency survivor. Saved zero-spend `not_triggered` разрешено deterministic
+re-evaluate; любая started/spent/indeterminate operation остаётся at-most-once.
+Sep-1 A/B использует saved evidence и не расходует production API.
+
+Для Sep-12 Agency observability P2 dependency audit затрагивает stable
+`agency_discovery_rescue_v5.py` import surface, active v6 wrapper, exact preserved
+v5 base, provider metadata extraction, persisted Agency diagnostics, Hybrid
+consumer и same-day recovery hook. Request query, Reuters domain filter,
+`max_tool_calls`, include/source metadata contract, SDK retry setting, candidate
+schema, agency-health trigger, Freshness, ranking, Hybrid/Coverage allocation и
+ceilings 24/25 не меняются. Bounded sanitized raw response сохраняется до parse,
+но не является retry authority. Regression fixture сохраняет Sep6-Sep11 missing/
+unknown evidence и offline transport controls. Любая будущая query/routing правка
+остаётся отдельным search architecture change и требует equal-budget empirical
+validation; P2 её не предрешает.
 
 Для Hybrid v3 conditional paid extension dependency audit затрагивает stable
 Hybrid entrypoint, preserved v2/v3 layers, `regional_health` из Primary,
