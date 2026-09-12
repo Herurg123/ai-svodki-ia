@@ -23,7 +23,11 @@ from coverage_slot_guard import (
     sha256_value,
     slot_is_consumed_or_ambiguous,
 )
-from coverage_slot_transport import protected_policy_audit_request, replay_result_snapshot
+from coverage_slot_transport import (
+    protected_policy_audit_request,
+    replay_raw_response,
+    replay_result_snapshot,
+)
 
 _BASE_PATH = Path(__file__).with_name("ensure_story_coverage_p0.py")
 _BASE_SPEC = importlib.util.spec_from_file_location("ensure_story_coverage_p0", _BASE_PATH)
@@ -45,6 +49,7 @@ _pre = _base._pre
 _runtime = _pre._runtime
 _policy = _pre._policy
 _PRE_RUN_RESOLUTION = _pre._run_resolution
+_PRE_PREPARE_PRIOR_FOR_QUALITY = _pre._prepare_prior_for_quality
 _P0_EXECUTE_AUDIT_PLAN = _base.execute_audit_plan
 _P0_PREPARE_PRIOR_FOR_QUALITY = _base._prepare_prior_for_quality
 _P0_PRIMARY_SEARCH_DIAGNOSTICS = _base._primary_search_diagnostics
@@ -93,16 +98,29 @@ def _publication_date(plan: dict[str, Any] | None = None) -> str:
 
 
 def _sync_public_hooks() -> None:
-    """Preserve the exact P0 monkeypatch surface before installing slot hooks."""
+    """Restore a clean P0 compatibility surface before optional-slot hooks."""
     current = globals()
     for name, value in list(current.items()):
         if name.startswith("__") and name.endswith("__"):
             continue
         if name in _DELEGATE_EXCLUSIONS or name.startswith("_P0_"):
             continue
-        if name in _base.__dict__:
+        # Some historical private hooks are exposed by P0 only through
+        # __getattr__. Materialize a patched public value on P0 so its own
+        # _sync_p0() can carry it to the Retrieval Quality/v8 layer.
+        try:
+            exists = hasattr(_base, name)
+        except Exception:
+            exists = False
+        if exists:
             setattr(_base, name, value)
     _base._sync_p0()
+    # A prior production-style call may have installed the slot hooks on the
+    # preserved Retrieval Quality wrapper. Direct compatibility calls must
+    # always start from the byte-for-byte P0 behavior instead of inheriting
+    # process-global test/order state.
+    _pre._run_resolution = _PRE_RUN_RESOLUTION
+    _pre._prepare_prior_for_quality = _PRE_PREPARE_PRIOR_FOR_QUALITY
 
 
 def _sync_slot_hooks() -> None:
@@ -362,14 +380,25 @@ def _run_resolution(
         if state == "response_saved":
             snapshot = reservation.result_snapshot()
             if not isinstance(snapshot, dict):
-                return _blocked_quality_plan(
-                    plan,
-                    signals=signals,
-                    cluster=cluster,
-                    query=query,
-                    reason="saved optional-slot response has no parse/result snapshot",
-                    reservation=reservation,
-                )
+                try:
+                    _replayed, snapshot = replay_raw_response(
+                        _runtime,
+                        reservation.raw_response(),
+                        maximum_web_search_calls=1,
+                    )
+                    reservation.save_result_snapshot(snapshot)
+                except BaseException as exc:
+                    return _blocked_quality_plan(
+                        plan,
+                        signals=signals,
+                        cluster=cluster,
+                        query=query,
+                        reason=(
+                            "saved optional-slot raw response could not be replayed offline: "
+                            f"{type(exc).__name__}: {exc}"
+                        ),
+                        reservation=reservation,
+                    )
             _runtime._policy_audit_request = lambda **_kwargs: replay_result_snapshot(
                 _runtime, snapshot
             )
