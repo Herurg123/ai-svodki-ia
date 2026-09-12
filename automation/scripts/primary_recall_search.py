@@ -162,8 +162,12 @@ def _weak_source_product_identity(
 ) -> dict[str, Any] | None:
     """Extract evidence-only product identity without making it retrieval-eligible."""
     source_url = _clean(rejection.get("url"))
-    parsed = urlparse(source_url)
-    if parsed.scheme != "https" or not parsed.hostname:
+    try:
+        parsed = urlparse(source_url)
+        host = parsed.hostname
+    except ValueError:
+        return None
+    if parsed.scheme != "https" or not host:
         return None
 
     versions: list[str] = []
@@ -194,7 +198,7 @@ def _weak_source_product_identity(
     if not organization:
         return None
 
-    host = (parsed.hostname or "").casefold()
+    host = host.casefold()
     if host.startswith("www."):
         host = host[4:]
     return {
@@ -318,10 +322,15 @@ def regional_health(direction_reports: Any) -> dict[str, Any]:
 def _annotate(research: dict[str, Any], report: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
     research, report = copy.deepcopy(research), copy.deepcopy(report)
     signals = collect_unresolved_signals(report.get("directions"))
+    research_signals = [
+        copy.deepcopy(item)
+        for item in signals
+        if item.get("reason_code") != "weak_source"
+    ]
     regions = regional_health(report.get("directions"))
-    for target in (research, report):
+    for target, target_signals in ((research, research_signals), (report, signals)):
         target["retrieval_quality_contract_version"] = RETRIEVAL_QUALITY_CONTRACT_VERSION
-        target["unresolved_signals"] = copy.deepcopy(signals)
+        target["unresolved_signals"] = copy.deepcopy(target_signals)
         target["regional_health"] = copy.deepcopy(regions)
         target["business_query_treatment"] = {
             "version": BUSINESS_QUERY_TREATMENT_VERSION,
