@@ -77,6 +77,16 @@ counts, route/host rejection, merge schema/window validation, dedupe/cap and fin
 addition as independent axes. Missing diagnostics never become a zero and never
 authorize a retry.
 
+P3a weak-source signal retention changes only Primary diagnostic provenance. A
+qualified product/model `reason_code=weak_source` rejection may now survive in
+`unresolved_signals` when it has HTTPS source provenance plus organization,
+version/model and lifecycle/action anchors. The row remains evidence-only:
+`resolution_required=false`, `candidate_eligible=false` and
+`additional_search_operations=0`. It is not a candidate, does not reserve the
+Coverage seventh slot, does not weaken the weak-source publication exclusion and
+does not claim that an authoritative event identity was found. Exact authoritative
+binding and automatic closure are a separate deferred P3b boundary.
+
 Immediately before fresh Hybrid retrieval P4 performs a zero-paid viability
 refresh over the saved Primary provenance and the current post-freshness/editorial
 candidate pool. It may only re-open an early healthy Russia/China-Asia region when
@@ -196,6 +206,7 @@ listing и проверяется отсутствие всех удалённы
 | FTP video retention | `.github/workflows/repository-cleanup.yml` и `automation/scripts/cleanup_video_ftp.py` |
 | Final retrieval observability | `automation/scripts/discovery_health.py` и `pipeline-status.json` |
 | Agency rescue observability | `automation/scripts/agency_discovery_rescue_v6.py` и `agency-discovery-rescue-transport*.json` |
+| Weak-source retention regression | `automation/fixtures/recall/weak-source-signal-retention-2026-09-11.json` и matrix D6 |
 
 Документация должна описывать реализованный код, а не предполагаемую будущую
 схему.
@@ -226,8 +237,9 @@ listing и проверяется отсутствие всех удалённы
   implementations и FTP-retention `cleanup_video_ftp.py`;
 - `tests/` содержит основной Python offline regression suite, включая event/source
   freshness, Source Pulse Yandex/trusted-feed regressions, provider routing,
-  Agency observability/viability/recovery, P4 regional viability, Discovery Health,
-  no-video RSS boundary и retrieval budget/regional regressions;
+  Agency observability/viability/recovery, P3a weak-source retention, P4 regional
+  viability, Discovery Health, no-video RSS boundary и retrieval budget/regional
+  regressions;
 - `notebooklm-video/` является отдельным локальным downstream-подпроектом;
 - `preview/` и `recovery/` являются временными ignored runtime directories.
 
@@ -327,9 +339,9 @@ reusable domain CI, узкий automated-writer secret scope и canonical rulese
 dry-run/apply, orphan semantics, MLSD/NLST listing, pre-delete validation,
 post-delete verification и hard `video` boundary без RSS/local-runtime dependency.
 Retrieval tests отдельно защищают Event/Source Freshness, Source Pulse safety,
-provider routing, Agency observability/post-filter viability/recovery, P4 regional
-viability, Discovery Health truthfulness, regional Hybrid allocation, search
-ceilings и compatibility wrappers.
+provider routing, Agency observability/post-filter viability/recovery, P3a
+weak-source evidence retention, P4 regional viability, Discovery Health truthfulness,
+regional Hybrid allocation, search ceilings и compatibility wrappers.
 
 `automation/notebooklm-video/tests/video-boundary-smoke.js` проверяет hard FTP
 boundary и ignore rules. `lockfile-contract-smoke.js` проверяет синхронизацию
@@ -473,6 +485,17 @@ event-origin evidence. `published_date`/`published_at`/`time_precision` отно
 `event_time_precision`, `event_origin_url`, `event_evidence_kind` и
 `event_date_evidence` относятся к событию. Retrieval не обязан выдумывать origin:
 при неоднозначном доказательстве event fields возвращаются как `unknown`/`null`.
+
+Retrieval Quality P3a расширяет только сохранение rejection evidence. Для
+`reason_code=weak_source` row должен иметь HTTPS source URL, явный или
+консервативно извлечённый organization prefix, хотя бы один product/model version
+anchor и lifecycle/action anchor. Тогда сохраняются исходный URL/reason и эти
+identity hints как `signal_class=weak_source_product`. Это не авторитетная
+identity: row остаётся `status=unresolved`, `resolution_required=false`,
+`candidate_eligible=false`, `additional_search_operations=0` и
+`resolution_eligibility=deferred_exact_authoritative_binding`. Неполный
+weak-source row по-прежнему не попадает в queue. Existing high-signal
+`unverified` scoring/resolution semantics не меняются.
 
 После того как versioned Primary engine вернул trusted runtime research, public
 wrapper запускает Source Pulse v1.4 supplement на том же exact saved window и
@@ -751,6 +774,14 @@ multiple search operations или technical/API ambiguity остаются fail-
 Same-day recovery детерминированно переиспользует такой сохранённый seventh
 slot без повторной Web Search operation.
 
+P3a weak-source rows намеренно не входят в этот resolution admission. Они
+сохраняются для диагностики с `resolution_required=false`, поэтому существующий
+`_required_signals()` их игнорирует. Даже если для того же события известен
+внешний authoritative reference, P3a сам его не связывает и не расходует slot.
+Если seventh slot уже занят обязательным `unverified` resolution или другим
+разрешённым контрактом, weak-source row остаётся unresolved/deferred; восьмой
+Coverage search не появляется.
+
 Fresh-agency source health использует тот же свободный seventh slot только когда
 ненулевой пригодный пул одновременно (a) не имеет свежего прямого
 Reuters/AP/Bloomberg/FT primary source и (b) содержит событие, которое уже
@@ -811,7 +842,9 @@ viability может увеличить фактическую частоту у
 Reuters rescue только после доказанной поздней потери Primary agency survivor;
 она не создаёт второй rescue slot и не меняет theoretical ceiling. P2 Agency
 observability только записывает evidence вокруг этого существующего вызова и
-также не меняет theoretical ceiling.
+также не меняет theoretical ceiling. P3a weak-source retention также является
+zero-search diagnostic transform: он сохраняет evidence, но не открывает slot и
+не меняет theoretical ceiling.
 
 Source Pulse не входит в search-operation budget: collector, parser и
 page/freshness verification используют только обычный HTTPS и не вызывают
@@ -1085,6 +1118,12 @@ Primary повторно проходит current source-health. Legacy saved ca
 только из-за отсутствия нового metadata и не заставляют повторять уже оплаченный
 research. Existing source freshness/reuse checks сохраняются.
 
+P3a weak-source evidence не создаёт recovery obligation. Оно является частью
+сохранённого Primary diagnostic report и может переиспользоваться вместе с ним,
+но `resolution_required=false` не понижает recovery mode, не резервирует
+Coverage slot и не разрешает повторять paid retrieval. Future P3b должен отдельно
+доказать at-most-once semantics до изменения этого правила.
+
 Coverage recovery сохраняет уже завершённые mandatory direction attempts и не
 повторяет их только из-за смены source-health contract. После загрузки same-day
 artifact текущая deterministic source-health логика заново решает, применим ли
@@ -1298,6 +1337,16 @@ matrix сохраняет missing report/diagnostics_missing как unknown evid
 offline wire controls различают missing/null/empty/nonempty/malformed source
 metadata. Этот audit не утверждает provider cause и не разрешает routing/query
 change; он фиксирует диагностический baseline при нулевом дополнительном spend.
+
+Sep-12 weak-source signal retention P3a сохранён в
+`audits/experiments/2026-09-12-weak-source-signal-retention-p3a/`, fixture
+`fixtures/recall/weak-source-signal-retention-2026-09-11.json`. Saved Sep11
+DeepSeek rejection воспроизводит baseline `weak_source` + `unresolved_signals=[]`.
+Proposed deterministic replay сохраняет qualified evidence, но оставляет
+`resolution_required=false`, `candidate_eligible=false` и 0 новых Web Search.
+Permanent matrix case D6 фиксирует принцип queue-positive != retrieval-positive.
+Assistant-side Terra в этой сессии не exposed; P3a не меняет query/routing/ranking,
+поэтому live substitute search не выполнялся и production API не расходовался.
 
 ## 12. Совместимость и versioned реализации
 
@@ -1528,6 +1577,21 @@ ceilings 24/25 не меняются. Bounded sanitized raw response сохра�
 unknown evidence и offline transport controls. Любая будущая query/routing правка
 остаётся отдельным search architecture change и требует equal-budget empirical
 validation; P2 её не предрешает.
+
+Для Sep-12 weak-source signal retention P3a dependency audit затрагивает только
+post-Primary extraction `unresolved_signals`, saved Primary diagnostics, existing
+Coverage `_required_signals` boundary, retrieval validation matrix, docs и offline
+regressions. Search query, provider/domain routing, Primary 12-pass execution,
+candidate pool/cap, Event/Source Freshness, archive dedupe, editorial ranking,
+regional/agency health, Hybrid/Coverage allocation и ceilings 24/25 не меняются.
+Qualified weak-source evidence остаётся `resolution_required=false` и
+`candidate_eligible=false`; поэтому recovery не получает новой paid obligation.
+Controlled Sep11 replay использует saved DeepSeek evidence и 0 production API/Web
+Search. P3b exact authoritative binding остаётся отдельной future semantic change
+и до production use обязан пройти identity negatives и fixed-budget acceptance.
+Новая prescriptive норма в `AGENTS.md` не потребовалась: действующий retrieval
+compatibility/search-matrix contract уже запрещает такое расширение без отдельной
+проверки.
 
 Для Hybrid v3 conditional paid extension dependency audit затрагивает stable
 Hybrid entrypoint, preserved v2/v3 layers, `regional_health` из Primary,
