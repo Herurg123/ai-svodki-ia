@@ -121,13 +121,23 @@ validation, dedupe/cap и фактическое addition. Старый `validat
 P3a сохраняет ещё один ранее терявшийся диагностический класс: квалифицированный
 Primary `weak_source` для product/model события теперь может остаться в
 `unresolved_signals` вместе с исходными URL/reason, organization,
-version/model и lifecycle/action anchors. Это **evidence-only** очередь:
+version/model и lifecycle/action anchors. Сам P3a остаётся **evidence-only**:
 `resolution_required=false`, `candidate_eligible=false`, новый search не
 резервируется, существующий седьмой Coverage slot не вытесняется, а слабый
-источник не становится публикационно пригодным. Exact authoritative binding и
-автоматическое закрытие такого сигнала относятся к отдельному P3b и в текущий
-контракт не входят. Потолки 24/25, Freshness, archive dedupe и editorial ranking
-не меняются.
+источник не становится публикационно пригодным.
+
+Active P3b выполняет exact authoritative binding только downstream в Coverage и
+только через уже существующий optional seventh slot. Старый required
+high-signal `unverified` resolution всегда имеет приоритет. За один выпуск P3b
+может рассмотреть максимум один qualified weak-source signal; admission требует
+реальной authoritative page, exact organization, всех version/model anchors,
+совместимого lifecycle/action, deterministic Event/Source Freshness и archive
+checks. Provider/model labels не являются proof. Если slot занят, уже потрачен
+или transport имеет `request_started` с неизвестным исходом, signal остаётся
+unresolved/deferred и новый search не выполняется. `response_saved` и
+`processed` переигрываются/переиспользуются offline без повторного provider call.
+Восьмой Coverage search не появляется; потолки 24/25, regional/agency health и
+editorial ranking не меняются.
 
 Каноническая continuity-точка остается `search_cutoff_at` последнего успешно
 опубликованного выпуска. После единственного search один Primary-pass может
