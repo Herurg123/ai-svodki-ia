@@ -30,15 +30,40 @@ _ORIGINAL_EXPORTS: dict[str, Any] = {
     if not (name.startswith("__") and name.endswith("__"))
 }
 _RUNTIME_PULL_NAMES = ("_LAST_RECALL_SENTINEL", "_LAST_AGENCY_RESCUE")
+_IDENTITY_EXPORTS = frozenset({"completed_prior_audit"})
+_SHIM_INTERNALS = frozenset(
+    {
+        "_impl",
+        "_IMPL_PATH",
+        "_IMPL_SPEC",
+        "_ORIGINAL_EXPORTS",
+        "_RUNTIME_PULL_NAMES",
+        "_IDENTITY_EXPORTS",
+        "_SHIM_INTERNALS",
+        "_sync_to_impl",
+        "_pull_impl_runtime_state",
+        "_make_proxy",
+    }
+)
 
 
 def _sync_to_impl() -> None:
+    """Push public monkeypatches, including lazy delegated hooks, into P3b."""
     current = globals()
-    for name, original in _ORIGINAL_EXPORTS.items():
-        if name not in current:
+    for name, value in list(current.items()):
+        if name in _SHIM_INTERNALS or (name.startswith("__") and name.endswith("__")):
             continue
-        value = current[name]
-        if getattr(value, "_coverage_public_proxy_target", None) == name:
+        try:
+            exists = hasattr(_impl, name)
+        except Exception:
+            exists = False
+        if not exists:
+            continue
+        original = _ORIGINAL_EXPORTS.get(name)
+        if (
+            original is not None
+            and getattr(value, "_coverage_public_proxy_target", None) == name
+        ):
             setattr(_impl, name, original)
         else:
             setattr(_impl, name, value)
@@ -70,7 +95,7 @@ def _make_proxy(name: str):
 
 
 for _name, _value in _ORIGINAL_EXPORTS.items():
-    if inspect.isfunction(_value):
+    if inspect.isfunction(_value) and _name not in _IDENTITY_EXPORTS:
         globals()[_name] = _make_proxy(_name)
     else:
         globals()[_name] = _value
