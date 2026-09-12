@@ -38,7 +38,7 @@ class P4RetrievalArchitectureContractTests(unittest.TestCase):
 
     def test_architecture_describes_active_v6_and_preserved_v5_v4(self) -> None:
         text = ARCHITECTURE.read_text(encoding="utf-8")
-        self.assertIn("Active provider\nroute in v6 остаётся тем же Reuters-only route, который был доказан в v5", text)
+        self.assertIn("Active provider\nroute в v6 остаётся тем же Reuters-only route, который был доказан в v5", text)
         self.assertIn("Query v6\nпобайтно сохраняет v5 global source-neutral формулировку", text)
         self.assertIn("Preserved v4 и побайтно сохранённый\n`agency_discovery_rescue_v5_base.py` остаются replay/rollback implementations", text)
         self.assertNotIn("V4 делает единственный query gap-aware", text)
