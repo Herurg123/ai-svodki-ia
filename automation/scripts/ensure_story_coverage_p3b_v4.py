@@ -39,6 +39,10 @@ def __getattr__(name: str) -> Any:
 
 
 def _sync_p3b_public_hooks() -> None:
+    # STATE_DIR is part of the historical monkeypatch surface and is security-
+    # relevant for the durable optional-slot journal. Keep one exact value across
+    # every wrapper layer instead of relying on generic alias propagation.
+    state_dir = globals().get("STATE_DIR")
     for name, value in list(globals().items()):
         if name in _V4_INTERNALS or (name.startswith("__") and name.endswith("__")):
             continue
@@ -48,7 +52,18 @@ def _sync_p3b_public_hooks() -> None:
             exists = False
         if exists:
             setattr(_v3, name, value)
+    if state_dir is not None:
+        _v3.STATE_DIR = state_dir
+        _v2.STATE_DIR = state_dir
     _v3._sync_p3b_public_hooks()
+    if state_dir is not None:
+        # v3/v2 compatibility sync may mirror older aliases back down. Reassert
+        # the runtime journal root after that generic pass so recovery observes
+        # the exact same durable slot that public callers patched.
+        _v3.STATE_DIR = state_dir
+        _v2.STATE_DIR = state_dir
+        if hasattr(_v2, "_v1"):
+            _v2._v1.STATE_DIR = state_dir
     # Keep the reserved-budget guard installed after generic compatibility sync.
     _v2._run_p3b_binding_v2 = _guarded_run_p3b_binding_v2
 
@@ -103,11 +118,15 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
 
 def main() -> int:
     """Run the historical CLI shell with the hardened execute entrypoint installed."""
+    # Capture the historical CLI callback before generic compatibility sync. That
+    # preserves the long-standing monkeypatch seam and prevents an exported stale
+    # alias from silently replacing a caller/test override.
+    historical_main = _v2._v1._P3A_MAIN
     _sync_p3b_public_hooks()
     original_execute = _v2._v1._pre.execute_audit_plan
     _v2._v1._pre.execute_audit_plan = execute_audit_plan
     try:
-        return int(_v2._v1._P3A_MAIN())
+        return int(historical_main())
     finally:
         _v2._v1._pre.execute_audit_plan = original_execute
         _pull_p3b_runtime_state()
