@@ -20,8 +20,8 @@ def load(name: str, filename: str):
     return module
 
 
-guard = load("coverage_optional_slot_recovery_guard", "coverage_slot_guard.py")
 recovery = load("coverage_optional_slot_recovery", "recover_digest_artifact.py")
+guard = sys.modules["coverage_slot_guard"]
 
 
 class CoverageOptionalSlotRecoveryTests(unittest.TestCase):
@@ -115,6 +115,39 @@ class CoverageOptionalSlotRecoveryTests(unittest.TestCase):
                     )
             finally:
                 recovery._base._ACTIVE_EVIDENCE_ROOT = original
+
+    def test_divergent_existing_target_journal_is_not_overwritten(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            selected = root / "bundle-selected" / "preview"
+            target = root / "target" / "production-daily"
+            selected.mkdir(parents=True)
+            target.mkdir(parents=True)
+            self._saved_state(selected)
+            existing = guard.prepare_slot(
+                state_dir=target,
+                publication_date="2026-09-11",
+                owner="unresolved_high_signal_resolution",
+                search_window={"start_at": "different", "end_at": "window"},
+                request_contract={"query": "different query"},
+                bundle_identity={"bundle": "different"},
+            )
+            before = guard.journal_path(target, "2026-09-11").read_bytes()
+
+            original = recovery._base._ACTIVE_EVIDENCE_ROOT
+            try:
+                recovery._base._ACTIVE_EVIDENCE_ROOT = selected
+                with self.assertRaises(recovery.RecoveryError):
+                    recovery._restore_optional_slot(
+                        recovery_root=root,
+                        report_path=target / "recovery-report.json",
+                        publication_date="2026-09-11",
+                    )
+            finally:
+                recovery._base._ACTIVE_EVIDENCE_ROOT = original
+
+            self.assertEqual(before, guard.journal_path(target, "2026-09-11").read_bytes())
+            self.assertEqual(existing.state, "reserved")
 
 
 if __name__ == "__main__":
