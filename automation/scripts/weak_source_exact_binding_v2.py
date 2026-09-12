@@ -114,10 +114,6 @@ def _identity_surface_matches(text: str, signal: dict[str, Any], *, require_curr
             return False, "lifecycle_identity_mismatch"
     wants_preview = any(action == "preview" for action in actions)
     wants_ga = any(action == "ga" for action in actions)
-    # GA is a later lifecycle state, so a current GA surface cannot prove the
-    # earlier preview event even when it says "after preview". Conversely a GA
-    # article may legitimately mention its previous preview after explicitly
-    # proving GA, so that historical word does not invalidate the GA event.
     if wants_preview and _GA_RE.search(text):
         return False, "preview_ga_mismatch"
     if wants_ga and not _GA_RE.search(text):
@@ -126,6 +122,11 @@ def _identity_surface_matches(text: str, signal: dict[str, Any], *, require_curr
         if any(action in {"replace", "launch", "update", "preview", "ga"} for action in actions):
             return False, "benchmark_lifecycle_mismatch"
     return True, "exact_event_identity"
+
+
+def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, str]:
+    """Strict zero-paid identity proof used by archive/dedupe and page binding."""
+    return _identity_surface_matches(surface, signal, require_current_lifecycle=True)
 
 
 class _EventSurfaceParser(HTMLParser):
@@ -195,13 +196,13 @@ def candidate_exact_binding(candidate: dict[str, Any], signal: dict[str, Any], *
         return False, "authoritative_page_redirected_outside_allowlist"
     if weak_host and final_host == weak_host:
         return False, "weak_source_cannot_self_authorize"
-    card_ok, card_reason = _identity_surface_matches(_current_candidate_surface(candidate), signal, require_current_lifecycle=True)
+    card_ok, card_reason = exact_event_identity(_current_candidate_surface(candidate), signal)
     if not card_ok:
         return False, card_reason
     page_surface = _clean(authoritative_page_surface)
     if not page_surface:
         return False, "authoritative_page_identity_unverified"
-    page_ok, page_reason = _identity_surface_matches(page_surface, signal, require_current_lifecycle=True)
+    page_ok, page_reason = exact_event_identity(page_surface, signal)
     if not page_ok:
         return False, f"authoritative_page_{page_reason}"
     return True, "exact_authoritative_page_binding"
