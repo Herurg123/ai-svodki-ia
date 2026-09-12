@@ -104,12 +104,14 @@ semantic delta существующими regressions.
 | B1 | Budget | Caller передал oversized Hybrid limit | Шестой Hybrid search не появляется. |
 | B2 | Budget | Baseline Hybrid limit понижен | Conditional fifth slot не активируется тайно. |
 | B3 | Budget | Double-gap + oversized caller limit | Whole-pipeline ceiling остаётся в утверждённых пределах. |
+| B4 | Budget / Coverage optional slot | Optional seventh request уже `request_started`, `response_saved`, `processed` или legacy-spent | Semantic cleanup/recovery не возвращает slot; effective Coverage consumption остаётся 7, восьмой search невозможен. |
 | C1 | Continuity | Exact start/end timestamps | Поиск не создаёт дыру и не перечитывает уже закрытое окно без причины. |
 | C2 | Continuity | Пограничная дата без точного времени | Date-only evidence не подменяет exact continuity timestamp. |
 | P1 | Recovery | Research-only saved artifact | Recovery не повторяет уже оплаченный search без необходимости. |
 | P2 | Recovery | Partial editorial saved artifact | Search state переиспользуется, downstream может быть завершён отдельно. |
 | P3 | Recovery | Coverage добавил кандидата | Rerun editorial использует merged research без повторения завершённых retrieval passes. |
 | P4 | Recovery | Saved artifact старой совместимой версии | Compatibility adapter сохраняет provenance и paid at-most-once semantics. |
+| P7 | Recovery / Coverage optional slot | Crash между reservation, provider admission, raw-response fsync и semantic apply | `reserved` допускает только тот же exact intent; `request_started` без saved response не retry'ится; saved raw/parsed response replay'ится offline; same-date foreign bundle не смешивается. |
 | P5 | Ordering | Порядок кандидатов/результатов provider изменён | Смысловой результат не зависит от случайного порядка, кроме явно ranking-зависимых мест. |
 | P6 | Ordering | Duplicate результаты приходят в разном порядке | Dedupe/fusion остаются детерминированными. |
 
@@ -134,7 +136,11 @@ semantic delta существующими regressions.
 - short digest + one degraded discovery-plane;
 - qualified weak-source product signal + occupied Coverage seventh slot: signal remains unresolved/deferred and cannot create an eighth Coverage search or displace an already-required obligation;
 - qualified weak-source product signal + same-company/different-event or preview-vs-GA ambiguity: company overlap alone cannot close event identity;
-- qualified weak-source product signal + authoritative reference visible outside the active binding path: queue evidence alone cannot become a candidate.
+- qualified weak-source product signal + authoritative reference visible outside the active binding path: queue evidence alone cannot become a candidate;
+- optional Coverage slot `request_started` + unknown provider outcome + same-day recovery: slot stays consumed/ambiguous and automatic retry is forbidden;
+- optional Coverage raw response fsynced + crash before parser/result snapshot: the same raw response is reparsed offline and no second provider search is opened;
+- selected recovery bundle without optional-slot state + another same-date bundle with state: foreign journal/response is ignored rather than globally merged;
+- selected optional-slot state + divergent target journal/response: recovery fails closed before overwrite.
 
 Для изменения, которое одновременно затрагивает несколько перечисленных
 измерений, matrix должна покрывать pairwise combinations всех релевантных
@@ -202,6 +208,26 @@ must prove exact event identity against same-company/different-event, old releas
 similar version, preview-vs-GA, duplicate, false-alias, missing-source-proof,
 ordering and occupied/spent seventh-slot negatives before production activation.
 A queue-positive result is not evidence of retrieval uplift.
+
+### Permanent regression: 2026-09-12 Coverage optional-slot refund / crash recovery
+
+The pre-treatment optional seventh Coverage operation could be represented only
+by semantic attempt/completed-call state. If the provider request had already
+been admitted but parsing/cleanup/recovery lost that semantic attempt, later
+logic could incorrectly see `remaining_calls=1` and refund the slot. That is an
+at-most-once violation and is unsafe for P3b.
+
+B4/P7 require a durable reservation journal outside rollback-prone semantic
+state. The request must be persisted as `request_started` before provider
+transport; that state cannot automatically retry. A durably fsynced raw response
+must be reparsed/replayed offline after interruption. Recovery may restore the
+journal/response only from the exact selected artifact bundle; corrupt state or a
+divergent existing target fails closed before overwrite. The six mandatory
+Coverage passes and the overall maximum of seven Coverage searches are unchanged.
+Offline contracts:
+`automation/tests/test_coverage_optional_slot_guard.py` and
+`automation/tests/test_coverage_optional_slot_recovery.py`; controlled report:
+`automation/audits/experiments/2026-09-12-coverage-optional-slot-reservation/README.md`.
 
 ## 5. Критерий допуска
 
