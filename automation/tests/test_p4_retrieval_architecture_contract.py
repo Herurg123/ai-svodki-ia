@@ -36,10 +36,11 @@ class P4RetrievalArchitectureContractTests(unittest.TestCase):
         )
         self.assertEqual(coverage.DEFAULT_MAXIMUM_AUDIT_CALLS, 7)
 
-    def test_architecture_describes_active_v5_not_old_gap_aware_v4(self) -> None:
+    def test_architecture_describes_active_v6_and_preserved_v5_v4(self) -> None:
         text = ARCHITECTURE.read_text(encoding="utf-8")
-        self.assertIn("Query v5 остаётся\nglobal", text)
-        self.assertIn("Preserved v4 остаётся\nreplay/rollback", text)
+        self.assertIn("Active provider\nroute in v6 остаётся тем же Reuters-only route, который был доказан в v5", text)
+        self.assertIn("Query v6\nпобайтно сохраняет v5 global source-neutral формулировку", text)
+        self.assertIn("Preserved v4 и побайтно сохранённый\n`agency_discovery_rescue_v5_base.py` остаются replay/rollback implementations", text)
         self.assertNotIn("V4 делает единственный query gap-aware", text)
 
     def test_p4_is_one_way_and_zero_paid(self) -> None:
