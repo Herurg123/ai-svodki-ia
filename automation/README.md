@@ -34,7 +34,7 @@
 - `prompts/` — active prompts и сохранённые legacy prompts;
 - `fixtures/recall/` — machine-readable retrieval regressions, включая event-
   freshness, Yandex Source Pulse date, provider/source-routing, regional-health
-  viability и Sep12 OpenAI trusted-feed freshness controls;
+  viability, Sep12 OpenAI trusted-feed freshness и Agency observability controls;
 - `fixtures/research/.runtime/` — ignored trusted runtime ingress для fresh
   research;
 - `specs/` — редакционные и технические спецификации;
@@ -53,11 +53,15 @@
   до первого editorial;
 - `scripts/agency_discovery_rescue.py` / `agency_discovery_rescue_v4.py` —
   preserved previous rescue implementations для replay/rollback;
-  `scripts/agency_discovery_rescue_v5.py` — active conditional Reuters-only
-  missing-event rescue: максимум один Web Search, global publisher route без
-  regional-gap подмены query и с post-freshness/editorial health trigger;
+  `scripts/agency_discovery_rescue_v5_base.py` — побайтно сохранённый pre-P2 v5;
+  `scripts/agency_discovery_rescue_v5.py` — stable compatibility import surface,
+  который направляет active behavior в `agency_discovery_rescue_v6.py`; v6
+  сохраняет максимум один Reuters-only Web Search и тот же global publisher route,
+  но добавляет независимую request/transport/parse/source-metadata/model/validation/
+  dedupe/cap/addition диагностику и bounded sanitized raw-response capture до
+  parsing;
 - `scripts/agency_health_viability.py` — zero-network deterministic bridge перед
-  active v5 rescue: по exact Search-derived Primary `major_agencies` provenance
+  active v6 rescue: по exact Search-derived Primary `major_agencies` provenance
   проверяет, остался ли viable survivor после Primary final cap, freshness и
   первого editorial; ambiguous identity не разрешает search;
 - `scripts/retrieval_routing_audit.py` — zero-network P3 classifier/replay для
@@ -77,9 +81,10 @@
 - `scripts/hybrid_search_completeness.py` — stable Hybrid v3 entrypoint: baseline
   максимум 4 searches и ровно один conditional fifth search только при
   одновременных Search-derived Russia + China/Asia gaps; P3 сохраняет
-  representative query routing/v5 rescue, а P4 перед search детерминированно
-  переоткрывает false-healthy gap, если exact Primary regional candidates больше
-  не имеют viable post-filter survivor;
+  representative query routing/один Reuters rescue slot, P2 observability не
+  меняет его request contract, а P4 перед search детерминированно переоткрывает
+  false-healthy gap, если exact Primary regional candidates больше не имеют
+  viable post-filter survivor;
 - `scripts/ensure_story_coverage.py` — fallback Coverage public entrypoint;
   evidence-rich unverified exhaustion может завершить bounded quality check
   без публикации слуха и без повторного search при same-day recovery; fresh-agency
@@ -238,13 +243,16 @@ product/policy, Tencent/Hunyuan и model/research surfaces. Это ranking ancho
 не company whitelist. Hybrid сохраняет свои прежние trigger semantics и лишь
 расширяет текст уже существующих regional health queries.
 
-Agency rescue v5 сохраняет один Reuters-only high-context search и его global
+Agency rescue сохраняет один Reuters-only high-context search и global
 publisher-route роль: Search-derived regional gaps записываются в диагностику, но
-не подменяют query словом Russia/Asia. Теперь перед этим слотом отдельный
-zero-paid agency-health bridge проверяет post-filter survival exact Primary
+не подменяют query словом Russia/Asia. Перед этим слотом отдельный zero-paid
+agency-health bridge проверяет post-filter survival exact Primary
 `major_agencies`; он меняет только trigger semantics, а не query/provider route
-или число slots. Same-day recovery использует тот же v5 entrypoint. Versioned v4
-остаётся preserved replay/rollback asset.
+или число slots. P2 active v6 поверх побайтно сохранённого v5 добавляет только
+диагностику transport/source metadata/model/validation/dedupe/addition. Same-day
+recovery использует тот же stable v5 compatibility path, но completed/started
+paid state никогда не получает второй search. Versioned v4 и v5 base остаются
+preserved replay/rollback assets.
 
 Offline fixture: `fixtures/recall/provider-routing-2026-08-29.json`.
 Classifier: `scripts/retrieval_routing_audit.py`. Controlled audit:
@@ -296,6 +304,32 @@ full recovery понижается до `partial_editorial`, чтобы text run
 первую и единственную попытку существующего slot. `search_started`, completed,
 failed и indeterminate состояния не получают второй search. Controlled A/B audit:
 `audits/experiments/2026-09-01-post-freshness-agency-rescue-ab.md`.
+
+## Agency observability P2
+
+`agency_discovery_rescue_v6.py` закрывает только диагностическую слепую зону
+`completed_no_addition`. Перед единственным Reuters transport сохраняется
+redacted request contract: exact query, tools/filter/limits и hashes prompt/schema,
+но не API key и не полный prompt. После ответа sanitized bounded raw response
+сохраняется **до** JSON parsing. Это позволяет отличить transport failure от
+response/schema failure, не повторяя платный вызов.
+
+Report независимо хранит source metadata как
+`missing | null | empty | nonempty | malformed | mixed | unknown`, model
+candidate/rejection counts, direct-host rejection, pre-merge eligibility,
+window/schema validation, dedupe/archive/cap и final accepted/added counts.
+Исторический `validated_count` не переопределяется: его явный alias —
+`pre_merge_eligible_count`; отдельно добавлен `post_validation_count`. Unknown не
+превращается в ноль.
+
+Транспортный capture ограничен 256 KiB; превышение сохраняет hash/size и bounded
+projection. Используется существующий diagnostic URL sanitizer. Capture не
+является recovery journal и не разрешает повторный search. `search_started`
+остаётся at-most-once indeterminate, а `search_completed`/`merge_failed` используют
+сохранённый response offline. Fixture и architecture audit:
+`fixtures/recall/agency-observability-2026-09-11.json` и
+`audits/experiments/2026-09-12-agency-observability-p2/`. Query/routing repair
+остаётся отдельным будущим A/B и не входит в P2.
 
 ## Discovery Health v1
 
