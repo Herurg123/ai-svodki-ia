@@ -9,6 +9,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "automation" / "scripts"
 FIXTURE = ROOT / "automation" / "fixtures" / "recall" / "weak-source-signal-retention-2026-09-11.json"
+ARCHITECTURE = ROOT / "automation" / "ARCHITECTURE.md"
+SEARCH_MATRIX = ROOT / "automation" / "specs" / "search-change-validation-matrix.md"
 sys.path.insert(0, str(SCRIPTS))
 
 
@@ -121,6 +123,16 @@ class WeakSourceSignalRetentionP3Tests(unittest.TestCase):
         self.assertIn("future_authoritative_binding_reference_only", control)
         self.assertFalse(control["expected"]["resolution_required"])
         self.assertFalse(control["expected"]["candidate_eligible"])
+
+    def test_canonical_docs_keep_p3a_evidence_only_and_p3b_deferred(self) -> None:
+        architecture = ARCHITECTURE.read_text(encoding="utf-8")
+        matrix = SEARCH_MATRIX.read_text(encoding="utf-8")
+        self.assertIn("P3a weak-source signal retention changes only Primary diagnostic provenance", architecture)
+        self.assertIn("`resolution_required=false`, `candidate_eligible=false`", architecture)
+        self.assertIn("Exact authoritative\nbinding and automatic closure are a separate deferred P3b boundary", architecture)
+        self.assertIn("| D6 | Degradation / weak source |", matrix)
+        self.assertIn("queue-positive != retrieval-positive", matrix)
+        self.assertIn("восьмой\nCoverage search не появляется", architecture)
 
 
 if __name__ == "__main__":
