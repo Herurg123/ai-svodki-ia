@@ -2,8 +2,9 @@
 """Coverage optional-slot recovery over the preserved P0 recovery wrapper.
 
 ``recover_digest_artifact_p0.py`` is the byte-for-byte pre-slot implementation.
-This layer restores only the durable Coverage optional-slot journal/response and
-binds them to the exact artifact bundle already selected by P0 recovery.
+This layer preserves its public monkeypatch/recovery surface and adds one rule:
+optional seventh-slot journal/response state may be restored only from the exact
+artifact bundle already selected by P0 recovery.
 """
 from __future__ import annotations
 
@@ -13,7 +14,6 @@ from pathlib import Path
 from typing import Any
 
 from coverage_slot_guard import CoverageSlotError, JOURNAL_PREFIX, restore_state_from_bundle
-
 
 _BASE_PATH = Path(__file__).with_name("recover_digest_artifact_p0.py")
 _BASE_SPEC = importlib.util.spec_from_file_location("recover_digest_artifact_p0", _BASE_PATH)
@@ -31,7 +31,50 @@ def __getattr__(name: str) -> Any:
     return getattr(_base, name)
 
 
-_BASE_RECOVER = _base.recover
+_P0_CHOOSE_SOURCE = _base.choose_source
+_P0_RECOVER = _base.recover
+_P0_MAIN = _base.main
+_ACTIVE_EVIDENCE_ROOT = getattr(_base, "_ACTIVE_EVIDENCE_ROOT", None)
+
+_DELEGATE_EXCLUSIONS = {
+    "main",
+    "recover",
+    "choose_source",
+    "_restore_optional_slot",
+    "_sync_public_hooks",
+    "_pull_runtime_state",
+    "_ACTIVE_EVIDENCE_ROOT",
+}
+
+
+def _sync_public_hooks() -> None:
+    current = globals()
+    for name, value in list(current.items()):
+        if name.startswith("__") and name.endswith("__"):
+            continue
+        if name in _DELEGATE_EXCLUSIONS or name.startswith("_P0_"):
+            continue
+        if name in _base.__dict__:
+            setattr(_base, name, value)
+    if hasattr(_base, "_sync_p0"):
+        _base._sync_p0()
+
+
+def _pull_runtime_state() -> None:
+    globals()["_ACTIVE_EVIDENCE_ROOT"] = getattr(
+        _base, "_ACTIVE_EVIDENCE_ROOT", None
+    )
+
+
+def choose_source(
+    recovery_root: Path,
+    publication_date: str,
+) -> tuple[Path, str, list[dict[str, Any]]]:
+    _sync_public_hooks()
+    try:
+        return _P0_CHOOSE_SOURCE(recovery_root, publication_date)
+    finally:
+        _pull_runtime_state()
 
 
 def _bundle_has_slot_journal(recovery_root: Path, publication_date: str) -> bool:
@@ -74,14 +117,21 @@ def recover(
     timezone_name: str = "Europe/Moscow",
     image_target_dir: Path | None = None,
 ) -> dict[str, Any]:
-    report = _BASE_RECOVER(
-        recovery_root,
-        target_dir,
-        publication_date,
-        report_path,
-        timezone_name,
-        image_target_dir,
-    )
+    _sync_public_hooks()
+    original_choose = _base.choose_source
+    _base.choose_source = choose_source
+    try:
+        report = _P0_RECOVER(
+            recovery_root,
+            target_dir,
+            publication_date,
+            report_path,
+            timezone_name,
+            image_target_dir,
+        )
+    finally:
+        _base.choose_source = original_choose
+        _pull_runtime_state()
     report["coverage_optional_slot_recovery"] = _restore_optional_slot(
         recovery_root=recovery_root,
         report_path=report_path,
@@ -92,12 +142,14 @@ def recover(
 
 
 def main() -> int:
+    _sync_public_hooks()
     original = _base.recover
     _base.recover = recover
     try:
-        return int(_base.main())
+        return int(_P0_MAIN())
     finally:
         _base.recover = original
+        _pull_runtime_state()
 
 
 if __name__ == "__main__":
