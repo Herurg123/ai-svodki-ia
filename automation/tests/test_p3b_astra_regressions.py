@@ -117,6 +117,10 @@ def page_html(published: str = "2026-09-10T06:30:00+00:00") -> str:
 
 
 class AstraP3bRuntimeRegressions(unittest.TestCase):
+    def _slot_state(self, state: Path) -> str:
+        journal = coverage.load_journal(state, DATE)
+        return str((journal or {}).get("state") or "")
+
     def _real_six_plan(self, state: Path) -> tuple[dict, int]:
         calls = 0
         def fake_request(**kwargs):
@@ -222,7 +226,7 @@ class AstraP3bRuntimeRegressions(unittest.TestCase):
 
             self.assertEqual(len(mandatory_calls), 6)
             self.assertEqual(len(p3b_calls), 1)
-            self.assertEqual(coverage.journal_state(state, DATE), "processed")
+            self.assertEqual(self._slot_state(state), "processed")
             self.assertEqual(result["weak_source_exact_binding"]["status"], "bound_candidate")
             self.assertEqual(result["search_budget"]["completed_calls"], 7)
             self.assertEqual(result["search_budget"]["remaining_calls"], 0)
@@ -262,7 +266,7 @@ class AstraP3bRuntimeRegressions(unittest.TestCase):
                 )
             self.assertEqual(search.call_count, 0)
             self.assertEqual(provider.call_count, 0)
-            self.assertEqual(coverage.journal_state(state, DATE), "request_started")
+            self.assertEqual(self._slot_state(state), "request_started")
             self.assertIn(result["weak_source_exact_binding"]["status"], {"indeterminate", "deferred"})
             self.assertLessEqual(result["search_budget"]["effective_consumed_calls"], 7)
             self.assertEqual(result["search_budget"]["remaining_calls"], 0)
@@ -311,7 +315,7 @@ class AstraP3bRuntimeRegressions(unittest.TestCase):
                 )
             self.assertEqual(search.call_count, 0)
             self.assertEqual(provider.call_count, 0)
-            self.assertEqual(coverage.journal_state(state, DATE), "processed")
+            self.assertEqual(self._slot_state(state), "processed")
             self.assertEqual(result["weak_source_exact_binding"]["status"], "unresolved")
             self.assertEqual(result["search_budget"]["remaining_calls"], 0)
 
