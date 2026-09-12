@@ -86,6 +86,10 @@ class P3bOptionalSlotRecoveryTests(unittest.TestCase):
             bundle_identity=coverage._bundle_identity(plan),
         )
 
+    def _slot_state(self, state_dir: Path) -> str:
+        journal = coverage.load_journal(state_dir, DATE)
+        return str((journal or {}).get("state") or "")
+
     def _execute(self, state_dir: Path, plan: dict):
         with (
             mock.patch.object(coverage, "STATE_DIR", state_dir),
@@ -119,7 +123,7 @@ class P3bOptionalSlotRecoveryTests(unittest.TestCase):
             self.assertEqual(result["weak_source_exact_binding"]["status"], "indeterminate")
             self.assertEqual(result["weak_source_exact_binding"]["slot_state"], "request_started")
             self.assertEqual(result["search_budget"]["remaining_calls"], 0)
-            self.assertEqual(coverage.journal_state(state, DATE), "request_started")
+            self.assertEqual(self._slot_state(state), "request_started")
 
     def test_response_saved_replays_offline_without_provider_or_page_fetch(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -154,7 +158,7 @@ class P3bOptionalSlotRecoveryTests(unittest.TestCase):
             ):
                 result, calls = self._execute(state, plan)
             self.assertEqual(calls, 0)
-            self.assertEqual(coverage.journal_state(state, DATE), "processed")
+            self.assertEqual(self._slot_state(state), "processed")
             self.assertEqual(result["weak_source_exact_binding"]["status"], "unresolved")
             self.assertEqual(result["search_budget"]["remaining_calls"], 0)
 
@@ -192,7 +196,7 @@ class P3bOptionalSlotRecoveryTests(unittest.TestCase):
             self._reservation(state, reservation_plan)
             result, calls = self._execute(state, self._plan(0))
             self.assertEqual(calls, 0)
-            self.assertEqual(coverage.journal_state(state, DATE), "reserved")
+            self.assertEqual(self._slot_state(state), "reserved")
             self.assertEqual(result["weak_source_exact_binding"]["status"], "deferred")
             self.assertEqual(result["search_budget"]["remaining_calls"], 0)
 
