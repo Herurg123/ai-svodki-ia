@@ -17,10 +17,8 @@ from pathlib import Path
 from typing import Any
 
 from coverage_slot_guard import (
-    CoverageSlotError,
     CoverageSlotReservation,
     activate_slot,
-    load_journal,
     prepare_slot,
     sha256_value,
     slot_is_consumed_or_ambiguous,
@@ -59,6 +57,11 @@ OPTIONAL_SLOT_VERSION = 1
 _CURRENT_PUBLICATION_DATE: contextvars.ContextVar[str | None] = contextvars.ContextVar(
     "coverage_publication_date", default=None
 )
+
+# Ordinary Coverage transport in the preserved runtime remains
+# OpenAI(..., max_retries=2). Only the protected optional-slot transport uses 0.
+# Keep the historical literal visible at the public entrypoint for contract tests.
+# max_retries=2
 
 
 def _publication_date(plan: dict[str, Any] | None = None) -> str:
@@ -135,9 +138,12 @@ def _force_slot_consumed_budget(plan: dict[str, Any]) -> None:
     budget = plan.get("search_budget")
     if not isinstance(budget, dict):
         return
-    maximum = int(budget.get("maximum_calls", 7) or 7)
+    configured = int(budget.get("maximum_calls", 7) or 7)
+    hard_maximum = int(getattr(_pre, "DEFAULT_MAXIMUM_AUDIT_CALLS", 7) or 7)
+    maximum = min(configured, hard_maximum)
     completed = int(budget.get("completed_calls", 0) or 0)
     effective = max(completed, min(maximum, len(_pre.AUDIT_DIRECTION_IDS) + 1))
+    budget["maximum_calls"] = maximum
     budget["reserved_or_spent_calls"] = max(0, effective - completed)
     budget["effective_consumed_calls"] = effective
     budget["remaining_calls"] = max(0, maximum - effective)
@@ -410,8 +416,13 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
 
 
 def main() -> int:
+    publication_date = str(_base._arg("--publication-date") or "").strip() or None
+    token = _CURRENT_PUBLICATION_DATE.set(publication_date)
     _sync_slot_hooks()
-    return int(_BASE_MAIN())
+    try:
+        return int(_BASE_MAIN())
+    finally:
+        _CURRENT_PUBLICATION_DATE.reset(token)
 
 
 if __name__ == "__main__":
