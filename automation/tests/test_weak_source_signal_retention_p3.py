@@ -131,7 +131,7 @@ class WeakSourceSignalRetentionP3Tests(unittest.TestCase):
         self.assertIn("`resolution_required=false`, `candidate_eligible=false`", architecture)
         self.assertIn("Exact authoritative\nbinding and automatic closure are a separate deferred P3b boundary", architecture)
         self.assertIn("| D6 | Degradation / weak source |", matrix)
-        self.assertIn("queue-positive != retrieval-positive", matrix)
+        self.assertIn("queue-positive не становится retrieval-positive", matrix)
         self.assertIn("восьмой\nCoverage search не появляется", architecture)
 
 
