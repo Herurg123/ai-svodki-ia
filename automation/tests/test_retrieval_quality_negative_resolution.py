@@ -213,7 +213,7 @@ class NegativeResolutionRecoveryTests(unittest.TestCase):
             for direction in coverage.AUDIT_DIRECTION_IDS
         ]
 
-    def test_bogus_complete_diagnostics_do_not_block_quality_retry(self):
+    def test_spent_resolution_is_not_refunded_by_quality_migration(self):
         attempts = self.mandatory_attempts()
         attempts.append(
             {
@@ -252,9 +252,13 @@ class NegativeResolutionRecoveryTests(unittest.TestCase):
             },
         }
         prepared = coverage._prepare_prior_for_quality(prior, None)
-        self.assertEqual(len(prepared["attempts"]), 6)
+        self.assertEqual(len(prepared["attempts"]), 7)
         self.assertEqual(prepared["search_budget"]["completed_calls"], 6)
-        self.assertEqual(prepared["search_budget"]["remaining_calls"], 1)
+        self.assertEqual(prepared["search_budget"]["effective_consumed_calls"], 7)
+        self.assertEqual(prepared["search_budget"]["remaining_calls"], 0)
+        self.assertEqual(
+            prepared["attempts"][-1]["search_operation_count_contribution"], 1
+        )
         self.assertNotIn("retrieval_quality", prepared)
 
     def test_finalizer_reconstructs_negative_resolution_diagnostics(self):
