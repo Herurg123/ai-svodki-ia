@@ -13,7 +13,11 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from coverage_slot_guard import CoverageSlotError, JOURNAL_PREFIX, restore_state_from_bundle
+from coverage_slot_guard import (
+    CoverageSlotError,
+    JOURNAL_PREFIX,
+    restore_state_from_bundle as restore_coverage_slot_state_from_bundle,
+)
 
 _BASE_PATH = Path(__file__).with_name("recover_digest_artifact_p0.py")
 _BASE_SPEC = importlib.util.spec_from_file_location("recover_digest_artifact_p0", _BASE_PATH)
@@ -35,6 +39,9 @@ _P0_CHOOSE_SOURCE = _base.choose_source
 _P0_RECOVER = _base.recover
 _P0_MAIN = _base.main
 _ACTIVE_EVIDENCE_ROOT = getattr(_base, "_ACTIVE_EVIDENCE_ROOT", None)
+# Historical direct tests patch this public hook. It lives two wrappers down,
+# so materialize and bridge it explicitly instead of relying on __getattr__.
+_BASE_CHOOSE_SOURCE = _base._pre._BASE_CHOOSE_SOURCE
 
 _DELEGATE_EXCLUSIONS = {
     "main",
@@ -44,6 +51,7 @@ _DELEGATE_EXCLUSIONS = {
     "_sync_public_hooks",
     "_pull_runtime_state",
     "_ACTIVE_EVIDENCE_ROOT",
+    "restore_coverage_slot_state_from_bundle",
 }
 
 
@@ -56,6 +64,10 @@ def _sync_public_hooks() -> None:
             continue
         if name in _base.__dict__:
             setattr(_base, name, value)
+    # This private hook is exposed only through nested compatibility __getattr__
+    # layers. Keep the public monkeypatch seam intact for direct choose_source
+    # tests and older recovery consumers.
+    _base._pre._BASE_CHOOSE_SOURCE = globals()["_BASE_CHOOSE_SOURCE"]
     if hasattr(_base, "_sync_p0"):
         _base._sync_p0()
 
@@ -100,7 +112,7 @@ def _restore_optional_slot(
             "copied": [],
         }
     try:
-        return restore_state_from_bundle(
+        return restore_coverage_slot_state_from_bundle(
             bundle_root=Path(evidence_root),
             target_state_dir=Path(report_path).parent.resolve(),
             publication_date=publication_date,
