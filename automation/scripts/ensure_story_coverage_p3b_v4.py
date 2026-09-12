@@ -27,11 +27,13 @@ for _name in dir(_v3):
         globals()[_name] = getattr(_v3, _name)
 
 _V2_RUN_P3B_BINDING = _v2._run_p3b_binding_v2
+_PRE_RECALC_BUDGET_KEY = "_p3b_pre_recalc_budget"
 _V4_INTERNALS = {
     "_v3", "_v2", "_V3_PATH", "_V3_SPEC", "_V2_RUN_P3B_BINDING",
-    "_V4_INTERNALS", "_sync_p3b_public_hooks", "_pull_p3b_runtime_state",
-    "_guarded_run_p3b_binding_v2", "_run_p3b_binding_v2", "_P3A_MAIN",
-    "execute_audit_plan", "main", "__getattr__",
+    "_PRE_RECALC_BUDGET_KEY", "_V4_INTERNALS", "_sync_p3b_public_hooks",
+    "_pull_p3b_runtime_state", "_guarded_run_p3b_binding_v2",
+    "_run_p3b_binding_v2", "_P3A_MAIN", "execute_audit_plan", "main",
+    "__getattr__",
 }
 
 
@@ -80,6 +82,7 @@ def _guarded_run_p3b_binding_v2(*, plan: dict[str, Any], publication_date: str,
                                 signal: dict[str, Any], api_key: str, model: str,
                                 search_window: dict[str, Any], archive: dict[str, Any]) -> dict[str, Any]:
     """Never turn an unspent reservation into an eighth/over-budget wire call."""
+    preserved_budget = plan.pop(_PRE_RECALC_BUDGET_KEY, None)
     try:
         journal = load_journal(Path(STATE_DIR), publication_date)
     except CoverageSlotError:
@@ -88,9 +91,21 @@ def _guarded_run_p3b_binding_v2(*, plan: dict[str, Any], publication_date: str,
     if state == "reserved":
         budget = plan.get("search_budget")
         remaining = int(budget.get("remaining_calls", 0) or 0) if isinstance(budget, dict) else 0
-        if remaining < 1:
+        prior_completed = 0
+        if isinstance(preserved_budget, dict):
+            prior_completed = max(
+                int(preserved_budget.get("completed_calls", 0) or 0),
+                int(preserved_budget.get("effective_consumed_calls", 0) or 0),
+            )
+        if remaining < 1 or prior_completed >= 7:
+            base = copy.deepcopy(plan)
+            if isinstance(preserved_budget, dict) and prior_completed >= 7:
+                # The temporary six-call clamp is only a routing guard. Never let
+                # its later 7-call recalculation erase evidence that another
+                # Coverage path had already consumed the optional seventh search.
+                base["search_budget"] = copy.deepcopy(preserved_budget)
             return _v2._annotation(
-                plan,
+                base,
                 status="deferred",
                 reason="reserved optional slot cannot override exhausted runtime Coverage budget",
                 signal=signal,
@@ -111,9 +126,27 @@ def _guarded_run_p3b_binding_v2(*, plan: dict[str, Any], publication_date: str,
 
 def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
     _sync_p3b_public_hooks()
+    original_recalculate = _v2._pre._recalculate_budget
+
+    def preserving_recalculate(plan: dict[str, Any], maximum_calls: int) -> Any:
+        budget = plan.get("search_budget") if isinstance(plan, dict) else None
+        if isinstance(budget, dict):
+            consumed = max(
+                int(budget.get("completed_calls", 0) or 0),
+                int(budget.get("effective_consumed_calls", 0) or 0),
+            )
+            if consumed >= 7:
+                plan[_PRE_RECALC_BUDGET_KEY] = copy.deepcopy(budget)
+        return original_recalculate(plan, maximum_calls)
+
+    _v2._pre._recalculate_budget = preserving_recalculate
     try:
-        return _v3.execute_audit_plan(*args, **kwargs)
+        result = _v3.execute_audit_plan(*args, **kwargs)
+        if isinstance(result, dict):
+            result.pop(_PRE_RECALC_BUDGET_KEY, None)
+        return result
     finally:
+        _v2._pre._recalculate_budget = original_recalculate
         _pull_p3b_runtime_state()
 
 
