@@ -20,10 +20,16 @@ import json
 from pathlib import Path
 from typing import Any, Callable
 
-import agency_discovery_rescue_v5 as v5
+import agency_discovery_rescue_v5_base as v5
 from ensure_story_coverage_policy import build_audit_api_metadata, response_to_plain
 from story_coverage import write_json
 from usage_observer import call_with_usage
+
+# Preserve the public compatibility surface that callers/tests historically import
+# from v5. v6 overrides only the version, transport runner and final entrypoint.
+for _name in dir(v5):
+    if not _name.startswith("_") and _name not in globals():
+        globals()[_name] = getattr(v5, _name)
 
 v4 = v5.v4
 v3 = v4.v3
