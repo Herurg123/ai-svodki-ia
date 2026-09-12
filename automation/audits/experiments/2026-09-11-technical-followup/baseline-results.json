@@ -1,0 +1,226 @@
+{
+  "baseline": "5d15b0f0a220f55a6753412b6e712fd2cd96b06a",
+  "scope": "offline baseline diagnostics; no fix acceptance",
+  "paid_calls": 0,
+  "network_calls": 0,
+  "coverage": {
+    "first": {
+      "rc": 0,
+      "status": "ok",
+      "mode": "existing_digest_after_editorial_repair_error",
+      "audit_added_candidates": 1,
+      "editorial_rerun_required": true,
+      "editorial_rerun_performed": false
+    },
+    "simulated_new_response_lost_to_rollback": true,
+    "merged_research_restored": true,
+    "second": {
+      "rc": 0,
+      "new_editorial_child_calls": 0,
+      "status": "ok",
+      "mode": "existing_short_digest_after_best_effort_audit",
+      "audit_added_candidates": 0,
+      "editorial_rerun_required": false,
+      "editorial_rerun_performed": false
+    },
+    "scope": "actual policy + merge + restore; saved completed plan injected; child validation failure simulated, no model invoked"
+  },
+  "empty_parser_health": {
+    "summary": {
+      "configured_sources": 1,
+      "sources_ok": 1,
+      "sources_unavailable": 0,
+      "sources_parse_error": 0,
+      "lead_count": 0,
+      "eligible_new_lead_count": 0,
+      "tier_a_leads": 0,
+      "tier_b_leads": 0,
+      "cutoff_ambiguous_leads": 0,
+      "archive_url_duplicates": 0,
+      "fetch_elapsed_ms_total": 0,
+      "fetch_elapsed_ms_max": 0,
+      "degraded_source_ids": [],
+      "source_health_status": "complete"
+    },
+    "source": {
+      "source_id": "probe_official",
+      "tier": "A",
+      "region": "global",
+      "status": "ok",
+      "attempts": [
+        {
+          "url": "https://example.com/news",
+          "status": "ok",
+          "http_status": 200,
+          "error": null,
+          "elapsed_ms": 0
+        }
+      ],
+      "selected_url": "https://example.com/news",
+      "parsed_items": 0,
+      "window_items": 0,
+      "accepted_leads": 0,
+      "cutoff_ambiguous_leads": 0,
+      "archive_url_duplicates": 0,
+      "parsed_items_before_v12": 0,
+      "parsed_items_after_v12": 0,
+      "dated_items_after_v12": 0,
+      "undated_items_after_v12": 0,
+      "visible_dates_recovered": 0
+    }
+  },
+  "updated_only_feed": {
+    "published_at": "2026-09-10T12:00:00+00:00",
+    "source_item_id": "https://example.com/old"
+  },
+  "weekday_conflict": {
+    "event_date": "2026-09-10",
+    "calendar_weekday": "Thursday",
+    "evidence": "AP датирует реакцию Китая средой и сообщает, что американский advisory вышел во вторник; календарная дата события установлена как 10 сентября 2026 года.",
+    "baseline_status": "fresh"
+  },
+  "weak_source_signal": {
+    "rejections": [
+      {
+        "title": "DeepSeek Replaces V4 Pro With V4.1 Flash Following Superior Speed and Cost Tests",
+        "url": "https://huggingnews.com/ai/update-deepseek-replaces-v4-pro-with-v41-flash-following-superior-speed-afb7de47",
+        "reason_code": "weak_source",
+        "reason": "Потенциально релевантный продуктовый апдейт, но в доступной карточке подтверждение сводится к агрегатору и публикациям в соцсетях; официальный release note DeepSeek в этом проходе не был получен."
+      }
+    ],
+    "unresolved_signals": []
+  },
+  "agency_wire_and_metadata": [
+    {
+      "input_sources": null,
+      "include": [
+        "web_search_call.action.sources"
+      ],
+      "tools": [
+        {
+          "type": "web_search",
+          "search_context_size": "high",
+          "return_token_budget": "default",
+          "filters": {
+            "allowed_domains": [
+              "reuters.com"
+            ]
+          }
+        }
+      ],
+      "max_tool_calls": 4,
+      "metadata": {
+        "source_metadata_available": false,
+        "search_actions_with_source_metadata": 0,
+        "search_actions_missing_source_metadata": 1
+      },
+      "consulted_sources": []
+    },
+    {
+      "input_sources": [],
+      "include": [
+        "web_search_call.action.sources"
+      ],
+      "tools": [
+        {
+          "type": "web_search",
+          "search_context_size": "high",
+          "return_token_budget": "default",
+          "filters": {
+            "allowed_domains": [
+              "reuters.com"
+            ]
+          }
+        }
+      ],
+      "max_tool_calls": 4,
+      "metadata": {
+        "source_metadata_available": true,
+        "search_actions_with_source_metadata": 1,
+        "search_actions_missing_source_metadata": 0
+      },
+      "consulted_sources": []
+    },
+    {
+      "input_sources": [
+        {
+          "url": "https://www.reuters.com/example",
+          "title": "Example"
+        }
+      ],
+      "include": [
+        "web_search_call.action.sources"
+      ],
+      "tools": [
+        {
+          "type": "web_search",
+          "search_context_size": "high",
+          "return_token_budget": "default",
+          "filters": {
+            "allowed_domains": [
+              "reuters.com"
+            ]
+          }
+        }
+      ],
+      "max_tool_calls": 4,
+      "metadata": {
+        "source_metadata_available": true,
+        "search_actions_with_source_metadata": 1,
+        "search_actions_missing_source_metadata": 0
+      },
+      "consulted_sources": [
+        {
+          "url": "https://www.reuters.com/example",
+          "title": "Example"
+        }
+      ]
+    }
+  ],
+  "agency_history": [
+    {
+      "date": "2026-09-06",
+      "state": "completed_no_addition",
+      "raw_count": 0,
+      "validated_count": 0,
+      "added_count": 0,
+      "source_metadata_available": false
+    },
+    {
+      "date": "2026-09-07",
+      "state": "completed_no_addition",
+      "raw_count": 0,
+      "validated_count": 0,
+      "added_count": 0,
+      "source_metadata_available": false
+    },
+    {
+      "date": "2026-09-08",
+      "availability": "missing_committed_report"
+    },
+    {
+      "date": "2026-09-09",
+      "state": "diagnostics_missing",
+      "raw_count": 0,
+      "validated_count": 0,
+      "added_count": 0,
+      "source_metadata_available": false
+    },
+    {
+      "date": "2026-09-10",
+      "state": "completed_no_addition",
+      "raw_count": 0,
+      "validated_count": 0,
+      "added_count": 0,
+      "source_metadata_available": false
+    },
+    {
+      "date": "2026-09-11",
+      "state": "completed_no_addition",
+      "raw_count": 0,
+      "validated_count": 0,
+      "added_count": 0,
+      "source_metadata_available": false
+    }
+  ]
+}

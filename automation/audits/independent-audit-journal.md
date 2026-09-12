@@ -230,3 +230,22 @@ can add one public HTTP fetch through the existing bounded transport per matchin
 release lacking HTML publication metadata; this is not a paid search. See
 `experiments/2026-09-07-step03-preregistration.md` and
 `experiments/replay_publication_proof_2026_09_07.py` for scope and limitations.
+
+## 2026-09-11 — Technical follow-up and Astra → Sol handoff
+
+Independently checked scheduled run `34549170782`, recovery `34553236194`, both saved
+Coverage reports and baseline `5d15b0f`. Confirmed skipped SDK on recovery and required
+editorial repair failure accepted as success. Additional local counterexample: rollback
+erases a simulated saved response; recovery retains merged research but duplicate
+addition clears the repair obligation. No paid call or runtime change was made.
+
+Corrected scope: Agency request filtering and metadata include are present; internal
+provider routing failure is not established. Sep8 lacks a committed report and Sep9
+has missing diagnostics. Normalized Pulse timestamps can originate from `updated`;
+raw historical feed proof is absent. Qualcomm zero parse does not identify its exact
+parser cause. Independent references do not re-certify the old strict-window recall
+percentage. Detailed evidence, contracts, negative tests and remaining empirical gates:
+[HANDOFF TO SOL HIGH](experiments/2026-09-11-technical-followup/HANDOFF_TO_SOL_HIGH.md).
+
+Runtime fixes remain unimplemented. Stop Astra per owner prompt; conditional permission
+to merge a proven fix is already granted, but acceptance gates remain required.
