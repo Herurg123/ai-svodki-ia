@@ -2,12 +2,23 @@ from __future__ import annotations
 
 import copy
 import html
+import importlib.util
 import re
+import sys
 from html.parser import HTMLParser
+from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
-import weak_source_exact_binding as _v1
+_V1_PATH = Path(__file__).with_name("weak_source_exact_binding.py")
+_V1_SPEC = importlib.util.spec_from_file_location(
+    "weak_source_exact_binding_v1_for_hardened_v2",
+    _V1_PATH,
+)
+assert _V1_SPEC and _V1_SPEC.loader
+_v1 = importlib.util.module_from_spec(_V1_SPEC)
+sys.modules[_V1_SPEC.name] = _v1
+_V1_SPEC.loader.exec_module(_v1)
 
 VERSION = 2
 MODE = "weak_source_exact_authoritative_binding"
