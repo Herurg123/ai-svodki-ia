@@ -100,6 +100,7 @@ semantic delta существующими regressions.
 | D3 | Degradation | Partial provider/tool result | Partial/budget_exhausted/error не допускают ложный complete. |
 | D4 | Degradation | Source/network/parser/anti-bot error | Degraded diagnostics остаются видимыми и не превращаются в healthy. |
 | D5 | Degradation | Один discovery-plane degraded, другой даёт кандидатов | Второй plane не маскирует health первого. |
+| D6 | Degradation / weak source | Qualified product/model `weak_source` rejection имеет HTTPS provenance, organization, version/model anchor и lifecycle/action anchor | Evidence сохраняется как unresolved, но queue-positive не становится retrieval-positive: без exact authoritative binding нельзя ставить `resolution_required`, делать candidate eligible или тратить новый search. Контроль: `weak-source-signal-retention-2026-09-11.json`. |
 | B1 | Budget | Caller передал oversized Hybrid limit | Шестой Hybrid search не появляется. |
 | B2 | Budget | Baseline Hybrid limit понижен | Conditional fifth slot не активируется тайно. |
 | B3 | Budget | Double-gap + oversized caller limit | Whole-pipeline ceiling остаётся в утверждённых пределах. |
@@ -130,7 +131,10 @@ semantic delta существующими regressions.
 - Search-derived regional gap + Pulse-only candidate;
 - paid-search hard miss + Pulse-only Tier-A official recovery + simultaneous Search-derived regional gap + same-day recovery;
 - mandatory-stage partial/error + same-day recovery;
-- short digest + one degraded discovery-plane.
+- short digest + one degraded discovery-plane;
+- qualified weak-source product signal + occupied Coverage seventh slot: signal remains unresolved/deferred and cannot create an eighth Coverage search or displace an already-required obligation;
+- qualified weak-source product signal + same-company/different-event or preview-vs-GA ambiguity: company overlap alone cannot close event identity;
+- qualified weak-source product signal + authoritative reference visible outside the active binding path: queue evidence alone cannot become a candidate.
 
 Для изменения, которое одновременно затрагивает несколько перечисленных
 измерений, matrix должна покрывать pairwise combinations всех релевантных
@@ -174,6 +178,30 @@ same-day recovery reuses the saved snapshot and never repolls. Reusable fixture:
 `automation/fixtures/recall/source-pulse-global-official-2026-09-09.json`; offline
 contract: `automation/tests/test_source_pulse_global_official_p5.py`; controlled
 report: `automation/audits/experiments/2026-09-09-source-pulse-global-official-p5.md`.
+
+### Permanent regression: 2026-09-11 weak-source evidence loss
+
+Sep11 saved Primary evidence contains a DeepSeek V4.1 Flash rejection with
+`reason_code=weak_source`, original aggregator URL and an explicit reason that the
+official release note was not obtained. The production baseline preserves the
+rejection but produces `unresolved_signals=[]`, so a meaningful weak-source clue
+becomes invisible to later deterministic diagnostics.
+
+D6 requires qualified product/model weak-source evidence to survive as an
+**evidence-only unresolved row** with source/reason provenance, organization,
+version/model anchors and lifecycle/action anchors. Retention alone must keep
+`resolution_required=false`, `candidate_eligible=false` and zero additional
+search operations. It does not authorize exact authoritative binding, does not
+reserve the Coverage seventh slot and does not change the 24/25 pipeline ceilings.
+Reusable fixture: `automation/fixtures/recall/weak-source-signal-retention-2026-09-11.json`;
+offline contract: `automation/tests/test_weak_source_signal_retention_p3.py`;
+controlled report: `automation/audits/experiments/2026-09-12-weak-source-signal-retention-p3a/README.md`.
+
+Any later authoritative-binding treatment is a separate semantic boundary. It
+must prove exact event identity against same-company/different-event, old release,
+similar version, preview-vs-GA, duplicate, false-alias, missing-source-proof,
+ordering and occupied/spent seventh-slot negatives before production activation.
+A queue-positive result is not evidence of retrieval uplift.
 
 ## 5. Критерий допуска
 
