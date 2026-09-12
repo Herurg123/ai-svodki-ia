@@ -3,7 +3,9 @@
   "publication_date": "2026-09-11",
   "search_window": {
     "start_at": "2026-09-10T01:04:18+00:00",
-    "end_at": "2026-09-11T01:05:09+00:00"
+    "end_at": "2026-09-11T01:05:09+00:00",
+    "start_date": "2026-09-10",
+    "end_date": "2026-09-11"
   },
   "trusted_source": {
     "source_id": "openai_news_rss",
