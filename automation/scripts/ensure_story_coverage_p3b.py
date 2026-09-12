@@ -609,19 +609,22 @@ def _p3b_execute(*args: Any, **kwargs: Any) -> Any:
                 disposition="unresolved_deferred",
             )
 
-        budget = result.get("search_budget")
-        remaining = int(budget.get("remaining_calls", 0) or 0) if isinstance(budget, dict) else 0
-        if remaining < 1:
-            return _p3b_annotation(
-                result,
-                status="deferred",
-                reason="existing Coverage optional slot is unavailable",
-                signal=signal,
-                disposition="unresolved_deferred",
-            )
-
         try:
             existing_journal = load_journal(Path(STATE_DIR), publication_date)
+            existing_state = (
+                str(existing_journal.get("state") or "")
+                if isinstance(existing_journal, dict)
+                else ""
+            )
+            if existing_state in {"response_saved", "processed"}:
+                return _run_p3b_binding(
+                    plan=result,
+                    signal=signal,
+                    api_key=str(kwargs.get("api_key") or ""),
+                    model=str(kwargs.get("model") or ""),
+                    search_window=kwargs.get("search_window") or {},
+                    archive=kwargs.get("archive") or {},
+                )
             if isinstance(existing_journal, dict) and slot_is_consumed_or_ambiguous(
                 Path(STATE_DIR), publication_date
             ):
@@ -631,7 +634,7 @@ def _p3b_execute(*args: Any, **kwargs: Any) -> Any:
                     reason="existing Coverage optional slot is already consumed or ambiguous",
                     signal=signal,
                     disposition="unresolved_deferred",
-                    slot_state=str(existing_journal.get("state") or ""),
+                    slot_state=existing_state,
                 )
                 _p3b_force_consumed(deferred)
                 return deferred
@@ -645,6 +648,17 @@ def _p3b_execute(*args: Any, **kwargs: Any) -> Any:
             )
             _p3b_force_consumed(deferred)
             return deferred
+
+        budget = result.get("search_budget")
+        remaining = int(budget.get("remaining_calls", 0) or 0) if isinstance(budget, dict) else 0
+        if remaining < 1:
+            return _p3b_annotation(
+                result,
+                status="deferred",
+                reason="existing Coverage optional slot is unavailable",
+                signal=signal,
+                disposition="unresolved_deferred",
+            )
 
         return _run_p3b_binding(
             plan=result,
