@@ -3,8 +3,8 @@
 
 v2 contains the substantive Astra fixes. v3 repairs the historical public/private
 Coverage import and monkeypatch surface without weakening those fixes. It also
-restores the v2 exact-binder symbols that the compatibility re-export in v2 could
-otherwise shadow with the preserved v1 implementation.
+keeps the preserved v1 binder isolated so old compatibility helpers cannot be
+silently reinterpreted by the hardened v2 binder.
 """
 from __future__ import annotations
 
@@ -22,9 +22,18 @@ _v2 = importlib.util.module_from_spec(_V2_SPEC)
 sys.modules[_V2_SPEC.name] = _v2
 _V2_SPEC.loader.exec_module(_v2)
 
+# Preserve the exact v1 binder surface before restoring the hardened v2 symbols.
+# Historical helper tests and callers may still exercise v1 directly, but the
+# active orchestration below never uses those weaker semantics.
+_V1_BINDER_EXPORTS = {
+    "build_p3b_query": _v2._v1.build_p3b_query,
+    "candidate_exact_binding": _v2._v1.candidate_exact_binding,
+    "qualifying_p3b_signals": _v2._v1.qualifying_p3b_signals,
+    "select_p3b_signal": _v2._v1.select_p3b_signal,
+}
+
 # v2 deliberately re-exported the whole v1 module before defining its hardened
-# runtime. That preserved most compatibility seams, but it also shadowed several
-# imported binder names. Restore the hardened binder explicitly before any call.
+# runtime. Restore the active binder explicitly before any hardened call.
 _v2.build_p3b_query = _binding_v2.build_query
 _v2.candidate_exact_binding = _binding_v2.candidate_exact_binding
 _v2.qualifying_p3b_signals = _binding_v2.qualifying_signals
@@ -42,8 +51,6 @@ def _v2_lazy_getattr(name: str) -> Any:
     return getattr(_v2._v1, name)
 
 
-# Make historical lazy private attributes visible through v2 as well. This is
-# required for direct imports and for unittest.mock.patch.object(...).
 _v2.__getattr__ = _v2_lazy_getattr
 
 for _name in dir(_v2):
@@ -52,8 +59,8 @@ for _name in dir(_v2):
 
 _COMPAT_INTERNALS = {
     "_v2", "_V2_PATH", "_V2_SPEC", "_binding_v2", "_v2_lazy_getattr",
-    "_V2_EXECUTE_AUDIT_PLAN", "_V2_MAIN", "_COMPAT_INTERNALS",
-    "_sync_p3b_public_hooks", "_pull_p3b_runtime_state",
+    "_V1_BINDER_EXPORTS", "_V2_EXECUTE_AUDIT_PLAN", "_V2_MAIN",
+    "_COMPAT_INTERNALS", "_sync_p3b_public_hooks", "_pull_p3b_runtime_state",
     "execute_audit_plan", "main", "__getattr__",
 }
 
@@ -62,8 +69,17 @@ def __getattr__(name: str) -> Any:
     return getattr(_v2, name)
 
 
+def _restore_active_binders() -> None:
+    _v2.build_p3b_query = _binding_v2.build_query
+    _v2.candidate_exact_binding = _binding_v2.candidate_exact_binding
+    _v2.qualifying_p3b_signals = _binding_v2.qualifying_signals
+    _v2.select_p3b_signal = _binding_v2.select_signal
+    for name, value in _V1_BINDER_EXPORTS.items():
+        setattr(_v2._v1, name, value)
+
+
 def _sync_p3b_public_hooks() -> None:
-    """Push monkeypatchable state through v3 -> v2 -> v1 -> preserved P3a."""
+    """Push monkeypatchable state while keeping v1/v2 binder semantics separate."""
     for name, value in list(globals().items()):
         if name in _COMPAT_INTERNALS or (name.startswith("__") and name.endswith("__")):
             continue
@@ -73,7 +89,11 @@ def _sync_p3b_public_hooks() -> None:
             exists = False
         if exists:
             setattr(_v2, name, value)
+    _restore_active_binders()
     _v2._sync_p3b_public_hooks()
+    # v2's generic compatibility sync intentionally mirrors most names into v1;
+    # restore the binder boundary immediately afterwards.
+    _restore_active_binders()
 
 
 def _pull_p3b_runtime_state() -> None:
