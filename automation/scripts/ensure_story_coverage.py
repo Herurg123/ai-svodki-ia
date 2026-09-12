@@ -47,7 +47,8 @@ def _sync_to_impl() -> None:
         sync()
 
 
-def _pull_runtime_state() -> None:
+def _pull_impl_runtime_state() -> None:
+    """Pull diagnostics without colliding with the historical exported hook."""
     for name in _RUNTIME_PULL_NAMES:
         if hasattr(_impl, name):
             globals()[name] = getattr(_impl, name)
@@ -62,7 +63,7 @@ def _make_proxy(name: str):
         try:
             return getattr(_impl, name)(*args, **kwargs)
         finally:
-            _pull_runtime_state()
+            _pull_impl_runtime_state()
 
     proxy._coverage_public_proxy_target = name  # type: ignore[attr-defined]
     return proxy
