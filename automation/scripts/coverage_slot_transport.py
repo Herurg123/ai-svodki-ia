@@ -1,74 +1,62 @@
 from __future__ import annotations
 
 import json
+from types import SimpleNamespace
 from typing import Any
 
 from coverage_slot_guard import CoverageSlotReservation
 
 
-def protected_policy_audit_request(
+def _plain_object(value: Any) -> Any:
+    if isinstance(value, dict):
+        obj = SimpleNamespace()
+        for key, item in value.items():
+            setattr(obj, str(key), _plain_object(item))
+        return obj
+    if isinstance(value, list):
+        return [_plain_object(item) for item in value]
+    return value
+
+
+def _plain_output_text(value: Any) -> str:
+    if not isinstance(value, dict):
+        return ""
+    direct = value.get("output_text")
+    if isinstance(direct, str) and direct.strip():
+        return direct.strip()
+    parts: list[str] = []
+    output = value.get("output")
+    if not isinstance(output, list):
+        return ""
+    for item in output:
+        if not isinstance(item, dict):
+            continue
+        content = item.get("content")
+        if not isinstance(content, list):
+            continue
+        for block in content:
+            if not isinstance(block, dict):
+                continue
+            if block.get("type") == "output_text" and isinstance(block.get("text"), str):
+                parts.append(block["text"])
+    return "\n".join(part for part in parts if part).strip()
+
+
+def _parse_response(
     runtime: Any,
-    reservation: CoverageSlotReservation,
+    response: Any,
     *,
-    api_key: str,
-    model: str,
-    prompt: str,
     maximum_web_search_calls: int,
-    allowed_domains: list[str] | tuple[str, ...] | None = None,
-) -> Any:
-    """Execute one protected Coverage slot with durable pre/post transport state.
-
-    This intentionally mirrors the established runtime transport contract while
-    disabling SDK retries only for the protected optional-slot call. The raw
-    response is persisted before metadata extraction or JSON parsing.
-    """
-    from openai import OpenAI
-
-    client = OpenAI(api_key=api_key, timeout=1200.0, max_retries=0)
-    web_search_tool: dict[str, Any] = {
-        "type": "web_search",
-        "search_context_size": "medium",
-        "return_token_budget": "default",
-    }
-    if allowed_domains:
-        web_search_tool["filters"] = {"allowed_domains": list(allowed_domains)}
+    raw_response: Any,
+) -> tuple[Any, dict[str, Any]]:
+    metadata = runtime.build_audit_api_metadata(
+        response,
+        maximum_web_search_calls=maximum_web_search_calls,
+    )
     total_tool_calls = (
         maximum_web_search_calls + runtime.COVERAGE_NAVIGATION_TOOL_ALLOWANCE
         if maximum_web_search_calls == 1
         else maximum_web_search_calls
-    )
-
-    # Durable request admission must precede the provider call. If this write
-    # fails the transport is never invoked.
-    reservation.mark_request_started()
-    response = runtime.call_with_usage(
-        "coverage",
-        client.responses.create,
-        model=model,
-        input=prompt,
-        tools=[web_search_tool],
-        tool_choice="required",
-        max_tool_calls=total_tool_calls,
-        include=["web_search_call.action.sources"],
-        reasoning={"effort": "medium"},
-        max_output_tokens=3500,
-        text={
-            "format": {
-                "type": "json_schema",
-                "name": "daily_ai_targeted_coverage_audit",
-                "strict": True,
-                "schema": runtime.AUDIT_SCHEMA,
-            }
-        },
-        store=False,
-    )
-
-    raw_response = runtime.response_to_plain(response)
-    reservation.save_raw_response(raw_response)
-
-    metadata = runtime.build_audit_api_metadata(
-        response,
-        maximum_web_search_calls=maximum_web_search_calls,
     )
     metadata["configured_search_operations"] = maximum_web_search_calls
     metadata["configured_total_tool_calls"] = total_tool_calls
@@ -113,7 +101,7 @@ def protected_policy_audit_request(
             payload["status"] = "complete"
         if payload.get("direction_id") not in runtime.AUDIT_DIRECTION_IDS:
             inferred = next(
-                (item for item in runtime.AUDIT_DIRECTION_IDS if item in prompt),
+                (item for item in runtime.AUDIT_DIRECTION_IDS if item in output_text),
                 None,
             )
             if inferred:
@@ -126,8 +114,6 @@ def protected_policy_audit_request(
         "output_text": output_text,
         "validation_error": validation_error,
     }
-    reservation.save_result_snapshot(snapshot)
-
     result = runtime.AuditRequestResult(
         payload=payload if isinstance(payload, dict) else None,
         metadata=metadata,
@@ -138,9 +124,95 @@ def protected_policy_audit_request(
     runtime._LAST_AUDIT_RESULT = result
     if result not in runtime._LAST_AUDIT_RESULTS:
         runtime._LAST_AUDIT_RESULTS.append(result)
-    if validation_error:
-        raise runtime.CoverageAuditResponseError(validation_error, metadata)
+    return result, snapshot
+
+
+def _raise_if_invalid(runtime: Any, result: Any) -> Any:
+    if result.validation_error:
+        raise runtime.CoverageAuditResponseError(result.validation_error, result.metadata)
     return result
+
+
+def protected_policy_audit_request(
+    runtime: Any,
+    reservation: CoverageSlotReservation,
+    *,
+    api_key: str,
+    model: str,
+    prompt: str,
+    maximum_web_search_calls: int,
+    allowed_domains: list[str] | tuple[str, ...] | None = None,
+) -> Any:
+    """Execute one protected optional Coverage call with no SDK retry."""
+    from openai import OpenAI
+
+    client = OpenAI(api_key=api_key, timeout=1200.0, max_retries=0)
+    web_search_tool: dict[str, Any] = {
+        "type": "web_search",
+        "search_context_size": "medium",
+        "return_token_budget": "default",
+    }
+    if allowed_domains:
+        web_search_tool["filters"] = {"allowed_domains": list(allowed_domains)}
+    total_tool_calls = (
+        maximum_web_search_calls + runtime.COVERAGE_NAVIGATION_TOOL_ALLOWANCE
+        if maximum_web_search_calls == 1
+        else maximum_web_search_calls
+    )
+
+    reservation.mark_request_started()
+    response = runtime.call_with_usage(
+        "coverage",
+        client.responses.create,
+        model=model,
+        input=prompt,
+        tools=[web_search_tool],
+        tool_choice="required",
+        max_tool_calls=total_tool_calls,
+        include=["web_search_call.action.sources"],
+        reasoning={"effort": "medium"},
+        max_output_tokens=3500,
+        text={
+            "format": {
+                "type": "json_schema",
+                "name": "daily_ai_targeted_coverage_audit",
+                "strict": True,
+                "schema": runtime.AUDIT_SCHEMA,
+            }
+        },
+        store=False,
+    )
+
+    raw_response = runtime.response_to_plain(response)
+    reservation.save_raw_response(raw_response)
+    result, snapshot = _parse_response(
+        runtime,
+        response,
+        maximum_web_search_calls=maximum_web_search_calls,
+        raw_response=raw_response,
+    )
+    reservation.save_result_snapshot(snapshot)
+    return _raise_if_invalid(runtime, result)
+
+
+def replay_raw_response(
+    runtime: Any,
+    raw_response: Any,
+    *,
+    maximum_web_search_calls: int = 1,
+) -> tuple[Any, dict[str, Any]]:
+    """Reparse the durably saved provider response without another wire call."""
+    if not isinstance(raw_response, dict):
+        raise RuntimeError("saved Coverage optional-slot raw response must be an object")
+    response = _plain_object(raw_response)
+    setattr(response, "output_text", _plain_output_text(raw_response))
+    result, snapshot = _parse_response(
+        runtime,
+        response,
+        maximum_web_search_calls=maximum_web_search_calls,
+        raw_response=raw_response,
+    )
+    return _raise_if_invalid(runtime, result), snapshot
 
 
 def replay_result_snapshot(runtime: Any, snapshot: dict[str, Any]) -> Any:
@@ -160,6 +232,4 @@ def replay_result_snapshot(runtime: Any, snapshot: dict[str, Any]) -> Any:
     runtime._LAST_AUDIT_RESULT = result
     if result not in runtime._LAST_AUDIT_RESULTS:
         runtime._LAST_AUDIT_RESULTS.append(result)
-    if result.validation_error:
-        raise runtime.CoverageAuditResponseError(result.validation_error, metadata)
-    return result
+    return _raise_if_invalid(runtime, result)
