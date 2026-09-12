@@ -9,6 +9,7 @@ import re
 import sys
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 from event_freshness_contract import apply_candidate_schema_contract
 
@@ -34,6 +35,7 @@ _BASE_RUN_SEARCH = _base.run_primary_recall_search
 _BASE_BUILD_PROMPT = _base.build_prompt
 RETRIEVAL_QUALITY_CONTRACT_VERSION = 1
 UNRESOLVED_SIGNAL_VERSION = 1
+WEAK_SOURCE_SIGNAL_VERSION = 1
 BUSINESS_QUERY_TREATMENT_VERSION = 1
 BUSINESS_QUERY_DIRECTION_ID = "business_investment_partnerships"
 BUSINESS_QUERY_TREATMENT = (
@@ -93,6 +95,25 @@ _ENTITY_STOP = {
     "Data", "Center", "Centre", "Billion", "Million", "Guarantee", "Investment",
     "Wall", "Street", "Journal", "Financial", "Times",
 }
+_WEAK_PRODUCT_VERSION_RE = re.compile(
+    r"\b(?:v\d+(?:\.\d+){0,3}|(?:gpt|claude|gemini|llama|qwen|glm|deepseek)[- ]?\d+(?:\.\d+){0,3})"
+    r"(?:[- ][A-Za-z][A-Za-z0-9-]*)?\b",
+    re.IGNORECASE,
+)
+_WEAK_PRODUCT_ACTION_PATTERNS = (
+    (re.compile(r"\breplaces?\b", re.IGNORECASE), "replace"),
+    (re.compile(r"\breleases?\b|\breleased\b", re.IGNORECASE), "release"),
+    (re.compile(r"\blaunches?\b|\blaunched\b", re.IGNORECASE), "launch"),
+    (re.compile(r"\bintroduces?\b|\bintroduced\b", re.IGNORECASE), "introduce"),
+    (re.compile(r"\bunveils?\b|\bunveiled\b", re.IGNORECASE), "unveil"),
+    (re.compile(r"\bupdates?\b|\bupdated\b", re.IGNORECASE), "update"),
+    (re.compile(r"\bupgrades?\b|\bupgraded\b", re.IGNORECASE), "upgrade"),
+    (re.compile(r"\bships?\b|\bshipped\b", re.IGNORECASE), "ship"),
+    (re.compile(r"\brolls? out\b|\brolled out\b", re.IGNORECASE), "rollout"),
+    (re.compile(r"\bpreview\b", re.IGNORECASE), "preview"),
+    (re.compile(r"\bgeneral availability\b|\bgenerally available\b", re.IGNORECASE), "general_availability"),
+    (re.compile(r"\bretires?\b|\bretired\b|\bdiscontinues?\b|\bdiscontinued\b", re.IGNORECASE), "retire"),
+)
 
 
 def _clean(value: Any) -> str:
@@ -136,8 +157,94 @@ def _score(title: str, reason: str) -> tuple[int, str | None, list[str]]:
     return min(score, 5), source, anchors
 
 
+def _weak_source_product_identity(
+    rejection: dict[str, Any], title: str
+) -> dict[str, Any] | None:
+    """Extract evidence-only product identity without making it retrieval-eligible."""
+    source_url = _clean(rejection.get("url"))
+    parsed = urlparse(source_url)
+    if parsed.scheme != "https" or not parsed.hostname:
+        return None
+
+    versions: list[str] = []
+    for match in _WEAK_PRODUCT_VERSION_RE.finditer(title):
+        value = _clean(match.group(0)).strip(".,:;()[]{}")
+        if value and value.casefold() not in {item.casefold() for item in versions}:
+            versions.append(value)
+    if not versions:
+        return None
+
+    actions: list[str] = []
+    action_positions: list[int] = []
+    for pattern, canonical in _WEAK_PRODUCT_ACTION_PATTERNS:
+        match = pattern.search(title)
+        if not match:
+            continue
+        action_positions.append(match.start())
+        if canonical not in actions:
+            actions.append(canonical)
+    if not actions:
+        return None
+
+    organization = _clean(rejection.get("organization"))
+    if not organization and action_positions:
+        prefix = title[:min(action_positions)].strip(" -–—,:;()[]{}")
+        if 1 <= len(prefix.split()) <= 4 and any(char.isalpha() for char in prefix):
+            organization = _clean(prefix)
+    if not organization:
+        return None
+
+    host = (parsed.hostname or "").casefold()
+    if host.startswith("www."):
+        host = host[4:]
+    return {
+        "organization": organization,
+        "product_version_anchors": versions[:4],
+        "lifecycle_action_anchors": actions[:4],
+        "source_url": source_url,
+        "source_host": host,
+    }
+
+
+def _weak_source_signal(
+    *, rejection: dict[str, Any], direction_id: str, index: int, title: str, reason: str
+) -> dict[str, Any] | None:
+    identity = _weak_source_product_identity(rejection, title)
+    if identity is None:
+        return None
+    score, source, anchors = _score(title, reason)
+    return {
+        "signal_id": f"sig-{direction_id}-{index:02d}",
+        "version": WEAK_SOURCE_SIGNAL_VERSION,
+        "status": "unresolved",
+        "signal_class": "weak_source_product",
+        "title": title,
+        "origin_direction": direction_id,
+        "reason_code": "weak_source",
+        "evidence_reason": reason,
+        "likely_significance_score": score,
+        "entities": _entities(title),
+        "anchors": anchors,
+        "source_hint": source,
+        "organization": identity["organization"],
+        "product_version_anchors": identity["product_version_anchors"],
+        "lifecycle_action_anchors": identity["lifecycle_action_anchors"],
+        "source_provenance": {
+            "url": identity["source_url"],
+            "host": identity["source_host"],
+            "reason_code": "weak_source",
+            "reason": reason,
+        },
+        "resolution_required": False,
+        "resolution_eligibility": "deferred_exact_authoritative_binding",
+        "candidate_eligible": False,
+        "additional_search_operations": 0,
+        "query_terms_are_hints_not_filters": True,
+    }
+
+
 def collect_unresolved_signals(direction_reports: Any) -> list[dict[str, Any]]:
-    """Preserve unverified evidence; only strict high-signal rows require rescue."""
+    """Preserve unresolved evidence without granting weak-source publication eligibility."""
     signals: list[dict[str, Any]] = []
     if not isinstance(direction_reports, list):
         return signals
@@ -149,10 +256,24 @@ def collect_unresolved_signals(direction_reports: Any) -> list[dict[str, Any]]:
         if not isinstance(rows, list):
             continue
         for index, rejection in enumerate(rows, start=1):
-            if not isinstance(rejection, dict) or rejection.get("reason_code") != "unverified":
+            if not isinstance(rejection, dict):
                 continue
+            reason_code = rejection.get("reason_code")
             title, reason = _clean(rejection.get("title")), _clean(rejection.get("reason"))
             if not title or not reason:
+                continue
+            if reason_code == "weak_source":
+                weak_signal = _weak_source_signal(
+                    rejection=rejection,
+                    direction_id=direction_id,
+                    index=index,
+                    title=title,
+                    reason=reason,
+                )
+                if weak_signal is not None:
+                    signals.append(weak_signal)
+                continue
+            if reason_code != "unverified":
                 continue
             score, source, anchors = _score(title, reason)
             signals.append({

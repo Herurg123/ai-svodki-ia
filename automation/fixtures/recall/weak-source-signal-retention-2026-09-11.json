@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "scope": "P3a weak-source signal retention only; no authoritative binding or candidate admission",
+  "baseline": "Sep11 technical follow-up saved evidence",
+  "production_api_calls": 0,
+  "web_search_operations": 0,
+  "search_budget_change": 0,
+  "positive_control": {
+    "direction_id": "independent_missing_events",
+    "rejection": {
+      "title": "DeepSeek Replaces V4 Pro With V4.1 Flash Following Superior Speed and Cost Tests",
+      "url": "https://huggingnews.com/ai/update-deepseek-replaces-v4-pro-with-v41-flash-following-superior-speed-afb7de47",
+      "reason_code": "weak_source",
+      "reason": "Потенциально релевантный продуктовый апдейт, но в доступной карточке подтверждение сводится к агрегатору и публикациям в соцсетях; официальный release note DeepSeek в этом проходе не был получен."
+    },
+    "expected": {
+      "signal_class": "weak_source_product",
+      "organization": "DeepSeek",
+      "product_version_anchors": ["V4 Pro", "V4.1 Flash"],
+      "lifecycle_action_anchors": ["replace"],
+      "resolution_required": false,
+      "candidate_eligible": false,
+      "additional_search_operations": 0
+    },
+    "future_authoritative_binding_reference_only": {
+      "official_url": "https://www.deepseek.com/en/news/deepseek-v4-1-flash/",
+      "reuters_url": "https://www.reuters.com/world/asia-pacific/chinas-deepseek-launches-v41-flash-model-2026-09-10/",
+      "reuters_timestamp_utc": "2026-09-10T06:32:45Z",
+      "note": "Reference evidence is preserved for a later exact-binding experiment. P3a must not consume it automatically."
+    }
+  },
+  "negative_controls": [
+    {
+      "id": "no_version_anchor",
+      "rejection": {
+        "title": "DeepSeek launches a faster AI service",
+        "url": "https://example.com/deepseek-faster-service",
+        "reason_code": "weak_source",
+        "reason": "Only an aggregator card was available."
+      },
+      "retained": false
+    },
+    {
+      "id": "no_lifecycle_action",
+      "rejection": {
+        "title": "DeepSeek V4.1 Flash benchmark discussion",
+        "url": "https://example.com/deepseek-v41-benchmark",
+        "reason_code": "weak_source",
+        "reason": "Only an aggregator card was available."
+      },
+      "retained": false
+    },
+    {
+      "id": "no_https_source_provenance",
+      "rejection": {
+        "title": "DeepSeek releases V4.1 Flash",
+        "url": "",
+        "reason_code": "weak_source",
+        "reason": "Source provenance was not preserved."
+      },
+      "retained": false
+    },
+    {
+      "id": "other_rejection_reason",
+      "rejection": {
+        "title": "DeepSeek releases V4.1 Flash",
+        "url": "https://example.com/deepseek-v41",
+        "reason_code": "outside_window",
+        "reason": "Old event."
+      },
+      "retained": false
+    }
+  ],
+  "invariants": {
+    "weak_source_publication_exclusion_unchanged": true,
+    "existing_unverified_resolution_behavior_unchanged": true,
+    "coverage_seventh_slot_unchanged": true,
+    "freshness_unchanged": true,
+    "archive_dedupe_unchanged": true,
+    "automatic_authoritative_binding_enabled": false
+  }
+}

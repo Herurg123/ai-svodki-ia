@@ -34,7 +34,8 @@
 - `prompts/` — active prompts и сохранённые legacy prompts;
 - `fixtures/recall/` — machine-readable retrieval regressions, включая event-
   freshness, Yandex Source Pulse date, provider/source-routing, regional-health
-  viability, Sep12 OpenAI trusted-feed freshness и Agency observability controls;
+  viability, Sep12 OpenAI trusted-feed freshness, Agency observability и P3a
+  weak-source evidence-retention controls;
 - `fixtures/research/.runtime/` — ignored trusted runtime ingress для fresh
   research;
 - `specs/` — редакционные и технические спецификации;
@@ -50,7 +51,9 @@
   editorial flow;
 - `scripts/primary_recall_search.py` — стабильный public Primary Recall
   entrypoint; после fresh Primary запускает zero-paid Source Pulse v1.4 supplement
-  до первого editorial;
+  до первого editorial; P3a также сохраняет строго квалифицированные product/model
+  `weak_source` rejections как evidence-only `unresolved_signals`, не превращая их
+  в candidates или новые search obligations;
 - `scripts/agency_discovery_rescue.py` / `agency_discovery_rescue_v4.py` —
   preserved previous rescue implementations для replay/rollback;
   `scripts/agency_discovery_rescue_v5_base.py` — побайтно сохранённый pre-P2 v5;
@@ -228,6 +231,30 @@ P4 отдельно, уже после Event/Source Freshness и первого 
 fusion, каждую причину promotion/rejection, promoted URLs, trusted-feed evidence
 и snapshot reuse; весь `production-daily/` входит в стандартный Actions artifact.
 
+## Weak-source signal retention P3a
+
+Primary Retrieval Quality теперь сохраняет строго квалифицированный
+`reason_code=weak_source` для product/model событий как evidence-only unresolved
+row. Для retention обязательны исходный HTTPS source provenance, organization,
+версионный/model anchor и lifecycle/action anchor. Исходные URL и reason не
+заменяются выводом о том, что событие уже доказано.
+
+P3a не меняет publication eligibility: такой row получает
+`resolution_required=false`, `candidate_eligible=false` и
+`additional_search_operations=0`. Поэтому он не попадает в существующий Coverage
+`_required_signals`, не резервирует/вытесняет седьмой Coverage slot и не делает
+weak source кандидатом. Существующий high-signal `unverified` resolution работает
+как раньше.
+
+Sep11 DeepSeek fixture:
+`fixtures/recall/weak-source-signal-retention-2026-09-11.json`; zero-paid matrix
+audit: `audits/experiments/2026-09-12-weak-source-signal-retention-p3a/`.
+Permanent case добавлен в `specs/search-change-validation-matrix.md` как D6.
+Exact authoritative binding, same-company/different-event matching и возможное
+закрытие сигнала относятся к отдельному P3b и в P3a не активированы. Search
+ceilings 24/25, Freshness, archive dedupe, recovery spend и editorial ranking не
+изменены.
+
 ## Provider routing P3
 
 P3 не добавляет новый discovery stage. Saved production replay показал, что
@@ -377,10 +404,11 @@ Whole-pipeline theoretical ceiling:
 оба gaps:    12 Primary + 1 agency rescue + 5 Hybrid + 7 Coverage = 25
 ```
 
-Source Pulse, Event Freshness, P4 regional viability, agency-health viability и
-Discovery Health в эти числа не входят: у них 0 OpenAI calls и 0 Web Search.
-Дополнительные региональные Coverage searches и отдельный LLM semantic-event
-matcher сейчас не включены; они остаются deferred options для будущих аудитов.
+Source Pulse, Event Freshness, P4 regional viability, agency-health viability,
+P3a weak-source evidence retention и Discovery Health в эти числа не входят: у
+них 0 OpenAI calls и 0 Web Search. Дополнительные региональные Coverage searches
+и отдельный LLM semantic-event matcher сейчас не включены; они остаются deferred
+options для будущих аудитов.
 
 Редакционный validator применяет действующую политику без региональных квот.
 Российский research lead с `include|consider` и score ≥ 3 может быть исключён
