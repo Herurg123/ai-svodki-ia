@@ -113,10 +113,12 @@ class P3bOptionalSlotRecoveryTests(unittest.TestCase):
         self.assertEqual(calls, ["processed"])
         self.assertEqual(result["recovery_probe"], "processed")
 
-    def test_request_started_is_resolved_by_durable_guard_before_budget_shortcut(self) -> None:
+    def test_request_started_remains_ambiguous_and_never_retries(self) -> None:
         result, calls = self._execute(state="request_started", remaining_calls=0)
-        self.assertEqual(calls, ["request_started"])
-        self.assertEqual(result["recovery_probe"], "request_started")
+        self.assertEqual(calls, [])
+        self.assertEqual(result["weak_source_exact_binding"]["status"], "deferred")
+        self.assertEqual(result["weak_source_exact_binding"]["slot_state"], "request_started")
+        self.assertEqual(result["search_budget"]["remaining_calls"], 0)
 
     def test_zero_budget_without_consumed_journal_cannot_start_new_search(self) -> None:
         result, calls = self._execute(state=None, remaining_calls=0)
