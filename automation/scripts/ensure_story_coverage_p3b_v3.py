@@ -32,6 +32,11 @@ _v2.select_p3b_signal = _binding_v2.select_signal
 _v2.P3B_EXACT_BINDING_VERSION = _binding_v2.VERSION
 _v2.P3B_MODE = _binding_v2.MODE
 
+# Preserve the real hardened entrypoints before this wrapper exports its own.
+# They must never be overwritten by compatibility-state synchronization.
+_V2_EXECUTE_AUDIT_PLAN = _v2.execute_audit_plan
+_V2_MAIN = _v2.main
+
 
 def _v2_lazy_getattr(name: str) -> Any:
     return getattr(_v2._v1, name)
@@ -47,7 +52,9 @@ for _name in dir(_v2):
 
 _COMPAT_INTERNALS = {
     "_v2", "_V2_PATH", "_V2_SPEC", "_binding_v2", "_v2_lazy_getattr",
-    "_COMPAT_INTERNALS", "_sync_p3b_public_hooks", "_pull_p3b_runtime_state",
+    "_V2_EXECUTE_AUDIT_PLAN", "_V2_MAIN", "_COMPAT_INTERNALS",
+    "_sync_p3b_public_hooks", "_pull_p3b_runtime_state",
+    "execute_audit_plan", "main", "__getattr__",
 }
 
 
@@ -79,7 +86,7 @@ def _pull_p3b_runtime_state() -> None:
 def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
     _sync_p3b_public_hooks()
     try:
-        return _v2.execute_audit_plan(*args, **kwargs)
+        return _V2_EXECUTE_AUDIT_PLAN(*args, **kwargs)
     finally:
         _pull_p3b_runtime_state()
 
@@ -87,7 +94,7 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
 def main() -> int:
     _sync_p3b_public_hooks()
     try:
-        return int(_v2.main())
+        return int(_V2_MAIN())
     finally:
         _pull_p3b_runtime_state()
 
