@@ -27,9 +27,21 @@ qualifying_signals = _v1.qualifying_signals
 select_signal = _v1.select_signal
 build_query = _v1.build_query
 build_prompt = _v1.build_prompt
-candidate_source_url = _v1.candidate_source_url
-normalized_host = _v1.normalized_host
-normalized_org = _v1.normalized_org
+
+
+def candidate_source_url(candidate: dict[str, Any]) -> str:
+    source = candidate.get("primary_source")
+    if not isinstance(source, dict):
+        return ""
+    return _clean(source.get("url"))
+
+
+def normalized_host(value: Any) -> str:
+    return _v1._host(value)
+
+
+def normalized_org(value: Any) -> str:
+    return _v1._compact_identity(value)
 
 
 _LIFECYCLE_GROUPS: dict[str, tuple[str, ...]] = {
