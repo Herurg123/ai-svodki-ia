@@ -53,6 +53,7 @@ def canonical_url(value: Any) -> str | None:
         return None
     try:
         parsed = urllib.parse.urlsplit(value.strip())
+        port = parsed.port
     except ValueError:
         return None
     if (
@@ -60,7 +61,7 @@ def canonical_url(value: Any) -> str | None:
         or not parsed.hostname
         or parsed.username
         or parsed.password
-        or parsed.port not in {None, 443}
+        or port not in {None, 443}
     ):
         return None
     host = parsed.hostname.casefold().strip(".")
@@ -202,7 +203,7 @@ def build_evidence(
     if lead.get("cutoff_ambiguous") is True:
         return None
     source_item_id = canonical_url(lead.get("source_item_id"))
-    if source_item_id is not None and source_item_id != item_url:
+    if source_item_id != item_url:
         return None
     return {
         "version": VERSION,
