@@ -32,9 +32,9 @@
   эксперименты;
 - `config/` — production, editorial, site, image и Source Pulse configuration;
 - `prompts/` — active prompts и сохранённые legacy prompts;
-- `fixtures/recall/` — machine-readable retrieval regressions, включая P1
-  event-freshness controls, P2 Yandex Source Pulse date controls, P3
-  provider/source-routing controls и P4 regional-health viability controls;
+- `fixtures/recall/` — machine-readable retrieval regressions, включая event-
+  freshness, Yandex Source Pulse date, provider/source-routing, regional-health
+  viability и Sep12 OpenAI trusted-feed freshness controls;
 - `fixtures/research/.runtime/` — ignored trusted runtime ingress для fresh
   research;
 - `specs/` — редакционные и технические спецификации;
@@ -49,7 +49,7 @@
 - `scripts/run_digest_preview.py` — orchestration fresh/recovery research и
   editorial flow;
 - `scripts/primary_recall_search.py` — стабильный public Primary Recall
-  entrypoint; после fresh Primary запускает zero-paid Source Pulse v1.3 supplement
+  entrypoint; после fresh Primary запускает zero-paid Source Pulse v1.4 supplement
   до первого editorial;
 - `scripts/agency_discovery_rescue.py` / `agency_discovery_rescue_v4.py` —
   preserved previous rescue implementations для replay/rollback;
@@ -65,12 +65,13 @@
 - `scripts/regional_health_viability.py` — zero-network P4 pre-Hybrid viability
   refresh: может только переоткрыть early false-healthy Russia/China-Asia gap по
   exact Primary provenance после freshness/editorial filtering;
-- `scripts/source_pulse_supplement_v13.py` — bounded Tier-A official/trusted-news
-  supplemental discovery поверх сохранённого v1.2: обычный HTTPS,
-  source-aware date parsing, узкий Yandex URL+visible-date repair,
-  deterministic date/relevance/host gate, `consider` only, без OpenAI/Web Search;
-- `scripts/source_pulse_supplement_v12.py` — сохранённый предыдущий Source Pulse
-  implementation для rollback/replay compatibility;
+- `scripts/source_pulse_supplement_v14.py` — active bounded Tier-A
+  official/trusted-news supplemental discovery поверх сохранённого v1.3:
+  сохраняет Yandex URL+visible-date repair и добавляет только для явно
+  одобренного first-party feed exact same-host saved publication proof без
+  повторного polling feed, OpenAI/Web Search;
+- `scripts/source_pulse_supplement_v13.py` / `source_pulse_supplement_v12.py` —
+  сохранённые предыдущие Source Pulse implementations для rollback/replay;
 - `scripts/source_pulse_shadow.py` — сохранённый snapshot/fusion diagnostics перед
   и после Hybrid без повторного polling;
 - `scripts/hybrid_search_completeness.py` — stable Hybrid v3 entrypoint: baseline
@@ -91,10 +92,11 @@
   `not_triggered`, но никогда не повторяет started/spent/indeterminate rescue;
 - `scripts/event_freshness.py` — zero-network deterministic event-age gate по
   уже сохранённому origin evidence;
-- `scripts/source_freshness.py` — stable двухслойный freshness entrypoint:
-  Event Freshness перед preserved fail-closed Source Freshness v1;
-- `scripts/source_freshness_v1.py` — сохранённая authority для безопасного fetch
-  и доказательства publication date цитируемой страницы;
+- `scripts/source_freshness.py` — active Source Freshness v3: Event Freshness,
+  preserved direct-page/first-party v2 semantics и candidate-local проверка
+  сохранённого trusted-feed proof; generic RSS bypass отсутствует;
+- `scripts/source_freshness_v2.py` / `source_freshness_v1.py` — preserved
+  implementations для replay/rollback, включая безопасный fetch и page date proof;
 - `scripts/discovery_health.py` — zero-network volume-independent reducer уже
   сохранённых Primary/Pulse/Agency/Hybrid/Coverage diagnostics в
   `healthy | degraded | indeterminate`; не меняет publication и не вызывает API;
@@ -129,18 +131,17 @@ Paid retrieval candidates сохраняют два независимых вр�
 `event_freshness.py` не открывает сеть и не вызывает OpenAI/Web Search. Надёжный
 origin вне exact saved window получает `event_freshness_stale` и отсекается до
 editorial. Неизвестный/неоднозначный origin остаётся `unknown` и сохраняет recall,
-но после этого candidate всё равно обязан пройти прежний fail-closed Source
-Freshness Proof по странице. Поэтому свежая перепечатка не омолаживает старое
-доказанное событие, а отсутствие origin evidence не становится самостоятельным
-false-negative gate.
+но после этого candidate всё равно обязан пройти fail-closed Source Freshness
+Proof. Поэтому свежая перепечатка не омолаживает старое доказанное событие, а
+отсутствие origin evidence не становится самостоятельным false-negative gate.
 
 Regression fixture находится в
 `fixtures/recall/event-freshness-2026-08-29.json`, controlled offline replay — в
-`audits/experiments/2026-08-29-event-freshness-p1.md`. P1 не добавляет paid calls
-или Web Search operations и сохраняет recovery старых artifacts без `event_*`
-полей через `event=unknown`.
+`audits/experiments/2026-08-29-event-freshness-p1.md`. Этот event-age gate не
+добавляет paid calls или Web Search operations и сохраняет recovery старых
+artifacts без `event_*` полей через `event=unknown`.
 
-## Source Pulse v1.3
+## Source Pulse v1.4
 
 Пункт 5, автономный отчёт v3: `scripts/source_pulse_value.py` читает
 один сохранённый Source Pulse report. Пример запуска без сети:
@@ -183,33 +184,35 @@ observed_total, observed_releases, unknown_releases и complete_total (null пр
 Нулевые counts не служат основанием удалять источник. Условия продолжения:
 `audits/experiments/2026-09-09-step05-resumed.md`.
 
-Fresh production сначала завершает Primary Recall, затем Source Pulse v1.3
+Fresh production сначала завершает Primary Recall, затем Source Pulse v1.4
 опрашивает фиксированный registry обычным HTTPS. Только `pulse_only` Tier-A
 `official` или `trusted_news` leads могут попасть в trusted research, причём
 только как `recommendation=consider`. Tier B остаётся diagnostic-only.
 
-Для каждого продвигаемого lead повторно открывается уже найденный URL,
-детерминированно проверяется publication date против exact saved window,
-проверяется redirect/host allowlist и применяется AI-relevance gate. После merge
-штатный Event + Source Freshness Proof всё равно повторно проверяет trusted
-research перед первым editorial. Pulse rows без отдельного event-origin evidence
-остаются `event=unknown`, но не обходят fail-closed page freshness. ТАСС включён
+Обычный promotion по-прежнему повторно открывает найденный URL, проверяет direct
+publication date против exact saved window, redirect/host allowlist и AI relevance.
+Yandex v1.3 repair сохраняет узкий URL+visible-date fallback. P1 trusted-feed
+repair v1.4 добавляет ещё один, отдельный контракт только для явно одобренного
+Tier-A official `rss_atom`: сейчас `openai_news_rss`, поля `pubDate` или
+`published`, exact same-host item URL и exact `source_item_id`. При direct 403 или
+отсутствии publication metadata этот уже сохранённый feed timestamp может
+подтвердить publication date; feed повторно не запрашивается. Parseable direct
+page date остаётся authority, а date conflict или canonical/redirect drift
+fail-closed отклоняют кандидат. Atom `updated`, cross-host items и любой
+неодобренный RSS источник не получают fallback.
+
+После merge штатный Event + Source Freshness v3 снова проверяет trusted research
+перед первым editorial. Для v1.4 кандидата оно независимо перепроверяет persisted
+trusted-feed proof против текущего registry и exact primary URL. Поэтому recovery
+может переиспользовать сохранённое доказательство без mutable feed repoll. Pulse
+rows без отдельного event-origin evidence остаются `event=unknown`. ТАСС включён
 в российский Tier-A `trusted_news` registry через
 `https://tass.ru/tag/iskusstvennyi-intellekt`; Yandex IR, MWS и VK остаются
 официальными Tier-A surfaces, CNews остаётся Tier-B lead-only.
 
-P2 добавляет только Yandex-specific publication-date repair. Generic Source
-Freshness parser по-прежнему не извлекает случайные даты из body text. Если у
-Yandex IR/company-news страницы нет обычной machine-readable publication date,
-v1.3 принимает fallback только при согласии двух first-party сигналов: dated
-Yandex URL/id и совпадающей видимой даты в верхней части страницы или index item.
-Конфликтующая ненулевая parser-date не получает приоритет только потому, что она
-уже заполнена. Existing machine-readable publication metadata остаётся
-authoritative. Same-day recovery чинит сохранённый Pulse snapshot из уже
-сохранённых Yandex URL/title evidence и не repoll'ит mutable indexes.
-
-Regression fixture: `fixtures/recall/source-pulse-yandex-2026-08-29.json`.
-Controlled replay/audit: `audits/experiments/2026-08-29-yandex-source-pulse-date-p2.md`.
+Regression fixture P1 trusted-feed repair:
+`fixtures/recall/openai-feed-freshness-2026-09-11.json`; controlled architecture
+audit: `audits/experiments/2026-09-12-openai-feed-freshness-p1/`.
 
 Pulse не вызывает OpenAI и Web Search. Он никогда не закрывает уже существующий
 Search-derived `regional_health` gap и поэтому не может скрыть деградацию Primary.
@@ -217,8 +220,8 @@ P4 отдельно, уже после Event/Source Freshness и первого 
 переоткрыть early healthy регион по exact Primary provenance; Pulse-only candidate
 не считается доказательством здоровья Primary. Runtime report
 `preview/production-daily/source-pulse-<DATE>.json` сохраняет source/parser health,
-fusion, каждую причину promotion/rejection, promoted URLs и snapshot reuse; весь
-`production-daily/` входит в стандартный Actions artifact.
+fusion, каждую причину promotion/rejection, promoted URLs, trusted-feed evidence
+и snapshot reuse; весь `production-daily/` входит в стандартный Actions artifact.
 
 ## Provider routing P3
 
@@ -433,7 +436,10 @@ production API и фиксируются в `audits/experiments/`.
 implicit caching полного запроса. Измеренная экономия API определяется по
 `usage-ledger.json`; офлайн-сокращение токенов не является счётом провайдера.
 
-Source Freshness использует общий с Pulse разбор подтверждённой даты Яндекса и
-точную дату GitHub release из публичного Releases API при отсутствии HTML-даты.
-Generic metadata и отдельная проверка возраста события имеют приоритет;
-новых платных поисков нет. Подробности и границы — в `automation/ARCHITECTURE.md`.
+Source Freshness v3 сохраняет общий с Pulse разбор подтверждённой даты Яндекса,
+точную дату GitHub release из публичного Releases API и generic page metadata.
+Дополнительно он может переиспользовать сохранённый trusted-feed proof Source
+Pulse v1.4 только для явно одобренного exact same-host item. Feed не repoll'ится;
+direct page metadata и конфликты остаются authority/fail-closed. Отдельная
+проверка возраста события имеет приоритет, новых платных поисков нет. Подробности
+и границы — в `automation/ARCHITECTURE.md`.
