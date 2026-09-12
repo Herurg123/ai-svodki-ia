@@ -61,6 +61,7 @@ _COMPAT_INTERNALS = {
     "_v2", "_V2_PATH", "_V2_SPEC", "_binding_v2", "_v2_lazy_getattr",
     "_V1_BINDER_EXPORTS", "_V2_EXECUTE_AUDIT_PLAN", "_V2_MAIN",
     "_COMPAT_INTERNALS", "_sync_p3b_public_hooks", "_pull_p3b_runtime_state",
+    "_restore_active_binders", "_run_p3b_binding_v2", "_P3A_MAIN",
     "execute_audit_plan", "main", "__getattr__",
 }
 
@@ -80,6 +81,11 @@ def _restore_active_binders() -> None:
 
 def _sync_p3b_public_hooks() -> None:
     """Push monkeypatchable state while keeping v1/v2 binder semantics separate."""
+    # These two callbacks can be deliberately installed by the active v4 layer
+    # or by historical compatibility tests. They are execution seams, not state
+    # to be overwritten by stale aliases exported when this module was imported.
+    active_run_p3b = _v2._run_p3b_binding_v2
+    active_p3a_main = _v2._v1._P3A_MAIN
     for name, value in list(globals().items()):
         if name in _COMPAT_INTERNALS or (name.startswith("__") and name.endswith("__")):
             continue
@@ -92,8 +98,12 @@ def _sync_p3b_public_hooks() -> None:
     _restore_active_binders()
     _v2._sync_p3b_public_hooks()
     # v2's generic compatibility sync intentionally mirrors most names into v1;
-    # restore the binder boundary immediately afterwards.
+    # restore the binder boundary and active orchestration callbacks immediately
+    # afterwards. Otherwise a second wrapper sync can silently uninstall v4's
+    # reserved-budget guard or a caller's historical main seam.
     _restore_active_binders()
+    _v2._run_p3b_binding_v2 = active_run_p3b
+    _v2._v1._P3A_MAIN = active_p3a_main
 
 
 def _pull_p3b_runtime_state() -> None:
