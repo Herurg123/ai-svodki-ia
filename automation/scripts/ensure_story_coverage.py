@@ -4,8 +4,8 @@
 ``ensure_story_coverage_p0.py`` is the byte-for-byte pre-guard public wrapper.
 This layer changes only the already-existing optional seventh Coverage search:
 its owner/request state is persisted before transport so recovery cannot refund
-an admitted or ambiguous request. Semantic matching remains in the preserved
-implementation and is intentionally unchanged here.
+an admitted or ambiguous request. All historical public hooks remain bridged
+through the preserved P0 wrapper; semantic matching is intentionally unchanged.
 """
 from __future__ import annotations
 
@@ -24,7 +24,6 @@ from coverage_slot_guard import (
     slot_is_consumed_or_ambiguous,
 )
 from coverage_slot_transport import protected_policy_audit_request, replay_result_snapshot
-
 
 _BASE_PATH = Path(__file__).with_name("ensure_story_coverage_p0.py")
 _BASE_SPEC = importlib.util.spec_from_file_location("ensure_story_coverage_p0", _BASE_PATH)
@@ -46,10 +45,18 @@ _pre = _base._pre
 _runtime = _pre._runtime
 _policy = _pre._policy
 _PRE_RUN_RESOLUTION = _pre._run_resolution
-_PRE_PREPARE_PRIOR_FOR_QUALITY = _pre._prepare_prior_for_quality
-_BASE_EXECUTE_AUDIT_PLAN = _base.execute_audit_plan
-_BASE_MAIN = _base.main
+_P0_EXECUTE_AUDIT_PLAN = _base.execute_audit_plan
+_P0_PREPARE_PRIOR_FOR_QUALITY = _base._prepare_prior_for_quality
+_P0_PRIMARY_SEARCH_DIAGNOSTICS = _base._primary_search_diagnostics
+_P0_FINALIZE_QUALITY_REPORT = _base._finalize_quality_report
+_P0_MAIN = _base.main
 
+# Materialize the historical private/public compatibility hooks. Tests and
+# downstream wrappers monkeypatch these on the public module and expect P0 to
+# carry them all the way into v8/runtime.
+_BASE_EXECUTE_AUDIT_PLAN = getattr(_base, "_BASE_EXECUTE_AUDIT_PLAN", None)
+_LAST_RECALL_SENTINEL = getattr(_base, "_LAST_RECALL_SENTINEL", None)
+_LAST_AGENCY_RESCUE = getattr(_base, "_LAST_AGENCY_RESCUE", None)
 REPOSITORY_ROOT = _base.REPOSITORY_ROOT
 STATE_DIR = _base.STATE_DIR
 OPTIONAL_SLOT_OWNER = _pre.UNRESOLVED_RESOLUTION_STRATEGY
@@ -60,8 +67,21 @@ _CURRENT_PUBLICATION_DATE: contextvars.ContextVar[str | None] = contextvars.Cont
 
 # Ordinary Coverage transport in the preserved runtime remains
 # OpenAI(..., max_retries=2). Only the protected optional-slot transport uses 0.
-# Keep the historical literal visible at the public entrypoint for contract tests.
 # max_retries=2
+
+_DELEGATE_EXCLUSIONS = {
+    "main",
+    "execute_audit_plan",
+    "_prepare_prior_for_quality",
+    "_primary_search_diagnostics",
+    "_finalize_quality_report",
+    "_run_resolution",
+    "_sync_public_hooks",
+    "_sync_slot_hooks",
+    "_pull_runtime_state",
+    "_LAST_RECALL_SENTINEL",
+    "_LAST_AGENCY_RESCUE",
+}
 
 
 def _publication_date(plan: dict[str, Any] | None = None) -> str:
@@ -72,15 +92,31 @@ def _publication_date(plan: dict[str, Any] | None = None) -> str:
     return str(_CURRENT_PUBLICATION_DATE.get() or "").strip()
 
 
-def _sync_slot_hooks() -> None:
-    # Preserve the established public monkeypatch surface while layering only the
-    # two internal functions that own optional-slot admission/migration.
-    for name in ("REPOSITORY_ROOT", "STATE_DIR"):
-        if name in globals() and hasattr(_base, name):
-            setattr(_base, name, globals()[name])
+def _sync_public_hooks() -> None:
+    """Preserve the exact P0 monkeypatch surface before installing slot hooks."""
+    current = globals()
+    for name, value in list(current.items()):
+        if name.startswith("__") and name.endswith("__"):
+            continue
+        if name in _DELEGATE_EXCLUSIONS or name.startswith("_P0_"):
+            continue
+        if name in _base.__dict__:
+            setattr(_base, name, value)
     _base._sync_p0()
+
+
+def _sync_slot_hooks() -> None:
+    _sync_public_hooks()
     _pre._run_resolution = _run_resolution
     _pre._prepare_prior_for_quality = _prepare_prior_for_quality
+
+
+def _pull_runtime_state() -> None:
+    for name in ("_LAST_RECALL_SENTINEL", "_LAST_AGENCY_RESCUE"):
+        if name in _base.__dict__:
+            globals()[name] = getattr(_base, name)
+        elif name in _pre.__dict__:
+            globals()[name] = getattr(_pre, name)
 
 
 def _request_contract(
@@ -128,8 +164,7 @@ def _legacy_slot_attempt(attempts: Any) -> dict[str, Any] | None:
     matches = [
         item
         for item in attempts
-        if isinstance(item, dict)
-        and item.get("search_strategy") == OPTIONAL_SLOT_OWNER
+        if isinstance(item, dict) and item.get("search_strategy") == OPTIONAL_SLOT_OWNER
     ]
     return copy.deepcopy(matches[-1]) if matches else None
 
@@ -149,7 +184,8 @@ def _force_slot_consumed_budget(plan: dict[str, Any]) -> None:
     budget["remaining_calls"] = max(0, maximum - effective)
     budget["exhausted"] = effective >= maximum
     budget["search_budget_exhausted"] = effective >= maximum
-    budget["stop_reason"] = "coverage_optional_slot_consumed_or_ambiguous"
+    if effective >= maximum and plan.get("audit_state") != "completed_usable":
+        budget["stop_reason"] = "coverage_optional_slot_consumed_or_ambiguous"
 
 
 def _append_slot_attempt_if_missing(
@@ -177,7 +213,8 @@ def _append_slot_attempt_if_missing(
                 "direction_id": "general_coverage_gaps",
                 "label": "Unresolved high-signal resolution v1",
                 "required": True,
-                "attempt": 1 + max(
+                "attempt": 1
+                + max(
                     [
                         int(item.get("attempt", 0) or 0)
                         for item in attempts
@@ -256,8 +293,6 @@ def _run_resolution(
 ) -> dict[str, Any]:
     publication_date = _publication_date(plan)
     if not publication_date:
-        # Historical direct unit hooks have no release identity. Preserve their
-        # exact pre-guard behavior instead of inventing a pseudo journal.
         return _PRE_RUN_RESOLUTION(
             plan=plan,
             signals=signals,
@@ -367,22 +402,21 @@ def _run_resolution(
 
 
 def _legacy_slot_was_consumed_or_ambiguous(prior: dict[str, Any] | None) -> bool:
-    if not isinstance(prior, dict):
-        return False
-    attempt = _legacy_slot_attempt(prior.get("attempts"))
-    if attempt is None:
-        return False
-    # Historical resolution attempts were appended only after transport returned.
-    # An error/indeterminate row from newer guards is also never refundable.
-    return True
+    return bool(
+        isinstance(prior, dict)
+        and _legacy_slot_attempt(prior.get("attempts")) is not None
+    )
 
 
 def _prepare_prior_for_quality(
     prior_plan: dict[str, Any] | None,
     search_window: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
+    _sync_public_hooks()
     prior_copy = copy.deepcopy(prior_plan) if isinstance(prior_plan, dict) else prior_plan
-    publication_date = _publication_date(prior_copy if isinstance(prior_copy, dict) else None)
+    publication_date = _publication_date(
+        prior_copy if isinstance(prior_copy, dict) else None
+    )
     legacy_spent = _legacy_slot_was_consumed_or_ambiguous(
         prior_copy if isinstance(prior_copy, dict) else None
     )
@@ -390,7 +424,10 @@ def _prepare_prior_for_quality(
         publication_date
         and slot_is_consumed_or_ambiguous(Path(STATE_DIR), publication_date)
     )
-    prepared = _PRE_PREPARE_PRIOR_FOR_QUALITY(prior_plan, search_window)
+    try:
+        prepared = _P0_PREPARE_PRIOR_FOR_QUALITY(prior_plan, search_window)
+    finally:
+        _pull_runtime_state()
     if not isinstance(prepared, dict) or not (legacy_spent or journal_spent):
         return prepared
 
@@ -410,9 +447,26 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
     token = _CURRENT_PUBLICATION_DATE.set(publication_date)
     _sync_slot_hooks()
     try:
-        return _BASE_EXECUTE_AUDIT_PLAN(*args, **kwargs)
+        return _P0_EXECUTE_AUDIT_PLAN(*args, **kwargs)
     finally:
+        _pull_runtime_state()
         _CURRENT_PUBLICATION_DATE.reset(token)
+
+
+def _primary_search_diagnostics(*args: Any, **kwargs: Any) -> Any:
+    _sync_public_hooks()
+    try:
+        return _P0_PRIMARY_SEARCH_DIAGNOSTICS(*args, **kwargs)
+    finally:
+        _pull_runtime_state()
+
+
+def _finalize_quality_report(*args: Any, **kwargs: Any) -> Any:
+    _sync_public_hooks()
+    try:
+        return _P0_FINALIZE_QUALITY_REPORT(*args, **kwargs)
+    finally:
+        _pull_runtime_state()
 
 
 def main() -> int:
@@ -420,8 +474,9 @@ def main() -> int:
     token = _CURRENT_PUBLICATION_DATE.set(publication_date)
     _sync_slot_hooks()
     try:
-        return int(_BASE_MAIN())
+        return int(_P0_MAIN())
     finally:
+        _pull_runtime_state()
         _CURRENT_PUBLICATION_DATE.reset(token)
 
 
