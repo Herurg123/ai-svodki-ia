@@ -30,7 +30,8 @@ _V2_RUN_P3B_BINDING = _v2._run_p3b_binding_v2
 _V4_INTERNALS = {
     "_v3", "_v2", "_V3_PATH", "_V3_SPEC", "_V2_RUN_P3B_BINDING",
     "_V4_INTERNALS", "_sync_p3b_public_hooks", "_pull_p3b_runtime_state",
-    "_guarded_run_p3b_binding_v2", "execute_audit_plan", "main", "__getattr__",
+    "_guarded_run_p3b_binding_v2", "_run_p3b_binding_v2", "_P3A_MAIN",
+    "execute_audit_plan", "main", "__getattr__",
 }
 
 
