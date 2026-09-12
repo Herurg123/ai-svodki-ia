@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Stable public compatibility surface for hardened Coverage P3b.
 
-The active P3b v2 implementation lives in ``ensure_story_coverage_p3b_v2.py``;
-the first P3b implementation is preserved in ``ensure_story_coverage_p3b.py``
-and the exact pre-P3b implementation remains in ``ensure_story_coverage_p3a.py``.
+The active compatibility wrapper lives in ``ensure_story_coverage_p3b_v3.py``;
+the substantive Astra fixes live in ``ensure_story_coverage_p3b_v2.py``; the
+first P3b implementation is preserved in ``ensure_story_coverage_p3b.py`` and
+the exact pre-P3b implementation remains in ``ensure_story_coverage_p3a.py``.
 This shim keeps historical direct-import and monkeypatch seams working across the
 versioned wrapper layers. The ordinary Coverage text client still inherits the
 preserved ``max_retries=2`` policy; protected optional-slot retry semantics remain
@@ -18,8 +19,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
-_IMPL_PATH = Path(__file__).with_name("ensure_story_coverage_p3b_v2.py")
-_IMPL_SPEC = importlib.util.spec_from_file_location("ensure_story_coverage_p3b_v2", _IMPL_PATH)
+_IMPL_PATH = Path(__file__).with_name("ensure_story_coverage_p3b_v3.py")
+_IMPL_SPEC = importlib.util.spec_from_file_location("ensure_story_coverage_p3b_v3", _IMPL_PATH)
 assert _IMPL_SPEC and _IMPL_SPEC.loader
 _impl = importlib.util.module_from_spec(_IMPL_SPEC)
 sys.modules[_IMPL_SPEC.name] = _impl
