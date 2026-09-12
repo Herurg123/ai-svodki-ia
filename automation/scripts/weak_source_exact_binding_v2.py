@@ -40,26 +40,15 @@ def _clean(value: Any) -> str:
 
 
 def _anchors(signal: dict[str, Any]) -> list[str]:
-    return [
-        _clean(item)
-        for item in signal.get("product_version_anchors") or []
-        if _clean(item)
-    ]
+    return [_clean(item) for item in signal.get("product_version_anchors") or [] if _clean(item)]
 
 
 def _actions(signal: dict[str, Any]) -> list[str]:
-    return [
-        _clean(item).casefold()
-        for item in signal.get("lifecycle_action_anchors") or []
-        if _clean(item)
-    ]
+    return [_clean(item).casefold() for item in signal.get("lifecycle_action_anchors") or [] if _clean(item)]
 
 
 def _anchor_pattern(anchor: str) -> str:
     escaped = re.escape(anchor.casefold()).replace(r"\ ", r"\s+")
-    # Reject a shorter version when the same product/version token is immediately
-    # extended, e.g. V4 must not match V4.1 or V4 Pro. Likewise V4.1 Flash must
-    # not match a longer V4.1 Flash Preview variant as the exact version anchor.
     suffixes = r"(?:pro|flash|mini|max|ultra|preview|beta|turbo|lite|plus)"
     return rf"(?<![\w.]){escaped}(?![\w.\-]|\s+(?:{suffixes})\b)"
 
@@ -94,43 +83,27 @@ def _directed_replace_matches(text: str, old_anchor: str, new_anchor: str) -> bo
 
 
 def _current_candidate_surface(candidate: dict[str, Any]) -> str:
-    # Deliberately exclude verified_facts/keywords/event history. Historical mentions
-    # cannot prove the lifecycle action of the current card.
-    return " ".join(
-        _clean(candidate.get(key))
-        for key in ("title", "event_type")
-        if _clean(candidate.get(key))
-    )
+    return " ".join(_clean(candidate.get(key)) for key in ("title", "event_type") if _clean(candidate.get(key)))
 
 
-def _identity_surface_matches(
-    text: str,
-    signal: dict[str, Any],
-    *,
-    require_current_lifecycle: bool,
-) -> tuple[bool, str]:
+def _identity_surface_matches(text: str, signal: dict[str, Any], *, require_current_lifecycle: bool) -> tuple[bool, str]:
     text = _clean(text)
     if not text:
         return False, "event_surface_missing"
     if not _contains_org(text, signal.get("organization")):
         return False, "organization_identity_mismatch"
-
     anchors = _anchors(signal)
     if not anchors:
         return False, "version_identity_missing"
     for anchor in anchors:
         if not _contains_exact_anchor(text, anchor):
             return False, "version_identity_mismatch"
-
     actions = _actions(signal)
     if not actions:
         return False, "lifecycle_identity_missing"
-
     folded = text.casefold()
     for action in actions:
         if action == "replace":
-            # A benchmark/evaluation is a different current lifecycle even when it
-            # recounts an earlier replacement in the same title/lead.
             if require_current_lifecycle and _BENCHMARK_RE.search(text):
                 return False, "benchmark_lifecycle_mismatch"
             if len(anchors) < 2 or not _directed_replace_matches(text, anchors[0], anchors[1]):
@@ -139,17 +112,17 @@ def _identity_surface_matches(
         terms = _LIFECYCLE_GROUPS.get(action, (action,))
         if not any(_has_term(folded, term) for term in terms):
             return False, "lifecycle_identity_mismatch"
-
-    # These lifecycle states are mutually exclusive current-event identities.
     wants_preview = any(action == "preview" for action in actions)
     wants_ga = any(action == "ga" for action in actions)
-    if wants_preview and _GA_RE.search(text) and not _PREVIEW_RE.search(text):
+    # GA is a later lifecycle state, so a current GA surface cannot prove the
+    # earlier preview event even when it says "after preview". Conversely a GA
+    # article may legitimately mention its previous preview after explicitly
+    # proving GA, so that historical word does not invalidate the GA event.
+    if wants_preview and _GA_RE.search(text):
         return False, "preview_ga_mismatch"
-    if wants_ga and _PREVIEW_RE.search(text) and not _GA_RE.search(text):
+    if wants_ga and not _GA_RE.search(text):
         return False, "preview_ga_mismatch"
     if require_current_lifecycle and "benchmark" not in actions and _BENCHMARK_RE.search(text):
-        # A benchmark card/page cannot prove a release/replacement event merely by
-        # mentioning that historical event.
         if any(action in {"replace", "launch", "update", "preview", "ga"} for action in actions):
             return False, "benchmark_lifecycle_mismatch"
     return True, "exact_event_identity"
@@ -197,19 +170,10 @@ def extract_authoritative_event_surface(html_text: str) -> str:
         parser.feed(str(html_text or ""))
     except Exception:
         return ""
-    # Keep the current-event surface bounded. The entire page is deliberately not
-    # used because related/history sections can contain earlier model versions.
     return _clean(" ".join(parser.parts[:10]))
 
 
-def candidate_exact_binding(
-    candidate: dict[str, Any],
-    signal: dict[str, Any],
-    *,
-    authoritative_domains: tuple[str, ...],
-    authoritative_page_surface: str | None = None,
-    authoritative_final_url: str | None = None,
-) -> tuple[bool, str]:
+def candidate_exact_binding(candidate: dict[str, Any], signal: dict[str, Any], *, authoritative_domains: tuple[str, ...], authoritative_page_surface: str | None = None, authoritative_final_url: str | None = None) -> tuple[bool, str]:
     if candidate.get("recommendation") not in {"include", "consider"}:
         return False, "candidate_not_eligible"
     if candidate.get("verification_status") != "verified":
@@ -218,7 +182,6 @@ def candidate_exact_binding(
         return False, "candidate_not_fresh_event"
     if normalized_org(candidate.get("organization")) != normalized_org(signal.get("organization")):
         return False, "organization_identity_mismatch"
-
     url = candidate_source_url(candidate)
     host = normalized_host(url)
     weak_host = normalized_host(((signal.get("source_provenance") or {}).get("url")))
@@ -226,44 +189,24 @@ def candidate_exact_binding(
         return False, "primary_source_not_authoritative"
     if weak_host and host == weak_host:
         return False, "weak_source_cannot_self_authorize"
-
     final_url = _clean(authoritative_final_url) or url
     final_host = normalized_host(final_url)
     if not final_host or not _v1._host_allowed(final_host, authoritative_domains):
         return False, "authoritative_page_redirected_outside_allowlist"
     if weak_host and final_host == weak_host:
         return False, "weak_source_cannot_self_authorize"
-
-    current_surface = _current_candidate_surface(candidate)
-    card_ok, card_reason = _identity_surface_matches(
-        current_surface,
-        signal,
-        require_current_lifecycle=True,
-    )
+    card_ok, card_reason = _identity_surface_matches(_current_candidate_surface(candidate), signal, require_current_lifecycle=True)
     if not card_ok:
         return False, card_reason
-
     page_surface = _clean(authoritative_page_surface)
     if not page_surface:
         return False, "authoritative_page_identity_unverified"
-    page_ok, page_reason = _identity_surface_matches(
-        page_surface,
-        signal,
-        require_current_lifecycle=True,
-    )
+    page_ok, page_reason = _identity_surface_matches(page_surface, signal, require_current_lifecycle=True)
     if not page_ok:
         return False, f"authoritative_page_{page_reason}"
     return True, "exact_authoritative_page_binding"
 
 
-def rejection_exact_terminal_binding(
-    rejection: dict[str, Any],
-    signal: dict[str, Any],
-    *,
-    authoritative_domains: tuple[str, ...],
-) -> tuple[bool, str]:
-    # Model-supplied rejection labels are not independent evidence. In particular,
-    # duplicate needs an exact archive match and stale/outside-window needs the real
-    # deterministic freshness gate. Those proofs live in orchestration, not here.
+def rejection_exact_terminal_binding(rejection: dict[str, Any], signal: dict[str, Any], *, authoritative_domains: tuple[str, ...]) -> tuple[bool, str]:
     del rejection, signal, authoritative_domains
     return False, "terminal_negative_requires_independent_proof"
