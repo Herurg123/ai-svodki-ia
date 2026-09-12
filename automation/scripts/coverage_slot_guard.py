@@ -100,6 +100,25 @@ def journal_state(state_dir: Path, publication_date: str) -> str | None:
     return str(value.get("state")) if value is not None and value.get("state") else None
 
 
+def load_raw_response(state_dir: Path, publication_date: str) -> Any:
+    journal = load_journal(state_dir, publication_date)
+    if journal is None:
+        raise CoverageSlotError("Coverage optional-slot journal is missing")
+    expected = str(journal.get("response_sha256") or "").strip()
+    if not expected:
+        raise CoverageSlotError("Coverage optional-slot journal has no saved response hash")
+    path = response_path(state_dir, publication_date)
+    if not path.is_file():
+        raise CoverageSlotError("Coverage optional-slot saved response is missing")
+    data = path.read_bytes()
+    if hashlib.sha256(data).hexdigest() != expected:
+        raise CoverageSlotError("Coverage optional-slot saved response hash mismatch")
+    try:
+        return json.loads(data.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise CoverageSlotError(f"invalid Coverage optional-slot saved response: {exc}") from exc
+
+
 def _identity_payload(
     *,
     publication_date: str,
@@ -209,6 +228,9 @@ class CoverageSlotReservation:
         value = self.journal.get(_PROCESSED_SNAPSHOT_KEY)
         return copy.deepcopy(value) if isinstance(value, dict) else None
 
+    def raw_response(self) -> Any:
+        return load_raw_response(self.state_dir, self.publication_date)
+
 
 def prepare_slot(
     *,
@@ -243,7 +265,6 @@ def prepare_slot(
                 "request_contract_sha256": identity["request_contract_sha256"],
             },
         }
-        # Reservation durability is a prerequisite for transport admission.
         _atomic_write_json(journal_path(state_dir, publication_date), value)
     else:
         _assert_identity(existing, identity)
@@ -268,9 +289,7 @@ def active_slot() -> CoverageSlotReservation | None:
     return _ACTIVE_SLOT.get()
 
 
-def slot_is_consumed_or_ambiguous(
-    state_dir: Path, publication_date: str
-) -> bool:
+def slot_is_consumed_or_ambiguous(state_dir: Path, publication_date: str) -> bool:
     value = load_journal(state_dir, publication_date)
     return bool(
         isinstance(value, dict)
@@ -279,6 +298,40 @@ def slot_is_consumed_or_ambiguous(
             or value.get("state") in {"request_started", "response_saved", "processed"}
         )
     )
+
+
+def _validated_bundle_state(
+    source_dir: Path, publication_date: str
+) -> tuple[dict[str, Any], bytes, bytes | None]:
+    source_journal = journal_path(source_dir, publication_date)
+    if not source_journal.is_file():
+        raise FileNotFoundError(source_journal)
+    try:
+        journal_bytes = source_journal.read_bytes()
+        journal = json.loads(journal_bytes.decode("utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise CoverageSlotError(f"invalid bundled Coverage optional-slot journal: {exc}") from exc
+    if not isinstance(journal, dict) or journal.get("publication_date") != publication_date:
+        raise CoverageSlotError("bundled Coverage optional-slot identity mismatch")
+    if int(journal.get("version", 0) or 0) != VERSION:
+        raise CoverageSlotError("unsupported bundled Coverage optional-slot journal version")
+
+    expected_response_sha = str(journal.get("response_sha256") or "").strip()
+    source_response = response_path(source_dir, publication_date)
+    response_bytes: bytes | None = None
+    if expected_response_sha:
+        if not source_response.is_file():
+            raise CoverageSlotError(
+                "bundled Coverage optional-slot journal references missing response"
+            )
+        response_bytes = source_response.read_bytes()
+        if hashlib.sha256(response_bytes).hexdigest() != expected_response_sha:
+            raise CoverageSlotError("bundled Coverage optional-slot response hash mismatch")
+    elif source_response.exists():
+        raise CoverageSlotError(
+            "bundled Coverage optional-slot response exists without journal hash"
+        )
+    return journal, journal_bytes, response_bytes
 
 
 def restore_state_from_bundle(
@@ -295,44 +348,44 @@ def restore_state_from_bundle(
             "publication_date": publication_date,
             "copied": [],
         }
-    try:
-        journal = json.loads(source_journal.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        raise CoverageSlotError(f"invalid bundled Coverage optional-slot journal: {exc}") from exc
-    if not isinstance(journal, dict) or journal.get("publication_date") != publication_date:
-        raise CoverageSlotError("bundled Coverage optional-slot identity mismatch")
-    if int(journal.get("version", 0) or 0) != VERSION:
-        raise CoverageSlotError("unsupported bundled Coverage optional-slot journal version")
 
+    journal, journal_bytes, response_bytes = _validated_bundle_state(
+        source_dir, publication_date
+    )
     target_state_dir = Path(target_state_dir)
     target_state_dir.mkdir(parents=True, exist_ok=True)
-    copied: list[str] = []
     target_journal = journal_path(target_state_dir, publication_date)
-    shutil.copy2(source_journal, target_journal)
-    copied.append(str(target_journal))
+    target_response = response_path(target_state_dir, publication_date)
 
-    expected_response_sha = journal.get("response_sha256")
-    source_response = response_path(source_dir, publication_date)
-    if expected_response_sha:
-        if not source_response.is_file():
+    if target_journal.exists():
+        existing = target_journal.read_bytes()
+        if existing != journal_bytes:
             raise CoverageSlotError(
-                "bundled Coverage optional-slot journal references missing response"
+                "existing Coverage optional-slot journal differs from selected bundle; overwrite forbidden"
             )
-        response_bytes = source_response.read_bytes()
-        if hashlib.sha256(response_bytes).hexdigest() != expected_response_sha:
-            raise CoverageSlotError("bundled Coverage optional-slot response hash mismatch")
-        target_response = response_path(target_state_dir, publication_date)
-        shutil.copy2(source_response, target_response)
-        copied.append(str(target_response))
-    elif source_response.exists():
+    if response_bytes is not None and target_response.exists():
+        if target_response.read_bytes() != response_bytes:
+            raise CoverageSlotError(
+                "existing Coverage optional-slot response differs from selected bundle; overwrite forbidden"
+            )
+    if response_bytes is None and target_response.exists():
         raise CoverageSlotError(
-            "bundled Coverage optional-slot response exists without journal hash"
+            "existing Coverage optional-slot response has no matching selected-bundle response"
         )
 
-    # Re-read through the normal validator after copying.
+    copied: list[str] = []
+    if not target_journal.exists():
+        shutil.copy2(source_journal, target_journal)
+        copied.append(str(target_journal))
+    if response_bytes is not None and not target_response.exists():
+        shutil.copy2(response_path(source_dir, publication_date), target_response)
+        copied.append(str(target_response))
+
     load_journal(target_state_dir, publication_date)
+    if journal.get("response_sha256"):
+        load_raw_response(target_state_dir, publication_date)
     return {
-        "status": "restored",
+        "status": "restored" if copied else "already_present",
         "publication_date": publication_date,
         "state": journal.get("state"),
         "owner": journal.get("owner"),
