@@ -1,37 +1,102 @@
 #!/usr/bin/env python3
-"""Source Freshness v3 with event-age and trusted first-party feed proof.
+"""Source Freshness v2 with an independent event-age gate.
 
-The complete v2 implementation is preserved in ``source_freshness_v2.py``. v3
-keeps its event-age gate, direct-page authority and first-party page adapters,
-then adds one candidate-local fallback for durable trusted-feed evidence created
-by Source Pulse. The fallback never fetches or repolls the feed.
+The preserved v1 module remains the authority for safe source fetching,
+publication-metadata parsing and fail-closed source-page freshness. v2 adds a
+separate zero-paid deterministic event-origin check before that source proof.
+Reliable stale event evidence rejects immediately; unknown event origin preserves
+recall and still has to pass source-page proof, including bounded first-party
+fallbacks after generic HTML metadata.
 """
 from __future__ import annotations
 
 import argparse
 import copy
+import importlib.util
 import json
 import sys
 from pathlib import Path
 from typing import Any
 
-import source_freshness_v2 as _v2
-from trusted_feed_source_freshness import verify_candidate_with_trusted_feed
+_EVENT_PATH = Path(__file__).with_name("event_freshness.py")
+_EVENT_SPEC = importlib.util.spec_from_file_location("event_freshness", _EVENT_PATH)
+assert _EVENT_SPEC and _EVENT_SPEC.loader
+_event = importlib.util.module_from_spec(_EVENT_SPEC)
+sys.modules[_EVENT_SPEC.name] = _event
+_EVENT_SPEC.loader.exec_module(_event)
+EVENT_FRESHNESS_VERSION = _event.EVENT_FRESHNESS_VERSION
+EventFreshnessResult = _event.EventFreshnessResult
+apply_event_freshness = _event.apply_event_freshness
 
-for _name in dir(_v2):
+_V1_PATH = Path(__file__).with_name("source_freshness_v1.py")
+_V1_SPEC = importlib.util.spec_from_file_location("source_freshness_v1", _V1_PATH)
+assert _V1_SPEC and _V1_SPEC.loader
+_v1 = importlib.util.module_from_spec(_V1_SPEC)
+sys.modules[_V1_SPEC.name] = _v1
+_V1_SPEC.loader.exec_module(_v1)
+
+from publication_evidence_adapters import first_party_evidence as _first_party_evidence
+
+for _name in dir(_v1):
     if not _name.startswith("_"):
-        globals()[_name] = getattr(_v2, _name)
+        globals()[_name] = getattr(_v1, _name)
+
+_parse_aware = _v1._parse_aware
+_stage_name = _v1._stage_name
+SOURCE_FRESHNESS_VERSION = 2
+USER_AGENT = "ai-svodki-source-freshness/2.0 (+https://rybalka.one/posts/)"
 
 
-def __getattr__(name: str) -> Any:
-    return getattr(_v2, name)
+def _event_record_fields(result: EventFreshnessResult) -> dict[str, Any]:
+    return {
+        "event_freshness_status": result.status,
+        "event_freshness_reason": result.reason,
+        "event_date": result.event_date,
+        "event_at": result.event_at,
+        "event_time_precision": result.time_precision,
+        "event_origin_url": result.origin_url,
+        "event_evidence_kind": result.evidence_kind,
+        "event_date_evidence": result.evidence,
+        "event_freshness_rejection_code": result.rejection_code,
+    }
 
 
-SOURCE_FRESHNESS_VERSION = 3
-EVENT_FRESHNESS_VERSION = _v2.EVENT_FRESHNESS_VERSION
-USER_AGENT = "ai-svodki-source-freshness/3.0 (+https://rybalka.one/posts/)"
-_parse_aware = _v2._parse_aware
-_stage_name = _v2._stage_name
+def _selected_source_record(record: dict[str, Any]) -> dict[str, Any] | None:
+    selected = str(record.get("selected_source_url") or "")
+    if not selected:
+        return None
+    for raw in record.get("sources") or []:
+        if isinstance(raw, dict) and str(raw.get("url") or "") == selected:
+            return raw
+    return None
+
+
+def _annotate_source_diagnostics(
+    candidate: dict[str, Any], record: dict[str, Any]
+) -> None:
+    status = str(record.get("status") or "")
+    source_status = {
+        "verified_fresh": "fresh",
+        "excluded_outside_window": "stale",
+        "excluded_unverified_freshness": "unknown",
+    }.get(status, "unknown")
+    candidate["source_freshness_status"] = source_status
+    candidate["source_publication_url"] = record.get("selected_source_url")
+    selected = _selected_source_record(record)
+    if selected is None:
+        candidate["source_published_date"] = None
+        candidate["source_published_at"] = None
+        candidate["source_time_precision"] = "unknown"
+        candidate["source_publication_evidence"] = ""
+        return
+    candidate["source_published_date"] = selected.get("published_date")
+    candidate["source_published_at"] = selected.get("published_at")
+    candidate["source_time_precision"] = selected.get("time_precision") or "unknown"
+    locator = str(selected.get("locator") or "").strip()
+    raw_date = str(selected.get("raw_date") or "").strip()
+    candidate["source_publication_evidence"] = (
+        f"{locator}={raw_date}" if locator and raw_date else raw_date or locator
+    )
 
 
 def verify_candidate(
@@ -39,11 +104,11 @@ def verify_candidate(
 ) -> dict[str, Any]:
     original_recommendation = str(candidate.get("recommendation") or "")
     if original_recommendation not in {"include", "consider"}:
-        return _v2.verify_candidate(
+        return _v1.verify_candidate(
             candidate, start_at=start_at, end_at=end_at, fetcher=fetcher
         )
 
-    event_result = _v2.apply_event_freshness(
+    event_result = apply_event_freshness(
         candidate, start_at=start_at, end_at=end_at
     )
     if event_result.status == "stale":
@@ -54,19 +119,17 @@ def verify_candidate(
             "status": "excluded_event_freshness_stale",
             "reason": event_result.reason,
             "sources": [],
-            **_v2._event_record_fields(event_result),
+            **_event_record_fields(event_result),
         }
 
-    record = verify_candidate_with_trusted_feed(
-        candidate,
-        start_at=start_at,
-        end_at=end_at,
-        fetcher=fetcher,
-        base_module=_v2._v1,
-        first_party_evidence=_v2._first_party_evidence,
+    record = _v1.verify_candidate(
+        candidate, start_at=start_at, end_at=end_at, fetcher=fetcher,
+        evidence_resolver=lambda body, requested, final: _first_party_evidence(
+            body, requested, final, fetcher
+        ),
     )
-    _v2._annotate_source_diagnostics(candidate, record)
-    record.update(_v2._event_record_fields(event_result))
+    _annotate_source_diagnostics(candidate, record)
+    record.update(_event_record_fields(event_result))
     return record
 
 
@@ -106,7 +169,6 @@ def verify_research_payload(
     summary = {
         "version": SOURCE_FRESHNESS_VERSION,
         "event_freshness_version": EVENT_FRESHNESS_VERSION,
-        "trusted_feed_publication_evidence_version": 1,
         "status": "complete",
         "search_window": copy.deepcopy(window),
         "candidate_count": len(
@@ -134,16 +196,7 @@ def verify_research_payload(
             item.get("status") == "excluded_unverified_freshness"
             for item in records
         ),
-        "trusted_feed_evidence_used": sum(
-            item.get("trusted_feed_publication_evidence_used") is True
-            for item in records
-        ),
-        "trusted_feed_conflicts": sum(
-            isinstance(item.get("trusted_feed_publication_conflict"), dict)
-            for item in records
-        ),
         "paid_api_calls": 0,
-        "web_search_operations": 0,
         "candidates": records,
     }
     return result, summary
@@ -171,12 +224,10 @@ def verify_research_file(
     report: dict[str, Any] = {
         "version": SOURCE_FRESHNESS_VERSION,
         "event_freshness_version": EVENT_FRESHNESS_VERSION,
-        "trusted_feed_publication_evidence_version": 1,
         "publication_date": publication_date,
         "status": "complete",
         "runs": [],
         "paid_api_calls": 0,
-        "web_search_operations": 0,
     }
     if report_path.is_file():
         try:
@@ -194,7 +245,6 @@ def verify_research_file(
     run["research_path"] = str(research_path)
     report["runs"].append(run)
     report["paid_api_calls"] = 0
-    report["web_search_operations"] = 0
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n",
@@ -205,10 +255,7 @@ def verify_research_file(
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description=(
-            "Verify event age and source publication freshness, including strict "
-            "saved first-party feed evidence, without paid APIs"
-        )
+        description="Verify event age and source publication freshness without paid APIs"
     )
     parser.add_argument("--research", type=Path, required=True)
     parser.add_argument("--publication-date", required=True)

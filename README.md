@@ -121,21 +121,28 @@ origin не является автоматической причиной ис�
 fail-closed Source Freshness Proof. P1 не добавляет новый LLM/Web Search pass и не
 увеличивает paid search ceiling.
 
-После fresh Primary Source Pulse v1.3 выполняет второй discovery-plane без
+После fresh Primary Source Pulse v1.4 выполняет второй discovery-plane без
 дополнительного платного retrieval: обычный HTTPS к фиксированному registry,
 **0 OpenAI calls и 0 Web Search operations**. В candidate pool могут попасть
 только свежие `pulse_only` Tier-A `official` или `trusted_news` leads, и только
-как `consider` после детерминированной проверки страницы/даты, host allowlist и
-AI relevance. Yandex IR/company-news имеет узкий P2 fallback: только совпадение
-dated first-party URL/id и видимой даты может дополнить отсутствующую generic
-machine-readable publication date; сам общий Source Freshness parser body text не
-сканирует. ТАСС включён в российский Tier-A `trusted_news` registry через AI-tag
-surface; Yandex IR/MWS/VK остаются official, CNews остаётся Tier-B lead-only.
-Tier B не влияет на publication. Source Pulse никогда не закрывает Search-derived
-China/Asia или Russia gap. После freshness/editorial P4 может только переоткрыть
-ранний false-healthy gap по exact Primary provenance, поэтому второй discovery-
-plane по-прежнему не может подавить Hybrid regional recovery. Полная диагностика
-сохраняется в daily Actions artifact.
+как `consider` после детерминированной проверки источника и AI relevance.
+Yandex IR/company-news сохраняет узкий P2 fallback: только совпадение dated
+first-party URL/id и видимой даты может дополнить отсутствующую generic
+machine-readable publication date. P1 trusted-feed repair добавляет отдельное,
+ещё более узкое исключение только для явно одобренного Tier-A official RSS/Atom:
+сейчас это `openai_news_rss`, причём authority имеют только RSS `pubDate` или Atom
+`published`, exact same-host item URL и совпадающий `source_item_id`. Если
+страница OpenAI отвечает 403 или не содержит publication metadata, сохранённое
+feed-доказательство может подтвердить дату без повторного polling feed. Если
+страница открывается и показывает конфликтующую дату либо canonical/redirect
+уходит на другой item, кандидат fail-closed отклоняется. Generic RSS fallback для
+остальных источников не включён. ТАСС включён в российский Tier-A `trusted_news`
+registry через AI-tag surface; Yandex IR/MWS/VK остаются official, CNews остаётся
+Tier-B lead-only. Tier B не влияет на publication. Source Pulse никогда не
+закрывает Search-derived China/Asia или Russia gap. После freshness/editorial P4
+может только переоткрыть ранний false-healthy gap по exact Primary provenance,
+поэтому второй discovery-plane по-прежнему не может подавить Hybrid regional
+recovery. Полная диагностика сохраняется в daily Actions artifact.
 
 Черновой автономный отчёт `automation/scripts/source_pulse_value.py` читает
 сохранённый Source Pulse JSON и разделяет source health, прочитанные записи,
@@ -277,7 +284,9 @@ Production API не используется для обычных refactor/CI/r
 implicit caching полного запроса. Измеренная экономия API определяется по
 `usage-ledger.json`; офлайн-сокращение токенов не является счётом провайдера.
 
-Source Freshness использует общий с Pulse разбор подтверждённой даты Яндекса и
-точную дату GitHub release из публичного Releases API при отсутствии HTML-даты.
-Generic metadata и отдельная проверка возраста события имеют приоритет;
-новых платных поисков нет. Подробности и границы — в `automation/ARCHITECTURE.md`.
+Source Freshness v3 сохраняет generic page metadata, Yandex/GitHub first-party
+adapters и отдельную event-age проверку, а также умеет повторно проверить
+сохранённое trusted-feed доказательство Source Pulse v1.4. Этот путь не repoll'ит
+feed и разрешён только для явно одобренного exact same-host item; direct page
+metadata и конфликты остаются authority/fail-closed. Новых платных поисков нет.
+Подробности и границы — в `automation/ARCHITECTURE.md`.

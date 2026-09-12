@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "publication_date": "2026-09-11",
+  "search_window": {
+    "start_at": "2026-09-10T01:04:18+00:00",
+    "end_at": "2026-09-11T01:05:09+00:00",
+    "start_date": "2026-09-10",
+    "end_date": "2026-09-11"
+  },
+  "trusted_source": {
+    "source_id": "openai_news_rss",
+    "feed_url": "https://openai.com/news/rss.xml",
+    "item_url": "https://openai.com/index/openai-for-financial-services",
+    "title": "OpenAI for Financial Services",
+    "published_at": "2026-09-10T20:00:00+00:00",
+    "published_date": "2026-09-10",
+    "publication_evidence_kind": "rss_pubdate"
+  },
+  "controls": [
+    {
+      "id": "direct-403-saved-rss-pubdate",
+      "expected": "fresh",
+      "reason": "exact same-host saved RSS pubDate may prove publication when the direct page cannot be fetched"
+    },
+    {
+      "id": "direct-page-undated-saved-rss-pubdate",
+      "expected": "fresh",
+      "reason": "exact saved feed proof may fill only a missing direct publication date"
+    },
+    {
+      "id": "atom-updated-only",
+      "expected": "blocked",
+      "reason": "Atom updated is not original publication evidence"
+    },
+    {
+      "id": "cross-host-item",
+      "expected": "blocked",
+      "reason": "feed and item hosts must be identical"
+    },
+    {
+      "id": "canonical-redirect-mismatch",
+      "expected": "blocked",
+      "reason": "direct canonical identity may not drift from the exact feed item URL"
+    },
+    {
+      "id": "direct-publication-date-conflict",
+      "expected": "blocked",
+      "reason": "parseable direct page publication metadata overrides and contradicts the feed"
+    },
+    {
+      "id": "feed-timestamp-outside-window",
+      "expected": "stale",
+      "reason": "trusted feed evidence does not weaken the exact saved window"
+    }
+  ],
+  "budget": {
+    "openai_calls": 0,
+    "web_search_operations": 0,
+    "feed_repoll_for_fallback": false
+  }
+}
