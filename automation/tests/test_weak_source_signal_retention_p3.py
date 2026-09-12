@@ -91,6 +91,27 @@ class WeakSourceSignalRetentionP3Tests(unittest.TestCase):
         self.assertTrue(signals[0]["resolution_required"])
         self.assertNotIn("candidate_eligible", signals[0])
 
+    def test_semantic_weak_source_evidence_survives_rejection_order_perturbation(self) -> None:
+        control = self.fixture["positive_control"]["rejection"]
+        unrelated = {
+            "title": "Unrelated stale card",
+            "url": "https://example.com/stale-card",
+            "reason_code": "outside_window",
+            "reason": "Outside the saved window.",
+        }
+        rows = []
+        for rejections in ([control, unrelated], [unrelated, control]):
+            signals = primary.collect_unresolved_signals([{
+                "direction_id": "independent_missing_events",
+                "model_rejections": rejections,
+            }])
+            weak = [item for item in signals if item.get("reason_code") == "weak_source"]
+            self.assertEqual(len(weak), 1)
+            semantic = dict(weak[0])
+            semantic.pop("signal_id", None)
+            rows.append(semantic)
+        self.assertEqual(rows[0], rows[1])
+
     def test_p3a_is_zero_search_and_does_not_enable_authoritative_binding(self) -> None:
         self.assertEqual(self.fixture["production_api_calls"], 0)
         self.assertEqual(self.fixture["web_search_operations"], 0)
