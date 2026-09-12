@@ -92,6 +92,10 @@ class P3bOptionalSlotRecoveryTests(unittest.TestCase):
         ), mock.patch.object(
             coverage, "load_journal", return_value=journal
         ), mock.patch.object(
+            coverage,
+            "slot_is_consumed_or_ambiguous",
+            return_value=bool(journal and journal.get("slot_consumed_or_ambiguous")),
+        ), mock.patch.object(
             coverage, "_run_p3b_binding", side_effect=fake_run
         ):
             result = coverage.execute_audit_plan(
