@@ -110,6 +110,10 @@ _ANCHOR_KNOWN_VARIANT_SUFFIXES = frozenset({
     "pro", "max", "plus", "mini", "turbo", "flash", "reasoning", "coder", "chat",
     "instruct", "thinking", "lite", "ultra", "vision", "audio", "vl", "base",
 })
+_EVENT_ENTITY_TOKEN_RE = re.compile(
+    r"\b(?:[A-Z][A-Za-z0-9.+-]*|[a-z][A-Za-z0-9.+-]*[A-Z][A-Za-z0-9.+-]*)\b"
+)
+_EVENT_ENTITY_GENERIC_TOKENS = frozenset({"ai", "api", "gpu", "llm", "ml", "now", "today"})
 
 
 def _clean(value: Any) -> str:
@@ -239,6 +243,55 @@ def _event_claims(text: str) -> list[str]:
     return [_clean(part) for part in _CLAIM_SPLIT_RE.split(cleaned) if _clean(part)]
 
 
+def _strip_identity_anchors(text: str, signal: dict[str, Any]) -> str:
+    result = str(text or "")
+    for anchor in sorted(_anchors(signal), key=len, reverse=True):
+        result = re.sub(_anchor_pattern(anchor), " ", result, flags=re.I)
+    return result
+
+
+def _contains_foreign_event_entity(text: str, signal: dict[str, Any]) -> bool:
+    cleaned = _strip_identity_anchors(text, signal)
+    return any(
+        match.group(0).casefold() not in _EVENT_ENTITY_GENERIC_TOKENS
+        for match in _EVENT_ENTITY_TOKEN_RE.finditer(cleaned)
+    )
+
+
+def _organization_binds_action_span(
+    claim: str,
+    signal: dict[str, Any],
+    action_span: tuple[int, int],
+) -> bool:
+    """Require the lifecycle assertion to be attributable to the signal org.
+
+    Co-occurrence in one sentence is not enough. A foreign named actor between the
+    signal organization and lifecycle span means the action may belong to that
+    other actor. Organization-after-action forms are accepted only when neither
+    the action-to-organization segment nor the prefix before the action contains a
+    foreign named actor. The check is deliberately conservative: P3b is an
+    opportunistic promotion path, so an ambiguous claim must fail closed.
+    """
+    organization = _clean(signal.get("organization"))
+    if not organization:
+        return False
+    start, end = action_span
+    for org_match in _term_matches(claim, organization):
+        if org_match.end() <= start:
+            between = claim[org_match.end():start]
+            if not _contains_foreign_event_entity(between, signal):
+                return True
+        elif org_match.start() >= end:
+            between = claim[end:org_match.start()]
+            prefix = claim[:start]
+            if (
+                not _contains_foreign_event_entity(between, signal)
+                and not _contains_foreign_event_entity(prefix, signal)
+            ):
+                return True
+    return False
+
+
 def _action_mention_is_negated(text: str, start: int) -> bool:
     prefix = text[max(0, start - 72):start]
     return bool(_NEGATED_ACTION_PREFIX_RE.search(prefix))
@@ -302,11 +355,15 @@ def _claim_lifecycle_matches(
                 return False, "lifecycle_negated"
             if _action_mention_is_historical(claim, span[0], span[1]):
                 return False, "historical_event_context"
+            if not _organization_binds_action_span(claim, signal, span):
+                return False, "organization_event_attribution_mismatch"
             continue
         terms = _LIFECYCLE_GROUPS.get(action, (action,))
         span, reason = _active_term_span(claim, terms)
         if span is None:
             return False, str(reason or "lifecycle_identity_mismatch")
+        if not _organization_binds_action_span(claim, signal, span):
+            return False, "organization_event_attribution_mismatch"
 
     wants_preview = any(action == "preview" for action in actions)
     wants_ga = any(action == "ga" for action in actions)
@@ -378,6 +435,7 @@ def _identity_surface_matches(text: str, signal: dict[str, Any], *, require_curr
         "benchmark_lifecycle_mismatch",
         "preview_ga_mismatch",
         "replacement_direction_mismatch",
+        "organization_event_attribution_mismatch",
         "lifecycle_identity_mismatch",
     ):
         if preferred in reasons:
