@@ -128,8 +128,9 @@ class P3bReplacementRoleTests(unittest.TestCase):
 
     def test_ambiguous_signal_direction_fails_closed(self) -> None:
         signal = self.signal(
-            "DeepSeek V4.1 Flash replaces V4 Pro; V4 Pro replaces V4.1 Flash"
+            "DeepSeek replaces models: V4.1 Flash replaces V4 Pro; V4 Pro replaces V4.1 Flash"
         )
+        self.assertEqual(signal["organization"], "DeepSeek")
         self.assertIsNone(binder._replacement_roles(signal)[0])
         ok, reason = self.bind(
             "DeepSeek V4.1 Flash replaces V4 Pro",
