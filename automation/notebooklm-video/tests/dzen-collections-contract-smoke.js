@@ -31,6 +31,32 @@ assert.strictEqual(collections.classifyCollectionCardLookup(0, true), "TIMEOUT")
 assert.strictEqual(collections.classifyCollectionCardLookup(2, false), "AMBIGUOUS");
 assert.strictEqual(collections.COLLECTION_CARD_TIMEOUT_MS, 15_000);
 
+// Regression for the 2026-09-13 Dzen UI reorder: exact target cards can exist
+// below the modal viewport. Geometry must be unsafe before scroll and safe only
+// after the card is brought into the visible modal area.
+const viewport = { width: 1365, height: 768 };
+const modalBox = { x: 16, y: 8, width: 640, height: 636 };
+assert.strictEqual(
+  collections.collectionClickGeometry({ x: 40, y: 700, width: 580, height: 90 }, modalBox, viewport).safe,
+  false
+);
+assert.strictEqual(
+  collections.collectionClickGeometry({ x: 40, y: 630, width: 580, height: 90 }, modalBox, viewport).safe,
+  false
+);
+assert.strictEqual(
+  collections.collectionClickGeometry({ x: 40, y: 500, width: 580, height: 90 }, modalBox, viewport).safe,
+  true
+);
+
+// Regression for the false-positive video ADDED incident: page-wide success text
+// is diagnostic only. Persisting ADDED requires target-local selected/muted state,
+// immediately or after exact-target re-open verification.
+assert.strictEqual(collections.classifyCollectionConfirmation(true, false, false), "muted-tile");
+assert.strictEqual(collections.classifyCollectionConfirmation(false, true, false), "reopened-muted-tile");
+assert.strictEqual(collections.classifyCollectionConfirmation(false, false, true), null);
+assert.strictEqual(collections.classifyCollectionConfirmation(false, false, false), null);
+
 for (const marker of [
   'alpha <= 0.70',
   'status: "ADDED"',
@@ -40,10 +66,23 @@ for (const marker of [
   'Повторный клик НЕ выполняю',
   'жду загрузку плашки',
   'Не дождался загрузки подборки',
+  'scrollIntoViewIfNeeded',
+  'document.elementFromPoint',
+  'общий success-text, но он НЕ считается подтверждением',
+  'reopened-muted-tile',
+  'Повторный клик запрещён',
 ]) assert(source.includes(marker), `Missing collections marker: ${marker}`);
+
+assert(!source.includes('return "success-text"'), "page-wide success text must not confirm ADDED by itself");
+const processStart = source.indexOf("async function processTarget(");
+const processEnd = source.indexOf("function runSelfTest()", processStart);
+const processSource = source.slice(processStart, processEnd);
+assert.strictEqual((processSource.match(/page\.mouse\.click\(/g) || []).length, 1, "processTarget must retain exactly one physical collection click");
+assert(processSource.indexOf("prepareCollectionCardClick(") < processSource.indexOf("page.mouse.click("), "scroll/hit-test must run before the physical click");
+assert(processSource.indexOf("verifyCollectionMembershipAfterClick(") > processSource.indexOf("page.mouse.click("), "target-local reopen verification must be post-click only");
 
 const pendingIndex = source.indexOf("const pending = TARGETS.filter");
 const launchIndex = source.indexOf("launchRobotBrowser");
 assert(pendingIndex >= 0 && launchIndex > pendingIndex, "completed-target filtering must happen before browser launch");
-assert(source.includes('confirmedBy: result.status === "added" ? "ui-success-after-click" : "existing-muted-tile"'));
+assert(source.includes('confirmedBy: result.status === "added" ? (result.signal || "target-local-ui-confirmation") : "existing-muted-tile"'));
 console.log("Dzen collections persistence contract smoke: OK");
