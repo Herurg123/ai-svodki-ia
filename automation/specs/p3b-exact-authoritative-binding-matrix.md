@@ -6,8 +6,7 @@
 
 P3a остаётся evidence-only: qualified `reason_code=weak_source` сохраняет source provenance и identity hints, но имеет `resolution_required=false`, `candidate_eligible=false` и сам не связывает событие с authoritative source.
 
-Active P3b использует binder v2 и public Coverage path через v4 → v3 → v2. Он может рассмотреть максимум один qualified P3a weak-source signal и использует только уже существующий optional seventh Coverage slot. Шесть mandatory Coverage directions не меняются. Required high-signal `unverified` resolution имеет
-приоритет. Если optional capacity занята, потрачена или неоднозначна, weak-source signal остаётся unresolved/deferred. Восьмой Coverage search запрещён. Обычный whole-pipeline ceiling остаётся 24 Web Search operations; существующий conditional double-regional-gap ceiling остаётся 25.
+Active P3b использует binder implementation `weak_source_exact_binding_v3.py` при сохранённом durable request-contract `VERSION=2`; public Coverage path идёт через v5 → v4 → v3 → v2 compatibility chain. Он может рассмотреть максимум один qualified P3a weak-source signal и использует только уже существующий optional seventh Coverage slot. Шесть mandatory Coverage directions не меняются. Required high-signal `unverified` resolution имеет приоритет. Если optional capacity занята, потрачена или неоднозначна, weak-source signal остаётся unresolved/deferred. Восьмой Coverage search запрещён. Обычный whole-pipeline ceiling остаётся 24 Web Search operations; существующий conditional double-regional-gap ceiling остаётся 25.
 
 Положительное P3b admission требует runtime proof, а не утверждения модели: authoritative non-weak URL, реальную страницу, exact organization, все retained version/model anchors, совместимый lifecycle/action, deterministic Event/Source Freshness и archive/dedupe checks. Organization, все retained anchors и lifecycle/action должны доказываться одним local event claim; соседние title/paragraph claims нельзя склеивать в одно событие. Простого присутствия organization в том же claim тоже недостаточно: lifecycle assertion должна относиться к signal organization, а foreign named actor либо явная reporting/role attribution между organization и lifecycle/action делает identity недоказанной. Replacement direction выводится из retained signal claim, а не из порядка anchors. Negation и historical/background mentions не являются current-event proof. Provider terminal-negative labels не являются independent proof.
 
@@ -42,6 +41,7 @@ Active P3b использует binder v2 и public Coverage path через v4 
 
 - changed model / missing signal / changed archive при уже занятом seventh slot не создают новый optional search;
 - `reserved` P3b intent не обходит higher-priority required `unverified`, а foreign/mismatched reservation не удаляется;
+- proven unstarted P3b reservation может быть atomically released только ради уже существующего required `unverified`; после handoff seventh slot исполняется через P3a durable transport, а crash после `request_started` оставляет consumed/ambiguous journal и recovery не делает новый search;
 - explicit negation и historical exact-event mention не дают positive binding;
 - organization нельзя заимствовать из соседнего page claim: exact organization + retained anchors + lifecycle/action должны находиться в одном local event claim;
 - same-claim foreign actor contamination fail-closed: `DeepSeek says OpenAI launches V4.1 Flash`, lowercase foreign actor и role-attribution формы вроде `DeepSeek says the rival launches ...` не доказывают DeepSeek event, а `OpenAI says DeepSeek launches V4.1 Flash` сохраняет корректную attribution;
@@ -51,7 +51,7 @@ Active P3b использует binder v2 и public Coverage path через v4 
 - `V4.1 Flash Thinking`, numeric continuation и иные distinct variants не считаются `V4.1 Flash`;
 - mutable archive updates одной модели не dedupe'ятся по org+version+lifecycle; exact URL остаётся conclusive, а semantic duplicate требует exact normalized event-detail fingerprint;
 - high-overlap distinct updates (`video input support` vs `video output support`) не являются одним событием;
-- active matrix использует binder v2/public v4 path, а не исторический v1;
+- active matrix использует public v5 runtime с binder implementation v3 и сохранённым contract `VERSION=2`, а не исторический v1/v2 binder path;
 - `test_p3b_astra_regressions.py` проходит standalone в чистом Python process, чтобы full-suite import order не мог маскировать compatibility defect.
 
 ## Permanent executable coverage
@@ -60,6 +60,7 @@ Active P3b использует binder v2 и public Coverage path через v4 
 - `automation/tests/test_p3b_regression_matrix.py`;
 - `automation/tests/test_p3b_optional_slot_recovery.py`;
 - `automation/tests/test_p3b_astra_regressions.py`;
+- `automation/tests/test_p3b_astra_second_review.py`;
 - `automation/tests/test_p3b_recovery_ownership_priority.py`;
 - `automation/tests/test_p3b_negation_historical_binding.py`;
 - `automation/tests/test_p3b_replacement_roles.py`;
@@ -75,13 +76,14 @@ Active P3b использует binder v2 и public Coverage path через v4 
 |---|---|---|
 | no journal | Только если mandatory Coverage завершён, optional seventh slot реально свободен и нет higher-priority required resolution | максимум 1 |
 | `reserved` + capacity свободна | Продолжить тот же exact intent; перед wire call перейти в `request_started` | максимум 1 |
+| `reserved` + proven P3b intent + required `unverified` | Atomically release только unstarted reservation без wire/response/consumption evidence; передать slot required legacy resolution через durable P3a transport | максимум 1 |
 | `reserved` + budget уже исчерпан | Defer; reservation не может восстановить потраченный seventh slot | 0 |
 | `request_started` | Outcome неизвестен; сохранить indeterminate/consumed | 0 |
 | `response_saved` | Replay сохранённого response/result offline; без mutable-page refetch | 0 |
 | `processed` | Reuse сохранённого hardened result | 0 |
 | invalid/foreign/mismatched journal | Fail closed; не переписывать чужой intent и не угадывать consumption | 0 |
 
-Только current unstarted P3b reservation с доказанным request-contract identity может быть снят ради уже существующего required `unverified`, причём лишь при доказанном отсутствии wire-attempt/response/consumed evidence и concurrent journal mutation.
+Только current unstarted P3b reservation с доказанным exact request-contract identity может быть снят ради уже существующего required `unverified`, причём лишь при доказанном отсутствии wire-attempt/response/consumed evidence и concurrent journal mutation. Handoff сохраняет publication-date context на время P3a durable resolution; crash после `request_started` не возвращает capacity и следующий запуск не выполняет восьмой search.
 
 ## Exact identity / archive contract
 
@@ -101,9 +103,9 @@ Binding fail-closed, если отсутствует хотя бы одно об
 
 ## Recovery / compatibility / budget proof
 
-Public `ensure_story_coverage.py` обязан сохранять historical Coverage API и monkeypatch seams, но production CLI и direct `execute_audit_plan()` должны идти через один hardened P3b runtime. Compatibility sync не имеет права снять reserved-budget guard, заменить hardened binder legacy binder'ом или восстановить уже потраченную optional capacity.
+Public `ensure_story_coverage.py` обязан сохранять historical Coverage API и monkeypatch seams, но production CLI и direct `execute_audit_plan()` должны идти через один hardened P3b v5 runtime. Compatibility sync не имеет права снять reserved-budget guard, заменить active binder implementation v3 legacy binder'ом или восстановить уже потраченную optional capacity.
 
-Preserved `ensure_story_coverage_p3a.py` должен оставаться byte-identical pre-P3b public implementation. Historical P3b v1/binder v1 остаются forensic/compatibility assets и не должны становиться active semantics из-за import order.
+Preserved `ensure_story_coverage_p3a.py` должен оставаться byte-identical pre-P3b public implementation. Historical P3b v1/v2 and binder v1/v2 остаются forensic/compatibility assets; binder v3 сохраняет durable `VERSION=2`, чтобы hardened semantics не разрывали уже сохранённый request contract.
 
 P3b не меняет Primary 12-search matrix, Agency Rescue route/health, Hybrid allocation, regional health, ranking, editorial policy, Source Pulse или Freshness policy. Search ceilings остаются 24/25.
 
