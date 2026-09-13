@@ -37,11 +37,21 @@ The active path is hardened by new layers rather than mutating preserved compati
 - v5 archive matching preserves exact-URL duplicate proof, but mutable semantic proof now compares ordered event-detail discriminator sequences. Structured archive organization is accepted only as context for the same story row and cannot reassign lowercase or role-attributed foreign actors.
 - `ensure_story_coverage_p3a.py` is intentionally unchanged.
 
+## Final durable-handoff integration correction
+
+A later exact-path regression exposed one integration gap in the first v5 handoff implementation.
+
+Hypothesis: calling `_P3A._run_resolution()` directly after delegated `_P3A.execute_audit_plan()` may lose the publication identity that selects P3a's durable resolver, because the normal P3a execute wrapper stores the date in `_CURRENT_PUBLICATION_DATE` only for the duration of that call and resets the ContextVar on return. The resulting plan is not required to retain `publication_date`, so the subsequent direct resolver can incorrectly treat the call as undated and fall back to the historical `_PRE_RUN_RESOLUTION` path.
+
+Result: the crash regression behaved exactly this way. Exact P3b reservation ownership and required-`unverified` priority were already correct, but the simulated process stop after transport admission was not raised because the direct handoff never entered P3a's durable journal transport. Once ownership was asserted independently, this became the sole remaining failing P3b regression.
+
+Decision: v5 now sets P3a `_CURRENT_PUBLICATION_DATE` from the active `publication_date` only around `_P3A._run_resolution()` and resets the token in `finally`. The change does not alter P3a, queries, provider routing, capacity or binder/Freshness semantics. It only preserves the context that P3a's own durable resolver expects. On code head `654eada715382789982b2d847e98c0846e5b6a11`, PR Gate #368 completed 803/803 tests successfully, including the crash-after-`request_started` recovery regression and required-priority regression.
+
 ## Permanent regression controls
 
 `automation/tests/test_p3b_astra_second_review.py` covers:
 
-1. public runtime ownership (`v5` + binder v3);
+1. public runtime ownership (`v5` + binder v3 implementation with preserved contract `VERSION=2`);
 2. real six-pass P3b→required-legacy handoff, simulated transport stop after durable `request_started`, and recovery with no provider retry/eighth search;
 3. all three actor/action/model counterexamples plus a positive current control through authoritative-page binding and deterministic Freshness;
 4. all four planned/cancelled/modal/historical counterexamples;
