@@ -154,6 +154,16 @@ class P3bArchiveUpdateIdentityTests(unittest.TestCase):
             coverage._archive_exact_event(archive, self.candidate(), self.signal_update)
         )
 
+    def test_structured_org_cannot_reassign_foreign_headline_actor(self) -> None:
+        signal = copy.deepcopy(self.signal_update)
+        signal["title"] = "DeepSeek launches V4.1 Flash"
+        signal["lifecycle_action_anchors"] = ["launch"]
+        archive = self.archive_story("OpenAI launches V4.1 Flash")
+        archive["items"][0]["stories"][0]["event_type"] = "launch"
+        self.assertFalse(
+            coverage._archive_exact_event(archive, self.candidate(), signal)
+        )
+
     def test_exact_source_url_remains_conclusive_duplicate_proof(self) -> None:
         candidate = self.candidate()
         archive = self.archive_story(
