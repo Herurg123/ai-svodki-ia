@@ -113,6 +113,22 @@ class P3bArchiveUpdateIdentityTests(unittest.TestCase):
             coverage._archive_exact_event(archive, candidate, self.signal_update)
         )
 
+    def test_high_overlap_but_distinct_update_is_not_archive_duplicate(self) -> None:
+        candidate = self.candidate()
+        candidate["title"] = "DeepSeek updates V4.1 Flash with video input support"
+        candidate["event_summary"] = candidate["title"]
+        candidate["primary_source"] = {
+            "title": candidate["title"],
+            "publisher": "DeepSeek",
+            "url": "https://www.deepseek.com/en/news/v4-1-flash-video-input/",
+        }
+        archive = self.archive_story(
+            "DeepSeek updates V4.1 Flash with video output support"
+        )
+        self.assertFalse(
+            coverage._archive_exact_event(archive, candidate, self.signal_update)
+        )
+
     def test_same_mutable_update_different_url_keeps_semantic_duplicate_proof(self) -> None:
         archive = self.archive_story(
             "DeepSeek V4.1 Flash update expands the one million token context window"
