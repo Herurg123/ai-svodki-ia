@@ -355,7 +355,8 @@ def _identity_surface_matches(text: str, signal: dict[str, Any], *, require_curr
 
     candidate_claims = [
         claim for claim in _event_claims(text)
-        if all(_contains_exact_anchor(claim, anchor) for anchor in anchors)
+        if _contains_org(claim, signal.get("organization"))
+        and all(_contains_exact_anchor(claim, anchor) for anchor in anchors)
     ]
     if not candidate_claims:
         return False, "exact_event_claim_missing"
