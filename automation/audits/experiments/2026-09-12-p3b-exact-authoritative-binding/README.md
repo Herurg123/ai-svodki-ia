@@ -1,178 +1,169 @@
 # P3b exact authoritative binding audit
 
-Date: 2026-09-12
+Date: 2026-09-12 / final remediation audit 2026-09-13
 
 PR: #175 `Add P3b exact authoritative weak-source binding`
 
-Status: implementation and offline regression evidence complete; final canonical-doc synchronization and independent Astra review remain pre-merge gates.
+Status: implementation, Astra remediation, permanent offline regressions and canonical documentation are complete. The remaining pre-merge gate is a new independent Astra review of the final exact PR head.
 
 ## Scope
 
-P3b is a downstream exact-authoritative binding layer for qualified P3a `weak_source` product/model signals. P3a remains evidence-only: its queue rows stay `resolution_required=false` and `candidate_eligible=false`. P3b may admit a candidate only after independent same-event authoritative evidence is returned through the already-existing optional seventh Coverage slot.
+P3b is a downstream exact-authoritative binding layer for qualified P3a `weak_source` product/model signals. P3a remains evidence-only: its rows stay `resolution_required=false` and `candidate_eligible=false`. P3b can admit at most one candidate only after independently proving the same event against a fetched authoritative page and the existing deterministic freshness/archive gates.
 
-P3b does not make the weak source authoritative, does not use the legacy fuzzy matcher as proof, and does not create a new search slot.
+P3b does not make the weak source authoritative, does not use fuzzy same-company matching as proof, and does not add a search slot.
 
 ## Search and spend contract
 
-The whole-pipeline search ceilings are unchanged:
+Search ceilings are unchanged:
 
-- Primary: 12 searches;
-- Agency Rescue: at most 1 search;
+- Primary: 12 Web Search operations;
+- Agency Rescue: at most 1;
 - Hybrid: normally at most 4, conditionally 5 only on the existing double-regional-gap path;
-- Coverage: 6 mandatory searches plus at most the existing optional seventh search;
+- Coverage: 6 mandatory plus at most the existing optional seventh;
 - normal whole-pipeline ceiling: 24;
 - existing conditional double-gap ceiling: 25.
 
-P3b can use only that existing seventh Coverage slot and only when the older required `unverified` resolution path does not own it. There is no eighth Coverage search.
+P3b can use only the existing optional seventh Coverage slot. Existing required high-signal `unverified` resolution has priority. Durable slot occupancy is tracked independently from whether a saved P3b result is reusable under the current model/signal/archive contract, so model/archive/signal mismatch cannot reopen an eighth search.
 
-No production workflow, user production API, paid Web Search, or other user-paid network experiment was used for this PR. Terra is not exposed in the current working environment, so the required independent search-side validation was emulated with deterministic fixtures, saved-state semantics and offline replay. This limitation is intentional and was not compensated by production spend.
+No production workflow, user production API or paid Web Search was used for implementation/remediation. Terra is not exposed in the implementation environment, so search-side acceptance uses deterministic fixtures, saved-state semantics and offline replay. No query/routing change was introduced by the remediation rounds.
 
-## Exact identity contract
+## Active exact identity contract
 
-Weak-source fields are hints, not proof. A positive P3b binding requires all of the following:
+The active binder is `weak_source_exact_binding_v2.py`, `VERSION=2`. The public Coverage entrypoint routes through active v4 → v3 → v2 orchestration; historical P3b v1 and the byte-preserved P3a implementation remain compatibility/reference layers.
 
-- verified candidate;
-- `freshness_status` of `new_event` or `material_update`;
+A positive admission requires all of the following:
+
+- candidate recommendation is `include|consider`, verification is `verified`, and claimed event freshness is `new_event|material_update`;
 - exact normalized organization identity;
-- every model/version anchor present as an ordered exact-token sequence;
-- lifecycle/action semantic match, with preview, GA, release, update, replacement and benchmark kept distinct;
-- authoritative primary-source host from the existing authoritative-domain policy;
-- the authoritative primary source cannot be the original weak-source host.
+- every retained product/model/version anchor matches exactly rather than by fuzzy prefix;
+- lifecycle/action is compatible with the retained signal;
+- for replacement, old/new roles are inferred from the retained signal claim, not anchor-array order, and candidate/page must assert the same direction;
+- negated lifecycle claims and historical/background mentions are not current-event proof;
+- canonical `general_availability` is normalized to GA semantics; preview and GA remain distinct;
+- unknown named/numeric model suffixes do not collapse into a shorter retained anchor;
+- primary/final URL is in the existing authoritative allowlist and cannot be the weak-source host;
+- the fetched authoritative page contains the exact current event claim;
+- deterministic Event/Source Freshness passes;
+- archive/dedupe does not independently prove the same event.
 
-The binder therefore does not conflate `V4`, `V4.1`, `V4.1 Flash`, preview/GA, launch/update, replacement/benchmark or old/current events. Ambiguous identity stays unresolved.
+Provider/model terminal-negative labels are diagnostic only. `rejection_exact_terminal_binding()` in active v2 does not treat a model `duplicate`/`unverified` label as proof. A negative disposition needs independent deterministic evidence elsewhere in the pipeline; the model label itself never closes the weak-source signal.
 
-An `unverified` rejection does not auto-close a weak-source signal. Terminal-negative closure requires independently authoritative exact same-event evidence plus an allowed terminal reason. Contradictory exact positive and exact terminal-negative evidence fails closed as unresolved.
-
-## Determinism
-
-P3b selects at most one weak-source signal, ordered by significance and then `signal_id`. Positive candidates are sorted deterministically by source class and then URL/title. The source-neutral query contains the retained organization/version/action hints without publisher/site/date filters. The saved DeepSeek control produces:
-
-`DeepSeek V4 Pro V4.1 Flash replace latest`
-
-Admitted candidates are marked with:
+Admitted candidates carry:
 
 - `audit_direction="weak_source_exact_binding"`;
 - `resolution_signal_ids=[signal_id]`;
-- `p3b_exact_binding_version=1`.
+- `p3b_exact_binding_version=2`;
+- authoritative-page proof metadata.
+
+## Archive exact-event contract
+
+Exact source URL remains conclusive duplicate proof.
+
+For singular lifecycle identities such as a directed replacement, the strict organization/version/lifecycle identity predicate can independently establish the archived same event.
+
+For mutable lifecycle actions such as `update`/`upgrade`/`rollout`, organization + model/version + lifecycle is insufficient because one product can receive many distinct updates. Semantic archive rejection therefore additionally requires an exact normalized event-detail fingerprint after removing identity and generic update words. Partial lexical overlap is deliberately non-terminal. This prevents high-overlap distinct updates such as `video input support` vs `video output support` from being collapsed while preserving exact-URL duplicate proof and exact same-update semantic proof.
 
 ## Durable optional-slot / recovery proof
 
-P3b reuses the #174 durable slot states:
+Durable states remain:
 
 `reserved -> request_started -> response_saved -> processed`
 
-Recovery rules remain fail-closed and at-most-once:
+Rules:
 
-- `request_started` with unknown provider outcome is consumed/ambiguous and is never retried automatically;
-- `response_saved` replays the saved response offline even when restored runtime accounting reports zero remaining calls;
-- `processed` reuses the deterministic processed snapshot even when restored runtime accounting reports zero remaining calls;
-- an empty or merely `reserved` journal cannot override a zero runtime budget and start a new search;
-- a consumed/ambiguous seventh slot cannot be refunded into an eighth search;
-- the older required `unverified` obligation retains priority over P3b.
+- any valid/unknown optional-slot journal suppresses fresh legacy optional routing before reuse compatibility is considered;
+- `request_started` means outcome/consumption is ambiguous and never auto-retries;
+- `response_saved` replays the saved provider response/result offline, with no new provider search and no mutable authoritative-page refetch; if durable page proof was not saved before interruption, replay fails closed rather than inventing proof;
+- `processed` reuses the saved hardened result;
+- a reserved slot cannot override evidence that the runtime already consumed seven Coverage calls;
+- a current unstarted P3b reservation may be released for a higher-priority required `unverified` obligation only when request-contract identity is proven and there is independently no admitted wire attempt, consumed/ambiguous flag, response hash/file or concurrent journal mutation;
+- foreign/mismatched/invalid reservations remain fail-closed.
 
-The journal is inspected before the runtime `remaining_calls` shortcut so saved work is recoverable without reopening paid transport.
+These rules preserve at-most-once provider transport and prohibit an eighth Coverage search during normal execution and same-day recovery.
 
-## Regression matrix
+## Import / compatibility proof
 
-The permanent offline P3b matrix is encoded in `automation/tests/test_p3b_regression_matrix.py`, with transport/recovery cases exercised by `automation/tests/test_p3b_optional_slot_recovery.py` and the existing optional-slot suites.
+The pre-P3b public implementation is preserved byte-for-byte as `ensure_story_coverage_p3a.py`; its Git blob equals the pre-PR `ensure_story_coverage.py` blob.
 
-| # | Case | Expected P3b state/invariant |
-|---|---|---|
-| 1 | exact positive | candidate admitted through exact authoritative binding |
-| 2 | same company / different product | unresolved; version identity mismatch |
-| 3 | similar version | unresolved; exact version mismatch |
-| 4 | old release | blocked by Freshness |
-| 5 | preview vs GA | unresolved; lifecycle mismatch |
-| 6 | benchmark vs release | unresolved; lifecycle mismatch |
-| 7 | duplicate/reprint | exact authoritative terminal-negative only when terminal reason is independently proven |
-| 8 | false alias | unresolved; no fuzzy alias proof |
-| 9 | missing authoritative source | unresolved/fail-closed |
-| 10 | wrong event/date official page | blocked by Freshness/event mismatch |
-| 11 | independently valid candidate not binding | remains independent; cannot close this signal |
-| 12 | result-order permutation | deterministic same selected result |
-| 13 | occupied seventh slot | deferred capacity; no eighth search |
-| 14 | seventh slot spent before recovery | consumed; not refunded |
-| 15 | interrupted/ambiguous transport | `request_started`, deferred/indeterminate, no retry |
-| 16 | saved completed resolution replay | offline replay/snapshot reuse, no wire call |
-| 17 | stale authoritative page | blocked by Freshness |
-| 18 | archive duplicate | excluded/terminal according to archive recommendation, never promoted |
-| 19 | candidate fails Freshness | blocked before admission |
-| 20 | company+version match but lifecycle differs | unresolved; lifecycle mismatch |
+The active v2 layer now restores hardened binder symbols immediately after historical v1 export and after compatibility synchronization. It also restores the preserved v1 binder symbols/constants so direct v2 imports cannot mutate the forensic v1 semantics.
 
-A baseline-vs-treatment control also demonstrates the intended semantic delta: the legacy fuzzy cluster matcher can accept a same-company/different-event candidate that P3b rejects because exact version/lifecycle identity is missing. This delta is the purpose of P3b rather than an accidental ranking change.
+Permanent subprocess controls start clean Python interpreters with different import orders. A dedicated subprocess also runs `test_p3b_astra_regressions.py` as the only discovered test module, so full-suite import order cannot hide the standalone monkeypatch/import defect reported by Astra.
+
+## Permanent 20-case matrix
+
+The canonical matrix is `automation/specs/p3b-exact-authoritative-binding-matrix.md`. It contains exactly these 20 cases:
+
+1. exact positive;
+2. same company, different product;
+3. similar version;
+4. old release;
+5. preview vs GA;
+6. benchmark vs release;
+7. duplicate/reprint;
+8. false alias;
+9. missing authoritative source;
+10. wrong event/date official page;
+11. independently valid candidate not binding;
+12. result-order permutation;
+13. optional seventh occupied;
+14. seventh spent before recovery;
+15. interrupted/ambiguous transport;
+16. saved completed resolution replay;
+17. stale authoritative page;
+18. archive duplicate;
+19. candidate fails Freshness;
+20. same company + version, different lifecycle.
+
+Additional permanent controls cover Astra's remediation counterexamples: changed-model/missing-signal/changed-archive recovery mismatch, required-resolution priority, negation/history, replacement-role permutation, distinct and high-overlap mutable archive updates, GA alias, unknown/numeric suffixes, active-version matrix wiring and isolated import order.
 
 ## Whole-project architecture audit
 
-The audited data path is:
+Audited path:
 
-Primary -> Source Pulse -> Event Freshness -> Source Freshness -> first editorial -> Agency Rescue -> Hybrid -> Coverage -> archive -> repair journal -> recovery -> publication validation.
+Primary → Source Pulse → Event Freshness → Source Freshness → first editorial → Agency Rescue → Hybrid → Coverage/P3b → archive/dedupe → durable recovery → publication validation.
 
 ### Primary / P3a
 
-P3b does not alter Primary retrieval, source ranking, Primary caps or P3a signal collection. The weak-source signal remains diagnostic evidence until P3b independently binds an authoritative event.
+Primary retrieval, query matrix, ranking, caps and signal collection are unchanged. P3a remains evidence-only and byte-preserved relative to the pre-P3b public Coverage implementation. Weak evidence never becomes publication proof by itself.
 
 ### Source Pulse
 
-P3b does not change Pulse registry, Pulse health, Pulse candidate admission or regional-health semantics. Pulse-only evidence cannot authorize a P3b weak-source signal.
+Registry, health, promotion and regional-health semantics are unchanged. Pulse cannot authorize P3b binding and P3b cannot close/reopen Pulse-derived regional health.
 
-### Event Freshness and Source Freshness
+### Event / Source Freshness
 
-P3b requires an already verified/fresh candidate shape and explicitly rejects stale/uncertain event states. It adds no bypass around Event Freshness or Source Freshness. An official URL for an old or wrong event is insufficient.
+Existing deterministic freshness code/policy files are unchanged. P3b invokes the existing page/date verification before admission. A fresh page containing only a historical exact-event mention is rejected by identity before page freshness can masquerade as event freshness.
 
-### First editorial
+### Editorial / Agency Rescue / Hybrid
 
-P3b runs in Coverage after the existing first editorial path. It does not change first-editorial ranking, regional quotas, topic ranking or publisher pressure. P3b admission is at most one exact candidate from the optional Coverage resolution path.
-
-### Agency Rescue
-
-Agency health and the single Reuters rescue slot are untouched. P3b does not treat Agency observability or a Reuters result as weak-signal proof unless the candidate independently satisfies the exact P3b binding contract.
-
-### Hybrid
-
-Regional health and the 4/conditional-5 Hybrid budget are untouched. P3b neither opens nor closes Hybrid regional gaps and cannot consume a Hybrid slot.
+No editorial ranking, Agency Rescue, regional health or Hybrid implementation file is changed by PR #175. P3b runs only downstream in Coverage and cannot consume Agency/Hybrid slots or change the 4/conditional-5 Hybrid allocation.
 
 ### Coverage
 
-The six mandatory Coverage directions are unchanged. P3b runs only after they are complete and only through the existing optional seventh-slot owner. Existing required high-signal `unverified` resolution has priority. P3b cannot create an eighth search.
+Six mandatory directions remain unchanged. P3b is only an alternate consumer of the already-existing optional seventh slot, after mandatory Coverage and behind required legacy `unverified` priority. Slot occupancy is independent from reuse compatibility, closing the recovery-context eighth-search defect.
 
 ### Archive / dedupe
 
-P3b does not weaken archive recommendation semantics. Duplicate/stale candidates are not promoted merely because organization/version text matches. Exact terminal-negative handling is separate from positive candidate admission.
+Archive checks remain before positive admission. Exact URL is conclusive. Mutable same-model updates require exact event-detail identity rather than broad lexical overlap, so a distinct update is not suppressed merely because organization/version/lifecycle or generic words match.
 
-### Repair journal / recovery
+### Recovery
 
-The durable optional-slot journal remains the source of truth for consumed/ambiguous capacity. Saved response and processed snapshot states replay offline; unknown started transport does not retry. This preserves paid at-most-once behavior across same-day recovery.
+Durable journal state is the source of truth for optional-slot occupancy and at-most-once transport. `request_started` never retries, saved/processed work reuses offline, and budget recalculation cannot refund an already consumed seventh operation.
 
 ### Publication validation
 
-P3b changes only candidate admission into the existing downstream pool. It does not change publication validators, story schema, RSS/sitemap validation, publication ordering rules or deploy mechanics. Existing offline production validators pass on the exact implementation head used for the pre-documentation Gate.
+Publication validators, story schema, RSS/sitemap rules, deploy mechanics and ordering policy are unchanged. P3b only changes whether one Coverage candidate is admitted into the existing downstream candidate pool.
 
-## Compatibility incident found during implementation
+## Changed-file / non-regression boundary
 
-The first compatibility wrapper accidentally proxied its own `_pull_runtime_state` helper, producing recursive self-calls and widespread legacy-test failures. The repair renamed the shim-internal pull helper and preserved the historical exported helper separately.
+PR changes are confined to root/automation documentation, Coverage/P3b compatibility layers and binders, the permanent P3b spec/audit, and P3/P3b tests. It does not directly change workflow files, Primary, Source Pulse, Event/Source Freshness policy, Agency Rescue, Hybrid, editorial ranking or publication validators.
 
-Three remaining compatibility failures showed that late `mock.patch` hooks were not being synchronized through the new wrapper and that `completed_prior_audit` had a historical object-identity contract. The stable public shim now propagates lazy delegated hooks and preserves that identity export. The legacy suite then returned green before the P3b recovery tests were added.
-
-This was a wrapper compatibility defect, not a relaxation of the P3b exact-binding contract.
-
-## CI evidence
-
-Pre-documentation exact-head `f6431d25cf1d0eccfd8be1b7a018dd4bf1dc8da2`:
-
-- PR Gate run `34696297663`;
-- compile: success;
-- unit/regression suite: success;
-- editorial contract validator: success;
-- committed archive validator: success;
-- production workflow contract validator: success;
-- RSS/sitemap/structured-data validator: success;
-- protected-path mutation check: success;
-- `Required PR Gate`: success.
-
-A new exact-head Gate is still required after canonical documentation/audit commits.
+Root `README.md`, `automation/README.md` and `automation/ARCHITECTURE.md` were inspected during final remediation. Their active P3b descriptions already state the exact authoritative page, lifecycle/freshness/archive requirements, durable seventh-slot behavior and unchanged 24/25 ceilings; no additional semantic change is needed beyond this finalized audit/spec synchronization.
 
 ## Independent review gate
 
-The P3b handoff explicitly requires a separate independent Astra audit after final diff, final architecture audit, permanent validation evidence, recovery/budget proof, zero-spend confirmation and exact-head green Gate are available. This document does not claim to substitute the implementer's self-audit for that independent review.
+The original independent Astra review of head `5332e64c2221670c8c1815811c758d380d27a747` returned `REQUEST CHANGES` with five P1 and two P2 findings. All seven findings now have repository regressions, plus the additional high-overlap mutable-update control found during the implementer's final architecture audit.
 
-Merge is prohibited until that independent Astra gate is satisfied and the final reviewed head remains unchanged.
+The final exact PR head must pass `PR Gate` / `Required PR Gate` after the last code/documentation commit. That exact SHA is then handed to Astra for a new independent review, including rerun of the original probes and independent counterexamples. This document is implementer self-audit evidence and does not substitute for Astra's verdict.
+
+Merge remains prohibited until Astra returns explicit `APPROVE` on the unchanged final exact head.
