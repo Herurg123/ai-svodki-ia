@@ -3,7 +3,6 @@ from __future__ import annotations
 import copy
 import sys
 import tempfile
-import types
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -82,6 +81,21 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
             }
         )
 
+    @staticmethod
+    def _required_signal() -> dict:
+        return {
+            "signal_id": "required-rillet",
+            "status": "unresolved",
+            "title": "Rillet Lands $100M to Scale AI ERP",
+            "origin_direction": "business_investment_partnerships",
+            "reason_code": "unverified",
+            "evidence_reason": "Unverified funding round",
+            "likely_significance_score": 4,
+            "entities": ["Rillet"],
+            "anchors": ["$100M"],
+            "resolution_required": True,
+        }
+
     def test_existing_saved_slot_blocks_fresh_optional_search_across_context_mismatch(self) -> None:
         cases = {
             "changed_model": {
@@ -158,64 +172,42 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
                 self.assertEqual(budget["remaining_calls"], 0)
                 self.assertEqual(budget["effective_consumed_calls"], 7)
 
-    def test_required_unverified_preempts_only_unstarted_reservation(self) -> None:
+    def test_required_unverified_preempts_proven_unstarted_p3b_reservation(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             state = Path(raw)
             plan = self._six_mandatory_plan(state)
             reservation = self._reservation(state, plan)
             self.assertEqual(reservation.state, "reserved")
+            required = [self._required_signal()]
+            p3a_calls: list[dict] = []
+            active_v2 = coverage._impl._v2
+            original_v2_sync = active_v2._sync_p3b_public_hooks
 
-            required = [{
-                "signal_id": "required-rillet",
-                "status": "unresolved",
-                "title": "Rillet Lands $100M to Scale AI ERP",
-                "origin_direction": "business_investment_partnerships",
-                "reason_code": "unverified",
-                "evidence_reason": "Unverified funding round",
-                "likely_significance_score": 4,
-                "entities": ["Rillet"],
-                "anchors": ["$100M"],
-                "resolution_required": True,
-            }]
-            optional_prompts: list[str] = []
+            def fake_p3a_execute(*args, **kwargs):
+                p3a_calls.append(dict(kwargs))
+                # v4 must release the unstarted P3b reservation before handing
+                # capacity back to the higher-priority legacy scheduler.
+                self.assertIsNone(coverage.load_journal(state, DATE))
+                return copy.deepcopy(plan)
 
-            def required_transport(runtime, slot, **kwargs):
-                prompt = str(kwargs.get("prompt") or "")
-                optional_prompts.append(prompt)
-                slot.mark_request_started()
-                raw_response = {"id": "offline-required-resolution", "status": "completed"}
-                slot.save_raw_response(raw_response)
-                payload = {
-                    "status": "complete_with_gaps",
-                    "direction_id": "general_coverage_gaps",
-                    "candidates": [],
-                    "rejections": [],
-                    "notes": "offline required-priority control",
-                }
-                metadata = {
-                    "response_id": "offline-required-resolution",
-                    "status": "completed",
-                    "actual_queries": ["Rillet $100M latest"],
-                    "consulted_sources": [],
-                    "web_search_calls": 1,
-                    "web_search_calls_completed": 1,
-                    "web_search_call_items_total": 1,
-                }
-                slot.save_result_snapshot({
-                    "payload": copy.deepcopy(payload),
-                    "metadata": copy.deepcopy(metadata),
-                    "output_text": "{}",
-                    "validation_error": None,
-                })
-                return types.SimpleNamespace(payload=payload, metadata=metadata)
+            def sync_then_install_required_probe() -> None:
+                original_v2_sync()
+                active_v2._v1._P3A_EXECUTE_AUDIT_PLAN = fake_p3a_execute
 
-            p3a_module = coverage._impl._v2._v1._p3a
             with (
                 mock.patch.object(coverage, "STATE_DIR", state),
                 mock.patch.object(coverage._pre, "_required_signals", return_value=required),
                 mock.patch.object(coverage, "_p3b_signals", return_value=[copy.deepcopy(SIGNAL)]),
-                mock.patch.object(coverage, "protected_policy_audit_request", side_effect=required_transport),
-                mock.patch.object(p3a_module, "protected_policy_audit_request", side_effect=required_transport),
+                mock.patch.object(
+                    active_v2,
+                    "_sync_p3b_public_hooks",
+                    side_effect=sync_then_install_required_probe,
+                ),
+                mock.patch.object(
+                    coverage._impl,
+                    "_V2_RUN_P3B_BINDING",
+                    side_effect=AssertionError("P3b must not run ahead of required unverified resolution"),
+                ),
             ):
                 result = coverage.execute_audit_plan(
                     api_key="offline",
@@ -230,14 +222,59 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
                     prior_plan=copy.deepcopy(plan),
                 )
 
-            self.assertEqual(len(optional_prompts), 1)
-            self.assertIn("Rillet", optional_prompts[0])
-            self.assertNotIn("DeepSeek V4 Pro V4.1 Flash", optional_prompts[0])
-            self.assertEqual(coverage.load_journal(state, DATE)["state"], "processed")
-            self.assertEqual(result["search_budget"]["completed_calls"], 7)
-            self.assertEqual(result["search_budget"]["remaining_calls"], 0)
+            self.assertEqual(len(p3a_calls), 1)
+            self.assertEqual(p3a_calls[0]["maximum_web_search_calls"], 7)
+            self.assertIsNone(coverage.load_journal(state, DATE))
             self.assertEqual(result["weak_source_exact_binding"]["status"], "deferred")
             self.assertIn("slot priority", result["weak_source_exact_binding"]["reason"])
+
+    def test_required_does_not_delete_unidentified_reserved_intent(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            state = Path(raw)
+            plan = self._six_mandatory_plan(state)
+            reservation = self._reservation(state, plan)
+            original_journal = coverage.load_journal(state, DATE)
+            self.assertIsNotNone(original_journal)
+            delegated_maxima: list[int] = []
+
+            def fail_closed_delegate(*args, **kwargs):
+                delegated_maxima.append(int(kwargs.get("maximum_web_search_calls", 0) or 0))
+                current = coverage.load_journal(state, DATE)
+                self.assertEqual(current, original_journal)
+                return copy.deepcopy(plan)
+
+            with (
+                mock.patch.object(coverage, "STATE_DIR", state),
+                mock.patch.object(
+                    coverage._pre,
+                    "_required_signals",
+                    return_value=[self._required_signal()],
+                ),
+                mock.patch.object(coverage, "_p3b_signals", return_value=[copy.deepcopy(SIGNAL)]),
+                mock.patch.object(
+                    coverage._impl._v3,
+                    "execute_audit_plan",
+                    side_effect=fail_closed_delegate,
+                ),
+            ):
+                result = coverage.execute_audit_plan(
+                    api_key="offline",
+                    model="different-model-so-intent-cannot-be-proven",
+                    template=TEMPLATE,
+                    publication_date=DATE,
+                    search_window=copy.deepcopy(WINDOW),
+                    missing_total=7,
+                    maximum_web_search_calls=7,
+                    existing_candidates=[],
+                    archive={"items": []},
+                    prior_plan=copy.deepcopy(plan),
+                )
+
+            self.assertEqual(delegated_maxima, [6])
+            self.assertEqual(coverage.load_journal(state, DATE), original_journal)
+            self.assertEqual(result["search_budget"]["maximum_calls"], 7)
+            self.assertEqual(result["search_budget"]["remaining_calls"], 0)
+            self.assertEqual(result["search_budget"]["effective_consumed_calls"], 7)
 
 
 if __name__ == "__main__":
