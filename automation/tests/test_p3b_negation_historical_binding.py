@@ -172,6 +172,9 @@ class P3bNegationHistoricalBindingTests(unittest.TestCase):
         for surface in (
             "DeepSeek says OpenAI launches V4.1 Flash",
             "According to DeepSeek, OpenAI launches V4.1 Flash",
+            "DeepSeek says openai launches V4.1 Flash",
+            "DeepSeek says the rival launches V4.1 Flash",
+            "According to DeepSeek, the competitor launches V4.1 Flash",
         ):
             with self.subTest(surface=surface):
                 ok, reason = binder.exact_event_identity(surface, signal)
@@ -194,6 +197,16 @@ class P3bNegationHistoricalBindingTests(unittest.TestCase):
         self.assertEqual(
             binder.exact_event_identity(
                 "OpenAI says DeepSeek launches V4.1 Flash",
+                signal,
+            ),
+            (True, "exact_event_identity"),
+        )
+
+    def test_direct_signal_org_announcement_stays_bindable(self) -> None:
+        signal = self.signal(action="launch", anchors=["V4.1 Flash"])
+        self.assertEqual(
+            binder.exact_event_identity(
+                "DeepSeek announces V4.1 Flash launch",
                 signal,
             ),
             (True, "exact_event_identity"),
