@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Stable public compatibility surface for hardened Coverage P3b.
 
-The active runtime guard lives in ``ensure_story_coverage_p3b_v4.py``; v3 keeps
-historical compatibility seams, v2 contains the substantive Astra exact-binding
-repairs, v1 is retained for forensic comparison, and ``ensure_story_coverage_p3a.py``
-preserves the exact pre-P3b behavior. Direct imports and the CLI now enter the
-same hardened execute path. The ordinary Coverage text client still inherits the
-preserved ``max_retries=2`` policy; protected optional-slot retry semantics remain
-isolated in the dedicated slot transport module.
+The active runtime guard lives in ``ensure_story_coverage_p3b_v5.py``; v4 keeps
+the previous durable orchestration guard, v3 keeps historical compatibility seams,
+v2 preserves the first substantive Astra exact-binding repairs, v1 is retained for
+forensic comparison, and ``ensure_story_coverage_p3a.py`` preserves the exact
+pre-P3b behavior. Direct imports and the CLI enter the same hardened execute path.
+The ordinary Coverage text client still inherits the preserved ``max_retries=2``
+policy; protected optional-slot retry semantics remain isolated in the dedicated
+slot transport module.
 """
 from __future__ import annotations
 
@@ -18,8 +19,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
-_IMPL_PATH = Path(__file__).with_name("ensure_story_coverage_p3b_v4.py")
-_IMPL_SPEC = importlib.util.spec_from_file_location("ensure_story_coverage_p3b_v4", _IMPL_PATH)
+_IMPL_PATH = Path(__file__).with_name("ensure_story_coverage_p3b_v5.py")
+_IMPL_SPEC = importlib.util.spec_from_file_location("ensure_story_coverage_p3b_v5", _IMPL_PATH)
 assert _IMPL_SPEC and _IMPL_SPEC.loader
 _impl = importlib.util.module_from_spec(_IMPL_SPEC)
 sys.modules[_IMPL_SPEC.name] = _impl
@@ -50,7 +51,7 @@ _SHIM_INTERNALS = frozenset(
 
 
 def _iter_compat_targets() -> list[Any]:
-    """Return the active compatibility owners from v4 down to the v8 runtime."""
+    """Return the active compatibility owners from v5 down to the v8 runtime."""
     targets: list[Any] = []
     seen: set[int] = set()
 
