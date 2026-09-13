@@ -36,7 +36,7 @@ A positive admission requires all of the following:
 - candidate recommendation is `include|consider`, verification is `verified`, and claimed event freshness is `new_event|material_update`;
 - exact normalized organization identity;
 - organization, every retained product/model/version anchor and lifecycle/action coexist in one local event claim; adjacent title/paragraph claims are never combined into synthetic identity proof;
-- lifecycle/action in that local claim is attributable to the signal organization rather than merely co-occurring with it; an explicitly named foreign actor between the signal organization and lifecycle/action fails closed;
+- lifecycle/action in that local claim is attributable to the signal organization rather than merely co-occurring with it; a foreign named actor or explicit reporting/role attribution between the signal organization and lifecycle/action fails closed;
 - every retained product/model/version anchor matches exactly rather than by fuzzy prefix;
 - lifecycle/action is compatible with the retained signal;
 - for replacement, old/new roles are inferred from the retained signal claim, not anchor-array order, and candidate/page must assert the same direction;
@@ -48,7 +48,7 @@ A positive admission requires all of the following:
 - deterministic Event/Source Freshness passes;
 - archive/dedupe does not independently prove the same event.
 
-The actor-attribution guard is intentionally conservative because P3b is opportunistic. `DeepSeek says OpenAI launches V4.1 Flash` does not prove a DeepSeek launch even though the organization, version and lifecycle words occur in one sentence. The inverse `OpenAI says DeepSeek launches V4.1 Flash` still attributes the lifecycle event to DeepSeek and is eligible for the remaining exact-binding checks.
+The actor-attribution guard is intentionally conservative because P3b is opportunistic. `DeepSeek says OpenAI launches V4.1 Flash`, lowercase foreign-actor/reporting forms, and role-attribution forms such as `DeepSeek says the rival launches V4.1 Flash` do not prove a DeepSeek launch even though the organization, version and lifecycle words occur in one sentence. The inverse `OpenAI says DeepSeek launches V4.1 Flash` still attributes the lifecycle event to DeepSeek and is eligible for the remaining exact-binding checks. A direct form such as `DeepSeek announces V4.1 Flash launch` remains bindable.
 
 Provider/model terminal-negative labels are diagnostic only. `rejection_exact_terminal_binding()` in active v2 does not treat a model `duplicate`/`unverified` label as proof. A negative disposition needs independent deterministic evidence elsewhere in the pipeline; the model label itself never closes the weak-source signal.
 
@@ -65,7 +65,7 @@ Exact source URL remains conclusive duplicate proof.
 
 For singular lifecycle identities such as a directed replacement, the strict organization/version/lifecycle identity predicate can independently establish the archived same event.
 
-Structured archive `organization` may supply the organization identity for its own story row when the headline omits it, but it cannot reassign a headline that explicitly names another actor. Thus a row with `organization=DeepSeek` and headline `OpenAI launches V4.1 Flash` is not same-event proof for a DeepSeek launch.
+Structured archive `organization` may supply the organization identity for its own story row when the headline omits it, but it cannot reassign a headline that attributes the event to another actor. Thus a row with `organization=DeepSeek` and headline `OpenAI launches V4.1 Flash` is not same-event proof for a DeepSeek launch.
 
 For mutable lifecycle actions such as `update`/`upgrade`/`rollout`, organization + model/version + lifecycle is insufficient because one product can receive many distinct updates. Semantic archive rejection therefore additionally requires an exact normalized event-detail fingerprint after removing identity and generic update words. Partial lexical overlap is deliberately non-terminal. This prevents high-overlap distinct updates such as `video input support` vs `video output support` from being collapsed while preserving exact-URL duplicate proof and exact same-update semantic proof.
 
@@ -120,7 +120,7 @@ The canonical matrix is `automation/specs/p3b-exact-authoritative-binding-matrix
 19. candidate fails Freshness;
 20. same company + version, different lifecycle.
 
-Additional permanent controls cover Astra's remediation counterexamples and final self-audit counterexamples: changed-model/missing-signal/changed-archive recovery mismatch, required-resolution priority, negation/history, cross-claim and same-claim actor attribution contamination, structured archive foreign-actor contamination, replacement-role permutation, distinct and high-overlap mutable archive updates, GA alias, unknown/numeric suffixes, active-version matrix wiring and isolated import order.
+Additional permanent controls cover Astra's remediation counterexamples and final self-audit counterexamples: changed-model/missing-signal/changed-archive recovery mismatch, required-resolution priority, negation/history, cross-claim contamination, same-claim named/lowercase/role actor-attribution contamination, structured archive foreign-actor contamination, replacement-role permutation, distinct and high-overlap mutable archive updates, GA alias, unknown/numeric suffixes, active-version matrix wiring and isolated import order.
 
 ## Whole-project architecture audit
 
@@ -150,7 +150,7 @@ Six mandatory directions remain unchanged. P3b is only an alternate consumer of 
 
 ### Archive / dedupe
 
-Archive checks remain before positive admission. Exact URL is conclusive. Mutable same-model updates require exact event-detail identity rather than broad lexical overlap, so a distinct update is not suppressed merely because organization/version/lifecycle or generic words match. Exact-event identity itself is claim-local and actor-bound: organization cannot be borrowed from a neighboring archive/page claim, nor can a same-claim foreign actor receive the lifecycle while the signal organization appears only as speaker/context. Structured archive organization is accepted only for its own row and cannot override an explicit foreign headline actor.
+Archive checks remain before positive admission. Exact URL is conclusive. Mutable same-model updates require exact event-detail identity rather than broad lexical overlap, so a distinct update is not suppressed merely because organization/version/lifecycle or generic words match. Exact-event identity itself is claim-local and actor-bound: organization cannot be borrowed from a neighboring archive/page claim, nor can a same-claim foreign actor receive the lifecycle while the signal organization appears only as speaker/context. Explicit reporting/role attribution is treated conservatively as ambiguous rather than synthetic proof. Structured archive organization is accepted only for its own row and cannot override a foreign headline actor.
 
 ### Recovery
 
@@ -168,7 +168,7 @@ Root `README.md`, `automation/README.md` and `automation/ARCHITECTURE.md` were i
 
 ## Independent review gate
 
-The original independent Astra review of head `5332e64c2221670c8c1815811c758d380d27a747` returned `REQUEST CHANGES` with five P1 and two P2 findings. All seven findings now have repository regressions. Final implementer audits additionally found and fixed the high-overlap mutable-update dedupe case, cross-claim organization contamination, and same-claim foreign-actor attribution contamination, all with permanent controls.
+The original independent Astra review of head `5332e64c2221670c8c1815811c758d380d27a747` returned `REQUEST CHANGES` with five P1 and two P2 findings. All seven findings now have repository regressions. Final implementer audits additionally found and fixed the high-overlap mutable-update dedupe case, cross-claim organization contamination, same-claim named foreign-actor attribution contamination, and ambiguous reporting/role attribution contamination, all with permanent controls.
 
 The final exact PR head must pass `PR Gate` / `Required PR Gate` after the last code/documentation commit. That exact SHA is then handed to Astra for a new independent review, including rerun of the original probes and independent counterexamples. This document is implementer self-audit evidence and does not substitute for Astra's verdict.
 
