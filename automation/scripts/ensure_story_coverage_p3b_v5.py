@@ -244,26 +244,52 @@ def _journal_matches_current_p3b_intent_v5(
     model: str,
     search_window: dict[str, Any],
     archive: dict[str, Any],
+    signal: dict[str, Any] | None,
 ) -> bool:
-    """Use the proven v4 contract identity, with explicit owner/window guards."""
+    """Prove a reserved P3b journal from the exact active request contract."""
     if str(journal.get("state") or "") != "reserved":
         return False
     if str(journal.get("owner") or "") != str(P3B_SLOT_OWNER):
         return False
     if str(journal.get("search_window_sha256") or "") != sha256_value(search_window):
         return False
+    if not isinstance(signal, dict):
+        return False
+
+    saved_hash = str(journal.get("request_contract_sha256") or "")
     try:
-        return bool(
-            _v4._journal_matches_current_p3b_intent(
-                publication_date=publication_date,
-                journal=journal,
+        query = build_p3b_query(signal)
+        prompt = build_p3b_prompt(
+            search_window=search_window,
+            signal=signal,
+            archive=_runtime._compact_recent_archive(archive),
+        )
+        active_hash = sha256_value(
+            _request_contract_v2(
                 model=model,
-                search_window=search_window,
-                archive=archive,
+                query=query,
+                prompt=prompt,
+                signal=signal,
             )
         )
     except Exception:
         return False
+    if saved_hash == active_hash:
+        return True
+
+    # Historical v1/v2 request contracts are compatibility-only. They may prove
+    # an old reservation, but failure in that namespace cannot veto the active
+    # exact contract above.
+    try:
+        compatible_hashes = _v2._p3b_contract_hashes(
+            signal=signal,
+            model=model,
+            search_window=search_window,
+            archive=archive,
+        )
+    except Exception:
+        return False
+    return saved_hash in compatible_hashes
 
 
 def _run_handed_off_required_legacy(
@@ -329,6 +355,14 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
     search_window = kwargs.get("search_window") or {}
     archive = kwargs.get("archive") or {}
     model = str(kwargs.get("model") or "")
+    try:
+        active_p3b_signal = (
+            select_p3b_signal(_p3b_signals(publication_date))
+            if publication_date
+            else None
+        )
+    except Exception:
+        active_p3b_signal = None
 
     legacy_journal = bool(
         required_before
@@ -354,6 +388,7 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
             model=model,
             search_window=search_window,
             archive=archive,
+            signal=active_p3b_signal,
         )
         and _v4._release_unstarted_reservation_for_required(publication_date, journal)
     ):
