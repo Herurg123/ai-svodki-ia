@@ -9,7 +9,7 @@ P3a остаётся evidence-only: qualified `reason_code=weak_source` сохр
 Active P3b использует binder v2 и public Coverage path через v4 → v3 → v2. Он может рассмотреть максимум один qualified P3a weak-source signal и использует только уже существующий optional seventh Coverage slot. Шесть mandatory Coverage directions не меняются. Required high-signal `unverified` resolution имеет
 приоритет. Если optional capacity занята, потрачена или неоднозначна, weak-source signal остаётся unresolved/deferred. Восьмой Coverage search запрещён. Обычный whole-pipeline ceiling остаётся 24 Web Search operations; существующий conditional double-regional-gap ceiling остаётся 25.
 
-Положительное P3b admission требует runtime proof, а не утверждения модели: authoritative non-weak URL, реальную страницу, exact organization, все retained version/model anchors, совместимый lifecycle/action, deterministic Event/Source Freshness и archive/dedupe checks. Organization, все retained anchors и lifecycle/action должны доказываться одним local event claim; соседние title/paragraph claims нельзя склеивать в одно событие. Простого присутствия organization в том же claim тоже недостаточно: lifecycle assertion должна относиться к signal organization, а явный foreign named actor между organization и lifecycle/action делает identity недоказанной. Replacement direction выводится из retained signal claim, а не из порядка anchors. Negation и historical/background mentions не являются current-event proof. Provider terminal-negative labels не являются independent proof.
+Положительное P3b admission требует runtime proof, а не утверждения модели: authoritative non-weak URL, реальную страницу, exact organization, все retained version/model anchors, совместимый lifecycle/action, deterministic Event/Source Freshness и archive/dedupe checks. Organization, все retained anchors и lifecycle/action должны доказываться одним local event claim; соседние title/paragraph claims нельзя склеивать в одно событие. Простого присутствия organization в том же claim тоже недостаточно: lifecycle assertion должна относиться к signal organization, а foreign named actor либо явная reporting/role attribution между organization и lifecycle/action делает identity недоказанной. Replacement direction выводится из retained signal claim, а не из порядка anchors. Negation и historical/background mentions не являются current-event proof. Provider terminal-negative labels не являются independent proof.
 
 ## Обязательная 20-case matrix
 
@@ -44,7 +44,7 @@ Active P3b использует binder v2 и public Coverage path через v4 
 - `reserved` P3b intent не обходит higher-priority required `unverified`, а foreign/mismatched reservation не удаляется;
 - explicit negation и historical exact-event mention не дают positive binding;
 - organization нельзя заимствовать из соседнего page claim: exact organization + retained anchors + lifecycle/action должны находиться в одном local event claim;
-- same-claim foreign actor contamination fail-closed: `DeepSeek says OpenAI launches V4.1 Flash` не доказывает DeepSeek event, а `OpenAI says DeepSeek launches V4.1 Flash` сохраняет корректную attribution;
+- same-claim foreign actor contamination fail-closed: `DeepSeek says OpenAI launches V4.1 Flash`, lowercase foreign actor и role-attribution формы вроде `DeepSeek says the rival launches ...` не доказывают DeepSeek event, а `OpenAI says DeepSeek launches V4.1 Flash` сохраняет корректную attribution;
 - structured archive organization не может переназначить foreign headline actor на signal organization;
 - replacement old/new roles не зависят от порядка `product_version_anchors`;
 - canonical `general_availability` совместим с GA, но negated GA остаётся fail-closed;
@@ -89,7 +89,7 @@ Binding fail-closed, если отсутствует хотя бы одно об
 
 - normalized organization соответствует exact signal identity;
 - normalized organization, каждый retained product/version/model anchor и lifecycle/action присутствуют в одном local event claim; совпадения, разбросанные по соседним claims, не складываются;
-- lifecycle/action в этом local claim атрибутирован signal organization; organization не может быть только speaker/context рядом с event другого явно названного actor;
+- lifecycle/action в этом local claim атрибутирован signal organization; organization не может быть только speaker/context рядом с event другого actor, включая явную reporting/role attribution;
 - каждый retained product/version/model anchor присутствует точно, без fuzzy prefix/version conflation;
 - lifecycle/action совпадает, replacement направлен, negation/history не принимаются за current assertion;
 - primary/final URL относится к разрешённому authoritative source class и не совпадает с weak-source host;
@@ -97,7 +97,7 @@ Binding fail-closed, если отсутствует хотя бы одно об
 - deterministic freshness подтверждает saved editorial window;
 - archive/dedupe не доказывает уже опубликованный exact event.
 
-Для mutable lifecycle exact archive URL является достаточным proof. При другом URL org+version+lifecycle недостаточно: normalized event-detail fingerprint должен совпасть целиком. Частичное lexical overlap не блокирует fresh candidate. Structured archive organization может дополнять headline только внутри той же story row и не может переопределять явно названного foreign actor в headline.
+Для mutable lifecycle exact archive URL является достаточным proof. При другом URL org+version+lifecycle недостаточно: normalized event-detail fingerprint должен совпасть целиком. Частичное lexical overlap не блокирует fresh candidate. Structured archive organization может дополнять headline только внутри той же story row и не может переопределять foreign actor в headline.
 
 ## Recovery / compatibility / budget proof
 
