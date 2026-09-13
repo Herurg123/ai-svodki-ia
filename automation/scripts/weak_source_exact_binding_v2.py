@@ -114,6 +114,15 @@ _EVENT_ENTITY_TOKEN_RE = re.compile(
     r"\b(?:[A-Z][A-Za-z0-9.+-]*|[a-z][A-Za-z0-9.+-]*[A-Z][A-Za-z0-9.+-]*)\b"
 )
 _EVENT_ENTITY_GENERIC_TOKENS = frozenset({"ai", "api", "gpu", "llm", "ml", "now", "today"})
+_EVENT_ATTRIBUTION_BREAK_RE = re.compile(
+    r"\b(?:"
+    r"says?|said|reports?|reported|claims?|claimed|writes?|wrote|notes?|noted|"
+    r"cites?|cited|quotes?|quoted|"
+    r"(?:the|a|an)\s+(?:rival|competitor|partner|supplier|customer|vendor|lab|company|organization)|"
+    r"(?:another|other)\s+(?:company|organization|lab|vendor)"
+    r")\b",
+    re.I,
+)
 
 
 def _clean(value: Any) -> str:
@@ -252,6 +261,8 @@ def _strip_identity_anchors(text: str, signal: dict[str, Any]) -> str:
 
 def _contains_foreign_event_entity(text: str, signal: dict[str, Any]) -> bool:
     cleaned = _strip_identity_anchors(text, signal)
+    if _EVENT_ATTRIBUTION_BREAK_RE.search(cleaned):
+        return True
     return any(
         match.group(0).casefold() not in _EVENT_ENTITY_GENERIC_TOKENS
         for match in _EVENT_ENTITY_TOKEN_RE.finditer(cleaned)
@@ -265,12 +276,13 @@ def _organization_binds_action_span(
 ) -> bool:
     """Require the lifecycle assertion to be attributable to the signal org.
 
-    Co-occurrence in one sentence is not enough. A foreign named actor between the
-    signal organization and lifecycle span means the action may belong to that
-    other actor. Organization-after-action forms are accepted only when neither
-    the action-to-organization segment nor the prefix before the action contains a
-    foreign named actor. The check is deliberately conservative: P3b is an
-    opportunistic promotion path, so an ambiguous claim must fail closed.
+    Co-occurrence in one sentence is not enough. A foreign named actor or explicit
+    reporting/role attribution between the signal organization and lifecycle span
+    means the action may belong to another actor. Organization-after-action forms
+    are accepted only when neither the action-to-organization segment nor the
+    prefix before the action contains such foreign attribution. The check is
+    deliberately conservative: P3b is an opportunistic promotion path, so an
+    ambiguous claim must fail closed.
     """
     organization = _clean(signal.get("organization"))
     if not organization:
