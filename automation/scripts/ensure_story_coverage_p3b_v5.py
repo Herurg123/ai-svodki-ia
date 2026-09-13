@@ -58,6 +58,9 @@ def __getattr__(name: str) -> Any:
 
 def _install_v5_bindings() -> None:
     """Install hardened binder/archive hooks after every compatibility sync."""
+    globals()["_exact_binding"] = _binding_v3
+    globals()["_archive_mutable_event_detail_match"] = _archive_mutable_event_detail_match_v5
+    globals()["_archive_exact_event"] = _archive_exact_event_v5
     _v4._exact_binding = _binding_v3
     _v2._binding_v2 = _binding_v3
     _v3._binding_v2 = _binding_v3
