@@ -32,13 +32,66 @@ _ORIGINAL_EXPORTS: dict[str, Any] = {
 }
 _RUNTIME_PULL_NAMES = ("_LAST_RECALL_SENTINEL", "_LAST_AGENCY_RESCUE")
 _IDENTITY_EXPORTS = frozenset({"completed_prior_audit"})
+_COMPAT_HOOK_NAMES = (
+    "run_audit_request",
+    "protected_policy_audit_request",
+    "_p3b_signals",
+    "STATE_DIR",
+)
 _SHIM_INTERNALS = frozenset(
     {
         "_impl", "_IMPL_PATH", "_IMPL_SPEC", "_ORIGINAL_EXPORTS",
-        "_RUNTIME_PULL_NAMES", "_IDENTITY_EXPORTS", "_SHIM_INTERNALS",
+        "_RUNTIME_PULL_NAMES", "_IDENTITY_EXPORTS", "_COMPAT_HOOK_NAMES",
+        "_SHIM_INTERNALS", "_iter_compat_targets", "_propagate_compat_hooks",
         "_sync_to_impl", "_pull_impl_runtime_state", "_make_proxy",
     }
 )
+
+
+def _iter_compat_targets() -> list[Any]:
+    """Return the active compatibility owners from v4 down to the v8 runtime."""
+    targets: list[Any] = []
+    seen: set[int] = set()
+
+    def add(value: Any) -> Any:
+        if value is None or id(value) in seen:
+            return value
+        seen.add(id(value))
+        targets.append(value)
+        return value
+
+    add(_impl)
+    add(getattr(_impl, "_v3", None))
+    v2 = add(getattr(_impl, "_v2", None))
+    v1 = add(getattr(v2, "_v1", None)) if v2 is not None else None
+    p3a = add(getattr(v1, "_p3a", None)) if v1 is not None else None
+    p0 = add(getattr(p3a, "_base", None)) if p3a is not None else None
+    quality = add(getattr(p0, "_pre", None)) if p0 is not None else None
+    v8 = add(getattr(quality, "_v8", None)) if quality is not None else None
+    add(getattr(v8, "_base", None)) if v8 is not None else None
+    return targets
+
+
+def _propagate_compat_hooks() -> None:
+    """Push only sanctioned late monkeypatch seams to their real runtime owners.
+
+    The layered compatibility modules intentionally retain historical function
+    objects. A patch on this public module must therefore reach the leaf module
+    whose function globals actually execute. Binder/policy semantics are excluded
+    from this explicit path so compatibility cannot downgrade hardened P3b logic.
+    """
+    targets = _iter_compat_targets()
+    for name in _COMPAT_HOOK_NAMES:
+        try:
+            value = getattr(_impl, name)
+        except Exception:
+            continue
+        for target in targets[1:]:
+            try:
+                if hasattr(target, name):
+                    setattr(target, name, value)
+            except Exception:
+                continue
 
 
 def _sync_to_impl() -> None:
@@ -60,6 +113,7 @@ def _sync_to_impl() -> None:
     sync = getattr(_impl, "_sync_p3b_public_hooks", None)
     if callable(sync):
         sync()
+    _propagate_compat_hooks()
 
 
 def _pull_impl_runtime_state() -> None:
