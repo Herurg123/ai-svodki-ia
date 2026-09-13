@@ -310,6 +310,8 @@ def _run_handed_off_required_legacy(
 
     original_recalculate(plan, 7)
     _P3A.STATE_DIR = STATE_DIR
+    publication_date = str(kwargs.get("publication_date") or "").strip() or None
+    date_token = _P3A._CURRENT_PUBLICATION_DATE.set(publication_date)
 
     saved_transport = _P3A.protected_policy_audit_request
     try:
@@ -327,6 +329,7 @@ def _run_handed_off_required_legacy(
         )
     finally:
         _P3A.protected_policy_audit_request = saved_transport
+        _P3A._CURRENT_PUBLICATION_DATE.reset(date_token)
 
     try:
         signal = select_p3b_signal(_p3b_signals(str(kwargs.get("publication_date") or "")))
