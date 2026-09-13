@@ -179,14 +179,23 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
             reservation = self._reservation(state, plan)
             self.assertEqual(reservation.state, "reserved")
             required = [self._required_signal()]
-            p3a_calls: list[dict] = []
+            delegated_calls: list[dict] = []
+            handoff_calls: list[dict] = []
             active_v2 = coverage._impl._v2
             original_v2_sync = active_v2._sync_p3b_public_hooks
 
             def fake_p3a_execute(*args, **kwargs):
-                p3a_calls.append(dict(kwargs))
-                # v4 must release the unstarted P3b reservation before handing
-                # capacity back to the higher-priority legacy scheduler.
+                delegated_calls.append(dict(kwargs))
+                # The active v5 layer must release the unstarted P3b reservation
+                # before the six-pass compatibility scheduler runs.
+                self.assertIsNone(coverage.load_journal(state, DATE))
+                return copy.deepcopy(plan)
+
+            def fake_handoff_resolution(*, plan, signals, maximum_web_search_calls, **kwargs):
+                handoff_calls.append({
+                    "signals": copy.deepcopy(signals),
+                    "maximum_web_search_calls": maximum_web_search_calls,
+                })
                 self.assertIsNone(coverage.load_journal(state, DATE))
                 return copy.deepcopy(plan)
 
@@ -202,6 +211,11 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
                     active_v2,
                     "_sync_p3b_public_hooks",
                     side_effect=sync_then_install_required_probe,
+                ),
+                mock.patch.object(
+                    coverage._impl._P3A,
+                    "_run_resolution",
+                    side_effect=fake_handoff_resolution,
                 ),
                 mock.patch.object(
                     coverage._impl,
@@ -222,8 +236,11 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
                     prior_plan=copy.deepcopy(plan),
                 )
 
-            self.assertEqual(len(p3a_calls), 1)
-            self.assertEqual(p3a_calls[0]["maximum_web_search_calls"], 7)
+            self.assertEqual(len(delegated_calls), 1)
+            self.assertEqual(delegated_calls[0]["maximum_web_search_calls"], 6)
+            self.assertEqual(len(handoff_calls), 1)
+            self.assertEqual(handoff_calls[0]["maximum_web_search_calls"], 7)
+            self.assertEqual(handoff_calls[0]["signals"], required)
             self.assertIsNone(coverage.load_journal(state, DATE))
             self.assertEqual(result["weak_source_exact_binding"]["status"], "deferred")
             self.assertIn("slot priority", result["weak_source_exact_binding"]["reason"])
