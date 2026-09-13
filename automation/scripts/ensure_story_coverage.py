@@ -42,8 +42,9 @@ _SHIM_INTERNALS = frozenset(
     {
         "_impl", "_IMPL_PATH", "_IMPL_SPEC", "_ORIGINAL_EXPORTS",
         "_RUNTIME_PULL_NAMES", "_IDENTITY_EXPORTS", "_COMPAT_HOOK_NAMES",
-        "_SHIM_INTERNALS", "_iter_compat_targets", "_propagate_compat_hooks",
-        "_sync_to_impl", "_pull_impl_runtime_state", "_make_proxy",
+        "_SHIM_INTERNALS", "_iter_compat_targets", "_iter_compat_namespaces",
+        "_propagate_compat_hooks", "_sync_to_impl", "_pull_impl_runtime_state",
+        "_make_proxy",
     }
 )
 
@@ -72,26 +73,52 @@ def _iter_compat_targets() -> list[Any]:
     return targets
 
 
-def _propagate_compat_hooks() -> None:
-    """Push only sanctioned late monkeypatch seams to their real runtime owners.
+def _iter_compat_namespaces() -> list[dict[str, Any]]:
+    """Return module and preserved-function global namespaces that can execute.
 
-    The layered compatibility modules intentionally retain historical function
-    objects. A patch on this public module must therefore reach the leaf module
-    whose function globals actually execute. Binder/policy semantics are excluded
-    from this explicit path so compatibility cannot downgrade hardened P3b logic.
+    Versioned compatibility layers intentionally keep aliases to function objects
+    created by separately loaded modules. Those aliases can execute with a
+    ``__globals__`` mapping that is not the ``__dict__`` of the module object we
+    can reach through the active wrapper chain. Public monkeypatches therefore
+    have to follow function ownership, not merely module identity.
     """
-    targets = _iter_compat_targets()
+    namespaces: list[dict[str, Any]] = []
+    seen: set[int] = set()
+
+    def add(namespace: Any) -> None:
+        if not isinstance(namespace, dict) or id(namespace) in seen:
+            return
+        seen.add(id(namespace))
+        namespaces.append(namespace)
+
+    for target in _iter_compat_targets():
+        namespace = getattr(target, "__dict__", None)
+        add(namespace)
+        if not isinstance(namespace, dict):
+            continue
+        for value in tuple(namespace.values()):
+            if inspect.isfunction(value):
+                add(getattr(value, "__globals__", None))
+    return namespaces
+
+
+def _propagate_compat_hooks() -> None:
+    """Push only sanctioned late monkeypatch seams to real execution owners.
+
+    Binder/policy semantics are deliberately excluded. Each allowed hook is
+    written only into namespaces that already define that name, including the
+    ``__globals__`` of preserved function aliases. This keeps compatibility
+    monkeypatches functional without creating new mutable API surface.
+    """
+    namespaces = _iter_compat_namespaces()
     for name in _COMPAT_HOOK_NAMES:
         try:
             value = getattr(_impl, name)
         except Exception:
             continue
-        for target in targets[1:]:
-            try:
-                if hasattr(target, name):
-                    setattr(target, name, value)
-            except Exception:
-                continue
+        for namespace in namespaces:
+            if name in namespace:
+                namespace[name] = value
 
 
 def _sync_to_impl() -> None:
