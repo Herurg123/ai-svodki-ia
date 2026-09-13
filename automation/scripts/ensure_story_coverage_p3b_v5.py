@@ -60,8 +60,8 @@ _V5_INTERNALS = {
     "_sync_p3b_public_hooks", "_pull_p3b_runtime_state",
     "_archive_discriminator_sequence", "_archive_mutable_event_detail_match_v5",
     "_archive_exact_event_v5", "_with_v3_processing", "_run_p3b_binding_v3",
-    "_journal_matches_current_legacy_intent", "_run_handed_off_required_legacy",
-    "execute_audit_plan", "main", "__getattr__",
+    "_journal_matches_current_legacy_intent", "_journal_matches_current_p3b_intent_v5",
+    "_run_handed_off_required_legacy", "execute_audit_plan", "main", "__getattr__",
 }
 
 
@@ -237,6 +237,50 @@ def _journal_matches_current_legacy_intent(
     return str(journal.get("request_contract_sha256") or "") == _P3A.sha256_value(contract)
 
 
+def _journal_matches_current_p3b_intent_v5(
+    *,
+    publication_date: str,
+    journal: dict[str, Any],
+    model: str,
+    search_window: dict[str, Any],
+    archive: dict[str, Any],
+) -> bool:
+    """Prove reserved P3b ownership from the active signal/request contract."""
+    if str(journal.get("state") or "") != "reserved":
+        return False
+    try:
+        signal = select_p3b_signal(_p3b_signals(publication_date))
+        if signal is None:
+            return False
+        hashes = set(
+            _v2._p3b_contract_hashes(
+                signal=signal,
+                model=model,
+                search_window=search_window,
+                archive=archive,
+            )
+        )
+        query = build_p3b_query(signal)
+        prompt = build_p3b_prompt(
+            search_window=search_window,
+            signal=signal,
+            archive=_runtime._compact_recent_archive(archive),
+        )
+        hashes.add(
+            sha256_value(
+                _request_contract_v2(
+                    model=model,
+                    query=query,
+                    prompt=prompt,
+                    signal=signal,
+                )
+            )
+        )
+    except Exception:
+        return False
+    return str(journal.get("request_contract_sha256") or "") in hashes
+
+
 def _run_handed_off_required_legacy(
     plan: dict[str, Any],
     *,
@@ -317,7 +361,7 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
         and required_before
         and isinstance(journal, dict)
         and not legacy_journal
-        and _v4._journal_matches_current_p3b_intent(
+        and _journal_matches_current_p3b_intent_v5(
             publication_date=publication_date,
             journal=journal,
             model=model,
