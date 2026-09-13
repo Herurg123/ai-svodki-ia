@@ -178,7 +178,7 @@ def _archive_exact_event_v4(
             }
             if candidate_url and candidate_url in story_urls:
                 return True
-            surface = " ".join(
+            surface = " | ".join(
                 str(story.get(key) or "")
                 for key in ("headline", "organization", "event_type")
             )
