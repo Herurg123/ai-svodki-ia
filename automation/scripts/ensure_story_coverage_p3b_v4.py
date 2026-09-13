@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""P3b v4 runtime guard for hardened CLI and reserved-slot recovery semantics.
+"""P3b v4 runtime guard for hardened CLI and durable optional-slot ownership.
 
 The substantive exact-page binding remains in v2 and compatibility bridging in
-v3. This narrow layer fixes two orchestration boundaries: a merely reserved slot
-must not override a runtime budget already exhausted by other Coverage work, and
-the CLI main path must execute the same hardened P3b entrypoint as direct callers.
+v3. This layer protects three orchestration boundaries: an existing durable slot
+must suppress any fresh legacy optional search before reuse eligibility is known,
+an unstarted reservation may be preempted only by higher-priority required
+``unverified`` resolution, and a merely reserved P3b slot must never override a
+runtime budget already exhausted by other Coverage work. The CLI and direct
+callers execute the same hardened path.
 """
 from __future__ import annotations
 
@@ -13,6 +16,14 @@ import importlib.util
 import sys
 from pathlib import Path
 from typing import Any
+
+from coverage_slot_guard import (
+    CoverageSlotError,
+    journal_path,
+    load_journal,
+    response_path,
+    sha256_value,
+)
 
 _V3_PATH = Path(__file__).with_name("ensure_story_coverage_p3b_v3.py")
 _V3_SPEC = importlib.util.spec_from_file_location("ensure_story_coverage_p3b_v3_active", _V3_PATH)
@@ -32,6 +43,8 @@ _V4_INTERNALS = {
     "_v3", "_v2", "_V3_PATH", "_V3_SPEC", "_V2_RUN_P3B_BINDING",
     "_PRE_RECALC_BUDGET_KEY", "_V4_INTERNALS", "_sync_p3b_public_hooks",
     "_pull_p3b_runtime_state", "_guarded_run_p3b_binding_v2",
+    "_load_optional_journal", "_release_unstarted_reservation_for_required",
+    "_seal_existing_optional_slot_budget",
     "_run_p3b_binding_v2", "_P3A_MAIN", "execute_audit_plan", "main",
     "__getattr__",
 }
@@ -42,9 +55,6 @@ def __getattr__(name: str) -> Any:
 
 
 def _sync_p3b_public_hooks() -> None:
-    # STATE_DIR is part of the historical monkeypatch surface and is security-
-    # relevant for the durable optional-slot journal. Keep one exact value across
-    # every wrapper layer instead of relying on generic alias propagation.
     state_dir = globals().get("STATE_DIR")
     for name, value in list(globals().items()):
         if name in _V4_INTERNALS or (name.startswith("__") and name.endswith("__")):
@@ -60,14 +70,10 @@ def _sync_p3b_public_hooks() -> None:
         _v2.STATE_DIR = state_dir
     _v3._sync_p3b_public_hooks()
     if state_dir is not None:
-        # v3/v2 compatibility sync may mirror older aliases back down. Reassert
-        # the runtime journal root after that generic pass so recovery observes
-        # the exact same durable slot that public callers patched.
         _v3.STATE_DIR = state_dir
         _v2.STATE_DIR = state_dir
         if hasattr(_v2, "_v1"):
             _v2._v1.STATE_DIR = state_dir
-    # Keep the reserved-budget guard installed after generic compatibility sync.
     _v2._run_p3b_binding_v2 = _guarded_run_p3b_binding_v2
 
 
@@ -78,10 +84,55 @@ def _pull_p3b_runtime_state() -> None:
             globals()[name] = getattr(_v3, name)
 
 
+def _load_optional_journal(publication_date: str | None) -> tuple[dict[str, Any] | None, bool]:
+    if not publication_date:
+        return None, False
+    try:
+        return load_journal(Path(STATE_DIR), publication_date), False
+    except CoverageSlotError:
+        return None, True
+
+
+def _release_unstarted_reservation_for_required(
+    publication_date: str,
+    journal: dict[str, Any],
+) -> bool:
+    if str(journal.get("state") or "") != "reserved":
+        return False
+    if journal.get("wire_attempt_admitted") is True:
+        return False
+    if journal.get("slot_consumed_or_ambiguous") is True:
+        return False
+    if str(journal.get("response_sha256") or "").strip():
+        return False
+    state_dir = Path(STATE_DIR)
+    if response_path(state_dir, publication_date).exists():
+        return False
+    try:
+        latest = load_journal(state_dir, publication_date)
+    except CoverageSlotError:
+        return False
+    if not isinstance(latest, dict):
+        return False
+    if sha256_value(latest) != sha256_value(journal):
+        return False
+    try:
+        journal_path(state_dir, publication_date).unlink()
+    except FileNotFoundError:
+        return False
+    return True
+
+
+def _seal_existing_optional_slot_budget(
+    result: dict[str, Any], *, original_maximum: int, recalculate: Any,
+) -> None:
+    recalculate(result, max(7, original_maximum))
+    _v2._v1._p3b_force_consumed(result)
+
+
 def _guarded_run_p3b_binding_v2(*, plan: dict[str, Any], publication_date: str,
                                 signal: dict[str, Any], api_key: str, model: str,
                                 search_window: dict[str, Any], archive: dict[str, Any]) -> dict[str, Any]:
-    """Never turn an unspent reservation into an eighth/over-budget wire call."""
     preserved_budget = plan.pop(_PRE_RECALC_BUDGET_KEY, None)
     try:
         journal = load_journal(Path(STATE_DIR), publication_date)
@@ -100,9 +151,6 @@ def _guarded_run_p3b_binding_v2(*, plan: dict[str, Any], publication_date: str,
         if remaining < 1 or prior_completed >= 7:
             base = copy.deepcopy(plan)
             if isinstance(preserved_budget, dict) and prior_completed >= 7:
-                # The temporary six-call clamp is only a routing guard. Never let
-                # its later 7-call recalculation erase evidence that another
-                # Coverage path had already consumed the optional seventh search.
                 base["search_budget"] = copy.deepcopy(preserved_budget)
             return _v2._annotation(
                 base,
@@ -126,6 +174,23 @@ def _guarded_run_p3b_binding_v2(*, plan: dict[str, Any], publication_date: str,
 
 def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
     _sync_p3b_public_hooks()
+    publication_date = _v2._valid_publication_date(kwargs.get("publication_date"))
+    journal, invalid_journal = _load_optional_journal(publication_date)
+    required_before = list(_v2._pre._required_signals(publication_date)) if publication_date else []
+    if (
+        publication_date
+        and required_before
+        and isinstance(journal, dict)
+        and _release_unstarted_reservation_for_required(publication_date, journal)
+    ):
+        journal = None
+
+    slot_occupied_or_unknown = invalid_journal or isinstance(journal, dict)
+    call_kwargs = dict(kwargs)
+    original_maximum = int(call_kwargs.get("maximum_web_search_calls", 7) or 7)
+    if slot_occupied_or_unknown:
+        call_kwargs["maximum_web_search_calls"] = min(original_maximum, 6)
+
     original_recalculate = _v2._pre._recalculate_budget
 
     def preserving_recalculate(plan: dict[str, Any], maximum_calls: int) -> Any:
@@ -141,8 +206,14 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
 
     _v2._pre._recalculate_budget = preserving_recalculate
     try:
-        result = _v3.execute_audit_plan(*args, **kwargs)
+        result = _v3.execute_audit_plan(*args, **call_kwargs)
         if isinstance(result, dict):
+            if slot_occupied_or_unknown:
+                _seal_existing_optional_slot_budget(
+                    result,
+                    original_maximum=original_maximum,
+                    recalculate=original_recalculate,
+                )
             result.pop(_PRE_RECALC_BUDGET_KEY, None)
         return result
     finally:
@@ -151,10 +222,6 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
 
 
 def main() -> int:
-    """Run the historical CLI shell with the hardened execute entrypoint installed."""
-    # Capture the historical CLI callback before generic compatibility sync. That
-    # preserves the long-standing monkeypatch seam and prevents an exported stale
-    # alias from silently replacing a caller/test override.
     historical_main = _v2._v1._P3A_MAIN
     _sync_p3b_public_hooks()
     original_execute = _v2._v1._pre.execute_audit_plan
@@ -166,7 +233,6 @@ def main() -> int:
         _pull_p3b_runtime_state()
 
 
-# Install the guard for direct calls that enter through v3/v2 globals.
 _v2._run_p3b_binding_v2 = _guarded_run_p3b_binding_v2
 
 
