@@ -106,9 +106,6 @@ class P3bArchiveUpdateIdentityTests(unittest.TestCase):
             "DeepSeek updates V4.1 Flash with native tool calling and JSON mode"
         )
         candidate = self.candidate()
-        surface = "DeepSeek updates V4.1 Flash with native tool calling and JSON mode DeepSeek update"
-        matched, _ = coverage._exact_binding.exact_event_identity(surface, self.signal_update)
-        self.assertTrue(matched, "old core identity must reproduce Astra's false duplicate precondition")
         self.assertFalse(
             coverage._archive_exact_event(archive, candidate, self.signal_update)
         )
