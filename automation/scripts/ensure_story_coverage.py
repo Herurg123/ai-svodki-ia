@@ -106,7 +106,11 @@ def _sync_to_impl() -> None:
         if not exists:
             continue
         original = _ORIGINAL_EXPORTS.get(name)
-        if original is not None and getattr(value, "_coverage_public_proxy_target", None) == name:
+        if (
+            original is not None
+            and inspect.isfunction(value)
+            and getattr(value, "_coverage_public_proxy_target", None) == name
+        ):
             setattr(_impl, name, original)
         else:
             setattr(_impl, name, value)
