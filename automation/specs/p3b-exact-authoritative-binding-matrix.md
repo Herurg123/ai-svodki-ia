@@ -6,7 +6,8 @@
 
 P3a остаётся evidence-only: qualified `reason_code=weak_source` сохраняет source provenance и identity hints, но имеет `resolution_required=false`, `candidate_eligible=false` и сам не связывает событие с authoritative source.
 
-Active P3b использует binder v2 и public Coverage path через v4 → v3 → v2. Он может рассмотреть максимум один qualified P3a weak-source signal и использует только уже существующий optional seventh Coverage slot. Шесть mandatory Coverage directions не меняются. Required high-signal `unverified` resolution имеет приоритет. Если optional capacity занята, потрачена или неоднозначна, weak-source signal остаётся unresolved/deferred. Восьмой Coverage search запрещён. Обычный whole-pipeline ceiling остаётся 24 Web Search operations; существующий conditional double-regional-gap ceiling остаётся 25.
+Active P3b использует binder v2 и public Coverage path через v4 → v3 → v2. Он может рассмотреть максимум один qualified P3a weak-source signal и использует только уже существующий optional seventh Coverage slot. Шесть mandatory Coverage directions не меняются. Required high-signal `unverified` resolution имеет
+приоритет. Если optional capacity занята, потрачена или неоднозначна, weak-source signal остаётся unresolved/deferred. Восьмой Coverage search запрещён. Обычный whole-pipeline ceiling остаётся 24 Web Search operations; существующий conditional double-regional-gap ceiling остаётся 25.
 
 Положительное P3b admission требует runtime proof, а не утверждения модели: authoritative non-weak URL, реальную страницу, exact organization, все retained version/model anchors, совместимый lifecycle/action, deterministic Event/Source Freshness и archive/dedupe checks. Replacement direction выводится из retained signal claim, а не из порядка anchors. Negation и historical/background mentions не являются current-event proof. Provider terminal-negative labels не являются independent proof.
 
