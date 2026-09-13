@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""P3b v5 runtime guard for durable legacy handoff and exact event admission.
+"""P3b v5: narrow second-Astra hardening over the preserved v4 runtime.
 
-v4 remains the preserved orchestration baseline. This layer keeps the same single
-optional seventh Coverage slot and same durable request contracts while closing
-the second independent Astra findings: every required legacy resolution enters
-the protected slot transport, active exact binding uses binder v3, and mutable
-archive identity preserves ordered event detail instead of unordered token sets.
+v4 remains the orchestration baseline. v5 changes only three active semantics:
+(1) exact-page processing uses the fail-closed binder v3 without mutating the
+historical v2/v3 compatibility modules at import time; (2) mutable archive
+identity preserves ordered event detail; and (3) an exact P3b->required-legacy
+slot handoff executes the seventh search through P3a's durable slot transport.
+The durable request contract and the single optional seventh Coverage slot stay
+unchanged.
 """
 from __future__ import annotations
 
@@ -13,7 +15,7 @@ import copy
 import importlib.util
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import weak_source_exact_binding_v3 as _binding_v3
 
@@ -33,6 +35,9 @@ _v2 = _v4._v2
 _P3A = _v2._v1._p3a
 _PRE_RECALC_BUDGET_KEY = _v4._PRE_RECALC_BUDGET_KEY
 
+# Public v5 semantics. The nested v2/v3 compatibility modules deliberately keep
+# their historical binder identities outside an active v5 call.
+_exact_binding = _binding_v3
 build_p3b_query = _binding_v3.build_query
 candidate_exact_binding = _binding_v3.candidate_exact_binding
 qualifying_p3b_signals = _binding_v3.qualifying_signals
@@ -42,13 +47,21 @@ extract_authoritative_event_surface = _binding_v3.extract_authoritative_event_su
 P3B_EXACT_BINDING_VERSION = _binding_v3.VERSION
 P3B_MODE = _binding_v3.MODE
 
+_V5_SEMANTIC_EXPORTS = {
+    "_exact_binding", "build_p3b_query", "candidate_exact_binding",
+    "qualifying_p3b_signals", "rejection_exact_terminal_binding",
+    "select_p3b_signal", "extract_authoritative_event_surface",
+    "P3B_EXACT_BINDING_VERSION", "P3B_MODE", "_archive_exact_event",
+    "_process_p3b_payload_v2",
+}
 _V5_INTERNALS = {
     "_v4", "_v3", "_v2", "_P3A", "_binding_v3", "_V4_PATH", "_V4_SPEC",
-    "_PRE_RECALC_BUDGET_KEY", "_V5_INTERNALS", "_install_v5_bindings",
+    "_PRE_RECALC_BUDGET_KEY", "_V5_SEMANTIC_EXPORTS", "_V5_INTERNALS",
     "_sync_p3b_public_hooks", "_pull_p3b_runtime_state",
     "_archive_discriminator_sequence", "_archive_mutable_event_detail_match_v5",
-    "_archive_exact_event_v5", "_journal_matches_current_legacy_intent",
-    "_run_required_legacy_durable", "execute_audit_plan", "main", "__getattr__",
+    "_archive_exact_event_v5", "_with_v3_processing", "_run_p3b_binding_v3",
+    "_journal_matches_current_legacy_intent", "_run_handed_off_required_legacy",
+    "execute_audit_plan", "main", "__getattr__",
 }
 
 
@@ -56,40 +69,25 @@ def __getattr__(name: str) -> Any:
     return getattr(_v4, name)
 
 
-def _install_v5_bindings() -> None:
-    """Install hardened binder/archive hooks after every compatibility sync."""
-    globals()["_exact_binding"] = _binding_v3
-    globals()["_archive_mutable_event_detail_match"] = _archive_mutable_event_detail_match_v5
-    globals()["_archive_exact_event"] = _archive_exact_event_v5
-    _v4._exact_binding = _binding_v3
-    _v2._binding_v2 = _binding_v3
-    _v3._binding_v2 = _binding_v3
-
-    # v2/v3 compatibility synchronization can restore older aliases. Re-run
-    # their explicit active-binder restorers after replacing the binder owner.
-    _v2._restore_active_binders()
-    _v3._restore_active_binders()
-
-    for module in (_v4, _v3, _v2):
-        module.build_p3b_query = _binding_v3.build_query
-        module.candidate_exact_binding = _binding_v3.candidate_exact_binding
-        module.qualifying_p3b_signals = _binding_v3.qualifying_signals
-        module.rejection_exact_terminal_binding = _binding_v3.rejection_exact_terminal_binding
-        module.select_p3b_signal = _binding_v3.select_signal
-        module.extract_authoritative_event_surface = _binding_v3.extract_authoritative_event_surface
-        module.P3B_EXACT_BINDING_VERSION = _binding_v3.VERSION
-        module.P3B_MODE = _binding_v3.MODE
-
-    _v2._archive_exact_event = _archive_exact_event_v5
-    _v4._archive_exact_event = _archive_exact_event_v5
-    _v4._archive_exact_event_v4 = _archive_exact_event_v5
-    _v2._run_p3b_binding_v2 = _v4._guarded_run_p3b_binding_v2
-
-
 def _sync_p3b_public_hooks() -> None:
-    """Sync public monkeypatch seams, then restore v5 semantic owners."""
+    """Mirror ordinary monkeypatch seams into v4 without exporting v5 semantics."""
+    state_dir = globals().get("STATE_DIR")
+    for name, value in list(globals().items()):
+        if (
+            name in _V5_INTERNALS
+            or name in _V5_SEMANTIC_EXPORTS
+            or (name.startswith("__") and name.endswith("__"))
+        ):
+            continue
+        try:
+            exists = hasattr(_v4, name)
+        except Exception:
+            exists = False
+        if exists:
+            setattr(_v4, name, value)
+    if state_dir is not None:
+        _v4.STATE_DIR = state_dir
     _v4._sync_p3b_public_hooks()
-    _install_v5_bindings()
 
 
 def _pull_p3b_runtime_state() -> None:
@@ -109,9 +107,7 @@ def _archive_discriminator_sequence(text: Any, signal: dict[str, Any]) -> tuple[
 
 
 def _archive_mutable_event_detail_match_v5(
-    candidate: dict[str, Any],
-    story: dict[str, Any],
-    signal: dict[str, Any],
+    candidate: dict[str, Any], story: dict[str, Any], signal: dict[str, Any]
 ) -> bool:
     candidate_text = " ".join(
         str(candidate.get(key) or "") for key in ("title", "event_summary")
@@ -127,15 +123,11 @@ def _archive_mutable_event_detail_match_v5(
 
 
 def _archive_exact_event_v5(
-    archive: dict[str, Any],
-    candidate: dict[str, Any],
-    signal: dict[str, Any],
+    archive: dict[str, Any], candidate: dict[str, Any], signal: dict[str, Any]
 ) -> bool:
-    """Require exact URL or exact semantic event identity with ordered detail."""
+    """Require exact URL or exact same-event proof with ordered mutable detail."""
     source = candidate.get("primary_source")
-    candidate_url = (
-        str(source.get("url") or "").strip() if isinstance(source, dict) else ""
-    )
+    candidate_url = str(source.get("url") or "").strip() if isinstance(source, dict) else ""
     actions = {
         str(item or "").strip().casefold()
         for item in signal.get("lifecycle_action_anchors") or []
@@ -186,6 +178,34 @@ def _archive_exact_event_v5(
     return False
 
 
+def _with_v3_processing(callback: Callable[[], Any]) -> Any:
+    """Install v3 exact semantics only while the active v2 processing code runs."""
+    saved = {
+        "candidate_exact_binding": _v2.candidate_exact_binding,
+        "rejection_exact_terminal_binding": _v2.rejection_exact_terminal_binding,
+        "extract_authoritative_event_surface": _v2.extract_authoritative_event_surface,
+        "_archive_exact_event": _v2._archive_exact_event,
+    }
+    try:
+        _v2.candidate_exact_binding = _binding_v3.candidate_exact_binding
+        _v2.rejection_exact_terminal_binding = _binding_v3.rejection_exact_terminal_binding
+        _v2.extract_authoritative_event_surface = _binding_v3.extract_authoritative_event_surface
+        _v2._archive_exact_event = _archive_exact_event_v5
+        return callback()
+    finally:
+        for name, value in saved.items():
+            setattr(_v2, name, value)
+
+
+def _process_p3b_payload_v2(*args: Any, **kwargs: Any) -> Any:
+    """Public v5 processing seam with transient v3 binder/archive semantics."""
+    return _with_v3_processing(lambda: _v2._process_p3b_payload_v2(*args, **kwargs))
+
+
+def _run_p3b_binding_v3(*args: Any, **kwargs: Any) -> Any:
+    return _with_v3_processing(lambda: _v4._guarded_run_p3b_binding_v2(*args, **kwargs))
+
+
 def _journal_matches_current_legacy_intent(
     *,
     journal: dict[str, Any],
@@ -194,7 +214,6 @@ def _journal_matches_current_legacy_intent(
     archive: dict[str, Any],
     required_signals: list[dict[str, Any]],
 ) -> bool:
-    """Identify only the current required-resolution durable request contract."""
     if not required_signals:
         return False
     try:
@@ -218,65 +237,48 @@ def _journal_matches_current_legacy_intent(
     return str(journal.get("request_contract_sha256") or "") == _P3A.sha256_value(contract)
 
 
-def _run_required_legacy_durable(
-    result: dict[str, Any],
+def _run_handed_off_required_legacy(
+    plan: dict[str, Any],
     *,
-    publication_date: str,
     required_signals: list[dict[str, Any]],
     kwargs: dict[str, Any],
     original_maximum: int,
     original_recalculate: Any,
 ) -> dict[str, Any]:
-    """Resume/start required legacy resolution only through P3a's slot guard."""
+    """Spend/recover slot seven through P3a's durable transport after handoff."""
     if original_maximum < 7 or not required_signals:
-        return result
-    if set(result.get("checked_directions") or ()) != set(_v2._pre.AUDIT_DIRECTION_IDS):
-        return result
+        return plan
+    if set(plan.get("checked_directions") or ()) != set(_v2._pre.AUDIT_DIRECTION_IDS):
+        return plan
 
-    original_recalculate(result, 7)
-    budget = result.get("search_budget")
-    remaining = int(budget.get("remaining_calls", 0) or 0) if isinstance(budget, dict) else 0
+    original_recalculate(plan, 7)
+    _P3A.STATE_DIR = STATE_DIR
 
-    # Existing legacy journals may be request_started/response_saved/processed.
-    # Their durable state, rather than recomputed remaining_calls, owns recovery.
+    saved_transport = _P3A.protected_policy_audit_request
     try:
-        journal = _P3A.load_journal(Path(STATE_DIR), publication_date)
-    except Exception:
-        journal = None
-    legacy_journal = bool(
-        isinstance(journal, dict)
-        and _journal_matches_current_legacy_intent(
-            journal=journal,
+        # Public tests/runtime may monkeypatch the sanctioned transport seam on
+        # v5. Pin that exact active value into P3a for this one durable call.
+        _P3A.protected_policy_audit_request = protected_policy_audit_request
+        result = _P3A._run_resolution(
+            plan=plan,
+            signals=required_signals,
+            api_key=str(kwargs.get("api_key") or ""),
             model=str(kwargs.get("model") or ""),
             search_window=kwargs.get("search_window") or {},
             archive=kwargs.get("archive") or {},
-            required_signals=required_signals,
+            maximum_web_search_calls=7,
         )
-    )
-    if remaining < 1 and not legacy_journal:
-        return result
+    finally:
+        _P3A.protected_policy_audit_request = saved_transport
 
-    _P3A.STATE_DIR = STATE_DIR
-    resolved = _P3A._run_resolution(
-        plan=result,
-        signals=required_signals,
-        api_key=str(kwargs.get("api_key") or ""),
-        model=str(kwargs.get("model") or ""),
-        search_window=kwargs.get("search_window") or {},
-        archive=kwargs.get("archive") or {},
-        maximum_web_search_calls=7,
-    )
-
-    # Required legacy owns the slot. P3b stays diagnostic-only/deferred even when
-    # the protected legacy resolution found a candidate or definitive negative.
     try:
-        signal = select_p3b_signal(_p3b_signals(publication_date))
+        signal = select_p3b_signal(_p3b_signals(str(kwargs.get("publication_date") or "")))
     except Exception:
         signal = None
     if signal is None:
-        return resolved
+        return result
     return _v2._annotation(
-        resolved,
+        result,
         status="deferred",
         reason="existing required unresolved/unverified resolution has slot priority",
         signal=signal,
@@ -327,29 +329,21 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
         journal = None
         released_for_required = True
 
-    # Required legacy may take the seventh slot only when there is no ambiguous
-    # foreign/P3b owner, or when it is resuming its own durable journal.
-    protected_legacy_allowed = bool(
-        publication_date
-        and required_before
-        and not invalid_journal
-        and (journal is None or legacy_journal)
-    )
+    handoff_recovery = released_for_required or legacy_journal
     slot_occupied_or_unknown = invalid_journal or (
         isinstance(journal, dict) and not legacy_journal
     )
 
     call_kwargs = dict(kwargs)
     original_maximum = int(call_kwargs.get("maximum_web_search_calls", 7) or 7)
-
-    # Never let the delegated compatibility scheduler spend slot seven while a
-    # required legacy obligation is pending. It can reset the hook during prior
-    # preparation. We run six mandatory passes there, then invoke the protected
-    # P3a resolver directly for the seventh durable operation.
-    if slot_occupied_or_unknown or protected_legacy_allowed:
+    # For the exact handoff only, prevent the compatibility scheduler from using
+    # its unjournaled seventh-search path. Mandatory six are reused/run normally;
+    # slot seven is invoked below through P3a's durable transport.
+    if slot_occupied_or_unknown or handoff_recovery:
         call_kwargs["maximum_web_search_calls"] = min(original_maximum, 6)
 
     original_recalculate = _v2._pre._recalculate_budget
+    original_runner = _v2._run_p3b_binding_v2
 
     def preserving_recalculate(plan: dict[str, Any], maximum_calls: int) -> Any:
         budget = plan.get("search_budget") if isinstance(plan, dict) else None
@@ -363,15 +357,15 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
         return original_recalculate(plan, maximum_calls)
 
     _v2._pre._recalculate_budget = preserving_recalculate
+    _v2._run_p3b_binding_v2 = _run_p3b_binding_v3
     try:
         result = _v3.execute_audit_plan(*args, **call_kwargs)
         if not isinstance(result, dict):
             return result
 
-        if protected_legacy_allowed and publication_date:
-            result = _run_required_legacy_durable(
+        if handoff_recovery:
+            result = _run_handed_off_required_legacy(
                 result,
-                publication_date=publication_date,
                 required_signals=required_before,
                 kwargs=dict(kwargs),
                 original_maximum=original_maximum,
@@ -388,6 +382,7 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
         return result
     finally:
         _v2._pre._recalculate_budget = original_recalculate
+        _v2._run_p3b_binding_v2 = original_runner
         _pull_p3b_runtime_state()
 
 
@@ -404,7 +399,6 @@ def main() -> int:
 
 
 _archive_exact_event = _archive_exact_event_v5
-_install_v5_bindings()
 
 
 if __name__ == "__main__":
