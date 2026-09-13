@@ -167,6 +167,38 @@ class P3bNegationHistoricalBindingTests(unittest.TestCase):
         self.assertFalse(ok)
         self.assertEqual(reason, "authoritative_page_exact_event_claim_missing")
 
+    def test_same_claim_foreign_actor_cannot_borrow_signal_organization(self) -> None:
+        signal = self.signal(action="launch", anchors=["V4.1 Flash"])
+        for surface in (
+            "DeepSeek says OpenAI launches V4.1 Flash",
+            "According to DeepSeek, OpenAI launches V4.1 Flash",
+        ):
+            with self.subTest(surface=surface):
+                ok, reason = binder.exact_event_identity(surface, signal)
+                self.assertFalse(ok)
+                self.assertEqual(reason, "organization_event_attribution_mismatch")
+
+    def test_authoritative_page_requires_signal_org_to_own_lifecycle_assertion(self) -> None:
+        signal = self.signal(action="launch", anchors=["V4.1 Flash"])
+        candidate = self.candidate("DeepSeek launches V4.1 Flash", event_type="launch")
+        ok, reason = self.bind(
+            candidate,
+            signal,
+            "DeepSeek says OpenAI launches V4.1 Flash",
+        )
+        self.assertFalse(ok)
+        self.assertEqual(reason, "authoritative_page_organization_event_attribution_mismatch")
+
+    def test_foreign_speaker_can_report_exact_signal_org_event(self) -> None:
+        signal = self.signal(action="launch", anchors=["V4.1 Flash"])
+        self.assertEqual(
+            binder.exact_event_identity(
+                "OpenAI says DeepSeek launches V4.1 Flash",
+                signal,
+            ),
+            (True, "exact_event_identity"),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
