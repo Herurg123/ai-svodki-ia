@@ -65,6 +65,8 @@ Active P3b использует binder v2 и public Coverage path через v4 
 
 ## Durable optional-slot state machine
 
+Переходы active P3b: `reserved → request_started → response_saved → processed`.
+
 | Saved state | Допустимое действие | Новый provider search |
 |---|---|---|
 | no journal | Только если mandatory Coverage завершён, optional seventh slot реально свободен и нет higher-priority required resolution | максимум 1 |
