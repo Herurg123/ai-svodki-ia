@@ -56,6 +56,38 @@ _LIFECYCLE_GROUPS: dict[str, tuple[str, ...]] = {
 _BENCHMARK_RE = re.compile(r"\b(?:benchmark|benchmarks|benchmarked|evaluation|eval|score|scores)\b", re.I)
 _PREVIEW_RE = re.compile(r"\b(?:preview|pre[- ]?release|beta|early access)\b", re.I)
 _GA_RE = re.compile(r"\b(?:general availability|generally available|stable release|GA)\b", re.I)
+_CLAIM_SPLIT_RE = re.compile(r"\s*(?:\||(?<=[.!?;]))\s+")
+_NEGATED_ACTION_PREFIX_RE = re.compile(
+    r"(?:"
+    r"\bnot\b|\bnever\b|\bno longer\b|"
+    r"\bno\s+(?:plan|plans|intention|intent)\s+to\b|"
+    r"\b(?:do|does|did|is|are|was|were|has|have|had|will|would|can|could|should)"
+    r"(?:\s+not|n't)\b|"
+    r"\byet\s+to\b|\bwithout\b|\brather\s+than\b|\binstead\s+of\b"
+    r")(?:\W+\w+){0,3}\W*$",
+    re.I,
+)
+_HISTORICAL_ACTION_PREFIX_RE = re.compile(
+    r"(?:"
+    r"\bpreviously\b|\bearlier\b|\bformerly\b|\bonce\b|"
+    r"\blast\s+(?:year|month|week)\b|"
+    r"\b(?:years?|months?|weeks?)\s+ago\b|"
+    r"\bprior\s+to\b|\bhad\b"
+    r")(?:\W+\w+){0,4}\W*$",
+    re.I,
+)
+_HISTORICAL_ACTION_SUFFIX_RE = re.compile(
+    r"^\W*(?:"
+    r"last\s+(?:year|month|week)\b|"
+    r"(?:years?|months?|weeks?)\s+ago\b|"
+    r"previously\b|earlier\b|formerly\b"
+    r")",
+    re.I,
+)
+_CURRENT_ACTION_NEAR_RE = re.compile(
+    r"\b(?:now|today|currently|newly|this\s+(?:week|month))\b",
+    re.I,
+)
 
 
 def _clean(value: Any) -> str:
@@ -87,12 +119,16 @@ def _contains_org(text: str, organization: Any) -> bool:
     return bool(re.search(rf"(?<![\w]){re.escape(org.casefold()).replace(r'\ ', r'\s+')}(?![\w])", _clean(text).casefold(), re.I))
 
 
-def _has_term(text: str, term: str) -> bool:
+def _term_matches(text: str, term: str) -> list[re.Match[str]]:
     pattern = re.escape(term.casefold()).replace(r"\ ", r"\s+")
-    return bool(re.search(rf"(?<![\w]){pattern}(?![\w])", text.casefold(), re.I))
+    return list(re.finditer(rf"(?<![\w]){pattern}(?![\w])", text.casefold(), re.I))
 
 
-def _directed_replace_matches(text: str, old_anchor: str, new_anchor: str) -> bool:
+def _has_term(text: str, term: str) -> bool:
+    return bool(_term_matches(text, term))
+
+
+def _directed_replace_span(text: str, old_anchor: str, new_anchor: str) -> tuple[int, int] | None:
     folded = _clean(text).casefold()
     old = _anchor_pattern(old_anchor)
     new = _anchor_pattern(new_anchor)
@@ -102,11 +138,119 @@ def _directed_replace_matches(text: str, old_anchor: str, new_anchor: str) -> bo
         rf"{new}\s+{relation}\s+{old}",
         rf"{old}\s+(?:is\s+|was\s+)?(?:replaced|superseded)\s+by\s+{new}",
     )
-    return any(re.search(pattern, folded, re.I) for pattern in patterns)
+    for pattern in patterns:
+        match = re.search(pattern, folded, re.I)
+        if match:
+            return match.span()
+    return None
+
+
+def _directed_replace_matches(text: str, old_anchor: str, new_anchor: str) -> bool:
+    return _directed_replace_span(text, old_anchor, new_anchor) is not None
+
+
+def _event_claims(text: str) -> list[str]:
+    cleaned = _clean(text)
+    if not cleaned:
+        return []
+    return [_clean(part) for part in _CLAIM_SPLIT_RE.split(cleaned) if _clean(part)]
+
+
+def _action_mention_is_negated(text: str, start: int) -> bool:
+    prefix = text[max(0, start - 72):start]
+    return bool(_NEGATED_ACTION_PREFIX_RE.search(prefix))
+
+
+def _action_mention_is_historical(text: str, start: int, end: int) -> bool:
+    prefix = text[max(0, start - 88):start]
+    suffix = text[end:min(len(text), end + 64)]
+    if _CURRENT_ACTION_NEAR_RE.search(prefix[-32:]) or _CURRENT_ACTION_NEAR_RE.search(suffix[:32]):
+        return False
+    return bool(
+        _HISTORICAL_ACTION_PREFIX_RE.search(prefix)
+        or _HISTORICAL_ACTION_SUFFIX_RE.search(suffix)
+    )
+
+
+def _active_term_span(text: str, terms: tuple[str, ...]) -> tuple[tuple[int, int] | None, str | None]:
+    saw_negated = False
+    saw_historical = False
+    for term in terms:
+        for match in _term_matches(text, term):
+            start, end = match.span()
+            if _action_mention_is_negated(text, start):
+                saw_negated = True
+                continue
+            if _action_mention_is_historical(text, start, end):
+                saw_historical = True
+                continue
+            return (start, end), None
+    if saw_negated:
+        return None, "lifecycle_negated"
+    if saw_historical:
+        return None, "historical_event_context"
+    return None, "lifecycle_identity_mismatch"
 
 
 def _current_candidate_surface(candidate: dict[str, Any]) -> str:
-    return " ".join(_clean(candidate.get(key)) for key in ("title", "event_type") if _clean(candidate.get(key)))
+    parts = [_clean(candidate.get(key)) for key in ("title", "event_type") if _clean(candidate.get(key))]
+    return " | ".join(parts)
+
+
+def _claim_lifecycle_matches(
+    claim: str,
+    signal: dict[str, Any],
+    *,
+    require_current_lifecycle: bool,
+) -> tuple[bool, str]:
+    anchors = _anchors(signal)
+    actions = _actions(signal)
+    for action in actions:
+        if action == "replace":
+            if require_current_lifecycle and _BENCHMARK_RE.search(claim):
+                return False, "benchmark_lifecycle_mismatch"
+            if len(anchors) < 2:
+                return False, "replacement_direction_mismatch"
+            span = _directed_replace_span(claim, anchors[0], anchors[1])
+            if span is None:
+                return False, "replacement_direction_mismatch"
+            if _action_mention_is_negated(claim, span[0]):
+                return False, "lifecycle_negated"
+            if _action_mention_is_historical(claim, span[0], span[1]):
+                return False, "historical_event_context"
+            continue
+        terms = _LIFECYCLE_GROUPS.get(action, (action,))
+        span, reason = _active_term_span(claim, terms)
+        if span is None:
+            return False, str(reason or "lifecycle_identity_mismatch")
+
+    wants_preview = any(action == "preview" for action in actions)
+    wants_ga = any(action == "ga" for action in actions)
+    if wants_preview:
+        ga_span, _ = _active_term_span(
+            claim,
+            ("general availability", "generally available", "stable release", "ga"),
+        )
+        if ga_span is not None:
+            return False, "preview_ga_mismatch"
+    if wants_ga:
+        ga_span, ga_reason = _active_term_span(
+            claim,
+            ("general availability", "generally available", "stable release", "ga"),
+        )
+        if ga_span is None:
+            return False, str(ga_reason or "preview_ga_mismatch")
+    if require_current_lifecycle and "benchmark" not in actions:
+        benchmark_span, _ = _active_term_span(
+            claim,
+            ("benchmark", "benchmarks", "benchmarked", "evaluation", "eval", "score", "scores"),
+        )
+        if benchmark_span is not None and any(
+            action in {"replace", "launch", "update", "preview", "ga"}
+            for action in actions
+        ):
+            return False, "benchmark_lifecycle_mismatch"
+    return True, "exact_event_identity"
 
 
 def _identity_surface_matches(text: str, signal: dict[str, Any], *, require_current_lifecycle: bool) -> tuple[bool, str]:
@@ -124,27 +268,36 @@ def _identity_surface_matches(text: str, signal: dict[str, Any], *, require_curr
     actions = _actions(signal)
     if not actions:
         return False, "lifecycle_identity_missing"
-    folded = text.casefold()
-    for action in actions:
-        if action == "replace":
-            if require_current_lifecycle and _BENCHMARK_RE.search(text):
-                return False, "benchmark_lifecycle_mismatch"
-            if len(anchors) < 2 or not _directed_replace_matches(text, anchors[0], anchors[1]):
-                return False, "replacement_direction_mismatch"
-            continue
-        terms = _LIFECYCLE_GROUPS.get(action, (action,))
-        if not any(_has_term(folded, term) for term in terms):
-            return False, "lifecycle_identity_mismatch"
-    wants_preview = any(action == "preview" for action in actions)
-    wants_ga = any(action == "ga" for action in actions)
-    if wants_preview and _GA_RE.search(text):
-        return False, "preview_ga_mismatch"
-    if wants_ga and not _GA_RE.search(text):
-        return False, "preview_ga_mismatch"
-    if require_current_lifecycle and "benchmark" not in actions and _BENCHMARK_RE.search(text):
-        if any(action in {"replace", "launch", "update", "preview", "ga"} for action in actions):
-            return False, "benchmark_lifecycle_mismatch"
-    return True, "exact_event_identity"
+
+    candidate_claims = [
+        claim for claim in _event_claims(text)
+        if all(_contains_exact_anchor(claim, anchor) for anchor in anchors)
+    ]
+    if not candidate_claims:
+        return False, "exact_event_claim_missing"
+
+    reasons: list[str] = []
+    for claim in candidate_claims:
+        ok, reason = _claim_lifecycle_matches(
+            claim,
+            signal,
+            require_current_lifecycle=require_current_lifecycle,
+        )
+        if ok:
+            return True, reason
+        reasons.append(reason)
+
+    for preferred in (
+        "lifecycle_negated",
+        "historical_event_context",
+        "benchmark_lifecycle_mismatch",
+        "preview_ga_mismatch",
+        "replacement_direction_mismatch",
+        "lifecycle_identity_mismatch",
+    ):
+        if preferred in reasons:
+            return False, preferred
+    return False, reasons[0] if reasons else "exact_event_claim_missing"
 
 
 def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, str]:
@@ -194,7 +347,7 @@ def extract_authoritative_event_surface(html_text: str) -> str:
         parser.feed(str(html_text or ""))
     except Exception:
         return ""
-    return _clean(" ".join(parser.parts[:10]))
+    return _clean(" | ".join(parser.parts[:10]))
 
 
 def candidate_exact_binding(candidate: dict[str, Any], signal: dict[str, Any], *, authoritative_domains: tuple[str, ...], authoritative_page_surface: str | None = None, authoritative_final_url: str | None = None) -> tuple[bool, str]:
