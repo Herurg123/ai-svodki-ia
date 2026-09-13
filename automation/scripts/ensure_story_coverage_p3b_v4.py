@@ -179,9 +179,20 @@ def _archive_exact_event_v4(
             }
             if candidate_url and candidate_url in story_urls:
                 return True
+            headline = str(story.get("headline") or "").strip()
+            organization = str(story.get("organization") or "").strip()
+            event_type = str(story.get("event_type") or "").strip()
+            signal_org = str(signal.get("organization") or "").strip()
+            if organization and (
+                _exact_binding.normalized_org(organization)
+                != _exact_binding.normalized_org(signal_org)
+            ):
+                continue
+            event_claim = " ".join(
+                part for part in (organization, headline) if part
+            )
             surface = " | ".join(
-                str(story.get(key) or "")
-                for key in ("headline", "organization", "event_type")
+                part for part in (event_claim, event_type) if part
             )
             try:
                 matched, _reason = _exact_binding.exact_event_identity(surface, signal)
