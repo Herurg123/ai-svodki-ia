@@ -2,17 +2,18 @@
 """P3b v4 runtime guard for hardened CLI and durable optional-slot ownership.
 
 The substantive exact-page binding remains in v2 and compatibility bridging in
-v3. This layer protects three orchestration boundaries: an existing durable slot
-must suppress any fresh legacy optional search before reuse eligibility is known,
-a provably current P3b reservation may be preempted before transport only by
-higher-priority required ``unverified`` resolution, and a merely reserved P3b
-slot must never override a runtime budget already exhausted by other Coverage
-work. The CLI and direct callers execute the same hardened path.
+v3. This layer protects orchestration boundaries around durable slot ownership,
+required-signal priority, exhausted Coverage budget, and exact archive admission.
+For mutable product lifecycles, archive semantic dedupe additionally requires
+strong event-specific detail overlap so distinct updates of one model are not
+collapsed merely because organization, version and lifecycle match. The CLI and
+direct callers execute the same hardened path.
 """
 from __future__ import annotations
 
 import copy
 import importlib.util
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -24,6 +25,7 @@ from coverage_slot_guard import (
     response_path,
     sha256_value,
 )
+import weak_source_exact_binding_v2 as _exact_binding
 
 _V3_PATH = Path(__file__).with_name("ensure_story_coverage_p3b_v3.py")
 _V3_SPEC = importlib.util.spec_from_file_location("ensure_story_coverage_p3b_v3_active", _V3_PATH)
@@ -39,10 +41,23 @@ for _name in dir(_v3):
 
 _V2_RUN_P3B_BINDING = _v2._run_p3b_binding_v2
 _PRE_RECALC_BUDGET_KEY = "_p3b_pre_recalc_budget"
+_ARCHIVE_MUTABLE_ACTIONS = frozenset({"update", "upgrade", "rollout"})
+_ARCHIVE_TOKEN_RE = re.compile(r"[a-z0-9]+(?:[.+-][a-z0-9]+)*", re.I)
+_ARCHIVE_GENERIC_TOKENS = frozenset({
+    "a", "an", "and", "ai", "announced", "announces", "announcement", "are",
+    "as", "at", "by", "for", "from", "in", "into", "is", "its", "latest",
+    "model", "models", "new", "now", "of", "official", "on", "product",
+    "release", "released", "releases", "rollout", "rolled", "out", "the", "to",
+    "today", "update", "updated", "updates", "upgrade", "upgraded", "upgrades",
+    "version", "with",
+})
 _V4_INTERNALS = {
-    "_v3", "_v2", "_V3_PATH", "_V3_SPEC", "_V2_RUN_P3B_BINDING",
-    "_PRE_RECALC_BUDGET_KEY", "_V4_INTERNALS", "_sync_p3b_public_hooks",
-    "_pull_p3b_runtime_state", "_guarded_run_p3b_binding_v2",
+    "_v3", "_v2", "_exact_binding", "_V3_PATH", "_V3_SPEC", "_V2_RUN_P3B_BINDING",
+    "_PRE_RECALC_BUDGET_KEY", "_ARCHIVE_MUTABLE_ACTIONS", "_ARCHIVE_TOKEN_RE",
+    "_ARCHIVE_GENERIC_TOKENS", "_V4_INTERNALS", "_sync_p3b_public_hooks",
+    "_pull_p3b_runtime_state", "_archive_identity_stop_tokens",
+    "_archive_discriminator_tokens", "_archive_mutable_event_detail_match",
+    "_archive_exact_event_v4", "_guarded_run_p3b_binding_v2",
     "_load_optional_journal", "_journal_matches_current_p3b_intent",
     "_release_unstarted_reservation_for_required",
     "_seal_existing_optional_slot_budget",
@@ -83,6 +98,101 @@ def _pull_p3b_runtime_state() -> None:
     for name in ("_LAST_RECALL_SENTINEL", "_LAST_AGENCY_RESCUE"):
         if hasattr(_v3, name):
             globals()[name] = getattr(_v3, name)
+
+
+def _archive_identity_stop_tokens(signal: dict[str, Any]) -> set[str]:
+    stops = set(_ARCHIVE_GENERIC_TOKENS)
+    values = [signal.get("organization")]
+    values.extend(signal.get("product_version_anchors") or [])
+    values.extend(signal.get("lifecycle_action_anchors") or [])
+    for value in values:
+        stops.update(
+            token.casefold()
+            for token in _ARCHIVE_TOKEN_RE.findall(str(value or ""))
+        )
+    return stops
+
+
+def _archive_discriminator_tokens(text: Any, signal: dict[str, Any]) -> set[str]:
+    stops = _archive_identity_stop_tokens(signal)
+    return {
+        token.casefold()
+        for token in _ARCHIVE_TOKEN_RE.findall(str(text or ""))
+        if len(token) > 1 and token.casefold() not in stops
+    }
+
+
+def _archive_mutable_event_detail_match(
+    candidate: dict[str, Any], story: dict[str, Any], signal: dict[str, Any]
+) -> bool:
+    candidate_text = " ".join(
+        str(candidate.get(key) or "") for key in ("title", "event_summary")
+    )
+    story_text = " ".join(
+        str(story.get(key) or "") for key in ("headline", "event_summary")
+    )
+    candidate_tokens = _archive_discriminator_tokens(candidate_text, signal)
+    story_tokens = _archive_discriminator_tokens(story_text, signal)
+    if not candidate_tokens or not story_tokens:
+        return False
+    shared = candidate_tokens & story_tokens
+    if len(shared) < 2:
+        return False
+    return len(shared) / min(len(candidate_tokens), len(story_tokens)) >= 0.5
+
+
+def _archive_exact_event_v4(
+    archive: dict[str, Any], candidate: dict[str, Any], signal: dict[str, Any]
+) -> bool:
+    """Require independent duplicate proof, especially for mutable model updates.
+
+    Exact source URL remains conclusive. Semantic matching first requires the
+    existing strict organization/version/lifecycle identity. Mutable lifecycle
+    actions can recur for one model, so their core identity is insufficient on
+    its own; at least two event-specific terms with strong overlap are required.
+    Ambiguous or underspecified archive rows therefore do not block admission.
+    """
+    source = candidate.get("primary_source")
+    candidate_url = str(source.get("url") or "").strip() if isinstance(source, dict) else ""
+    actions = {
+        str(item or "").strip().casefold()
+        for item in signal.get("lifecycle_action_anchors") or []
+        if str(item or "").strip()
+    }
+    mutable = bool(actions & _ARCHIVE_MUTABLE_ACTIONS)
+
+    for issue in archive.get("items") or []:
+        if not isinstance(issue, dict):
+            continue
+        if candidate_url and candidate_url in {
+            str(url).strip() for url in issue.get("source_urls") or []
+        }:
+            return True
+        for story in issue.get("stories") or []:
+            if not isinstance(story, dict):
+                continue
+            story_urls = {
+                str(row.get("url") or "").strip()
+                for row in story.get("sources") or []
+                if isinstance(row, dict)
+            }
+            if candidate_url and candidate_url in story_urls:
+                return True
+            surface = " ".join(
+                str(story.get(key) or "")
+                for key in ("headline", "organization", "event_type")
+            )
+            try:
+                matched, _reason = _exact_binding.exact_event_identity(surface, signal)
+            except Exception:
+                matched = False
+            if not matched:
+                continue
+            if not mutable:
+                return True
+            if _archive_mutable_event_detail_match(candidate, story, signal):
+                return True
+    return False
 
 
 def _load_optional_journal(publication_date: str | None) -> tuple[dict[str, Any] | None, bool]:
@@ -275,6 +385,8 @@ def main() -> int:
         _pull_p3b_runtime_state()
 
 
+_archive_exact_event = _archive_exact_event_v4
+_v2._archive_exact_event = _archive_exact_event_v4
 _v2._run_p3b_binding_v2 = _guarded_run_p3b_binding_v2
 
 
