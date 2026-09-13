@@ -218,16 +218,28 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
                     side_effect=sync_then_install_required_probe,
                 ),
                 mock.patch.object(
-                    coverage._impl,
+                    coverage,
                     "_run_handed_off_required_legacy",
                     side_effect=fake_handoff,
                 ),
                 mock.patch.object(
-                    coverage._impl,
+                    coverage,
                     "_V2_RUN_P3B_BINDING",
                     side_effect=AssertionError("P3b must not run ahead of required unverified resolution"),
                 ),
             ):
+                current_journal = coverage.load_journal(state, DATE)
+                self.assertIsNotNone(current_journal)
+                self.assertTrue(
+                    coverage._journal_matches_current_p3b_intent_v5(
+                        publication_date=DATE,
+                        journal=current_journal,
+                        model=MODEL,
+                        search_window=copy.deepcopy(WINDOW),
+                        archive={"items": []},
+                        signal=copy.deepcopy(SIGNAL),
+                    )
+                )
                 result = coverage.execute_audit_plan(
                     api_key="offline",
                     model=MODEL,
