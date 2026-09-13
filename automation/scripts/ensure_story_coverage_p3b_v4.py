@@ -4,10 +4,10 @@
 The substantive exact-page binding remains in v2 and compatibility bridging in
 v3. This layer protects three orchestration boundaries: an existing durable slot
 must suppress any fresh legacy optional search before reuse eligibility is known,
-an unstarted reservation may be preempted only by higher-priority required
-``unverified`` resolution, and a merely reserved P3b slot must never override a
-runtime budget already exhausted by other Coverage work. The CLI and direct
-callers execute the same hardened path.
+a provably current P3b reservation may be preempted before transport only by
+higher-priority required ``unverified`` resolution, and a merely reserved P3b
+slot must never override a runtime budget already exhausted by other Coverage
+work. The CLI and direct callers execute the same hardened path.
 """
 from __future__ import annotations
 
@@ -43,7 +43,8 @@ _V4_INTERNALS = {
     "_v3", "_v2", "_V3_PATH", "_V3_SPEC", "_V2_RUN_P3B_BINDING",
     "_PRE_RECALC_BUDGET_KEY", "_V4_INTERNALS", "_sync_p3b_public_hooks",
     "_pull_p3b_runtime_state", "_guarded_run_p3b_binding_v2",
-    "_load_optional_journal", "_release_unstarted_reservation_for_required",
+    "_load_optional_journal", "_journal_matches_current_p3b_intent",
+    "_release_unstarted_reservation_for_required",
     "_seal_existing_optional_slot_budget",
     "_run_p3b_binding_v2", "_P3A_MAIN", "execute_audit_plan", "main",
     "__getattr__",
@@ -91,6 +92,37 @@ def _load_optional_journal(publication_date: str | None) -> tuple[dict[str, Any]
         return load_journal(Path(STATE_DIR), publication_date), False
     except CoverageSlotError:
         return None, True
+
+
+def _journal_matches_current_p3b_intent(
+    *,
+    publication_date: str,
+    journal: dict[str, Any],
+    model: str,
+    search_window: dict[str, Any],
+    archive: dict[str, Any],
+) -> bool:
+    """Prove a reserved journal is P3b before allowing priority preemption.
+
+    Foreign/mismatched reservations remain fail-closed. The request hash is used
+    only for intent identity here, never as a proxy for whether the slot exists
+    or is already occupied.
+    """
+    if str(journal.get("state") or "") != "reserved":
+        return False
+    try:
+        signal = _v2.select_p3b_signal(_v2._p3b_signals(publication_date))
+        if signal is None:
+            return False
+        hashes = _v2._p3b_contract_hashes(
+            signal=signal,
+            model=model,
+            search_window=search_window,
+            archive=archive,
+        )
+    except Exception:
+        return False
+    return str(journal.get("request_contract_sha256") or "") in hashes
 
 
 def _release_unstarted_reservation_for_required(
@@ -177,10 +209,20 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
     publication_date = _v2._valid_publication_date(kwargs.get("publication_date"))
     journal, invalid_journal = _load_optional_journal(publication_date)
     required_before = list(_v2._pre._required_signals(publication_date)) if publication_date else []
+    search_window = kwargs.get("search_window") or {}
+    archive = kwargs.get("archive") or {}
+    model = str(kwargs.get("model") or "")
     if (
         publication_date
         and required_before
         and isinstance(journal, dict)
+        and _journal_matches_current_p3b_intent(
+            publication_date=publication_date,
+            journal=journal,
+            model=model,
+            search_window=search_window,
+            archive=archive,
+        )
         and _release_unstarted_reservation_for_required(publication_date, journal)
     ):
         journal = None
