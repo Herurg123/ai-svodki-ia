@@ -250,6 +250,24 @@ Live-тест 29.08.2026 подтвердил idempotency marker уже доба
 точный title имеет `rgba(6, 6, 15, 0.6)`. Alpha `<= 0.70` трактуется как
 already-added и повторный click не выполняется.
 
+Начиная с live-изменения Дзен 13.09.2026, exact target может находиться ниже
+видимой части внутреннего scroll-контейнера. Перед единственным collection click
+worker выполняет `scrollIntoViewIfNeeded`, повторно проверяет геометрию относительно
+модалки/viewport и подтверждает hit-test через `elementFromPoint`. Если target не
+является фактическим элементом под рассчитанной точкой, клик запрещён.
+
+После клика общий page-wide success-text считается только диагностикой и сам по
+себе не переводит target в `ADDED`. Нужен target-local selected/muted state
+(`alpha <= 0.70`) либо такой же exact-target state после повторного открытия
+модалки. Повторное открытие выполняется только для verification и не даёт права
+на второй collection click.
+
+Live-run 13.09.2026 подтвердил этот путь на обеих целях: digest успешно прошёл
+scroll/hit-test; video после единственного click показало общий success-text,
+который не был принят как доказательство, после чего exact `Видеосводки по ИИ`
+при повторном открытии стало `rgba(6, 6, 15, 0.6)` и только тогда state стал
+`ADDED`, а агрегат `COMPLETE`.
+
 ## 8. Что переносить со старой машины
 
 По необходимости переносить отдельно от Git:
@@ -293,6 +311,10 @@ Get-Content -Raw C:\TRASH\NotebookLMBot\config.json | ConvertFrom-Json | Out-Nul
   checkbox-click и последующее продолжение verification;
 - подтверждение `PUBLISHED` через Studio `Видео` после успешного live publish;
 - `job.dzenCollections.video.status` и `job.dzenCollections.digest.status`;
+- при scrollable collections modal target должен быть прокручен в видимую область
+  и hit-test подтверждён до единственного click;
+- page-wide success-text без target-local muted/selected state не должен давать
+  `ADDED`;
 - при `dzenCollections.status=COMPLETE` отсутствие новых запусков browser для
   этапа подборок.
 
