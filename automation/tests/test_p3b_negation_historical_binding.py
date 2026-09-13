@@ -25,10 +25,17 @@ binder = load("p3b_negation_historical_binder", "weak_source_exact_binding_v2.py
 class P3bNegationHistoricalBindingTests(unittest.TestCase):
     @staticmethod
     def signal(*, action: str = "replace", anchors: list[str] | None = None) -> dict:
+        selected_anchors = anchors or ["V4 Pro", "V4.1 Flash"]
+        title = (
+            "DeepSeek replaces V4 Pro with V4.1 Flash"
+            if action == "replace" and selected_anchors == ["V4 Pro", "V4.1 Flash"]
+            else f"DeepSeek {action} {' '.join(selected_anchors)}"
+        )
         return {
             "signal_id": "weak-source-p1-negation-history",
+            "title": title,
             "organization": "DeepSeek",
-            "product_version_anchors": anchors or ["V4 Pro", "V4.1 Flash"],
+            "product_version_anchors": selected_anchors,
             "lifecycle_action_anchors": [action],
             "source_provenance": {
                 "url": "https://huggingnews.com/ai/deepseek-v41-flash",

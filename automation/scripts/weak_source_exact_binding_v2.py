@@ -149,6 +149,34 @@ def _directed_replace_matches(text: str, old_anchor: str, new_anchor: str) -> bo
     return _directed_replace_span(text, old_anchor, new_anchor) is not None
 
 
+def _replacement_roles(signal: dict[str, Any]) -> tuple[tuple[str, str] | None, str]:
+    """Infer old/new roles from the retained weak-source claim, never anchor order."""
+    anchors = _anchors(signal)
+    if len(anchors) < 2:
+        return None, "replacement_direction_mismatch"
+    title = _clean(signal.get("title"))
+    if not title:
+        return None, "replacement_direction_mismatch"
+
+    matches: list[tuple[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    for old_anchor in anchors:
+        for new_anchor in anchors:
+            if old_anchor.casefold() == new_anchor.casefold():
+                continue
+            if _directed_replace_span(title, old_anchor, new_anchor) is None:
+                continue
+            key = (old_anchor.casefold(), new_anchor.casefold())
+            if key in seen:
+                continue
+            seen.add(key)
+            matches.append((old_anchor, new_anchor))
+
+    if len(matches) != 1:
+        return None, "replacement_direction_mismatch"
+    return matches[0], "replacement_roles_from_signal_claim"
+
+
 def _event_claims(text: str) -> list[str]:
     cleaned = _clean(text)
     if not cleaned:
@@ -203,15 +231,16 @@ def _claim_lifecycle_matches(
     *,
     require_current_lifecycle: bool,
 ) -> tuple[bool, str]:
-    anchors = _anchors(signal)
     actions = _actions(signal)
     for action in actions:
         if action == "replace":
             if require_current_lifecycle and _BENCHMARK_RE.search(claim):
                 return False, "benchmark_lifecycle_mismatch"
-            if len(anchors) < 2:
-                return False, "replacement_direction_mismatch"
-            span = _directed_replace_span(claim, anchors[0], anchors[1])
+            roles, role_reason = _replacement_roles(signal)
+            if roles is None:
+                return False, role_reason
+            old_anchor, new_anchor = roles
+            span = _directed_replace_span(claim, old_anchor, new_anchor)
             if span is None:
                 return False, "replacement_direction_mismatch"
             if _action_mention_is_negated(claim, span[0]):
