@@ -257,34 +257,21 @@ async function openCollectionModal(page, row, title) {
 async function findCollectionCard(page, modal, name, logger, timeoutMs = COLLECTION_CARD_TIMEOUT_MS) {
   const deadline = Date.now() + timeoutMs;
   let waitLogged = false;
-
   while (true) {
-    if (!(await modal.isVisible().catch(() => false))) {
-      throw new Error(`Окно подборок закрылось до появления «${name}».`);
-    }
-
+    if (!(await modal.isVisible().catch(() => false))) throw new Error(`Окно подборок закрылось до появления «${name}».`);
     const text = modal.getByText(name, { exact: true });
     const visible = [];
     for (let i = 0; i < await text.count().catch(() => 0); i += 1) {
       if (await text.nth(i).isVisible().catch(() => false)) visible.push(text.nth(i));
     }
-
     const lookupState = classifyCollectionCardLookup(visible.length, Date.now() >= deadline);
-    if (lookupState === "AMBIGUOUS") {
-      throw new Error(`Ожидалась одна видимая подборка «${name}», найдено ${visible.length}.`);
-    }
-    if (lookupState === "TIMEOUT") {
-      throw new Error(`Не дождался загрузки подборки «${name}» за ${timeoutMs} мс: видимых точных совпадений 0.`);
-    }
+    if (lookupState === "AMBIGUOUS") throw new Error(`Ожидалась одна видимая подборка «${name}», найдено ${visible.length}.`);
+    if (lookupState === "TIMEOUT") throw new Error(`Не дождался загрузки подборки «${name}» за ${timeoutMs} мс: видимых точных совпадений 0.`);
     if (lookupState === "WAIT") {
-      if (!waitLogged) {
-        logger.log(`Окно подборок открыто; жду загрузку плашки «${name}» до ${timeoutMs} мс.`);
-        waitLogged = true;
-      }
+      if (!waitLogged) { logger.log(`Окно подборок открыто; жду загрузку плашки «${name}» до ${timeoutMs} мс.`); waitLogged = true; }
       await page.waitForTimeout(COLLECTION_CARD_POLL_MS);
       continue;
     }
-
     const marker = `ai-svodki-card-${Date.now()}`;
     const ok = await visible[0].evaluate((el, markerValue) => {
       let node = el, best = null;
@@ -298,6 +285,51 @@ async function findCollectionCard(page, modal, name, logger, timeoutMs = COLLECT
     if (waitLogged) logger.log(`Плашка «${name}» загрузилась; продолжаю.`);
     return modal.locator(`[data-ai-svodki-card="${marker}"]`).first();
   }
+}
+function collectionClickGeometry(cardBox, modalBox, viewport) {
+  const finiteBox = (box) => box && [box.x, box.y, box.width, box.height].every(Number.isFinite) && box.width > 0 && box.height > 0;
+  if (!finiteBox(cardBox)) return { safe: false, reason: "card-geometry" };
+  if (!finiteBox(modalBox)) return { safe: false, reason: "modal-geometry" };
+  if (!viewport || !Number.isFinite(viewport.width) || !Number.isFinite(viewport.height) || viewport.width <= 0 || viewport.height <= 0) return { safe: false, reason: "viewport-geometry" };
+  const x = cardBox.x + cardBox.width * 0.72;
+  const y = cardBox.y + cardBox.height * 0.50;
+  const insideModal = x >= modalBox.x && x <= modalBox.x + modalBox.width && y >= modalBox.y && y <= modalBox.y + modalBox.height;
+  const insideViewport = x >= 0 && x < viewport.width && y >= 0 && y < viewport.height;
+  return { safe: insideModal && insideViewport, x, y, insideModal, insideViewport, reason: insideModal && insideViewport ? null : "click-point-clipped" };
+}
+async function readViewportSize(page) {
+  return page.evaluate(() => ({ width: window.innerWidth, height: window.innerHeight })).catch(() => null);
+}
+async function prepareCollectionCardClick(page, modal, card, name, logger) {
+  const beforeCardBox = await card.boundingBox().catch(() => null);
+  const beforeModalBox = await modal.boundingBox().catch(() => null);
+  const beforeViewport = await readViewportSize(page);
+  const before = collectionClickGeometry(beforeCardBox, beforeModalBox, beforeViewport);
+  if (!before.safe) logger.log(`Подборка «${name}» найдена вне безопасной области клика модалки; прокручиваю найденную плашку в видимую область.`);
+  await card.scrollIntoViewIfNeeded({ timeout: 10_000 });
+  await page.waitForTimeout(250);
+  const measureAndHitTest = async () => {
+    const cardBox = await card.boundingBox().catch(() => null);
+    const modalBox = await modal.boundingBox().catch(() => null);
+    const viewport = await readViewportSize(page);
+    const geometry = collectionClickGeometry(cardBox, modalBox, viewport);
+    if (!geometry.safe) return { geometry, hit: false };
+    const hit = await card.evaluate((el, point) => {
+      const top = document.elementFromPoint(point.x, point.y);
+      return Boolean(top && (top === el || el.contains(top)));
+    }, { x: geometry.x, y: geometry.y }).catch(() => false);
+    return { geometry, hit };
+  };
+  let verified = await measureAndHitTest();
+  if (!verified.hit) {
+    await card.evaluate((el) => { el.scrollIntoView({ block: "center", inline: "nearest", behavior: "auto" }); }).catch(() => {});
+    await page.waitForTimeout(250);
+    verified = await measureAndHitTest();
+  }
+  if (!verified.geometry.safe) throw new Error(`После прокрутки плашки «${name}» точка клика всё ещё вне видимой области (reason=${verified.geometry.reason || "unknown"}). Клик НЕ выполняю.`);
+  if (!verified.hit) throw new Error(`После прокрутки плашки «${name}» hit-test не подтвердил целевую карточку в точке клика. Клик НЕ выполняю.`);
+  logger.log(`Плашка «${name}» приведена в видимую область; click-point подтверждён: x=${Math.round(verified.geometry.x)}, y=${Math.round(verified.geometry.y)}.`);
+  return { x: verified.geometry.x, y: verified.geometry.y };
 }
 async function alreadyAdded(card, name) {
   return card.evaluate((el, expected) => {
@@ -315,18 +347,50 @@ async function alreadyAdded(card, name) {
     return { selected: explicit || (Number.isFinite(alpha) && alpha <= 0.70), explicit, alpha, color };
   }, name);
 }
-async function waitAccepted(page, card, name, before) {
-  const deadline = Date.now() + 8_000;
-  while (Date.now() < deadline) {
-    const body = normalizeText(await page.locator("body").innerText().catch(() => ""));
-    if (/добавлен[ао]? в подборку|публикаци[яи].*добавлен/i.test(body)) return "success-text";
-    const after = await alreadyAdded(card, name).catch(() => null);
-    if (after?.selected && !before.selected) return "muted-tile";
-    await page.waitForTimeout(300);
-  }
+function classifyCollectionConfirmation(immediateSelected, reopenedSelected, sawSuccessText) {
+  if (immediateSelected) return "muted-tile";
+  if (reopenedSelected) return "reopened-muted-tile";
+  if (sawSuccessText) return null;
   return null;
 }
+async function waitAccepted(page, card, name, before, timeoutMs = 2_500) {
+  const deadline = Date.now() + timeoutMs;
+  let sawSuccessText = false;
+  while (Date.now() < deadline) {
+    const body = normalizeText(await page.locator("body").innerText().catch(() => ""));
+    if (/добавлен[ао]? в подборку|публикаци[яи].*добавлен/i.test(body)) sawSuccessText = true;
+    const after = await alreadyAdded(card, name).catch(() => null);
+    if (after?.selected && !before.selected) return { confirmed: true, signal: "muted-tile", sawSuccessText };
+    await page.waitForTimeout(300);
+  }
+  return { confirmed: false, signal: null, sawSuccessText };
+}
 async function closeOverlay(page) { await page.keyboard.press("Escape").catch(() => {}); await page.waitForTimeout(250); }
+async function verifyCollectionMembershipAfterClick(page, dateKey, target, title, logger) {
+  await closeOverlay(page);
+  await openPublications(page);
+  await ensureAllFilter(page);
+  const row = await findPublicationRow(page, target, dateKey, logger);
+  if (!row) throw new Error(`После клика не удалось повторно найти публикацию «${title}» для проверки подборки. Повторный клик запрещён.`);
+  const modal = await openCollectionModal(page, row, title);
+  const card = await findCollectionCard(page, modal, target.collectionName, logger);
+  await card.scrollIntoViewIfNeeded({ timeout: 10_000 });
+  await page.waitForTimeout(250);
+  const deadline = Date.now() + 8_000;
+  let after = null;
+  while (Date.now() < deadline) {
+    after = await alreadyAdded(card, target.collectionName).catch(() => null);
+    if (after?.selected) {
+      logger.log(`Повторная проверка подтверждает membership: «${target.collectionName}» already-selected=true; title-color=${after.color}; title-alpha=${after.alpha}.`);
+      await closeOverlay(page);
+      return { confirmed: true, signal: "reopened-muted-tile", after };
+    }
+    await page.waitForTimeout(300);
+  }
+  if (after) logger.log(`Повторная проверка НЕ подтвердила membership: «${target.collectionName}» already-selected=${after.selected}; title-color=${after.color}; title-alpha=${after.alpha}.`);
+  await closeOverlay(page);
+  return { confirmed: false, signal: null, after };
+}
 async function processTarget(page, config, dateKey, target, apply, logger) {
   await openPublications(page); await ensureAllFilter(page);
   const title = titleFor(target, dateKey); const row = await findPublicationRow(page, target, dateKey, logger);
@@ -337,14 +401,21 @@ async function processTarget(page, config, dateKey, target, apply, logger) {
   logger.log(`Подборка «${target.collectionName}»: already-selected=${before.selected}; title-color=${before.color}; title-alpha=${before.alpha}.`);
   if (!apply) { await closeOverlay(page); return { status: "dry-run", title }; }
   if (before.selected) { logger.log(`Уже в «${target.collectionName}». Повторный клик НЕ выполняю.`); await closeOverlay(page); return { status: "already-added", title }; }
-  const box = await card.boundingBox(); if (!box) throw new Error(`Нет геометрии плашки «${target.collectionName}».`);
-  const x = box.x + box.width * 0.72, y = box.y + box.height * 0.50;
-  logger.log(`APPLY: один клик по плашке «${target.collectionName}»: x=${Math.round(x)}, y=${Math.round(y)}.`);
-  await page.mouse.click(x, y);
-  const signal = await waitAccepted(page, card, target.collectionName, before);
-  if (!signal) throw new Error(`После единственного клика по «${target.collectionName}» нет подтверждения успеха. Повторный клик запрещён.`);
-  logger.log(`Добавление подтверждено: «${title}» -> «${target.collectionName}», signal=${signal}.`);
-  await closeOverlay(page); return { status: "added", title, signal };
+  const clickPoint = await prepareCollectionCardClick(page, modal, card, target.collectionName, logger);
+  logger.log(`APPLY: один клик по плашке «${target.collectionName}»: x=${Math.round(clickPoint.x)}, y=${Math.round(clickPoint.y)}.`);
+  await page.mouse.click(clickPoint.x, clickPoint.y);
+  const immediate = await waitAccepted(page, card, target.collectionName, before);
+  if (immediate.confirmed) {
+    logger.log(`Добавление подтверждено состоянием целевой плашки: «${title}» -> «${target.collectionName}», signal=${immediate.signal}.`);
+    await closeOverlay(page);
+    return { status: "added", title, signal: immediate.signal };
+  }
+  if (immediate.sawSuccessText) logger.log(`После клика виден общий success-text, но он НЕ считается подтверждением для «${target.collectionName}». Перепроверяю exact target через повторное открытие модалки.`);
+  else logger.log(`После клика целевая плашка не перешла в confirmed-selected состояние. Перепроверяю exact target через повторное открытие модалки.`);
+  const recheck = await verifyCollectionMembershipAfterClick(page, dateKey, target, title, logger);
+  if (!recheck.confirmed) throw new Error(`После единственного клика по «${target.collectionName}» membership не подтверждён целевой плашкой даже после повторного открытия. Повторный клик запрещён.`);
+  logger.log(`Добавление подтверждено повторной проверкой: «${title}» -> «${target.collectionName}», signal=${recheck.signal}.`);
+  return { status: "added", title, signal: recheck.signal };
 }
 function runSelfTest() {
   const date = "2026-08-29";
@@ -357,6 +428,16 @@ function runSelfTest() {
   if (classifyCollectionCardLookup(1, false) !== "FOUND") throw new Error("one collection must be found");
   if (classifyCollectionCardLookup(0, true) !== "TIMEOUT") throw new Error("empty modal after deadline must time out");
   if (classifyCollectionCardLookup(2, false) !== "AMBIGUOUS") throw new Error("duplicate collection matches must fail closed");
+  const viewport = { width: 1365, height: 768 };
+  const modalBox = { x: 16, y: 8, width: 640, height: 636 };
+  if (collectionClickGeometry({ x: 40, y: 700, width: 580, height: 90 }, modalBox, viewport).safe) throw new Error("collection below modal viewport must not be clickable before scroll");
+  if (collectionClickGeometry({ x: 40, y: 630, width: 580, height: 90 }, modalBox, viewport).safe) throw new Error("collection click-point below modal bottom must fail closed");
+  const afterScroll = collectionClickGeometry({ x: 40, y: 500, width: 580, height: 90 }, modalBox, viewport);
+  if (!afterScroll.safe) throw new Error("collection moved into modal viewport must become click-safe");
+  if (classifyCollectionConfirmation(true, false, false) !== "muted-tile") throw new Error("immediate target selection must confirm");
+  if (classifyCollectionConfirmation(false, true, false) !== "reopened-muted-tile") throw new Error("reopened target selection must confirm");
+  if (classifyCollectionConfirmation(false, false, true) !== null) throw new Error("page-wide success text alone must never confirm");
+  if (classifyCollectionConfirmation(false, false, false) !== null) throw new Error("missing target confirmation must fail closed");
   console.log("Dzen collections contract self-test: OK");
 }
 async function main(argv = process.argv.slice(2)) {
@@ -378,7 +459,7 @@ async function main(argv = process.argv.slice(2)) {
         const result = await processTarget(session.primaryPage, config, dateKey, target, args.apply, logger);
         if (!args.apply) continue;
         if (["added", "already-added"].includes(result.status)) {
-          const status = updateCollectionTarget(config, state, job, target, { status: "ADDED", title: result.title, confirmedAt: new Date().toISOString(), confirmedBy: result.status === "added" ? "ui-success-after-click" : "existing-muted-tile", lastResult: result.status, lastAttemptAt: new Date().toISOString(), lastError: null, lastErrorAt: null });
+          const status = updateCollectionTarget(config, state, job, target, { status: "ADDED", title: result.title, confirmedAt: new Date().toISOString(), confirmedBy: result.status === "added" ? (result.signal || "target-local-ui-confirmation") : "existing-muted-tile", lastResult: result.status, lastAttemptAt: new Date().toISOString(), lastError: null, lastErrorAt: null });
           logger.log(`STATE: ${target.key}=ADDED; dzenCollections=${status}.`);
         } else if (result.status === "missing") {
           const status = updateCollectionTarget(config, state, job, target, { status: "PENDING", title: result.title, lastResult: "missing", lastAttemptAt: new Date().toISOString(), lastError: null, lastErrorAt: null });
@@ -398,5 +479,5 @@ async function main(argv = process.argv.slice(2)) {
   }
 }
 
-module.exports = { COLLECTION_CARD_TIMEOUT_MS, TARGETS, classifyCollectionCardLookup, collectionsComplete, collectionsStatus, findJobForDate, main, parseDateKey, targetIsAdded, titleFor, updateCollectionTarget };
+module.exports = { COLLECTION_CARD_TIMEOUT_MS, TARGETS, classifyCollectionCardLookup, classifyCollectionConfirmation, collectionClickGeometry, collectionsComplete, collectionsStatus, findJobForDate, main, parseDateKey, targetIsAdded, titleFor, updateCollectionTarget };
 if (require.main === module) main().catch((e) => { console.error(e.stack || e.message); process.exitCode = 1; });
