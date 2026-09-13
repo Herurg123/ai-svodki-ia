@@ -7,6 +7,11 @@ existing P3b journal before legacy optional search routing, passes publication
 date explicitly, binds identity to the fetched authoritative page, runs the
 existing deterministic Event/Source Freshness gate before positive admission,
 and never treats model-supplied terminal labels as independent proof.
+
+The hardened binder is restored explicitly after the historical v1 compatibility
+export and after every compatibility sync. Direct imports of this module therefore
+have the same v2 binder semantics regardless of import order, while the preserved
+v1 module keeps its original binder functions and version constants.
 """
 from __future__ import annotations
 
@@ -20,16 +25,10 @@ from typing import Any, Callable
 import source_freshness as _source_freshness
 from coverage_slot_guard import CoverageSlotError, load_journal, prepare_slot, sha256_value
 from coverage_slot_transport import protected_policy_audit_request, replay_raw_response, replay_result_snapshot
-from weak_source_exact_binding_v2 import (
-    MODE as P3B_MODE,
-    VERSION as P3B_EXACT_BINDING_VERSION,
-    build_prompt as _build_prompt_v1,
-    build_query as build_p3b_query,
-    candidate_exact_binding,
-    extract_authoritative_event_surface,
-    qualifying_signals as qualifying_p3b_signals,
-    select_signal as select_p3b_signal,
-)
+import weak_source_exact_binding_v2 as _binding_v2
+
+_build_prompt_v1 = _binding_v2.build_prompt
+extract_authoritative_event_surface = _binding_v2.extract_authoritative_event_surface
 
 _V1_PATH = Path(__file__).with_name("ensure_story_coverage_p3b.py")
 _V1_SPEC = importlib.util.spec_from_file_location("ensure_story_coverage_p3b_v1", _V1_PATH)
@@ -38,17 +37,50 @@ _v1 = importlib.util.module_from_spec(_V1_SPEC)
 sys.modules[_V1_SPEC.name] = _v1
 _V1_SPEC.loader.exec_module(_v1)
 
+_V1_BINDER_EXPORTS = {
+    "build_p3b_query": _v1.build_p3b_query,
+    "candidate_exact_binding": _v1.candidate_exact_binding,
+    "qualifying_p3b_signals": _v1.qualifying_p3b_signals,
+    "rejection_exact_terminal_binding": _v1.rejection_exact_terminal_binding,
+    "select_p3b_signal": _v1.select_p3b_signal,
+}
+_V1_BINDER_CONSTANTS = {
+    "P3B_EXACT_BINDING_VERSION": _v1.P3B_EXACT_BINDING_VERSION,
+    "P3B_MODE": _v1.P3B_MODE,
+}
+
 for _name in dir(_v1):
     if not (_name.startswith("__") and _name.endswith("__")):
         globals()[_name] = getattr(_v1, _name)
 
-# Restore v2 symbols overwritten by the compatibility export above.
-P3B_EXACT_BINDING_VERSION = 2
-P3B_MODE = "weak_source_exact_authoritative_binding"
+
+def _restore_active_binders() -> None:
+    global build_p3b_query, candidate_exact_binding, qualifying_p3b_signals
+    global rejection_exact_terminal_binding, select_p3b_signal
+    global P3B_EXACT_BINDING_VERSION, P3B_MODE, extract_authoritative_event_surface
+    build_p3b_query = _binding_v2.build_query
+    candidate_exact_binding = _binding_v2.candidate_exact_binding
+    qualifying_p3b_signals = _binding_v2.qualifying_signals
+    rejection_exact_terminal_binding = _binding_v2.rejection_exact_terminal_binding
+    select_p3b_signal = _binding_v2.select_signal
+    extract_authoritative_event_surface = _binding_v2.extract_authoritative_event_surface
+    P3B_EXACT_BINDING_VERSION = _binding_v2.VERSION
+    P3B_MODE = _binding_v2.MODE
+    for name, value in _V1_BINDER_EXPORTS.items():
+        setattr(_v1, name, value)
+    for name, value in _V1_BINDER_CONSTANTS.items():
+        setattr(_v1, name, value)
+
+
+_restore_active_binders()
 
 _SYNC_EXCLUSIONS = {
     "main", "execute_audit_plan", "_p3b_execute", "_sync_p3b_public_hooks",
     "_pull_p3b_runtime_state", "_run_p3b_binding_v2", "_process_p3b_payload_v2",
+    "_binding_v2", "_build_prompt_v1", "_V1_BINDER_EXPORTS", "_V1_BINDER_CONSTANTS",
+    "_restore_active_binders", "build_p3b_query", "candidate_exact_binding",
+    "qualifying_p3b_signals", "rejection_exact_terminal_binding", "select_p3b_signal",
+    "extract_authoritative_event_surface", "P3B_EXACT_BINDING_VERSION", "P3B_MODE",
 }
 
 
@@ -59,7 +91,9 @@ def _sync_p3b_public_hooks() -> None:
             continue
         if hasattr(_v1, name):
             setattr(_v1, name, value)
+    _restore_active_binders()
     _v1._sync_p3b_public_hooks()
+    _restore_active_binders()
 
 
 def _pull_p3b_runtime_state() -> None:
@@ -160,13 +194,12 @@ def _archive_exact_event(archive: dict[str, Any], candidate: dict[str, Any], sig
             }
             if candidate_url and candidate_url in story_urls:
                 return True
-            surface = " ".join(
+            surface = " | ".join(
                 str(story.get(key) or "")
                 for key in ("headline", "organization", "event_type")
             )
             try:
-                from weak_source_exact_binding_v2 import exact_event_identity
-                matched, _reason = exact_event_identity(surface, signal)
+                matched, _reason = _binding_v2.exact_event_identity(surface, signal)
             except Exception:
                 matched = False
             if matched:
