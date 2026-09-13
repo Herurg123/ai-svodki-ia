@@ -4,7 +4,7 @@ Date: 2026-09-12 / final remediation audit 2026-09-13
 
 PR: #175 `Add P3b exact authoritative weak-source binding`
 
-Status: implementation, Astra remediation, permanent offline regressions and canonical documentation are complete. The remaining pre-merge gate is a new independent Astra review of the final exact PR head.
+Status: implementation, Astra remediation, permanent offline regressions and canonical documentation are complete. Runtime code head `654eada715382789982b2d847e98c0846e5b6a11` passed PR Gate #368 with 803/803 tests. Documentation synchronization follows that green code head, so the final documentation-inclusive exact SHA must pass a fresh PR Gate before independent Astra handoff. The remaining pre-merge gate after that is a new independent Astra review of the unchanged final exact PR head.
 
 ## Scope
 
@@ -29,7 +29,7 @@ No production workflow, user production API or paid Web Search was used for impl
 
 ## Active exact identity contract
 
-The active binder is `weak_source_exact_binding_v2.py`, `VERSION=2`. The public Coverage entrypoint routes through active v4 → v3 → v2 orchestration; historical P3b v1 and the byte-preserved P3a implementation remain compatibility/reference layers.
+The active binder implementation is `weak_source_exact_binding_v3.py`. It deliberately preserves binder `VERSION=2` and the existing P3b mode so saved v2 request contracts/journals remain recognizable; v3 is semantic hardening, not a new durable contract generation. The public Coverage entrypoint routes through active v5 → v4 → v3 → v2 compatibility orchestration. Historical P3b v1/v2 semantics and the byte-preserved P3a implementation remain compatibility/reference layers, not active exact-binding semantics.
 
 A positive admission requires all of the following:
 
@@ -40,7 +40,7 @@ A positive admission requires all of the following:
 - every retained product/model/version anchor matches exactly rather than by fuzzy prefix;
 - lifecycle/action is compatible with the retained signal;
 - for replacement, old/new roles are inferred from the retained signal claim, not anchor-array order, and candidate/page must assert the same direction;
-- negated lifecycle claims and historical/background mentions are not current-event proof;
+- negated lifecycle claims, historical/background mentions and prospective/planned actions are not current-event proof;
 - canonical `general_availability` is normalized to GA semantics; preview and GA remain distinct;
 - unknown named/numeric model suffixes do not collapse into a shorter retained anchor;
 - primary/final URL is in the existing authoritative allowlist and cannot be the weak-source host;
@@ -50,13 +50,13 @@ A positive admission requires all of the following:
 
 The actor-attribution guard is intentionally conservative because P3b is opportunistic. `DeepSeek says OpenAI launches V4.1 Flash`, lowercase foreign-actor/reporting forms, and role-attribution forms such as `DeepSeek says the rival launches V4.1 Flash` do not prove a DeepSeek launch even though the organization, version and lifecycle words occur in one sentence. The inverse `OpenAI says DeepSeek launches V4.1 Flash` still attributes the lifecycle event to DeepSeek and is eligible for the remaining exact-binding checks. A direct form such as `DeepSeek announces V4.1 Flash launch` remains bindable.
 
-Provider/model terminal-negative labels are diagnostic only. `rejection_exact_terminal_binding()` in active v2 does not treat a model `duplicate`/`unverified` label as proof. A negative disposition needs independent deterministic evidence elsewhere in the pipeline; the model label itself never closes the weak-source signal.
+Provider/model terminal-negative labels are diagnostic only. The active binder does not treat a model `duplicate`/`unverified` label as proof. A negative disposition needs independent deterministic evidence elsewhere in the pipeline; the model label itself never closes the weak-source signal.
 
 Admitted candidates carry:
 
 - `audit_direction="weak_source_exact_binding"`;
 - `resolution_signal_ids=[signal_id]`;
-- `p3b_exact_binding_version=2`;
+- `p3b_exact_binding_version=2` because v3 intentionally preserves the durable v2 contract version;
 - authoritative-page proof metadata.
 
 ## Archive exact-event contract
@@ -67,7 +67,7 @@ For singular lifecycle identities such as a directed replacement, the strict org
 
 Structured archive `organization` may supply the organization identity for its own story row when the headline omits it, but it cannot reassign a headline that attributes the event to another actor. Thus a row with `organization=DeepSeek` and headline `OpenAI launches V4.1 Flash` is not same-event proof for a DeepSeek launch.
 
-For mutable lifecycle actions such as `update`/`upgrade`/`rollout`, organization + model/version + lifecycle is insufficient because one product can receive many distinct updates. Semantic archive rejection therefore additionally requires an exact normalized event-detail fingerprint after removing identity and generic update words. Partial lexical overlap is deliberately non-terminal. This prevents high-overlap distinct updates such as `video input support` vs `video output support` from being collapsed while preserving exact-URL duplicate proof and exact same-update semantic proof.
+For mutable lifecycle actions such as `update`/`upgrade`/`rollout`, organization + model/version + lifecycle is insufficient because one product can receive many distinct updates. Semantic archive rejection therefore additionally requires an exact normalized ordered event-detail fingerprint after removing identity and generic update words. Partial lexical overlap is deliberately non-terminal. This prevents high-overlap distinct updates such as `video input support` vs `video output support` from being collapsed while preserving exact-URL duplicate proof and exact same-update semantic proof.
 
 ## Durable optional-slot / recovery proof
 
@@ -82,8 +82,11 @@ Rules:
 - `response_saved` replays the saved provider response/result offline, with no new provider search and no mutable authoritative-page refetch; if durable page proof was not saved before interruption, replay fails closed rather than inventing proof;
 - `processed` reuses the saved hardened result;
 - a reserved slot cannot override evidence that the runtime already consumed seven Coverage calls;
-- a current unstarted P3b reservation may be released for a higher-priority required `unverified` obligation only when request-contract identity is proven and there is independently no admitted wire attempt, consumed/ambiguous flag, response hash/file or concurrent journal mutation;
-- foreign/mismatched/invalid reservations remain fail-closed.
+- a current unstarted P3b reservation may be released for a higher-priority required `unverified` obligation only when exact request-contract identity is proven and there is independently no admitted wire attempt, consumed/ambiguous flag, response hash/file or concurrent journal mutation;
+- release is atomic with respect to the observed journal and only the proven P3b reservation can be removed; foreign/mismatched/invalid reservations remain fail-closed;
+- after that release, v5 deliberately suppresses the compatibility scheduler's unjournaled seventh-search path and hands slot seven to P3a's durable resolver;
+- v5 preserves the publication-date ContextVar only for the duration of that direct P3a durable handoff, then resets it in `finally`; this is required because P3a's normal `execute_audit_plan` resets the context before v5 performs the handoff;
+- a process stop after `request_started` therefore leaves a consumed/ambiguous journal; same-day recovery sees that state and cannot issue another provider search.
 
 These rules preserve at-most-once provider transport and prohibit an eighth Coverage search during normal execution and same-day recovery.
 
@@ -91,7 +94,9 @@ These rules preserve at-most-once provider transport and prohibit an eighth Cove
 
 The pre-P3b public implementation is preserved byte-for-byte as `ensure_story_coverage_p3a.py`; its Git blob equals the pre-PR `ensure_story_coverage.py` blob.
 
-The active v2 layer now restores hardened binder symbols immediately after historical v1 export and after compatibility synchronization. It also restores the preserved v1 binder symbols/constants so direct v2 imports cannot mutate the forensic v1 semantics.
+The active v5 layer installs binder-v3 semantics only around active exact processing and does not mutate historical nested binder identities at import time. Binder v3 inherits and hardens v2 while keeping `VERSION=2`; v2 compatibility helpers remain available for recognizing previously saved contracts, but compatibility failure cannot veto an exact active contract match.
+
+Public `ensure_story_coverage.py` remains the monkeypatch-compatible entrypoint. Active ownership and handoff regressions are asserted through public seams because wrapper synchronization intentionally restores implementation aliases and must not make a test pass or fail merely from import order.
 
 Permanent subprocess controls start clean Python interpreters with different import orders. A dedicated subprocess also runs `test_p3b_astra_regressions.py` as the only discovered test module, so full-suite import order cannot hide the standalone monkeypatch/import defect reported by Astra.
 
@@ -120,7 +125,9 @@ The canonical matrix is `automation/specs/p3b-exact-authoritative-binding-matrix
 19. candidate fails Freshness;
 20. same company + version, different lifecycle.
 
-Additional permanent controls cover Astra's remediation counterexamples and final self-audit counterexamples: changed-model/missing-signal/changed-archive recovery mismatch, required-resolution priority, negation/history, cross-claim contamination, same-claim named/lowercase/role actor-attribution contamination, structured archive foreign-actor contamination, replacement-role permutation, distinct and high-overlap mutable archive updates, GA alias, unknown/numeric suffixes, active-version matrix wiring and isolated import order.
+Additional permanent controls cover Astra's remediation counterexamples and final self-audit counterexamples: changed-model/missing-signal/changed-archive recovery mismatch, required-resolution priority, durable P3b-to-required handoff and crash recovery, negation/history/prospective language, cross-claim contamination, same-claim named/lowercase/role actor-attribution contamination, structured archive foreign-actor contamination, replacement-role permutation, distinct and high-overlap mutable archive updates, GA alias, unknown/numeric suffixes, active-version matrix wiring and isolated import order.
+
+Permanent executable coverage includes `test_p3b_astra_second_review.py` in addition to the original P3b matrix, Astra, recovery, archive, lifecycle and import-isolation suites.
 
 ## Whole-project architecture audit
 
@@ -146,15 +153,15 @@ No editorial ranking, Agency Rescue, regional health or Hybrid implementation fi
 
 ### Coverage
 
-Six mandatory directions remain unchanged. P3b is only an alternate consumer of the already-existing optional seventh slot, after mandatory Coverage and behind required legacy `unverified` priority. Slot occupancy is independent from reuse compatibility, closing the recovery-context eighth-search defect.
+Six mandatory directions remain unchanged. P3b is only an alternate consumer of the already-existing optional seventh slot, after mandatory Coverage and behind required legacy `unverified` priority. Slot occupancy is independent from reuse compatibility, closing the recovery-context eighth-search defect. A proven unstarted P3b reservation can hand the seventh slot to required legacy resolution only through the durable P3a transport; `request_started` remains consumed/ambiguous after interruption.
 
 ### Archive / dedupe
 
-Archive checks remain before positive admission. Exact URL is conclusive. Mutable same-model updates require exact event-detail identity rather than broad lexical overlap, so a distinct update is not suppressed merely because organization/version/lifecycle or generic words match. Exact-event identity itself is claim-local and actor-bound: organization cannot be borrowed from a neighboring archive/page claim, nor can a same-claim foreign actor receive the lifecycle while the signal organization appears only as speaker/context. Explicit reporting/role attribution is treated conservatively as ambiguous rather than synthetic proof. Structured archive organization is accepted only for its own row and cannot override a foreign headline actor.
+Archive checks remain before positive admission. Exact URL is conclusive. Mutable same-model updates require exact ordered event-detail identity rather than broad lexical overlap, so a distinct update is not suppressed merely because organization/version/lifecycle or generic words match. Exact-event identity itself is claim-local and actor-bound: organization cannot be borrowed from a neighboring archive/page claim, nor can a same-claim foreign actor receive the lifecycle while the signal organization appears only as speaker/context. Explicit reporting/role attribution is treated conservatively as ambiguous rather than synthetic proof. Structured archive organization is accepted only for its own row and cannot override a foreign headline actor.
 
 ### Recovery
 
-Durable journal state is the source of truth for optional-slot occupancy and at-most-once transport. `request_started` never retries, saved/processed work reuses offline, and budget recalculation cannot refund an already consumed seventh operation.
+Durable journal state is the source of truth for optional-slot occupancy and at-most-once transport. `request_started` never retries, saved/processed work reuses offline, and budget recalculation cannot refund an already consumed seventh operation. The v5 handoff explicitly carries publication-date context into the direct P3a durable resolver and resets it afterwards; this fixes the second-Astra crash case without changing search routing or adding capacity.
 
 ### Publication validation
 
@@ -164,12 +171,24 @@ Publication validators, story schema, RSS/sitemap rules, deploy mechanics and or
 
 PR changes are confined to root/automation documentation, Coverage/P3b compatibility layers and binders, the permanent P3b spec/audit, and P3/P3b tests. It does not directly change workflow files, Primary, Source Pulse, Event/Source Freshness policy, Agency Rescue, Hybrid, editorial ranking or publication validators.
 
-Root `README.md`, `automation/README.md` and `automation/ARCHITECTURE.md` were inspected during final remediation. Their active P3b descriptions already state the exact authoritative page, organization/version/lifecycle, freshness/archive requirements, durable seventh-slot behavior and unchanged 24/25 ceilings; the detailed claim-local and actor-attribution clarifications are captured in this audit and permanent matrix without changing those higher-level contracts.
+Root `README.md`, `automation/README.md` and `automation/ARCHITECTURE.md` were inspected during final remediation. Their higher-level active P3b descriptions already state the exact authoritative page, organization/version/lifecycle, freshness/archive requirements, durable seventh-slot behavior and unchanged 24/25 ceilings. The implementation-version and durable-handoff details belong in this audit and permanent matrix, so no gratuitous high-level documentation churn is required.
+
+## Validation evidence
+
+The runtime code head `654eada715382789982b2d847e98c0846e5b6a11` passed PR Gate #368 (`34776097208`). Main CI reported `Ran 803 tests ... OK`, including:
+
+- `test_p3b_to_required_legacy_handoff_stays_durable_after_transport_crash`;
+- `test_required_unverified_preempts_proven_unstarted_p3b_reservation`;
+- active public v5 / binder-v3 wiring;
+- binder identity/actor-attribution, Freshness, archive/dedupe, recovery, import-isolation and budget regressions;
+- editorial, archive, production-daily, RSS, sitemap, structured-data and protected-path validators.
+
+Because the canonical docs were synchronized after that green code head, exact-head discipline requires a new PR Gate on the final documentation-inclusive SHA. Gate #368 is evidence for the runtime fix, not the final merge gate.
 
 ## Independent review gate
 
-The original independent Astra review of head `5332e64c2221670c8c1815811c758d380d27a747` returned `REQUEST CHANGES` with five P1 and two P2 findings. All seven findings now have repository regressions. Final implementer audits additionally found and fixed the high-overlap mutable-update dedupe case, cross-claim organization contamination, same-claim named foreign-actor attribution contamination, and ambiguous reporting/role attribution contamination, all with permanent controls.
+The original independent Astra review of head `5332e64c2221670c8c1815811c758d380d27a747` returned `REQUEST CHANGES` with five P1 and two P2 findings. All seven findings now have repository regressions. Final implementer audits additionally found and fixed the high-overlap mutable-update dedupe case, cross-claim organization contamination, same-claim named foreign-actor attribution contamination, ambiguous reporting/role attribution contamination, exact reservation ownership handoff and publication-context loss across the direct durable P3a handoff.
 
-The final exact PR head must pass `PR Gate` / `Required PR Gate` after the last code/documentation commit. That exact SHA is then handed to Astra for a new independent review, including rerun of the original probes and independent counterexamples. This document is implementer self-audit evidence and does not substitute for Astra's verdict.
+The final exact PR head must pass `PR Gate` / `Required PR Gate` after the last documentation commit. That exact SHA is then handed to Astra for a new independent review, including rerun of the original probes and independent counterexamples. This document is implementer self-audit evidence and does not substitute for Astra's verdict.
 
 Merge remains prohibited until Astra returns explicit `APPROVE` on the unchanged final exact head.
