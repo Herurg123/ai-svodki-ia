@@ -307,7 +307,9 @@ def _run_handed_off_required_legacy(
     """Spend/recover slot seven through P3a's durable transport after handoff."""
     if original_maximum < 7 or not required_signals:
         return plan
-    if set(plan.get("checked_directions") or ()) != set(_v2._pre.AUDIT_DIRECTION_IDS):
+    required_directions = set(AUDIT_DIRECTION_IDS)
+    checked_directions = set(plan.get("checked_directions") or ())
+    if not required_directions.issubset(checked_directions):
         return plan
 
     original_recalculate(plan, 7)
