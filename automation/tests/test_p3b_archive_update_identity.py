@@ -137,6 +137,23 @@ class P3bArchiveUpdateIdentityTests(unittest.TestCase):
             coverage._archive_exact_event(archive, self.candidate(), self.signal_update)
         )
 
+    def test_structured_archive_org_preserves_semantic_duplicate_without_headline_org(self) -> None:
+        archive = self.archive_story(
+            "V4.1 Flash update expands the one million token context window"
+        )
+        self.assertTrue(
+            coverage._archive_exact_event(archive, self.candidate(), self.signal_update)
+        )
+
+    def test_conflicting_structured_archive_org_fails_closed(self) -> None:
+        archive = self.archive_story(
+            "V4.1 Flash update expands the one million token context window"
+        )
+        archive["items"][0]["stories"][0]["organization"] = "OpenAI"
+        self.assertFalse(
+            coverage._archive_exact_event(archive, self.candidate(), self.signal_update)
+        )
+
     def test_exact_source_url_remains_conclusive_duplicate_proof(self) -> None:
         candidate = self.candidate()
         archive = self.archive_story(
