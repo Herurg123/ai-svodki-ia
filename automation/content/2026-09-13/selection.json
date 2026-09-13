@@ -1,0 +1,18 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-003",
+    "cand-004",
+    "cand-005",
+    "cand-006"
+  ],
+  "excluded_candidate_ids": [
+    "cand-002",
+    "cand-007",
+    "cand-008"
+  ],
+  "selection_summary": "Выбраны пять свежих подтверждённых самостоятельных сюжетов: коммерческие показатели AI-облака Oracle, отчёт Anthropic о злоупотреблении Claude, предложение о более осторожном темпе frontier-разработки, сообщение о публичной beta OpenAI Agents API и российский open-source-релиз Яндекса. Пул не даёт достаточного числа столь же надёжных и содержательных событий для обычного объёма выпуска.",
+  "diversity_overrides": []
+}

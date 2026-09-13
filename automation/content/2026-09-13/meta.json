@@ -1,0 +1,42 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-13",
+  "slug": "2026-09-13",
+  "title": "ИИ-Сводка на 13 сентября 2026",
+  "description": "Oracle показывает быстрый рост AI-облака, Anthropic раскрывает злоупотребления Claude в кибероперациях, а лидеры индустрии обсуждают более осторожный темп развития frontier-моделей. Яндекс открывает модель для ИИ-ответов в Поиске.",
+  "published_at": "2026-09-13T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-13.png",
+  "topics": [
+    "Oracle Cloud Infrastructure",
+    "AI Cloud Infrastructure",
+    "Anthropic",
+    "Claude",
+    "кибербезопасность ИИ",
+    "frontier-модели",
+    "OpenAI Agents API",
+    "агенты ИИ",
+    "Яндекс",
+    "open source",
+    "ИИ-поиск"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-006."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, legal_regulation."
+    }
+  ]
+}

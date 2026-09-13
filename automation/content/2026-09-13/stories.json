@@ -1,0 +1,168 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Oracle сообщила о росте выручки AI Cloud Infrastructure на 121% до $7,4 млрд за квартал",
+    "organization": "Oracle; Oracle Cloud Infrastructure",
+    "topic": "AI-инфраструктура, облачная выручка и капитальные затраты",
+    "event_type": "earnings",
+    "status": "new",
+    "summary": "Oracle отчиталась, что квартальная выручка AI Cloud Infrastructure выросла на 121% год к году до $7,4 млрд. В материале также приводятся поставка 850 МВт мощности, свыше 300 000 GPU, рост оставшихся обязательств к исполнению до $664 млрд и квартальные капзатраты $28,5 млрд.",
+    "published_at": "2026-09-11T20:50:36+00:00",
+    "published_date": "2026-09-11",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Oracle AI Infrastructure Revenue Jumps 121% to $7.4 Billion in First Quarter Beat",
+        "publisher": "HuggingNews",
+        "url": "https://huggingnews.com/earnings/oracle-ai-infrastructure-revenue-jumps-121percent-to-74-billion-in-first-429f6f47"
+      }
+    ],
+    "keywords": [
+      "Oracle",
+      "OCI",
+      "AI cloud infrastructure",
+      "GPU",
+      "earnings",
+      "capex"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Anthropic раскрыла кампании злоумышленников, использовавших Claude для кибершпионажа и кражи данных",
+    "organization": "Anthropic; Claude; ShinyHunters; Midnight Blizzard",
+    "topic": "AI security; злоупотребление агентными моделями в кибероперациях; threat intelligence",
+    "event_type": "threat-intelligence report",
+    "status": "new",
+    "summary": "Anthropic опубликовала threat-intelligence report о пресечённых злоупотреблениях Claude: от AI-оркестрации киберопераций и кражи данных до операций, связанных с разведкой, мошенничеством, слежкой, оружием и незаконной дистилляцией моделей.",
+    "published_at": "2026-09-11T16:19:09-04:00",
+    "published_date": "2026-09-11",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Detecting and countering misuse of AI: September 2026",
+        "publisher": "Anthropic",
+        "url": "https://www.anthropic.com/threat-intelligence-report-september-2026"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "AI misuse",
+      "cyber operations",
+      "ShinyHunters",
+      "Midnight Blizzard",
+      "AI agents",
+      "data theft"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Dario Amodei предложил замедлить развитие frontier-ИИ; OpenAI заявила о готовности последовать части подхода",
+    "organization": "Anthropic; OpenAI; Dario Amodei; Sam Altman",
+    "topic": "AI safety; governance; pacing frontier-model development",
+    "event_type": "policy and safety proposal",
+    "status": "new",
+    "summary": "Глава Anthropic Dario Amodei опубликовал план более осторожного темпа разработки frontier-моделей. По сообщению TechCrunch, Anthropic односторонне обязалась внедрить одну из предложенных мер, а Сэм Альтман заявил, что OpenAI последует этому подходу.",
+    "published_at": "2026-09-12T19:34:44+00:00",
+    "published_date": "2026-09-12",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic CEO outlines plan to slow AI development",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/12/anthropic-ceo-outlines-plan-to-pace-the-frontier/"
+      },
+      {
+        "title": "We Must Pace the Frontier",
+        "publisher": "Dario Amodei",
+        "url": "https://darioamodei.com/post/we-must-pace-the-frontier"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "OpenAI",
+      "Dario Amodei",
+      "Sam Altman",
+      "AI safety",
+      "frontier AI",
+      "alignment",
+      "pacing"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "OpenAI, по данным отраслевого источника, открыла публичную beta Agents API",
+    "organization": "OpenAI; Codex; Agents API; DigitalOcean; Daytona; E2B; Oracle Cloud; Vercel",
+    "topic": "Платформа для разработки и запуска облачных AI-агентов",
+    "event_type": "product_launch",
+    "status": "new",
+    "summary": "По данным публикации, OpenAI запустила публичную beta Agents API: hosted runtime на базе Codex должен управлять agent loop, вызовами моделей, инструментами и контекстом для длительных задач. Сообщается о Linux-sandbox окружениях и first-party интеграциях с DigitalOcean, Daytona, E2B, Oracle Cloud и Vercel.",
+    "published_at": "2026-09-11T20:50:36+00:00",
+    "published_date": "2026-09-11",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI Launches Public Beta of Agents API With 1st Party Sandbox Integrations",
+        "publisher": "HuggingNews",
+        "url": "https://huggingnews.com/ai/openai-launches-public-beta-of-agents-api-with-1st-party-sandbox-integra-94c04d56"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Agents API",
+      "Codex",
+      "hosted runtime",
+      "sandbox",
+      "sub-agents",
+      "agent orchestration"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "russia",
+    "headline": "Яндекс выложил в open source языковую модель для быстрых ИИ-ответов в Поиске",
+    "organization": "Яндекс",
+    "topic": "11 сентября 2026Яндекс выложил в опенсорс собственную языковую модель, которая лежит в основе быстрых ИИ-ответов в Поиске",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+    "published_at": null,
+    "published_date": "2026-09-11",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "11 сентября 2026Яндекс выложил в опенсорс собственную языковую модель, которая лежит в основе быстрых ИИ-ответов в Поиске",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=11-09-2026-01"
+      }
+    ],
+    "keywords": [
+      "11",
+      "сентября",
+      "2026Яндекс",
+      "выложил",
+      "опенсорс",
+      "собственную",
+      "языковую",
+      "модель",
+      "которая",
+      "лежит",
+      "основе",
+      "быстрых"
+    ],
+    "geography": "russia",
+    "category": "investment"
+  }
+]
