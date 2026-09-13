@@ -245,55 +245,25 @@ def _journal_matches_current_p3b_intent_v5(
     search_window: dict[str, Any],
     archive: dict[str, Any],
 ) -> bool:
-    """Prove reserved P3b ownership from exact active or compatible contracts."""
+    """Use the proven v4 contract identity, with explicit owner/window guards."""
     if str(journal.get("state") or "") != "reserved":
         return False
     if str(journal.get("owner") or "") != str(P3B_SLOT_OWNER):
         return False
     if str(journal.get("search_window_sha256") or "") != sha256_value(search_window):
         return False
-
     try:
-        signal = select_p3b_signal(_p3b_signals(publication_date))
-    except Exception:
-        return False
-    if signal is None:
-        return False
-
-    hashes: set[str] = set()
-    # Historical compatibility recognition is additive only. A stale compatibility
-    # namespace must never suppress the exact active contract check below.
-    try:
-        hashes.update(
-            _v2._p3b_contract_hashes(
-                signal=signal,
+        return bool(
+            _v4._journal_matches_current_p3b_intent(
+                publication_date=publication_date,
+                journal=journal,
                 model=model,
                 search_window=search_window,
                 archive=archive,
             )
         )
     except Exception:
-        pass
-
-    try:
-        query = build_p3b_query(signal)
-        prompt = build_p3b_prompt(
-            search_window=search_window,
-            signal=signal,
-            archive=_runtime._compact_recent_archive(archive),
-        )
-        active_contract_hash = sha256_value(
-            _request_contract_v2(
-                model=model,
-                query=query,
-                prompt=prompt,
-                signal=signal,
-            )
-        )
-    except Exception:
         return False
-    hashes.add(active_contract_hash)
-    return str(journal.get("request_contract_sha256") or "") in hashes
 
 
 def _run_handed_off_required_legacy(
