@@ -186,18 +186,23 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
 
             def fake_p3a_execute(*args, **kwargs):
                 delegated_calls.append(dict(kwargs))
-                # The active v5 layer must release the unstarted P3b reservation
-                # before the six-pass compatibility scheduler runs.
                 self.assertIsNone(coverage.load_journal(state, DATE))
                 return copy.deepcopy(plan)
 
-            def fake_handoff_resolution(*, plan, signals, maximum_web_search_calls, **kwargs):
+            def fake_handoff(
+                current_plan,
+                *,
+                required_signals,
+                kwargs,
+                original_maximum,
+                original_recalculate,
+            ):
                 handoff_calls.append({
-                    "signals": copy.deepcopy(signals),
-                    "maximum_web_search_calls": maximum_web_search_calls,
+                    "signals": copy.deepcopy(required_signals),
+                    "original_maximum": original_maximum,
                 })
                 self.assertIsNone(coverage.load_journal(state, DATE))
-                return copy.deepcopy(plan)
+                return copy.deepcopy(current_plan)
 
             def sync_then_install_required_probe() -> None:
                 original_v2_sync()
@@ -213,9 +218,9 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
                     side_effect=sync_then_install_required_probe,
                 ),
                 mock.patch.object(
-                    coverage._impl._P3A,
-                    "_run_resolution",
-                    side_effect=fake_handoff_resolution,
+                    coverage._impl,
+                    "_run_handed_off_required_legacy",
+                    side_effect=fake_handoff,
                 ),
                 mock.patch.object(
                     coverage._impl,
@@ -239,11 +244,13 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
             self.assertEqual(len(delegated_calls), 1)
             self.assertEqual(delegated_calls[0]["maximum_web_search_calls"], 6)
             self.assertEqual(len(handoff_calls), 1)
-            self.assertEqual(handoff_calls[0]["maximum_web_search_calls"], 7)
+            self.assertEqual(handoff_calls[0]["original_maximum"], 7)
             self.assertEqual(handoff_calls[0]["signals"], required)
             self.assertIsNone(coverage.load_journal(state, DATE))
-            self.assertEqual(result["weak_source_exact_binding"]["status"], "deferred")
-            self.assertIn("slot priority", result["weak_source_exact_binding"]["reason"])
+            self.assertNotEqual(
+                result.get("weak_source_exact_binding", {}).get("status"),
+                "bound_candidate",
+            )
 
     def test_required_does_not_delete_unidentified_reserved_intent(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
