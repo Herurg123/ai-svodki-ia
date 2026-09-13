@@ -8,6 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "automation" / "scripts"
+TESTS = ROOT / "automation" / "tests"
 
 
 class P3bImportIsolationTests(unittest.TestCase):
@@ -25,6 +26,35 @@ class P3bImportIsolationTests(unittest.TestCase):
             proc.returncode,
             0,
             msg=f"isolated import control failed\nSTDOUT:\n{proc.stdout}\nSTDERR:\n{proc.stderr}",
+        )
+
+    def test_standalone_astra_regression_module_passes_in_clean_process(self) -> None:
+        proc = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "unittest",
+                "discover",
+                "-s",
+                str(TESTS),
+                "-p",
+                "test_p3b_astra_regressions.py",
+                "-v",
+            ],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            timeout=60,
+            check=False,
+        )
+        self.assertEqual(
+            proc.returncode,
+            0,
+            msg=(
+                "Astra regression module must pass standalone in a clean interpreter; "
+                "full-suite import order is not proof.\n"
+                f"STDOUT:\n{proc.stdout}\nSTDERR:\n{proc.stderr}"
+            ),
         )
 
     def test_standalone_v2_keeps_hardened_binder_after_legacy_first_and_sync(self) -> None:
