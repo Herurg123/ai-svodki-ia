@@ -23,6 +23,10 @@ TEMPLATE = controls.TEMPLATE
 BASE_SIGNAL = controls.SIGNAL
 
 
+class SimulatedProcessStop(BaseException):
+    pass
+
+
 def launch_signal() -> dict:
     signal = copy.deepcopy(BASE_SIGNAL)
     signal["title"] = "DeepSeek launches V4.1 Flash"
@@ -135,7 +139,7 @@ class AstraSecondReviewRegressions(unittest.TestCase):
             def crash_after_admission(runtime, reservation, **kwargs):
                 protected_calls.append("started")
                 reservation.mark_request_started()
-                raise RuntimeError("simulated process stop after transport admission")
+                raise SimulatedProcessStop("simulated process stop after transport admission")
 
             common = dict(
                 api_key="offline",
@@ -164,7 +168,7 @@ class AstraSecondReviewRegressions(unittest.TestCase):
                 mock.patch.object(coverage._pre, "_required_signals", return_value=required),
                 mock.patch.object(coverage, "_p3b_signals", return_value=[copy.deepcopy(BASE_SIGNAL)]),
             ):
-                with self.assertRaisesRegex(RuntimeError, "simulated process stop"):
+                with self.assertRaisesRegex(SimulatedProcessStop, "simulated process stop"):
                     coverage.execute_audit_plan(**common)
 
             journal = coverage.load_journal(state, DATE)
