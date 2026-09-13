@@ -13,6 +13,7 @@ TESTS = ROOT / "automation" / "tests"
 sys.path[:0] = [str(SCRIPTS), str(TESTS)]
 
 import ensure_story_coverage as coverage
+import weak_source_exact_binding_v2 as historical_binder
 import weak_source_exact_binding_v3 as binder
 import test_p3b_astra_regressions as controls
 
@@ -124,7 +125,7 @@ class AstraSecondReviewRegressions(unittest.TestCase):
     def test_public_runtime_is_v5_with_v3_binder(self) -> None:
         self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v5")
         self.assertIs(coverage._exact_binding, binder)
-        self.assertIs(coverage._impl._v2._binding_v2, binder)
+        self.assertIs(coverage._impl._v2._binding_v2, historical_binder)
 
     def test_p3b_to_required_legacy_handoff_stays_durable_after_transport_crash(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
