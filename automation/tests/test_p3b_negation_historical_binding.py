@@ -152,6 +152,21 @@ class P3bNegationHistoricalBindingTests(unittest.TestCase):
         self.assertFalse(ok)
         self.assertIn(reason, {"exact_event_claim_missing", "lifecycle_identity_mismatch"})
 
+    def test_event_identity_requires_organization_in_same_local_claim(self) -> None:
+        signal = self.signal()
+        surface = "DeepSeek announces R2 | OpenAI replaces V4 Pro with V4.1 Flash"
+        ok, reason = binder.exact_event_identity(surface, signal)
+        self.assertFalse(ok)
+        self.assertEqual(reason, "exact_event_claim_missing")
+
+    def test_authoritative_page_cannot_borrow_organization_from_other_claim(self) -> None:
+        signal = self.signal()
+        candidate = self.candidate("DeepSeek replaces V4 Pro with V4.1 Flash")
+        page = "DeepSeek announces R2 | OpenAI replaces V4 Pro with V4.1 Flash"
+        ok, reason = self.bind(candidate, signal, page)
+        self.assertFalse(ok)
+        self.assertEqual(reason, "authoritative_page_exact_event_claim_missing")
+
 
 if __name__ == "__main__":
     unittest.main()
