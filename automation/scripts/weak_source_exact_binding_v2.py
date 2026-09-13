@@ -106,6 +106,10 @@ _ANCHOR_ALLOWED_FOLLOWING_WORDS = frozenset({
     "were", "will", "with", "would", "adds", "add", "added", "featuring", "following",
     "supports", "support", "improves", "improve", "improved", "offers", "offer",
 })
+_ANCHOR_KNOWN_VARIANT_SUFFIXES = frozenset({
+    "pro", "max", "plus", "mini", "turbo", "flash", "reasoning", "coder", "chat",
+    "instruct", "thinking", "lite", "ultra", "vision", "audio", "vl", "base",
+})
 
 
 def _clean(value: Any) -> str:
@@ -138,8 +142,15 @@ def _anchor_followed_by_variant_suffix(text: str, match_end: int) -> bool:
     next_word = re.match(r"\s+([A-Za-z0-9][A-Za-z0-9.+-]*)", tail)
     if next_word is None:
         return False
-    token = next_word.group(1).casefold()
-    return token not in _ANCHOR_ALLOWED_FOLLOWING_WORDS
+    raw_token = next_word.group(1)
+    token = raw_token.casefold()
+    if token in _ANCHOR_ALLOWED_FOLLOWING_WORDS:
+        return False
+    if token in _ANCHOR_KNOWN_VARIANT_SUFFIXES:
+        return True
+    if raw_token[0].isdigit():
+        return True
+    return raw_token[0].isupper()
 
 
 def _contains_exact_anchor(text: str, anchor: str) -> bool:
