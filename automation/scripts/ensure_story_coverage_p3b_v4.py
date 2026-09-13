@@ -4,10 +4,10 @@
 The substantive exact-page binding remains in v2 and compatibility bridging in
 v3. This layer protects orchestration boundaries around durable slot ownership,
 required-signal priority, exhausted Coverage budget, and exact archive admission.
-For mutable product lifecycles, archive semantic dedupe additionally requires
-strong event-specific detail overlap so distinct updates of one model are not
-collapsed merely because organization, version and lifecycle match. The CLI and
-direct callers execute the same hardened path.
+For mutable product lifecycles, archive semantic dedupe additionally requires an
+exact event-detail fingerprint so distinct updates of one model are not collapsed
+merely because organization, version, lifecycle, or generic update words match.
+The CLI and direct callers execute the same hardened path.
 """
 from __future__ import annotations
 
@@ -44,12 +44,15 @@ _PRE_RECALC_BUDGET_KEY = "_p3b_pre_recalc_budget"
 _ARCHIVE_MUTABLE_ACTIONS = frozenset({"update", "upgrade", "rollout"})
 _ARCHIVE_TOKEN_RE = re.compile(r"[a-z0-9]+(?:[.+-][a-z0-9]+)*", re.I)
 _ARCHIVE_GENERIC_TOKENS = frozenset({
-    "a", "an", "and", "ai", "announced", "announces", "announcement", "are",
-    "as", "at", "by", "for", "from", "in", "into", "is", "its", "latest",
-    "model", "models", "new", "now", "of", "official", "on", "product",
-    "release", "released", "releases", "rollout", "rolled", "out", "the", "to",
-    "today", "update", "updated", "updates", "upgrade", "upgraded", "upgrades",
-    "version", "with",
+    "a", "add", "added", "adds", "an", "and", "ai", "announced", "announces",
+    "announcement", "are", "as", "at", "bring", "brings", "brought", "by",
+    "enable", "enabled", "enables", "expand", "expanded", "expands", "feature",
+    "features", "for", "from", "in", "into", "introduce", "introduced",
+    "introduces", "is", "its", "latest", "model", "models", "new", "now", "of",
+    "official", "on", "product", "release", "released", "releases", "rollout",
+    "rolled", "out", "support", "supported", "supports", "the", "to", "today",
+    "update", "updated", "updates", "upgrade", "upgraded", "upgrades", "version",
+    "with",
 })
 _V4_INTERNALS = {
     "_v3", "_v2", "_exact_binding", "_V3_PATH", "_V3_SPEC", "_V2_RUN_P3B_BINDING",
@@ -133,12 +136,9 @@ def _archive_mutable_event_detail_match(
     )
     candidate_tokens = _archive_discriminator_tokens(candidate_text, signal)
     story_tokens = _archive_discriminator_tokens(story_text, signal)
-    if not candidate_tokens or not story_tokens:
+    if len(candidate_tokens) < 2 or len(story_tokens) < 2:
         return False
-    shared = candidate_tokens & story_tokens
-    if len(shared) < 2:
-        return False
-    return len(shared) / min(len(candidate_tokens), len(story_tokens)) >= 0.5
+    return candidate_tokens == story_tokens
 
 
 def _archive_exact_event_v4(
@@ -149,8 +149,9 @@ def _archive_exact_event_v4(
     Exact source URL remains conclusive. Semantic matching first requires the
     existing strict organization/version/lifecycle identity. Mutable lifecycle
     actions can recur for one model, so their core identity is insufficient on
-    its own; at least two event-specific terms with strong overlap are required.
-    Ambiguous or underspecified archive rows therefore do not block admission.
+    its own; normalized event-specific discriminator sets must match exactly.
+    Partial lexical overlap is deliberately non-terminal and does not block a
+    fresh candidate.
     """
     source = candidate.get("primary_source")
     candidate_url = str(source.get("url") or "").strip() if isinstance(source, dict) else ""
