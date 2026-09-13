@@ -52,6 +52,11 @@ _LIFECYCLE_GROUPS: dict[str, tuple[str, ...]] = {
     "update": ("update", "updates", "updated", "upgrade", "upgrades", "upgraded"),
     "benchmark": ("benchmark", "benchmarks", "benchmarked", "evaluation", "eval", "score"),
 }
+_ACTION_ALIASES = {
+    "general_availability": "ga",
+    "general availability": "ga",
+    "upgrade": "update",
+}
 
 _BENCHMARK_RE = re.compile(r"\b(?:benchmark|benchmarks|benchmarked|evaluation|eval|score|scores)\b", re.I)
 _PREVIEW_RE = re.compile(r"\b(?:preview|pre[- ]?release|beta|early access)\b", re.I)
@@ -88,6 +93,19 @@ _CURRENT_ACTION_NEAR_RE = re.compile(
     r"\b(?:now|today|currently|newly|this\s+(?:week|month))\b",
     re.I,
 )
+_ANCHOR_ALLOWED_FOLLOWING_WORDS = frozenset({
+    "a", "an", "and", "are", "as", "at", "available", "became", "becomes", "before",
+    "benchmark", "benchmarked", "benchmarks", "brings", "bring", "by", "can", "could",
+    "for", "from", "general", "generally", "gets", "get", "gains", "gain", "had", "has",
+    "have", "in", "introduces", "introduced", "is", "launch", "launched", "launches",
+    "model", "now", "of", "on", "or", "preview", "previews", "release", "released",
+    "releases", "replace", "replaced", "replacement", "replaces", "replacing", "rollout",
+    "rolls", "rolled", "score", "scores", "ship", "ships", "shipped", "stable", "supersede",
+    "superseded", "supersedes", "superseding", "the", "to", "today", "unveil", "unveiled",
+    "unveils", "update", "updated", "updates", "upgrade", "upgraded", "upgrades", "was",
+    "were", "will", "with", "would", "adds", "add", "added", "featuring", "following",
+    "supports", "support", "improves", "improve", "improved", "offers", "offer",
+})
 
 
 def _clean(value: Any) -> str:
@@ -99,17 +117,41 @@ def _anchors(signal: dict[str, Any]) -> list[str]:
 
 
 def _actions(signal: dict[str, Any]) -> list[str]:
-    return [_clean(item).casefold() for item in signal.get("lifecycle_action_anchors") or [] if _clean(item)]
+    result: list[str] = []
+    for item in signal.get("lifecycle_action_anchors") or []:
+        value = _clean(item).casefold()
+        if not value:
+            continue
+        canonical = _ACTION_ALIASES.get(value, value)
+        if canonical not in result:
+            result.append(canonical)
+    return result
 
 
 def _anchor_pattern(anchor: str) -> str:
     escaped = re.escape(anchor.casefold()).replace(r"\ ", r"\s+")
-    suffixes = r"(?:pro|flash|mini|max|ultra|preview|beta|turbo|lite|plus)"
-    return rf"(?<![\w.]){escaped}(?![\w.\-]|\s+(?:{suffixes})\b)"
+    return rf"(?<![\w.]){escaped}(?![\w.\-])"
+
+
+def _anchor_followed_by_variant_suffix(text: str, match_end: int) -> bool:
+    tail = text[match_end:]
+    next_word = re.match(r"\s+([A-Za-z0-9][A-Za-z0-9.+-]*)", tail)
+    if next_word is None:
+        return False
+    token = next_word.group(1).casefold()
+    return token not in _ANCHOR_ALLOWED_FOLLOWING_WORDS
 
 
 def _contains_exact_anchor(text: str, anchor: str) -> bool:
-    return bool(_clean(anchor) and re.search(_anchor_pattern(anchor), _clean(text).casefold(), re.I))
+    anchor = _clean(anchor)
+    cleaned = _clean(text)
+    if not anchor or not cleaned:
+        return False
+    folded = cleaned.casefold()
+    for match in re.finditer(_anchor_pattern(anchor), folded, re.I):
+        if not _anchor_followed_by_variant_suffix(cleaned, match.end()):
+            return True
+    return False
 
 
 def _contains_org(text: str, organization: Any) -> bool:
@@ -141,7 +183,9 @@ def _directed_replace_span(text: str, old_anchor: str, new_anchor: str) -> tuple
     for pattern in patterns:
         match = re.search(pattern, folded, re.I)
         if match:
-            return match.span()
+            segment = folded[match.start():match.end()]
+            if _contains_exact_anchor(segment, old_anchor) and _contains_exact_anchor(segment, new_anchor):
+                return match.span()
     return None
 
 
