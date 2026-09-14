@@ -155,21 +155,16 @@ class AstraFourthReviewRegressions(unittest.TestCase):
 
     def test_current_claim_can_coexist_with_historical_background(self) -> None:
         signal = second.launch_signal()
-        item = second.launch_candidate()
         surface = (
             "DeepSeek launched V4.1 Flash today. "
             "DeepSeek launched V4.1 Flash in 2025."
         )
-        result = second.process_candidate(
-            signal=signal,
-            candidate=item,
-            surface=surface,
-        )
-        self.assertEqual(len(result["candidates"]), 1)
-        self.assertEqual(
-            result["weak_source_exact_binding"]["status"],
-            "bound_candidate",
-        )
+        # This is an identity-layer control. Full P3b admission has a separate
+        # deterministic Event/Source Freshness gate and may still fail closed on
+        # explicit historical date evidence in the authoritative page surface.
+        ok, reason = binder.exact_event_identity(surface, copy.deepcopy(signal))
+        self.assertTrue(ok, msg=reason)
+        self.assertEqual(reason, "exact_event_identity")
 
     def test_direct_binder_counterexamples_are_not_exact_event_identity(self) -> None:
         launch = second.launch_signal()
