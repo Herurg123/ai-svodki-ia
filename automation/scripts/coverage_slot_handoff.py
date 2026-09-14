@@ -108,12 +108,26 @@ def transfer_reserved_slot(
         if _guard.response_path(state_dir, publication_date).exists():
             return None
 
+        # P3a normally derives the bundle date from a ContextVar while executing.
+        # The ownership transfer happens just before that execution context is
+        # installed, so bind the transferred reservation to the explicit daily
+        # slot date here. Otherwise a correct transfer can hash an empty date and
+        # then fail identity validation when the durable resolver sees the real
+        # publication date a moment later.
+        normalized_bundle_identity = (
+            dict(target_bundle_identity)
+            if isinstance(target_bundle_identity, dict)
+            else target_bundle_identity
+        )
+        if isinstance(normalized_bundle_identity, dict):
+            normalized_bundle_identity["publication_date"] = publication_date
+
         identity = _guard._identity_payload(
             publication_date=publication_date,
             owner=target_owner,
             search_window=target_search_window,
             request_contract=target_request_contract,
-            bundle_identity=target_bundle_identity,
+            bundle_identity=normalized_bundle_identity,
         )
         replacement = {
             "version": _guard.VERSION,
