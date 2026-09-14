@@ -175,34 +175,15 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
     def test_required_unverified_preempts_proven_unstarted_p3b_reservation(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             state = Path(raw)
-            plan = self._six_mandatory_plan(state)
-            reservation = self._reservation(state, plan)
+            helper = controls.AstraP3bRuntimeRegressions()
+            plan, _ = helper._real_six_plan(state)
+            reservation = helper._reservation(state, plan)
             self.assertEqual(reservation.state, "reserved")
             original_journal = coverage.load_journal(state, DATE)
             self.assertIsInstance(original_journal, dict)
             original_owner = original_journal["owner"]
             required = [self._required_signal()]
-            delegated_calls: list[dict] = []
             handoff_calls: list[dict] = []
-
-            def fake_delegate(*args, **kwargs):
-                delegated_calls.append(dict(kwargs))
-                current = coverage.load_journal(state, DATE)
-                self.assertIsInstance(current, dict)
-                self.assertEqual(current["owner"], original_owner)
-                self.assertEqual(current["state"], "reserved")
-                return copy.deepcopy(plan)
-
-            def assert_legacy_reservation() -> None:
-                current = coverage.load_journal(state, DATE)
-                self.assertIsInstance(current, dict)
-                self.assertEqual(
-                    current["owner"],
-                    coverage._impl._P3A.OPTIONAL_SLOT_OWNER,
-                )
-                self.assertEqual(current["state"], "reserved")
-                self.assertFalse(current.get("wire_attempt_admitted"))
-                self.assertFalse(current.get("slot_consumed_or_ambiguous"))
 
             def fake_handoff(
                 current_plan,
@@ -212,22 +193,36 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
                 original_maximum,
                 original_recalculate,
             ):
+                current = coverage.load_journal(state, DATE)
+                self.assertIsInstance(current, dict)
+                self.assertNotEqual(current["owner"], original_owner)
+                self.assertEqual(
+                    current["owner"],
+                    coverage._impl._P3A.OPTIONAL_SLOT_OWNER,
+                )
+                self.assertEqual(current["state"], "reserved")
+                self.assertFalse(current.get("wire_attempt_admitted"))
+                self.assertFalse(current.get("slot_consumed_or_ambiguous"))
                 handoff_calls.append({
                     "signals": copy.deepcopy(required_signals),
                     "original_maximum": original_maximum,
                 })
-                assert_legacy_reservation()
                 return copy.deepcopy(current_plan)
 
             with (
                 mock.patch.object(coverage, "STATE_DIR", state),
+                mock.patch.object(
+                    coverage,
+                    "run_audit_request",
+                    side_effect=AssertionError("six completed mandatory passes must not rerun"),
+                ),
+                mock.patch.object(
+                    coverage,
+                    "protected_policy_audit_request",
+                    side_effect=AssertionError("priority test intercepts after atomic transfer, before transport"),
+                ),
                 mock.patch.object(coverage._pre, "_required_signals", return_value=required),
                 mock.patch.object(coverage, "_p3b_signals", return_value=[copy.deepcopy(SIGNAL)]),
-                mock.patch.object(
-                    coverage._impl._v3,
-                    "execute_audit_plan",
-                    side_effect=fake_delegate,
-                ),
                 mock.patch.object(
                     coverage._impl,
                     "_run_handed_off_required_legacy",
@@ -259,12 +254,12 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
                     prior_plan=copy.deepcopy(plan),
                 )
 
-            self.assertEqual(len(delegated_calls), 1)
-            self.assertEqual(delegated_calls[0]["maximum_web_search_calls"], 6)
             self.assertEqual(len(handoff_calls), 1)
             self.assertEqual(handoff_calls[0]["original_maximum"], 7)
             self.assertEqual(handoff_calls[0]["signals"], required)
-            assert_legacy_reservation()
+            journal = coverage.load_journal(state, DATE)
+            self.assertEqual(journal["owner"], coverage._impl._P3A.OPTIONAL_SLOT_OWNER)
+            self.assertEqual(journal["state"], "reserved")
             self.assertNotEqual(
                 result.get("weak_source_exact_binding", {}).get("status"),
                 "bound_candidate",
