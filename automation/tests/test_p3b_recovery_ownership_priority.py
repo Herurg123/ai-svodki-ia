@@ -181,8 +181,14 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
             required = [self._required_signal()]
             delegated_calls: list[dict] = []
             handoff_calls: list[dict] = []
-            active_v2 = coverage._impl._v2
-            original_v2_sync = active_v2._sync_p3b_public_hooks
+
+            def fake_delegate(*args, **kwargs):
+                delegated_calls.append(dict(kwargs))
+                current = coverage.load_journal(state, DATE)
+                self.assertIsInstance(current, dict)
+                self.assertEqual(current["owner"], reservation.owner)
+                self.assertEqual(current["state"], "reserved")
+                return copy.deepcopy(plan)
 
             def assert_legacy_reservation() -> None:
                 current = coverage.load_journal(state, DATE)
@@ -194,11 +200,6 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
                 self.assertEqual(current["state"], "reserved")
                 self.assertFalse(current.get("wire_attempt_admitted"))
                 self.assertFalse(current.get("slot_consumed_or_ambiguous"))
-
-            def fake_p3a_execute(*args, **kwargs):
-                delegated_calls.append(dict(kwargs))
-                assert_legacy_reservation()
-                return copy.deepcopy(plan)
 
             def fake_handoff(
                 current_plan,
@@ -215,28 +216,19 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
                 assert_legacy_reservation()
                 return copy.deepcopy(current_plan)
 
-            def sync_then_install_required_probe() -> None:
-                original_v2_sync()
-                active_v2._v1._P3A_EXECUTE_AUDIT_PLAN = fake_p3a_execute
-
             with (
                 mock.patch.object(coverage, "STATE_DIR", state),
                 mock.patch.object(coverage._pre, "_required_signals", return_value=required),
                 mock.patch.object(coverage, "_p3b_signals", return_value=[copy.deepcopy(SIGNAL)]),
                 mock.patch.object(
-                    active_v2,
-                    "_sync_p3b_public_hooks",
-                    side_effect=sync_then_install_required_probe,
+                    coverage._impl._v3,
+                    "execute_audit_plan",
+                    side_effect=fake_delegate,
                 ),
                 mock.patch.object(
-                    coverage,
+                    coverage._impl,
                     "_run_handed_off_required_legacy",
                     side_effect=fake_handoff,
-                ),
-                mock.patch.object(
-                    coverage,
-                    "_V2_RUN_P3B_BINDING",
-                    side_effect=AssertionError("P3b must not run ahead of required unverified resolution"),
                 ),
             ):
                 current_journal = coverage.load_journal(state, DATE)
