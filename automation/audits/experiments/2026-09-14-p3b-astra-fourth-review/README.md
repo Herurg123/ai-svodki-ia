@@ -81,16 +81,14 @@ The remediation changes only active exact-binding semantics, its canonical tests
 - whole-pipeline ceilings 24/25;
 - production publication/deploy validation.
 
+Root `README.md` and `automation/README.md` were rechecked after the repair. Their public descriptions are intentionally implementation-version-neutral at this detail level and already describe exact authoritative identity, Freshness/archive checks, the same optional seventh slot and unchanged 24/25 ceilings, so no wording change is required there. Canonical implementation details are synchronized in `automation/ARCHITECTURE.md` and the permanent P3b matrix.
+
 ## Validation state
 
 Regression-only red evidence is fixed at commit `d272835e42387aa5006befe103f404a6ecc89ea1`, PR Gate #397 / run `34876840067`.
 
-An intermediate repaired head reduced the full suite to only the cross-claim `remains in preview` pair, which exposed the exact-anchor prose-continuation issue described above. That issue was then fixed locally in v4 rather than by weakening historical binder semantics.
+An intermediate repaired head reduced the full suite to only the cross-claim `remains in preview` pair, which exposed the exact-anchor prose-continuation issue described above. That issue was then fixed locally in v4 rather than by weakening historical binder semantics. A subsequent documentation-stage Gate completed the Python unit suite and all main validators successfully before being superseded by later documentation commits.
 
-The documentation-inclusive final exact-head SHA and its fully green PR Gate are recorded below only after all code/spec/document synchronization is complete.
+The final documentation-inclusive exact SHA is intentionally recorded in the PR handoff rather than self-referenced inside this committed file: editing this file to insert its own resulting commit SHA would create another SHA. The final PR Gate must run after this audit, architecture, matrix and contract-test synchronization, and the PR handoff must name that unchanged exact head and gate.
 
-- Final exact head: **pending final documentation synchronization**
-- Final PR Gate: **pending**
-- Required independent verdict on that unchanged head: **pending**
-
-Merge remains prohibited until the final documentation-inclusive exact SHA passes `Required PR Gate` and receives a new independent review with explicit `APPROVE`.
+Merge remains prohibited until that final documentation-inclusive exact SHA passes `Required PR Gate` and receives a new independent review with explicit `APPROVE`.
