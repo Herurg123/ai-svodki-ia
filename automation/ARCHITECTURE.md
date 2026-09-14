@@ -293,7 +293,7 @@ mutation scope не входит.
 | `pr-gate.yml` | Always-on PR routing и единый required gate | Нет |
 | `ci.yml` | Main CI, offline проверки основного production-кода | Нет |
 | `video-ci.yml` | Video CI, dependency-free offline проверки video-подпроекта | Нет |
-| `daily-production.yml` | Ежедневный retrieval/editorial/build/publish pipeline | Да, по production contract |
+| `daily-production.yml` | Ежедневное формирование ИИ-Сводки | Да, по production contract |
 | `deploy-posts.yml` | FTP-синхронизация точного `posts/` выбранного commit | Да, только public deploy |
 | `repository-cleanup.yml` | 32-day repository/public cleanup и отдельная FTP-video retention стадия | Да, только documented retention scope |
 | `repository-hygiene.yml` | Уборка безопасно классифицированных GitHub objects | Да, только GitHub-object policy scope |
@@ -804,15 +804,15 @@ reference и не расходует slot.
 Active P3b v6 является отдельным consumer того же optional seventh slot и
 использует binder `weak_source_exact_binding_v4.py`. Durable request identity
 остаётся совместимым `VERSION=2`, а binder v4 отдельно маркирует current positive
-semantic proof через `EVIDENCE_VERSION=2`. Evidence v2 дополнительно требует
-fail-closed обработки uncertainty/action-state language независимо от позиции
-action token и взаимоисключающих active lifecycle claims для той же exact
-organization/model identity. Выбирается максимум один qualified weak-source
-signal. Admission требует реальной authoritative non-weak страницы, exact
-organization, всех retained version/model anchors, lifecycle/action,
-deterministic Event/Source Freshness и archive/dedupe. Provider/model labels,
-fuzzy same-company matching, similar version, preview/GA, benchmark/release и
-old/current совпадения proof не являются.
+semantic proof через `EVIDENCE_VERSION=3`. Evidence v3 сохраняет все evidence-v2
+fail-closed требования для uncertainty/action-state language и взаимоисключающих
+active lifecycle claims и дополнительно запрещает positive replacement binding,
+если после полного directed replacement span указан отдельный foreign trailing
+agent. Выбирается максимум один qualified weak-source signal. Admission требует
+реальной authoritative non-weak страницы, exact organization, всех retained
+version/model anchors, lifecycle/action, deterministic Event/Source Freshness и
+archive/dedupe. Provider/model labels, fuzzy same-company matching, similar
+version, preview/GA, benchmark/release и old/current совпадения proof не являются.
 
 Required legacy `unverified` resolution имеет приоритет. Если current P3b journal
 доказан как exact тот же intent и всё ещё `reserved` без wire-attempt, response,
@@ -829,8 +829,8 @@ Durable states P3b: `reserved → request_started → response_saved → process
 `request_started` означает неизвестный consumption/outcome и автоматически не
 ретраится. `response_saved` replay и compatible `processed` reuse выполняются
 offline без нового provider search; mutable authoritative page при saved replay
-повторно не открывается. Positive `processed` snapshot, созданный до current
-binder evidence version, включая evidence-v1 positive, не переиспользуется как
+повторно не открывается. Positive `processed` snapshot с evidence-v1 или
+evidence-v2 predates current binder evidence v3, не переиспользуется как
 современное proof и деградирует fail-closed без нового поиска. `reserved` не
 может восстановить optional capacity, если prior runtime уже доказывает семь
 consumed Coverage operations: временный six-call routing clamp не имеет права
@@ -1456,6 +1456,14 @@ historical binder v2 на active binder v4 и переход positive semantic p
 ceilings 24/25 этим remediation не меняются; acceptance остаётся offline без
 production spend.
 
+Sep-14 P3b replacement passive-attribution hotfix сохранён в
+`audits/experiments/2026-09-14-p3b-replacement-passive-attribution-hotfix/README.md`.
+Он закрывает foreign trailing-agent counterexample для replacement claims,
+сохраняет durable request `VERSION=2`, переводит current positive semantic proof
+на `EVIDENCE_VERSION=3` и делает evidence-v1/evidence-v2 positive processed
+snapshots stale без нового provider search или page refetch. Query/routing,
+Freshness policy, durable slot capacity, ranking и ceilings 24/25 не меняются.
+
 ## 12. Совместимость и versioned реализации
 
 Некоторые stable public files являются wrappers над сохранёнными versioned
@@ -1514,11 +1522,11 @@ atomic P3b→legacy optional-slot transfer и current processed-evidence migrati
 v5 сохраняет second-review orchestration compatibility, v4/v3/v2/v1 и P3a
 остаются replay/regression boundaries. Active semantic binder
 `weak_source_exact_binding_v4.py` сохраняет durable request `VERSION=2`/mode, но
-использует `EVIDENCE_VERSION=2` для current positive proof. Evidence-v1 positive
-processed snapshot считается stale после fourth-review hardening и не разрешает
-новый provider search или mutable-page refetch. Generic sync не имеет права
-заменить active binder legacy matcher'ом, снять durable occupied-slot guard или
-изменить identity-sensitive historical exports.
+использует `EVIDENCE_VERSION=3` для current positive proof. Evidence-v1/evidence-v2
+positive processed snapshots считаются stale после replacement-attribution
+hardening и не разрешают новый provider search или mutable-page refetch. Generic
+sync не имеет права заменить active binder legacy matcher'ом, снять durable
+occupied-slot guard или изменить identity-sensitive historical exports.
 
 Discovery Health не создаёт новую versioned retrieval engine: это отдельный
 post-production reducer над saved reports. Он не monkeypatch'ит retrieval runtime
@@ -1718,21 +1726,26 @@ Event/Source Freshness, archive/dedupe, durable slot journal/recovery,
 compatibility wrappers, docs и regression matrix. Active public runtime — v6,
 semantic binder — `weak_source_exact_binding_v4.py` при сохранённом durable
 request `VERSION=2`; positive processed proof дополнительно требует current
-`EVIDENCE_VERSION=2`. Required legacy `unverified` resolution имеет приоритет, но
+`EVIDENCE_VERSION=3`. Evidence v3 сохраняет fourth-review lifecycle hardening и
+дополнительно fail-closed отклоняет foreign trailing agent после полного directed
+replacement span. Required legacy `unverified` resolution имеет приоритет, но
 может получить proven unstarted P3b slot только atomic transfer под общим
 slot/admission lock; release-then-reserve gap отсутствует, а started/ambiguous
 state не перезаписывается. P3b не меняет Primary query, provider/domain routing,
 regional/agency health, Source Pulse, Hybrid allocation, editorial ranking или
 candidate caps, не создаёт восьмой Coverage search и не меняет ceilings 24/25.
-Permanent acceptance содержит 20 случаев плюс second/third/fourth-review
-real-scheduler, crash/recovery, identity/lifecycle/archive/import controls;
-whole-project audit находится в
+Permanent acceptance содержит 20 случаев плюс second/third/fourth-review и
+replacement-attribution hotfix real-scheduler, crash/recovery,
+identity/lifecycle/archive/import controls; whole-project audit находится в
 `audits/experiments/2026-09-12-p3b-exact-authoritative-binding/`, v6 atomic-handoff
-evidence — в `audits/experiments/2026-09-14-p3b-astra-third-review/`, а current
+evidence — в `audits/experiments/2026-09-14-p3b-astra-third-review/`, fourth-review
 semantic/matrix remediation — в
-`audits/experiments/2026-09-14-p3b-astra-fourth-review/`. Terra в текущей среде не
-exposed, поэтому acceptance выполнен fixtures/saved replay без production spend.
-До merge требуется independent Astra review final exact-head diff.
+`audits/experiments/2026-09-14-p3b-astra-fourth-review/`, а current replacement
+attribution remediation — в
+`audits/experiments/2026-09-14-p3b-replacement-passive-attribution-hotfix/`.
+Terra в текущей среде не exposed, поэтому acceptance выполнен fixtures/saved replay
+без production spend. До merge требуется independent Astra review final exact-head
+diff.
 
 Для Hybrid v3 conditional paid extension dependency audit затрагивает stable
 Hybrid entrypoint, preserved v2/v3 layers, `regional_health` из Primary,
