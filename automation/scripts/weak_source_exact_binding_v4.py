@@ -236,13 +236,30 @@ def _cross_claim_lifecycle_conflict_reason(
 
 
 def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, str]:
-    """Apply v3 identity plus stricter evidence-boundary/current-event guards."""
-    base_ok, base_reason = _v3.exact_event_identity(surface, signal)
-    if not base_ok:
-        return base_ok, base_reason
-
+    """Apply v3 structural primitives plus stricter v4 current-event guards."""
     text = _v3._v2._clean(surface)
+    if not text:
+        return False, "event_surface_missing"
+    if not _v3._v2._contains_org(text, signal.get("organization")):
+        return False, "organization_identity_mismatch"
+
     anchors = _v3._v2._anchors(signal)
+    if not anchors:
+        return False, "version_identity_missing"
+    for anchor in anchors:
+        if not _contains_exact_anchor(text, anchor):
+            return False, "version_identity_mismatch"
+
+    actions = _v3._v2._actions(signal)
+    if not actions:
+        return False, "lifecycle_identity_missing"
+    if "replace" in actions:
+        roles, role_reason = _v3._v2._replacement_roles(signal)
+        if roles is None:
+            return False, role_reason
+        if _v3._replacement_direction_conflict(text, signal, roles):
+            return False, "replacement_direction_conflict"
+
     candidate_claims = [
         claim
         for claim in _v3._v2._event_claims(text)
@@ -250,7 +267,7 @@ def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, st
         and all(_contains_exact_anchor(claim, anchor) for anchor in anchors)
     ]
     if not candidate_claims:
-        return False, "version_identity_mismatch"
+        return False, "exact_event_claim_missing"
 
     reasons: list[str] = []
     positive = False
@@ -287,7 +304,12 @@ def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, st
         "lifecycle_negated",
         "lifecycle_noncurrent",
         "historical_event_context",
+        "replacement_direction_conflict",
+        "benchmark_lifecycle_mismatch",
         "preview_ga_mismatch",
+        "replacement_direction_mismatch",
+        "model_action_attribution_mismatch",
+        "lifecycle_identity_mismatch",
         "version_identity_mismatch",
     ):
         if preferred in reasons:
@@ -303,22 +325,41 @@ def candidate_exact_binding(
     authoritative_page_surface: str | None = None,
     authoritative_final_url: str | None = None,
 ) -> tuple[bool, str]:
-    base_ok, base_reason = _v3.candidate_exact_binding(
-        candidate,
-        signal,
-        authoritative_domains=authoritative_domains,
-        authoritative_page_surface=authoritative_page_surface,
-        authoritative_final_url=authoritative_final_url,
-    )
-    if not base_ok:
-        return base_ok, base_reason
+    if candidate.get("recommendation") not in {"include", "consider"}:
+        return False, "candidate_not_eligible"
+    if candidate.get("verification_status") != "verified":
+        return False, "candidate_not_verified"
+    if candidate.get("freshness_status") not in {"new_event", "material_update"}:
+        return False, "candidate_not_fresh_event"
+    if _v3.normalized_org(candidate.get("organization")) != _v3.normalized_org(
+        signal.get("organization")
+    ):
+        return False, "organization_identity_mismatch"
+
+    url = _v3.candidate_source_url(candidate)
+    host = _v3.normalized_host(url)
+    weak_host = _v3.normalized_host(((signal.get("source_provenance") or {}).get("url")))
+    if not host or not _v3._v2._v1._host_allowed(host, authoritative_domains):
+        return False, "primary_source_not_authoritative"
+    if weak_host and host == weak_host:
+        return False, "weak_source_cannot_self_authorize"
+
+    final_url = _v3._v2._clean(authoritative_final_url) or url
+    final_host = _v3.normalized_host(final_url)
+    if not final_host or not _v3._v2._v1._host_allowed(final_host, authoritative_domains):
+        return False, "authoritative_page_redirected_outside_allowlist"
+    if weak_host and final_host == weak_host:
+        return False, "weak_source_cannot_self_authorize"
 
     card_ok, card_reason = exact_event_identity(
         _v3._v2._current_candidate_surface(candidate), signal
     )
     if not card_ok:
         return False, card_reason
+
     page_surface = _v3._v2._clean(authoritative_page_surface)
+    if not page_surface:
+        return False, "authoritative_page_identity_unverified"
     page_ok, page_reason = exact_event_identity(page_surface, signal)
     if not page_ok:
         return False, f"authoritative_page_{page_reason}"
