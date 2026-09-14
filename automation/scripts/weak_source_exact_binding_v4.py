@@ -22,12 +22,12 @@ for _name in dir(_v3):
         globals()[_name] = getattr(_v3, _name)
 
 # Durable request identity remains v2-compatible. This marker versions only the
-# semantic proof stored in a processed positive snapshot. Version 2 invalidates
-# positive v4/evidence-v1 snapshots produced before the fourth-review temporal
-# and cross-claim contradiction hardening.
+# semantic proof stored in a processed positive snapshot. Version 3 invalidates
+# positive evidence-v2 snapshots produced before replacement trailing-agent
+# attribution was hardened, while preserving the same durable request contract.
 VERSION = _v3.VERSION
 MODE = _v3.MODE
-EVIDENCE_VERSION = 2
+EVIDENCE_VERSION = 3
 
 _VARIANT_PUNCT_RE = re.compile(
     r"^(?P<sep>/|\+|[\u2010\u2011\u2012\u2013\u2014\u2015\u2212])"
@@ -44,6 +44,10 @@ _V4_ANCHOR_ALLOWED_FOLLOWING_WORDS = frozenset(
 _PASSIVE_ACTION_RE = re.compile(
     r"\b(?:is|are|was|were|has\s+been|have\s+been|had\s+been)\s+"
     r"(?:launched|released|updated|upgraded)\b",
+    re.I,
+)
+_TRAILING_REPLACEMENT_AGENT_RE = re.compile(
+    r"^\s*(?:,\s*)?\bby\s+([^,.;|]+)",
     re.I,
 )
 _CONDITIONAL_PREFIX_RE = re.compile(r"^\s*(?:if|unless|whether)\b", re.I)
@@ -121,22 +125,41 @@ def _contains_exact_anchor(text: str, anchor: str) -> bool:
 
 def _passive_attribution_reason(claim: str, signal: dict[str, Any]) -> str | None:
     actions = set(_v3._v2._actions(signal))
-    if not actions.intersection({"launch", "update"}):
-        return None
     organization = _v3._v2._clean(signal.get("organization"))
     if not organization:
         return "organization_event_attribution_mismatch"
     org_pattern = rf"(?<![\w]){re.escape(organization)}(?![\w])"
-    for match in _PASSIVE_ACTION_RE.finditer(claim):
-        tail = claim[match.end():]
-        by_match = re.search(r"\bby\s+([^,.;|]+)", tail, re.I)
-        if by_match is not None:
-            agent = by_match.group(1).strip()
-            if re.match(org_pattern, agent, re.I) is None:
+
+    if actions.intersection({"launch", "update"}):
+        for match in _PASSIVE_ACTION_RE.finditer(claim):
+            tail = claim[match.end():]
+            by_match = re.search(r"\bby\s+([^,.;|]+)", tail, re.I)
+            if by_match is not None:
+                agent = by_match.group(1).strip()
+                if re.match(org_pattern, agent, re.I) is None:
+                    return "organization_event_attribution_mismatch"
+                continue
+            if re.search(rf"\bfor\s+{org_pattern}", tail, re.I):
                 return "organization_event_attribution_mismatch"
-            continue
-        if re.search(rf"\bfor\s+{org_pattern}", tail, re.I):
-            return "organization_event_attribution_mismatch"
+
+    if "replace" in actions:
+        roles, _reason = _v3._v2._replacement_roles(signal)
+        if roles is not None:
+            old_anchor, new_anchor = roles
+            for _start, end in _v3._directed_replace_spans(
+                claim, old_anchor, new_anchor
+            ):
+                # The passive replacement grammar already contains the internal
+                # relation ``old was replaced by new``. Only attribution that
+                # begins *after the complete directed replacement span* can be a
+                # separate event agent. This catches e.g. ``... V4.1 Flash by
+                # OpenAI`` without mistaking the replacement target for an agent.
+                trailing = _TRAILING_REPLACEMENT_AGENT_RE.match(claim[end:])
+                if trailing is None:
+                    continue
+                agent = trailing.group(1).strip()
+                if re.match(org_pattern, agent, re.I) is None:
+                    return "organization_event_attribution_mismatch"
     return None
 
 
