@@ -1,0 +1,32 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-14",
+  "slug": "2026-09-14",
+  "title": "ИИ-Сводка на 14 сентября 2026",
+  "description": "Сэм Альтман заявил, что OpenAI не планирует выходить на биржу в 2026 году. Короткий выпуск о том, почему отсрочка IPO сохраняет для компании большую свободу в финансировании и корпоративной стратегии.",
+  "published_at": "2026-09-14T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-14.png",
+  "topics": [
+    "OpenAI",
+    "Сэм Альтман",
+    "IPO",
+    "корпоративная стратегия",
+    "финансирование ИИ",
+    "frontier-модели"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: global_breaking, major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    }
+  ]
+}

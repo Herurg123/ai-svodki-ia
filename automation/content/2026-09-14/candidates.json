@@ -1,0 +1,262 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-09-14",
+  "search_window": {
+    "start_at": "2026-09-12T03:59:53+03:00",
+    "end_at": "2026-09-14T04:04:12+03:00",
+    "latest_archive_at": "2026-09-13T03:59:53+03:00",
+    "start_date": "2026-09-12",
+    "end_date": "2026-09-14",
+    "latest_archive_date": "2026-09-13"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Сэм Альтман заявил, что OpenAI не планирует выходить на биржу в 2026 году",
+      "organization": "OpenAI; Sam Altman",
+      "published_date": "2026-09-12",
+      "published_at": "2026-09-12T20:19:16+00:00",
+      "time_precision": "datetime",
+      "topic": "Корпоративная стратегия и потенциальное IPO OpenAI",
+      "event_type": "corporate strategy",
+      "keywords": [
+        "OpenAI",
+        "Sam Altman",
+        "IPO",
+        "public offering",
+        "fundraising",
+        "AI business"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "OpenAI’s Sam Altman says it would be ‘ill-advised’ to go public in 2026",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/12/openais-sam-altman-says-it-would-be-ill-advised-to-go-public-in-2026/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Генеральный директор OpenAI Сэм Альтман заявил, что компании было бы неразумно проводить IPO в 2026 году. По его словам, OpenAI не спешит с размещением, несмотря на ранее сообщавшуюся конфиденциальную подачу документов для IPO.",
+      "verified_facts": [
+        "TechCrunch опубликовал материал 12 сентября 2026 года в 13:19 PDT.",
+        "В материале приведён ответ Альтмана, что IPO OpenAI не состоится в 2026 году.",
+        "Материал указывает, что OpenAI ранее конфиденциально подала документы для IPO."
+      ],
+      "significance": "Это уточняет краткосрочную финансовую и корпоративную траекторию одного из ключевых разработчиков frontier-ИИ, но является заявлением о сроках, а не подтверждённой сделкой, раундом или формальным IPO-анонсированием.",
+      "significance_score": 2,
+      "limitations": "Первичный источник высказывания — интервью Альтмана, на которое ссылается TechCrunch; точные дата и время самого интервью в проверенном материале не указаны. Нет независимого подтверждения статуса конфиденциальной подачи или календаря IPO в пределах данного прохода.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет отдельного сюжета о переносе IPO OpenAI на период после 2026 года.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Публикация TechCrunch содержит точный timestamp и прямую атрибуцию слов Альтмана. Сюжет не является дублем архивных материалов о безопасности Astra, ограничении ChatGPT Pro или Agents API.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-12T20:19:16+00:00; timestamp проверен Python против effective window. Материал опубликован внутри effective window; это новое публичное сообщение о сроках IPO, не зафиксированное среди архивных сюжетов.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Сюжет касается корпоративной стратегии, а не судебного или регуляторного действия.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-рубрике.",
+      "event_date": "2026-09-12",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/09/12/openais-sam-altman-says-it-would-be-ill-advised-to-go-public-in-2026/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch впервые публично сообщил об ответе Альтмана 12 сентября 2026 года; точная дата исходного интервью в доступном материале не указана.",
+      "id": "cand-001",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/09/12/openais-sam-altman-says-it-would-be-ill-advised-to-go-public-in-2026/",
+      "source_published_date": "2026-09-12",
+      "source_published_at": "2026-09-12T20:19:16+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-12T20:19:16+00:00"
+    },
+    {
+      "title": "Perplexity trusts GPT-6 Astra with end-to-end systems",
+      "organization": "OpenAI",
+      "published_date": "2026-09-14",
+      "published_at": "2026-09-14T00:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Perplexity trusts GPT-6 Astra with end-to-end systems",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "Perplexity",
+        "trusts",
+        "GPT-6",
+        "Astra",
+        "end-to-end",
+        "systems"
+      ],
+      "geography": "world",
+      "category": "other",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Perplexity trusts GPT-6 Astra with end-to-end systems",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/perplexity-improving-accuracy-with-astra"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI official artificial intelligence publication: Perplexity trusts GPT-6 Astra with end-to-end systems",
+      "verified_facts": [
+        "Perplexity trusts GPT-6 Astra with end-to-end systems",
+        "OpenAI official artificial intelligence publication: Perplexity trusts GPT-6 Astra with end-to-end systems"
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-09-14T00:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-09-14T00:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-14T00:00:00+00:00; timestamp проверен Python против effective window. Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-09-14T00:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-09-14T00:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-002",
+      "trusted_feed_publication_evidence": {
+        "version": 1,
+        "kind": "trusted_first_party_feed",
+        "source_id": "openai_news_rss",
+        "feed_url": "https://openai.com/news/rss.xml",
+        "item_url": "https://openai.com/index/perplexity-improving-accuracy-with-astra",
+        "published_at": "2026-09-14T00:00:00+00:00",
+        "published_date": "2026-09-14",
+        "time_precision": "datetime",
+        "feed_date_field": "rss_pubdate",
+        "same_host_required": true,
+        "exact_item_url_required": true
+      },
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_evidence_kind": "trusted_first_party_feed",
+      "source_freshness_feed_source_id": "openai_news_rss",
+      "source_freshness_feed_date_field": "rss_pubdate",
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://openai.com/index/perplexity-improving-accuracy-with-astra",
+      "source_published_date": "2026-09-14",
+      "source_published_at": "2026-09-14T00:00:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "trusted_feed:openai_news_rss:rss_pubdate=2026-09-14T00:00:00+00:00"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=1, validated unique=1, final candidates=1. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

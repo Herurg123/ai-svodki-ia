@@ -1,0 +1,32 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Сэм Альтман заявил, что OpenAI не планирует выходить на биржу в 2026 году",
+    "organization": "OpenAI; Sam Altman",
+    "topic": "Корпоративная стратегия и потенциальное IPO OpenAI",
+    "event_type": "corporate strategy",
+    "status": "new",
+    "summary": "Генеральный директор OpenAI Сэм Альтман заявил, что компании было бы неразумно проводить IPO в 2026 году. По его словам, OpenAI не спешит с размещением, несмотря на ранее сообщавшуюся конфиденциальную подачу документов для IPO.",
+    "published_at": "2026-09-12T20:19:16+00:00",
+    "published_date": "2026-09-12",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI’s Sam Altman says it would be ‘ill-advised’ to go public in 2026",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/12/openais-sam-altman-says-it-would-be-ill-advised-to-go-public-in-2026/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Sam Altman",
+      "IPO",
+      "public offering",
+      "fundraising",
+      "AI business"
+    ],
+    "geography": "world",
+    "category": "investment"
+  }
+]

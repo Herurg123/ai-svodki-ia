@@ -1,0 +1,899 @@
+{
+  "version": 1,
+  "strategy": "source_pulse_shadow",
+  "supplement_version": 14,
+  "publication_date": "2026-09-14",
+  "status": "complete_with_gaps",
+  "state": "completed_supplemental",
+  "candidate_influence": false,
+  "supplemental_candidate_influence": true,
+  "supplemental_policy": "tier_a_official_or_trusted_news_pulse_only_consider_after_deterministic_page_freshness_or_strict_saved_first_party_feed_proof",
+  "repoll_on_recovery": false,
+  "paid_api_calls": 0,
+  "web_search_operations": 0,
+  "reused_snapshot": false,
+  "snapshot": {
+    "version": 1,
+    "mode": "production_shadow",
+    "production_integration": true,
+    "paid_api_calls": 0,
+    "web_search_operations": 0,
+    "window": {
+      "start_at": "2026-09-12T03:59:53+03:00",
+      "end_at": "2026-09-14T04:04:12+03:00"
+    },
+    "sources": [
+      {
+        "source_id": "baidu_ir",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://ir.baidu.com/",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20311
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "alibaba_ir_hkex",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.alibabagroup.com/en-US/ir-filings-hkex",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 454
+          }
+        ],
+        "selected_url": "https://www.alibabagroup.com/en-US/ir-filings-hkex",
+        "parsed_items": 25,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 52,
+        "parsed_items_after_v12": 52,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 52,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "alibaba_cloud_blog",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.alibabacloud.com/blog",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1897
+          }
+        ],
+        "selected_url": "https://www.alibabacloud.com/blog",
+        "parsed_items": 30,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 59,
+        "parsed_items_after_v12": 59,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 59,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "marvell_current_reports",
+        "tier": "A",
+        "region": "global",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://investor.marvell.com/sec-filings/current-reports",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 375
+          }
+        ],
+        "selected_url": "https://investor.marvell.com/sec-filings/current-reports",
+        "parsed_items": 20,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 105,
+        "parsed_items_after_v12": 105,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 105,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://blogs.nvidia.com/recent-news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 200
+          }
+        ],
+        "selected_url": "https://blogs.nvidia.com/recent-news",
+        "parsed_items": 21,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 24,
+        "parsed_items_after_v12": 24,
+        "dated_items_after_v12": 10,
+        "undated_items_after_v12": 14,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "openai_news_rss",
+        "tier": "A",
+        "region": "global",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://openai.com/news/rss.xml",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 197
+          }
+        ],
+        "selected_url": "https://openai.com/news/rss.xml",
+        "parsed_items": 16,
+        "window_items": 1,
+        "accepted_leads": 1,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 1192,
+        "parsed_items_after_v12": 1192,
+        "dated_items_after_v12": 1192,
+        "undated_items_after_v12": 0,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "qualcomm_news_ai",
+        "tier": "A",
+        "region": "global",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.qualcomm.com/news",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 93
+          }
+        ],
+        "selected_url": "https://www.qualcomm.com/news",
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 0,
+        "parsed_items_after_v12": 0,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 0,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "nsa_ai_news",
+        "tier": "A",
+        "region": "global",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://www.nsa.gov/Press-Room/News-Highlights/Tag/116894/",
+            "status": "error",
+            "http_status": 403,
+            "error": "HTTPError: HTTP Error 403: Forbidden",
+            "elapsed_ms": 421
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://ir.yandex.ru/press-releases?year=2026",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 2882
+          }
+        ],
+        "selected_url": "https://ir.yandex.ru/press-releases?year=2026",
+        "parsed_items": 30,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 219,
+        "parsed_items_after_v12": 222,
+        "dated_items_after_v12": 196,
+        "undated_items_after_v12": 26,
+        "visible_dates_recovered": 3,
+        "yandex_dates_corrected_v13": 189,
+        "yandex_conflicts_nulled_v13": 0,
+        "yandex_duplicate_urls_collapsed_v13": 190
+      },
+      {
+        "source_id": "tass_ai",
+        "tier": "A",
+        "region": "russia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://tass.ru/tag/iskusstvennyi-intellekt",
+            "status": "error",
+            "http_status": 403,
+            "error": "HTTPError: HTTP Error 403: Forbidden",
+            "elapsed_ms": 1573
+          },
+          {
+            "url": "https://tass.ru/feed",
+            "status": "error",
+            "http_status": 403,
+            "error": "HTTPError: HTTP Error 403: Forbidden",
+            "elapsed_ms": 1440
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "xpeng_ir",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://ir.xiaopeng.com/rss/news-releases.xml",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20528
+          },
+          {
+            "url": "https://ir.xiaopeng.com/news-events/news-releases",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20790
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://api-docs.deepseek.com/news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 464
+          }
+        ],
+        "selected_url": "https://api-docs.deepseek.com/news",
+        "parsed_items": 26,
+        "window_items": 2,
+        "accepted_leads": 2,
+        "cutoff_ambiguous_leads": 2,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 30,
+        "parsed_items_after_v12": 30,
+        "dated_items_after_v12": 3,
+        "undated_items_after_v12": 27,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "mws_news",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://mws.ru/news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1743
+          }
+        ],
+        "selected_url": "https://mws.ru/news",
+        "parsed_items": 30,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 120,
+        "parsed_items_after_v12": 121,
+        "dated_items_after_v12": 1,
+        "undated_items_after_v12": 120,
+        "visible_dates_recovered": 1
+      },
+      {
+        "source_id": "vk_press",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://vk.company.ru/ru/press/releases/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1227
+          }
+        ],
+        "selected_url": "https://vk.company.ru/ru/press/releases",
+        "parsed_items": 25,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 52,
+        "parsed_items_after_v12": 52,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 52,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "ithome_ai",
+        "tier": "B",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.ithome.com/tag/AI/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1459
+          }
+        ],
+        "selected_url": "https://www.ithome.com/tags/AI",
+        "parsed_items": 26,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 34,
+        "parsed_items_after_v12": 34,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 34,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "cnews_ai",
+        "tier": "B",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.cnews.ru/news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 3576
+          }
+        ],
+        "selected_url": "https://www.cnews.ru/news",
+        "parsed_items": 30,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 127,
+        "parsed_items_after_v12": 127,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 127,
+        "visible_dates_recovered": 0
+      }
+    ],
+    "leads": [
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "role": "official",
+        "title": "Agent Integrations Guide",
+        "url": "https://api-docs.deepseek.com/quick_start/agent_integrations/claude_code",
+        "published_date": "2026-09-14",
+        "published_at": null,
+        "time_precision": "date",
+        "cutoff_ambiguous": true,
+        "source_item_id": "https://api-docs.deepseek.com/quick_start/agent_integrations/claude_code",
+        "event_fingerprint": "c3f712b34fd0ce1547392388",
+        "exact_fingerprint": "0be14e866b5783954decfeaf",
+        "archive_url_duplicate": false
+      },
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "role": "official",
+        "title": "Anthropic API",
+        "url": "https://api-docs.deepseek.com/guides/anthropic_api",
+        "published_date": "2026-09-14",
+        "published_at": null,
+        "time_precision": "date",
+        "cutoff_ambiguous": true,
+        "source_item_id": "https://api-docs.deepseek.com/guides/anthropic_api",
+        "event_fingerprint": "1181a1be937663cfbaee8ff2",
+        "exact_fingerprint": "d30150160e0d8b65004d536b",
+        "archive_url_duplicate": false
+      },
+      {
+        "source_id": "openai_news_rss",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "Perplexity trusts GPT-6 Astra with end-to-end systems",
+        "url": "https://openai.com/index/perplexity-improving-accuracy-with-astra",
+        "published_date": "2026-09-14",
+        "published_at": "2026-09-14T00:00:00+00:00",
+        "time_precision": "datetime",
+        "cutoff_ambiguous": false,
+        "source_item_id": "https://openai.com/index/perplexity-improving-accuracy-with-astra",
+        "event_fingerprint": "f35975f7a25b568c99a78661",
+        "exact_fingerprint": "2d8cd136170163a4b37c3cd7",
+        "archive_url_duplicate": false,
+        "publication_evidence_kind": "rss_pubdate"
+      }
+    ],
+    "summary": {
+      "configured_sources": 16,
+      "sources_ok": 12,
+      "sources_unavailable": 4,
+      "sources_parse_error": 0,
+      "lead_count": 3,
+      "eligible_new_lead_count": 1,
+      "tier_a_leads": 3,
+      "tier_b_leads": 0,
+      "cutoff_ambiguous_leads": 2,
+      "archive_url_duplicates": 0,
+      "fetch_elapsed_ms_total": 79630,
+      "fetch_elapsed_ms_max": 20790,
+      "degraded_source_ids": [
+        "alibaba_cloud_blog",
+        "alibaba_ir_hkex",
+        "baidu_ir",
+        "cnews_ai",
+        "ithome_ai",
+        "marvell_current_reports",
+        "nsa_ai_news",
+        "tass_ai",
+        "vk_press",
+        "xpeng_ir"
+      ],
+      "source_health_status": "complete_with_gaps"
+    },
+    "fetched_at": "2026-09-14T01:09:02.515743+00:00",
+    "snapshot_hash": "1d2fe522ac3fb07474c8da6d37110c75f9301baed45d79e7ff291e943a1f4dfb",
+    "collector_version": 14,
+    "candidate_influence": false,
+    "repoll_on_recovery": false
+  },
+  "fusion": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "role": "official",
+        "title": "Agent Integrations Guide",
+        "url": "https://api-docs.deepseek.com/quick_start/agent_integrations/claude_code",
+        "published_date": "2026-09-14",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "c3f712b34fd0ce1547392388",
+        "exact_fingerprint": "0be14e866b5783954decfeaf",
+        "disposition": "cutoff_ambiguous",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": false
+      },
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "role": "official",
+        "title": "Anthropic API",
+        "url": "https://api-docs.deepseek.com/guides/anthropic_api",
+        "published_date": "2026-09-14",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "1181a1be937663cfbaee8ff2",
+        "exact_fingerprint": "d30150160e0d8b65004d536b",
+        "disposition": "cutoff_ambiguous",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": false
+      },
+      {
+        "source_id": "openai_news_rss",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "Perplexity trusts GPT-6 Astra with end-to-end systems",
+        "url": "https://openai.com/index/perplexity-improving-accuracy-with-astra",
+        "published_date": "2026-09-14",
+        "published_at": "2026-09-14T00:00:00+00:00",
+        "time_precision": "datetime",
+        "event_fingerprint": "f35975f7a25b568c99a78661",
+        "exact_fingerprint": "2d8cd136170163a4b37c3cd7",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      }
+    ],
+    "search_candidate_ids": [
+      "cand-001"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001"
+    ],
+    "summary": {
+      "pulse_total": 3,
+      "pulse_only_count": 1,
+      "both_count": 0,
+      "search_only_count": 1,
+      "cutoff_ambiguous_count": 2,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 1,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 0,
+      "pulse_only_china_asia_count": 0
+    }
+  },
+  "fusion_pre_hybrid": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "role": "official",
+        "title": "Agent Integrations Guide",
+        "url": "https://api-docs.deepseek.com/quick_start/agent_integrations/claude_code",
+        "published_date": "2026-09-14",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "c3f712b34fd0ce1547392388",
+        "exact_fingerprint": "0be14e866b5783954decfeaf",
+        "disposition": "cutoff_ambiguous",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": false
+      },
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "role": "official",
+        "title": "Anthropic API",
+        "url": "https://api-docs.deepseek.com/guides/anthropic_api",
+        "published_date": "2026-09-14",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "1181a1be937663cfbaee8ff2",
+        "exact_fingerprint": "d30150160e0d8b65004d536b",
+        "disposition": "cutoff_ambiguous",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": false
+      },
+      {
+        "source_id": "openai_news_rss",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "Perplexity trusts GPT-6 Astra with end-to-end systems",
+        "url": "https://openai.com/index/perplexity-improving-accuracy-with-astra",
+        "published_date": "2026-09-14",
+        "published_at": "2026-09-14T00:00:00+00:00",
+        "time_precision": "datetime",
+        "event_fingerprint": "f35975f7a25b568c99a78661",
+        "exact_fingerprint": "2d8cd136170163a4b37c3cd7",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      }
+    ],
+    "search_candidate_ids": [
+      "cand-001"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001"
+    ],
+    "summary": {
+      "pulse_total": 3,
+      "pulse_only_count": 1,
+      "both_count": 0,
+      "search_only_count": 1,
+      "cutoff_ambiguous_count": 2,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 1,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 0,
+      "pulse_only_china_asia_count": 0
+    }
+  },
+  "promotion": {
+    "proposed_count": 1,
+    "promoted_count": 1,
+    "rejected_by_merge_count": 0,
+    "candidate_count_before": 1,
+    "candidate_count_after": 2,
+    "accepted_candidate_urls": [
+      "https://openai.com/index/perplexity-improving-accuracy-with-astra"
+    ],
+    "merge_rejections": [],
+    "lead_dispositions": [
+      {
+        "source_id": "deepseek_official_news",
+        "title": "Agent Integrations Guide",
+        "url": "https://api-docs.deepseek.com/quick_start/agent_integrations/claude_code",
+        "tier": "A",
+        "region": "china_asia",
+        "role": "official",
+        "fusion_disposition": "cutoff_ambiguous",
+        "promotion_status": "not_eligible",
+        "reason": "fusion_cutoff_ambiguous"
+      },
+      {
+        "source_id": "deepseek_official_news",
+        "title": "Anthropic API",
+        "url": "https://api-docs.deepseek.com/guides/anthropic_api",
+        "tier": "A",
+        "region": "china_asia",
+        "role": "official",
+        "fusion_disposition": "cutoff_ambiguous",
+        "promotion_status": "not_eligible",
+        "reason": "fusion_cutoff_ambiguous"
+      },
+      {
+        "source_id": "openai_news_rss",
+        "title": "Perplexity trusts GPT-6 Astra with end-to-end systems",
+        "url": "https://openai.com/index/perplexity-improving-accuracy-with-astra",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "fusion_disposition": "pulse_only",
+        "promotion_status": "promoted",
+        "reason": "tier_a_official_trusted_feed_fallback_fresh_ai_relevant",
+        "final_url": "https://openai.com/index/perplexity-improving-accuracy-with-astra",
+        "http_status": 200,
+        "evidence_locator": "trusted_feed:openai_news_rss:rss_pubdate",
+        "evidence_raw": "2026-09-14T00:00:00+00:00",
+        "trusted_feed_publication_evidence": {
+          "trigger": "direct_fetch_error",
+          "error": "SourceFreshnessError: source fetch failed: HTTPError: HTTP Error 403: Forbidden",
+          "source_id": "openai_news_rss",
+          "feed_date_field": "rss_pubdate",
+          "published_at": "2026-09-14T00:00:00+00:00"
+        }
+      }
+    ]
+  },
+  "fusion_after_promotion": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "role": "official",
+        "title": "Agent Integrations Guide",
+        "url": "https://api-docs.deepseek.com/quick_start/agent_integrations/claude_code",
+        "published_date": "2026-09-14",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "c3f712b34fd0ce1547392388",
+        "exact_fingerprint": "0be14e866b5783954decfeaf",
+        "disposition": "cutoff_ambiguous",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": false
+      },
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "role": "official",
+        "title": "Anthropic API",
+        "url": "https://api-docs.deepseek.com/guides/anthropic_api",
+        "published_date": "2026-09-14",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "1181a1be937663cfbaee8ff2",
+        "exact_fingerprint": "d30150160e0d8b65004d536b",
+        "disposition": "cutoff_ambiguous",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": false
+      },
+      {
+        "source_id": "openai_news_rss",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "Perplexity trusts GPT-6 Astra with end-to-end systems",
+        "url": "https://openai.com/index/perplexity-improving-accuracy-with-astra",
+        "published_date": "2026-09-14",
+        "published_at": "2026-09-14T00:00:00+00:00",
+        "time_precision": "datetime",
+        "event_fingerprint": "f35975f7a25b568c99a78661",
+        "exact_fingerprint": "2d8cd136170163a4b37c3cd7",
+        "disposition": "both_exact_url",
+        "matched_candidate_ids": [
+          "cand-002"
+        ],
+        "actionable_shadow_lead": false
+      }
+    ],
+    "search_candidate_ids": [
+      "cand-001",
+      "cand-002"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001"
+    ],
+    "summary": {
+      "pulse_total": 3,
+      "pulse_only_count": 0,
+      "both_count": 1,
+      "search_only_count": 1,
+      "cutoff_ambiguous_count": 2,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 0,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 0,
+      "pulse_only_china_asia_count": 0
+    }
+  },
+  "error": null,
+  "yandex_date_repair": {
+    "version": 1,
+    "strategy": "dated_yandex_url_plus_matching_visible_date",
+    "generic_source_freshness_parser_changed": false,
+    "paid_api_calls": 0,
+    "web_search_operations": 0,
+    "direct_page_fallback_count": 0,
+    "saved_snapshot_dates_corrected": 0,
+    "saved_snapshot_rows_filtered_outside_window": 0,
+    "saved_snapshot_rows_ambiguous": 0
+  },
+  "trusted_feed_publication_evidence": {
+    "version": 1,
+    "strategy": "same_host_exact_item_saved_feed_publication_fallback",
+    "trusted_source_ids": [
+      "openai_news_rss"
+    ],
+    "saved_proof_count": 1,
+    "fallback_count": 1,
+    "direct_fetch_error_fallback_count": 1,
+    "undated_page_fallback_count": 0,
+    "conflict_rejection_count": 0,
+    "annotated_candidate_count": 1,
+    "feed_repolled_for_fallback": false,
+    "paid_api_calls": 0,
+    "web_search_operations": 0
+  },
+  "fusion_post_hybrid": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "role": "official",
+        "title": "Agent Integrations Guide",
+        "url": "https://api-docs.deepseek.com/quick_start/agent_integrations/claude_code",
+        "published_date": "2026-09-14",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "c3f712b34fd0ce1547392388",
+        "exact_fingerprint": "0be14e866b5783954decfeaf",
+        "disposition": "cutoff_ambiguous",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": false
+      },
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "role": "official",
+        "title": "Anthropic API",
+        "url": "https://api-docs.deepseek.com/guides/anthropic_api",
+        "published_date": "2026-09-14",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "1181a1be937663cfbaee8ff2",
+        "exact_fingerprint": "d30150160e0d8b65004d536b",
+        "disposition": "cutoff_ambiguous",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": false
+      },
+      {
+        "source_id": "openai_news_rss",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "Perplexity trusts GPT-6 Astra with end-to-end systems",
+        "url": "https://openai.com/index/perplexity-improving-accuracy-with-astra",
+        "published_date": "2026-09-14",
+        "published_at": "2026-09-14T00:00:00+00:00",
+        "time_precision": "datetime",
+        "event_fingerprint": "f35975f7a25b568c99a78661",
+        "exact_fingerprint": "2d8cd136170163a4b37c3cd7",
+        "disposition": "both_exact_url",
+        "matched_candidate_ids": [
+          "cand-002"
+        ],
+        "actionable_shadow_lead": false
+      }
+    ],
+    "search_candidate_ids": [
+      "cand-001",
+      "cand-002"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001"
+    ],
+    "summary": {
+      "pulse_total": 3,
+      "pulse_only_count": 0,
+      "both_count": 1,
+      "search_only_count": 1,
+      "cutoff_ambiguous_count": 2,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 0,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 0,
+      "pulse_only_china_asia_count": 0
+    }
+  }
+}
