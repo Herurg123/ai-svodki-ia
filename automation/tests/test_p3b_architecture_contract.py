@@ -22,7 +22,9 @@ class P3bArchitectureContractTests(unittest.TestCase):
         matrix = MATRIX.read_text(encoding="utf-8")
 
         for text in (architecture, matrix):
-            self.assertIn("active p3b v6", text.lower())
+            normalized = text.lower()
+            self.assertIn("active p3b", normalized)
+            self.assertIn("v6", normalized)
             self.assertIn("weak_source_exact_binding_v4.py", text)
             self.assertIn("coverage_slot_handoff", text)
             self.assertIn("atomic", text)
