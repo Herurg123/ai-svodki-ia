@@ -99,6 +99,12 @@ or transport is ambiguous, the signal remains unresolved/deferred and no eighth
 Coverage search is created. Durable P3b state is
 `reserved → request_started → response_saved → processed`; `request_started`
 never auto-retries, while `response_saved` and `processed` replay/reuse offline.
+Если higher-priority required `unverified` появляется при доказанном exact
+unstarted P3b reservation, active v6 под тем же optional-slot lock, который
+защищает request admission, атомарно заменяет полный P3b request/bundle contract
+на полный legacy reservation. Отдельного release-then-reserve окна без durable
+owner нет; started/response/consumed/foreign/mismatched state такой transfer не
+разрешает.
 
 Immediately before fresh Hybrid retrieval P4 performs a zero-paid viability
 refresh over the saved Primary provenance and the current post-freshness/editorial
@@ -248,7 +254,8 @@ listing и проверяется отсутствие всех удалённы
   `source_pulse_shadow.py`, `agency_discovery_rescue_v6.py`, preserved
   `agency_discovery_rescue_v5_base.py`, `agency_health_viability.py`,
   `regional_health_viability.py`, `discovery_health.py`, versioned Hybrid v2/v3,
-  active P3b Coverage v4/v3/v2 layers and FTP-retention `cleanup_video_ftp.py`;
+  active P3b Coverage v6 with preserved v5/v4/v3/v2 layers,
+  shared `coverage_slot_handoff.py` and FTP-retention `cleanup_video_ftp.py`;
 - `tests/` содержит основной Python offline regression suite, включая event/source
   freshness, Source Pulse Yandex/trusted-feed regressions, provider routing,
   Agency observability/viability/recovery, P3a weak-source retention, active P3b
@@ -794,26 +801,39 @@ P3a weak-source rows намеренно не входят в legacy resolution a
 `_required_signals()` их игнорирует. Сам P3a не связывает внешний authoritative
 reference и не расходует slot.
 
-P3b exact authoritative binding является отдельным active consumer того же
-optional seventh slot. Он запускается только если нет required legacy
-`unverified` resolution и capacity действительно свободна либо уже durable
-зарезервирована именно тем же P3b intent. Выбирается максимум один qualified
+Active P3b v6 является отдельным consumer того же optional seventh slot и
+использует binder `weak_source_exact_binding_v4.py`. Durable request identity
+остаётся совместимым `VERSION=2`, а binder v4 отдельно маркирует current positive
+semantic proof через `EVIDENCE_VERSION=1`. Выбирается максимум один qualified
 weak-source signal. Admission требует реальной authoritative non-weak страницы,
 exact organization, всех retained version/model anchors, lifecycle/action,
 deterministic Event/Source Freshness и archive/dedupe. Provider/model labels,
 fuzzy same-company matching, similar version, preview/GA, benchmark/release и
 old/current совпадения proof не являются.
 
+Required legacy `unverified` resolution имеет приоритет. Если current P3b journal
+доказан как exact тот же intent и всё ещё `reserved` без wire-attempt, response,
+snapshot или consumed/ambiguous evidence, v6 передаёт slot не удалением
+reservation, а `coverage_slot_handoff.transfer_reserved_slot`: под тем же
+inter-thread/inter-process lock, который защищает `prepare_slot` и
+`activate_slot`, exact expected source journal заменяется полным legacy
+request/bundle contract одним atomic replace. Crash после transfer оставляет
+полный legacy `reserved`; crash после admission оставляет `request_started`.
+Concurrent mutation, started/response-bearing, foreign, invalid или mismatched
+journal transfer запрещают и оставляют fail-closed.
+
 Durable states P3b: `reserved → request_started → response_saved → processed`.
 `request_started` означает неизвестный consumption/outcome и автоматически не
-ретраится. `response_saved` replay и `processed` reuse выполняются offline без
-нового provider search; mutable authoritative page при saved replay повторно не
-открывается. `reserved` не может восстановить optional capacity, если prior
-runtime уже доказывает семь consumed Coverage operations: временный six-call
-routing clamp не имеет права стереть этот факт. Invalid/foreign/mismatched journal
-остаётся fail-closed. Если seventh slot уже занят обязательным resolution или
-другим разрешённым контрактом, signal остаётся unresolved/deferred; восьмой
-Coverage search не появляется.
+ретраится. `response_saved` replay и compatible `processed` reuse выполняются
+offline без нового provider search; mutable authoritative page при saved replay
+повторно не открывается. Positive `processed` snapshot, созданный до current
+binder evidence version, не переиспользуется как современное proof и
+деградирует fail-closed без нового поиска. `reserved` не может восстановить
+optional capacity, если prior runtime уже доказывает семь consumed Coverage
+operations: временный six-call routing clamp не имеет права стереть этот факт.
+Если seventh slot уже занят обязательным resolution или другим разрешённым
+контрактом, signal остаётся unresolved/deferred; восьмой Coverage search не
+появляется.
 
 Fresh-agency source health использует тот же свободный seventh slot только когда
 ненулевой пригодный пул одновременно (a) не имеет свежего прямого
@@ -1163,10 +1183,18 @@ Active P3b использует durable optional-slot journal
 exact request/bundle identity до wire call. `request_started` считается
 consumed/ambiguous и никогда не получает automatic retry. `response_saved`
 переигрывается offline из сохранённого response/result без нового provider search
-или mutable-page refetch, а `processed` snapshot переиспользуется. Invalid,
-foreign или mismatched journal не переписывается догадкой. Уже потраченный
-seventh slot не восстанавливается из-за повторного budget calculation; P3b не
-может создать восьмой Coverage search при recovery.
+или mutable-page refetch, а compatible current-evidence `processed` snapshot
+переиспользуется. Invalid, foreign или mismatched journal не переписывается
+догадкой. Уже потраченный seventh slot не восстанавливается из-за повторного
+budget calculation; P3b не может создать восьмой Coverage search при recovery.
+
+Когда required legacy `unverified` должен получить ещё не начатый exact P3b slot,
+v6 использует atomic transfer вместо release + последующей reservation. Shared
+slot lock проверяет exact source journal identity и отсутствие admission/response/
+consumption evidence, после чего одним replace сохраняет полный target legacy
+request/bundle contract. Поэтому процессный stop непосредственно после handoff
+оставляет recoverable `reserved`, а stop после `request_started` оставляет
+consumed/ambiguous state; ни один путь не разрешает второй provider search.
 
 Coverage recovery сохраняет уже завершённые mandatory direction attempts и не
 повторяет их только из-за смены source-health contract. После загрузки same-day
@@ -1405,6 +1433,16 @@ Terra в среде реализации не был exposed, поэтому sea
 требует отдельный независимый Astra review final diff; одноимённые regression
 tests не являются заменой reviewer verdict.
 
+Sep-14 P3b v6 / Astra third-review remediation сохранён в
+`audits/experiments/2026-09-14-p3b-astra-third-review/README.md`. Он фиксирует
+active v6 + binder v4 topology, atomic P3b→legacy reservation transfer под общим
+slot/admission lock, crash immediately-after-transfer и after-admission recovery,
+passive attribution, conditional/rumor/history lifecycle controls, punctuation
+version continuations, GA/preview contradiction, mutable numeric direction и
+positive processed evidence-version migration. Этот remediation не меняет
+query/routing или search ceilings; acceptance выполнен offline без production
+spend.
+
 ## 12. Совместимость и versioned реализации
 
 Некоторые stable public files являются wrappers над сохранёнными versioned
@@ -1415,8 +1453,8 @@ implementations, например:
 - `agency_discovery_rescue_v5.py` как stable compatibility surface над active v6
   и побайтно сохранённым `agency_discovery_rescue_v5_base.py`;
 - `hybrid_search_completeness.py` над preserved Hybrid v2/v3 implementations;
-- `ensure_story_coverage.py` над active P3b v4 → v3 → v2 orchestration и
-  preserved P3b v1/P3a/Coverage compatibility layers;
+- `ensure_story_coverage.py` над active P3b v6 с preserved v5/v4/v3/v2/v1/P3a
+  compatibility/recovery layers;
 - `recover_digest_artifact.py` над preserved recovery implementation.
 
 Это не случайные дубликаты. Причины сохранения:
@@ -1458,11 +1496,14 @@ stable wrapper, не переписывая proven v2/v3 engines. Это осо�
 saved-artifact recovery и старых tests, которые monkeypatch'ят исторические hooks.
 
 Coverage P3b следует тому же правилу. Public `ensure_story_coverage.py` сохраняет
-historical import/monkeypatch API, active v4 защищает CLI и spent/reserved budget
-semantics, v3 сохраняет compatibility hooks, v2 владеет hardened real-page exact
-binding, а прежние v1/P3a engines остаются replay/regression boundaries. Generic
-sync не имеет права заменить hardened binder legacy fuzzy matcher'ом, снять v4
-reserved-budget guard или изменить identity-sensitive historical exports.
+historical import/monkeypatch API и направляет active runtime в v6. V6 владеет
+atomic P3b→legacy optional-slot transfer и current processed-evidence migration;
+v5 сохраняет second-review orchestration compatibility, v4/v3/v2/v1 и P3a
+остаются replay/regression boundaries. Active semantic binder
+`weak_source_exact_binding_v4.py` сохраняет durable request `VERSION=2`/mode, но
+добавляет `EVIDENCE_VERSION=1` для current positive proof. Generic sync не имеет
+права заменить active binder legacy matcher'ом, снять durable occupied-slot guard
+или изменить identity-sensitive historical exports.
 
 Discovery Health не создаёт новую versioned retrieval engine: это отдельный
 post-production reducer над saved reports. Он не monkeypatch'ит retrieval runtime
@@ -1659,17 +1700,22 @@ retrieval compatibility/search-matrix contract уже запрещает рас�
 Для active P3b exact authoritative binding dependency audit затрагивает только
 Coverage optional seventh-slot arbitration, P3a diagnostic handoff, exact binder,
 Event/Source Freshness, archive/dedupe, durable slot journal/recovery,
-compatibility wrappers, docs и regression matrix. P3b не меняет Primary query,
-provider/domain routing, regional/agency health, Source Pulse, Hybrid allocation,
-editorial ranking или candidate caps. Required legacy `unverified` resolution
-имеет приоритет; P3b не создаёт восьмой Coverage search и не меняет ceilings
-24/25. Exact page identity запрещает fuzzy same-company/version/lifecycle
-conflation. Durable `request_started` не ретраится; `response_saved`/`processed`
-replay/reuse offline. Permanent acceptance содержит 20 случаев плюс real scheduler
-recovery controls; whole-project audit находится в
-`audits/experiments/2026-09-12-p3b-exact-authoritative-binding/`. Terra в текущей
-среде не exposed, поэтому acceptance выполнен fixtures/saved replay без production
-spend. До merge требуется independent Astra review final exact-head diff.
+compatibility wrappers, docs и regression matrix. Active public runtime — v6,
+semantic binder — `weak_source_exact_binding_v4.py` при сохранённом durable
+request `VERSION=2`; positive processed proof дополнительно требует current
+`EVIDENCE_VERSION=1`. Required legacy `unverified` resolution имеет приоритет, но
+может получить proven unstarted P3b slot только atomic transfer под общим
+slot/admission lock; release-then-reserve gap отсутствует, а started/ambiguous
+state не перезаписывается. P3b не меняет Primary query, provider/domain routing,
+regional/agency health, Source Pulse, Hybrid allocation, editorial ranking или
+candidate caps, не создаёт восьмой Coverage search и не меняет ceilings 24/25.
+Permanent acceptance содержит 20 случаев плюс second/third-review real-scheduler,
+crash/recovery, identity/lifecycle/archive/import controls; whole-project audit
+находится в `audits/experiments/2026-09-12-p3b-exact-authoritative-binding/`, а
+финальная v6 remediation evidence — в
+`audits/experiments/2026-09-14-p3b-astra-third-review/`. Terra в текущей среде не
+exposed, поэтому acceptance выполнен fixtures/saved replay без production spend.
+До merge требуется independent Astra review final exact-head diff.
 
 Для Hybrid v3 conditional paid extension dependency audit затрагивает stable
 Hybrid entrypoint, preserved v2/v3 layers, `regional_health` из Primary,
