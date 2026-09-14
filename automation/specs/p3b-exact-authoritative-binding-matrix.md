@@ -6,10 +6,9 @@
 
 P3a остаётся evidence-only: qualified `reason_code=weak_source` сохраняет source provenance и identity hints, но имеет `resolution_required=false`, `candidate_eligible=false` и сам не связывает событие с authoritative source.
 
-Active P3b использует binder implementation `weak_source_exact_binding_v3.py` при сохранённом durable request-contract `VERSION=2`; public Coverage path идёт через v5 → v4 → v3 → v2 compatibility chain. Он может рассмотреть максимум один qualified P3a weak-source signal и использует только уже существующий optional seventh Coverage slot. Шесть mandatory Coverage directions не меняются. Required high-signal `unverified` resolution имеет
-приоритет. Если optional capacity занята, потрачена или неоднозначна, weak-source signal остаётся unresolved/deferred. Восьмой Coverage search запрещён. Обычный whole-pipeline ceiling остаётся 24 Web Search operations; существующий conditional double-regional-gap ceiling остаётся 25.
+Active P3b использует binder implementation `weak_source_exact_binding_v4.py` при сохранённом durable request-contract `VERSION=2`; public Coverage path идёт через v6 → v5 → v4 → v3 → v2 compatibility chain. Binder v4 отдельно маркирует semantic positive proof через `EVIDENCE_VERSION=1`, не разрывая durable request identity. P3b может рассмотреть максимум один qualified P3a weak-source signal и использует только уже существующий optional seventh Coverage slot. Шесть mandatory Coverage directions не меняются. Required high-signal `unverified` resolution имеет приоритет. Если optional capacity занята, потрачена или неоднозначна, weak-source signal остаётся unresolved/deferred. Восьмой Coverage search запрещён. Обычный whole-pipeline ceiling остаётся 24 Web Search operations; существующий conditional double-regional-gap ceiling остаётся 25.
 
-Положительное P3b admission требует runtime proof, а не утверждения модели: authoritative non-weak URL, реальную страницу, exact organization, все retained version/model anchors, совместимый lifecycle/action, deterministic Event/Source Freshness и archive/dedupe checks. Organization, все retained anchors и lifecycle/action должны доказываться одним local event claim; соседние title/paragraph claims нельзя склеивать в одно событие. Простого присутствия organization в том же claim тоже недостаточно: lifecycle assertion должна относиться к signal organization, а foreign named actor либо явная reporting/role attribution между organization и lifecycle/action делает identity недоказанной. Replacement direction выводится из retained signal claim, а не из порядка anchors. Negation и historical/background mentions не являются current-event proof. Provider terminal-negative labels не являются independent proof.
+Положительное P3b admission требует runtime proof, а не утверждения модели: authoritative non-weak URL, реальную страницу, exact organization, все retained version/model anchors, совместимый lifecycle/action, deterministic Event/Source Freshness и archive/dedupe checks. Organization, все retained anchors и lifecycle/action должны доказываться одним local event claim; соседние title/paragraph claims нельзя склеивать в одно событие. Простого присутствия organization в том же claim тоже недостаточно: lifecycle assertion должна относиться к signal organization, а foreign named actor, passive attribution другому agent либо явная reporting/role attribution между organization и lifecycle/action делает identity недоказанной. Replacement direction выводится из retained signal claim, а не из порядка anchors. Negation, conditional/uncertain language и historical/background mentions не являются current-event proof. Provider terminal-negative labels не являются independent proof.
 
 ## Обязательная 20-case matrix
 
@@ -17,7 +16,7 @@ Active P3b использует binder implementation `weak_source_exact_binding
 |---:|---|---|
 | 1 | Exact positive | Exact fresh authoritative same-event page допускает один bound candidate. |
 | 2 | Same company, different product | Reject; совпадение организации не связывает другое product/model событие. |
-| 3 | Similar version | Reject; соседняя версия или именованный/числовой suffix не заменяет exact retained anchor. |
+| 3 | Similar version | Reject; соседняя версия или именованный/числовой/punctuation suffix не заменяет exact retained anchor. |
 | 4 | Old release | Reject через deterministic freshness; свежая страница/результат не омолаживает старое событие. |
 | 5 | Preview vs GA | Reject lifecycle mismatch; preview и `general_availability`/GA являются разными событиями. |
 | 6 | Benchmark vs release | Reject lifecycle/action mismatch; benchmark/current comparison не доказывает новый release/replacement. |
@@ -38,21 +37,25 @@ Active P3b использует binder implementation `weak_source_exact_binding
 
 ## Astra remediation controls сверх 20 cases
 
-Постоянные regressions также обязаны доказывать исходные independent-review counterexamples и финальные self-audit counterexamples:
+Постоянные regressions также обязаны доказывать исходные independent-review counterexamples и последующие exact-head self-audit counterexamples:
 
 - changed model / missing signal / changed archive при уже занятом seventh slot не создают новый optional search;
 - `reserved` P3b intent не обходит higher-priority required `unverified`, а foreign/mismatched reservation не удаляется;
-- proven unstarted P3b reservation может быть atomically released только ради уже существующего required `unverified`; после handoff seventh slot исполняется через P3a durable transport, а crash после `request_started` оставляет consumed/ambiguous journal и recovery не делает новый search;
-- explicit negation и historical exact-event mention не дают positive binding;
+- proven unstarted P3b reservation может быть передан required `unverified` только атомарной заменой durable intent под тем же slot lock, который защищает request admission; между P3b и legacy не возникает состояния без reservation;
+- crash сразу после atomic transfer оставляет полный legacy `reserved` journal, а crash после `request_started` оставляет consumed/ambiguous journal; recovery в обоих случаях не создаёт восьмой Coverage search;
+- transfer не имеет права перезаписать уже `request_started`, response-bearing, consumed/ambiguous, foreign или concurrently changed P3b journal;
+- explicit negation, suffix-negative lifecycle, conditional `if/unless/whether`, rumor/speculation, planned/cancelled/modal и historical exact-event mention не дают positive binding;
 - organization нельзя заимствовать из соседнего page claim: exact organization + retained anchors + lifecycle/action должны находиться в одном local event claim;
-- same-claim foreign actor contamination fail-closed: `DeepSeek says OpenAI launches V4.1 Flash`, lowercase foreign actor и role-attribution формы вроде `DeepSeek says the rival launches ...` не доказывают DeepSeek event, а `OpenAI says DeepSeek launches V4.1 Flash` сохраняет корректную attribution;
+- same-claim foreign actor contamination fail-closed: `DeepSeek says OpenAI launches V4.1 Flash`, lowercase foreign actor, role-attribution и passive `... launched by OpenAI` не доказывают DeepSeek event, а корректная attribution к signal organization сохраняет positive control;
+- GA claim не может одновременно использовать active preview/beta/early-access assertion как positive proof;
 - structured archive organization не может переназначить foreign headline actor на signal organization;
-- replacement old/new roles не зависят от порядка `product_version_anchors`;
-- canonical `general_availability` совместим с GA, но negated GA остаётся fail-closed;
-- `V4.1 Flash Thinking`, numeric continuation и иные distinct variants не считаются `V4.1 Flash`;
-- mutable archive updates одной модели не dedupe'ятся по org+version+lifecycle; exact URL остаётся conclusive, а semantic duplicate требует exact normalized event-detail fingerprint;
+- replacement old/new roles не зависят от порядка `product_version_anchors`, а наличие обеих противоположных active replacement directions fail-closed;
+- canonical `general_availability` совместим с GA, но negated/preview GA остаётся fail-closed;
+- lowercase, numeric и punctuation continuations (`v2`, `experimental`, `/Pro`, `+`, dash-variant`) не считаются exact shorter anchor, кроме явно разрешённого обычного prose continuation;
+- mutable archive updates одной модели не dedupe'ятся по org+version+lifecycle; exact URL остаётся conclusive, а semantic duplicate требует exact normalized ordered event-detail fingerprint, включая single-digit direction (`8K→9K` не равно `9K→8K`);
 - high-overlap distinct updates (`video input support` vs `video output support`) не являются одним событием;
-- active matrix использует public v5 runtime с binder implementation v3 и сохранённым contract `VERSION=2`, а не исторический v1/v2 binder path;
+- positive `processed` snapshot без current binder `EVIDENCE_VERSION` не переиспользуется как current hardened proof;
+- active matrix использует public v6 runtime с binder implementation v4 и сохранённым durable contract `VERSION=2`, а не исторический v1/v2/v3 active path;
 - `test_p3b_astra_regressions.py` проходит standalone в чистом Python process, чтобы full-suite import order не мог маскировать compatibility defect.
 
 ## Permanent executable coverage
@@ -62,6 +65,7 @@ Active P3b использует binder implementation `weak_source_exact_binding
 - `automation/tests/test_p3b_optional_slot_recovery.py`;
 - `automation/tests/test_p3b_astra_regressions.py`;
 - `automation/tests/test_p3b_astra_second_review.py`;
+- `automation/tests/test_p3b_astra_third_review.py`;
 - `automation/tests/test_p3b_recovery_ownership_priority.py`;
 - `automation/tests/test_p3b_negation_historical_binding.py`;
 - `automation/tests/test_p3b_replacement_roles.py`;
@@ -76,15 +80,15 @@ Active P3b использует binder implementation `weak_source_exact_binding
 | Saved state | Допустимое действие | Новый provider search |
 |---|---|---|
 | no journal | Только если mandatory Coverage завершён, optional seventh slot реально свободен и нет higher-priority required resolution | максимум 1 |
-| `reserved` + capacity свободна | Продолжить тот же exact intent; перед wire call перейти в `request_started` | максимум 1 |
-| `reserved` + proven P3b intent + required `unverified` | Atomically release только unstarted reservation без wire/response/consumption evidence; передать slot required legacy resolution через durable P3a transport | максимум 1 |
+| `reserved` + capacity свободна | Продолжить тот же exact P3b intent; перед wire call перейти в `request_started` под protected admission lock | максимум 1 |
+| `reserved` + proven P3b intent + required `unverified` | Под shared slot lock атомарно заменить только unstarted P3b reservation на полный legacy durable reservation; затем исполнить required legacy resolution через P3a protected transport | максимум 1 |
 | `reserved` + budget уже исчерпан | Defer; reservation не может восстановить потраченный seventh slot | 0 |
-| `request_started` | Outcome неизвестен; сохранить indeterminate/consumed | 0 |
+| `request_started` | Outcome неизвестен; сохранить indeterminate/consumed, transfer/retry запрещены | 0 |
 | `response_saved` | Replay сохранённого response/result offline; без mutable-page refetch | 0 |
-| `processed` | Reuse сохранённого hardened result | 0 |
+| `processed` | Reuse только current hardened result; stale positive evidence-version fail-closed | 0 |
 | invalid/foreign/mismatched journal | Fail closed; не переписывать чужой intent и не угадывать consumption | 0 |
 
-Только current unstarted P3b reservation с доказанным exact request-contract identity может быть снят ради уже существующего required `unverified`, причём лишь при доказанном отсутствии wire-attempt/response/consumed evidence и concurrent journal mutation. Handoff сохраняет publication-date context на время P3a durable resolution; crash после `request_started` не возвращает capacity и следующий запуск не выполняет восьмой search.
+Только current unstarted P3b reservation с доказанным exact request-contract identity может быть передан уже существующему required `unverified`. `coverage_slot_handoff.transfer_reserved_slot` под тем же межпоточным/межпроцессным slot lock проверяет `state=reserved`, отсутствие wire-attempt, response/snapshot/consumed evidence и exact expected source journal hash, после чего одним atomic replace записывает полный legacy request/bundle contract. Поэтому нет crash-window, где P3b уже снят, а legacy reservation ещё не существует. Handoff сохраняет publication-date context на время P3a durable resolution; crash после `request_started` не возвращает capacity и следующий запуск не выполняет восьмой search.
 
 ## Exact identity / archive contract
 
@@ -92,21 +96,21 @@ Binding fail-closed, если отсутствует хотя бы одно об
 
 - normalized organization соответствует exact signal identity;
 - normalized organization, каждый retained product/version/model anchor и lifecycle/action присутствуют в одном local event claim; совпадения, разбросанные по соседним claims, не складываются;
-- lifecycle/action в этом local claim атрибутирован signal organization; organization не может быть только speaker/context рядом с event другого actor, включая явную reporting/role attribution;
-- каждый retained product/version/model anchor присутствует точно, без fuzzy prefix/version conflation;
-- lifecycle/action совпадает, replacement направлен, negation/history не принимаются за current assertion;
+- lifecycle/action в этом local claim атрибутирован signal organization; organization не может быть только speaker/context рядом с event другого actor, включая явную reporting/role attribution и passive attribution другому agent;
+- каждый retained product/version/model anchor присутствует точно, без fuzzy prefix/version conflation и без неизвестного adjacent lexical/punctuation continuation;
+- lifecycle/action совпадает, replacement направлен, negation/conditional/uncertain/history не принимаются за current assertion; GA не может одновременно доказываться active preview context;
 - primary/final URL относится к разрешённому authoritative source class и не совпадает с weak-source host;
 - fetched page independently содержит exact current-event surface;
 - deterministic freshness подтверждает saved editorial window;
 - archive/dedupe не доказывает уже опубликованный exact event.
 
-Для mutable lifecycle exact archive URL является достаточным proof. При другом URL org+version+lifecycle недостаточно: normalized event-detail fingerprint должен совпасть целиком. Частичное lexical overlap не блокирует fresh candidate. Structured archive organization может дополнять headline только внутри той же story row и не может переопределять foreign actor в headline.
+Для mutable lifecycle exact archive URL является достаточным proof. При другом URL org+version+lifecycle недостаточно: normalized ordered event-detail fingerprint должен совпасть целиком и сохранять направление numeric/mutable change. Частичное lexical overlap не блокирует fresh candidate. Structured archive organization может дополнять headline только внутри той же story row и не может переопределять foreign actor в headline.
 
 ## Recovery / compatibility / budget proof
 
-Public `ensure_story_coverage.py` обязан сохранять historical Coverage API и monkeypatch seams, но production CLI и direct `execute_audit_plan()` должны идти через один hardened P3b v5 runtime. Compatibility sync не имеет права снять reserved-budget guard, заменить active binder implementation v3 legacy binder'ом или восстановить уже потраченную optional capacity.
+Public `ensure_story_coverage.py` обязан сохранять historical Coverage API и monkeypatch seams, но production CLI и direct `execute_audit_plan()` должны идти через один hardened P3b v6 runtime. V6 владеет atomic P3b→legacy slot transfer, v5 сохраняет second-review orchestration compatibility, preserved v4/v3/v2/v1 layers остаются replay/regression boundaries. Compatibility sync не имеет права снять durable occupied-slot guard, заменить active binder v4 legacy matcher'ом или восстановить уже потраченную optional capacity.
 
-Preserved `ensure_story_coverage_p3a.py` должен оставаться byte-identical pre-P3b public implementation. Historical P3b v1/v2 and binder v1/v2 остаются forensic/compatibility assets; binder v3 сохраняет durable `VERSION=2`, чтобы hardened semantics не разрывали уже сохранённый request contract.
+Preserved `ensure_story_coverage_p3a.py` должен оставаться byte-identical pre-P3b public implementation. Historical binder v1/v2/v3 остаются forensic/compatibility assets; binder v4 наследует hardened v3 semantics, сохраняет durable `VERSION=2`/mode и отдельно использует `EVIDENCE_VERSION=1` для current positive processed proof.
 
 P3b не меняет Primary 12-search matrix, Agency Rescue route/health, Hybrid allocation, regional health, ranking, editorial policy, Source Pulse или Freshness policy. Search ceilings остаются 24/25.
 
@@ -114,6 +118,8 @@ P3b не меняет Primary 12-search matrix, Agency Rescue route/health, Hybr
 
 Whole-project architecture/recovery audit: `automation/audits/experiments/2026-09-12-p3b-exact-authoritative-binding/README.md`.
 
-В среде реализации Terra не был exposed. Поэтому search-side acceptance выполнен через deterministic fixtures, saved artifacts и offline replay без production API пользователя и без paid Web Search. P3b remediation не меняет search query/routing, поэтому отсутствие Terra не компенсировалось production spend.
+Финальная v6/third-review remediation evidence: `automation/audits/experiments/2026-09-14-p3b-astra-third-review/README.md`.
+
+В среде реализации Terra не был exposed. Поэтому search-side acceptance выполнен через deterministic fixtures, saved artifacts и offline replay без production API пользователя и без paid Web Search. Последние remediation rounds не меняют search query/routing, поэтому отсутствие Terra не компенсировалось production spend.
 
 Перед merge final exact head обязан пройти полный PR Gate и отдельный независимый Astra review final diff. Regression tests с именем `astra` являются executable controls, а не заменой независимого reviewer verdict.
