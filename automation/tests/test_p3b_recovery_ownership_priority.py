@@ -224,7 +224,7 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
                 mock.patch.object(coverage._pre, "_required_signals", return_value=required),
                 mock.patch.object(coverage, "_p3b_signals", return_value=[copy.deepcopy(SIGNAL)]),
                 mock.patch.object(
-                    coverage._impl,
+                    coverage,
                     "_run_handed_off_required_legacy",
                     side_effect=fake_handoff,
                 ),
