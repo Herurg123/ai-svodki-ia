@@ -162,7 +162,7 @@ class AstraFourthReviewRegressions(unittest.TestCase):
             reservation.save_raw_response({"id": "evidence-v1", "status": "completed"})
             reservation.mark_processed(saved)
 
-            with mock.patch.object(coverage, "STATE_DIR", state):
+            with mock.patch.object(coverage._impl, "STATE_DIR", state):
                 self.assertTrue(
                     coverage._impl._processed_positive_snapshot_is_stale(controls.DATE)
                 )
