@@ -38,7 +38,8 @@
   weak-source evidence-retention controls;
 - `fixtures/research/.runtime/` — ignored trusted runtime ingress для fresh
   research;
-- `specs/` — редакционные и технические спецификации;
+- `specs/` — редакционные и технические спецификации, включая permanent P3b
+  exact-authoritative 20-case validation matrix;
 - `scripts/` — production, retrieval, event/source freshness, recovery, cleanup,
   site generation и validators;
 - `tests/` — основной Python offline regression suite;
@@ -94,7 +95,13 @@
   source-health rescue использует свободный седьмой slot только когда в текущем
   пуле существует допустимый funding/M&A/investment/infrastructure/chips/partnership
   target, а при реальном source-health gap без такого target фиксируется
-  `not_applicable` без дополнительного search и без ложной блокировки выпуска;
+  `not_applicable` без дополнительного search и без ложной блокировки выпуска.
+  Active P3b в этом же entrypoint может использовать только тот же свободный
+  optional seventh slot для максимум одного qualified P3a weak-source signal,
+  причём required `unverified` resolution имеет приоритет. Admission требует
+  exact authoritative page identity, deterministic Freshness и archive checks;
+  `request_started` не ретраится, `response_saved`/`processed` переиспользуются
+  offline, а восьмой Coverage search запрещён;
 - `scripts/recover_digest_artifact.py` — paid-stage recovery entrypoint; текущий
   agency-health contract разрешает повторно оценить только zero-spend saved
   `not_triggered`, но никогда не повторяет started/spent/indeterminate rescue;
@@ -231,9 +238,9 @@ P4 отдельно, уже после Event/Source Freshness и первого 
 fusion, каждую причину promotion/rejection, promoted URLs, trusted-feed evidence
 и snapshot reuse; весь `production-daily/` входит в стандартный Actions artifact.
 
-## Weak-source signal retention P3a
+## Weak-source signal retention P3a и exact authoritative binding P3b
 
-Primary Retrieval Quality теперь сохраняет строго квалифицированный
+Primary Retrieval Quality сохраняет строго квалифицированный
 `reason_code=weak_source` для product/model событий как evidence-only unresolved
 row. Для retention обязательны исходный HTTPS source provenance, organization,
 версионный/model anchor и lifecycle/action anchor. Исходные URL и reason не
@@ -244,16 +251,30 @@ P3a не меняет publication eligibility: такой row получает
 `additional_search_operations=0`. Поэтому он не попадает в существующий Coverage
 `_required_signals`, не резервирует/вытесняет седьмой Coverage slot и не делает
 weak source кандидатом. Существующий high-signal `unverified` resolution работает
-как раньше.
+как раньше и всегда имеет приоритет на optional slot.
 
-Sep11 DeepSeek fixture:
-`fixtures/recall/weak-source-signal-retention-2026-09-11.json`; zero-paid matrix
-audit: `audits/experiments/2026-09-12-weak-source-signal-retention-p3a/`.
-Permanent case добавлен в `specs/search-change-validation-matrix.md` как D6.
-Exact authoritative binding, same-company/different-event matching и возможное
-закрытие сигнала относятся к отдельному P3b и в P3a не активированы. Search
-ceilings 24/25, Freshness, archive dedupe, recovery spend и editorial ranking не
-изменены.
+Active P3b находится downstream в Coverage. Он выбирает максимум один qualified
+weak-source signal и может использовать только уже существующий optional seventh
+Coverage slot после шести mandatory directions. Положительное admission возможно
+только после runtime-проверки authoritative non-weak URL: exact organization,
+всех retained version/model anchors, lifecycle/action, реальной страницы,
+deterministic Event/Source Freshness и archive/dedupe. Fuzzy same-company match,
+provider `verified` label, similar version, preview/GA, benchmark/release,
+old/current или обратный replacement не являются proof.
+
+Durable slot semantics: `reserved → request_started → response_saved → processed`.
+`request_started` означает неизвестный outcome и никогда не ретраится;
+`response_saved` replay выполняется offline без нового provider/page fetch;
+`processed` snapshot переиспользуется. Если slot уже занят другим разрешённым
+контрактом, spent до recovery, invalid/ambiguous или runtime budget уже исчерпан,
+P3b остаётся diagnostic/deferred и восьмой Coverage search не появляется.
+Whole-pipeline ceilings остаются 24/25.
+
+Sep11 DeepSeek P3a fixture:
+`fixtures/recall/weak-source-signal-retention-2026-09-11.json`; P3a zero-paid audit:
+`audits/experiments/2026-09-12-weak-source-signal-retention-p3a/`. P3b whole-project
+audit: `audits/experiments/2026-09-12-p3b-exact-authoritative-binding/README.md`.
+Permanent P3b matrix: `specs/p3b-exact-authoritative-binding-matrix.md`.
 
 ## Provider routing P3
 
@@ -406,9 +427,10 @@ Whole-pipeline theoretical ceiling:
 
 Source Pulse, Event Freshness, P4 regional viability, agency-health viability,
 P3a weak-source evidence retention и Discovery Health в эти числа не входят: у
-них 0 OpenAI calls и 0 Web Search. Дополнительные региональные Coverage searches
-и отдельный LLM semantic-event matcher сейчас не включены; они остаются deferred
-options для будущих аудитов.
+них 0 OpenAI calls и 0 Web Search. Active P3b также не повышает ceiling: он может
+занять только уже существующий optional seventh Coverage slot и не создаёт новый
+slot. Дополнительные региональные Coverage searches и отдельный LLM semantic-event
+matcher сейчас не включены; они остаются deferred options для будущих аудитов.
 
 Редакционный validator применяет действующую политику без региональных квот.
 Российский research lead с `include|consider` и score ≥ 3 может быть исключён
