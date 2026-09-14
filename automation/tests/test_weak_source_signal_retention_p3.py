@@ -141,7 +141,10 @@ class WeakSourceSignalRetentionP3Tests(unittest.TestCase):
         for case_number in range(1, 21):
             self.assertIn(f"| {case_number} |", p3b_matrix)
         self.assertIn("reserved → request_started → response_saved → processed", p3b_matrix)
-        self.assertIn("Required high-signal `unverified` resolution имеет\nприоритет", p3b_matrix)
+        self.assertIn(
+            "Required high-signal `unverified` resolution имеет приоритет",
+            " ".join(p3b_matrix.split()),
+        )
 
 
 if __name__ == "__main__":
