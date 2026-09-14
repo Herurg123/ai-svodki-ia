@@ -199,10 +199,9 @@ def _strict_claim_reason(claim: str, signal: dict[str, Any]) -> str | None:
         return contextual
     if _UNCERTAIN_ASSERTION_RE.search(claim):
         return "lifecycle_noncurrent"
-    # Historical/current state is action-scoped in v3._span_state. A second old
-    # claim (or an old year elsewhere in a combined surface) must not invalidate
-    # an independently current retained action. Historical-only claims still fail
-    # closed in _v3._claim_lifecycle_matches before this stricter v4 layer runs.
+    historical = _historical_reason(claim)
+    if historical:
+        return historical
 
     actions = _v3._v2._actions(signal)
     if "ga" in actions:
