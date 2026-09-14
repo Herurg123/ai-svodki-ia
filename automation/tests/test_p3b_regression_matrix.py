@@ -9,7 +9,7 @@ SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 import ensure_story_coverage as coverage
-import weak_source_exact_binding_v2 as binder
+import weak_source_exact_binding_v4 as binder
 
 
 MATRIX = {
@@ -203,9 +203,11 @@ class P3bExactBindingMatrixTests(unittest.TestCase):
         self.assertEqual(len(set(MATRIX.values())), 20)
         self.assertEqual(binder.VERSION, 2)
         self.assertEqual(coverage.P3B_EXACT_BINDING_VERSION, 2)
-        self.assertIs(
-            coverage._impl._v2.candidate_exact_binding,
-            binder.candidate_exact_binding,
+        self.assertIs(coverage._exact_binding, binder)
+        self.assertIs(coverage._impl._exact_binding, binder)
+        self.assertEqual(
+            coverage.P3B_BINDER_EVIDENCE_VERSION,
+            binder.EVIDENCE_VERSION,
         )
         self.assertIs(
             coverage._impl._v2._run_p3b_binding_v2,
