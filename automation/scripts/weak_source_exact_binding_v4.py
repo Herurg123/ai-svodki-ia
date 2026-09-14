@@ -48,7 +48,8 @@ _PASSIVE_ACTION_RE = re.compile(
 )
 _CONDITIONAL_PREFIX_RE = re.compile(r"^\s*(?:if|unless|whether)\b", re.I)
 _UNCERTAIN_ASSERTION_RE = re.compile(
-    r"\b(?:rumou?r|rumou?red|speculation|speculative|unconfirmed|hypothetical)\b",
+    r"\b(?:rumou?r|rumou?red|speculation|speculative|unconfirmed|hypothetical|"
+    r"reportedly|allegedly|purportedly|supposedly|apparently)\b",
     re.I,
 )
 _UNCERTAIN_ACTION_PREFIX_RE = re.compile(
@@ -272,6 +273,13 @@ def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, st
     if conflict:
         return False, conflict
     if positive:
+        # Exact same-identity claims that actively negate or make the retained
+        # lifecycle prospective/uncertain are contradictory current evidence.
+        # Historical background is deliberately not a veto: an authoritative
+        # page may mention an older release while proving a new current event.
+        for veto in ("lifecycle_negated", "lifecycle_noncurrent"):
+            if veto in reasons:
+                return False, veto
         return True, "exact_event_identity"
 
     for preferred in (
