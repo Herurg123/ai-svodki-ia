@@ -184,9 +184,20 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
             active_v2 = coverage._impl._v2
             original_v2_sync = active_v2._sync_p3b_public_hooks
 
+            def assert_legacy_reservation() -> None:
+                current = coverage.load_journal(state, DATE)
+                self.assertIsInstance(current, dict)
+                self.assertEqual(
+                    current["owner"],
+                    coverage._impl._P3A.OPTIONAL_SLOT_OWNER,
+                )
+                self.assertEqual(current["state"], "reserved")
+                self.assertFalse(current.get("wire_attempt_admitted"))
+                self.assertFalse(current.get("slot_consumed_or_ambiguous"))
+
             def fake_p3a_execute(*args, **kwargs):
                 delegated_calls.append(dict(kwargs))
-                self.assertIsNone(coverage.load_journal(state, DATE))
+                assert_legacy_reservation()
                 return copy.deepcopy(plan)
 
             def fake_handoff(
@@ -201,7 +212,7 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
                     "signals": copy.deepcopy(required_signals),
                     "original_maximum": original_maximum,
                 })
-                self.assertIsNone(coverage.load_journal(state, DATE))
+                assert_legacy_reservation()
                 return copy.deepcopy(current_plan)
 
             def sync_then_install_required_probe() -> None:
@@ -258,7 +269,7 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
             self.assertEqual(len(handoff_calls), 1)
             self.assertEqual(handoff_calls[0]["original_maximum"], 7)
             self.assertEqual(handoff_calls[0]["signals"], required)
-            self.assertIsNone(coverage.load_journal(state, DATE))
+            assert_legacy_reservation()
             self.assertNotEqual(
                 result.get("weak_source_exact_binding", {}).get("status"),
                 "bound_candidate",
