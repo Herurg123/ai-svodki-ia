@@ -157,19 +157,29 @@ class AstraFourthReviewRegressions(unittest.TestCase):
         signal = second.launch_signal()
         item = second.launch_candidate()
         surface = (
-            "DeepSeek launched V4.1 Flash today. "
-            "DeepSeek launched V4.1 Flash in 2025."
+            "DeepSeek announces V4.1 Flash launch today. "
+            "DeepSeek announces V4.1 Flash launch in 2025."
         )
-        result = second.process_candidate(
-            signal=signal,
-            candidate=item,
-            surface=surface,
+        ok, reason = binder.exact_event_identity(surface, copy.deepcopy(signal))
+        self.assertTrue(ok, msg=reason)
+        self.assertEqual(reason, "exact_event_identity")
+
+        bound, bound_reason = binder.candidate_exact_binding(
+            copy.deepcopy(item),
+            copy.deepcopy(signal),
+            authoritative_domains=("deepseek.com",),
+            authoritative_page_surface=surface,
+            authoritative_final_url=item["primary_source"]["url"],
         )
-        self.assertEqual(len(result["candidates"]), 1)
-        self.assertEqual(
-            result["weak_source_exact_binding"]["status"],
-            "bound_candidate",
+        self.assertTrue(bound, msg=bound_reason)
+        self.assertEqual(bound_reason, "exact_authoritative_page_binding")
+
+        historical_only, historical_reason = binder.exact_event_identity(
+            "DeepSeek announces V4.1 Flash launch in 2025.",
+            copy.deepcopy(signal),
         )
+        self.assertFalse(historical_only)
+        self.assertEqual(historical_reason, "historical_event_context")
 
     def test_direct_binder_counterexamples_are_not_exact_event_identity(self) -> None:
         launch = second.launch_signal()
