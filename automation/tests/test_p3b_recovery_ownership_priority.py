@@ -181,7 +181,7 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
             self.assertEqual(reservation.state, "reserved")
             original_journal = coverage.load_journal(state, DATE)
             self.assertIsInstance(original_journal, dict)
-            original_owner = original_journal["owner"]
+            original_contract_hash = original_journal["request_contract_sha256"]
             required = [self._required_signal()]
             handoff_calls: list[dict] = []
 
@@ -195,10 +195,21 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
             ):
                 current = coverage.load_journal(state, DATE)
                 self.assertIsInstance(current, dict)
-                self.assertNotEqual(current["owner"], original_owner)
                 self.assertEqual(
                     current["owner"],
                     coverage._impl._P3A.OPTIONAL_SLOT_OWNER,
+                )
+                self.assertNotEqual(
+                    current["request_contract_sha256"], original_contract_hash
+                )
+                self.assertTrue(
+                    coverage._journal_matches_current_legacy_intent_v6(
+                        journal=current,
+                        model=MODEL,
+                        search_window=copy.deepcopy(WINDOW),
+                        archive={"items": []},
+                        required_signals=required,
+                    )
                 )
                 self.assertEqual(current["state"], "reserved")
                 self.assertFalse(current.get("wire_attempt_admitted"))
