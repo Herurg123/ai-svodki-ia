@@ -136,7 +136,7 @@ class WeakSourceSignalRetentionP3Tests(unittest.TestCase):
         self.assertIn("`response_saved`", architecture)
         self.assertIn("| D6 | Degradation / weak source |", matrix)
         self.assertIn("queue-positive не становится retrieval-positive", matrix)
-        self.assertIn("восьмой\nCoverage search не появляется", architecture)
+        self.assertIn("восьмой Coverage search не появляется", " ".join(architecture.split()))
         self.assertIn("## Обязательная 20-case matrix", p3b_matrix)
         for case_number in range(1, 21):
             self.assertIn(f"| {case_number} |", p3b_matrix)
