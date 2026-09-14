@@ -22,10 +22,12 @@ for _name in dir(_v3):
         globals()[_name] = getattr(_v3, _name)
 
 # Durable request identity remains v2-compatible. This marker versions only the
-# semantic proof stored in a processed positive snapshot.
+# semantic proof stored in a processed positive snapshot. Version 2 invalidates
+# positive v4/evidence-v1 snapshots produced before the fourth-review temporal
+# and cross-claim contradiction hardening.
 VERSION = _v3.VERSION
 MODE = _v3.MODE
-EVIDENCE_VERSION = 1
+EVIDENCE_VERSION = 2
 
 _VARIANT_PUNCT_RE = re.compile(
     r"^(?P<sep>/|\+|[\u2010\u2011\u2012\u2013\u2014\u2015\u2212])"
@@ -36,19 +38,25 @@ _PASSIVE_ACTION_RE = re.compile(
     r"(?:launched|released|updated|upgraded)\b",
     re.I,
 )
-_POST_ACTION_NONCURRENT_RE = re.compile(
-    r"\b(?:launch(?:es|ed)?|release(?:s|d)?|update(?:s|d)?|upgrade(?:s|d)?)\b"
-    r"[^.;!?]{0,80}\b(?:"
-    r"cancelled|canceled|abandoned|scrapped|delayed|postponed|paused|halted|"
-    r"planned|scheduled|proposed|considered|"
-    r"not\s+happening|not\s+happened|not\s+occurred|"
-    r"has\s+not\s+happened|have\s+not\s+happened|had\s+not\s+happened"
-    r")\b",
-    re.I,
-)
 _CONDITIONAL_PREFIX_RE = re.compile(r"^\s*(?:if|unless|whether)\b", re.I)
 _UNCERTAIN_ASSERTION_RE = re.compile(
     r"\b(?:rumou?r|rumou?red|speculation|speculative|unconfirmed|hypothetical)\b",
+    re.I,
+)
+_UNCERTAIN_ACTION_PREFIX_RE = re.compile(
+    r"\b(?:reportedly|allegedly|purportedly|supposedly|apparently)\b"
+    r"(?:\W+\w+){0,2}\W*$",
+    re.I,
+)
+_POST_ACTION_STATE_RE = re.compile(
+    r"^\W*(?:(?:is|are|was|were|has\s+been|have\s+been|had\s+been)\s+)?(?:"
+    r"cancelled|canceled|abandoned|scrapped|delayed|postponed|paused|halted|"
+    r"planned|scheduled|proposed|considered|expected|denied|disputed"
+    r")\b|"
+    r"^\W*(?:may|might|could|would|should)\s+"
+    r"(?:happen|occur|take\s+place|be(?:come)?|arrive|ship)\b|"
+    r"^\W*(?:not\s+(?:happening|happened|occurring|occurred)|"
+    r"(?:has|have|had)\s+not\s+(?:happened|occurred|taken\s+place))\b",
     re.I,
 )
 _HISTORICAL_RELATIVE_RE = re.compile(
@@ -57,6 +65,8 @@ _HISTORICAL_RELATIVE_RE = re.compile(
     re.I,
 )
 _YEAR_RE = re.compile(r"\b((?:19|20)\d{2})\b")
+_PREVIEW_TERMS = ("preview", "pre-release", "prerelease", "beta", "early access")
+_GA_TERMS = ("general availability", "generally available", "stable release", "ga")
 
 
 def _anchor_followed_by_variant_suffix(text: str, match_end: int) -> bool:
@@ -126,14 +136,49 @@ def _historical_reason(claim: str) -> str | None:
     return None
 
 
+def _signal_action_spans(claim: str, signal: dict[str, Any]) -> list[tuple[int, int]]:
+    """Return lifecycle spans for every retained action, independent of word order.
+
+    v3's prospective guard is intentionally prefix-oriented. v4 additionally
+    needs the exact span so suffix state such as ``GA planned`` or ``launch may
+    happen`` is evaluated for every lifecycle family rather than a hard-coded
+    launch/update subset.
+    """
+    spans: list[tuple[int, int]] = []
+    for action in _v3._v2._actions(signal):
+        if action == "replace":
+            roles, _reason = _v3._v2._replacement_roles(signal)
+            if roles is None:
+                continue
+            old_anchor, new_anchor = roles
+            spans.extend(_v3._directed_replace_spans(claim, old_anchor, new_anchor))
+            continue
+        terms = _v3._v2._LIFECYCLE_GROUPS.get(action, (action,))
+        for term in terms:
+            spans.extend(match.span() for match in _v3._v2._term_matches(claim, term))
+    return sorted(set(spans))
+
+
+def _action_context_reason(claim: str, signal: dict[str, Any]) -> str | None:
+    for start, end in _signal_action_spans(claim, signal):
+        prefix = claim[max(0, start - 96):start]
+        suffix = claim[end:min(len(claim), end + 112)]
+        if _UNCERTAIN_ACTION_PREFIX_RE.search(prefix):
+            return "lifecycle_noncurrent"
+        if _POST_ACTION_STATE_RE.search(suffix):
+            return "lifecycle_noncurrent"
+    return None
+
+
 def _strict_claim_reason(claim: str, signal: dict[str, Any]) -> str | None:
     passive = _passive_attribution_reason(claim, signal)
     if passive:
         return passive
     if _CONDITIONAL_PREFIX_RE.search(claim):
         return "lifecycle_noncurrent"
-    if _POST_ACTION_NONCURRENT_RE.search(claim):
-        return "lifecycle_noncurrent"
+    contextual = _action_context_reason(claim, signal)
+    if contextual:
+        return contextual
     if _UNCERTAIN_ASSERTION_RE.search(claim):
         return "lifecycle_noncurrent"
     historical = _historical_reason(claim)
@@ -142,12 +187,33 @@ def _strict_claim_reason(claim: str, signal: dict[str, Any]) -> str | None:
 
     actions = _v3._v2._actions(signal)
     if "ga" in actions:
-        preview_span, _ = _v3._active_term_span(
-            claim,
-            ("preview", "pre-release", "prerelease", "beta", "early access"),
-        )
+        preview_span, _ = _v3._active_term_span(claim, _PREVIEW_TERMS)
         if preview_span is not None:
             return "preview_ga_mismatch"
+    return None
+
+
+def _cross_claim_lifecycle_conflict_reason(
+    claims: list[str], signal: dict[str, Any]
+) -> str | None:
+    """Reject mutually exclusive active lifecycle claims across the same surface.
+
+    A clean GA sentence must not win simply because it appears before a second
+    exact claim saying the same product is still in preview. Historical/negated
+    background remains non-active through v3's span-state logic, preserving the
+    existing current-assertion-plus-history positive contract.
+    """
+    actions = set(_v3._v2._actions(signal))
+    if "ga" in actions:
+        for claim in claims:
+            preview_span, _ = _v3._active_term_span(claim, _PREVIEW_TERMS)
+            if preview_span is not None:
+                return "preview_ga_mismatch"
+    if "preview" in actions:
+        for claim in claims:
+            ga_span, _ = _v3._active_term_span(claim, _GA_TERMS)
+            if ga_span is not None:
+                return "preview_ga_mismatch"
     return None
 
 
@@ -169,6 +235,7 @@ def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, st
         return False, "version_identity_mismatch"
 
     reasons: list[str] = []
+    positive = False
     for claim in candidate_claims:
         ok, reason = _v3._claim_lifecycle_matches(
             claim,
@@ -180,8 +247,15 @@ def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, st
             continue
         strict_reason = _strict_claim_reason(claim, signal)
         if strict_reason is None:
-            return True, "exact_event_identity"
+            positive = True
+            continue
         reasons.append(strict_reason)
+
+    conflict = _cross_claim_lifecycle_conflict_reason(candidate_claims, signal)
+    if conflict:
+        return False, conflict
+    if positive:
+        return True, "exact_event_identity"
 
     for preferred in (
         "organization_event_attribution_mismatch",
