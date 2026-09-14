@@ -31,7 +31,8 @@ class P3bArchitectureContractTests(unittest.TestCase):
             self.assertIn("восьм", text)
 
         self.assertIn("release-then-reserve", architecture)
-        self.assertIn("slot/admission lock", matrix)
+        self.assertIn("slot lock", matrix)
+        self.assertIn("request admission", matrix)
 
     def test_runtime_and_search_ceilings_match_documented_contract(self) -> None:
         self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v6")
