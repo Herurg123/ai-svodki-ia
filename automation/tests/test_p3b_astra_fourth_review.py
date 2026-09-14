@@ -53,6 +53,7 @@ class AstraFourthReviewRegressions(unittest.TestCase):
             "DeepSeek V4.1 Flash launch might happen next month",
             "DeepSeek V4.1 Flash launch could happen next month",
             "DeepSeek V4.1 Flash launch denied",
+            "DeepSeek V4.1 Flash launch was reportedly cancelled",
         )
         for surface in bad_surfaces:
             with self.subTest(surface=surface):
@@ -123,17 +124,70 @@ class AstraFourthReviewRegressions(unittest.TestCase):
         }
         self.assertIn("authoritative_page_preview_ga_mismatch", reasons)
 
+    def test_clean_claim_cannot_override_same_event_noncurrent_claim(self) -> None:
+        cases = (
+            (
+                ga_signal(),
+                ga_candidate(),
+                "DeepSeek V4.1 Flash general availability. "
+                "DeepSeek V4.1 Flash general availability planned next month.",
+            ),
+            (
+                second.launch_signal(),
+                second.launch_candidate(),
+                "DeepSeek launched V4.1 Flash today. "
+                "DeepSeek V4.1 Flash launch cancelled.",
+            ),
+        )
+        for signal, item, surface in cases:
+            with self.subTest(surface=surface):
+                result = second.process_candidate(
+                    signal=signal,
+                    candidate=item,
+                    surface=surface,
+                )
+                self.assertEqual(result["candidates"], [], msg=surface)
+                self.assertNotEqual(
+                    result["weak_source_exact_binding"]["status"],
+                    "bound_candidate",
+                    msg=surface,
+                )
+
+    def test_current_claim_can_coexist_with_historical_background(self) -> None:
+        signal = second.launch_signal()
+        item = second.launch_candidate()
+        surface = (
+            "DeepSeek launched V4.1 Flash today. "
+            "DeepSeek launched V4.1 Flash in 2025."
+        )
+        result = second.process_candidate(
+            signal=signal,
+            candidate=item,
+            surface=surface,
+        )
+        self.assertEqual(len(result["candidates"]), 1)
+        self.assertEqual(
+            result["weak_source_exact_binding"]["status"],
+            "bound_candidate",
+        )
+
     def test_direct_binder_counterexamples_are_not_exact_event_identity(self) -> None:
         launch = second.launch_signal()
         ga = ga_signal()
         for signal, surface in (
             (launch, "DeepSeek reportedly launched V4.1 Flash"),
             (launch, "DeepSeek V4.1 Flash launch may happen next month"),
+            (launch, "DeepSeek V4.1 Flash launch was reportedly cancelled"),
             (ga, "DeepSeek V4.1 Flash general availability cancelled"),
             (
                 ga,
                 "DeepSeek V4.1 Flash general availability. "
                 "DeepSeek V4.1 Flash remains in preview.",
+            ),
+            (
+                ga,
+                "DeepSeek V4.1 Flash general availability. "
+                "DeepSeek V4.1 Flash general availability planned next month.",
             ),
         ):
             with self.subTest(surface=surface):
