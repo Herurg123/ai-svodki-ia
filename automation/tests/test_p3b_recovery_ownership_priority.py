@@ -178,6 +178,9 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
             plan = self._six_mandatory_plan(state)
             reservation = self._reservation(state, plan)
             self.assertEqual(reservation.state, "reserved")
+            original_journal = coverage.load_journal(state, DATE)
+            self.assertIsInstance(original_journal, dict)
+            original_owner = original_journal["owner"]
             required = [self._required_signal()]
             delegated_calls: list[dict] = []
             handoff_calls: list[dict] = []
@@ -186,7 +189,7 @@ class P3bRecoveryOwnershipPriorityTests(unittest.TestCase):
                 delegated_calls.append(dict(kwargs))
                 current = coverage.load_journal(state, DATE)
                 self.assertIsInstance(current, dict)
-                self.assertEqual(current["owner"], reservation.owner)
+                self.assertEqual(current["owner"], original_owner)
                 self.assertEqual(current["state"], "reserved")
                 return copy.deepcopy(plan)
 
