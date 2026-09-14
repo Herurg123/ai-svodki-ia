@@ -199,9 +199,10 @@ def _strict_claim_reason(claim: str, signal: dict[str, Any]) -> str | None:
         return contextual
     if _UNCERTAIN_ASSERTION_RE.search(claim):
         return "lifecycle_noncurrent"
-    historical = _historical_reason(claim)
-    if historical:
-        return historical
+    # Historical/current state is action-scoped in v3._span_state. A second old
+    # claim (or an old year elsewhere in a combined surface) must not invalidate
+    # an independently current retained action. Historical-only claims still fail
+    # closed in _v3._claim_lifecycle_matches before this stricter v4 layer runs.
 
     actions = _v3._v2._actions(signal)
     if "ga" in actions:
@@ -286,10 +287,13 @@ def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, st
             continue
         reasons.append(strict_reason)
 
-    conflict = _cross_claim_lifecycle_conflict_reason(candidate_claims, signal)
-    if conflict:
-        return False, conflict
     if positive:
+        # Cross-claim contradiction is meaningful only when a retained positive
+        # claim exists. Without one, preserve the ordinary v3 lifecycle reason
+        # instead of replacing it with a global GA/preview mismatch label.
+        conflict = _cross_claim_lifecycle_conflict_reason(candidate_claims, signal)
+        if conflict:
+            return False, conflict
         # Exact same-identity claims that actively negate or make the retained
         # lifecycle prospective/uncertain are contradictory current evidence.
         # Historical background is deliberately not a veto: an authoritative
