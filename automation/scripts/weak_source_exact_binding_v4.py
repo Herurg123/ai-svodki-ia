@@ -33,6 +33,14 @@ _VARIANT_PUNCT_RE = re.compile(
     r"^(?P<sep>/|\+|[\u2010\u2011\u2012\u2013\u2014\u2015\u2212])"
     r"\s*(?P<token>[A-Za-z0-9][A-Za-z0-9.+-]*)?"
 )
+# v3 intentionally treats unknown adjacent words as possible model/version
+# continuations. These are ordinary predicate/linking words observed after an
+# exact product anchor; they may preserve identity but can never create lifecycle
+# proof by themselves. Keep the exception local to v4 rather than mutating the
+# historical v2/v3 compatibility vocabulary.
+_V4_ANCHOR_ALLOWED_FOLLOWING_WORDS = frozenset(
+    {"remain", "remains", "remained", "remaining", "stay", "stays", "stayed", "still"}
+)
 _PASSIVE_ACTION_RE = re.compile(
     r"\b(?:is|are|was|were|has\s+been|have\s+been|had\s+been)\s+"
     r"(?:launched|released|updated|upgraded)\b",
@@ -82,6 +90,15 @@ def _anchor_followed_by_variant_suffix(text: str, match_end: int) -> bool:
         # Slash and plus are product/version continuation syntax even without a
         # following word. Unicode dashes alone can be ordinary prose punctuation.
         return sep in {"/", "+"}
+    next_word = re.match(
+        r"(?:\s+|\s*[\(\[]\s*)([A-Za-z0-9][A-Za-z0-9.+-]*)",
+        tail,
+    )
+    if (
+        next_word is not None
+        and next_word.group(1).casefold() in _V4_ANCHOR_ALLOWED_FOLLOWING_WORDS
+    ):
+        return False
     return _v3._anchor_followed_by_variant_suffix(text, match_end)
 
 
