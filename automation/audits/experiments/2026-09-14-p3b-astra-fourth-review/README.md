@@ -42,13 +42,17 @@ The repair:
 
 - keeps durable `VERSION=2` and the existing P3b mode;
 - raises semantic `EVIDENCE_VERSION` from 1 to 2 so a previously positive processed snapshot produced before this hardening cannot be reused as current proof;
-- adds action-relative uncertainty handling for evidential adverbs such as `reportedly`;
+- treats evidential uncertainty words such as `reportedly` fail-closed anywhere in an exact candidate claim rather than only before an action token;
 - applies post-action state/modal checks across retained lifecycle families rather than only a launch/update-oriented regex subset, covering planned/scheduled/expected/cancelled/denied and modal `may|might|could|would|should` forms;
-- delays positive return until exact local claims have been checked for mutually exclusive active lifecycle assertions;
+- delays positive return until all exact local claims have been checked for contradictory active/noncurrent lifecycle evidence;
 - keeps GA and preview distinct across multiple local claims, not only inside one sentence/claim;
+- prevents one clean same-event claim from overriding a neighboring exact `negated` or `noncurrent` claim such as current GA + GA planned or current launch + launch cancelled;
+- deliberately does **not** let historical/background exact claims veto a separately proven current claim; a permanent positive control covers current launch plus a 2025 historical mention;
 - preserves strict unknown lexical/numeric/punctuation version-suffix rejection while locally allowing a bounded set of ordinary predicate/linking words such as `remain/remains/stay/stays` after an exact anchor. Historical v2/v3 compatibility vocabulary is not mutated.
 
 The final point matters because the cross-claim counterexample initially remained hidden after the first repair: v3-style fail-closed suffix detection treated `remains` after `V4.1 Flash` as a possible model suffix, so the contradictory preview claim was excluded before conflict analysis. The v4-only prose exception lets that exact claim participate without weakening the existing `v2`, `experimental`, numeric or punctuation variant controls.
+
+A later neighboring self-audit also checked same-action contradictions, not only GA↔preview. Permanent regressions now reject clean-current + planned/cancelled exact claims for the same identity and `launch was reportedly cancelled`, while retaining a current+historical positive control. This closes the same early-positive mechanism without turning historical background into a blanket veto.
 
 ## Canonical matrix correction
 
