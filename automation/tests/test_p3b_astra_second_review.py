@@ -14,7 +14,7 @@ sys.path[:0] = [str(SCRIPTS), str(TESTS)]
 
 import ensure_story_coverage as coverage
 import weak_source_exact_binding_v2 as historical_binder
-import weak_source_exact_binding_v3 as binder
+import weak_source_exact_binding_v4 as binder
 import test_p3b_astra_regressions as controls
 
 DATE = controls.DATE
@@ -122,8 +122,8 @@ class AstraSecondReviewRegressions(unittest.TestCase):
             "resolution_required": True,
         }
 
-    def test_public_runtime_is_v5_with_v3_binder(self) -> None:
-        self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v5")
+    def test_public_runtime_is_v6_with_v4_binder(self) -> None:
+        self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v6")
         self.assertIs(coverage._exact_binding, binder)
         self.assertIs(coverage._impl._v2._binding_v2, historical_binder)
 
