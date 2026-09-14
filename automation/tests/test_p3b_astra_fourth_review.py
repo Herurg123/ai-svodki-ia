@@ -157,8 +157,8 @@ class AstraFourthReviewRegressions(unittest.TestCase):
         signal = second.launch_signal()
         item = second.launch_candidate()
         surface = (
-            "DeepSeek launched V4.1 Flash today. "
-            "DeepSeek launched V4.1 Flash in 2025."
+            "DeepSeek announces V4.1 Flash launch today. "
+            "DeepSeek announces V4.1 Flash launch in 2025."
         )
         ok, reason = binder.exact_event_identity(surface, copy.deepcopy(signal))
         self.assertTrue(ok, msg=reason)
@@ -175,7 +175,7 @@ class AstraFourthReviewRegressions(unittest.TestCase):
         self.assertEqual(bound_reason, "exact_authoritative_page_binding")
 
         historical_only, historical_reason = binder.exact_event_identity(
-            "DeepSeek launched V4.1 Flash in 2025.",
+            "DeepSeek announces V4.1 Flash launch in 2025.",
             copy.deepcopy(signal),
         )
         self.assertFalse(historical_only)
