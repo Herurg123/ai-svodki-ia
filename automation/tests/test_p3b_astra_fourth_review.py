@@ -40,7 +40,7 @@ class AstraFourthReviewRegressions(unittest.TestCase):
         self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v6")
         self.assertIs(coverage._exact_binding, binder)
         self.assertEqual(coverage.P3B_EXACT_BINDING_VERSION, 2)
-        self.assertEqual(binder.EVIDENCE_VERSION, 2)
+        self.assertEqual(binder.EVIDENCE_VERSION, 3)
         self.assertEqual(coverage.P3B_BINDER_EVIDENCE_VERSION, binder.EVIDENCE_VERSION)
 
     def test_suffix_modal_uncertain_launch_assertions_fail_closed(self) -> None:
