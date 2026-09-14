@@ -293,7 +293,7 @@ mutation scope не входит.
 | `pr-gate.yml` | Always-on PR routing и единый required gate | Нет |
 | `ci.yml` | Main CI, offline проверки основного production-кода | Нет |
 | `video-ci.yml` | Video CI, dependency-free offline проверки video-подпроекта | Нет |
-| `daily-production.yml` | Ежедневное формирование ИИ-Сводки | Да, по production contract |
+| `daily-production.yml` | Ежедневный retrieval/editorial/build/publish pipeline | Да, по production contract |
 | `deploy-posts.yml` | FTP-синхронизация точного `posts/` выбранного commit | Да, только public deploy |
 | `repository-cleanup.yml` | 32-day repository/public cleanup и отдельная FTP-video retention стадия | Да, только documented retention scope |
 | `repository-hygiene.yml` | Уборка безопасно классифицированных GitHub objects | Да, только GitHub-object policy scope |
