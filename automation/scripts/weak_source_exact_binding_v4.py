@@ -22,13 +22,13 @@ for _name in dir(_v3):
         globals()[_name] = getattr(_v3, _name)
 
 # Durable request identity remains v2-compatible. This marker versions only the
-# semantic proof stored in a processed positive snapshot. Version 4 invalidates
-# positive evidence-v3 snapshots produced before nested separator, complete
-# passive-agent surface, and historical-background attribution were hardened,
-# while preserving the same durable request contract.
+# semantic proof stored in a processed positive snapshot. Version 5 invalidates
+# positive evidence-v4 snapshots produced before current-vs-background date
+# scoping, quote/curly-wrapper attribution, and historical passive lifecycle
+# ordering were hardened, while preserving the same durable request contract.
 VERSION = _v3.VERSION
 MODE = _v3.MODE
-EVIDENCE_VERSION = 4
+EVIDENCE_VERSION = 5
 
 _VARIANT_PUNCT_RE = re.compile(
     r"^(?P<sep>/|\+|[\u2010\u2011\u2012\u2013\u2014\u2015\u2212])"
@@ -49,7 +49,7 @@ _PASSIVE_ACTION_RE = re.compile(
 )
 _PASSIVE_AGENT_RE = re.compile(r"\bby\s+([^.;|]+)", re.I)
 _TRAILING_REPLACEMENT_AGENT_RE = re.compile(
-    r"^\s*(?:(?:[,:\-\u2013\u2014]\s*)|(?:[\(\[]\s*))*\bby\s+([^.;|]+)",
+    r"^\s*(?:(?:[,:\-\u2013\u2014]\s*)|(?:[\(\[\{\"'“”‘’]\s*))*\bby\s+([^.;|]+)",
     re.I,
 )
 _CONDITIONAL_PREFIX_RE = re.compile(r"^\s*(?:if|unless|whether)\b", re.I)
@@ -74,12 +74,17 @@ _POST_ACTION_STATE_RE = re.compile(
     r"(?:has|have|had)\s+not\s+(?:happened|occurred|taken\s+place))\b",
     re.I,
 )
-_HISTORICAL_RELATIVE_RE = re.compile(
-    r"\b(?:last\s+(?:year|month|week)|(?:years?|months?|weeks?)\s+ago|"
-    r"previously|formerly|earlier)\b",
+_HISTORICAL_FULL_DATE_RE = re.compile(
+    r"\b(?:on\s+)?(?:january|february|march|april|may|june|july|august|"
+    r"september|october|november|december)\s+\d{1,2}(?:st|nd|rd|th)?"
+    r"(?:,\s*|\s+)((?:19|20)\d{2})\b",
     re.I,
 )
-_YEAR_RE = re.compile(r"\b((?:19|20)\d{2})\b")
+_HISTORICAL_DATE_BACKGROUND_BRIDGE_RE = re.compile(
+    r"\b(?:due\s+to|because(?:\s+of)?|owing\s+to|incident|cause|reason|"
+    r"after|before|following)\b",
+    re.I,
+)
 _PREVIEW_TERMS = ("preview", "pre-release", "prerelease", "beta", "early access")
 _GA_TERMS = ("general availability", "generally available", "stable release", "ga")
 
@@ -189,20 +194,6 @@ def _passive_attribution_reason(claim: str, signal: dict[str, Any]) -> str | Non
     return None
 
 
-def _historical_reason(claim: str) -> str | None:
-    if _HISTORICAL_RELATIVE_RE.search(claim):
-        return "historical_event_context"
-    current_year = date.today().year
-    for match in _YEAR_RE.finditer(claim):
-        try:
-            year = int(match.group(1))
-        except ValueError:
-            continue
-        if year < current_year:
-            return "historical_event_context"
-    return None
-
-
 def _signal_action_spans(claim: str, signal: dict[str, Any]) -> list[tuple[int, int]]:
     """Return lifecycle spans for every retained action, independent of word order.
 
@@ -226,6 +217,56 @@ def _signal_action_spans(claim: str, signal: dict[str, Any]) -> list[tuple[int, 
     return sorted(set(spans))
 
 
+def _action_span_has_past_full_date(
+    claim: str,
+    span: tuple[int, int],
+) -> bool:
+    """Bind an explicit past full date to the lifecycle span, not the whole claim."""
+    start, end = span
+    prefix = claim[max(0, start - 140):start]
+    suffix = claim[end:min(len(claim), end + 180)]
+    if (
+        _v3._v2._CURRENT_ACTION_NEAR_RE.search(prefix[-40:])
+        or _v3._v2._CURRENT_ACTION_NEAR_RE.search(suffix[:40])
+    ):
+        return False
+
+    local_start = max(0, start - 140)
+    local_end = min(len(claim), end + 180)
+    local = claim[local_start:local_end]
+    action_start = start - local_start
+    action_end = end - local_start
+    current_year = date.today().year
+
+    for match in _HISTORICAL_FULL_DATE_RE.finditer(local):
+        try:
+            year = int(match.group(1))
+        except ValueError:
+            continue
+        if year >= current_year:
+            continue
+        if match.start() >= action_end:
+            bridge = local[action_end:match.start()]
+        elif match.end() <= action_start:
+            bridge = local[match.end():action_start]
+        else:
+            bridge = ""
+        if _HISTORICAL_DATE_BACKGROUND_BRIDGE_RE.search(bridge):
+            continue
+        return True
+    return False
+
+
+def _historical_reason(claim: str, signal: dict[str, Any]) -> str | None:
+    """Classify history only when a past marker binds the retained lifecycle."""
+    for span in _signal_action_spans(claim, signal):
+        if _v3._span_state(claim, span) == "historical_event_context":
+            return "historical_event_context"
+        if _action_span_has_past_full_date(claim, span):
+            return "historical_event_context"
+    return None
+
+
 def _action_context_reason(claim: str, signal: dict[str, Any]) -> str | None:
     for start, end in _signal_action_spans(claim, signal):
         prefix = claim[max(0, start - 96):start]
@@ -238,10 +279,13 @@ def _action_context_reason(claim: str, signal: dict[str, Any]) -> str | None:
 
 
 def _strict_claim_reason(claim: str, signal: dict[str, Any]) -> str | None:
-    # Historical/background claims are non-current evidence and therefore cannot
-    # veto a separate current exact claim merely because their old event names a
-    # foreign passive agent. Detect that status before attribution contradiction.
-    historical = _historical_reason(claim)
+    # A current lifecycle contradiction must win over unrelated old background
+    # dates, but genuine historical lifecycle claims must be classified before
+    # passive-attribution checks so they cannot veto a separate current proof.
+    contextual = _action_context_reason(claim, signal)
+    if contextual:
+        return contextual
+    historical = _historical_reason(claim, signal)
     if historical:
         return historical
     passive = _passive_attribution_reason(claim, signal)
@@ -249,9 +293,6 @@ def _strict_claim_reason(claim: str, signal: dict[str, Any]) -> str | None:
         return passive
     if _CONDITIONAL_PREFIX_RE.search(claim):
         return "lifecycle_noncurrent"
-    contextual = _action_context_reason(claim, signal)
-    if contextual:
-        return contextual
     if _UNCERTAIN_ASSERTION_RE.search(claim):
         return "lifecycle_noncurrent"
 
@@ -325,6 +366,20 @@ def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, st
     positive = False
     for claim in candidate_claims:
         match_claim = _claim_match_surface(claim)
+
+        # These v4 relations must be resolved before inherited lifecycle matching:
+        # a current cancellation cannot be hidden by an unrelated old date, while
+        # a genuinely historical passive claim must not become a foreign-agent
+        # veto before its date is recognized as historical background.
+        contextual = _action_context_reason(match_claim, signal)
+        if contextual:
+            reasons.append(contextual)
+            continue
+        historical = _historical_reason(match_claim, signal)
+        if historical:
+            reasons.append(historical)
+            continue
+
         ok, reason = _v3._claim_lifecycle_matches(
             match_claim,
             signal,
