@@ -50,7 +50,7 @@ _PASSIVE_ACTION_RE = re.compile(
 _PASSIVE_AGENT_RE = re.compile(r"\bby\s+([^.;|]+)", re.I)
 _TRAILING_REPLACEMENT_AGENT_RE = re.compile(
     r"^\s*(?:(?:[,:\-\u2013\u2014]\s*)|"
-    r"(?:[\(\[\{<«‹（［｛\"'“”‘’]\s*))*\bby\s+([^.;|]+)",
+    r"(?:[\(\)\[\]\{\}<>«»‹›（）［］｛｝\"'“”‘’]\s*))*\bby\s+([^.;|]+)",
     re.I,
 )
 _CONDITIONAL_PREFIX_RE = re.compile(r"^\s*(?:if|unless|whether)\b", re.I)
@@ -195,6 +195,46 @@ def _historical_bridge_blocks_binding(bridge: str) -> bool:
     )
 
 
+def _action_span_has_current_prefix_marker(
+    claim: str,
+    span: tuple[int, int],
+) -> bool:
+    """Bind an explicit current marker only to the local lifecycle relation.
+
+    A current marker before the action wins over an unrelated old date later in
+    the same claim, but not when a reporting/attribution predicate or a newer
+    relation-bound historical marker intervenes. This prevents ``Today ... did
+    not launch ..., citing 2025 reporting`` from being laundered into historical
+    context while preserving ``Today ... said it launched ... on <old date>``.
+    """
+    start, _end = span
+    prefix = claim[max(0, start - 140):start]
+    current_matches = list(_v3._v2._CURRENT_ACTION_NEAR_RE.finditer(prefix))
+    if not current_matches:
+        return False
+    current = current_matches[-1]
+
+    historical_after_current = []
+    for pattern in (
+        _HISTORICAL_FULL_DATE_RE,
+        _HISTORICAL_ACTION_YEAR_RELATION_RE,
+        _HISTORICAL_ACTION_RELATIVE_RE,
+        _v3._v2._HISTORICAL_ACTION_PREFIX_RE,
+    ):
+        historical_after_current.extend(
+            match.start()
+            for match in pattern.finditer(prefix)
+            if match.start() > current.start()
+        )
+    if historical_after_current:
+        return False
+
+    bridge = prefix[current.end():]
+    if _v3._v2._EVENT_ATTRIBUTION_BREAK_RE.search(bridge):
+        return False
+    return True
+
+
 def _action_span_has_historical_prefix_marker(
     claim: str,
     span: tuple[int, int],
@@ -286,6 +326,8 @@ def _action_span_is_historical(
     span: tuple[int, int],
 ) -> bool:
     """Return history only when an old marker binds this exact relation span."""
+    if _action_span_has_current_prefix_marker(claim, span):
+        return False
     start, _end = span
     prefix = claim[max(0, start - 120):start]
     if _v3._v2._HISTORICAL_ACTION_PREFIX_RE.search(prefix):
@@ -377,8 +419,8 @@ def _passive_attribution_reason(claim: str, signal: dict[str, Any]) -> str | Non
                 # relation ``old was replaced by new``. Only attribution that
                 # begins *after the complete directed replacement span* can be a
                 # separate event agent. A bounded sequence of punctuation and
-                # opening wrappers may precede ``by``; the complete agent surface
-                # is retained through commas for exact identity comparison.
+                # wrapper characters may precede ``by``; the complete agent
+                # surface is retained through commas for exact identity comparison.
                 trailing = _TRAILING_REPLACEMENT_AGENT_RE.match(claim[end:])
                 if trailing is None:
                     continue
