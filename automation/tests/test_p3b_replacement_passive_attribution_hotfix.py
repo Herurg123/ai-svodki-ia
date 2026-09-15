@@ -115,6 +115,19 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
                 "disposition": "positive_exact_binding",
                 "candidate_count": 1,
             }
+            # Model the complete historical seven-pass result, not merely a six-pass
+            # plan with a candidate attached. The optional slot is already consumed
+            # and must stay consumed even while its stale semantic candidate is revoked.
+            coverage._impl._v2._v1._p3b_force_consumed(saved)
+            saved_budget = saved["search_budget"]
+            self.assertGreaterEqual(
+                max(
+                    int(saved_budget.get("completed_calls", 0) or 0),
+                    int(saved_budget.get("effective_consumed_calls", 0) or 0),
+                ),
+                7,
+            )
+
             reservation.mark_request_started()
             reservation.save_raw_response({"id": "evidence-v2", "status": "completed"})
             reservation.mark_processed(saved)
@@ -173,7 +186,15 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
             self.assertEqual(result["weak_source_exact_binding"]["status"], "unresolved")
             self.assertEqual(result["weak_source_exact_binding"]["candidate_count"], 0)
             self.assertIn("predates", result["weak_source_exact_binding"]["reason"])
-            self.assertEqual(result["search_budget"]["remaining_calls"], 0)
+            result_budget = result["search_budget"]
+            self.assertGreaterEqual(
+                max(
+                    int(result_budget.get("completed_calls", 0) or 0),
+                    int(result_budget.get("effective_consumed_calls", 0) or 0),
+                ),
+                7,
+            )
+            self.assertEqual(result_budget["remaining_calls"], 0)
 
 
 if __name__ == "__main__":
