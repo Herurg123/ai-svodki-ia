@@ -30,7 +30,8 @@ Active v6 now treats stale semantic-proof revocation as a postcondition independ
 - stale signal identity is recovered from the processed diagnostic or exact admitted candidate provenance;
 - after preserved orchestration returns, stale migration is applied to every returned plan even when model/archive/request context drift caused an earlier defer;
 - candidate cleanup remains narrow: `audit_direction=weak_source_exact_binding`, exact P3b binding version, non-empty authoritative-page proof and the exact stale `resolution_signal_id` are all required;
-- unrelated Coverage candidates and other-signal P3b candidates remain untouched;
+- if the preserved drift branch returned an empty/currently reduced candidate list, non-stale candidates from the durable processed snapshot are carried forward while the stale signal-bound P3b candidate stays revoked;
+- unrelated Coverage candidates and other-signal P3b candidates therefore remain preserved;
 - diagnostic becomes `unresolved` / `unresolved_deferred`;
 - the already-consumed optional slot remains consumed;
 - no new search, provider retry or page refetch occurs.
@@ -72,11 +73,14 @@ DeepSeek replaces V4 Pro with V4.1 Flash.
 DeepSeek says V4 Pro was replaced by V4.1 Flash by OpenAI on September 1, 2025.
 ```
 
-On the reviewed head the second claim could pass current lifecycle matching, then `_strict_claim_reason` evaluated passive attribution before broad historical-year detection. `organization_event_attribution_mismatch` therefore entered the cross-claim veto set and rejected the otherwise valid current claim.
+On the reviewed head the historical claim could produce `organization_event_attribution_mismatch` before broad historical-year classification, making that mismatch a cross-claim veto. During regression-first remediation a second inherited boundary defect also became visible: after claim splitting, the terminal period in the otherwise clean current sentence `V4.1 Flash.` was still interpreted by the old anchor-boundary logic as a possible version continuation, so the valid current claim could disappear entirely.
 
-`_strict_claim_reason` now classifies historical/background context before passive-attribution contradiction. Historical-only proof remains non-positive, but historical background cannot veto a separate current exact-event claim solely because the old event names a foreign agent.
+The final fix therefore has two narrow parts:
 
-The permanent regression exercises both direct binder and active admission paths using the full-date form that escaped the prior `in 2025` control.
+- `_strict_claim_reason` classifies historical/background context before passive-attribution contradiction, so a historical foreign agent cannot veto a separate current exact claim;
+- v4 normalizes only terminal sentence punctuation on an already split claim before exact anchor/lifecycle matching. A true suffix continuation such as `.1` remains rejected; only punctuation that claim splitting has already established as terminal is removed from the matching surface.
+
+Historical-only proof remains non-positive. The permanent regression exercises both direct binder and active admission paths using the full-date form that escaped the prior `in 2025` control and a current claim ending with ordinary sentence punctuation.
 
 ## Semantic evidence migration
 
