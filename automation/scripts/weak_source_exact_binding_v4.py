@@ -195,6 +195,33 @@ def _historical_bridge_blocks_binding(bridge: str) -> bool:
     )
 
 
+def _action_span_has_historical_prefix_marker(
+    claim: str,
+    span: tuple[int, int],
+) -> bool:
+    """Bind a past year/relative marker before the action only across a clean bridge."""
+    start, _end = span
+    prefix = claim[max(0, start - 180):start]
+    current_year = date.today().year
+
+    for match in reversed(list(_HISTORICAL_ACTION_YEAR_RELATION_RE.finditer(prefix))):
+        try:
+            year = int(match.group(1))
+        except ValueError:
+            continue
+        if year >= current_year:
+            continue
+        if _historical_bridge_blocks_binding(prefix[match.end():]):
+            continue
+        return True
+
+    for match in reversed(list(_HISTORICAL_ACTION_RELATIVE_RE.finditer(prefix))):
+        if _historical_bridge_blocks_binding(prefix[match.end():]):
+            continue
+        return True
+    return False
+
+
 def _action_span_has_historical_suffix_marker(
     claim: str,
     span: tuple[int, int],
@@ -258,15 +285,12 @@ def _action_span_is_historical(
     claim: str,
     span: tuple[int, int],
 ) -> bool:
-    """Return history only when the old marker binds this exact relation span."""
-    start, end = span
+    """Return history only when an old marker binds this exact relation span."""
+    start, _end = span
     prefix = claim[max(0, start - 120):start]
-    suffix = claim[end:min(len(claim), end + 120)]
-    if _v3._v2._CURRENT_ACTION_NEAR_RE.search(prefix[-40:]):
-        return False
-    if _v3._v2._CURRENT_ACTION_NEAR_RE.search(suffix[:40]):
-        return False
     if _v3._v2._HISTORICAL_ACTION_PREFIX_RE.search(prefix):
+        return True
+    if _action_span_has_historical_prefix_marker(claim, span):
         return True
     if _action_span_has_historical_suffix_marker(claim, span):
         return True
