@@ -22,13 +22,13 @@ for _name in dir(_v3):
         globals()[_name] = getattr(_v3, _name)
 
 # Durable request identity remains v2-compatible. This marker versions only the
-# semantic proof stored in a processed positive snapshot. Version 5 invalidates
-# positive evidence-v4 snapshots produced before current-vs-background date
-# scoping, quote/curly-wrapper attribution, and historical passive lifecycle
-# ordering were hardened, while preserving the same durable request contract.
+# semantic proof stored in a processed positive snapshot. Version 6 invalidates
+# positive evidence-v5 snapshots produced before lifecycle-local historical
+# classification and Unicode-wrapper attribution were hardened, while preserving
+# the same durable request contract and the v4 compatibility/import surface.
 VERSION = _v3.VERSION
 MODE = _v3.MODE
-EVIDENCE_VERSION = 5
+EVIDENCE_VERSION = 6
 
 _VARIANT_PUNCT_RE = re.compile(
     r"^(?P<sep>/|\+|[\u2010\u2011\u2012\u2013\u2014\u2015\u2212])"
@@ -49,7 +49,8 @@ _PASSIVE_ACTION_RE = re.compile(
 )
 _PASSIVE_AGENT_RE = re.compile(r"\bby\s+([^.;|]+)", re.I)
 _TRAILING_REPLACEMENT_AGENT_RE = re.compile(
-    r"^\s*(?:(?:[,:\-\u2013\u2014]\s*)|(?:[\(\[\{\"'“”‘’]\s*))*\bby\s+([^.;|]+)",
+    r"^\s*(?:(?:[,:\-\u2013\u2014]\s*)|"
+    r"(?:[\(\[\{<«‹（［｛\"'“”‘’]\s*))*\bby\s+([^.;|]+)",
     re.I,
 )
 _CONDITIONAL_PREFIX_RE = re.compile(r"^\s*(?:if|unless|whether)\b", re.I)
@@ -92,7 +93,8 @@ _HISTORICAL_ACTION_RELATIVE_RE = re.compile(
 )
 _HISTORICAL_DATE_BACKGROUND_BRIDGE_RE = re.compile(
     r"\b(?:due\s+to|because(?:\s+of)?|owing\s+to|incident|cause|reason|"
-    r"after|before|following)\b",
+    r"after|before|following|with|while|whereas|although|though|amid|despite|but|"
+    r"separate|dispute|agreement|context|background|dating\s+to|unresolved)\b",
     re.I,
 )
 _PREVIEW_TERMS = ("preview", "pre-release", "prerelease", "beta", "early access")
@@ -153,55 +155,13 @@ def _contains_exact_anchor(text: str, anchor: str) -> bool:
 
 
 def _agent_matches_signal_organization(agent: str, organization: str) -> bool:
-    cleaned_agent = _v3._v2._clean(agent).strip("()[]{} \t\r\n\"'“”‘’")
+    cleaned_agent = _v3._v2._clean(agent).strip(
+        "()[]{}<>«»‹›（）［］｛｝ \t\r\n\"'“”‘’"
+    )
     return bool(
         cleaned_agent
         and _v3.normalized_org(cleaned_agent) == _v3.normalized_org(organization)
     )
-
-
-def _passive_attribution_reason(claim: str, signal: dict[str, Any]) -> str | None:
-    actions = set(_v3._v2._actions(signal))
-    organization = _v3._v2._clean(signal.get("organization"))
-    if not organization:
-        return "organization_event_attribution_mismatch"
-
-    if actions.intersection({"launch", "update"}):
-        for match in _PASSIVE_ACTION_RE.finditer(claim):
-            tail = claim[match.end():]
-            by_match = _PASSIVE_AGENT_RE.search(tail)
-            if by_match is not None:
-                # Keep the complete agent surface through commas. Truncating at
-                # the first comma turns a multi-agent list such as
-                # ``DeepSeek, OpenAI and Anthropic`` into a false exact match.
-                agent = by_match.group(1).strip()
-                if not _agent_matches_signal_organization(agent, organization):
-                    return "organization_event_attribution_mismatch"
-                continue
-            org_pattern = rf"(?<![\w]){re.escape(organization)}(?![\w])"
-            if re.search(rf"\bfor\s+{org_pattern}", tail, re.I):
-                return "organization_event_attribution_mismatch"
-
-    if "replace" in actions:
-        roles, _reason = _v3._v2._replacement_roles(signal)
-        if roles is not None:
-            old_anchor, new_anchor = roles
-            for _start, end in _v3._directed_replace_spans(
-                claim, old_anchor, new_anchor
-            ):
-                # The passive replacement grammar already contains the internal
-                # relation ``old was replaced by new``. Only attribution that
-                # begins *after the complete directed replacement span* can be a
-                # separate event agent. A bounded sequence of punctuation and
-                # opening wrappers may precede ``by``; the complete agent surface
-                # is retained through commas for exact identity comparison.
-                trailing = _TRAILING_REPLACEMENT_AGENT_RE.match(claim[end:])
-                if trailing is None:
-                    continue
-                agent = trailing.group(1).strip()
-                if not _agent_matches_signal_organization(agent, organization):
-                    return "organization_event_attribution_mismatch"
-    return None
 
 
 def _signal_action_spans(claim: str, signal: dict[str, Any]) -> list[tuple[int, int]]:
@@ -231,6 +191,7 @@ def _historical_bridge_blocks_binding(bridge: str) -> bool:
     return bool(
         _HISTORICAL_DATE_BACKGROUND_BRIDGE_RE.search(bridge)
         or _v3._v2._CURRENT_ACTION_NEAR_RE.search(bridge)
+        or _POST_ACTION_STATE_RE.search(bridge)
     )
 
 
@@ -293,42 +254,160 @@ def _action_span_has_past_full_date(
     return False
 
 
+def _action_span_is_historical(
+    claim: str,
+    span: tuple[int, int],
+) -> bool:
+    """Return history only when the old marker binds this exact relation span."""
+    start, end = span
+    prefix = claim[max(0, start - 120):start]
+    suffix = claim[end:min(len(claim), end + 120)]
+    if _v3._v2._CURRENT_ACTION_NEAR_RE.search(prefix[-40:]):
+        return False
+    if _v3._v2._CURRENT_ACTION_NEAR_RE.search(suffix[:40]):
+        return False
+    if _v3._v2._HISTORICAL_ACTION_PREFIX_RE.search(prefix):
+        return True
+    if _action_span_has_historical_suffix_marker(claim, span):
+        return True
+    return _action_span_has_past_full_date(claim, span)
+
+
+def _post_action_state_span(
+    claim: str,
+    span: tuple[int, int],
+) -> tuple[int, int] | None:
+    _start, end = span
+    suffix = claim[end:min(len(claim), end + 112)]
+    match = _POST_ACTION_STATE_RE.search(suffix)
+    if match is None:
+        return None
+    return end + match.start(), end + match.end()
+
+
+def _action_relation_is_historical(
+    claim: str,
+    span: tuple[int, int],
+) -> bool:
+    if _action_span_is_historical(claim, span):
+        return True
+    state_span = _post_action_state_span(claim, span)
+    return bool(state_span and _action_span_is_historical(claim, state_span))
+
+
+def _span_state_v4(text: str, span: tuple[int, int]) -> str | None:
+    """Relation-local replacement for v3's broad any-year historical state."""
+    start, _end = span
+    historical = _action_relation_is_historical(text, span)
+    if _v3._v2._action_mention_is_negated(text, start):
+        return "historical_event_context" if historical else "lifecycle_negated"
+    if _v3._action_mention_is_noncurrent(text, start):
+        return "historical_event_context" if historical else "lifecycle_noncurrent"
+    if historical:
+        return "historical_event_context"
+    return None
+
+
+# The inherited matcher resolves _span_state through its own module globals at
+# call time. Patch only the private v3 compatibility instance loaded for v4 so
+# current runtime uses relation-local historical semantics without mutating the
+# historical source file or its public import surface.
+_v3._span_state = _span_state_v4
+
+
+def _passive_attribution_reason(claim: str, signal: dict[str, Any]) -> str | None:
+    actions = set(_v3._v2._actions(signal))
+    organization = _v3._v2._clean(signal.get("organization"))
+    if not organization:
+        return "organization_event_attribution_mismatch"
+
+    if actions.intersection({"launch", "update"}):
+        for match in _PASSIVE_ACTION_RE.finditer(claim):
+            relation_historical = _action_relation_is_historical(claim, match.span())
+            tail = claim[match.end():]
+            by_match = _PASSIVE_AGENT_RE.search(tail)
+            if by_match is not None:
+                # Keep the complete agent surface through commas. Truncating at
+                # the first comma turns a multi-agent list such as
+                # ``DeepSeek, OpenAI and Anthropic`` into a false exact match.
+                agent = by_match.group(1).strip()
+                if not _agent_matches_signal_organization(agent, organization):
+                    if relation_historical:
+                        continue
+                    return "organization_event_attribution_mismatch"
+                continue
+            org_pattern = rf"(?<![\w]){re.escape(organization)}(?![\w])"
+            if re.search(rf"\bfor\s+{org_pattern}", tail, re.I):
+                if relation_historical:
+                    continue
+                return "organization_event_attribution_mismatch"
+
+    if "replace" in actions:
+        roles, _reason = _v3._v2._replacement_roles(signal)
+        if roles is not None:
+            old_anchor, new_anchor = roles
+            for start, end in _v3._directed_replace_spans(
+                claim, old_anchor, new_anchor
+            ):
+                # The passive replacement grammar already contains the internal
+                # relation ``old was replaced by new``. Only attribution that
+                # begins *after the complete directed replacement span* can be a
+                # separate event agent. A bounded sequence of punctuation and
+                # opening wrappers may precede ``by``; the complete agent surface
+                # is retained through commas for exact identity comparison.
+                trailing = _TRAILING_REPLACEMENT_AGENT_RE.match(claim[end:])
+                if trailing is None:
+                    continue
+                agent = trailing.group(1).strip()
+                if not _agent_matches_signal_organization(agent, organization):
+                    if _action_relation_is_historical(claim, (start, end)):
+                        continue
+                    return "organization_event_attribution_mismatch"
+    return None
+
+
 def _historical_reason(claim: str, signal: dict[str, Any]) -> str | None:
-    """Classify history only when a past marker binds the retained lifecycle."""
-    for span in _signal_action_spans(claim, signal):
-        if _v3._span_state(claim, span) == "historical_event_context":
-            return "historical_event_context"
-        if _action_span_has_historical_suffix_marker(claim, span):
-            return "historical_event_context"
-        if _action_span_has_past_full_date(claim, span):
-            return "historical_event_context"
+    """Classify a claim historical only when all retained relations are old."""
+    spans = _signal_action_spans(claim, signal)
+    if spans and all(_action_relation_is_historical(claim, span) for span in spans):
+        return "historical_event_context"
     return None
 
 
 def _action_context_reason(claim: str, signal: dict[str, Any]) -> str | None:
     for start, end in _signal_action_spans(claim, signal):
+        relation_historical = _action_relation_is_historical(claim, (start, end))
+        if _v3._v2._action_mention_is_negated(claim, start):
+            if not relation_historical:
+                return "lifecycle_negated"
+            continue
+
         prefix = claim[max(0, start - 96):start]
-        suffix = claim[end:min(len(claim), end + 112)]
         if _UNCERTAIN_ACTION_PREFIX_RE.search(prefix):
-            return "lifecycle_noncurrent"
-        if _POST_ACTION_STATE_RE.search(suffix):
+            if not relation_historical:
+                return "lifecycle_noncurrent"
+            continue
+
+        state_span = _post_action_state_span(claim, (start, end))
+        if state_span is not None and not _action_span_is_historical(claim, state_span):
             return "lifecycle_noncurrent"
     return None
 
 
 def _strict_claim_reason(claim: str, signal: dict[str, Any]) -> str | None:
-    # A current lifecycle contradiction must win over unrelated old background
-    # dates, but genuine historical lifecycle claims must be classified before
-    # passive-attribution checks so they cannot veto a separate current proof.
+    # Resolve current contradictions/foreign attribution before generic history.
+    # Each veto is itself relation-local, so historical background cannot veto a
+    # separate current exact claim and unrelated old dates cannot hide a current
+    # contradiction.
     contextual = _action_context_reason(claim, signal)
     if contextual:
         return contextual
-    historical = _historical_reason(claim, signal)
-    if historical:
-        return historical
     passive = _passive_attribution_reason(claim, signal)
     if passive:
         return passive
+    historical = _historical_reason(claim, signal)
+    if historical:
+        return historical
     if _CONDITIONAL_PREFIX_RE.search(claim):
         return "lifecycle_noncurrent"
     if _UNCERTAIN_ASSERTION_RE.search(claim):
@@ -405,13 +484,16 @@ def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, st
     for claim in candidate_claims:
         match_claim = _claim_match_surface(claim)
 
-        # These v4 relations must be resolved before inherited lifecycle matching:
-        # a current cancellation cannot be hidden by an unrelated old date, while
-        # a genuinely historical passive claim must not become a foreign-agent
-        # veto before its date is recognized as historical background.
+        # Current contradictions and foreign attribution are checked first, but
+        # both are relation-aware: old background is skipped, while an unrelated
+        # old date cannot launder a current veto into historical context.
         contextual = _action_context_reason(match_claim, signal)
         if contextual:
             reasons.append(contextual)
+            continue
+        passive = _passive_attribution_reason(match_claim, signal)
+        if passive:
+            reasons.append(passive)
             continue
         historical = _historical_reason(match_claim, signal)
         if historical:
