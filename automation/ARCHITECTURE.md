@@ -804,21 +804,21 @@ reference и не расходует slot.
 Active P3b v6 является отдельным consumer того же optional seventh slot и
 использует binder `weak_source_exact_binding_v4.py`. Durable request identity
 остаётся совместимым `VERSION=2`, а binder v4 отдельно маркирует current positive
-semantic proof через `EVIDENCE_VERSION=5`. Evidence v5 сохраняет previous
-fail-closed lifecycle/replacement hardening, включая nested/stacked separators,
-полный passive-agent surface через запятые и terminal sentence punctuation после
-claim splitting. Fifth-review hardening делает historical classification
-relation-aware: старый год в причине текущей отмены/противоречия не превращает
-current claim в historical background; quotes, curly braces и mixed wrappers не
-скрывают separate trailing foreign `by` attribution; relation-bound historical
-passive launch/update/replacement сначала классифицируется как historical и
-поэтому не veto'ит отдельную current exact claim. При этом historical/background
-claim сам по себе никогда не становится current positive proof. Выбирается
-максимум один qualified weak-source signal. Admission требует реальной
-authoritative non-weak страницы, exact organization, всех retained version/model
-anchors, lifecycle/action, deterministic Event/Source Freshness и archive/dedupe.
-Provider/model labels, fuzzy same-company matching, similar version, preview/GA,
-benchmark/release и old/current совпадения proof не являются.
+semantic proof через `EVIDENCE_VERSION=6`. Evidence v6 сохраняет previous
+fail-closed lifecycle/replacement hardening и fifth-review semantics, но делает
+history relation-local для самой lifecycle relation. Unrelated old full date или
+background не может скрыть current negation/state/foreign attribution; old
+cancellation/state, доказуемо связанный с historical relation, не veto'ит
+отдельную current exact claim; old year/date до или после lifecycle action
+остаётся historical только через clean relation bridge. Unicode wrappers,
+включая `«…»`, `‹…›` и fullwidth `（…）`, не скрывают separate trailing foreign
+`by` attribution. Historical/background claim сам по себе никогда не становится
+current positive proof. Выбирается максимум один qualified weak-source signal.
+Admission требует реальной authoritative non-weak страницы, exact organization,
+всех retained version/model anchors, lifecycle/action, deterministic Event/Source
+Freshness и archive/dedupe. Provider/model labels, fuzzy same-company matching,
+similar version, preview/GA, benchmark/release и old/current совпадения proof не
+являются.
 
 Required legacy `unverified` resolution имеет приоритет. Если current P3b journal
 доказан как exact тот же intent и всё ещё `reserved` без wire-attempt, response,
@@ -836,7 +836,7 @@ Durable states P3b: `reserved → request_started → response_saved → process
 ретраится. `response_saved` replay и compatible `processed` reuse выполняются
 offline без нового provider search; mutable authoritative page при saved replay
 повторно не открывается. Positive `processed` snapshot с evidence-v1, evidence-v2,
-evidence-v3 или evidence-v4 predates current binder evidence v5, не
+evidence-v3, evidence-v4 или evidence-v5 predates current binder evidence v6, не
 переиспользуется как современное proof и деградирует fail-closed без нового
 поиска. Stale-proof revocation является v6 postcondition даже при drift current
 model/archive/request hash: obsolete signal-bound P3b candidate удаляется,
@@ -1197,13 +1197,13 @@ exact request/bundle identity до wire call. `request_started` считаетс
 consumed/ambiguous и никогда не получает automatic retry. `response_saved`
 переигрывается offline из сохранённого response/result без нового provider search
 или mutable-page refetch, а compatible current-evidence `processed` snapshot
-переиспользуется. Positive processed evidence-v1/evidence-v2/evidence-v3/evidence-v4
-snapshot считается stale относительно current evidence v5. Его signal-bound
-candidate обязан быть отозван как recovery postcondition даже при изменившемся
-current request hash/model/archive context; unrelated durable candidates
-сохраняются, optional slot остаётся consumed, новый provider search/retry/page
-refetch не разрешается. Invalid, foreign или mismatched journal не
-переписывается догадкой. Уже потраченный seventh slot не восстанавливается из-за
+переиспользуется. Positive processed evidence-v1/evidence-v2/evidence-v3/evidence-v4/
+evidence-v5 snapshot считается stale относительно current evidence v6. Его
+signal-bound candidate обязан быть отозван как recovery postcondition даже при
+изменившемся current request hash/model/archive context; unrelated durable
+candidates сохраняются, optional slot остаётся consumed, новый provider
+search/retry/page refetch не разрешается. Invalid, foreign или mismatched journal
+не переписывается догадкой. Уже потраченный seventh slot не восстанавливается из-за
 повторного budget calculation; P3b не может создать восьмой Coverage search при
 recovery.
 
@@ -1506,6 +1506,22 @@ canonical 20-case matrix, Coverage 7 и whole-pipeline ceilings 24/25. Пров�
 выполняются offline без production API, paid Web Search или Terra; fresh
 independent Astra review final exact head всё ещё обязателен.
 
+Sep-15 Astra sixth-review remediation сохранён в
+`audits/experiments/2026-09-15-p3b-astra-final-review-remediation/sixth-review-three-groups-remediation.md`.
+Он фиксирует independent `REQUEST CHANGES` на exact head
+`e332e8b60a0adcb748af1b14c07cbae0a2712048`: unrelated historical full-date
+background скрывал current negation/attribution, historical cancellation veto'ил
+отдельную current exact claim, а Unicode wrappers `«…»`, `‹…›`, `（…）` скрывали
+trailing foreign agent. Regression-first head
+`97b1b6034fc3031c282aa4d5b1ae7dfa9faa9e20` дал ожидаемо красный PR Gate #468.
+Intermediate Gate #470 подтвердил новые fixes, но выявил два collateral old-year
+historical controls; они были сохранены как fail-closed historical relations и не
+ослаблены. Current contract сохраняет durable `VERSION=2`, переводит positive
+semantic proof на `EVIDENCE_VERSION=6`, считает positive evidence-v1/v2/v3/v4/v5
+stale и сохраняет canonical 20-case matrix, Coverage 7 и whole-pipeline ceilings
+24/25. Проверки выполняются offline без production API, paid Web Search или Terra;
+fresh independent Astra review final exact head остаётся обязательным.
+
 ## 12. Совместимость и versioned реализации
 
 Некоторые stable public files являются wrappers над сохранёнными versioned
@@ -1564,15 +1580,15 @@ atomic P3b→legacy optional-slot transfer и current processed-evidence migrati
 v5 сохраняет second-review orchestration compatibility, v4/v3/v2/v1 и P3a
 остаются replay/regression boundaries. Active semantic binder
 `weak_source_exact_binding_v4.py` сохраняет durable request `VERSION=2`/mode, но
-использует `EVIDENCE_VERSION=5` для current positive proof. Имя binder-файла v4
+использует `EVIDENCE_VERSION=6` для current positive proof. Имя binder-файла v4
 является compatibility/import surface и не связывает номер semantic evidence
 marker. Positive processed snapshots evidence-v1/evidence-v2/evidence-v3/
-evidence-v4 считаются stale после fifth-review hardening и не разрешают новый
-provider search или mutable-page refetch. Stale candidate revocation остаётся
-обязательным v6 postcondition независимо от drift current request identity и
-сохраняет unrelated durable candidates. Generic sync не имеет права заменить
-active binder legacy matcher'ом, снять durable occupied-slot guard или изменить
-identity-sensitive historical exports.
+evidence-v4/evidence-v5 считаются stale после sixth-review hardening и не
+разрешают новый provider search или mutable-page refetch. Stale candidate
+revocation остаётся обязательным v6 postcondition независимо от drift current
+request identity и сохраняет unrelated durable candidates. Generic sync не имеет
+права заменить active binder legacy matcher'ом, снять durable occupied-slot guard
+или изменить identity-sensitive historical exports.
 
 Discovery Health не создаёт новую versioned retrieval engine: это отдельный
 post-production reducer над saved reports. Он не monkeypatch'ит retrieval runtime
@@ -1772,15 +1788,16 @@ Event/Source Freshness, archive/dedupe, durable slot journal/recovery,
 compatibility wrappers, docs и regression matrix. Active public runtime — v6,
 semantic binder — `weak_source_exact_binding_v4.py` при сохранённом durable
 request `VERSION=2`; positive processed proof дополнительно требует current
-`EVIDENCE_VERSION=5`. Evidence v5 сохраняет previous lifecycle/replacement
-hardening и добавляет fifth-review relation-aware historical semantics: unrelated
-old year не скрывает current cancellation/contradiction, quote/curly/mixed
-wrappers не скрывают trailing foreign attribution, а relation-bound historical
-passive launch/update/replacement background классифицируется до foreign-agent
-veto и поэтому не блокирует отдельную current exact claim; historical background
-сам по себе остаётся non-positive. Positive evidence-v1/v2/v3/v4 считается
-stale; v6 отзывает obsolete signal-bound candidate как postcondition даже при
-current request-hash или archive/model drift, сохраняя unrelated durable
+`EVIDENCE_VERSION=6`. Evidence v6 сохраняет previous lifecycle/replacement и
+fifth-review hardening, но делает historical classification relation-local:
+unrelated old full date/background не скрывает current negation/state/foreign
+attribution; historical cancellation/state не veto'ит отдельную current exact
+claim; relation-bound old year/date до или после lifecycle action остаётся
+historical даже при отдельном subsequent current predicate; Unicode wrappers
+`«…»`, `‹…›`, `（…）` не скрывают trailing foreign attribution. Historical
+background сам по себе остаётся non-positive. Positive evidence-v1/v2/v3/v4/v5
+считается stale; v6 отзывает obsolete signal-bound candidate как postcondition
+даже при current request-hash или archive/model drift, сохраняя unrelated durable
 candidates, consumed slot и zero-I/O recovery. Required legacy `unverified`
 resolution имеет приоритет, но может получить proven unstarted P3b slot только
 atomic transfer под общим slot/admission lock; release-then-reserve gap
@@ -1788,8 +1805,8 @@ atomic transfer под общим slot/admission lock; release-then-reserve gap
 query, provider/domain routing, regional/agency health, Source Pulse, Hybrid
 allocation, editorial ranking или candidate caps, не создаёт восьмой Coverage
 search и не меняет ceilings 24/25. Permanent acceptance содержит 20 случаев плюс
-second/third/fourth/fifth-review, replacement-attribution и Sep-15 supplemental
-regressions; whole-project audit находится в
+second/third/fourth/fifth/sixth-review, replacement-attribution и Sep-15
+supplemental regressions; whole-project audit находится в
 `audits/experiments/2026-09-12-p3b-exact-authoritative-binding/`, v6 atomic-handoff
 evidence — в `audits/experiments/2026-09-14-p3b-astra-third-review/`, fourth-review
 semantic/matrix remediation — в
@@ -1798,8 +1815,10 @@ remediation — в
 `audits/experiments/2026-09-14-p3b-replacement-passive-attribution-hotfix/`,
 Sep-15 four-blocker remediation — в
 `audits/experiments/2026-09-15-p3b-astra-final-review-remediation/final-review-four-blockers-remediation.md`,
-а fifth-review remediation — в
-`audits/experiments/2026-09-15-p3b-astra-final-review-remediation/fifth-review-three-blockers-remediation.md`.
+fifth-review remediation — в
+`audits/experiments/2026-09-15-p3b-astra-final-review-remediation/fifth-review-three-blockers-remediation.md`,
+а sixth-review remediation — в
+`audits/experiments/2026-09-15-p3b-astra-final-review-remediation/sixth-review-three-groups-remediation.md`.
 Terra в текущей среде не использовалась; acceptance выполнен fixtures/saved replay
 без production spend. До merge требуется повторный independent Astra review final
 exact-head diff.
