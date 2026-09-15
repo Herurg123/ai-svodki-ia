@@ -48,11 +48,12 @@ _PASSIVE_ACTION_RE = re.compile(
     re.I,
 )
 _PASSIVE_AGENT_RE = re.compile(r"\bby\s+([^.;|]+)", re.I)
-_TRAILING_REPLACEMENT_AGENT_RE = re.compile(
-    r"^\s*(?:(?:[,:\-\u2013\u2014]\s*)|"
-    r"(?:[\(\)\[\]\{\}<>«»‹›（）［］｛｝\"'“”‘’]\s*))*\bby\s+([^.;|]+)",
-    re.I,
-)
+# After a complete directed replacement span, only non-word punctuation/wrapper
+# characters may be skipped before a separate ``by <agent>`` attribution. This is
+# intentionally structural rather than a punctuation whitelist: slash, bullets,
+# ellipsis, equals signs and wrapper combinations are neutral, while any real word
+# between the replacement and ``by`` prevents the matcher from jumping over text.
+_TRAILING_REPLACEMENT_AGENT_RE = re.compile(r"^\W*\bby\s+([^.;|]+)", re.I)
 _CONDITIONAL_PREFIX_RE = re.compile(r"^\s*(?:if|unless|whether)\b", re.I)
 _UNCERTAIN_ASSERTION_RE = re.compile(
     r"\b(?:rumou?r|rumou?red|speculation|speculative|unconfirmed|hypothetical|"
@@ -81,6 +82,26 @@ _HISTORICAL_FULL_DATE_RE = re.compile(
     r"(?:,\s*|\s+)((?:19|20)\d{2})\b",
     re.I,
 )
+_FULL_DATE_PARTS_RE = re.compile(
+    r"^(?:on\s+)?(?P<month>january|february|march|april|may|june|july|august|"
+    r"september|october|november|december)\s+(?P<day>\d{1,2})(?:st|nd|rd|th)?"
+    r"(?:,\s*|\s+)(?P<year>(?:19|20)\d{2})$",
+    re.I,
+)
+_MONTH_NUMBERS = {
+    "january": 1,
+    "february": 2,
+    "march": 3,
+    "april": 4,
+    "may": 5,
+    "june": 6,
+    "july": 7,
+    "august": 8,
+    "september": 9,
+    "october": 10,
+    "november": 11,
+    "december": 12,
+}
 _HISTORICAL_ACTION_YEAR_RELATION_RE = re.compile(
     r"\b(?:in|during|back\s+in|since)\s+((?:19|20)\d{2})\b",
     re.I,
@@ -195,6 +216,52 @@ def _historical_bridge_blocks_binding(bridge: str) -> bool:
     )
 
 
+def _full_date_value(match: re.Match[str]) -> date | None:
+    """Parse a matched English full date without weakening the public grammar."""
+    parts = _FULL_DATE_PARTS_RE.fullmatch(match.group(0).strip())
+    if parts is None:
+        return None
+    try:
+        return date(
+            int(parts.group("year")),
+            _MONTH_NUMBERS[parts.group("month").casefold()],
+            int(parts.group("day")),
+        )
+    except (KeyError, ValueError):
+        return None
+
+
+def _action_span_has_nonpast_full_date_prefix(
+    claim: str,
+    span: tuple[int, int],
+    *,
+    allow_attribution_break: bool = False,
+) -> bool:
+    """Recognize an explicit non-past full date governing the local relation.
+
+    The ordinary path will not bind through a reporting/attribution predicate, so
+    ``On <today>, DeepSeek said it launched ... on <old date>`` remains historical.
+    Safety vetoes may opt into the conservative variant: an explicitly dated
+    negated/noncurrent relation must not become positive merely because another old
+    date is cited nearby, even when the prose is attribution-heavy.
+    """
+    start, _end = span
+    prefix = claim[max(0, start - 180):start]
+    today = date.today()
+    for match in reversed(list(_HISTORICAL_FULL_DATE_RE.finditer(prefix))):
+        value = _full_date_value(match)
+        if value is None or value < today:
+            continue
+        bridge = prefix[match.end():]
+        if (
+            not allow_attribution_break
+            and _v3._v2._EVENT_ATTRIBUTION_BREAK_RE.search(bridge)
+        ):
+            continue
+        return True
+    return False
+
+
 def _action_span_has_current_prefix_marker(
     claim: str,
     span: tuple[int, int],
@@ -203,24 +270,26 @@ def _action_span_has_current_prefix_marker(
 
     A current marker before the action wins over an unrelated old date later in
     the same claim, but not when a reporting/attribution predicate or a newer
-    relation-bound historical marker intervenes. This prevents ``Today ... did
-    not launch ..., citing 2025 reporting`` from being laundered into historical
-    context while preserving ``Today ... said it launched ... on <old date>``.
+    relation-bound historical marker intervenes. A non-past explicit full date is
+    also a current marker when it governs the relation. This keeps ``Today ... did
+    not launch ..., citing 2025 reporting`` and ``On <today> ... did not launch``
+    current while preserving ``Today ... said it launched ... on <old date>``.
     """
+    if _action_span_has_nonpast_full_date_prefix(claim, span):
+        return True
+
     start, _end = span
     prefix = claim[max(0, start - 140):start]
     current_matches = list(_v3._v2._CURRENT_ACTION_NEAR_RE.finditer(prefix))
     if not current_matches:
         return False
     current = current_matches[-1]
-    current_year = date.today().year
+    today = date.today()
+    current_year = today.year
 
     for match in _HISTORICAL_FULL_DATE_RE.finditer(prefix):
-        try:
-            year = int(match.group(1))
-        except ValueError:
-            continue
-        if year < current_year and match.start() > current.start():
+        value = _full_date_value(match)
+        if value is not None and value < today and match.start() > current.start():
             return False
 
     for match in _HISTORICAL_ACTION_YEAR_RELATION_RE.finditer(prefix):
@@ -309,14 +378,11 @@ def _action_span_has_past_full_date(
     local = claim[local_start:local_end]
     action_start = start - local_start
     action_end = end - local_start
-    current_year = date.today().year
+    today = date.today()
 
     for match in _HISTORICAL_FULL_DATE_RE.finditer(local):
-        try:
-            year = int(match.group(1))
-        except ValueError:
-            continue
-        if year >= current_year:
+        value = _full_date_value(match)
+        if value is None or value >= today:
             continue
         if match.start() >= action_end:
             bridge = local[action_end:match.start()]
@@ -452,19 +518,28 @@ def _historical_reason(claim: str, signal: dict[str, Any]) -> str | None:
 def _action_context_reason(claim: str, signal: dict[str, Any]) -> str | None:
     for start, end in _signal_action_spans(claim, signal):
         relation_historical = _action_relation_is_historical(claim, (start, end))
+        explicit_nonpast_date = _action_span_has_nonpast_full_date_prefix(
+            claim,
+            (start, end),
+            allow_attribution_break=True,
+        )
         if _v3._v2._action_mention_is_negated(claim, start):
-            if not relation_historical:
+            # Fail closed for an explicitly non-past dated contradiction. An old
+            # cited date must never demote that contradiction to historical context.
+            if explicit_nonpast_date or not relation_historical:
                 return "lifecycle_negated"
             continue
 
         prefix = claim[max(0, start - 96):start]
         if _UNCERTAIN_ACTION_PREFIX_RE.search(prefix):
-            if not relation_historical:
+            if explicit_nonpast_date or not relation_historical:
                 return "lifecycle_noncurrent"
             continue
 
         state_span = _post_action_state_span(claim, (start, end))
-        if state_span is not None and not _action_span_is_historical(claim, state_span):
+        if state_span is not None and (
+            explicit_nonpast_date or not _action_span_is_historical(claim, state_span)
+        ):
             return "lifecycle_noncurrent"
     return None
 
