@@ -213,21 +213,30 @@ def _action_span_has_current_prefix_marker(
     if not current_matches:
         return False
     current = current_matches[-1]
+    current_year = date.today().year
 
-    historical_after_current = []
+    for match in _HISTORICAL_FULL_DATE_RE.finditer(prefix):
+        try:
+            year = int(match.group(1))
+        except ValueError:
+            continue
+        if year < current_year and match.start() > current.start():
+            return False
+
+    for match in _HISTORICAL_ACTION_YEAR_RELATION_RE.finditer(prefix):
+        try:
+            year = int(match.group(1))
+        except ValueError:
+            continue
+        if year < current_year and match.start() > current.start():
+            return False
+
     for pattern in (
-        _HISTORICAL_FULL_DATE_RE,
-        _HISTORICAL_ACTION_YEAR_RELATION_RE,
         _HISTORICAL_ACTION_RELATIVE_RE,
         _v3._v2._HISTORICAL_ACTION_PREFIX_RE,
     ):
-        historical_after_current.extend(
-            match.start()
-            for match in pattern.finditer(prefix)
-            if match.start() > current.start()
-        )
-    if historical_after_current:
-        return False
+        if any(match.start() > current.start() for match in pattern.finditer(prefix)):
+            return False
 
     bridge = prefix[current.end():]
     if _v3._v2._EVENT_ATTRIBUTION_BREAK_RE.search(bridge):
