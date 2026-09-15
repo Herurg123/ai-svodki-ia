@@ -44,12 +44,15 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
             "DeepSeek says V4 Pro was replaced by V4.1 Flash - by OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash – by OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash — by OpenAI",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash ((by OpenAI))",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash: — by OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek's rival OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek rival OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek and OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek / OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek-owned OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek's OpenAI team",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek, OpenAI and Anthropic",
         )
         for surface in surfaces:
             with self.subTest(surface=surface):
@@ -89,6 +92,26 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
         self.assertEqual(result["candidates"], [])
         self.assertEqual(result["weak_source_exact_binding"]["candidate_count"], 0)
         self.assertNotEqual(
+            result["weak_source_exact_binding"]["status"],
+            "bound_candidate",
+        )
+
+    def test_current_claim_survives_historical_foreign_attribution_with_full_date(self) -> None:
+        surface = (
+            "DeepSeek replaces V4 Pro with V4.1 Flash. "
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash by OpenAI on September 1, 2025."
+        )
+        self.assertEqual(
+            binder.exact_event_identity(surface, SIGNAL),
+            (True, "exact_event_identity"),
+        )
+        result = second.process_candidate(
+            signal=copy.deepcopy(SIGNAL),
+            candidate=controls.candidate(),
+            surface=surface,
+        )
+        self.assertEqual(len(result["candidates"]), 1)
+        self.assertEqual(
             result["weak_source_exact_binding"]["status"],
             "bound_candidate",
         )
@@ -145,16 +168,22 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
                 launch_signal,
                 launch_item,
                 "V4.1 Flash was launched by DeepSeek",
-                "V4.1 Flash was launched by DeepSeek's rival OpenAI",
+                (
+                    "V4.1 Flash was launched by DeepSeek's rival OpenAI",
+                    "V4.1 Flash was launched by DeepSeek, OpenAI and Anthropic",
+                ),
             ),
             (
                 update_signal,
                 update_item,
                 "V4.1 Flash was updated by deepseek",
-                "V4.1 Flash was updated by DeepSeek and OpenAI",
+                (
+                    "V4.1 Flash was updated by DeepSeek and OpenAI",
+                    "V4.1 Flash was updated by DeepSeek, OpenAI and Anthropic",
+                ),
             ),
         )
-        for signal, item, positive_surface, negative_surface in cases:
+        for signal, item, positive_surface, negative_surfaces in cases:
             with self.subTest(signal=signal["title"], surface=positive_surface):
                 self.assertEqual(
                     binder.exact_event_identity(positive_surface, signal),
@@ -171,25 +200,26 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
                     "bound_candidate",
                 )
 
-            with self.subTest(signal=signal["title"], surface=negative_surface):
-                self.assertEqual(
-                    binder.exact_event_identity(negative_surface, signal),
-                    (False, "organization_event_attribution_mismatch"),
-                )
-                negative = second.process_candidate(
-                    signal=copy.deepcopy(signal),
-                    candidate=copy.deepcopy(item),
-                    surface=negative_surface,
-                )
-                self.assertEqual(negative["candidates"], [])
-                self.assertEqual(
-                    negative["weak_source_exact_binding"]["candidate_count"],
-                    0,
-                )
-                self.assertNotEqual(
-                    negative["weak_source_exact_binding"]["status"],
-                    "bound_candidate",
-                )
+            for negative_surface in negative_surfaces:
+                with self.subTest(signal=signal["title"], surface=negative_surface):
+                    self.assertEqual(
+                        binder.exact_event_identity(negative_surface, signal),
+                        (False, "organization_event_attribution_mismatch"),
+                    )
+                    negative = second.process_candidate(
+                        signal=copy.deepcopy(signal),
+                        candidate=copy.deepcopy(item),
+                        surface=negative_surface,
+                    )
+                    self.assertEqual(negative["candidates"], [])
+                    self.assertEqual(
+                        negative["weak_source_exact_binding"]["candidate_count"],
+                        0,
+                    )
+                    self.assertNotEqual(
+                        negative["weak_source_exact_binding"]["status"],
+                        "bound_candidate",
+                    )
 
     def test_evidence_v2_positive_processed_snapshot_revokes_prior_p3b_candidate(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
