@@ -238,7 +238,7 @@ listing и проверяется отсутствие всех удалённы
 - `content/YYYY-MM-DD/` хранит структурированные материалы выпусков;
 - `archive/index.json` хранит редакционную память и dedupe/material-update
   context;
-- `archive/search-baselines/` хранит manifests постоянных retrieval baselines;
+- `archive/search-baselines/` хранит manifests постоянных search baselines;
 - `archive/video-rss-enrichment-2026-08/` хранит inert reference-only snapshot
   закрытого Video → RSS эксперимента;
 - `audits/` хранит независимые проверки и controlled experiments;
@@ -1077,7 +1077,7 @@ Opt-in `AI_DIGEST_USAGE_DIR` включён только в production job; да
 вызывает transport ровно один раз и возвращает исходный объект/исключение. Он не
 меняет SDK retry policy. Метаданные attempt сохраняются атомарно перед вызовом и
 сразу после ответа, до JSON/editorial validation, поэтому поздний сбой не должен
-уничтожить usage. Промпты, тексты ответов, credentials и image base64 не пишутся.
+уничтожать usage. Промпты, тексты ответов, credentials и image base64 не пишутся.
 Ошибка записи диагностируется предупреждением и не вызывает новый платный запрос.
 
 Always-run шаг `Account for observed release and recovery usage` перед финальной
@@ -1088,7 +1088,7 @@ Image provider request ID, либо уникальный UUID попытки `us
 связывает живое наблюдение с копиями image report. Локальный номер выпуска
 не является ключом дедупликации оплаченных вызовов. Неидентифицируемый historical image
 остаётся явно неопределённым. Реестр также восстанавливает usage старых артефактов
-без нового observer; это read-only совместимость с сохранёнными оплачёнными данными.
+без нового observer; это read-only совместимость с сохранёнными оплаченными данными.
 
 `preview/production-daily/usage-ledger.json` содержит записи, provenance, итог по
 стадиям, input/output/cache-read/cache-write, число завершённых search operations,
