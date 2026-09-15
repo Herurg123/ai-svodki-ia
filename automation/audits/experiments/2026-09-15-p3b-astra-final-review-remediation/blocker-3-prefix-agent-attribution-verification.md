@@ -2,9 +2,11 @@
 
 Date: 2026-09-15
 
+> **Superseded status:** this record describes the initial PR #183 verification head `7b2fce57695b215399cc68a817af9648d4c8179b`. A later independent Astra review of that exact head returned `REQUEST CHANGES` with four reproducible blockers, including additional passive-attribution cases. The active remediation record is `final-review-four-blockers-remediation.md`. Statements below about no production change and `EVIDENCE_VERSION=3` are historical to the initial verification and are not the final PR contract.
+
 ## Scope
 
-This record verifies the third blocker from the independent Astra review of PR #179 old head `769a981b31a87efc1384f125b4e2a91dc5c4700d`:
+This record originally verified the third blocker from the independent Astra review of PR #179 old head `769a981b31a87efc1384f125b4e2a91dc5c4700d`:
 
 > Prefix organization matching incorrectly accepts a foreign passive agent such as `DeepSeek's rival OpenAI` as attribution to `DeepSeek`.
 
@@ -22,7 +24,7 @@ DeepSeek
 
 The correct result is fail-closed attribution rejection. A signal-organization prefix inside a longer foreign agent surface is not exact event attribution.
 
-This follow-up starts from `main` merge commit `28241c86e9ecd5491aa6113db510b3422a537154`, after PR #182 was merged. No separate blocker-3 branch or open PR existed when the work started.
+This follow-up started from `main` merge commit `28241c86e9ecd5491aa6113db510b3422a537154`, after PR #182 was merged.
 
 ## Historical baseline reproduction
 
@@ -40,7 +42,7 @@ the historical pattern is effectively:
 (?<![\w])DeepSeek(?![\w])
 ```
 
-A deterministic offline reproduction gives:
+A deterministic offline reproduction gave:
 
 ```text
 old prefix matcher: True
@@ -49,156 +51,64 @@ signal normalized identity: deepseek
 current exact identity equality: False
 ```
 
-The old check therefore accepted the foreign possessive surface because the apostrophe after `DeepSeek` satisfies the non-word boundary. The bug was not in replacement direction: it was the prefix attribution predicate itself.
+The old check therefore accepted the foreign possessive surface because the apostrophe after `DeepSeek` satisfied the non-word boundary. No production API, paid Web Search, or Terra call was used.
 
-No production API, paid Web Search, or Terra call was used for this reproduction.
+## Initial runtime assessment at `7b2fce5`
 
-## Current runtime assessment
+At the initial verification head, `automation/scripts/weak_source_exact_binding_v4.py` already contained `_agent_matches_signal_organization()` and used full normalized equality for both launch/update passive attribution and replacement trailing-agent attribution after the complete directed replacement span.
 
-On current `main`, `automation/scripts/weak_source_exact_binding_v4.py` contains `_agent_matches_signal_organization()` and uses it from `_passive_attribution_reason()` for both:
+That correctly closed the original possessive-prefix counterexample and motivated the first PR #183 test-only scope. The later independent review proved that this assessment was incomplete: nested/mixed separators, comma-separated co-agents, and a historical-background cross-claim case still escaped the surrounding parser/control flow even though the equality helper itself was strict.
 
-- launch/update passive attribution; and
-- replacement trailing-agent attribution after the complete directed replacement span.
+## Initial regressions
 
-The helper strips only ordinary wrappers/whitespace and then requires full normalized identity equality:
+The initial follow-up added or strengthened:
 
-```text
-normalized_org(cleaned_agent) == normalized_org(signal organization)
-```
+- the possessive-prefix counterexample at binder and active admission levels;
+- `DeepSeek rival OpenAI`, `DeepSeek and OpenAI`, `DeepSeek / OpenAI`, `DeepSeek-owned OpenAI`, `DeepSeek's OpenAI team`;
+- zero-candidate diagnostics;
+- lowercase exact-agent positive control;
+- clean duplicate + foreign-attributed same-identity veto;
+- passive launch/update exact-agent controls.
 
-Therefore:
+Those regressions remain useful but are no longer the complete acceptance set. The later final-review remediation additionally covers nested/mixed separators, comma-separated agent lists, full-date historical background, stale cleanup across request-context drift, and semantic evidence migration through evidence-v3.
 
-```text
-DeepSeek -> deepseek
-DeepSeek's rival OpenAI -> deepseeksrivalopenai
-```
+## Evidence-version history
 
-and the Astra counterexample fails closed as `organization_event_attribution_mismatch`.
-
-The same binder also retains `organization_event_attribution_mismatch` as a same-identity cross-claim veto, so a clean duplicate claim cannot rescue a foreign-attributed claim of the same exact event identity.
-
-Conclusion: blocker #3 existed on the old Astra-reviewed SHA, but the production runtime on the current `main` already contains the semantic remediation. This follow-up intentionally does not make a new production runtime change merely to manufacture a diff.
-
-## Permanent regressions strengthened by this follow-up
-
-`automation/tests/test_p3b_replacement_passive_attribution_hotfix.py` is extended without changing production code.
-
-### Replacement negative controls
-
-The required Astra counterexample remains covered at both binder and active processing/admission levels:
-
-```text
-DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek's rival OpenAI
-```
-
-Additional exact-agent contamination controls are added:
-
-```text
-... by DeepSeek rival OpenAI
-... by DeepSeek and OpenAI
-... by DeepSeek / OpenAI
-... by DeepSeek-owned OpenAI
-... by DeepSeek's OpenAI team
-```
-
-Every surface must return binder rejection `organization_event_attribution_mismatch`, return no P3b candidate, report `candidate_count=0`, and never report `bound_candidate`.
-
-### Positive exact-agent / case normalization
-
-The clean replacement control remains positive, and a lowercase exact organization control is added:
-
-```text
-V4 Pro was replaced by V4.1 Flash by DeepSeek
-V4 Pro was replaced by V4.1 Flash by deepseek
-```
-
-Both are required to preserve `exact_event_identity` and active candidate admission when the remaining lifecycle/Freshness prerequisites are satisfied.
-
-### Cross-claim rescue
-
-The same-identity surface containing a clean duplicate plus the Astra foreign-attributed claim is asserted at both binder and active admission levels. The result must remain non-positive with zero returned candidates.
-
-### Launch/update passive attribution
-
-Existing lifecycle fixtures are reused rather than expanding production grammar. The same full-agent equality rule is exercised for:
-
-```text
-V4.1 Flash was launched by DeepSeek
-V4.1 Flash was launched by DeepSeek's rival OpenAI
-V4.1 Flash was updated by deepseek
-V4.1 Flash was updated by DeepSeek and OpenAI
-```
-
-Clean exact organization remains positive; contaminated agents fail closed at binder and active admission levels.
-
-## Evidence-version decision
-
-The durable request contract remains:
+At initial head `7b2fce5`, the durable request contract and semantic marker were:
 
 ```text
 VERSION=2
-```
-
-The active binder semantic proof marker remains:
-
-```text
 EVIDENCE_VERSION=3
 ```
 
-No bump to evidence v4 is justified. The current evidence-v3 binder on production `main` already uses complete normalized agent identity equality. The historical prefix semantics existed on the old PR #179 reviewed head before the final merged remediation; no reachable current evidence-v3 positive snapshot path was found that would require a new semantic migration boundary.
+The initial assessment concluded that no evidence-v4 bump was necessary. The later independent review invalidated that conclusion by demonstrating false-positive surfaces that could be persisted as evidence-v3 positive processed snapshots.
 
-The existing stale positive evidence-v2 revocation path from blocker #1 remains untouched.
-
-## Protected non-scope and invariants
-
-No production runtime file is modified by this follow-up. In particular, it does not change:
-
-- blocker #1 stale processed candidate revocation or optional-slot recovery;
-- blocker #2 punctuation/separator attribution grammar;
-- query wording or provider/model routing;
-- Primary, Source Pulse, Agency Rescue, Hybrid, or Coverage allocation;
-- Event Freshness or Source Freshness;
-- archive/dedupe, ranking/editorial, publication validators, or optional-slot handoff;
-- P3a;
-- lifecycle/version identity semantics beyond testing the already-merged exact-agent boundary.
-
-Search invariants remain:
-
-- Primary max = 12;
-- Agency Rescue max = 1;
-- Hybrid = 4 normally / 5 only on the approved double-regional-gap path;
-- Coverage = 6 mandatory + existing optional seventh;
-- Coverage max = 7;
-- no eighth Coverage search;
-- whole-pipeline ceiling = 24 normal / 25 conditional double-gap.
-
-`automation/scripts/ensure_story_coverage_p3a.py` remains byte-identical with blob:
+The final remediation therefore keeps durable `VERSION=2` but advances current semantic proof to:
 
 ```text
-14f0e38f57b9285a949ec5083136999c12c81bc0
+EVIDENCE_VERSION=4
 ```
 
-The canonical P3b matrix remains exactly 20 cases; blocker #3 stays a supplemental Astra remediation control rather than creating case 21.
+Evidence-v1, evidence-v2 and evidence-v3 positives are stale under the remediated runtime. See `final-review-four-blockers-remediation.md` for rationale and controls.
 
-## Documentation assessment
+## Preserved invariants
 
-The root remediation record for this Astra review already documents H3, full normalized passive-agent equality, launch/update reuse, cross-claim veto, `VERSION=2`, `EVIDENCE_VERSION=3`, and unchanged 7/24/25 budgets. The canonical P3b spec likewise already requires foreign passive/trailing attribution to fail closed. Because this follow-up changes no production contract, root `README.md`, `automation/README.md`, `automation/ARCHITECTURE.md`, `AGENTS.md`, and the canonical validation matrices do not require semantic edits.
+Across both the initial verification and later remediation:
 
-## Final verification contract
+- query wording and provider/model routing are unchanged;
+- Primary, Source Pulse, Agency Rescue and Hybrid allocation are unchanged;
+- Event/Source Freshness and archive/dedupe policy are unchanged;
+- P3a remains outside semantic mutation;
+- Coverage remains six mandatory + existing optional seventh, maximum 7, no eighth search;
+- whole-pipeline ceilings remain 24 normal / 25 conditional double-gap;
+- canonical P3b matrix remains exactly 20 cases.
 
-The PR may be considered ready only after its exact final head has:
+Expected preserved P3a blob:
 
-1. the focused blocker #3 regression suite green;
-2. the relevant P3b/Astra regression suites green;
-3. full `python -m unittest discover -s automation/tests -v` green;
-4. Main CI / Offline production checks green;
-5. Required PR Gate green;
-6. expected Video CI behavior for the changed paths;
-7. P3a blob still equal to `14f0e38f57b9285a949ec5083136999c12c81bc0`;
-8. canonical P3b matrix still exactly 20 cases;
-9. `VERSION=2` and `EVIDENCE_VERSION=3` unchanged;
-10. Coverage max 7, no eighth search, and whole-pipeline ceilings 24/25 unchanged.
+`14f0e38f57b9285a949ec5083136999c12c81bc0`
 
-The exact final commit SHA and exact-head Gate/run are recorded in the PR body after GitHub computes the final content-addressed commit and the corresponding Actions run. Embedding the SHA of the commit that contains this file inside the file itself would be self-referential and would necessarily change that SHA.
+## Final verification boundary
 
-Do not merge this PR. A new independent Astra review should evaluate the exact unchanged final head before any owner merge decision.
+This historical record is not merge evidence for the later head. The final exact PR #183 head must separately pass the full offline PR Gate, retain the invariants above, and receive a fresh independent review after the four-blocker remediation.
+
+Do not merge PR #183 based on the initial `7b2fce5` verification.
