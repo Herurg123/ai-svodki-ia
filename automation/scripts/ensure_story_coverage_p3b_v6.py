@@ -249,29 +249,76 @@ def _processed_positive_snapshot_is_stale(publication_date: str) -> bool:
 
 
 def _without_stale_p3b_candidates(plan: dict[str, Any]) -> dict[str, Any]:
-    """Drop candidates whose eligibility depended on stale P3b semantic proof.
+    """Revoke only candidates provenance-bound to the stale P3b proof.
 
-    A stale processed journal consumes the optional slot but cannot authorize its
-    old positive candidate under the current binder semantics. Preserve mandatory
-    Coverage candidates and diagnostics, while removing every candidate carrying
-    the P3b admission markers before returning the fail-closed annotation.
+    The stale processed journal has already established that semantic proof is no
+    longer reusable. Candidate revocation is narrower: require the admitted P3b
+    direction, durable binding version, authoritative-page proof marker, and the
+    exact stale signal id. Other Coverage directions and P3b-like metadata are
+    preserved. If old provenance is ambiguous, do not guess at collateral data.
     """
     result = copy.deepcopy(plan)
     candidates = result.get("candidates")
     if not isinstance(candidates, list):
         return result
-    result["candidates"] = [
-        item
-        for item in candidates
-        if not (
-            isinstance(item, dict)
-            and (
+
+    diagnostic = result.get(_v2._P3B_DIAGNOSTIC_KEY)
+    stale_signal_ids: set[str] = set()
+    if isinstance(diagnostic, dict):
+        signal_id = str(diagnostic.get("signal_id") or "").strip()
+        if signal_id:
+            stale_signal_ids.add(signal_id)
+
+    # Historical synthetic/recovery fixtures may omit diagnostic.signal_id. Use
+    # candidate provenance only when it identifies exactly one old P3b signal;
+    # otherwise preserve ambiguous data rather than broad-deleting by marker.
+    if not stale_signal_ids:
+        inferred: list[set[str]] = []
+        for item in candidates:
+            if not isinstance(item, dict):
+                continue
+            try:
+                binding_version = int(item.get("p3b_exact_binding_version", 0) or 0)
+            except (TypeError, ValueError):
+                continue
+            signal_ids = {
+                str(value or "").strip()
+                for value in item.get("resolution_signal_ids") or []
+                if str(value or "").strip()
+            }
+            if (
                 item.get("audit_direction") == "weak_source_exact_binding"
-                or "p3b_authoritative_page_proof" in item
-                or "p3b_exact_binding_version" in item
-            )
+                and binding_version == P3B_EXACT_BINDING_VERSION
+                and signal_ids
+                and str(item.get("p3b_authoritative_page_proof") or "").strip()
+            ):
+                inferred.append(signal_ids)
+        if len(inferred) == 1:
+            stale_signal_ids.update(inferred[0])
+
+    if not stale_signal_ids:
+        return result
+
+    def stale_bound(item: Any) -> bool:
+        if not isinstance(item, dict):
+            return False
+        try:
+            binding_version = int(item.get("p3b_exact_binding_version", 0) or 0)
+        except (TypeError, ValueError):
+            return False
+        signal_ids = {
+            str(value or "").strip()
+            for value in item.get("resolution_signal_ids") or []
+            if str(value or "").strip()
+        }
+        return bool(
+            item.get("audit_direction") == "weak_source_exact_binding"
+            and binding_version == P3B_EXACT_BINDING_VERSION
+            and str(item.get("p3b_authoritative_page_proof") or "").strip()
+            and signal_ids.intersection(stale_signal_ids)
         )
-    ]
+
+    result["candidates"] = [item for item in candidates if not stale_bound(item)]
     return result
 
 
