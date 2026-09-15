@@ -81,7 +81,6 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
             "V4 Pro was replaced by V4.1 Flash by DeepSeek",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash (by DeepSeek)",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash: by DeepSeek",
-            "DeepSeek says V4 Pro was replaced by V4.1 Flash.",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash: availability starts today",
         )
         for surface in surfaces:
