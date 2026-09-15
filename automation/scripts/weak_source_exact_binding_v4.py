@@ -22,12 +22,13 @@ for _name in dir(_v3):
         globals()[_name] = getattr(_v3, _name)
 
 # Durable request identity remains v2-compatible. This marker versions only the
-# semantic proof stored in a processed positive snapshot. Version 3 invalidates
-# positive evidence-v2 snapshots produced before replacement trailing-agent
-# attribution was hardened, while preserving the same durable request contract.
+# semantic proof stored in a processed positive snapshot. Version 4 invalidates
+# positive evidence-v3 snapshots produced before nested separator, complete
+# passive-agent surface, and historical-background attribution were hardened,
+# while preserving the same durable request contract.
 VERSION = _v3.VERSION
 MODE = _v3.MODE
-EVIDENCE_VERSION = 3
+EVIDENCE_VERSION = 4
 
 _VARIANT_PUNCT_RE = re.compile(
     r"^(?P<sep>/|\+|[\u2010\u2011\u2012\u2013\u2014\u2015\u2212])"
@@ -46,8 +47,9 @@ _PASSIVE_ACTION_RE = re.compile(
     r"(?:launched|released|updated|upgraded)\b",
     re.I,
 )
+_PASSIVE_AGENT_RE = re.compile(r"\bby\s+([^.;|]+)", re.I)
 _TRAILING_REPLACEMENT_AGENT_RE = re.compile(
-    r"^\s*(?:[,:\-\u2013\u2014]\s*)?(?:[\(\[]\s*)?\bby\s+([^,.;|)\]]+)",
+    r"^\s*(?:(?:[,:\-\u2013\u2014]\s*)|(?:[\(\[]\s*))*\bby\s+([^.;|]+)",
     re.I,
 )
 _CONDITIONAL_PREFIX_RE = re.compile(r"^\s*(?:if|unless|whether)\b", re.I)
@@ -140,8 +142,11 @@ def _passive_attribution_reason(claim: str, signal: dict[str, Any]) -> str | Non
     if actions.intersection({"launch", "update"}):
         for match in _PASSIVE_ACTION_RE.finditer(claim):
             tail = claim[match.end():]
-            by_match = re.search(r"\bby\s+([^,.;|]+)", tail, re.I)
+            by_match = _PASSIVE_AGENT_RE.search(tail)
             if by_match is not None:
+                # Keep the complete agent surface through commas. Truncating at
+                # the first comma turns a multi-agent list such as
+                # ``DeepSeek, OpenAI and Anthropic`` into a false exact match.
                 agent = by_match.group(1).strip()
                 if not _agent_matches_signal_organization(agent, organization):
                     return "organization_event_attribution_mismatch"
@@ -160,9 +165,9 @@ def _passive_attribution_reason(claim: str, signal: dict[str, Any]) -> str | Non
                 # The passive replacement grammar already contains the internal
                 # relation ``old was replaced by new``. Only attribution that
                 # begins *after the complete directed replacement span* can be a
-                # separate event agent. Allow ordinary punctuation/parentheses
-                # before that separate ``by`` but require the complete captured
-                # agent identity to equal the signal organization.
+                # separate event agent. A bounded sequence of punctuation and
+                # opening wrappers may precede ``by``; the complete agent surface
+                # is retained through commas for exact identity comparison.
                 trailing = _TRAILING_REPLACEMENT_AGENT_RE.match(claim[end:])
                 if trailing is None:
                     continue
@@ -221,6 +226,12 @@ def _action_context_reason(claim: str, signal: dict[str, Any]) -> str | None:
 
 
 def _strict_claim_reason(claim: str, signal: dict[str, Any]) -> str | None:
+    # Historical/background claims are non-current evidence and therefore cannot
+    # veto a separate current exact claim merely because their old event names a
+    # foreign passive agent. Detect that status before attribution contradiction.
+    historical = _historical_reason(claim)
+    if historical:
+        return historical
     passive = _passive_attribution_reason(claim, signal)
     if passive:
         return passive
@@ -231,9 +242,6 @@ def _strict_claim_reason(claim: str, signal: dict[str, Any]) -> str | None:
         return contextual
     if _UNCERTAIN_ASSERTION_RE.search(claim):
         return "lifecycle_noncurrent"
-    historical = _historical_reason(claim)
-    if historical:
-        return historical
 
     actions = _v3._v2._actions(signal)
     if "ga" in actions:
