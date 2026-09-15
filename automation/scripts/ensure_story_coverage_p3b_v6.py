@@ -62,9 +62,10 @@ _V6_INTERNALS = {
     "_sync_p3b_public_hooks", "_pull_p3b_runtime_state", "_stamp_binder_evidence",
     "_archive_discriminator_sequence", "_archive_mutable_event_detail_match_v6",
     "_archive_exact_event_v6", "_with_v4_processing", "_process_p3b_payload_v2",
-    "_processed_positive_snapshot_is_stale", "_run_p3b_binding_v4",
-    "_priority_deferred_runner", "_journal_matches_current_legacy_intent_v6",
-    "_legacy_contract", "_transfer_p3b_to_legacy", "_after_handoff_transfer",
+    "_processed_positive_snapshot_is_stale", "_without_stale_p3b_candidates",
+    "_run_p3b_binding_v4", "_priority_deferred_runner",
+    "_journal_matches_current_legacy_intent_v6", "_legacy_contract",
+    "_transfer_p3b_to_legacy", "_after_handoff_transfer",
     "_run_handed_off_required_legacy", "execute_audit_plan", "main", "__getattr__",
 }
 
@@ -247,13 +248,40 @@ def _processed_positive_snapshot_is_stale(publication_date: str) -> bool:
     return int(diagnostic.get("binder_evidence_version", 0) or 0) != P3B_BINDER_EVIDENCE_VERSION
 
 
+def _without_stale_p3b_candidates(plan: dict[str, Any]) -> dict[str, Any]:
+    """Drop candidates whose eligibility depended on stale P3b semantic proof.
+
+    A stale processed journal consumes the optional slot but cannot authorize its
+    old positive candidate under the current binder semantics. Preserve mandatory
+    Coverage candidates and diagnostics, while removing every candidate carrying
+    the P3b admission markers before returning the fail-closed annotation.
+    """
+    result = copy.deepcopy(plan)
+    candidates = result.get("candidates")
+    if not isinstance(candidates, list):
+        return result
+    result["candidates"] = [
+        item
+        for item in candidates
+        if not (
+            isinstance(item, dict)
+            and (
+                item.get("audit_direction") == "weak_source_exact_binding"
+                or "p3b_authoritative_page_proof" in item
+                or "p3b_exact_binding_version" in item
+            )
+        )
+    ]
+    return result
+
+
 def _run_p3b_binding_v4(*args: Any, **kwargs: Any) -> Any:
     publication_date = str(kwargs.get("publication_date") or "")
     if publication_date and _processed_positive_snapshot_is_stale(publication_date):
         plan = kwargs.get("plan") if isinstance(kwargs.get("plan"), dict) else {}
         signal = kwargs.get("signal") if isinstance(kwargs.get("signal"), dict) else None
         result = _v2._annotation(
-            plan,
+            _without_stale_p3b_candidates(plan),
             status="unresolved",
             reason=(
                 "processed positive optional-slot proof predates the active binder evidence "
