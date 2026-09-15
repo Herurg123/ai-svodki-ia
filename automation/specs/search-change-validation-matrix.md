@@ -77,6 +77,7 @@ semantic delta существующими regressions.
 | O5 | Пересечения | Один event найден несколькими search passes | Cross-query/cross-stage duplicate не раздувает candidate pool. |
 | O6 | Пересечения | Identity принадлежит невыбранному кандидату | Unselected candidate не может загрязнить provenance выбранного сюжета. |
 | O7 | Пересечения | Один publisher/topic доминирует в dense pool | Source/ranking pressure не уничтожает независимые достойные события. |
+| O8 | Event identity / attribution | Exact replacement anchors и signal organization присутствуют в claim, но после полного directed replacement span стоит explicit foreign trailing agent (`... old was replaced by new by ForeignOrg`) | Replacement attribution fail-closed: foreign trailing agent не может быть приписан signal organization; корректный `... by SignalOrg` и replacement без отдельного trailing agent остаются positive controls. |
 | R1 | Регион | Russia healthy, China/Asia healthy | Дополнительные regional slots не открываются. |
 | R2 | Регион | Только Russia gap | Сохраняется контракт 3 broad + 1 regional Hybrid. |
 | R3 | Регион | Только China/Asia gap | Сохраняется контракт 3 broad + 1 regional Hybrid. |
@@ -136,6 +137,7 @@ semantic delta существующими regressions.
 - short digest + one degraded discovery-plane;
 - qualified weak-source product signal + occupied Coverage seventh slot: signal remains unresolved/deferred and cannot create an eighth Coverage search or displace an already-required obligation;
 - qualified weak-source product signal + same-company/different-event or preview-vs-GA ambiguity: company overlap alone cannot close event identity;
+- qualified weak-source product signal + exact replacement claim + foreign trailing passive agent: exact anchors and signal organization in the same claim must still fail closed when the complete directed replacement span is followed by `by ForeignOrg`; the same saved optional-slot state with an evidence-v2 positive snapshot must migrate to unresolved under the new evidence version without a paid retry or page refetch;
 - qualified weak-source product signal + authoritative reference visible outside the active binding path: queue evidence alone cannot become a candidate;
 - optional Coverage slot `request_started` + unknown provider outcome + same-day recovery: slot stays consumed/ambiguous and automatic retry is forbidden;
 - optional Coverage raw response fsynced + crash before parser/result snapshot: the same raw response is reparsed offline and no second provider search is opened;

@@ -62,9 +62,10 @@ _V6_INTERNALS = {
     "_sync_p3b_public_hooks", "_pull_p3b_runtime_state", "_stamp_binder_evidence",
     "_archive_discriminator_sequence", "_archive_mutable_event_detail_match_v6",
     "_archive_exact_event_v6", "_with_v4_processing", "_process_p3b_payload_v2",
-    "_processed_positive_snapshot_is_stale", "_run_p3b_binding_v4",
-    "_priority_deferred_runner", "_journal_matches_current_legacy_intent_v6",
-    "_legacy_contract", "_transfer_p3b_to_legacy", "_after_handoff_transfer",
+    "_stale_positive_processed_snapshot", "_processed_positive_snapshot_is_stale",
+    "_without_stale_p3b_candidates", "_run_p3b_binding_v4", "_priority_deferred_runner",
+    "_journal_matches_current_legacy_intent_v6", "_legacy_contract",
+    "_transfer_p3b_to_legacy", "_after_handoff_transfer",
     "_run_handed_off_required_legacy", "execute_audit_plan", "main", "__getattr__",
 }
 
@@ -219,19 +220,20 @@ def _process_p3b_payload_v2(*args: Any, **kwargs: Any) -> Any:
     return _with_v4_processing(lambda: _v2._process_p3b_payload_v2(*args, **kwargs))
 
 
-def _processed_positive_snapshot_is_stale(publication_date: str) -> bool:
+def _stale_positive_processed_snapshot(publication_date: str) -> dict[str, Any] | None:
+    """Return the durable stale positive snapshot that must be migrated fail-closed."""
     try:
         journal = load_journal(Path(STATE_DIR), publication_date)
     except CoverageSlotError:
-        return False
+        return None
     if not isinstance(journal, dict) or str(journal.get("state") or "") != "processed":
-        return False
+        return None
     saved = journal.get("processed_snapshot")
     if not isinstance(saved, dict):
-        return False
+        return None
     diagnostic = saved.get(_v2._P3B_DIAGNOSTIC_KEY)
     if not isinstance(diagnostic, dict):
-        return bool(saved.get("candidates"))
+        return copy.deepcopy(saved) if saved.get("candidates") else None
     positive = (
         diagnostic.get("status") == "bound_candidate"
         or diagnostic.get("disposition") == "positive_exact_binding"
@@ -243,17 +245,71 @@ def _processed_positive_snapshot_is_stale(publication_date: str) -> bool:
         )
     )
     if not positive:
-        return False
-    return int(diagnostic.get("binder_evidence_version", 0) or 0) != P3B_BINDER_EVIDENCE_VERSION
+        return None
+    if int(diagnostic.get("binder_evidence_version", 0) or 0) == P3B_BINDER_EVIDENCE_VERSION:
+        return None
+    return copy.deepcopy(saved)
+
+
+def _processed_positive_snapshot_is_stale(publication_date: str) -> bool:
+    return _stale_positive_processed_snapshot(publication_date) is not None
+
+
+def _without_stale_p3b_candidates(
+    plan: dict[str, Any], signal: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Revoke only candidates provenance-bound to this stale P3b signal proof.
+
+    Staleness is established from the processed journal before this helper runs.
+    The active signal is the durable request identity already selected for that
+    recovery path, so candidate revocation additionally requires the admitted P3b
+    direction, durable binding version, authoritative-page proof marker, and that
+    exact signal id. Other Coverage directions and unrelated P3b-like metadata
+    are preserved rather than guessed away.
+    """
+    result = copy.deepcopy(plan)
+    candidates = result.get("candidates")
+    if not isinstance(candidates, list):
+        return result
+
+    stale_signal_id = str((signal or {}).get("signal_id") or "").strip()
+    if not stale_signal_id:
+        return result
+
+    def stale_bound(item: Any) -> bool:
+        if not isinstance(item, dict):
+            return False
+        try:
+            binding_version = int(item.get("p3b_exact_binding_version", 0) or 0)
+        except (TypeError, ValueError):
+            return False
+        signal_ids = {
+            str(value or "").strip()
+            for value in item.get("resolution_signal_ids") or []
+            if str(value or "").strip()
+        }
+        return bool(
+            item.get("audit_direction") == "weak_source_exact_binding"
+            and binding_version == P3B_EXACT_BINDING_VERSION
+            and str(item.get("p3b_authoritative_page_proof") or "").strip()
+            and stale_signal_id in signal_ids
+        )
+
+    result["candidates"] = [item for item in candidates if not stale_bound(item)]
+    return result
 
 
 def _run_p3b_binding_v4(*args: Any, **kwargs: Any) -> Any:
     publication_date = str(kwargs.get("publication_date") or "")
-    if publication_date and _processed_positive_snapshot_is_stale(publication_date):
-        plan = kwargs.get("plan") if isinstance(kwargs.get("plan"), dict) else {}
+    stale_snapshot = (
+        _stale_positive_processed_snapshot(publication_date)
+        if publication_date
+        else None
+    )
+    if stale_snapshot is not None:
         signal = kwargs.get("signal") if isinstance(kwargs.get("signal"), dict) else None
         result = _v2._annotation(
-            plan,
+            _without_stale_p3b_candidates(stale_snapshot, signal),
             status="unresolved",
             reason=(
                 "processed positive optional-slot proof predates the active binder evidence "

@@ -22,12 +22,12 @@ for _name in dir(_v3):
         globals()[_name] = getattr(_v3, _name)
 
 # Durable request identity remains v2-compatible. This marker versions only the
-# semantic proof stored in a processed positive snapshot. Version 2 invalidates
-# positive v4/evidence-v1 snapshots produced before the fourth-review temporal
-# and cross-claim contradiction hardening.
+# semantic proof stored in a processed positive snapshot. Version 3 invalidates
+# positive evidence-v2 snapshots produced before replacement trailing-agent
+# attribution was hardened, while preserving the same durable request contract.
 VERSION = _v3.VERSION
 MODE = _v3.MODE
-EVIDENCE_VERSION = 2
+EVIDENCE_VERSION = 3
 
 _VARIANT_PUNCT_RE = re.compile(
     r"^(?P<sep>/|\+|[\u2010\u2011\u2012\u2013\u2014\u2015\u2212])"
@@ -44,6 +44,10 @@ _V4_ANCHOR_ALLOWED_FOLLOWING_WORDS = frozenset(
 _PASSIVE_ACTION_RE = re.compile(
     r"\b(?:is|are|was|were|has\s+been|have\s+been|had\s+been)\s+"
     r"(?:launched|released|updated|upgraded)\b",
+    re.I,
+)
+_TRAILING_REPLACEMENT_AGENT_RE = re.compile(
+    r"^\s*(?:[,:\-\u2013\u2014]\s*)?(?:[\(\[]\s*)?\bby\s+([^,.;|)\]]+)",
     re.I,
 )
 _CONDITIONAL_PREFIX_RE = re.compile(r"^\s*(?:if|unless|whether)\b", re.I)
@@ -119,24 +123,52 @@ def _contains_exact_anchor(text: str, anchor: str) -> bool:
     return bool(_exact_anchor_spans(text, anchor))
 
 
+def _agent_matches_signal_organization(agent: str, organization: str) -> bool:
+    cleaned_agent = _v3._v2._clean(agent).strip("()[]{} \t\r\n\"'“”‘’")
+    return bool(
+        cleaned_agent
+        and _v3.normalized_org(cleaned_agent) == _v3.normalized_org(organization)
+    )
+
+
 def _passive_attribution_reason(claim: str, signal: dict[str, Any]) -> str | None:
     actions = set(_v3._v2._actions(signal))
-    if not actions.intersection({"launch", "update"}):
-        return None
     organization = _v3._v2._clean(signal.get("organization"))
     if not organization:
         return "organization_event_attribution_mismatch"
-    org_pattern = rf"(?<![\w]){re.escape(organization)}(?![\w])"
-    for match in _PASSIVE_ACTION_RE.finditer(claim):
-        tail = claim[match.end():]
-        by_match = re.search(r"\bby\s+([^,.;|]+)", tail, re.I)
-        if by_match is not None:
-            agent = by_match.group(1).strip()
-            if re.match(org_pattern, agent, re.I) is None:
+
+    if actions.intersection({"launch", "update"}):
+        for match in _PASSIVE_ACTION_RE.finditer(claim):
+            tail = claim[match.end():]
+            by_match = re.search(r"\bby\s+([^,.;|]+)", tail, re.I)
+            if by_match is not None:
+                agent = by_match.group(1).strip()
+                if not _agent_matches_signal_organization(agent, organization):
+                    return "organization_event_attribution_mismatch"
+                continue
+            org_pattern = rf"(?<![\w]){re.escape(organization)}(?![\w])"
+            if re.search(rf"\bfor\s+{org_pattern}", tail, re.I):
                 return "organization_event_attribution_mismatch"
-            continue
-        if re.search(rf"\bfor\s+{org_pattern}", tail, re.I):
-            return "organization_event_attribution_mismatch"
+
+    if "replace" in actions:
+        roles, _reason = _v3._v2._replacement_roles(signal)
+        if roles is not None:
+            old_anchor, new_anchor = roles
+            for _start, end in _v3._directed_replace_spans(
+                claim, old_anchor, new_anchor
+            ):
+                # The passive replacement grammar already contains the internal
+                # relation ``old was replaced by new``. Only attribution that
+                # begins *after the complete directed replacement span* can be a
+                # separate event agent. Allow ordinary punctuation/parentheses
+                # before that separate ``by`` but require the complete captured
+                # agent identity to equal the signal organization.
+                trailing = _TRAILING_REPLACEMENT_AGENT_RE.match(claim[end:])
+                if trailing is None:
+                    continue
+                agent = trailing.group(1).strip()
+                if not _agent_matches_signal_organization(agent, organization):
+                    return "organization_event_attribution_mismatch"
     return None
 
 
@@ -293,11 +325,15 @@ def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, st
         conflict = _cross_claim_lifecycle_conflict_reason(candidate_claims, signal)
         if conflict:
             return False, conflict
-        # Exact same-identity claims that actively negate or make the retained
-        # lifecycle prospective/uncertain are contradictory current evidence.
+        # Exact same-identity claims with foreign attribution or active lifecycle
+        # contradiction cannot be rescued by a separate clean-looking duplicate.
         # Historical background is deliberately not a veto: an authoritative
         # page may mention an older release while proving a new current event.
-        for veto in ("lifecycle_negated", "lifecycle_noncurrent"):
+        for veto in (
+            "organization_event_attribution_mismatch",
+            "lifecycle_negated",
+            "lifecycle_noncurrent",
+        ):
             if veto in reasons:
                 return False, veto
         return True, "exact_event_identity"

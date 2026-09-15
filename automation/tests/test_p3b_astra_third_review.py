@@ -151,6 +151,12 @@ class AstraThirdReviewRegressions(unittest.TestCase):
             saved = copy.deepcopy(plan)
             stale_candidate = controls.candidate()
             stale_candidate["audit_direction"] = "weak_source_exact_binding"
+            stale_candidate["resolution_signal_ids"] = [str(BASE_SIGNAL.get("signal_id") or "")]
+            stale_candidate["p3b_exact_binding_version"] = coverage.P3B_EXACT_BINDING_VERSION
+            stale_candidate["p3b_authoritative_page_url"] = stale_candidate["primary_source"]["url"]
+            stale_candidate["p3b_authoritative_page_proof"] = (
+                "current-event surface + deterministic Source/Event Freshness"
+            )
             saved["candidates"] = [stale_candidate]
             saved["weak_source_exact_binding"] = {
                 "version": 2,
