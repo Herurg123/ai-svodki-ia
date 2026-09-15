@@ -47,7 +47,7 @@ _PASSIVE_ACTION_RE = re.compile(
     re.I,
 )
 _TRAILING_REPLACEMENT_AGENT_RE = re.compile(
-    r"^\s*(?:,\s*)?\bby\s+([^,.;|]+)",
+    r"^\s*(?:[,:\-\u2013\u2014]\s*)?(?:[\(\[]\s*)?\bby\s+([^,.;|)\]]+)",
     re.I,
 )
 _CONDITIONAL_PREFIX_RE = re.compile(r"^\s*(?:if|unless|whether)\b", re.I)
@@ -123,12 +123,19 @@ def _contains_exact_anchor(text: str, anchor: str) -> bool:
     return bool(_exact_anchor_spans(text, anchor))
 
 
+def _agent_matches_signal_organization(agent: str, organization: str) -> bool:
+    cleaned_agent = _v3._v2._clean(agent).strip("()[]{} \t\r\n\"'“”‘’")
+    return bool(
+        cleaned_agent
+        and _v3.normalized_org(cleaned_agent) == _v3.normalized_org(organization)
+    )
+
+
 def _passive_attribution_reason(claim: str, signal: dict[str, Any]) -> str | None:
     actions = set(_v3._v2._actions(signal))
     organization = _v3._v2._clean(signal.get("organization"))
     if not organization:
         return "organization_event_attribution_mismatch"
-    org_pattern = rf"(?<![\w]){re.escape(organization)}(?![\w])"
 
     if actions.intersection({"launch", "update"}):
         for match in _PASSIVE_ACTION_RE.finditer(claim):
@@ -136,9 +143,10 @@ def _passive_attribution_reason(claim: str, signal: dict[str, Any]) -> str | Non
             by_match = re.search(r"\bby\s+([^,.;|]+)", tail, re.I)
             if by_match is not None:
                 agent = by_match.group(1).strip()
-                if re.match(org_pattern, agent, re.I) is None:
+                if not _agent_matches_signal_organization(agent, organization):
                     return "organization_event_attribution_mismatch"
                 continue
+            org_pattern = rf"(?<![\w]){re.escape(organization)}(?![\w])"
             if re.search(rf"\bfor\s+{org_pattern}", tail, re.I):
                 return "organization_event_attribution_mismatch"
 
@@ -152,13 +160,14 @@ def _passive_attribution_reason(claim: str, signal: dict[str, Any]) -> str | Non
                 # The passive replacement grammar already contains the internal
                 # relation ``old was replaced by new``. Only attribution that
                 # begins *after the complete directed replacement span* can be a
-                # separate event agent. This catches e.g. ``... V4.1 Flash by
-                # OpenAI`` without mistaking the replacement target for an agent.
+                # separate event agent. Allow ordinary punctuation/parentheses
+                # before that separate ``by`` but require the complete captured
+                # agent identity to equal the signal organization.
                 trailing = _TRAILING_REPLACEMENT_AGENT_RE.match(claim[end:])
                 if trailing is None:
                     continue
                 agent = trailing.group(1).strip()
-                if re.match(org_pattern, agent, re.I) is None:
+                if not _agent_matches_signal_organization(agent, organization):
                     return "organization_event_attribution_mismatch"
     return None
 
