@@ -45,6 +45,11 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
             "DeepSeek says V4 Pro was replaced by V4.1 Flash – by OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash — by OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek's rival OpenAI",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek rival OpenAI",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek and OpenAI",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek / OpenAI",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek-owned OpenAI",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek's OpenAI team",
         )
         for surface in surfaces:
             with self.subTest(surface=surface):
@@ -58,6 +63,10 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
                     surface=surface,
                 )
                 self.assertEqual(result["candidates"], [])
+                self.assertEqual(
+                    result["weak_source_exact_binding"]["candidate_count"],
+                    0,
+                )
                 self.assertNotEqual(
                     result["weak_source_exact_binding"]["status"],
                     "bound_candidate",
@@ -72,6 +81,17 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
             binder.exact_event_identity(surface, SIGNAL),
             (False, "organization_event_attribution_mismatch"),
         )
+        result = second.process_candidate(
+            signal=copy.deepcopy(SIGNAL),
+            candidate=controls.candidate(),
+            surface=surface,
+        )
+        self.assertEqual(result["candidates"], [])
+        self.assertEqual(result["weak_source_exact_binding"]["candidate_count"], 0)
+        self.assertNotEqual(
+            result["weak_source_exact_binding"]["status"],
+            "bound_candidate",
+        )
 
     def test_replacement_positive_controls_remain_positive(self) -> None:
         item = controls.candidate()
@@ -79,6 +99,7 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
             "DeepSeek replaces V4 Pro with V4.1 Flash",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash",
             "V4 Pro was replaced by V4.1 Flash by DeepSeek",
+            "V4 Pro was replaced by V4.1 Flash by deepseek",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash (by DeepSeek)",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash: by DeepSeek",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash: availability starts today",
@@ -102,6 +123,72 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
                 self.assertEqual(
                     result["weak_source_exact_binding"]["binder_evidence_version"],
                     3,
+                )
+
+    def test_passive_launch_update_require_exact_agent_identity(self) -> None:
+        launch_signal = second.launch_signal()
+        launch_item = second.launch_candidate()
+
+        update_signal = second.update_signal()
+        update_item = second.launch_candidate()
+        update_item["title"] = "DeepSeek updates V4.1 Flash from 32K to 64K context"
+        update_item["event_type"] = "update"
+        update_item["event_summary"] = update_item["title"]
+        update_item["primary_source"] = {
+            "title": update_item["title"],
+            "publisher": "DeepSeek",
+            "url": "https://www.deepseek.com/en/news/v4-context-64k/",
+        }
+
+        cases = (
+            (
+                launch_signal,
+                launch_item,
+                "V4.1 Flash was launched by DeepSeek",
+                "V4.1 Flash was launched by DeepSeek's rival OpenAI",
+            ),
+            (
+                update_signal,
+                update_item,
+                "V4.1 Flash was updated by deepseek",
+                "V4.1 Flash was updated by DeepSeek and OpenAI",
+            ),
+        )
+        for signal, item, positive_surface, negative_surface in cases:
+            with self.subTest(signal=signal["title"], surface=positive_surface):
+                self.assertEqual(
+                    binder.exact_event_identity(positive_surface, signal),
+                    (True, "exact_event_identity"),
+                )
+                positive = second.process_candidate(
+                    signal=copy.deepcopy(signal),
+                    candidate=copy.deepcopy(item),
+                    surface=positive_surface,
+                )
+                self.assertEqual(len(positive["candidates"]), 1)
+                self.assertEqual(
+                    positive["weak_source_exact_binding"]["status"],
+                    "bound_candidate",
+                )
+
+            with self.subTest(signal=signal["title"], surface=negative_surface):
+                self.assertEqual(
+                    binder.exact_event_identity(negative_surface, signal),
+                    (False, "organization_event_attribution_mismatch"),
+                )
+                negative = second.process_candidate(
+                    signal=copy.deepcopy(signal),
+                    candidate=copy.deepcopy(item),
+                    surface=negative_surface,
+                )
+                self.assertEqual(negative["candidates"], [])
+                self.assertEqual(
+                    negative["weak_source_exact_binding"]["candidate_count"],
+                    0,
+                )
+                self.assertNotEqual(
+                    negative["weak_source_exact_binding"]["status"],
+                    "bound_candidate",
                 )
 
     def test_evidence_v2_positive_processed_snapshot_revokes_prior_p3b_candidate(self) -> None:
