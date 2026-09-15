@@ -60,6 +60,16 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
                     "bound_candidate",
                 )
 
+    def test_cross_claim_foreign_attribution_vetoes_positive_duplicate(self) -> None:
+        surface = (
+            "DeepSeek replaces V4 Pro with V4.1 Flash | "
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek's rival OpenAI"
+        )
+        self.assertEqual(
+            binder.exact_event_identity(surface, SIGNAL),
+            (False, "organization_event_attribution_mismatch"),
+        )
+
     def test_replacement_positive_controls_remain_positive(self) -> None:
         item = controls.candidate()
         surfaces = (
@@ -93,10 +103,38 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
     def test_evidence_v2_positive_processed_snapshot_revokes_prior_p3b_candidate(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             state = Path(raw)
-            helper = controls.AstraP3bRuntimeRegressions()
-            plan, _ = helper._real_six_plan(state)
-            reservation = helper._reservation(state, plan)
+            mandatory_calls: list[dict] = []
 
+            def fake_mandatory(**kwargs):
+                mandatory_calls.append(kwargs)
+                return controls.mandatory_success(
+                    controls.direction_from_prompt(str(kwargs["prompt"]))
+                )
+
+            with (
+                mock.patch.object(coverage, "STATE_DIR", state),
+                mock.patch.object(coverage, "run_audit_request", side_effect=fake_mandatory),
+                mock.patch.object(coverage._pre, "_required_signals", return_value=[]),
+            ):
+                plan = coverage._P3A_EXECUTE_AUDIT_PLAN(
+                    api_key="offline",
+                    model=MODEL,
+                    template=TEMPLATE,
+                    publication_date=DATE,
+                    search_window=copy.deepcopy(WINDOW),
+                    missing_total=7,
+                    maximum_web_search_calls=7,
+                    existing_candidates=[],
+                    archive={"items": []},
+                )
+
+            self.assertEqual(len(mandatory_calls), 6)
+            self.assertEqual(plan["search_budget"]["maximum_calls"], 7)
+            self.assertEqual(plan["search_budget"]["completed_calls"], 6)
+            self.assertEqual(plan["search_budget"]["remaining_calls"], 1)
+
+            helper = controls.AstraP3bRuntimeRegressions()
+            reservation = helper._reservation(state, plan)
             saved = copy.deepcopy(plan)
             stale_candidate = controls.candidate()
             stale_candidate["audit_direction"] = "weak_source_exact_binding"
@@ -115,11 +153,11 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
                 "disposition": "positive_exact_binding",
                 "candidate_count": 1,
             }
-            # Model the complete historical seven-pass result, not merely a six-pass
-            # plan with a candidate attached. The optional slot is already consumed
-            # and must stay consumed even while its stale semantic candidate is revoked.
+            # Model the complete historical seven-pass result: six mandatory
+            # operations plus the already-consumed optional P3b slot.
             coverage._impl._v2._v1._p3b_force_consumed(saved)
             saved_budget = saved["search_budget"]
+            self.assertEqual(saved_budget["maximum_calls"], 7)
             self.assertGreaterEqual(
                 max(
                     int(saved_budget.get("completed_calls", 0) or 0),
@@ -127,6 +165,7 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
                 ),
                 7,
             )
+            self.assertEqual(saved_budget["remaining_calls"], 0)
 
             reservation.mark_request_started()
             reservation.save_raw_response({"id": "evidence-v2", "status": "completed"})
@@ -142,8 +181,6 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
                 maximum_web_search_calls=7,
                 existing_candidates=[{"title": "existing", "recommendation": "include"}],
                 archive={"items": []},
-                # Reproduce recovery from the complete seven-pass result, including
-                # the candidate whose eligibility depended on stale evidence-v2.
                 prior_plan=copy.deepcopy(saved),
             )
             with (
