@@ -325,11 +325,15 @@ def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, st
         conflict = _cross_claim_lifecycle_conflict_reason(candidate_claims, signal)
         if conflict:
             return False, conflict
-        # Exact same-identity claims that actively negate or make the retained
-        # lifecycle prospective/uncertain are contradictory current evidence.
+        # Exact same-identity claims with foreign attribution or active lifecycle
+        # contradiction cannot be rescued by a separate clean-looking duplicate.
         # Historical background is deliberately not a veto: an authoritative
         # page may mention an older release while proving a new current event.
-        for veto in ("lifecycle_negated", "lifecycle_noncurrent"):
+        for veto in (
+            "organization_event_attribution_mismatch",
+            "lifecycle_negated",
+            "lifecycle_noncurrent",
+        ):
             if veto in reasons:
                 return False, veto
         return True, "exact_event_identity"
