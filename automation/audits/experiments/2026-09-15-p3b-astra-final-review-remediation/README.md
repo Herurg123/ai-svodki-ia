@@ -39,12 +39,23 @@ The original agent check used `re.match()` against the signal organization, so a
 
 Expected treatment: the complete captured agent identity must normalize exactly to the signal organization. Lowercase equality remains valid; possessive/role/foreign suffix contamination fails closed. The same exact-agent rule is also applied to existing launch/update passive attribution.
 
+## Gate #428 findings during remediation
+
+The first strengthened full-suite run deliberately failed in two places and exposed useful test/semantic detail rather than an unrelated regression.
+
+1. The first migration fixture called preserved P3a with `maximum_web_search_calls=7`. That path may legitimately consume the existing legacy optional slot, so it produced seven transport calls before the synthetic P3b state was installed. This was a fixture error, not a runtime budget defect. The corrected fixture starts from the established real six-mandatory plan, then reconstructs the historical pre-P3b budget contract (`maximum_calls=7`, six consumed, one optional remaining) without running the legacy seventh-slot resolver. `_p3b_force_consumed()` then records the historical P3b slot as the seventh consumed operation.
+
+2. The possessive foreign-agent end-to-end control exposed an additional same-identity cross-claim seam. The test page fixture places the surface in HTML metadata as well as body text; an apostrophe in `DeepSeek's` can produce a second clean-looking local claim beside the full foreign-attributed claim. Binder-level matching rejected the foreign claim, but the clean duplicate could still make the complete page surface positive because attribution mismatch was not a cross-claim veto. This is a real fail-closed issue independent of the fixture shape: one exact-identity local claim attributing the event to a foreign actor must not be rescued by another clean-looking duplicate on the same authoritative surface.
+
+Decision: `organization_event_attribution_mismatch` is now a same-identity cross-claim veto alongside the existing active lifecycle contradiction vetoes. Historical/background claims remain non-vetoing, preserving the existing current-event-plus-history positive contract.
+
 ## Implementation decision
 
 1. `automation/scripts/weak_source_exact_binding_v4.py`
    - broaden only the post-directed-replacement separator grammar;
    - compare the complete normalized captured agent with the signal organization;
    - reuse that exact-agent check for existing launch/update passive attribution;
+   - make `organization_event_attribution_mismatch` a cross-claim veto when another exact-identity claim looks positive;
    - keep durable request `VERSION=2` and semantic `EVIDENCE_VERSION=3` unchanged because evidence v3 has not yet been merged to production and this remediation completes the same pending v3 contract.
 
 2. `automation/scripts/ensure_story_coverage_p3b_v6.py`
@@ -55,8 +66,9 @@ Expected treatment: the complete captured agent identity must normalize exactly 
 3. `automation/tests/test_p3b_replacement_passive_attribution_hotfix.py`
    - add comma/colon/parentheses/dash foreign-agent negatives;
    - add possessive-prefix foreign-agent negative;
+   - add a same-identity positive-duplicate + foreign-attribution contradiction control;
    - preserve SignalOrg and ordinary replacement positive controls;
-   - change migration reproduction to pass the complete seven-pass saved plan, including the stale P3b candidate, as `prior_plan`;
+   - reconstruct six mandatory operations plus the existing optional seventh slot, consume that slot as historical P3b, and pass the complete seven-pass saved plan including the stale P3b candidate as `prior_plan`;
    - assert zero ordinary calls, zero protected retries, zero page refetches, zero surviving P3b candidates, unresolved diagnostic, and no optional capacity refund.
 
 ## Architecture / budget decision
@@ -70,7 +82,7 @@ The existing canonical contracts already state the desired semantics:
 - whole-pipeline ceilings remain 24 normally and 25 only on the approved double-regional-gap path;
 - P3b→legacy atomic handoff, Event/Source Freshness, archive/dedupe, Primary, Agency Rescue, Hybrid allocation, ranking/editorial policy, publication validation, and preserved P3a are not modified.
 
-Because this remediation makes implementation satisfy already-written contracts rather than changing those contracts, no additional architecture prose or new matrix case is required. The permanent executable regression is strengthened instead.
+Because this remediation makes implementation satisfy already-written contracts rather than changing those contracts, no additional architecture prose or new canonical matrix case is required. The permanent executable regression is strengthened instead.
 
 ## Acceptance gate
 
