@@ -35,6 +35,11 @@ class AstraSeventhReviewRegressions(unittest.TestCase):
                 "Today, DeepSeek did not launch V4.1 Flash, per "
                 "September 1, 2025 reporting"
             ),
+            (
+                "DeepSeek launches V4.1 Flash | "
+                "Today, on September 15, 2026, DeepSeek did not launch V4.1 Flash, "
+                "citing reporting from September 1, 2025"
+            ),
         )
 
         for surface in surfaces:
