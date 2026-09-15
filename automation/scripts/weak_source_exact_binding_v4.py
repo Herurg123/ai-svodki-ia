@@ -109,9 +109,21 @@ def _anchor_followed_by_variant_suffix(text: str, match_end: int) -> bool:
     return _v3._anchor_followed_by_variant_suffix(text, match_end)
 
 
+def _claim_match_surface(text: str) -> str:
+    """Remove only terminal sentence punctuation before exact lifecycle matching.
+
+    The inherited anchor pattern deliberately rejects a dot immediately after an
+    anchor because it can introduce a version continuation. Once claim splitting
+    has already established the sentence boundary, however, a terminal period is
+    punctuation rather than a model suffix. Keeping this normalization local to
+    the complete claim preserves rejection of true continuations such as `.1`.
+    """
+    return re.sub(r"[.!?;]+$", "", _v3._v2._clean(text)).rstrip()
+
+
 def _exact_anchor_spans(text: str, anchor: str) -> list[tuple[int, int]]:
     anchor = _v3._v2._clean(anchor)
-    cleaned = _v3._v2._clean(text)
+    cleaned = _claim_match_surface(text)
     if not anchor or not cleaned:
         return []
     spans: list[tuple[int, int]] = []
@@ -264,12 +276,12 @@ def _cross_claim_lifecycle_conflict_reason(
     actions = set(_v3._v2._actions(signal))
     if "ga" in actions:
         for claim in claims:
-            preview_span, _ = _v3._active_term_span(claim, _PREVIEW_TERMS)
+            preview_span, _ = _v3._active_term_span(_claim_match_surface(claim), _PREVIEW_TERMS)
             if preview_span is not None:
                 return "preview_ga_mismatch"
     if "preview" in actions:
         for claim in claims:
-            ga_span, _ = _v3._active_term_span(claim, _GA_TERMS)
+            ga_span, _ = _v3._active_term_span(_claim_match_surface(claim), _GA_TERMS)
             if ga_span is not None:
                 return "preview_ga_mismatch"
     return None
@@ -312,15 +324,16 @@ def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, st
     reasons: list[str] = []
     positive = False
     for claim in candidate_claims:
+        match_claim = _claim_match_surface(claim)
         ok, reason = _v3._claim_lifecycle_matches(
-            claim,
+            match_claim,
             signal,
             require_current_lifecycle=True,
         )
         if not ok:
             reasons.append(reason)
             continue
-        strict_reason = _strict_claim_reason(claim, signal)
+        strict_reason = _strict_claim_reason(match_claim, signal)
         if strict_reason is None:
             positive = True
             continue
