@@ -20,13 +20,21 @@ def _full_date(value: date) -> str:
     return f"{value.strftime('%B')} {value.day}, {value.year}"
 
 
+def _previous_year(value: date) -> date:
+    try:
+        return value.replace(year=value.year - 1)
+    except ValueError:
+        # February 29 has no same-day representation in a non-leap prior year.
+        return value.replace(year=value.year - 1, day=28)
+
+
 class AstraEighthReviewRegressions(unittest.TestCase):
     def test_explicit_current_full_date_cannot_be_laundered_by_cited_history(self) -> None:
         signal = second.launch_signal()
         item = second.launch_candidate()
         today = date.today()
         current = _full_date(today)
-        historical = _full_date(today.replace(year=today.year - 1))
+        historical = _full_date(_previous_year(today))
 
         surfaces = (
             (
@@ -82,7 +90,7 @@ class AstraEighthReviewRegressions(unittest.TestCase):
     def test_explicit_current_full_date_is_a_relation_marker(self) -> None:
         signal = second.launch_signal()
         today = date.today()
-        historical = today.replace(year=today.year - 1)
+        historical = _previous_year(today)
         claim = (
             f"On {_full_date(today)}, DeepSeek did not launch V4.1 Flash, "
             f"citing reporting from {_full_date(historical)}"
@@ -94,7 +102,7 @@ class AstraEighthReviewRegressions(unittest.TestCase):
     def test_reporting_time_control_and_real_past_full_date_stay_historical(self) -> None:
         signal = second.launch_signal()
         today = date.today()
-        historical = today.replace(year=today.year - 1)
+        historical = _previous_year(today)
         reporting_control = (
             f"On {_full_date(today)}, DeepSeek said it launched V4.1 Flash on "
             f"{_full_date(historical)}"
