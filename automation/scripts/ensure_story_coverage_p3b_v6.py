@@ -63,9 +63,10 @@ _V6_INTERNALS = {
     "_archive_discriminator_sequence", "_archive_mutable_event_detail_match_v6",
     "_archive_exact_event_v6", "_with_v4_processing", "_process_p3b_payload_v2",
     "_stale_positive_processed_snapshot", "_processed_positive_snapshot_is_stale",
-    "_without_stale_p3b_candidates", "_run_p3b_binding_v4", "_priority_deferred_runner",
-    "_journal_matches_current_legacy_intent_v6", "_legacy_contract",
-    "_transfer_p3b_to_legacy", "_after_handoff_transfer",
+    "_stale_processed_signal", "_without_stale_p3b_candidates",
+    "_migrate_stale_processed_result", "_run_p3b_binding_v4",
+    "_priority_deferred_runner", "_journal_matches_current_legacy_intent_v6",
+    "_legacy_contract", "_transfer_p3b_to_legacy", "_after_handoff_transfer",
     "_run_handed_off_required_legacy", "execute_audit_plan", "main", "__getattr__",
 }
 
@@ -255,17 +256,49 @@ def _processed_positive_snapshot_is_stale(publication_date: str) -> bool:
     return _stale_positive_processed_snapshot(publication_date) is not None
 
 
+def _stale_processed_signal(
+    stale_snapshot: dict[str, Any],
+    active_signal: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    """Recover the signal identity that admitted the stale processed candidate."""
+    diagnostic = stale_snapshot.get(_v2._P3B_DIAGNOSTIC_KEY)
+    stale_signal_id = (
+        str(diagnostic.get("signal_id") or "").strip()
+        if isinstance(diagnostic, dict)
+        else ""
+    )
+    if not stale_signal_id:
+        candidate_signal_ids: set[str] = set()
+        for item in stale_snapshot.get("candidates") or []:
+            if not isinstance(item, dict):
+                continue
+            if item.get("audit_direction") != "weak_source_exact_binding":
+                continue
+            for value in item.get("resolution_signal_ids") or []:
+                value = str(value or "").strip()
+                if value:
+                    candidate_signal_ids.add(value)
+        if len(candidate_signal_ids) == 1:
+            stale_signal_id = next(iter(candidate_signal_ids))
+
+    active_id = str((active_signal or {}).get("signal_id") or "").strip()
+    if stale_signal_id and active_id == stale_signal_id:
+        return active_signal
+    if stale_signal_id:
+        return {"signal_id": stale_signal_id}
+    return active_signal
+
+
 def _without_stale_p3b_candidates(
     plan: dict[str, Any], signal: dict[str, Any] | None,
 ) -> dict[str, Any]:
     """Revoke only candidates provenance-bound to this stale P3b signal proof.
 
     Staleness is established from the processed journal before this helper runs.
-    The active signal is the durable request identity already selected for that
-    recovery path, so candidate revocation additionally requires the admitted P3b
-    direction, durable binding version, authoritative-page proof marker, and that
-    exact signal id. Other Coverage directions and unrelated P3b-like metadata
-    are preserved rather than guessed away.
+    Candidate revocation additionally requires the admitted P3b direction,
+    durable binding version, authoritative-page proof marker, and the exact stale
+    signal id. Other Coverage directions and unrelated P3b-like metadata are
+    preserved rather than guessed away.
     """
     result = copy.deepcopy(plan)
     candidates = result.get("candidates")
@@ -299,6 +332,42 @@ def _without_stale_p3b_candidates(
     return result
 
 
+def _migrate_stale_processed_result(
+    plan: dict[str, Any],
+    *,
+    stale_snapshot: dict[str, Any],
+    active_signal: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Enforce stale-proof revocation even when current request identity drifted.
+
+    Request-hash mismatch may legitimately stop replay or new transport, but it
+    cannot make a candidate admitted by obsolete semantic proof valid again. Use
+    durable stale provenance to clean the current returned plan, then preserve the
+    consumed processed slot without search, retry, or page refetch.
+    """
+    signal = _stale_processed_signal(stale_snapshot, active_signal)
+    diagnostic = stale_snapshot.get(_v2._P3B_DIAGNOSTIC_KEY)
+    query = (
+        str(diagnostic.get("query") or "").strip() or None
+        if isinstance(diagnostic, dict)
+        else None
+    )
+    result = _v2._annotation(
+        _without_stale_p3b_candidates(plan, signal),
+        status="unresolved",
+        reason=(
+            "processed positive optional-slot proof predates the active binder evidence "
+            "version; automatic reuse is forbidden without a new slot"
+        ),
+        signal=signal,
+        query=query,
+        disposition="unresolved_deferred",
+        slot_state="processed",
+    )
+    _v2._v1._p3b_force_consumed(result)
+    return _stamp_binder_evidence(result)
+
+
 def _run_p3b_binding_v4(*args: Any, **kwargs: Any) -> Any:
     publication_date = str(kwargs.get("publication_date") or "")
     stale_snapshot = (
@@ -307,21 +376,12 @@ def _run_p3b_binding_v4(*args: Any, **kwargs: Any) -> Any:
         else None
     )
     if stale_snapshot is not None:
-        signal = kwargs.get("signal") if isinstance(kwargs.get("signal"), dict) else None
-        result = _v2._annotation(
-            _without_stale_p3b_candidates(stale_snapshot, signal),
-            status="unresolved",
-            reason=(
-                "processed positive optional-slot proof predates the active binder evidence "
-                "version; automatic reuse is forbidden without a new slot"
-            ),
-            signal=signal,
-            query=build_p3b_query(signal or {}),
-            disposition="unresolved_deferred",
-            slot_state="processed",
+        active_signal = kwargs.get("signal") if isinstance(kwargs.get("signal"), dict) else None
+        return _migrate_stale_processed_result(
+            stale_snapshot,
+            stale_snapshot=stale_snapshot,
+            active_signal=active_signal,
         )
-        _v2._v1._p3b_force_consumed(result)
-        return _stamp_binder_evidence(result)
     return _with_v4_processing(lambda: _v4._guarded_run_p3b_binding_v2(*args, **kwargs))
 
 
@@ -450,6 +510,11 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
     _sync_p3b_public_hooks()
     publication_date = _v2._valid_publication_date(kwargs.get("publication_date"))
     journal, invalid_journal = _v4._load_optional_journal(publication_date)
+    stale_snapshot = (
+        _stale_positive_processed_snapshot(publication_date)
+        if publication_date
+        else None
+    )
     required_before = (
         list(_v2._pre._required_signals(publication_date))
         if publication_date
@@ -519,6 +584,17 @@ def execute_audit_plan(*args: Any, **kwargs: Any) -> Any:
         result = _v3.execute_audit_plan(*args, **call_kwargs)
         if not isinstance(result, dict):
             return result
+
+        # The preserved v2 layer may return early when model/archive/request
+        # context changes and the saved request hash no longer matches. A stale
+        # semantic proof is still stale independently of that request identity,
+        # so enforce revocation as a v6 postcondition on every returned plan.
+        if stale_snapshot is not None:
+            result = _migrate_stale_processed_result(
+                result,
+                stale_snapshot=stale_snapshot,
+                active_signal=active_p3b_signal,
+            )
 
         handoff_recovery = legacy_journal
         if p3b_handoff and publication_date and isinstance(journal, dict):
