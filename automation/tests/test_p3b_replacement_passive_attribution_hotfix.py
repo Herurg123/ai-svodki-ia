@@ -40,6 +40,9 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
             "DeepSeek says V4 Pro was replaced by V4.1 Flash, by OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash: by OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash (by OpenAI)",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash, (by OpenAI)",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash - by OpenAI",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash – by OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash — by OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek's rival OpenAI",
         )
@@ -78,6 +81,7 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
             "V4 Pro was replaced by V4.1 Flash by DeepSeek",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash (by DeepSeek)",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash: by DeepSeek",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash: availability starts today",
         )
         for surface in surfaces:
             with self.subTest(surface=surface):
