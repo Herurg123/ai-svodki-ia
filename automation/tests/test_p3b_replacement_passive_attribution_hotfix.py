@@ -38,6 +38,10 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
             "DeepSeek says V4 Pro was replaced by V4.1 Flash by openai",
             "DeepSeek replaces V4 Pro with V4.1 Flash by OpenAI",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash, by OpenAI",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash: by OpenAI",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash (by OpenAI)",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash — by OpenAI",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash by DeepSeek's rival OpenAI",
         )
         for surface in surfaces:
             with self.subTest(surface=surface):
@@ -62,6 +66,8 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
             "DeepSeek replaces V4 Pro with V4.1 Flash",
             "DeepSeek says V4 Pro was replaced by V4.1 Flash",
             "V4 Pro was replaced by V4.1 Flash by DeepSeek",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash (by DeepSeek)",
+            "DeepSeek says V4 Pro was replaced by V4.1 Flash: by DeepSeek",
         )
         for surface in surfaces:
             with self.subTest(surface=surface):
@@ -84,7 +90,7 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
                     3,
                 )
 
-    def test_evidence_v2_positive_processed_snapshot_is_not_reused(self) -> None:
+    def test_evidence_v2_positive_processed_snapshot_revokes_prior_p3b_candidate(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             state = Path(raw)
             helper = controls.AstraP3bRuntimeRegressions()
@@ -94,6 +100,11 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
             saved = copy.deepcopy(plan)
             stale_candidate = controls.candidate()
             stale_candidate["audit_direction"] = "weak_source_exact_binding"
+            stale_candidate["resolution_signal_ids"] = [str(SIGNAL.get("signal_id") or "")]
+            stale_candidate["p3b_exact_binding_version"] = coverage.P3B_EXACT_BINDING_VERSION
+            stale_candidate["p3b_authoritative_page_proof"] = (
+                "current-event surface + deterministic Source/Event Freshness"
+            )
             saved["candidates"] = [stale_candidate]
             saved["weak_source_exact_binding"] = {
                 "version": 2,
@@ -118,7 +129,9 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
                 maximum_web_search_calls=7,
                 existing_candidates=[{"title": "existing", "recommendation": "include"}],
                 archive={"items": []},
-                prior_plan=copy.deepcopy(plan),
+                # Reproduce recovery from the complete seven-pass result, including
+                # the candidate whose eligibility depended on stale evidence-v2.
+                prior_plan=copy.deepcopy(saved),
             )
             with (
                 mock.patch.object(coverage, "STATE_DIR", state),
@@ -150,7 +163,15 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
             self.assertEqual(protected.call_count, 0)
             self.assertEqual(pages.call_count, 0)
             self.assertEqual(result.get("candidates"), [])
+            self.assertFalse(
+                any(
+                    isinstance(item, dict)
+                    and item.get("audit_direction") == "weak_source_exact_binding"
+                    for item in result.get("candidates") or []
+                )
+            )
             self.assertEqual(result["weak_source_exact_binding"]["status"], "unresolved")
+            self.assertEqual(result["weak_source_exact_binding"]["candidate_count"], 0)
             self.assertIn("predates", result["weak_source_exact_binding"]["reason"])
             self.assertEqual(result["search_budget"]["remaining_calls"], 0)
 
