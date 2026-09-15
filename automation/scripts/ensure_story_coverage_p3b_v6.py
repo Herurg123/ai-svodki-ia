@@ -341,9 +341,10 @@ def _migrate_stale_processed_result(
     """Enforce stale-proof revocation even when current request identity drifted.
 
     Request-hash mismatch may legitimately stop replay or new transport, but it
-    cannot make a candidate admitted by obsolete semantic proof valid again. Use
-    durable stale provenance to clean the current returned plan, then preserve the
-    consumed processed slot without search, retry, or page refetch.
+    cannot make a candidate admitted by obsolete semantic proof valid again.
+    Preserve unrelated durable processed candidates even when the preserved v2
+    drift branch returns an empty candidate list, while removing only candidates
+    tied to the obsolete P3b proof. No search, retry, or page refetch is opened.
     """
     signal = _stale_processed_signal(stale_snapshot, active_signal)
     diagnostic = stale_snapshot.get(_v2._P3B_DIAGNOSTIC_KEY)
@@ -352,8 +353,24 @@ def _migrate_stale_processed_result(
         if isinstance(diagnostic, dict)
         else None
     )
+
+    cleaned_plan = _without_stale_p3b_candidates(plan, signal)
+    cleaned_snapshot = _without_stale_p3b_candidates(stale_snapshot, signal)
+    current_candidates = cleaned_plan.get("candidates")
+    durable_candidates = cleaned_snapshot.get("candidates")
+    if isinstance(durable_candidates, list):
+        merged_candidates = (
+            copy.deepcopy(current_candidates)
+            if isinstance(current_candidates, list)
+            else []
+        )
+        for item in durable_candidates:
+            if item not in merged_candidates:
+                merged_candidates.append(copy.deepcopy(item))
+        cleaned_plan["candidates"] = merged_candidates
+
     result = _v2._annotation(
-        _without_stale_p3b_candidates(plan, signal),
+        cleaned_plan,
         status="unresolved",
         reason=(
             "processed positive optional-slot proof predates the active binder evidence "
