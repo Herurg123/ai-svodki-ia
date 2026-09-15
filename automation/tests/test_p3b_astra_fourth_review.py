@@ -40,7 +40,7 @@ class AstraFourthReviewRegressions(unittest.TestCase):
         self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v6")
         self.assertIs(coverage._exact_binding, binder)
         self.assertEqual(coverage.P3B_EXACT_BINDING_VERSION, 2)
-        self.assertEqual(binder.EVIDENCE_VERSION, 5)
+        self.assertEqual(binder.EVIDENCE_VERSION, 6)
         self.assertEqual(coverage.P3B_BINDER_EVIDENCE_VERSION, binder.EVIDENCE_VERSION)
 
     def test_suffix_modal_uncertain_launch_assertions_fail_closed(self) -> None:
@@ -205,7 +205,7 @@ class AstraFourthReviewRegressions(unittest.TestCase):
                 self.assertFalse(ok, msg=surface)
 
     def test_positive_processed_snapshot_before_current_evidence_is_stale(self) -> None:
-        for evidence_version in (1, 2, 3, 4):
+        for evidence_version in (1, 2, 3, 4, 5):
             with self.subTest(evidence_version=evidence_version), tempfile.TemporaryDirectory() as raw:
                 state = Path(raw)
                 helper = controls.AstraP3bRuntimeRegressions()
