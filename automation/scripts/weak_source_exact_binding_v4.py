@@ -80,6 +80,16 @@ _HISTORICAL_FULL_DATE_RE = re.compile(
     r"(?:,\s*|\s+)((?:19|20)\d{2})\b",
     re.I,
 )
+_HISTORICAL_ACTION_YEAR_RELATION_RE = re.compile(
+    r"\b(?:in|during|back\s+in|since)\s+((?:19|20)\d{2})\b",
+    re.I,
+)
+_HISTORICAL_ACTION_RELATIVE_RE = re.compile(
+    r"\b(?:last\s+(?:year|month|week)|"
+    r"(?:\d+\s+)?(?:years?|months?|weeks?)\s+ago|"
+    r"previously|earlier|formerly)\b",
+    re.I,
+)
 _HISTORICAL_DATE_BACKGROUND_BRIDGE_RE = re.compile(
     r"\b(?:due\s+to|because(?:\s+of)?|owing\s+to|incident|cause|reason|"
     r"after|before|following)\b",
@@ -217,20 +227,46 @@ def _signal_action_spans(claim: str, signal: dict[str, Any]) -> list[tuple[int, 
     return sorted(set(spans))
 
 
+def _historical_bridge_blocks_binding(bridge: str) -> bool:
+    return bool(
+        _HISTORICAL_DATE_BACKGROUND_BRIDGE_RE.search(bridge)
+        or _v3._v2._CURRENT_ACTION_NEAR_RE.search(bridge)
+    )
+
+
+def _action_span_has_historical_suffix_marker(
+    claim: str,
+    span: tuple[int, int],
+) -> bool:
+    """Recognize old-event suffixes without treating every old year as the action date."""
+    _start, end = span
+    suffix = claim[end:min(len(claim), end + 180)]
+    current_year = date.today().year
+
+    for match in _HISTORICAL_ACTION_YEAR_RELATION_RE.finditer(suffix):
+        try:
+            year = int(match.group(1))
+        except ValueError:
+            continue
+        if year >= current_year:
+            continue
+        if _historical_bridge_blocks_binding(suffix[:match.start()]):
+            continue
+        return True
+
+    for match in _HISTORICAL_ACTION_RELATIVE_RE.finditer(suffix):
+        if _historical_bridge_blocks_binding(suffix[:match.start()]):
+            continue
+        return True
+    return False
+
+
 def _action_span_has_past_full_date(
     claim: str,
     span: tuple[int, int],
 ) -> bool:
     """Bind an explicit past full date to the lifecycle span, not the whole claim."""
     start, end = span
-    prefix = claim[max(0, start - 140):start]
-    suffix = claim[end:min(len(claim), end + 180)]
-    if (
-        _v3._v2._CURRENT_ACTION_NEAR_RE.search(prefix[-40:])
-        or _v3._v2._CURRENT_ACTION_NEAR_RE.search(suffix[:40])
-    ):
-        return False
-
     local_start = max(0, start - 140)
     local_end = min(len(claim), end + 180)
     local = claim[local_start:local_end]
@@ -251,7 +287,7 @@ def _action_span_has_past_full_date(
             bridge = local[match.end():action_start]
         else:
             bridge = ""
-        if _HISTORICAL_DATE_BACKGROUND_BRIDGE_RE.search(bridge):
+        if _historical_bridge_blocks_binding(bridge):
             continue
         return True
     return False
@@ -261,6 +297,8 @@ def _historical_reason(claim: str, signal: dict[str, Any]) -> str | None:
     """Classify history only when a past marker binds the retained lifecycle."""
     for span in _signal_action_spans(claim, signal):
         if _v3._span_state(claim, span) == "historical_event_context":
+            return "historical_event_context"
+        if _action_span_has_historical_suffix_marker(claim, span):
             return "historical_event_context"
         if _action_span_has_past_full_date(claim, span):
             return "historical_event_context"
