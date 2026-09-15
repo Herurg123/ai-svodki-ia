@@ -1,0 +1,150 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-09-15",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-09-15.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-003: источник показывает дату без точного времени.",
+    "Выбрано 6 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-09-15",
+  "started_at": "2026-09-15T01:38:24+00:00",
+  "finished_at": "2026-09-15T01:38:57+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 59,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "13ad692e26ca4b2a044067af44fce3accdecf943a668c804427758ecce7e0486",
+    "candidates_sha256": "e2ae05985d4989f9c8ae43ba72b800553b57d15c3eb337d0359193334b08b66c",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-09-13T04:04:12+03:00",
+      "end_at": "2026-09-15T04:28:04+03:00",
+      "latest_archive_at": "2026-09-14T04:04:12+03:00",
+      "start_date": "2026-09-13",
+      "end_date": "2026-09-15",
+      "latest_archive_date": "2026-09-14"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "964a6774860fd83015df9ab443e9d5e88e5c066165e1d8fec24beca8059b62a8",
+    "editorial_sha256": "eedceaa12596a2c76bcd908a595ba99d2444a0510e9e7b235de6df820dff8e38",
+    "digest_sha256": "2b99956a9a8e6b7474fa8c543712cc25d17335bc5288c55b4651b05bacaa112a",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-09-15.png",
+          "normalized_value": "ai-svodka-2026-09-15.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        },
+        {
+          "field": "image_prompt",
+          "model_value": "Изображение 16:9: современная футуристическая редакционная обложка ежедневного аналитического выпуска об ИИ. Крупный и единственный читаемый текст: «ИИ-Сводка на 15 сентября 2026».\n\nГлавные визуальные темы: шесть связанных мотивов — удалённый coding-агент, ускоренный поток кода между облачным сервером и рабочей станцией; локальный ИИ-агент на Windows-ПК с сияющим GPU-модулем; абстрактный корпоративный помощник, организующий календарные карточки; высокоскоростная световая сетевая fabric между вычислительными стойками; беспилотный robotaxi на ночной улице Лас-Вегаса; нейтральный силуэт инженера, наблюдающий за инфраструктурой.\n\nКомпозиция: в центре — светящаяся сеть, соединяющая вычислительный кластер и локальную рабочую станцию; вокруг неё равномерно расположены пять остальных сюжетных сцен в виде цельной городской и технологической панорамы. В нижней зоне — robotaxi на дороге и мягкое отражение неонового света, без пустых участков кадра.\n\nСтиль: детализированная футуристическая редакционная иллюстрация, глубокая сине-графитовая палитра с бирюзовыми, фиолетовыми и янтарными акцентами, чистая журнальная композиция. Без логотипов компаний, без дополнительного текста, без водяных знаков, без мелких интерфейсных надписей, без стокового корпоративного клипарта, без узнаваемых лиц реальных людей.",
+          "normalized_value": "Изображение 16:9: современная футуристическая редакционная обложка ежедневного аналитического выпуска об ИИ. Крупный и единственный читаемый текст: «ИИ-Сводка на 15 сентября 2026».\n\nГлавные визуальные темы: шесть связанных мотивов — удалённый coding-агент, ускоренный поток кода между облачным сервером и рабочей станцией; локальный ИИ-агент на Windows-ПК с сияющим GPU-модулем; абстрактный корпоративный помощник, организующий календарные карточки; высокоскоростная световая сетевая fabric между вычислительными стойками; беспилотный robotaxi на ночной улице Лас-Вегаса; нейтральный силуэт инженера, наблюдающий за инфраструктурой.\n\nКомпозиция: в центре — светящаяся сеть, соединяющая вычислительный кластер и локальную рабочую станцию; вокруг неё равномерно расположены пять остальных сюжетных сцен в виде цельной городской и технологической панорамы. В нижней зоне — robotaxi на дороге и мягкое отражение неонового света, без пустых участков кадра.\n\nСтиль: детализированная футуристическая редакционная иллюстрация, глубокая сине-графитовая палитра с бирюзовыми, фиолетовыми и янтарными акцентами, чистая журнальная композиция. Без логотипов компаний, без дополнительного текста, без водяных знаков, без мелких интерфейсных надписей, без стокового корпоративного клипарта, без узнаваемых лиц реальных людей. Обязательные ограничения: без пустой половины кадра."
+        }
+      ],
+      "changed_count": 2,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 6 сюжетов."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: global_breaking, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_09df6dfd505696ad016aa8a191b3b487d292e77145f2e81484",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 120574,
+        "input_tokens_details": {
+          "cache_write_tokens": 12489,
+          "cached_tokens": 108082
+        },
+        "output_tokens": 2954,
+        "output_tokens_details": {
+          "reasoning_tokens": 284
+        },
+        "total_tokens": 123528
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 120574,
+    "output_tokens": 2954,
+    "total_tokens": 123528,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "ddc36e1d4a89847b5c2d2256d9820a1d9f5cd273",
+    "run_id": "34917341579",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-09-15T04:28:04+03:00"
+}

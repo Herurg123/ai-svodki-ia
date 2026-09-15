@@ -1,0 +1,18 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-002",
+    "cand-004",
+    "cand-005",
+    "cand-006",
+    "cand-007",
+    "cand-008"
+  ],
+  "excluded_candidate_ids": [
+    "cand-001",
+    "cand-003"
+  ],
+  "selection_summary": "Выбраны шесть подтверждённых свежих сюжетов: обновление инструмента разработки Anthropic, официальные публикации NVIDIA и OpenAI о локальных и корпоративных сценариях агентов, а также независимые сообщения о сетевой инфраструктуре Cornelis и запуске Waymo в Лас-Вегасе. Кандидаты cand-001 и cand-003 исключены по прямой рекомендации пула и не прошли fail-closed проверку свежести источника.",
+  "diversity_overrides": []
+}

@@ -1,0 +1,38 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-15",
+  "slug": "2026-09-15",
+  "title": "ИИ-Сводка на 15 сентября 2026",
+  "description": "США спорят о регулировании ИИ, а рынок продолжает развивать практический слой: удалённые coding-сессии, локальные агенты на ПК, корпоративных помощников, сети для кластеров и беспилотный транспорт.",
+  "published_at": "2026-09-15T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-15.png",
+  "topics": [
+    "Claude Code",
+    "coding-агенты",
+    "локальный ИИ",
+    "NVIDIA RTX",
+    "GPT-6 Astra",
+    "Perplexity",
+    "Fyxer",
+    "ИИ-инфраструктура",
+    "сети для ИИ-кластеров",
+    "Cornelis",
+    "Waymo",
+    "robotaxi"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: global_breaking, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+    }
+  ]
+}

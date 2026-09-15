@@ -1,0 +1,189 @@
+[
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Claude Code 2.1.271 добавил fast mode для удалённых coding-сессий",
+    "organization": "Anthropic; Claude Code",
+    "topic": "CLI coding agents; ускорение удалённых cloud- и self-hosted-сессий разработки",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "По данным трекера релизов с ссылкой на оригинальный changelog, Anthropic выпустила Claude Code 2.1.271. В Claude Code Remote появился fast mode: настройка хоста либо команда /fast применяется к удалённым сессиям на облачных и self-hosted runners.",
+    "published_at": "2026-09-14T19:45:19+00:00",
+    "published_date": "2026-09-14",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Claude Code v2.1.271",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/claude-code-2.1.271"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "remote sessions",
+      "fast mode",
+      "cloud runners",
+      "self-hosted runners",
+      "coding agent"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Perplexity Portable Computer стал доступен для Windows на NVIDIA RTX",
+    "organization": "NVIDIA",
+    "topic": "Perplexity Portable Computer Is Now Available on Windows, Powered by NVIDIA RTX",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Perplexity Portable Computer is now available on Windows, powered by NVIDIA RTX GPUs. Run local AI agent workflows without cloud credits.",
+    "published_at": "2026-09-14T15:00:52+00:00",
+    "published_date": "2026-09-14",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Perplexity Portable Computer Is Now Available on Windows, Powered by NVIDIA RTX",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/local-ai-perplexity-windows-pcs"
+      }
+    ],
+    "keywords": [
+      "Perplexity",
+      "Portable",
+      "Computer",
+      "Is",
+      "Now",
+      "Available",
+      "Windows",
+      "Powered",
+      "by",
+      "NVIDIA",
+      "RTX"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "OpenAI: Perplexity использует GPT-6 Astra для сквозных систем",
+    "organization": "OpenAI",
+    "topic": "Perplexity trusts GPT-6 Astra with end-to-end systems",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Perplexity trusts GPT-6 Astra with end-to-end systems",
+    "published_at": "2026-09-14T00:00:00+00:00",
+    "published_date": "2026-09-14",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Perplexity trusts GPT-6 Astra with end-to-end systems",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/perplexity-improving-accuracy-with-astra"
+      }
+    ],
+    "keywords": [
+      "Perplexity",
+      "trusts",
+      "GPT-6",
+      "Astra",
+      "end-to-end",
+      "systems"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "OpenAI рассказала о создании доверенного ИИ-помощника Fyxer",
+    "organization": "OpenAI",
+    "topic": "How Fyxer built an AI executive assistant people trust",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: How Fyxer built an AI executive assistant people trust",
+    "published_at": "2026-09-14T12:00:00+00:00",
+    "published_date": "2026-09-14",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "How Fyxer built an AI executive assistant people trust",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/fyxer"
+      }
+    ],
+    "keywords": [
+      "How",
+      "Fyxer",
+      "built",
+      "executive",
+      "assistant",
+      "people",
+      "trust"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Cornelis привлекла $205 млн и представила Active Compute Fabric для ИИ-кластеров",
+    "organization": "Cornelis Networks; IAG Capital Partners; NVIDIA",
+    "topic": "AI-инфраструктура; высокоскоростные сети и межсоединения для GPU- и accelerator-кластеров",
+    "event_type": "funding_and_product_announcement",
+    "status": "new",
+    "summary": "Cornelis объявила о раунде на $205 млн во главе с IAG Capital Partners и о продукте Active Compute Fabric — сетевой технологии, рассчитанной на сокращение простоев ускорителей при обмене данными в AI-кластерах. Компания предлагает открытую архитектуру, совместимую с разными GPU и ускорителями.",
+    "published_at": "2026-09-14T20:07:37+00:00",
+    "published_date": "2026-09-14",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "AI infrastructure company Cornelis raises $205M to chip away at Nvidia’s dominance",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/14/ai-infrastructure-company-cornelis-raises-205m-to-chip-away-at-nvidias-dominance/"
+      }
+    ],
+    "keywords": [
+      "Cornelis",
+      "AI infrastructure",
+      "networking",
+      "Active Compute Fabric",
+      "GPU clusters",
+      "IAG Capital Partners",
+      "NVIDIA"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Waymo начала открывать robotaxi-сервис для пассажиров в Лас-Вегасе",
+    "organization": "Waymo; Alphabet; Nevada Transportation Authority",
+    "topic": "Physical AI; автономный транспорт; коммерческое развёртывание robotaxi",
+    "event_type": "commercial_service_launch",
+    "status": "new",
+    "summary": "Waymo начала поэтапно приглашать пассажиров в публичный robotaxi-сервис в Лас-Вегасе после получения окончательного разрешения транспортного регулятора Невады. На первом этапе работают десятки новых беспилотных минивэнов Ojai; доступ предоставляется по приглашениям.",
+    "published_at": "2026-09-14T16:04:16+00:00",
+    "published_date": "2026-09-14",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Waymo opens robotaxi service in Las Vegas",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/14/waymo-opens-robotaxi-service-in-las-vegas/"
+      }
+    ],
+    "keywords": [
+      "Waymo",
+      "robotaxi",
+      "Las Vegas",
+      "autonomous vehicles",
+      "Nevada Transportation Authority",
+      "Ojai"
+    ],
+    "geography": "world",
+    "category": "robotics"
+  }
+]
