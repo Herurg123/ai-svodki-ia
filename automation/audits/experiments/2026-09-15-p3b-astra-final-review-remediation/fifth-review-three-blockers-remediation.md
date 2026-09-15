@@ -81,7 +81,7 @@ Collateral historical repair:
 
 PR Gate #459 / run `34971959924` restored the older action-bound historical controls and kept all three new Astra regressions green. The remaining failures on that head were only assertions/documentation that still expected `EVIDENCE_VERSION=4` while runtime correctly emitted 5.
 
-The final branch subsequently synchronizes permanent version contracts and canonical documentation to evidence-v5. A final full PR Gate must be green on the exact unchanged head before this remediation is returned for another independent Astra review.
+The branch then synchronized permanent version contracts and canonical documentation to evidence-v5. A final full PR Gate must be green on the exact unchanged head before this remediation is returned for another independent Astra review.
 
 ## Preserved invariants
 
@@ -89,7 +89,8 @@ The final branch subsequently synchronizes permanent version contracts and canon
 - active semantic binder remains `weak_source_exact_binding_v4.py`;
 - durable request contract remains `VERSION=2`;
 - current semantic proof is `EVIDENCE_VERSION=5`;
-- P3a remains byte-identical;
+- positive processed evidence-v1/evidence-v2/evidence-v3/evidence-v4 is stale;
+- P3a production blob remains `14f0e38f57b9285a949ec5083136999c12c81bc0`;
 - canonical P3b matrix remains exactly 20 numbered cases; fifth-review counterexamples are supplemental controls;
 - Coverage remains six mandatory searches plus the existing optional seventh, maximum 7;
 - no eighth Coverage search;
@@ -100,6 +101,12 @@ The final branch subsequently synchronizes permanent version contracts and canon
 
 No production API, paid Web Search or Terra call was used. This remediation is deterministic parser/lifecycle/recovery validation only.
 
+## Final exact-head verification protocol
+
+The literal final Git SHA and final PR Gate run are intentionally pinned in PR #183 metadata only after the exact head is green. They are not self-embedded into this tracked file after the gate: committing a post-gate SHA/run back into the audit would create a new Git head and invalidate that same exact-head proof. The final handoff therefore requires all three pieces to agree without any later Git commit: this durable remediation record, the frozen PR head, and the green PR Gate/run recorded in the PR body.
+
+The final verification must establish all of the following on that frozen head: full offline unit suite green; compile and editorial/archive/workflow/RSS/sitemap/structured-data validators green; protected-path cleanliness green; Required PR Gate green; P3a blob unchanged; canonical matrix exactly 20; `VERSION=2`; `EVIDENCE_VERSION=5`; positive v1-v4 stale; Coverage ceiling 7 with no eighth search; whole-pipeline ceilings 24/25; and PR still open with `merged=false`.
+
 ## Merge boundary
 
-Do not merge from this record. The exact final head must first pass the complete PR Gate and then receive a fresh independent Astra final review. Regression tests named `astra` are executable controls, not reviewer approval.
+**DO NOT MERGE.** The exact final head must first pass the complete PR Gate and then receive a fresh independent Astra final review. This audit records remediation evidence, not independent approval. Regression tests named `astra` are executable controls, not reviewer approval.
