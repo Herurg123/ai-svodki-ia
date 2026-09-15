@@ -40,7 +40,7 @@ class AstraFourthReviewRegressions(unittest.TestCase):
         self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v6")
         self.assertIs(coverage._exact_binding, binder)
         self.assertEqual(coverage.P3B_EXACT_BINDING_VERSION, 2)
-        self.assertEqual(binder.EVIDENCE_VERSION, 3)
+        self.assertEqual(binder.EVIDENCE_VERSION, 6)
         self.assertEqual(coverage.P3B_BINDER_EVIDENCE_VERSION, binder.EVIDENCE_VERSION)
 
     def test_suffix_modal_uncertain_launch_assertions_fail_closed(self) -> None:
@@ -204,32 +204,35 @@ class AstraFourthReviewRegressions(unittest.TestCase):
                 ok, _reason = binder.exact_event_identity(surface, copy.deepcopy(signal))
                 self.assertFalse(ok, msg=surface)
 
-    def test_positive_processed_snapshot_from_evidence_v1_is_stale(self) -> None:
-        with tempfile.TemporaryDirectory() as raw:
-            state = Path(raw)
-            helper = controls.AstraP3bRuntimeRegressions()
-            plan, _ = helper._real_six_plan(state)
-            reservation = helper._reservation(state, plan)
-            saved = copy.deepcopy(plan)
-            stale_candidate = controls.candidate()
-            stale_candidate["audit_direction"] = "weak_source_exact_binding"
-            saved["candidates"] = [stale_candidate]
-            saved["weak_source_exact_binding"] = {
-                "version": 2,
-                "mode": coverage.P3B_MODE,
-                "status": "bound_candidate",
-                "disposition": "positive_exact_binding",
-                "candidate_count": 1,
-                "binder_evidence_version": 1,
-            }
-            reservation.mark_request_started()
-            reservation.save_raw_response({"id": "evidence-v1", "status": "completed"})
-            reservation.mark_processed(saved)
-
-            with mock.patch.object(coverage._impl, "STATE_DIR", state):
-                self.assertTrue(
-                    coverage._impl._processed_positive_snapshot_is_stale(controls.DATE)
+    def test_positive_processed_snapshot_before_current_evidence_is_stale(self) -> None:
+        for evidence_version in (1, 2, 3, 4, 5):
+            with self.subTest(evidence_version=evidence_version), tempfile.TemporaryDirectory() as raw:
+                state = Path(raw)
+                helper = controls.AstraP3bRuntimeRegressions()
+                plan, _ = helper._real_six_plan(state)
+                reservation = helper._reservation(state, plan)
+                saved = copy.deepcopy(plan)
+                stale_candidate = controls.candidate()
+                stale_candidate["audit_direction"] = "weak_source_exact_binding"
+                saved["candidates"] = [stale_candidate]
+                saved["weak_source_exact_binding"] = {
+                    "version": 2,
+                    "mode": coverage.P3B_MODE,
+                    "status": "bound_candidate",
+                    "disposition": "positive_exact_binding",
+                    "candidate_count": 1,
+                    "binder_evidence_version": evidence_version,
+                }
+                reservation.mark_request_started()
+                reservation.save_raw_response(
+                    {"id": f"evidence-v{evidence_version}", "status": "completed"}
                 )
+                reservation.mark_processed(saved)
+
+                with mock.patch.object(coverage._impl, "STATE_DIR", state):
+                    self.assertTrue(
+                        coverage._impl._processed_positive_snapshot_is_stale(controls.DATE)
+                    )
 
 
 if __name__ == "__main__":

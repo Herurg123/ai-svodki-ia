@@ -132,7 +132,13 @@ class P3bStaleCandidateRevocationTests(unittest.TestCase):
         reservation.mark_processed(saved)
         return saved, stale, controls_to_preserve
 
-    def _recover_without_io(self, *, state: Path, prior_plan: dict) -> tuple[dict, tuple[int, int, int]]:
+    def _recover_without_io(
+        self,
+        *,
+        state: Path,
+        prior_plan: dict,
+        archive: dict | None = None,
+    ) -> tuple[dict, tuple[int, int, int]]:
         common = dict(
             api_key="offline",
             model=MODEL,
@@ -142,7 +148,7 @@ class P3bStaleCandidateRevocationTests(unittest.TestCase):
             missing_total=1,
             maximum_web_search_calls=7,
             existing_candidates=[{"title": "existing", "recommendation": "include"}],
-            archive={"items": []},
+            archive=copy.deepcopy(archive if archive is not None else {"items": []}),
             prior_plan=copy.deepcopy(prior_plan),
         )
         with (
@@ -172,6 +178,39 @@ class P3bStaleCandidateRevocationTests(unittest.TestCase):
             result = coverage.execute_audit_plan(**common)
         return result, (ordinary.call_count, protected.call_count, pages.call_count)
 
+    def _assert_stale_revoked(
+        self,
+        *,
+        result: dict,
+        stale: dict,
+        preserved: list[dict],
+    ) -> None:
+        titles = {
+            str(item.get("title") or "")
+            for item in result.get("candidates") or []
+            if isinstance(item, dict)
+        }
+        self.assertNotIn(stale["title"], titles)
+        for item in preserved:
+            self.assertIn(item["title"], titles)
+
+        diagnostic = result["weak_source_exact_binding"]
+        self.assertEqual(diagnostic["status"], "unresolved")
+        self.assertEqual(diagnostic["disposition"], "unresolved_deferred")
+        self.assertEqual(diagnostic["candidate_count"], 0)
+        self.assertIn("predates", diagnostic["reason"])
+
+        budget = result["search_budget"]
+        self.assertEqual(budget["maximum_calls"], 7)
+        self.assertEqual(budget["remaining_calls"], 0)
+        self.assertGreaterEqual(
+            max(
+                int(budget.get("completed_calls", 0) or 0),
+                int(budget.get("effective_consumed_calls", 0) or 0),
+            ),
+            7,
+        )
+
     def test_stale_evidence_revokes_only_signal_bound_candidate_and_keeps_slot_consumed(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             state = Path(raw)
@@ -198,31 +237,7 @@ class P3bStaleCandidateRevocationTests(unittest.TestCase):
             result, calls = self._recover_without_io(state=state, prior_plan=saved)
 
             self.assertEqual(calls, (0, 0, 0))
-            titles = {
-                str(item.get("title") or "")
-                for item in result.get("candidates") or []
-                if isinstance(item, dict)
-            }
-            self.assertNotIn(stale["title"], titles)
-            for item in preserved:
-                self.assertIn(item["title"], titles)
-
-            diagnostic = result["weak_source_exact_binding"]
-            self.assertEqual(diagnostic["status"], "unresolved")
-            self.assertEqual(diagnostic["disposition"], "unresolved_deferred")
-            self.assertEqual(diagnostic["candidate_count"], 0)
-            self.assertIn("predates", diagnostic["reason"])
-
-            budget = result["search_budget"]
-            self.assertEqual(budget["maximum_calls"], 7)
-            self.assertEqual(budget["remaining_calls"], 0)
-            self.assertGreaterEqual(
-                max(
-                    int(budget.get("completed_calls", 0) or 0),
-                    int(budget.get("effective_consumed_calls", 0) or 0),
-                ),
-                7,
-            )
+            self._assert_stale_revoked(result=result, stale=stale, preserved=preserved)
 
             merged_after, accepted_after, _rejected_after = story_coverage.merge_candidates(
                 base, copy.deepcopy(result.get("candidates") or [])
@@ -239,6 +254,42 @@ class P3bStaleCandidateRevocationTests(unittest.TestCase):
             }
             self.assertNotIn(stale["title"], merged_titles)
             self.assertNotIn(stale["title"], accepted_titles)
+
+    def test_stale_evidence_cleanup_survives_archive_request_hash_drift(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            state = Path(raw)
+            saved, stale, preserved = self._seven_pass_processed_plan(
+                state=state,
+                binder_evidence_version=2,
+                include_preservation_controls=True,
+            )
+            changed_archive = {
+                "items": [
+                    {
+                        "date": "2026-09-10",
+                        "source_urls": ["https://example.com/unrelated-archive-entry"],
+                        "stories": [
+                            {
+                                "headline": "Unrelated archived control event",
+                                "organization": "Example Org",
+                                "event_type": "release",
+                                "sources": [
+                                    {"url": "https://example.com/unrelated-archive-entry"}
+                                ],
+                            }
+                        ],
+                    }
+                ]
+            }
+
+            result, calls = self._recover_without_io(
+                state=state,
+                prior_plan=saved,
+                archive=changed_archive,
+            )
+
+            self.assertEqual(calls, (0, 0, 0))
+            self._assert_stale_revoked(result=result, stale=stale, preserved=preserved)
 
     def test_current_evidence_processed_reuse_does_not_trigger_cleanup(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
