@@ -35,7 +35,7 @@ Therefore no new runtime semantic change is required in this follow-up.
 
 ## Deterministic follow-up experiment
 
-Hypothesis: the merged bounded parser also fails closed for neighboring separator wrappers that stay inside the same local claim, while ordinary punctuation without an attribution does not create a false foreign-agent rejection.
+Hypothesis: the merged bounded parser also fails closed for neighboring separator wrappers that stay inside the same local claim, while lifecycle-compatible punctuation without a trailing attribution does not create a false foreign-agent rejection.
 
 The permanent regression matrix is expanded with these same-claim negatives:
 
@@ -56,14 +56,21 @@ DeepSeek says V4 Pro was replaced by V4.1 Flash (by OpenAI)
 DeepSeek says V4 Pro was replaced by V4.1 Flash — by OpenAI
 ```
 
-Positive controls are expanded with ordinary post-replacement punctuation:
+The lifecycle-compatible positive continuation is also retained:
 
 ```text
-DeepSeek says V4 Pro was replaced by V4.1 Flash.
 DeepSeek says V4 Pro was replaced by V4.1 Flash: availability starts today
 ```
 
 Both binder-level identity and the active processing/admission helper are asserted for every added surface.
+
+The first proposed follow-up head `9dad2a0fdbf4ea2aa9ab2ca84b3d4bc2dc01406f` also tested this additional punctuation surface:
+
+```text
+DeepSeek says V4 Pro was replaced by V4.1 Flash.
+```
+
+PR Gate #439 / run `34936293658` deterministically rejected that proposed positive because the active lifecycle/version parser returns `version_identity_mismatch`. All newly added negative separator controls passed in that run, and the colon non-attribution continuation passed. Because the task requires punctuation positives only when compatible with the current lifecycle contract, the period case was removed rather than broadening parser semantics outside blocker #2.
 
 A semicolon form is intentionally not added to this local separator matrix. The inherited `_CLAIM_SPLIT_RE` splits `;` followed by whitespace into a separate claim, so `; by OpenAI` does not reach the same immediate trailing-attribution claim path. Changing cross-claim semantics would broaden this task beyond blocker #2.
 
