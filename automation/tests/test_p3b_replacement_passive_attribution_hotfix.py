@@ -25,10 +25,10 @@ SIGNAL = controls.SIGNAL
 
 
 class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
-    def test_active_binder_evidence_version_is_4(self) -> None:
+    def test_active_binder_evidence_version_is_5(self) -> None:
         self.assertIs(coverage._exact_binding, binder)
-        self.assertEqual(binder.EVIDENCE_VERSION, 4)
-        self.assertEqual(coverage.P3B_BINDER_EVIDENCE_VERSION, 4)
+        self.assertEqual(binder.EVIDENCE_VERSION, 5)
+        self.assertEqual(coverage.P3B_BINDER_EVIDENCE_VERSION, 5)
         self.assertEqual(coverage.P3B_EXACT_BINDING_VERSION, 2)
 
     def test_replacement_foreign_trailing_agent_fails_closed(self) -> None:
@@ -145,7 +145,7 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
                 )
                 self.assertEqual(
                     result["weak_source_exact_binding"]["binder_evidence_version"],
-                    4,
+                    5,
                 )
 
     def test_passive_launch_update_require_exact_agent_identity(self) -> None:
