@@ -248,55 +248,25 @@ def _processed_positive_snapshot_is_stale(publication_date: str) -> bool:
     return int(diagnostic.get("binder_evidence_version", 0) or 0) != P3B_BINDER_EVIDENCE_VERSION
 
 
-def _without_stale_p3b_candidates(plan: dict[str, Any]) -> dict[str, Any]:
-    """Revoke only candidates provenance-bound to the stale P3b proof.
+def _without_stale_p3b_candidates(
+    plan: dict[str, Any], signal: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Revoke only candidates provenance-bound to this stale P3b signal proof.
 
-    The stale processed journal has already established that semantic proof is no
-    longer reusable. Candidate revocation is narrower: require the admitted P3b
-    direction, durable binding version, authoritative-page proof marker, and the
-    exact stale signal id. Other Coverage directions and P3b-like metadata are
-    preserved. If old provenance is ambiguous, do not guess at collateral data.
+    Staleness is established from the processed journal before this helper runs.
+    The active signal is the durable request identity already selected for that
+    recovery path, so candidate revocation additionally requires the admitted P3b
+    direction, durable binding version, authoritative-page proof marker, and that
+    exact signal id. Other Coverage directions and unrelated P3b-like metadata
+    are preserved rather than guessed away.
     """
     result = copy.deepcopy(plan)
     candidates = result.get("candidates")
     if not isinstance(candidates, list):
         return result
 
-    diagnostic = result.get(_v2._P3B_DIAGNOSTIC_KEY)
-    stale_signal_ids: set[str] = set()
-    if isinstance(diagnostic, dict):
-        signal_id = str(diagnostic.get("signal_id") or "").strip()
-        if signal_id:
-            stale_signal_ids.add(signal_id)
-
-    # Historical synthetic/recovery fixtures may omit diagnostic.signal_id. Use
-    # candidate provenance only when it identifies exactly one old P3b signal;
-    # otherwise preserve ambiguous data rather than broad-deleting by marker.
-    if not stale_signal_ids:
-        inferred: list[set[str]] = []
-        for item in candidates:
-            if not isinstance(item, dict):
-                continue
-            try:
-                binding_version = int(item.get("p3b_exact_binding_version", 0) or 0)
-            except (TypeError, ValueError):
-                continue
-            signal_ids = {
-                str(value or "").strip()
-                for value in item.get("resolution_signal_ids") or []
-                if str(value or "").strip()
-            }
-            if (
-                item.get("audit_direction") == "weak_source_exact_binding"
-                and binding_version == P3B_EXACT_BINDING_VERSION
-                and signal_ids
-                and str(item.get("p3b_authoritative_page_proof") or "").strip()
-            ):
-                inferred.append(signal_ids)
-        if len(inferred) == 1:
-            stale_signal_ids.update(inferred[0])
-
-    if not stale_signal_ids:
+    stale_signal_id = str((signal or {}).get("signal_id") or "").strip()
+    if not stale_signal_id:
         return result
 
     def stale_bound(item: Any) -> bool:
@@ -315,7 +285,7 @@ def _without_stale_p3b_candidates(plan: dict[str, Any]) -> dict[str, Any]:
             item.get("audit_direction") == "weak_source_exact_binding"
             and binding_version == P3B_EXACT_BINDING_VERSION
             and str(item.get("p3b_authoritative_page_proof") or "").strip()
-            and signal_ids.intersection(stale_signal_ids)
+            and stale_signal_id in signal_ids
         )
 
     result["candidates"] = [item for item in candidates if not stale_bound(item)]
@@ -328,7 +298,7 @@ def _run_p3b_binding_v4(*args: Any, **kwargs: Any) -> Any:
         plan = kwargs.get("plan") if isinstance(kwargs.get("plan"), dict) else {}
         signal = kwargs.get("signal") if isinstance(kwargs.get("signal"), dict) else None
         result = _v2._annotation(
-            _without_stale_p3b_candidates(plan),
+            _without_stale_p3b_candidates(plan, signal),
             status="unresolved",
             reason=(
                 "processed positive optional-slot proof predates the active binder evidence "
