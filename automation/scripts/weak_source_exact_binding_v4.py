@@ -30,6 +30,50 @@ VERSION = _v3.VERSION
 MODE = _v3.MODE
 EVIDENCE_VERSION = 6
 
+# P3a stores canonical lifecycle anchors, while authoritative prose naturally
+# contains inflected forms. Historical v2/v3 grouped release under ``launch`` and
+# had no morphology group at all for several other P3a canonicals. Patch only the
+# private compatibility instance loaded by active v4 so the public historical
+# modules remain byte-for-byte semantic references while active matching mirrors
+# every production-reachable P3a action family.
+_V4_LIFECYCLE_GROUPS = dict(_v3._v2._LIFECYCLE_GROUPS)
+_V4_LIFECYCLE_GROUPS.update(
+    {
+        "release": ("release", "releases", "released"),
+        "introduce": ("introduce", "introduces", "introduced"),
+        "unveil": ("unveil", "unveils", "unveiled"),
+        "ship": ("ship", "ships", "shipped"),
+        "rollout": ("rollout", "roll out", "rolls out", "rolled out", "rolling out"),
+        "retire": (
+            "retire",
+            "retires",
+            "retired",
+            "discontinue",
+            "discontinues",
+            "discontinued",
+        ),
+    }
+)
+_v3._v2._LIFECYCLE_GROUPS = _V4_LIFECYCLE_GROUPS
+
+# v3 uses this guard to prevent one lifecycle relation from borrowing a version
+# anchor across another lifecycle predicate. Extend the same active-only private
+# vocabulary together with the morphology groups above; otherwise newly
+# recognized P3a actions could re-open cross-relation anchor contamination.
+_v3._LIFECYCLE_WORD_RE = re.compile(
+    r"\b(?:"
+    r"replace|replaces|replaced|replacing|replacement|supersede|supersedes|superseded|superseding|"
+    r"preview|pre[- ]?release|prerelease|beta|early\s+access|general\s+availability|"
+    r"generally\s+available|stable\s+release|launch|launches|launched|release|releases|released|"
+    r"introduce|introduces|introduced|unveil|unveils|unveiled|ship|ships|shipped|"
+    r"rollout|roll\s+out|rolls\s+out|rolled\s+out|rolling\s+out|"
+    r"retire|retires|retired|discontinue|discontinues|discontinued|"
+    r"update|updates|updated|upgrade|upgrades|upgraded|benchmark|benchmarks|benchmarked|evaluation|"
+    r"eval|score|scores"
+    r")\b",
+    re.I,
+)
+
 _VARIANT_PUNCT_RE = re.compile(
     r"^(?P<sep>/|\+|[\u2010\u2011\u2012\u2013\u2014\u2015\u2212])"
     r"\s*(?P<token>[A-Za-z0-9][A-Za-z0-9.+-]*)?"
@@ -44,7 +88,8 @@ _V4_ANCHOR_ALLOWED_FOLLOWING_WORDS = frozenset(
 )
 _PASSIVE_ACTION_RE = re.compile(
     r"\b(?:is|are|was|were|has\s+been|have\s+been|had\s+been)\s+"
-    r"(?:launched|released|updated|upgraded)\b",
+    r"(?:launched|released|introduced|unveiled|updated|upgraded|shipped|"
+    r"rolled\s+out|retired|discontinued)\b",
     re.I,
 )
 _PASSIVE_AGENT_RE = re.compile(r"\bby\s+([^.;|]+)", re.I)
@@ -562,7 +607,9 @@ def _passive_attribution_reason(claim: str, signal: dict[str, Any]) -> str | Non
     if not organization:
         return "organization_event_attribution_mismatch"
 
-    if actions.intersection({"launch", "update"}):
+    if actions.intersection(
+        {"launch", "release", "introduce", "unveil", "update", "ship", "rollout", "retire"}
+    ):
         for match in _PASSIVE_ACTION_RE.finditer(claim):
             relation_historical = _action_relation_is_historical(claim, match.span())
             tail = claim[match.end():]

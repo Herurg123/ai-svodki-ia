@@ -83,6 +83,7 @@ semantic delta существующими regressions.
 | O11 | Event identity / cross-claim veto | Отдельная clean current-positive claim сосуществует с historical negated/noncurrent claim того же identity через reporting predicate | Historical/background contradiction не становится global current veto; genuine current negation/noncurrent claim по тому же identity по-прежнему veto'ит clean duplicate. |
 | O12 | Event identity / attribution separator | Complete replacement span отделён от direct `by ForeignOrg` underscore-separator (`... ] _ by ForeignOrg` или `...]_by ForeignOrg`) | Python `\w` semantics не должны скрывать foreign trailing agent: underscore считается neutral separator только для непосредственного trailing attribution, `by SignalOrg` остаётся positive control, matcher не перепрыгивает substantive words. |
 | O13 | Event time / future boundary | Valid full date позже текущей даты управляет lifecycle relation до или после action | Future relation не является current exact proof и не создаёт current contradiction: positive и negated future assertions дают `lifecycle_noncurrent`; today остаётся current, yesterday historical, invalid calendar date не становится current/future marker; reporting-time future date не омолаживает отдельное historical event-time. |
+| O14 | Event identity / P3a lifecycle morphology | P3a канонизировал inflected weak-source lifecycle wording (`releases/released`, `introduces/introduced`, `unveils/unveiled`, `ships/shipped`, `rolls/rolled out`, `retires/retired/discontinues/discontinued`) в canonical action anchor | Active P3b binder обязан принимать ту же relation morphology на exact authoritative surface без fuzzy expansion за пределы P3a semantics; passive `... by ForeignOrg` для вновь распознанных families остаётся fail-closed; historical v2/v3 compatibility source contract не мутируется. |
 | R1 | Регион | Russia healthy, China/Asia healthy | Дополнительные regional slots не открываются. |
 | R2 | Регион | Только Russia gap | Сохраняется контракт 3 broad + 1 regional Hybrid. |
 | R3 | Регион | Только China/Asia gap | Сохраняется контракт 3 broad + 1 regional Hybrid. |
@@ -148,6 +149,7 @@ semantic delta существующими regressions.
 - qualified weak-source product signal + clean current positive claim + historical negated/noncurrent background claim: historical background cannot create a global veto, while an actually current contradiction must veto a clean duplicate;
 - qualified weak-source product signal + replacement span + underscore separator + foreign trailing agent: `... ] _ by ForeignOrg` and `...]_by ForeignOrg` must fail closed, corresponding `by SignalOrg` controls remain positive, and substantive words are never skipped;
 - qualified weak-source product signal + valid future event date + positive/negated lifecycle relation: future relation is `lifecycle_noncurrent`, not current proof/veto; today/yesterday/invalid-date controls keep their distinct semantics; a future reporting timestamp cannot promote an old event-time;
+- qualified weak-source product signal + P3a canonical lifecycle morphology + passive attribution: every Primary-detected morphology for `release/introduce/unveil/ship/rollout/retire` must bind the same canonical relation on the authoritative page, while `... by ForeignOrg` remains `organization_event_attribution_mismatch`; active Coverage/Freshness admission must agree with direct binder output and no query/search-budget delta is permitted;
 - qualified weak-source product signal + authoritative reference visible outside the active binding path: queue evidence alone cannot become a candidate;
 - optional Coverage slot `request_started` + unknown provider outcome + same-day recovery: slot stays consumed/ambiguous and automatic retry is forbidden;
 - optional Coverage raw response fsynced + crash before parser/result snapshot: the same raw response is reparsed offline and no second provider search is opened;
@@ -278,6 +280,32 @@ current/future markers. Direct binder checks are paired with the active P3b
 processor. `VERSION=2`, `EVIDENCE_VERSION=6`, the canonical 20-case P3b matrix,
 search budgets and zero-new-I/O recovery semantics remain unchanged. Offline
 contract: `automation/tests/test_p3b_astra_tenth_review.py`.
+
+### Permanent regression: 2026-09-16 P3b P3a lifecycle morphology alignment
+
+Independent blind review of the exact tenth-review head found that P3a canonical
+action anchors and active binder morphology were not fully aligned. The concrete
+blocker was `released -> release`: P3a retained canonical `release`, but inherited
+v2/v3 lifecycle groups stored `release/releases/released` only under `launch`, so
+normal authoritative `released` or `releases` wording failed exact binding before
+Freshness. Architecture-wide comparison exposed the same root class for
+`introduce`, `unveil`, `ship`, `rollout` and `retire`/`discontinue` morphology.
+
+O14 makes the class permanent. Active v4 now overlays only its private compatibility
+instance with morphology groups matching the exact P3a canonicalization contract,
+while historical v2/v3 source behavior stays unchanged. The v3 lifecycle-word
+boundary is expanded in the same private instance so a newly recognized relation
+cannot borrow anchors across another lifecycle predicate. Passive attribution is
+also extended to the newly recognized families, preventing the recall repair from
+accepting `... by ForeignOrg` surfaces. A zero-paid 34-case baseline/proposed
+morphology comparison found 16 repaired production-reachable false negatives and
+0 regressions on already-supported morphology. Query delta = 0, paid-search delta
+= 0, Terra was not used because no search/query behavior changes. Direct binder
+checks are paired with real Coverage + authoritative-page + deterministic Source
+Freshness admission. `VERSION=2`, `EVIDENCE_VERSION=6`, the canonical 20-case P3b
+matrix, 7-call Coverage ceiling, 24/25 pipeline ceilings and zero-new-I/O recovery
+semantics remain unchanged. Offline contract:
+`automation/tests/test_p3b_astra_eleventh_review.py`.
 
 ## 5. Критерий допуска
 
