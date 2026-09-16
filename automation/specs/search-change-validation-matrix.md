@@ -78,6 +78,9 @@ semantic delta существующими regressions.
 | O6 | Пересечения | Identity принадлежит невыбранному кандидату | Unselected candidate не может загрязнить provenance выбранного сюжета. |
 | O7 | Пересечения | Один publisher/topic доминирует в dense pool | Source/ranking pressure не уничтожает независимые достойные события. |
 | O8 | Event identity / attribution | Exact replacement anchors и signal organization присутствуют в claim, но после полного directed replacement span стоит explicit foreign trailing agent (`... old was replaced by new by ForeignOrg`) | Replacement attribution fail-closed: foreign trailing agent не может быть приписан signal organization; корректный `... by SignalOrg` и replacement без отдельного trailing agent остаются positive controls. |
+| O9 | Event identity / claim segmentation | Complete replacement span отделён от следующего `by ForeignOrg` только wrappers/punctuation и natural semicolon (`... [old was replaced by new]; by ForeignOrg`) | Claim segmentation не имеет права отрезать непосредственный trailing agent до attribution-check; foreign agent остаётся fail-closed, `; by SignalOrg` остаётся positive control, substantive words между span и `by` не перепрыгиваются. |
+| O10 | Event time / reporting time | Current/non-past reporting date и historical lifecycle date находятся в одной claim через `said`, `reported`, `according to`, `citing`, `based on`, `referencing` или `per` | Reporting-time дата не омолаживает старое событие; relation-bound historical date даёт `historical_event_context`. Обратный control: old cited/report date не может скрыть реально current negation, когда current evidence относится к lifecycle relation. |
+| O11 | Event identity / cross-claim veto | Отдельная clean current-positive claim сосуществует с historical negated/noncurrent claim того же identity через reporting predicate | Historical/background contradiction не становится global current veto; genuine current negation/noncurrent claim по тому же identity по-прежнему veto'ит clean duplicate. |
 | R1 | Регион | Russia healthy, China/Asia healthy | Дополнительные regional slots не открываются. |
 | R2 | Регион | Только Russia gap | Сохраняется контракт 3 broad + 1 regional Hybrid. |
 | R3 | Регион | Только China/Asia gap | Сохраняется контракт 3 broad + 1 regional Hybrid. |
@@ -138,6 +141,9 @@ semantic delta существующими regressions.
 - qualified weak-source product signal + occupied Coverage seventh slot: signal remains unresolved/deferred and cannot create an eighth Coverage search or displace an already-required obligation;
 - qualified weak-source product signal + same-company/different-event or preview-vs-GA ambiguity: company overlap alone cannot close event identity;
 - qualified weak-source product signal + exact replacement claim + foreign trailing passive agent: exact anchors and signal organization in the same claim must still fail closed when the complete directed replacement span is followed by `by ForeignOrg`; the same saved optional-slot state with an evidence-v2 positive snapshot must migrate to unresolved under the new evidence version without a paid retry or page refetch;
+- qualified weak-source product signal + replacement span + natural semicolon + foreign trailing agent: `... [old was replaced by new]; by ForeignOrg` must remain one attribution surface for fail-closed identity checks, while `; by SignalOrg` remains positive and intervening substantive words are never skipped;
+- qualified weak-source product signal + current reporting date + historical lifecycle date + reporting predicate (`said/reported/according to/citing/based on/referencing/per`): reporting time cannot promote the old event; the reciprocal current-negation case with an old cited/report date must still veto positive admission;
+- qualified weak-source product signal + clean current positive claim + historical negated/noncurrent background claim: historical background cannot create a global veto, while an actually current contradiction must veto a clean duplicate;
 - qualified weak-source product signal + authoritative reference visible outside the active binding path: queue evidence alone cannot become a candidate;
 - optional Coverage slot `request_started` + unknown provider outcome + same-day recovery: slot stays consumed/ambiguous and automatic retry is forbidden;
 - optional Coverage raw response fsynced + crash before parser/result snapshot: the same raw response is reparsed offline and no second provider search is opened;
@@ -230,6 +236,25 @@ Offline contracts:
 `automation/tests/test_coverage_optional_slot_guard.py` and
 `automation/tests/test_coverage_optional_slot_recovery.py`; controlled report:
 `automation/audits/experiments/2026-09-12-coverage-optional-slot-reservation/README.md`.
+
+### Permanent regression: 2026-09-16 P3b relation-local reporting/attribution
+
+Independent review of exact P3b evidence-v6 head found three adjacent event-
+identity failures after authoritative retrieval: a current reporting date could
+promote an explicitly old lifecycle event through reporting predicates omitted
+from the active attribution boundary; a natural semicolon could split `; by
+ForeignOrg` away before trailing-agent validation; and a historical negated claim
+could be reclassified as a current global veto for a separate clean current claim.
+
+O9/O10/O11 make these incident shapes permanent. Treatment is zero-query and
+zero-paid: active v4 must apply one shared reporting boundary for event-time
+ownership and veto classification, preserve only the immediate `; by <agent>`
+attribution surface before inherited claim splitting, and keep historical
+background non-vetoing without weakening genuine current contradictions. Direct
+binder checks are paired with the active P3b processor so a helper-level result
+cannot diverge from candidate admission. The canonical 20-case P3b matrix remains
+unchanged; these cases are supplemental retrieval-safety regressions. Offline
+contract: `automation/tests/test_p3b_astra_ninth_review.py`.
 
 ## 5. Критерий допуска
 
