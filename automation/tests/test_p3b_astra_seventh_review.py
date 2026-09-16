@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import sys
 import unittest
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -15,10 +16,15 @@ import test_p3b_astra_second_review as second
 import weak_source_exact_binding_v4 as binder
 
 
+def _full_date(value: date) -> str:
+    return f"{value.strftime('%B')} {value.day}, {value.year}"
+
+
 class AstraSeventhReviewRegressions(unittest.TestCase):
     def test_current_negation_cannot_be_laundered_by_cited_historical_date(self) -> None:
         signal = second.launch_signal()
         item = second.launch_candidate()
+        current = _full_date(date.today())
         surfaces = (
             (
                 "DeepSeek launches V4.1 Flash | "
@@ -37,7 +43,7 @@ class AstraSeventhReviewRegressions(unittest.TestCase):
             ),
             (
                 "DeepSeek launches V4.1 Flash | "
-                "Today, on September 15, 2026, DeepSeek did not launch V4.1 Flash, "
+                f"Today, on {current}, DeepSeek did not launch V4.1 Flash, "
                 "citing reporting from September 1, 2025"
             ),
         )
