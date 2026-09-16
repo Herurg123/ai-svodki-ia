@@ -83,6 +83,22 @@ Per repository instructions, `automation/specs/search-change-validation-matrix.m
 
 This does not expand the canonical P3b exact-authoritative-binding matrix. That matrix remains exactly 20 cases; Astra review counterexamples remain supplemental retrieval-safety regressions.
 
+## Current-main synchronization boundary
+
+While this remediation was being validated, `main` advanced from the PR's original base `28241c86e9ecd5491aa6113db510b3422a537154` to `fc395080c222bb728d46b74e4a486a661729e745` through the normal 2026-09-16 publication/retention commits. The base delta contains archive/content/posts publication material and old-content cleanup only; it does not modify P3b runtime, binder, tests, retrieval specs, query/provider routing, Freshness policy, recovery implementation, editorial implementation, or search-budget code.
+
+Gate #488 on pre-sync remediation head `f88f41b579fcc458e6f814d003a64c63904c9169` was green, but GitHub correctly tested a merge ref against the advanced current `main`. Therefore its merge-ref tree was not byte-identical to the standalone feature-head tree. To remove that ambiguity before the next independent final review, the feature branch is synchronized with exact current-main SHA `fc395080c222bb728d46b74e4a486a661729e745` and a fresh Gate is required afterward.
+
+The **semantic remediation delta itself** from the independently reviewed head is limited to five paths:
+
+- `automation/scripts/weak_source_exact_binding_v4.py`
+- `automation/tests/test_p3b_astra_ninth_review.py`
+- `automation/tests/test_p3b_astra_seventh_review.py` (calendar-stable fixture only)
+- `automation/specs/search-change-validation-matrix.md`
+- this audit record
+
+A raw git compare from the old reviewed SHA to the post-sync final head will additionally contain the intervening current-main publication/retention delta. That inherited base advancement is not part of the P3b remediation and must not be misrepresented as such. The PR diff against current `main` is the relevant scope check after synchronization.
+
 ## Preserved architecture and budgets
 
 No change is intended or authorized outside exact P3b event-binding semantics and its validation evidence.
@@ -117,8 +133,8 @@ A local `git clone` was not relied upon because DNS resolution in the sandbox wa
 
 ## Final-review requirement
 
-A new exact final head and successful PR Gate must be pinned only after all remediation, matrix, test-maintenance, and audit commits are present. The remediation author must not self-approve that head.
+A new exact final head and successful PR Gate must be pinned only after all remediation, matrix, test-maintenance, audit, and current-main synchronization commits are present. The remediation author must not self-approve that head.
 
-Fresh independent Astra review must independently inspect the final diff and active runtime, reproduce all three defect classes plus adjacent variants, re-check prior P3b remediation groups, verify evidence-v6 recovery semantics and all search budgets, and verify that CI tested content-identical final head/merge-ref trees.
+Fresh independent Astra review must independently inspect the final PR diff against current `main` and the active runtime, distinguish inherited base-sync content from remediation, reproduce all three defect classes plus adjacent variants, re-check prior P3b remediation groups, verify evidence-v6 recovery semantics and all search budgets, and verify that final CI tested content-identical final head/merge-ref trees.
 
 **DO NOT MERGE until that fresh independent review returns APPROVE on the exact final SHA.**
