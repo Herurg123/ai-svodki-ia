@@ -54,6 +54,21 @@ _PASSIVE_AGENT_RE = re.compile(r"\bby\s+([^.;|]+)", re.I)
 # ellipsis, equals signs and wrapper combinations are neutral, while any real word
 # between the replacement and ``by`` prevents the matcher from jumping over text.
 _TRAILING_REPLACEMENT_AGENT_RE = re.compile(r"^\W*\bby\s+([^.;|]+)", re.I)
+# v2's attribution boundary predates several common reporting/evidence surfaces.
+# Keep the extension local to active v4 so historical compatibility modules do not
+# silently change. These terms separate a reporting timestamp from the lifecycle
+# relation, but they do not by themselves make an old cited/report date the event
+# date.
+_REPORTING_ATTRIBUTION_BREAK_RE = re.compile(
+    r"\b(?:according\s+to|citing|based\s+on|referencing|per)\b",
+    re.I,
+)
+# v2 splits a natural semicolon claim before v4 can inspect a trailing agent.
+# Protect only the exact ``; by ...`` boundary; the trailing-agent matcher still
+# decides whether the following surface is the signal organization or a foreign
+# attribution and still refuses to jump over substantive words.
+_SEMICOLON_TRAILING_AGENT_JOIN_RE = re.compile(r";(?=\s+by\b)", re.I)
+_CLAUSE_BOUNDARY_PUNCT_RE = re.compile(r"[.!?;|,:]")
 _CONDITIONAL_PREFIX_RE = re.compile(r"^\s*(?:if|unless|whether)\b", re.I)
 _UNCERTAIN_ASSERTION_RE = re.compile(
     r"\b(?:rumou?r|rumou?red|speculation|speculative|unconfirmed|hypothetical|"
@@ -208,6 +223,54 @@ def _signal_action_spans(claim: str, signal: dict[str, Any]) -> list[tuple[int, 
     return sorted(set(spans))
 
 
+def _event_attribution_break_matches(text: str) -> list[re.Match[str]]:
+    matches = list(_v3._v2._EVENT_ATTRIBUTION_BREAK_RE.finditer(text))
+    matches.extend(_REPORTING_ATTRIBUTION_BREAK_RE.finditer(text))
+    return sorted(matches, key=lambda match: match.start())
+
+
+def _has_event_attribution_break(text: str) -> bool:
+    return bool(_event_attribution_break_matches(text))
+
+
+def _current_prefix_evidence_spans(text: str) -> list[tuple[int, int]]:
+    """Return explicit current/non-past anchors without assigning relation ownership."""
+    spans = [match.span() for match in _v3._v2._CURRENT_ACTION_NEAR_RE.finditer(text)]
+    today = date.today()
+    for match in _HISTORICAL_FULL_DATE_RE.finditer(text):
+        value = _full_date_value(match)
+        if value is not None and value >= today:
+            spans.append(match.span())
+    return sorted(set(spans))
+
+
+def _past_date_is_reporting_evidence(
+    local: str,
+    match: re.Match[str],
+    action_start: int,
+) -> bool:
+    """Separate an old report/evidence date from a current relation date.
+
+    This applies only when a current/non-past anchor precedes the old date and a
+    reporting attribution lies between them without a new clause boundary after
+    the attribution phrase. It therefore covers ``On <today>, according to <old>
+    report, ...`` but not ``according to DeepSeek, on <old date>, ...`` where the
+    old date begins a distinct event-time clause.
+    """
+    if match.end() > action_start:
+        return False
+    anchors = _current_prefix_evidence_spans(local[:match.start()])
+    if not anchors:
+        return False
+    _anchor_start, anchor_end = anchors[-1]
+    bridge = local[anchor_end:match.start()]
+    breaks = _event_attribution_break_matches(bridge)
+    if not breaks:
+        return False
+    last_break = breaks[-1]
+    return not _CLAUSE_BOUNDARY_PUNCT_RE.search(bridge[last_break.end():])
+
+
 def _historical_bridge_blocks_binding(bridge: str) -> bool:
     return bool(
         _HISTORICAL_DATE_BACKGROUND_BRIDGE_RE.search(bridge)
@@ -234,16 +297,13 @@ def _full_date_value(match: re.Match[str]) -> date | None:
 def _action_span_has_nonpast_full_date_prefix(
     claim: str,
     span: tuple[int, int],
-    *,
-    allow_attribution_break: bool = False,
 ) -> bool:
     """Recognize an explicit non-past full date governing the local relation.
 
-    The ordinary path will not bind through a reporting/attribution predicate, so
-    ``On <today>, DeepSeek said it launched ... on <old date>`` remains historical.
-    Safety vetoes may opt into the conservative variant: an explicitly dated
-    negated/noncurrent relation must not become positive merely because another old
-    date is cited nearby, even when the prose is attribution-heavy.
+    A reporting/attribution predicate between the date and lifecycle action makes
+    the date reporting-time evidence rather than relation time. Current safety
+    vetoes must reuse this same boundary instead of reclassifying the relation with
+    a more permissive rule.
     """
     start, _end = span
     prefix = claim[max(0, start - 180):start]
@@ -253,10 +313,7 @@ def _action_span_has_nonpast_full_date_prefix(
         if value is None or value < today:
             continue
         bridge = prefix[match.end():]
-        if (
-            not allow_attribution_break
-            and _v3._v2._EVENT_ATTRIBUTION_BREAK_RE.search(bridge)
-        ):
+        if _has_event_attribution_break(bridge):
             continue
         return True
     return False
@@ -273,7 +330,8 @@ def _action_span_has_current_prefix_marker(
     relation-bound historical marker intervenes. A non-past explicit full date is
     also a current marker when it governs the relation. This keeps ``Today ... did
     not launch ..., citing 2025 reporting`` and ``On <today> ... did not launch``
-    current while preserving ``Today ... said it launched ... on <old date>``.
+    current while preserving reporting-time history such as ``On <today>,
+    according to DeepSeek, DeepSeek launched ... on <old date>``.
     """
     if _action_span_has_nonpast_full_date_prefix(claim, span):
         return True
@@ -308,7 +366,7 @@ def _action_span_has_current_prefix_marker(
             return False
 
     bridge = prefix[current.end():]
-    if _v3._v2._EVENT_ATTRIBUTION_BREAK_RE.search(bridge):
+    if _has_event_attribution_break(bridge):
         return False
     return True
 
@@ -378,6 +436,7 @@ def _action_span_has_past_full_date(
     local = claim[local_start:local_end]
     action_start = start - local_start
     action_end = end - local_start
+    current_prefix_evidence = bool(_current_prefix_evidence_spans(local[:action_start]))
     today = date.today()
 
     for match in _HISTORICAL_FULL_DATE_RE.finditer(local):
@@ -386,7 +445,15 @@ def _action_span_has_past_full_date(
             continue
         if match.start() >= action_end:
             bridge = local[action_end:match.start()]
+            # A past date in a cited/reporting tail is evidence metadata rather
+            # than event time when the local relation already has explicit current
+            # evidence. Without current evidence we stay conservative and keep the
+            # old date historical rather than promoting an ambiguous event.
+            if current_prefix_evidence and _has_event_attribution_break(bridge):
+                continue
         elif match.end() <= action_start:
+            if _past_date_is_reporting_evidence(local, match, action_start):
+                continue
             bridge = local[match.end():action_start]
         else:
             bridge = ""
@@ -521,11 +588,11 @@ def _action_context_reason(claim: str, signal: dict[str, Any]) -> str | None:
         explicit_nonpast_date = _action_span_has_nonpast_full_date_prefix(
             claim,
             (start, end),
-            allow_attribution_break=True,
         )
         if _v3._v2._action_mention_is_negated(claim, start):
-            # Fail closed for an explicitly non-past dated contradiction. An old
-            # cited date must never demote that contradiction to historical context.
+            # Reuse the same relation-local date/attribution classification used
+            # by historical detection. A reporting-time current date must not be
+            # reinterpreted here as an event-time veto.
             if explicit_nonpast_date or not relation_historical:
                 return "lifecycle_negated"
             continue
@@ -595,6 +662,15 @@ def _cross_claim_lifecycle_conflict_reason(
     return None
 
 
+def _event_claims_v4(text: str) -> list[str]:
+    """Preserve direct semicolon trailing attribution for relation-local checks."""
+    cleaned = _v3._v2._clean(text)
+    if not cleaned:
+        return []
+    protected = _SEMICOLON_TRAILING_AGENT_JOIN_RE.sub(",", cleaned)
+    return _v3._v2._event_claims(protected)
+
+
 def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, str]:
     """Apply v3 structural primitives plus stricter v4 current-event guards."""
     text = _v3._v2._clean(surface)
@@ -622,7 +698,7 @@ def exact_event_identity(surface: str, signal: dict[str, Any]) -> tuple[bool, st
 
     candidate_claims = [
         claim
-        for claim in _v3._v2._event_claims(text)
+        for claim in _event_claims_v4(text)
         if _v3._v2._contains_org(claim, signal.get("organization"))
         and all(_contains_exact_anchor(claim, anchor) for anchor in anchors)
     ]
