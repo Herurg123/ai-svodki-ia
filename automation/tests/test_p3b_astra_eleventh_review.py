@@ -170,47 +170,56 @@ class P3bAstraEleventhReviewTests(unittest.TestCase):
             page_fetcher=lambda url: (self._html(title), url, 200),
         )
 
-    def test_every_p3a_canonical_lifecycle_accepts_its_detected_morphology(self) -> None:
+    def test_p3a_canonical_lifecycle_accepts_reachable_and_adjacent_morphology(self) -> None:
+        # Each signal_source is a real P3a-retained surface. Two authoritative
+        # claim controls deliberately use adjacent natural morphology that maps to
+        # the same already-produced canonical action: bare `launch` and
+        # progressive `rolling out`. They do not create new P3a semantics.
         cases = (
-            ("release", "release"),
-            ("releases", "release"),
-            ("released", "release"),
-            ("launch", "launch"),
-            ("launches", "launch"),
-            ("launched", "launch"),
-            ("introduce", "introduce"),
-            ("introduces", "introduce"),
-            ("introduced", "introduce"),
-            ("unveil", "unveil"),
-            ("unveils", "unveil"),
-            ("unveiled", "unveil"),
-            ("update", "update"),
-            ("updates", "update"),
-            ("updated", "update"),
-            ("upgrade", "upgrade"),
-            ("upgrades", "upgrade"),
-            ("upgraded", "upgrade"),
-            ("ship", "ship"),
-            ("ships", "ship"),
-            ("shipped", "ship"),
-            ("roll out", "rollout"),
-            ("rolls out", "rollout"),
-            ("rolled out", "rollout"),
-            ("preview", "preview"),
-            ("general availability", "general_availability"),
-            ("generally available", "general_availability"),
-            ("retire", "retire"),
-            ("retires", "retire"),
-            ("retired", "retire"),
-            ("discontinue", "retire"),
-            ("discontinues", "retire"),
-            ("discontinued", "retire"),
+            ("release", "release", "release"),
+            ("releases", "releases", "release"),
+            ("released", "released", "release"),
+            ("launched", "launch", "launch"),
+            ("launches", "launches", "launch"),
+            ("launched", "launched", "launch"),
+            ("introduce", "introduce", "introduce"),
+            ("introduces", "introduces", "introduce"),
+            ("introduced", "introduced", "introduce"),
+            ("unveil", "unveil", "unveil"),
+            ("unveils", "unveils", "unveil"),
+            ("unveiled", "unveiled", "unveil"),
+            ("update", "update", "update"),
+            ("updates", "updates", "update"),
+            ("updated", "updated", "update"),
+            ("upgrade", "upgrade", "upgrade"),
+            ("upgrades", "upgrades", "upgrade"),
+            ("upgraded", "upgraded", "upgrade"),
+            ("ship", "ship", "ship"),
+            ("ships", "ships", "ship"),
+            ("shipped", "shipped", "ship"),
+            ("roll out", "roll out", "rollout"),
+            ("rolls out", "rolls out", "rollout"),
+            ("rolled out", "rolled out", "rollout"),
+            ("rolled out", "rolling out", "rollout"),
+            ("preview", "preview", "preview"),
+            ("general availability", "general availability", "general_availability"),
+            ("generally available", "generally available", "general_availability"),
+            ("retire", "retire", "retire"),
+            ("retires", "retires", "retire"),
+            ("retired", "retired", "retire"),
+            ("discontinue", "discontinue", "retire"),
+            ("discontinues", "discontinues", "retire"),
+            ("discontinued", "discontinued", "retire"),
         )
-        for surface, canonical in cases:
-            with self.subTest(surface=surface, canonical=canonical):
-                signal = self._signal(surface, canonical)
+        for signal_source, claim_surface, canonical in cases:
+            with self.subTest(
+                signal_source=signal_source,
+                claim_surface=claim_surface,
+                canonical=canonical,
+            ):
+                signal = self._signal(signal_source, canonical)
                 ok, reason = binder.exact_event_identity(
-                    f"DeepSeek {surface} V4.1 Flash",
+                    f"DeepSeek {claim_surface} V4.1 Flash",
                     signal,
                 )
                 self.assertTrue(ok, reason)

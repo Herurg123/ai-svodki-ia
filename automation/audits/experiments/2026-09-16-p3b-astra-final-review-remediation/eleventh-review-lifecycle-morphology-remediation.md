@@ -20,7 +20,9 @@ Architecture-wide comparison showed the same root mismatch for the production-re
 
 Before changing the repository, baseline and proposed morphology maps were compared on the same controlled corpus derived from the exact P3a action regexes and active binder groups at the reviewed head.
 
-- controlled morphology cases: 34;
+- controlled authoritative morphology cases: 34;
+- 32 cases use surfaces directly retained by P3a;
+- 2 cases are adjacent authoritative-page controls (`launch` for a signal retained from `launched`, and `rolling out` for a signal retained from `rolled out`) and do not create new P3a semantics;
 - baseline production-reachable false negatives repaired by the proposed overlay: 16;
 - regressions on already-supported morphology: 0;
 - OpenAI calls: 0;
@@ -46,13 +48,13 @@ The overlay mirrors all P3a canonical lifecycle families that were previously mi
 
 The existing `launch`, `update/upgrade`, `preview`, `ga/general_availability`, `replace` and benchmark contracts are preserved.
 
-Because the newly recognized lifecycle verbs become active exact-binding predicates, v4 also extends its private lifecycle-word boundary used to prevent cross-relation anchor borrowing. Passive attribution checks are extended to the newly aligned action families so `... was released/introduced/... by ForeignOrg` remains fail-closed rather than gaining eligibility as a side effect of morphology repair.
+Because the newly recognized lifecycle verbs become active exact-binding predicates, v4 also extends its private lifecycle-word boundary used to prevent one relation from borrowing anchors across another lifecycle predicate. Passive attribution checks are extended to the newly aligned action families so `... was released/introduced/... by ForeignOrg` remains fail-closed rather than gaining eligibility as a side effect of morphology repair.
 
 ## Permanent regressions
 
 `automation/tests/test_p3b_astra_eleventh_review.py` covers:
 
-- real P3a signal extraction for every supported lifecycle morphology;
+- real P3a signal extraction for every production-reachable canonical family, using direct P3a morphology plus the two explicitly labelled adjacent authoritative controls;
 - direct v4 `exact_event_identity` acceptance for each matching canonical family;
 - explicit `release` controls for `release`, `releases` and `released`;
 - foreign passive performer rejection for release, introduce, unveil, ship, rollout and retire;
@@ -61,6 +63,8 @@ Because the newly recognized lifecycle verbs become active exact-binding predica
 - real Coverage-path rejection for a foreign passive release performer;
 - unchanged historical v2 lifecycle groups;
 - unchanged durable `VERSION=2` and semantic `EVIDENCE_VERSION=6`.
+
+The first CI run of this remediation (Gate #495 / workflow run `35088622909`) was intentionally not accepted as a final gate: its runtime compiled and 867 of 868 unit tests passed, but the new regression harness incorrectly attempted to create a P3a signal from bare `launch`, which the production collector does not retain as an input surface. The test was corrected to create the canonical `launch` signal from real P3a-retained `launched` and use bare `launch` only as the adjacent authoritative-page control described above. No runtime remediation logic changed in that correction.
 
 `automation/specs/search-change-validation-matrix.md` adds permanent case **O14** and a corresponding critical combination / incident record. The canonical 20-case P3b exact-authoritative-binding matrix remains unchanged.
 
