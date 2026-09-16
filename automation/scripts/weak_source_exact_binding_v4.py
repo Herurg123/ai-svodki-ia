@@ -48,12 +48,12 @@ _PASSIVE_ACTION_RE = re.compile(
     re.I,
 )
 _PASSIVE_AGENT_RE = re.compile(r"\bby\s+([^.;|]+)", re.I)
-# After a complete directed replacement span, only non-word punctuation/wrapper
-# characters may be skipped before a separate ``by <agent>`` attribution. This is
-# intentionally structural rather than a punctuation whitelist: slash, bullets,
-# ellipsis, equals signs and wrapper combinations are neutral, while any real word
-# between the replacement and ``by`` prevents the matcher from jumping over text.
-_TRAILING_REPLACEMENT_AGENT_RE = re.compile(r"^\W*\bby\s+([^.;|]+)", re.I)
+# After a complete directed replacement span, only neutral separators may be
+# skipped before a separate ``by <agent>`` attribution. Python treats underscore
+# as ``\w``, so include it explicitly alongside non-word punctuation/wrappers.
+# The matcher still starts at the exact end of the replacement span and cannot
+# jump over substantive words.
+_TRAILING_REPLACEMENT_AGENT_RE = re.compile(r"^[\W_]*by\b\s+([^.;|]+)", re.I)
 # v2's attribution boundary predates several common reporting/evidence surfaces.
 # Keep the extension local to active v4 so historical compatibility modules do not
 # silently change. These terms separate a reporting timestamp from the lifecycle
@@ -234,12 +234,12 @@ def _has_event_attribution_break(text: str) -> bool:
 
 
 def _current_prefix_evidence_spans(text: str) -> list[tuple[int, int]]:
-    """Return explicit current/non-past anchors without assigning relation ownership."""
+    """Return explicit today/current anchors without assigning relation ownership."""
     spans = [match.span() for match in _v3._v2._CURRENT_ACTION_NEAR_RE.finditer(text)]
     today = date.today()
     for match in _HISTORICAL_FULL_DATE_RE.finditer(text):
         value = _full_date_value(match)
-        if value is not None and value >= today:
+        if value is not None and value == today:
             spans.append(match.span())
     return sorted(set(spans))
 
@@ -251,9 +251,9 @@ def _past_date_is_reporting_evidence(
 ) -> bool:
     """Separate an old report/evidence date from a current relation date.
 
-    This applies only when a current/non-past anchor precedes the old date and a
-    reporting attribution lies between them without a new clause boundary after
-    the attribution phrase. It therefore covers ``On <today>, according to <old>
+    This applies only when a current anchor precedes the old date and a reporting
+    attribution lies between them without a new clause boundary after the
+    attribution phrase. It therefore covers ``On <today>, according to <old>
     report, ...`` but not ``according to DeepSeek, on <old date>, ...`` where the
     old date begins a distinct event-time clause.
     """
@@ -298,22 +298,53 @@ def _action_span_has_nonpast_full_date_prefix(
     claim: str,
     span: tuple[int, int],
 ) -> bool:
-    """Recognize an explicit non-past full date governing the local relation.
+    """Recognize an explicit today full date governing the local relation.
 
-    A reporting/attribution predicate between the date and lifecycle action makes
-    the date reporting-time evidence rather than relation time. Current safety
-    vetoes must reuse this same boundary instead of reclassifying the relation with
-    a more permissive rule.
+    The compatibility name predates the future-date hardening. A future full date
+    is deliberately *not* current evidence. A reporting/attribution predicate
+    between the date and lifecycle action still makes a same-day date reporting
+    time rather than relation time.
     """
     start, _end = span
     prefix = claim[max(0, start - 180):start]
     today = date.today()
     for match in reversed(list(_HISTORICAL_FULL_DATE_RE.finditer(prefix))):
         value = _full_date_value(match)
-        if value is None or value < today:
+        if value is None or value != today:
             continue
         bridge = prefix[match.end():]
         if _has_event_attribution_break(bridge):
+            continue
+        return True
+    return False
+
+
+def _action_span_has_future_full_date(
+    claim: str,
+    span: tuple[int, int],
+) -> bool:
+    """Bind a valid future full date only when it governs this lifecycle relation."""
+    start, end = span
+    local_start = max(0, start - 180)
+    local_end = min(len(claim), end + 180)
+    local = claim[local_start:local_end]
+    action_start = start - local_start
+    action_end = end - local_start
+    today = date.today()
+
+    for match in _HISTORICAL_FULL_DATE_RE.finditer(local):
+        value = _full_date_value(match)
+        if value is None or value <= today:
+            continue
+        if match.end() <= action_start:
+            bridge = local[match.end():action_start]
+        elif match.start() >= action_end:
+            bridge = local[action_end:match.start()]
+        else:
+            bridge = ""
+        if _has_event_attribution_break(bridge):
+            continue
+        if _historical_bridge_blocks_binding(bridge):
             continue
         return True
     return False
@@ -327,11 +358,11 @@ def _action_span_has_current_prefix_marker(
 
     A current marker before the action wins over an unrelated old date later in
     the same claim, but not when a reporting/attribution predicate or a newer
-    relation-bound historical marker intervenes. A non-past explicit full date is
-    also a current marker when it governs the relation. This keeps ``Today ... did
-    not launch ..., citing 2025 reporting`` and ``On <today> ... did not launch``
-    current while preserving reporting-time history such as ``On <today>,
-    according to DeepSeek, DeepSeek launched ... on <old date>``.
+    relation-bound historical marker intervenes. An explicit full date counts as
+    current only when it is exactly today; future dates are noncurrent. This keeps
+    ``Today ... did not launch ..., citing 2025 reporting`` and ``On <today> ...
+    did not launch`` current while preserving reporting-time history such as
+    ``On <today>, according to DeepSeek, DeepSeek launched ... on <old date>``.
     """
     if _action_span_has_nonpast_full_date_prefix(claim, span):
         return True
@@ -506,6 +537,8 @@ def _action_relation_is_historical(
 def _span_state_v4(text: str, span: tuple[int, int]) -> str | None:
     """Relation-local replacement for v3's broad any-year historical state."""
     start, _end = span
+    if _action_span_has_future_full_date(text, span):
+        return "lifecycle_noncurrent"
     historical = _action_relation_is_historical(text, span)
     if _v3._v2._action_mention_is_negated(text, start):
         return "historical_event_context" if historical else "lifecycle_negated"
@@ -560,9 +593,8 @@ def _passive_attribution_reason(claim: str, signal: dict[str, Any]) -> str | Non
                 # The passive replacement grammar already contains the internal
                 # relation ``old was replaced by new``. Only attribution that
                 # begins *after the complete directed replacement span* can be a
-                # separate event agent. A bounded sequence of punctuation and
-                # wrapper characters may precede ``by``; the complete agent
-                # surface is retained through commas for exact identity comparison.
+                # separate event agent. Neutral punctuation/wrappers/underscores
+                # may precede ``by``; substantive words may not be skipped.
                 trailing = _TRAILING_REPLACEMENT_AGENT_RE.match(claim[end:])
                 if trailing is None:
                     continue
@@ -584,8 +616,10 @@ def _historical_reason(claim: str, signal: dict[str, Any]) -> str | None:
 
 def _action_context_reason(claim: str, signal: dict[str, Any]) -> str | None:
     for start, end in _signal_action_spans(claim, signal):
+        if _action_span_has_future_full_date(claim, (start, end)):
+            return "lifecycle_noncurrent"
         relation_historical = _action_relation_is_historical(claim, (start, end))
-        explicit_nonpast_date = _action_span_has_nonpast_full_date_prefix(
+        explicit_current_date = _action_span_has_nonpast_full_date_prefix(
             claim,
             (start, end),
         )
@@ -593,19 +627,19 @@ def _action_context_reason(claim: str, signal: dict[str, Any]) -> str | None:
             # Reuse the same relation-local date/attribution classification used
             # by historical detection. A reporting-time current date must not be
             # reinterpreted here as an event-time veto.
-            if explicit_nonpast_date or not relation_historical:
+            if explicit_current_date or not relation_historical:
                 return "lifecycle_negated"
             continue
 
         prefix = claim[max(0, start - 96):start]
         if _UNCERTAIN_ACTION_PREFIX_RE.search(prefix):
-            if explicit_nonpast_date or not relation_historical:
+            if explicit_current_date or not relation_historical:
                 return "lifecycle_noncurrent"
             continue
 
         state_span = _post_action_state_span(claim, (start, end))
         if state_span is not None and (
-            explicit_nonpast_date or not _action_span_is_historical(claim, state_span)
+            explicit_current_date or not _action_span_is_historical(claim, state_span)
         ):
             return "lifecycle_noncurrent"
     return None
