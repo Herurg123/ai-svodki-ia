@@ -1,0 +1,163 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-09-16",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-09-16.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-002: источник показывает дату без точного времени.",
+    "cand-004: источник показывает дату без точного времени.",
+    "cand-008: источник показывает дату без точного времени.",
+    "cand-009: источник показывает дату без точного времени.",
+    "cand-010: источник показывает дату без точного времени.",
+    "cand-015: источник показывает дату без точного времени.",
+    "cand-016: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: associated press (4)",
+    "Исследовательский пул перегружен одной организацией: nvidia (3)",
+    "Выбрано 6 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-09-16",
+  "started_at": "2026-09-16T01:34:41+00:00",
+  "finished_at": "2026-09-16T01:35:18+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 60,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "74d1ba56c81154a95481000149a4bcd02eccfe92d5e6041ff9020a7b0881b8e6",
+    "candidates_sha256": "7630729c8fcec7c7b39ddf05cb8b6f32265523d47634ba161a99c483d437aa4a",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-09-14T04:28:04+03:00",
+      "end_at": "2026-09-16T04:24:55+03:00",
+      "latest_archive_at": "2026-09-15T04:28:04+03:00",
+      "start_date": "2026-09-14",
+      "end_date": "2026-09-16",
+      "latest_archive_date": "2026-09-15"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "fbe2dceeb7936e47e30c7fc623990fde8dbb560855482f069c3dde1a55ce5471",
+    "editorial_sha256": "59a1a0ec1e58d68d4d6bac598e9ea1d37b283b1911ebf1e80450aff8e4f0eb6a",
+    "digest_sha256": "6df2271786e537a7bc4e6b975b525ca904d40c0b700de3cbfd6f543bc7836f0d",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-09-16.jpg",
+          "normalized_value": "ai-svodka-2026-09-16.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        }
+      ],
+      "changed_count": 1,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 6 сюжетов."
+        },
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-015."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: В коротком подтверждённом пуле три независимых события TechCrunch — запуск модели Koa, MCP-интеграция WhatsApp Business и раунд Profound — относятся к разным продуктовым и рыночным сюжетам; исключение одного из них только ради soft-лимита неоправданно сократило бы и без того короткий выпуск."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0623b252b959a294016aa9f23286ac87d0988ef14d6c03abe6",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 129375,
+        "input_tokens_details": {
+          "cache_write_tokens": 19533,
+          "cached_tokens": 109839
+        },
+        "output_tokens": 3494,
+        "output_tokens_details": {
+          "reasoning_tokens": 516
+        },
+        "total_tokens": 132869
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 129375,
+    "output_tokens": 3494,
+    "total_tokens": 132869,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "c033ee3d40218a482a802e3091c03d572d2ed475",
+    "run_id": "35043955755",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-09-16T04:24:55+03:00"
+}

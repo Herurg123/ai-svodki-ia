@@ -1,45 +1,47 @@
 {
   "status": "ok",
-  "request_id": "production-image-2026-08-14",
+  "usage_attempt_id": "bea6115d2df54a2ca8eddd03a53be784",
+  "request_id": "production-image-2026-09-16",
   "model": "gpt-image-2",
   "endpoint": "/v1/images/generations",
   "http_status": 200,
-  "openai_request_id": "req_8d1be3edaea34f8d89774f0104adf217",
-  "source_editorial_request_id": null,
+  "openai_request_id": "req_3bfdc3bbb66942bfb1ab0c2ed904abed",
+  "source_editorial_request_id": "production-digest-2026-09-16",
   "request": {
     "size": "1536x864",
     "quality": "high",
     "output_format": "png",
     "background": "opaque",
     "n": 1,
-    "prompt_sha256": "99c72a16235afc52794b08ac8a5cd7e28af124aa806ee94460ff983a4c6f89dc"
+    "prompt_sha256": "cb32166b8806e01ca5fb4a080f13a738ef5c5791b86932da343bfe7f74c51503"
   },
   "response": {
-    "created": 1786695222,
+    "created": 1789524431,
     "background": "opaque",
     "output_format": "png",
     "quality": "high",
     "size": "1536x864",
     "usage": {
-      "input_tokens": 378,
+      "input_tokens": 359,
       "input_tokens_details": {
         "image_tokens": 0,
-        "text_tokens": 378
+        "text_tokens": 359
       },
       "output_tokens": 4312,
       "output_tokens_details": {
         "image_tokens": 4312,
         "text_tokens": 0
       },
-      "total_tokens": 4690
+      "total_tokens": 4671
     },
     "data_count": 1,
     "revised_prompt": null
   },
-  "cover_sha256": "9b529dec56271e1d6939b3808755a7bb782166ee35594cc66981d905e08d9b91",
-  "cover_bytes": 2291561,
+  "cover_sha256": "965a9a31ec9bf7fe0351c1561aeccb72a0658677b225ca0fca3e504ede331a4f",
+  "cover_bytes": 2228053,
   "base64_stored": false,
   "copied_source_files": [
+    "agency-discovery-rescue.json",
     "article.html",
     "artifact-normalization.json",
     "artifact-validation.json",
@@ -53,7 +55,6 @@
     "meta.json",
     "metadata-normalization.json",
     "policy-normalization.json",
-    "primary-recall.json",
     "research-filtered-out.json",
     "research-input-info.json",
     "research-output-raw.json",
@@ -63,6 +64,6 @@
     "sources.json",
     "stories.json"
   ],
-  "started_at": "2026-08-14T08:11:51+00:00",
-  "finished_at": "2026-08-14T08:13:43+00:00"
+  "started_at": "2026-09-16T02:05:40+00:00",
+  "finished_at": "2026-09-16T02:07:11+00:00"
 }

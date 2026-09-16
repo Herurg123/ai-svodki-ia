@@ -1,7 +1,8 @@
 {
   "status": "ok",
-  "artifact_dir": "automation/preview/2026-08-14",
+  "artifact_dir": "automation/preview/2026-09-16",
   "changed_files": [],
   "changes": [],
+  "warnings": [],
   "removed_stale_validation": false
 }

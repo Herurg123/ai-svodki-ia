@@ -1,0 +1,198 @@
+[
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Cline CLI 3.0.62 добавил управление Agent Plugin Hub и обновил модельный каталог",
+    "organization": "Cline",
+    "topic": "CLI coding agents; plugins; scheduled agent runs; model routing и provider catalog",
+    "event_type": "release",
+    "status": "new",
+    "summary": "Cline выпустил CLI 3.0.62: добавлены управление плагинами через Hub, доработки устойчивости фоновых и запланированных запусков, а также крупное обновление каталога моделей и провайдеров. В частности, обновление меняет default-маршрутизацию для десятков провайдеров; без закреплённой модели пользователи могут получить иной model default.",
+    "published_at": "2026-09-15T06:04:39+00:00",
+    "published_date": "2026-09-15",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Cline CLI 3.0.62",
+        "publisher": "Freedom.Tech",
+        "url": "https://freedom.tech/posts/2026-09-15-cline-cli-3-0-62/"
+      }
+    ],
+    "keywords": [
+      "Cline CLI",
+      "Agent Plugin Hub",
+      "scheduled runs",
+      "model catalog",
+      "DeepSeek V4.1 Flash",
+      "GPT-6 Astra",
+      "Gemini 3.8 Flash"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Salesforce и NVIDIA представили Koa — reasoning-модель для Agentforce",
+    "organization": "Salesforce; NVIDIA; Agentforce; Koa; Nemotron",
+    "topic": "Корпоративная reasoning-модель, постобученная для продаж, маркетинга и поддержки; альтернатива маршрутизации агентных задач в закрытые frontier-модели.",
+    "event_type": "model announcement",
+    "status": "new",
+    "summary": "Salesforce представила Koa как свою первую reasoning-модель для Agentforce. Она построена на open-weight NVIDIA Nemotron и постобучена для корпоративных задач продаж, маркетинга и клиентской поддержки; Salesforce позиционирует её как более контролируемый и экономичный вариант для части многошаговых задач, которые прежде направлялись Claude или ChatGPT.",
+    "published_at": "2026-09-15T12:00:00+00:00",
+    "published_date": "2026-09-15",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Salesforce and Nvidia’s new reasoning model is everything the AI labs should fear",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/15/salesforce-and-nvidias-new-reasoning-model-is-everything-the-ai-labs-should-fear/"
+      }
+    ],
+    "keywords": [
+      "Salesforce",
+      "NVIDIA",
+      "Koa",
+      "Nemotron",
+      "Agentforce",
+      "reasoning model",
+      "enterprise AI",
+      "open-weight"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Meta открыла WhatsApp Business Tools MCP для внешних агентов ИИ",
+    "organization": "Meta; WhatsApp Business; Claude; Cursor; Codex; ChatGPT",
+    "topic": "Интеграция MCP с WhatsApp Business Platform для AI coding-агентов и автоматизации настройки корпоративного мессенджинга.",
+    "event_type": "product integration",
+    "status": "new",
+    "summary": "Meta объявила WhatsApp Business Tools MCP — MCP-сервер, через который выбранные пользователем AI-агенты могут настраивать и администрировать WhatsApp Business Platform. Он покрывает создание и верификацию аккаунта и номера, подключение Cloud API, работу с шаблонами, тестирование webhooks и проверку статусов конфигурации.",
+    "published_at": "2026-09-15T20:12:53+00:00",
+    "published_date": "2026-09-15",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Meta now lets AI agents handle the boring parts of WhatsApp Business setup",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/15/meta-now-lets-ai-agents-handle-the-boring-parts-of-whatsapp-business-setup/"
+      }
+    ],
+    "keywords": [
+      "Meta",
+      "WhatsApp Business",
+      "MCP",
+      "Model Context Protocol",
+      "AI agents",
+      "Claude",
+      "Cursor",
+      "Codex",
+      "ChatGPT"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Microsoft AI вынесла на обсуждение Humanist AI Code of Conduct",
+    "organization": "Microsoft AI; MAI Models",
+    "topic": "AI safety; alignment; governance; model behavior; публичная консультация",
+    "event_type": "safety governance framework publication",
+    "status": "new",
+    "summary": "Microsoft AI опубликовала проект Code of Conduct для своих MAI-моделей и открыла шестинедельную публичную консультацию. Документ задаёт иерархию инструкций, обязательные ограничения безопасности, требования сохранения человеческого контроля и запреты на ряд опасных действий; Microsoft подчёркивает, что текущая версия ещё не применяется для обучения моделей и будет доработана.",
+    "published_at": "2026-09-14T13:00:00+00:00",
+    "published_date": "2026-09-14",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Humanist AI Code of Conduct",
+        "publisher": "Microsoft AI",
+        "url": "https://microsoft.ai/code-of-conduct/"
+      }
+    ],
+    "keywords": [
+      "Microsoft AI",
+      "Humanist AI",
+      "Code of Conduct",
+      "MAI Models",
+      "alignment",
+      "safety constraints",
+      "human control",
+      "public consultation"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-011",
+    "section": "world",
+    "headline": "Profound привлекла $180 млн на маркетинг в ИИ-поиске",
+    "organization": "Profound; Sequoia Capital; Kleiner Perkins; Lightspeed Venture Partners; Khosla Ventures",
+    "topic": "Финансирование AEO/GEO-платформы, помогающей брендам отслеживать и повышать присутствие в ответах AI-поиска.",
+    "event_type": "funding",
+    "status": "new",
+    "summary": "Profound, разрабатывающая маркетинговое ПО для присутствия брендов в AI-результатах поиска, объявила о раунде Series D на $180 млн при оценке $1,8 млрд. Раунд возглавили Sequoia и Kleiner Perkins.",
+    "published_at": "2026-09-15T15:22:48+00:00",
+    "published_date": "2026-09-15",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "AEO startup Profound hits unicorn valuation, raises $180M Series D 7 months after last round",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/15/aeo-startup-profound-hits-unicorn-valuation-raises-180m-series-d-7-months-after-last-round/"
+      }
+    ],
+    "keywords": [
+      "Profound",
+      "Series D",
+      "AEO",
+      "GEO",
+      "AI search",
+      "Sequoia",
+      "Kleiner Perkins",
+      "funding"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-015",
+    "section": "russia",
+    "headline": "Алиса AI теперь сама выбирает уровень интеллекта для задачи",
+    "organization": "Яндекс",
+    "topic": "15 сентября 2026Алиса AI теперь сама выбирает, какой уровень интеллекта нужен для решения задачи",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+    "published_at": null,
+    "published_date": "2026-09-15",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "15 сентября 2026Алиса AI теперь сама выбирает, какой уровень интеллекта нужен для решения задачи",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=15-09-2026-01"
+      }
+    ],
+    "keywords": [
+      "15",
+      "сентября",
+      "2026Алиса",
+      "теперь",
+      "сама",
+      "выбирает",
+      "какой",
+      "уровень",
+      "интеллекта",
+      "нужен",
+      "для",
+      "решения"
+    ],
+    "geography": "russia",
+    "category": "investment"
+  }
+]
