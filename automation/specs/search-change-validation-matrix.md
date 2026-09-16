@@ -78,6 +78,12 @@ semantic delta существующими regressions.
 | O6 | Пересечения | Identity принадлежит невыбранному кандидату | Unselected candidate не может загрязнить provenance выбранного сюжета. |
 | O7 | Пересечения | Один publisher/topic доминирует в dense pool | Source/ranking pressure не уничтожает независимые достойные события. |
 | O8 | Event identity / attribution | Exact replacement anchors и signal organization присутствуют в claim, но после полного directed replacement span стоит explicit foreign trailing agent (`... old was replaced by new by ForeignOrg`) | Replacement attribution fail-closed: foreign trailing agent не может быть приписан signal organization; корректный `... by SignalOrg` и replacement без отдельного trailing agent остаются positive controls. |
+| O9 | Event identity / claim segmentation | Complete replacement span отделён от следующего `by ForeignOrg` только wrappers/punctuation и natural semicolon (`... [old was replaced by new]; by ForeignOrg`) | Claim segmentation не имеет права отрезать непосредственный trailing agent до attribution-check; foreign agent остаётся fail-closed, `; by SignalOrg` остаётся positive control, substantive words между span и `by` не перепрыгиваются. |
+| O10 | Event time / reporting time | Current/non-past reporting date и historical lifecycle date находятся в одной claim через `said`, `reported`, `according to`, `citing`, `based on`, `referencing` или `per` | Reporting-time дата не омолаживает старое событие; relation-bound historical date даёт `historical_event_context`. Обратный control: old cited/report date не может скрыть реально current negation, когда current evidence относится к lifecycle relation. |
+| O11 | Event identity / cross-claim veto | Отдельная clean current-positive claim сосуществует с historical negated/noncurrent claim того же identity через reporting predicate | Historical/background contradiction не становится global current veto; genuine current negation/noncurrent claim по тому же identity по-прежнему veto'ит clean duplicate. |
+| O12 | Event identity / attribution separator | Complete replacement span отделён от direct `by ForeignOrg` underscore-separator (`... ] _ by ForeignOrg` или `...]_by ForeignOrg`) | Python `\w` semantics не должны скрывать foreign trailing agent: underscore считается neutral separator только для непосредственного trailing attribution, `by SignalOrg` остаётся positive control, matcher не перепрыгивает substantive words. |
+| O13 | Event time / future boundary | Valid full date позже текущей даты управляет lifecycle relation до или после action | Future relation не является current exact proof и не создаёт current contradiction: positive и negated future assertions дают `lifecycle_noncurrent`; today остаётся current, yesterday historical, invalid calendar date не становится current/future marker; reporting-time future date не омолаживает отдельное historical event-time. |
+| O14 | Event identity / P3a lifecycle morphology | P3a канонизировал inflected weak-source lifecycle wording (`releases/released`, `introduces/introduced`, `unveils/unveiled`, `ships/shipped`, `rolls/rolled out`, `retires/retired/discontinues/discontinued`) в canonical action anchor | Active P3b binder обязан принимать ту же relation morphology на exact authoritative surface без fuzzy expansion за пределы P3a semantics; passive `... by ForeignOrg` для вновь распознанных families остаётся fail-closed; historical v2/v3 compatibility source contract не мутируется. |
 | R1 | Регион | Russia healthy, China/Asia healthy | Дополнительные regional slots не открываются. |
 | R2 | Регион | Только Russia gap | Сохраняется контракт 3 broad + 1 regional Hybrid. |
 | R3 | Регион | Только China/Asia gap | Сохраняется контракт 3 broad + 1 regional Hybrid. |
@@ -138,6 +144,12 @@ semantic delta существующими regressions.
 - qualified weak-source product signal + occupied Coverage seventh slot: signal remains unresolved/deferred and cannot create an eighth Coverage search or displace an already-required obligation;
 - qualified weak-source product signal + same-company/different-event or preview-vs-GA ambiguity: company overlap alone cannot close event identity;
 - qualified weak-source product signal + exact replacement claim + foreign trailing passive agent: exact anchors and signal organization in the same claim must still fail closed when the complete directed replacement span is followed by `by ForeignOrg`; the same saved optional-slot state with an evidence-v2 positive snapshot must migrate to unresolved under the new evidence version without a paid retry or page refetch;
+- qualified weak-source product signal + replacement span + natural semicolon + foreign trailing agent: `... [old was replaced by new]; by ForeignOrg` must remain one attribution surface for fail-closed identity checks, while `; by SignalOrg` remains positive and intervening substantive words are never skipped;
+- qualified weak-source product signal + current reporting date + historical lifecycle date + reporting predicate (`said/reported/according to/citing/based on/referencing/per`): reporting time cannot promote the old event; the reciprocal current-negation case with an old cited/report date must still veto positive admission;
+- qualified weak-source product signal + clean current positive claim + historical negated/noncurrent background claim: historical background cannot create a global veto, while an actually current contradiction must veto a clean duplicate;
+- qualified weak-source product signal + replacement span + underscore separator + foreign trailing agent: `... ] _ by ForeignOrg` and `...]_by ForeignOrg` must fail closed, corresponding `by SignalOrg` controls remain positive, and substantive words are never skipped;
+- qualified weak-source product signal + valid future event date + positive/negated lifecycle relation: future relation is `lifecycle_noncurrent`, not current proof/veto; today/yesterday/invalid-date controls keep their distinct semantics; a future reporting timestamp cannot promote an old event-time;
+- qualified weak-source product signal + P3a canonical lifecycle morphology + passive attribution: every Primary-detected morphology for `release/introduce/unveil/ship/rollout/retire` must bind the same canonical relation on the authoritative page, while `... by ForeignOrg` remains `organization_event_attribution_mismatch`; active Coverage/Freshness admission must agree with direct binder output and no query/search-budget delta is permitted;
 - qualified weak-source product signal + authoritative reference visible outside the active binding path: queue evidence alone cannot become a candidate;
 - optional Coverage slot `request_started` + unknown provider outcome + same-day recovery: slot stays consumed/ambiguous and automatic retry is forbidden;
 - optional Coverage raw response fsynced + crash before parser/result snapshot: the same raw response is reparsed offline and no second provider search is opened;
@@ -230,6 +242,70 @@ Offline contracts:
 `automation/tests/test_coverage_optional_slot_guard.py` and
 `automation/tests/test_coverage_optional_slot_recovery.py`; controlled report:
 `automation/audits/experiments/2026-09-12-coverage-optional-slot-reservation/README.md`.
+
+### Permanent regression: 2026-09-16 P3b relation-local reporting/attribution
+
+Independent review of exact P3b evidence-v6 head found three adjacent event-
+identity failures after authoritative retrieval: a current reporting date could
+promote an explicitly old lifecycle event through reporting predicates omitted
+from the active attribution boundary; a natural semicolon could split `; by
+ForeignOrg` away before trailing-agent validation; and a historical negated claim
+could be reclassified as a current global veto for a separate clean current claim.
+
+O9/O10/O11 make these incident shapes permanent. Treatment is zero-query and
+zero-paid: active v4 must apply one shared reporting boundary for event-time
+ownership and veto classification, preserve only the immediate `; by <agent>`
+attribution surface before inherited claim splitting, and keep historical
+background non-vetoing without weakening genuine current contradictions. Direct
+binder checks are paired with the active P3b processor so a helper-level result
+cannot diverge from candidate admission. The canonical 20-case P3b matrix remains
+unchanged; these cases are supplemental retrieval-safety regressions. Offline
+contract: `automation/tests/test_p3b_astra_ninth_review.py`.
+
+### Permanent regression: 2026-09-16 P3b underscore/future-date boundaries
+
+A later independent review of the exact ninth-review final head found two more
+active-binder boundaries. First, `_` is a Python word character, so a matcher based
+on `\W*` could miss direct foreign attribution in `] _ by ForeignOrg` and
+`]_by ForeignOrg`. Second, treating every valid full date `>= today` as current
+collapsed future event-time into current exact proof/current contradiction.
+
+O12/O13 make these boundaries permanent. Active v4 treats underscore as a neutral
+separator only for a direct trailing `by <agent>` surface and still refuses to
+jump substantive words. Full dates are split into past/today/future semantics:
+past remains historical when relation-bound, today can be current evidence,
+future relation-time fails closed as `lifecycle_noncurrent`, and reporting-time
+future dates do not promote old event-time. Invalid calendar dates do not become
+current/future markers. Direct binder checks are paired with the active P3b
+processor. `VERSION=2`, `EVIDENCE_VERSION=6`, the canonical 20-case P3b matrix,
+search budgets and zero-new-I/O recovery semantics remain unchanged. Offline
+contract: `automation/tests/test_p3b_astra_tenth_review.py`.
+
+### Permanent regression: 2026-09-16 P3b P3a lifecycle morphology alignment
+
+Independent blind review of the exact tenth-review head found that P3a canonical
+action anchors and active binder morphology were not fully aligned. The concrete
+blocker was `released -> release`: P3a retained canonical `release`, but inherited
+v2/v3 lifecycle groups stored `release/releases/released` only under `launch`, so
+normal authoritative `released` or `releases` wording failed exact binding before
+Freshness. Architecture-wide comparison exposed the same root class for
+`introduce`, `unveil`, `ship`, `rollout` and `retire`/`discontinue` morphology.
+
+O14 makes the class permanent. Active v4 now overlays only its private compatibility
+instance with morphology groups matching the exact P3a canonicalization contract,
+while historical v2/v3 source behavior stays unchanged. The v3 lifecycle-word
+boundary is expanded in the same private instance so a newly recognized relation
+cannot borrow anchors across another lifecycle predicate. Passive attribution is
+also extended to the newly recognized families, preventing the recall repair from
+accepting `... by ForeignOrg` surfaces. A zero-paid 34-case baseline/proposed
+morphology comparison found 16 repaired production-reachable false negatives and
+0 regressions on already-supported morphology. Query delta = 0, paid-search delta
+= 0, Terra was not used because no search/query behavior changes. Direct binder
+checks are paired with real Coverage + authoritative-page + deterministic Source
+Freshness admission. `VERSION=2`, `EVIDENCE_VERSION=6`, the canonical 20-case P3b
+matrix, 7-call Coverage ceiling, 24/25 pipeline ceilings and zero-new-I/O recovery
+semantics remain unchanged. Offline contract:
+`automation/tests/test_p3b_astra_eleventh_review.py`.
 
 ## 5. Критерий допуска
 
