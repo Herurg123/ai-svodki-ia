@@ -30,9 +30,15 @@ Optional-slot journal, который отсутствует, и journal, кот
 
 - `processed_snapshot` является JSON object;
 - `processed_snapshot.candidates` является list;
-- `processed_snapshot.search_budget` является object и содержит `maximum_calls`, `completed_calls`, `remaining_calls`.
+- `processed_snapshot.search_budget` является object и содержит `maximum_calls`, `completed_calls`, `remaining_calls`;
+- `processed_snapshot.search_window` является object, и его SHA-256 обязан совпадать с outer journal `search_window_sha256`;
+- `_P3A._bundle_identity(processed_snapshot)` должен быть вычислим, а его SHA-256 обязан совпадать с outer journal `bundle_identity_sha256`.
 
-Missing/list/scalar/empty или structurally inconsistent processed snapshot является durable corruption и даёт fail-closed `CoverageSlotError` до `existing_full_digest`, `prior_complete` и других complete/reusable shortcuts. Validator намеренно не требует P3b-only diagnostic: legacy `unverified` owner использует тот же durable optional slot и валидный generic processed Coverage plan должен оставаться reusable.
+Тем самым v7 независимо доказывает обе связи durable state: `outer journal -> current Coverage bundle` и `inner processed_snapshot -> тот же outer durable identity`. Полностью структурно валидный current-evidence snapshot из другого run/bundle не может быть reused только потому, что сам outer journal принадлежит текущему bundle.
+
+Missing/list/scalar/empty, structurally inconsistent, identity-unprovable или identity-mismatched processed snapshot является durable corruption и даёт fail-closed `CoverageSlotError` до `existing_full_digest`, `prior_complete`, child reuse и других complete/reusable shortcuts. Validator намеренно не требует P3b-only diagnostic: legacy `unverified` owner использует тот же durable optional slot и валидный same-identity generic processed Coverage plan должен оставаться reusable. `response_saved` остаётся отдельным состоянием: сохранённый raw response может быть offline replayed в deterministic processed state и не обязан преждевременно иметь `processed_snapshot`.
+
+Проверка identity не переписывает journal, не refund/reopen optional slot и не выполняет provider call, Web Search, retry или authoritative-page refetch.
 
 ## Durable marker
 
@@ -71,6 +77,7 @@ Marker записывается до mutation. При crash следующий �
 4. Если marker имеет `pending|blocked` и `publication_snapshot_invalidated=true` (или поле отсутствует у раннего marker), full recovery также понижается до `partial_editorial`.
 5. `completed` marker не понижает full recovery только из-за оставшегося historical journal.
 6. Marker и forensic backups копируются в current `production-daily` только из exact selected bundle. Конфликт с уже существующим отличающимся state fail-closed; смешивать два artifact bundle запрещено.
+7. Для `state=processed` same-bundle доказательство не заканчивается на outer journal: сохранённый `processed_snapshot` обязан иметь тот же durable search-window hash и bundle-identity hash, иначе reuse fail-closed до child path.
 
 Эта интеграция не повторяет retrieval, не открывает optional slot и не меняет search budgets.
 
@@ -92,6 +99,14 @@ Marker записывается до mutation. При crash следующий �
 
 - nested active-v7/base/v6 compatibility sync не может восстановить old v6 stale predicate и resurrect genuine historical v1 provenance;
 - corrupt/missing deterministic `processed_snapshot` fail-closed, при этом валидный generic/legacy processed Coverage plan остаётся reusable.
+
+`automation/tests/test_p3b_v7_processed_snapshot_identity.py` отдельно закрепляет same-bundle identity границу для inner durable result:
+
+- outer journal остаётся полностью валидным для bundle A, а подменяется только `processed_snapshot`;
+- foreign-date и same-date/same-search-window, но different-bundle current-evidence snapshots fail-closed до child reuse;
+- same-date case различает bundle identity через durable P3a attempt identity, поэтому regression нельзя удовлетворить одной проверкой даты или search window;
+- provider, protected/retry transport и authoritative-page fetch запрещены assertion seams и остаются с нулевым числом вызовов;
+- journal bytes после reject остаются неизменными.
 
 ## Rollback
 
