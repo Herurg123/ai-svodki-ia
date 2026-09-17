@@ -431,14 +431,17 @@ def recovery_preflight(
     stories_backup = _backup_path(marker_path, "stories")
 
     if not publication_risk:
-        # Stale provenance confined to a reusable report can be removed offline
-        # without invalidating an otherwise clean complete artifact.
-        marker_value["state"] = "completed"
-        marker_value["reason"] = "stale_positive_p3b_prior_report_sanitized"
+        # Report-only sanitation is still two-phase: a crash must never leave a
+        # completed marker pointing at an unsanitized reusable report.
         _atomic_write_json(marker_path, marker_value)
         _backup_once(report_path, report_backup)
         if report_path.is_file() and sanitized_report is not None:
             _atomic_write_json(report_path, sanitized_report)
+        marker_value["state"] = "completed"
+        marker_value["reason"] = "stale_positive_p3b_prior_report_sanitized"
+        if report_path.is_file():
+            marker_value["clean_report_sha256"] = _sha256_bytes(report_path.read_bytes())
+        _atomic_write_json(marker_path, marker_value)
         return None
 
     # Crash ordering is intentional: pending marker first, then backups/mutations.
