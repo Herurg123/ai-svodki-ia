@@ -38,9 +38,9 @@ _base = importlib.util.module_from_spec(_BASE_SPEC)
 sys.modules[_BASE_SPEC.name] = _base
 _BASE_SPEC.loader.exec_module(_base)
 
-for _name in dir(_base):
+for _name, _value in list(vars(_base).items()):
     if not (_name.startswith("__") and _name.endswith("__")):
-        globals()[_name] = getattr(_base, _name)
+        globals()[_name] = _value
 
 # This is still P3b runtime v7. The preserved file split is forensic only, not a
 # semantic or durable-contract version bump.
