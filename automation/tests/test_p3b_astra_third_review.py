@@ -30,8 +30,9 @@ class SimulatedProcessStop(BaseException):
 
 
 class AstraThirdReviewRegressions(unittest.TestCase):
-    def test_public_runtime_is_v6_with_v4_binder(self) -> None:
-        self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v6")
+    def test_public_runtime_is_v7_with_preserved_v6_and_v4_binder(self) -> None:
+        self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v7")
+        self.assertTrue(coverage._impl._v6.__name__.endswith("p3b_v6_preserved"))
         self.assertIs(coverage._exact_binding, binder)
         self.assertEqual(coverage.P3B_EXACT_BINDING_VERSION, 2)
         self.assertEqual(coverage.P3B_BINDER_EVIDENCE_VERSION, binder.EVIDENCE_VERSION)
