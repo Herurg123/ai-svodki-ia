@@ -122,8 +122,9 @@ class AstraSecondReviewRegressions(unittest.TestCase):
             "resolution_required": True,
         }
 
-    def test_public_runtime_is_v6_with_v4_binder(self) -> None:
-        self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v6")
+    def test_public_runtime_is_v7_with_preserved_v6_and_v4_binder(self) -> None:
+        self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v7")
+        self.assertTrue(coverage._impl._v6.__name__.endswith("p3b_v6_preserved"))
         self.assertIs(coverage._exact_binding, binder)
         self.assertIs(coverage._impl._v2._binding_v2, historical_binder)
 
