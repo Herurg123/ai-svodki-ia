@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import sys
 import tempfile
@@ -10,10 +11,15 @@ ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "automation" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
+from coverage_slot_guard import prepare_slot
 import ensure_story_coverage_p3b_v7 as v7
 
 DATE = "2026-09-17"
 SIGNAL_ID = "weak-source-signal-persisted"
+SEARCH_WINDOW = {
+    "start_at": "2026-09-16T03:00:00+00:00",
+    "end_at": "2026-09-17T03:00:00+00:00",
+}
 
 
 def _write(path: Path, value) -> None:
@@ -54,29 +60,17 @@ def _independent() -> dict:
     }
 
 
-def _journal() -> dict:
+def _plan(candidates: list[dict]) -> dict:
     return {
-        "version": 1,
         "publication_date": DATE,
-        "state": "processed",
-        "slot_consumed_or_ambiguous": True,
-        "wire_attempt_admitted": True,
-        "processed_snapshot": {
-            "candidates": [_stale(), _independent()],
-            "weak_source_exact_binding": {
-                "version": v7.P3B_EXACT_BINDING_VERSION,
-                "mode": v7.P3B_MODE,
-                "signal_id": SIGNAL_ID,
-                "binder_evidence_version": 5,
-                "status": "bound_candidate",
-                "disposition": "positive_exact_binding",
-                "candidate_count": 1,
-            },
-            "search_budget": {
-                "maximum_calls": 7,
-                "completed_calls": 7,
-                "remaining_calls": 0,
-            },
+        "search_window": copy.deepcopy(SEARCH_WINDOW),
+        "checked_directions": list(v7.AUDIT_DIRECTION_IDS),
+        "attempts": [],
+        "candidates": copy.deepcopy(candidates),
+        "search_budget": {
+            "maximum_calls": 7,
+            "completed_calls": 7,
+            "remaining_calls": 0,
         },
     }
 
@@ -96,11 +90,54 @@ class P3bV7DurableRecoveryInputsTests(unittest.TestCase):
         self.marker = self.state / f"coverage-p3b-v7-revocation-{DATE}.json"
         self.state.mkdir(parents=True)
         self.artifact.mkdir(parents=True)
-        _write(self.journal, _journal())
+        self.seed_journal()
+
+    def seed_journal(self) -> None:
+        stale = _stale()
+        independent = _independent()
+        plan = _plan([stale, independent])
+        reservation = prepare_slot(
+            state_dir=self.state,
+            publication_date=DATE,
+            owner=v7.P3B_SLOT_OWNER,
+            search_window=SEARCH_WINDOW,
+            request_contract={
+                "version": v7.P3B_EXACT_BINDING_VERSION,
+                "strategy": v7.P3B_SLOT_OWNER,
+                "model": "gpt-test",
+                "query": "persisted exact query",
+                "prompt_sha256": "fixture-prompt",
+                "signal_ids": [SIGNAL_ID],
+                "maximum_web_search_calls": 1,
+                "allowed_domains": [],
+            },
+            bundle_identity=v7._v6._P3A._bundle_identity(plan),
+        )
+        reservation.mark_request_started()
+        reservation.save_raw_response({"id": "persisted-response", "output": []})
+        reservation.mark_processed(
+            {
+                "candidates": [stale, independent],
+                "weak_source_exact_binding": {
+                    "version": v7.P3B_EXACT_BINDING_VERSION,
+                    "mode": v7.P3B_MODE,
+                    "signal_id": SIGNAL_ID,
+                    "binder_evidence_version": 5,
+                    "status": "bound_candidate",
+                    "disposition": "positive_exact_binding",
+                    "candidate_count": 1,
+                },
+                "search_budget": {
+                    "maximum_calls": 7,
+                    "completed_calls": 7,
+                    "remaining_calls": 0,
+                },
+            }
+        )
 
     def test_persisted_research_only_is_sanitized_without_invalidating_clean_digest(self) -> None:
         independent = _independent()
-        _write(self.artifact / "candidates.json", {"candidates": [independent]})
+        _write(self.artifact / "candidates.json", _plan([independent]))
         _write(
             self.artifact / "stories.json",
             [{"candidate_id": independent["id"], "headline": independent["title"]}],
@@ -139,7 +176,7 @@ class P3bV7DurableRecoveryInputsTests(unittest.TestCase):
         independent = _independent()
         _write(
             self.artifact / "candidates.json",
-            {"candidates": [stale, independent]},
+            _plan([stale, independent]),
         )
         _write(
             self.artifact / "stories.json",
