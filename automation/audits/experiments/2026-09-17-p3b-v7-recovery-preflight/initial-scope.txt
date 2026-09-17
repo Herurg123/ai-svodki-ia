@@ -1,0 +1,6 @@
+Base reviewed for remediation: 41481a7fd4feacbd812cc3de82630ca5078f23e8
+Current main observed during implementation: c8c88ceffd26a97b48be9bf16913dc4b90c9f8c8
+The two intervening main commits are publication/retention content changes only; no P3b runtime files changed.
+
+Remediation target: production stale-positive P3b reuse bypass above execute_audit_plan.
+No query/routing/binder evidence-version/budget change.
