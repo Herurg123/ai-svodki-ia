@@ -47,7 +47,7 @@ _SHIM_INTERNALS = frozenset(
         "_RUNTIME_PULL_NAMES", "_IDENTITY_EXPORTS", "_COMPAT_HOOK_NAMES",
         "_SHIM_INTERNALS", "_iter_compat_targets", "_iter_compat_namespaces",
         "_propagate_compat_hooks", "_sync_to_impl", "_pull_impl_runtime_state",
-        "_make_proxy",
+        "_make_proxy", "_run_public_main", "main",
     }
 )
 
@@ -153,8 +153,17 @@ def _sync_to_impl() -> None:
 
 
 def _pull_impl_runtime_state() -> None:
+    """Pull late runtime diagnostics from the preserved execution owner into v7."""
+    preserved = getattr(_impl, "_v6", None)
+    pull = getattr(preserved, "_pull_p3b_runtime_state", None)
+    if callable(pull):
+        pull()
     for name in _RUNTIME_PULL_NAMES:
-        if hasattr(_impl, name):
+        if preserved is not None and hasattr(preserved, name):
+            value = getattr(preserved, name)
+            setattr(_impl, name, value)
+            globals()[name] = value
+        elif hasattr(_impl, name):
             globals()[name] = getattr(_impl, name)
 
 
@@ -178,6 +187,51 @@ for _name, _value in _ORIGINAL_EXPORTS.items():
         globals()[_name] = _make_proxy(_name)
     else:
         globals()[_name] = _value
+
+
+def _run_public_main() -> int:
+    """Run the v7 pre/postflight while installing the active v7 execute hook."""
+    _sync_to_impl()
+    publication_date = str(_impl._cli_arg("--publication-date") or "").strip()
+    artifact_raw = _impl._cli_arg("--artifact-dir")
+    report_raw = _impl._cli_arg("--report")
+
+    artifact_dir: Path | None = None
+    report_path: Path | None = None
+    context: dict[str, Any] | None = None
+    if publication_date and artifact_raw and report_raw:
+        artifact_dir = Path(artifact_raw)
+        report_path = Path(report_raw)
+        context = _impl.recovery_preflight(
+            publication_date=publication_date,
+            artifact_dir=artifact_dir,
+            report_path=report_path,
+            state_dir=Path(_impl.STATE_DIR),
+        )
+
+    historical_main = _impl._v2._v1._P3A_MAIN
+    original_execute = _impl._v2._v1._pre.execute_audit_plan
+    _impl._v2._v1._pre.execute_audit_plan = _impl.execute_audit_plan
+    try:
+        child_code = int(historical_main())
+    finally:
+        _impl._v2._v1._pre.execute_audit_plan = original_execute
+        _pull_impl_runtime_state()
+
+    if artifact_dir is None or report_path is None:
+        # Historical argparse/main remains the owner of malformed CLI behavior.
+        return child_code
+    return int(
+        _impl._postflight(
+            context,
+            child_code=child_code,
+            artifact_dir=artifact_dir,
+            report_path=report_path,
+        )
+    )
+
+
+main = _run_public_main
 
 
 def __getattr__(name: str) -> Any:
