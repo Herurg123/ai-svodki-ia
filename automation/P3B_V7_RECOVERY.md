@@ -18,6 +18,22 @@ Active public `automation/scripts/ensure_story_coverage.py` загружает `
 
 Если stale provenance находится только внутри non-publishable recovery inputs (`coverage-audit.json` и/или persisted merged research), они очищаются offline без инвалидирования заведомо чистого complete digest. Такой pending marker явно имеет `publication_snapshot_invalidated=false`, поэтому crash/restart продолжает sanitation, но не карантинит чистый `stories.json` только из-за незавершённой записи recovery input.
 
+### Ownership stale-revocation predicate через compatibility chain
+
+Historical v1 admission существовал до позднего `p3b_authoritative_page_proof`, поэтому active v7 stale-revocation predicate является remediation-owned compatibility invariant, а не локальным helper только preflight. Один и тот же predicate обязан оставаться установленным и в reviewed v7-base namespace, и в preserved v6 seam на всём production path `active v7 -> reviewed base -> v6`.
+
+Preserved base перед child execution выполняет собственный compatibility sync. Этот nested sync не имеет права вернуть pre-v7 `_without_stale_p3b_candidates` в v6: иначе genuine v1 row, уже удалённый preflight, может быть повторно принят historical migration/replay path. Permanent regression должен проходить именно через active `execute_audit_plan()`, nested base sync и preserved-v6 child, а не только напрямую вызывать `recovery_preflight`.
+
+### Fail-closed deterministic processed snapshot
+
+Optional-slot journal, который отсутствует, и journal, который присутствует в `state=processed`, но не содержит проверяемого deterministic result, являются разными состояниями. Для любого processed optional-slot owner recovery требует сохранённый полный Coverage plan:
+
+- `processed_snapshot` является JSON object;
+- `processed_snapshot.candidates` является list;
+- `processed_snapshot.search_budget` является object и содержит `maximum_calls`, `completed_calls`, `remaining_calls`.
+
+Missing/list/scalar/empty или structurally inconsistent processed snapshot является durable corruption и даёт fail-closed `CoverageSlotError` до `existing_full_digest`, `prior_complete` и других complete/reusable shortcuts. Validator намеренно не требует P3b-only diagnostic: legacy `unverified` owner использует тот же durable optional slot и валидный generic processed Coverage plan должен оставаться reusable.
+
 ## Durable marker
 
 Основной state file:
@@ -69,6 +85,13 @@ Marker записывается до mutation. При crash следующий �
 5. новый `stories.json` существует и не ссылается на revoked candidate id/title/source URL;
 6. optional-slot journal сохранил исходный consumption/ambiguity state и не был «refund» или переписан preflight;
 7. обычные Coverage и whole-pipeline ceilings остаются 7 и 24/25 соответственно.
+
+## Permanent controls
+
+Помимо существующих v7 recovery/crash/bundle controls, `automation/tests/test_p3b_v7_external_review_regressions.py` закрепляет два composition-level invariants, которые не были доказаны isolated helper tests:
+
+- nested active-v7/base/v6 compatibility sync не может восстановить old v6 stale predicate и resurrect genuine historical v1 provenance;
+- corrupt/missing deterministic `processed_snapshot` fail-closed, при этом валидный generic/legacy processed Coverage plan остаётся reusable.
 
 ## Rollback
 
