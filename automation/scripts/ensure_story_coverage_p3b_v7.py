@@ -390,13 +390,16 @@ def recovery_preflight(
             stories = None
         story_affected = bool(fingerprints and _object_mentions_revoked(stories, fingerprints))
 
-    already_pending = isinstance(marker, dict) and marker.get("state") == "pending"
-    affected = bool(research_removed or report_removed or story_affected or already_pending)
-    if not affected:
+    recovery_guard_active = bool(
+        isinstance(marker, dict) and marker.get("state") in {"pending", "blocked"}
+    )
+    publication_risk = bool(research_removed or story_affected or recovery_guard_active)
+    if not publication_risk and not report_removed:
         return None
 
     stale_signal_id = str((signal or {}).get("signal_id") or "").strip()
-    marker_value: dict[str, Any] = {
+    marker_value: dict[str, Any] = copy.deepcopy(marker) if isinstance(marker, dict) else {}
+    marker_value.update({
         "version": P3B_RECOVERY_PREFLIGHT_VERSION,
         "runtime_version": P3B_RUNTIME_VERSION,
         "publication_date": publication_date,
@@ -410,23 +413,37 @@ def recovery_preflight(
         "optional_slot_journal_mutated": False,
         "research_revocations": int(research_removed),
         "prior_report_revocations": int(report_removed),
-        "stories_quarantined": bool(stories_path.is_file()),
-    }
-    if candidates_path.is_file():
+        "stories_quarantined": bool(
+            marker_value.get("stories_quarantined") or (publication_risk and stories_path.is_file())
+        ),
+    })
+    if candidates_path.is_file() and "original_candidates_sha256" not in marker_value:
         marker_value["original_candidates_sha256"] = _sha256_bytes(
             candidates_path.read_bytes()
         )
-    if report_path.is_file():
+    if report_path.is_file() and "original_report_sha256" not in marker_value:
         marker_value["original_report_sha256"] = _sha256_bytes(report_path.read_bytes())
-    if stories_path.is_file():
+    if stories_path.is_file() and "original_stories_sha256" not in marker_value:
         marker_value["original_stories_sha256"] = _sha256_bytes(stories_path.read_bytes())
-
-    # Crash ordering is intentional: pending marker first, then backups/mutations.
-    _atomic_write_json(marker_path, marker_value)
 
     candidates_backup = _backup_path(marker_path, "candidates")
     report_backup = _backup_path(marker_path, "coverage-report")
     stories_backup = _backup_path(marker_path, "stories")
+
+    if not publication_risk:
+        # Stale provenance confined to a reusable report can be removed offline
+        # without invalidating an otherwise clean complete artifact.
+        marker_value["state"] = "completed"
+        marker_value["reason"] = "stale_positive_p3b_prior_report_sanitized"
+        _atomic_write_json(marker_path, marker_value)
+        _backup_once(report_path, report_backup)
+        if report_path.is_file() and sanitized_report is not None:
+            _atomic_write_json(report_path, sanitized_report)
+        return None
+
+    # Crash ordering is intentional: pending marker first, then backups/mutations.
+    _atomic_write_json(marker_path, marker_value)
+
     _backup_once(candidates_path, candidates_backup)
     _backup_once(report_path, report_backup)
     _backup_once(stories_path, stories_backup)
