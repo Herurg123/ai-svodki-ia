@@ -4,16 +4,17 @@
 v7 does not change the durable optional-slot request identity or binder semantics.
 Binder v4 still uses durable VERSION=2 and semantic EVIDENCE_VERSION=6. The v7
 change closes a production integration gap above ``execute_audit_plan``: an old
-complete artifact or a reusable prior Coverage report could previously bypass the
+complete artifact or reusable Coverage recovery input could previously bypass the
 v6 stale-positive postcondition entirely.
 
 Before the historical production main is allowed to inspect complete/reusable
 artifacts, v7 deterministically revokes only provenance-bound candidates admitted
-by stale positive P3b evidence, writes a durable pending marker, and quarantines
-``stories.json`` so the stale complete snapshot cannot take an early-success or
-editorial-fallback path. The optional-slot journal is deliberately left byte-for-
-byte unchanged. A successful child run must rebuild a clean story set before the
-marker can become completed; crashes and failures leave publication fail-closed.
+by stale positive P3b evidence, writes a durable pending marker, sanitizes both
+current and persisted recovery research, and quarantines ``stories.json`` when the
+publishable snapshot can be affected. The optional-slot journal is deliberately
+left byte-for-byte unchanged. A successful child run must rebuild a clean story
+set before an invalidating marker can become completed; crashes and failures keep
+publication fail-closed.
 """
 from __future__ import annotations
 
@@ -59,6 +60,7 @@ _V7_INTERNALS = {
     "_read_json",
     "_cli_arg",
     "_revocation_marker_path",
+    "_persisted_research_path",
     "_backup_path",
     "_load_stale_positive_snapshot",
     "_signal_from_marker_or_snapshot",
@@ -153,6 +155,10 @@ def _cli_arg(name: str) -> str | None:
 
 def _revocation_marker_path(state_dir: Path, publication_date: str) -> Path:
     return Path(state_dir) / f"{_REVOCATION_PREFIX}{publication_date}.json"
+
+
+def _persisted_research_path(state_dir: Path, publication_date: str) -> Path:
+    return Path(state_dir) / f"coverage-audit-merged-candidates-{publication_date}.json"
 
 
 def _backup_path(marker_path: Path, kind: str) -> Path:
@@ -334,14 +340,16 @@ def recovery_preflight(
 ) -> dict[str, Any] | None:
     """Quarantine stale-positive production reuse before historical main runs.
 
-    The durable optional-slot journal is read-only here. The pending marker is
-    written before artifact mutation so any crash leaves a deterministic reason to
-    deny complete-snapshot reuse on the next run.
+    The durable optional-slot journal is read-only here. A pending marker is
+    written before mutation. Persisted merged research and the reusable Coverage
+    report are sanitized with the same exact v6 provenance predicate because both
+    are later recovery inputs, even when the current complete digest is clean.
     """
     state_dir = Path(state_dir if state_dir is not None else STATE_DIR)
     artifact_dir = Path(artifact_dir)
     report_path = Path(report_path)
     marker_path = _revocation_marker_path(state_dir, publication_date)
+    persisted_research_path = _persisted_research_path(state_dir, publication_date)
     marker = _load_marker(marker_path)
     stale_snapshot = _load_stale_positive_snapshot(state_dir, publication_date)
     signal = _signal_from_marker_or_snapshot(marker, stale_snapshot)
@@ -365,7 +373,6 @@ def recovery_preflight(
     candidates_path = artifact_dir / "candidates.json"
     stories_path = artifact_dir / "stories.json"
 
-    research: Any = None
     sanitized_research: Any = None
     research_removed = 0
     if candidates_path.is_file():
@@ -374,7 +381,14 @@ def recovery_preflight(
             research, signal
         )
 
-    report: Any = None
+    sanitized_persisted_research: Any = None
+    persisted_research_removed = 0
+    if persisted_research_path.is_file():
+        persisted_research = _read_json(persisted_research_path)
+        sanitized_persisted_research, persisted_research_removed = (
+            _sanitize_candidate_containers(persisted_research, signal)
+        )
+
     sanitized_report: Any = None
     report_removed = 0
     if report_path.is_file():
@@ -388,38 +402,72 @@ def recovery_preflight(
             stories = _read_json(stories_path)
         except Exception:
             stories = None
-        story_affected = bool(fingerprints and _object_mentions_revoked(stories, fingerprints))
+        story_affected = bool(
+            fingerprints and _object_mentions_revoked(stories, fingerprints)
+        )
 
-    recovery_guard_active = bool(
+    marker_active = bool(
         isinstance(marker, dict) and marker.get("state") in {"pending", "blocked"}
     )
-    publication_risk = bool(research_removed or story_affected or recovery_guard_active)
-    if not publication_risk and not report_removed:
+    # Markers written before this field existed are treated conservatively as
+    # publication-invalidating. A recovery-input-only cleanup explicitly stores
+    # False so a crash during report/merged-research sanitation does not destroy
+    # an otherwise proven-clean complete digest on restart.
+    publication_guard_active = bool(
+        marker_active and (marker or {}).get("publication_snapshot_invalidated") is not False
+    )
+    publication_risk = bool(
+        research_removed or story_affected or publication_guard_active
+    )
+    recovery_inputs_need_cleanup = bool(
+        report_removed or persisted_research_removed
+    )
+    if not publication_risk and not recovery_inputs_need_cleanup:
         return None
 
     stale_signal_id = str((signal or {}).get("signal_id") or "").strip()
     marker_value: dict[str, Any] = copy.deepcopy(marker) if isinstance(marker, dict) else {}
-    marker_value.update({
-        "version": P3B_RECOVERY_PREFLIGHT_VERSION,
-        "runtime_version": P3B_RUNTIME_VERSION,
-        "publication_date": publication_date,
-        "state": "pending",
-        "reason": "stale_positive_p3b_candidate_revocation",
-        "stale_signal_id": stale_signal_id or None,
-        "binder_evidence_version_required": P3B_BINDER_EVIDENCE_VERSION,
-        "revoked_candidate_fingerprints": fingerprints,
-        "artifact_dir": str(artifact_dir),
-        "report_path": str(report_path),
-        "optional_slot_journal_mutated": False,
-        "research_revocations": int(research_removed),
-        "prior_report_revocations": int(report_removed),
-        "stories_quarantined": bool(
-            marker_value.get("stories_quarantined") or (publication_risk and stories_path.is_file())
-        ),
-    })
+    publication_snapshot_invalidated = bool(
+        marker_value.get("publication_snapshot_invalidated") is True
+        or publication_risk
+    )
+    marker_value.update(
+        {
+            "version": P3B_RECOVERY_PREFLIGHT_VERSION,
+            "runtime_version": P3B_RUNTIME_VERSION,
+            "publication_date": publication_date,
+            "state": "pending",
+            "reason": "stale_positive_p3b_candidate_revocation",
+            "stale_signal_id": stale_signal_id or None,
+            "binder_evidence_version_required": P3B_BINDER_EVIDENCE_VERSION,
+            "revoked_candidate_fingerprints": fingerprints,
+            "artifact_dir": str(artifact_dir),
+            "report_path": str(report_path),
+            "persisted_research_path": str(persisted_research_path),
+            "optional_slot_journal_mutated": False,
+            "publication_snapshot_invalidated": publication_snapshot_invalidated,
+            "research_revocations": int(research_removed),
+            "persisted_research_revocations": int(persisted_research_removed),
+            "prior_report_revocations": int(report_removed),
+            "stories_quarantined": bool(
+                marker_value.get("stories_quarantined")
+                or (
+                    publication_snapshot_invalidated
+                    and stories_path.is_file()
+                )
+            ),
+        }
+    )
     if candidates_path.is_file() and "original_candidates_sha256" not in marker_value:
         marker_value["original_candidates_sha256"] = _sha256_bytes(
             candidates_path.read_bytes()
+        )
+    if (
+        persisted_research_path.is_file()
+        and "original_persisted_research_sha256" not in marker_value
+    ):
+        marker_value["original_persisted_research_sha256"] = _sha256_bytes(
+            persisted_research_path.read_bytes()
         )
     if report_path.is_file() and "original_report_sha256" not in marker_value:
         marker_value["original_report_sha256"] = _sha256_bytes(report_path.read_bytes())
@@ -427,32 +475,57 @@ def recovery_preflight(
         marker_value["original_stories_sha256"] = _sha256_bytes(stories_path.read_bytes())
 
     candidates_backup = _backup_path(marker_path, "candidates")
+    persisted_research_backup = _backup_path(marker_path, "merged-research")
     report_backup = _backup_path(marker_path, "coverage-report")
     stories_backup = _backup_path(marker_path, "stories")
 
-    if not publication_risk:
-        # Report-only sanitation is still two-phase: a crash must never leave a
-        # completed marker pointing at an unsanitized reusable report.
+    if not publication_snapshot_invalidated:
+        # Recovery-input-only sanitation is still two-phase: pending first, then
+        # first forensic backups, then mutations, then completed. The explicit
+        # non-invalidating marker scope lets a restart resume without needlessly
+        # quarantining a clean complete digest.
         _atomic_write_json(marker_path, marker_value)
+        _backup_once(persisted_research_path, persisted_research_backup)
         _backup_once(report_path, report_backup)
+        if (
+            persisted_research_path.is_file()
+            and sanitized_persisted_research is not None
+        ):
+            _atomic_write_json(
+                persisted_research_path, sanitized_persisted_research
+            )
         if report_path.is_file() and sanitized_report is not None:
             _atomic_write_json(report_path, sanitized_report)
         marker_value["state"] = "completed"
-        marker_value["reason"] = "stale_positive_p3b_prior_report_sanitized"
+        marker_value["reason"] = "stale_positive_p3b_recovery_inputs_sanitized"
+        if persisted_research_path.is_file():
+            marker_value["clean_persisted_research_sha256"] = _sha256_bytes(
+                persisted_research_path.read_bytes()
+            )
         if report_path.is_file():
-            marker_value["clean_report_sha256"] = _sha256_bytes(report_path.read_bytes())
+            marker_value["clean_report_sha256"] = _sha256_bytes(
+                report_path.read_bytes()
+            )
         _atomic_write_json(marker_path, marker_value)
         return None
 
-    # Crash ordering is intentional: pending marker first, then backups/mutations.
+    # Crash ordering is intentional: pending invalidating marker first, then
+    # first backups, then mutations. A restart therefore cannot accept the old
+    # complete publication snapshot even if it crashed before stories unlink.
     _atomic_write_json(marker_path, marker_value)
 
     _backup_once(candidates_path, candidates_backup)
+    _backup_once(persisted_research_path, persisted_research_backup)
     _backup_once(report_path, report_backup)
     _backup_once(stories_path, stories_backup)
 
     if candidates_path.is_file() and sanitized_research is not None:
         _atomic_write_json(candidates_path, sanitized_research)
+    if (
+        persisted_research_path.is_file()
+        and sanitized_persisted_research is not None
+    ):
+        _atomic_write_json(persisted_research_path, sanitized_persisted_research)
     if report_path.is_file() and sanitized_report is not None:
         _atomic_write_json(report_path, sanitized_report)
     if stories_path.is_file():
@@ -461,6 +534,7 @@ def recovery_preflight(
     context = copy.deepcopy(marker_value)
     context["marker_path"] = str(marker_path)
     context["candidate_backup_path"] = str(candidates_backup)
+    context["persisted_research_backup_path"] = str(persisted_research_backup)
     context["report_backup_path"] = str(report_backup)
     context["stories_backup_path"] = str(stories_backup)
     return context
@@ -489,6 +563,10 @@ def _postflight(
 
     candidates_path = Path(artifact_dir) / "candidates.json"
     stories_path = Path(artifact_dir) / "stories.json"
+    persisted_research_path = _persisted_research_path(
+        Path(report_path).parent,
+        str(context.get("publication_date") or ""),
+    )
     failures: list[str] = []
 
     if not candidates_path.is_file():
@@ -497,7 +575,19 @@ def _postflight(
         research = _read_json(candidates_path)
         _cleaned, removed = _sanitize_candidate_containers(research, signal)
         if removed:
-            failures.append("rebuilt candidates.json still contains stale P3b provenance")
+            failures.append(
+                "rebuilt candidates.json still contains stale P3b provenance"
+            )
+
+    if persisted_research_path.is_file():
+        persisted_research = _read_json(persisted_research_path)
+        _cleaned, removed = _sanitize_candidate_containers(
+            persisted_research, signal
+        )
+        if removed:
+            failures.append(
+                "persisted merged research still contains stale P3b provenance"
+            )
 
     if report_path.is_file():
         report = _read_json(report_path)
@@ -510,7 +600,9 @@ def _postflight(
     else:
         stories = _read_json(stories_path)
         if fingerprints and _object_mentions_revoked(stories, fingerprints):
-            failures.append("rebuilt stories.json still references revoked P3b candidate")
+            failures.append(
+                "rebuilt stories.json still references revoked P3b candidate"
+            )
 
     marker = _load_marker(marker_path) or copy.deepcopy(context)
     if failures:
@@ -523,6 +615,10 @@ def _postflight(
     marker["postflight_errors"] = []
     marker["clean_candidates_sha256"] = _sha256_bytes(candidates_path.read_bytes())
     marker["clean_stories_sha256"] = _sha256_bytes(stories_path.read_bytes())
+    if persisted_research_path.is_file():
+        marker["clean_persisted_research_sha256"] = _sha256_bytes(
+            persisted_research_path.read_bytes()
+        )
     if report_path.is_file():
         marker["clean_report_sha256"] = _sha256_bytes(report_path.read_bytes())
     _atomic_write_json(marker_path, marker)
