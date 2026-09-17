@@ -80,7 +80,10 @@ def __getattr__(name: str) -> Any:
 
 def _install_revocation_predicate() -> None:
     # v6 migration and v7 sanitation must use one predicate or the durable stale
-    # snapshot can re-admit a row immediately after preflight removed it.
+    # snapshot can re-admit a row immediately after preflight removed it. Install
+    # it on the reviewed base as well: its nested compatibility sync mirrors that
+    # global into v6 immediately before child execution.
+    _base._without_stale_p3b_candidates = _without_stale_p3b_candidates
     _base._v6._without_stale_p3b_candidates = _without_stale_p3b_candidates
 
 
@@ -341,6 +344,26 @@ def _validate_optional_slot_journal(
         # Validates saved-response existence, bytes hash and JSON decoding. No
         # provider replay or page fetch occurs.
         load_raw_response(state_dir, publication_date)
+    if state == "processed":
+        # Both the legacy unverified owner and P3b persist the complete Coverage
+        # plan as the deterministic processed snapshot. A processed state without
+        # that plan is durable corruption, not equivalent to "no P3b evidence".
+        processed = journal.get("processed_snapshot")
+        if not isinstance(processed, dict):
+            raise CoverageSlotError(
+                "processed Coverage optional-slot journal is missing its deterministic processed snapshot"
+            )
+        if not isinstance(processed.get("candidates"), list):
+            raise CoverageSlotError(
+                "processed Coverage optional-slot snapshot has invalid candidates"
+            )
+        budget = processed.get("search_budget")
+        if not isinstance(budget, dict) or not all(
+            key in budget for key in ("maximum_calls", "completed_calls", "remaining_calls")
+        ):
+            raise CoverageSlotError(
+                "processed Coverage optional-slot snapshot has invalid search budget"
+            )
 
     search_window: dict[str, Any] | None = None
     candidates_path = Path(artifact_dir) / "candidates.json"
