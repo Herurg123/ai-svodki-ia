@@ -364,6 +364,25 @@ def _validate_optional_slot_journal(
             raise CoverageSlotError(
                 "processed Coverage optional-slot snapshot has invalid search budget"
             )
+        processed_window = processed.get("search_window")
+        if not isinstance(processed_window, dict):
+            raise CoverageSlotError(
+                "processed Coverage optional-slot snapshot has no durable search-window identity"
+            )
+        if sha256_value(processed_window) != str(journal.get("search_window_sha256") or ""):
+            raise CoverageSlotError(
+                "processed Coverage optional-slot snapshot search-window identity mismatch"
+            )
+        try:
+            processed_bundle = _base._v6._P3A._bundle_identity(processed)
+        except Exception as exc:
+            raise CoverageSlotError(
+                f"processed Coverage optional-slot snapshot bundle identity is not provable: {exc}"
+            ) from exc
+        if sha256_value(processed_bundle) != str(journal.get("bundle_identity_sha256") or ""):
+            raise CoverageSlotError(
+                "processed Coverage optional-slot snapshot bundle identity mismatch"
+            )
 
     search_window: dict[str, Any] | None = None
     candidates_path = Path(artifact_dir) / "candidates.json"
