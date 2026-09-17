@@ -16,7 +16,13 @@ from editorial_policy import validate_diversity_overrides  # noqa: E402
 POLICY_PATH = ROOT / "automation" / "config" / "editorial.json"
 PROMPT_PATH = ROOT / "automation" / "prompts" / "daily_digest.md"
 SPEC_PATH = ROOT / "automation" / "specs" / "editorial-policy.md"
-AUG15_CANDIDATES_PATH = ROOT / "automation" / "content" / "2026-08-15" / "candidates.json"
+AUG15_CANDIDATES_PATH = (
+    ROOT
+    / "automation"
+    / "fixtures"
+    / "editorial"
+    / "short-pool-diversity-2026-08-15.json"
+)
 
 
 def _baseline_eligible(candidate: dict, policy: dict) -> bool:
