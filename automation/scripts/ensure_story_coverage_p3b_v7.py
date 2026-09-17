@@ -38,7 +38,13 @@ _base = importlib.util.module_from_spec(_BASE_SPEC)
 sys.modules[_BASE_SPEC.name] = _base
 _BASE_SPEC.loader.exec_module(_base)
 
+# Preserve wrapper-owned loader bindings. The reviewed baseline itself re-exports
+# historical private names (including ``_base``), and copying that binding would
+# make the remediation layer accidentally call into a much older runtime module.
+_WRAPPER_LOADER_NAMES = {"_base", "_BASE_PATH", "_BASE_SPEC", "_WRAPPER_LOADER_NAMES"}
 for _name, _value in list(vars(_base).items()):
+    if _name in _WRAPPER_LOADER_NAMES:
+        continue
     if not (_name.startswith("__") and _name.endswith("__")):
         globals()[_name] = _value
 
@@ -50,6 +56,7 @@ _REMEDIATION_INTERNALS = {
     "_base",
     "_BASE_PATH",
     "_BASE_SPEC",
+    "_WRAPPER_LOADER_NAMES",
     "_REMEDIATION_INTERNALS",
     "_sync_p3b_public_hooks",
     "_candidate_is_stale_historical_p3b",
