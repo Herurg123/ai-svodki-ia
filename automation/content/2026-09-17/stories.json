@@ -1,0 +1,222 @@
+[
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Amazon запустила Alexa+ в Индии с поддержкой хинди и локальными сервисами",
+    "organization": "Amazon; Alexa+",
+    "topic": "Consumer AI; разговорный ассистент; Индия; локализация и сервисные интеграции",
+    "event_type": "market launch",
+    "status": "new",
+    "summary": "Amazon объявила о раннем доступе к генеративному ассистенту Alexa+ в Индии на хинди и английском. Сервис получил локальные интеграции с индийскими сервисами доставки, бронирования и музыки; после тестового периода он должен стать бесплатным для подписчиков Prime.",
+    "published_at": "2026-09-16T10:34:47+00:00",
+    "published_date": "2026-09-16",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Amazon launches Alexa+ in India with Hindi support",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/16/amazon-launches-alexa-in-india-with-hindi-support/"
+      }
+    ],
+    "keywords": [
+      "Amazon",
+      "Alexa+",
+      "India",
+      "Hindi",
+      "Swiggy",
+      "Zomato",
+      "MakeMyTrip",
+      "generative AI assistant"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Google открыла ранний доступ к Google Home MCP для внешних агентов ИИ",
+    "organization": "Google; Google Home; Google Cloud",
+    "topic": "Consumer AI; MCP; агентные интеграции; умный дом",
+    "event_type": "product integration rollout",
+    "status": "new",
+    "summary": "Google начала выдавать подписчикам Google Home Premium Advanced в США ранний доступ к MCP-серверу Google Home. Он позволяет совместимым ИИ-агентам подключаться к устройствам и истории событий Google Home для управления устройствами, просмотра сводок камер и создания собственных панелей управления.",
+    "published_at": "2026-09-16T17:00:00+00:00",
+    "published_date": "2026-09-16",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Your AI agents can now control your Google Home devices",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/16/your-ai-agents-can-now-control-your-google-home-devices/"
+      }
+    ],
+    "keywords": [
+      "Google Home",
+      "MCP",
+      "AI agents",
+      "Claude",
+      "ChatGPT",
+      "Antigravity",
+      "smart home"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Anthropic объединила Claude Chat, Cowork и Artifacts в одном интерфейсе",
+    "organization": "Anthropic; Claude; Cowork; Artifacts",
+    "topic": "Consumer AI; агентный интерфейс; документы и презентации",
+    "event_type": "product update",
+    "status": "new",
+    "summary": "Anthropic объединила режимы Claude Chat, Cowork и Artifacts в одном окне и добавила в общий интерфейс функции создания, редактирования и презентации слайдов и документов. Сначала обновление разворачивается для тарифов Pro и Max.",
+    "published_at": "2026-09-16T16:30:00+00:00",
+    "published_date": "2026-09-16",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic merges Claude chat and Cowork in one interface",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/16/anthropic-merges-claude-chat-and-cowork-in-one-interface/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "Cowork",
+      "Artifacts",
+      "Claude Design",
+      "documents",
+      "presentations"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-012",
+    "section": "world",
+    "headline": "Emerald AI, Google и NVIDIA запустили альянс гибких ИИ-дата-центров",
+    "organization": "NVIDIA",
+    "topic": "Emerald AI, Google and NVIDIA Launch Alliance to Advance Flexible AI Data Centers",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "The AI Energy Management Alliance brings together the full AI and power value chain to accelerate the interconnection of flexible, grid-enhancing data centers, strengthen reliability and protect affordability.",
+    "published_at": "2026-09-16T13:00:33+00:00",
+    "published_date": "2026-09-16",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Emerald AI, Google and NVIDIA Launch Alliance to Advance Flexible AI Data Centers",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/ai-energy-management-alliance"
+      }
+    ],
+    "keywords": [
+      "Emerald",
+      "Google",
+      "NVIDIA",
+      "Launch",
+      "Alliance",
+      "Advance",
+      "Flexible",
+      "Data",
+      "Centers"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-017",
+    "section": "world",
+    "headline": "OpenAI опубликовала рамку раскрытия model misalignment",
+    "organization": "OpenAI",
+    "topic": "Our framework for reporting model misalignment",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Our framework for reporting model misalignment",
+    "published_at": "2026-09-16T17:00:00+00:00",
+    "published_date": "2026-09-16",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Our framework for reporting model misalignment",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/model-misalignment-reporting-framework"
+      }
+    ],
+    "keywords": [
+      "Our",
+      "framework",
+      "reporting",
+      "model",
+      "misalignment"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-018",
+    "section": "world",
+    "headline": "Google вложит $15 млрд в ИИ-инфраструктуру Финляндии и закрепит атомную генерацию",
+    "organization": "Google; Alphabet; Fortum; Loviisa Nuclear Power Plant",
+    "topic": "AI-дата-центры; энергоснабжение; европейская облачная инфраструктура",
+    "event_type": "capital investment and energy procurement",
+    "status": "new",
+    "summary": "Alphabet объявила о вложении $15 млрд в Финляндии: проект включает три новых дата-центра, расширение существующего объекта в Хамине и долгосрочное энергоснабжение. По сообщению TechRadar, соглашение с Fortum позволит проекту получать до 500 МВт от АЭС Loviisa — до половины ее выработки.",
+    "published_at": "2026-09-15T17:05:00+00:00",
+    "published_date": "2026-09-15",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google invests $15bn in Finland and secures 500 MW power from Soviet-era nuclear power plant till 2050",
+        "publisher": "TechRadar",
+        "url": "https://www.techradar.com/pro/google-invests-usd15bn-in-finland-and-secures-500-mw-power-from-soviet-era-nuclear-power-plant-till-2050"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Alphabet",
+      "Finland",
+      "AI data centers",
+      "cloud infrastructure",
+      "nuclear power",
+      "Fortum",
+      "Loviisa",
+      "$15 billion"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-019",
+    "section": "world",
+    "headline": "SpaceXAI добавила постоянную память в coding-агент Grok Build",
+    "organization": "SpaceXAI (xAI); Grok Build",
+    "topic": "Coding agents; persistent project memory; cross-session context",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "SpaceXAI объявила, что Grok Build получил встроенную память между сессиями: агент в фоне сохраняет устойчивые сведения о проекте — соглашения, решения и факты — в Markdown-файлы, затем читает релевантные заметки перед работой в новых сессиях. Добавлены команды /memory для просмотра файлов памяти и /dream для их периодической организации по темам.",
+    "published_at": "2026-09-16T00:00:00+00:00",
+    "published_date": "2026-09-16",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Memory in Grok Build",
+        "publisher": "SpaceXAI",
+        "url": "https://x.ai/news/grok-build-memory"
+      }
+    ],
+    "keywords": [
+      "Grok Build",
+      "coding agent",
+      "persistent memory",
+      "project context",
+      "Markdown notes",
+      "/memory",
+      "/dream"
+    ],
+    "geography": "world",
+    "category": "coding"
+  }
+]

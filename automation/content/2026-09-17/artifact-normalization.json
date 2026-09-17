@@ -1,0 +1,20 @@
+{
+  "status": "ok",
+  "artifact_dir": "automation/preview/2026-09-17",
+  "changed_files": [
+    "editorial-output-raw.json"
+  ],
+  "changes": [
+    {
+      "file": "editorial-output-raw.json",
+      "field": "$.digest.image_prompt",
+      "added_constraints": [
+        "без дополнительного текста",
+        "без водяных знаков",
+        "без узнаваемых лиц"
+      ]
+    }
+  ],
+  "warnings": [],
+  "removed_stale_validation": false
+}

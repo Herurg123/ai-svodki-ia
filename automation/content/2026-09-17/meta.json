@@ -1,0 +1,40 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-17",
+  "slug": "2026-09-17",
+  "title": "ИИ-Сводка на 17 сентября 2026",
+  "description": "Google и NVIDIA объединяют энергетику и ИИ-дата-центры, Google вкладывает $15 млрд в Финляндию, а OpenAI формализует раскрытие misalignment. В фокусе также Alexa+, Google Home MCP, Claude и Grok Build.",
+  "published_at": "2026-09-17T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-17.png",
+  "topics": [
+    "ИИ-дата-центры",
+    "энергоснабжение",
+    "Google",
+    "NVIDIA",
+    "Alexa+",
+    "Google Home MCP",
+    "агенты ИИ",
+    "Anthropic",
+    "Claude",
+    "OpenAI",
+    "misalignment",
+    "Grok Build",
+    "ИИ-кодинг",
+    "Финляндия"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_integrations, russia, developer_tools."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Три независимых продуктовых события — запуск Alexa+ в Индии, Google Home MCP и объединение интерфейсов Claude — составляют значимую часть небольшого, но достаточного пула подтверждённых новостей и не являются дублями."
+    }
+  ]
+}
