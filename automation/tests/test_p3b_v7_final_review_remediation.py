@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import sys
 import tempfile
@@ -28,8 +29,6 @@ def _write(path: Path, value) -> None:
 
 
 def _v1_candidate(candidate_id: str = "historical-v1") -> dict:
-    # Exact production shape emitted by the preserved original P3b admission:
-    # no authoritative-page URL/proof fields existed yet.
     return {
         "id": candidate_id,
         "title": "Historical P3b v1 candidate",
@@ -67,7 +66,6 @@ def _same_looking_unrelated() -> dict:
         "title": "Historical P3b v1 candidate",
         "audit_direction": "weak_source_exact_binding",
         "p3b_exact_binding_version": 1,
-        # Exact stale signal provenance is deliberately absent.
         "primary_source": {
             "title": "Historical P3b v1 candidate",
             "publisher": "Example",
@@ -109,7 +107,7 @@ class P3bV7FinalReviewRemediationTests(unittest.TestCase):
             "search_window": dict(SEARCH_WINDOW),
             "checked_directions": list(v7.AUDIT_DIRECTION_IDS),
             "attempts": [],
-            "candidates": candidates,
+            "candidates": copy.deepcopy(candidates),
             "search_budget": {
                 "maximum_calls": 7,
                 "completed_calls": 7,
@@ -139,7 +137,9 @@ class P3bV7FinalReviewRemediationTests(unittest.TestCase):
         )
         reservation.mark_request_started()
         reservation.save_raw_response({"id": "saved-response", "output": []})
-        reservation.mark_processed(snapshot)
+        production_snapshot = copy.deepcopy(plan)
+        production_snapshot.update(copy.deepcopy(snapshot))
+        reservation.mark_processed(production_snapshot)
         return self.journal.read_bytes()
 
     def _stale_snapshot(self, candidate: dict) -> dict:
@@ -253,7 +253,7 @@ class P3bV7FinalReviewRemediationTests(unittest.TestCase):
 
         for key in ("search_window_sha256", "bundle_identity_sha256"):
             with self.subTest(key=key):
-                changed = dict(journal)
+                changed = copy.deepcopy(journal)
                 changed[key] = "f" * 64
                 _write(self.journal, changed)
                 with self.assertRaises(CoverageSlotError):

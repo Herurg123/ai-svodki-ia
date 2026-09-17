@@ -32,12 +32,20 @@ def _write(path: Path, value) -> None:
     )
 
 
-def _plan(publication_date: str) -> dict:
+def _plan(publication_date: str, *, response_id: str) -> dict:
     return {
         "publication_date": publication_date,
         "search_window": copy.deepcopy(SEARCH_WINDOW),
         "checked_directions": list(v7.AUDIT_DIRECTION_IDS),
-        "attempts": [],
+        "attempts": [
+            {
+                "direction_id": v7.AUDIT_DIRECTION_IDS[0],
+                "actual_queries": ["bundle identity control query"],
+                "candidate_count": 0,
+                "filtered_quality": {},
+                "api": {"response_id": response_id},
+            }
+        ],
         "candidates": [],
         "search_budget": {
             "maximum_calls": 7,
@@ -47,11 +55,11 @@ def _plan(publication_date: str) -> dict:
     }
 
 
-def _foreign_current_snapshot() -> dict:
-    snapshot = _plan(FOREIGN_DATE)
+def _current_snapshot(plan: dict, *, candidate_id: str) -> dict:
+    snapshot = copy.deepcopy(plan)
     snapshot["candidates"] = [
         {
-            "id": "foreign-current-p3b",
+            "id": candidate_id,
             "title": "Foreign current-shape P3b candidate",
             "audit_direction": "weak_source_exact_binding",
             "resolution_signal_ids": [SIGNAL_ID],
@@ -81,7 +89,9 @@ def _foreign_current_snapshot() -> dict:
 
 
 class P3bV7ProcessedSnapshotIdentityTests(unittest.TestCase):
-    def test_foreign_processed_snapshot_fails_closed_without_io_or_mutation(self) -> None:
+    def _assert_foreign_snapshot_rejected(
+        self, *, current_plan: dict, foreign_snapshot: dict
+    ) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             state = root / "production-daily"
@@ -91,7 +101,6 @@ class P3bV7ProcessedSnapshotIdentityTests(unittest.TestCase):
             state.mkdir(parents=True)
             artifact.mkdir(parents=True)
 
-            current_plan = _plan(DATE)
             _write(artifact / "candidates.json", current_plan)
             reservation = prepare_slot(
                 state_dir=state,
@@ -112,7 +121,7 @@ class P3bV7ProcessedSnapshotIdentityTests(unittest.TestCase):
             )
             reservation.mark_request_started()
             reservation.save_raw_response({"id": "saved-response", "output": []})
-            reservation.mark_processed(_foreign_current_snapshot())
+            reservation.mark_processed(foreign_snapshot)
             before = journal_path.read_bytes()
 
             with (
@@ -145,6 +154,30 @@ class P3bV7ProcessedSnapshotIdentityTests(unittest.TestCase):
                 (0, 0, 0),
             )
             self.assertEqual(journal_path.read_bytes(), before)
+
+    def test_foreign_date_processed_snapshot_fails_closed_without_io_or_mutation(self) -> None:
+        current_plan = _plan(DATE, response_id="bundle-a")
+        foreign_plan = _plan(FOREIGN_DATE, response_id="bundle-a")
+        self._assert_foreign_snapshot_rejected(
+            current_plan=current_plan,
+            foreign_snapshot=_current_snapshot(
+                foreign_plan, candidate_id="foreign-date-current-p3b"
+            ),
+        )
+
+    def test_same_date_foreign_bundle_snapshot_fails_closed_without_io_or_mutation(self) -> None:
+        current_plan = _plan(DATE, response_id="bundle-a")
+        foreign_plan = _plan(DATE, response_id="bundle-b")
+        self.assertNotEqual(
+            v7._v6._P3A._bundle_identity(current_plan),
+            v7._v6._P3A._bundle_identity(foreign_plan),
+        )
+        self._assert_foreign_snapshot_rejected(
+            current_plan=current_plan,
+            foreign_snapshot=_current_snapshot(
+                foreign_plan, candidate_id="same-date-foreign-bundle-current-p3b"
+            ),
+        )
 
 
 if __name__ == "__main__":

@@ -115,25 +115,17 @@ class P3bV7DurableRecoveryInputsTests(unittest.TestCase):
         )
         reservation.mark_request_started()
         reservation.save_raw_response({"id": "persisted-response", "output": []})
-        reservation.mark_processed(
-            {
-                "candidates": [stale, independent],
-                "weak_source_exact_binding": {
-                    "version": v7.P3B_EXACT_BINDING_VERSION,
-                    "mode": v7.P3B_MODE,
-                    "signal_id": SIGNAL_ID,
-                    "binder_evidence_version": 5,
-                    "status": "bound_candidate",
-                    "disposition": "positive_exact_binding",
-                    "candidate_count": 1,
-                },
-                "search_budget": {
-                    "maximum_calls": 7,
-                    "completed_calls": 7,
-                    "remaining_calls": 0,
-                },
-            }
-        )
+        snapshot = copy.deepcopy(plan)
+        snapshot["weak_source_exact_binding"] = {
+            "version": v7.P3B_EXACT_BINDING_VERSION,
+            "mode": v7.P3B_MODE,
+            "signal_id": SIGNAL_ID,
+            "binder_evidence_version": 5,
+            "status": "bound_candidate",
+            "disposition": "positive_exact_binding",
+            "candidate_count": 1,
+        }
+        reservation.mark_processed(snapshot)
 
     def test_persisted_research_only_is_sanitized_without_invalidating_clean_digest(self) -> None:
         independent = _independent()

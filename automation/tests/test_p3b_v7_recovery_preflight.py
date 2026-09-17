@@ -77,23 +77,17 @@ def _plan(candidates: list[dict]) -> dict:
 
 
 def _snapshot(*, binder_evidence_version: int, candidates: list[dict]) -> dict:
-    return {
-        "candidates": copy.deepcopy(candidates),
-        "weak_source_exact_binding": {
-            "version": v7.P3B_EXACT_BINDING_VERSION,
-            "mode": v7.P3B_MODE,
-            "signal_id": SIGNAL_ID,
-            "binder_evidence_version": binder_evidence_version,
-            "status": "bound_candidate",
-            "disposition": "positive_exact_binding",
-            "candidate_count": 1,
-        },
-        "search_budget": {
-            "maximum_calls": 7,
-            "completed_calls": 7,
-            "remaining_calls": 0,
-        },
+    result = _plan(candidates)
+    result["weak_source_exact_binding"] = {
+        "version": v7.P3B_EXACT_BINDING_VERSION,
+        "mode": v7.P3B_MODE,
+        "signal_id": SIGNAL_ID,
+        "binder_evidence_version": binder_evidence_version,
+        "status": "bound_candidate",
+        "disposition": "positive_exact_binding",
+        "candidate_count": 1,
     }
+    return result
 
 
 class P3bV7RecoveryPreflightTests(unittest.TestCase):

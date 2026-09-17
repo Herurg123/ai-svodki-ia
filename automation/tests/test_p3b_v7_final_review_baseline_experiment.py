@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import os
 import subprocess
@@ -13,6 +14,7 @@ BASELINE = SCRIPTS / "ensure_story_coverage_p3b_v7_base.py"
 PROPOSED = SCRIPTS / "ensure_story_coverage_p3b_v7.py"
 
 _RUNNER = r'''
+import copy
 import importlib.util
 import json
 import sys
@@ -70,10 +72,10 @@ def unrelated():
 def plan(candidates):
     return {
         "publication_date": DATE,
-        "search_window": WINDOW,
+        "search_window": copy.deepcopy(WINDOW),
         "checked_directions": list(mod.AUDIT_DIRECTION_IDS),
         "attempts": [],
-        "candidates": candidates,
+        "candidates": copy.deepcopy(candidates),
         "search_budget": {
             "maximum_calls": 7,
             "completed_calls": 7,
@@ -165,25 +167,17 @@ with tempfile.TemporaryDirectory() as tmp:
         )
         reservation.mark_request_started()
         reservation.save_raw_response({"id": "experiment-response", "output": []})
-        reservation.mark_processed(
-            {
-                "candidates": [current],
-                "weak_source_exact_binding": {
-                    "version": mod.P3B_EXACT_BINDING_VERSION,
-                    "mode": mod.P3B_MODE,
-                    "signal_id": SIGNAL,
-                    "binder_evidence_version": mod.P3B_BINDER_EVIDENCE_VERSION,
-                    "status": "bound_candidate",
-                    "disposition": "positive_exact_binding",
-                    "candidate_count": 1,
-                },
-                "search_budget": {
-                    "maximum_calls": 7,
-                    "completed_calls": 7,
-                    "remaining_calls": 0,
-                },
-            }
-        )
+        snapshot = copy.deepcopy(research)
+        snapshot["weak_source_exact_binding"] = {
+            "version": mod.P3B_EXACT_BINDING_VERSION,
+            "mode": mod.P3B_MODE,
+            "signal_id": SIGNAL,
+            "binder_evidence_version": mod.P3B_BINDER_EVIDENCE_VERSION,
+            "status": "bound_candidate",
+            "disposition": "positive_exact_binding",
+            "candidate_count": 1,
+        }
+        reservation.mark_processed(snapshot)
         context = mod.recovery_preflight(
             publication_date=DATE,
             artifact_dir=artifact,

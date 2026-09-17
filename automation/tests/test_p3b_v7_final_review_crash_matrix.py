@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import sys
 import tempfile
@@ -63,7 +64,7 @@ def _plan(candidates: list[dict]) -> dict:
         "search_window": dict(SEARCH_WINDOW),
         "checked_directions": list(v7.AUDIT_DIRECTION_IDS),
         "attempts": [],
-        "candidates": candidates,
+        "candidates": copy.deepcopy(candidates),
         "search_budget": {
             "maximum_calls": 7,
             "completed_calls": 7,
@@ -112,25 +113,17 @@ class P3bV7FinalReviewCrashMatrixTests(unittest.TestCase):
         )
         reservation.mark_request_started()
         reservation.save_raw_response({"id": "crash-matrix-response", "output": []})
-        reservation.mark_processed(
-            {
-                "candidates": [stale, independent],
-                "weak_source_exact_binding": {
-                    "version": v7.P3B_EXACT_BINDING_VERSION,
-                    "mode": v7.P3B_MODE,
-                    "signal_id": SIGNAL_ID,
-                    "binder_evidence_version": evidence_version,
-                    "status": "bound_candidate",
-                    "disposition": "positive_exact_binding",
-                    "candidate_count": 1,
-                },
-                "search_budget": {
-                    "maximum_calls": 7,
-                    "completed_calls": 7,
-                    "remaining_calls": 0,
-                },
-            }
-        )
+        snapshot = copy.deepcopy(plan)
+        snapshot["weak_source_exact_binding"] = {
+            "version": v7.P3B_EXACT_BINDING_VERSION,
+            "mode": v7.P3B_MODE,
+            "signal_id": SIGNAL_ID,
+            "binder_evidence_version": evidence_version,
+            "status": "bound_candidate",
+            "disposition": "positive_exact_binding",
+            "candidate_count": 1,
+        }
+        reservation.mark_processed(snapshot)
 
     def _seed_recovery_input_only(self) -> None:
         self._seed_journal(evidence_version=5)
