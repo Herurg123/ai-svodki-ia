@@ -140,6 +140,15 @@ class P3bV7ExternalReviewRegressions(unittest.TestCase):
                 "list": [],
                 "scalar": "broken",
                 "empty_object": {},
+                "invalid_candidates": {
+                    "candidates": "broken",
+                    "search_budget": {
+                        "maximum_calls": 7,
+                        "completed_calls": 7,
+                        "remaining_calls": 0,
+                    },
+                },
+                "invalid_budget": {"candidates": [], "search_budget": {}},
             }
             for name, replacement in cases.items():
                 with self.subTest(name=name):
@@ -156,6 +165,51 @@ class P3bV7ExternalReviewRegressions(unittest.TestCase):
                             report_path=report,
                             state_dir=state,
                         )
+
+    def test_valid_generic_processed_plan_remains_reusable(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            state = root / "production-daily"
+            artifact = root / DATE
+            report = state / "coverage-audit.json"
+            state.mkdir(parents=True)
+            artifact.mkdir(parents=True)
+
+            plan = _plan()
+            _write(artifact / "candidates.json", plan)
+            reservation = prepare_slot(
+                state_dir=state,
+                publication_date=DATE,
+                owner=v7.P3B_SLOT_OWNER,
+                search_window=SEARCH_WINDOW,
+                request_contract={
+                    "version": 1,
+                    "strategy": "unverified_resolution",
+                    "model": "gpt-test",
+                    "query": "legacy resolution query",
+                    "prompt_sha256": "legacy-fixture-prompt",
+                    "signal_ids": ["legacy-unverified-signal"],
+                    "maximum_web_search_calls": 1,
+                    "allowed_domains": [],
+                },
+                bundle_identity=v7._v6._P3A._bundle_identity(plan),
+            )
+            reservation.mark_request_started()
+            reservation.save_raw_response({"id": "legacy-response", "output": []})
+            reservation.mark_processed(copy.deepcopy(plan))
+
+            context = v7.recovery_preflight(
+                publication_date=DATE,
+                artifact_dir=artifact,
+                report_path=report,
+                state_dir=state,
+            )
+
+            self.assertIsNone(context)
+            self.assertEqual(
+                json.loads((artifact / "candidates.json").read_text(encoding="utf-8")),
+                plan,
+            )
 
 
 if __name__ == "__main__":
