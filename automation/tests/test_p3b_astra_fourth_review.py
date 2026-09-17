@@ -37,7 +37,8 @@ def ga_candidate() -> dict:
 
 class AstraFourthReviewRegressions(unittest.TestCase):
     def test_public_runtime_still_uses_active_v4_binder(self) -> None:
-        self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v6")
+        self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v7")
+        self.assertTrue(coverage._impl._v6.__name__.endswith("p3b_v6_preserved"))
         self.assertIs(coverage._exact_binding, binder)
         self.assertEqual(coverage.P3B_EXACT_BINDING_VERSION, 2)
         self.assertEqual(binder.EVIDENCE_VERSION, 6)
@@ -229,10 +230,10 @@ class AstraFourthReviewRegressions(unittest.TestCase):
                 )
                 reservation.mark_processed(saved)
 
-                with mock.patch.object(coverage._impl, "STATE_DIR", state):
-                    self.assertTrue(
-                        coverage._impl._processed_positive_snapshot_is_stale(controls.DATE)
-                    )
+                stale_snapshot = coverage._impl._load_stale_positive_snapshot(
+                    state, controls.DATE
+                )
+                self.assertIsNotNone(stale_snapshot)
 
 
 if __name__ == "__main__":
