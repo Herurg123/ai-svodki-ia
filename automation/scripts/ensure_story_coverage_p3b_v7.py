@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import copy
 import importlib.util
-import json
 import sys
 from pathlib import Path
 from typing import Any
@@ -56,6 +55,8 @@ _REMEDIATION_INTERNALS = {
     "_candidate_is_stale_historical_p3b",
     "_without_stale_p3b_candidates",
     "_install_revocation_predicate",
+    "_positive_snapshot",
+    "_validate_current_p3b_request_identity",
     "_validate_optional_slot_journal",
     "_repair_recovery_input_only_marker",
     "recovery_preflight",
@@ -154,19 +155,13 @@ def _without_stale_p3b_candidates(
 _install_revocation_predicate()
 
 
-def _load_stale_positive_snapshot(
-    state_dir: Path, publication_date: str
-) -> dict[str, Any] | None:
-    """Strict equivalent of the reviewed loader: invalid journal is not absence."""
-    journal = load_journal(Path(state_dir), publication_date)
-    if not isinstance(journal, dict) or str(journal.get("state") or "") != "processed":
-        return None
+def _positive_snapshot(journal: dict[str, Any]) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
     saved = journal.get("processed_snapshot")
     if not isinstance(saved, dict):
-        return None
+        return None, None
     diagnostic = saved.get(_base._v6._v2._P3B_DIAGNOSTIC_KEY)
     if not isinstance(diagnostic, dict):
-        return copy.deepcopy(saved) if saved.get("candidates") else None
+        return (saved, None) if saved.get("candidates") else (None, None)
     positive = (
         diagnostic.get("status") == "bound_candidate"
         or diagnostic.get("disposition") == "positive_exact_binding"
@@ -177,11 +172,108 @@ def _load_stale_positive_snapshot(
             for item in saved.get("candidates") or []
         )
     )
-    if not positive:
+    return (saved, diagnostic) if positive else (None, diagnostic)
+
+
+def _load_stale_positive_snapshot(
+    state_dir: Path, publication_date: str
+) -> dict[str, Any] | None:
+    """Strict equivalent of the reviewed loader: invalid journal is not absence."""
+    journal = load_journal(Path(state_dir), publication_date)
+    if not isinstance(journal, dict) or str(journal.get("state") or "") != "processed":
         return None
+    saved, diagnostic = _positive_snapshot(journal)
+    if not isinstance(saved, dict):
+        return None
+    if not isinstance(diagnostic, dict):
+        return copy.deepcopy(saved)
     if int(diagnostic.get("binder_evidence_version", 0) or 0) == P3B_BINDER_EVIDENCE_VERSION:
         return None
     return copy.deepcopy(saved)
+
+
+def _validate_current_p3b_request_identity(
+    *,
+    journal: dict[str, Any],
+    publication_date: str,
+    search_window: dict[str, Any] | None,
+) -> None:
+    """Recompute current reusable P3b request identity when CLI inputs are present.
+
+    Stale evidence-v1..v5 is revoked rather than replayed, so current model/request
+    drift is not used to block its deterministic sanitation. For a current
+    evidence-v6 positive, however, complete/reusable recovery may rely on the
+    saved proof; model/query/prompt/signal identity must therefore still match.
+    """
+    if str(journal.get("state") or "") != "processed":
+        return
+    saved, diagnostic = _positive_snapshot(journal)
+    if not isinstance(saved, dict) or not isinstance(diagnostic, dict):
+        return
+    if int(diagnostic.get("binder_evidence_version", 0) or 0) != P3B_BINDER_EVIDENCE_VERSION:
+        return
+    if str(journal.get("owner") or "") != str(P3B_SLOT_OWNER):
+        return
+
+    model = str(_base._cli_arg("--model") or "").strip()
+    archive_raw = _base._cli_arg("--archive")
+    # Direct helper/unit callers may not have a CLI. Production main always does.
+    if not model and not archive_raw:
+        return
+    if not model or not archive_raw:
+        raise CoverageSlotError(
+            "current P3b durable request identity cannot be proven without model and archive"
+        )
+    if not isinstance(search_window, dict):
+        raise CoverageSlotError(
+            "current P3b durable request identity cannot be proven without search window"
+        )
+
+    archive_path = Path(archive_raw)
+    try:
+        archive = _base._read_json(archive_path)
+    except Exception as exc:
+        raise CoverageSlotError(
+            f"current P3b archive identity is unreadable: {exc}"
+        ) from exc
+    if not isinstance(archive, dict):
+        raise CoverageSlotError("current P3b archive identity must be an object")
+
+    try:
+        active_signal = _base._v6.select_p3b_signal(
+            _base._v6._p3b_signals(publication_date)
+        )
+    except Exception as exc:
+        raise CoverageSlotError(
+            f"current P3b signal identity cannot be reconstructed: {exc}"
+        ) from exc
+    if not isinstance(active_signal, dict):
+        raise CoverageSlotError("current P3b signal identity is no longer provable")
+    saved_signal = str(diagnostic.get("signal_id") or "").strip()
+    active_signal_id = str(active_signal.get("signal_id") or "").strip()
+    if not saved_signal or saved_signal != active_signal_id:
+        raise CoverageSlotError("current P3b signal identity drift")
+
+    try:
+        query = _base._v6.build_p3b_query(active_signal)
+        prompt = _base._v6.build_p3b_prompt(
+            search_window=search_window,
+            signal=active_signal,
+            archive=_base._v6._runtime._compact_recent_archive(archive),
+        )
+        contract = _base._v6._v2._request_contract_v2(
+            model=model,
+            query=query,
+            prompt=prompt,
+            signal=active_signal,
+        )
+        expected_hash = sha256_value(contract)
+    except Exception as exc:
+        raise CoverageSlotError(
+            f"current P3b request identity cannot be reconstructed: {exc}"
+        ) from exc
+    if str(journal.get("request_contract_sha256") or "") != expected_hash:
+        raise CoverageSlotError("current P3b request/model identity drift")
 
 
 def _validate_optional_slot_journal(
@@ -194,8 +286,8 @@ def _validate_optional_slot_journal(
 
     Missing is a normal state. Existing but malformed, structurally incompatible,
     response-corrupt, or inconsistent with the current artifact's durable
-    search-window/bundle identity is untrusted and therefore raises fail-closed.
-    The journal and saved response remain byte-for-byte untouched.
+    search-window/bundle/request identity is untrusted and therefore raises
+    fail-closed. The journal and saved response remain byte-for-byte untouched.
     """
     journal = load_journal(state_dir, publication_date)
     if journal is None:
@@ -243,6 +335,7 @@ def _validate_optional_slot_journal(
         # provider replay or page fetch occurs.
         load_raw_response(state_dir, publication_date)
 
+    search_window: dict[str, Any] | None = None
     candidates_path = Path(artifact_dir) / "candidates.json"
     if candidates_path.is_file():
         try:
@@ -253,9 +346,10 @@ def _validate_optional_slot_journal(
             ) from exc
         if not isinstance(research, dict):
             raise CoverageSlotError("current Coverage research must be an object")
-        search_window = research.get("search_window")
-        if isinstance(search_window, dict):
-            expected = sha256_value(search_window)
+        candidate_window = research.get("search_window")
+        if isinstance(candidate_window, dict):
+            search_window = candidate_window
+            expected = sha256_value(candidate_window)
             if str(journal.get("search_window_sha256") or "") != expected:
                 raise CoverageSlotError("Coverage optional-slot search-window identity mismatch")
         try:
@@ -268,6 +362,11 @@ def _validate_optional_slot_journal(
         if str(journal.get("bundle_identity_sha256") or "") != expected_bundle:
             raise CoverageSlotError("Coverage optional-slot bundle identity mismatch")
 
+    _validate_current_p3b_request_identity(
+        journal=journal,
+        publication_date=publication_date,
+        search_window=search_window,
+    )
     return journal
 
 
