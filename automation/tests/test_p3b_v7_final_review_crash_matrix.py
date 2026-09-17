@@ -242,19 +242,24 @@ class P3bV7FinalReviewCrashMatrixTests(unittest.TestCase):
 
     def test_crash_during_final_marker_atomic_write_restarts_idempotently(self) -> None:
         self._seed_recovery_input_only()
-        original_atomic_bytes = v7._atomic_write_bytes
+        original_replace = v7._base.os.replace
         crashed = False
 
-        def fail_final_replace(path: Path, data: bytes) -> None:
+        def fail_final_replace(source, destination) -> None:
             nonlocal crashed
-            if path == self.marker and b'"state":"completed"' in data and not crashed:
+            source_path = Path(source)
+            destination_path = Path(destination)
+            if (
+                destination_path == self.marker
+                and not crashed
+                and source_path.is_file()
+                and b'"state":"completed"' in source_path.read_bytes()
+            ):
                 crashed = True
-                temporary = path.with_name(path.name + ".tmp")
-                temporary.write_bytes(data)
-                raise OSError("fault during final marker atomic write")
-            original_atomic_bytes(path, data)
+                raise OSError("fault during final marker atomic replace")
+            original_replace(source, destination)
 
-        with mock.patch.object(v7, "_atomic_write_bytes", side_effect=fail_final_replace):
+        with mock.patch.object(v7._base.os, "replace", side_effect=fail_final_replace):
             with self.assertRaises(OSError):
                 self._call()
         self.assertEqual(json.loads(self.marker.read_text(encoding="utf-8"))["state"], "pending")
