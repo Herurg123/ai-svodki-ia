@@ -14,29 +14,36 @@ import weak_source_exact_binding_v4 as binder
 
 ARCHITECTURE = ROOT / "automation" / "ARCHITECTURE.md"
 MATRIX = ROOT / "automation" / "specs" / "p3b-exact-authoritative-binding-matrix.md"
+RUNBOOK = ROOT / "automation" / "P3B_V7_RECOVERY.md"
 
 
 class P3bArchitectureContractTests(unittest.TestCase):
-    def test_docs_pin_active_v6_binder_v4_and_atomic_transfer(self) -> None:
+    def test_docs_pin_active_v7_preserved_v6_binder_v4_and_atomic_transfer(self) -> None:
         architecture = ARCHITECTURE.read_text(encoding="utf-8")
         matrix = MATRIX.read_text(encoding="utf-8")
+        runbook = RUNBOOK.read_text(encoding="utf-8")
 
         for text in (architecture, matrix):
             normalized = text.lower()
             self.assertIn("active p3b", normalized)
-            self.assertIn("v6", normalized)
+            self.assertIn("v7", normalized)
             self.assertIn("weak_source_exact_binding_v4.py", text)
             self.assertIn("EVIDENCE_VERSION=6", text)
             self.assertIn("coverage_slot_handoff", text)
             self.assertIn("atomic", text)
             self.assertIn("восьм", text)
 
+        self.assertIn("preserved v6", architecture)
         self.assertIn("release-then-reserve", architecture)
         self.assertIn("slot lock", matrix)
         self.assertIn("request admission", matrix)
+        self.assertIn("coverage-p3b-v7-revocation", runbook)
+        self.assertIn("rollback", runbook.lower())
 
     def test_runtime_and_search_ceilings_match_documented_contract(self) -> None:
-        self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v6")
+        self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v7")
+        self.assertTrue(coverage._impl._v6.__name__.endswith("p3b_v6_preserved"))
+        self.assertEqual(coverage.P3B_RUNTIME_VERSION, 7)
         self.assertIs(coverage._exact_binding, binder)
         self.assertEqual(coverage.P3B_EXACT_BINDING_VERSION, 2)
         self.assertEqual(coverage.P3B_BINDER_EVIDENCE_VERSION, binder.EVIDENCE_VERSION)
