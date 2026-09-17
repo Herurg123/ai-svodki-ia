@@ -177,6 +177,11 @@ with tempfile.TemporaryDirectory() as tmp:
                     "disposition": "positive_exact_binding",
                     "candidate_count": 1,
                 },
+                "search_budget": {
+                    "maximum_calls": 7,
+                    "completed_calls": 7,
+                    "remaining_calls": 0,
+                },
             }
         )
         context = mod.recovery_preflight(
