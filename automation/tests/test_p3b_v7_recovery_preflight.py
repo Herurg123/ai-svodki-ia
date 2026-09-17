@@ -271,7 +271,7 @@ class P3bV7RecoveryPreflightTests(unittest.TestCase):
         self.assertEqual(marker["state"], "completed")
         self.assertEqual(
             marker["reason"],
-            "stale_positive_p3b_prior_report_sanitized",
+            "stale_positive_p3b_recovery_inputs_sanitized",
         )
 
     def test_child_failure_leaves_pending_marker_and_no_publishable_stories(self) -> None:
