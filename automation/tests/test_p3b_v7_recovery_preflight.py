@@ -12,10 +12,15 @@ ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "automation" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
+from coverage_slot_guard import prepare_slot
 import ensure_story_coverage_p3b_v7 as v7
 
 DATE = "2026-09-16"
 SIGNAL_ID = "weak-source-signal-1"
+SEARCH_WINDOW = {
+    "start_at": "2026-09-15T03:00:00+00:00",
+    "end_at": "2026-09-16T03:00:00+00:00",
+}
 
 
 def _write(path: Path, value) -> None:
@@ -56,30 +61,37 @@ def _independent_candidate() -> dict:
     }
 
 
-def _journal(*, binder_evidence_version: int) -> dict:
-    stale = _stale_candidate()
+def _plan(candidates: list[dict]) -> dict:
     return {
-        "version": 1,
         "publication_date": DATE,
-        "state": "processed",
-        "slot_consumed_or_ambiguous": True,
-        "wire_attempt_admitted": True,
-        "processed_snapshot": {
-            "candidates": [stale, _independent_candidate()],
-            "weak_source_exact_binding": {
-                "version": v7.P3B_EXACT_BINDING_VERSION,
-                "mode": v7.P3B_MODE,
-                "signal_id": SIGNAL_ID,
-                "binder_evidence_version": binder_evidence_version,
-                "status": "bound_candidate",
-                "disposition": "positive_exact_binding",
-                "candidate_count": 1,
-            },
-            "search_budget": {
-                "maximum_calls": 7,
-                "completed_calls": 7,
-                "remaining_calls": 0,
-            },
+        "search_window": copy.deepcopy(SEARCH_WINDOW),
+        "checked_directions": list(v7.AUDIT_DIRECTION_IDS),
+        "attempts": [],
+        "candidates": copy.deepcopy(candidates),
+        "search_budget": {
+            "maximum_calls": 7,
+            "completed_calls": 7,
+            "remaining_calls": 0,
+        },
+    }
+
+
+def _snapshot(*, binder_evidence_version: int, candidates: list[dict]) -> dict:
+    return {
+        "candidates": copy.deepcopy(candidates),
+        "weak_source_exact_binding": {
+            "version": v7.P3B_EXACT_BINDING_VERSION,
+            "mode": v7.P3B_MODE,
+            "signal_id": SIGNAL_ID,
+            "binder_evidence_version": binder_evidence_version,
+            "status": "bound_candidate",
+            "disposition": "positive_exact_binding",
+            "candidate_count": 1,
+        },
+        "search_budget": {
+            "maximum_calls": 7,
+            "completed_calls": 7,
+            "remaining_calls": 0,
         },
     }
 
@@ -103,19 +115,44 @@ class P3bV7RecoveryPreflightTests(unittest.TestCase):
     def marker_path(self) -> Path:
         return self.state / f"coverage-p3b-v7-revocation-{DATE}.json"
 
+    def seed_journal(self, *, binder_evidence_version: int, candidates: list[dict]) -> bytes:
+        plan = _plan(candidates)
+        reservation = prepare_slot(
+            state_dir=self.state,
+            publication_date=DATE,
+            owner=v7.P3B_SLOT_OWNER,
+            search_window=SEARCH_WINDOW,
+            request_contract={
+                "version": v7.P3B_EXACT_BINDING_VERSION,
+                "strategy": v7.P3B_SLOT_OWNER,
+                "model": "gpt-test",
+                "query": "durable exact query",
+                "prompt_sha256": "fixture-prompt",
+                "signal_ids": [SIGNAL_ID],
+                "maximum_web_search_calls": 1,
+                "allowed_domains": [],
+            },
+            bundle_identity=v7._v6._P3A._bundle_identity(plan),
+        )
+        reservation.mark_request_started()
+        reservation.save_raw_response({"id": "fixture-response", "output": []})
+        reservation.mark_processed(
+            _snapshot(
+                binder_evidence_version=binder_evidence_version,
+                candidates=candidates,
+            )
+        )
+        return self.journal_path.read_bytes()
+
     def seed_stale(self) -> bytes:
         stale = _stale_candidate()
         independent = _independent_candidate()
-        _write(self.journal_path, _journal(binder_evidence_version=5))
-        original_journal = self.journal_path.read_bytes()
-        _write(
-            self.artifact / "candidates.json",
-            {
-                "publication_date": DATE,
-                "search_window": {"start_at": "a", "end_at": "b"},
-                "candidates": [stale, independent],
-            },
+        plan = _plan([stale, independent])
+        original_journal = self.seed_journal(
+            binder_evidence_version=5,
+            candidates=[stale, independent],
         )
+        _write(self.artifact / "candidates.json", plan)
         _write(
             self.artifact / "stories.json",
             [
@@ -214,6 +251,7 @@ class P3bV7RecoveryPreflightTests(unittest.TestCase):
             self.marker_path.read_text(encoding="utf-8")
         )["original_stories_sha256"]
         self.journal_path.unlink()
+        self.state.joinpath(f"coverage-optional-slot-{DATE}.response.json").unlink()
 
         second = self.call_preflight()
         self.assertIsInstance(second, dict)
@@ -223,12 +261,13 @@ class P3bV7RecoveryPreflightTests(unittest.TestCase):
         self.assertFalse((self.artifact / "stories.json").exists())
 
     def test_current_evidence_v6_does_not_trigger_preflight(self) -> None:
-        _write(
-            self.journal_path,
-            _journal(binder_evidence_version=v7.P3B_BINDER_EVIDENCE_VERSION),
-        )
         stale = _stale_candidate()
-        _write(self.artifact / "candidates.json", {"candidates": [stale]})
+        plan = _plan([stale])
+        self.seed_journal(
+            binder_evidence_version=v7.P3B_BINDER_EVIDENCE_VERSION,
+            candidates=[stale],
+        )
+        _write(self.artifact / "candidates.json", plan)
         _write(
             self.artifact / "stories.json",
             [{"candidate_id": stale["id"]}],
@@ -242,13 +281,13 @@ class P3bV7RecoveryPreflightTests(unittest.TestCase):
         self.assertFalse(self.marker_path.exists())
 
     def test_report_only_stale_provenance_is_cleaned_without_invalidating_clean_digest(self) -> None:
-        _write(self.journal_path, _journal(binder_evidence_version=5))
         independent = _independent_candidate()
         stale = _stale_candidate()
-        _write(
-            self.artifact / "candidates.json",
-            {"candidates": [independent]},
+        self.seed_journal(
+            binder_evidence_version=5,
+            candidates=[stale, independent],
         )
+        _write(self.artifact / "candidates.json", _plan([independent]))
         _write(
             self.artifact / "stories.json",
             [{"candidate_id": independent["id"]}],
