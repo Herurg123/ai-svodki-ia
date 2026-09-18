@@ -1,0 +1,217 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Обновление: Crusoe привлекла $3,9 млрд в Series F на ИИ-дата-центры и модульные ИИ-фабрики",
+    "organization": "Crusoe; Atreides Management; Mubadala Capital; Valor Equity Partners; NVIDIA",
+    "topic": "AI-инфраструктура; дата-центры; GPU/compute; финансирование",
+    "event_type": "funding",
+    "status": "update",
+    "summary": "Crusoe сообщила о раунде Series F на $3,9 млрд при оценке $30,9 млрд. Средства предназначены для действующих дата-центров, включая площадку в Абилине для OpenAI, и для развёртывания перевозимых модульных AI-фабрик Spark.",
+    "published_at": "2026-09-17T23:25:52+00:00",
+    "published_date": "2026-09-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Crusoe raises $3.9B to build massive data centers and small modular ‘AI factories’",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/17/crusoe-raises-3-9b-to-build-massive-data-centers-and-small-modular-ai-factories/"
+      }
+    ],
+    "keywords": [
+      "Crusoe",
+      "Series F",
+      "AI data centers",
+      "modular AI factories",
+      "Spark",
+      "OpenAI",
+      "infrastructure"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "FAA готовит ИИ-платформу SMART для управления воздушным движением",
+    "organization": "Federal Aviation Administration; Air Space Intelligence; SMART",
+    "topic": "Государственное внедрение ИИ; управление воздушным движением; прогнозирование потоков; авиационная инфраструктура",
+    "event_type": "government AI deployment",
+    "status": "new",
+    "summary": "FAA, по данным TechCrunch, готовит запуск SMART — облачной AI-платформы Air Space Intelligence для прогнозирования потоков воздушного движения, конфликтов маршрутов и ограничений пропускной способности. Сообщается, что контракт оценивается в $875 млн на 12 лет; первым регионом внедрения должна стать агломерация Вашингтона.",
+    "published_at": "2026-09-17T22:14:59+00:00",
+    "published_date": "2026-09-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "The FAA’s plan to fix air traffic? $875M worth of AI",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/17/the-faas-plan-to-fix-air-traffic-875-million-worth-of-ai/"
+      }
+    ],
+    "keywords": [
+      "FAA",
+      "SMART",
+      "Air Space Intelligence",
+      "air traffic control",
+      "AI",
+      "aviation"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "ООН и Google запустили UN System Data Commons с MCP-доступом для агентов ИИ",
+    "organization": "United Nations; Google; Google Data Commons; UNICEF",
+    "topic": "AI-агенты; Model Context Protocol; публичные данные; международные организации",
+    "event_type": "platform launch",
+    "status": "new",
+    "summary": "ООН объявила о работе с Google над UN System Data Commons — UN-governed платформой на базе открытого Data Commons. Она заменяет UNData, поддерживает запросы на естественном языке и MCP-подключение AI-систем к статистике агентств ООН с прослеживаемыми источниками.",
+    "published_at": "2026-09-17T20:00:00+00:00",
+    "published_date": "2026-09-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "UN turns to Google to make its global data ready for AI agents",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/17/un-turns-to-google-to-make-its-global-data-ready-for-ai-agents/"
+      }
+    ],
+    "keywords": [
+      "United Nations",
+      "Google",
+      "UN System Data Commons",
+      "Data Commons",
+      "MCP",
+      "AI agents",
+      "UNICEF"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-010",
+    "section": "world",
+    "headline": "Обновление: Meta Muse и Instinct начали добавлять исходящие звонки",
+    "organization": "Meta; Muse; Instinct; Noah Shinn",
+    "topic": "Потребительские AI-агенты; phone calling; выполнение реальных задач; agentic assistants",
+    "event_type": "product feature rollout",
+    "status": "update",
+    "summary": "TechCrunch сообщает, что Instinct начала раннее развёртывание Concierge для звонков и сервисных задач, а Meta расширила beta-функцию исходящих звонков Muse в американские компании для части пользователей. Для Muse это новое функциональное обновление после уже заархивированного запуска потребительского агента.",
+    "published_at": "2026-09-17T13:46:16+00:00",
+    "published_date": "2026-09-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Rival AI agents, Instinct and Meta’s Muse, both add the ability to make calls",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/17/rival-ai-agents-instinct-and-metas-muse-both-add-the-ability-to-make-calls/"
+      }
+    ],
+    "keywords": [
+      "Meta Muse",
+      "Instinct",
+      "AI agents",
+      "phone calls",
+      "consumer AI",
+      "Concierge"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-011",
+    "section": "world",
+    "headline": "PrismML выпустила компактную open-weight модель Bonsai 2 27B",
+    "organization": "PrismML; Qwen; Alibaba",
+    "topic": "Компактные reasoning-модели; локальный inference; сжатие весов; open weights",
+    "event_type": "model release",
+    "status": "new",
+    "summary": "PrismML объявила Bonsai 2 27B — Apache-2.0 модель на базе Qwen3.8 27B с ternary-весами. Компания заявляет размер 5,9 ГБ, контекст 262K, мультимодальный ввод и сохранение 98,2% совокупного benchmark-результата базовой модели при более чем девятикратном сокращении размера.",
+    "published_at": null,
+    "published_date": "2026-09-17",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Introducing Bonsai 2 27B: Near-Lossless Compression in a 9x Smaller Footprint",
+        "publisher": "PrismML",
+        "url": "https://prismml.com/news/bonsai-2-27b"
+      }
+    ],
+    "keywords": [
+      "PrismML",
+      "Bonsai 2 27B",
+      "ternary weights",
+      "Qwen3.8",
+      "local AI",
+      "open weights"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Huawei перенесла запуск Ascend 960DT на первый квартал 2027 года",
+    "organization": "Huawei; Ascend; Atlas",
+    "topic": "AI-чипы; китайская полупроводниковая инфраструктура; обучение и inference",
+    "event_type": "product roadmap announcement",
+    "status": "new",
+    "summary": "Huawei на конференции Huawei Connect сообщила, что ускоряет вывод следующего AI-чипа Ascend 960DT: вместо третьего квартала 2027 года он ожидается в первом квартале. Компания также продвигает Peerium Computing Architecture для крупных систем обучения и inference.",
+    "published_at": "2026-09-17T14:06:14+00:00",
+    "published_date": "2026-09-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Huawei plans Q1 2027 launch of new AI chip as it takes on Nvidia",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/17/huawei-plans-q1-2027-launch-of-new-ai-chip-as-it-takes-on-nvidia/"
+      }
+    ],
+    "keywords": [
+      "Huawei",
+      "Ascend 960DT",
+      "Peerium Computing Architecture",
+      "UnifiedBus",
+      "Atlas 950",
+      "AI chips",
+      "China"
+    ],
+    "geography": "world",
+    "category": "chips"
+  },
+  {
+    "candidate_id": "cand-017",
+    "section": "russia",
+    "headline": "Алиса AI поможет школьникам с математикой и английским языком",
+    "organization": "Яндекс",
+    "topic": "17 сентября 2026Алиса AI поможет школьникам с математикой и английским языком",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+    "published_at": null,
+    "published_date": "2026-09-17",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "17 сентября 2026Алиса AI поможет школьникам с математикой и английским языком",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=17-09-2026-01"
+      }
+    ],
+    "keywords": [
+      "17",
+      "сентября",
+      "2026Алиса",
+      "поможет",
+      "школьникам",
+      "математикой",
+      "английским",
+      "языком"
+    ],
+    "geography": "russia",
+    "category": "investment"
+  }
+]

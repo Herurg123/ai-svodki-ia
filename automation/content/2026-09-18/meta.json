@@ -1,0 +1,44 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-18",
+  "slug": "2026-09-18",
+  "title": "ИИ-Сводка на 18 сентября 2026",
+  "description": "Crusoe закрыла раунд на $3,9 млрд для ИИ-инфраструктуры, Huawei ускоряет дорожную карту Ascend, ООН открывает данные для агентов, а Meta и Instinct выводят ассистентов к телефонным звонкам.",
+  "published_at": "2026-09-18T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-18.png",
+  "topics": [
+    "ИИ-инфраструктура",
+    "дата-центры",
+    "Crusoe",
+    "управление воздушным движением",
+    "агенты ИИ",
+    "MCP",
+    "ООН",
+    "Huawei Ascend",
+    "open-weight модели",
+    "локальный inference",
+    "Meta Muse",
+    "Алиса AI",
+    "образовательный ИИ"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-011, cand-017."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Пять выбранных публикаций TechCrunch описывают независимые события высокой или средней отраслевой значимости в разных сегментах: финансирование дата-центров, авиационная критическая инфраструктура, китайские ускорители, данные ООН для агентов и потребительские звонки агентов. Короткий подтверждённый пул не позволяет заменить их сопоставимыми по качеству источниками."
+    }
+  ]
+}
