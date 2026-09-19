@@ -24,21 +24,53 @@ Historical v1 admission существовал до позднего `p3b_author
 
 Preserved base перед child execution выполняет собственный compatibility sync. Этот nested sync не имеет права вернуть pre-v7 `_without_stale_p3b_candidates` в v6: иначе genuine v1 row, уже удалённый preflight, может быть повторно принят historical migration/replay path. Permanent regression должен проходить именно через active `execute_audit_plan()`, nested base sync и preserved-v6 child, а не только напрямую вызывать `recovery_preflight`.
 
-### Fail-closed deterministic processed snapshot
+### Durable request -> response -> result -> processed lineage
 
-Optional-slot journal, который отсутствует, и journal, который присутствует в `state=processed`, но не содержит проверяемого deterministic result, являются разными состояниями. Для любого processed optional-slot owner recovery требует сохранённый полный Coverage plan:
+Optional-slot journal, который отсутствует, и journal, который существует, но
+не может доказать сохранённый result, являются разными состояниями. Reservation
+identity фиксируется **до** optional request и больше не реконструируется из
+post-request Coverage plan или финального research `candidates.json`.
 
-- `processed_snapshot` является JSON object;
-- `processed_snapshot.candidates` является list;
-- `processed_snapshot.search_budget` является object и содержит `maximum_calls`, `completed_calls`, `remaining_calls`;
-- `processed_snapshot.search_window` является object, и его SHA-256 обязан совпадать с outer journal `search_window_sha256`;
-- `_P3A._bundle_identity(processed_snapshot)` должен быть вычислим, а его SHA-256 обязан совпадать с outer journal `bundle_identity_sha256`.
+Новый writer сохраняет отдельную lineage-цепочку:
 
-Тем самым v7 независимо доказывает обе связи durable state: `outer journal -> current Coverage bundle` и `inner processed_snapshot -> тот же outer durable identity`. Полностью структурно валидный current-evidence snapshot из другого run/bundle не может быть reused только потому, что сам outer journal принадлежит текущему bundle.
+- outer journal сохраняет immutable `search_window_sha256`,
+  `request_contract_sha256` и pre-optional `bundle_identity_sha256`;
+- `response_saved` сохраняет canonical raw response отдельным файлом и
+  `response_sha256`;
+- `result_snapshot` получает `result_snapshot_sha256` и
+  `result_snapshot_provenance`, которые ссылаются на exact request, raw
+  response и reservation bundle;
+- `processed_snapshot` получает `processed_snapshot_sha256` и
+  `processed_snapshot_provenance`, которые ссылаются на те же request/response/
+  bundle и, когда parsed result существует, на его exact hash.
 
-Missing/list/scalar/empty, structurally inconsistent, identity-unprovable или identity-mismatched processed snapshot является durable corruption и даёт fail-closed `CoverageSlotError` до `existing_full_digest`, `prior_complete`, child reuse и других complete/reusable shortcuts. Validator намеренно не требует P3b-only diagnostic: legacy `unverified` owner использует тот же durable optional slot и валидный same-identity generic processed Coverage plan должен оставаться reusable. `response_saved` остаётся отдельным состоянием: сохранённый raw response может быть offline replayed в deterministic processed state и не обязан преждевременно иметь `processed_snapshot`.
+`processed_snapshot` по-прежнему обязан быть object, иметь `candidates[]` и
+валидный `search_budget` с `maximum_calls`, `completed_calls`,
+`remaining_calls`. Но v7 **не требует** от post-request snapshot
+`search_window` и не сравнивает `_P3A._bundle_identity(processed_snapshot)`
+с reservation hash: optional attempt сам меняет Coverage plan, поэтому такое
+сравнение lifecycle-нестабильно. Финальный research `candidates.json` тоже не
+является Coverage audit plan и не используется для реконструкции pre-optional
+bundle identity. Из него v7 проверяет только exact search-window identity, когда
+она присутствует.
 
-Проверка identity не переписывает journal, не refund/reopen optional slot и не выполняет provider call, Web Search, retry или authoritative-page refetch.
+Для `response_saved` hash-проверенный raw response является authority.
+Recovery всегда детерминированно перепарсивает его offline и переписывает
+`result_snapshot` из этого replay; независимо сохранённый parsed snapshot не
+может подменить raw response. Provider call, retry, Web Search и mutable-page
+refetch при этом не выполняются.
+
+`processed` reuse разрешён только для snapshot с валидной current lineage.
+Historical journals, созданные до этих provenance полей, остаются читаемыми для
+fail-closed migration/sanitation, но отсутствие provenance не повышает их до
+current reusable result. В частности current-evidence P3b positive без доказанной
+processed lineage карантинится тем же zero-I/O preflight, slot остаётся spent и
+не refund/reopen'ится.
+
+Partial lineage, hash mismatch или request/response/bundle provenance mismatch
+даёт fail-closed `CoverageSlotError` до complete/reusable shortcuts. Проверка
+не выполняет внешнего I/O и не меняет search budget.
+
 
 ## Durable marker
 
