@@ -349,8 +349,11 @@ class CoverageSlotReservation:
         self._write(value)
 
     def result_snapshot(self) -> dict[str, Any] | None:
-        value = self.journal.get(_RESULT_SNAPSHOT_KEY)
-        return copy.deepcopy(value) if isinstance(value, dict) else None
+        # Current response_saved reuse requires proven result lineage. Historical
+        # journals without additive provenance intentionally return None so the
+        # preserved child reparses the hash-validated raw response offline and
+        # upgrades the result snapshot before any processed transition.
+        return validated_result_snapshot(self.journal)
 
     def processed_snapshot(self) -> dict[str, Any] | None:
         # Public reuse path is provenance-aware. Historical processed journals
