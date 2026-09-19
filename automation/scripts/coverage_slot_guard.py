@@ -224,15 +224,18 @@ def validated_processed_snapshot(journal: dict[str, Any]) -> dict[str, Any] | No
         return None
     provenance = journal.get(_PROCESSED_SNAPSHOT_PROVENANCE_KEY)
     result_hash = str((provenance or {}).get("result_snapshot_sha256") or "").strip()
-    if result_hash:
-        if str(journal.get(_RESULT_SNAPSHOT_SHA256_KEY) or "") != result_hash:
-            raise CoverageSlotError(
-                "Coverage optional-slot processed snapshot result provenance mismatch"
-            )
-        if validated_result_snapshot(journal) is None:
-            raise CoverageSlotError(
-                "Coverage optional-slot processed snapshot references unproven result snapshot"
-            )
+    if not result_hash:
+        raise CoverageSlotError(
+            "Coverage optional-slot processed snapshot has no parsed-result provenance"
+        )
+    if str(journal.get(_RESULT_SNAPSHOT_SHA256_KEY) or "") != result_hash:
+        raise CoverageSlotError(
+            "Coverage optional-slot processed snapshot result provenance mismatch"
+        )
+    if validated_result_snapshot(journal) is None:
+        raise CoverageSlotError(
+            "Coverage optional-slot processed snapshot references unproven result snapshot"
+        )
     return snapshot
 
 
@@ -327,20 +330,20 @@ class CoverageSlotReservation:
         value["state"] = "processed"
         value["slot_consumed_or_ambiguous"] = True
         if processed_snapshot is not None:
+            result_hash = str(value.get(_RESULT_SNAPSHOT_SHA256_KEY) or "").strip()
+            if not result_hash or validated_result_snapshot(value) is None:
+                raise CoverageSlotError(
+                    "Coverage optional-slot processed snapshot requires proven parsed-result provenance"
+                )
             saved = copy.deepcopy(processed_snapshot)
             snapshot_sha256 = sha256_value(saved)
             value[_PROCESSED_SNAPSHOT_KEY] = saved
             value[_PROCESSED_SNAPSHOT_SHA256_KEY] = snapshot_sha256
-            result_hash = str(value.get(_RESULT_SNAPSHOT_SHA256_KEY) or "").strip()
-            if result_hash:
-                # If result lineage is declared it must already be internally
-                # consistent before it can be linked into processed provenance.
-                validated_result_snapshot(value)
             value[_PROCESSED_SNAPSHOT_PROVENANCE_KEY] = {
                 "request_contract_sha256": value.get("request_contract_sha256"),
                 "response_sha256": response_sha256,
                 "bundle_identity_sha256": value.get("bundle_identity_sha256"),
-                "result_snapshot_sha256": result_hash or None,
+                "result_snapshot_sha256": result_hash,
                 "snapshot_sha256": snapshot_sha256,
             }
         self._write(value)
