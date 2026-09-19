@@ -58,6 +58,8 @@ GitHub artifact recovery является частью того же invariant. 
 - current processed writer сохраняет hash полного `processed_snapshot` и provenance exact request/response/pre-optional bundle; подмена `candidates[]` после записи provenance обязана fail-closed;
 - production-shaped final research `candidates.json` не обязан содержать Coverage `attempts/checked_directions` и не используется для реконструкции pre-optional bundle identity;
 - post-request `processed_snapshot` не обязан содержать top-level `search_window/publication_date` и не сравнивается через lifecycle-нестабильный `_P3A._bundle_identity(processed_snapshot)`;
+- saved parsed result при `response_saved|processed` обязан точно воспроизводиться deterministic offline parse из hash-проверенного raw response; `raw A + parsed B` fail-closed без provider/search/page I/O;
+- processed legacy `unverified_resolution` обязан совпадать с current full request contract, пересчитанным из current required signals/model/archive/search window; stable `signal_id` при query/prompt/model/content drift не разрешает early reuse;
 - v7 preflight/recovery integration не выполняет ordinary/protected provider call, retry, Web Search или authoritative-page refetch и не меняет optional-slot journal bytes/search-budget consumption;
 - `reserved` P3b intent не обходит higher-priority required `unverified`, а foreign/mismatched reservation не удаляется;
 - proven unstarted P3b reservation может быть передан required `unverified` только атомарной заменой durable intent под тем же slot lock, который защищает request admission; между P3b и legacy не возникает состояния без reservation;
@@ -119,7 +121,7 @@ GitHub artifact recovery является частью того же invariant. 
 | `reserved` + proven P3b intent + required `unverified` | Под shared slot lock атомарно заменить только unstarted P3b reservation на полный legacy durable reservation; затем исполнить required legacy resolution через P3a protected transport | максимум 1 |
 | `reserved` + budget уже исчерпан | Defer; reservation не может восстановить потраченный seventh slot | 0 |
 | `request_started` | Outcome неизвестен; сохранить indeterminate/consumed, transfer/retry запрещены | 0 |
-| `response_saved` | Replay сохранённого response/result offline; без mutable-page refetch | 0 |
+| `response_saved` | До child reuse active v7 доказывает exact deterministic raw→parsed equivalence для saved result; затем preserved offline replay, без provider search/mutable-page refetch | 0 |
 | `processed` | Reuse только current hardened result с `EVIDENCE_VERSION=6` **и** валидной durable processed lineage exact bytes → request/response/pre-optional bundle; pre-lineage/stale/foreign/mismatched result fail-closed без refund | 0 |
 | invalid/foreign/mismatched journal | Fail closed; не переписывать чужой intent и не угадывать consumption | 0 |
 
