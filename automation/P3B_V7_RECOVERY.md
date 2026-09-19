@@ -61,7 +61,13 @@ runtime и не открывает новый provider search/page fetch. Ког
 совпадения parsed snapshot. Поэтому согласованная пара `raw A + parsed B`
 fail-closed до child reuse даже если оба JSON структурно валидны. Current writer
 дополнительно сохраняет exact result hash и provenance, связанные с тем же
-request/response/bundle. Эта remediation не меняет historical child
+request/response/bundle. Historical `response_saved` с parsed snapshot, но без
+additive result lineage, не считается proven getter-result: preserved child
+детерминированно перепарсивает hash-проверенный raw response offline, записывает
+current result lineage и только после этого может перейти в `processed`.
+Serialized replay сохраняет nested `web_search_call.action` как mapping и
+восстанавливает output text как из top-level convenience field, так и из
+`output[].content[].output_text`. Эта remediation не меняет historical child
 parsing/replay routing preserved P3a/P3b layers: proof выполняется выше них в
 active v7 и не делает provider/network I/O.
 
@@ -70,7 +76,9 @@ Historical journals, созданные до этих provenance полей, о�
 fail-closed migration/sanitation, но отсутствие provenance не повышает их до
 current reusable result. В частности current-evidence P3b positive без доказанной
 processed lineage карантинится тем же zero-I/O preflight, slot остаётся spent и
-не refund/reopen'ится.
+не refund/reopen'ится. Matching legacy/generic request identity тоже недостаточно:
+pre-lineage legacy `processed` fail-closed до `prior_complete` /
+`existing_full_digest`, поэтому ранний shortcut не обходит processed lineage.
 
 Partial lineage, hash mismatch или request/response/bundle provenance mismatch
 даёт fail-closed `CoverageSlotError` до complete/reusable shortcuts. Проверка
