@@ -134,10 +134,12 @@ high-signal `unverified` resolution всегда имеет приоритет. 
 совместимого lifecycle/action, deterministic Event/Source Freshness и archive
 checks. Provider/model labels не являются proof. Если slot занят, уже потрачен
 или transport имеет `request_started` с неизвестным исходом, signal остаётся
-unresolved/deferred и новый search не выполняется. `response_saved` и
-`processed` переигрываются/переиспользуются offline без повторного provider call.
-Восьмой Coverage search не появляется; потолки 24/25, regional/agency health и
-editorial ranking не меняются.
+unresolved/deferred и новый search не выполняется. `response_saved` сохраняет
+существующий offline replay, а `processed` переиспользуется только при durable
+provenance exact snapshot bytes, связанной с тем же request/response и
+pre-optional bundle. Финальный research `candidates.json` не используется как
+Coverage-plan identity. Восьмой Coverage search не появляется; потолки 24/25,
+regional/agency health и editorial ranking не меняются.
 
 Каноническая continuity-точка остается `search_cutoff_at` последнего успешно
 опубликованного выпуска. После единственного search один Primary-pass может
