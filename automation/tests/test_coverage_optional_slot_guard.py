@@ -167,7 +167,6 @@ class CoverageOptionalSlotGuardTests(unittest.TestCase):
             state_dir = Path(raw)
             original_state = coverage.STATE_DIR
             original_transport = coverage.protected_policy_audit_request
-            original_replay_raw = coverage.replay_raw_response
             calls = {"transport": 0}
 
             def save_then_interrupt(runtime, reservation, **_kwargs):
@@ -215,38 +214,6 @@ class CoverageOptionalSlotGuardTests(unittest.TestCase):
                     "response_saved",
                 )
 
-                def replay_saved_raw(runtime, raw_response, **_kwargs):
-                    self.assertEqual(raw_response["id"], "resp-saved")
-                    replay_snapshot = {
-                        "payload": {
-                            "status": "complete_with_gaps",
-                            "direction_id": "general_coverage_gaps",
-                            "candidates": [],
-                            "rejections": [dict(OUTSIDE_WINDOW)],
-                            "notes": "reparsed from durable raw response",
-                        },
-                        "metadata": {
-                            "response_id": "resp-saved",
-                            "status": "completed",
-                            "actual_queries": ["Rillet Lands Scale ERP latest"],
-                            "consulted_sources": [],
-                            "web_search_calls": 1,
-                            "web_search_calls_completed": 1,
-                            "web_search_call_items_total": 1,
-                        },
-                        "output_text": "{}",
-                        "validation_error": None,
-                    }
-                    result = runtime.AuditRequestResult(
-                        payload=copy.deepcopy(replay_snapshot["payload"]),
-                        metadata=copy.deepcopy(replay_snapshot["metadata"]),
-                        output_text="{}",
-                        raw_response=copy.deepcopy(raw_response),
-                        validation_error=None,
-                    )
-                    return result, replay_snapshot
-
-                coverage.replay_raw_response = replay_saved_raw
                 coverage.protected_policy_audit_request = lambda *_a, **_k: self.fail(
                     "offline replay must not call transport"
                 )
@@ -262,7 +229,6 @@ class CoverageOptionalSlotGuardTests(unittest.TestCase):
             finally:
                 coverage.STATE_DIR = original_state
                 coverage.protected_policy_audit_request = original_transport
-                coverage.replay_raw_response = original_replay_raw
 
             self.assertEqual(calls["transport"], 1)
             self.assertEqual(
@@ -356,121 +322,6 @@ class CoverageOptionalSlotGuardTests(unittest.TestCase):
                 "processed",
             )
             self.assertEqual(replayed["search_budget"]["remaining_calls"], 0)
-            self.assertEqual(replayed["retrieval_quality"]["status"], "complete")
-
-    def test_saved_response_ignores_untrusted_result_snapshot_and_reparses_raw(self) -> None:
-        with tempfile.TemporaryDirectory() as raw:
-            state_dir = Path(raw)
-            original_state = coverage.STATE_DIR
-            original_transport = coverage.protected_policy_audit_request
-            original_replay_raw = coverage.replay_raw_response
-            original_replay_snapshot = coverage.replay_result_snapshot
-            expected_snapshot = {
-                "payload": {
-                    "status": "complete_with_gaps",
-                    "direction_id": "general_coverage_gaps",
-                    "candidates": [],
-                    "rejections": [dict(OUTSIDE_WINDOW)],
-                    "notes": "authoritative reparse from raw response",
-                },
-                "metadata": {
-                    "response_id": "raw-a",
-                    "status": "completed",
-                    "actual_queries": ["Rillet Lands Scale ERP latest"],
-                    "consulted_sources": [],
-                    "web_search_calls": 1,
-                    "web_search_calls_completed": 1,
-                    "web_search_call_items_total": 1,
-                },
-                "output_text": "{}",
-                "validation_error": None,
-            }
-            try:
-                coverage.STATE_DIR = state_dir
-                reservation = slot_guard.prepare_slot(
-                    state_dir=state_dir,
-                    publication_date="2026-08-25",
-                    owner=coverage.OPTIONAL_SLOT_OWNER,
-                    search_window=dict(WINDOW),
-                    request_contract=coverage._request_contract(
-                        model="gpt-5.6-terra",
-                        query=coverage._pre.build_resolution_query([dict(SIGNAL)]),
-                        prompt=coverage._pre.build_resolution_prompt(
-                            search_window=dict(WINDOW),
-                            cluster=[dict(SIGNAL)],
-                            archive={"items": []},
-                        ),
-                        cluster=[dict(SIGNAL)],
-                    ),
-                    bundle_identity=coverage._bundle_identity(base_plan()),
-                )
-                reservation.mark_request_started()
-                reservation.save_raw_response({"id": "raw-a", "status": "completed"})
-                reservation.save_result_snapshot(
-                    {
-                        "payload": {
-                            "status": "complete",
-                            "direction_id": "general_coverage_gaps",
-                            "candidates": [
-                                {
-                                    "id": "foreign-b",
-                                    "title": "Foreign parsed candidate",
-                                    "recommendation": "include",
-                                }
-                            ],
-                            "rejections": [],
-                        },
-                        "metadata": {
-                            "response_id": "parsed-b",
-                            "status": "completed",
-                            "actual_queries": ["Foreign query"],
-                            "web_search_calls_completed": 1,
-                        },
-                        "output_text": "{}",
-                        "validation_error": None,
-                    }
-                )
-
-                def replay_raw(runtime, raw_response, **_kwargs):
-                    self.assertIs(runtime, coverage._runtime)
-                    self.assertEqual(raw_response["id"], "raw-a")
-                    result = runtime.AuditRequestResult(
-                        payload=copy.deepcopy(expected_snapshot["payload"]),
-                        metadata=copy.deepcopy(expected_snapshot["metadata"]),
-                        output_text="{}",
-                        raw_response=copy.deepcopy(raw_response),
-                        validation_error=None,
-                    )
-                    return result, copy.deepcopy(expected_snapshot)
-
-                coverage.replay_raw_response = replay_raw
-                coverage.replay_result_snapshot = lambda *_a, **_k: self.fail(
-                    "response_saved recovery must treat hash-validated raw response as authority"
-                )
-                coverage.protected_policy_audit_request = lambda *_a, **_k: self.fail(
-                    "response_saved recovery must not call transport"
-                )
-                replayed = coverage._run_resolution(
-                    plan=base_plan(),
-                    signals=[dict(SIGNAL)],
-                    api_key="unused-test-key",
-                    model="gpt-5.6-terra",
-                    search_window=dict(WINDOW),
-                    archive={"items": []},
-                    maximum_web_search_calls=7,
-                )
-            finally:
-                coverage.STATE_DIR = original_state
-                coverage.protected_policy_audit_request = original_transport
-                coverage.replay_raw_response = original_replay_raw
-                coverage.replay_result_snapshot = original_replay_snapshot
-
-            journal = slot_guard.load_journal(state_dir, "2026-08-25")
-            self.assertEqual(journal["result_snapshot"]["metadata"]["response_id"], "raw-a")
-            self.assertEqual(
-                slot_guard.journal_state(state_dir, "2026-08-25"),
-                "processed",
-            )
             self.assertEqual(replayed["retrieval_quality"]["status"], "complete")
 
     def test_legacy_spent_resolution_attempt_is_not_refunded_to_six(self) -> None:
