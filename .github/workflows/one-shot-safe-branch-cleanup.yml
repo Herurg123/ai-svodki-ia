@@ -1,5 +1,5 @@
-name: One-shot confirmed orphan workflow cleanup
-run-name: One-shot confirmed orphan workflow cleanup ${{ github.run_id }}
+name: One-shot orphan cleanup verifier
+run-name: One-shot orphan cleanup verifier ${{ github.run_id }}
 
 on:
   pull_request:
@@ -8,24 +8,20 @@ on:
     types:
       - synchronize
 
-concurrency:
-  group: one-shot-confirmed-orphan-workflow-cleanup
-  cancel-in-progress: false
-
 permissions:
   contents: read
-  actions: write
+  actions: read
   pull-requests: write
 
 jobs:
-  cleanup:
+  verify:
     if: >-
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.head_ref == 'ops/one-shot-safe-branch-cleanup-2026-09-19'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Disable three proven orphan workflows and delete expired runs
+      - name: Verify orphan cleanup and close disposable PR
         env:
           GITHUB_TOKEN: ${{ github.token }}
           EXPECTED_MAIN_SHA: 227d06e4755ba996829c5f4636c24fe0cd0362b0
@@ -34,162 +30,92 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
-          import datetime as dt
           import json
           import os
           import urllib.error
           import urllib.parse
           import urllib.request
 
-          REPO = os.environ["GITHUB_REPOSITORY"]
-          OWNER = REPO.split("/", 1)[0]
-          TOKEN = os.environ["GITHUB_TOKEN"]
-          EXPECTED_MAIN = os.environ["EXPECTED_MAIN_SHA"]
-          PR_NUMBER = int(os.environ["CLEANUP_PR_NUMBER"])
-          SELF_BRANCH = "ops/one-shot-safe-branch-cleanup-2026-09-19"
+          REPO=os.environ["GITHUB_REPOSITORY"]
+          TOKEN=os.environ["GITHUB_TOKEN"]
+          EXPECTED=os.environ["EXPECTED_MAIN_SHA"]
+          PR_NUMBER=int(os.environ["CLEANUP_PR_NUMBER"])
+          SELF_BRANCH="ops/one-shot-safe-branch-cleanup-2026-09-19"
 
-          TARGETS = {
-              335355114: {
-                  "path": ".github/workflows/diag-aug16-editorial-replay.yml",
-                  "source_branch": "diag/aug16-editorial-replay",
-                  "expected_runs": {31924815820, 31924787047},
-              },
-              342216302: {
-                  "path": ".github/workflows/video-lockfile-generator.yml",
-                  "source_branch": "agent/video-lockfile-generator-2026-08-25",
-                  "expected_runs": {32867008664},
-              },
-              344297155: {
-                  "path": ".github/workflows/package-notebooklm-video-update.yml",
-                  "source_branch": "build/notebooklm-video-update-2026-08-28",
-                  "expected_runs": {33139402463, 33139375336, 33139312547},
-              },
+          CLEANED={
+              335355114: ".github/workflows/diag-aug16-editorial-replay.yml",
+              342216302: ".github/workflows/video-lockfile-generator.yml",
+              344297155: ".github/workflows/package-notebooklm-video-update.yml",
+          }
+          RETAINED={
+              344367759: (".github/workflows/build-notebooklm-update.yml","rebase/automatic-dzen-worker-final"),
+              344361682: (".github/workflows/apply-dzen-rebase-docs.yml","rebase/automatic-dzen-worker-final"),
           }
 
-          RETAINED = {
-              344367759: (".github/workflows/build-notebooklm-update.yml", "rebase/automatic-dzen-worker-final"),
-              344361682: (".github/workflows/apply-dzen-rebase-docs.yml", "rebase/automatic-dzen-worker-final"),
-          }
-
-          cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=14)
-
-          def api(method, path, payload=None, allow_404=False):
-              url = f"https://api.github.com/repos/{REPO}/{path}"
-              body = None
-              headers = {
-                  "Accept": "application/vnd.github+json",
-                  "Authorization": f"Bearer {TOKEN}",
-                  "X-GitHub-Api-Version": "2022-11-28",
-                  "User-Agent": "ai-svodki-confirmed-orphan-cleanup",
+          def api(method,path,payload=None,allow404=False):
+              url=f"https://api.github.com/repos/{REPO}/{path}"
+              body=None
+              headers={
+                  "Accept":"application/vnd.github+json",
+                  "Authorization":f"Bearer {TOKEN}",
+                  "X-GitHub-Api-Version":"2022-11-28",
+                  "User-Agent":"ai-svodki-orphan-cleanup-verifier",
               }
               if payload is not None:
-                  body = json.dumps(payload).encode("utf-8")
-                  headers["Content-Type"] = "application/json"
-              req = urllib.request.Request(url, data=body, method=method, headers=headers)
+                  body=json.dumps(payload).encode()
+                  headers["Content-Type"]="application/json"
+              req=urllib.request.Request(url,data=body,method=method,headers=headers)
               try:
-                  with urllib.request.urlopen(req, timeout=30) as response:
-                      raw = response.read()
-                      return None if not raw else json.loads(raw.decode("utf-8"))
-              except urllib.error.HTTPError as exc:
-                  if allow_404 and exc.code == 404:
+                  with urllib.request.urlopen(req,timeout=30) as r:
+                      raw=r.read()
+                      return None if not raw else json.loads(raw.decode())
+              except urllib.error.HTTPError as e:
+                  if allow404 and e.code==404:
                       return None
-                  detail = exc.read().decode("utf-8", errors="replace")
-                  raise RuntimeError(f"{method} {path} -> HTTP {exc.code}: {detail}") from exc
+                  detail=e.read().decode("utf-8",errors="replace")
+                  raise RuntimeError(f"{method} {path} -> HTTP {e.code}: {detail}") from e
 
-          def parse_time(value):
-              return dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
-
-          pr = api("GET", f"pulls/{PR_NUMBER}")
-          if pr["state"] != "open" or pr["base"]["ref"] != "main":
+          pr=api("GET",f"pulls/{PR_NUMBER}")
+          if pr["state"]!="open" or pr["base"]["ref"]!="main":
               raise RuntimeError("cleanup PR state/base changed")
-          if pr["head"]["ref"] != SELF_BRANCH or pr["head"]["repo"]["full_name"] != REPO:
+          if pr["head"]["ref"]!=SELF_BRANCH or pr["head"]["repo"]["full_name"]!=REPO:
               raise RuntimeError("cleanup PR identity changed")
 
-          current_main = api("GET", "git/ref/heads/main")["object"]["sha"]
-          if current_main != EXPECTED_MAIN:
-              raise RuntimeError(f"main changed: {current_main}; changing nothing")
+          main=api("GET","git/ref/heads/main")["object"]["sha"]
+          if main!=EXPECTED:
+              raise RuntimeError(f"main changed: {main}")
 
-          # Prove the two retained workflow objects and their retained source branch
-          # still exist. They are explicit negative controls and are never mutated.
-          for wid, (expected_path, branch) in RETAINED.items():
-              workflow = api("GET", f"actions/workflows/{wid}")
-              if workflow["path"] != expected_path:
+          cleaned_state={}
+          for wid,path in CLEANED.items():
+              workflow=api("GET",f"actions/workflows/{wid}",allow404=True)
+              if workflow is None:
+                  cleaned_state[wid]="absent"
+                  continue
+              if workflow.get("path")!=path:
+                  raise RuntimeError(f"cleaned workflow {wid} identity changed")
+              if workflow.get("state")!="disabled_manually":
+                  raise RuntimeError(f"cleaned workflow {wid} still active")
+              runs=api("GET",f"actions/workflows/{wid}/runs?per_page=100")
+              if runs.get("total_count",0)!=0:
+                  raise RuntimeError(f"cleaned workflow {wid} still has runs")
+              cleaned_state[wid]="disabled_no_runs"
+
+          retained_state={}
+          for wid,(path,branch) in RETAINED.items():
+              workflow=api("GET",f"actions/workflows/{wid}")
+              if workflow.get("path")!=path:
                   raise RuntimeError(f"retained workflow {wid} identity changed")
-              encoded_branch = urllib.parse.quote(branch, safe="/")
-              if api("GET", f"git/ref/heads/{encoded_branch}", allow_404=True) is None:
+              enc=urllib.parse.quote(branch,safe="/")
+              if api("GET",f"git/ref/heads/{enc}",allow404=True) is None:
                   raise RuntimeError(f"retained branch {branch!r} disappeared")
+              retained_state[wid]=workflow.get("state")
 
-          plans = []
-          for wid, spec in TARGETS.items():
-              workflow = api("GET", f"actions/workflows/{wid}")
-              if workflow["path"] != spec["path"]:
-                  raise RuntimeError(f"workflow {wid} identity changed")
+          api("PATCH",f"pulls/{PR_NUMBER}",{"state":"closed"})
 
-              encoded_path = urllib.parse.quote(spec["path"], safe="/")
-              if api("GET", f"contents/{encoded_path}?ref=main", allow_404=True) is not None:
-                  raise RuntimeError(f"workflow {wid} file exists on main")
-
-              branch = spec["source_branch"]
-              encoded_branch = urllib.parse.quote(branch, safe="/")
-              if api("GET", f"git/ref/heads/{encoded_branch}", allow_404=True) is not None:
-                  raise RuntimeError(f"workflow {wid} source branch reappeared")
-
-              query = urllib.parse.urlencode({
-                  "state": "open",
-                  "head": f"{OWNER}:{branch}",
-                  "per_page": "1",
-              })
-              if api("GET", f"pulls?{query}"):
-                  raise RuntimeError(f"workflow {wid} source branch has an open PR")
-
-              runs = api("GET", f"actions/workflows/{wid}/runs?per_page=100")
-              actual_ids = {int(run["id"]) for run in runs.get("workflow_runs", [])}
-              if actual_ids != spec["expected_runs"]:
-                  raise RuntimeError(
-                      f"workflow {wid} run set changed: expected {sorted(spec['expected_runs'])}, "
-                      f"found {sorted(actual_ids)}"
-                  )
-
-              for run in runs.get("workflow_runs", []):
-                  if run.get("status") != "completed":
-                      raise RuntimeError(f"workflow {wid} has non-completed run {run['id']}")
-                  if run.get("head_branch") != branch:
-                      raise RuntimeError(
-                          f"workflow {wid} run {run['id']} belongs to {run.get('head_branch')!r}"
-                      )
-                  if parse_time(run["created_at"]) > cutoff:
-                      raise RuntimeError(f"workflow {wid} has recent run {run['id']}")
-
-              if workflow.get("state") not in {"active", "disabled_manually"}:
-                  raise RuntimeError(f"workflow {wid} unexpected state {workflow.get('state')!r}")
-              plans.append((wid, workflow.get("state"), sorted(actual_ids)))
-
-          disabled = []
-          deleted_runs = []
-          for wid, state, run_ids in plans:
-              if state == "active":
-                  api("PUT", f"actions/workflows/{wid}/disable")
-                  disabled.append(wid)
-              for run_id in run_ids:
-                  api("DELETE", f"actions/runs/{run_id}")
-                  deleted_runs.append(run_id)
-
-          for wid, _, _ in plans:
-              workflow = api("GET", f"actions/workflows/{wid}")
-              if workflow.get("state") != "disabled_manually":
-                  raise RuntimeError(f"workflow {wid} was not disabled")
-              remaining = api("GET", f"actions/workflows/{wid}/runs?per_page=100")
-              if remaining.get("total_count", 0) != 0:
-                  raise RuntimeError(f"workflow {wid} still has runs")
-
-          # Close only the disposable PR after successful verification.
-          api("PATCH", f"pulls/{PR_NUMBER}", {"state": "closed"})
-
-          print("CLEANUP_RESULT", json.dumps({
-              "disabled_workflows": disabled,
-              "deleted_runs": deleted_runs,
-              "retained_workflows": sorted(RETAINED),
-              "main": EXPECTED_MAIN,
-              "pr_closed": PR_NUMBER,
-          }, sort_keys=True))
+          print("VERIFY_RESULT",json.dumps({
+              "cleaned":cleaned_state,
+              "retained":retained_state,
+              "main":main,
+              "pr_closed":PR_NUMBER,
+          },sort_keys=True))
           PY
