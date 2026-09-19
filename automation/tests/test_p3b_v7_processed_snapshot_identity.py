@@ -88,6 +88,29 @@ def _current_snapshot(plan: dict, *, candidate_id: str) -> dict:
     return snapshot
 
 
+def _raw_response() -> dict:
+    payload = {
+        "status": "complete_with_gaps",
+        "direction_id": "general_coverage_gaps",
+        "candidates": [],
+        "rejections": [],
+    }
+    return {
+        "id": "saved-response",
+        "status": "completed",
+        "model": "gpt-test",
+        "output_text": json.dumps(payload, ensure_ascii=False),
+        "output": [
+            {
+                "id": "search-1",
+                "type": "web_search_call",
+                "status": "completed",
+                "action": {"type": "search", "query": "current exact query", "sources": []},
+            }
+        ],
+    }
+
+
 class P3bV7ProcessedSnapshotIdentityTests(unittest.TestCase):
     def _assert_foreign_snapshot_rejected(
         self, *, current_plan: dict, foreign_snapshot: dict
@@ -120,7 +143,14 @@ class P3bV7ProcessedSnapshotIdentityTests(unittest.TestCase):
                 bundle_identity=v7._v6._P3A._bundle_identity(current_plan),
             )
             reservation.mark_request_started()
-            reservation.save_raw_response({"id": "saved-response", "output": []})
+            raw_response = _raw_response()
+            reservation.save_raw_response(raw_response)
+            _parsed, result_snapshot = v7.replay_raw_response(
+                v7._base._v6._runtime,
+                raw_response,
+                maximum_web_search_calls=1,
+            )
+            reservation.save_result_snapshot(result_snapshot)
             reservation.mark_processed(
                 _current_snapshot(current_plan, candidate_id="current-provenance-control")
             )
