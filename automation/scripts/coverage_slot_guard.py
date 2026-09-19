@@ -189,6 +189,12 @@ def _validated_snapshot_provenance(
         raise CoverageSlotError(
             f"Coverage optional-slot {label} response provenance mismatch"
         )
+    if str(provenance.get("bundle_identity_sha256") or "") != str(
+        journal.get("bundle_identity_sha256") or ""
+    ):
+        raise CoverageSlotError(
+            f"Coverage optional-slot {label} bundle provenance mismatch"
+        )
     if str(provenance.get("snapshot_sha256") or "") != saved_hash:
         raise CoverageSlotError(
             f"Coverage optional-slot {label} snapshot provenance mismatch"
@@ -302,6 +308,7 @@ class CoverageSlotReservation:
         value[_RESULT_SNAPSHOT_PROVENANCE_KEY] = {
             "request_contract_sha256": value.get("request_contract_sha256"),
             "response_sha256": response_sha256,
+            "bundle_identity_sha256": value.get("bundle_identity_sha256"),
             "snapshot_sha256": snapshot_sha256,
         }
         self._write(value)
@@ -332,6 +339,7 @@ class CoverageSlotReservation:
             value[_PROCESSED_SNAPSHOT_PROVENANCE_KEY] = {
                 "request_contract_sha256": value.get("request_contract_sha256"),
                 "response_sha256": response_sha256,
+                "bundle_identity_sha256": value.get("bundle_identity_sha256"),
                 "result_snapshot_sha256": result_hash or None,
                 "snapshot_sha256": snapshot_sha256,
             }
