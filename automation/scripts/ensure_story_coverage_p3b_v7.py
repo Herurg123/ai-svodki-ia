@@ -496,10 +496,19 @@ def _validate_optional_slot_journal(
             raise CoverageSlotError(
                 "processed Coverage optional-slot snapshot has invalid search budget"
             )
-        # If current lineage is declared, verify it exactly. A historical journal
-        # with no lineage returns None here and is handled fail-closed by the
-        # runtime rather than being promoted to a current reusable snapshot.
-        validated_processed_snapshot(journal)
+        # If current lineage is declared, verify it exactly. Historical P3b
+        # positives may still need the zero-I/O sanitation path below, but a
+        # historical generic/legacy processed resolution must not reach
+        # prior_complete/existing_full_digest shortcuts without proven processed
+        # lineage. The consumed slot stays spent; this does not authorize retry.
+        proven_processed = validated_processed_snapshot(journal)
+        if (
+            proven_processed is None
+            and _processed_snapshot_is_legacy_resolution(journal)
+        ):
+            raise CoverageSlotError(
+                "historical legacy processed optional-slot result has no durable processed provenance"
+            )
 
     search_window: dict[str, Any] | None = None
     candidates_path = Path(artifact_dir) / "candidates.json"
