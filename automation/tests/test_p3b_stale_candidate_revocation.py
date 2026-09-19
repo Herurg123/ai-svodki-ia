@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import json
 import sys
 import tempfile
 import unittest
@@ -21,6 +22,30 @@ MODEL = controls.MODEL
 WINDOW = controls.WINDOW
 TEMPLATE = controls.TEMPLATE
 SIGNAL = controls.SIGNAL
+
+
+def _raw_response(response_id: str) -> dict:
+    payload = {
+        "status": "complete_with_gaps",
+        "direction_id": "general_coverage_gaps",
+        "candidates": [],
+        "rejections": [],
+    }
+    return {
+        "id": response_id,
+        "status": "completed",
+        "model": MODEL,
+        "output_text": json.dumps(payload, ensure_ascii=False),
+        "output": [
+            {
+                "id": "search-1",
+                "type": "web_search_call",
+                "status": "completed",
+                "action": {"type": "search", "query": "fixture exact query", "sources": []},
+            }
+        ],
+    }
+
 
 
 def _valid_candidate(*, title: str, url: str, audit_direction: str) -> dict:
@@ -126,9 +151,14 @@ class P3bStaleCandidateRevocationTests(unittest.TestCase):
         )
 
         reservation.mark_request_started()
-        reservation.save_raw_response(
-            {"id": f"evidence-v{binder_evidence_version}", "status": "completed"}
+        raw_response = _raw_response(f"evidence-v{binder_evidence_version}")
+        reservation.save_raw_response(raw_response)
+        _parsed, result_snapshot = coverage.replay_raw_response(
+            coverage._runtime,
+            raw_response,
+            maximum_web_search_calls=1,
         )
+        reservation.save_result_snapshot(result_snapshot)
         reservation.mark_processed(saved)
         return saved, stale, controls_to_preserve
 
