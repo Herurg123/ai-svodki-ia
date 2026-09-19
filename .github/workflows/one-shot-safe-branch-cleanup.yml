@@ -1,5 +1,5 @@
-name: One-shot superseded Dzen branch cleanup
-run-name: One-shot superseded Dzen branch cleanup ${{ github.run_id }}
+name: One-shot abandoned Dzen branch cleanup
+run-name: One-shot abandoned Dzen branch cleanup ${{ github.run_id }}
 
 on:
   pull_request:
@@ -8,18 +8,13 @@ on:
     types:
       - synchronize
 
-concurrency:
-  group: one-shot-superseded-dzen-branch-cleanup
-  cancel-in-progress: false
-
 permissions:
   contents: write
-  actions: write
+  actions: read
   pull-requests: write
 
 jobs:
   cleanup:
-    name: Delete audited superseded Dzen branch and orphan workflows
     if: >-
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.head_ref == 'ops/one-shot-safe-branch-cleanup-2026-09-19'
@@ -27,7 +22,7 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Re-prove exact state, clean, and verify
+      - name: Re-prove supersession, delete branch, verify
         env:
           GITHUB_TOKEN: ${{ github.token }}
           EXPECTED_MAIN_SHA: 227d06e4755ba996829c5f4636c24fe0cd0362b0
@@ -36,7 +31,7 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
-          import datetime as dt
+          import base64
           import json
           import os
           import urllib.error
@@ -50,25 +45,19 @@ jobs:
           PR_NUMBER = int(os.environ["CLEANUP_PR_NUMBER"])
           SELF_BRANCH = "ops/one-shot-safe-branch-cleanup-2026-09-19"
 
-          TARGET_BRANCH = "rebase/automatic-dzen-worker-final"
-          TARGET_HEAD = "585800364d9adcbf664b72120e82bd4d2f635fcd"
-          TARGET_TREE = "3d371485a43b0b6e2e7bedf5200709472bf09021"
-          ACCEPTED_MERGE = "5d278fd594c70b357b5bfdd4f493119829a6dc81"
-          ACCEPTED_PR = 109
-
-          WORKFLOWS = {
-              344367759: {
-                  "path": ".github/workflows/build-notebooklm-update.yml",
-                  "runs": {33147248198},
-              },
-              344361682: {
-                  "path": ".github/workflows/apply-dzen-rebase-docs.yml",
-                  "runs": {33146698123},
-              },
+          TARGET_BRANCH = "fix/dzen-shared-browser-session"
+          TARGET_HEAD = "da6ee14ed9aa54cffaa3ac4cfbd1e854a36b9f5b"
+          TARGET_TREE = "7b44c7a6970241bd227163e785c85418b34be5cf"
+          SUCCESSOR_PR = 103
+          SUCCESSOR_MERGE = "e69cbdf593f9de22cb43012e7b544ed7a84d970e"
+          REQUIRED_SUCCESSOR_COMMITS = {
+              "d38dc2ec6983ec1182ca046d9b9b17b12caac35e",
+              "94aae166be11549a056592d15e59dfa6ee3f4607",
+              "8739de0eea00d1688b8bf04c9c5ec29dd8a4800c",
+              "5e452281312aa994cd12bb33a024da65e16aae84",
+              "13520aae993ccdfeb4f023aa76a69a43e3e9e373",
           }
-
           ACTIVE = {"queued", "in_progress", "waiting", "requested", "pending"}
-          cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=14)
 
           def api(method, path, payload=None, allow_404=False):
               url = f"https://api.github.com/repos/{REPO}/{path}"
@@ -77,7 +66,7 @@ jobs:
                   "Accept": "application/vnd.github+json",
                   "Authorization": f"Bearer {TOKEN}",
                   "X-GitHub-Api-Version": "2022-11-28",
-                  "User-Agent": "ai-svodki-superseded-dzen-cleanup",
+                  "User-Agent": "ai-svodki-abandoned-dzen-cleanup",
               }
               if payload is not None:
                   body = json.dumps(payload).encode("utf-8")
@@ -93,146 +82,77 @@ jobs:
                   detail = exc.read().decode("utf-8", errors="replace")
                   raise RuntimeError(f"{method} {path} -> HTTP {exc.code}: {detail}") from exc
 
-          def parse_time(value):
-              return dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
-
           def enc(value):
               return urllib.parse.quote(value, safe="/")
 
-          # Bind execution to this disposable same-repository PR.
+          def main_text(path):
+              encoded = urllib.parse.quote(path, safe="/")
+              obj = api("GET", f"contents/{encoded}?ref=main")
+              return base64.b64decode(obj["content"]).decode("utf-8")
+
           pr = api("GET", f"pulls/{PR_NUMBER}")
           if pr["state"] != "open" or pr["base"]["ref"] != "main":
               raise RuntimeError("cleanup PR state/base changed")
           if pr["head"]["ref"] != SELF_BRANCH or pr["head"]["repo"]["full_name"] != REPO:
               raise RuntimeError("cleanup PR identity changed")
 
-          # Pin current main.
-          main = api("GET", "git/ref/heads/main")
-          current_main = main["object"]["sha"]
+          current_main = api("GET", "git/ref/heads/main")["object"]["sha"]
           if current_main != EXPECTED_MAIN:
-              raise RuntimeError(
-                  f"main changed: expected {EXPECTED_MAIN}, found {current_main}; deleting nothing"
-              )
+              raise RuntimeError(f"main changed: expected {EXPECTED_MAIN}, found {current_main}")
 
-          # Re-prove accepted canonical state via PR #109 and commit ancestry.
-          accepted_pr = api("GET", f"pulls/{ACCEPTED_PR}")
-          if not accepted_pr.get("merged") or accepted_pr.get("merge_commit_sha") != ACCEPTED_MERGE:
-              raise RuntimeError("accepted PR #109 merge identity changed")
-          merge_commit = api("GET", f"commits/{ACCEPTED_MERGE}")
-          if merge_commit["commit"]["tree"]["sha"] != TARGET_TREE:
-              raise RuntimeError("accepted merge tree no longer matches audited target tree")
-          compare = api("GET", f"compare/{ACCEPTED_MERGE}...{EXPECTED_MAIN}")
-          if compare.get("behind_by") != 0 or compare.get("merge_base_commit", {}).get("sha") != ACCEPTED_MERGE:
-              raise RuntimeError("accepted PR #109 merge is not an ancestor of current main")
-
-          # Re-prove target branch exact head and exact final tree.
           target_ref = api("GET", f"git/ref/heads/{enc(TARGET_BRANCH)}")
           if target_ref["object"]["sha"] != TARGET_HEAD:
-              raise RuntimeError(
-                  f"target head changed: expected {TARGET_HEAD}, found {target_ref['object']['sha']}"
-              )
+              raise RuntimeError("target branch head changed")
           target_commit = api("GET", f"commits/{TARGET_HEAD}")
           if target_commit["commit"]["tree"]["sha"] != TARGET_TREE:
-              raise RuntimeError("target final tree changed")
+              raise RuntimeError("target branch tree changed")
 
-          # No open PR may reference the target branch.
-          query = urllib.parse.urlencode({
-              "state": "open",
-              "head": f"{OWNER}:{TARGET_BRANCH}",
-              "per_page": "100",
-          })
-          open_prs = api("GET", f"pulls?{query}")
-          if open_prs:
-              raise RuntimeError(
-                  f"target branch acquired open PR(s): {[item['number'] for item in open_prs]}"
-              )
+          q = urllib.parse.urlencode({"state":"open","head":f"{OWNER}:{TARGET_BRANCH}","per_page":"100"})
+          if api("GET", f"pulls?{q}"):
+              raise RuntimeError("target branch acquired an open PR")
 
-          # No active run may exist for target branch.
           for status in sorted(ACTIVE):
-              query = urllib.parse.urlencode({
-                  "branch": TARGET_BRANCH,
-                  "status": status,
-                  "per_page": "1",
-              })
-              runs = api("GET", f"actions/runs?{query}")
-              if runs.get("total_count", 0):
-                  raise RuntimeError(f"target branch has active Actions run with status {status!r}")
+              q = urllib.parse.urlencode({"branch":TARGET_BRANCH,"status":status,"per_page":"1"})
+              if api("GET", f"actions/runs?{q}").get("total_count", 0):
+                  raise RuntimeError(f"target branch has active run status={status}")
 
-          # Re-prove exact workflow identities and exact old completed run sets.
-          plans = []
-          for wid, spec in WORKFLOWS.items():
-              workflow = api("GET", f"actions/workflows/{wid}")
-              if workflow.get("path") != spec["path"]:
-                  raise RuntimeError(f"workflow {wid} identity changed")
+          successor = api("GET", f"pulls/{SUCCESSOR_PR}")
+          if not successor.get("merged") or successor.get("merge_commit_sha") != SUCCESSOR_MERGE:
+              raise RuntimeError("successor PR #103 merge identity changed")
 
-              path = urllib.parse.quote(spec["path"], safe="/")
-              if api("GET", f"contents/{path}?ref=main", allow_404=True) is not None:
-                  raise RuntimeError(f"workflow {wid} file exists on current main")
+          compare = api("GET", f"compare/{SUCCESSOR_MERGE}...{EXPECTED_MAIN}")
+          if compare.get("behind_by") != 0 or compare.get("merge_base_commit", {}).get("sha") != SUCCESSOR_MERGE:
+              raise RuntimeError("successor merge is not an ancestor of current main")
 
-              runs = api("GET", f"actions/workflows/{wid}/runs?per_page=100")
-              actual = {int(run["id"]) for run in runs.get("workflow_runs", [])}
-              if actual != spec["runs"]:
-                  raise RuntimeError(
-                      f"workflow {wid} run set changed: expected {sorted(spec['runs'])}, found {sorted(actual)}"
-                  )
-              for run in runs.get("workflow_runs", []):
-                  if run.get("status") != "completed":
-                      raise RuntimeError(f"workflow {wid} run {run['id']} is not completed")
-                  if run.get("head_branch") != TARGET_BRANCH:
-                      raise RuntimeError(
-                          f"workflow {wid} run {run['id']} belongs to {run.get('head_branch')!r}"
-                      )
-                  if parse_time(run["created_at"]) > cutoff:
-                      raise RuntimeError(f"workflow {wid} run {run['id']} is newer than 14 days")
-              if workflow.get("state") not in {"active", "disabled_manually"}:
-                  raise RuntimeError(f"workflow {wid} unexpected state {workflow.get('state')!r}")
-              plans.append((wid, workflow.get("state"), sorted(actual)))
+          commits = api("GET", f"pulls/{SUCCESSOR_PR}/commits?per_page=100")
+          present = {item["sha"] for item in commits}
+          missing = REQUIRED_SUCCESSOR_COMMITS - present
+          if missing:
+              raise RuntimeError(f"required successor history missing: {sorted(missing)}")
 
-          # Destructive phase. All checks above complete before the first mutation.
-          disabled = []
-          deleted_runs = []
-          for wid, state, run_ids in plans:
-              if state == "active":
-                  api("PUT", f"actions/workflows/{wid}/disable")
-                  disabled.append(wid)
-              for run_id in run_ids:
-                  api("DELETE", f"actions/runs/{run_id}")
-                  deleted_runs.append(run_id)
+          worker = main_text("automation/notebooklm-video/worker.js")
+          if "browser-session" in worker or "createBrowserSession" in worker:
+              raise RuntimeError("current worker architecture changed; re-audit required")
+
+          dzen = main_text("automation/notebooklm-video/dzen-publish.js")
+          if "readVideoDraftFromUrl" in dzen or "DZEN_DRAFT_DISCOVERY_TIMEOUT_MS" in dzen:
+              raise RuntimeError("old draft-recovery semantics reappeared; re-audit required")
+          if "Не считаю это доказательством провала загрузки" not in dzen:
+              raise RuntimeError("current accepted upload-timeout contract changed")
 
           api("DELETE", f"git/refs/heads/{enc(TARGET_BRANCH)}")
 
-          # Verify exact result while keeping main pinned.
-          current_main_after = api("GET", "git/ref/heads/main")["object"]["sha"]
-          if current_main_after != EXPECTED_MAIN:
-              raise RuntimeError("main changed during cleanup")
-
           if api("GET", f"git/ref/heads/{enc(TARGET_BRANCH)}", allow_404=True) is not None:
               raise RuntimeError("target branch still exists after DELETE")
+          if api("GET", "git/ref/heads/main")["object"]["sha"] != EXPECTED_MAIN:
+              raise RuntimeError("main changed during cleanup")
 
-          workflow_state = {}
-          for wid, spec in WORKFLOWS.items():
-              workflow = api("GET", f"actions/workflows/{wid}", allow_404=True)
-              if workflow is None:
-                  workflow_state[wid] = "absent"
-                  continue
-              if workflow.get("path") != spec["path"]:
-                  raise RuntimeError(f"workflow {wid} identity changed after cleanup")
-              if workflow.get("state") != "disabled_manually":
-                  raise RuntimeError(f"workflow {wid} remains active")
-              remaining = api("GET", f"actions/workflows/{wid}/runs?per_page=100")
-              if remaining.get("total_count", 0) != 0:
-                  raise RuntimeError(f"workflow {wid} still has runs")
-              workflow_state[wid] = "disabled_no_runs"
-
-          # Close only this disposable operational PR.
-          api("PATCH", f"pulls/{PR_NUMBER}", {"state": "closed"})
+          api("PATCH", f"pulls/{PR_NUMBER}", {"state":"closed"})
 
           print("CLEANUP_RESULT", json.dumps({
-              "main": EXPECTED_MAIN,
               "deleted_branch": TARGET_BRANCH,
-              "disabled_workflows": disabled,
-              "deleted_runs": deleted_runs,
-              "workflow_state": workflow_state,
+              "main": EXPECTED_MAIN,
+              "successor_pr": SUCCESSOR_PR,
               "pr_closed": PR_NUMBER,
           }, sort_keys=True))
           PY
