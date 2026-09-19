@@ -1,0 +1,152 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-09-19",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-09-19.json",
+  "warnings": [
+    "cand-003: источник показывает дату без точного времени.",
+    "cand-006: источник показывает дату без точного времени.",
+    "cand-012: источник показывает дату без точного времени.",
+    "cand-013: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: techcrunch (6)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-09-19",
+  "started_at": "2026-09-19T01:19:07+00:00",
+  "finished_at": "2026-09-19T01:19:50+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 63,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "72d74132a549905ea5005db215f4f42b61bcccc6c72cb51ed640aa29ba3a13ec",
+    "candidates_sha256": "c0bde81a69fd2fe1bc24e0e22ec598c95a27f2e24aad78ee55af3b935d1148e5",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-09-17T04:17:08+03:00",
+      "end_at": "2026-09-19T04:10:10+03:00",
+      "latest_archive_at": "2026-09-18T04:17:08+03:00",
+      "start_date": "2026-09-17",
+      "end_date": "2026-09-19",
+      "latest_archive_date": "2026-09-18"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "830c1c3ad234b62de4dd6703330c0171f593f5b51f2a1bfacd0976e382e2e161",
+    "editorial_sha256": "47ad877921c52d2ccc5654c913491301c3ba24dad1df7f95424ba732d184f638",
+    "digest_sha256": "fadab0f2a2c7144dfb3e68273ecd55c4787dd0a1c6780913c2b749bd09e06649",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-09-19.jpg",
+          "normalized_value": "ai-svodka-2026-09-19.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.meta_marking",
+          "model_value": "inconsistent",
+          "normalized_value": "first Meta*, subsequent Meta"
+        }
+      ],
+      "changed_count": 1,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-003."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_integrations, russia, developer_tools, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Пять выбранных материалов TechCrunch описывают независимые события высокой редакционной значимости в разных сегментах: внешнюю оценку безопасности Anthropic, governance Google DeepMind, семейного агента Google, desktop-расширение Meta и новую специализированную модель TypeSafe AI. Сопоставимых подтверждённых альтернатив в пуле недостаточно для замены без потери важных сюжетов."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0856bc4911e267ae016aade30c712087d09fd0a389634fe6c6",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 134281,
+        "input_tokens_details": {
+          "cache_write_tokens": 17877,
+          "cached_tokens": 116401
+        },
+        "output_tokens": 3946,
+        "output_tokens_details": {
+          "reasoning_tokens": 516
+        },
+        "total_tokens": 138227
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 134281,
+    "output_tokens": 3946,
+    "total_tokens": 138227,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "bd0dbceb256b0f5fccd4583519094ce9bb518202",
+    "run_id": "35411755185",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-09-19T04:10:10+03:00"
+}

@@ -1,0 +1,45 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-19",
+  "slug": "2026-09-19",
+  "title": "ИИ-Сводка на 19 сентября 2026",
+  "description": "Anthropic выводит внешнюю оценку моделей в постоянный контур, Google и Meta расширяют потребительских агентов, а Qwen выпускает omni-модальную систему с контекстом до миллиона токенов.",
+  "published_at": "2026-09-19T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-19.png",
+  "topics": [
+    "безопасность ИИ",
+    "оценка моделей",
+    "агенты ИИ",
+    "AGI governance",
+    "кибербезопасность",
+    "Google DeepMind",
+    "Anthropic",
+    "Meta",
+    "Muse",
+    "семейные ИИ-агенты",
+    "Qwen",
+    "мультимодальные модели",
+    "длинный контекст",
+    "model routing"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-003."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_integrations, russia, developer_tools, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Пять выбранных материалов TechCrunch описывают независимые события высокой редакционной значимости в разных сегментах: внешнюю оценку безопасности Anthropic, governance Google DeepMind, семейного агента Google, desktop-расширение Meta и новую специализированную модель TypeSafe AI. Сопоставимых подтверждённых альтернатив в пуле недостаточно для замены без потери важных сюжетов."
+    }
+  ]
+}

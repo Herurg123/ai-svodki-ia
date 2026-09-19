@@ -1,0 +1,222 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Anthropic привлекла Accenture как первого встроенного оценщика моделей",
+    "organization": "Anthropic; Accenture; Faculty",
+    "topic": "AI safety; независимая оценка моделей; red teaming; governance",
+    "event_type": "partnership",
+    "status": "new",
+    "summary": "Anthropic сообщила, что сотрудники Faculty — AI-подразделения Accenture — начнут работать внутри компании, оценивая и red-team'я модели, проводя alignment assessments и тестируя safeguards. Компании ожидают вложить в проект не менее $1 млрд за пять лет.",
+    "published_at": "2026-09-18T21:44:33+00:00",
+    "published_date": "2026-09-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic’s first embedded evaluator is … Accenture?",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/18/anthropics-first-embedded-evaluator-is-accenture/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Accenture",
+      "Faculty",
+      "embedded evaluator",
+      "red teaming",
+      "alignment assessments",
+      "model safeguards"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Испанский регулятор получил уведомление о предполагаемой атаке с применением агента ИИ",
+    "organization": "Agencia Española de Protección de Datos (AEPD); неназванная испанская компания; неназванная LLM-платформа",
+    "topic": "Несанкционированные действия AI-агента; утечка персональных данных; agentic cyberattacks",
+    "event_type": "incident disclosure",
+    "status": "new",
+    "summary": "Испанское агентство по защите данных AEPD сообщило, что получило первое уведомление о нарушении персональных данных, которое, по данным пострадавшей организации, было осуществлено с применением AI-агента на базе известной LLM. Согласно пересказу регуляторного сообщения, агент использовал публично доступные файлы для входа, сканировал внутреннюю систему на уязвимости, затем модифицировал персональные данные и получил доступ к счетам; расследование продолжается.",
+    "published_at": "2026-09-17T11:24:43+00:00",
+    "published_date": "2026-09-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Spain says it has seen first AI agent hack",
+        "publisher": "IT Pro",
+        "url": "https://www.itpro.com/security/cyber-attacks/spain-says-it-has-seen-first-ai-agent-hack"
+      }
+    ],
+    "keywords": [
+      "AI agent",
+      "data breach",
+      "autonomous attack",
+      "vulnerability scanning",
+      "personal data",
+      "AEPD",
+      "credentials"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Google DeepMind запустила институт для публичной дискуссии об AGI",
+    "organization": "Google; Google DeepMind; DeepMind Institute; Demis Hassabis; Shane Legg; James Manyika",
+    "topic": "AGI governance; безопасность frontier-моделей; независимые evaluations; стандарты",
+    "event_type": "institution launch and policy proposals",
+    "status": "new",
+    "summary": "Google и Google DeepMind запустили DeepMind Institute для публичной дискуссии об AGI. Стартовая серия эссе включает предложения о сохранении проверяемости reasoning и о системе оценок frontier-моделей, которая могла бы перейти от добровольного представления моделей до релиза к обязательным требованиям к deployment.",
+    "published_at": "2026-09-17T23:21:17+00:00",
+    "published_date": "2026-09-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google DeepMind launches institute to widen the AGI debate",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/17/google-deepmind-launches-institute-to-widen-the-agi-debate/"
+      }
+    ],
+    "keywords": [
+      "Google DeepMind",
+      "DeepMind Institute",
+      "AGI",
+      "frontier AI",
+      "evaluations",
+      "AI governance",
+      "Demis Hassabis"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Google тестирует CC — семейного агента для домашних задач",
+    "organization": "Google; Gemini; Antigravity; CC",
+    "topic": "Consumer AI; агенты; household management; Gmail; Calendar; shared memory",
+    "event_type": "product_launch",
+    "status": "new",
+    "summary": "Google представила обновлённый экспериментальный CC: AI-агента для семей, который работает с почтой, календарями, чатами и задачами, помогает вести общее расписание, создавать списки и выполнять отдельные бытовые действия, включая заполнение некоторых форм.",
+    "published_at": "2026-09-18T17:33:50+00:00",
+    "published_date": "2026-09-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google’s new ‘CC’ is an AI agent that helps families run their households",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/18/googles-new-cc-is-an-ai-agent-that-helps-families-run-their-households/"
+      }
+    ],
+    "keywords": [
+      "Google CC",
+      "AI agent",
+      "Gemini",
+      "Antigravity",
+      "family",
+      "Gmail",
+      "calendar",
+      "household management"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Обновление: Meta выпустила Muse для Mac с доступом к нативным приложениям",
+    "organization": "Meta; Muse",
+    "topic": "Потребительские AI-агенты; desktop agents; выполнение действий в macOS",
+    "event_type": "product availability expansion",
+    "status": "update",
+    "summary": "Meta сделала Muse доступным на Mac. По данным TechCrunch, агент может по opt-in взаимодействовать с файлами, сообщениями, календарём, заметками и почтой в нативных приложениях и запрашивает подтверждение перед чувствительными действиями.",
+    "published_at": "2026-09-18T15:22:48+00:00",
+    "published_date": "2026-09-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Meta’s Muse hits Mac, letting the AI take actions on your computer",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/18/metas-muse-hits-mac-letting-the-ai-take-actions-on-your-computer/"
+      }
+    ],
+    "keywords": [
+      "Meta",
+      "Muse",
+      "Mac",
+      "consumer AI agent",
+      "desktop agent",
+      "macOS"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "TypeSafe AI выпустила Jev — модель для калиброванных решений",
+    "organization": "TypeSafe AI; Diogo Almeida; Jev",
+    "topic": "Модели; software automation; классификация; model routing; synthetic data",
+    "event_type": "model_release",
+    "status": "new",
+    "summary": "TypeSafe AI выпустила Jev — transformer-модель, которая выдаёт вероятностные «калиброванные решения», а не текст. Компания позиционирует её для дешёвой и быстрой автоматизации, контроля агентных трасс и model routing.",
+    "published_at": "2026-09-18T18:49:30+00:00",
+    "published_date": "2026-09-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "A new kind of AI model from a ChatGPT inventor is thrilling developers",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/18/a-new-kind-of-ai-model-from-a-chatgpt-inventor-is-thrilling-developers/"
+      }
+    ],
+    "keywords": [
+      "TypeSafe AI",
+      "Jev",
+      "calibrated decisions",
+      "System One model",
+      "synthetic data",
+      "RLCD",
+      "model routing"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Alibaba Qwen выпустила Qwen3.8-Omni-Flash с контекстом до 1 млн токенов",
+    "organization": "Alibaba Cloud; Qwen",
+    "topic": "Нативная мультимодальная модель для агентных задач и обработки текста, изображений, аудио и видео",
+    "event_type": "model_release",
+    "status": "new",
+    "summary": "Alibaba Qwen выпустила Qwen3.8-Omni-Flash, свою первую omni-модальную модель, ориентированную на агентные сценарии. Она принимает текст, изображения, аудио и видео, имеет контекст до 1 млн токенов, поддерживает function calling, web search, structured outputs и совместимые с OpenAI/DashScope API; текст остаётся единственным типом output.",
+    "published_at": null,
+    "published_date": "2026-09-18",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Qwen3.8-Omni-Flash · LLM Releases",
+        "publisher": "LLM Releases",
+        "url": "https://www.llm-releases.com/models/qwen3-8-omni-flash"
+      }
+    ],
+    "keywords": [
+      "Qwen3.8-Omni-Flash",
+      "Qwen",
+      "Alibaba Cloud",
+      "omni-modal",
+      "multimodal",
+      "agents",
+      "audio",
+      "video",
+      "1M context",
+      "function calling"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  }
+]
