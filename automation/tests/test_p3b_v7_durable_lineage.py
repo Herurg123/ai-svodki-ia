@@ -429,6 +429,7 @@ class P3bV7DurableLineageTests(unittest.TestCase):
             state.mkdir(parents=True)
             artifact.mkdir(parents=True)
             archive = {"items": []}
+            _write(archive_path, archive)
             saved_signal = _legacy_signal(
                 title="Alpha Labs releases Orion",
                 evidence_reason="Weak source reports a new Orion release",
