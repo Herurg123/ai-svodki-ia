@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import json
 import sys
 import tempfile
 import unittest
@@ -16,6 +17,30 @@ import ensure_story_coverage as coverage
 import test_p3b_astra_regressions as controls
 import test_p3b_astra_second_review as second
 import weak_source_exact_binding_v4 as binder
+
+
+def _raw_response(response_id: str) -> dict:
+    payload = {
+        "status": "complete_with_gaps",
+        "direction_id": "general_coverage_gaps",
+        "candidates": [],
+        "rejections": [],
+    }
+    return {
+        "id": response_id,
+        "status": "completed",
+        "model": "gpt-test",
+        "output_text": json.dumps(payload, ensure_ascii=False),
+        "output": [
+            {
+                "id": "search-1",
+                "type": "web_search_call",
+                "status": "completed",
+                "action": {"type": "search", "query": "fixture exact query", "sources": []},
+            }
+        ],
+    }
+
 
 
 def ga_signal() -> dict:
@@ -37,7 +62,8 @@ def ga_candidate() -> dict:
 
 class AstraFourthReviewRegressions(unittest.TestCase):
     def test_public_runtime_still_uses_active_v4_binder(self) -> None:
-        self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v6")
+        self.assertEqual(coverage._impl.__name__, "ensure_story_coverage_p3b_v7")
+        self.assertTrue(coverage._impl._v6.__name__.endswith("p3b_v6_preserved"))
         self.assertIs(coverage._exact_binding, binder)
         self.assertEqual(coverage.P3B_EXACT_BINDING_VERSION, 2)
         self.assertEqual(binder.EVIDENCE_VERSION, 6)
@@ -224,15 +250,20 @@ class AstraFourthReviewRegressions(unittest.TestCase):
                     "binder_evidence_version": evidence_version,
                 }
                 reservation.mark_request_started()
-                reservation.save_raw_response(
-                    {"id": f"evidence-v{evidence_version}", "status": "completed"}
+                raw_response = _raw_response(f"evidence-v{evidence_version}")
+                reservation.save_raw_response(raw_response)
+                _parsed, result_snapshot = coverage.replay_raw_response(
+                    coverage._runtime,
+                    raw_response,
+                    maximum_web_search_calls=1,
                 )
+                reservation.save_result_snapshot(result_snapshot)
                 reservation.mark_processed(saved)
 
-                with mock.patch.object(coverage._impl, "STATE_DIR", state):
-                    self.assertTrue(
-                        coverage._impl._processed_positive_snapshot_is_stale(controls.DATE)
-                    )
+                stale_snapshot = coverage._impl._load_stale_positive_snapshot(
+                    state, controls.DATE
+                )
+                self.assertIsNotNone(stale_snapshot)
 
 
 if __name__ == "__main__":

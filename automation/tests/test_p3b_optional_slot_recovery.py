@@ -169,6 +169,22 @@ class P3bOptionalSlotRecoveryTests(unittest.TestCase):
             reservation = self._reservation(state, reservation_plan)
             reservation.mark_request_started()
             reservation.save_raw_response({"id": "resp-p3b-processed", "status": "completed"})
+            reservation.save_result_snapshot({
+                "payload": {
+                    "status": "complete_with_gaps",
+                    "direction_id": "general_coverage_gaps",
+                    "candidates": [],
+                    "rejections": [],
+                },
+                "metadata": {
+                    "response_id": "resp-p3b-processed",
+                    "status": "completed",
+                    "actual_queries": [coverage.build_p3b_query(SIGNAL)],
+                    "web_search_calls_completed": 1,
+                },
+                "output_text": "{}",
+                "validation_error": None,
+            })
             saved = self._plan(0)
             saved["weak_source_exact_binding"] = {
                 "version": 2,

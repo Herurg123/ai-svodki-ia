@@ -1,0 +1,70 @@
+{
+  "source": "Frozen minimal projection of automation/content/2026-08-15/candidates.json from commit 41481a7fd4feacbd812cc3de82630ca5078f23e8. Kept outside retention-managed production content so the short-pool diversity regression remains reproducible.",
+  "candidates": [
+    {
+      "id": "cand-001",
+      "organization": "OpenAI; Cerebras",
+      "category": "models",
+      "primary_source": {
+        "publisher": "TechCrunch"
+      },
+      "recommendation": "include",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 3,
+      "curiosity_eligible": false
+    },
+    {
+      "id": "cand-002",
+      "organization": "Microsoft",
+      "category": "agents",
+      "primary_source": {
+        "publisher": "TechCrunch"
+      },
+      "recommendation": "include",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 4,
+      "curiosity_eligible": false
+    },
+    {
+      "id": "cand-003",
+      "organization": "Writer; Z.ai",
+      "category": "models",
+      "primary_source": {
+        "publisher": "TechCrunch"
+      },
+      "recommendation": "include",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 3,
+      "curiosity_eligible": false
+    },
+    {
+      "id": "cand-004",
+      "organization": "Google; Gemini; Flow",
+      "category": "security",
+      "primary_source": {
+        "publisher": "TechCrunch"
+      },
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 2,
+      "curiosity_eligible": false
+    },
+    {
+      "id": "cand-005",
+      "organization": "Zayo; Nvidia",
+      "category": "infrastructure",
+      "primary_source": {
+        "publisher": "Data Center Knowledge"
+      },
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "freshness_status": "new_event",
+      "significance_score": 3,
+      "curiosity_eligible": false
+    }
+  ]
+}

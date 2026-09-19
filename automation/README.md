@@ -100,8 +100,13 @@
   optional seventh slot для максимум одного qualified P3a weak-source signal,
   причём required `unverified` resolution имеет приоритет. Admission требует
   exact authoritative page identity, deterministic Freshness и archive checks;
-  `request_started` не ретраится, `response_saved`/`processed` переиспользуются
-  offline, а восьмой Coverage search запрещён;
+  `request_started` не ретраится, `response_saved` сохраняет прежний offline
+  replay, а `processed` переиспользуется только при доказанной durable provenance
+  exact snapshot bytes → request/response/pre-optional bundle → parsed-result hash. Финальный research
+  `candidates.json` не реконструирует Coverage-plan identity. Active v7 также
+  требует exact deterministic raw↔parsed replay для saved result и current
+  request-contract identity для processed legacy resolution; восьмой Coverage
+  search запрещён;
 - `scripts/recover_digest_artifact.py` — paid-stage recovery entrypoint; текущий
   agency-health contract разрешает повторно оценить только zero-spend saved
   `not_triggered`, но никогда не повторяет started/spent/indeterminate rescue;

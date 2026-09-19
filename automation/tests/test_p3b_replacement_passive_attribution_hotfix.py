@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import json
 import sys
 import tempfile
 import unittest
@@ -22,6 +23,30 @@ MODEL = controls.MODEL
 WINDOW = controls.WINDOW
 TEMPLATE = controls.TEMPLATE
 SIGNAL = controls.SIGNAL
+
+
+def _raw_response(response_id: str) -> dict:
+    payload = {
+        "status": "complete_with_gaps",
+        "direction_id": "general_coverage_gaps",
+        "candidates": [],
+        "rejections": [],
+    }
+    return {
+        "id": response_id,
+        "status": "completed",
+        "model": MODEL,
+        "output_text": json.dumps(payload, ensure_ascii=False),
+        "output": [
+            {
+                "id": "search-1",
+                "type": "web_search_call",
+                "status": "completed",
+                "action": {"type": "search", "query": "fixture exact query", "sources": []},
+            }
+        ],
+    }
+
 
 
 class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
@@ -275,7 +300,14 @@ class P3bReplacementPassiveAttributionHotfixTests(unittest.TestCase):
             self.assertEqual(saved_budget["remaining_calls"], 0)
 
             reservation.mark_request_started()
-            reservation.save_raw_response({"id": "evidence-v2", "status": "completed"})
+            raw_response = _raw_response("evidence-v2")
+            reservation.save_raw_response(raw_response)
+            _parsed, result_snapshot = coverage.replay_raw_response(
+                coverage._runtime,
+                raw_response,
+                maximum_web_search_calls=1,
+            )
+            reservation.save_result_snapshot(result_snapshot)
             reservation.mark_processed(saved)
 
             common = dict(

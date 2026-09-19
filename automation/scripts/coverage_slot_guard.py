@@ -16,7 +16,11 @@ VERSION = 1
 JOURNAL_PREFIX = "coverage-optional-slot-"
 RESPONSE_SUFFIX = ".response.json"
 _RESULT_SNAPSHOT_KEY = "result_snapshot"
+_RESULT_SNAPSHOT_SHA256_KEY = "result_snapshot_sha256"
+_RESULT_SNAPSHOT_PROVENANCE_KEY = "result_snapshot_provenance"
 _PROCESSED_SNAPSHOT_KEY = "processed_snapshot"
+_PROCESSED_SNAPSHOT_SHA256_KEY = "processed_snapshot_sha256"
+_PROCESSED_SNAPSHOT_PROVENANCE_KEY = "processed_snapshot_provenance"
 
 
 class CoverageSlotError(RuntimeError):
@@ -145,6 +149,96 @@ def _assert_identity(journal: dict[str, Any], expected: dict[str, Any]) -> None:
             )
 
 
+def _validated_snapshot_provenance(
+    journal: dict[str, Any],
+    *,
+    snapshot_key: str,
+    snapshot_sha256_key: str,
+    provenance_key: str,
+    label: str,
+) -> dict[str, Any] | None:
+    snapshot = journal.get(snapshot_key)
+    if not isinstance(snapshot, dict):
+        return None
+    saved_hash = str(journal.get(snapshot_sha256_key) or "").strip()
+    provenance = journal.get(provenance_key)
+    lineage_declared = bool(saved_hash or provenance is not None)
+    if not lineage_declared:
+        # Historical v1 journals predate durable result lineage. Their bytes are
+        # still readable for fail-closed migration/sanitation, but the snapshot
+        # is not proven reusable by the current runtime.
+        return None
+    if not saved_hash or not isinstance(provenance, dict):
+        raise CoverageSlotError(
+            f"Coverage optional-slot {label} provenance is incomplete"
+        )
+    actual_hash = sha256_value(snapshot)
+    if saved_hash != actual_hash:
+        raise CoverageSlotError(
+            f"Coverage optional-slot {label} hash mismatch"
+        )
+    if str(provenance.get("request_contract_sha256") or "") != str(
+        journal.get("request_contract_sha256") or ""
+    ):
+        raise CoverageSlotError(
+            f"Coverage optional-slot {label} request provenance mismatch"
+        )
+    if str(provenance.get("response_sha256") or "") != str(
+        journal.get("response_sha256") or ""
+    ):
+        raise CoverageSlotError(
+            f"Coverage optional-slot {label} response provenance mismatch"
+        )
+    if str(provenance.get("bundle_identity_sha256") or "") != str(
+        journal.get("bundle_identity_sha256") or ""
+    ):
+        raise CoverageSlotError(
+            f"Coverage optional-slot {label} bundle provenance mismatch"
+        )
+    if str(provenance.get("snapshot_sha256") or "") != saved_hash:
+        raise CoverageSlotError(
+            f"Coverage optional-slot {label} snapshot provenance mismatch"
+        )
+    return copy.deepcopy(snapshot)
+
+
+def validated_result_snapshot(journal: dict[str, Any]) -> dict[str, Any] | None:
+    return _validated_snapshot_provenance(
+        journal,
+        snapshot_key=_RESULT_SNAPSHOT_KEY,
+        snapshot_sha256_key=_RESULT_SNAPSHOT_SHA256_KEY,
+        provenance_key=_RESULT_SNAPSHOT_PROVENANCE_KEY,
+        label="result snapshot",
+    )
+
+
+def validated_processed_snapshot(journal: dict[str, Any]) -> dict[str, Any] | None:
+    snapshot = _validated_snapshot_provenance(
+        journal,
+        snapshot_key=_PROCESSED_SNAPSHOT_KEY,
+        snapshot_sha256_key=_PROCESSED_SNAPSHOT_SHA256_KEY,
+        provenance_key=_PROCESSED_SNAPSHOT_PROVENANCE_KEY,
+        label="processed snapshot",
+    )
+    if snapshot is None:
+        return None
+    provenance = journal.get(_PROCESSED_SNAPSHOT_PROVENANCE_KEY)
+    result_hash = str((provenance or {}).get("result_snapshot_sha256") or "").strip()
+    if not result_hash:
+        raise CoverageSlotError(
+            "Coverage optional-slot processed snapshot has no parsed-result provenance"
+        )
+    if str(journal.get(_RESULT_SNAPSHOT_SHA256_KEY) or "") != result_hash:
+        raise CoverageSlotError(
+            "Coverage optional-slot processed snapshot result provenance mismatch"
+        )
+    if validated_result_snapshot(journal) is None:
+        raise CoverageSlotError(
+            "Coverage optional-slot processed snapshot references unproven result snapshot"
+        )
+    return snapshot
+
+
 @dataclass
 class CoverageSlotReservation:
     state_dir: Path
@@ -205,7 +299,21 @@ class CoverageSlotReservation:
             raise CoverageSlotError(
                 "Coverage optional-slot result snapshot requires saved response"
             )
-        value[_RESULT_SNAPSHOT_KEY] = copy.deepcopy(snapshot)
+        response_sha256 = str(value.get("response_sha256") or "").strip()
+        if not response_sha256:
+            raise CoverageSlotError(
+                "Coverage optional-slot result snapshot requires saved response provenance"
+            )
+        saved = copy.deepcopy(snapshot)
+        snapshot_sha256 = sha256_value(saved)
+        value[_RESULT_SNAPSHOT_KEY] = saved
+        value[_RESULT_SNAPSHOT_SHA256_KEY] = snapshot_sha256
+        value[_RESULT_SNAPSHOT_PROVENANCE_KEY] = {
+            "request_contract_sha256": value.get("request_contract_sha256"),
+            "response_sha256": response_sha256,
+            "bundle_identity_sha256": value.get("bundle_identity_sha256"),
+            "snapshot_sha256": snapshot_sha256,
+        }
         self._write(value)
 
     def mark_processed(self, processed_snapshot: dict[str, Any] | None = None) -> None:
@@ -214,19 +322,50 @@ class CoverageSlotReservation:
             raise CoverageSlotError(
                 "Coverage optional-slot cannot be processed before response_saved"
             )
+        response_sha256 = str(value.get("response_sha256") or "").strip()
+        if not response_sha256:
+            raise CoverageSlotError(
+                "Coverage optional-slot processed snapshot requires saved response provenance"
+            )
         value["state"] = "processed"
         value["slot_consumed_or_ambiguous"] = True
         if processed_snapshot is not None:
-            value[_PROCESSED_SNAPSHOT_KEY] = copy.deepcopy(processed_snapshot)
+            result_hash = str(value.get(_RESULT_SNAPSHOT_SHA256_KEY) or "").strip()
+            if not result_hash or validated_result_snapshot(value) is None:
+                raise CoverageSlotError(
+                    "Coverage optional-slot processed snapshot requires proven parsed-result provenance"
+                )
+            saved = copy.deepcopy(processed_snapshot)
+            snapshot_sha256 = sha256_value(saved)
+            value[_PROCESSED_SNAPSHOT_KEY] = saved
+            value[_PROCESSED_SNAPSHOT_SHA256_KEY] = snapshot_sha256
+            value[_PROCESSED_SNAPSHOT_PROVENANCE_KEY] = {
+                "request_contract_sha256": value.get("request_contract_sha256"),
+                "response_sha256": response_sha256,
+                "bundle_identity_sha256": value.get("bundle_identity_sha256"),
+                "result_snapshot_sha256": result_hash,
+                "snapshot_sha256": snapshot_sha256,
+            }
         self._write(value)
 
     def result_snapshot(self) -> dict[str, Any] | None:
-        value = self.journal.get(_RESULT_SNAPSHOT_KEY)
-        return copy.deepcopy(value) if isinstance(value, dict) else None
+        # Current response_saved reuse requires proven result lineage. Historical
+        # journals without additive provenance intentionally return None so the
+        # preserved child reparses the hash-validated raw response offline and
+        # upgrades the result snapshot before any processed transition.
+        return validated_result_snapshot(self.journal)
 
     def processed_snapshot(self) -> dict[str, Any] | None:
-        value = self.journal.get(_PROCESSED_SNAPSHOT_KEY)
-        return copy.deepcopy(value) if isinstance(value, dict) else None
+        # Public reuse path is provenance-aware. Historical processed journals
+        # remain readable through load_journal()/the raw JSON for sanitation,
+        # but they are not silently promoted to a current reusable result.
+        return validated_processed_snapshot(self.journal)
+
+    def validated_result_snapshot(self) -> dict[str, Any] | None:
+        return validated_result_snapshot(self.journal)
+
+    def validated_processed_snapshot(self) -> dict[str, Any] | None:
+        return validated_processed_snapshot(self.journal)
 
     def raw_response(self) -> Any:
         return load_raw_response(self.state_dir, self.publication_date)
@@ -331,6 +470,11 @@ def _validated_bundle_state(
         raise CoverageSlotError(
             "bundled Coverage optional-slot response exists without journal hash"
         )
+    # New lineage fields are self-authenticating within the selected bundle.
+    # Historical journals without them remain readable for fail-closed legacy
+    # handling, but partial/mismatched provenance is rejected here.
+    validated_result_snapshot(journal)
+    validated_processed_snapshot(journal)
     return journal, journal_bytes, response_bytes
 
 
