@@ -151,47 +151,10 @@ class P3bOptionalSlotRecoveryTests(unittest.TestCase):
                 "output_text": "{}",
                 "validation_error": None,
             })
-            def replay_saved_raw(runtime, raw_response, **_kwargs):
-                self.assertEqual(raw_response["id"], "resp-p3b-saved")
-                snapshot = {
-                    "payload": {
-                        "status": "complete_with_gaps",
-                        "direction_id": "general_coverage_gaps",
-                        "candidates": [],
-                        "rejections": [],
-                    },
-                    "metadata": {
-                        "response_id": "resp-p3b-saved",
-                        "status": "completed",
-                        "actual_queries": [query],
-                        "consulted_sources": [],
-                        "web_search_calls": 1,
-                        "web_search_calls_completed": 1,
-                        "web_search_call_items_total": 1,
-                    },
-                    "output_text": "{}",
-                    "validation_error": None,
-                }
-                result = runtime.AuditRequestResult(
-                    payload=copy.deepcopy(snapshot["payload"]),
-                    metadata=copy.deepcopy(snapshot["metadata"]),
-                    output_text="{}",
-                    raw_response=copy.deepcopy(raw_response),
-                    validation_error=None,
-                )
-                return result, snapshot
-
-            with (
-                mock.patch.object(
-                    coverage,
-                    "replay_raw_response",
-                    side_effect=replay_saved_raw,
-                ),
-                mock.patch.object(
-                    coverage._source_freshness,
-                    "fetch_source_html",
-                    side_effect=AssertionError("offline replay must not refetch mutable authoritative page"),
-                ),
+            with mock.patch.object(
+                coverage._source_freshness,
+                "fetch_source_html",
+                side_effect=AssertionError("offline replay must not refetch mutable authoritative page"),
             ):
                 result, calls = self._execute(state, plan)
             self.assertEqual(calls, 0)
