@@ -54,11 +54,13 @@ post-request Coverage plan или финального research `candidates.json
 bundle identity. Из него v7 проверяет только exact search-window identity, когда
 она присутствует.
 
-Для `response_saved` hash-проверенный raw response является authority.
-Recovery всегда детерминированно перепарсивает его offline и переписывает
-`result_snapshot` из этого replay; независимо сохранённый parsed snapshot не
-может подменить raw response. Provider call, retry, Web Search и mutable-page
-refetch при этом не выполняются.
+`response_saved` сохраняет существующую offline replay-семантику preserved
+runtime и не открывает новый provider search/page fetch. Когда parsed
+`result_snapshot` записывается current writer'ом, guard дополнительно сохраняет
+его exact hash и provenance, связанные с тем же request/response/bundle.
+Эта remediation не меняет historical parsing/replay routing preserved P3a/P3b
+layers; она закрывает processed-result lineage и ошибочную реконструкцию bundle
+из post-request артефактов.
 
 `processed` reuse разрешён только для snapshot с валидной current lineage.
 Historical journals, созданные до этих provenance полей, остаются читаемыми для
@@ -109,7 +111,7 @@ Marker записывается до mutation. При crash следующий �
 4. Если marker имеет `pending|blocked` и `publication_snapshot_invalidated=true` (или поле отсутствует у раннего marker), full recovery также понижается до `partial_editorial`.
 5. `completed` marker не понижает full recovery только из-за оставшегося historical journal.
 6. Marker и forensic backups копируются в current `production-daily` только из exact selected bundle. Конфликт с уже существующим отличающимся state fail-closed; смешивать два artifact bundle запрещено.
-7. Для `state=processed` same-bundle доказательство не заканчивается на outer journal: сохранённый `processed_snapshot` обязан иметь тот же durable search-window hash и bundle-identity hash, иначе reuse fail-closed до child path.
+7. Для `state=processed` same-bundle доказательство не заканчивается на outer journal: current writer сохраняет hash полного `processed_snapshot` и provenance, связанные с exact request/response и pre-optional bundle. Финальный research `candidates.json` и post-request Coverage plan не используются для реконструкции reservation bundle identity.
 
 Эта интеграция не повторяет retrieval, не открывает optional slot и не меняет search budgets.
 
