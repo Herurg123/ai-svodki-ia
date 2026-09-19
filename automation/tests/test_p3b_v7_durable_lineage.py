@@ -143,6 +143,25 @@ def _saved_result_snapshot() -> dict:
         "validation_error": None,
     }
 
+def _legacy_saved_result_snapshot() -> dict:
+    return {
+        "payload": {
+            "status": "complete_with_gaps",
+            "direction_id": "general_coverage_gaps",
+            "candidates": [],
+            "rejections": [],
+        },
+        "metadata": {
+            "response_id": "legacy-optional-response",
+            "status": "completed",
+            "actual_queries": ["legacy exact query"],
+            "web_search_calls_completed": 1,
+        },
+        "output_text": "{}",
+        "validation_error": None,
+    }
+
+
 
 class P3bV7DurableLineageTests(unittest.TestCase):
     def _seed_legacy_processed(
@@ -164,6 +183,7 @@ class P3bV7DurableLineageTests(unittest.TestCase):
         )
         reservation.mark_request_started()
         reservation.save_raw_response({"id": "legacy-optional-response", "output": []})
+        reservation.save_result_snapshot(_legacy_saved_result_snapshot())
         processed = copy.deepcopy(plan)
         processed["attempts"].append(
             {
@@ -219,6 +239,18 @@ class P3bV7DurableLineageTests(unittest.TestCase):
     def _matching_raw_replay(self, runtime, raw_response, **_kwargs):
         self.assertEqual(raw_response["id"], "optional-response")
         snapshot = _saved_result_snapshot()
+        result = runtime.AuditRequestResult(
+            payload=copy.deepcopy(snapshot["payload"]),
+            metadata=copy.deepcopy(snapshot["metadata"]),
+            output_text=snapshot["output_text"],
+            raw_response=copy.deepcopy(raw_response),
+            validation_error=None,
+        )
+        return result, snapshot
+
+    def _matching_legacy_raw_replay(self, runtime, raw_response, **_kwargs):
+        self.assertEqual(raw_response["id"], "legacy-optional-response")
+        snapshot = _legacy_saved_result_snapshot()
         result = runtime.AuditRequestResult(
             payload=copy.deepcopy(snapshot["payload"]),
             metadata=copy.deepcopy(snapshot["metadata"]),
@@ -410,6 +442,11 @@ class P3bV7DurableLineageTests(unittest.TestCase):
                     "_required_signals",
                     return_value=[copy.deepcopy(signal)],
                 ),
+                mock.patch.object(
+                    v7,
+                    "replay_raw_response",
+                    side_effect=self._matching_legacy_raw_replay,
+                ),
             ):
                 context = v7.recovery_preflight(
                     publication_date=DATE,
@@ -476,6 +513,11 @@ class P3bV7DurableLineageTests(unittest.TestCase):
                     "fetch_source_html",
                     side_effect=AssertionError("page fetch"),
                 ) as pages,
+                mock.patch.object(
+                    v7,
+                    "replay_raw_response",
+                    side_effect=self._matching_legacy_raw_replay,
+                ),
             ):
                 with self.assertRaisesRegex(
                     CoverageSlotError,
