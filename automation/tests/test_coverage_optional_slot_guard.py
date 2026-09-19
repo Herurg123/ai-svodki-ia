@@ -130,18 +130,19 @@ class CoverageOptionalSlotGuardTests(unittest.TestCase):
             coverage._runtime.call_with_usage = original_call_with_usage
 
     def test_raw_replay_preserves_nested_search_action_metadata(self) -> None:
+        payload = {
+            "status": "complete_with_gaps",
+            "direction_id": "general_coverage_gaps",
+            "candidates": [],
+            "rejections": [],
+        }
         raw_response = {
             "id": "raw-replay-control",
             "status": "completed",
             "model": "gpt-test",
-            "output_text": json.dumps(
-                {
-                    "status": "complete_with_gaps",
-                    "direction_id": "general_coverage_gaps",
-                    "candidates": [],
-                    "rejections": [],
-                }
-            ),
+            # Production response_to_plain(model_dump) may not retain the SDK
+            # convenience property output_text; replay must recover it from the
+            # serialized message content blocks.
             "output": [
                 {
                     "id": "search-1",
@@ -152,7 +153,18 @@ class CoverageOptionalSlotGuardTests(unittest.TestCase):
                         "query": "Rillet Lands Scale ERP latest",
                         "sources": [],
                     },
-                }
+                },
+                {
+                    "id": "message-1",
+                    "type": "message",
+                    "status": "completed",
+                    "content": [
+                        {
+                            "type": "output_text",
+                            "text": json.dumps(payload),
+                        }
+                    ],
+                },
             ],
         }
 
