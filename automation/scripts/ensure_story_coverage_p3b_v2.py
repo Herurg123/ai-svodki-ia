@@ -24,7 +24,7 @@ from typing import Any, Callable
 
 import source_freshness as _source_freshness
 from coverage_slot_guard import CoverageSlotError, load_journal, prepare_slot, sha256_value
-from coverage_slot_transport import protected_policy_audit_request, replay_raw_response, replay_result_snapshot
+from coverage_slot_transport import protected_policy_audit_request, replay_raw_response
 import weak_source_exact_binding_v2 as _binding_v2
 
 _build_prompt_v1 = _binding_v2.build_prompt
