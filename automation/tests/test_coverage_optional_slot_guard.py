@@ -225,15 +225,45 @@ class CoverageOptionalSlotGuardTests(unittest.TestCase):
             def save_then_interrupt(runtime, reservation, **_kwargs):
                 calls["transport"] += 1
                 reservation.mark_request_started()
-                reservation.save_raw_response({"id": "resp-saved"})
+                payload = {
+                    "status": "complete_with_gaps",
+                    "direction_id": "general_coverage_gaps",
+                    "candidates": [],
+                    "rejections": [dict(OUTSIDE_WINDOW)],
+                    "notes": "saved before interruption",
+                }
+                reservation.save_raw_response(
+                    {
+                        "id": "resp-saved",
+                        "status": "completed",
+                        "model": "gpt-test",
+                        "output": [
+                            {
+                                "id": "search-1",
+                                "type": "web_search_call",
+                                "status": "completed",
+                                "action": {
+                                    "type": "search",
+                                    "query": "Rillet Lands Scale ERP latest",
+                                    "sources": [],
+                                },
+                            },
+                            {
+                                "id": "message-1",
+                                "type": "message",
+                                "status": "completed",
+                                "content": [
+                                    {
+                                        "type": "output_text",
+                                        "text": json.dumps(payload),
+                                    }
+                                ],
+                            },
+                        ],
+                    }
+                )
                 snapshot = {
-                    "payload": {
-                        "status": "complete_with_gaps",
-                        "direction_id": "general_coverage_gaps",
-                        "candidates": [],
-                        "rejections": [dict(OUTSIDE_WINDOW)],
-                        "notes": "saved before interruption",
-                    },
+                    "payload": copy.deepcopy(payload),
                     "metadata": {
                         "response_id": "resp-saved",
                         "status": "completed",
@@ -267,6 +297,17 @@ class CoverageOptionalSlotGuardTests(unittest.TestCase):
                     "response_saved",
                 )
 
+                # Emulate a pre-lineage journal from an older runtime: the parsed
+                # snapshot exists, but additive hash/provenance fields do not.
+                journal_path = slot_guard.journal_path(state_dir, "2026-08-25")
+                historical = json.loads(journal_path.read_text(encoding="utf-8"))
+                historical.pop("result_snapshot_sha256", None)
+                historical.pop("result_snapshot_provenance", None)
+                journal_path.write_text(
+                    json.dumps(historical, ensure_ascii=False, sort_keys=True) + "\n",
+                    encoding="utf-8",
+                )
+
                 coverage.protected_policy_audit_request = lambda *_a, **_k: self.fail(
                     "offline replay must not call transport"
                 )
@@ -290,6 +331,11 @@ class CoverageOptionalSlotGuardTests(unittest.TestCase):
             )
             self.assertEqual(replayed["search_budget"]["remaining_calls"], 0)
             self.assertEqual(replayed["retrieval_quality"]["status"], "complete")
+            upgraded = slot_guard.load_journal(state_dir, "2026-08-25")
+            self.assertTrue(upgraded.get("result_snapshot_sha256"))
+            self.assertIsInstance(upgraded.get("result_snapshot_provenance"), dict)
+            self.assertTrue(upgraded.get("processed_snapshot_sha256"))
+            self.assertIsInstance(upgraded.get("processed_snapshot_provenance"), dict)
 
     def test_raw_response_without_parse_snapshot_replays_offline(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
