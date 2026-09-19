@@ -138,8 +138,10 @@ unresolved/deferred и новый search не выполняется. `response_
 существующий offline replay, а `processed` переиспользуется только при durable
 provenance exact snapshot bytes, связанной с тем же request/response и
 pre-optional bundle. Финальный research `candidates.json` не используется как
-Coverage-plan identity. Восьмой Coverage search не появляется; потолки 24/25,
-regional/agency health и editorial ranking не меняются.
+Coverage-plan identity. Active v7 дополнительно требует exact deterministic
+raw↔parsed replay для saved result и current request-contract identity для
+processed legacy resolution. Восьмой Coverage search не появляется; потолки
+24/25, regional/agency health и editorial ranking не меняются.
 
 Каноническая continuity-точка остается `search_cutoff_at` последнего успешно
 опубликованного выпуска. После единственного search один Primary-pass может
