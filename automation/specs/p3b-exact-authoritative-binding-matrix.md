@@ -60,6 +60,8 @@ GitHub artifact recovery является частью того же invariant. 
 - post-request `processed_snapshot` не обязан содержать top-level `search_window/publication_date` и не сравнивается через lifecycle-нестабильный `_P3A._bundle_identity(processed_snapshot)`;
 - saved parsed result при `response_saved|processed` обязан точно воспроизводиться deterministic offline parse из hash-проверенного raw response; `raw A + parsed B` fail-closed без provider/search/page I/O;
 - processed legacy `unverified_resolution` обязан совпадать с current full request contract, пересчитанным из current required signals/model/archive/search window; stable `signal_id` при query/prompt/model/content drift не разрешает early reuse;
+- matching legacy request сам по себе не повышает pre-lineage `processed` journal до reusable: без proven processed lineage он fail-closed до `prior_complete`/`existing_full_digest`, slot остаётся spent и search не повторяется;
+- historical `response_saved` с parsed snapshot без additive lineage обязан reparsed'иться из hash-проверенного raw response offline и получить current result lineage до `processed`; serialized raw replay обязан сохранять nested search action metadata и message output-text blocks;
 - v7 preflight/recovery integration не выполняет ordinary/protected provider call, retry, Web Search или authoritative-page refetch и не меняет optional-slot journal bytes/search-budget consumption;
 - `reserved` P3b intent не обходит higher-priority required `unverified`, а foreign/mismatched reservation не удаляется;
 - proven unstarted P3b reservation может быть передан required `unverified` только атомарной заменой durable intent под тем же slot lock, который защищает request admission; между P3b и legacy не возникает состояния без reservation;
