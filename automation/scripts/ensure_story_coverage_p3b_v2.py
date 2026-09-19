@@ -24,7 +24,7 @@ from typing import Any, Callable
 
 import source_freshness as _source_freshness
 from coverage_slot_guard import CoverageSlotError, load_journal, prepare_slot, sha256_value
-from coverage_slot_transport import protected_policy_audit_request, replay_raw_response
+from coverage_slot_transport import protected_policy_audit_request, replay_raw_response, replay_result_snapshot
 import weak_source_exact_binding_v2 as _binding_v2
 
 _build_prompt_v1 = _binding_v2.build_prompt
@@ -396,24 +396,14 @@ def _run_p3b_binding_v2(
         _v1._p3b_force_consumed(result)
         return result
     if initial_state == "processed":
-        try:
-            saved = reservation.validated_processed_snapshot()
-        except CoverageSlotError as exc:
-            saved = None
-            invalid_reason = f"processed optional slot provenance is invalid: {exc}"
-        else:
-            invalid_reason = (
-                "processed optional slot lacks proven durable processed provenance"
-                if saved is None
-                else "processed optional slot lacks a safe P3b v2 processed snapshot"
-            )
+        saved = reservation.processed_snapshot()
         if isinstance(saved, dict) and (saved.get(_P3B_DIAGNOSTIC_KEY) or {}).get("version") == P3B_EXACT_BINDING_VERSION:
             result = copy.deepcopy(saved)
             _v1._p3b_force_consumed(result)
             return result
         result = _annotation(
             plan, status="unresolved",
-            reason=invalid_reason,
+            reason="processed optional slot lacks a safe P3b v2 processed snapshot",
             signal=signal, query=query, disposition="unresolved_deferred", slot_state=initial_state,
         )
         _v1._p3b_force_consumed(result)
@@ -421,14 +411,13 @@ def _run_p3b_binding_v2(
 
     try:
         if initial_state == "response_saved":
-            request_result, snapshot = replay_raw_response(
-                _runtime,
-                reservation.raw_response(),
-                maximum_web_search_calls=1,
-            )
-            # The saved raw provider response is the only response_saved
-            # authority. Rebuild and overwrite parsed state deterministically.
-            reservation.save_result_snapshot(snapshot)
+            snapshot = reservation.result_snapshot()
+            if not isinstance(snapshot, dict):
+                parsed, snapshot = replay_raw_response(_runtime, reservation.raw_response(), maximum_web_search_calls=1)
+                reservation.save_result_snapshot(snapshot)
+                request_result = parsed
+            else:
+                request_result = replay_result_snapshot(_runtime, snapshot)
             allow_page_fetch = False
         else:
             request_result = protected_policy_audit_request(
