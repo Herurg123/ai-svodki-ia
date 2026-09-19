@@ -100,7 +100,10 @@ Active v7 больше:
 
 Current evidence-v6 positive из historical pre-lineage journal также не
 считается автоматически reusable: active v7 отправляет его в zero-I/O
-quarantine/sanitation path. Consumed optional slot не refund/reopen'ится.
+quarantine/sanitation path. Matching pre-lineage generic/legacy `processed`
+journal теперь также fail-closed до early complete/prior-report shortcuts:
+совпадение current request contract не заменяет доказательство processed lineage.
+Consumed optional slot не refund/reopen'ится.
 
 ## Saved raw ↔ parsed-result proof
 
@@ -118,6 +121,22 @@ Preserved P3a/P3b child parsing/replay routing не меняется. Вмест
 Проверка выполняется offline: 0 provider calls, 0 Web Search, 0 page refetch.
 Current writer дополнительно сохраняет result hash/provenance, но semantic
 raw↔parsed proof не полагается только на это writer assertion.
+
+Во время remediation обнаружился соседний production replay defect:
+`replay_raw_response()` строил nested `SimpleNamespace`, тогда как
+`response_to_plain()` понимал mapping/model_dump/to_dict, но не
+`SimpleNamespace`. Из-за этого сериализованный
+`web_search_call.action.type=search` превращался в строку и честный saved raw
+мог выглядеть как response с нулём search operations. Replay node теперь
+экспортирует deterministic `to_dict()`; permanent control использует
+production-shaped serialized response без top-level `output_text`, с отдельными
+`web_search_call` и message `content[type=output_text]`.
+
+Historical `response_saved`, где parsed snapshot уже есть, но additive lineage
+полей ещё нет, теперь не считается proven result getter'ом. Preserved child
+reparses hash-проверенный raw response offline, записывает current
+`result_snapshot_sha256/provenance` и только после этого создаёт processed
+lineage.
 
 ## Current legacy request identity
 
@@ -143,8 +162,13 @@ model, archive и exact search window и использует preserved v6 contr
    по exact processed hash с нулём provider/protected/page-fetch I/O.
 4. saved parsed snapshot, который не совпадает с deterministic raw replay,
    fail-closed с нулём external I/O;
-5. matching processed legacy request остаётся reusable, а тот же `signal_id` с
-   изменившимся current request contract fail-closed до child shortcuts.
+5. matching **current-lineage** processed legacy request остаётся reusable, а тот же `signal_id` с
+   изменившимся current request contract fail-closed до child shortcuts;
+6. matching pre-lineage legacy `processed` fail-closed до early shortcuts;
+7. historical pre-lineage `response_saved` upgrades result/processed lineage
+   через zero-I/O raw replay;
+8. serialized Responses API replay сохраняет nested search action и output text
+   из message content blocks.
 
 `test_p3b_v7_processed_snapshot_identity.py` теперь моделирует persisted
 snapshot mix-up после честной записи current provenance, а не подменяет вход
