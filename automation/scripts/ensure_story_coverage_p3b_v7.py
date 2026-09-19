@@ -30,7 +30,7 @@ from coverage_slot_guard import (
     validated_processed_snapshot,
     validated_result_snapshot,
 )
-from coverage_slot_transport import replay_raw_response
+from coverage_slot_transport import parse_raw_response, replay_raw_response
 
 _BASE_PATH = Path(__file__).with_name("ensure_story_coverage_p3b_v7_base.py")
 _BASE_SPEC = importlib.util.spec_from_file_location(
@@ -70,6 +70,7 @@ _REMEDIATION_INTERNALS = {
     "_processed_snapshot_is_legacy_resolution",
     "_validate_current_legacy_request_identity",
     "_validate_saved_result_against_raw",
+    "parse_raw_response",
     "_validate_optional_slot_journal",
     "_repair_recovery_input_only_marker",
     "recovery_preflight",
@@ -389,7 +390,7 @@ def _validate_saved_result_against_raw(
         return
     raw_response = load_raw_response(state_dir, publication_date)
     try:
-        _result, replayed_snapshot = replay_raw_response(
+        _result, replayed_snapshot = parse_raw_response(
             _base._v6._runtime,
             raw_response,
             maximum_web_search_calls=1,
