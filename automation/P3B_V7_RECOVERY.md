@@ -56,11 +56,14 @@ bundle identity. Из него v7 проверяет только exact search-w
 
 `response_saved` сохраняет существующую offline replay-семантику preserved
 runtime и не открывает новый provider search/page fetch. Когда parsed
-`result_snapshot` записывается current writer'ом, guard дополнительно сохраняет
-его exact hash и provenance, связанные с тем же request/response/bundle.
-Эта remediation не меняет historical parsing/replay routing preserved P3a/P3b
-layers; она закрывает processed-result lineage и ошибочную реконструкцию bundle
-из post-request артефактов.
+`result_snapshot` существует, active v7 preflight детерминированно перепарсивает
+уже hash-проверенный durable raw response текущим parser и требует exact
+совпадения parsed snapshot. Поэтому согласованная пара `raw A + parsed B`
+fail-closed до child reuse даже если оба JSON структурно валидны. Current writer
+дополнительно сохраняет exact result hash и provenance, связанные с тем же
+request/response/bundle. Эта remediation не меняет historical child
+parsing/replay routing preserved P3a/P3b layers: proof выполняется выше них в
+active v7 и не делает provider/network I/O.
 
 `processed` reuse разрешён только для snapshot с валидной current lineage.
 Historical journals, созданные до этих provenance полей, остаются читаемыми для
@@ -72,6 +75,13 @@ processed lineage карантинится тем же zero-I/O preflight, slot 
 Partial lineage, hash mismatch или request/response/bundle provenance mismatch
 даёт fail-closed `CoverageSlotError` до complete/reusable shortcuts. Проверка
 не выполняет внешнего I/O и не меняет search budget.
+
+Для processed legacy/generic `unverified_resolution` v7 дополнительно
+реконструирует **current** request contract из current required Primary signals,
+model, archive и exact search window. Совпадение одного stable `signal_id` не
+является identity: если изменились query/prompt/model/signal content, старый
+processed result не может пройти `existing_full_digest`/prior-complete reuse.
+Mismatch fail-closed, optional slot остаётся spent и не refund/reopen'ится.
 
 
 ## Durable marker
