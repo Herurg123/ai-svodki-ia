@@ -67,6 +67,8 @@ _REMEDIATION_INTERNALS = {
     "_install_revocation_predicate",
     "_positive_snapshot",
     "_validate_current_p3b_request_identity",
+    "_processed_snapshot_is_legacy_resolution",
+    "_validate_current_legacy_request_identity",
     "_validate_saved_result_against_raw",
     "_validate_optional_slot_journal",
     "_repair_recovery_input_only_marker",
@@ -296,6 +298,83 @@ def _validate_current_p3b_request_identity(
         raise CoverageSlotError("current P3b request/model identity drift")
 
 
+def _processed_snapshot_is_legacy_resolution(journal: dict[str, Any]) -> bool:
+    if str(journal.get("state") or "") != "processed":
+        return False
+    saved = journal.get("processed_snapshot")
+    if not isinstance(saved, dict):
+        return False
+    attempts = saved.get("attempts")
+    if not isinstance(attempts, list):
+        return False
+    for item in attempts:
+        if not isinstance(item, dict):
+            continue
+        if item.get("search_strategy") != _base._v6._P3A.OPTIONAL_SLOT_OWNER:
+            continue
+        if item.get("resolution_mode") == P3B_MODE:
+            continue
+        if int(item.get("unresolved_resolution_version", 0) or 0) > 0:
+            return True
+    return False
+
+
+def _validate_current_legacy_request_identity(
+    *,
+    journal: dict[str, Any],
+    publication_date: str,
+    search_window: dict[str, Any] | None,
+) -> None:
+    """Reject complete/reusable legacy resolution when its current intent drifted."""
+    if not _processed_snapshot_is_legacy_resolution(journal):
+        return
+
+    model = str(_base._cli_arg("--model") or "").strip()
+    archive_raw = _base._cli_arg("--archive")
+    # Direct helper/unit callers may intentionally lack a production CLI.
+    if not model and not archive_raw:
+        return
+    if not model or not archive_raw:
+        raise CoverageSlotError(
+            "current legacy durable request identity cannot be proven without model and archive"
+        )
+    if not isinstance(search_window, dict):
+        raise CoverageSlotError(
+            "current legacy durable request identity cannot be proven without search window"
+        )
+
+    try:
+        archive = _base._read_json(Path(archive_raw))
+    except Exception as exc:
+        raise CoverageSlotError(
+            f"current legacy archive identity is unreadable: {exc}"
+        ) from exc
+    if not isinstance(archive, dict):
+        raise CoverageSlotError("current legacy archive identity must be an object")
+
+    try:
+        required_signals = list(
+            _base._v6._v2._pre._required_signals(publication_date)
+        )
+    except Exception as exc:
+        raise CoverageSlotError(
+            f"current legacy signal identity cannot be reconstructed: {exc}"
+        ) from exc
+    if not required_signals:
+        raise CoverageSlotError(
+            "current legacy signal identity is no longer provable"
+        )
+
+    if not _base._v6._journal_matches_current_legacy_intent_v6(
+        journal=journal,
+        model=model,
+        search_window=search_window,
+        archive=archive,
+        required_signals=required_signals,
+    ):
+        raise CoverageSlotError("current legacy request/model/signal identity drift")
+
+
 def _validate_saved_result_against_raw(
     *,
     journal: dict[str, Any],
@@ -440,6 +519,11 @@ def _validate_optional_slot_journal(
             if str(journal.get("search_window_sha256") or "") != expected:
                 raise CoverageSlotError("Coverage optional-slot search-window identity mismatch")
 
+    _validate_current_legacy_request_identity(
+        journal=journal,
+        publication_date=publication_date,
+        search_window=search_window,
+    )
     _validate_current_p3b_request_identity(
         journal=journal,
         publication_date=publication_date,
