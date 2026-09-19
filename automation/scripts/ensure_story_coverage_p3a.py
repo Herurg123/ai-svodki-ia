@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from coverage_slot_guard import (
+    CoverageSlotError,
     CoverageSlotReservation,
     activate_slot,
     prepare_slot,
@@ -26,7 +27,6 @@ from coverage_slot_guard import (
 from coverage_slot_transport import (
     protected_policy_audit_request,
     replay_raw_response,
-    replay_result_snapshot,
 )
 
 _BASE_PATH = Path(__file__).with_name("ensure_story_coverage_p0.py")
