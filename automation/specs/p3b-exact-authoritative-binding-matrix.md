@@ -54,7 +54,10 @@ GitHub artifact recovery является частью того же invariant. 
 - same-bundle recovery переносит v7 marker/forensic backups только из evidence root, выбранного для dated artifact; divergent current state не смешивается с recovery bundle и fail-closed;
 - selected full pre-v7 artifact со stale positive journal и selected full artifact с publication-invalidating `pending|blocked` marker понижаются до `partial_editorial` до runtime-readiness decision, чтобы rebuild мог выполниться без повторного retrieval;
 - valid `completed` marker не создаёт вечный `partial_editorial` только потому, что historical processed journal намеренно остался evidence-v1..v5;
-- current evidence-v6 positive не запускает v7 stale preflight;
+- current evidence-v6 positive запускает обычный reuse только при доказанной durable processed lineage; pre-lineage evidence-v6 positive не считается current reusable proof и обрабатывается fail-closed без refund/retry;
+- current processed writer сохраняет hash полного `processed_snapshot` и provenance exact request/response/pre-optional bundle; подмена `candidates[]` после записи provenance обязана fail-closed;
+- production-shaped final research `candidates.json` не обязан содержать Coverage `attempts/checked_directions` и не используется для реконструкции pre-optional bundle identity;
+- post-request `processed_snapshot` не обязан содержать top-level `search_window/publication_date` и не сравнивается через lifecycle-нестабильный `_P3A._bundle_identity(processed_snapshot)`;
 - v7 preflight/recovery integration не выполняет ordinary/protected provider call, retry, Web Search или authoritative-page refetch и не меняет optional-slot journal bytes/search-budget consumption;
 - `reserved` P3b intent не обходит higher-priority required `unverified`, а foreign/mismatched reservation не удаляется;
 - proven unstarted P3b reservation может быть передан required `unverified` только атомарной заменой durable intent под тем же slot lock, который защищает request admission; между P3b и legacy не возникает состояния без reservation;
@@ -102,6 +105,7 @@ GitHub artifact recovery является частью того же invariant. 
 - `automation/tests/test_p3b_v7_recovery_preflight.py`;
 - `automation/tests/test_p3b_v7_durable_recovery_inputs.py`;
 - `automation/tests/test_p3b_v7_recovery_bundle.py`;
+- `automation/tests/test_p3b_v7_durable_lineage.py`;
 - `automation/tests/test_p3b_architecture_contract.py`.
 
 ## Durable optional-slot state machine
@@ -116,7 +120,7 @@ GitHub artifact recovery является частью того же invariant. 
 | `reserved` + budget уже исчерпан | Defer; reservation не может восстановить потраченный seventh slot | 0 |
 | `request_started` | Outcome неизвестен; сохранить indeterminate/consumed, transfer/retry запрещены | 0 |
 | `response_saved` | Replay сохранённого response/result offline; без mutable-page refetch | 0 |
-| `processed` | Reuse только current hardened result с `EVIDENCE_VERSION=6`; stale positive evidence-version fail-closed | 0 |
+| `processed` | Reuse только current hardened result с `EVIDENCE_VERSION=6` **и** валидной durable processed lineage exact bytes → request/response/pre-optional bundle; pre-lineage/stale/foreign/mismatched result fail-closed без refund | 0 |
 | invalid/foreign/mismatched journal | Fail closed; не переписывать чужой intent и не угадывать consumption | 0 |
 
 Только current unstarted P3b reservation с доказанным exact request-contract identity может быть передан уже существующему required `unverified`. `coverage_slot_handoff.transfer_reserved_slot` под тем же межпоточным/межпроцессным slot lock проверяет `state=reserved`, отсутствие wire-attempt, response/snapshot/consumed evidence и exact expected source journal hash, после чего одним atomic replace записывает полный legacy request/bundle contract. Поэтому нет crash-window, где P3b уже снят, а legacy reservation ещё не существует. Handoff сохраняет publication-date context на время P3a durable resolution; crash после `request_started` не возвращает capacity и следующий запуск не выполняет восьмой search.
@@ -145,6 +149,8 @@ Binding fail-closed, если отсутствует хотя бы одно об
 Public `ensure_story_coverage.py` обязан сохранять historical Coverage API и monkeypatch seams, но production CLI и direct `execute_audit_plan()` входят через active P3b v7 runtime. V7 добавляет только production recovery preflight/postflight; preserved v6 остаётся владельцем binder v4, atomic P3b→legacy slot transfer и direct `execute_audit_plan` stale-evidence migration. V5 сохраняет second-review orchestration compatibility, preserved v4/v3/v2/v1 layers остаются replay/regression boundaries. Compatibility sync не имеет права снять durable occupied-slot guard, заменить active binder v4 legacy matcher'ом или восстановить уже потраченную optional capacity.
 
 Preserved `ensure_story_coverage_p3a.py` должен оставаться byte-identical pre-P3b public implementation. Historical binder v1/v2/v3 остаются forensic/compatibility assets; binder v4 наследует hardened v3 semantics, сохраняет durable `VERSION=2`/mode и отдельно использует `EVIDENCE_VERSION=6` для current positive processed proof. Evidence-v1/evidence-v2/evidence-v3/evidence-v4/evidence-v5 positive snapshots считаются stale и fail-closed без нового provider search/page refetch. Stale semantic-proof cleanup является v6 postcondition на direct execute path и v7 preflight invariant перед production complete/prior-report reuse: current request-hash/model/archive drift может запретить replay, но не может сохранить или повторно опубликовать candidate, admitted только obsolete proof.
+
+Common `coverage_slot_guard.py` добавляет current snapshot lineage без изменения preserved P3a/P3b semantic layers: result/processed hashes связываются с immutable request-contract hash, saved-response hash и pre-optional bundle hash. Pre-optional bundle не реконструируется из post-request Coverage plan или final research artifact, потому что их lifecycle/schema намеренно различаются.
 
 Persisted merged Coverage research является durable recovery source, а не временным scratch-файлом. Поэтому v7 санирует его до downstream reuse и включает в postflight. `recover_digest_artifact.py` восстанавливает v7 marker/backups только из exact selected artifact bundle и понижает full recovery до `partial_editorial` только когда selected bundle доказывает незавершённую publication-invalidating remediation либо является pre-v7 stale-positive bundle. Это readiness guard, не разрешение на retrieval. Valid `completed` marker прекращает такой downgrade, хотя historical journal остаётся byte-for-byte прежним.
 
