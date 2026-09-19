@@ -101,16 +101,34 @@ Current evidence-v6 positive из historical pre-lineage journal также не
 считается автоматически reusable: active v7 отправляет его в zero-I/O
 quarantine/sanitation path. Consumed optional slot не refund/reopen'ится.
 
-## Response-saved boundary
+## Saved raw ↔ parsed-result proof
 
-Эта remediation **не меняет** preserved response parsing/replay routing. Existing
-`response_saved` offline semantics остаются compatibility behavior preserved
-P3a/P3b layers.
+Preserved P3a/P3b child parsing/replay routing не меняется. Вместо переписывания
+этих compatibility layers active v7 preflight независимо доказывает saved result
+до child reuse:
 
-Common writer теперь записывает hash/provenance parsed `result_snapshot`, когда
-он сохраняется, но отдельный broader вопрос о том, должен ли recovery всегда
-перепарсить raw response вместо использования saved parsed result, не заявляется
-как исправленный этим PR.
+1. durable raw response сначала проходит существующую bytes-hash/JSON проверку;
+2. если journal содержит parsed `result_snapshot`, active v7 детерминированно
+   reparses уже сохранённый raw response текущим parser;
+3. canonical hash replayed snapshot обязан точно совпасть с saved parsed
+   snapshot;
+4. mismatch `raw A + parsed B` даёт fail-closed `CoverageSlotError`.
+
+Проверка выполняется offline: 0 provider calls, 0 Web Search, 0 page refetch.
+Current writer дополнительно сохраняет result hash/provenance, но semantic
+raw↔parsed proof не полагается только на это writer assertion.
+
+## Current legacy request identity
+
+Processed generic/legacy `unverified_resolution` теперь распознаётся по
+сохранённому resolution attempt. До historical child shortcuts active v7
+пересчитывает current full request identity из current required Primary signals,
+model, archive и exact search window и использует preserved v6 contract helper.
+
+Поэтому старый processed result с тем же direction/index-based `signal_id`, но
+изменившимися signal content/query/prompt/model/archive contract, не может пройти
+`existing_full_digest`/prior-complete reuse. Mismatch fail-closed, optional slot
+остаётся spent; новый седьмой/восьмой search не открывается.
 
 ## Regression coverage
 
@@ -122,6 +140,10 @@ Common writer теперь записывает hash/provenance parsed `result_s
    bundle mismatch;
 3. подмена `processed_snapshot.candidates` после durable write обнаруживается
    по exact processed hash с нулём provider/protected/page-fetch I/O.
+4. saved parsed snapshot, который не совпадает с deterministic raw replay,
+   fail-closed с нулём external I/O;
+5. matching processed legacy request остаётся reusable, а тот же `signal_id` с
+   изменившимся current request contract fail-closed до child shortcuts.
 
 `test_p3b_v7_processed_snapshot_identity.py` теперь моделирует persisted
 snapshot mix-up после честной записи current provenance, а не подменяет вход
