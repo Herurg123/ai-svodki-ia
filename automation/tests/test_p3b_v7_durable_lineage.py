@@ -93,6 +93,38 @@ def _research_artifact() -> dict:
     }
 
 
+def _legacy_signal(*, title: str, evidence_reason: str) -> dict:
+    return {
+        "signal_id": "sig-legacy-01",
+        "status": "unresolved",
+        "resolution_required": True,
+        "origin_direction": "major_labs",
+        "title": title,
+        "evidence_reason": evidence_reason,
+        "entities": ["Alpha Labs", "Orion"],
+        "anchors": ["Orion"],
+        "source_hint": "https://example.com/weak",
+        "likely_significance_score": 95,
+    }
+
+
+def _legacy_contract(signal: dict, *, model: str, archive: dict) -> dict:
+    pre = v7._base._v6._v2._pre
+    cluster = pre.resolution_cluster([copy.deepcopy(signal)])
+    query = pre.build_resolution_query(cluster)
+    prompt = pre.build_resolution_prompt(
+        search_window=SEARCH_WINDOW,
+        cluster=cluster,
+        archive=archive,
+    )
+    return v7._base._v6._P3A._request_contract(
+        model=model,
+        query=query,
+        prompt=prompt,
+        cluster=cluster,
+    )
+
+
 def _saved_result_snapshot() -> dict:
     return {
         "payload": {
@@ -113,6 +145,51 @@ def _saved_result_snapshot() -> dict:
 
 
 class P3bV7DurableLineageTests(unittest.TestCase):
+    def _seed_legacy_processed(
+        self,
+        state: Path,
+        *,
+        signal: dict,
+        model: str,
+        archive: dict,
+    ):
+        plan = _coverage_plan()
+        reservation = prepare_slot(
+            state_dir=state,
+            publication_date=DATE,
+            owner=v7._base._v6._P3A.OPTIONAL_SLOT_OWNER,
+            search_window=SEARCH_WINDOW,
+            request_contract=_legacy_contract(signal, model=model, archive=archive),
+            bundle_identity=v7._base._v6._P3A._bundle_identity(plan),
+        )
+        reservation.mark_request_started()
+        reservation.save_raw_response({"id": "legacy-optional-response", "output": []})
+        processed = copy.deepcopy(plan)
+        processed["attempts"].append(
+            {
+                "direction_id": "general_coverage_gaps",
+                "attempt": 2,
+                "status": "checked_with_gaps",
+                "search_strategy": v7._base._v6._P3A.OPTIONAL_SLOT_OWNER,
+                "unresolved_resolution_version": 1,
+                "signal_ids": [signal["signal_id"]],
+                "api": {"response_id": "legacy-optional-response"},
+            }
+        )
+        processed["search_budget"] = {
+            "maximum_calls": 7,
+            "completed_calls": 7,
+            "remaining_calls": 0,
+        }
+        processed["retrieval_quality_contract_version"] = 1
+        processed["retrieval_quality"] = {
+            "version": 1,
+            "status": "complete",
+            "required_signal_count": 1,
+        }
+        reservation.mark_processed(processed)
+        return reservation, processed
+
     def _seed_processed(self, state: Path):
         plan = _coverage_plan()
         reservation = prepare_slot(
@@ -282,6 +359,126 @@ class P3bV7DurableLineageTests(unittest.TestCase):
             ):
                 with self.assertRaisesRegex(
                     CoverageSlotError, "processed snapshot provenance|processed snapshot hash"
+                ):
+                    v7.recovery_preflight(
+                        publication_date=DATE,
+                        artifact_dir=artifact,
+                        report_path=report,
+                        state_dir=state,
+                    )
+
+            self.assertEqual(
+                (ordinary.call_count, protected.call_count, pages.call_count),
+                (0, 0, 0),
+            )
+
+    def test_matching_current_legacy_request_remains_reusable(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            state = root / "production-daily"
+            artifact = root / DATE
+            report = state / "coverage-audit.json"
+            archive_path = root / "archive.json"
+            state.mkdir(parents=True)
+            artifact.mkdir(parents=True)
+            archive = {"items": []}
+            _write(archive_path, archive)
+            signal = _legacy_signal(
+                title="Alpha Labs releases Orion",
+                evidence_reason="Weak source reports a new Orion release",
+            )
+            self._seed_legacy_processed(
+                state,
+                signal=signal,
+                model="gpt-test",
+                archive=archive,
+            )
+            _write(artifact / "candidates.json", _research_artifact())
+
+            argv = [
+                "ensure_story_coverage.py",
+                "--publication-date", DATE,
+                "--artifact-dir", str(artifact),
+                "--report", str(report),
+                "--model", "gpt-test",
+                "--archive", str(archive_path),
+            ]
+            with (
+                mock.patch.object(sys, "argv", argv),
+                mock.patch.object(
+                    v7._base._v6._v2._pre,
+                    "_required_signals",
+                    return_value=[copy.deepcopy(signal)],
+                ),
+            ):
+                context = v7.recovery_preflight(
+                    publication_date=DATE,
+                    artifact_dir=artifact,
+                    report_path=report,
+                    state_dir=state,
+                )
+            self.assertIsNone(context)
+
+    def test_same_signal_id_with_changed_legacy_request_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            state = root / "production-daily"
+            artifact = root / DATE
+            report = state / "coverage-audit.json"
+            archive_path = root / "archive.json"
+            state.mkdir(parents=True)
+            artifact.mkdir(parents=True)
+            archive = {"items": []}
+            saved_signal = _legacy_signal(
+                title="Alpha Labs releases Orion",
+                evidence_reason="Weak source reports a new Orion release",
+            )
+            current_signal = _legacy_signal(
+                title="Alpha Labs delays Orion enterprise rollout",
+                evidence_reason="Current evidence is about a delayed enterprise rollout",
+            )
+            self._seed_legacy_processed(
+                state,
+                signal=saved_signal,
+                model="gpt-test",
+                archive=archive,
+            )
+            _write(artifact / "candidates.json", _research_artifact())
+
+            argv = [
+                "ensure_story_coverage.py",
+                "--publication-date", DATE,
+                "--artifact-dir", str(artifact),
+                "--report", str(report),
+                "--model", "gpt-test",
+                "--archive", str(archive_path),
+            ]
+            with (
+                mock.patch.object(sys, "argv", argv),
+                mock.patch.object(
+                    v7._base._v6._v2._pre,
+                    "_required_signals",
+                    return_value=[copy.deepcopy(current_signal)],
+                ),
+                mock.patch.object(
+                    v7._v6,
+                    "run_audit_request",
+                    side_effect=AssertionError("provider call"),
+                ) as ordinary,
+                mock.patch.object(
+                    v7._v6,
+                    "protected_policy_audit_request",
+                    side_effect=AssertionError("protected call"),
+                ) as protected,
+                mock.patch.object(
+                    v7._v6._source_freshness,
+                    "fetch_source_html",
+                    side_effect=AssertionError("page fetch"),
+                ) as pages,
+            ):
+                with self.assertRaisesRegex(
+                    CoverageSlotError,
+                    "current legacy request/model/signal identity drift",
                 ):
                     v7.recovery_preflight(
                         publication_date=DATE,
