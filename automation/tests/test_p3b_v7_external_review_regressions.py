@@ -61,6 +61,29 @@ def _plan() -> dict:
     }
 
 
+def _raw_response(*, response_id: str, query: str) -> dict:
+    payload = {
+        "status": "complete_with_gaps",
+        "direction_id": "general_coverage_gaps",
+        "candidates": [],
+        "rejections": [],
+    }
+    return {
+        "id": response_id,
+        "status": "completed",
+        "model": "gpt-test",
+        "output_text": json.dumps(payload, ensure_ascii=False),
+        "output": [
+            {
+                "id": "search-1",
+                "type": "web_search_call",
+                "status": "completed",
+                "action": {"type": "search", "query": query, "sources": []},
+            }
+        ],
+    }
+
+
 class P3bV7ExternalReviewRegressions(unittest.TestCase):
     def test_nested_baseline_sync_cannot_restore_old_v6_revocation_predicate(self) -> None:
         stale = _v1_candidate()
@@ -114,7 +137,17 @@ class P3bV7ExternalReviewRegressions(unittest.TestCase):
                 bundle_identity=v7._v6._P3A._bundle_identity(plan),
             )
             reservation.mark_request_started()
-            reservation.save_raw_response({"id": "saved-response", "output": []})
+            raw_response = _raw_response(
+                response_id="saved-response",
+                query="historical exact query",
+            )
+            reservation.save_raw_response(raw_response)
+            _parsed, result_snapshot = v7.replay_raw_response(
+                v7._base._v6._runtime,
+                raw_response,
+                maximum_web_search_calls=1,
+            )
+            reservation.save_result_snapshot(result_snapshot)
             reservation.mark_processed(
                 {
                     "candidates": [],
@@ -195,7 +228,17 @@ class P3bV7ExternalReviewRegressions(unittest.TestCase):
                 bundle_identity=v7._v6._P3A._bundle_identity(plan),
             )
             reservation.mark_request_started()
-            reservation.save_raw_response({"id": "legacy-response", "output": []})
+            raw_response = _raw_response(
+                response_id="legacy-response",
+                query="legacy resolution query",
+            )
+            reservation.save_raw_response(raw_response)
+            _parsed, result_snapshot = v7.replay_raw_response(
+                v7._base._v6._runtime,
+                raw_response,
+                maximum_web_search_calls=1,
+            )
+            reservation.save_result_snapshot(result_snapshot)
             reservation.mark_processed(copy.deepcopy(plan))
 
             context = v7.recovery_preflight(
