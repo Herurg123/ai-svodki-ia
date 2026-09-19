@@ -28,6 +28,30 @@ def _write(path: Path, value) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def _raw_response(response_id: str, query: str) -> dict:
+    payload = {
+        "status": "complete_with_gaps",
+        "direction_id": "general_coverage_gaps",
+        "candidates": [],
+        "rejections": [],
+    }
+    return {
+        "id": response_id,
+        "status": "completed",
+        "model": "gpt-test",
+        "output_text": json.dumps(payload, ensure_ascii=False),
+        "output": [
+            {
+                "id": "search-1",
+                "type": "web_search_call",
+                "status": "completed",
+                "action": {"type": "search", "query": query, "sources": []},
+            }
+        ],
+    }
+
+
+
 def _stale() -> dict:
     return {
         "id": "stale-crash",
@@ -112,7 +136,15 @@ class P3bV7FinalReviewCrashMatrixTests(unittest.TestCase):
             bundle_identity=v7._v6._P3A._bundle_identity(plan),
         )
         reservation.mark_request_started()
-        reservation.save_raw_response({"id": "crash-matrix-response", "output": []})
+        query = str((request_contract or {}).get("query") or "crash matrix query")
+        raw_response = _raw_response("crash-matrix-response", query)
+        reservation.save_raw_response(raw_response)
+        _parsed, result_snapshot = v7.replay_raw_response(
+            v7._base._v6._runtime,
+            raw_response,
+            maximum_web_search_calls=1,
+        )
+        reservation.save_result_snapshot(result_snapshot)
         snapshot = copy.deepcopy(plan)
         snapshot["weak_source_exact_binding"] = {
             "version": v7.P3B_EXACT_BINDING_VERSION,
