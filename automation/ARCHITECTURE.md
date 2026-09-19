@@ -117,8 +117,15 @@ not reconstructed from the post-request Coverage plan or the final research
 `candidates.json`: both have a different lifecycle shape. Historical processed
 journals without current snapshot provenance remain readable for deterministic
 migration/sanitation but cannot silently become current reusable proof; the slot
-stays consumed and no provider/search/page-refetch I/O is reopened. Если
-higher-priority required `unverified` появляется при доказанном exact unstarted
+stays consumed and no provider/search/page-refetch I/O is reopened. Active v7
+также перепроверяет saved parsed result детерминированным replay уже сохранённого
+raw response и требует exact equality, поэтому `raw A + parsed B` не проходит
+recovery. Для processed legacy `unverified_resolution` preflight пересчитывает
+current request contract из current signal/model/archive/search-window context;
+stable signal id без совпадения полного request identity не разрешает early
+complete/prior reuse. Эти проверки выполняются offline до preserved child
+shortcuts. Если higher-priority required `unverified` появляется при доказанном
+exact unstarted
 P3b reservation, preserved v6 под тем же optional-slot lock, который защищает
 request admission, атомарно заменяет полный P3b request/bundle contract на полный
 legacy reservation. Отдельного release-then-reserve окна без durable owner нет;
