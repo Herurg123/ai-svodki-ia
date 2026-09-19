@@ -121,7 +121,15 @@ class P3bV7ProcessedSnapshotIdentityTests(unittest.TestCase):
             )
             reservation.mark_request_started()
             reservation.save_raw_response({"id": "saved-response", "output": []})
-            reservation.mark_processed(foreign_snapshot)
+            reservation.mark_processed(
+                _current_snapshot(current_plan, candidate_id="current-provenance-control")
+            )
+            # Simulate a persisted snapshot mix-up after the durable writer has
+            # committed current provenance. The foreign bytes must not inherit
+            # the current request/response/bundle lineage.
+            journal = json.loads(journal_path.read_text(encoding="utf-8"))
+            journal["processed_snapshot"] = copy.deepcopy(foreign_snapshot)
+            _write(journal_path, journal)
             before = journal_path.read_bytes()
 
             with (
