@@ -76,8 +76,9 @@ Writer теперь дополнительно сохраняет:
 
 Snapshot provenance связывает exact snapshot bytes с теми же
 `request_contract_sha256`, `response_sha256` и pre-optional
-`bundle_identity_sha256`. Processed provenance при наличии parsed result также
-ссылается на exact `result_snapshot_sha256`.
+`bundle_identity_sha256`. Current processed provenance обязательно
+ссылается на exact `result_snapshot_sha256`; новый writer не может перейти в
+`processed` без доказанного parsed-result lineage.
 
 Current processed reuse через `CoverageSlotReservation.processed_snapshot()`
 разрешён только для proven lineage. Historical journals без новых additive
