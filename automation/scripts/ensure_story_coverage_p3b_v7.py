@@ -200,7 +200,13 @@ def _load_stale_positive_snapshot(
     if not isinstance(diagnostic, dict):
         return copy.deepcopy(saved)
     if int(diagnostic.get("binder_evidence_version", 0) or 0) == P3B_BINDER_EVIDENCE_VERSION:
-        return None
+        # Current semantic evidence is reusable only when the durable writer
+        # also proves the exact processed bytes against this request/response.
+        # Pre-lineage current snapshots are quarantined like stale positives:
+        # the spent slot is not refunded and no provider/page I/O is reopened.
+        if validated_processed_snapshot(journal) is not None:
+            return None
+        return copy.deepcopy(saved)
     return copy.deepcopy(saved)
 
 
