@@ -27,6 +27,8 @@ from coverage_slot_guard import (
     load_journal,
     load_raw_response,
     sha256_value,
+    validated_processed_snapshot,
+    validated_result_snapshot,
 )
 
 _BASE_PATH = Path(__file__).with_name("ensure_story_coverage_p3b_v7_base.py")
@@ -292,12 +294,15 @@ def _validate_optional_slot_journal(
     artifact_dir: Path,
     state_dir: Path,
 ) -> dict[str, Any] | None:
-    """Validate durable state needed before any complete/reusable shortcut.
+    """Validate durable state before complete/reusable shortcuts.
 
-    Missing is a normal state. Existing but malformed, structurally incompatible,
-    response-corrupt, or inconsistent with the current artifact's durable
-    search-window/bundle/request identity is untrusted and therefore raises
-    fail-closed. The journal and saved response remain byte-for-byte untouched.
+    Reservation identity belongs to the pre-optional Coverage plan and is not
+    reconstructed from post-editorial candidates.json or the post-request
+    processed plan. New result/processed lineage is instead authenticated by
+    hashes written by the durable slot writer and chained to the exact request
+    contract plus saved raw response. Historical journals without those lineage
+    fields remain readable for fail-closed migration, but are not thereby proven
+    reusable by the active P3a/P3b runtime.
     """
     journal = load_journal(state_dir, publication_date)
     if journal is None:
@@ -340,14 +345,14 @@ def _validate_optional_slot_journal(
             raise CoverageSlotError(
                 "Coverage optional-slot consumed state lost its wire-attempt marker"
             )
+
     if state in {"response_saved", "processed"}:
-        # Validates saved-response existence, bytes hash and JSON decoding. No
-        # provider replay or page fetch occurs.
+        # Response bytes remain the transport authority. This validates file
+        # existence, exact bytes hash and JSON decoding without external I/O.
         load_raw_response(state_dir, publication_date)
+        validated_result_snapshot(journal)
+
     if state == "processed":
-        # Both the legacy unverified owner and P3b persist the complete Coverage
-        # plan as the deterministic processed snapshot. A processed state without
-        # that plan is durable corruption, not equivalent to "no P3b evidence".
         processed = journal.get("processed_snapshot")
         if not isinstance(processed, dict):
             raise CoverageSlotError(
@@ -364,25 +369,10 @@ def _validate_optional_slot_journal(
             raise CoverageSlotError(
                 "processed Coverage optional-slot snapshot has invalid search budget"
             )
-        processed_window = processed.get("search_window")
-        if not isinstance(processed_window, dict):
-            raise CoverageSlotError(
-                "processed Coverage optional-slot snapshot has no durable search-window identity"
-            )
-        if sha256_value(processed_window) != str(journal.get("search_window_sha256") or ""):
-            raise CoverageSlotError(
-                "processed Coverage optional-slot snapshot search-window identity mismatch"
-            )
-        try:
-            processed_bundle = _base._v6._P3A._bundle_identity(processed)
-        except Exception as exc:
-            raise CoverageSlotError(
-                f"processed Coverage optional-slot snapshot bundle identity is not provable: {exc}"
-            ) from exc
-        if sha256_value(processed_bundle) != str(journal.get("bundle_identity_sha256") or ""):
-            raise CoverageSlotError(
-                "processed Coverage optional-slot snapshot bundle identity mismatch"
-            )
+        # If current lineage is declared, verify it exactly. A historical journal
+        # with no lineage returns None here and is handled fail-closed by the
+        # runtime rather than being promoted to a current reusable snapshot.
+        validated_processed_snapshot(journal)
 
     search_window: dict[str, Any] | None = None
     candidates_path = Path(artifact_dir) / "candidates.json"
@@ -401,15 +391,6 @@ def _validate_optional_slot_journal(
             expected = sha256_value(candidate_window)
             if str(journal.get("search_window_sha256") or "") != expected:
                 raise CoverageSlotError("Coverage optional-slot search-window identity mismatch")
-        try:
-            bundle_identity = _base._v6._P3A._bundle_identity(research)
-        except Exception as exc:
-            raise CoverageSlotError(
-                f"current Coverage bundle identity is not provable: {exc}"
-            ) from exc
-        expected_bundle = sha256_value(bundle_identity)
-        if str(journal.get("bundle_identity_sha256") or "") != expected_bundle:
-            raise CoverageSlotError("Coverage optional-slot bundle identity mismatch")
 
     _validate_current_p3b_request_identity(
         journal=journal,
@@ -417,7 +398,6 @@ def _validate_optional_slot_journal(
         search_window=search_window,
     )
     return journal
-
 
 def _repair_recovery_input_only_marker(
     *,
