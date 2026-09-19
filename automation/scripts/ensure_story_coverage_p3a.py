@@ -361,7 +361,17 @@ def _run_resolution(
             reservation=reservation,
         )
     if state == "processed":
-        saved = reservation.processed_snapshot()
+        try:
+            saved = reservation.validated_processed_snapshot()
+        except CoverageSlotError as exc:
+            return _blocked_quality_plan(
+                plan,
+                signals=signals,
+                cluster=cluster,
+                query=query,
+                reason=f"processed optional slot provenance is invalid: {exc}",
+                reservation=reservation,
+            )
         if isinstance(saved, dict):
             result = copy.deepcopy(saved)
             _force_slot_consumed_budget(result)
@@ -371,37 +381,39 @@ def _run_resolution(
             signals=signals,
             cluster=cluster,
             query=query,
-            reason="processed optional slot is missing its deterministic processed snapshot",
+            reason=(
+                "processed optional slot has no proven durable processed provenance; "
+                "automatic reuse is forbidden"
+            ),
             reservation=reservation,
         )
 
     original_policy_request = _runtime._policy_audit_request
     try:
         if state == "response_saved":
-            snapshot = reservation.result_snapshot()
-            if not isinstance(snapshot, dict):
-                try:
-                    _replayed, snapshot = replay_raw_response(
-                        _runtime,
-                        reservation.raw_response(),
-                        maximum_web_search_calls=1,
-                    )
-                    reservation.save_result_snapshot(snapshot)
-                except BaseException as exc:
-                    return _blocked_quality_plan(
-                        plan,
-                        signals=signals,
-                        cluster=cluster,
-                        query=query,
-                        reason=(
-                            "saved optional-slot raw response could not be replayed offline: "
-                            f"{type(exc).__name__}: {exc}"
-                        ),
-                        reservation=reservation,
-                    )
-            _runtime._policy_audit_request = lambda **_kwargs: replay_result_snapshot(
-                _runtime, snapshot
-            )
+            try:
+                replayed, snapshot = replay_raw_response(
+                    _runtime,
+                    reservation.raw_response(),
+                    maximum_web_search_calls=1,
+                )
+                # The hash-validated raw response is authoritative. Any older
+                # parsed snapshot is overwritten from deterministic replay rather
+                # than trusted as an independent recovery input.
+                reservation.save_result_snapshot(snapshot)
+            except BaseException as exc:
+                return _blocked_quality_plan(
+                    plan,
+                    signals=signals,
+                    cluster=cluster,
+                    query=query,
+                    reason=(
+                        "saved optional-slot raw response could not be replayed offline: "
+                        f"{type(exc).__name__}: {exc}"
+                    ),
+                    reservation=reservation,
+                )
+            _runtime._policy_audit_request = lambda **_kwargs: replayed
         else:
             _runtime._policy_audit_request = lambda **kwargs: protected_policy_audit_request(
                 _runtime, reservation, **kwargs
