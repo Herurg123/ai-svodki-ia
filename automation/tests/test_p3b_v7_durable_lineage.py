@@ -621,6 +621,82 @@ class P3bV7DurableLineageTests(unittest.TestCase):
                 (0, 0, 0),
             )
 
+    def test_deterministic_invalid_processed_raw_remains_recoverable_offline(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            state = root / "production-daily"
+            artifact = root / DATE
+            report = state / "coverage-audit.json"
+            state.mkdir(parents=True)
+            artifact.mkdir(parents=True)
+
+            plan = _coverage_plan()
+            reservation = prepare_slot(
+                state_dir=state,
+                publication_date=DATE,
+                owner=v7.P3B_SLOT_OWNER,
+                search_window=SEARCH_WINDOW,
+                request_contract={
+                    "version": v7.P3B_EXACT_BINDING_VERSION,
+                    "strategy": v7.P3B_SLOT_OWNER,
+                    "model": "gpt-test",
+                    "query": "runtime exact query",
+                    "prompt_sha256": "runtime-prompt",
+                    "signal_ids": ["sig-runtime"],
+                    "maximum_web_search_calls": 1,
+                    "allowed_domains": [],
+                },
+                bundle_identity=v7._v6._P3A._bundle_identity(plan),
+            )
+            reservation.mark_request_started()
+            invalid_raw = {
+                "id": "invalid-terminal-response",
+                "status": "completed",
+                "model": "gpt-test",
+                "output": [],
+            }
+            reservation.save_raw_response(invalid_raw)
+            parsed, result_snapshot = v7.parse_raw_response(
+                v7._base._v6._runtime,
+                invalid_raw,
+                maximum_web_search_calls=1,
+            )
+            self.assertIsNotNone(parsed.validation_error)
+            reservation.save_result_snapshot(result_snapshot)
+            processed = _processed_plan(plan)
+            reservation.mark_processed(processed)
+            _write(artifact / "candidates.json", _research_artifact())
+
+            with (
+                mock.patch.object(
+                    v7._v6,
+                    "run_audit_request",
+                    side_effect=AssertionError("provider call"),
+                ) as ordinary,
+                mock.patch.object(
+                    v7._v6,
+                    "protected_policy_audit_request",
+                    side_effect=AssertionError("protected call"),
+                ) as protected,
+                mock.patch.object(
+                    v7._v6._source_freshness,
+                    "fetch_source_html",
+                    side_effect=AssertionError("page fetch"),
+                ) as pages,
+            ):
+                context = v7.recovery_preflight(
+                    publication_date=DATE,
+                    artifact_dir=artifact,
+                    report_path=report,
+                    state_dir=state,
+                )
+
+            self.assertIsNone(context)
+            self.assertEqual(
+                (ordinary.call_count, protected.call_count, pages.call_count),
+                (0, 0, 0),
+            )
+
     def test_saved_result_must_match_deterministic_raw_replay(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
