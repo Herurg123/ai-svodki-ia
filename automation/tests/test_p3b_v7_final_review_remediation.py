@@ -87,6 +87,29 @@ def _independent() -> dict:
     }
 
 
+def _raw_response(*, response_id: str = "saved-response", query: str = "historical exact query") -> dict:
+    payload = {
+        "status": "complete_with_gaps",
+        "direction_id": "general_coverage_gaps",
+        "candidates": [],
+        "rejections": [],
+    }
+    return {
+        "id": response_id,
+        "status": "completed",
+        "model": "gpt-test",
+        "output_text": json.dumps(payload, ensure_ascii=False),
+        "output": [
+            {
+                "id": "search-1",
+                "type": "web_search_call",
+                "status": "completed",
+                "action": {"type": "search", "query": query, "sources": []},
+            }
+        ],
+    }
+
+
 class P3bV7FinalReviewRemediationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory()
@@ -136,7 +159,14 @@ class P3bV7FinalReviewRemediationTests(unittest.TestCase):
             bundle_identity=v7._v6._P3A._bundle_identity(plan),
         )
         reservation.mark_request_started()
-        reservation.save_raw_response({"id": "saved-response", "output": []})
+        raw_response = _raw_response()
+        reservation.save_raw_response(raw_response)
+        _parsed, result_snapshot = v7.replay_raw_response(
+            v7._base._v6._runtime,
+            raw_response,
+            maximum_web_search_calls=1,
+        )
+        reservation.save_result_snapshot(result_snapshot)
         production_snapshot = copy.deepcopy(plan)
         production_snapshot.update(copy.deepcopy(snapshot))
         reservation.mark_processed(production_snapshot)
