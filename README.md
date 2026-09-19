@@ -136,8 +136,8 @@ checks. Provider/model labels не являются proof. Если slot зан�
 или transport имеет `request_started` с неизвестным исходом, signal остаётся
 unresolved/deferred и новый search не выполняется. `response_saved` сохраняет
 существующий offline replay, а `processed` переиспользуется только при durable
-provenance exact snapshot bytes, связанной с тем же request/response и
-pre-optional bundle. Финальный research `candidates.json` не используется как
+provenance exact snapshot bytes, связанной с тем же request/response,
+pre-optional bundle и exact parsed-result hash. Финальный research `candidates.json` не используется как
 Coverage-plan identity. Active v7 дополнительно требует exact deterministic
 raw↔parsed replay для saved result и current request-contract identity для
 processed legacy resolution. Восьмой Coverage search не появляется; потолки
