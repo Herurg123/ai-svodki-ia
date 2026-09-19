@@ -328,7 +328,7 @@ class P3bV7DurableLineageTests(unittest.TestCase):
                 ) as pages,
                 mock.patch.object(
                     v7,
-                    "replay_raw_response",
+                    "parse_raw_response",
                     side_effect=self._matching_raw_replay,
                 ),
             ):
@@ -385,7 +385,7 @@ class P3bV7DurableLineageTests(unittest.TestCase):
                 ) as pages,
                 mock.patch.object(
                     v7,
-                    "replay_raw_response",
+                    "parse_raw_response",
                     side_effect=self._matching_raw_replay,
                 ),
             ):
@@ -444,7 +444,7 @@ class P3bV7DurableLineageTests(unittest.TestCase):
                 ),
                 mock.patch.object(
                     v7,
-                    "replay_raw_response",
+                    "parse_raw_response",
                     side_effect=self._matching_legacy_raw_replay,
                 ),
             ):
@@ -507,7 +507,7 @@ class P3bV7DurableLineageTests(unittest.TestCase):
                 ),
                 mock.patch.object(
                     v7,
-                    "replay_raw_response",
+                    "parse_raw_response",
                     side_effect=self._matching_legacy_raw_replay,
                 ),
                 mock.patch.object(
@@ -601,7 +601,7 @@ class P3bV7DurableLineageTests(unittest.TestCase):
                 ) as pages,
                 mock.patch.object(
                     v7,
-                    "replay_raw_response",
+                    "parse_raw_response",
                     side_effect=self._matching_legacy_raw_replay,
                 ),
             ):
@@ -724,7 +724,7 @@ class P3bV7DurableLineageTests(unittest.TestCase):
             with (
                 mock.patch.object(
                     v7,
-                    "replay_raw_response",
+                    "parse_raw_response",
                     side_effect=replay_foreign,
                 ),
                 mock.patch.object(
