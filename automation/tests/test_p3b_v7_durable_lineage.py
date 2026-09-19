@@ -93,6 +93,25 @@ def _research_artifact() -> dict:
     }
 
 
+def _saved_result_snapshot() -> dict:
+    return {
+        "payload": {
+            "status": "complete_with_gaps",
+            "direction_id": "general_coverage_gaps",
+            "candidates": [],
+            "rejections": [],
+        },
+        "metadata": {
+            "response_id": "optional-response",
+            "status": "completed",
+            "actual_queries": ["runtime exact query"],
+            "web_search_calls_completed": 1,
+        },
+        "output_text": "{}",
+        "validation_error": None,
+    }
+
+
 class P3bV7DurableLineageTests(unittest.TestCase):
     def _seed_processed(self, state: Path):
         plan = _coverage_plan()
@@ -115,27 +134,22 @@ class P3bV7DurableLineageTests(unittest.TestCase):
         )
         reservation.mark_request_started()
         reservation.save_raw_response({"id": "optional-response", "output": []})
-        reservation.save_result_snapshot(
-            {
-                "payload": {
-                    "status": "complete_with_gaps",
-                    "direction_id": "general_coverage_gaps",
-                    "candidates": [],
-                    "rejections": [],
-                },
-                "metadata": {
-                    "response_id": "optional-response",
-                    "status": "completed",
-                    "actual_queries": ["runtime exact query"],
-                    "web_search_calls_completed": 1,
-                },
-                "output_text": "{}",
-                "validation_error": None,
-            }
-        )
+        reservation.save_result_snapshot(_saved_result_snapshot())
         processed = _processed_plan(plan)
         reservation.mark_processed(processed)
         return reservation, processed
+
+    def _matching_raw_replay(self, runtime, raw_response, **_kwargs):
+        self.assertEqual(raw_response["id"], "optional-response")
+        snapshot = _saved_result_snapshot()
+        result = runtime.AuditRequestResult(
+            payload=copy.deepcopy(snapshot["payload"]),
+            metadata=copy.deepcopy(snapshot["metadata"]),
+            output_text=snapshot["output_text"],
+            raw_response=copy.deepcopy(raw_response),
+            validation_error=None,
+        )
+        return result, snapshot
 
     def test_writer_persists_result_and_processed_lineage_hashes(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -203,6 +217,11 @@ class P3bV7DurableLineageTests(unittest.TestCase):
                     "fetch_source_html",
                     side_effect=AssertionError("page fetch"),
                 ) as pages,
+                mock.patch.object(
+                    v7,
+                    "replay_raw_response",
+                    side_effect=self._matching_raw_replay,
+                ),
             ):
                 context = v7.recovery_preflight(
                     publication_date=DATE,
@@ -255,9 +274,76 @@ class P3bV7DurableLineageTests(unittest.TestCase):
                     "fetch_source_html",
                     side_effect=AssertionError("page fetch"),
                 ) as pages,
+                mock.patch.object(
+                    v7,
+                    "replay_raw_response",
+                    side_effect=self._matching_raw_replay,
+                ),
             ):
                 with self.assertRaisesRegex(
                     CoverageSlotError, "processed snapshot provenance|processed snapshot hash"
+                ):
+                    v7.recovery_preflight(
+                        publication_date=DATE,
+                        artifact_dir=artifact,
+                        report_path=report,
+                        state_dir=state,
+                    )
+
+            self.assertEqual(
+                (ordinary.call_count, protected.call_count, pages.call_count),
+                (0, 0, 0),
+            )
+
+    def test_saved_result_must_match_deterministic_raw_replay(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            state = root / "production-daily"
+            artifact = root / DATE
+            report = state / "coverage-audit.json"
+            state.mkdir(parents=True)
+            artifact.mkdir(parents=True)
+            self._seed_processed(state)
+            _write(artifact / "candidates.json", _research_artifact())
+
+            foreign_snapshot = _saved_result_snapshot()
+            foreign_snapshot["metadata"]["response_id"] = "foreign-parsed-b"
+
+            def replay_foreign(runtime, raw_response, **_kwargs):
+                result = runtime.AuditRequestResult(
+                    payload=copy.deepcopy(foreign_snapshot["payload"]),
+                    metadata=copy.deepcopy(foreign_snapshot["metadata"]),
+                    output_text=foreign_snapshot["output_text"],
+                    raw_response=copy.deepcopy(raw_response),
+                    validation_error=None,
+                )
+                return result, copy.deepcopy(foreign_snapshot)
+
+            with (
+                mock.patch.object(
+                    v7,
+                    "replay_raw_response",
+                    side_effect=replay_foreign,
+                ),
+                mock.patch.object(
+                    v7._v6,
+                    "run_audit_request",
+                    side_effect=AssertionError("provider call"),
+                ) as ordinary,
+                mock.patch.object(
+                    v7._v6,
+                    "protected_policy_audit_request",
+                    side_effect=AssertionError("protected call"),
+                ) as protected,
+                mock.patch.object(
+                    v7._v6._source_freshness,
+                    "fetch_source_html",
+                    side_effect=AssertionError("page fetch"),
+                ) as pages,
+            ):
+                with self.assertRaisesRegex(
+                    CoverageSlotError,
+                    "saved result snapshot does not match deterministic raw replay",
                 ):
                     v7.recovery_preflight(
                         publication_date=DATE,
