@@ -102,7 +102,7 @@
   exact authoritative page identity, deterministic Freshness и archive checks;
   `request_started` не ретраится, `response_saved` сохраняет прежний offline
   replay, а `processed` переиспользуется только при доказанной durable provenance
-  exact snapshot bytes → request/response/pre-optional bundle. Финальный research
+  exact snapshot bytes → request/response/pre-optional bundle → parsed-result hash. Финальный research
   `candidates.json` не реконструирует Coverage-plan identity. Active v7 также
   требует exact deterministic raw↔parsed replay для saved result и current
   request-contract identity для processed legacy resolution; восьмой Coverage
