@@ -30,6 +30,7 @@ from coverage_slot_guard import (
     validated_processed_snapshot,
     validated_result_snapshot,
 )
+from coverage_slot_transport import replay_raw_response
 
 _BASE_PATH = Path(__file__).with_name("ensure_story_coverage_p3b_v7_base.py")
 _BASE_SPEC = importlib.util.spec_from_file_location(
@@ -66,6 +67,7 @@ _REMEDIATION_INTERNALS = {
     "_install_revocation_predicate",
     "_positive_snapshot",
     "_validate_current_p3b_request_identity",
+    "_validate_saved_result_against_raw",
     "_validate_optional_slot_journal",
     "_repair_recovery_input_only_marker",
     "recovery_preflight",
@@ -294,6 +296,40 @@ def _validate_current_p3b_request_identity(
         raise CoverageSlotError("current P3b request/model identity drift")
 
 
+def _validate_saved_result_against_raw(
+    *,
+    journal: dict[str, Any],
+    publication_date: str,
+    state_dir: Path,
+) -> None:
+    """Prove a saved parsed snapshot is exactly reproducible from durable raw bytes."""
+    if str(journal.get("state") or "") not in {"response_saved", "processed"}:
+        return
+    saved = journal.get("result_snapshot")
+    if not isinstance(saved, dict):
+        return
+    raw_response = load_raw_response(state_dir, publication_date)
+    try:
+        _result, replayed_snapshot = replay_raw_response(
+            _base._v6._runtime,
+            raw_response,
+            maximum_web_search_calls=1,
+        )
+    except BaseException as exc:
+        raise CoverageSlotError(
+            "Coverage optional-slot saved raw response cannot be deterministically "
+            f"replayed: {type(exc).__name__}: {exc}"
+        ) from exc
+    if not isinstance(replayed_snapshot, dict):
+        raise CoverageSlotError(
+            "Coverage optional-slot raw replay did not produce a parsed snapshot"
+        )
+    if sha256_value(replayed_snapshot) != sha256_value(saved):
+        raise CoverageSlotError(
+            "Coverage optional-slot saved result snapshot does not match deterministic raw replay"
+        )
+
+
 def _validate_optional_slot_journal(
     *,
     publication_date: str,
@@ -353,9 +389,15 @@ def _validate_optional_slot_journal(
             )
 
     if state in {"response_saved", "processed"}:
-        # Response bytes remain the transport authority. This validates file
-        # existence, exact bytes hash and JSON decoding without external I/O.
+        # Response bytes remain the transport authority. Validate their hash and,
+        # when a parsed snapshot exists, prove current deterministic parsing
+        # reproduces those exact saved bytes without provider/network I/O.
         load_raw_response(state_dir, publication_date)
+        _validate_saved_result_against_raw(
+            journal=journal,
+            publication_date=publication_date,
+            state_dir=state_dir,
+        )
         validated_result_snapshot(journal)
 
     if state == "processed":
