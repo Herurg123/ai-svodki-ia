@@ -456,6 +456,92 @@ class P3bV7DurableLineageTests(unittest.TestCase):
                 )
             self.assertIsNone(context)
 
+    def test_pre_lineage_matching_legacy_processed_cannot_bypass_shortcuts(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            state = root / "production-daily"
+            artifact = root / DATE
+            report = state / "coverage-audit.json"
+            archive_path = root / "archive.json"
+            state.mkdir(parents=True)
+            artifact.mkdir(parents=True)
+            archive = {"items": []}
+            _write(archive_path, archive)
+            signal = _legacy_signal(
+                title="Alpha Labs releases Orion",
+                evidence_reason="Weak source reports a new Orion release",
+            )
+            self._seed_legacy_processed(
+                state,
+                signal=signal,
+                model="gpt-test",
+                archive=archive,
+            )
+            _write(artifact / "candidates.json", _research_artifact())
+
+            journal_path = state / f"coverage-optional-slot-{DATE}.json"
+            historical = json.loads(journal_path.read_text(encoding="utf-8"))
+            for key in (
+                "result_snapshot_sha256",
+                "result_snapshot_provenance",
+                "processed_snapshot_sha256",
+                "processed_snapshot_provenance",
+            ):
+                historical.pop(key, None)
+            _write(journal_path, historical)
+
+            argv = [
+                "ensure_story_coverage.py",
+                "--publication-date", DATE,
+                "--artifact-dir", str(artifact),
+                "--report", str(report),
+                "--model", "gpt-test",
+                "--archive", str(archive_path),
+            ]
+            with (
+                mock.patch.object(sys, "argv", argv),
+                mock.patch.object(
+                    v7._base._v6._v2._pre,
+                    "_required_signals",
+                    return_value=[copy.deepcopy(signal)],
+                ),
+                mock.patch.object(
+                    v7,
+                    "replay_raw_response",
+                    side_effect=self._matching_legacy_raw_replay,
+                ),
+                mock.patch.object(
+                    v7._v6,
+                    "run_audit_request",
+                    side_effect=AssertionError("provider call"),
+                ) as ordinary,
+                mock.patch.object(
+                    v7._v6,
+                    "protected_policy_audit_request",
+                    side_effect=AssertionError("protected call"),
+                ) as protected,
+                mock.patch.object(
+                    v7._v6._source_freshness,
+                    "fetch_source_html",
+                    side_effect=AssertionError("page fetch"),
+                ) as pages,
+            ):
+                with self.assertRaisesRegex(
+                    CoverageSlotError,
+                    "historical legacy processed optional-slot result has no durable processed provenance",
+                ):
+                    v7.recovery_preflight(
+                        publication_date=DATE,
+                        artifact_dir=artifact,
+                        report_path=report,
+                        state_dir=state,
+                    )
+
+            self.assertEqual(
+                (ordinary.call_count, protected.call_count, pages.call_count),
+                (0, 0, 0),
+            )
+
     def test_same_signal_id_with_changed_legacy_request_fails_closed(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
