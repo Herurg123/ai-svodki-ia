@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import json
 import sys
 import tempfile
 import types
@@ -127,6 +128,46 @@ class CoverageOptionalSlotGuardTests(unittest.TestCase):
         finally:
             coverage.STATE_DIR = original_state
             coverage._runtime.call_with_usage = original_call_with_usage
+
+    def test_raw_replay_preserves_nested_search_action_metadata(self) -> None:
+        raw_response = {
+            "id": "raw-replay-control",
+            "status": "completed",
+            "model": "gpt-test",
+            "output_text": json.dumps(
+                {
+                    "status": "complete_with_gaps",
+                    "direction_id": "general_coverage_gaps",
+                    "candidates": [],
+                    "rejections": [],
+                }
+            ),
+            "output": [
+                {
+                    "id": "search-1",
+                    "type": "web_search_call",
+                    "status": "completed",
+                    "action": {
+                        "type": "search",
+                        "query": "Rillet Lands Scale ERP latest",
+                        "sources": [],
+                    },
+                }
+            ],
+        }
+
+        result, snapshot = coverage.replay_raw_response(
+            coverage._runtime,
+            raw_response,
+            maximum_web_search_calls=1,
+        )
+
+        self.assertIsNone(result.validation_error)
+        self.assertEqual(snapshot["metadata"]["web_search_calls_completed"], 1)
+        self.assertEqual(
+            snapshot["metadata"]["actual_queries"],
+            ["Rillet Lands Scale ERP latest"],
+        )
 
     def test_reservation_write_failure_prevents_transport(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
