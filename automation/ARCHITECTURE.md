@@ -108,12 +108,20 @@ If the optional slot is occupied, already spent or transport is ambiguous, the
 signal remains unresolved/deferred and no eighth Coverage search is created.
 Durable P3b slot state remains
 `reserved → request_started → response_saved → processed`; `request_started`
-never auto-retries, while `response_saved` and current-evidence `processed`
-replay/reuse offline. Если higher-priority required `unverified` появляется при
-доказанном exact unstarted P3b reservation, preserved v6 под тем же optional-slot
-lock, который защищает request admission, атомарно заменяет полный P3b
-request/bundle contract на полный legacy reservation. Отдельного
-release-then-reserve окна без durable owner нет;
+never auto-retries, while `response_saved` keeps the established offline replay
+path and current `processed` reuse additionally requires durable provenance of
+the exact processed bytes. The common slot writer records hashes for saved
+result/processed snapshots and binds them to the same request-contract hash,
+saved-response hash and pre-optional bundle identity. Reservation identity is
+not reconstructed from the post-request Coverage plan or the final research
+`candidates.json`: both have a different lifecycle shape. Historical processed
+journals without current snapshot provenance remain readable for deterministic
+migration/sanitation but cannot silently become current reusable proof; the slot
+stays consumed and no provider/search/page-refetch I/O is reopened. Если
+higher-priority required `unverified` появляется при доказанном exact unstarted
+P3b reservation, preserved v6 под тем же optional-slot lock, который защищает
+request admission, атомарно заменяет полный P3b request/bundle contract на полный
+legacy reservation. Отдельного release-then-reserve окна без durable owner нет;
 started/response/consumed/foreign/mismatched state такой transfer не разрешает.
 
 V7 закрывает отдельную recovery-дыру над `execute_audit_plan`: stale positive
