@@ -112,7 +112,10 @@ never auto-retries, while `response_saved` keeps the established offline replay
 path and current `processed` reuse additionally requires durable provenance of
 the exact processed bytes. The common slot writer records hashes for saved
 result/processed snapshots and binds them to the same request-contract hash,
-saved-response hash and pre-optional bundle identity. Reservation identity is
+saved-response hash and pre-optional bundle identity. A current transition to
+`processed` additionally requires proven parsed-result lineage and stores the
+exact `result_snapshot_sha256`; a processed snapshot without that link is not
+current reusable state. Reservation identity is
 not reconstructed from the post-request Coverage plan or the final research
 `candidates.json`: both have a different lifecycle shape. Historical processed
 journals without current snapshot provenance remain readable for deterministic
