@@ -42,7 +42,7 @@ post-request Coverage plan или финального research `candidates.json
   response и reservation bundle;
 - `processed_snapshot` получает `processed_snapshot_sha256` и
   `processed_snapshot_provenance`, которые ссылаются на те же request/response/
-  bundle и, когда parsed result существует, на его exact hash.
+  bundle и обязательно на exact `result_snapshot_sha256` того parsed result, из которого получен processed result.
 
 `processed_snapshot` по-прежнему обязан быть object, иметь `candidates[]` и
 валидный `search_budget` с `maximum_calls`, `completed_calls`,
