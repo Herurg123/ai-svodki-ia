@@ -7,9 +7,23 @@ from typing import Any
 from coverage_slot_guard import CoverageSlotReservation
 
 
+class _ReplayObject(SimpleNamespace):
+    """Attribute-style saved response node that round-trips through response_to_plain."""
+
+    def to_dict(self) -> dict[str, Any]:
+        def restore(value: Any) -> Any:
+            if isinstance(value, _ReplayObject):
+                return {key: restore(item) for key, item in vars(value).items()}
+            if isinstance(value, list):
+                return [restore(item) for item in value]
+            return value
+
+        return {key: restore(item) for key, item in vars(self).items()}
+
+
 def _plain_object(value: Any) -> Any:
     if isinstance(value, dict):
-        obj = SimpleNamespace()
+        obj = _ReplayObject()
         for key, item in value.items():
             setattr(obj, str(key), _plain_object(item))
         return obj
