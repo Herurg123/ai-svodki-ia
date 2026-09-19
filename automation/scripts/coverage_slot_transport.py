@@ -209,22 +209,36 @@ def protected_policy_audit_request(
     return _raise_if_invalid(runtime, result)
 
 
+def parse_raw_response(
+    runtime: Any,
+    raw_response: Any,
+    *,
+    maximum_web_search_calls: int = 1,
+) -> tuple[Any, dict[str, Any]]:
+    """Deterministically parse saved raw bytes without requiring a valid outcome."""
+    if not isinstance(raw_response, dict):
+        raise RuntimeError("saved Coverage optional-slot raw response must be an object")
+    response = _plain_object(raw_response)
+    setattr(response, "output_text", _plain_output_text(raw_response))
+    return _parse_response(
+        runtime,
+        response,
+        maximum_web_search_calls=maximum_web_search_calls,
+        raw_response=raw_response,
+    )
+
+
 def replay_raw_response(
     runtime: Any,
     raw_response: Any,
     *,
     maximum_web_search_calls: int = 1,
 ) -> tuple[Any, dict[str, Any]]:
-    """Reparse the durably saved provider response without another wire call."""
-    if not isinstance(raw_response, dict):
-        raise RuntimeError("saved Coverage optional-slot raw response must be an object")
-    response = _plain_object(raw_response)
-    setattr(response, "output_text", _plain_output_text(raw_response))
-    result, snapshot = _parse_response(
+    """Reparse a saved provider response and require the replayed result to be valid."""
+    result, snapshot = parse_raw_response(
         runtime,
-        response,
+        raw_response,
         maximum_web_search_calls=maximum_web_search_calls,
-        raw_response=raw_response,
     )
     return _raise_if_invalid(runtime, result), snapshot
 
