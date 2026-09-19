@@ -167,6 +167,7 @@ class CoverageOptionalSlotGuardTests(unittest.TestCase):
             state_dir = Path(raw)
             original_state = coverage.STATE_DIR
             original_transport = coverage.protected_policy_audit_request
+            original_replay_raw = coverage.replay_raw_response
             calls = {"transport": 0}
 
             def save_then_interrupt(runtime, reservation, **_kwargs):
@@ -214,6 +215,38 @@ class CoverageOptionalSlotGuardTests(unittest.TestCase):
                     "response_saved",
                 )
 
+                def replay_saved_raw(runtime, raw_response, **_kwargs):
+                    self.assertEqual(raw_response["id"], "resp-saved")
+                    replay_snapshot = {
+                        "payload": {
+                            "status": "complete_with_gaps",
+                            "direction_id": "general_coverage_gaps",
+                            "candidates": [],
+                            "rejections": [dict(OUTSIDE_WINDOW)],
+                            "notes": "reparsed from durable raw response",
+                        },
+                        "metadata": {
+                            "response_id": "resp-saved",
+                            "status": "completed",
+                            "actual_queries": ["Rillet Lands Scale ERP latest"],
+                            "consulted_sources": [],
+                            "web_search_calls": 1,
+                            "web_search_calls_completed": 1,
+                            "web_search_call_items_total": 1,
+                        },
+                        "output_text": "{}",
+                        "validation_error": None,
+                    }
+                    result = runtime.AuditRequestResult(
+                        payload=copy.deepcopy(replay_snapshot["payload"]),
+                        metadata=copy.deepcopy(replay_snapshot["metadata"]),
+                        output_text="{}",
+                        raw_response=copy.deepcopy(raw_response),
+                        validation_error=None,
+                    )
+                    return result, replay_snapshot
+
+                coverage.replay_raw_response = replay_saved_raw
                 coverage.protected_policy_audit_request = lambda *_a, **_k: self.fail(
                     "offline replay must not call transport"
                 )
@@ -229,6 +262,7 @@ class CoverageOptionalSlotGuardTests(unittest.TestCase):
             finally:
                 coverage.STATE_DIR = original_state
                 coverage.protected_policy_audit_request = original_transport
+                coverage.replay_raw_response = original_replay_raw
 
             self.assertEqual(calls["transport"], 1)
             self.assertEqual(
