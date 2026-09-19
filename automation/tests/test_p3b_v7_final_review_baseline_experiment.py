@@ -29,6 +29,7 @@ mod = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = mod
 spec.loader.exec_module(mod)
 from coverage_slot_guard import prepare_slot
+from coverage_slot_transport import replay_raw_response
 
 DATE = "2026-09-17"
 SIGNAL = "experiment-signal"
@@ -36,6 +37,29 @@ WINDOW = {
     "start_at": "2026-09-16T03:00:00+00:00",
     "end_at": "2026-09-17T03:00:00+00:00",
 }
+
+
+def raw_response():
+    payload = {
+        "status": "complete_with_gaps",
+        "direction_id": "general_coverage_gaps",
+        "candidates": [],
+        "rejections": [],
+    }
+    return {
+        "id": "experiment-response",
+        "status": "completed",
+        "model": "experiment-model",
+        "output_text": json.dumps(payload),
+        "output": [
+            {
+                "id": "search-1",
+                "type": "web_search_call",
+                "status": "completed",
+                "action": {"type": "search", "query": "experiment-query", "sources": []},
+            }
+        ],
+    }
 
 
 def candidate_v1():
@@ -166,7 +190,14 @@ with tempfile.TemporaryDirectory() as tmp:
             bundle_identity=mod._v6._P3A._bundle_identity(research),
         )
         reservation.mark_request_started()
-        reservation.save_raw_response({"id": "experiment-response", "output": []})
+        raw = raw_response()
+        reservation.save_raw_response(raw)
+        _parsed, result_snapshot = replay_raw_response(
+            mod._v6._runtime,
+            raw,
+            maximum_web_search_calls=1,
+        )
+        reservation.save_result_snapshot(result_snapshot)
         snapshot = copy.deepcopy(research)
         snapshot["weak_source_exact_binding"] = {
             "version": mod.P3B_EXACT_BINDING_VERSION,
