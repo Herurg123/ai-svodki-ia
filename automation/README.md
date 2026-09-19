@@ -103,7 +103,9 @@
   `request_started` не ретраится, `response_saved` сохраняет прежний offline
   replay, а `processed` переиспользуется только при доказанной durable provenance
   exact snapshot bytes → request/response/pre-optional bundle. Финальный research
-  `candidates.json` не реконструирует Coverage-plan identity; восьмой Coverage
+  `candidates.json` не реконструирует Coverage-plan identity. Active v7 также
+  требует exact deterministic raw↔parsed replay для saved result и current
+  request-contract identity для processed legacy resolution; восьмой Coverage
   search запрещён;
 - `scripts/recover_digest_artifact.py` — paid-stage recovery entrypoint; текущий
   agency-health contract разрешает повторно оценить только zero-spend saved
