@@ -350,8 +350,10 @@ class CoverageSlotReservation:
         return copy.deepcopy(value) if isinstance(value, dict) else None
 
     def processed_snapshot(self) -> dict[str, Any] | None:
-        value = self.journal.get(_PROCESSED_SNAPSHOT_KEY)
-        return copy.deepcopy(value) if isinstance(value, dict) else None
+        # Public reuse path is provenance-aware. Historical processed journals
+        # remain readable through load_journal()/the raw JSON for sanitation,
+        # but they are not silently promoted to a current reusable result.
+        return validated_processed_snapshot(self.journal)
 
     def validated_result_snapshot(self) -> dict[str, Any] | None:
         return validated_result_snapshot(self.journal)
