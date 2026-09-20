@@ -191,11 +191,12 @@ Production работает из GitHub Actions, хранит результат
 - создаёт PNG первого кадра;
 - при включённой настройке доставляет media только в FTP-каталог `video`;
 - после успешного локального этапа автоматически выполняет native Dzen browser-upload через тот же защищённый профиль, но в отдельной последовательной browser-сессии;
-- после подтверждённого `PUBLISHED` выполняет отдельную post-publication фазу Дзен-подборок: same-day видео назначается в `Видеосводки по ИИ`, а same-day ежедневная сводка — в `Сводки по ИИ`; подтверждение хранится раздельно по обеим целям в локальном `state.json`.
+- после подтверждённого `PUBLISHED` выполняет отдельную post-publication фазу Дзен-подборок: same-day видео назначается в `Видеосводки по ИИ`, а same-day ежедневная сводка — в `Сводки по ИИ`; подтверждение хранится раздельно по обеим целям в локальном `state.json`;
+- после `dzenCollections.status=COMPLETE` выполняет четвёртую post-publication фазу `dzen-article-video.js`: получает public URL same-day статьи/видео через Studio, при наличии exact placeholder записывает article URL в локальный `downloads/_ИИ-Сводка.txt`, вставляет video preview перед H2 `Мировые лидеры ИИ` под новым H2 `Видеосводка`, выполняет двухэтапное `Опубликовать` -> `Сохранить изменения` с at-most-once state и завершает только после public verification.
 
 Video runtime не является prerequisite, stage, fallback или recovery-компонентом
-основного production. Ошибка video worker или collections stage не должна менять
-статус ежедневной ИИ-Сводки и не должна блокировать её публикацию.
+основного production. Ошибка video worker, collections или article-video stage не
+должна менять статус ежедневной ИИ-Сводки и не должна блокировать её публикацию.
 
 ### 1.3. RSS boundary и архив Video → RSS
 
@@ -264,6 +265,7 @@ listing и проверяется отсутствие всех удалённы
 | P3b v7 recovery/rollback | `automation/P3B_V7_RECOVERY.md` |
 | Video runtime/deployment | `automation/notebooklm-video/README.md` и `DEPLOYMENT.md` |
 | Dzen collections runtime | `automation/notebooklm-video/dzen-collections.js` и `DZEN_COLLECTIONS_DEBUG_README.txt` |
+| Dzen article-video runtime | `automation/notebooklm-video/dzen-article-video.js` и `DZEN_ARTICLE_VIDEO.md` |
 | RSS no-video boundary | `automation/tests/test_rss_video_boundary.py` |
 | Retired Video → RSS reference | `automation/archive/video-rss-enrichment-2026-08/` |
 | FTP video retention | `.github/workflows/repository-cleanup.yml` и `automation/scripts/cleanup_video_ftp.py` |
@@ -413,8 +415,7 @@ wrappers.
 `automation/notebooklm-video/tests/video-boundary-smoke.js` проверяет hard FTP
 boundary и ignore rules. `lockfile-contract-smoke.js` проверяет синхронизацию
 `package.json`/`package-lock.json` и локальный `npm ci` contract.
-`dzen-collections-contract-smoke.js` и `full-worker-contract-smoke.js` защищают
-третью Dzen-фазу и её persistent no-repeat semantics.
+`dzen-collections-contract-smoke.js` защищает третью Dzen-фазу, `dzen-article-video-contract-smoke.js` — универсальную дату, exact placeholder/manual-link preservation и article-video at-most-once markers, а `full-worker-contract-smoke.js` защищает ordering всех четырёх фаз и no-browser terminal skips.
 
 ### 4.5. Защита `main` и automated writers
 
@@ -1728,12 +1729,15 @@ RSS
  -> same-day video -> «Видеосводки по ИИ»
  -> same-day digest -> «Сводки по ИИ»
  -> per-target persistent ADDED/PENDING state
+ -> dzen-article-video.js
+ -> same-day article: H2 «Видеосводка» -> Dzen video -> H2 «Мировые лидеры ИИ»
+ -> public verification -> COMPLETE/VERIFIED
 ```
 
 Runtime state, real config, FTP access, logs, media и browser profile не хранятся
 в Git. Локальный `.gitignore` является частью safety contract.
 
-`full-worker.lock` является внешним lock всего трёхфазного scheduled flow и не
+`full-worker.lock` является внешним lock всего четырёхфазного scheduled flow и не
 допускает, чтобы следующий 10-минутный trigger вошёл в новый browser этап до
 завершения предыдущего. Внутри него существующий `scheduled-worker.lock` остаётся
 защитой первых двух проверенных фаз. После успешного `worker.js` выбирается самый
@@ -1766,6 +1770,29 @@ Live-тест 29.08.2026 показал точный marker этого сост�
 обрабатывает лишь вторую. Missing/error цель остаётся `PENDING` и может быть
 проверена следующим scheduled trigger. Ошибка логируется, browser закрывается,
 а автоматический второй click после неоднозначного результата запрещён.
+
+Четвёртая фаза разрешена только когда video уже `PUBLISHED`, коллекции
+`COMPLETE`, а предыдущие фазы текущего full run успешны. Ее state хранится в
+`job.dzenArticleVideo`: `COMPLETE`, `SKIPPED_EXISTING` и `ERROR` являются
+terminal; `PUBLISH_ARMED`, `CONFIRMATION_ARMED` и `CLICKED_UNVERIFIED`
+verification-only и запрещают повторное редактирование/публикационный click.
+`ERROR` не ретраится автоматически.
+
+Runtime не зависит от конкретной календарной даты: `full-worker.js` передаёт
+`--date=YYYY-MM-DD` выбранного job. Article URL записывается в локальный
+`downloads/_ИИ-Сводка.txt` только если второй bullet блока `Этот выпуск:`
+остаётся exact placeholder `- https://` (или configured placeholder). Если
+placeholder отсутствует, файл трактуется как вручную заполненный и не
+перезаписывается. При наличии placeholder первая ссылка обязана соответствовать
+`job.publicationUrl`, иначе фаза fail-closed останавливается до mutation статьи.
+
+После вставки Dzen preview H2 `Видеосводка` подтверждается через floating
+toolbar. Publish gate ждёт одновременно `Сохранено ...` и
+`Есть неопубликованные правки` минимум 8 секунд без `Идёт сохранение`.
+Далее выполняется ровно один click `Опубликовать` и ровно один native
+`BUTTON` `Сохранить изменения`. Navigation после final click считается
+ожидаемым success-path. `COMPLETE/VERIFIED` сохраняется только после публичного
+порядка H2 `Видеосводка` -> video preview -> H2 `Мировые лидеры ИИ`.
 
 Переносимые npm dependencies являются частью versioned runtime contract:
 
@@ -1828,6 +1855,17 @@ production, RSS, FTP delivery semantics, retrieval/editorial, paid API budgets �
 среде 29.08.2026: обе новые назначения прошли одним кликом, а повторный apply
 подтвердил alpha=0.6 already-added state без второго клика. Offline contracts
 защищают ordering, state persistence и no-browser skip после COMPLETE.
+
+Для post-publication Dzen article-video dependency audit также ограничен локальным
+NotebookLM-video downstream: `full-worker.js`, `dzen-article-video.js`,
+`browser-session.js`, локальные `state.json` и `downloads/_ИИ-Сводка.txt`,
+Studio/Public article UI и существующие video/collections state. Nightly GitHub
+production, RSS, site/FTP publication, retrieval/editorial и paid API budgets не
+меняются. Live clean acceptance 20.09.2026 прошёл полный one-run путь включая
+stable autosave, unique native `Сохранить изменения`, ожидаемую navigation и
+public verification. Offline contracts защищают date-generic behavior,
+manual-link preservation, terminal/verification-only markers и fourth-phase
+ordering.
 
 Для Source Pulse v1.4 dependency audit затрагивает fresh Primary wrapper,
 фиксированный source registry, trusted runtime research, Event/Source Freshness
