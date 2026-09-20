@@ -22,6 +22,8 @@ New-Item -ItemType Directory -Path $TargetDir -Force | Out-Null
 
 $files = @(
     "worker.js",
+    "log-utils.js",
+    "history-utils.js",
     "full-worker.js",
     "scheduled-worker.js",
     "browser-session.js",
@@ -72,6 +74,7 @@ $template.tempDir = Join-Path $TargetDir "temp"
 $template.regularLog = Join-Path $TargetDir "worker.log"
 $template.errorLog = Join-Path $TargetDir "!!! ERROR !!!.log"
 $template.logRotation.archiveDir = Join-Path $TargetDir "logs"
+$template.historyRetention.archiveDir = Join-Path $TargetDir "archive"
 $template.stateFile = Join-Path $TargetDir "state.json"
 $template.descriptionFile = Join-Path $template.downloadDir "_ИИ-Сводка.txt"
 $template.successRegistryFile = Join-Path $template.downloadDir "_СКАЧАННЫЕ_ВИДЕО.json"
@@ -96,6 +99,10 @@ Push-Location $TargetDir
 try {
     npm ci --no-audit --no-fund
     if ($LASTEXITCODE -ne 0) { throw "npm ci завершился ошибкой." }
+    node --check log-utils.js
+    if ($LASTEXITCODE -ne 0) { throw "node --check log-utils.js завершился ошибкой." }
+    node --check history-utils.js
+    if ($LASTEXITCODE -ne 0) { throw "node --check history-utils.js завершился ошибкой." }
     node --check worker.js
     if ($LASTEXITCODE -ne 0) { throw "node --check worker.js завершился ошибкой." }
     node --check full-worker.js
