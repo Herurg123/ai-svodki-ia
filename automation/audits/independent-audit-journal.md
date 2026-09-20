@@ -1,6 +1,6 @@
 # Журнал независимых аудитов ИИ-Сводки
 
-Последнее обновление: 2026-09-09
+Последнее обновление: 2026-09-20
 Назначение: накопление независимых проверок полноты и свежести ежедневной ИИ-Сводки без расходования production API пользователя.
 
 > Историческая часть журнала периодически сжимается: сохраняются ежедневные verdict, подтверждённые misses, повторяющиеся паттерны и принятые архитектурные решения. Детальные отчёты и controlled experiments хранятся в `automation/audits/` и `automation/audits/experiments/` и не дублируются здесь целиком.
@@ -230,3 +230,44 @@ can add one public HTTP fetch through the existing bounded transport per matchin
 release lacking HTML publication metadata; this is not a paid search. See
 `experiments/2026-09-07-step03-preregistration.md` and
 `experiments/replay_publication_proof_2026_09_07.py` for scope and limitations.
+
+
+## 2026-09-11 — Technical follow-up and Astra → Sol handoff
+
+Independently checked scheduled run `34549170782`, recovery `34553236194`, both saved
+Coverage reports and baseline `5d15b0f`. Confirmed skipped SDK on recovery and required
+editorial repair failure accepted as success. Additional local counterexample: rollback
+erases a simulated saved response; recovery retains merged research but duplicate
+addition clears the repair obligation. No paid call or runtime change was made.
+
+Corrected scope: Agency request filtering and metadata include are present; internal
+provider routing failure is not established. Sep8 lacks a committed report and Sep9
+has missing diagnostics. Normalized Pulse timestamps can originate from `updated`;
+raw historical feed proof is absent. Qualcomm zero parse does not identify its exact
+parser cause. Independent references do not re-certify the old strict-window recall
+percentage. Detailed evidence, contracts, negative tests and remaining empirical gates:
+[HANDOFF TO SOL HIGH](experiments/2026-09-11-technical-followup/HANDOFF_TO_SOL_HIGH.md).
+
+Runtime fixes remained unimplemented in this historical handoff. The later implementation
+and review chain is closed out in
+[the Sep11 remediation program closure](experiments/2026-09-20-sep11-remediation-closure/README.md).
+
+
+## 2026-09-20 — Sep11 remediation program archive and closure
+
+The unmerged PR #167 evidence package has been copied into the canonical inert
+`automation/audits/experiments/` history without changing its historical blobs. A
+separate closeout index now connects the Sep11 starting audit/handoff to the merged
+implementation chain through PR #184 and records the final active P3b recovery contract.
+
+Start: PR #166 independent Sep11 audit and PR #167 technical P0–P5 handoff.
+End: merged PR #184, active P3b v7 over preserved v6, binder
+`weak_source_exact_binding_v4.py`, durable `VERSION=2`, semantic
+`EVIDENCE_VERSION=6`, P3a blob
+`14f0e38f57b9285a949ec5083136999c12c81bc0`, Coverage max 7 and whole-pipeline
+ceilings 24/25. The closeout explicitly distinguishes historical evidence from current
+architecture and identifies unrelated adjacent PRs so future audits do not infer a
+false causal chain.
+
+Canonical chronology and provenance:
+[Sep11 remediation program closure](experiments/2026-09-20-sep11-remediation-closure/README.md).
