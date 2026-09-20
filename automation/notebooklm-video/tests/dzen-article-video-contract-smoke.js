@@ -8,6 +8,8 @@ const { execFileSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "..");
 const scriptPath = path.join(ROOT, "dzen-article-video.js");
 const source = fs.readFileSync(scriptPath, "utf8");
+const setupSource = fs.readFileSync(path.join(ROOT, "setup-local.ps1"), "utf8");
+const fullWorkerSource = fs.readFileSync(path.join(ROOT, "full-worker.js"), "utf8");
 const articleVideo = require(scriptPath);
 
 assert.strictEqual(articleVideo.formatRussianLongDate("2027-01-03"), "3 января 2027");
@@ -143,5 +145,28 @@ const selfTestOutput = execFileSync(
   { cwd: ROOT, encoding: "utf8" }
 );
 assert.match(selfTestOutput, /SELF-TEST OK/);
+
+
+for (const deploymentMarker of [
+  '"dzen-article-video.js"',
+  '"run-dzen-article-video-dry-run.cmd"',
+  '"run-dzen-article-video-apply.cmd"',
+  '"DZEN_ARTICLE_VIDEO.md"',
+  "node --check dzen-article-video.js",
+]) {
+  assert(
+    setupSource.includes(deploymentMarker),
+    `setup-local.ps1 must deploy/check article-video asset: ${deploymentMarker}`
+  );
+}
+
+assert(
+  fullWorkerSource.includes('runNodeScript("dzen-article-video.js", ["--apply"'),
+  "full-worker must invoke the production article-video child"
+);
+assert(
+  fullWorkerSource.includes('dzenStatus !== "PUBLISHED" || collectionStatus !== "COMPLETE"'),
+  "full-worker must gate article-video on PUBLISHED + COMPLETE"
+);
 
 console.log("Dzen article-video contract smoke: OK");
