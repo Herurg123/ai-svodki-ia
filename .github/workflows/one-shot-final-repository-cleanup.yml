@@ -1,0 +1,291 @@
+name: One-shot final repository branch cleanup
+run-name: One-shot final repository branch cleanup ${{ github.run_id }}
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: write
+  actions: read
+  pull-requests: write
+
+jobs:
+  cleanup:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.head_ref == 'ops/one-shot-final-repository-cleanup-2026-09-20'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Re-prove branch safety, delete refs, self-clean
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          EXPECTED_MAIN_SHA: 9acb4267fc18a37b0f3184f41ddfc71358736bc5
+          EXPECTED_ARCHIVE_SHA: d926a3abf8b9443f58f303d984ef79fdc289fc3e
+          CLEANUP_PR_NUMBER: ${{ github.event.pull_request.number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          REPO = os.environ["GITHUB_REPOSITORY"]
+          TOKEN = os.environ["GITHUB_TOKEN"]
+          EXPECTED_MAIN = os.environ["EXPECTED_MAIN_SHA"]
+          EXPECTED_ARCHIVE = os.environ["EXPECTED_ARCHIVE_SHA"]
+          PR_NUMBER = int(os.environ["CLEANUP_PR_NUMBER"])
+
+          SELF_BRANCH = "ops/one-shot-final-repository-cleanup-2026-09-20"
+          SELF_WORKFLOW = ".github/workflows/one-shot-final-repository-cleanup.yml"
+          ARCHIVE_BRANCH = "archive/search-baseline-pre-hybrid-2026-08-09"
+
+          TARGETS = {
+              "audit/archive-sep11-remediation-history-2026-09-20": {
+                  "sha": "22fd6bb9f193e83d1fc79c9bc1ae46df01ecb222", "pr": 186, "merged": True
+              },
+              "audit/2026-09-11-technical-handoff": {
+                  "sha": "90b654c2ae3c5b7f917ac9fb63344404efbdb316", "pr": 167, "merged": False
+              },
+              "feat/p3b-exact-authoritative-binding": {
+                  "sha": "6435dae2ce15b023f777c090ad1c2263b5d56cc8", "pr": 175, "merged": True
+              },
+              "fix/p3b-fourth-review-historical-control": {
+                  "sha": "9f77d9f5145883e2a510fcb348645b6089cec66b", "pr": 178, "merged": True
+              },
+              "fix/p3b-v7-recovery-preflight": {
+                  "sha": "6369eee27a0e80e3d6cd77ca3419541432d9f647", "pr": 184, "merged": True
+              },
+              "hotfix/p3b-prefix-agent-attribution-verification": {
+                  "sha": "86bab6f4f08ab6239ee6ff79fd86ad8fb4ea10fd", "pr": 183, "merged": True
+              },
+              "hotfix/p3b-replacement-passive-attribution": {
+                  "sha": "cb1074dcee296b9c9097ea49d050c8eb7b8da50e", "pr": 179, "merged": True
+              },
+              "hotfix/p3b-separator-attribution-bypass": {
+                  "sha": "174e4a0f9cf006bb7b8e80b7557d4daa4b250bb6", "pr": 182, "merged": True
+              },
+              "ops/one-shot-safe-branch-cleanup-2026-09-19": {
+                  "sha": "d104e9d0982eadf718c18db3c419a949c082aa2e", "pr": 185, "merged": False
+              },
+          }
+
+          SEP11_BLOBS = {
+              "automation/audits/experiments/2026-09-11-technical-followup/HANDOFF_TO_SOL_HIGH.md":
+                  "8ab5f8347b0726749c13980783d569d406808c3f",
+              "automation/audits/experiments/2026-09-11-technical-followup/README.md":
+                  "b7958d51f19e957091d16c8e4f3819368817230a",
+              "automation/audits/experiments/2026-09-11-technical-followup/baseline-results.json":
+                  "2d46a6ea6d877231fa571b377291e46c0cb3a666",
+              "automation/audits/experiments/2026-09-11-technical-followup/manifest.json":
+                  "7605fd12b3ee6b38050cde445bef120faac341b3",
+              "automation/audits/experiments/2026-09-11-technical-followup/probe_baseline.py":
+                  "6f148220a9847a559f4010f5c326257296850eb6",
+              "automation/audits/experiments/2026-09-11-technical-followup/saved-coverage-final.json":
+                  "64e1d1b2c6fc3f77b41eafb99598e1f5ae3bf890",
+              "automation/audits/experiments/2026-09-11-technical-followup/saved-coverage-paid.json":
+                  "3333827feef0de9833bbc8032d0e39de203b94d6",
+              "automation/audits/experiments/2026-09-11-technical-followup/terra-reference.md":
+                  "94bf930bcd39af93d07b982349b848311b01f8b5",
+          }
+          MAIN_AUDIT_BLOBS = {
+              "automation/audits/independent-audit-journal.md":
+                  "569e4717762041e2c51d44c6e224ac90619301b2",
+              "automation/audits/experiments/2026-09-20-sep11-remediation-closure/README.md":
+                  "b9ff51affac24b1767c1589cce9cef1bf68c812d",
+              "automation/audits/experiments/2026-09-20-sep11-remediation-closure/manifest.json":
+                  "44ac2f55b38caf55875c850c059bf8e4604dbc8c",
+          }
+          OLD_ONE_SHOT_WORKFLOW = ".github/workflows/one-shot-safe-branch-cleanup.yml"
+          OLD_ONE_SHOT_BLOB = "e6c082a9b58ffe1b39601091f020e77a119951a4"
+          OLD_ONE_SHOT_RUN = 35494906416
+          OLD_DELETED_BRANCH = "fix/regional-recall-zero-budget-v12"
+          ACTIVE = {"queued", "in_progress", "waiting", "requested", "pending"}
+
+          def api(method, path, payload=None, allow_404=False):
+              url = f"https://api.github.com/repos/{REPO}/{path}"
+              body = None
+              headers = {
+                  "Accept": "application/vnd.github+json",
+                  "Authorization": f"Bearer {TOKEN}",
+                  "X-GitHub-Api-Version": "2022-11-28",
+                  "User-Agent": "ai-svodki-final-repository-cleanup",
+              }
+              if payload is not None:
+                  body = json.dumps(payload).encode("utf-8")
+                  headers["Content-Type"] = "application/json"
+              req = urllib.request.Request(url, data=body, method=method, headers=headers)
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as response:
+                      raw = response.read()
+                      return None if not raw else json.loads(raw.decode("utf-8"))
+              except urllib.error.HTTPError as exc:
+                  if allow_404 and exc.code == 404:
+                      return None
+                  detail = exc.read().decode("utf-8", errors="replace")
+                  raise RuntimeError(f"{method} {path} -> HTTP {exc.code}: {detail}") from exc
+
+          def enc_ref(value):
+              return urllib.parse.quote(value, safe="/")
+
+          def enc_path(value):
+              return urllib.parse.quote(value, safe="/")
+
+          def content_sha(path, ref):
+              query = urllib.parse.urlencode({"ref": ref})
+              payload = api("GET", f"contents/{enc_path(path)}?{query}")
+              if not isinstance(payload, dict) or not isinstance(payload.get("sha"), str):
+                  raise RuntimeError(f"unexpected contents response for {path}@{ref}")
+              return payload["sha"]
+
+          def branches():
+              result = []
+              page = 1
+              while True:
+                  rows = api("GET", f"branches?per_page=100&page={page}")
+                  result.extend(row["name"] for row in rows)
+                  if len(rows) < 100:
+                      return result
+                  page += 1
+
+          def active_runs(branch):
+              found = []
+              for status in sorted(ACTIVE):
+                  q = urllib.parse.urlencode({"branch": branch, "status": status, "per_page": "100"})
+                  rows = api("GET", f"actions/runs?{q}").get("workflow_runs", [])
+                  found.extend((row["id"], row["status"]) for row in rows)
+              return found
+
+          def assert_core_unchanged():
+              if api("GET", "git/ref/heads/main")["object"]["sha"] != EXPECTED_MAIN:
+                  raise RuntimeError("main changed")
+              if api("GET", f"git/ref/heads/{enc_ref(ARCHIVE_BRANCH)}")["object"]["sha"] != EXPECTED_ARCHIVE:
+                  raise RuntimeError("permanent archive changed")
+              for path, expected_sha in {**SEP11_BLOBS, **MAIN_AUDIT_BLOBS}.items():
+                  if content_sha(path, "main") != expected_sha:
+                      raise RuntimeError(f"canonical main audit/evidence blob changed: {path}")
+
+          pr = api("GET", f"pulls/{PR_NUMBER}")
+          if pr["state"] != "open" or pr["base"]["ref"] != "main":
+              raise RuntimeError("cleanup PR state/base changed")
+          if pr["head"]["ref"] != SELF_BRANCH or pr["head"]["repo"]["full_name"] != REPO:
+              raise RuntimeError("cleanup PR identity changed")
+
+          pr_files = api("GET", f"pulls/{PR_NUMBER}/files?per_page=100")
+          if [row["filename"] for row in pr_files] != [SELF_WORKFLOW]:
+              raise RuntimeError("cleanup PR contains changes outside the one-shot workflow")
+
+          assert_core_unchanged()
+
+          expected_before = set(TARGETS) | {"main", ARCHIVE_BRANCH, SELF_BRANCH}
+          current_before = set(branches())
+          if current_before != expected_before:
+              raise RuntimeError(
+                  f"repository branch set changed before cleanup: expected={sorted(expected_before)} "
+                  f"actual={sorted(current_before)}"
+              )
+
+          for branch, spec in TARGETS.items():
+              ref = api("GET", f"git/ref/heads/{enc_ref(branch)}")
+              if ref["object"]["sha"] != spec["sha"]:
+                  raise RuntimeError(f"branch head changed: {branch}")
+              branch_meta = api("GET", f"branches/{enc_ref(branch)}")
+              if branch_meta.get("protected"):
+                  raise RuntimeError(f"branch became protected: {branch}")
+
+              related = api("GET", f"pulls/{spec['pr']}")
+              if related["state"] != "closed":
+                  raise RuntimeError(f"related PR is not closed: #{spec['pr']}")
+              if related["head"]["ref"] != branch or related["head"]["sha"] != spec["sha"]:
+                  raise RuntimeError(f"related PR head identity changed: #{spec['pr']}")
+              if bool(related.get("merged")) != bool(spec["merged"]):
+                  raise RuntimeError(f"related PR merge state changed: #{spec['pr']}")
+
+              if spec["merged"]:
+                  compare = api("GET", f"compare/{spec['sha']}...{EXPECTED_MAIN}")
+                  if compare.get("merge_base_commit", {}).get("sha") != spec["sha"]:
+                      raise RuntimeError(f"merged branch head is no longer an ancestor of main: {branch}")
+
+              live = active_runs(branch)
+              if live:
+                  raise RuntimeError(f"branch has active Actions runs: {branch}: {live}")
+
+          for path, expected_sha in SEP11_BLOBS.items():
+              if content_sha(path, "audit/2026-09-11-technical-handoff") != expected_sha:
+                  raise RuntimeError(f"PR #167 historical source blob changed: {path}")
+              if content_sha(path, "main") != expected_sha:
+                  raise RuntimeError(f"PR #167 historical evidence not preserved in main: {path}")
+
+          old_compare = api(
+              "GET",
+              f"compare/{EXPECTED_MAIN}...{TARGETS['ops/one-shot-safe-branch-cleanup-2026-09-19']['sha']}",
+          )
+          old_files = [row["filename"] for row in old_compare.get("files", [])]
+          if old_files != [OLD_ONE_SHOT_WORKFLOW]:
+              raise RuntimeError(f"PR #185 branch has unexpected unique files: {old_files}")
+          if content_sha(OLD_ONE_SHOT_WORKFLOW, "ops/one-shot-safe-branch-cleanup-2026-09-19") != OLD_ONE_SHOT_BLOB:
+              raise RuntimeError("PR #185 one-shot workflow blob changed")
+          old_run = api("GET", f"actions/runs/{OLD_ONE_SHOT_RUN}")
+          if (
+              old_run.get("status") != "completed"
+              or old_run.get("conclusion") != "success"
+              or old_run.get("head_sha") != TARGETS["ops/one-shot-safe-branch-cleanup-2026-09-19"]["sha"]
+          ):
+              raise RuntimeError("PR #185 successful one-shot run proof changed")
+          if api("GET", f"git/ref/heads/{enc_ref(OLD_DELETED_BRANCH)}", allow_404=True) is not None:
+              raise RuntimeError("PR #185 intended target branch unexpectedly exists")
+
+          deleted = []
+          for branch in TARGETS:
+              assert_core_unchanged()
+              api("DELETE", f"git/refs/heads/{enc_ref(branch)}")
+              if api("GET", f"git/ref/heads/{enc_ref(branch)}", allow_404=True) is not None:
+                  raise RuntimeError(f"branch still exists after DELETE: {branch}")
+              deleted.append(branch)
+
+          assert_core_unchanged()
+          expected_pre_self_delete = {"main", ARCHIVE_BRANCH, SELF_BRANCH}
+          actual_pre_self_delete = set(branches())
+          if actual_pre_self_delete != expected_pre_self_delete:
+              raise RuntimeError(
+                  f"unexpected branch set after target deletion: "
+                  f"expected={sorted(expected_pre_self_delete)} actual={sorted(actual_pre_self_delete)}"
+              )
+
+          api("PATCH", f"pulls/{PR_NUMBER}", {"state": "closed"})
+          closed_pr = api("GET", f"pulls/{PR_NUMBER}")
+          if closed_pr.get("state") != "closed" or closed_pr.get("merged"):
+              raise RuntimeError("cleanup PR did not close cleanly without merge")
+
+          assert_core_unchanged()
+          api("DELETE", f"git/refs/heads/{enc_ref(SELF_BRANCH)}")
+          if api("GET", f"git/ref/heads/{enc_ref(SELF_BRANCH)}", allow_404=True) is not None:
+              raise RuntimeError("self cleanup branch still exists after DELETE")
+
+          assert_core_unchanged()
+          final_branches = set(branches())
+          expected_final = {"main", ARCHIVE_BRANCH}
+          if final_branches != expected_final:
+              raise RuntimeError(
+                  f"unexpected final branch set: expected={sorted(expected_final)} actual={sorted(final_branches)}"
+              )
+
+          print("CLEANUP_RESULT", json.dumps({
+              "deleted_branches": deleted,
+              "self_deleted": SELF_BRANCH,
+              "pr_closed": PR_NUMBER,
+              "main": EXPECTED_MAIN,
+              "archive": EXPECTED_ARCHIVE,
+              "final_branches": sorted(final_branches),
+          }, sort_keys=True))
+          PY
