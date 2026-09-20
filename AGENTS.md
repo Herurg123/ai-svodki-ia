@@ -178,6 +178,15 @@ and retained independently, and native video publication may use the separate
 operator-controlled browser path, but video work must not mutate RSS in order to
 publish video.
 
+The local downstream may also perform a strictly post-publication Dzen article-video
+stage after native video publication and both Dzen collections are confirmed. That
+stage may edit only the already-published same-day Dzen article, must preserve its
+own at-most-once/verification-only state, and may update the local
+`downloads/_ИИ-Сводка.txt` only by replacing the exact second-link placeholder.
+If that placeholder is absent, treat the local description as operator-edited and
+do not rewrite it. This remains a local video-subproject behavior and must not
+modify RSS, nightly production, public site generation or GitHub publication state.
+
 The 32-day FTP video retention step in `repository-cleanup.yml` is a separate
 narrow exception that manages only already-published remote media. It may enter
 only the hard-coded FTP directory `video` and may delete only basenames that
