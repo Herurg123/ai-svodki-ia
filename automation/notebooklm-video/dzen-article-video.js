@@ -3,6 +3,8 @@
 const fs = require("fs");
 const path = require("path");
 const { spawn } = require("child_process");
+const logUtils = require("./log-utils");
+const history = require("./history-utils");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
@@ -38,14 +40,6 @@ function stripBom(value) {
 function loadJson(filePath, fallback = null) {
   if (!fs.existsSync(filePath)) return fallback;
   return JSON.parse(stripBom(fs.readFileSync(filePath, "utf8")));
-}
-
-function saveJsonAtomic(filePath, value) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  const tmp = `${filePath}.article-video-${process.pid}-${Date.now()}.tmp`;
-  fs.writeFileSync(tmp, JSON.stringify(value, null, 2), "utf8");
-  fs.rmSync(filePath, { force: true });
-  fs.renameSync(tmp, filePath);
 }
 
 function normalizeText(value) {
@@ -98,33 +92,15 @@ function formatDateKey(date, timeZone) {
   return `${out.year}-${out.month}-${out.day}`;
 }
 
-function formatTime(timeZone) {
-  return new Intl.DateTimeFormat("ru-RU", {
-    timeZone: timeZone || "Europe/Moscow",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  }).format(new Date());
-}
-
-function appendLine(filePath, line) {
-  if (!filePath) return;
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.appendFileSync(filePath, `${line}\r\n`, "utf8");
-}
-
 function createLogger(config) {
   const write = (prefix, message, error = null) => {
     const suffix = error && error.stack ? `\r\n${error.stack}` : "";
-    const line = `[${formatTime(config.timeZone || "Europe/Moscow")}] ${prefix}${message}${suffix}`;
+    const line = `[${logUtils.formatTime(config.timeZone || "Europe/Moscow")}] ${prefix}${message}${suffix}`;
     if (prefix.includes("!!!")) console.error(line);
     else console.log(line);
-    appendLine(config.regularLog, line);
+    logUtils.appendRegularLine(config, line);
     if (prefix.includes("!!!") && config.errorLog && config.errorLog !== config.regularLog) {
-      appendLine(config.errorLog, line);
+      logUtils.appendErrorLine(config, line);
     }
   };
   return {
@@ -184,7 +160,7 @@ function updateArticleVideo(config, state, job, fields) {
     updatedAt: now,
   };
   job.updatedAt = now;
-  saveJsonAtomic(config.stateFile, state);
+  history.saveStateWithRetention(config, state);
   return job.dzenArticleVideo;
 }
 
@@ -2568,12 +2544,16 @@ async function main() {
     if (!fs.existsSync(CONFIG_PATH)) throw new Error(`Не найден config.json: ${CONFIG_PATH}`);
     config = loadJson(CONFIG_PATH);
     logger = createLogger(config);
-    state = loadJson(config.stateFile, { jobs: {} });
+    state = history.loadActiveState(config);
 
     if (!dateKey) dateKey = formatDateKey(new Date(), config.timeZone || "Europe/Moscow");
     parseDateKey(dateKey);
-    job = findJobForDate(state, dateKey);
-    if (!job) throw new Error(`В state.json не найден job за ${dateKey}.`);
+    const resolvedJob = history.findJobForDateIncludingArchive(config, state, dateKey);
+    job = resolvedJob && resolvedJob.job;
+    if (!job) throw new Error(`В active state или archive не найден job за ${dateKey}.`);
+    if (resolvedJob.source === "archive") {
+      logger.log(`Job за ${dateKey} загружен из JSON-архива для явной операторской операции.`);
+    }
 
     const av = ensureArticleVideoState(job);
     const runMode = args.apply ? "apply" : "dry-run";
