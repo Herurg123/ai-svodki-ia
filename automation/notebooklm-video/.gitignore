@@ -11,6 +11,7 @@ scheduled-worker.lock
 worker.log
 !!! ERROR !!!.log
 logs/
+archive/
 screenshots/
 traces/
 temp/
