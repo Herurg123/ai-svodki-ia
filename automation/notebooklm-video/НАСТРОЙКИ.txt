@@ -276,19 +276,21 @@ sourceTimeoutMs
 downloadTimeoutMs
   Максимальное время ожидания начала скачивания готового видео.
 
-АВТОМАТИЧЕСКАЯ ПУБЛИКАЦИЯ В ДЗЕН И ПОДБОРКИ
---------------------------------------------
+АВТОМАТИЧЕСКАЯ ПУБЛИКАЦИЯ В ДЗЕН, ПОДБОРКИ И ВИДЕО В СТАТЬЕ
+-----------------------------------------------------------
 
 run-worker.cmd
-  Запускает full-worker.js, то есть полный трёхфазный цикл по расписанию:
+  Запускает full-worker.js, то есть полный четырёхфазный цикл по расписанию:
   1) scheduled-worker.js -> worker.js -> NotebookLM/MP4/PNG/FTP;
   2) Dzen duplicate guard -> при необходимости один fresh upload -> один publish
      click -> verification во вкладке «Видео» -> PUBLISHED;
   3) dzen-collections.js -> видео дня в «Видеосводки по ИИ» и ежедневная сводка
-     в «Сводки по ИИ».
+     в «Сводки по ИИ»;
+  4) dzen-article-video.js -> вставка same-day видео в same-day статью только
+     после PUBLISHED + dzenCollections=COMPLETE -> public verification.
 
 full-worker.lock
-  Внешний lock всего трёхфазного запуска. Следующий 10-минутный trigger не входит
+  Внешний lock всего четырёхфазного запуска. Следующий 10-минутный trigger не входит
   в новую browser-фазу, пока предыдущий полный запуск ещё работает.
   scheduled-worker.lock остаётся внутренним lock первых двух фаз.
 
@@ -348,7 +350,7 @@ Dzen collections state:
 
    Команда node worker.js используется только для NotebookLM-only диагностики.
    Команда node scheduled-worker.js используется только для диагностики первых
-   двух фаз и не запускает подборки.
+   двух фаз и не запускает подборки или вставку видео в статью.
 
 4. После проверки вернуть:
 
@@ -360,6 +362,40 @@ Dzen collections state:
   run-dzen-collections-apply.cmd --date=YYYY-MM-DD
 
 Первая команда не кликает по плашке, вторая применяет тот же production-код.
+
+Ручная диагностика вставки видео в статью:
+
+  run-dzen-article-video-dry-run.cmd --date=YYYY-MM-DD
+  run-dzen-article-video-apply.cmd --date=YYYY-MM-DD
+
+  Дата универсальна и не зашита в runtime. Без --date используется текущая
+  локальная дата в timeZone из config.json.
+
+  Четвёртая фаза запускается по расписанию только после:
+    job.dzenAutomation.status = PUBLISHED
+    job.dzenCollections.status = COMPLETE
+
+  dzenArticleVideo.status:
+    PENDING
+    COMPLETE
+    SKIPPED_EXISTING
+    ERROR
+
+  PUBLISH_ARMED, CONFIRMATION_ARMED и CLICKED_UNVERIFIED =
+  verification-only: повторный editor/publish/save click запрещён.
+  COMPLETE и SKIPPED_EXISTING больше не открывают browser.
+  ERROR является terminal и не ретраится автоматически.
+
+  Перед редактированием статьи resolved public article URL записывается в
+  downloads\_ИИ-Сводка.txt только вместо exact второй строки-заглушки:
+
+    - https://
+
+  под блоком «Этот выпуск:». Если exact заглушки уже нет, файл считается
+  вручную заполненным и НЕ изменяется. Если заглушка есть, первая ссылка
+  обязана соответствовать текущему job.publicationUrl, иначе этап остановится
+  до любых изменений статьи.
+
 
 FTP-ДОСТАВКА ВИДЕО
 ------------------
