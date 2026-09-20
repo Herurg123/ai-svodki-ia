@@ -1,0 +1,184 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Google подтвердила автономные взломы Gemini в ходе кибертестирования",
+    "organization": "Google; Gemini; Irregular",
+    "topic": "AI security; автономное выполнение кибератак; model behavior; disclosure",
+    "event_type": "security disclosure",
+    "status": "new",
+    "summary": "TechCrunch со ссылкой на The Wall Street Journal сообщил, что Gemini в ходе санкционированного тестирования компании Irregular получил доступ к защищённым системам трёх компаний. По описанию, модель в одном случае перебирала пароли, а в двух других нашла учётные данные в публичном репозитории; Google заявила, что Gemini прекращал действия после установления факта взлома.",
+    "published_at": "2026-09-19T17:30:00+00:00",
+    "published_date": "2026-09-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google’s Gemini is the latest AI model to hack other companies",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/19/googles-gemini-is-the-latest-ai-model-to-hack-other-companies/"
+      }
+    ],
+    "keywords": [
+      "Gemini",
+      "autonomous hacking",
+      "cybersecurity testing",
+      "Irregular",
+      "credential discovery"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "AMD опубликовала расширенные бенчмарки серверных EPYC Venice против NVIDIA Vera",
+    "organization": "AMD; NVIDIA; EPYC; Vera",
+    "topic": "Серверные CPU для AI/HPC-инфраструктуры; производительность и конкуренция AMD с NVIDIA",
+    "event_type": "official benchmark disclosure",
+    "status": "new",
+    "summary": "AMD раскрыла дополнительные показатели производительности будущих серверных EPYC Venice (включая 256-ядерный EPYC 9996) в SPEC CPU 2026. По данным компании, 256-ядерная конфигурация показывает до 2,24x результата NVIDIA Vera, а 96-ядерная высокочастотная конфигурация — около 20% преимущества над 88-ядерной Vera в Integer Rate; независимый разбор отмечает различия в конфигурациях и версиях компилятора, поэтому заявления требуют осторожной интерпретации.",
+    "published_at": "2026-09-18T21:51:29+00:00",
+    "published_date": "2026-09-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "AMD targets Nvidia with first official benchmarks for EPYC 'Venice' CPUs",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/pc-components/cpus/amd-shares-first-official-benchmarks-for-epyc-venice-cpus-targets-nvidia-company-claims-256-core-chip-is-more-than-twice-as-fast-as-nvidia-vera-96-core-model-20-percent-faster-per-core"
+      }
+    ],
+    "keywords": [
+      "AMD",
+      "EPYC Venice",
+      "EPYC 9996",
+      "NVIDIA Vera",
+      "SPEC CPU 2026",
+      "data center CPUs",
+      "AI infrastructure"
+    ],
+    "geography": "world",
+    "category": "chips"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "GitHub Copilot добавил Dev Containers для агентов, создание PR из Agent Host и интеграцию Sentry",
+    "organization": "GitHub; GitHub Copilot; Visual Studio Code; Sentry",
+    "topic": "Coding agents; agentic development environments; code review; Dev Containers; production debugging; pull requests",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "GitHub выпустила недельный пакет обновлений Copilot: agent-сессии в VS Code получают запуск в локальных Dev Containers, создание pull request прямо из Agent Host и автоматическую очистку завершённых сессий. В Copilot app добавлен Sentry canvas для перехода от production crash report к расследованию, проверке исправления и подготовке PR; также расширены code review и выбор моделей по профилям cost/quality/latency.",
+    "published_at": "2026-09-18T12:21:22-07:00",
+    "published_date": "2026-09-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "GitHub Copilot weekly releases — September 14",
+        "publisher": "GitHub",
+        "url": "https://github.blog/changelog/2026-09-18-github-copilot-weekly-releases-september-14/"
+      }
+    ],
+    "keywords": [
+      "GitHub Copilot",
+      "VS Code",
+      "Agent Host",
+      "Dev Containers",
+      "Sentry",
+      "code review",
+      "Copilot CLI",
+      "auto model selection"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Сообщается, что галлюцинация ИИ-чатбота едва не привела к военной операции США против китайского судна",
+    "organization": "U.S. Special Operations Command; U.S. military; CNN",
+    "topic": "AI safety; применение ИИ в военной разведке; hallucinations; human oversight; national security",
+    "event_type": "reported AI safety incident",
+    "status": "new",
+    "summary": "TechCrunch, ссылаясь на CNN, сообщила, что весной AI-чатбот неверно интерпретировал данные о грузе китайского судна как признаки перевозки компонентов ядерной программы. Ошибочный вывод был оформлен аналитиком в служебную сводку и распространился по командным каналам; операцию, для которой самолёты уже были в воздухе, по сообщению источника отменили в последний момент.",
+    "published_at": "2026-09-18T23:12:32+00:00",
+    "published_date": "2026-09-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "AI hallucination nearly triggers US military operation",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/18/ai-hallucination-nearly-triggers-us-military-operation/"
+      }
+    ],
+    "keywords": [
+      "AI hallucination",
+      "U.S. military",
+      "Special Operations Command",
+      "intelligence",
+      "China",
+      "military AI",
+      "human oversight"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Anthropic подтвердила работу собственной wet-lab лаборатории биологии",
+    "organization": "Anthropic; Eric Kauderer-Abrams",
+    "topic": "AI for science; biology; wet lab; life sciences; biosecurity",
+    "event_type": "corporate research disclosure",
+    "status": "new",
+    "summary": "Anthropic подтвердила TechCrunch, что управляет wet-lab лабораторией в районе залива Сан-Франциско, где её ИИ-модели могут использоваться в физических биологических экспериментах. Компания описала основной фокус как фундаментальную биологию, а не разработку лекарств, и параллельно запустила программу верификации исследователей life sciences для доступа к наиболее мощным моделям.",
+    "published_at": "2026-09-18T23:13:31+00:00",
+    "published_date": "2026-09-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic is operating a lab that conducts biology experiments",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/18/anthropic-is-operating-a-lab-that-conducts-biology-experiments/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "wet lab",
+      "biology experiments",
+      "life sciences",
+      "drug discovery",
+      "protein design"
+    ],
+    "geography": "world",
+    "category": "research"
+  },
+  {
+    "candidate_id": "cand-011",
+    "section": "world",
+    "headline": "Трамп заявил о планах создать AI Force и назначить AI-«царя»",
+    "organization": "Администрация президента США; Donald Trump",
+    "topic": "AI policy; US federal strategy; AI governance; data centers",
+    "event_type": "policy statement",
+    "status": "new",
+    "summary": "Президент США Дональд Трамп в постах Truth Social заявил, что намерен сформировать AI Force по аналогии с Space Force и позднее объявить AI-«царя». При этом он не раскрыл полномочия, юридическую форму, бюджет или сроки реализации этой структуры.",
+    "published_at": "2026-09-19T19:57:47+00:00",
+    "published_date": "2026-09-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Trump says it’s time to rebrand AI with a new name — and he’s also creating an AI Force",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/19/trump-suggests-rebranding-ai-with-a-new-name-says-hes-also-creating-an-ai-force/"
+      }
+    ],
+    "keywords": [
+      "Trump",
+      "AI Force",
+      "AI czar",
+      "federal AI policy",
+      "data centers"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  }
+]

@@ -1,0 +1,599 @@
+{
+  "version": 1,
+  "publication_date": "2026-09-20",
+  "search_strategy": "agency_discovery_rescue",
+  "request_contract": {
+    "model": "gpt-5.6-terra",
+    "query": "latest AI models research chips infrastructure financing earnings business deals policy security",
+    "prompt_sha256": "f72df564321e8b17770f3bb6feaa43dd74a83c22bff30864cf17f401c72c12dc",
+    "prompt_chars": 53384,
+    "tools": [
+      {
+        "type": "web_search",
+        "search_context_size": "high",
+        "return_token_budget": "default",
+        "filters": {
+          "allowed_domains": [
+            "reuters.com"
+          ]
+        }
+      }
+    ],
+    "tool_choice": "required",
+    "max_tool_calls": 4,
+    "include": [
+      "web_search_call.action.sources"
+    ],
+    "reasoning": {
+      "effort": "medium"
+    },
+    "max_output_tokens": 5000,
+    "response_schema_name": "daily_ai_agency_discovery_rescue",
+    "response_schema_sha256": "1d3914e62fb4bac24f1e17963a08cce48795be829f9361313f065da3624e8c3c",
+    "store": false,
+    "sdk_max_retries": 2
+  },
+  "transport_state": "response_saved",
+  "response_parse_status": "parsed_valid",
+  "raw_response_saved_before_parse": true,
+  "response": {
+    "sha256": "e64d3f4124d5bceb7193c415828efd162c1cb9b1eb5da730b141ee7dd4cb480a",
+    "bytes": 10760,
+    "truncated": false,
+    "raw": {
+      "id": "resp_03b436839fad38f0016aaf33da554487d0811613e1d274d8ac",
+      "created_at": 1789866970.0,
+      "error": null,
+      "incomplete_details": null,
+      "instructions": null,
+      "metadata": {},
+      "model": "gpt-5.6-terra",
+      "object": "response",
+      "output": [
+        {
+          "id": "rs_03b436839fad38f0016aaf33dae79487d08b2e79fb09f8a47c",
+          "summary": [],
+          "type": "reasoning",
+          "content": [],
+          "encrypted_content": "gAAAAABqrzPdnRqCol5qcQi9Da5eElLd1PBKYb1rEC9veKnmS6Tf5a0qMe7PU-vE5tPvdld7O1u-aepCN2IP3BoUrsoWjEHj2xbC5Y_ACP70rirWW313HDRRtuhcu3_nMKgq-V1WLhAYqp93Y92yK1jOK_pGxWy14Nn0NQmo1yS-kmVNtORXajCyhUhmhnDPaQKccWFs2jdp0ujRnPwmybwcj6jGfRaD6NFswIrtz2OycqqtbYdasJodS1mqfKwPOa89nIyqL470LFkujOqA45_nELGuhl4p_1jd3r_WU6hIlKmrwUG5_FDeKRRkpoQD0XekDj8wXyDW_KrEeajWrUkn9arEsWz09k2b92O_rcYvgSXeiow5cJYUPqOU2f_CUc0Jju0WCYAsRdLJRe0rPUPEQ2BEvdrLqtJ3ytaPXklAdsmdkm6OpFpAyTfHloLz65gw0rbc1C39dOgIg0yYEo1TQLimgKVOFJgW_yfPUOkaJUDZ2g95xJlhIgqCsPkznswypDHnXKjv_rjHeGqA1kIJLEdrKVXSWwplBSIQVSHRgmL5BUyVUeN5VhKSELOLEnG29DkVOsRUGPvVHJcjtdIW0dLFZzTd-u_CAH5gOEoRc1SOyJkqd31VEC76GE5-KkpC1L_F-KIFBv9IZo8ca8LcU7G0aysFDtKNIApR0S5iOIfxhA_urxDO6oydoxF0eOe_DaxfPk1CSajdufBWFSgSxeZPo2fRrkXXmoYj0v6QsE9c9Ae3wFeuEVlu085AsqD1btuqhOyjKOO-SwrgEr4-p3X4LokMc6ZLgN88wd9DZGaF82wDemHrphWLVKpP-81LH_9ALrFGqHEv-U1bmgC5bc3kcF59tbOvIyHb-jXvGS3vXS6imdZ2bPJYK9vDGAZvE8EaaOEKfq6JYosZuN7jwY8LXIxr2kQL-uiK4oj21UBxUz1HeG76PD_59okeIE9cRSoQiH9sfmK0SgSD_CMcbbt8VsdKHYGvMX0BX13p8crlgXXuNQc5I_moEMyBL4OJgNm7XJ7OR_qEFh1h4raBIYUcqlbx315MR9Q0kHWz7pm2ptcW1aXhnN3odLWGp7eL6rLcbpjoH70V56xtKuw6HQtKpanB-uK6TlW5PFBDdLWKB_qANoY6iRdVuSBsJUZt42pUmToLC2ER4Six2WMR5Hx0jedSaX4J0vmcRph53f5nCzyCcNE8p6hxjAwZOT6GATjagqssMUwXvC9UzlbJmg0O_nFsphgxu5n1hJYyMd98FUR1dsJqGRO4UyX8Dm9rsIgTm26pHApZDLyJqtLMUS4xX6qU0aDE8B-QLDW6gheBwMtbGQ-sQBu0tkiOl8iZvhJtlBCmM_76YyhRhrZzn7MEPvCUqA==",
+          "status": null
+        },
+        {
+          "id": "ws_03b436839fad38f0016aaf33db5ef887d0ba8da7ac01f1b52c",
+          "action": {
+            "type": "search",
+            "queries": [
+              "latest AI models research chips infrastructure financing earnings business deals policy security"
+            ],
+            "query": "latest AI models research chips infrastructure financing earnings business deals policy security",
+            "sources": null
+          },
+          "status": "completed",
+          "type": "web_search_call"
+        },
+        {
+          "id": "rs_03b436839fad38f0016aaf33dc5dac87d0bfd4b8d67f0535e2",
+          "summary": [],
+          "type": "reasoning",
+          "content": [],
+          "encrypted_content": "gAAAAABqrzPdyJRTMgFIaDJz0kyOv_diZgT9jbieysCLyTkp7iu5S26O5AISFg2gBYGcBCni0mkvskAz9LxfqeYwGL6SQZ6W8yCFnPEMHb6DZxeTDKeuiaq0My0AJiVI8WAuspWXXKtyOcbwUcFjfL4CFhsOvhBaVjqJ8ji41yUUKWehvU5GSYMdSar25mqfXour-fYfgDbbw2xqSQ7SgqZ5fPb6YmG5ljkL7YyGOPwVNSgv5H_2U1aYqRy6PhHfDW7ub3FK6n7O7JHMhnjaDK9xdVCChSdc2Mbzgg3OhZWo_RkmHjn96_4wnvBVv7OZaS48wzh2vDfsHduH0wtPcmmq76KjhKxaNyjcmBg3hp9nNIkCRxOmMS9DF4SpUXarOOmlCkW66jiB1mWq_1y63CeU-4eQIilunhOEt5Uka-dtIxMEEfwCHWPlTHI0UTDXseAYnWepUTTXSF0V6sYi7BwvKI1xoG3J4CDKE7qcDExu6SWGvGBDq7m2nWoN2A7g6RUVSOAkZdvlc3qNC46jconelanq8P6Bwu9Rc_4wIBcVeQSqv5vY4Uk7HPT8VHvmvaOu57AYNDJ8btaVN8-eDGOuT4jBuo_ZkJxKXpNahUAEHioieolch6IBsVwmjBHp1Ou40Vqvk4Qrlbt8qL7ODftovx7JlL1qdad_r11Yd_KMN4jbkOhDz8LdUpRi64hYWuGs3FBlB5gU2--qWj09WL9TOvrPhOcrc9kEu9bgpuxmgEb9dKfxH-YKDUxshUhba5i9dt2PbFU9ckSTostWftLmTT8B31KaMhLMkEMQFrms4UeV4TreZ6yXy-QJ8N_X55nK1KU3e6MXRuS4b7r41yNd7PO2H4UWQoGEm5ySmSPfjAffO43HKbyddikyk3pD_n1mZBEuUlQfpfMnCKR-eBr7_UibMnOpsPK2a8j6NMHuQHcdvxa6UCEkT_QlKl7BZjB5h0ae58t-GMADlj2658kjYkd3sXrUvgeNaMeC75LwpvnUurTruR9kO_il0Gi63c8X2fKTLeXFbb2dhrLd6S22gaSOCzJdvCQkDekLE4zKDl_MFR3dAW49RKS7R10OGMWfJKJiBAkMGo7YqKM5QGGL2ntyiBVhlzv2sojQIEA8RSv9EX6hKpf-lrYx7EC_OcSJlI5TlnM6AVYg_eV0D_jwH23rDJVMQiNLI1PVX1UBxPf_eGhy9GOOzVYN6cVYu8YEdmyY_LFwVbgnNm0Iw_vCFrYZc6RSrg==",
+          "status": null
+        },
+        {
+          "id": "msg_03b436839fad38f0016aaf33dcac0c87d0a57c068bbfa6abb0",
+          "content": [
+            {
+              "annotations": [],
+              "text": "{\"status\":\"complete_with_gaps\",\"error_message\":null,\"direction_id\":\"agency_discovery_rescue\",\"candidates\":[],\"rejections\":[],\"notes\":\"Единственная разрешённая Reuters-only поисковая операция по точному query не вернула результатов. Поэтому прямых Reuters-материалов с source timestamp внутри effective window для проверки и отбора не обнаружено.\"}",
+              "type": "output_text",
+              "logprobs": []
+            }
+          ],
+          "role": "assistant",
+          "status": "completed",
+          "type": "message",
+          "phase": "final_answer"
+        }
+      ],
+      "parallel_tool_calls": true,
+      "temperature": 1.0,
+      "tool_choice": "required",
+      "tools": [
+        {
+          "type": "web_search",
+          "filters": {
+            "allowed_domains": [
+              "reuters.com"
+            ]
+          },
+          "search_context_size": "high",
+          "user_location": {
+            "city": null,
+            "country": "US",
+            "region": null,
+            "timezone": null,
+            "type": "approximate"
+          },
+          "return_token_budget": "default",
+          "search_content_types": [
+            "text"
+          ]
+        }
+      ],
+      "top_p": 0.98,
+      "background": false,
+      "completed_at": 1789866973.0,
+      "conversation": null,
+      "max_output_tokens": 5000,
+      "max_tool_calls": 4,
+      "moderation": null,
+      "previous_response_id": null,
+      "prompt": null,
+      "prompt_cache_key": null,
+      "prompt_cache_options": null,
+      "prompt_cache_retention": "24h",
+      "reasoning": {
+        "context": "all_turns",
+        "effort": "medium",
+        "generate_summary": null,
+        "mode": "standard",
+        "summary": null
+      },
+      "safety_identifier": null,
+      "service_tier": "default",
+      "status": "completed",
+      "text": {
+        "format": {
+          "name": "daily_ai_agency_discovery_rescue",
+          "schema_": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "complete",
+                  "complete_with_gaps",
+                  "error"
+                ]
+              },
+              "error_message": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "direction_id": {
+                "type": "string",
+                "enum": [
+                  "agency_discovery_rescue"
+                ]
+              },
+              "candidates": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 3,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "organization": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "published_date": {
+                      "type": "string",
+                      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+                    },
+                    "published_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "time_precision": {
+                      "type": "string",
+                      "enum": [
+                        "datetime",
+                        "date"
+                      ]
+                    },
+                    "topic": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "event_type": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "keywords": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 12,
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "geography": {
+                      "type": "string",
+                      "enum": [
+                        "world",
+                        "russia"
+                      ]
+                    },
+                    "category": {
+                      "type": "string",
+                      "enum": [
+                        "models",
+                        "agents",
+                        "coding",
+                        "security",
+                        "research",
+                        "multimodal",
+                        "robotics",
+                        "infrastructure",
+                        "chips",
+                        "regulation",
+                        "enterprise",
+                        "open_source",
+                        "investment",
+                        "legal",
+                        "curiosity",
+                        "russia",
+                        "other"
+                      ]
+                    },
+                    "source_type": {
+                      "type": "string",
+                      "enum": [
+                        "official",
+                        "documentation",
+                        "research",
+                        "government",
+                        "regulator",
+                        "court",
+                        "news_agency",
+                        "technology_media",
+                        "business_media",
+                        "industry_media"
+                      ]
+                    },
+                    "primary_source": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "publisher": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "url": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "title",
+                        "publisher",
+                        "url"
+                      ]
+                    },
+                    "supporting_sources": {
+                      "type": "array",
+                      "minItems": 0,
+                      "maxItems": 2,
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "title": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "publisher": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "url": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "publisher",
+                          "url"
+                        ]
+                      }
+                    },
+                    "event_summary": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "verified_facts": {
+                      "type": "array",
+                      "minItems": 2,
+                      "maxItems": 6,
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "significance": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "significance_score": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 5
+                    },
+                    "limitations": {
+                      "type": "string"
+                    },
+                    "archive_status": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "update"
+                      ]
+                    },
+                    "archive_reason": {
+                      "type": "string"
+                    },
+                    "recommendation": {
+                      "type": "string",
+                      "enum": [
+                        "include",
+                        "consider",
+                        "exclude"
+                      ]
+                    },
+                    "verification_status": {
+                      "type": "string",
+                      "enum": [
+                        "verified",
+                        "unconfirmed",
+                        "contradicted"
+                      ]
+                    },
+                    "verification_notes": {
+                      "type": "string"
+                    },
+                    "freshness_status": {
+                      "type": "string",
+                      "enum": [
+                        "new_event",
+                        "material_update",
+                        "old_reprint"
+                      ]
+                    },
+                    "freshness_reason": {
+                      "type": "string"
+                    },
+                    "legal_scale": {
+                      "type": "string",
+                      "enum": [
+                        "not_applicable",
+                        "major",
+                        "minor"
+                      ]
+                    },
+                    "legal_scale_reason": {
+                      "type": "string"
+                    },
+                    "curiosity_eligible": {
+                      "type": "boolean"
+                    },
+                    "curiosity_verification": {
+                      "type": "string"
+                    },
+                    "event_date": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+                      "description": "Calendar date of the event occurrence or first material public announcement/release. Never use a later article publication date."
+                    },
+                    "event_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Verified timezone-aware exact event-origin timestamp when available; otherwise null. Never invent a time."
+                    },
+                    "event_time_precision": {
+                      "type": "string",
+                      "enum": [
+                        "datetime",
+                        "date",
+                        "unknown"
+                      ],
+                      "description": "Precision of event_date/event_at, separate from source time."
+                    },
+                    "event_origin_url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "URL that proves the event-origin date/timestamp, or null if unknown."
+                    },
+                    "event_evidence_kind": {
+                      "type": "string",
+                      "enum": [
+                        "official_announcement",
+                        "official_release",
+                        "official_research",
+                        "filing",
+                        "court_docket",
+                        "release_note",
+                        "changelog",
+                        "first_party_timestamp",
+                        "authoritative_secondary",
+                        "unknown"
+                      ],
+                      "description": "Reliability class of event-origin date evidence."
+                    },
+                    "event_date_evidence": {
+                      "type": "string",
+                      "description": "Concise evidence explaining where the event date came from; empty if unknown."
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "organization",
+                    "published_date",
+                    "published_at",
+                    "time_precision",
+                    "topic",
+                    "event_type",
+                    "keywords",
+                    "geography",
+                    "category",
+                    "source_type",
+                    "primary_source",
+                    "supporting_sources",
+                    "event_summary",
+                    "verified_facts",
+                    "significance",
+                    "significance_score",
+                    "limitations",
+                    "archive_status",
+                    "archive_reason",
+                    "recommendation",
+                    "verification_status",
+                    "verification_notes",
+                    "freshness_status",
+                    "freshness_reason",
+                    "legal_scale",
+                    "legal_scale_reason",
+                    "curiosity_eligible",
+                    "curiosity_verification",
+                    "event_date",
+                    "event_at",
+                    "event_time_precision",
+                    "event_origin_url",
+                    "event_evidence_kind",
+                    "event_date_evidence"
+                  ]
+                }
+              },
+              "rejections": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 10,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reason_code": {
+                      "type": "string",
+                      "enum": [
+                        "duplicate",
+                        "outside_window",
+                        "old_reprint",
+                        "insufficient_significance",
+                        "minor_legal_event",
+                        "unverified",
+                        "satire_or_fiction",
+                        "weak_source",
+                        "not_ai_news",
+                        "other"
+                      ]
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "url",
+                    "reason_code",
+                    "reason"
+                  ]
+                }
+              },
+              "notes": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "status",
+              "error_message",
+              "direction_id",
+              "candidates",
+              "rejections",
+              "notes"
+            ]
+          },
+          "type": "json_schema",
+          "description": null,
+          "strict": true
+        },
+        "verbosity": "medium"
+      },
+      "top_logprobs": 0,
+      "truncation": "disabled",
+      "usage": {
+        "input_tokens": 19605,
+        "input_tokens_details": {
+          "cache_write_tokens": 19318,
+          "cached_tokens": 0
+        },
+        "output_tokens": 179,
+        "output_tokens_details": {
+          "reasoning_tokens": 86
+        },
+        "total_tokens": 19784
+      },
+      "user": null,
+      "billing": {
+        "payer": "openai"
+      },
+      "frequency_penalty": 0.0,
+      "presence_penalty": 0.0,
+      "store": false,
+      "tool_usage": {
+        "image_gen": {
+          "input_tokens": 0,
+          "input_tokens_details": {
+            "image_tokens": 0,
+            "text_tokens": 0
+          },
+          "output_tokens": 0,
+          "output_tokens_details": {
+            "image_tokens": 0,
+            "text_tokens": 0
+          },
+          "total_tokens": 0
+        },
+        "web_search": {
+          "num_requests": 1
+        }
+      }
+    }
+  },
+  "parsed_candidate_count": 0,
+  "parsed_model_rejection_count": 0
+}
