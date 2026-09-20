@@ -6,6 +6,8 @@ const crypto = require("crypto");
 const { spawn } = require("child_process");
 const { chromium } = require("playwright");
 const { XMLParser } = require("fast-xml-parser");
+const logUtils = require("./log-utils");
+const history = require("./history-utils");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
@@ -227,6 +229,7 @@ function ensureDirectories(config) {
     path.dirname(config.stateFile),
     path.dirname(config.descriptionFile),
     path.dirname(config.successRegistryFile),
+    history.getHistoryConfig(config).archiveDir,
   ];
 
   if (config.logRotation?.enabled !== false && config.logRotation?.archiveDir) {
@@ -268,184 +271,8 @@ function formatDateKey(date, timeZone) {
   return `${values.year}-${values.month}-${values.day}`;
 }
 
-function getLogRotationConfig(config) {
-  const rotation = config.logRotation || {};
-  return {
-    enabled: rotation.enabled !== false,
-    archiveDir:
-      rotation.archiveDir ||
-      path.join(path.dirname(config.regularLog || ROOT), "logs"),
-    workerRetentionDays: Number.isInteger(rotation.workerRetentionDays)
-      ? rotation.workerRetentionDays
-      : 7,
-    errorRetentionDays: Number.isInteger(rotation.errorRetentionDays)
-      ? rotation.errorRetentionDays
-      : 30,
-    maxFileSizeMb:
-      typeof rotation.maxFileSizeMb === "number" &&
-      Number.isFinite(rotation.maxFileSizeMb) &&
-      rotation.maxFileSizeMb > 0
-        ? rotation.maxFileSizeMb
-        : 25,
-  };
-}
-
-function nextArchiveLogPath(config, kind, sourceDate) {
-  const rotation = getLogRotationConfig(config);
-  const prefix = kind === "error" ? "error" : "worker";
-  const dateKey = formatDateKey(sourceDate, config.timeZone);
-  let sequence = 1;
-
-  while (true) {
-    const suffix = sequence === 1 ? "" : `-${sequence}`;
-    const candidate = path.join(
-      rotation.archiveDir,
-      `${prefix}-${dateKey}${suffix}.log`
-    );
-
-    if (!fs.existsSync(candidate)) {
-      return candidate;
-    }
-
-    sequence += 1;
-  }
-}
-
-function rotateLogIfNeeded(config, logPath, kind) {
-  const rotation = getLogRotationConfig(config);
-  if (!rotation.enabled || !logPath || !fs.existsSync(logPath)) {
-    return null;
-  }
-
-  const stats = fs.statSync(logPath);
-  if (!stats.isFile() || stats.size === 0) {
-    return null;
-  }
-
-  const now = new Date();
-  const crossedDay =
-    formatDateKey(stats.mtime, config.timeZone) !==
-    formatDateKey(now, config.timeZone);
-  const exceededSize =
-    stats.size >= rotation.maxFileSizeMb * 1024 * 1024;
-
-  if (!crossedDay && !exceededSize) {
-    return null;
-  }
-
-  fs.mkdirSync(rotation.archiveDir, { recursive: true });
-  const archivePath = nextArchiveLogPath(
-    config,
-    kind,
-    crossedDay ? stats.mtime : now
-  );
-  fs.renameSync(logPath, archivePath);
-
-  return {
-    archivePath,
-    sizeBytes: stats.size,
-    reason: crossedDay ? "смена даты" : "превышение размера",
-  };
-}
-
-function archiveDateToUtc(dateKey) {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateKey);
-  if (!match) {
-    return null;
-  }
-
-  return Date.UTC(
-    Number(match[1]),
-    Number(match[2]) - 1,
-    Number(match[3])
-  );
-}
-
-function cleanupOldLogArchives(config) {
-  const rotation = getLogRotationConfig(config);
-  const result = { deletedFiles: 0, deletedBytes: 0 };
-
-  if (!rotation.enabled || !fs.existsSync(rotation.archiveDir)) {
-    return result;
-  }
-
-  const todayKey = formatDateKey(new Date(), config.timeZone);
-  const todayUtc = archiveDateToUtc(todayKey);
-  const archivePattern =
-    /^(worker|error)-(\d{4}-\d{2}-\d{2})(?:-\d+)?\.log$/i;
-
-  for (const entry of fs.readdirSync(rotation.archiveDir, {
-    withFileTypes: true,
-  })) {
-    if (!entry.isFile()) {
-      continue;
-    }
-
-    const match = archivePattern.exec(entry.name);
-    if (!match) {
-      continue;
-    }
-
-    const archiveUtc = archiveDateToUtc(match[2]);
-    if (archiveUtc === null || archiveUtc > todayUtc) {
-      continue;
-    }
-
-    const retentionDays =
-      match[1].toLowerCase() === "error"
-        ? rotation.errorRetentionDays
-        : rotation.workerRetentionDays;
-    const ageDays = Math.floor((todayUtc - archiveUtc) / 86400000);
-
-    if (ageDays < retentionDays) {
-      continue;
-    }
-
-    const filePath = path.join(rotation.archiveDir, entry.name);
-    const sizeBytes = fs.statSync(filePath).size;
-    fs.rmSync(filePath, { force: true });
-    result.deletedFiles += 1;
-    result.deletedBytes += sizeBytes;
-  }
-
-  return result;
-}
-
 function performLogMaintenance(config) {
-  const rotation = getLogRotationConfig(config);
-  const result = {
-    enabled: rotation.enabled,
-    rotated: [],
-    deletedFiles: 0,
-    deletedBytes: 0,
-  };
-
-  if (!rotation.enabled) {
-    return result;
-  }
-
-  const regularRotation = rotateLogIfNeeded(
-    config,
-    config.regularLog,
-    "worker"
-  );
-  if (regularRotation) {
-    result.rotated.push(regularRotation);
-  }
-
-  const errorRotation = rotateLogIfNeeded(
-    config,
-    config.errorLog,
-    "error"
-  );
-  if (errorRotation) {
-    result.rotated.push(errorRotation);
-  }
-
-  const cleanup = cleanupOldLogArchives(config);
-  result.deletedFiles = cleanup.deletedFiles;
-  result.deletedBytes = cleanup.deletedBytes;
-  return result;
+  return logUtils.performLogMaintenance(config);
 }
 
 function formatByteCount(bytes) {
@@ -459,18 +286,7 @@ function formatByteCount(bytes) {
 }
 
 function appendRegularLogLine(config, line) {
-  const rotation = rotateLogIfNeeded(config, config.regularLog, "worker");
-
-  if (rotation) {
-    const rotationLine =
-      `[${formatTime(config.timeZone)}] Ротация worker.log: ` +
-      `${rotation.reason}; архив=${rotation.archivePath}; ` +
-      `размер=${formatByteCount(rotation.sizeBytes)}.`;
-    console.log(rotationLine);
-    fs.appendFileSync(config.regularLog, `${rotationLine}\r\n`, "utf8");
-  }
-
-  fs.appendFileSync(config.regularLog, `${line}\r\n`, "utf8");
+  return logUtils.appendRegularLine(config, line);
 }
 
 function log(config, message) {
@@ -536,26 +352,7 @@ async function appendError(config, reason, details = {}) {
 
   rows.push("=".repeat(72), "");
 
-  const rotation = rotateLogIfNeeded(config, config.errorLog, "error");
-  if (rotation) {
-    const rotationRows = [
-      "=".repeat(72),
-      `Время: ${formatTime(config.timeZone)} ${config.timeZone}`,
-      "Этап: LOG_ROTATION",
-      `Причина: Ротация журнала ошибок (${rotation.reason})`,
-      `Архив: ${rotation.archivePath}`,
-      `Размер: ${formatByteCount(rotation.sizeBytes)}`,
-      "=".repeat(72),
-      "",
-    ];
-    fs.appendFileSync(
-      config.errorLog,
-      `${rotationRows.join("\r\n")}\r\n`,
-      "utf8"
-    );
-  }
-
-  fs.appendFileSync(config.errorLog, `${rows.join("\r\n")}\r\n`, "utf8");
+  logUtils.appendErrorLine(config, rows.join("\r\n"));
 }
 
 function acquireLock(config) {
@@ -816,23 +613,7 @@ function writeDescription(config, publication) {
 
 
 function loadSuccessRegistry(config) {
-  const fallback = {
-    version: 1,
-    videos: [],
-  };
-
-  const registry = loadJson(config.successRegistryFile, fallback);
-
-  if (!registry || typeof registry !== "object") {
-    return fallback;
-  }
-
-  if (!Array.isArray(registry.videos)) {
-    registry.videos = [];
-  }
-
-  registry.version ||= 1;
-  return registry;
+  return history.loadActiveRegistry(config);
 }
 
 function fileSha256(filePath) {
@@ -1370,18 +1151,20 @@ function redactTransferError(error, identity) {
 
 function updateRegistryTransferInfo(config, publication, fields) {
   const registry = loadSuccessRegistry(config);
-  const record = registry.videos.find(
-    (item) => item.publicationUrl === publication.url
-  );
+  const location = history.findRegistryRecord(config, registry, publication.url);
 
-  if (!record) {
+  if (!location) {
     throw new Error(
-      `Не найдена запись выпуска в реестре скачиваний: ${publication.url}`
+      `Не найдена запись выпуска в active/archive реестре скачиваний: ${publication.url}`
     );
   }
 
-  Object.assign(record, fields);
-  saveJsonAtomic(config.successRegistryFile, registry);
+  Object.assign(location.record, fields);
+  if (location.source === "active") {
+    history.saveRegistryWithRetention(config, location.registry);
+  } else {
+    history.saveRegistryLocation(location);
+  }
 }
 
 async function ensureFtpDelivery(config, publication, job, state) {
@@ -1528,9 +1311,12 @@ async function ensureSuccessRegistryEntry(
 ) {
   const registry = loadSuccessRegistry(config);
 
-  const existing = registry.videos.find(
-    (item) => item.publicationUrl === publication.url
+  const existingLocation = history.findRegistryRecord(
+    config,
+    registry,
+    publication.url
   );
+  const existing = existingLocation && existingLocation.record;
 
   if (existing) {
     if (!job.successRegistryRecordedAt) {
@@ -1573,7 +1359,7 @@ async function ensureSuccessRegistryEntry(
   };
 
   registry.videos.push(record);
-  saveJsonAtomic(config.successRegistryFile, registry);
+  history.saveRegistryWithRetention(config, registry);
 
   job.successRegistryRecordedAt = record.recordedAt;
   job.updatedAt = new Date().toISOString();
@@ -1610,7 +1396,7 @@ function loadState(config) {
 }
 
 function saveState(config, state) {
-  saveJsonAtomic(config.stateFile, state);
+  history.saveStateWithRetention(config, state);
 }
 
 function clearSessionRestoreFiles(config) {
@@ -4048,6 +3834,13 @@ async function run() {
 
   const logMaintenance = performLogMaintenance(config);
   log(config, "Запуск worker.js");
+  const historyResult = history.compactJsonHistory(config);
+  if (historyResult.enabled && (historyResult.archivedJobs || historyResult.archivedRecords)) {
+    log(
+      config,
+      `JSON-history: архивировано jobs=${historyResult.archivedJobs}; registry=${historyResult.archivedRecords}; active window=${historyResult.activeDays} дн.`
+    );
+  }
 
   await ensureTransferAccessProtected(config);
 

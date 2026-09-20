@@ -5,6 +5,8 @@ const path = require("path");
 const { spawn } = require("child_process");
 const { chromium } = require("playwright");
 const helpers = require("./dzen-publish.js");
+const logUtils = require("./log-utils");
+const history = require("./history-utils");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
@@ -16,26 +18,6 @@ function stripBom(value) {
 function loadJson(filePath, fallback = null) {
   if (!fs.existsSync(filePath)) return fallback;
   return JSON.parse(stripBom(fs.readFileSync(filePath, "utf8")));
-}
-
-function saveJsonAtomic(filePath, value) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  const tmp = `${filePath}.tmp`;
-  fs.writeFileSync(tmp, JSON.stringify(value, null, 2), "utf8");
-  fs.rmSync(filePath, { force: true });
-  fs.renameSync(tmp, filePath);
-}
-
-function formatTime(timeZone) {
-  return new Intl.DateTimeFormat("ru-RU", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  }).format(new Date());
 }
 
 function formatDateKey(date, timeZone) {
@@ -52,24 +34,20 @@ function formatDateKey(date, timeZone) {
   return `${values.year}-${values.month}-${values.day}`;
 }
 
-function appendLine(filePath, line) {
-  if (!filePath) return;
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.appendFileSync(filePath, `${line}\r\n`, "utf8");
-}
-
 function log(config, message) {
-  const line = `[${formatTime(config.timeZone)}] ${message}`;
+  const line = `[${logUtils.formatTime(config.timeZone)}] ${message}`;
   console.log(line);
-  appendLine(config.regularLog, line);
+  logUtils.appendRegularLine(config, line);
 }
 
 function fatalLog(config, message, error = null) {
   const suffix = error && error.stack ? `\r\n${error.stack}` : "";
-  const line = `[${formatTime(config.timeZone)}] !!! DZEN: ${message}${suffix}`;
+  const line = `[${logUtils.formatTime(config.timeZone)}] !!! DZEN: ${message}${suffix}`;
   console.error(line);
-  appendLine(config.regularLog, line);
-  appendLine(config.errorLog, line);
+  logUtils.appendRegularLine(config, line);
+  if (config.errorLog && config.errorLog !== config.regularLog) {
+    logUtils.appendErrorLine(config, line);
+  }
 }
 
 function parseArgs(argv) {
@@ -246,7 +224,7 @@ async function publishPreparedDraft(config, state, job, dateKey) {
       videoTabVerified: true,
       updatedAt: new Date().toISOString(),
     });
-    saveJsonAtomic(config.stateFile, state);
+    history.saveStateWithRetention(config, state);
     return verification;
   }
 
@@ -272,7 +250,7 @@ async function publishPreparedDraft(config, state, job, dateKey) {
       updatedAt: new Date().toISOString(),
       dryRun: false,
     });
-    saveJsonAtomic(config.stateFile, state);
+    history.saveStateWithRetention(config, state);
 
     const publishButton = await waitForActivePublishButton(
       draftPage,
@@ -283,7 +261,7 @@ async function publishPreparedDraft(config, state, job, dateKey) {
     job.dzenVideo.publishClickedAt = new Date().toISOString();
     job.dzenVideo.status = "PUBLISH_CLICKED_UNVERIFIED";
     job.dzenVideo.updatedAt = new Date().toISOString();
-    saveJsonAtomic(config.stateFile, state);
+    history.saveStateWithRetention(config, state);
     log(config, "DZEN: кнопка «Опубликовать» нажата. Проверяю появление новой записи именно во вкладке «Видео».");
   } finally {
     await verifyPage.close().catch(() => {});
@@ -296,7 +274,7 @@ async function publishPreparedDraft(config, state, job, dateKey) {
     job.dzenVideo.publishVerificationError = "Не подтверждено увеличение числа одноимённых записей во вкладке Видео за 90 секунд.";
     job.dzenVideo.publishVerificationScreenshot = verification.screenshotPath;
     job.dzenVideo.updatedAt = new Date().toISOString();
-    saveJsonAtomic(config.stateFile, state);
+    history.saveStateWithRetention(config, state);
     throw new Error("Кнопка «Опубликовать» была нажата, но новая запись во вкладке «Видео» не подтверждена за 90 секунд. Повторный клик автоматически не выполняется.");
   }
 
@@ -311,7 +289,7 @@ async function publishPreparedDraft(config, state, job, dateKey) {
     publishVerificationError: null,
     updatedAt: new Date().toISOString(),
   });
-  saveJsonAtomic(config.stateFile, state);
+  history.saveStateWithRetention(config, state);
   log(config, `DZEN: публикация подтверждена во вкладке «Видео». Совпадений заголовка: ${verification.count}.`);
   if (verification.publishedUrl) log(config, `DZEN: URL опубликованной записи: ${verification.publishedUrl}`);
   log(config, `DZEN: контрольный скриншот: ${verification.screenshotPath}`);
@@ -323,7 +301,12 @@ async function main(argv = process.argv.slice(2)) {
   if (!fs.existsSync(CONFIG_PATH)) throw new Error(`Не найден config.json: ${CONFIG_PATH}`);
   const config = helpers.applyDzenConfigDefaults(loadJson(CONFIG_PATH));
   const dateKey = args.date || formatDateKey(new Date(), config.timeZone);
-  let state = loadJson(config.stateFile, { jobs: {} });
+  let state = history.loadActiveState(config);
+  let resolvedJob = history.findJobForDateIncludingArchive(config, state, dateKey);
+  if (!resolvedJob) throw new Error(`В active state или archive не найдено задание выпуска ${dateKey}.`);
+  if (resolvedJob.source === "archive") {
+    log(config, `DZEN: job за ${dateKey} загружен из JSON-архива для явной операторской операции.`);
+  }
   let job = helpers.findJobForDate(state, dateKey);
 
   if (job.dzenVideo?.status === "PUBLISHED") {
@@ -334,7 +317,9 @@ async function main(argv = process.argv.slice(2)) {
   if (!["PUBLISHING", "PUBLISH_CLICKED_UNVERIFIED"].includes(job.dzenVideo?.status)) {
     log(config, `DZEN: готовлю и публикую видео за ${dateKey}. Явный операторский запуск, Планировщик не затрагивается.`);
     await runPrepare(dateKey);
-    state = loadJson(config.stateFile, { jobs: {} });
+    state = history.loadActiveState(config);
+    resolvedJob = history.findJobForDateIncludingArchive(config, state, dateKey);
+    if (!resolvedJob) throw new Error(`После подготовки job за ${dateKey} не найден ни в active state, ни в archive.`);
     job = helpers.findJobForDate(state, dateKey);
     if (job.dzenVideo?.status !== "READY_TO_PUBLISH") {
       throw new Error(`После подготовки ожидался READY_TO_PUBLISH, получено: ${job.dzenVideo?.status || "нет статуса"}`);

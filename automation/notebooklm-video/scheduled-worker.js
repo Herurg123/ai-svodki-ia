@@ -6,6 +6,8 @@ const { spawn } = require("child_process");
 
 const duplicateGuard = require("./dzen-duplicate-guard");
 const dzenHelpers = require("./dzen-publish");
+const logUtils = require("./log-utils");
+const history = require("./history-utils");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
@@ -22,45 +24,19 @@ function loadJson(filePath, fallback = null) {
   return JSON.parse(stripBom(fs.readFileSync(filePath, "utf8")));
 }
 
-function saveJsonAtomic(filePath, value) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  const tmp = `${filePath}.scheduled-${process.pid}-${Date.now()}.tmp`;
-  fs.writeFileSync(tmp, JSON.stringify(value, null, 2), "utf8");
-  fs.rmSync(filePath, { force: true });
-  fs.renameSync(tmp, filePath);
-}
-
-function appendLine(filePath, line) {
-  if (!filePath) return;
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.appendFileSync(filePath, `${line}\r\n`, "utf8");
-}
-
-function formatTime(timeZone) {
-  return new Intl.DateTimeFormat("ru-RU", {
-    timeZone: timeZone || "Europe/Moscow",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  }).format(new Date());
-}
-
 function log(config, message) {
-  const line = `[${formatTime(config && config.timeZone)}] AUTO-WORKER: ${message}`;
+  const line = `[${logUtils.formatTime(config && config.timeZone)}] AUTO-WORKER: ${message}`;
   console.log(line);
-  appendLine(config && config.regularLog, line);
+  logUtils.appendRegularLine(config, line);
 }
 
 function fatalLog(config, message, error = null) {
   const suffix = error && error.stack ? `\r\n${error.stack}` : "";
-  const line = `[${formatTime(config && config.timeZone)}] !!! AUTO-WORKER: ${message}${suffix}`;
+  const line = `[${logUtils.formatTime(config && config.timeZone)}] !!! AUTO-WORKER: ${message}${suffix}`;
   console.error(line);
-  appendLine(config && config.regularLog, line);
+  logUtils.appendRegularLine(config, line);
   if (config && config.errorLog && config.errorLog !== config.regularLog) {
-    appendLine(config.errorLog, line);
+    logUtils.appendErrorLine(config, line);
   }
 }
 
@@ -231,7 +207,7 @@ function updateDzenAutomation(config, state, job, status, fields = {}) {
     updatedAt: now,
   };
   job.updatedAt = now;
-  saveJsonAtomic(config.stateFile, state);
+  history.saveStateWithRetention(config, state);
 }
 
 async function verifyPublished(session, config, dateArg, logFn) {

@@ -6,6 +6,8 @@ const { spawn } = require("child_process");
 
 const scheduled = require("./scheduled-worker");
 const collections = require("./dzen-collections");
+const logUtils = require("./log-utils");
+const history = require("./history-utils");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
@@ -20,37 +22,19 @@ function loadJson(filePath, fallback = null) {
   return JSON.parse(stripBom(fs.readFileSync(filePath, "utf8")));
 }
 
-function appendLine(filePath, line) {
-  if (!filePath) return;
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.appendFileSync(filePath, `${line}\r\n`, "utf8");
-}
-
-function formatTime(timeZone) {
-  return new Intl.DateTimeFormat("ru-RU", {
-    timeZone: timeZone || "Europe/Moscow",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  }).format(new Date());
-}
-
 function log(config, message) {
-  const line = `[${formatTime(config && config.timeZone)}] FULL-WORKER: ${message}`;
+  const line = `[${logUtils.formatTime(config && config.timeZone)}] FULL-WORKER: ${message}`;
   console.log(line);
-  appendLine(config && config.regularLog, line);
+  logUtils.appendRegularLine(config, line);
 }
 
 function fatalLog(config, message, error = null) {
   const suffix = error && error.stack ? `\r\n${error.stack}` : "";
-  const line = `[${formatTime(config && config.timeZone)}] !!! FULL-WORKER: ${message}${suffix}`;
+  const line = `[${logUtils.formatTime(config && config.timeZone)}] !!! FULL-WORKER: ${message}${suffix}`;
   console.error(line);
-  appendLine(config && config.regularLog, line);
+  logUtils.appendRegularLine(config, line);
   if (config && config.errorLog && config.errorLog !== config.regularLog) {
-    appendLine(config.errorLog, line);
+    logUtils.appendErrorLine(config, line);
   }
 }
 
@@ -148,6 +132,15 @@ async function main() {
     }
 
     log(config, "=== START full scheduled flow ===");
+    const historyResult = history.compactJsonHistory(config);
+    if (historyResult.enabled) {
+      log(
+        config,
+        `JSON-history: active window=${historyResult.activeDays} дн.; ` +
+          `архивировано jobs=${historyResult.archivedJobs}; ` +
+          `registry=${historyResult.archivedRecords}; archive=${historyResult.archiveDir}.`
+      );
+    }
     log(config, "Фазы 1-2/4: запускаю существующий scheduled-worker.js (NotebookLM/FTP -> Dzen publish).");
     try {
       await runNodeScript("scheduled-worker.js");
