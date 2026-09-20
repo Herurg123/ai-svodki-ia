@@ -4,6 +4,8 @@ const fs = require("fs");
 const path = require("path");
 const { spawn } = require("child_process");
 const helpers = require("./dzen-publish.js");
+const logUtils = require("./log-utils");
+const history = require("./history-utils");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
@@ -23,24 +25,6 @@ function loadJson(filePath, fallback = null) {
   return JSON.parse(stripBom(fs.readFileSync(filePath, "utf8")));
 }
 
-function appendLine(filePath, line) {
-  if (!filePath) return;
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.appendFileSync(filePath, `${line}\r\n`, "utf8");
-}
-
-function formatTime(timeZone) {
-  return new Intl.DateTimeFormat("ru-RU", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  }).format(new Date());
-}
-
 function formatDateKey(date, timeZone) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone,
@@ -56,23 +40,25 @@ function formatDateKey(date, timeZone) {
 }
 
 function log(config, message) {
-  const line = `[${formatTime(config.timeZone)}] DZEN: ${message}`;
+  const line = `[${logUtils.formatTime(config.timeZone)}] DZEN: ${message}`;
   console.log(line);
-  appendLine(config.regularLog, line);
+  logUtils.appendRegularLine(config, line);
 }
 
 function warn(config, message) {
-  const line = `[${formatTime(config.timeZone)}] !!! DZEN: ${message}`;
+  const line = `[${logUtils.formatTime(config.timeZone)}] !!! DZEN: ${message}`;
   console.warn(line);
-  appendLine(config.regularLog, line);
+  logUtils.appendRegularLine(config, line);
 }
 
 function fatalLog(config, message, error = null) {
   const suffix = error && error.stack ? `\r\n${error.stack}` : "";
-  const line = `[${formatTime(config.timeZone)}] !!! DZEN: ${message}${suffix}`;
+  const line = `[${logUtils.formatTime(config.timeZone)}] !!! DZEN: ${message}${suffix}`;
   console.error(line);
-  appendLine(config.regularLog, line);
-  appendLine(config.errorLog, line);
+  logUtils.appendRegularLine(config, line);
+  if (config.errorLog && config.errorLog !== config.regularLog) {
+    logUtils.appendErrorLine(config, line);
+  }
 }
 
 function parseArgs(argv) {
@@ -622,7 +608,12 @@ async function main(argv = process.argv.slice(2)) {
 
   const config = helpers.applyDzenConfigDefaults(loadJson(CONFIG_PATH));
   const dateKey = date || formatDateKey(new Date(), config.timeZone);
-  const state = loadJson(config.stateFile, { jobs: {} });
+  const state = history.loadActiveState(config);
+  const resolvedJob = history.findJobForDateIncludingArchive(config, state, dateKey);
+  if (!resolvedJob) throw new Error(`В active state или archive не найдено задание выпуска ${dateKey}.`);
+  if (resolvedJob.source === "archive") {
+    log(config, `job за ${dateKey} загружен из JSON-архива для явной операторской операции.`);
+  }
   const job = helpers.findJobForDate(state, dateKey);
 
   if (!job.downloadedFile || !fs.existsSync(job.downloadedFile)) {
