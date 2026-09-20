@@ -42,6 +42,11 @@
     "errorRetentionDays": 30,
     "maxFileSizeMb": 25
   },
+  "historyRetention": {
+    "enabled": true,
+    "activeDays": 14,
+    "archiveDir": "C:\\NotebookLMBot\\archive"
+  },
   "stateFile": "C:\\NotebookLMBot\\state.json",
   "descriptionFile": "C:\\NotebookLMBot\\downloads\\_ИИ-Сводка.txt",
   "rssUrl": "https://rybalka.one/posts/rss.xml",
