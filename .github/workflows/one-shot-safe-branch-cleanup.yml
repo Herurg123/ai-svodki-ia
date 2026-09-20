@@ -1,5 +1,5 @@
-name: One-shot rejected Step4 branch cleanup
-run-name: One-shot rejected Step4 branch cleanup ${{ github.run_id }}
+name: One-shot superseded regional recall branch cleanup
+run-name: One-shot superseded regional recall branch cleanup ${{ github.run_id }}
 
 on:
   pull_request:
@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Re-prove rejected Step4 isolation, delete branch, verify
+      - name: Re-prove accepted port, delete branch, verify
         env:
           GITHUB_TOKEN: ${{ github.token }}
           EXPECTED_MAIN_SHA: 6797e0b81063b92e36f0b3d80c0239c5d3a64bb5
@@ -46,12 +46,32 @@ jobs:
           PR_NUMBER = int(os.environ["CLEANUP_PR_NUMBER"])
           SELF_BRANCH = "ops/one-shot-safe-branch-cleanup-2026-09-19"
 
-          TARGET_BRANCH = "architecture/step04-evidence-20260907"
-          TARGET_HEAD = "e85d11331621bf2deedca6a92510c5792cd34263"
-          PARENT_1 = "1383da3c3718150a9cbc9164f9c44ad420524ca6"
-          PARENT_2 = "665bff99e3a536962edc67e92274086bc5d4b7d3"
-          MERGE_BASE = "b474b06bc00f365b9737ece4dd0912c1892489e7"
+          TARGET_BRANCH = "fix/regional-recall-zero-budget-v12"
+          TARGET_HEAD = "86d8f40e532303c1c01de47c39501e85390af4e3"
           ARCHIVE_BRANCH = "archive/search-baseline-pre-hybrid-2026-08-09"
+
+          PORT_COMMIT = "cd86f0668bd9a054700561776f3a380402671134"
+          ACCEPTED_PR = 108
+          ACCEPTED_HEAD = "3b1364d92c1a4fd2ad51c99158f70573413f0d7b"
+          ACCEPTED_MERGE = "0dbfd0006abc06284ce87dcbf4103daa04d26e91"
+
+          PORT_BLOBS = {
+              "automation/config/source-pulse-v1.json": "d3683e37a90b0500f4a8435aaca9bf1d4040a22b",
+              "automation/scripts/agency_discovery_rescue_v4.py": "fa66c0f95a537e03f8fee55ded86b355c8f17acc",
+              "automation/scripts/hybrid_search_completeness.py": "b87256d26fe6482473cfd790da63643dc53b17db",
+              "automation/scripts/hybrid_search_completeness_regional_v1.py": "ea475d73282a8565f0576b7d8a1b0a81effa2e1a",
+              "automation/scripts/hybrid_search_completeness_v2.py": "c801d9c169934af59b7ccecdcc48b34d88f38d71",
+              "automation/scripts/primary_recall_search.py": "ae678036e5d56dae6744e7b89f0d04cffa537c90",
+              "automation/scripts/source_pulse_supplement_v12.py": "471cb98e8c03e654996e5c647ac36f17bc60f8e7",
+              "automation/tests/test_regional_recall_zero_budget_v12.py": "1eaeaa622724c213d38eaf50c9cd328372639a4f",
+              "automation/tests/test_source_pulse_supplement_v12.py": "51bd8d646ce4090419db93c033c5a1901d418d4e",
+          }
+          CURRENT_MAIN_EXACT_BLOBS = {
+              "automation/scripts/hybrid_search_completeness_regional_v1.py": "ea475d73282a8565f0576b7d8a1b0a81effa2e1a",
+              "automation/scripts/hybrid_search_completeness_v2.py": "c801d9c169934af59b7ccecdcc48b34d88f38d71",
+              "automation/scripts/source_pulse_supplement_v12.py": "471cb98e8c03e654996e5c647ac36f17bc60f8e7",
+              "automation/tests/test_source_pulse_supplement_v12.py": "51bd8d646ce4090419db93c033c5a1901d418d4e",
+          }
           ACTIVE = {"queued", "in_progress", "waiting", "requested", "pending"}
 
           def api(method, path, payload=None, allow_404=False):
@@ -61,7 +81,7 @@ jobs:
                   "Accept": "application/vnd.github+json",
                   "Authorization": f"Bearer {TOKEN}",
                   "X-GitHub-Api-Version": "2022-11-28",
-                  "User-Agent": "ai-svodki-step4-cleanup",
+                  "User-Agent": "ai-svodki-regional-recall-cleanup",
               }
               if payload is not None:
                   body = json.dumps(payload).encode("utf-8")
@@ -77,8 +97,16 @@ jobs:
                   detail = exc.read().decode("utf-8", errors="replace")
                   raise RuntimeError(f"{method} {path} -> HTTP {exc.code}: {detail}") from exc
 
-          def enc(value):
+          def enc_ref(value):
               return urllib.parse.quote(value, safe="/")
+
+          def content_sha(path, ref):
+              encoded = urllib.parse.quote(path, safe="/")
+              query = urllib.parse.urlencode({"ref": ref})
+              payload = api("GET", f"contents/{encoded}?{query}")
+              if not isinstance(payload, dict) or not isinstance(payload.get("sha"), str):
+                  raise RuntimeError(f"unexpected contents response for {path}@{ref}")
+              return payload["sha"]
 
           pr = api("GET", f"pulls/{PR_NUMBER}")
           if pr["state"] != "open" or pr["base"]["ref"] != "main":
@@ -86,57 +114,73 @@ jobs:
           if pr["head"]["ref"] != SELF_BRANCH or pr["head"]["repo"]["full_name"] != REPO:
               raise RuntimeError("cleanup PR identity changed")
 
-          main_sha = api("GET", "git/ref/heads/main")["object"]["sha"]
-          if main_sha != EXPECTED_MAIN:
-              raise RuntimeError(f"main changed: expected {EXPECTED_MAIN}, found {main_sha}")
-
-          archive_sha = api("GET", f"git/ref/heads/{enc(ARCHIVE_BRANCH)}")["object"]["sha"]
-          if archive_sha != EXPECTED_ARCHIVE:
+          if api("GET", "git/ref/heads/main")["object"]["sha"] != EXPECTED_MAIN:
+              raise RuntimeError("main changed")
+          if api("GET", f"git/ref/heads/{enc_ref(ARCHIVE_BRANCH)}")["object"]["sha"] != EXPECTED_ARCHIVE:
               raise RuntimeError("permanent archive changed")
 
-          target_ref = api("GET", f"git/ref/heads/{enc(TARGET_BRANCH)}")
+          target_ref = api("GET", f"git/ref/heads/{enc_ref(TARGET_BRANCH)}")
           if target_ref["object"]["sha"] != TARGET_HEAD:
               raise RuntimeError("target branch head changed")
 
-          c0 = api("GET", f"commits/{TARGET_HEAD}")
-          if [p["sha"] for p in c0.get("parents", [])] != [PARENT_1]:
-              raise RuntimeError("target head ancestry changed")
-          c1 = api("GET", f"commits/{PARENT_1}")
-          if [p["sha"] for p in c1.get("parents", [])] != [PARENT_2]:
-              raise RuntimeError("target middle ancestry changed")
-          c2 = api("GET", f"commits/{PARENT_2}")
-          if [p["sha"] for p in c2.get("parents", [])] != [MERGE_BASE]:
-              raise RuntimeError("target base ancestry changed")
-
-          q = urllib.parse.urlencode({"state":"all","head":f"{OWNER}:{TARGET_BRANCH}","per_page":"100"})
+          q = urllib.parse.urlencode({"state": "all", "head": f"{OWNER}:{TARGET_BRANCH}", "per_page": "100"})
           if api("GET", f"pulls?{q}"):
               raise RuntimeError("target branch has PR history; re-audit required")
-
-          q = urllib.parse.urlencode({"branch":TARGET_BRANCH,"per_page":"100"})
-          target_runs = api("GET", f"actions/runs?{q}")
-          if target_runs.get("total_count", 0) != 0:
+          q = urllib.parse.urlencode({"branch": TARGET_BRANCH, "per_page": "100"})
+          if api("GET", f"actions/runs?{q}").get("total_count", 0) != 0:
               raise RuntimeError("target branch has Actions history; re-audit required")
 
+          accepted_pr = api("GET", f"pulls/{ACCEPTED_PR}")
+          if (
+              not accepted_pr.get("merged")
+              or accepted_pr.get("head", {}).get("sha") != ACCEPTED_HEAD
+              or accepted_pr.get("merge_commit_sha") != ACCEPTED_MERGE
+          ):
+              raise RuntimeError("accepted PR #108 identity changed")
+
+          port = api("GET", f"commits/{PORT_COMMIT}")
+          port_files = {row["filename"]: row["sha"] for row in port.get("files", [])}
+          if port_files != PORT_BLOBS:
+              raise RuntimeError("accepted port commit file/blob map changed")
+
+          compare_port = api("GET", f"compare/{PORT_COMMIT}...{ACCEPTED_HEAD}")
+          if compare_port.get("behind_by") != 0 or compare_port.get("merge_base_commit", {}).get("sha") != PORT_COMMIT:
+              raise RuntimeError("port commit is not an ancestor of accepted PR head")
+
+          compare_main = api("GET", f"compare/{ACCEPTED_MERGE}...{EXPECTED_MAIN}")
+          if compare_main.get("behind_by") != 0 or compare_main.get("merge_base_commit", {}).get("sha") != ACCEPTED_MERGE:
+              raise RuntimeError("accepted PR #108 merge is not an ancestor of current main")
+
+          for path, expected_sha in CURRENT_MAIN_EXACT_BLOBS.items():
+              if content_sha(path, "main") != expected_sha:
+                  raise RuntimeError(f"versioned recovery asset changed or disappeared: {path}")
+
           for status in sorted(ACTIVE):
-              q = urllib.parse.urlencode({"branch":TARGET_BRANCH,"status":status,"per_page":"1"})
+              q = urllib.parse.urlencode({"branch": TARGET_BRANCH, "status": status, "per_page": "1"})
               if api("GET", f"actions/runs?{q}").get("total_count", 0):
                   raise RuntimeError(f"target branch has active run status={status}")
 
-          api("DELETE", f"git/refs/heads/{enc(TARGET_BRANCH)}")
+          api("DELETE", f"git/refs/heads/{enc_ref(TARGET_BRANCH)}")
 
-          if api("GET", f"git/ref/heads/{enc(TARGET_BRANCH)}", allow_404=True) is not None:
+          if api("GET", f"git/ref/heads/{enc_ref(TARGET_BRANCH)}", allow_404=True) is not None:
               raise RuntimeError("target branch still exists after DELETE")
           if api("GET", "git/ref/heads/main")["object"]["sha"] != EXPECTED_MAIN:
               raise RuntimeError("main changed during cleanup")
-          if api("GET", f"git/ref/heads/{enc(ARCHIVE_BRANCH)}")["object"]["sha"] != EXPECTED_ARCHIVE:
+          if api("GET", f"git/ref/heads/{enc_ref(ARCHIVE_BRANCH)}")["object"]["sha"] != EXPECTED_ARCHIVE:
               raise RuntimeError("permanent archive changed during cleanup")
+          for path, expected_sha in CURRENT_MAIN_EXACT_BLOBS.items():
+              if content_sha(path, "main") != expected_sha:
+                  raise RuntimeError(f"versioned recovery asset changed during cleanup: {path}")
 
-          api("PATCH", f"pulls/{PR_NUMBER}", {"state":"closed"})
+          api("PATCH", f"pulls/{PR_NUMBER}", {"state": "closed"})
 
           print("CLEANUP_RESULT", json.dumps({
               "deleted_branch": TARGET_BRANCH,
               "main": EXPECTED_MAIN,
               "archive": EXPECTED_ARCHIVE,
+              "accepted_pr": ACCEPTED_PR,
+              "accepted_merge": ACCEPTED_MERGE,
+              "port_commit": PORT_COMMIT,
               "pr_closed": PR_NUMBER,
           }, sort_keys=True))
           PY
