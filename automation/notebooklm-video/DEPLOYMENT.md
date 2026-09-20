@@ -81,8 +81,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\setup-local.ps1 `
 Скрипт:
 
 1. копирует переносимые runtime-файлы, включая `worker.js`, `full-worker.js`,
-   `scheduled-worker.js`, Dzen browser-upload/collections runtime, `package.json`,
-   `package-lock.json` и `НАСТРОЙКИ.txt`;
+   `scheduled-worker.js`, Dzen browser-upload/collections/article-video runtime,
+   `package.json`, `package-lock.json` и `НАСТРОЙКИ.txt`;
 2. создаёт `config.json` из `config.example.json`;
 3. подставляет локальные каталоги;
 4. запрашивает разрешённый внешний IP, если он не передан параметром;
@@ -153,6 +153,7 @@ node --check .\worker.js
 node --check .\full-worker.js
 node --check .\scheduled-worker.js
 node --check .\dzen-collections.js
+node --check .\dzen-article-video.js
 npm test
 ```
 
@@ -166,14 +167,16 @@ run-worker.cmd
 
 `node worker.js` допустим только как NotebookLM-only диагностика и сам Dzen-фазы
 не запускает. `node scheduled-worker.js` допустим только как диагностика первых
-двух фаз и намеренно обходит третью фазу подборок.
+двух фаз и намеренно обходит третью фазу подборок и четвёртую article-video фазу.
 
 Проверить: browser стартует с нужным защищённым профилем; IP совпадает; RSS и
 NotebookLM доступны; после готового MP4/PNG и optional FTP первый browser закрыт;
 затем Dzen duplicate guard подтверждает вкладку `Видео`. Для уже опубликованного
 выпуска он обязан завершиться без upload. После `PUBLISHED` третья фаза должна
 найти только две same-day цели и добавить их в свои подборки либо подтвердить,
-что они уже добавлены.
+что они уже добавлены. После `dzenCollections=COMPLETE` четвёртая фаза должна
+вставить видео в same-day статью и завершиться `dzenArticleVideo=COMPLETE/VERIFIED`
+либо безопасным `SKIPPED_EXISTING`.
 
 Редко после единственного клика `Опубликовать`/`Отправить` Дзен может показать
 модальное окно `Подтвердите, что вы не робот` с checkbox `Я не робот` в светлой
@@ -201,6 +204,9 @@ Task Scheduler -> wscript.exe -> run-worker-hidden.vbs
                -> dzen-collections.js
                -> video -> «Видеосводки по ИИ»
                -> digest -> «Сводки по ИИ»
+               -> dzen-article-video.js
+               -> article: «Видеосводка» -> Dzen video -> «Мировые лидеры ИИ»
+               -> public verification
 ```
 
 Рекомендуемый production-контракт текущего развёртывания сохраняется: ежедневно,
@@ -209,7 +215,7 @@ Task Scheduler -> wscript.exe -> run-worker-hidden.vbs
 экземплярами и выполнением пропущенного запуска после входа. Компьютер
 автоматически не пробуждается.
 
-`full-worker.lock` защищает всю трёхфазную цепочку, поэтому новый 10-минутный
+`full-worker.lock` защищает всю четырёхфазную цепочку, поэтому новый 10-минутный
 trigger не может войти в следующий browser этап, пока предыдущий full run ещё
 работает. Внутри него существующий `scheduled-worker.lock` дополнительно защищает
 проверенные NotebookLM/FTP + Dzen publish фазы. Если post-click challenge требует
@@ -327,7 +333,33 @@ Get-Content -Raw C:\TRASH\NotebookLMBot\config.json | ConvertFrom-Json | Out-Nul
 Обычное развёртывание и helper `install-ftp-support.cmd` не должны выполнять
 `npm install`: они используют только `npm ci` и не переписывают lockfile.
 
-## 11. Ручная диагностика подборок
+## 11. Ручная диагностика article-video
+
+Dry-run без изменения статьи:
+
+```cmd
+run-dzen-article-video-dry-run.cmd --date=YYYY-MM-DD
+```
+
+Apply:
+
+```cmd
+run-dzen-article-video-apply.cmd --date=YYYY-MM-DD
+```
+
+Штатный Task Scheduler эти entrypoints напрямую не вызывает: четвёртую фазу
+запускает `full-worker.js` только после `dzenAutomation=PUBLISHED` и
+`dzenCollections=COMPLETE`.
+
+Resolved public article URL записывается в `downloads/_ИИ-Сводка.txt` только
+вместо exact второй заглушки `- https://` под `Этот выпуск:`. Если заглушки
+уже нет, файл считается вручную заполненным и не меняется.
+
+После `PUBLISH_ARMED`, `CONFIRMATION_ARMED` или `CLICKED_UNVERIFIED`
+повторный editor/publish/save click запрещён; разрешена только public verification.
+Подробности: [`DZEN_ARTICLE_VIDEO.md`](DZEN_ARTICLE_VIDEO.md).
+
+## 12. Ручная диагностика подборок
 
 Имена ручных команд намеренно совпадают с файлами, использованными при live-debug,
 чтобы обновление рабочего каталога происходило поверх существующих файлов:
@@ -341,7 +373,7 @@ run-dzen-collections-apply.cmd --date=YYYY-MM-DD
 тот же код `dzen-collections.js`, который используется автоматической третьей
 фазой.
 
-## 12. Откат
+## 13. Откат
 
 Перед заменой рабочего runtime всегда сохранять резервную копию исходников, если
 в локальном каталоге были незакоммиченные изменения. Git хранит канонический
