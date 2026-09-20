@@ -3,6 +3,8 @@
 const fs = require("fs");
 const path = require("path");
 const { spawn } = require("child_process");
+const logUtils = require("./log-utils");
+const history = require("./history-utils");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
@@ -30,26 +32,6 @@ function loadJson(filePath, fallback = null) {
     return fallback;
   }
   return JSON.parse(stripBom(fs.readFileSync(filePath, "utf8")));
-}
-
-function saveJsonAtomic(filePath, value) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  const tmp = `${filePath}.tmp`;
-  fs.writeFileSync(tmp, JSON.stringify(value, null, 2), "utf8");
-  fs.rmSync(filePath, { force: true });
-  fs.renameSync(tmp, filePath);
-}
-
-function formatTime(timeZone) {
-  return new Intl.DateTimeFormat("ru-RU", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  }).format(new Date());
 }
 
 function formatDateKey(date, timeZone) {
@@ -174,18 +156,10 @@ function applyDzenConfigDefaults(config) {
   return { ...config, dzenUpload: dzen };
 }
 
-function appendLine(filePath, line) {
-  if (!filePath) {
-    return;
-  }
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.appendFileSync(filePath, `${line}\r\n`, "utf8");
-}
-
 function log(config, message) {
-  const line = `[${formatTime(config.timeZone)}] ${message}`;
+  const line = `[${logUtils.formatTime(config.timeZone)}] ${message}`;
   console.log(line);
-  appendLine(config.regularLog, line);
+  logUtils.appendRegularLine(config, line);
 }
 
 function warn(config, message) {
@@ -194,10 +168,12 @@ function warn(config, message) {
 
 function fatalLog(config, message, error = null) {
   const suffix = error && error.stack ? `\r\n${error.stack}` : "";
-  const line = `[${formatTime(config.timeZone)}] !!! DZEN: ${message}${suffix}`;
+  const line = `[${logUtils.formatTime(config.timeZone)}] !!! DZEN: ${message}${suffix}`;
   console.error(line);
-  appendLine(config.regularLog, line);
-  appendLine(config.errorLog, line);
+  logUtils.appendRegularLine(config, line);
+  if (config.errorLog && config.errorLog !== config.regularLog) {
+    logUtils.appendErrorLine(config, line);
+  }
 }
 
 function safeFilePart(value) {
@@ -900,7 +876,7 @@ async function saveScreenshot(page, config, dateKey, label) {
 async function prepareDzenVideoDryRun(config, state, job, dateKey) {
   const videoPath = job.downloadedFile;
   const previewPath = await ensurePreview(config, job);
-  saveJsonAtomic(config.stateFile, state);
+  history.saveStateWithRetention(config, state);
 
   const title = buildDzenTitle(dateKey);
   const description = buildDzenDescription(
@@ -949,7 +925,7 @@ async function prepareDzenVideoDryRun(config, state, job, dateKey) {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    saveJsonAtomic(config.stateFile, state);
+    history.saveStateWithRetention(config, state);
   }
 
   if (await isLoginPage(page)) {
@@ -985,7 +961,7 @@ async function prepareDzenVideoDryRun(config, state, job, dateKey) {
     dryRun: true,
     readyScreenshot: screenshotPath,
   };
-  saveJsonAtomic(config.stateFile, state);
+  history.saveStateWithRetention(config, state);
 
   log(config, `DZEN: dry-run готов. Финальная кнопка НЕ нажата. Draft: ${draftUrl}`);
   log(config, `DZEN: диагностический скриншот: ${screenshotPath}`);
@@ -1002,7 +978,14 @@ async function main(argv = process.argv.slice(2)) {
     throw new Error("В config.json отсутствуют обязательные общие пути/state/timeZone.");
   }
   const dateKey = args.date || formatDateKey(new Date(), config.timeZone);
-  const state = loadJson(config.stateFile, { jobs: {} });
+  const state = history.loadActiveState(config);
+  const resolvedJob = history.findJobForDateIncludingArchive(config, state, dateKey);
+  if (!resolvedJob) {
+    throw new Error(`В active state или archive не найдено задание выпуска ${dateKey}.`);
+  }
+  if (resolvedJob.source === "archive") {
+    log(config, `DZEN: job за ${dateKey} загружен из JSON-архива для явной операторской операции.`);
+  }
   const job = findJobForDate(state, dateKey);
 
   log(config, `DZEN: запускаю безопасную подготовку видео за ${dateKey}.`);
