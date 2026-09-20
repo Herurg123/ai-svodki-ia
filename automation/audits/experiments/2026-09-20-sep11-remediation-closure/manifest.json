@@ -1,0 +1,135 @@
+{
+  "kind": "sep11-remediation-program-archive-and-closeout",
+  "created_on": "2026-09-20",
+  "repository": "Herurg123/ai-svodki-ia",
+  "archive_parent_main_sha": "6797e0b81063b92e36f0b3d80c0239c5d3a64bb5",
+  "starting_audit": {
+    "pr": 166,
+    "head_sha": "0a66b21918046b1020e4794519e2b1376c057244",
+    "merge_commit_sha": "5d15b0f0a220f55a6753412b6e712fd2cd96b06a"
+  },
+  "technical_handoff": {
+    "pr": 167,
+    "head_sha": "90b654c2ae3c5b7f917ac9fb63344404efbdb316",
+    "base_sha": "5d15b0f0a220f55a6753412b6e712fd2cd96b06a",
+    "archived_files": [
+      {
+        "path": "automation/audits/experiments/2026-09-11-technical-followup/HANDOFF_TO_SOL_HIGH.md",
+        "sha": "8ab5f8347b0726749c13980783d569d406808c3f"
+      },
+      {
+        "path": "automation/audits/experiments/2026-09-11-technical-followup/README.md",
+        "sha": "b7958d51f19e957091d16c8e4f3819368817230a"
+      },
+      {
+        "path": "automation/audits/experiments/2026-09-11-technical-followup/baseline-results.json",
+        "sha": "2d46a6ea6d877231fa571b377291e46c0cb3a666"
+      },
+      {
+        "path": "automation/audits/experiments/2026-09-11-technical-followup/manifest.json",
+        "sha": "7605fd12b3ee6b38050cde445bef120faac341b3"
+      },
+      {
+        "path": "automation/audits/experiments/2026-09-11-technical-followup/probe_baseline.py",
+        "sha": "6f148220a9847a559f4010f5c326257296850eb6"
+      },
+      {
+        "path": "automation/audits/experiments/2026-09-11-technical-followup/saved-coverage-final.json",
+        "sha": "64e1d1b2c6fc3f77b41eafb99598e1f5ae3bf890"
+      },
+      {
+        "path": "automation/audits/experiments/2026-09-11-technical-followup/saved-coverage-paid.json",
+        "sha": "3333827feef0de9833bbc8032d0e39de203b94d6"
+      },
+      {
+        "path": "automation/audits/experiments/2026-09-11-technical-followup/terra-reference.md",
+        "sha": "94bf930bcd39af93d07b982349b848311b01f8b5"
+      }
+    ]
+  },
+  "implementation_chain": [
+    {
+      "pr": 168,
+      "head_sha": "e68f6899d2bc9adb9e1a1ac9023854a4c09ef5d2",
+      "merge_commit_sha": "5ae060a736d3ff0fa9550255aa4ea4c5b5083d0c"
+    },
+    {
+      "pr": 170,
+      "head_sha": "3281da7e729eba49fc4ebd02b035661f0834a5b1",
+      "merge_commit_sha": "a6110fb0af2a1c6930464146ad6b5b697b825113"
+    },
+    {
+      "pr": 171,
+      "head_sha": "45a2da5a728988a559a9dcd58fed2add6dc74512",
+      "merge_commit_sha": "337a123300dbf783c7e46ffd4be8f6f9d546b2a5"
+    },
+    {
+      "pr": 172,
+      "head_sha": "aaa9c2564c10d31cc710e780bb0c5eea6261dc0c",
+      "merge_commit_sha": "5b0f305c431aa4e55e07df245751cd84ed2718a0"
+    },
+    {
+      "pr": 173,
+      "head_sha": "d49c720f89e7c6b7a9fe9946a92100177faa7c4c",
+      "merge_commit_sha": "11aebb40ca8ae6e899fa87486e9af175a8db517b"
+    },
+    {
+      "pr": 174,
+      "head_sha": "69b8e10f696825392dcf8eea56d9ff3dd14e8d8c",
+      "merge_commit_sha": "b88f108199396e9bb0e30906d1e1b9022df9d94c"
+    },
+    {
+      "pr": 175,
+      "head_sha": "6435dae2ce15b023f777c090ad1c2263b5d56cc8",
+      "merge_commit_sha": "4a6a0f5dff96d24fe237eb182ba673cb54893cd5"
+    },
+    {
+      "pr": 178,
+      "head_sha": "9f77d9f5145883e2a510fcb348645b6089cec66b",
+      "merge_commit_sha": "33a94a0ee28464ef622667f733158c2e56a5f788"
+    },
+    {
+      "pr": 179,
+      "head_sha": "cb1074dcee296b9c9097ea49d050c8eb7b8da50e",
+      "merge_commit_sha": "f073b1c7a84eced7610969740a20305af765fab5"
+    },
+    {
+      "pr": 182,
+      "head_sha": "174e4a0f9cf006bb7b8e80b7557d4daa4b250bb6",
+      "merge_commit_sha": "28241c86e9ecd5491aa6113db510b3422a537154"
+    },
+    {
+      "pr": 183,
+      "head_sha": "86bab6f4f08ab6239ee6ff79fd86ad8fb4ea10fd",
+      "merge_commit_sha": "41481a7fd4feacbd812cc3de82630ca5078f23e8"
+    },
+    {
+      "pr": 184,
+      "head_sha": "6369eee27a0e80e3d6cd77ca3419541432d9f647",
+      "merge_commit_sha": "227d06e4755ba996829c5f4636c24fe0cd0362b0"
+    }
+  ],
+  "adjacent_but_out_of_scope_prs": [
+    169,
+    176
+  ],
+  "final_contract": {
+    "p3b_runtime": "v7 over preserved v6",
+    "binder": "automation/scripts/weak_source_exact_binding_v4.py",
+    "durable_version": 2,
+    "evidence_version": 6,
+    "stale_positive_evidence_versions": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "p3a_blob_sha": "14f0e38f57b9285a949ec5083136999c12c81bc0",
+    "canonical_p3b_matrix_cases": 20,
+    "coverage_max": 7,
+    "eighth_coverage_search": false,
+    "whole_pipeline_normal_max": 24,
+    "whole_pipeline_double_regional_gap_max": 25
+  }
+}
