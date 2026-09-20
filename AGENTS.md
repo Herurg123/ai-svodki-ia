@@ -201,6 +201,8 @@ Real `config.json`, `ftp-access.json`, state, logs, downloaded media and browser
 profiles must never be committed. FTP behavior must remain hard-confined to the
 remote directory `video` unless an explicit architecture change is approved.
 
+The local NotebookLM-video runtime keeps bounded active JSON state: the current 14-day window remains in active `state.json` and the download registry, while older safe terminal history moves to the ignored local `archive/` directory. Unresolved jobs must never be archived solely because of age, archive history must remain readable for explicit old-date operations and duplicate checks, and the JSON archive is not subject to text-log retention. Shared text-log writers rotate before append through the video subproject logging utility; `dzen-browser-runner.js` remains an explicit temporary exception and must not be modified merely to normalize logging without owner approval.
+
 ## Retrieval compatibility boundary
 
 The public retrieval entrypoints such as `primary_recall_search.py`,
