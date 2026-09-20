@@ -122,11 +122,20 @@ function selectCollectionsJob(state, currentDateKey, phasesError = null) {
   return scheduled.findLatestDoneJob(state, currentDateKey);
 }
 
+function articleVideoStatus(job) {
+  return String(job && job.dzenArticleVideo && job.dzenArticleVideo.status || "PENDING");
+}
+
+function articleVideoPhase(job) {
+  return String(job && job.dzenArticleVideo && job.dzenArticleVideo.phase || "PENDING");
+}
+
 async function main() {
   let config = null;
   let lockHandle = null;
   let phasesError = null;
   let collectionsError = null;
+  let articleVideoError = null;
 
   try {
     if (!fs.existsSync(CONFIG_PATH)) throw new Error(`Не найден config.json: ${CONFIG_PATH}`);
@@ -139,7 +148,7 @@ async function main() {
     }
 
     log(config, "=== START full scheduled flow ===");
-    log(config, "Фазы 1-2/3: запускаю существующий scheduled-worker.js (NotebookLM/FTP -> Dzen publish).");
+    log(config, "Фазы 1-2/4: запускаю существующий scheduled-worker.js (NotebookLM/FTP -> Dzen publish).");
     try {
       await runNodeScript("scheduled-worker.js");
     } catch (error) {
@@ -147,27 +156,27 @@ async function main() {
       fatalLog(
         config,
         `Фазы 1-2 завершились ошибкой: ${error.message}. ` +
-          "Третья фаза всё равно проверит доступные same-day публикации; общий exit останется ошибочным.",
+          "Третья фаза всё равно проверит доступные same-day публикации; фаза 4 при этом НЕ запускается.",
         error
       );
     }
 
-    const state = loadJson(config.stateFile, { jobs: {} });
+    let state = loadJson(config.stateFile, { jobs: {} });
     const currentDateKey = scheduled.formatDateKey(new Date(), config.timeZone || "Europe/Moscow");
     const job = selectCollectionsJob(state, currentDateKey, phasesError);
 
     if (!job) {
-      log(config, `Фаза 3/3: нет подходящего локального job с датой не позже ${currentDateKey}; подборки не запускаю.`);
+      log(config, `Фаза 3/4: нет подходящего локального job с датой не позже ${currentDateKey}; подборки не запускаю.`);
     } else if (collections.collectionsComplete(job)) {
       log(
         config,
-        `Фаза 3/3: обе подборки за ${job.date} уже подтверждены в state.json ` +
+        `Фаза 3/4: обе подборки за ${job.date} уже подтверждены в state.json ` +
           `(video=ADDED, digest=ADDED). Браузер для подборок НЕ открываю.`
       );
     } else {
       log(
         config,
-        `Фаза 3/3: запускаю отдельный этап подборок за ${job.date}; ` +
+        `Фаза 3/4: запускаю отдельный этап подборок за ${job.date}; ` +
           `state=${collections.collectionsStatus(job)}; ` +
           `dzenVideo=${scheduled.getAutomationStatus(job)}.`
       );
@@ -177,24 +186,78 @@ async function main() {
         const refreshedJob = collections.findJobForDate(refreshed, job.date);
         log(
           config,
-          `Фаза 3/3 завершена: dzenCollections.status=${collections.collectionsStatus(refreshedJob)}.`
+          `Фаза 3/4 завершена: dzenCollections.status=${collections.collectionsStatus(refreshedJob)}.`
         );
       } catch (error) {
         collectionsError = error;
-        fatalLog(config, `Фаза 3/3 завершилась ошибкой: ${error.message}`, error);
+        fatalLog(config, `Фаза 3/4 завершилась ошибкой: ${error.message}`, error);
       }
     }
 
-    if (phasesError || collectionsError) {
+    if (!job) {
+      log(config, "Фаза 4/4: нет выбранного job; article-video этап не запускаю.");
+    } else if (phasesError || collectionsError) {
+      log(
+        config,
+        "Фаза 4/4 НЕ запускается: она разрешена только после полного успеха всех предыдущих фаз."
+      );
+    } else {
+      state = loadJson(config.stateFile, { jobs: {} });
+      const refreshedJob = collections.findJobForDate(state, job.date);
+      const dzenStatus = scheduled.getAutomationStatus(refreshedJob);
+      const collectionStatus = collections.collectionsStatus(refreshedJob);
+      const avStatus = articleVideoStatus(refreshedJob);
+      const avPhase = articleVideoPhase(refreshedJob);
+
+      if (dzenStatus !== "PUBLISHED" || collectionStatus !== "COMPLETE") {
+        log(
+          config,
+          `Фаза 4/4 НЕ запускается: gate не выполнен ` +
+          `(dzenAutomation=${dzenStatus}; dzenCollections=${collectionStatus}).`
+        );
+      } else if (["COMPLETE", "SKIPPED_EXISTING"].includes(avStatus)) {
+        log(
+          config,
+          `Фаза 4/4: dzenArticleVideo.status=${avStatus}; terminal success/skip, браузер НЕ открываю.`
+        );
+      } else if (avStatus === "ERROR") {
+        articleVideoError = new Error(
+          `dzenArticleVideo.status=ERROR; автоматический retry запрещён ` +
+          `(phase=${avPhase}). Требуется явный incident recovery.`
+        );
+        fatalLog(config, `Фаза 4/4 заблокирована: ${articleVideoError.message}`, articleVideoError);
+      } else {
+        log(
+          config,
+          `Фаза 4/4: запускаю article-video за ${job.date}; status=${avStatus}; phase=${avPhase}.`
+        );
+        try {
+          await runNodeScript("dzen-article-video.js", ["--apply", `--date=${job.date}`]);
+          const after = loadJson(config.stateFile, { jobs: {} });
+          const afterJob = collections.findJobForDate(after, job.date);
+          log(
+            config,
+            `Фаза 4/4 завершена: dzenArticleVideo.status=${articleVideoStatus(afterJob)}; ` +
+            `phase=${articleVideoPhase(afterJob)}.`
+          );
+        } catch (error) {
+          articleVideoError = error;
+          fatalLog(config, `Фаза 4/4 завершилась ошибкой: ${error.message}`, error);
+        }
+      }
+    }
+
+    if (phasesError || collectionsError || articleVideoError) {
       const parts = [];
       if (phasesError) parts.push(`фазы 1-2: ${phasesError.message}`);
       if (collectionsError) parts.push(`фаза 3: ${collectionsError.message}`);
+      if (articleVideoError) parts.push(`фаза 4: ${articleVideoError.message}`);
       throw new Error(`Полный scheduled flow завершён с ошибкой (${parts.join("; ")}).`);
     }
 
     log(config, "=== END full scheduled flow SUCCESS ===");
   } catch (error) {
-    if (error !== phasesError && error !== collectionsError) {
+    if (error !== phasesError && error !== collectionsError && error !== articleVideoError) {
       fatalLog(config, error.message, error);
     }
     process.exitCode = process.exitCode || 1;
@@ -206,6 +269,8 @@ async function main() {
 module.exports = {
   FULL_WORKER_LOCK_PATH,
   acquireFullWorkerLock,
+  articleVideoPhase,
+  articleVideoStatus,
   main,
   releaseFullWorkerLock,
   runNodeScript,

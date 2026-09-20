@@ -29,7 +29,7 @@ production-автоматизации и операторских проверо
 |---|---|
 | `automation/` | Основной production-конвейер: retrieval, event/source freshness, editorial, recovery, validators, archive, audits и configuration. |
 | `posts/` | Сформированный публичный сайт, article/image RSS, sitemap и постоянные публичные assets. |
-| `automation/notebooklm-video/` | Отдельный локальный Windows downstream-подпроект: после публикации выпуска создаёт NotebookLM-видео, MP4/PNG, при необходимости доставляет их в FTP `video`, автоматически публикует нативное видео в Дзен, а затем назначает видео и ежедневную сводку текущего дня в две фиксированные Дзен-подборки с persistent per-target state. |
+| `automation/notebooklm-video/` | Отдельный локальный Windows downstream-подпроект: после публикации выпуска создаёт NotebookLM-видео, MP4/PNG, при необходимости доставляет их в FTP `video`, автоматически публикует нативное видео в Дзен, назначает видео и ежедневную сводку в две фиксированные Дзен-подборки, а после их `COMPLETE` вставляет опубликованное видео в same-day статью с persistent at-most-once state. |
 | `automation/archive/video-rss-enrichment-2026-08/` | Reference-only архив закрытого Video → RSS эксперимента. Не является runtime/workflow path. |
 | `.github/workflows/` | Always-on PR Gate, два раздельных CI-домена, production, deploy и cleanup/hygiene. |
 
