@@ -2,6 +2,8 @@
 
 const fs = require("fs");
 const path = require("path");
+const logUtils = require("./log-utils");
+const history = require("./history-utils");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
@@ -33,13 +35,6 @@ function loadJson(filePath, fallback = null) {
   if (!fs.existsSync(filePath)) return fallback;
   return JSON.parse(stripBom(fs.readFileSync(filePath, "utf8")));
 }
-function saveJsonAtomic(filePath, value) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  const tmp = `${filePath}.collections-${process.pid}-${Date.now()}.tmp`;
-  fs.writeFileSync(tmp, JSON.stringify(value, null, 2), "utf8");
-  fs.rmSync(filePath, { force: true });
-  fs.renameSync(tmp, filePath);
-}
 function normalizeText(value) {
   return String(value || "").normalize("NFKC")
     .replace(/[\u200B-\u200D\u2060\uFEFF]/g, "")
@@ -68,21 +63,13 @@ function formatDateKey(date, timeZone) {
   const v = {}; for (const p of parts) if (["year", "month", "day"].includes(p.type)) v[p.type] = p.value;
   return `${v.year}-${v.month}-${v.day}`;
 }
-function formatTime(timeZone) {
-  return new Intl.DateTimeFormat("ru-RU", { timeZone, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date());
-}
-function appendLine(filePath, line) {
-  if (!filePath) return;
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.appendFileSync(filePath, `${line}\r\n`, "utf8");
-}
 function createLogger(config) {
   const write = (prefix, message, error = null) => {
     const suffix = error?.stack ? `\r\n${error.stack}` : "";
-    const line = `[${formatTime(config.timeZone || "Europe/Moscow")}] ${prefix}${message}${suffix}`;
+    const line = `[${logUtils.formatTime(config.timeZone || "Europe/Moscow")}] ${prefix}${message}${suffix}`;
     if (prefix.includes("!!!")) console.error(line); else console.log(line);
-    appendLine(config.regularLog, line);
-    if (prefix.includes("!!!") && config.errorLog !== config.regularLog) appendLine(config.errorLog, line);
+    logUtils.appendRegularLine(config, line);
+    if (prefix.includes("!!!") && config.errorLog !== config.regularLog) logUtils.appendErrorLine(config, line);
   };
   return { log: (m) => write("DZEN-COLLECTIONS: ", m), warn: (m) => write("DZEN-COLLECTIONS WARN: ", m), fatal: (m, e) => write("DZEN-COLLECTIONS !!!: ", m, e) };
 }
@@ -122,7 +109,7 @@ function updateCollectionTarget(config, state, job, target, fields) {
   job.dzenCollections.status = collectionsStatus(job);
   if (job.dzenCollections.status === "COMPLETE") job.dzenCollections.completedAt ||= now;
   job.updatedAt = now;
-  saveJsonAtomic(config.stateFile, state);
+  history.saveStateWithRetention(config, state);
   return job.dzenCollections.status;
 }
 function classifyCollectionCardLookup(visibleCount, timedOut) {
@@ -446,8 +433,13 @@ async function main(argv = process.argv.slice(2)) {
   const config = loadJson(CONFIG_PATH); if (args.visible) config.minimizeBrowserWindow = false;
   if (!config.stateFile) throw new Error("В config.json не задан stateFile.");
   const logger = createLogger(config), dateKey = args.date || formatDateKey(new Date(), config.timeZone || "Europe/Moscow");
-  const state = loadJson(config.stateFile, { jobs: {} }), job = findJobForDate(state, dateKey);
-  if (!job) { logger.log(`Нет job за ${dateKey}. Браузер НЕ открываю.`); return; }
+  const state = history.loadActiveState(config);
+  const resolvedJob = history.findJobForDateIncludingArchive(config, state, dateKey);
+  const job = resolvedJob && resolvedJob.job;
+  if (!job) { logger.log(`Нет job за ${dateKey} ни в active state, ни в archive. Браузер НЕ открываю.`); return; }
+  if (resolvedJob.source === "archive") {
+    logger.log(`Job за ${dateKey} загружен из JSON-архива для явной операторской операции.`);
+  }
   const pending = TARGETS.filter((t) => !targetIsAdded(job, t.key));
   if (!pending.length) { logger.log(`dzenCollections=COMPLETE за ${dateKey}. Браузер НЕ открываю.`); return; }
   logger.log(`=== START collections date=${dateKey}; pending=${pending.map((t) => t.key).join(",")} ===`);
