@@ -1,5 +1,5 @@
-name: One-shot superseded Sep1 audit branch cleanup
-run-name: One-shot superseded Sep1 audit branch cleanup ${{ github.run_id }}
+name: One-shot rejected Step4 branch cleanup
+run-name: One-shot rejected Step4 branch cleanup ${{ github.run_id }}
 
 on:
   pull_request:
@@ -22,10 +22,11 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Re-prove supersession, delete branch, verify
+      - name: Re-prove rejected Step4 isolation, delete branch, verify
         env:
           GITHUB_TOKEN: ${{ github.token }}
           EXPECTED_MAIN_SHA: 6797e0b81063b92e36f0b3d80c0239c5d3a64bb5
+          EXPECTED_ARCHIVE_SHA: d926a3abf8b9443f58f303d984ef79fdc289fc3e
           CLEANUP_PR_NUMBER: ${{ github.event.pull_request.number }}
         shell: bash
         run: |
@@ -41,19 +42,16 @@ jobs:
           OWNER = REPO.split("/", 1)[0]
           TOKEN = os.environ["GITHUB_TOKEN"]
           EXPECTED_MAIN = os.environ["EXPECTED_MAIN_SHA"]
+          EXPECTED_ARCHIVE = os.environ["EXPECTED_ARCHIVE_SHA"]
           PR_NUMBER = int(os.environ["CLEANUP_PR_NUMBER"])
           SELF_BRANCH = "ops/one-shot-safe-branch-cleanup-2026-09-19"
 
-          TARGET_BRANCH = "audit/2026-09-01-independent-retrieval"
-          TARGET_HEAD = "6df0b0ffb7d1c556435e1f5fce58c8e26d6bd83e"
-          COMMON_PARENT = "3ff9244f0cf7d534030a3a89d7e36fb72655557e"
-          TARGET_PATH = "automation/audits/2026-09-01-independent-release-audit.md"
-
-          ACCEPTED_PR = 137
-          ACCEPTED_AUDIT = "e426e753ec34b053dc486a20c8d2cc29bed61823"
-          ACCEPTED_HEAD = "971a703fb8d398827e15165fed51bd538a7c27d0"
-          ACCEPTED_MERGE = "55590d72fbc6b4f1c3566bede65f018cbac9eb4f"
-
+          TARGET_BRANCH = "architecture/step04-evidence-20260907"
+          TARGET_HEAD = "e85d11331621bf2deedca6a92510c5792cd34263"
+          PARENT_1 = "1383da3c3718150a9cbc9164f9c44ad420524ca6"
+          PARENT_2 = "665bff99e3a536962edc67e92274086bc5d4b7d3"
+          MERGE_BASE = "b474b06bc00f365b9737ece4dd0912c1892489e7"
+          ARCHIVE_BRANCH = "archive/search-baseline-pre-hybrid-2026-08-09"
           ACTIVE = {"queued", "in_progress", "waiting", "requested", "pending"}
 
           def api(method, path, payload=None, allow_404=False):
@@ -63,7 +61,7 @@ jobs:
                   "Accept": "application/vnd.github+json",
                   "Authorization": f"Bearer {TOKEN}",
                   "X-GitHub-Api-Version": "2022-11-28",
-                  "User-Agent": "ai-svodki-superseded-audit-cleanup",
+                  "User-Agent": "ai-svodki-step4-cleanup",
               }
               if payload is not None:
                   body = json.dumps(payload).encode("utf-8")
@@ -88,53 +86,36 @@ jobs:
           if pr["head"]["ref"] != SELF_BRANCH or pr["head"]["repo"]["full_name"] != REPO:
               raise RuntimeError("cleanup PR identity changed")
 
-          current_main = api("GET", "git/ref/heads/main")["object"]["sha"]
-          if current_main != EXPECTED_MAIN:
-              raise RuntimeError(f"main changed: expected {EXPECTED_MAIN}, found {current_main}")
+          main_sha = api("GET", "git/ref/heads/main")["object"]["sha"]
+          if main_sha != EXPECTED_MAIN:
+              raise RuntimeError(f"main changed: expected {EXPECTED_MAIN}, found {main_sha}")
+
+          archive_sha = api("GET", f"git/ref/heads/{enc(ARCHIVE_BRANCH)}")["object"]["sha"]
+          if archive_sha != EXPECTED_ARCHIVE:
+              raise RuntimeError("permanent archive changed")
 
           target_ref = api("GET", f"git/ref/heads/{enc(TARGET_BRANCH)}")
           if target_ref["object"]["sha"] != TARGET_HEAD:
               raise RuntimeError("target branch head changed")
 
-          target_commit = api("GET", f"commits/{TARGET_HEAD}")
-          parents = [item["sha"] for item in target_commit.get("parents", [])]
-          if parents != [COMMON_PARENT]:
-              raise RuntimeError(f"target parent changed: {parents}")
-          target_files = target_commit.get("files", [])
-          if len(target_files) != 1:
-              raise RuntimeError("target commit no longer has exactly one changed file")
-          only = target_files[0]
-          if only.get("filename") != TARGET_PATH or only.get("status") != "added":
-              raise RuntimeError("target commit file scope changed")
+          c0 = api("GET", f"commits/{TARGET_HEAD}")
+          if [p["sha"] for p in c0.get("parents", [])] != [PARENT_1]:
+              raise RuntimeError("target head ancestry changed")
+          c1 = api("GET", f"commits/{PARENT_1}")
+          if [p["sha"] for p in c1.get("parents", [])] != [PARENT_2]:
+              raise RuntimeError("target middle ancestry changed")
+          c2 = api("GET", f"commits/{PARENT_2}")
+          if [p["sha"] for p in c2.get("parents", [])] != [MERGE_BASE]:
+              raise RuntimeError("target base ancestry changed")
 
-          # Exact target branch must have no PR and no workflow runs.
           q = urllib.parse.urlencode({"state":"all","head":f"{OWNER}:{TARGET_BRANCH}","per_page":"100"})
           if api("GET", f"pulls?{q}"):
               raise RuntimeError("target branch has PR history; re-audit required")
+
           q = urllib.parse.urlencode({"branch":TARGET_BRANCH,"per_page":"100"})
           target_runs = api("GET", f"actions/runs?{q}")
           if target_runs.get("total_count", 0) != 0:
               raise RuntimeError("target branch has Actions history; re-audit required")
-
-          accepted_pr = api("GET", f"pulls/{ACCEPTED_PR}")
-          if (
-              not accepted_pr.get("merged")
-              or accepted_pr.get("head", {}).get("sha") != ACCEPTED_HEAD
-              or accepted_pr.get("merge_commit_sha") != ACCEPTED_MERGE
-          ):
-              raise RuntimeError("accepted PR #137 identity changed")
-
-          accepted_commit = api("GET", f"commits/{ACCEPTED_AUDIT}")
-          accepted_parents = [item["sha"] for item in accepted_commit.get("parents", [])]
-          if accepted_parents != [COMMON_PARENT]:
-              raise RuntimeError("accepted audit no longer shares target parent")
-          accepted_files = accepted_commit.get("files", [])
-          if len(accepted_files) != 1 or accepted_files[0].get("filename") != TARGET_PATH:
-              raise RuntimeError("accepted audit file scope changed")
-
-          compare = api("GET", f"compare/{ACCEPTED_MERGE}...{EXPECTED_MAIN}")
-          if compare.get("behind_by") != 0 or compare.get("merge_base_commit", {}).get("sha") != ACCEPTED_MERGE:
-              raise RuntimeError("accepted PR #137 merge is not an ancestor of current main")
 
           for status in sorted(ACTIVE):
               q = urllib.parse.urlencode({"branch":TARGET_BRANCH,"status":status,"per_page":"1"})
@@ -147,14 +128,15 @@ jobs:
               raise RuntimeError("target branch still exists after DELETE")
           if api("GET", "git/ref/heads/main")["object"]["sha"] != EXPECTED_MAIN:
               raise RuntimeError("main changed during cleanup")
+          if api("GET", f"git/ref/heads/{enc(ARCHIVE_BRANCH)}")["object"]["sha"] != EXPECTED_ARCHIVE:
+              raise RuntimeError("permanent archive changed during cleanup")
 
           api("PATCH", f"pulls/{PR_NUMBER}", {"state":"closed"})
 
           print("CLEANUP_RESULT", json.dumps({
               "deleted_branch": TARGET_BRANCH,
               "main": EXPECTED_MAIN,
-              "accepted_pr": ACCEPTED_PR,
-              "accepted_merge": ACCEPTED_MERGE,
+              "archive": EXPECTED_ARCHIVE,
               "pr_closed": PR_NUMBER,
           }, sort_keys=True))
           PY
