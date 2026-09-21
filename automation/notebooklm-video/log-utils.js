@@ -343,18 +343,22 @@ function cleanupOldLogArchives(config, now = new Date()) {
 
 function performLogMaintenance(config, now = new Date()) {
   const rotation = getRotationConfig(config);
-  const migration = migrateLegacyLogArchives(config);
   const result = {
     enabled: rotation.enabled,
     rotated: [],
     deletedFiles: 0,
     deletedBytes: 0,
-    migratedLegacyLogFiles: migration.movedFiles,
-    removedLegacySidecar: migration.removedLegacySidecar,
-    removedLegacyLogDir: migration.removedLegacyDir,
+    migratedLegacyLogFiles: 0,
+    removedLegacySidecar: false,
+    removedLegacyLogDir: false,
     archiveDir: rotation.archiveDir,
   };
   if (!rotation.enabled) return result;
+
+  const migration = migrateLegacyLogArchives(config);
+  result.migratedLegacyLogFiles = migration.movedFiles;
+  result.removedLegacySidecar = migration.removedLegacySidecar;
+  result.removedLegacyLogDir = migration.removedLegacyDir;
 
   for (const [kind, filePath] of [
     ["worker", config.regularLog],
