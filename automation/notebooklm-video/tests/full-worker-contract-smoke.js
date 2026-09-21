@@ -55,8 +55,12 @@ assert(source.includes('dzenStatus !== "PUBLISHED" || collectionStatus !== "COMP
   "article-video gate must require PUBLISHED video and COMPLETE collections");
 assert(source.includes('["COMPLETE", "SKIPPED_EXISTING"].includes(avStatus)'),
   "terminal article-video success/skip must avoid reopening the browser");
-assert(source.includes('avStatus === "ERROR"'),
-  "terminal article-video ERROR must block automatic retry");
+assert(source.includes('avStatus === "ERROR" && canAutoRecoverPreEditLinkError(refreshedJob)'),
+  "one proven-safe pre-edit link-resolution ERROR must have a dedicated automatic recovery branch");
+assert(source.includes('"--recover-pre-edit-link-error"'),
+  "safe scheduled recovery must invoke the guarded article-video recovery flag");
+assert(source.includes('} else if (avStatus === "ERROR")'),
+  "all other terminal article-video ERROR states must still block automatic retry");
 assert(source.includes("Фаза 4/4 НЕ запускается: она разрешена только после полного успеха всех предыдущих фаз."),
   "phase 4 must not run after any earlier phase failure");
 assert(source.includes("articleVideoError"),
@@ -66,5 +70,38 @@ assert.strictEqual(full.articleVideoStatus({}), "PENDING");
 assert.strictEqual(full.articleVideoStatus({ dzenArticleVideo: { status: "COMPLETE" } }), "COMPLETE");
 assert.strictEqual(full.articleVideoPhase({}), "PENDING");
 assert.strictEqual(full.articleVideoPhase({ dzenArticleVideo: { phase: "CLICKED_UNVERIFIED" } }), "CLICKED_UNVERIFIED");
+
+const safeLegacyLinkError = {
+  dzenArticleVideo: {
+    status: "ERROR",
+    phase: "ERROR",
+    lastError: "«Скопировать ссылку» не положил в clipboard ожидаемый article URL.",
+  },
+};
+assert.strictEqual(
+  full.canAutoRecoverPreEditLinkError(safeLegacyLinkError),
+  true,
+  "legacy pre-edit clipboard link error without editor/publish markers must be auto-recoverable once"
+);
+assert.strictEqual(
+  full.canAutoRecoverPreEditLinkError({
+    dzenArticleVideo: {
+      ...safeLegacyLinkError.dzenArticleVideo,
+      recoveryHistory: [{ reason: "pre-edit link-resolution recovery" }],
+    },
+  }),
+  false,
+  "scheduled pre-edit recovery must be at-most-once"
+);
+assert.strictEqual(
+  full.canAutoRecoverPreEditLinkError({
+    dzenArticleVideo: {
+      ...safeLegacyLinkError.dzenArticleVideo,
+      publishArmedAt: "2026-09-21T00:00:00.000Z",
+    },
+  }),
+  false,
+  "any publish marker must keep automatic recovery fail-closed"
+);
 
 console.log("Full worker four-stage contract smoke: OK");
