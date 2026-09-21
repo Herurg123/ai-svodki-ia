@@ -61,28 +61,7 @@ function getRotationConfig(config = {}) {
   };
 }
 
-function stateFilePath(config) {
-  return path.join(getRotationConfig(config).archiveDir, ".rotation-state.json");
-}
-
-function loadRotationState(config) {
-  const filePath = stateFilePath(config);
-  if (!fs.existsSync(filePath)) return { version: 1 };
-  try {
-    const parsed = JSON.parse(stripBom(fs.readFileSync(filePath, "utf8")));
-    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
-      ? { version: 1, ...parsed }
-      : { version: 1 };
-  } catch {
-    return { version: 1 };
-  }
-}
-
-function saveRotationState(config, state) {
-  saveJsonAtomic(stateFilePath(config), { version: 1, ...state });
-}
-
-function embeddedDateKeys(filePath) {
+function embeddedDateEntries(filePath) {
   if (!fs.existsSync(filePath)) return [];
   let text = "";
   try {
@@ -90,18 +69,28 @@ function embeddedDateKeys(filePath) {
   } catch {
     return [];
   }
+
   const out = [];
-  const seen = new Set();
-  const re = /\[(\d{2})\.(\d{2})\.(\d{4}),/g;
+  const re = /^\[(\d{2})\.(\d{2})\.(\d{4}),/gm;
   let match;
   while ((match = re.exec(text)) !== null) {
-    const key = `${match[3]}-${match[2]}-${match[1]}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      out.push(key);
-    }
+    out.push({
+      key: `${match[3]}-${match[2]}-${match[1]}`,
+      index: match.index,
+    });
   }
-  return out.sort();
+  return out;
+}
+
+function embeddedDateKeys(filePath) {
+  const out = [];
+  const seen = new Set();
+  for (const entry of embeddedDateEntries(filePath)) {
+    if (seen.has(entry.key)) continue;
+    seen.add(entry.key);
+    out.push(entry.key);
+  }
+  return out;
 }
 
 function nextArchivePath(config, kind, sourceDateKey) {
@@ -120,6 +109,13 @@ function dateKeyFromMtime(filePath, timeZone) {
   return formatDateKey(fs.statSync(filePath).mtime, timeZone);
 }
 
+function replaceFileAtomic(filePath, content) {
+  const tmp = `${filePath}.rotation-${process.pid}-${Date.now()}.tmp`;
+  fs.writeFileSync(tmp, content, "utf8");
+  fs.rmSync(filePath, { force: true });
+  fs.renameSync(tmp, filePath);
+}
+
 function prepareLogForAppend(config, filePath, kind, now = new Date()) {
   const rotation = getRotationConfig(config);
   if (!rotation.enabled || !filePath) {
@@ -129,63 +125,87 @@ function prepareLogForAppend(config, filePath, kind, now = new Date()) {
   fs.mkdirSync(rotation.archiveDir, { recursive: true });
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
-  const today = formatDateKey(now, config.timeZone || "Europe/Moscow");
-  const state = loadRotationState(config);
-  const stateKey = kind === "error" ? "errorDate" : "workerDate";
-
   if (!fs.existsSync(filePath) || fs.statSync(filePath).size === 0) {
-    state[stateKey] = today;
-    saveRotationState(config, state);
     return { rotated: false, enabled: true };
   }
 
+  const today = formatDateKey(now, config.timeZone || "Europe/Moscow");
   const stats = fs.statSync(filePath);
-  const dates = embeddedDateKeys(filePath);
-  let recordedDate = state[stateKey] || null;
-  let initialMixed = false;
+  const entries = embeddedDateEntries(filePath);
+  const dateKeys = entries.map((entry) => entry.key);
+  const uniqueDateKeys = [...new Set(dateKeys)];
+  const firstDateKey = dateKeys[0] || dateKeyFromMtime(filePath, config.timeZone || "Europe/Moscow");
+  const firstTodayEntry = entries.find((entry) => entry.key === today) || null;
+  const hasPast = uniqueDateKeys.some((dateKey) => dateKey < today);
+  const hasToday = uniqueDateKeys.includes(today);
 
-  if (!recordedDate) {
-    if (dates.length) {
-      recordedDate = dates[dates.length - 1];
-      initialMixed = dates.some((dateKey) => dateKey !== today);
-    } else {
-      recordedDate = dateKeyFromMtime(filePath, config.timeZone || "Europe/Moscow");
-    }
-  }
-
-  const crossedDay = recordedDate !== today || initialMixed;
   const exceededSize = stats.size >= rotation.maxFileSizeMb * 1024 * 1024;
 
-  if (!crossedDay && !exceededSize) {
-    if (state[stateKey] !== today) {
-      state[stateKey] = today;
-      saveRotationState(config, state);
+  // Day-boundary rotation is derived from timestamps already written into the
+  // log, never from a mutable sidecar and never from mtime once timestamps are
+  // available. This makes the operation idempotent across repeated same-day
+  // scheduled runs.
+  if (hasPast || (!entries.length && firstDateKey < today)) {
+    // If an intentionally untouched direct writer (currently
+    // dzen-browser-runner.js) has already appended one or more current-day
+    // lines into yesterday's active file, keep those current-day lines active.
+    // Only the prefix that belongs to older dates is archived.
+    if (hasToday && firstTodayEntry && firstTodayEntry.index > 0) {
+      const text = fs.readFileSync(filePath, "utf8");
+      const archiveText = text.slice(0, firstTodayEntry.index);
+      const activeText = text.slice(firstTodayEntry.index);
+      const oldKeys = entries
+        .filter((entry) => entry.index < firstTodayEntry.index && entry.key < today)
+        .map((entry) => entry.key);
+      const sourceDateKey = oldKeys.length
+        ? oldKeys[oldKeys.length - 1]
+        : firstDateKey;
+      const archivePath = nextArchivePath(config, kind, sourceDateKey);
+      fs.writeFileSync(archivePath, archiveText, "utf8");
+      replaceFileAtomic(filePath, activeText);
+
+      return {
+        rotated: true,
+        enabled: true,
+        archivePath,
+        sizeBytes: Buffer.byteLength(archiveText, "utf8"),
+        reason: "смена даты",
+        preservedCurrentDayPrefix: true,
+      };
     }
-    return { rotated: false, enabled: true };
+
+    // Normal case: all parseable entries belong to an older day. Rename the
+    // whole active file and start a fresh current-day log.
+    const sourceDateKey = uniqueDateKeys.length
+      ? uniqueDateKeys[uniqueDateKeys.length - 1]
+      : firstDateKey;
+    const archivePath = nextArchivePath(config, kind, sourceDateKey);
+    fs.renameSync(filePath, archivePath);
+    return {
+      rotated: true,
+      enabled: true,
+      archivePath,
+      sizeBytes: stats.size,
+      reason: "смена даты",
+    };
   }
 
-  // For a pre-existing mixed file from the old broken rotation, use the latest
-  // embedded date so the migrated archive is not immediately aged out.
-  const sourceDateKey = initialMixed && dates.length
-    ? dates[dates.length - 1]
-    : (recordedDate || today);
-  const archivePath = nextArchivePath(config, kind, sourceDateKey);
-  fs.renameSync(filePath, archivePath);
+  if (exceededSize) {
+    const sourceDateKey = hasToday
+      ? today
+      : (uniqueDateKeys[uniqueDateKeys.length - 1] || firstDateKey || today);
+    const archivePath = nextArchivePath(config, kind, sourceDateKey);
+    fs.renameSync(filePath, archivePath);
+    return {
+      rotated: true,
+      enabled: true,
+      archivePath,
+      sizeBytes: stats.size,
+      reason: "превышение размера",
+    };
+  }
 
-  state[stateKey] = today;
-  saveRotationState(config, state);
-
-  return {
-    rotated: true,
-    enabled: true,
-    archivePath,
-    sizeBytes: stats.size,
-    reason: exceededSize && !crossedDay
-      ? "превышение размера"
-      : initialMixed
-        ? "миграция смешанного журнала"
-        : "смена даты",
-  };
+  return { rotated: false, enabled: true };
 }
 
 function appendLine(config, kind, line) {
