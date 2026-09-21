@@ -222,8 +222,6 @@ function ensureDirectories(config) {
     config.workDir,
     config.downloadDir,
     config.screenshotsDir,
-    config.tracesDir,
-    config.tempDir,
     path.dirname(config.regularLog),
     path.dirname(config.errorLog),
     path.dirname(config.stateFile),
