@@ -3,18 +3,6 @@
 const fs = require("fs");
 const path = require("path");
 
-function stripBom(value) {
-  return String(value || "").replace(/^\uFEFF/, "");
-}
-
-function saveJsonAtomic(filePath, value) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  const tmp = `${filePath}.tmp-${process.pid}-${Date.now()}`;
-  fs.writeFileSync(tmp, JSON.stringify(value, null, 2), "utf8");
-  fs.rmSync(filePath, { force: true });
-  fs.renameSync(tmp, filePath);
-}
-
 function formatDateKey(date, timeZone = "Europe/Moscow") {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone,
@@ -78,17 +66,6 @@ function embeddedDateEntries(filePath) {
       key: `${match[3]}-${match[2]}-${match[1]}`,
       index: match.index,
     });
-  }
-  return out;
-}
-
-function embeddedDateKeys(filePath) {
-  const out = [];
-  const seen = new Set();
-  for (const entry of embeddedDateEntries(filePath)) {
-    if (seen.has(entry.key)) continue;
-    seen.add(entry.key);
-    out.push(entry.key);
   }
   return out;
 }
