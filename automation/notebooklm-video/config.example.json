@@ -41,7 +41,7 @@
   "errorLog": "C:\\NotebookLMBot\\!!! ERROR !!!.log",
   "logRotation": {
     "enabled": true,
-    "archiveDir": "C:\\NotebookLMBot\\logs",
+    "archiveDir": "C:\\NotebookLMBot\\archive",
     "workerRetentionDays": 7,
     "errorRetentionDays": 30,
     "maxFileSizeMb": 25

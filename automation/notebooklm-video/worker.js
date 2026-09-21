@@ -60,7 +60,7 @@ function applyConfigDefaultsAndValidate(config) {
 
   const rotationDefaults = {
     enabled: true,
-    archiveDir: path.join(path.dirname(config.regularLog), "logs"),
+    archiveDir: history.getHistoryConfig(config).archiveDir,
     workerRetentionDays: 7,
     errorRetentionDays: 30,
     maxFileSizeMb: 25,
@@ -71,6 +71,10 @@ function applyConfigDefaultsAndValidate(config) {
       config.logRotation[key] = value;
     }
   }
+
+  // Transparently migrate the previous default <workDir>\logs to the shared
+  // <workDir>\archive location without requiring a manual config.json edit.
+  config.logRotation.archiveDir = logUtils.getRotationConfig(config).archiveDir;
 
   if (typeof config.logRotation.enabled !== "boolean") {
     throw new Error(
@@ -3850,7 +3854,8 @@ async function run() {
     log(
       config,
       `Ротация журналов включена: архивировано=${rotatedCount}; ` +
-        `удалено=${deletedSummary}; ` +
+        `перенесено из legacy logs=${logMaintenance.migratedLegacyLogFiles || 0}; ` +
+        `удалено=${deletedSummary}; archive=${logMaintenance.archiveDir}; ` +
         `worker=${config.logRotation.workerRetentionDays} дн.; ` +
         `ошибки=${config.logRotation.errorRetentionDays} дн.; ` +
         `лимит=${config.logRotation.maxFileSizeMb} МБ.`

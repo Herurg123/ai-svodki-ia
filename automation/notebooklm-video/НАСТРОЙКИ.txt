@@ -144,7 +144,7 @@ logRotation.archiveDir
   Каталог архивных журналов.
 
   По умолчанию:
-    C:\\TRASH\\NotebookLMBot\\logs
+    C:\\TRASH\\NotebookLMBot\\archive
 
   Активные журналы продолжают находиться по прежним путям:
     C:\\TRASH\\NotebookLMBot\\worker.log
@@ -175,11 +175,13 @@ logRotation.maxFileSizeMb
   По умолчанию: 25.
 
   Ротация выполняется при смене календарной даты по timeZone или при
-  достижении maxFileSizeMb. Старые text-log архивы удаляются по их отдельным
-  retention rules.
+  достижении maxFileSizeMb. Архивные text logs лежат в общем archive/ рядом
+  с JSON-history, но удаляются только по своим отдельным 7/30-day retention rules.
+  JSON-файлы этой очисткой не затрагиваются.
 
 historyRetention
-  Группа настроек активного окна JSON-history. Это НЕ та же ротация, что logs.
+  Группа настроек активного окна JSON-history. JSON-history и text logs физически
+  лежат в одном archive/, но имеют независимые retention rules.
 
 historyRetention.enabled
   true = держать bounded active JSON и переносить старую безопасно завершённую

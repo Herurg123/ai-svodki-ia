@@ -43,7 +43,7 @@
 - `scripts/` — production, retrieval, event/source freshness, recovery, cleanup,
   site generation и validators;
 - `tests/` — основной Python offline regression suite;
-- `notebooklm-video/` — отдельный локальный Windows downstream-подпроект с единым scheduled flow NotebookLM → media/FTP → native Dzen publish → Dzen collections → video-in-article, shared pre-append text-log rotation и 14-дневным active JSON-history с локальным бессрочным архивом;
+- `notebooklm-video/` — отдельный локальный Windows downstream-подпроект с единым scheduled flow NotebookLM → media/FTP → native Dzen publish → Dzen collections → video-in-article, shared pre-append text-log rotation и 14-дневным active JSON-history в общем локальном `archive/`: JSON бессрочно, `worker/error` log archives по отдельным 7/30-day retention rules;
 - `preview/` и `recovery/` — временные ignored runtime/diagnostic каталоги.
 
 ## Основные entrypoints
