@@ -6,6 +6,7 @@ const { spawn } = require("child_process");
 
 const scheduled = require("./scheduled-worker");
 const collections = require("./dzen-collections");
+const articleVideo = require("./dzen-article-video");
 const logUtils = require("./log-utils");
 const history = require("./history-utils");
 
@@ -114,6 +115,15 @@ function articleVideoPhase(job) {
   return String(job && job.dzenArticleVideo && job.dzenArticleVideo.phase || "PENDING");
 }
 
+function canAutoRecoverPreEditLinkError(job) {
+  const av = job && job.dzenArticleVideo;
+  if (!articleVideo.isSafePreEditLinkResolutionError(av)) return false;
+  const history = Array.isArray(av.recoveryHistory) ? av.recoveryHistory : [];
+  return !history.some((entry) =>
+    /pre-edit link-resolution recovery/i.test(String(entry && entry.reason || ""))
+  );
+}
+
 async function main() {
   let config = null;
   let lockHandle = null;
@@ -213,10 +223,36 @@ async function main() {
           config,
           `Фаза 4/4: dzenArticleVideo.status=${avStatus}; terminal success/skip, браузер НЕ открываю.`
         );
+      } else if (avStatus === "ERROR" && canAutoRecoverPreEditLinkError(refreshedJob)) {
+        log(
+          config,
+          `Фаза 4/4: обнаружен безопасный pre-edit link-resolution ERROR без editor/publish markers. ` +
+          `Разрешаю ОДИН автоматический recovery за ${job.date}; повторные recovery этого типа будут заблокированы.`
+        );
+        try {
+          await runNodeScript(
+            "dzen-article-video.js",
+            ["--apply", `--date=${job.date}`, "--recover-pre-edit-link-error"]
+          );
+          const afterRecovery = loadJson(config.stateFile, { jobs: {} });
+          const afterRecoveryJob = collections.findJobForDate(afterRecovery, job.date);
+          log(
+            config,
+            `Фаза 4/4 recovery завершена: dzenArticleVideo.status=${articleVideoStatus(afterRecoveryJob)}; ` +
+            `phase=${articleVideoPhase(afterRecoveryJob)}.`
+          );
+        } catch (error) {
+          articleVideoError = error;
+          fatalLog(
+            config,
+            `Фаза 4/4 safe pre-edit recovery завершилась ошибкой: ${error.message}`,
+            error
+          );
+        }
       } else if (avStatus === "ERROR") {
         articleVideoError = new Error(
           `dzenArticleVideo.status=ERROR; автоматический retry запрещён ` +
-          `(phase=${avPhase}). Требуется явный incident recovery.`
+          `(phase=${avPhase}). Safe pre-edit recovery недоступен или уже использован; требуется явный incident recovery.`
         );
         fatalLog(config, `Фаза 4/4 заблокирована: ${articleVideoError.message}`, articleVideoError);
       } else {
@@ -264,6 +300,7 @@ module.exports = {
   acquireFullWorkerLock,
   articleVideoPhase,
   articleVideoStatus,
+  canAutoRecoverPreEditLinkError,
   main,
   releaseFullWorkerLock,
   runNodeScript,
