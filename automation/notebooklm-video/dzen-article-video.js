@@ -116,11 +116,13 @@ function parseArgs(argv) {
     apply: false,
     visible: false,
     selfTest: false,
+    recoverPreEditLinkError: false,
   };
   for (const arg of argv) {
     if (arg === "--apply") args.apply = true;
     else if (arg === "--visible") args.visible = true;
     else if (arg === "--self-test") args.selfTest = true;
+    else if (arg === "--recover-pre-edit-link-error") args.recoverPreEditLinkError = true;
     else if (arg.startsWith("--date=")) {
       args.date = arg.slice("--date=".length).trim();
       parseDateKey(args.date);
@@ -247,11 +249,7 @@ function runPowerShell(command, timeoutMs = 15_000) {
 async function readClipboardText() {
   const command = [
     "$ErrorActionPreference = 'Stop'",
-    "try {",
-    "  $v = Get-Clipboard -Raw -Format Text",
-    "} catch {",
-    "  $v = ''",
-    "}",
+    "$v = Get-Clipboard -Raw -Format Text",
     "$bytes = [System.Text.Encoding]::UTF8.GetBytes([string]$v)",
     "[Convert]::ToBase64String($bytes)",
   ].join("\r\n");
@@ -270,6 +268,168 @@ async function writeClipboardText(value) {
     "Write-Output 'OK'",
   ].join("\r\n");
   await runPowerShell(command);
+}
+
+function expectedPublicationUrlPattern(kind) {
+  return kind === "video"
+    ? /^https:\/\/dzen\.ru\/video\/watch\/[A-Za-z0-9_-]+(?:[?#].*)?$/
+    : /^https:\/\/dzen\.ru\/a\/[A-Za-z0-9_-]+(?:[?#].*)?$/;
+}
+
+function expectedPublicationUrlFromCandidates(candidates, kind) {
+  const pattern = expectedPublicationUrlPattern(kind);
+  for (const candidate of candidates || []) {
+    const value = String(
+      candidate && candidate.value !== undefined ? candidate.value : candidate || ""
+    ).trim();
+    if (pattern.test(value)) {
+      return {
+        value,
+        source: candidate && candidate.source ? String(candidate.source) : "candidate",
+      };
+    }
+  }
+  return null;
+}
+
+async function collectPublicationRowUrlCandidates(row) {
+  return row.evaluate((root) => {
+    const out = [];
+    const seen = new Set();
+    const add = (value, source) => {
+      const text = String(value || "").trim();
+      if (!text || seen.has(`${source}\n${text}`)) return;
+      seen.add(`${source}\n${text}`);
+      out.push({ value: text, source });
+    };
+
+    for (const node of [root, ...root.querySelectorAll("*")]) {
+      if (node.tagName === "A" && node.href) add(node.href, "row-anchor-href");
+      for (const attr of [...(node.attributes || [])]) {
+        if (!attr || !attr.value) continue;
+        if (/dzen\.ru\/(?:a\/|video\/watch\/)/i.test(attr.value)) {
+          try {
+            add(new URL(attr.value, location.href).href, `row-attr:${attr.name}`);
+          } catch {
+            add(attr.value, `row-attr:${attr.name}`);
+          }
+        }
+      }
+    }
+    return out.slice(0, 40);
+  });
+}
+
+async function armPageClipboardCapture(page) {
+  return page.evaluate(() => {
+    const KEY = "__AI_AV_CLIPBOARD_CAPTURE__";
+    const prior = window[KEY];
+    if (prior && prior.armed) {
+      prior.values = [];
+      prior.errors = [];
+      prior.armedAt = Date.now();
+      return { ok: true, reused: true, errors: prior.errors };
+    }
+
+    const state = { armed: true, armedAt: Date.now(), values: [], errors: [] };
+    window[KEY] = state;
+    const record = (value, source) => {
+      const text = String(value || "").trim();
+      if (!text) return;
+      state.values.push({ value: text, source, at: Date.now() });
+      if (state.values.length > 30) state.values.splice(0, state.values.length - 30);
+    };
+
+    document.addEventListener("copy", (event) => {
+      try {
+        const direct = event && event.clipboardData
+          ? event.clipboardData.getData("text/plain")
+          : "";
+        record(
+          direct || String(window.getSelection ? window.getSelection() : ""),
+          "copy-event"
+        );
+      } catch (error) {
+        state.errors.push(
+          `copy-event:${error && error.message ? error.message : error}`
+        );
+      }
+    }, true);
+
+    const clipboard = navigator.clipboard;
+    if (clipboard) {
+      try {
+        if (typeof clipboard.writeText === "function") {
+          const originalWriteText = clipboard.writeText.bind(clipboard);
+          const wrappedWriteText = (value) => {
+            record(value, "navigator.clipboard.writeText");
+            return originalWriteText(value);
+          };
+          try {
+            Object.defineProperty(clipboard, "writeText", {
+              configurable: true,
+              value: wrappedWriteText,
+            });
+          } catch {
+            clipboard.writeText = wrappedWriteText;
+          }
+        }
+      } catch (error) {
+        state.errors.push(
+          `writeText-hook:${error && error.message ? error.message : error}`
+        );
+      }
+
+      try {
+        if (typeof clipboard.write === "function") {
+          const originalWrite = clipboard.write.bind(clipboard);
+          const wrappedWrite = (items) => {
+            try {
+              for (const item of Array.from(items || [])) {
+                if (!item || !Array.from(item.types || []).includes("text/plain")) continue;
+                Promise.resolve(item.getType("text/plain"))
+                  .then((blob) => blob.text())
+                  .then((text) => record(text, "navigator.clipboard.write:text/plain"))
+                  .catch((error) => state.errors.push(
+                    `clipboard-item:${error && error.message ? error.message : error}`
+                  ));
+              }
+            } catch (error) {
+              state.errors.push(
+                `write-hook-capture:${error && error.message ? error.message : error}`
+              );
+            }
+            return originalWrite(items);
+          };
+          try {
+            Object.defineProperty(clipboard, "write", {
+              configurable: true,
+              value: wrappedWrite,
+            });
+          } catch {
+            clipboard.write = wrappedWrite;
+          }
+        }
+      } catch (error) {
+        state.errors.push(
+          `write-hook:${error && error.message ? error.message : error}`
+        );
+      }
+    }
+
+    return { ok: true, reused: false, errors: state.errors.slice() };
+  });
+}
+
+async function readPageClipboardCapture(page) {
+  return page.evaluate(() => {
+    const state = window.__AI_AV_CLIPBOARD_CAPTURE__;
+    if (!state) return { values: [], errors: ["capture-not-armed"] };
+    return {
+      values: Array.isArray(state.values) ? state.values.slice(-30) : [],
+      errors: Array.isArray(state.errors) ? state.errors.slice(-20) : [],
+    };
+  });
 }
 
 async function openPublications(page) {
@@ -433,22 +593,72 @@ async function openRowMenuAction(page, row, actionText, options = {}) {
   return after[0] || page;
 }
 
-async function copyPublicationUrl(page, row, kind) {
-  const before = await readClipboardText();
+async function copyPublicationUrl(page, row, kind, logger) {
+  const directCandidates = await collectPublicationRowUrlCandidates(row).catch(() => []);
+  const direct = expectedPublicationUrlFromCandidates(directCandidates, kind);
+  if (direct) {
+    if (logger) {
+      logger.log(
+        `Public ${kind} URL получен напрямую из same-day Studio row (${direct.source}), clipboard не требуется.`
+      );
+    }
+    return direct.value;
+  }
+
+  const captureArm = await armPageClipboardCapture(page).catch((error) => ({
+    ok: false,
+    errors: [`capture-arm:${error && error.message ? error.message : error}`],
+  }));
+
+  let before = "";
+  let beforeReadError = null;
+  try {
+    before = (await readClipboardText()).trim();
+  } catch (error) {
+    beforeReadError = error && error.message ? error.message : String(error);
+  }
+
   await openRowMenuAction(page, row, "Скопировать ссылку");
-  const pattern = kind === "video"
-    ? /^https:\/\/dzen\.ru\/video\/watch\/[A-Za-z0-9_-]+(?:[?#].*)?$/
-    : /^https:\/\/dzen\.ru\/a\/[A-Za-z0-9_-]+(?:[?#].*)?$/;
+  const pattern = expectedPublicationUrlPattern(kind);
   const deadline = Date.now() + 8_000;
+  let lastPageCapture = { values: [], errors: captureArm.errors || [] };
+  let lastClipboard = before;
+  let lastClipboardError = beforeReadError;
+
   while (Date.now() < deadline) {
-    const value = (await readClipboardText()).trim();
-    if (pattern.test(value)) return value;
+    lastPageCapture = await readPageClipboardCapture(page).catch((error) => ({
+      values: [],
+      errors: [`capture-read:${error && error.message ? error.message : error}`],
+    }));
+    const captured = expectedPublicationUrlFromCandidates(lastPageCapture.values, kind);
+    if (captured) {
+      if (logger) {
+        logger.log(
+          `Public ${kind} URL перехвачен в browser page (${captured.source}); OS clipboard не используется как источник истины.`
+        );
+      }
+      return captured.value;
+    }
+
+    try {
+      const value = (await readClipboardText()).trim();
+      lastClipboard = value;
+      lastClipboardError = null;
+      if (pattern.test(value) && (!pattern.test(before) || value !== before)) {
+        if (logger) logger.log(`Public ${kind} URL подтверждён через Windows clipboard.`);
+        return value;
+      }
+    } catch (error) {
+      lastClipboardError = error && error.message ? error.message : String(error);
+    }
+
     await page.waitForTimeout(200);
   }
-  const after = await readClipboardText();
+
   throw new Error(
-    `«Скопировать ссылку» не положил в clipboard ожидаемый ${kind} URL. ` +
-    `clipboardBefore=${JSON.stringify(before.slice(0, 80))}; clipboardAfter=${JSON.stringify(after.slice(0, 120))}`
+    `«Скопировать ссылку» не дало ожидаемый ${kind} URL ни через Studio DOM/page-capture, ни через Windows clipboard. ` +
+    `clipboardBefore=${JSON.stringify(before.slice(0, 80))}; clipboardAfter=${JSON.stringify(lastClipboard.slice(0, 120))}; ` +
+    `clipboardError=${JSON.stringify(lastClipboardError)}; pageCaptureErrors=${JSON.stringify((lastPageCapture.errors || []).slice(-5))}`
   );
 }
 
@@ -1035,9 +1245,23 @@ async function detectVideoPreviewBetween(page, videoUrl) {
   }, { headingText: HEADING_TEXT, anchorText: ANCHOR_TEXT, videoUrl });
 }
 
-async function pasteVideoAndWaitForPreview(page, videoUrl, logger) {
+async function prepareVideoClipboard(videoUrl, logger) {
   await writeClipboardText(videoUrl);
-  logger.log("Video URL помещён в Windows clipboard; выполняю реальный Ctrl+V.");
+  const readBack = (await readClipboardText()).trim();
+  if (readBack !== videoUrl) {
+    throw new Error(
+      `Windows clipboard не подтвердил video URL до изменения статьи. ` +
+      `expected=${JSON.stringify(videoUrl)}; actual=${JSON.stringify(readBack.slice(0, 160))}`
+    );
+  }
+  logger.log("Windows clipboard заранее подтверждён для video paste; editor ещё не изменён.");
+}
+
+async function pasteVideoAndWaitForPreview(page, videoUrl, logger, options = {}) {
+  if (!options.clipboardPrepared) {
+    await prepareVideoClipboard(videoUrl, logger);
+  }
+  logger.log("Выполняю реальный Ctrl+V подтверждённого video URL.");
   await page.keyboard.press("Control+V");
 
   const deadline = Date.now() + PREVIEW_TIMEOUT_MS;
@@ -2198,13 +2422,13 @@ async function resolveLinks(page, dateKey, logger) {
   await openPublications(page);
   await ensurePublicationFilter(page, "Статьи");
   const articleRow = await findPublicationRow(page, dateKey, "article", logger);
-  const articleUrl = await copyPublicationUrl(page, articleRow, "article");
+  const articleUrl = await copyPublicationUrl(page, articleRow, "article", logger);
   logger.log(`Article URL получен через «Скопировать ссылку»: ${articleUrl}`);
 
   await openPublications(page);
   await ensurePublicationFilter(page, "Видео");
   const videoRow = await findPublicationRow(page, dateKey, "video", logger);
-  const videoUrl = await copyPublicationUrl(page, videoRow, "video");
+  const videoUrl = await copyPublicationUrl(page, videoRow, "video", logger);
   logger.log(`Video URL получен через «Скопировать ссылку»: ${videoUrl}`);
 
   return { articleUrl, videoUrl };
@@ -2286,6 +2510,70 @@ async function runVerificationOnly(page, config, state, job, logger) {
     lastError: null,
     lastErrorAt: null,
   });
+}
+
+function isSafePreEditLinkResolutionError(av) {
+  if (!av || av.status !== "ERROR" || av.phase !== "ERROR") return false;
+  const errorText = String(av.lastError || "");
+  const linkFailure =
+    errorText.includes("Скопировать ссылку") &&
+    /(?:article|video) URL/i.test(errorText);
+  if (!linkFailure) return false;
+
+  const forbiddenMarkers = [
+    "articleUrl",
+    "videoUrl",
+    "descriptionLinkCheckedAt",
+    "publishArmedAt",
+    "publishButtonClickedAt",
+    "confirmationArmedAt",
+    "publishClickedAt",
+    "saveChangesClickedAt",
+    "verifiedAt",
+    "completedAt",
+    "existingDetectedAt",
+  ];
+  if (forbiddenMarkers.some((key) => av[key])) return false;
+  if (av.publishClicked === true) return false;
+  return true;
+}
+
+function authorizePreEditLinkRecovery(config, state, job, logger) {
+  const av = ensureArticleVideoState(job);
+  if (!isSafePreEditLinkResolutionError(av)) {
+    throw new Error(
+      "--recover-pre-edit-link-error разрешён только для ERROR/ERROR, возникшего на pre-edit «Скопировать ссылку», " +
+      "без articleUrl/videoUrl и без editor/publish markers. State не изменён."
+    );
+  }
+
+  const recoveredAt = new Date().toISOString();
+  const recoveryHistory = Array.isArray(av.recoveryHistory) ? av.recoveryHistory.slice() : [];
+  recoveryHistory.push({
+    recoveredAt,
+    fromStatus: av.status,
+    fromPhase: av.phase,
+    lastError: av.lastError || null,
+    lastErrorAt: av.lastErrorAt || null,
+    reason: "pre-edit link-resolution recovery; fail-closed proof: no resolved links, editor markers or publish markers",
+  });
+
+  updateArticleVideo(config, state, job, {
+    status: "PENDING",
+    phase: "PENDING",
+    recoveryHistory,
+    retryAuthorizedAt: recoveredAt,
+    retryReason: "pre-edit link-resolution recovery",
+    lastError: null,
+    lastErrorAt: null,
+  });
+  if (logger) {
+    logger.warn(
+      "Recovery разрешён: предыдущий ERROR был до links/editor/publish. " +
+      "State возвращён в PENDING; повторный publish click по старому инциденту невозможен."
+    );
+  }
+  return ensureArticleVideoState(job);
 }
 
 async function runApply(page, config, state, job, dateKey, logger) {
@@ -2382,9 +2670,17 @@ async function runApply(page, config, state, job, dateKey, logger) {
       "Новый heading, Enter, clipboard paste и второй embed НЕ выполняются."
     );
   } else {
+    // Fail before the first editor mutation if Windows clipboard cannot support
+    // the real Ctrl+V required for Dzen to create a video embed.
+    await prepareVideoClipboard(links.videoUrl, logger);
     const created = await createPlainHeadingBeforeAnchor(editorPage, logger);
     beforeStyle = created.beforeStyle;
-    await pasteVideoAndWaitForPreview(editorPage, links.videoUrl, logger);
+    await pasteVideoAndWaitForPreview(
+      editorPage,
+      links.videoUrl,
+      logger,
+      { clipboardPrepared: true }
+    );
 
     // Restore the operator clipboard as soon as the real video preview exists.
     // The outer finally block restores it again as a crash-safe fallback.
@@ -2490,6 +2786,31 @@ function runSelfTest() {
     throw new Error("self-test: manual second URL must be preserved");
   }
   if (!TERMINAL_STATUSES.has("ERROR")) throw new Error("self-test: ERROR must remain terminal");
+  const directArticle = expectedPublicationUrlFromCandidates(
+    [{ value: "https://dzen.ru/a/article-test", source: "row-anchor-href" }],
+    "article"
+  );
+  if (!directArticle || directArticle.value !== "https://dzen.ru/a/article-test") {
+    throw new Error("self-test: direct article URL extraction failed");
+  }
+  if (expectedPublicationUrlFromCandidates([{ value: "https://dzen.ru/a/x" }], "video")) {
+    throw new Error("self-test: article URL must not satisfy video pattern");
+  }
+  if (!isSafePreEditLinkResolutionError({
+    status: "ERROR",
+    phase: "ERROR",
+    lastError: "«Скопировать ссылку» не положил в clipboard ожидаемый article URL.",
+  })) {
+    throw new Error("self-test: safe pre-edit link recovery classification failed");
+  }
+  if (isSafePreEditLinkResolutionError({
+    status: "ERROR",
+    phase: "ERROR",
+    lastError: "«Скопировать ссылку» не положил в clipboard ожидаемый article URL.",
+    publishArmedAt: "2026-01-01T00:00:00.000Z",
+  })) {
+    throw new Error("self-test: publish marker must block pre-edit link recovery");
+  }
   if (!/^(?:H\s*2|Heading\s*2|Заголовок\s*2)$/i.test("Heading 2")) {
     throw new Error("self-test: live Dzen aria Heading 2 recognition failed");
   }
@@ -2543,6 +2864,7 @@ async function main() {
   try {
     if (!fs.existsSync(CONFIG_PATH)) throw new Error(`Не найден config.json: ${CONFIG_PATH}`);
     config = loadJson(CONFIG_PATH);
+    if (args.visible) config.minimizeBrowserWindow = false;
     logger = createLogger(config);
     state = history.loadActiveState(config);
 
@@ -2553,6 +2875,19 @@ async function main() {
     if (!job) throw new Error(`В active state или archive не найден job за ${dateKey}.`);
     if (resolvedJob.source === "archive") {
       logger.log(`Job за ${dateKey} загружен из JSON-архива для явной операторской операции.`);
+    }
+    if (args.visible) {
+      logger.warn(
+        "--visible: роботизированный Яндекс.Браузер будет запущен несвёрнутым для incident diagnostics/recovery."
+      );
+    }
+    if (args.recoverPreEditLinkError) {
+      if (!args.apply) {
+        throw new Error(
+          "--recover-pre-edit-link-error требует --apply: recovery является изменением state."
+        );
+      }
+      authorizePreEditLinkRecovery(config, state, job, logger);
     }
 
     const av = ensureArticleVideoState(job);
@@ -2638,6 +2973,8 @@ module.exports = {
   findJobForDate,
   formatRussianLongDate,
   headingMatchesOracle,
+  expectedPublicationUrlFromCandidates,
+  isSafePreEditLinkResolutionError,
   main,
   parseDateKey,
   planDescriptionArticleUrlUpdate,
