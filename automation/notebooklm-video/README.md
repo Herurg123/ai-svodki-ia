@@ -273,7 +273,7 @@ run-dzen-collections-apply.cmd --date=YYYY-MM-DD
 Четвёртая фаза запускается только после `dzenAutomation=PUBLISHED` и
 `dzenCollections=COMPLETE`. Она универсальна по дате: `full-worker.js`
 передаёт дату выбранного job, а `dzen-article-video.js` сам получает public URL
-same-day статьи и видео через Studio. URL сначала ищется прямо в same-day row/DOM, затем перехватывается page-side clipboard write/copy, и только последним fallback используется Windows clipboard.
+same-day статьи и видео через Studio. URL сначала ищется прямо в same-day row/DOM, затем перехватывается page-side clipboard write/copy, и только последним fallback используется Windows clipboard. Пустой исходный Windows clipboard корректно восстанавливается через Clipboard.Clear(); ошибка восстановления clipboard после уже подтверждённого embed логируется как warning и не обрывает content flow.
 
 Перед любым редактированием resolved article URL синхронизируется с
 `downloads/_ИИ-Сводка.txt` только если в блоке `Этот выпуск:` второй bullet
@@ -306,7 +306,7 @@ Editor flow:
 После `PUBLISH_ARMED`, `CONFIRMATION_ARMED` или `CLICKED_UNVERIFIED`
 повторная mutation запрещена: разрешена только публичная verification. Если exact
 H2 `Видеосводка` уже существует до изменений, этап завершает
-`SKIPPED_EXISTING` без publish click. `ERROR` не ретраится автоматически, кроме одного fail-closed scheduled recovery для pre-edit link-resolution ошибки без resolved links/editor/publish markers и без уже использованного recovery.
+`SKIPPED_EXISTING` без publish click. `ERROR` не ретраится автоматически, кроме двух узких one-shot fail-closed recovery-классов: pre-edit link-resolution без resolved links/editor/publish markers и pre-publish clipboard error с resolved links, но без publish markers. Во втором случае live draft обязательно инспектируется: уже существующий plain `Видеосводка` + подтверждённый video preview возобновляется только с H2 formatting, без второго embed.
 
 Ручные стабильные entrypoints:
 
