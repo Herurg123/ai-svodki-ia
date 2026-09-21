@@ -124,6 +124,15 @@ function canAutoRecoverPreEditLinkError(job) {
   );
 }
 
+function canAutoRecoverPrePublishClipboardError(job) {
+  const av = job && job.dzenArticleVideo;
+  if (!articleVideo.isSafePrePublishClipboardError(av)) return false;
+  const history = Array.isArray(av.recoveryHistory) ? av.recoveryHistory : [];
+  return !history.some((entry) =>
+    /pre-publish clipboard recovery/i.test(String(entry && entry.reason || ""))
+  );
+}
+
 async function main() {
   let config = null;
   let lockHandle = null;
@@ -249,10 +258,36 @@ async function main() {
             error
           );
         }
+      } else if (avStatus === "ERROR" && canAutoRecoverPrePublishClipboardError(refreshedJob)) {
+        log(
+          config,
+          `Фаза 4/4: обнаружен безопасный clipboard-related ERROR до publish с resolved links и без publish markers. ` +
+          `Разрешаю ОДИН автоматический recovery за ${job.date}; live editor будет проверен до любой новой mutation.`
+        );
+        try {
+          await runNodeScript(
+            "dzen-article-video.js",
+            ["--apply", `--date=${job.date}`, "--recover-prepublish-clipboard-error"]
+          );
+          const afterRecovery = loadJson(config.stateFile, { jobs: {} });
+          const afterRecoveryJob = collections.findJobForDate(afterRecovery, job.date);
+          log(
+            config,
+            `Фаза 4/4 clipboard recovery завершена: dzenArticleVideo.status=${articleVideoStatus(afterRecoveryJob)}; ` +
+            `phase=${articleVideoPhase(afterRecoveryJob)}.`
+          );
+        } catch (error) {
+          articleVideoError = error;
+          fatalLog(
+            config,
+            `Фаза 4/4 safe clipboard recovery завершилась ошибкой: ${error.message}`,
+            error
+          );
+        }
       } else if (avStatus === "ERROR") {
         articleVideoError = new Error(
           `dzenArticleVideo.status=ERROR; автоматический retry запрещён ` +
-          `(phase=${avPhase}). Safe pre-edit recovery недоступен или уже использован; требуется явный incident recovery.`
+          `(phase=${avPhase}). Safe recovery недоступен или уже использован; требуется явный incident recovery.`
         );
         fatalLog(config, `Фаза 4/4 заблокирована: ${articleVideoError.message}`, articleVideoError);
       } else {
@@ -301,6 +336,7 @@ module.exports = {
   articleVideoPhase,
   articleVideoStatus,
   canAutoRecoverPreEditLinkError,
+  canAutoRecoverPrePublishClipboardError,
   main,
   releaseFullWorkerLock,
   runNodeScript,
