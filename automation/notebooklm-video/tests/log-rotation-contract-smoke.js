@@ -39,7 +39,12 @@ function configFor(dir) {
   );
 
   assert.equal(result.rotated, true);
-  assert.ok(fs.existsSync(path.join(dir, "logs", "worker-2026-09-19.log")));
+  assert.ok(fs.existsSync(path.join(dir, "archive", "worker-2026-09-19.log")));
+  assert.equal(
+    logs.getRotationConfig(config).archiveDir,
+    path.join(dir, "archive"),
+    "legacy default logs path must transparently resolve to shared archive"
+  );
   assert.equal(fs.existsSync(config.regularLog), false);
 })();
 
@@ -78,7 +83,7 @@ function configFor(dir) {
   const text = fs.readFileSync(config.regularLog, "utf8");
   assert.match(text, /06:40:02/);
   assert.match(text, /06:55:30/);
-  assert.equal(fs.existsSync(path.join(dir, "logs", "worker-2026-09-21.log")), false);
+  assert.equal(fs.existsSync(path.join(dir, "archive", "worker-2026-09-21.log")), false);
 })();
 
 (function untouchedRunnerCurrentDayLineIsPreservedActive() {
@@ -115,6 +120,75 @@ function configFor(dir) {
     new Date("2026-09-21T03:55:00Z")
   );
   assert.equal(second.rotated, false);
+})();
+
+(function legacyLogArchivesMigrateIntoSharedArchiveWithoutTouchingJson() {
+  const dir = tempDir("log-migrate");
+  const config = configFor(dir);
+  const legacyDir = path.join(dir, "logs");
+  const archiveDir = path.join(dir, "archive");
+  fs.mkdirSync(legacyDir, { recursive: true });
+  fs.mkdirSync(archiveDir, { recursive: true });
+
+  fs.writeFileSync(path.join(legacyDir, "worker-2026-09-18.log"), "old worker", "utf8");
+  fs.writeFileSync(path.join(legacyDir, "error-2026-09-17.log"), "old error", "utf8");
+  fs.writeFileSync(
+    path.join(legacyDir, ".rotation-state.json"),
+    JSON.stringify({ version: 1, workerDate: "2026-09-18" }),
+    "utf8"
+  );
+  fs.writeFileSync(
+    path.join(archiveDir, "state-2026-09.json"),
+    JSON.stringify({ version: 1, jobs: { keep: true } }),
+    "utf8"
+  );
+  fs.writeFileSync(
+    path.join(archiveDir, "downloaded-videos-2026-09.json"),
+    JSON.stringify({ version: 1, videos: [{ publicationUrl: "keep" }] }),
+    "utf8"
+  );
+
+  const result = logs.performLogMaintenance(
+    config,
+    new Date("2026-09-21T04:00:00Z")
+  );
+
+  assert.equal(result.migratedLegacyLogFiles, 2);
+  assert.equal(result.removedLegacySidecar, true);
+  assert.equal(result.removedLegacyLogDir, true);
+  assert.ok(fs.existsSync(path.join(archiveDir, "worker-2026-09-18.log")));
+  assert.ok(fs.existsSync(path.join(archiveDir, "error-2026-09-17.log")));
+  assert.ok(fs.existsSync(path.join(archiveDir, "state-2026-09.json")));
+  assert.ok(fs.existsSync(path.join(archiveDir, "downloaded-videos-2026-09.json")));
+  assert.equal(fs.existsSync(legacyDir), false);
+})();
+
+(function logCleanupIgnoresJsonHistoryInSharedArchive() {
+  const dir = tempDir("log-cleanup-json");
+  const config = configFor(dir);
+  const archiveDir = path.join(dir, "archive");
+  fs.mkdirSync(archiveDir, { recursive: true });
+  fs.writeFileSync(path.join(archiveDir, "worker-2026-09-01.log"), "expired", "utf8");
+  fs.writeFileSync(
+    path.join(archiveDir, "state-2026-08.json"),
+    JSON.stringify({ version: 1, jobs: { old: true } }),
+    "utf8"
+  );
+  fs.writeFileSync(
+    path.join(archiveDir, "downloaded-videos-2026-08.json"),
+    JSON.stringify({ version: 1, videos: [{ publicationUrl: "old" }] }),
+    "utf8"
+  );
+
+  const result = logs.cleanupOldLogArchives(
+    config,
+    new Date("2026-09-21T04:00:00Z")
+  );
+
+  assert.equal(result.deletedFiles, 1);
+  assert.equal(fs.existsSync(path.join(archiveDir, "worker-2026-09-01.log")), false);
+  assert.ok(fs.existsSync(path.join(archiveDir, "state-2026-08.json")));
+  assert.ok(fs.existsSync(path.join(archiveDir, "downloaded-videos-2026-08.json")));
 })();
 
 (function staleLegacySidecarCannotForceSameDayRotation() {
