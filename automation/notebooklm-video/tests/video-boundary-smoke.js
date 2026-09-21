@@ -20,6 +20,17 @@ assert.strictEqual(
 );
 
 const worker = read("worker.js");
+assert.strictEqual(
+  Object.prototype.hasOwnProperty.call(config, "tempDir"),
+  false,
+  "unused tempDir must not be provisioned in fresh config"
+);
+assert.strictEqual(
+  Object.prototype.hasOwnProperty.call(config, "tracesDir"),
+  false,
+  "unused tracesDir must not be provisioned in fresh config"
+);
+
 assert.match(
   worker,
   /config\.ftpUpload\.remoteDir\s*!==\s*["']video["']/,
@@ -34,6 +45,11 @@ assert.match(
   worker,
   /ai-svodka|remoteFilenamePrefix/,
   "worker must keep deterministic remote media naming"
+);
+assert.doesNotMatch(
+  worker,
+  /config\.tempDir|config\.tracesDir/,
+  "worker startup must not create unused temp/traces directories"
 );
 
 const generateButtonPattern = /^Сгенерировать(?: сейчас)?$/i;

@@ -117,11 +117,10 @@ downloadDir
 screenshotsDir
   Каталог диагностических скриншотов при ошибках.
 
-tracesDir
-  Каталог трассировок Playwright, если они создаются диагностикой.
-
-tempDir
-  Временные файлы worker.js.
+Папки temp и traces
+  Активный runtime их не использует и больше не создаёт. Старые пустые
+  каталоги temp\ и traces\ можно удалить вручную. В свежем config.json
+  параметры tempDir/tracesDir отсутствуют.
 
 regularLog
   Обычный журнал работы worker.log.
@@ -157,9 +156,11 @@ logRotation.archiveDir
 
   При нескольких size-rotation в один день добавляется порядковый номер.
 
-  Служебный logs/.rotation-state.json хранит логическую дату streams и не
-  является журналом пользователя. Он нужен в том числе потому, что
-  dzen-browser-runner.js пока намеренно сохраняет прежнюю прямую запись.
+  Отдельный rotation sidecar не используется. Граница суток определяется
+  по timestamp уже записанных строк, поэтому повторные запуски одного дня
+  не должны уезжать в архив. Если dzen-browser-runner.js первым записал
+  current-day строку в старый active log, shared logger сохраняет эту строку
+  и весь current-day suffix активными, архивируя только более старый префикс.
 
 logRotation.workerRetentionDays
   Сколько календарных дней хранить архивы обычного worker.log.
@@ -395,7 +396,17 @@ Dzen collections state:
   PUBLISH_ARMED, CONFIRMATION_ARMED и CLICKED_UNVERIFIED =
   verification-only: повторный editor/publish/save click запрещён.
   COMPLETE и SKIPPED_EXISTING больше не открывают browser.
-  ERROR является terminal и не ретраится автоматически.
+  ERROR является terminal по умолчанию. Разрешены два узких one-shot
+  fail-closed scheduled recovery-класса:
+    1) pre-edit ошибка получения public URL без resolved links/editor/publish markers;
+    2) clipboard-related ошибка до publish с resolved article/video URL, но без
+       publish/terminal markers. Во втором случае editor сначала инспектируется:
+       partial heading + подтверждённый embed продолжаются без повторной вставки.
+  Каждый класс может быть использован только один раз. Ошибки после publish arm/click
+  остаются manual-only.
+
+  Пустой исходный Windows clipboard поддерживается: для восстановления пустого
+  clipboard используется Clipboard.Clear(), а не Set-Clipboard -Value "".
 
   Перед редактированием статьи resolved public article URL записывается в
   downloads\_ИИ-Сводка.txt только вместо exact второй строки-заглушки:

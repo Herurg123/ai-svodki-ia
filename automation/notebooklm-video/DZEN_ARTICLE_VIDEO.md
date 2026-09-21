@@ -21,7 +21,7 @@ NotebookLM/MP4/PNG/FTP
 
 - `job.dzenAutomation.status=PUBLISHED`;
 - `job.dzenCollections.status=COMPLETE`;
-- отсутствии terminal `dzenArticleVideo=COMPLETE|SKIPPED_EXISTING|ERROR`.
+- отсутствии terminal `dzenArticleVideo=COMPLETE|SKIPPED_EXISTING`; `ERROR` допускается только для отдельного guarded recovery path, описанного ниже.
 
 ## Универсальный same-day flow
 
@@ -32,10 +32,10 @@ job; ручной запуск без `--date` использует текущу
 
 1. Studio -> `Публикации` -> `Статьи` и находит exact заголовок
    `ИИ-Сводка на <дата>`.
-2. Через `Скопировать ссылку` получает public article URL.
+2. Получает public article URL из same-day Studio row: сначала DOM/href/attributes, затем page-side capture операции `Скопировать ссылку`, и только затем Windows clipboard fallback.
 3. Studio -> `Видео` и находит exact заголовок
    `ИИ-Сводка на <дата> | Подпишись, чтоб получать свежее!`.
-4. Через `Скопировать ссылку` получает public video URL.
+4. Тем же fail-closed способом получает public video URL.
 5. Синхронизирует article URL в `downloads/_ИИ-Сводка.txt` только когда в блоке
    `Этот выпуск:` второй bullet всё ещё является exact placeholder
    `- https://` (или configured `descriptionSecondUrlPlaceholder`).
@@ -99,8 +99,9 @@ verification-only. После неопределённого результат�
 Если exact H2 `Видеосводка` уже существует до изменений, runtime ничего не
 меняет и фиксирует `SKIPPED_EXISTING`.
 
-`ERROR` terminal и не разрешает автоматический retry. Recovery конкретного
-инцидента сначала обязан доказать, что повторная mutation безопасна.
+`ERROR` terminal и не разрешает обычный automatic retry. Есть два узких one-shot scheduled recovery-класса: (1) `--recover-pre-edit-link-error` только для pre-edit link-resolution ERROR без resolved URLs/editor/publish markers; (2) `--recover-prepublish-clipboard-error` только для clipboard-related ERROR с уже resolved article/video URL и без publish/terminal markers. Второй путь всегда заново открывает editor и до новой mutation применяет live inspection: CLEAN допускает обычную вставку, RESUMABLE_PARTIAL продолжает только с форматирования H2 без второго embed, неоднозначное состояние fail-closed. Каждый класс может быть использован не более одного раза. Любая неопределённость после publish arm/click остаётся manual-only.
+
+Перед первой mutation editor Windows clipboard отдельно preflight-проверяется записью/чтением exact video URL. Если clipboard не работает, статья ещё не изменена и этап падает безопасно. Пустой исходный clipboard восстанавливается через `System.Windows.Forms.Clipboard::Clear()`, а не через `Set-Clipboard -Value ""`, потому что Windows PowerShell отклоняет пустую строку. После подтверждённого embed восстановление пользовательского clipboard является best-effort и не имеет права превращать уже созданный draft в terminal content error.
 
 ## Live acceptance 2026-09-20
 
@@ -115,8 +116,7 @@ verification-only. После неопределённого результат�
 - public verification подтвердила требуемый порядок;
 - state завершился `COMPLETE/VERIFIED`.
 
-Incident-only recovery/reset/retest entrypoints, использованные при разработке,
-не входят в production source и не должны переноситься в обычный runtime.
+Incident-only reset/retest entrypoints, использованные при разработке, не входят в production source. Guarded `--recover-pre-edit-link-error` является production recovery-механизмом и используется `full-worker.js` только один раз при доказанно безопасном pre-edit link-resolution ERROR.
 
 ## Ручные entrypoints
 

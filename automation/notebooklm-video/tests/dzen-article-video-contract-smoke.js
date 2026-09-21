@@ -46,6 +46,65 @@ for (const status of ["COMPLETE", "SKIPPED_EXISTING", "ERROR"]) {
   assert(articleVideo.TERMINAL_STATUSES.has(status), `${status} must be terminal`);
 }
 
+const directArticle = articleVideo.expectedPublicationUrlFromCandidates(
+  [{ value: "https://dzen.ru/a/article-test", source: "row-anchor-href" }],
+  "article"
+);
+assert.strictEqual(directArticle.value, "https://dzen.ru/a/article-test");
+assert.strictEqual(
+  articleVideo.expectedPublicationUrlFromCandidates(
+    [{ value: "https://dzen.ru/a/not-video", source: "row-anchor-href" }],
+    "video"
+  ),
+  null
+);
+assert.strictEqual(
+  articleVideo.isSafePreEditLinkResolutionError({
+    status: "ERROR",
+    phase: "ERROR",
+    lastError: "«Скопировать ссылку» не положил в clipboard ожидаемый article URL.",
+  }),
+  true
+);
+assert.strictEqual(
+  articleVideo.isSafePreEditLinkResolutionError({
+    status: "ERROR",
+    phase: "ERROR",
+    lastError: "«Скопировать ссылку» не положил в clipboard ожидаемый article URL.",
+    saveChangesClickedAt: "2026-09-21T00:00:00.000Z",
+  }),
+  false
+);
+
+const emptyClipboardCommand = articleVideo.buildClipboardWriteCommand("");
+assert.match(emptyClipboardCommand, /Clipboard\]::Clear\(\)/);
+assert.doesNotMatch(emptyClipboardCommand, /Set-Clipboard -Value/);
+
+const nonEmptyClipboardCommand = articleVideo.buildClipboardWriteCommand("abc");
+assert.match(nonEmptyClipboardCommand, /Set-Clipboard -Value \$v/);
+
+assert.strictEqual(
+  articleVideo.isSafePrePublishClipboardError({
+    status: "ERROR",
+    phase: "ERROR",
+    articleUrl: "https://dzen.ru/a/article-test",
+    videoUrl: "https://dzen.ru/video/watch/video-test",
+    lastError: "Set-Clipboard : Value cannot be null. ArgumentNullException",
+  }),
+  true
+);
+assert.strictEqual(
+  articleVideo.isSafePrePublishClipboardError({
+    status: "ERROR",
+    phase: "ERROR",
+    articleUrl: "https://dzen.ru/a/article-test",
+    videoUrl: "https://dzen.ru/video/watch/video-test",
+    lastError: "Set-Clipboard : Value cannot be null. ArgumentNullException",
+    publishArmedAt: "2026-09-21T00:00:00.000Z",
+  }),
+  false
+);
+
 const baseDescription = [
   "ИИ-Сводка на 3 января 2027 | Подпишись, чтоб получать свежее!",
   "",
@@ -135,6 +194,12 @@ for (const required of [
   "AUTOSAVE_STABLE_MS = 8_000",
   "POST-CONFIRM: после «Сохранить изменения» началась навигация",
   "Публичная verification подтверждена",
+  "Public ${kind} URL получен напрямую из same-day Studio row",
+  "--recover-pre-edit-link-error",
+  "--recover-prepublish-clipboard-error",
+  "Windows clipboard заранее подтверждён для video paste",
+  "Clipboard]::Clear()",
+  "videoEmbedConfirmedAt",
 ]) {
   assert(source.includes(required), `missing article-video contract marker: ${required}`);
 }

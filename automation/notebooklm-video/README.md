@@ -73,13 +73,13 @@ RSS rybalka.one
   exact заглушку `- https://` на resolved Dzen article URL;
 - FTP-доставка идемпотентна и не запускает повторную генерацию/скачивание;
 - worker работает на FTP только внутри `video` и не изменяет остальные файлы;
-- общий `worker.log` ротируется до первой shared-writer записи нового дня и хранится 7 дней, error-log — 30 дней; `dzen-browser-runner.js` пока остаётся на прежней прямой записи, а sidecar в `logs/` не даёт ей скрыть границу суток;
+- общий `worker.log` ротируется до первой shared-writer записи нового дня и хранится 7 дней, error-log — 30 дней; граница суток определяется по timestamp записей, поэтому повторные запуски в тот же день остаются в одном active log. `dzen-browser-runner.js` пока остаётся на прямой записи; если он первым пишет current-day строку в старый файл, shared logger архивирует только старый префикс и сохраняет current-day suffix;
 - активные `state.json` и `_СКАЧАННЫЕ_ВИДЕО.json` держат 14 календарных дней; более старая безопасно завершённая история уходит в бессрочный локальный `archive/`, незавершённые jobs остаются active, а архив реестра продолжает участвовать в idempotency lookup;
 - принудительное сворачивание Яндекс.Браузера управляется конфигурацией;
 - завершённые Dzen-подборки фиксируются в `state.json`, поэтому browser для этого
   этапа не открывается снова после полного подтверждения;
-- `dzenArticleVideo=COMPLETE|SKIPPED_EXISTING` также не открывает browser снова,
-  а `ERROR` остаётся terminal и требует отдельного incident recovery.
+- `dzenArticleVideo=COMPLETE|SKIPPED_EXISTING` также не открывает browser снова. `ERROR` остаётся terminal по умолчанию; единственное исключение — один scheduled recovery для доказанного pre-edit link-resolution сбоя без resolved links/editor/publish markers. Повторный такой recovery и любые post-edit/post-click ошибки остаются manual-only;
+- пустые `temp/` и `traces/` больше не создаются: active runtime их не использует.
 
 ## Локальная ротация логов и JSON-history
 
@@ -88,10 +88,11 @@ RSS rybalka.one
 logger процессов. Поэтому внешний `full-worker.js` больше не может обновить
 `mtime` вчерашнего файла и тем самым скрыть смену суток от `worker.js`.
 `worker.log` хранится 7 дней, error-log 30 дней, размерный порог остаётся 25 МБ.
-`dzen-browser-runner.js` в этой миграции намеренно не менялся; локальный
-`logs/.rotation-state.json` хранит логическую дату потока и позволяет следующему
-shared writer корректно выполнить boundary rotation даже после прямой записи
-runner.
+`dzen-browser-runner.js` намеренно не меняется и остаётся прямым writer. `log-utils.js`
+не использует mutable sidecar для определения дня: он читает timestamp уже записанных
+строк. Если runner успел первым записать строку нового дня в вчерашний файл, следующий
+shared writer архивирует только старый префикс, оставляя current-day suffix в active log.
+Повторный запуск в тот же день не выполняет повторную day-rotation.
 
 `history-utils.js` держит активное окно 14 календарных дней. Более старые
 безопасно завершённые jobs из `state.json` переходят в
@@ -113,7 +114,7 @@ runner.
 FTP), затем Dzen publish после выбора самого свежего локального `DONE` job с датой
 не позже текущей. После подтверждённого `PUBLISHED` внешний worker выполняет
 третью фазу подборок, а после её `COMPLETE` — четвёртую фазу вставки видео в
-same-day статью. Отдельные задачи Планировщика Windows для этих Dzen-этапов не нужны.
+same-day статью. Если предыдущий article-video ERROR доказанно возник только на pre-edit получении public URL и state не содержит editor/publish markers, `full-worker.js` один раз запускает guarded recovery; повторный такой автоматический recovery запрещён. Отдельные задачи Планировщика Windows для этих Dzen-этапов не нужны.
 
 После успешного `worker.js` выбирается самый свежий `DONE` job с датой не позже
 текущей локальной даты. Поэтому delayed/catch-up выпуск предыдущего дня не
@@ -272,7 +273,7 @@ run-dzen-collections-apply.cmd --date=YYYY-MM-DD
 Четвёртая фаза запускается только после `dzenAutomation=PUBLISHED` и
 `dzenCollections=COMPLETE`. Она универсальна по дате: `full-worker.js`
 передаёт дату выбранного job, а `dzen-article-video.js` сам получает public URL
-same-day статьи и видео через Studio `Скопировать ссылку`.
+same-day статьи и видео через Studio. URL сначала ищется прямо в same-day row/DOM, затем перехватывается page-side clipboard write/copy, и только последним fallback используется Windows clipboard. Пустой исходный Windows clipboard корректно восстанавливается через Clipboard.Clear(); ошибка восстановления clipboard после уже подтверждённого embed логируется как warning и не обрывает content flow.
 
 Перед любым редактированием resolved article URL синхронизируется с
 `downloads/_ИИ-Сводка.txt` только если в блоке `Этот выпуск:` второй bullet
@@ -305,7 +306,7 @@ Editor flow:
 После `PUBLISH_ARMED`, `CONFIRMATION_ARMED` или `CLICKED_UNVERIFIED`
 повторная mutation запрещена: разрешена только публичная verification. Если exact
 H2 `Видеосводка` уже существует до изменений, этап завершает
-`SKIPPED_EXISTING` без publish click. `ERROR` не ретраится автоматически.
+`SKIPPED_EXISTING` без publish click. `ERROR` не ретраится автоматически, кроме двух узких one-shot fail-closed recovery-классов: pre-edit link-resolution без resolved links/editor/publish markers и pre-publish clipboard error с resolved links, но без publish markers. Во втором случае live draft обязательно инспектируется: уже существующий plain `Видеосводка` + подтверждённый video preview возобновляется только с H2 formatting, без второго embed.
 
 Ручные стабильные entrypoints:
 
