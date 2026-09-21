@@ -78,8 +78,8 @@ RSS rybalka.one
 - принудительное сворачивание Яндекс.Браузера управляется конфигурацией;
 - завершённые Dzen-подборки фиксируются в `state.json`, поэтому browser для этого
   этапа не открывается снова после полного подтверждения;
-- `dzenArticleVideo=COMPLETE|SKIPPED_EXISTING` также не открывает browser снова,
-  а `ERROR` остаётся terminal и требует отдельного incident recovery.
+- `dzenArticleVideo=COMPLETE|SKIPPED_EXISTING` также не открывает browser снова. `ERROR` остаётся terminal по умолчанию; единственное исключение — один scheduled recovery для доказанного pre-edit link-resolution сбоя без resolved links/editor/publish markers. Повторный такой recovery и любые post-edit/post-click ошибки остаются manual-only;
+- пустые `temp/` и `traces/` больше не создаются: active runtime их не использует.
 
 ## Локальная ротация логов и JSON-history
 
@@ -114,7 +114,7 @@ shared writer архивирует только старый префикс, о�
 FTP), затем Dzen publish после выбора самого свежего локального `DONE` job с датой
 не позже текущей. После подтверждённого `PUBLISHED` внешний worker выполняет
 третью фазу подборок, а после её `COMPLETE` — четвёртую фазу вставки видео в
-same-day статью. Отдельные задачи Планировщика Windows для этих Dzen-этапов не нужны.
+same-day статью. Если предыдущий article-video ERROR доказанно возник только на pre-edit получении public URL и state не содержит editor/publish markers, `full-worker.js` один раз запускает guarded recovery; повторный такой автоматический recovery запрещён. Отдельные задачи Планировщика Windows для этих Dzen-этапов не нужны.
 
 После успешного `worker.js` выбирается самый свежий `DONE` job с датой не позже
 текущей локальной даты. Поэтому delayed/catch-up выпуск предыдущего дня не
@@ -273,7 +273,7 @@ run-dzen-collections-apply.cmd --date=YYYY-MM-DD
 Четвёртая фаза запускается только после `dzenAutomation=PUBLISHED` и
 `dzenCollections=COMPLETE`. Она универсальна по дате: `full-worker.js`
 передаёт дату выбранного job, а `dzen-article-video.js` сам получает public URL
-same-day статьи и видео через Studio `Скопировать ссылку`.
+same-day статьи и видео через Studio. URL сначала ищется прямо в same-day row/DOM, затем перехватывается page-side clipboard write/copy, и только последним fallback используется Windows clipboard.
 
 Перед любым редактированием resolved article URL синхронизируется с
 `downloads/_ИИ-Сводка.txt` только если в блоке `Этот выпуск:` второй bullet
@@ -306,7 +306,7 @@ Editor flow:
 После `PUBLISH_ARMED`, `CONFIRMATION_ARMED` или `CLICKED_UNVERIFIED`
 повторная mutation запрещена: разрешена только публичная verification. Если exact
 H2 `Видеосводка` уже существует до изменений, этап завершает
-`SKIPPED_EXISTING` без publish click. `ERROR` не ретраится автоматически.
+`SKIPPED_EXISTING` без publish click. `ERROR` не ретраится автоматически, кроме одного fail-closed scheduled recovery для pre-edit link-resolution ошибки без resolved links/editor/publish markers и без уже использованного recovery.
 
 Ручные стабильные entrypoints:
 
