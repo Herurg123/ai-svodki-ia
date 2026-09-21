@@ -99,9 +99,9 @@ verification-only. После неопределённого результат�
 Если exact H2 `Видеосводка` уже существует до изменений, runtime ничего не
 меняет и фиксирует `SKIPPED_EXISTING`.
 
-`ERROR` terminal и не разрешает обычный automatic retry. Единственное scheduled исключение: `full-worker.js` может один раз вызвать `--recover-pre-edit-link-error`, только если ошибка относится к pre-edit `Скопировать ссылку`, `phase=ERROR`, отсутствуют `articleUrl`/`videoUrl`, editor/publish markers и предыдущая запись такого recovery. Этот recovery возвращает state в `PENDING` до запуска браузера. Если он снова завершится ошибкой, следующий scheduled run уже не ретраит его автоматически. Любая неопределённость после editor/publish остаётся manual-only.
+`ERROR` terminal и не разрешает обычный automatic retry. Есть два узких one-shot scheduled recovery-класса: (1) `--recover-pre-edit-link-error` только для pre-edit link-resolution ERROR без resolved URLs/editor/publish markers; (2) `--recover-prepublish-clipboard-error` только для clipboard-related ERROR с уже resolved article/video URL и без publish/terminal markers. Второй путь всегда заново открывает editor и до новой mutation применяет live inspection: CLEAN допускает обычную вставку, RESUMABLE_PARTIAL продолжает только с форматирования H2 без второго embed, неоднозначное состояние fail-closed. Каждый класс может быть использован не более одного раза. Любая неопределённость после publish arm/click остаётся manual-only.
 
-Перед первой mutation editor Windows clipboard отдельно preflight-проверяется записью/чтением exact video URL. Если clipboard не работает, статья ещё не изменена и этап падает безопасно.
+Перед первой mutation editor Windows clipboard отдельно preflight-проверяется записью/чтением exact video URL. Если clipboard не работает, статья ещё не изменена и этап падает безопасно. Пустой исходный clipboard восстанавливается через `System.Windows.Forms.Clipboard::Clear()`, а не через `Set-Clipboard -Value ""`, потому что Windows PowerShell отклоняет пустую строку. После подтверждённого embed восстановление пользовательского clipboard является best-effort и не имеет права превращать уже созданный draft в terminal content error.
 
 ## Live acceptance 2026-09-20
 
