@@ -1,0 +1,282 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-09-21",
+  "search_window": {
+    "start_at": "2026-09-19T04:08:25+03:00",
+    "end_at": "2026-09-21T04:04:31+03:00",
+    "latest_archive_at": "2026-09-20T04:08:25+03:00",
+    "start_date": "2026-09-19",
+    "end_date": "2026-09-21",
+    "latest_archive_date": "2026-09-20"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Alibaba Qwen выпустила open-weight Qwen-Image-2.1 с нативной поддержкой прозрачности",
+      "organization": "Alibaba; Qwen",
+      "published_date": "2026-09-20",
+      "published_at": "2026-09-20T13:06:41+00:00",
+      "time_precision": "datetime",
+      "topic": "Open-weight image generation; multimodal models; transparent PNG/RGBA; image editing",
+      "event_type": "model release",
+      "keywords": [
+        "Qwen-Image-2.1",
+        "Alibaba Qwen",
+        "open weights",
+        "image generation",
+        "RGBA",
+        "transparent PNG",
+        "Qwen3-VL-8B"
+      ],
+      "geography": "world",
+      "category": "multimodal",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Qwen-Image-2.1 official release announcement",
+        "publisher": "Alibaba Qwen",
+        "url": "https://x.com/Alibaba_Qwen/status/2101659310598361194"
+      },
+      "supporting_sources": [
+        {
+          "title": "Alibaba Releases 7B Qwen-Image-2.1 With Native Transparent PNG Support",
+          "publisher": "HuggingNews",
+          "url": "https://huggingnews.com/ai/alibaba-releases-7b-qwen-image-21-with-native-transparent-png-support-5dc7fca4"
+        }
+      ],
+      "event_summary": "Alibaba Qwen объявила о выпуске Qwen-Image-2.1 — open-weight модели для генерации и редактирования изображений. По данным анонса и сводки источников, архитектура сочетает 7,1B DiT с Qwen3-VL-8B, поддерживает нативный RGBA/прозрачные PNG и до десяти референсных изображений.",
+      "verified_facts": [
+        "Официальный аккаунт Alibaba Qwen сообщил о доступности Qwen-Image-2.1 20 сентября.",
+        "Сторонняя сводка, ссылающаяся на официальный пост, описывает модель как open-weight и указывает сочетание 7,1B DiT с Qwen3-VL-8B.",
+        "В релизе заявлены нативная генерация прозрачных изображений и работа с несколькими референсными изображениями.",
+        "Лицензия релиза некоммерческая, поэтому событие следует описывать как open-weight, а не как полностью open-source."
+      ],
+      "significance": "Это самостоятельный релиз крупной лаборатории в быстро развивающемся сегменте генерации и редактирования изображений; особенно заметны открытые веса, встроенная прозрачность и заявленная готовность ключевых inference/UI-инструментов в день запуска.",
+      "significance_score": 3,
+      "limitations": "Официальный пост X не открылся напрямую из-за ограничения доступа платформы; технические детали сверены с агрегированной страницей, которая фиксирует время и содержание официального объявления. Независимые бенчмарки не проверялись.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть Qwen3.8-Omni-Flash от 17 сентября, но Qwen-Image-2.1 — отдельный новый релиз image-модели, не являющийся обновлением того же сюжета.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Дата и факт релиза подтверждаются записью официального аккаунта Alibaba Qwen, сохранённой в source pool с точным временем; агрегатор приведён только как поддерживающий источник технических деталей.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-20T13:06:41.000Z; timestamp проверен Python против effective window. Официальное объявление опубликовано 20 сентября 2026 года в 09:06 EDT, внутри effective editorial window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Релиз модели; не юридическое событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "not_applicable",
+      "event_date": "2026-09-20",
+      "event_at": "2026-09-20T09:06:00-04:00",
+      "event_time_precision": "datetime",
+      "event_origin_url": "https://x.com/Alibaba_Qwen/status/2101659310598361194",
+      "event_evidence_kind": "first_party_timestamp",
+      "event_date_evidence": "Агрегированная запись сохраняет официальный пост @Alibaba_Qwen с датой 20 сентября 2026 года и временем 09:06 EDT.",
+      "id": "cand-001",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable exact event timestamp is inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://x.com/Alibaba_Qwen/status/2101659310598361194",
+      "source_published_date": "2026-09-20",
+      "source_published_at": "2026-09-20T13:06:41+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-20T13:06:41.000Z"
+    },
+    {
+      "title": "19 сентября 2026Яндекс наградил лучших преподавателей, которые готовят ИИ-специалистов",
+      "organization": "Яндекс",
+      "published_date": "2026-09-19",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "19 сентября 2026Яндекс наградил лучших преподавателей, которые готовят ИИ-специалистов",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "19",
+        "сентября",
+        "2026Яндекс",
+        "наградил",
+        "лучших",
+        "преподавателей",
+        "которые",
+        "готовят",
+        "ИИ-специалистов"
+      ],
+      "geography": "russia",
+      "category": "investment",
+      "source_type": "official",
+      "primary_source": {
+        "title": "19 сентября 2026Яндекс наградил лучших преподавателей, которые готовят ИИ-специалистов",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=19-09-2026-01"
+      },
+      "supporting_sources": [],
+      "event_summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+      "verified_facts": [
+        "19 сентября 2026Яндекс наградил лучших преподавателей, которые готовят ИИ-специалистов",
+        "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках."
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Source Pulse v1.2 + Source Freshness Proof: meta:datepublished=2026-09-19; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: yandex:url+visible-date=19 сентября 2026; timestamp проверен Python против effective window. Source Pulse v1.2 + Source Freshness Proof: meta:datepublished=2026-09-19; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-002",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://ir.yandex.ru/press-releases?year=2026&id=19-09-2026-01",
+      "source_published_date": "2026-09-19",
+      "source_published_at": null,
+      "source_time_precision": "date",
+      "source_publication_evidence": "yandex:url+visible-date=19 сентября 2026"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=1, validated unique=1, final candidates=1. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-models_products_agents-03",
+      "version": 1,
+      "status": "unresolved",
+      "title": "StepFun Launches 600B Step 5 Preview AI Model With Oct 15 Open Weights",
+      "origin_direction": "models_products_agents",
+      "reason_code": "unverified",
+      "evidence_reason": "Событие потенциально значимо, но в доступном source pool не удалось открыть первичный релиз StepFun или иной достаточно надёжный источник, подтверждающий характеристики и origin.",
+      "likely_significance_score": 1,
+      "entities": [
+        "StepFun",
+        "Launches",
+        "Step",
+        "Preview",
+        "Model",
+        "With",
+        "Oct",
+        "Open"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

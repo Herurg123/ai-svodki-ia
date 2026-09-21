@@ -1,0 +1,72 @@
+{
+  "status": "ok",
+  "usage_attempt_id": "8ba9c7890bdf41dbb4a1d07a22142bc8",
+  "request_id": "production-image-2026-09-21",
+  "model": "gpt-image-2",
+  "endpoint": "/v1/images/generations",
+  "http_status": 200,
+  "openai_request_id": "req_9fc6f59a86984c949766a09a7260690e",
+  "source_editorial_request_id": "production-digest-2026-09-21",
+  "request": {
+    "size": "1536x864",
+    "quality": "high",
+    "output_format": "png",
+    "background": "opaque",
+    "n": 1,
+    "prompt_sha256": "809515b12d1a430d87b1d8e4749c4d02c143be424e2b453cffd501d5f529605e"
+  },
+  "response": {
+    "created": 1789953305,
+    "background": "opaque",
+    "output_format": "png",
+    "quality": "high",
+    "size": "1536x864",
+    "usage": {
+      "input_tokens": 341,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 341
+      },
+      "output_tokens": 4312,
+      "output_tokens_details": {
+        "image_tokens": 4312,
+        "text_tokens": 0
+      },
+      "total_tokens": 4653
+    },
+    "data_count": 1,
+    "revised_prompt": null
+  },
+  "cover_sha256": "ea92d9d81ff5d43a361e9a36e9d30e443cd1ef730b7be0fc0f7a3d5a99f55e04",
+  "cover_bytes": 1983471,
+  "base64_stored": false,
+  "copied_source_files": [
+    "agency-discovery-rescue-transport.json",
+    "agency-discovery-rescue.json",
+    "article.html",
+    "artifact-normalization.json",
+    "artifact-validation.json",
+    "candidates.json",
+    "digest.json",
+    "editorial-output-raw.json",
+    "editorial-output.json",
+    "editorial-prompt-input.txt",
+    "hybrid-completeness.json",
+    "image-prompt.txt",
+    "meta.json",
+    "metadata-normalization.json",
+    "policy-normalization.json",
+    "primary-recall.json",
+    "research-filtered-out.json",
+    "research-input-info.json",
+    "research-output-raw.json",
+    "research-prompt-input.txt",
+    "run-info.json",
+    "selection.json",
+    "source-pulse.json",
+    "sources.json",
+    "stories.json"
+  ],
+  "started_at": "2026-09-21T01:13:48+00:00",
+  "finished_at": "2026-09-21T01:15:05+00:00"
+}

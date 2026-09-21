@@ -1,0 +1,38 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Alibaba Qwen выпустила open-weight Qwen-Image-2.1 с нативной поддержкой прозрачности",
+    "organization": "Alibaba; Qwen",
+    "topic": "Open-weight image generation; multimodal models; transparent PNG/RGBA; image editing",
+    "event_type": "model release",
+    "status": "new",
+    "summary": "Alibaba Qwen объявила о выпуске Qwen-Image-2.1 — open-weight модели для генерации и редактирования изображений. По данным анонса и сводки источников, архитектура сочетает 7,1B DiT с Qwen3-VL-8B, поддерживает нативный RGBA/прозрачные PNG и до десяти референсных изображений.",
+    "published_at": "2026-09-20T13:06:41+00:00",
+    "published_date": "2026-09-20",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Qwen-Image-2.1 official release announcement",
+        "publisher": "Alibaba Qwen",
+        "url": "https://x.com/Alibaba_Qwen/status/2101659310598361194"
+      },
+      {
+        "title": "Alibaba Releases 7B Qwen-Image-2.1 With Native Transparent PNG Support",
+        "publisher": "HuggingNews",
+        "url": "https://huggingnews.com/ai/alibaba-releases-7b-qwen-image-21-with-native-transparent-png-support-5dc7fca4"
+      }
+    ],
+    "keywords": [
+      "Qwen-Image-2.1",
+      "Alibaba Qwen",
+      "open weights",
+      "image generation",
+      "RGBA",
+      "transparent PNG",
+      "Qwen3-VL-8B"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  }
+]
