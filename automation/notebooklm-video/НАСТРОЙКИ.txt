@@ -157,9 +157,11 @@ logRotation.archiveDir
 
   При нескольких size-rotation в один день добавляется порядковый номер.
 
-  Служебный logs/.rotation-state.json хранит логическую дату streams и не
-  является журналом пользователя. Он нужен в том числе потому, что
-  dzen-browser-runner.js пока намеренно сохраняет прежнюю прямую запись.
+  Отдельный rotation sidecar не используется. Граница суток определяется
+  по timestamp уже записанных строк, поэтому повторные запуски одного дня
+  не должны уезжать в архив. Если dzen-browser-runner.js первым записал
+  current-day строку в старый active log, shared logger сохраняет эту строку
+  и весь current-day suffix активными, архивируя только более старый префикс.
 
 logRotation.workerRetentionDays
   Сколько календарных дней хранить архивы обычного worker.log.
