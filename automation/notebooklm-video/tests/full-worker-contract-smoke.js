@@ -58,7 +58,9 @@ assert(source.includes('["COMPLETE", "SKIPPED_EXISTING"].includes(avStatus)'),
 assert(source.includes('avStatus === "ERROR" && canAutoRecoverPreEditLinkError(refreshedJob)'),
   "one proven-safe pre-edit link-resolution ERROR must have a dedicated automatic recovery branch");
 assert(source.includes('"--recover-pre-edit-link-error"'),
-  "safe scheduled recovery must invoke the guarded article-video recovery flag");
+  "safe scheduled recovery must invoke the guarded article-video link recovery flag");
+assert(source.includes('"--recover-prepublish-clipboard-error"'),
+  "safe scheduled recovery must invoke the guarded pre-publish clipboard recovery flag");
 assert(source.includes('} else if (avStatus === "ERROR")'),
   "all other terminal article-video ERROR states must still block automatic retry");
 assert(source.includes("Фаза 4/4 НЕ запускается: она разрешена только после полного успеха всех предыдущих фаз."),
@@ -102,6 +104,41 @@ assert.strictEqual(
   }),
   false,
   "any publish marker must keep automatic recovery fail-closed"
+);
+
+const safeClipboardError = {
+  dzenArticleVideo: {
+    status: "ERROR",
+    phase: "ERROR",
+    articleUrl: "https://dzen.ru/a/article-test",
+    videoUrl: "https://dzen.ru/video/watch/video-test",
+    lastError: "Set-Clipboard : Value cannot be null. ArgumentNullException",
+  },
+};
+assert.strictEqual(
+  full.canAutoRecoverPrePublishClipboardError(safeClipboardError),
+  true,
+  "pre-publish clipboard error with resolved links and no publish markers must be recoverable once"
+);
+assert.strictEqual(
+  full.canAutoRecoverPrePublishClipboardError({
+    dzenArticleVideo: {
+      ...safeClipboardError.dzenArticleVideo,
+      recoveryHistory: [{ reason: "pre-publish clipboard recovery" }],
+    },
+  }),
+  false,
+  "clipboard recovery must be at-most-once"
+);
+assert.strictEqual(
+  full.canAutoRecoverPrePublishClipboardError({
+    dzenArticleVideo: {
+      ...safeClipboardError.dzenArticleVideo,
+      saveChangesClickedAt: "2026-09-21T00:00:00.000Z",
+    },
+  }),
+  false,
+  "final publish markers must block clipboard recovery"
 );
 
 console.log("Full worker four-stage contract smoke: OK");
