@@ -396,10 +396,17 @@ Dzen collections state:
   PUBLISH_ARMED, CONFIRMATION_ARMED и CLICKED_UNVERIFIED =
   verification-only: повторный editor/publish/save click запрещён.
   COMPLETE и SKIPPED_EXISTING больше не открывают browser.
-  ERROR является terminal по умолчанию. Единственное исключение — один
-  fail-closed scheduled recovery для pre-edit ошибки получения public URL,
-  если отсутствуют resolved links/editor/publish markers и такой recovery
-  ещё не выполнялся. Любые более поздние ошибки остаются manual-only.
+  ERROR является terminal по умолчанию. Разрешены два узких one-shot
+  fail-closed scheduled recovery-класса:
+    1) pre-edit ошибка получения public URL без resolved links/editor/publish markers;
+    2) clipboard-related ошибка до publish с resolved article/video URL, но без
+       publish/terminal markers. Во втором случае editor сначала инспектируется:
+       partial heading + подтверждённый embed продолжаются без повторной вставки.
+  Каждый класс может быть использован только один раз. Ошибки после publish arm/click
+  остаются manual-only.
+
+  Пустой исходный Windows clipboard поддерживается: для восстановления пустого
+  clipboard используется Clipboard.Clear(), а не Set-Clipboard -Value "".
 
   Перед редактированием статьи resolved public article URL записывается в
   downloads\_ИИ-Сводка.txt только вместо exact второй строки-заглушки:
