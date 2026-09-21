@@ -21,7 +21,7 @@ NotebookLM/MP4/PNG/FTP
 
 - `job.dzenAutomation.status=PUBLISHED`;
 - `job.dzenCollections.status=COMPLETE`;
-- отсутствии terminal `dzenArticleVideo=COMPLETE|SKIPPED_EXISTING|ERROR`.
+- отсутствии terminal `dzenArticleVideo=COMPLETE|SKIPPED_EXISTING`; `ERROR` допускается только для отдельного guarded recovery path, описанного ниже.
 
 ## Универсальный same-day flow
 
@@ -32,10 +32,10 @@ job; ручной запуск без `--date` использует текущу
 
 1. Studio -> `Публикации` -> `Статьи` и находит exact заголовок
    `ИИ-Сводка на <дата>`.
-2. Через `Скопировать ссылку` получает public article URL.
+2. Получает public article URL из same-day Studio row: сначала DOM/href/attributes, затем page-side capture операции `Скопировать ссылку`, и только затем Windows clipboard fallback.
 3. Studio -> `Видео` и находит exact заголовок
    `ИИ-Сводка на <дата> | Подпишись, чтоб получать свежее!`.
-4. Через `Скопировать ссылку` получает public video URL.
+4. Тем же fail-closed способом получает public video URL.
 5. Синхронизирует article URL в `downloads/_ИИ-Сводка.txt` только когда в блоке
    `Этот выпуск:` второй bullet всё ещё является exact placeholder
    `- https://` (или configured `descriptionSecondUrlPlaceholder`).
@@ -99,8 +99,9 @@ verification-only. После неопределённого результат�
 Если exact H2 `Видеосводка` уже существует до изменений, runtime ничего не
 меняет и фиксирует `SKIPPED_EXISTING`.
 
-`ERROR` terminal и не разрешает автоматический retry. Recovery конкретного
-инцидента сначала обязан доказать, что повторная mutation безопасна.
+`ERROR` terminal и не разрешает обычный automatic retry. Единственное scheduled исключение: `full-worker.js` может один раз вызвать `--recover-pre-edit-link-error`, только если ошибка относится к pre-edit `Скопировать ссылку`, `phase=ERROR`, отсутствуют `articleUrl`/`videoUrl`, editor/publish markers и предыдущая запись такого recovery. Этот recovery возвращает state в `PENDING` до запуска браузера. Если он снова завершится ошибкой, следующий scheduled run уже не ретраит его автоматически. Любая неопределённость после editor/publish остаётся manual-only.
+
+Перед первой mutation editor Windows clipboard отдельно preflight-проверяется записью/чтением exact video URL. Если clipboard не работает, статья ещё не изменена и этап падает безопасно.
 
 ## Live acceptance 2026-09-20
 
@@ -115,8 +116,7 @@ verification-only. После неопределённого результат�
 - public verification подтвердила требуемый порядок;
 - state завершился `COMPLETE/VERIFIED`.
 
-Incident-only recovery/reset/retest entrypoints, использованные при разработке,
-не входят в production source и не должны переноситься в обычный runtime.
+Incident-only reset/retest entrypoints, использованные при разработке, не входят в production source. Guarded `--recover-pre-edit-link-error` является production recovery-механизмом и используется `full-worker.js` только один раз при доказанно безопасном pre-edit link-resolution ERROR.
 
 ## Ручные entrypoints
 
