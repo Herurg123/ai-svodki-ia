@@ -191,6 +191,24 @@ function configFor(dir) {
   assert.ok(fs.existsSync(path.join(archiveDir, "downloaded-videos-2026-08.json")));
 })();
 
+(function disabledRotationDoesNotMigrateLegacyLogs() {
+  const dir = tempDir("log-disabled");
+  const config = configFor(dir);
+  config.logRotation.enabled = false;
+  const legacyDir = path.join(dir, "logs");
+  fs.mkdirSync(legacyDir, { recursive: true });
+  fs.writeFileSync(path.join(legacyDir, "worker-2026-09-18.log"), "keep", "utf8");
+
+  const result = logs.performLogMaintenance(
+    config,
+    new Date("2026-09-21T04:00:00Z")
+  );
+
+  assert.equal(result.enabled, false);
+  assert.equal(result.migratedLegacyLogFiles, 0);
+  assert.ok(fs.existsSync(path.join(legacyDir, "worker-2026-09-18.log")));
+})();
+
 (function staleLegacySidecarCannotForceSameDayRotation() {
   const dir = tempDir("log-stale-sidecar");
   const config = configFor(dir);
