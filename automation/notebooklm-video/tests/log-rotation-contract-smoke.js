@@ -30,8 +30,6 @@ function configFor(dir) {
   const dir = tempDir("log-day");
   const config = configFor(dir);
   fs.writeFileSync(config.regularLog, "[19.09.2026, 10:00:00] old\r\n", "utf8");
-  const old = new Date("2026-09-19T07:00:00Z");
-  fs.utimesSync(config.regularLog, old, old);
 
   const result = logs.prepareLogForAppend(
     config,
@@ -39,48 +37,98 @@ function configFor(dir) {
     "worker",
     new Date("2026-09-20T09:00:00Z")
   );
+
   assert.equal(result.rotated, true);
   assert.ok(fs.existsSync(path.join(dir, "logs", "worker-2026-09-19.log")));
+  assert.equal(fs.existsSync(config.regularLog), false);
 })();
 
-(function untouchedRunnerCannotPermanentlyMaskBoundary() {
-  const dir = tempDir("log-sidecar");
-  const config = configFor(dir);
-  fs.writeFileSync(config.regularLog, "[19.09.2026, 10:00:00] old\r\n", "utf8");
-
-  logs.prepareLogForAppend(
-    config,
-    config.regularLog,
-    "worker",
-    new Date("2026-09-19T09:00:00Z")
-  );
-
-  // dzen-browser-runner.js intentionally remains unchanged by this fix and may
-  // append directly. The sidecar must still preserve the old-day boundary.
-  fs.appendFileSync(
-    config.regularLog,
-    "[20.09.2026, 06:00:00] runner-first\r\n",
-    "utf8"
-  );
-
-  const result = logs.prepareLogForAppend(
-    config,
-    config.regularLog,
-    "worker",
-    new Date("2026-09-20T09:00:00Z")
-  );
-  assert.equal(result.rotated, true);
-  assert.ok(fs.existsSync(result.archivePath));
-})();
-
-(function legacyMixedLogMigratesOnce() {
-  const dir = tempDir("log-mixed");
+(function repeatedSameDayRunDoesNotRotateAgain() {
+  const dir = tempDir("log-repeat");
   const config = configFor(dir);
   fs.writeFileSync(
     config.regularLog,
-    "[18.09.2026, 10:00:00] a\r\n" +
-      "[19.09.2026, 10:00:00] b\r\n" +
-      "[20.09.2026, 06:00:00] c\r\n",
+    "[21.09.2026, 06:40:02] FULL-WORKER: first run\r\n" +
+      "[21.09.2026, 06:40:03] FULL-WORKER: first run end\r\n",
+    "utf8"
+  );
+
+  const first = logs.prepareLogForAppend(
+    config,
+    config.regularLog,
+    "worker",
+    new Date("2026-09-21T03:55:00Z")
+  );
+  assert.equal(first.rotated, false);
+
+  fs.appendFileSync(
+    config.regularLog,
+    "[21.09.2026, 06:55:30] FULL-WORKER: second run\r\n",
+    "utf8"
+  );
+
+  const second = logs.prepareLogForAppend(
+    config,
+    config.regularLog,
+    "worker",
+    new Date("2026-09-21T04:00:00Z")
+  );
+  assert.equal(second.rotated, false);
+
+  const text = fs.readFileSync(config.regularLog, "utf8");
+  assert.match(text, /06:40:02/);
+  assert.match(text, /06:55:30/);
+  assert.equal(fs.existsSync(path.join(dir, "logs", "worker-2026-09-21.log")), false);
+})();
+
+(function untouchedRunnerCurrentDayLineIsPreservedActive() {
+  const dir = tempDir("log-runner");
+  const config = configFor(dir);
+  fs.writeFileSync(
+    config.regularLog,
+    "[20.09.2026, 10:00:00] yesterday\r\n" +
+      "[21.09.2026, 06:39:59] DZEN: direct runner wrote before shared logger\r\n",
+    "utf8"
+  );
+
+  // dzen-browser-runner.js intentionally remains unchanged and can still write
+  // directly. Shared rotation must archive only the old prefix, not today's
+  // direct-runner line.
+  const result = logs.prepareLogForAppend(
+    config,
+    config.regularLog,
+    "worker",
+    new Date("2026-09-21T03:40:00Z")
+  );
+
+  assert.equal(result.rotated, true);
+  const archive = fs.readFileSync(result.archivePath, "utf8");
+  const active = fs.readFileSync(config.regularLog, "utf8");
+  assert.match(archive, /yesterday/);
+  assert.doesNotMatch(archive, /direct runner/);
+  assert.match(active, /direct runner/);
+
+  const second = logs.prepareLogForAppend(
+    config,
+    config.regularLog,
+    "worker",
+    new Date("2026-09-21T03:55:00Z")
+  );
+  assert.equal(second.rotated, false);
+})();
+
+(function staleLegacySidecarCannotForceSameDayRotation() {
+  const dir = tempDir("log-stale-sidecar");
+  const config = configFor(dir);
+  fs.mkdirSync(config.logRotation.archiveDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(config.logRotation.archiveDir, ".rotation-state.json"),
+    JSON.stringify({ version: 1, workerDate: "2026-09-20", errorDate: "2026-09-20" }),
+    "utf8"
+  );
+  fs.writeFileSync(
+    config.regularLog,
+    "[21.09.2026, 06:40:02] current day\r\n",
     "utf8"
   );
 
@@ -88,10 +136,33 @@ function configFor(dir) {
     config,
     config.regularLog,
     "worker",
-    new Date("2026-09-20T09:00:00Z")
+    new Date("2026-09-21T03:55:00Z")
   );
+
+  assert.equal(result.rotated, false);
+  assert.match(fs.readFileSync(config.regularLog, "utf8"), /current day/);
+})();
+
+(function sizeRotationStillWorks() {
+  const dir = tempDir("log-size");
+  const config = configFor(dir);
+  config.logRotation.maxFileSizeMb = 0.00001;
+  fs.writeFileSync(
+    config.regularLog,
+    "[21.09.2026, 06:40:02] " + "x".repeat(512) + "\r\n",
+    "utf8"
+  );
+
+  const result = logs.prepareLogForAppend(
+    config,
+    config.regularLog,
+    "worker",
+    new Date("2026-09-21T03:55:00Z")
+  );
+
   assert.equal(result.rotated, true);
-  assert.equal(path.basename(result.archivePath), "worker-2026-09-20.log");
+  assert.equal(result.reason, "превышение размера");
+  assert.ok(fs.existsSync(result.archivePath));
 })();
 
 console.log("LOG ROTATION CONTRACT OK");
