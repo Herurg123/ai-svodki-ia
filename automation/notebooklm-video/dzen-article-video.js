@@ -117,12 +117,14 @@ function parseArgs(argv) {
     visible: false,
     selfTest: false,
     recoverPreEditLinkError: false,
+    recoverPrePublishClipboardError: false,
   };
   for (const arg of argv) {
     if (arg === "--apply") args.apply = true;
     else if (arg === "--visible") args.visible = true;
     else if (arg === "--self-test") args.selfTest = true;
     else if (arg === "--recover-pre-edit-link-error") args.recoverPreEditLinkError = true;
+    else if (arg === "--recover-prepublish-clipboard-error") args.recoverPrePublishClipboardError = true;
     else if (arg.startsWith("--date=")) {
       args.date = arg.slice("--date=".length).trim();
       parseDateKey(args.date);
@@ -168,9 +170,12 @@ function updateArticleVideo(config, state, job, fields) {
 
 function markPrePublishError(config, state, job, error) {
   const now = new Date().toISOString();
+  const current = ensureArticleVideoState(job);
+  const failedFromPhase = current.phase || "PENDING";
   return updateArticleVideo(config, state, job, {
     status: "ERROR",
     phase: "ERROR",
+    failedFromPhase,
     lastError: error.message,
     lastErrorAt: now,
     lastAttemptAt: now,
@@ -257,9 +262,19 @@ async function readClipboardText() {
   return Buffer.from(encoded || "", "base64").toString("utf8");
 }
 
-async function writeClipboardText(value) {
-  const encoded = Buffer.from(String(value), "utf8").toString("base64");
-  const command = [
+function buildClipboardWriteCommand(value) {
+  const text = String(value ?? "");
+  if (!text.length) {
+    return [
+      "$ErrorActionPreference = 'Stop'",
+      "Add-Type -AssemblyName System.Windows.Forms",
+      "[System.Windows.Forms.Clipboard]::Clear()",
+      "Write-Output 'OK'",
+    ].join("\r\n");
+  }
+
+  const encoded = Buffer.from(text, "utf8").toString("base64");
+  return [
     "$ErrorActionPreference = 'Stop'",
     `$b64 = '${encoded}'`,
     "$bytes = [Convert]::FromBase64String($b64)",
@@ -267,7 +282,44 @@ async function writeClipboardText(value) {
     "Set-Clipboard -Value $v",
     "Write-Output 'OK'",
   ].join("\r\n");
-  await runPowerShell(command);
+}
+
+async function writeClipboardText(value) {
+  await runPowerShell(buildClipboardWriteCommand(value));
+}
+
+async function restoreOriginalClipboardBestEffort(logger, label = "clipboard restore") {
+  const original = global.__AI_AV_ORIGINAL_CLIPBOARD__;
+  if (typeof original !== "string") return false;
+
+  let lastError = null;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      await writeClipboardText(original);
+      if (logger) {
+        logger.log(
+          original.length
+            ? `Исходный текст Windows clipboard восстановлен (${label}).`
+            : `Исходный пустой Windows clipboard восстановлен через Clipboard.Clear() (${label}).`
+        );
+      }
+      return true;
+    } catch (error) {
+      lastError = error;
+      if (attempt < 3) {
+        await new Promise((resolve) => setTimeout(resolve, 150 * attempt));
+      }
+    }
+  }
+
+  if (logger) {
+    logger.warn(
+      `Не удалось восстановить исходный Windows clipboard после 3 попыток (${label}): ` +
+      `${lastError && lastError.message ? lastError.message : String(lastError)}. ` +
+      "Article-video flow продолжается: восстановление clipboard не является mutation/publish gate."
+    );
+  }
+  return false;
 }
 
 function expectedPublicationUrlPattern(kind) {
@@ -2576,6 +2628,81 @@ function authorizePreEditLinkRecovery(config, state, job, logger) {
   return ensureArticleVideoState(job);
 }
 
+function hasPublishOrTerminalMarkers(av) {
+  if (!av) return false;
+  const markers = [
+    "publishArmedAt",
+    "publishButtonClickedAt",
+    "confirmationArmedAt",
+    "publishClickedAt",
+    "saveChangesClickedAt",
+    "verifiedAt",
+    "completedAt",
+    "existingDetectedAt",
+  ];
+  return markers.some((key) => av[key]) || av.publishClicked === true;
+}
+
+function isSafePrePublishClipboardError(av) {
+  if (!av || av.status !== "ERROR" || av.phase !== "ERROR") return false;
+  if (hasPublishOrTerminalMarkers(av)) return false;
+
+  const errorText = String(av.lastError || "");
+  if (!/Set-Clipboard|Clipboard\.Clear|clipboard/i.test(errorText)) return false;
+
+  const articleUrl = String(av.articleUrl || "");
+  const videoUrl = String(av.videoUrl || "");
+  if (!expectedPublicationUrlPattern("article").test(articleUrl)) return false;
+  if (!expectedPublicationUrlPattern("video").test(videoUrl)) return false;
+
+  if (av.failedFromPhase && !["LINKS_RESOLVED", "EDITING"].includes(String(av.failedFromPhase))) {
+    return false;
+  }
+
+  return true;
+}
+
+function authorizePrePublishClipboardRecovery(config, state, job, logger) {
+  const av = ensureArticleVideoState(job);
+  if (!isSafePrePublishClipboardError(av)) {
+    throw new Error(
+      "--recover-prepublish-clipboard-error разрешён только для ERROR/ERROR с resolved article/video URL, " +
+      "clipboard-related lastError и без publish/terminal markers. State не изменён."
+    );
+  }
+
+  const recoveredAt = new Date().toISOString();
+  const recoveryHistory = Array.isArray(av.recoveryHistory) ? av.recoveryHistory.slice() : [];
+  recoveryHistory.push({
+    recoveredAt,
+    fromStatus: av.status,
+    fromPhase: av.phase,
+    failedFromPhase: av.failedFromPhase || null,
+    lastError: av.lastError || null,
+    lastErrorAt: av.lastErrorAt || null,
+    reason: "pre-publish clipboard recovery; live editor inspection required before any new mutation",
+  });
+
+  updateArticleVideo(config, state, job, {
+    status: "PENDING",
+    phase: "PENDING",
+    recoveryHistory,
+    retryAuthorizedAt: recoveredAt,
+    retryReason: "pre-publish clipboard recovery",
+    lastError: null,
+    lastErrorAt: null,
+  });
+
+  if (logger) {
+    logger.warn(
+      "Recovery разрешён для clipboard-related ERROR до publish. " +
+      "При открытии editor runtime сначала проверит live draft: CLEAN создаётся заново, " +
+      "RESUMABLE_PARTIAL продолжает только с H2 без второго embed, неоднозначное состояние fail-closed."
+    );
+  }
+  return ensureArticleVideoState(job);
+}
+
 async function runApply(page, config, state, job, dateKey, logger) {
   const av = ensureArticleVideoState(job);
 
@@ -2681,14 +2808,17 @@ async function runApply(page, config, state, job, dateKey, logger) {
       logger,
       { clipboardPrepared: true }
     );
+    updateArticleVideo(config, state, job, {
+      status: "PENDING",
+      phase: "EDITING",
+      videoEmbedConfirmedAt: new Date().toISOString(),
+      lastError: null,
+      lastErrorAt: null,
+    });
 
-    // Restore the operator clipboard as soon as the real video preview exists.
-    // The outer finally block restores it again as a crash-safe fallback.
-    const original = global.__AI_AV_ORIGINAL_CLIPBOARD__;
-    if (typeof original === "string") {
-      await writeClipboardText(original);
-      logger.log("Исходный текст Windows clipboard восстановлен после подтверждения video preview.");
-    }
+    // Clipboard preservation is secondary. A failure here must never turn a
+    // successfully created embed into a terminal article mutation incident.
+    await restoreOriginalClipboardBestEffort(logger, "после подтверждения video preview");
 
     const anchor = await exactDraftBlock(editorPage, ANCHOR_TEXT, "oracle-anchor");
     oracle = await blockStyleSnapshot(anchor);
@@ -2786,6 +2916,17 @@ function runSelfTest() {
     throw new Error("self-test: manual second URL must be preserved");
   }
   if (!TERMINAL_STATUSES.has("ERROR")) throw new Error("self-test: ERROR must remain terminal");
+  const emptyClipboardCommand = buildClipboardWriteCommand("");
+  if (!emptyClipboardCommand.includes("[System.Windows.Forms.Clipboard]::Clear()")) {
+    throw new Error("self-test: empty clipboard restore must use Clipboard.Clear()");
+  }
+  if (emptyClipboardCommand.includes("Set-Clipboard -Value")) {
+    throw new Error("self-test: empty clipboard restore must not call Set-Clipboard -Value");
+  }
+  const textClipboardCommand = buildClipboardWriteCommand("abc");
+  if (!textClipboardCommand.includes("Set-Clipboard -Value $v")) {
+    throw new Error("self-test: non-empty clipboard restore must use Set-Clipboard");
+  }
   const directArticle = expectedPublicationUrlFromCandidates(
     [{ value: "https://dzen.ru/a/article-test", source: "row-anchor-href" }],
     "article"
@@ -2810,6 +2951,25 @@ function runSelfTest() {
     publishArmedAt: "2026-01-01T00:00:00.000Z",
   })) {
     throw new Error("self-test: publish marker must block pre-edit link recovery");
+  }
+  if (!isSafePrePublishClipboardError({
+    status: "ERROR",
+    phase: "ERROR",
+    articleUrl: "https://dzen.ru/a/article-test",
+    videoUrl: "https://dzen.ru/video/watch/video-test",
+    lastError: "Set-Clipboard : Value cannot be null. ArgumentNullException",
+  })) {
+    throw new Error("self-test: safe pre-publish clipboard recovery classification failed");
+  }
+  if (isSafePrePublishClipboardError({
+    status: "ERROR",
+    phase: "ERROR",
+    articleUrl: "https://dzen.ru/a/article-test",
+    videoUrl: "https://dzen.ru/video/watch/video-test",
+    lastError: "Set-Clipboard : Value cannot be null. ArgumentNullException",
+    publishArmedAt: "2026-01-01T00:00:00.000Z",
+  })) {
+    throw new Error("self-test: publish marker must block pre-publish clipboard recovery");
   }
   if (!/^(?:H\s*2|Heading\s*2|Заголовок\s*2)$/i.test("Heading 2")) {
     throw new Error("self-test: live Dzen aria Heading 2 recognition failed");
@@ -2881,6 +3041,9 @@ async function main() {
         "--visible: роботизированный Яндекс.Браузер будет запущен несвёрнутым для incident diagnostics/recovery."
       );
     }
+    if (args.recoverPreEditLinkError && args.recoverPrePublishClipboardError) {
+      throw new Error("Нельзя одновременно указывать два recovery-флага.");
+    }
     if (args.recoverPreEditLinkError) {
       if (!args.apply) {
         throw new Error(
@@ -2888,6 +3051,14 @@ async function main() {
         );
       }
       authorizePreEditLinkRecovery(config, state, job, logger);
+    }
+    if (args.recoverPrePublishClipboardError) {
+      if (!args.apply) {
+        throw new Error(
+          "--recover-prepublish-clipboard-error требует --apply: recovery является изменением state."
+        );
+      }
+      authorizePrePublishClipboardRecovery(config, state, job, logger);
     }
 
     const av = ensureArticleVideoState(job);
@@ -2946,12 +3117,7 @@ async function main() {
     process.exitCode = 1;
   } finally {
     if (originalClipboard !== null) {
-      await writeClipboardText(originalClipboard).then(() => {
-        if (logger) logger.log("Исходный текст Windows clipboard восстановлен.");
-      }).catch((error) => {
-        if (logger) logger.fatal(`Не удалось восстановить clipboard: ${error.message}`, error);
-        process.exitCode = 1;
-      });
+      await restoreOriginalClipboardBestEffort(logger, "финальный cleanup");
     }
     delete global.__AI_AV_ORIGINAL_CLIPBOARD__;
 
@@ -2973,8 +3139,10 @@ module.exports = {
   findJobForDate,
   formatRussianLongDate,
   headingMatchesOracle,
+  buildClipboardWriteCommand,
   expectedPublicationUrlFromCandidates,
   isSafePreEditLinkResolutionError,
+  isSafePrePublishClipboardError,
   main,
   parseDateKey,
   planDescriptionArticleUrlUpdate,
