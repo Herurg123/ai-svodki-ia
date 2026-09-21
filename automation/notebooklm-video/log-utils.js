@@ -29,14 +29,56 @@ function formatTime(timeZone = "Europe/Moscow") {
   }).format(new Date());
 }
 
+function portablePathKey(value) {
+  return String(value || "")
+    .trim()
+    .replace(/\\/g, "/")
+    .replace(/\/+/g, "/")
+    .replace(/\/$/, "")
+    .toLowerCase();
+}
+
+function portableParent(value) {
+  const normalized = String(value || "").replace(/\\/g, "/").replace(/\/+/g, "/");
+  const index = normalized.lastIndexOf("/");
+  return index >= 0 ? normalized.slice(0, index) : "";
+}
+
+function defaultUnifiedArchiveDir(config, regularLog) {
+  const historyDir = config.historyRetention &&
+    typeof config.historyRetention === "object" &&
+    typeof config.historyRetention.archiveDir === "string" &&
+    config.historyRetention.archiveDir.trim()
+    ? config.historyRetention.archiveDir.trim()
+    : "";
+  if (historyDir) return historyDir;
+  if (config.workDir) return path.join(config.workDir, "archive");
+  return path.join(path.dirname(regularLog), "archive");
+}
+
+function legacyLogArchiveDirs(config, regularLog) {
+  const candidates = new Set();
+  if (config.workDir) {
+    candidates.add(portablePathKey(`${String(config.workDir).replace(/[\\/]+$/, "")}/logs`));
+  }
+  const parent = portableParent(regularLog);
+  if (parent) candidates.add(portablePathKey(`${parent}/logs`));
+  return candidates;
+}
+
 function getRotationConfig(config = {}) {
   const regularLog = config.regularLog || path.join(config.workDir || __dirname, "worker.log");
   const raw = config.logRotation && typeof config.logRotation === "object"
     ? config.logRotation
     : {};
+  const unifiedArchiveDir = defaultUnifiedArchiveDir(config, regularLog);
+  const rawArchiveDir = typeof raw.archiveDir === "string" ? raw.archiveDir.trim() : "";
+  const archiveDir = !rawArchiveDir || legacyLogArchiveDirs(config, regularLog).has(portablePathKey(rawArchiveDir))
+    ? unifiedArchiveDir
+    : rawArchiveDir;
   return {
     enabled: raw.enabled !== false,
-    archiveDir: raw.archiveDir || path.join(path.dirname(regularLog), "logs"),
+    archiveDir,
     workerRetentionDays: Number.isInteger(raw.workerRetentionDays) && raw.workerRetentionDays > 0
       ? raw.workerRetentionDays
       : 7,
@@ -47,6 +89,61 @@ function getRotationConfig(config = {}) {
       ? raw.maxFileSizeMb
       : 25,
   };
+}
+
+function legacyLogArchiveDir(config = {}) {
+  const regularLog = config.regularLog || path.join(config.workDir || __dirname, "worker.log");
+  if (config.workDir) return path.join(config.workDir, "logs");
+  return path.join(path.dirname(regularLog), "logs");
+}
+
+function migrateLegacyLogArchives(config = {}) {
+  const rotation = getRotationConfig(config);
+  const legacyDir = legacyLogArchiveDir(config);
+  const result = {
+    movedFiles: 0,
+    removedLegacySidecar: false,
+    removedLegacyDir: false,
+    legacyDir,
+    archiveDir: rotation.archiveDir,
+  };
+
+  if (portablePathKey(legacyDir) === portablePathKey(rotation.archiveDir)) return result;
+  if (!fs.existsSync(legacyDir)) return result;
+
+  fs.mkdirSync(rotation.archiveDir, { recursive: true });
+  const pattern = /^(worker|error)-(\d{4}-\d{2}-\d{2})(?:-(\d+))?\.log$/i;
+
+  for (const entry of fs.readdirSync(legacyDir, { withFileTypes: true })) {
+    if (!entry.isFile()) continue;
+    if (entry.name === ".rotation-state.json") {
+      fs.rmSync(path.join(legacyDir, entry.name), { force: true });
+      result.removedLegacySidecar = true;
+      continue;
+    }
+
+    const match = pattern.exec(entry.name);
+    if (!match) continue;
+
+    const sourcePath = path.join(legacyDir, entry.name);
+    let targetPath = path.join(rotation.archiveDir, entry.name);
+    if (fs.existsSync(targetPath)) {
+      targetPath = nextArchivePath(config, match[1].toLowerCase(), match[2]);
+    }
+    fs.renameSync(sourcePath, targetPath);
+    result.movedFiles += 1;
+  }
+
+  try {
+    if (fs.readdirSync(legacyDir).length === 0) {
+      fs.rmdirSync(legacyDir);
+      result.removedLegacyDir = true;
+    }
+  } catch {
+    // Keep a non-empty or concurrently touched legacy directory intact.
+  }
+
+  return result;
 }
 
 function embeddedDateEntries(filePath) {
@@ -246,11 +343,16 @@ function cleanupOldLogArchives(config, now = new Date()) {
 
 function performLogMaintenance(config, now = new Date()) {
   const rotation = getRotationConfig(config);
+  const migration = migrateLegacyLogArchives(config);
   const result = {
     enabled: rotation.enabled,
     rotated: [],
     deletedFiles: 0,
     deletedBytes: 0,
+    migratedLegacyLogFiles: migration.movedFiles,
+    removedLegacySidecar: migration.removedLegacySidecar,
+    removedLegacyLogDir: migration.removedLegacyDir,
+    archiveDir: rotation.archiveDir,
   };
   if (!rotation.enabled) return result;
 
@@ -275,6 +377,8 @@ module.exports = {
   formatDateKey,
   formatTime,
   getRotationConfig,
+  legacyLogArchiveDir,
+  migrateLegacyLogArchives,
   performLogMaintenance,
   prepareLogForAppend,
 };
