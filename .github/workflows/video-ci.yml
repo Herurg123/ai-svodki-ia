@@ -50,3 +50,28 @@ jobs:
         run: |
           set -euo pipefail
           npm test
+
+      - name: Показать итог Video CI
+        if: always()
+        shell: bash
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          case "${JOB_STATUS}" in
+            success) result="успешно" ;;
+            failure) result="ошибка" ;;
+            cancelled) result="отменено" ;;
+            *) result="${JOB_STATUS}" ;;
+          esac
+          {
+            echo "# Video CI"
+            echo
+            echo "- **Результат:** ${result}"
+            echo "- **Commit:** \`${GITHUB_SHA}\`"
+          } >> "${GITHUB_STEP_SUMMARY}"
+          if [[ "${JOB_STATUS}" == "failure" ]]; then
+            echo "::error title=Ошибка Video CI::Offline-проверки NotebookLM-video завершились ошибкой. Открой красный шаг выше для технических деталей."
+          elif [[ "${JOB_STATUS}" == "cancelled" ]]; then
+            echo "::warning title=Video CI отменён::Запуск Video CI был отменён до завершения всех проверок."
+          fi

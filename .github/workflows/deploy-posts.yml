@@ -4,13 +4,13 @@ on:
   workflow_call:
     inputs:
       ref:
-        description: "Exact commit SHA or ref to deploy"
+        description: "Точный commit SHA или ref для развёртывания"
         required: true
         type: string
   workflow_dispatch:
     inputs:
       ref:
-        description: "Commit SHA or ref to deploy"
+        description: "Commit SHA или ref для развёртывания"
         required: false
         default: main
         type: string
@@ -38,18 +38,18 @@ jobs:
         run: |
           set -euo pipefail
           if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
-            echo "FTP deployment is allowed only from main." >&2
+            echo "FTP-развёртывание разрешено только из main." >&2
             exit 1
           fi
           if [[ ! -d "posts" ]]; then
-            echo "Local posts/ directory is missing." >&2
+            echo "Локальный каталог posts/ отсутствует." >&2
             exit 1
           fi
           if [[ ! -f "posts/_footer-scr.png" ]]; then
-            echo "Permanent footer asset posts/_footer-scr.png is missing." >&2
+            echo "Постоянный файл posts/_footer-scr.png отсутствует." >&2
             exit 1
           fi
-          echo "Deploying commit $(git rev-parse HEAD)"
+          echo "Разворачивается commit $(git rev-parse HEAD)"
 
       - name: Deploy posts through FTP
         id: ftp_deploy
@@ -87,9 +87,9 @@ jobs:
 
           if curl "${curl_args[@]}" "${remote_url}" --output /dev/null; then
             echo "footer_repaired=false" >> "${GITHUB_OUTPUT}"
-            echo "Permanent footer asset is present on FTP."
+            echo "Постоянный файл footer присутствует на FTP."
           else
-            echo "Permanent footer asset is absent on FTP; restoring it."
+            echo "Постоянный файл footer отсутствует на FTP; выполняется восстановление."
             curl "${curl_args[@]}" \
               --upload-file "posts/_footer-scr.png" \
               "${remote_url}"
@@ -97,7 +97,7 @@ jobs:
           fi
 
           curl "${curl_args[@]}" "${remote_url}" --output /dev/null
-          echo "Permanent footer asset presence verified."
+          echo "Наличие постоянного файла footer на FTP подтверждено."
 
       - name: Показать итог FTP-синхронизации
         if: always()
@@ -128,3 +128,6 @@ jobs:
               echo "GitHub остаётся источником правильного состояния; этот же ref можно безопасно развернуть повторно."
             fi
           } >> "${GITHUB_STEP_SUMMARY}"
+          if [[ "${DEPLOY_OUTCOME}" != "success" || "${FOOTER_OUTCOME}" != "success" ]]; then
+            echo "::error title=Ошибка FTP-синхронизации::FTP-развёртывание не подтверждено полностью. GitHub остаётся источником правильного состояния; тот же ref можно безопасно развернуть повторно."
+          fi

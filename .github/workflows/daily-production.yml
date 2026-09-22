@@ -8,20 +8,20 @@ on:
   workflow_dispatch:
     inputs:
       publication_date:
-        description: "Optional YYYY-MM-DD override"
+        description: "Необязательная дата выпуска YYYY-MM-DD"
         required: false
         type: string
       publish:
-        description: "Commit and push to main"
+        description: "Зафиксировать выпуск и отправить его в main"
         required: true
         default: false
         type: boolean
       recovery_run_id:
-        description: "Optional failed run ID whose saved paid research/editorial artifact should be reused"
+        description: "Необязательный ID неудачного запуска для переиспользования сохранённого платного research/editorial artifact"
         required: false
         type: string
       force_fresh_research:
-        description: "Ignore automatic same-day recovery and run fresh research on current main"
+        description: "Игнорировать автоматическое восстановление за текущий день и выполнить свежий research на текущем main"
         required: true
         default: false
         type: boolean
@@ -83,7 +83,7 @@ jobs:
               image = Path("posts/images") / f"ai-svodka-{publication_date}.png"
               if not article.is_file() or not image.is_file():
                   raise SystemExit(
-                      "RSS contains the release but canonical article/image files are missing"
+                      "RSS содержит выпуск, но канонические файлы статьи или изображения отсутствуют"
                   )
               request = urllib.request.Request(
                   target_url, headers={"User-Agent": "ai-svodki-production-gate/1.0"}
@@ -107,7 +107,7 @@ jobs:
               stream.write(f"should_deploy={'true' if should_deploy else 'false'}\n")
           action = "produce" if should_run else ("redeploy" if should_deploy else "no-op")
           print(
-              f"Production gate: {action} for {publication_date}; live={live_status}"
+              f"Production gate: действие={action}, дата={publication_date}, сайт={live_status}"
           )
           PY
       - name: No-op summary
@@ -115,11 +115,11 @@ jobs:
         shell: bash
         run: |
           {
-            echo "## Daily production digest"
+            echo "## Daily production digest: выпуск уже опубликован"
             echo
-            echo "- Status: successful no-op"
-            echo "- Already published: ${{ steps.gate.outputs.target_url }}"
-            echo "- Paid API calls: 0"
+            echo "- **Статус:** действий не требуется"
+            echo "- **Уже опубликовано:** ${{ steps.gate.outputs.target_url }}"
+            echo "- **Платные API-вызовы:** 0"
           } >> "${GITHUB_STEP_SUMMARY}"
       - name: Показать причину ошибки gate
         if: failure()
@@ -230,7 +230,7 @@ jobs:
         run: |
           set -euo pipefail
           if [[ "${EVENT_NAME}" == "workflow_dispatch" && "${FORCE_FRESH_RESEARCH}" == "true" && -n "${MANUAL_RECOVERY_RUN_ID}" ]]; then
-            echo "force_fresh_research=true conflicts with recovery_run_id; choose fresh research or explicit artifact recovery, not both." >&2
+            echo "force_fresh_research=true несовместим с recovery_run_id: выберите либо свежий research, либо явное восстановление из artifact." >&2
             exit 1
           fi
           run_id="${MANUAL_RECOVERY_RUN_ID}"
@@ -238,7 +238,7 @@ jobs:
           if [[ "${EVENT_NAME}" == "workflow_dispatch" && "${FORCE_FRESH_RESEARCH}" == "true" ]]; then
             run_id=""
             source="none"
-            echo "Manual fresh research requested; automatic recovery is disabled for this run."
+            echo "Запрошен ручной свежий research; автоматическое восстановление для этого запуска отключено."
           elif [[ -z "${run_id}" ]]; then
             source="automatic"
             candidates="$(
@@ -273,17 +273,17 @@ jobs:
             done <<< "${candidates}"
             if [[ "${best_rank}" -gt 0 ]]; then
               run_id="${best_run_id}"
-              echo "Automatic recovery selected run ${run_id} with completeness rank ${best_rank}."
+              echo "Автоматическое восстановление выбрало run ${run_id} с рангом полноты ${best_rank}."
             fi
           fi
           if [[ -n "${run_id}" ]]; then
             echo "run_id=${run_id}" >> "${GITHUB_OUTPUT}"
             echo "source=${source}" >> "${GITHUB_OUTPUT}"
-            echo "Reusable artifact selected from run ${run_id} (${source})."
+            echo "Для восстановления выбран переиспользуемый artifact из run ${run_id} (${source})."
           else
             echo "run_id=" >> "${GITHUB_OUTPUT}"
             echo "source=none" >> "${GITHUB_OUTPUT}"
-            echo "No reusable artifact selected for ${PUBLICATION_DATE}."
+            echo "Для ${PUBLICATION_DATE} подходящий переиспользуемый artifact не выбран."
           fi
       - name: Download saved editorial artifact for recovery
         if: steps.recovery_source.outputs.run_id != ''
@@ -396,7 +396,7 @@ jobs:
             echo "reused=false" >> "${GITHUB_OUTPUT}"
             echo "image_recovered=false" >> "${GITHUB_OUTPUT}"
             if [[ "${RECOVERY_SOURCE}" == "manual" ]]; then
-              echo "Manual recovery artifact is unusable; refusing to start paid research." >&2
+              echo "Указанный вручную recovery artifact непригоден; платный research не будет запущен." >&2
               exit "${recovery_status}"
             fi
             rm -rf \
@@ -465,7 +465,7 @@ jobs:
                   + "\n"
               )
           PY
-          echo "Recovered reusable paid artifact from run ${RECOVERY_RUN_ID}."
+          echo "Переиспользуемый платный artifact восстановлен из run ${RECOVERY_RUN_ID}."
       - name: Install pinned OpenAI SDK
         if: steps.terminal_reuse.outputs.stop != 'true' && (steps.recovery.outputs.reused != 'true' || (steps.recovery.outputs.openai_needed == 'true' && steps.recovery.outputs.text_api_needed == 'true'))
         run: |
@@ -484,12 +484,12 @@ jobs:
           IMAGE_API_NEEDED: ${{ steps.recovery.outputs.image_api_needed || 'false' }}
         run: |
           set -euo pipefail
-          [[ -n "${OPENAI_API_KEY}" ]] || { echo "OPENAI_API_KEY missing" >&2; exit 1; }
+          [[ -n "${OPENAI_API_KEY}" ]] || { echo "Отсутствует OPENAI_API_KEY." >&2; exit 1; }
           if [[ "${RECOVERY_REUSED}" != "true" || "${TEXT_API_NEEDED}" == "true" ]]; then
-            [[ "${OPENAI_TEXT_MODEL}" == "gpt-5.6-terra" ]] || { echo "Unexpected text model" >&2; exit 1; }
+            [[ "${OPENAI_TEXT_MODEL}" == "gpt-5.6-terra" ]] || { echo "Настроена неожиданная текстовая модель OpenAI." >&2; exit 1; }
           fi
           if [[ "${RECOVERY_REUSED}" != "true" || "${IMAGE_API_NEEDED}" == "true" ]]; then
-            [[ "${OPENAI_IMAGE_MODEL}" == "gpt-image-2" ]] || { echo "Unexpected image model" >&2; exit 1; }
+            [[ "${OPENAI_IMAGE_MODEL}" == "gpt-image-2" ]] || { echo "Настроена неожиданная модель изображений OpenAI." >&2; exit 1; }
           fi
       - name: Patch runtime publication hour to 06:00 Moscow
         if: steps.terminal_reuse.outputs.stop != 'true'
@@ -758,7 +758,7 @@ jobs:
           date="${{ steps.runtime.outputs.publication_date }}"
           git fetch origin main
           [[ "$(git rev-parse HEAD)" == "$(git rev-parse origin/main)" ]] || {
-            echo "main changed while generation was running; refusing to push" >&2
+            echo "main изменился во время генерации; публикация в изменившийся main отменена." >&2
             exit 1
           }
           python automation/scripts/validate_publish_changes.py \
@@ -840,15 +840,25 @@ jobs:
           PRODUCTION_RESULT: ${{ needs.production.result }}
           DEPLOY_RESULT: ${{ needs.deploy.result }}
         run: |
+          ru_status() {
+            case "${1:-}" in
+              success) echo "успешно" ;;
+              failure) echo "ошибка" ;;
+              skipped) echo "пропущено" ;;
+              cancelled) echo "отменено" ;;
+              "") echo "не запускалось" ;;
+              *) echo "${1}" ;;
+            esac
+          }
           {
             echo "## Итог Daily production digest"
             echo
             echo "| Этап | Результат |"
             echo "|---|---|"
-            echo "| Gate | ${GATE_RESULT} |"
-            echo "| Production | ${PRODUCTION_RESULT} |"
-            echo "| Deploy | ${DEPLOY_RESULT} |"
-            echo "| FTP-only redeploy | ${REDEPLOY_RESULT} |"
+            echo "| Предварительная проверка | $(ru_status "${GATE_RESULT}") |"
+            echo "| Формирование выпуска | $(ru_status "${PRODUCTION_RESULT}") |"
+            echo "| FTP-развёртывание | $(ru_status "${DEPLOY_RESULT}") |"
+            echo "| Повторное FTP-развёртывание готового выпуска | $(ru_status "${REDEPLOY_RESULT}") |"
             echo
             echo "Подробная русскоязычная причина production-ошибки находится выше в Summary job production."
           } >> "${GITHUB_STEP_SUMMARY}"

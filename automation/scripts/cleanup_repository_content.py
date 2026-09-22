@@ -295,11 +295,11 @@ def render_github_summary(
         if changes_planned:
             headline = (
                 "🟡 Проверка завершена: мусор найден, но ничего не удалено "
-                "(ручной dry-run)."
+                "(ручная проверка без удаления, `dry-run`)."
             )
         else:
             headline = "✅ Проверка завершена: удалять нечего."
-        result_label = "не удалено (dry-run)"
+        result_label = "не удалено (проверка без удаления)"
         amount_label = "К удалению найдено"
     elif not changes_planned:
         headline = "✅ Ночная очистка завершена: удалять нечего."

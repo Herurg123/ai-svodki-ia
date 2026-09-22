@@ -94,7 +94,7 @@ jobs:
         run: |
           set -euo pipefail
           if [[ -n "$(git status --porcelain -- posts/)" ]]; then
-            echo "Offline CI modified protected paths." >&2
+            echo "Offline CI изменил защищённые пути." >&2
             git status --short -- posts/
             exit 1
           fi
@@ -107,3 +107,28 @@ jobs:
           path: automation/preview/ci/
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Показать итог Main CI
+        if: always()
+        shell: bash
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          case "${JOB_STATUS}" in
+            success) result="успешно" ;;
+            failure) result="ошибка" ;;
+            cancelled) result="отменено" ;;
+            *) result="${JOB_STATUS}" ;;
+          esac
+          {
+            echo "# Main CI"
+            echo
+            echo "- **Результат:** ${result}"
+            echo "- **Commit:** \`${GITHUB_SHA}\`"
+          } >> "${GITHUB_STEP_SUMMARY}"
+          if [[ "${JOB_STATUS}" == "failure" ]]; then
+            echo "::error title=Ошибка Main CI::Одна или несколько offline-проверок основного production-контура завершились ошибкой. Открой красный шаг выше; итог и принадлежность проверки указаны по-русски."
+          elif [[ "${JOB_STATUS}" == "cancelled" ]]; then
+            echo "::warning title=Main CI отменён::Запуск Main CI был отменён до завершения всех проверок."
+          fi

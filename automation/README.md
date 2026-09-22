@@ -159,6 +159,11 @@ Usage accounting остаётся diagnostic-only: `usage_observer.py` и
 `daily-production.yml` не зависит от локального NotebookLM-video runtime.
 Video-only изменения под `notebooklm-video/**` не должны запускать Main CI.
 
+Управляемая проектом operator-facing диагностика GitHub Actions русскоязычная:
+`workflow_dispatch` descriptions, Actions Summary, annotations, явные ошибки и
+recovery guidance. Названия workflow/jobs/steps и машинные/сторонние сообщения
+могут оставаться английскими.
+
 Video → RSS integration закрыта. Active workflows не добавляют MP4/PNG в
 `posts/rss.xml`; historical implementation сохранена только в
 `archive/video-rss-enrichment-2026-08/`.

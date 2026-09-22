@@ -41,12 +41,12 @@ class ForceFreshResearchWorkflowTests(unittest.TestCase):
             self.text,
         )
         self.assertIn(
-            "force_fresh_research=true conflicts with recovery_run_id",
+            "force_fresh_research=true несовместим с recovery_run_id",
             self.text,
         )
 
     def test_force_fresh_disables_automatic_recovery_selection(self):
-        forced = self.text.index('Manual fresh research requested; automatic recovery is disabled for this run.')
+        forced = self.text.index('Запрошен ручной свежий research; автоматическое восстановление для этого запуска отключено.')
         automatic = self.text.index('source="automatic"', forced)
         self.assertLess(forced, automatic)
         forced_block = self.text[self.text.rfind('if [[ "${EVENT_NAME}"', 0, forced):automatic]

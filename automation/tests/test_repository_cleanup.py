@@ -212,7 +212,7 @@ class RepositoryContentCleanupTests(unittest.TestCase):
 
             self.assertIn("ничего не удалено", summary)
             self.assertIn("К удалению найдено", summary)
-            self.assertIn("не удалено (dry-run)", summary)
+            self.assertIn("не удалено (проверка без удаления)", summary)
             self.assertNotIn("изменения записаны в `main`", summary)
 
     def test_russian_summary_reports_failed_push_as_not_published(self) -> None:
@@ -246,7 +246,7 @@ class RepositoryContentCleanupTests(unittest.TestCase):
         self.assertIn("contents: write", workflow)
         self.assertIn("default: false", workflow)
         self.assertIn("--retention-days", workflow)
-        self.assertIn("retention_days must be at least 32", workflow)
+        self.assertIn("retention_days должен быть не меньше 32", workflow)
         self.assertIn("cleanup_repository_content.py", workflow)
         self.assertIn("cleanup_public_posts.py", workflow)
         self.assertIn("render_github_summary", workflow)

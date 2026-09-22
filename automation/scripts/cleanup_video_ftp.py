@@ -248,14 +248,14 @@ def render_github_summary(report: dict[str, Any] | None, *, outcome: str) -> str
     mode = report["mode"]
     if mode == "dry-run":
         headline = (
-            "🟡 Найдены старые video assets; это dry-run, ничего не удалено."
+            "🟡 Найдены старые видеофайлы; это проверка без удаления (`dry-run`), ничего не удалено."
             if expired
-            else "✅ Старых video assets нет; dry-run завершён."
+            else "✅ Старых видеофайлов нет; проверка без удаления (`dry-run`) завершена."
         )
     elif expired:
         headline = "✅ Старые MP4/PNG удалены из FTP-каталога `video/`."
     else:
-        headline = "✅ FTP-каталог `video/` уже соответствует retention policy."
+        headline = "✅ FTP-каталог `video/` уже соответствует политике хранения."
 
     lines.extend(
         [
@@ -282,7 +282,7 @@ def render_github_summary(report: dict[str, Any] | None, *, outcome: str) -> str
         deleted = set(report["deleted_files"])
         for row in expired:
             if mode == "dry-run":
-                result = "не удалено (dry-run)"
+                result = "не удалено (проверка без удаления)"
             elif row["name"] in deleted:
                 result = "удалено"
             else:

@@ -243,7 +243,7 @@ class PublicPostsCleanupTests(unittest.TestCase):
                 validation_outcome="skipped",
                 commit_outcome="skipped",
             )
-            self.assertIn("ручной dry-run", dry)
+            self.assertIn("ручная проверка без удаления", dry)
             self.assertIn("RSS: **2 → 1**", dry)
             self.assertNotIn("Legacy RSS", dry)
             report["mode"] = "apply"

@@ -538,10 +538,10 @@ def render_github_summary(
     )
     if mode == "dry-run":
         headline = (
-            "🟡 Найдены просроченные публичные выпуски, но это ручной dry-run."
+            "🟡 Найдены просроченные публичные выпуски, но это ручная проверка без удаления (`dry-run`)."
             if planned else "✅ Просроченных публичных выпусков нет."
         )
-        result = "не удалено (dry-run)"
+        result = "не удалено (проверка без удаления)"
     elif not planned:
         headline, result = "✅ Публичные страницы и RSS уже актуальны.", "не требовалось"
     elif published:
@@ -660,7 +660,7 @@ def main() -> int:
             encoding="utf-8",
         )
     except Exception as exc:
-        print(f"Public posts cleanup failed: {exc}", file=sys.stderr)
+        print(f"Очистка публичных страниц завершилась ошибкой: {exc}", file=sys.stderr)
         return 1
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0

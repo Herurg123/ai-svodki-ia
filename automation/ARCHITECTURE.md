@@ -347,6 +347,13 @@ mutation scope не входит.
 | `repository-cleanup.yml` | 32-day repository/public cleanup и отдельная FTP-video retention стадия | Да, только documented retention scope |
 | `repository-hygiene.yml` | Уборка безопасно классифицированных GitHub objects | Да, только GitHub-object policy scope |
 
+Operator-facing слой Actions стандартизирован на русском языке. Названия workflow,
+jobs/steps, технические идентификаторы и сырые сообщения GitHub/сторонних actions
+могут оставаться английскими, но управляемые репозиторием dispatch-описания,
+Summary, annotations, явные ошибки/предупреждения, recovery guidance и итоговый
+статус должны быть русскоязычными. Каждый активный workflow оставляет русский
+Summary на своей actionable границе; regression contract проверяет этот инвариант.
+
 ### 4.1. PR Gate
 
 `pr-gate.yml` запускается для каждого pull request в `main` без `paths` filter.
