@@ -146,7 +146,11 @@ def main() -> int:
         # before request admission, without a duplicate fetch or search.
         bind_post_freshness_pool(context, runtime_research)
         binding = request_sha256(kwargs)
-        replay = prepare_request(context, binding)
+        replay = prepare_request(
+            context,
+            binding,
+            request_kwargs=kwargs,
+        )
         if replay is not None:
             return replay
         try:
