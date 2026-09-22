@@ -13,6 +13,8 @@ sys.path.insert(0, str(SCRIPTS))
 
 import editorial_repair_guard as repair
 import ensure_story_coverage as coverage
+import generate_digest_preview as digest_preview
+from prompt_context import editorial_input
 import recover_digest_artifact as recovery
 import run_editorial_repair as repair_runner
 
@@ -139,7 +141,7 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
             "artifact_identity_sha256": repair._artifact_identity(self.artifact),
         }
         identity["intent_sha256"] = repair._intent_sha(identity)
-        request_kwargs = dict(self.request(), input=prompt)
+        request_kwargs = self.production_request(prompt)
         request_sha = repair.request_sha256(request_kwargs)
         response = self.response(output or {"selected_candidate_ids": ["candidate-1"]})
         response_value = repair._seal(
@@ -206,6 +208,23 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
             "input": "PRIVATE_EDITORIAL_PROMPT",
             "reasoning": {"effort": "medium"},
             "text": {"format": {"type": "json_schema", "name": "digest"}},
+            "store": False,
+        }
+
+    def production_request(self, prompt: str):
+        return {
+            "model": MODEL,
+            **editorial_input(prompt, MODEL),
+            "reasoning": {"effort": "medium"},
+            "max_output_tokens": 18000,
+            "text": {
+                "format": {
+                    "type": "json_schema",
+                    "name": "daily_ai_editorial_digest",
+                    "strict": True,
+                    "schema": {"type": "object"},
+                }
+            },
             "store": False,
         }
 
@@ -658,14 +677,20 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
             target_state / "recovery.json",
         )
         self.assertEqual(report["recovery_mode"], "partial_editorial")
+        repair_recovery = report["editorial_repair_recovery"]["repair_state"]
+        self.assertEqual(repair_recovery["prompt_proof_status"], "copied")
+        prompt_proof = target_state / f"editorial-repair-{DATE}.prompt.txt"
+        self.assertTrue(prompt_proof.is_file())
 
-        saved_prompt = str(saved_request_kwargs["input"])
+        saved_prompt = repair._request_prompt_text(saved_request_kwargs)
+        self.assertIsNotNone(saved_prompt)
+        saved_prompt = str(saved_prompt)
         current_prompt = saved_prompt.replace(
             '"generated_at":"2026-09-22T01:36:38+00:00"',
             '"generated_at":"2026-09-22T04:36:27+00:00"',
         )
         self.assertNotEqual(current_prompt, saved_prompt)
-        current_request_kwargs = dict(saved_request_kwargs, input=current_prompt)
+        current_request_kwargs = self.production_request(current_prompt)
         self.assertNotEqual(
             repair.request_sha256(current_request_kwargs),
             self.journal()["request_sha256"],
@@ -686,6 +711,10 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
             # run 35687487645, so replay needs durable recovery-owned proof.
             (target_artifact / "editorial-prompt-input.txt").write_text(
                 current_prompt, encoding="utf-8"
+            )
+            self.assertIn(
+                '"generated_at":"2026-09-22T01:36:38+00:00"',
+                prompt_proof.read_text(encoding="utf-8"),
             )
             replay = generate_digest_preview.call_with_usage(
                 "editorial",
@@ -727,6 +756,73 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
         self.assertEqual(result, 0)
         self.assertEqual(callback_called, [])
         self.assertEqual(repair.journal_state(target_state, DATE), "validated")
+
+    def test_legacy_request_replay_rejects_non_archive_prompt_or_schema_drift(self):
+        saved_archive = {
+            "version": 2,
+            "generated_at": "2026-09-22T01:36:38+00:00",
+            "source": "automation/content + posts/rss.xml",
+            "items": [{"date": "2026-09-21", "stories": []}],
+        }
+        current_archive = json.loads(json.dumps(saved_archive))
+        current_archive["generated_at"] = "2026-09-22T04:36:27+00:00"
+        saved_request, _response = self.install_legacy_response_saved_state(
+            saved_archive=saved_archive,
+            current_archive=current_archive,
+        )
+        context = repair.load_required(
+            publication_date=DATE,
+            state_dir=self.state,
+            persisted_research_path=self.persisted,
+            archive_path=self.archive,
+            artifact_dir=self.artifact,
+            model=MODEL,
+        )
+        self.bind(context)
+        saved_prompt = repair._request_prompt_text(saved_request)
+        self.assertIsNotNone(saved_prompt)
+        timestamp_only = str(saved_prompt).replace(
+            '"generated_at":"2026-09-22T01:36:38+00:00"',
+            '"generated_at":"2026-09-22T04:36:27+00:00"',
+        )
+
+        prompt_drift = timestamp_only.replace(
+            "Synthetic production-shaped editorial prompt",
+            "Synthetic CHANGED editorial prompt",
+        )
+        prompt_kwargs = self.production_request(prompt_drift)
+        with self.assertRaisesRegex(
+            repair.EditorialRepairError, "request contract changed"
+        ):
+            repair.prepare_request(
+                context,
+                repair.request_sha256(prompt_kwargs),
+                request_kwargs=prompt_kwargs,
+            )
+
+        schema_kwargs = self.production_request(timestamp_only)
+        schema_kwargs["text"]["format"]["name"] = "changed_schema"
+        with self.assertRaisesRegex(
+            repair.EditorialRepairError, "request contract changed"
+        ):
+            repair.prepare_request(
+                context,
+                repair.request_sha256(schema_kwargs),
+                request_kwargs=schema_kwargs,
+            )
+
+    def test_v2_editorial_prompt_context_excludes_only_generated_at(self):
+        archive = {
+            "version": 2,
+            "generated_at": "2026-09-22T04:36:27+00:00",
+            "source": "automation/content + posts/rss.xml",
+            "items": [{"date": "2026-09-21", "stories": [{"candidate_id": "old"}]}],
+        }
+        value = json.loads(digest_preview.editorial_archive_context(archive))
+        self.assertNotIn("generated_at", value)
+        self.assertEqual(value["version"], archive["version"])
+        self.assertEqual(value["source"], archive["source"])
+        self.assertEqual(value["items"], archive["items"])
 
     def test_legacy_prompt_proof_does_not_hide_semantic_archive_drift(self):
         saved_archive = {
