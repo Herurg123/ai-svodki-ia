@@ -1,58 +1,228 @@
 # NotebookLM video subproject instructions
 
-This directory is an independently maintained local Windows downstream subproject inside the wider AI-Svodki repository.
+This directory is an independently maintained local Windows downstream subproject.
+The repository-level relationship and CI boundary are canonical in
+[`../ARCHITECTURE.md`](../ARCHITECTURE.md). This file contains prescriptive
+local rules; operator/runtime explanation belongs in `README.md`,
+`DEPLOYMENT.md` and the dedicated DZEN documents.
 
-The repository-level relationship and CI boundary are canonical in [`../ARCHITECTURE.md`](../ARCHITECTURE.md). This file contains the prescriptive local rules.
+## Scope and CI
 
-- Its scope is the local NotebookLM video workflow: RSS detection, Yandex Browser/Playwright automation, NotebookLM generation, MP4 download, PNG first-frame preview, local state/logging, restricted FTP delivery to `video`, scheduled native Dzen video publication after local completion, and the post-publication Dzen collections stage.
-- It is not part of the main nightly retrieval/editorial GitHub Actions production.
-- Pull requests are routed by the always-on **PR Gate**; video-domain changes call the dedicated **Video CI** in `.github/workflows/video-ci.yml`, while **Main CI** must remain unnecessary for video-only changes.
-- Do not re-couple Video CI and Main CI without an explicit architecture change plus matching documentation and contract-test updates.
-- Video CI stays offline with respect to NotebookLM, FTP, Dzen, production APIs, Windows DPAPI, and npm dependency installation. Platform-specific behavior is verified on the target Windows machine.
-- Keep `package.json` and committed `package-lock.json` synchronized. Any npm dependency change must update the lockfile in the same pull request and prove a clean `npm ci`; normal setup/deployment entrypoints must use `npm ci`, not `npm install`.
-- Do not modify files in this directory as a side effect of tasks about retrieval, editorial policy, RSS/site generation, the main FTP deploy, cleanup, audits, or repository hygiene unless the task explicitly targets that subproject.
-- Conversely, a video-subproject task does not authorize changes to unrelated production architecture.
-- Keep `README.md` and `DEPLOYMENT.md` current whenever production behavior, configuration, dependencies, deployment, recovery, or operator actions change. An isolated manual experiment that is not wired into `worker.js`, setup or Task Scheduler may instead be documented in its dedicated experiment document until promotion.
-- Local text logging must use the shared `log-utils.js` rotation path before append. Day-boundary detection must come from timestamps already present in the active log, not from mtime or mutable sidecar state. Repeated same-day scheduled runs must accumulate in the same active log. `dzen-browser-runner.js` is intentionally excluded from shared logging for now; if it directly writes the first current-day entry into an older active log, `log-utils.js` must archive only the older prefix and keep that current-day suffix active.
-- Active JSON history is bounded by `history-utils.js`: keep 14 calendar days in active `state.json` and `_СКАЧАННЫЕ_ВИДЕО.json`, move older safe terminal history into monthly files under local `archive/`, and never auto-delete that JSON archive. Rotated `worker-*.log`/`error-*.log` files share the same `archive/` directory but keep their independent 7/30-day cleanup; text-log cleanup must match only those `.log` names and must never delete JSON-history. A legacy sibling `logs/` may be migrated only for known rotated log names plus obsolete `.rotation-state.json`, preserving unknown files. Old unresolved jobs stay active regardless of age, and archived registry rows remain part of duplicate/idempotency lookup. Explicit old-date operator commands must be able to rehydrate archived state safely.
-- `dzenArticleVideo.status=ERROR` remains terminal by default. Two narrow one-shot scheduled recovery classes are allowed: a proven pre-edit link-resolution error with no resolved URLs/editor/publish markers, and a pre-publish clipboard-related error with resolved article/video URLs but no publish/terminal markers. The latter must inspect the live editor before any new mutation and may resume an existing plain heading + confirmed embed only from H2 formatting, never by inserting a second embed. Each recovery class is at-most-once. Any publish-arm/click uncertainty remains manual-only and must never receive an automatic second mutation/click.
-- `tempDir` and `tracesDir` are not active runtime surfaces. Do not precreate empty `temp/` or `traces/` directories and do not reintroduce them to fresh config unless a real producer/consumer is added with tests and documentation.
-- Keep practical Dzen publication experiments and negative results in [`DZEN_VIDEO_EXPERIMENTS.md`](DZEN_VIDEO_EXPERIMENTS.md); do not silently discard failed hypotheses and later re-present them as established solutions.
-- The 2026-08-27 controlled tests established that RSS-based delivery did not produce a native Dzen video publication in this project. Treat the RSS route for native Dzen video publication as unsuccessful and closed unless materially new evidence justifies reopening it.
-- Do not add production RSS mutations in an attempt to publish native Dzen video without a new, isolated experiment and explicit approval.
-- The 2026-08-27 manual Dzen Studio test and the 2026-08-28 automated fresh-upload MVP test confirmed that native browser upload works on the target Windows machine and lands in the Dzen video flow.
-- The 2026-08-28 duplicate-guard live test confirmed that Studio `Публикации` -> `Видео` can safely prevent a repeated upload by matching the visible title prefix before ` | `.
-- Native Dzen browser upload is promoted into the local scheduled downstream. `run-worker.cmd` now starts outer `full-worker.js`, which owns the complete scheduled lock and invokes the existing `scheduled-worker.js` for NotebookLM/FTP plus native Dzen publication before any collections work. `run-worker-hidden.vbs` and Task Scheduler therefore still use one full entrypoint without additional scheduled tasks.
-- The outer `full-worker.lock` must cover the complete NotebookLM/FTP -> Dzen publish -> Dzen collections sequence. The existing `scheduled-worker.lock` remains an inner guard for the proven first two phases and must not be bypassed by the normal scheduled entrypoint.
-- The collections stage starts only after the phases-1/2 child attempt has finished, but it is deliberately independent of native-video success: when the first two phases fail, the outer worker may still process an existing same-day digest and/or video, while preserving the original failure as the overall exit result. On a normal successful run it stays aligned with the newest eligible `DONE`/catch-up job. It handles only two exact targets for the chosen job date: video -> `Видеосводки по ИИ` (`https://dzen.ru/suite/a899d818-52b3-4f87-8e49-4a4bac375244`) and daily digest -> `Сводки по ИИ` (`https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1`). Zero or one visible same-day publication is valid and must not cause an unrelated publication to be touched.
-- Collection completion is persisted independently per target under `job.dzenCollections.video` and `job.dzenCollections.digest`. A target becomes `ADDED` only after a confirmed one-click UI success or a confirmed existing/already-added UI state. Aggregate status is `PENDING`, `PARTIAL`, or `COMPLETE`. If both targets are `ADDED`, future scheduled runs must skip the collections child before browser launch. If only one target is `ADDED`, only the other target may be retried.
-- The live 2026-08-29 idempotency test established the Dzen already-added UI contract: the target collection tile can remain formally hit-testable with no `disabled`/ARIA state while the exact collection title is muted to `rgba(6, 6, 15, 0.6)`. The collections worker therefore treats title alpha `<= 0.70` as a confirmed already-added signal and must not click that tile again.
-- Collection apply uses at most one physical click on the confirmed target tile. If that click has no confirmed success signal, a second automatic click is forbidden. Any blocking collections error must be written to normal/error logs, capture a diagnostic screenshot when possible, close the browser, and leave only the unresolved target retryable.
-- `run-dzen-collections-debug.cmd` and `run-dzen-collections-apply.cmd` remain manual diagnostic/operator entrypoints. Their filenames are intentionally stable so the live-test files can be overlaid instead of accumulating versioned copies; canonical implementation is `dzen-collections.js`.
-- A fourth scheduled stage, `dzen-article-video.js`, may run only after the chosen job has `dzenAutomation.status=PUBLISHED` and aggregate `dzenCollections.status=COMPLETE`. Earlier-phase failure blocks this fourth stage. `COMPLETE` and `SKIPPED_EXISTING` are terminal no-browser states; `ERROR` is terminal and must not auto-retry.
-- The article-video stage is date-generic. It resolves the exact same-day article `ИИ-Сводка на <дата>` and video `ИИ-Сводка на <дата> | Подпишись, чтоб получать свежее!` through Studio `Скопировать ссылку`; runtime code must not hard-code a calendar date or a specific publication URL.
-- Before editing the article, the resolved Dzen article URL may replace only the exact second-link placeholder in `downloads/_ИИ-Сводка.txt` under `Этот выпуск:`. If that exact placeholder is absent, treat the file as operator-edited and do not rewrite it. When the placeholder is present, the first link must still match the selected job's `publicationUrl`, otherwise fail closed before article mutation.
-- Article insertion uses the exact H2 `Видеосводка` immediately before exact H2 `Мировые лидеры ИИ`: create plain text, paste the public video URL with real `Ctrl+V`, wait for a real Dzen video preview, select the exact heading text, then apply H2 through the floating toolbar with geometry/hit-test verification. Preserve and restore the operator's Windows text clipboard.
-- Publishing an edited article is two-stage and at-most-once: wait for stable autosave with `Сохранено ...` + `Есть неопубликованные правки` and no `Идёт сохранение` for the required stability window, persist `PUBLISH_ARMED`, click `Опубликовать` once, confirm the `Публикация` modal, persist `CONFIRMATION_ARMED`, then click the unique native `BUTTON` `Сохранить изменения` once. Navigation that destroys the old execution context after that final click is an expected success-path.
-- `PUBLISH_ARMED`, `CONFIRMATION_ARMED` and `CLICKED_UNVERIFIED` are verification-only for article-video. A later run from any of these phases may only verify the public article; it must not reopen the editor or repeat either publish/save click. Completion requires public order H2 `Видеосводка` -> Dzen video preview -> H2 `Мировые лидеры ИИ`. Exact pre-existing H2 `Видеосводка` produces terminal `SKIPPED_EXISTING` with no mutation.
-- Stable manual article-video entrypoints are `run-dzen-article-video-dry-run.cmd` and `run-dzen-article-video-apply.cmd`; production details and the 2026-09-20 live acceptance evidence are documented in [`DZEN_ARTICLE_VIDEO.md`](DZEN_ARTICLE_VIDEO.md). Incident-only recovery/reset/retest scripts used during development are not production assets and must not be promoted.
-- `run-dzen-publish.cmd` and `run-dzen-dry-run.cmd` remain explicit operator/diagnostic entrypoints. Normal scheduled publication is owned by `scheduled-worker.js`; all paths reuse `browser-session.js`, the protected persistent browser profile and the same CDP lifecycle.
-- The Dzen browser bootstrap must never delete or recreate the protected browser profile, cookies, Google session, Dzen session, or profile session files.
-- The canonical live-publish baseline starts with a **pre-upload duplicate guard**. Before any live child/upload, open `https://dzen.ru/profile/editor/rybv/publications`, activate the real `input[type="radio"][aria-label="Видео"]` control, confirm `checked=true`, and search the visible list for the expected title prefix before ` | `. Do not click the visual text `<div>Видео</div>` because the radio input intercepts pointer events and causes Playwright click/scroll retries.
-- If the duplicate guard finds `ИИ-Сводка на <дата>` in the visible Video list, log `ВИДЕО УЖЕ ЕСТЬ`, do not start the live child, do not create a draft, do not upload MP4, and do not click publish. If the duplicate guard cannot reliably open/confirm the Video filter, fail closed before upload.
-- If no duplicate is found, the validated live-publish baseline remains a **fresh-upload, single-child, single-page MVP**: open Studio, create a new video upload, transfer the MP4, fill title/description once, set cover once, confirm exactly five tag chips, stop touching metadata/cover/tags, wait for the final processed/ready status, set comments to `Все пользователи`, click `Опубликовать`/`Отправить` once, log the click, then let the runner close the browser.
-- A normal live run must not reopen or resume a saved `videoEditorPublicationId`, must not reopen old drafts, and must not refill already prepared metadata. If a live child explicitly proves `publishClicked=false`, the next scheduled/operator run may start again from the duplicate guard and create a fresh upload only when no existing video is found. Remote drafts are not auto-deleted.
-- `videoEditorPublicationId` may be logged for diagnostics but is not a reliable persistent permalink for reopening the populated editor. The observed redirect to the channel page closed the inter-run resume hypothesis.
-- A Playwright file-upload timeout is not by itself proof that the Dzen MP4 upload failed; the same child may continue waiting for `videoEditorPublicationId` before deciding that upload failed.
-- Dzen metadata is written once. Whitespace-only changes introduced by Dzen must not trigger another write; non-whitespace content changes remain errors.
-- Video-description links after `Этот выпуск:` are separate bullet lines, each prefixed by `- `.
-- Dzen tags are mandatory: exactly five configured tags must become five separate visible tag chips. The tag input may disappear/re-render after Enter, especially after the fifth tag; reacquire the input when needed and validate completion from the visible chips.
-- Readiness is status-driven. Early `Уже можно публиковать` is not final readiness. Wait for `Загрузили и обработали видео` + `Готово: можно публиковать и смотреть` + an enabled exact publish button before the final click.
-- `Кто может комментировать = Все пользователи` is set after final readiness and before the one publish click in the validated MVP.
-- `dzen-publish-direct.js` itself still performs no second click. The scheduled orchestrator persists `PUBLISH_ARMED` before starting that child, records `CLICKED_UNVERIFIED` after a successful child exit, and verifies publication through the existing Studio `Видео` duplicate guard. `PUBLISH_ARMED`, `CLICKED_UNVERIFIED` and `BLOCKED_AMBIGUOUS` are verification-only states: a later run must never start another upload or perform a second publish click from those states.
-- The native-upload implementation, scheduled promotion and manual fallback are documented in [`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md). Scheduled integration must remain downstream-only: it must not mutate RSS, nightly GitHub production, retrieval/editorial state or the protected browser profile.
-- Any Dzen video-delivery experiment must be isolated, documented before it is promoted to production behavior, and recorded in `DZEN_VIDEO_EXPERIMENTS.md` with observed results.
-- Commit only portable source, safe templates, tests, dependency lockfiles, and documentation. Never commit real runtime configuration, access data, state, logs, downloaded media, browser profiles, or machine-local runtime state.
-- Use the committed example configuration files and setup scripts for portable deployment; machine-local files remain outside Git.
-- FTP access is hard-confined to remote directory `video`. Changing that boundary requires an explicit architecture decision, not a configuration-only edit.
-- All repository changes still follow branch -> pull request -> CI -> diff review -> separate explicit merge approval.
+- Scope is RSS detection, protected Yandex Browser/Playwright automation,
+  NotebookLM generation, MP4/PNG handling, local state/logging, restricted FTP
+  delivery to `video`, scheduled native Dzen publication, Dzen collections and
+  same-day article video insertion.
+- It is not part of nightly retrieval/editorial GitHub production.
+- PR Gate routes video-domain changes to dedicated **Video CI**. **Main CI** must
+  remain unnecessary for video-only changes; cross-cutting architecture changes
+  may require both.
+- Video CI stays offline with respect to NotebookLM, FTP, Dzen, production APIs,
+  Windows DPAPI and npm dependency installation.
+- Keep `package.json` and `package-lock.json` synchronized. Dependency changes
+  must prove clean `npm ci`; setup/deployment uses `npm ci`, not
+  `npm install`.
+- Do not modify this directory as a side effect of unrelated retrieval,
+  editorial, RSS/site, main deploy, cleanup, audit or hygiene tasks. Conversely,
+  video work does not authorize unrelated production changes.
+
+## Documentation ownership
+
+- Keep operator/runtime overview in `README.md`.
+- Keep Windows installation/migration in `DEPLOYMENT.md`.
+- Keep native upload details in `DZEN_NATIVE_UPLOAD.md`.
+- Keep article-video details in `DZEN_ARTICLE_VIDEO.md`.
+- Keep experiment chronology and negative results in
+  `DZEN_VIDEO_EXPERIMENTS.md`.
+- Keep this file prescriptive. Do not duplicate exact selectors, dated live-test
+  narratives or long implementation walkthroughs here when the dedicated
+  document already owns them.
+- Historical experiment evidence must not be silently discarded or later
+  re-presented as an established solution.
+
+## Repository and runtime data
+
+Commit only portable source, safe templates, tests, dependency lockfiles and
+documentation. Never commit real configuration, access data, state, logs,
+downloaded media, screenshots, browser profiles or other machine-local state.
+
+Use committed example configs and setup scripts for portable deployment. Real FTP
+access remains protected by Windows DPAPI `CurrentUser`.
+
+`tempDir` and `tracesDir` are not active runtime surfaces. Do not precreate
+empty `temp/` or `traces/` directories or restore them to fresh config unless
+a real producer/consumer is added with tests and documentation.
+
+## Browser/session safety
+
+All NotebookLM and Dzen browser automation reuses the protected persistent Yandex
+Browser profile and the project CDP lifecycle. Never delete/recreate the profile,
+cookies, Google session, Dzen session or profile session files.
+
+NotebookLM and Dzen must not operate concurrently through competing browser
+sessions. The scheduled orchestration closes the NotebookLM browser before the
+Dzen phase.
+
+Human verification challenges are manual-only. Automation must not click or
+attempt to bypass a Dzen/Google captcha or `Я не робот` challenge.
+
+## Locks, logging and retained state
+
+`full-worker.lock` covers the complete scheduled sequence. The inner
+`scheduled-worker.lock` remains the guard for NotebookLM/FTP + native Dzen
+publication and must not be bypassed by the normal scheduled entrypoint.
+
+Shared text logging uses `log-utils.js` rotation before append. Day-boundary
+detection comes from timestamps already in the active log, not mtime or mutable
+sidecar state. Repeated same-day runs must remain in the same active log.
+
+`dzen-browser-runner.js` intentionally remains a direct-writer exception. Do
+not modify it merely to normalize logging. If it writes the first current-day
+entry into an older log, shared rotation must archive only the older prefix and
+preserve the current-day suffix.
+
+Active JSON history is bounded by `history-utils.js`:
+
+- keep 14 calendar days active in `state.json` and
+  `_СКАЧАННЫЕ_ВИДЕО.json`;
+- move older safe terminal rows/jobs to monthly JSON files under local
+  `archive/`;
+- never auto-delete that JSON archive;
+- keep unresolved/error/verification-only jobs active regardless of age;
+- keep archived registry rows in duplicate/idempotency lookup;
+- explicit old-date operator commands must safely rehydrate archived state.
+
+Rotated text logs share local `archive/` but have independent 7/30-day
+retention. Text-log cleanup must match only `worker-*.log` /
+`error-*.log` and must never delete JSON history. A legacy `logs/` directory
+may migrate only known rotated log names plus obsolete rotation sidecar state,
+preserving unknown files.
+
+## Native Dzen publication safety
+
+The historical Video → RSS route is closed. Do not mutate production RSS to
+obtain native Dzen video without a new isolated experiment, architecture review
+and explicit approval.
+
+Scheduled native publication begins with a pre-upload duplicate guard. It must
+reliably confirm the Studio Video view and expected same-day title prefix before
+upload. If an existing video is confirmed, stop without child/upload/draft/click.
+If the guard cannot prove the Video surface, fail closed before upload.
+
+If no duplicate exists, the canonical live path is a fresh-upload flow. It may
+start one live child and perform at most one publish action. Metadata/cover/tags
+must not be repeatedly rewritten after the validated values are set.
+
+The scheduled orchestrator persists `PUBLISH_ARMED` before the live child and
+uses `CLICKED_UNVERIFIED` / `BLOCKED_AMBIGUOUS` for uncertain outcomes.
+These states are verification-only. A later run must never start a second upload
+or second publish click from them.
+
+A fresh retry is allowed only after explicit evidence that
+`publishClicked=false`. Remote drafts are not auto-deleted. A saved
+`videoEditorPublicationId` is diagnostic and must not be treated as a reliable
+inter-run resume permalink.
+
+Readiness is status-driven; do not treat an early partial-ready message as final
+readiness. Dzen tags remain mandatory and must resolve to the configured visible
+tag chips before publish.
+
+Normal scheduled publication is owned by `scheduled-worker.js`.
+`run-dzen-publish.cmd` and `run-dzen-dry-run.cmd` remain explicit
+operator/diagnostic entrypoints.
+
+Deep selector, tag, readiness and live evidence contracts are in
+[`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md) and
+[`DZEN_VIDEO_EXPERIMENTS.md`](DZEN_VIDEO_EXPERIMENTS.md).
+
+## Dzen collections safety
+
+The collections stage operates only on two exact targets for the selected job
+date: video → `Видеосводки по ИИ` and digest → `Сводки по ИИ`.
+Zero or one visible target is valid; never substitute an unrelated publication.
+
+Completion is persisted independently under `job.dzenCollections.video` and
+`job.dzenCollections.digest`. A target becomes `ADDED` only after a
+confirmed one-click UI success or a confirmed existing/already-added state.
+Aggregate state is `PENDING`, `PARTIAL` or `COMPLETE`.
+
+If both targets are `ADDED`, future scheduled runs skip collections before
+browser launch. If only one target is complete, only the unresolved target may be
+retried.
+
+A collection apply may perform at most one physical click on the confirmed exact
+target tile. Page-wide success text alone is not proof. Target-local
+selected/already-added confirmation is required; ambiguous outcome must not cause
+a second automatic click.
+
+Any blocking error must be logged, capture a diagnostic screenshot when possible,
+close the browser and leave only unresolved work retryable.
+
+`run-dzen-collections-debug.cmd` and `run-dzen-collections-apply.cmd` remain
+manual diagnostic/operator entrypoints with intentionally stable filenames.
+Canonical implementation is `dzen-collections.js`.
+
+## Article-video safety
+
+The article-video stage may run only after native video publication is confirmed
+and aggregate collections state is `COMPLETE`. It is date-generic and must
+resolve the exact same-day article and video; never hard-code a calendar date or
+publication URL.
+
+Before editing, the resolved Dzen article URL may replace only the exact second
+placeholder in `downloads/_ИИ-Сводка.txt`. If the placeholder is absent, treat
+the file as operator-edited and do not rewrite it. If present, the first link must
+still match the selected job's publication URL or the stage fails closed.
+
+Insertion must create exactly one `Видеосводка` H2 and one confirmed Dzen video
+embed immediately before exact H2 `Мировые лидеры ИИ`. Preserve/restore the
+operator's Windows text clipboard.
+
+Publishing is at-most-once. Persist armed states before the corresponding
+publish/save actions. `PUBLISH_ARMED`, `CONFIRMATION_ARMED` and
+`CLICKED_UNVERIFIED` are verification-only: later runs must not reopen the
+editor or repeat mutation/publish/save actions.
+
+Exact pre-existing H2 `Видеосводка` is terminal `SKIPPED_EXISTING` with no
+mutation.
+
+`dzenArticleVideo.status=ERROR` is terminal by default. Only two narrow
+one-shot scheduled recovery classes are permitted:
+
+1. proven pre-edit link-resolution failure with no resolved URLs/editor/publish
+   markers;
+2. pre-publish clipboard-related failure with resolved article/video URLs but no
+   publish/terminal markers, after inspecting the live draft before any new
+   mutation.
+
+The second class may resume an existing plain heading + confirmed embed only from
+H2 formatting and must never insert a second embed. Each recovery class is
+at-most-once. Any publish/click uncertainty remains manual-only.
+
+Stable manual entrypoints are
+`run-dzen-article-video-dry-run.cmd` and
+`run-dzen-article-video-apply.cmd`.
+Full details are in [`DZEN_ARTICLE_VIDEO.md`](DZEN_ARTICLE_VIDEO.md).
+
+## FTP boundary
+
+FTP access is hard-confined to remote directory `video`. The worker may manage
+only the documented current dated MP4/PNG names. It must not delete, rename or
+overwrite unrelated remote paths.
+
+Existing managed file with the expected size is already delivered. Size conflict
+fails instead of destructive overwrite.
+
+Broadening this boundary requires an explicit architecture decision, not a
+configuration-only change.
+
+## Experiments and promotion
+
+Any Dzen delivery experiment must be isolated and documented before promotion to
+production behavior. Record observed results, including failures, in
+`DZEN_VIDEO_EXPERIMENTS.md`.
+
+Do not promote incident-only reset/retest scripts or one-off local artifacts as
+production assets.
+
+All repository changes still follow the root repository workflow and safety
+rules. A video-local task does not override root `AGENTS.md`.

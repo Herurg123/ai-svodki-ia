@@ -2,8 +2,8 @@
 
 Production-репозиторий ежедневных аналитических выпусков об искусственном
 интеллекте. GitHub хранит код конвейера, редакционный архив и публикуемый
-статический сайт; успешный выпуск собирается, проверяется, фиксируется в `main` и
-только затем синхронизируется на FTP.
+статический сайт; успешный выпуск собирается, проверяется, фиксируется в `main`
+и только затем синхронизируется на FTP.
 
 Публичные адреса:
 
@@ -14,326 +14,144 @@ Production-репозиторий ежедневных аналитически�
 
 ## Где читать устройство проекта
 
-Каноническое подробное описание системы находится в
-[`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md). Там зафиксированы
-границы компонентов, nightly data flow, retrieval-бюджеты, recovery, публикация,
-cleanup/hygiene, CI и место локального NotebookLM-video подпроекта.
+- [`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md) — каноническая
+  подробная архитектура: data flow, retrieval, freshness, editorial, recovery,
+  publication, cleanup/hygiene, CI и video boundary.
+- [`automation/README.md`](automation/README.md) — рабочая карта `automation/`,
+  active entrypoints, ключевые production-инварианты и команды проверки.
+- [`AGENTS.md`](AGENTS.md) — обязательные правила изменения репозитория.
+- [`automation/notebooklm-video/README.md`](automation/notebooklm-video/README.md)
+  — локальный Windows downstream NotebookLM/Dzen.
 
-[`automation/README.md`](automation/README.md) является краткой картой каталога
-production-автоматизации и операторских проверок. Правила для изменений хранятся
-в [`AGENTS.md`](AGENTS.md).
+README намеренно остаётся обзорным. Детальные implementation/recovery contracts
+не дублируются здесь, если для них уже есть канонический architecture/spec
+документ.
 
 ## Основные части
 
 | Часть | Назначение |
 |---|---|
-| `automation/` | Основной production-конвейер: retrieval, event/source freshness, editorial, recovery, validators, archive, audits и configuration. |
-| `posts/` | Сформированный публичный сайт, article/image RSS, sitemap и постоянные публичные assets. |
-| `automation/notebooklm-video/` | Отдельный локальный Windows downstream-подпроект: после публикации выпуска создаёт NotebookLM-видео, MP4/PNG, при необходимости доставляет их в FTP `video`, автоматически публикует нативное видео в Дзен, назначает видео и ежедневную сводку в две фиксированные Дзен-подборки, после их `COMPLETE` вставляет опубликованное видео в same-day статью с one-shot fail-closed recovery для безопасного pre-edit link-resolution или pre-publish clipboard сбоя, корректно переживает пустой исходный Windows clipboard, не создаёт неиспользуемые `temp/`/`traces/`, локальные text logs ротирует до append по встроенным timestamp без потери предыдущих same-day запусков, складывает их архивы в общий `archive/` рядом с JSON-history и держит active JSON-history в 14-дневном окне с бессрочным архивом старой безопасно завершённой истории. |
-| `automation/archive/video-rss-enrichment-2026-08/` | Reference-only архив закрытого Video → RSS эксперимента. Не является runtime/workflow path. |
-| `.github/workflows/` | Always-on PR Gate, два раздельных CI-домена, production, deploy и cleanup/hygiene. |
+| `automation/` | Production-конвейер: retrieval, freshness, editorial, recovery, validators, archive, audits и configuration. |
+| `posts/` | Публичный статический сайт, article/image RSS, sitemap и постоянные assets. |
+| `automation/notebooklm-video/` | Независимый локальный Windows downstream после публикации выпуска: NotebookLM → MP4/PNG → optional FTP → native Dzen → collections → video-in-article. |
+| `automation/archive/video-rss-enrichment-2026-08/` | Inert reference-only архив закрытого Video → RSS эксперимента. |
+| `.github/workflows/` | PR Gate, Main CI, Video CI, production, deploy и maintenance workflows. |
 
 ## CI и production
 
 В репозитории семь постоянных GitHub Actions workflow:
 
-- `pr-gate.yml` — **PR Gate**, всегда запускается для pull request в `main`,
-  определяет затронутые CI-домены и завершает единым `Required PR Gate`;
-- `ci.yml` — **Main CI**, бесплатные офлайн-проверки основного production-кода;
-- `video-ci.yml` — **Video CI**, отдельные dependency-free проверки только
-  NotebookLM-video подпроекта;
-- `daily-production.yml` — ежедневное формирование ИИ-Сводки;
-- `deploy-posts.yml` — синхронизация `posts/` выбранного commit на FTP;
-- `repository-cleanup.yml` — единая 32-дневная maintenance-цепочка: компактирует
-  repository content, удаляет просроченные public posts и после безопасного
-  public deploy отдельно удаляет просроченные MP4/PNG из FTP-каталога `video`;
-- `repository-hygiene.yml` — отдельная уборка безопасно классифицированных
-  GitHub-объектов.
+- `pr-gate.yml` — always-on PR Gate и единый `Required PR Gate`;
+- `ci.yml` — Main CI для основного production-кода;
+- `video-ci.yml` — отдельный Video CI для NotebookLM-video;
+- `daily-production.yml` — ежедневный выпуск;
+- `deploy-posts.yml` — синхронизация выбранного `posts/` commit на FTP;
+- `repository-cleanup.yml` — 32-дневная очистка tracked/public content и
+  отдельная FTP-video retention стадия;
+- `repository-hygiene.yml` — безопасная уборка классифицированных GitHub
+  objects.
 
-Video-only изменения по-прежнему не запускают Main CI: PR Gate вызывает только
-Video CI. Для mixed/cross-cutting PR он требует оба домена. В ruleset обязательным
-является только всегда существующий `Required PR Gate`, а не path-dependent Main
-CI/Video CI. Подробности описаны в
+Video-only PR не должен тянуть Main CI; mixed/cross-cutting изменение проходит
+оба домена. Подробная ownership boundary находится в
 [`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md#4-github-actions).
 
-Для `main` подготовлен repository ruleset: обычные изменения должны проходить
-через pull request, force-push и удаление запрещаются, а direct-push bypass
-предназначен только для двух узких validated writers: nightly production и
-retention cleanup. Они используют один выделенный write deploy key только в своих
-финальных commit steps. Наличие ruleset JSON в Git само по себе не включает
-GitHub setting; порядок активации описан в
+Обычные изменения проекта идут через отдельную ветку, pull request, CI и review
+diff. Техническая возможность direct push в `main` сама по себе не является
+дефектом проекта. Nightly production и retention cleanup имеют отдельную
+документированную automated-writer boundary; GitHub-side hardening описан в
 [`automation/MAIN_PROTECTION.md`](automation/MAIN_PROTECTION.md).
 
-## Краткие production-инварианты
+## Production-контракт в одном экране
 
-Расходы всей наблюдаемой цепочки выпуска и загруженного recovery сохраняются в
-`production-daily/usage-ledger.json` и выводятся в Actions Summary. Реестр учитывает
-уникальные ответы, токены, чтение/запись кэша, поиск и изображение. Это оценка по
-сохранённым данным, не счёт OpenAI; потерянные ответы и неизвестные расходы явно
-помечаются. Диагностика не меняет публикацию, поиск или число платных запросов.
+Подробные числа, состояния и compatibility layers поддерживаются в
+`automation/ARCHITECTURE.md`; здесь остаются только границы, полезные при
+навигации:
 
-Этот раздел намеренно сохраняет операторские и тестируемые маркеры текущего
-production-контракта, а подробное объяснение находится в `automation/ARCHITECTURE.md`.
+- fresh Primary имеет 12 Web Search operations, Coverage — до 7 Coverage search
+  operations;
+- Hybrid обычно ограничен четырьмя search operations; ровно один conditional
+  fifth search разрешён только при одновременных Search-derived gaps Russia +
+  China/Asia;
+- обычный whole-pipeline потолок — 24 search operations, double-gap потолок — 25;
+- Event Freshness и Source Freshness являются разными gates; доказанно старое
+  событие не омолаживается свежей перепечаткой;
+- Source Pulse и deterministic viability/health diagnostics не добавляют
+  OpenAI/Web Search вызовы и не отменяют обязательный Search-derived recovery;
+- recovery переиспользует наиболее полный пригодный same-day artifact и не
+  повторяет уже завершённые paid stages;
+- `posts/rss.xml` остаётся article/image surface и не используется для доставки
+  локального видео;
+- production/API spend не используется для обычных refactor/regression работ без
+  отдельного разрешения.
 
-У `daily-production.yml` намеренно ровно один нативный GitHub `schedule`:
-`23:17 UTC`, то есть `02:17 Europe/Moscow` даты выпуска. Внутрисуточных повторных
-GitHub cron нет. Внешняя страховка обслуживается через cron-job.org и вызывает
-workflow через `workflow_dispatch`, поэтому такой запуск в Actions отображается
-как manual/dispatch, а не как scheduled run. Время выпуска нормализуется к
-06:00 МСК. Recovery выбирает наиболее полный пригодный artifact той же даты;
-его durable state всегда привязывается к exact selected bundle, включая manual
-recovery через layered compatibility wrappers, без смешивания same-date artifacts.
-Editorial-repair journal и новый editorial prompt не считают
-`archive.generated_at` содержательным изменением. Для старого response-saved
-replay recovery отдельно сохраняет exact prompt proof до перезаписи dated artifact
-и принимает только запрос, который реконструируется в исходный saved request SHA;
-реальное изменение archive items/sources, prompt policy, schema или model
-по-прежнему блокирует recovery.
-Editorial publisher diversity имеет отдельный zero-paid deterministic guard:
-selected IDs не переписываются, а пропущенный reasoned override нормализуется
-только для уже разрешённых и строго доказанных full/short-selection случаев;
-неоднозначные случаи по-прежнему блокируют публикацию.
-
-Fresh Primary выполняет ровно 12 Web Search search operations. Coverage выполняет
-до 7 Coverage search operations. Hybrid сохраняет базовый потолок 4 search
-operations; только когда effective Search-derived health одновременно показывает
-gap для Russia и China/Asia, разрешён один дополнительный пятый Hybrid search,
-чтобы сохранить все три широких Hybrid-прохода и выполнить два отдельных
-региональных health-check. Перед fresh Hybrid P4 выполняет zero-paid deterministic
-viability refresh: он может только переоткрыть early healthy регион, если exact
-Primary regional candidates после Primary final cap, Event/Source Freshness и
-первого editorial больше не имеют viable `include|consider` survivor. Уже
-открытый Search-gap никогда не закрывается, Pulse-only candidate не считается
-доказательством здоровья Primary, а неоднозначная provenance не тратит новый
-search. Поэтому обычный архитектурный потолок остаётся 24 search operations, а
-условный double-gap потолок равен 25; P4 не добавляет шестой или новый постоянный
-search.
-
-Перед единственным Reuters-only Agency Rescue теперь выполняется аналогичный
-zero-paid health-check для Search-derived `major_agencies`. Ранний
-`accepted_count > 0` больше не считается вечным доказательством здоровья: если
-exact Primary agency candidates после Primary final cap, freshness и первого
-editorial доказуемо не имеют viable `include|consider` survivor, может быть
-использован тот же существующий один rescue slot. Pulse-only/поздний кандидат не
-может подменить Primary provenance, неоднозначная identity не разрешает search.
-Same-day recovery может заново оценить только сохранённый zero-spend
-`not_triggered`; `search_started`, spent/terminal и indeterminate состояния
-никогда не получают второй rescue search. Потолки 24/25 от этого не меняются.
-
-P2 Agency observability переводит active rescue на v6 поверх побайтно сохранённой
-v5-реализации, но **не меняет** Reuters filter, query, tool contract, retry policy
-или единственный search slot. До parsing сохраняется bounded sanitized transport
-capture, а report отдельно различает transport/parse, source metadata
-`missing|null|empty|nonempty|malformed`, model rejection, host/schema/window
-validation, dedupe/cap и фактическое addition. Старый `validated_count` сохранён
-ради совместимости; отдельно добавлены `pre_merge_eligible_count` и
-`post_validation_count`. Отсутствующая диагностика остаётся unknown и не даёт
-права повторять search. Это наблюдаемость, а не routing-fix.
-
-P3a сохраняет ещё один ранее терявшийся диагностический класс: квалифицированный
-Primary `weak_source` для product/model события теперь может остаться в
-`unresolved_signals` вместе с исходными URL/reason, organization,
-version/model и lifecycle/action anchors. Сам P3a остаётся **evidence-only**:
-`resolution_required=false`, `candidate_eligible=false`, новый search не
-резервируется, существующий седьмой Coverage slot не вытесняется, а слабый
-источник не становится публикационно пригодным.
-
-Active P3b выполняет exact authoritative binding только downstream в Coverage и
-только через уже существующий optional seventh slot. Старый required
-high-signal `unverified` resolution всегда имеет приоритет. За один выпуск P3b
-может рассмотреть максимум один qualified weak-source signal; admission требует
-реальной authoritative page, exact organization, всех version/model anchors,
-совместимого lifecycle/action, deterministic Event/Source Freshness и archive
-checks. Provider/model labels не являются proof. Если slot занят, уже потрачен
-или transport имеет `request_started` с неизвестным исходом, signal остаётся
-unresolved/deferred и новый search не выполняется. `response_saved` сохраняет
-существующий offline replay, а `processed` переиспользуется только при durable
-provenance exact snapshot bytes, связанной с тем же request/response,
-pre-optional bundle и exact parsed-result hash. Финальный research `candidates.json` не используется как
-Coverage-plan identity. Active v7 дополнительно требует exact deterministic
-raw↔parsed replay для saved result и current request-contract identity для
-processed legacy resolution. Восьмой Coverage search не появляется; потолки
-24/25, regional/agency health и editorial ranking не меняются.
-
-Каноническая continuity-точка остается `search_cutoff_at` последнего успешно
-опубликованного выпуска. После единственного search один Primary-pass может
-использовать `open_page` и `find_in_page` как навигацию, не увеличивая
-search-operation budget.
-
-Event-age freshness теперь проверяется отдельно от source-page freshness.
-Надёжно доказанное событие вне exact saved window отклоняется deterministic gate
-с кодом `event_freshness_stale` до editorial. Неизвестный или неоднозначный
-origin не является автоматической причиной исключения и остаётся `unknown`, но
-это не обход freshness: цитируемая страница затем обязана пройти прежний
-fail-closed Source Freshness Proof. P1 не добавляет новый LLM/Web Search pass и не
-увеличивает paid search ceiling.
-
-После fresh Primary Source Pulse v1.4 выполняет второй discovery-plane без
-дополнительного платного retrieval: обычный HTTPS к фиксированному registry,
-**0 OpenAI calls и 0 Web Search operations**. В candidate pool могут попасть
-только свежие `pulse_only` Tier-A `official` или `trusted_news` leads, и только
-как `consider` после детерминированной проверки источника и AI relevance.
-Yandex IR/company-news сохраняет узкий P2 fallback: только совпадение dated
-first-party URL/id и видимой даты может дополнить отсутствующую generic
-machine-readable publication date. P1 trusted-feed repair добавляет отдельное,
-ещё более узкое исключение только для явно одобренного Tier-A official RSS/Atom:
-сейчас это `openai_news_rss`, причём authority имеют только RSS `pubDate` или Atom
-`published`, exact same-host item URL и совпадающий `source_item_id`. Если
-страница OpenAI отвечает 403 или не содержит publication metadata, сохранённое
-feed-доказательство может подтвердить дату без повторного polling feed. Если
-страница открывается и показывает конфликтующую дату либо canonical/redirect
-уходит на другой item, кандидат fail-closed отклоняется. Generic RSS fallback для
-остальных источников не включён. ТАСС включён в российский Tier-A `trusted_news`
-registry через AI-tag surface; Yandex IR/MWS/VK остаются official, CNews остаётся
-Tier-B lead-only. Tier B не влияет на publication. Source Pulse никогда не
-закрывает Search-derived China/Asia или Russia gap. После freshness/editorial P4
-может только переоткрыть ранний false-healthy gap по exact Primary provenance,
-поэтому второй discovery-plane по-прежнему не может подавить Hybrid regional
-recovery. Полная диагностика сохраняется в daily Actions artifact.
-
-Черновой автономный отчёт `automation/scripts/source_pulse_value.py` читает
-сохранённый Source Pulse JSON и разделяет source health, прочитанные записи,
-leads и подтверждённое добавление кандидатов. С `--release-dir` он прослеживает
-точную связь с сохранёнными freshness/editorial/stories. Неоднозначность остаётся
-`null`; сборка файла не считается публикацией. Опциональный `--published-repo`
-с конкретным `--published-commit` подтверждает `repository_published` по истории
-`origin/main` и committed странице; доставка на FTP отдельно остаётся неизвестной.
-Отчёт v3 сохраняет повреждённые и неоднозначные доказательства как unknown.
-Связь с публикацией проверяется внутри каждого сюжета. Отдельная сводка за
-несколько выпусков исключает повторный учёт recovery-копий и показывает полноту
-наблюдений для каждой метрики. Это автономная диагностика без изменений
-ежедневной сборки. Независимая приёмка диагностического модуля пройдена;
-доказательства и replay — `automation/audits/experiments/2026-09-09-step05-acceptance/`.
-Отчёт не подключён к production и не меняет набор источников или поиск.
-
-Финальный production status теперь также вычисляет zero-paid **Discovery Health
-v1** по уже сохранённым Primary, Source Pulse, Agency Rescue, Hybrid и Coverage
-отчётам. Статус `healthy | degraded | indeterminate` не зависит от количества
-опубликованных историй: полный выпуск из 7+ сюжетов не считается доказательством
-здорового retrieval. Explicit parser/source gaps и unresolved Hybrid regional
-gaps дают `degraded`; отсутствующая или неоднозначная source/provenance
-диагностика даёт `indeterminate`. Результат сохраняется в `pipeline-status.json`
-и показывается в Actions Summary, но v1 **не блокирует публикацию** и выполняет
-0 OpenAI calls / 0 Web Search operations.
-
-Редакционный отбор не имеет региональной квоты: предварительные research
-`include|consider` и score не обязывают включать российскую карточку, если
-редактор отклонил её по содержанию. Такое исключение видно в диагностике;
-если российский сюжет выбран, его раздел по-прежнему обязателен.
-
-Обязательные Coverage-направления сохраняют ids `security_world`,
-`security_russia`, `security_asia`, `legal_copyright_scraping`, `curiosity` и
-`general_coverage_gaps`; последний является авторитетный last-mile sweep
-оставшихся пробелов. Дополнительные региональные Coverage searches только из-за
-красного regional health сейчас не включены. `partial`, `budget_exhausted` и
-`error` блокируют Image API, commit и deploy. Один evidence-rich source-neutral
-Retrieval Quality resolution может завершиться `complete_with_gaps`, если
-минимум три разных source hosts подтверждают наличие того же high-signal
-сообщения, но ни один не даёт verified evidence; такой сюжет остаётся
-исключённым, а thin/ambiguous evidence остаётся fail-closed. Для короткого
-выпуска сохраняется пометка «Новостей сегодня меньше, чем обычно».
-
-Ручной production dispatch имеет `publish=false` по умолчанию и отдельный
-`recovery_run_id`. Текущие production defaults: `gpt-5.6-terra` для text/search и
-`gpt-image-2` для cover generation.
-
-Полностью завершённый нулевой candidate pool является normal successful `no-publish`, а не production failure. Technical partial/error audits remain fail-closed. Нулевая остановка требует актуальный `high_signal_recall_sentinel` версии 8 и завершённые обязательные quality/search стадии.
+Точный operational contract, включая schedule, search budget, recovery states,
+freshness и publication gates, находится в
+[`automation/README.md`](automation/README.md) и
+[`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md).
 
 ## Видео и RSS: закрытая ветвь
 
-Video → RSS enrichment признан тупиковым способом получения нативной публикации
-видео в Дзене и удалён из production. Active workflow больше не проверяет MP4/PNG
-для последующего изменения `posts/rss.xml`, а RSS не должен содержать локальные
-video payloads `/posts/video/`, `medium="video"` или `type="video/*"`.
+Video → RSS enrichment признан нерабочим способом получения нативной Dzen-video
+публикации и удалён из active production. `posts/rss.xml` не должен содержать
+локальные video payloads, `/posts/video/`, `medium="video"` или
+`type="video/*"`.
 
-Исходная реализация не уничтожена. Workflow, script, его regression test и
-специальная retention-политика Actions runs сохранены в
+Историческая реализация сохранена только под
 [`automation/archive/video-rss-enrichment-2026-08/`](automation/archive/video-rss-enrichment-2026-08/)
-как inert reference-only archive. Архив не импортируется, не планируется по cron и
-не входит в active test discovery. Возврат к этому подходу требует нового
-изолированного эксперимента и отдельного PR.
+как reference-only evidence. Возврат к этому пути требует нового изолированного
+эксперимента и отдельного архитектурного изменения.
 
-Рабочая video-ветка остаётся независимой: локальный NotebookLM-video может
-создавать и хранить MP4/PNG и публиковать видео через отдельный browser path, но
-не модифицирует RSS ради видео или назначения Дзен-подборок.
+Рабочий NotebookLM-video downstream независим от nightly production и публикует
+video через локальный browser path. Его детали находятся в
+[`automation/notebooklm-video/README.md`](automation/notebooklm-video/README.md).
 
-## 32-дневная очистка видео на FTP
+## 32-дневная очистка
 
-Очистка старых MP4 и PNG не зависит от того, присутствует ли видео в RSS или в
-каком-либо content item. После успешной основной ночной cleanup-цепочки отдельный
-job читает только FTP-каталог `video/` и управляет только файлами с точными
-именами `ai-svodka-YYYY-MM-DD.mp4` и `ai-svodka-YYYY-MM-DD.png`.
+`repository-cleanup.yml` компактирует старые `automation/content/YYYY-MM-DD/`,
+удаляет истёкшие public dated pages/images после validation и затем отдельно
+чистит FTP `video/` от exact-pattern `ai-svodka-YYYY-MM-DD.mp4/.png`, если их
+дата строго раньше общего cutoff.
 
-Используется та же календарная граница, что и для public cleanup: при
-`cutoff_date = reference_date - 32 days` удаляются только файлы с датой **раньше**
-`cutoff_date`; файл ровно на границе сохраняется. Старые orphan MP4/PNG удаляются
-независимо, наличие пары не требуется. Любые другие имена и каталоги остаются без
-изменений. Перед первым DELETE валидируется весь управляемый inventory, а после
-удаления выполняется повторный listing для подтверждения результата.
-
-Manual cleanup по умолчанию остаётся dry-run. Scheduled cleanup применяет
-удаление автоматически. Если основной public FTP deploy завершился ошибкой,
-video cleanup не запускается, чтобы не добавлять вторую удалённую mutation к уже
-неуспешной maintenance-цепочке.
+FTP-video cleanup не выводит inventory из RSS, не требует пары MP4/PNG и не
+трогает другие remote names/directories. Manual cleanup по умолчанию dry-run;
+scheduled cleanup применяет validated deletion автоматически. Полный contract —
+в `automation/ARCHITECTURE.md`.
 
 ## Правила инженерной уборки GitHub
 
-`repository-hygiene.yml` работает отдельно от 32-дневной очистки выпусков. Он
-может изменять только безопасно классифицированные GitHub-объекты и не является
-механизмом очистки tracked source или опубликованного контента.
+`repository-hygiene.yml` не чистит tracked source или опубликованный content.
+Он работает только с GitHub objects, которые policy доказуемо классифицировала
+как безопасные для mutation. Перед destructive operation состояние и SHA
+проверяются повторно.
 
-Специальная retention-политика только для runs бывшего
-`video-rss-enrichment.yml` больше не входит в active Repository hygiene, поскольку
-сам workflow закрыт. Её код сохранён в том же reference-only архиве для истории и
-возможного будущего исследования.
+Операторский результат: `Actions → Repository hygiene → последний запуск →
+Summary`. Диагностические JSON artifacts имеют `retention: 2 дня`.
 
-Операторский отчёт доступен через `Actions → Repository hygiene → последний
-запуск → Summary`. Диагностический JSON каждого этапа прикладывается как Actions
-artifact с `retention: 2 дня`. Полные правила классификации и destructive safety
-описаны в [`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md) и `AGENTS.md`.
+Классификация, protected objects и retry/delete boundaries описаны в
+[`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md) и
+[`AGENTS.md`](AGENTS.md).
 
 ## Локальный NotebookLM-video
 
-Подпроект начинает работу только после появления уже опубликованного выпуска в
-RSS. Его runtime находится на Windows-машине пользователя и не является
-GitHub-production стадией. `run-worker.cmd` запускает единый scheduled flow через
-`full-worker.js`: NotebookLM/MP4/PNG/FTP, затем Dzen duplicate guard и один fresh
-publish при необходимости с verification-only защитой от повторного клика, затем
-отдельный этап назначения same-day видео и ежедневной сводки в две фиксированные
-Дзен-подборки.
+Подпроект стартует после уже опубликованного выпуска и живёт на Windows-машине
+оператора. Один scheduled entrypoint ведёт NotebookLM/MP4/PNG/optional FTP,
+native Dzen publication, две Dzen collections и insertion опубликованного видео
+в same-day статью.
 
-Факт назначения хранится раздельно как `job.dzenCollections.video.status` и
-`job.dzenCollections.digest.status`. После двух `ADDED` агрегат становится
-`COMPLETE`, и следующие scheduled runs не открывают браузер для этапа подборок.
-При `PARTIAL` повторяется только недостающая цель.
-
-Инструкции:
+Его state, browser profile, реальные configs, FTP credentials, logs и downloaded
+media не коммитятся. Точные state machines, manual entrypoints, deployment и
+browser safety описаны в:
 
 - [README подпроекта](automation/notebooklm-video/README.md)
-- [развёртывание](automation/notebooklm-video/DEPLOYMENT.md)
-- [локальные правила](automation/notebooklm-video/AGENTS.md)
-
-В Git не попадают реальные локальные конфиги, FTP-доступы, state, логи,
-скачанные media и профиль браузера.
+- [DEPLOYMENT.md](automation/notebooklm-video/DEPLOYMENT.md)
+- [локальных правилах](automation/notebooklm-video/AGENTS.md)
 
 ## Разработка и изменения
 
-Изменения идут через отдельную ветку и pull request. Детальная архитектура не
-дублируется между README: при изменении поведения сначала обновляется
-`automation/ARCHITECTURE.md`, затем соответствующие краткие entry-point README и
-контрактные тесты.
+Изменения поведения или структуры должны обновлять
+`automation/ARCHITECTURE.md` и затронутые entry-point README/AGENTS в том же PR.
+Retrieval/search изменения дополнительно проходят независимую validation matrix и
+не используют пользовательский production API budget без отдельного разрешения.
 
-Production API не используется для обычных refactor/CI/regression-проверок без
-явного разрешения.
-
-Редактор и обычный Coverage получают JSON без форматирующих отступов, со всеми
-исходными данными. Редактор Terra отмечает архив явной границей кэша, сохраняя
-implicit caching полного запроса. Измеренная экономия API определяется по
-`usage-ledger.json`; офлайн-сокращение токенов не является счётом провайдера.
-
-Source Freshness v3 сохраняет generic page metadata, Yandex/GitHub first-party
-adapters и отдельную event-age проверку, а также умеет повторно проверить
-сохранённое trusted-feed доказательство Source Pulse v1.4. Этот путь не repoll'ит
-feed и разрешён только для явно одобренного exact same-host item; direct page
-metadata и конфликты остаются authority/fail-closed. Новых платных поисков нет.
-Подробности и границы — в `automation/ARCHITECTURE.md`.
+Исторические audits/fixtures сохраняются как evidence и regression assets; их не
+следует переписывать только ради сокращения живой документации.

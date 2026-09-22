@@ -1,430 +1,320 @@
 # NotebookLM video worker
 
-`automation/notebooklm-video/` — отдельный локальный downstream-подпроект внутри
-общего проекта ИИ-Сводок. Он не участвует в ночном GitHub Actions production и
-не формирует новости. Его работа начинается после публикации ежедневной
-ИИ-Сводки: найти сегодняшний выпуск в RSS, создать видеоповествование в
-NotebookLM, скачать MP4, создать PNG-превью первого кадра, при включённой
-настройке доставить оба файла в строго ограниченный FTP-каталог `video`,
-опубликовать нативное видео в Дзен, добавить обе публикации текущего дня в
-свои Дзен-подборки и затем встроить опубликованное видео в same-day статью.
+`automation/notebooklm-video/` — отдельный локальный Windows downstream
+проекта ИИ-Сводок. Он стартует только после появления опубликованного выпуска и
+не участвует в nightly retrieval/editorial GitHub production.
 
-Общая граница подпроекта относительно production и CI описана в
-[`../ARCHITECTURE.md`](../ARCHITECTURE.md). Локальные правила изменений находятся
-в [`AGENTS.md`](AGENTS.md), перенос на Windows-машину — в
-[`DEPLOYMENT.md`](DEPLOYMENT.md).
+Канонические ссылки:
+
+- [`../ARCHITECTURE.md`](../ARCHITECTURE.md) — граница подпроекта относительно
+  общего production/CI;
+- [`AGENTS.md`](AGENTS.md) — локальные prescriptive rules;
+- [`DEPLOYMENT.md`](DEPLOYMENT.md) — перенос и установка на Windows;
+- [`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md) — deep contract native Dzen
+  upload;
+- [`DZEN_ARTICLE_VIDEO.md`](DZEN_ARTICLE_VIDEO.md) — deep contract video-in-article;
+- [`DZEN_VIDEO_EXPERIMENTS.md`](DZEN_VIDEO_EXPERIMENTS.md) — historical live
+  experiments и negative evidence.
+
+Этот README является операторской/runtime-картой. Точные selectors, live-test
+chronology и incident evidence остаются в subsystem/audit документах, а не
+дублируются здесь.
 
 ## Изоляция от основного production
 
-Подпроект хранится в общем репозитории, потому что использует тот же выпуск,
-дату и URL публикации. При этом runtime и жизненный цикл изолированы:
-
-- video worker выполняется на Windows-машине пользователя;
+- worker выполняется на Windows-машине оператора;
 - основной nightly production не читает video state и не ждёт video result;
-- video-only изменения проверяет отдельный **Video CI**;
-- **Main CI** намеренно исключает video-only paths;
+- video-only изменения проверяет отдельный Video CI;
+- Main CI намеренно исключает video-only paths;
 - `daily-production`, основной FTP deploy, repository cleanup и repository
-  hygiene не должны зависеть от этого каталога.
+  hygiene не должны зависеть от локального video runtime;
+- video downstream не модифицирует `posts/rss.xml` ради публикации видео.
 
-Эта граница закреплена offline contract tests, чтобы локальный worker не стал
-скрытой production-зависимостью.
+## Scheduled flow
 
-## Рабочая схема
-
-```text
+~~~text
 RSS rybalka.one
   -> Windows Task Scheduler
   -> run-worker-hidden.vbs / run-worker.cmd
   -> full-worker.js
   -> scheduled-worker.js
-  -> worker.js
-  -> отдельный Яндекс.Браузер + защищённый профиль
-  -> Playwright connectOverCDP(127.0.0.1:9222)
-  -> NotebookLM
-  -> локальный MP4
-  -> PNG первого кадра через ffmpeg-static
-  -> FTP: только каталог video
-  -> закрыть NotebookLM browser/CDP
-  -> Dzen duplicate guard: Публикации -> Видео
-  -> если видео уже есть: PUBLISHED
-  -> иначе один fresh-upload child -> один publish click
-  -> при редком post-click «Я не робот»: только ручное подтверждение, без auto-click
-  -> post-click проверка через вкладку Видео -> PUBLISHED
+     -> worker.js
+        -> protected Yandex Browser profile / Playwright CDP
+        -> NotebookLM
+        -> MP4 + PNG first-frame preview
+        -> optional FTP video/
+     -> Dzen duplicate guard
+     -> at most one fresh native-video publish child
+     -> post-click verification
   -> dzen-collections.js
-  -> видео дня -> «Видеосводки по ИИ»
-  -> ежедневная сводка -> «Сводки по ИИ»
-  -> сохранить отдельные статусы video/digest
+     -> video -> «Видеосводки по ИИ»
+     -> digest -> «Сводки по ИИ»
   -> dzen-article-video.js
-  -> same-day статья: H2 «Видеосводка» -> Dzen video preview -> H2 «Мировые лидеры ИИ»
-  -> public verification -> COMPLETE/VERIFIED
-```
+     -> same-day article H2 «Видеосводка»
+     -> public verification
+~~~
 
-Ключевые свойства текущей реализации:
+`full-worker.js` owns the outer lock for the whole scheduled sequence.
+`scheduled-worker.js` keeps its inner guard for NotebookLM/FTP + native Dzen
+publication. Separate Task Scheduler jobs for later Dzen phases are not needed.
 
-- комплектный Chromium Playwright не используется;
-- Google/NotebookLM работают через отдельный Яндекс-профиль;
-- внешний IP проверяется внутри браузера до открытия Google;
-- главная NotebookLM поддерживает текущий интерфейс с кнопкой `+ Новый блокнот` и секцией `Недавние блокноты`, сохраняя fallback для прежних `Создать` / `Мои блокноты`;
-- после импорта источника readiness поддерживает новый центральный summary-интерфейс без legacy секции `Чат`: при наличии `1 источник`, активного video control, отсутствии loading markers и уже сгенерированного non-untitled notebook title импорт считается content-ready и затем обязан стабилизироваться не менее 5 секунд;
-- существующий блокнот открывается через href карточки;
-- импорт источника ждёт стабилизации интерфейса;
-- текущий блокнот безусловно переименовывается в `ИИ-YYYY-MM-DD`;
-- готовое видео скачивается только один раз и фиксируется в постоянном реестре;
-- `_ИИ-Сводка.txt` после ручного заполнения второй полной ссылки для текущего
-  выпуска больше не перезаписывается; article-video заменяет только оставшуюся
-  exact заглушку `- https://` на resolved Dzen article URL;
-- FTP-доставка идемпотентна и не запускает повторную генерацию/скачивание;
-- worker работает на FTP только внутри `video` и не изменяет остальные файлы;
-- общий `worker.log` ротируется до первой shared-writer записи нового дня и хранится 7 дней, error-log — 30 дней; архивные `worker-*.log`/`error-*.log` лежат в том же локальном `archive/`, что и JSON-history. Граница суток определяется по timestamp записей, поэтому повторные запуски в тот же день остаются в одном active log. `dzen-browser-runner.js` пока остаётся на прямой записи; если он первым пишет current-day строку в старый файл, shared logger архивирует только старый префикс и сохраняет current-day suffix;
-- активные `state.json` и `_СКАЧАННЫЕ_ВИДЕО.json` держат 14 календарных дней; более старая безопасно завершённая история уходит в бессрочный локальный `archive/`, незавершённые jobs остаются active, а архив реестра продолжает участвовать в idempotency lookup;
-- принудительное сворачивание Яндекс.Браузера управляется конфигурацией;
-- завершённые Dzen-подборки фиксируются в `state.json`, поэтому browser для этого
-  этапа не открывается снова после полного подтверждения;
-- `dzenArticleVideo=COMPLETE|SKIPPED_EXISTING` также не открывает browser снова. `ERROR` остаётся terminal по умолчанию; единственное исключение — один scheduled recovery для доказанного pre-edit link-resolution сбоя без resolved links/editor/publish markers. Повторный такой recovery и любые post-edit/post-click ошибки остаются manual-only;
-- пустые `temp/` и `traces/` больше не создаются: active runtime их не использует.
+The worker selects the newest eligible local `DONE` job whose date is not in the
+future, so delayed/catch-up processing remains possible.
 
-## Локальная ротация логов и JSON-history
+## NotebookLM и media
 
-Текстовые журналы и JSON-history имеют разные политики. `log-utils.js` выполняет
-ротацию `worker.log`/`!!! ERROR !!!.log` **до append** у переведённых на общий
-logger процессов. Поэтому внешний `full-worker.js` больше не может обновить
-`mtime` вчерашнего файла и тем самым скрыть смену суток от `worker.js`.
-`worker.log` хранится 7 дней, error-log 30 дней, размерный порог остаётся 25 МБ. Архивные text-log файлы складываются в общий локальный `archive/` рядом с JSON-history; cleanup text logs матчится только на `worker-*.log`/`error-*.log` и не трогает JSON.
-`dzen-browser-runner.js` намеренно не меняется и остаётся прямым writer. `log-utils.js`
-не использует mutable sidecar для определения дня: он читает timestamp уже записанных
-строк. Если runner успел первым записать строку нового дня в вчерашний файл, следующий
-shared writer архивирует только старый префикс, оставляя current-day suffix в active log.
-Повторный запуск в тот же день не выполняет повторную day-rotation.
+The worker uses a dedicated protected Yandex Browser profile through CDP. It must
+not delete/recreate that profile or its Google/NotebookLM/Dzen sessions.
 
-`history-utils.js` держит активное окно 14 календарных дней. Более старые
-безопасно завершённые jobs из `state.json` переходят в
-`archive/state-YYYY-MM.json`; незавершённый/error/verification-only job остаётся
-в active state независимо от возраста. Старые строки
-`downloads/_СКАЧАННЫЕ_ВИДЕО.json` переходят в
-`archive/downloaded-videos-YYYY-MM.json`, но archive остаётся частью lookup по
-`publicationUrl`, поэтому защита от повторной обработки не теряется. Явный
-операторский `--date=YYYY-MM-DD` может загрузить старый job из archive и сохранить
-его обратно через те же retention rules. JSON archive автоматически не удаляется. Text logs живут в том же `archive/`, но имеют отдельный короткий retention 7/30 дней; log-cleanup игнорирует `state-*.json` и `downloaded-videos-*.json`.
+Current NotebookLM home handling supports the current `+ Новый блокнот` /
+`Недавние блокноты` UI while preserving compatibility with the previous
+`Создать` / `Мои блокноты` surface. Source import waits for a stable
+content-ready state before video generation. Existing notebook cards are opened
+through their href and the selected notebook is renamed to `ИИ-YYYY-MM-DD`.
 
-## Автоматическая публикация видео в Дзен
+Downloaded video is registered persistently and is not regenerated/redownloaded
+when the same publication is already known. PNG preview is generated from the
+first frame. FTP delivery is idempotent and does not trigger a second
+NotebookLM-generation pass.
 
-`run-worker.cmd` является единым production-entrypoint локального downstream. Он
-запускает внешний `full-worker.js`. Тот держит lock всего scheduled flow и сначала
-вызывает существующий `scheduled-worker.js`, который последовательно выполняет
-две уже проверенные фазы: `worker.js` (RSS -> NotebookLM -> MP4/PNG -> optional
-FTP), затем Dzen publish после выбора самого свежего локального `DONE` job с датой
-не позже текущей. После подтверждённого `PUBLISHED` внешний worker выполняет
-третью фазу подборок, а после её `COMPLETE` — четвёртую фазу вставки видео в
-same-day статью. Если предыдущий article-video ERROR доказанно возник только на pre-edit получении public URL и state не содержит editor/publish markers, `full-worker.js` один раз запускает guarded recovery; повторный такой автоматический recovery запрещён. Отдельные задачи Планировщика Windows для этих Dzen-этапов не нужны.
+`downloads/_ИИ-Сводка.txt` is operator-owned after manual edits. Article-video
+may replace only the exact still-empty second-link placeholder under
+`Этот выпуск:`; if that placeholder is absent, the file is not rewritten.
 
-После успешного `worker.js` выбирается самый свежий `DONE` job с датой не позже
-текущей локальной даты. Поэтому delayed/catch-up выпуск предыдущего дня не
-теряется, а future-dated state никогда не запускает публикацию.
+## State, logs and history
 
-Dzen использует тот же защищённый профиль Яндекс.Браузера и тот же CDP-порт, но
-не одновременно с NotebookLM. `worker.js` сначала штатно закрывает свой browser;
-только после выхода child оркестратор запускает новую Dzen browser session.
+Shared text writers use `log-utils.js` and rotate before append. Day boundaries
+come from timestamps already present in the active log, not mtime/sidecar state,
+so repeated same-day runs accumulate in one active file.
 
-Перед любым upload выполняется live-проверенный duplicate guard:
+- active `worker.log`: 7-day rotated retention;
+- error log: 30-day rotated retention;
+- size threshold: 25 MB;
+- rotated text logs live under local `archive/`.
 
-```text
-Studio -> Публикации -> Видео
-  -> radio input[type="radio"][aria-label="Видео"]
-  -> checked=true
-  -> искать title prefix до " | "
-```
+`dzen-browser-runner.js` remains the documented direct-writer exception. When it
+writes the first current-day line into an older active log, the next shared writer
+archives only the older prefix and preserves the current-day suffix.
 
-Если ожидаемое видео уже видно, оркестратор записывает Dzen как `PUBLISHED` и
-ничего не загружает. Если совпадения нет, разрешается ровно один fresh-upload
-child `dzen-publish-direct.js`: MP4, metadata один раз, PNG cover, ровно пять
-tag-chip, финальная готовность, comments=`Все пользователи`, один publish click.
+`history-utils.js` keeps a 14-calendar-day active window in `state.json` and
+`downloads/_СКАЧАННЫЕ_ВИДЕО.json`. Older safe terminal history moves to monthly
+JSON files under local `archive/`. Unresolved/error/verification-only jobs remain
+active regardless of age. JSON archive is not auto-deleted and stays available for
+duplicate/idempotency lookup and explicit old-date operator actions.
 
-После единственного publish click `dzen-browser-runner.js` в течение 4 секунд
-проверяет, не появилось ли редкое окно `Подтвердите, что вы не робот` / `Я не
-робот`. Это human-only challenge: автоматизация **никогда не нажимает checkbox и
-не пытается обходить проверку**. Если окно появилось, runner восстанавливает
-свёрнутое окно Яндекс.Браузера, выводит страницу на передний план и до 120 секунд
-только ждёт ручного подтверждения. Пока challenge видим, других UI-click нет.
-После его исчезновения выполняется обычная post-click verification. Если окно не
-исчезло за лимит, исход считается post-click неопределённостью: новый upload и
-второй publish click остаются запрещены, дальнейшие scheduled runs работают
-только в verification-only режиме.
+Empty `temp/` and `traces/` are not active runtime surfaces and are not
+precreated.
 
-Для автоматического режима поверх проверенного direct child добавлена fail-closed
-state machine в существующем `state.json`:
+## Native Dzen video publication
 
-```text
+Normal scheduled publication begins with a fail-closed duplicate guard in Studio
+`Публикации → Видео`. It must confirm the real Video filter and match the
+expected title prefix before any upload.
+
+If an existing same-day video is confirmed, state becomes `PUBLISHED` and no
+new draft/upload/publish click occurs.
+
+If no duplicate exists, the validated production path runs one fresh-upload child
+`dzen-publish-direct.js`. Metadata, cover and configured tags are set once,
+readiness is status-driven, comments are set to `Все пользователи`, and the
+child performs at most one publish action.
+
+Scheduled safety state:
+
+~~~text
 PENDING / RETRYABLE_PRE_CLICK
   -> duplicate guard
-  -> PUBLISH_ARMED (сохраняется ДО live child)
-  -> один live child
+  -> PUBLISH_ARMED
+  -> one fresh-upload child
   -> CLICKED_UNVERIFIED
-  -> verification через Публикации -> Видео
+  -> verification through Studio Video list
   -> PUBLISHED
 
 PUBLISH_ARMED / CLICKED_UNVERIFIED / BLOCKED_AMBIGUOUS
-  -> только verification
-  -> НИКОГДА новый upload
-  -> НИКОГДА второй publish click
-```
+  -> verification only
+  -> never a new upload
+  -> never a second publish click
+~~~
 
-Повтор fresh upload допустим только когда предыдущий child явно успел сообщить
-`publishClicked=false`. Если процесс оборвался неоднозначно после `PUBLISH_ARMED`,
-следующие scheduled runs лишь проверяют список `Видео`.
+A fresh retry is allowed only when the previous child explicitly proved
+`publishClicked=false`. Ambiguous post-arm/post-click outcomes remain
+verification-only.
 
-По умолчанию `dzenUpload.automaticEnabled=true`. Для аварийного отключения только
-автоматической Dzen-фазы установить:
+If Dzen shows a post-click human challenge such as `Я не робот`, automation does
+not click or bypass it. The browser is surfaced for manual completion and the
+runner only waits. Timeout remains post-click uncertainty, not permission for a
+second upload/click.
 
-```json
+Emergency switch:
+
+~~~json
 "dzenUpload": {
   "automaticEnabled": false
 }
-```
+~~~
 
-Отсутствие `automaticEnabled` в старом локальном `config.json` трактуется как
-`true`, потому что этот флаг появился именно при promotion в scheduled production.
-`verificationTimeoutMs` по умолчанию равен 90000 мс.
+Missing `automaticEnabled` in an older local config is treated as `true`.
+Default verification timeout is 90000 ms.
 
-Ручные `run-dzen-publish.cmd --date=YYYY-MM-DD` и `run-dzen-dry-run.cmd` сохранены
-как операторские/диагностические entrypoints, но штатное расписание их не вызывает.
-Подробный browser-upload контракт находится в
-[`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md).
+Manual operator entrypoints remain:
 
-## Автоматическое добавление в Дзен-подборки
+~~~cmd
+run-dzen-publish.cmd --date=YYYY-MM-DD
+run-dzen-dry-run.cmd
+~~~
 
-После подтверждённого `job.dzenAutomation.status=PUBLISHED` внешний
-`full-worker.js` выполняет отдельную третью фазу `dzen-collections.js`. Она
-работает только с публикациями той же даты, что и выбранный локальный job, и знает
-ровно две цели:
+Deep selectors, metadata/tag/readiness rules and live evidence are canonical in
+[`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md) and
+[`DZEN_VIDEO_EXPERIMENTS.md`](DZEN_VIDEO_EXPERIMENTS.md).
 
-```text
-Видео:
-  ИИ-Сводка на <дата> | Подпишись, чтоб получать свежее!
-  -> Видеосводки по ИИ
-  -> https://dzen.ru/suite/a899d818-52b3-4f87-8e49-4a4bac375244
+## Dzen collections
 
-Ежедневная сводка:
-  ИИ-Сводка на <дата>
-  -> Сводки по ИИ
-  -> https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1
-```
+After native publication is confirmed, `dzen-collections.js` manages exactly
+two same-day targets:
 
-Если в конкретный момент видна только одна или ни одной из двух публикаций,
-никакая чужая публикация не используется как замена. Отсутствующая цель остаётся
-`PENDING` и может быть проверена следующим 10-минутным запуском.
+- video → `Видеосводки по ИИ`;
+- daily digest → `Сводки по ИИ`.
 
-Факт успешного назначения хранится отдельно по каждой цели:
+Zero or one visible target is valid; unrelated publications are never substituted.
 
-```text
+Per-target state is independent:
+
+~~~text
 job.dzenCollections.video.status = ADDED
 job.dzenCollections.digest.status = ADDED
 
-0 ADDED -> dzenCollections.status = PENDING
-1 ADDED -> dzenCollections.status = PARTIAL
-2 ADDED -> dzenCollections.status = COMPLETE
-```
+0 ADDED -> PENDING
+1 ADDED -> PARTIAL
+2 ADDED -> COMPLETE
+~~~
 
-Если обе цели `ADDED`, следующий scheduled run завершает третью фазу **до запуска
-browser child**. Если `ADDED` только одна, `dzen-collections.js` открывает browser
-и обрабатывает только вторую цель. Уже завершённая цель не переоткрывается.
+A completed target is never clicked again. Once aggregate state is `COMPLETE`,
+future scheduled runs skip the collections browser child.
 
-Live-тест 29.08.2026 подтвердил необычный Dzen UI contract для уже добавленной
-подборки: tile остаётся формально hit-testable и не получает нормальный
-`disabled`/ARIA marker, но точное название приглушается до
-`rgba(6, 6, 15, 0.6)`. Поэтому alpha `<= 0.70` считается подтверждённым
-`already-added`, и повторный клик запрещён.
+The worker scrolls the exact target tile into a safe visible position and verifies
+target-local state before persisting `ADDED`. A page-wide success message alone
+is not sufficient. Already-added detection and post-click confirmation are
+fail-closed; an ambiguous action never authorizes a second automatic collection
+click.
 
-После изменения интерфейса Дзен 13.09.2026 нужные подборки могут находиться ниже
-видимой части внутреннего scroll-контейнера модалки. Поэтому перед единственным
-физическим кликом worker прокручивает exact-name tile в видимую область,
-пересчитывает геометрию и выполняет `elementFromPoint` hit-test. Если точка клика
-не принадлежит целевой tile либо остаётся за пределами модалки/viewport, клик не
-выполняется и этап завершается fail-closed.
+Manual entrypoints:
 
-Page-wide success-text после клика больше не считается доказательством назначения:
-он может быть устаревшим или относиться к другому действию. `ADDED` записывается
-только когда exact target tile становится selected/muted (`alpha <= 0.70`) сразу
-после клика либо когда это состояние подтверждается после повторного открытия той
-же публикации и той же подборки. Повторное открытие является verification-only и
-не делает второй collection click.
-
-Live-run 13.09.2026 подтвердил обе ветки нового контракта: ежедневная сводка была
-успешно добавлена после scroll/hit-test, а видео после единственного клика сначала
-показало общий success-text, который был намеренно проигнорирован, затем exact
-`Видеосводки по ИИ` после повторного открытия подтвердилось как
-`rgba(6, 6, 15, 0.6)` и только после этого state перешёл в `ADDED/COMPLETE`.
-
-При неоднозначности второй автоматический клик не выполняется: этап пишет ошибку,
-делает screenshot при возможности, закрывает браузер и оставляет только эту цель
-незавершённой.
-
-Ручные команды сохранены под теми же именами, которые использовались во время
-отладки, чтобы локальный каталог не обрастал версиями:
-
-```cmd
+~~~cmd
 run-dzen-collections-debug.cmd --date=YYYY-MM-DD
 run-dzen-collections-apply.cmd --date=YYYY-MM-DD
-```
+~~~
 
-Первая команда не кликает по подборке, вторая применяет тот же production
-алгоритм вручную. Канонический исходник — `dzen-collections.js`.
+Their filenames are intentionally stable; canonical implementation is
+`dzen-collections.js`.
 
-## Автоматическая вставка видео в статью Дзен
+## Video in the same-day Dzen article
 
-Четвёртая фаза запускается только после `dzenAutomation=PUBLISHED` и
-`dzenCollections=COMPLETE`. Она универсальна по дате: `full-worker.js`
-передаёт дату выбранного job, а `dzen-article-video.js` сам получает public URL
-same-day статьи и видео через Studio. URL сначала ищется прямо в same-day row/DOM, затем перехватывается page-side clipboard write/copy, и только последним fallback используется Windows clipboard. Пустой исходный Windows clipboard корректно восстанавливается через Clipboard.Clear(); ошибка восстановления clipboard после уже подтверждённого embed логируется как warning и не обрывает content flow.
+The fourth stage runs only after native video is `PUBLISHED` and collections are
+`COMPLETE`. `dzen-article-video.js` resolves exact same-day article/video URLs
+through Studio and inserts the video before H2 `Мировые лидеры ИИ` under a new
+H2 `Видеосводка`.
 
-Перед любым редактированием resolved article URL синхронизируется с
-`downloads/_ИИ-Сводка.txt` только если в блоке `Этот выпуск:` второй bullet
-всё ещё равен exact placeholder `- https://`. Если placeholder отсутствует,
-файл считается вручную заполненным и **не изменяется**. Если placeholder есть,
-первая ссылка дополнительно обязана совпасть с `job.publicationUrl`.
+It uses real clipboard interaction when required, preserves/restores the
+operator's Windows text clipboard, waits for a real Dzen video preview and stable
+autosave, then performs a two-stage at-most-once publish/save flow.
 
-Editor flow:
+Safety states `PUBLISH_ARMED`, `CONFIRMATION_ARMED` and
+`CLICKED_UNVERIFIED` are verification-only on later runs. They must never cause
+a second editor mutation or publish/save click. Exact pre-existing H2
+`Видеосводка` ends as `SKIPPED_EXISTING`.
 
-```text
-ИИ-Сводка на <дата>
-  -> найти H2 «Мировые лидеры ИИ»
-  -> создать plain «Видеосводка»
-  -> Enter
-  -> real Ctrl+V public video URL
-  -> дождаться Dzen video preview
-  -> выделить exact «Видеосводка»
-  -> floating toolbar -> H2
-  -> дождаться stable autosave минимум 8 секунд
-  -> PUBLISH_ARMED
-  -> один click «Опубликовать»
-  -> modal «Публикация»
-  -> CONFIRMATION_ARMED
-  -> один click native BUTTON «Сохранить изменения»
-  -> CLICKED_UNVERIFIED
-  -> public verification
-  -> COMPLETE / VERIFIED
-```
+`ERROR` is terminal by default. Only two narrow one-shot scheduled recovery
+classes are allowed:
 
-После `PUBLISH_ARMED`, `CONFIRMATION_ARMED` или `CLICKED_UNVERIFIED`
-повторная mutation запрещена: разрешена только публичная verification. Если exact
-H2 `Видеосводка` уже существует до изменений, этап завершает
-`SKIPPED_EXISTING` без publish click. `ERROR` не ретраится автоматически, кроме двух узких one-shot fail-closed recovery-классов: pre-edit link-resolution без resolved links/editor/publish markers и pre-publish clipboard error с resolved links, но без publish markers. Во втором случае live draft обязательно инспектируется: уже существующий plain `Видеосводка` + подтверждённый video preview возобновляется только с H2 formatting, без второго embed.
+1. proven pre-edit link-resolution failure with no resolved links/editor/publish
+   markers;
+2. pre-publish clipboard-related failure with resolved links but no publish
+   markers, after mandatory live-draft inspection.
 
-Ручные стабильные entrypoints:
+The second case may resume an already confirmed plain heading + video embed only
+from H2 formatting, never by inserting another embed.
 
-```bat
+Manual entrypoints:
+
+~~~bat
 run-dzen-article-video-dry-run.cmd --date=YYYY-MM-DD
 run-dzen-article-video-apply.cmd --date=YYYY-MM-DD
-```
+~~~
 
-Полный state/recovery/at-most-once контракт и live acceptance за 20.09.2026:
+Full editor/state/recovery contract and acceptance evidence:
 [`DZEN_ARTICLE_VIDEO.md`](DZEN_ARTICLE_VIDEO.md).
 
-## Антивирус: обязательное исключение рабочей папки
+## Антивирус
 
-До первого запуска, восстановления или обновления локального образа необходимо
-сразу добавить **точную рабочую папку NotebookLMBot** в исключения активной
-антивирусной программы. Для текущего развёртывания это:
+До первого запуска/восстановления/обновления добавьте точную рабочую папку
+NotebookLMBot в исключения активного антивируса. Для текущего deployment это
+`C:\TRASH\NotebookLMBot`; при другом `TargetDir` исключение должно указывать
+именно на него.
 
-```text
-C:\TRASH\NotebookLMBot
-```
-
-Если `TargetDir` выбран другой, исключение должно указывать именно на него.
-Worker запускает Node.js, управляет браузером через Playwright/CDP, использует
-PowerShell/DPAPI и `ffmpeg-static`, поэтому поведенческие эвристики антивируса
-могут помещать отдельные runtime-файлы в карантин или удалять их.
-
-Не отключать антивирус целиком и не добавлять в исключения весь диск, весь
-Windows-профиль пользователя или `C:\Program Files`. Исключение должно быть
-узким и относиться только к рабочей папке NotebookLMBot. Защищённый профиль
-Яндекс.Браузера является отдельным runtime-активом и этим требованием
-автоматически не охватывается.
-
-То же предупреждение продублировано в [`НАСТРОЙКИ.txt`](НАСТРОЙКИ.txt) и в
-[`DEPLOYMENT.md`](DEPLOYMENT.md).
+Не отключайте антивирус целиком и не исключайте весь диск/Windows profile.
+Подробная deployment-процедура и то же safety warning находятся в
+[`DEPLOYMENT.md`](DEPLOYMENT.md) и `НАСТРОЙКИ.txt`.
 
 ## Что хранится в Git
 
-В репозитории находятся только переносимые исходники, шаблоны и инструкции:
-
-- `worker.js`, `scheduled-worker.js` и внешний `full-worker.js`;
-- Dzen runtime (`browser-session.js`, duplicate guard, runner, publishers и
-  `dzen-collections.js`);
-- совместимый `dzen-collections-debug.js` и две ручные команды подборок;
-- `package.json` с фиксированными верхнеуровневыми версиями зависимостей;
-- `package-lock.json` с зафиксированным полным транзитивным npm-деревом;
-- `config.example.json`;
-- `ftp-access.example.json`;
-- `setup-local.ps1` и `configure-ftp-access.ps1`;
-- `install-ftp-support.cmd`;
-- portable `run-worker.cmd` и `run-worker-hidden.vbs`;
-- `НАСТРОЙКИ.txt` с локальной памяткой;
-- документация и безопасные offline smoke tests.
+Коммитятся только portable source, safe templates, dependency manifests,
+launchers, documentation и offline tests.
 
 `package.json` и `package-lock.json` являются одной версионируемой единицей.
-Изменение npm-зависимостей должно обновлять lockfile в том же pull request.
-Локальная установка выполняется через `npm ci`.
+Dependency change обновляет lockfile в том же PR и должен доказывать clean
+`npm ci`.
 
-Реальные локальные конфиги, доступы, state, журналы, скачанные медиафайлы,
-диагностические файлы и профиль браузера в Git не попадают. Правила закреплены
-локальным `.gitignore`.
+Не коммитятся:
 
-## Конфигурация
+- real `config.json` / `ftp-access.json`;
+- DPAPI access data;
+- state/history/logs/screenshots;
+- downloaded media;
+- protected browser profile;
+- machine-local runtime state.
 
-Предпочтительный способ первичной настройки — `setup-local.ps1`. Он создаёт
-рабочую конфигурацию из безопасного шаблона, подставляет выбранный каталог,
-текущий Windows-профиль и локальные пути, копирует `package.json` вместе с
-`package-lock.json`, выполняет `npm ci --no-audit --no-fund` и проверяет основные
-worker entrypoints. Реальный FTP-доступ создаётся только при явном
-`-ConfigureFtp`; без него используется отдельная команда
-`configure-ftp-access.ps1`.
+## Настройка
 
-`npm ci` намеренно удаляет существующий `node_modules` и восстанавливает его
-строго по committed lockfile. Локальный FTP access защищается Windows DPAPI
-`CurrentUser` и при переносе под другой Windows-профиль создаётся заново.
+Preferred bootstrap: `setup-local.ps1`. Он создаёт local config из safe
+template, подставляет machine paths/profile, копирует dependency manifests,
+выполняет `npm ci --no-audit --no-fund` и проверяет основные entrypoints.
 
-## FTP-граница
+FTP credentials создаются только явно через `-ConfigureFtp` или
+`configure-ftp-access.ps1`. Local FTP access защищён Windows DPAPI
+`CurrentUser` и должен быть пересоздан при смене Windows user profile.
 
-После подключения worker проверяет каталог `video` и создаёт его при отсутствии.
-В него загружаются только текущие:
+Полная процедура: [`DEPLOYMENT.md`](DEPLOYMENT.md).
+
+## FTP boundary
+
+Worker работает только внутри remote directory `video` и управляет текущими:
 
 - `ai-svodka-YYYY-MM-DD.mp4`;
 - `ai-svodka-YYYY-MM-DD.png`.
 
-Другие FTP-каталоги и файлы worker не должен удалять, переименовывать или
-перезаписывать. Существующий файл правильного размера считается уже доставленным;
-конфликт размера завершает FTP-этап ошибкой вместо destructive overwrite.
+Он не удаляет/переименовывает/перезаписывает другие remote paths. Existing file
+с правильным размером считается уже доставленным; size conflict завершается
+ошибкой вместо destructive overwrite.
 
-## Проверка в GitHub
+## Проверка
 
-На pull request always-on `PR Gate` вызывает Video CI для video-домена; изменение
-общей `automation/ARCHITECTURE.md` также может потребовать Main CI как
-cross-cutting documentation contract. Video CI выполняет переносимые
-dependency-free проверки:
+PR Gate вызывает Video CI для video-domain. Изменение общей
+`automation/ARCHITECTURE.md` может сделать PR cross-cutting и потребовать Main
+CI.
 
-```text
-node --check worker.js
-node --check full-worker.js
-node --check dzen-collections.js
-node --check tests/*.js
-npm test
-```
+Video CI остаётся offline относительно NotebookLM, FTP, Dzen, production APIs и
+Windows DPAPI. Точный набор задаётся `.github/workflows/video-ci.yml`.
 
-Тесты не открывают NotebookLM, не подключаются к FTP/Dzen, не используют
-production API и не эмулируют Windows DPAPI. Отдельный lockfile contract smoke
-проверяет синхронизацию `package.json`/`package-lock.json` и использование
-`npm ci` в install entrypoints.
+Локальный базовый прогон:
 
-Локально после получения исходников или изменения зависимостей выполнять:
-
-```powershell
+~~~powershell
 npm ci --no-audit --no-fund
 node --check .\worker.js
 node --check .\full-worker.js
 node --check .\scheduled-worker.js
 node --check .\dzen-collections.js
 npm test
-```
+~~~
 
-Windows DPAPI и реальный browser/NotebookLM/Dzen flow проверяются на целевой
-Windows-машине. Полный перенос на новую машину описан в [DEPLOYMENT.md](DEPLOYMENT.md).
+Real browser/NotebookLM/Dzen/DPAPI behavior проверяется только на целевой
+Windows-машине.
