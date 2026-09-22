@@ -10,12 +10,16 @@ artifacts.
 The obligation is created before the child process. The exact post-Freshness pool
 is then bound immediately before provider admission, after the existing
 Source-Freshness pass has mutated the transient research input and without adding
-another fetch. Request arguments are hash-bound without persisting the prompt.
+another fetch. Request arguments are hash-bound. Recovery of legacy response-saved state may
+persist the exact prior editorial prompt as same-bundle proof before the mutable
+dated artifact can be rewritten. That proof can authorize only an offline replay
+whose reconstructed v1 request hash exactly matches the saved journal.
 The raw provider response is persisted before parsing so a crash can replay local
 parse/validation without buying a second editorial response.
 """
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import os
@@ -106,37 +110,80 @@ def _archive_sha256(value: Any, *, version: int) -> str:
     return canonical_sha256(value)
 
 
-def _saved_prompt_archive(artifact_dir: Path) -> dict[str, Any] | None:
-    path = artifact_dir / "editorial-prompt-input.txt"
-    if not path.is_file():
-        return None
-    try:
-        text = path.read_text(encoding="utf-8")
-    except OSError:
-        return None
-    start = text.find(ARCHIVE_CONTEXT_BEGIN)
+def _prompt_proof_path(state_dir: Path, publication_date: str) -> Path:
+    return state_dir / f"editorial-repair-{publication_date}.prompt.txt"
+
+
+def _split_prompt_archive(prompt: str) -> tuple[str, dict[str, Any], str] | None:
+    start = prompt.find(ARCHIVE_CONTEXT_BEGIN)
     if start < 0:
         return None
-    start += len(ARCHIVE_CONTEXT_BEGIN)
-    end = text.find(ARCHIVE_CONTEXT_END, start)
+    payload_start = start + len(ARCHIVE_CONTEXT_BEGIN)
+    end = prompt.find(ARCHIVE_CONTEXT_END, payload_start)
     if end < 0:
         return None
-    payload = text[start:end].strip()
+    payload = prompt[payload_start:end].strip()
     try:
-        value = json.loads(payload)
+        archive = json.loads(payload)
     except json.JSONDecodeError:
         return None
-    return value if isinstance(value, dict) else None
+    if not isinstance(archive, dict):
+        return None
+    return prompt[:payload_start], archive, prompt[end:]
+
+
+def _saved_prompt_text(
+    artifact_dir: Path,
+    *,
+    state_dir: Path | None = None,
+    publication_date: str | None = None,
+) -> str | None:
+    candidates: list[Path] = []
+    if state_dir is not None and publication_date:
+        candidates.append(_prompt_proof_path(state_dir, publication_date))
+    candidates.append(artifact_dir / "editorial-prompt-input.txt")
+    for path in candidates:
+        if not path.is_file():
+            continue
+        try:
+            return path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+    return None
+
+
+def _saved_prompt_archive(
+    artifact_dir: Path,
+    *,
+    state_dir: Path | None = None,
+    publication_date: str | None = None,
+) -> dict[str, Any] | None:
+    text = _saved_prompt_text(
+        artifact_dir,
+        state_dir=state_dir,
+        publication_date=publication_date,
+    )
+    if text is None:
+        return None
+    split = _split_prompt_archive(text)
+    return split[1] if split is not None else None
 
 
 def _legacy_archive_equivalent(
     journal: dict[str, Any],
     current_archive: Any,
     artifact_dir: Path,
+    *,
+    state_dir: Path | None = None,
+    publication_date: str | None = None,
 ) -> bool:
     """Admit v1 replay only when saved prompt proves timestamp-only drift."""
 
-    saved = _saved_prompt_archive(artifact_dir)
+    saved = _saved_prompt_archive(
+        artifact_dir,
+        state_dir=state_dir,
+        publication_date=publication_date,
+    )
     if saved is None:
         return False
     expected = str(journal.get("archive_sha256") or "")
@@ -145,6 +192,115 @@ def _legacy_archive_equivalent(
     return canonical_sha256(_archive_semantic_value(saved)) == canonical_sha256(
         _archive_semantic_value(current_archive)
     )
+
+
+def _request_prompt_text(kwargs: dict[str, Any]) -> str | None:
+    value = kwargs.get("input")
+    if isinstance(value, str):
+        return value
+    if not isinstance(value, list):
+        return None
+    parts: list[str] = []
+    for message in value:
+        if not isinstance(message, dict):
+            return None
+        content = message.get("content")
+        if not isinstance(content, list):
+            return None
+        for item in content:
+            if not isinstance(item, dict) or item.get("type") != "input_text":
+                return None
+            text = item.get("text")
+            if not isinstance(text, str):
+                return None
+            parts.append(text)
+    return "".join(parts) if parts else None
+
+
+def _request_with_prompt(kwargs: dict[str, Any], prompt: str) -> dict[str, Any] | None:
+    result = copy.deepcopy(kwargs)
+    value = result.get("input")
+    if isinstance(value, str):
+        result["input"] = prompt
+        return result
+    if not isinstance(value, list):
+        return None
+
+    refs: list[dict[str, Any]] = []
+    for message in value:
+        if not isinstance(message, dict):
+            return None
+        content = message.get("content")
+        if not isinstance(content, list):
+            return None
+        for item in content:
+            if not isinstance(item, dict) or item.get("type") != "input_text":
+                return None
+            if not isinstance(item.get("text"), str):
+                return None
+            refs.append(item)
+    if len(refs) == 1:
+        refs[0]["text"] = prompt
+        return result
+    if len(refs) == 2:
+        boundary = prompt.find(ARCHIVE_CONTEXT_END)
+        if boundary < 0:
+            return None
+        boundary += len(ARCHIVE_CONTEXT_END)
+        refs[0]["text"] = prompt[:boundary]
+        refs[1]["text"] = prompt[boundary:]
+        return result
+    return None
+
+
+def _legacy_request_sha(
+    context: RepairContext,
+    journal: dict[str, Any],
+    current_kwargs: dict[str, Any],
+) -> str | None:
+    """Return the saved v1 request SHA only for proven timestamp-only prompt drift."""
+
+    if int(journal.get("version") or 0) != LEGACY_VERSION:
+        return None
+    saved_request = str(journal.get("request_sha256") or "")
+    if not saved_request:
+        return None
+    saved_text = _saved_prompt_text(
+        context.artifact_dir,
+        state_dir=context.state_dir,
+        publication_date=context.publication_date,
+    )
+    current_text = _request_prompt_text(current_kwargs)
+    if saved_text is None or current_text is None:
+        return None
+
+    current_split = _split_prompt_archive(current_text)
+    if current_split is None:
+        return None
+    current_prefix, current_archive, current_suffix = current_split
+
+    variants = [saved_text]
+    if saved_text.endswith("\n"):
+        variants.append(saved_text[:-1])
+    for saved_variant in variants:
+        saved_split = _split_prompt_archive(saved_variant)
+        if saved_split is None:
+            continue
+        saved_prefix, saved_archive, saved_suffix = saved_split
+        if saved_prefix != current_prefix or saved_suffix != current_suffix:
+            continue
+        if canonical_sha256(saved_archive) != str(journal.get("archive_sha256") or ""):
+            continue
+        if canonical_sha256(_archive_semantic_value(saved_archive)) != canonical_sha256(
+            _archive_semantic_value(current_archive)
+        ):
+            continue
+        reconstructed = _request_with_prompt(current_kwargs, saved_variant)
+        if reconstructed is None:
+            continue
+        if request_sha256(reconstructed) == saved_request:
+            return saved_request
+    return None
 
 def _file_sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -326,6 +482,7 @@ def _verify_input_identity(
     persisted_research_path: Path,
     archive_path: Path,
     artifact_dir: Path,
+    state_dir: Path,
     model: str,
 ) -> None:
     try:
@@ -354,7 +511,13 @@ def _verify_input_identity(
             continue
         if key == "archive_sha256" and journal_version == LEGACY_VERSION:
             current_archive = _read_json(archive_path)
-            if _legacy_archive_equivalent(journal, current_archive, artifact_dir):
+            if _legacy_archive_equivalent(
+                journal,
+                current_archive,
+                artifact_dir,
+                state_dir=state_dir,
+                publication_date=publication_date,
+            ):
                 continue
         raise EditorialRepairError(f"editorial repair input changed: {key}")
     if journal.get("intent_sha256") != _intent_sha(journal):
@@ -468,6 +631,7 @@ def load_required(
         persisted_research_path=persisted_research_path,
         archive_path=archive_path,
         artifact_dir=artifact_dir,
+        state_dir=state_dir,
         model=model,
     )
     return _context_from_identity(
@@ -571,22 +735,38 @@ def _replay(response: dict[str, Any]) -> Any:
     )
 
 
-def prepare_request(context: RepairContext, request_sha: str) -> Any | None:
+def prepare_request(
+    context: RepairContext,
+    request_sha: str,
+    *,
+    request_kwargs: dict[str, Any] | None = None,
+) -> Any | None:
     journal = _load_bound_journal(context)
     if not journal.get("post_freshness_candidate_pool_sha256"):
         raise EditorialRepairError("post-Freshness candidate pool was not bound before transport")
     state = str(journal.get("state") or "")
     saved_request = journal.get("request_sha256")
+    replay_request_sha = request_sha
     if saved_request not in {None, request_sha}:
-        raise EditorialRepairError("editorial repair request contract changed")
+        durable_response = state in {"validated", "response_saved"} or (
+            state == "request_started" and context.response_path.is_file()
+        )
+        legacy_sha = (
+            _legacy_request_sha(context, journal, request_kwargs)
+            if durable_response and request_kwargs is not None
+            else None
+        )
+        if legacy_sha != saved_request:
+            raise EditorialRepairError("editorial repair request contract changed")
+        replay_request_sha = str(saved_request)
     if state in {"validated", "response_saved"}:
-        response, response_sha = _load_response(context, request_sha)
+        response, response_sha = _load_response(context, replay_request_sha)
         if journal.get("response_sha256") != response_sha:
             raise EditorialRepairError("saved repair response hash mismatch")
         return _replay(response)
     if state == "request_started":
         if context.response_path.is_file():
-            response, response_sha = _load_response(context, request_sha)
+            response, response_sha = _load_response(context, replay_request_sha)
             journal.update(
                 state="response_saved", response_sha256=response_sha,
                 recovered_after_interruption=True, updated_at=_now(),
@@ -733,10 +913,9 @@ def restore_state_from_bundle(
     source_state = bundle_root.resolve() / "production-daily"
     target_state = target_state_dir.resolve()
     copied: list[str] = []
-    for source in (
-        _journal_path(source_state, publication_date),
-        _response_path(source_state, publication_date),
-    ):
+    journal_source = _journal_path(source_state, publication_date)
+    response_source = _response_path(source_state, publication_date)
+    for source in (journal_source, response_source):
         if not source.is_file():
             continue
         target = target_state / source.name
@@ -746,7 +925,51 @@ def restore_state_from_bundle(
         if not target.is_file():
             shutil.copy2(source, target)
             copied.append(source.name)
-    return {"source_state_dir": str(source_state), "copied": copied}
+
+    prompt_proof_status = "not_applicable"
+    if journal_source.is_file():
+        journal = _load_raw_journal(journal_source)
+        state = str(journal.get("state") or "")
+        legacy_replayable = int(journal.get("version") or 0) == LEGACY_VERSION and (
+            state in {"response_saved", "validated"}
+            or state == "request_started" and response_source.is_file()
+        )
+        if legacy_replayable:
+            source_proof = _prompt_proof_path(source_state, publication_date)
+            if not source_proof.is_file():
+                source_proof = bundle_root.resolve() / publication_date / "editorial-prompt-input.txt"
+            if source_proof.is_file():
+                try:
+                    prompt = source_proof.read_text(encoding="utf-8")
+                except OSError as exc:
+                    raise EditorialRepairError(
+                        "legacy editorial prompt proof is unreadable"
+                    ) from exc
+                split = _split_prompt_archive(prompt)
+                if split is None or canonical_sha256(split[1]) != str(
+                    journal.get("archive_sha256") or ""
+                ):
+                    prompt_proof_status = "invalid"
+                else:
+                    target_proof = _prompt_proof_path(target_state, publication_date)
+                    target_proof.parent.mkdir(parents=True, exist_ok=True)
+                    if target_proof.is_file():
+                        if _file_sha256(target_proof) != _file_sha256(source_proof):
+                            raise EditorialRepairError(
+                                "conflicting legacy editorial prompt proof"
+                            )
+                    else:
+                        shutil.copy2(source_proof, target_proof)
+                        copied.append(target_proof.name)
+                    prompt_proof_status = "copied"
+            else:
+                prompt_proof_status = "missing"
+
+    return {
+        "source_state_dir": str(source_state),
+        "copied": copied,
+        "prompt_proof_status": prompt_proof_status,
+    }
 
 
 def publication_safe(artifact_dir: Path, state_dir: Path | None = None) -> None:

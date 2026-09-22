@@ -675,6 +675,14 @@ def pretty_json(value: Any) -> str:
     ) + "\n"
 
 
+def editorial_archive_context(archive: dict[str, Any]) -> str:
+    """Serialize archive evidence for editorial without volatile bootstrap time."""
+
+    stable = dict(archive)
+    stable.pop("generated_at", None)
+    return compact_json(stable)
+
+
 def sha256_text(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
@@ -2607,7 +2615,7 @@ def main() -> int:
             editorial_template,
             {
                 "CURRENT_DATE": publication_date_text,
-                "ARCHIVE_CONTEXT": compact_json(archive),
+                "ARCHIVE_CONTEXT": editorial_archive_context(archive),
                 "CANDIDATES_CONTEXT": compact_json(research),
                 "MINIMUM_SELECTED_STORIES": str(args.minimum_selected_stories),
                 "MAXIMUM_SELECTED_STORIES": str(args.maximum_selected_stories),
