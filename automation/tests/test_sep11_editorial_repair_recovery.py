@@ -643,6 +643,23 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
         current_archive = json.loads(json.dumps(saved_archive))
         current_archive["generated_at"] = "2026-09-22T04:36:27+00:00"
         output = {"selected_candidate_ids": ["candidate-1"]}
+        self.write_json(
+            self.artifact / "run-info.json",
+            {
+                "publication_date": DATE,
+                "finished_at": "2026-09-11T01:30:00+00:00",
+                "research": {
+                    "status": "ok",
+                    "temporal_anchor_version": 1,
+                },
+            },
+        )
+        self.write_json(self.artifact / "research-output-raw.json", self.research)
+        self.write_json(self.artifact / "editorial-output-raw.json", output)
+        self.write_json(
+            self.artifact / "editorial-output.json",
+            {"publication_date": DATE, **output},
+        )
         saved_request_kwargs, _response = self.install_legacy_response_saved_state(
             saved_archive=saved_archive,
             current_archive=current_archive,
