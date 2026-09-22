@@ -47,9 +47,9 @@ class RepositoryHygieneSummaryTests(unittest.TestCase):
         self.assertIn("Статус:", text)
         self.assertIn("#37", text)
         self.assertIn("Состояние репозитория", text)
-        self.assertIn("| Actions artifacts | 1 | 1 | 0 |", text)
+        self.assertIn("| Артефакты Actions | 1 | 1 | 0 |", text)
         self.assertIn("Гарантированно не трогается", text)
-        self.assertIn("retention: 2 дня", text)
+        self.assertIn("хранение: 2 дня", text)
 
     def test_branch_apply_lists_deleted_and_skipped(self) -> None:
         report = self._report()
@@ -59,7 +59,7 @@ class RepositoryHygieneSummaryTests(unittest.TestCase):
         }
         text = render_report(report)
         self.assertIn("очистка веток", text)
-        self.assertIn("Удалено доказанно устаревших merged-веток: **1**", text)
+        self.assertIn("Удалено доказанно устаревших слитых веток: **1**", text)
         self.assertIn("`agent/old-branch`", text)
         self.assertIn("head_changed", text)
 
@@ -75,10 +75,10 @@ class RepositoryHygieneSummaryTests(unittest.TestCase):
         }
         text = render_report(report)
         self.assertIn("очистка Actions", text)
-        self.assertIn("Удалено superseded artifacts: **1**", text)
+        self.assertIn("Удалено заменённых артефактов: **1**", text)
         self.assertIn("`main-ci-old` (id 10)", text)
         self.assertIn("`Old patch` (id 20)", text)
-        self.assertIn("Удалено просроченных runs доказанных orphan-workflows: **1**", text)
+        self.assertIn("Удалено просроченных запусков доказанных orphan-workflow: **1**", text)
         self.assertIn("run id 30", text)
 
 
