@@ -81,6 +81,10 @@ GitHub cron нет. Внешняя страховка обслуживается
 workflow через `workflow_dispatch`, поэтому такой запуск в Actions отображается
 как manual/dispatch, а не как scheduled run. Время выпуска нормализуется к
 06:00 МСК. Recovery выбирает наиболее полный пригодный artifact той же даты.
+Editorial publisher diversity имеет отдельный zero-paid deterministic guard:
+selected IDs не переписываются, а пропущенный reasoned override нормализуется
+только для уже разрешённых и строго доказанных full/short-selection случаев;
+неоднозначные случаи по-прежнему блокируют публикацию.
 
 Fresh Primary выполняет ровно 12 Web Search search operations. Coverage выполняет
 до 7 Coverage search operations. Hybrid сохраняет базовый потолок 4 search

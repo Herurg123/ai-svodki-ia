@@ -1,0 +1,241 @@
+{
+  "source_run_id": 35676364066,
+  "source_head_sha": "fefb11c504a93b9ca1c964db9d46c5c293613fd6",
+  "openai_calls_for_replay": 0,
+  "web_search_operations_for_replay": 0,
+  "research": {
+    "candidates": [
+      {
+        "id": "cand-001",
+        "organization": "Google; Gemini; Acer; ASUS; Dell; HP; Lenovo",
+        "recommendation": "include",
+        "verification_status": "verified",
+        "freshness_status": "new_event",
+        "category": "multimodal",
+        "legal_scale": "not_applicable",
+        "significance_score": 3,
+        "curiosity_eligible": false,
+        "primary_source": {
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/09/21/googles-899-googlebook-is-a-bet-that-youll-buy-a-new-laptop-for-gemini/"
+        }
+      },
+      {
+        "id": "cand-002",
+        "organization": "Meta; Muse; Amazon",
+        "recommendation": "consider",
+        "verification_status": "verified",
+        "freshness_status": "new_event",
+        "category": "agents",
+        "legal_scale": "not_applicable",
+        "significance_score": 2,
+        "curiosity_eligible": false,
+        "primary_source": {
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/09/21/metas-ai-agent-has-been-blocked-from-using-amazon-com/"
+        }
+      },
+      {
+        "id": "cand-003",
+        "organization": "OpenAI; Institute for Advanced Study; Advisory Group on Mathematics and Artificial Intelligence",
+        "recommendation": "include",
+        "verification_status": "verified",
+        "freshness_status": "material_update",
+        "category": "research",
+        "legal_scale": "not_applicable",
+        "significance_score": 3,
+        "curiosity_eligible": false,
+        "primary_source": {
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/09/21/openai-forms-math-advisory-group-as-its-ai-resolves-more-than-100-open-problems/"
+        }
+      },
+      {
+        "id": "cand-004",
+        "organization": "NVIDIA",
+        "recommendation": "consider",
+        "verification_status": "verified",
+        "freshness_status": "new_event",
+        "category": "other",
+        "legal_scale": "not_applicable",
+        "significance_score": 3,
+        "curiosity_eligible": false,
+        "primary_source": {
+          "publisher": "NVIDIA",
+          "url": "https://blogs.nvidia.com/blog/clean-energy-nvidia-ai"
+        }
+      },
+      {
+        "id": "cand-005",
+        "organization": "NVIDIA",
+        "recommendation": "consider",
+        "verification_status": "verified",
+        "freshness_status": "new_event",
+        "category": "agents",
+        "legal_scale": "not_applicable",
+        "significance_score": 3,
+        "curiosity_eligible": false,
+        "primary_source": {
+          "publisher": "NVIDIA",
+          "url": "https://blogs.nvidia.com/blog/ai-security-agent-stack"
+        }
+      },
+      {
+        "id": "cand-006",
+        "organization": "NVIDIA",
+        "recommendation": "consider",
+        "verification_status": "verified",
+        "freshness_status": "new_event",
+        "category": "infrastructure",
+        "legal_scale": "not_applicable",
+        "significance_score": 3,
+        "curiosity_eligible": false,
+        "primary_source": {
+          "publisher": "NVIDIA",
+          "url": "https://blogs.nvidia.com/blog/egypt-africa-ai-ecosystem"
+        }
+      },
+      {
+        "id": "cand-007",
+        "organization": "NVIDIA",
+        "recommendation": "consider",
+        "verification_status": "verified",
+        "freshness_status": "new_event",
+        "category": "other",
+        "legal_scale": "not_applicable",
+        "significance_score": 3,
+        "curiosity_eligible": false,
+        "primary_source": {
+          "publisher": "NVIDIA",
+          "url": "https://blogs.nvidia.com/blog/dsx-ready-ai-factories-power-cooling"
+        }
+      },
+      {
+        "id": "cand-008",
+        "organization": "NVIDIA",
+        "recommendation": "consider",
+        "verification_status": "verified",
+        "freshness_status": "new_event",
+        "category": "robotics",
+        "legal_scale": "not_applicable",
+        "significance_score": 3,
+        "curiosity_eligible": false,
+        "primary_source": {
+          "publisher": "NVIDIA",
+          "url": "https://blogs.nvidia.com/blog/physical-ai-halos-safety"
+        }
+      },
+      {
+        "id": "cand-009",
+        "organization": "Яндекс",
+        "recommendation": "consider",
+        "verification_status": "verified",
+        "freshness_status": "new_event",
+        "category": "investment",
+        "legal_scale": "not_applicable",
+        "significance_score": 3,
+        "curiosity_eligible": false,
+        "primary_source": {
+          "publisher": "Яндекс",
+          "url": "https://ir.yandex.ru/press-releases?year=2026&id=21-09-2026-03"
+        }
+      },
+      {
+        "id": "cand-010",
+        "organization": "OpenAI",
+        "recommendation": "consider",
+        "verification_status": "verified",
+        "freshness_status": "new_event",
+        "category": "agents",
+        "legal_scale": "not_applicable",
+        "significance_score": 3,
+        "curiosity_eligible": false,
+        "primary_source": {
+          "publisher": "OpenAI",
+          "url": "https://openai.com/index/v7"
+        }
+      },
+      {
+        "id": "cand-011",
+        "organization": "OpenAI",
+        "recommendation": "consider",
+        "verification_status": "verified",
+        "freshness_status": "new_event",
+        "category": "other",
+        "legal_scale": "not_applicable",
+        "significance_score": 3,
+        "curiosity_eligible": false,
+        "primary_source": {
+          "publisher": "OpenAI",
+          "url": "https://openai.com/index/expanding-openai-academy-with-new-learning-paths"
+        }
+      },
+      {
+        "id": "cand-012",
+        "organization": "OpenAI",
+        "recommendation": "consider",
+        "verification_status": "verified",
+        "freshness_status": "new_event",
+        "category": "other",
+        "legal_scale": "not_applicable",
+        "significance_score": 3,
+        "curiosity_eligible": false,
+        "primary_source": {
+          "publisher": "OpenAI",
+          "url": "https://openai.com/index/building-standards-next-phase-ai"
+        }
+      },
+      {
+        "id": "cand-013",
+        "organization": "OpenAI",
+        "recommendation": "consider",
+        "verification_status": "verified",
+        "freshness_status": "new_event",
+        "category": "other",
+        "legal_scale": "not_applicable",
+        "significance_score": 3,
+        "curiosity_eligible": false,
+        "primary_source": {
+          "publisher": "OpenAI",
+          "url": "https://openai.com/index/higgsfield-from-prompt-to-production-with-astra"
+        }
+      }
+    ]
+  },
+  "editorial": {
+    "selected_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-007",
+      "cand-009"
+    ],
+    "excluded_candidate_ids": [
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-008",
+      "cand-010",
+      "cand-011",
+      "cand-012",
+      "cand-013"
+    ],
+    "selection_summary": "Выбраны пять подтверждённых и самостоятельных событий: запуск ноутбуков Googlebook, конфликт Meta Muse с Amazon, новое внешнее консультирование OpenAI по математическим результатам, программа NVIDIA для компонентов питания и охлаждения ИИ-фабрик и российский open-source-релиз Яндекса. Остальные кандидаты представляют собой преимущественно обзорные материалы, образовательные инициативы или клиентские кейсы без достаточно конкретного самостоятельного новостного события.",
+    "diversity_overrides": [],
+    "digest": {
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "candidate_selection",
+          "message": "В проверенном пуле найдено пять самостоятельных сюжетов, достаточных по значимости и подтверждённости; выпуск опубликован в коротком формате без заполнения слабыми материалами."
+        },
+        {
+          "type": "source_gap",
+          "area": "regional_coverage",
+          "message": "В проверенном пуле не найдено самостоятельных достойных сюжетов о китайских компаниях или моделях; китайский раздел не сформирован."
+        }
+      ]
+    }
+  }
+}

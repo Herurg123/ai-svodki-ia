@@ -1245,6 +1245,18 @@ Editorial применяется после discovery/validation. Коротки
 regional Hybrid health-check не имеют отдельной publication quota и не могут
 обязать editorial выбрать promoted/returned `consider`. Discovery Health вообще
 исполняется после production mutation и не участвует в editorial selection.
+
+Publisher diversity нормализуется только zero-paid deterministic seam и никогда
+не меняет selected IDs. Preserved compatibility-base по-прежнему обрабатывает
+только genuinely short baseline-eligible pool. Active wrapper дополнительно
+обрабатывает complementary short-selection case, когда baseline-eligible pool
+достигает обычной цели, но editorial явно возвращает 1–6 story `short_digest`:
+нужны non-empty `low_news_volume`, полный selected/excluded partition, сохранение
+всех baseline-eligible `include`, ровно один publisher на один story выше soft
+cap и разные primary subjects/URLs у этой группы. Любая неоднозначность остаётся
+fail-closed. Этот seam не меняет retrieval, query/provider routing, Freshness,
+Coverage/Hybrid obligations, selected stories или search ceilings 24/25.
+
 Подробные правила находятся в `specs/editorial-policy.md`.
 
 ## 8. Recovery
