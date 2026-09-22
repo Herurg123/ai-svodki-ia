@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       apply:
-        description: "Apply safe GitHub-object cleanup; leave disabled for audit-only"
+        description: "Применить безопасную очистку GitHub-объектов; оставьте выключенным только для аудита"
         required: true
         default: false
         type: boolean
@@ -52,6 +52,17 @@ jobs:
           python automation/scripts/render_repository_hygiene_summary.py \
             automation/preview/repository-hygiene/plan.json \
             --summary "${GITHUB_STEP_SUMMARY}"
+
+      - name: Показать ошибку аудита repository hygiene
+        if: failure()
+        shell: bash
+        run: |
+          {
+            echo "## ❌ Repository hygiene: аудит не завершён"
+            echo
+            echo "План безопасной уборки GitHub-объектов не сформирован. Открой первый красный шаг выше; destructive-изменения этим job не выполнялись."
+          } >> "${GITHUB_STEP_SUMMARY}"
+          echo "::error title=Ошибка repository hygiene::Аудит безопасной уборки GitHub-объектов завершился ошибкой; изменения не применялись."
 
       - name: Upload audit JSON
         if: always()
@@ -98,6 +109,17 @@ jobs:
           python automation/scripts/render_repository_hygiene_summary.py \
             automation/preview/repository-hygiene/branches.json \
             --summary "${GITHUB_STEP_SUMMARY}"
+
+      - name: Показать ошибку очистки веток
+        if: failure()
+        shell: bash
+        run: |
+          {
+            echo "## ❌ Repository hygiene: очистка веток не завершена"
+            echo
+            echo "Безопасное удаление доказанно устаревших merged-веток не подтверждено. Открой первый красный шаг выше."
+          } >> "${GITHUB_STEP_SUMMARY}"
+          echo "::error title=Ошибка очистки веток::Repository hygiene не подтвердил завершение безопасной очистки веток."
 
       - name: Upload branch-cleanup JSON
         if: always()
@@ -146,6 +168,17 @@ jobs:
           python automation/scripts/render_repository_hygiene_summary.py \
             automation/preview/repository-hygiene/actions.json \
             --summary "${GITHUB_STEP_SUMMARY}"
+
+      - name: Показать ошибку очистки Actions
+        if: failure()
+        shell: bash
+        run: |
+          {
+            echo "## ❌ Repository hygiene: очистка Actions не завершена"
+            echo
+            echo "Удаление безопасно классифицированных Actions-объектов не подтверждено. Открой первый красный шаг выше."
+          } >> "${GITHUB_STEP_SUMMARY}"
+          echo "::error title=Ошибка очистки Actions::Repository hygiene не подтвердил завершение безопасной очистки Actions-объектов."
 
       - name: Upload Actions-cleanup JSON
         if: always()
