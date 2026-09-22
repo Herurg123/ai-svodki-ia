@@ -112,3 +112,21 @@ not a reason to relax generic Source Freshness.
 
 This is deliberately compatible with the Sep-2 decision to leave retrieval
 semantics unchanged until another full production sample is available.
+
+## Retirement note — 2026-09-22
+
+This document and
+`automation/fixtures/recall/source-pulse-official-newsrooms-2026-09-02.json`
+remain historical evidence of the Sep-2 feasibility decision. The original
+offline replay in
+`automation/tests/test_source_pulse_official_newsroom_experiment.py` was retired
+from the permanent CI suite after later Source Pulse work established a separate
+current production contract and permanent regression for bounded official routes.
+
+The reusable generic invariants from this experiment remain active in
+`automation/tests/test_source_pulse_supplement.py` (bounded article-card date
+parsing) and `automation/tests/test_source_freshness.py` (visible body dates do
+not become direct-page publication authority). The Sep-2 source-specific
+`NOT READY` decisions above are historical findings, not the current production
+registry contract.
+

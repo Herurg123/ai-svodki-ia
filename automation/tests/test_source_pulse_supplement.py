@@ -108,6 +108,21 @@ class SourcePulseParserV11Tests(unittest.TestCase):
         self.assertEqual(matching[0].published_date.isoformat(), "2026-08-26")
 
 
+    def test_bounded_article_card_iso_date_is_associated_with_link(self):
+        body = '''<html><body><article class="news-card">
+<a href="/news/ai-control">Example AI control release</a>
+<time>2026-08-26</time>
+</article></body></html>'''
+        items = supplement.parse_html_index_v11(body, "https://example.com/news/")
+        matching = [
+            item for item in items
+            if item.url == "https://example.com/news/ai-control"
+        ]
+        self.assertEqual(len(matching), 1)
+        self.assertEqual(matching[0].published_date.isoformat(), "2026-08-26")
+        self.assertEqual(matching[0].time_precision, "date")
+
+
 class SourcePulseSupplementTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
