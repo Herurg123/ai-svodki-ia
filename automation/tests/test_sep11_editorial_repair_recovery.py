@@ -450,9 +450,14 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
 
         self.assertEqual(Path(report["selected_source"]).resolve(), self.artifact.resolve())
         self.assertEqual(report["recovery_mode"], "partial_editorial")
+        repair_recovery = report["editorial_repair_recovery"]["repair_state"]
         self.assertEqual(
-            report["editorial_repair_recovery"]["repair_state"]["status"],
-            "restored",
+            Path(repair_recovery["source_state_dir"]).resolve(),
+            self.state.resolve(),
+        )
+        self.assertEqual(
+            repair_recovery["copied"],
+            [f"editorial-repair-{DATE}.json"],
         )
         restored_journal = (
             report_path.parent / f"editorial-repair-{DATE}.json"
