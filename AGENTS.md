@@ -141,8 +141,7 @@ artifact, cleanup target or deploy source of `daily-production.yml`,
 
 `posts/rss.xml` is an article/image surface, not a local video channel. Active
 production must not inject local video payloads or references including
-`/posts/video/`, `medium="video"` or `type="video/*"`. The retired Video →
-RSS implementation under `automation/archive/video-rss-enrichment-2026-08/`
+`/posts/video/`, `medium="video"` or `type="video/*"`. The retired Video → RSS implementation under `automation/archive/video-rss-enrichment-2026-08/`
 must remain inert.
 
 ## NotebookLM video subproject boundary
@@ -186,8 +185,7 @@ Any semantic search/retrieval/news-collection change must be independently
 validated before production use against
 `automation/specs/search-change-validation-matrix.md`. The proposed version and
 the current production baseline must run against the same controlled
-inputs/saved artifacts across all affected dimensions. Cover pairwise
-intersections and explicit critical three-way combinations for known incident
+inputs/saved artifacts across all affected dimensions. Cover pairwise intersections and explicit critical three-way combinations for known incident
 shapes. A new retrieval incident must enrich the canonical matrix and reusable
 fixtures rather than becoming a one-off exception.
 
@@ -213,8 +211,7 @@ remain the cited-page publication time.
 
 Reliable event origin outside the exact saved window is rejected with
 `event_freshness_stale`. Missing/ambiguous/untrusted event origin remains
-`event_freshness_status=unknown`: it preserves recall but never bypasses Source
-Freshness.
+`event_freshness_status=unknown`: it preserves recall but never bypasses Source Freshness.
 
 Do not use a fresh reprint, syndicated copy, tracker/doc update or search-result
 publication date as event-origin evidence. Do not add a paid LLM/Web Search pass
