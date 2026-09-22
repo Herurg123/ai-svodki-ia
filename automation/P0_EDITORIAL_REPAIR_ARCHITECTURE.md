@@ -43,6 +43,8 @@ The raw response is written and fsynced before parse/validation and before the j
 
 A recovered `full` artifact is downgraded to `partial_editorial` only when there is positive same-day evidence that Coverage can still require text completion, or an unresolved P0 repair journal exists. Missing optional diagnostics alone do not downgrade an otherwise current full artifact. The downgrade makes the pinned text runtime available while preserving the no-repeat full-Research contract.
 
+The exact selected bundle identity is normally recorded by the P0 `choose_source` hook. Because the active public recovery entrypoint is layered through compatibility wrappers, a wrapper may transiently replace that hook and fail to propagate the in-memory marker back to P0 even though the lower recovery engine has already selected and validated a concrete source. In that narrow case P0 may reconstruct the evidence root only from the lower recovery report's exact `selected_source`, after verifying that source still exists inside the requested recovery root. It must not search sibling bundles, guess by date, or mix state from another run.
+
 Historical artifacts without a P0 journal remain recoverable. If P0 state is present, its source identity and integrity are mandatory and recovery fails closed on ambiguity.
 
 ## Publication guard
