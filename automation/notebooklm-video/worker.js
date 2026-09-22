@@ -2324,6 +2324,26 @@ async function collectNotebookImportSnapshot(page, publicationUrl) {
   };
 }
 
+function sourceImportContentReady(snapshot, minimumContentChars) {
+  const headerTitle = String(snapshot && snapshot.headerTitle || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const generatedTitleReady = Boolean(
+    headerTitle &&
+      !/^(?:Блокнот без названия|Без названия|Untitled(?: notebook)?)$/i.test(headerTitle)
+  );
+
+  return {
+    ready:
+      Number(snapshot && snapshot.chatContentLength || 0) >= minimumContentChars ||
+      generatedTitleReady,
+    signal:
+      Number(snapshot && snapshot.chatContentLength || 0) >= minimumContentChars
+        ? "chat-content"
+        : (generatedTitleReady ? "generated-title" : "none"),
+  };
+}
+
 async function waitForSourceImportReady(config, page, publication) {
   const timeout = config.sourceTimeoutMs;
   const deadline = Date.now() + timeout;
@@ -2353,13 +2373,17 @@ async function waitForSourceImportReady(config, page, publication) {
       publication.url
     );
 
+    const contentReady = sourceImportContentReady(
+      snapshot,
+      minimumContentChars
+    );
     const readyCandidate = Boolean(
       snapshot.sourceCountVisible &&
         snapshot.sourceLoadingIndicators === 0 &&
         snapshot.busyInPanels === 0 &&
         snapshot.skeletonInChat === 0 &&
         snapshot.videoReady &&
-        snapshot.chatContentLength >= minimumContentChars
+        contentReady.ready
     );
 
     const fingerprint = JSON.stringify({
@@ -2386,7 +2410,8 @@ async function waitForSourceImportReady(config, page, publication) {
         log(
           config,
           `Источник полностью обработан, интерфейс стабилен. ` +
-            `Текст в области чата: ${snapshot.chatContentLength} символов; ` +
+            `сигнал готовности: ${contentReady.signal}; ` +
+            `текст старой области чата: ${snapshot.chatContentLength} символов; ` +
             `видео доступно: да; ` +
             `текущий заголовок: ${snapshot.headerTitle}.`
         );
@@ -2406,6 +2431,7 @@ async function waitForSourceImportReady(config, page, publication) {
       headerTitle: snapshot.headerTitle || "не определён",
       chatContentLength: snapshot.chatContentLength,
       rawUrlVisible: snapshot.rawUrlVisible,
+      contentReadySignal: contentReady.signal,
       stableForMs: stableSince ? Date.now() - stableSince : 0,
       url: snapshot.url,
     };
@@ -2418,7 +2444,8 @@ async function waitForSourceImportReady(config, page, publication) {
           `индикаторы источника=${snapshot.sourceLoadingIndicators}, ` +
           `занятые области=${snapshot.busyInPanels}, ` +
           `заглушки чата=${snapshot.skeletonInChat}, ` +
-          `текст чата=${snapshot.chatContentLength}, ` +
+          `текст старой области чата=${snapshot.chatContentLength}, ` +
+          `контент=${contentReady.signal}, ` +
           `видео активно=${snapshot.videoReady ? "да" : "нет"}, ` +
           `заголовок=${snapshot.headerTitle || "не определён"}, ` +
           `стабильность=${stableSince ? Date.now() - stableSince : 0}/${stableForMs} мс.`
