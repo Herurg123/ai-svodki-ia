@@ -139,7 +139,7 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
             "artifact_identity_sha256": repair._artifact_identity(self.artifact),
         }
         identity["intent_sha256"] = repair._intent_sha(identity)
-        request_kwargs = self.request()
+        request_kwargs = dict(self.request(), input=prompt)
         request_sha = repair.request_sha256(request_kwargs)
         response = self.response(output or {"selected_candidate_ids": ["candidate-1"]})
         response_value = repair._seal(
@@ -622,12 +622,36 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
             "items": [{"date": "2026-09-21", "stories": [{"candidate_id": "old"}]}],
         }
         current_archive = json.loads(json.dumps(saved_archive))
-        current_archive["generated_at"] = "2026-09-22T04:19:49+00:00"
+        current_archive["generated_at"] = "2026-09-22T04:36:27+00:00"
         output = {"selected_candidate_ids": ["candidate-1"]}
-        request_kwargs, _response = self.install_legacy_response_saved_state(
+        saved_request_kwargs, _response = self.install_legacy_response_saved_state(
             saved_archive=saved_archive,
             current_archive=current_archive,
             output=output,
+        )
+
+        # Reproduce the real workflow seam: recovery first copies the old dated
+        # artifact and durable response_saved state into a new runtime tree.
+        target_artifact = self.root / "current" / DATE
+        target_state = self.root / "current" / "production-daily"
+        report = recovery.recover(
+            self.artifact.parent,
+            target_artifact,
+            DATE,
+            target_state / "recovery.json",
+        )
+        self.assertEqual(report["recovery_mode"], "partial_editorial")
+
+        saved_prompt = str(saved_request_kwargs["input"])
+        current_prompt = saved_prompt.replace(
+            '"generated_at":"2026-09-22T01:36:38+00:00"',
+            '"generated_at":"2026-09-22T04:36:27+00:00"',
+        )
+        self.assertNotEqual(current_prompt, saved_prompt)
+        current_request_kwargs = dict(saved_request_kwargs, input=current_prompt)
+        self.assertNotEqual(
+            repair.request_sha256(current_request_kwargs),
+            self.journal()["request_sha256"],
         )
 
         import generate_digest_preview
@@ -640,13 +664,19 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
             raise AssertionError("provider transport must not run during replay")
 
         def fake_digest_main():
+            # generate_digest_preview writes the current prompt before transport.
+            # This intentionally destroys the dated copy, as production did in
+            # run 35687487645, so replay needs durable recovery-owned proof.
+            (target_artifact / "editorial-prompt-input.txt").write_text(
+                current_prompt, encoding="utf-8"
+            )
             replay = generate_digest_preview.call_with_usage(
                 "editorial",
                 forbidden_callback,
-                **request_kwargs,
+                **current_request_kwargs,
             )
             self.write_json(
-                self.artifact / "editorial-output-raw.json",
+                target_artifact / "editorial-output-raw.json",
                 json.loads(replay.output_text),
             )
             return 0
@@ -660,13 +690,13 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
             "--research-input",
             str(self.runtime),
             "--repair-persisted-research",
-            str(self.persisted),
+            str(target_state / f"coverage-audit-merged-candidates-{DATE}.json"),
             "--repair-state-dir",
-            str(self.state),
+            str(target_state),
             "--repair-archive",
             str(self.archive),
             "--repair-artifact-dir",
-            str(self.artifact),
+            str(target_artifact),
         ]
         original_call = generate_digest_preview.call_with_usage
         try:
@@ -679,7 +709,7 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
 
         self.assertEqual(result, 0)
         self.assertEqual(callback_called, [])
-        self.assertEqual(repair.journal_state(self.state, DATE), "validated")
+        self.assertEqual(repair.journal_state(target_state, DATE), "validated")
 
     def test_legacy_prompt_proof_does_not_hide_semantic_archive_drift(self):
         saved_archive = {
