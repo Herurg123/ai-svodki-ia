@@ -14,6 +14,7 @@ sys.path.insert(0, str(SCRIPTS))
 import editorial_repair_guard as repair
 import ensure_story_coverage as coverage
 import recover_digest_artifact as recovery
+import run_editorial_repair as repair_runner
 
 DATE = "2026-09-11"
 MODEL = "gpt-5.6-terra"
@@ -101,6 +102,85 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
     def write_json(path: Path, value):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(value), encoding="utf-8")
+
+    def install_legacy_response_saved_state(
+        self,
+        *,
+        saved_archive: dict,
+        current_archive: dict,
+        output: dict | None = None,
+    ) -> tuple[dict, dict]:
+        self.write_json(self.archive, current_archive)
+        prompt = (
+            "Synthetic production-shaped editorial prompt\n"
+            f"{repair.ARCHIVE_CONTEXT_BEGIN}\n"
+            + json.dumps(saved_archive, ensure_ascii=False, separators=(",", ":"))
+            + "\n"
+            + repair.ARCHIVE_CONTEXT_END
+            + "\n"
+        )
+        (self.artifact / "editorial-prompt-input.txt").write_text(
+            prompt, encoding="utf-8"
+        )
+
+        research = json.loads(self.persisted.read_text(encoding="utf-8"))
+        identity = {
+            "version": repair.LEGACY_VERSION,
+            "publication_date": DATE,
+            "model": MODEL,
+            "research_sha256": repair.canonical_sha256(research),
+            "candidate_pool_sha256": repair.canonical_sha256(
+                research["candidates"]
+            ),
+            "archive_sha256": repair.canonical_sha256(saved_archive),
+            "search_window_sha256": repair.canonical_sha256(
+                research["search_window"]
+            ),
+            "artifact_identity_sha256": repair._artifact_identity(self.artifact),
+        }
+        identity["intent_sha256"] = repair._intent_sha(identity)
+        request_kwargs = self.request()
+        request_sha = repair.request_sha256(request_kwargs)
+        response = self.response(output or {"selected_candidate_ids": ["candidate-1"]})
+        response_value = repair._seal(
+            {
+                "version": repair.LEGACY_VERSION,
+                "publication_date": DATE,
+                "intent_sha256": identity["intent_sha256"],
+                "request_sha256": request_sha,
+                "saved_at": "2026-09-22T01:47:24+00:00",
+                "response": repair._response_payload(response),
+            },
+            "response_sha256",
+        )
+        self.write_json(
+            self.state / f"editorial-repair-{DATE}.response.json",
+            response_value,
+        )
+        journal = repair._seal(
+            {
+                **identity,
+                "state": "response_saved",
+                "created_at": "2026-09-22T01:46:38+00:00",
+                "updated_at": "2026-09-22T01:47:24+00:00",
+                "request_sha256": request_sha,
+                "response_file": f"editorial-repair-{DATE}.response.json",
+                "response_sha256": response_value["response_sha256"],
+                "post_freshness_research_sha256": repair.canonical_sha256(
+                    self.research
+                ),
+                "post_freshness_candidate_pool_sha256": repair.canonical_sha256(
+                    self.research["candidates"]
+                ),
+                "failure_type": None,
+                "legacy_retry_authorized": False,
+                "legacy_retry_reason": None,
+                "validated_editorial_sha256": None,
+            },
+            "journal_sha256",
+        )
+        self.write_json(self.state / f"editorial-repair-{DATE}.json", journal)
+        return request_kwargs, response_value
 
     def prepare(self, *, legacy: dict | None = None):
         legacy_path = None
@@ -485,6 +565,148 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
                 )
         finally:
             recovery._base._ACTIVE_EVIDENCE_ROOT = original
+
+    def test_v2_archive_identity_ignores_only_generated_at(self):
+        self.write_json(
+            self.archive,
+            {
+                "version": 2,
+                "generated_at": "2026-09-22T01:36:38+00:00",
+                "source": "automation/content + posts/rss.xml",
+                "items": [{"date": "2026-09-10", "stories": []}],
+            },
+        )
+        context = self.prepare()
+        self.assertEqual(self.journal()["version"], repair.VERSION)
+        self.assertEqual(repair.VERSION, 2)
+
+        self.write_json(
+            self.archive,
+            {
+                "version": 2,
+                "generated_at": "2026-09-22T04:19:49+00:00",
+                "source": "automation/content + posts/rss.xml",
+                "items": [{"date": "2026-09-10", "stories": []}],
+            },
+        )
+        loaded = repair.load_required(
+            publication_date=DATE,
+            state_dir=self.state,
+            persisted_research_path=self.persisted,
+            archive_path=self.archive,
+            artifact_dir=self.artifact,
+            model=MODEL,
+        )
+        self.assertEqual(loaded.intent_sha256, context.intent_sha256)
+
+        changed = json.loads(self.archive.read_text(encoding="utf-8"))
+        changed["items"].append({"date": "2026-09-09", "stories": []})
+        self.write_json(self.archive, changed)
+        with self.assertRaisesRegex(
+            repair.EditorialRepairError, "archive_sha256"
+        ):
+            repair.load_required(
+                publication_date=DATE,
+                state_dir=self.state,
+                persisted_research_path=self.persisted,
+                archive_path=self.archive,
+                artifact_dir=self.artifact,
+                model=MODEL,
+            )
+
+    def test_sep22_legacy_response_saved_replays_through_public_runner(self):
+        saved_archive = {
+            "version": 2,
+            "generated_at": "2026-09-22T01:36:38+00:00",
+            "source": "automation/content + posts/rss.xml",
+            "items": [{"date": "2026-09-21", "stories": [{"candidate_id": "old"}]}],
+        }
+        current_archive = json.loads(json.dumps(saved_archive))
+        current_archive["generated_at"] = "2026-09-22T04:19:49+00:00"
+        output = {"selected_candidate_ids": ["candidate-1"]}
+        request_kwargs, _response = self.install_legacy_response_saved_state(
+            saved_archive=saved_archive,
+            current_archive=current_archive,
+            output=output,
+        )
+
+        import generate_digest_preview
+        import run_digest_preview
+
+        callback_called = []
+
+        def forbidden_callback(**_kwargs):
+            callback_called.append(True)
+            raise AssertionError("provider transport must not run during replay")
+
+        def fake_digest_main():
+            replay = generate_digest_preview.call_with_usage(
+                "editorial",
+                forbidden_callback,
+                **request_kwargs,
+            )
+            self.write_json(
+                self.artifact / "editorial-output-raw.json",
+                json.loads(replay.output_text),
+            )
+            return 0
+
+        argv = [
+            "run_editorial_repair.py",
+            "--publication-date",
+            DATE,
+            "--model",
+            MODEL,
+            "--research-input",
+            str(self.runtime),
+            "--repair-persisted-research",
+            str(self.persisted),
+            "--repair-state-dir",
+            str(self.state),
+            "--repair-archive",
+            str(self.archive),
+            "--repair-artifact-dir",
+            str(self.artifact),
+        ]
+        original_call = generate_digest_preview.call_with_usage
+        try:
+            with patch.object(sys, "argv", argv), patch.object(
+                run_digest_preview, "main", side_effect=fake_digest_main
+            ):
+                result = repair_runner.main()
+        finally:
+            generate_digest_preview.call_with_usage = original_call
+
+        self.assertEqual(result, 0)
+        self.assertEqual(callback_called, [])
+        self.assertEqual(repair.journal_state(self.state, DATE), "validated")
+
+    def test_legacy_prompt_proof_does_not_hide_semantic_archive_drift(self):
+        saved_archive = {
+            "version": 2,
+            "generated_at": "2026-09-22T01:36:38+00:00",
+            "source": "automation/content + posts/rss.xml",
+            "items": [{"date": "2026-09-21", "stories": []}],
+        }
+        current_archive = json.loads(json.dumps(saved_archive))
+        current_archive["generated_at"] = "2026-09-22T04:19:49+00:00"
+        current_archive["items"].append({"date": "2026-09-20", "stories": []})
+        self.install_legacy_response_saved_state(
+            saved_archive=saved_archive,
+            current_archive=current_archive,
+        )
+
+        with self.assertRaisesRegex(
+            repair.EditorialRepairError, "archive_sha256"
+        ):
+            repair.load_required(
+                publication_date=DATE,
+                state_dir=self.state,
+                persisted_research_path=self.persisted,
+                archive_path=self.archive,
+                artifact_dir=self.artifact,
+                model=MODEL,
+            )
 
     def test_deduped_second_recovery_cannot_erase_pending_obligation(self):
         calls = []
