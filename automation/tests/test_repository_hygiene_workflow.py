@@ -20,7 +20,7 @@ class RepositoryHygieneWorkflowTests(unittest.TestCase):
         content = CONTENT.read_text(encoding="utf-8")
         self.assertIn('cron: "43 12 * * *"', hygiene)
         self.assertIn('cron: "43 22 * * *"', content)
-        self.assertIn("minimum 32", content)
+        self.assertIn("минимум 32", content)
         self.assertNotIn("cleanup_repository_content.py", hygiene)
         self.assertNotIn("cleanup_public_posts.py", hygiene)
 
