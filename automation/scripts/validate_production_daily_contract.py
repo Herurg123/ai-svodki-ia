@@ -131,7 +131,7 @@ def main() -> int:
             "overall workflow status",
             "Итог публикации",
         ),
-        ("successful no-op", "successful no-op"),
+        ("русский успешный no-op", "**Статус:** действий не требуется"),
         ("deploy-only recovery", "Redeploy already committed release"),
         ("live URL gate", "ai-svodki-production-gate/1.0"),
         ("current main checkout", "ref: main"),
