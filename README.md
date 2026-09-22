@@ -55,6 +55,11 @@ Video-only PR не должен тянуть Main CI; mixed/cross-cutting изм
 оба домена. Подробная ownership boundary находится в
 [`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md#4-github-actions).
 
+Все управляемые проектом сообщения для оператора в GitHub Actions выводятся по-русски:
+manual-input descriptions, Summary, annotations, явные ошибки/предупреждения и
+recovery guidance. Английскими могут оставаться названия workflow/jobs/steps,
+технические идентификаторы и сырые сообщения GitHub или сторонних actions.
+
 Обычные изменения проекта идут через отдельную ветку, pull request, CI и review
 diff. Техническая возможность direct push в `main` сама по себе не является
 дефектом проекта. Nightly production и retention cleanup имеют отдельную
