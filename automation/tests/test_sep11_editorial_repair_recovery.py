@@ -629,6 +629,23 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
             current_archive=current_archive,
             output=output,
         )
+        self.write_json(
+            self.artifact / "run-info.json",
+            {
+                "publication_date": DATE,
+                "finished_at": "2026-09-22T01:47:24+00:00",
+                "research": {
+                    "status": "ok",
+                    "temporal_anchor_version": 1,
+                },
+            },
+        )
+        self.write_json(self.artifact / "research-output-raw.json", self.research)
+        self.write_json(self.artifact / "editorial-output-raw.json", output)
+        self.write_json(
+            self.artifact / "editorial-output.json",
+            {"publication_date": DATE, **output},
+        )
 
         # Reproduce the real workflow seam: recovery first copies the old dated
         # artifact and durable response_saved state into a new runtime tree.
