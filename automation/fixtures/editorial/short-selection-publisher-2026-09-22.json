@@ -227,13 +227,18 @@
       "editorial_notes": [
         {
           "type": "low_news_volume",
-          "area": "candidate_selection",
-          "message": "В проверенном пуле найдено пять самостоятельных сюжетов, достаточных по значимости и подтверждённости; выпуск опубликован в коротком формате без заполнения слабыми материалами."
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 5 сюжетов."
+        },
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-009."
         },
         {
           "type": "source_gap",
-          "area": "regional_coverage",
-          "message": "В проверенном пуле не найдено самостоятельных достойных сюжетов о китайских компаниях или моделях; китайский раздел не сформирован."
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
         }
       ]
     }
