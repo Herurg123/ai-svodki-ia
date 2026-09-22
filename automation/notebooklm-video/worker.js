@@ -12,6 +12,7 @@ const history = require("./history-utils");
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
 const VIDEO_GENERATE_BUTTON_PATTERN = /^Сгенерировать(?: сейчас)?$/i;
+const NOTEBOOK_CREATE_BUTTON_PATTERN = /^\+?\s*(?:Новый блокнот|Создать)$/i;
 
 let stage = "START";
 let browser = null;
@@ -2610,15 +2611,26 @@ async function submitWebsiteSourceUrl(page, sourceBox, timeout) {
   }
 }
 
+function notebookCreateLocators(page) {
+  return [
+    page.getByRole("button", { name: NOTEBOOK_CREATE_BUTTON_PATTERN }),
+    page
+      .locator('button:visible')
+      .filter({ hasText: /^\s*(?:Новый блокнот|Создать)\s*$/i }),
+    page.getByText(/^Новый блокнот$/i),
+    page.getByText(/^Создать$/i),
+  ];
+}
+
 async function waitNotebookHome(page, config) {
   await waitForAnyVisible(
     [
-      page.getByRole("button", { name: /^\+?\s*Создать$/i }),
-      page.getByText(/^Создать$/i),
+      ...notebookCreateLocators(page),
+      page.getByText(/Недавние блокноты/i),
       page.getByText(/Мои блокноты/i),
     ],
     config.uiTimeoutMs,
-    'главная страница NotebookLM ("Создать" или "Мои блокноты")'
+    'главная страница NotebookLM ("Новый блокнот", "Недавние блокноты" или legacy "Создать/Мои блокноты")'
   );
 }
 
@@ -3023,13 +3035,11 @@ async function createNotebookAndAddSource(config, context, publication, job, sta
   await waitNotebookHome(activePage, config);
 
   await clickAnyVisible(
-    [
-      activePage.getByRole("button", { name: /^\+?\s*Создать$/i }),
-      activePage.getByText(/^Создать$/i),
-    ],
+    notebookCreateLocators(activePage),
     config.uiTimeoutMs,
-    'кнопка "Создать"'
+    'кнопка "Новый блокнот" (или legacy "Создать")'
   );
+  log(config, 'Нажата кнопка создания блокнота: "Новый блокнот"/legacy "Создать".');
 
   const siteSourceLocators = [
     // В актуальном NotebookLM в DOM могут одновременно существовать скрытая
