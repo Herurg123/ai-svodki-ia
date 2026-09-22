@@ -79,7 +79,7 @@ class RepositoryHygieneSummaryTests(unittest.TestCase):
         self.assertIn("`main-ci-old` (id 10)", text)
         self.assertIn("`Old patch` (id 20)", text)
         self.assertIn("Удалено просроченных запусков доказанных orphan-workflow: **1**", text)
-        self.assertIn("run id 30", text)
+        self.assertIn("ID запуска 30", text)
 
 
 if __name__ == "__main__":
