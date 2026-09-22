@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Active editorial runtime with deterministic full-pool diversity repair.
+"""Active editorial runtime with deterministic publisher-diversity repair.
 
 The established runtime corrections remain in ``editorial_policy_runtime_base``
 and are re-exported here unchanged. The split exists because the 2026-09-03
@@ -7,11 +7,17 @@ production incident proved that a prompt-only publisher-diversity instruction is
 not an executable invariant: the editorial model saw the exact rule and still
 returned the same invalid three-publisher selection.
 
-This wrapper adds one narrow zero-paid repair before the existing validator. It
-never changes the selected story IDs. It may synthesize the publisher override
-already allowed by the canonical editorial policy only when the over-cap selected
-stories are independently eligible and strictly stronger, by significance score,
-than every unselected eligible candidate from another publisher. All ambiguous or
+This wrapper adds narrow zero-paid repairs before the existing validator and
+never changes the selected story IDs. The established full-pool repair may
+synthesize the publisher override already allowed by canonical policy only when
+the over-cap selected stories are independently eligible and strictly stronger,
+by significance score, than every unselected eligible candidate from another
+publisher. A separate short-selection repair handles the complementary production
+shape where the baseline-eligible pool is large but editorial explicitly returns
+a 1-6 story short digest: it requires a complete selected/excluded partition,
+a reasoned low-news-volume marker, retention of every baseline-eligible
+`include` candidate, exactly one publisher over the soft cap by one story, and
+distinct primary subjects/URLs for the over-cap stories. All ambiguous or
 neighboring cases remain fail-closed in the existing validator.
 
 ``editorial_policy_runtime_base`` is an active compatibility dependency, not an
@@ -29,6 +35,7 @@ import editorial_policy_runtime_base as _base
 from editorial_policy_runtime_base import *  # noqa: F401,F403
 
 FULL_POOL_PUBLISHER_REPAIR_VERSION = 1
+SHORT_SELECTION_PUBLISHER_REPAIR_VERSION = 1
 
 
 def _publisher(candidate: dict[str, Any]) -> tuple[str, str] | None:
@@ -224,11 +231,189 @@ def normalize_full_pool_publisher_overrides(
     return [copy.deepcopy(override)]
 
 
+
+def normalize_short_selection_publisher_overrides(
+    editorial: dict[str, Any],
+    research: dict[str, Any],
+    policy: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Repair one omitted publisher override for an explicit short selection.
+
+    The preserved compatibility base already repairs a genuinely short
+    baseline-eligible pool. This complementary seam is intentionally narrower:
+    it applies only when the baseline-eligible pool can reach the normal target,
+    but editorial explicitly chooses a 1-6 story short digest and fully accounts
+    for the current candidate pool. It never changes selection.
+
+    Fail closed unless all of the following are true:
+    * short_digest=true with a non-empty low_news_volume note and selection summary;
+    * selected/excluded IDs form an exact, non-overlapping partition of candidates;
+    * the baseline-eligible pool is not itself short, while selection is short;
+    * every baseline-eligible recommendation=include candidate is selected;
+    * exactly one publisher exceeds the soft cap, and only by one story;
+    * the over-cap selected stories are include|consider, baseline eligible and
+      have distinct primary subjects and primary URLs;
+    * no reasoned override for that publisher already exists.
+    """
+
+    diversity = policy.get("diversity")
+    story_counts = policy.get("story_counts")
+    candidates_raw = research.get("candidates")
+    selected_ids = editorial.get("selected_candidate_ids")
+    excluded_ids = editorial.get("excluded_candidate_ids")
+    overrides = editorial.get("diversity_overrides")
+    digest = editorial.get("digest")
+
+    if not isinstance(diversity, dict) or not isinstance(story_counts, dict):
+        return []
+    if diversity.get("short_pool_soft_limits_may_reduce_selection") is not False:
+        return []
+    if not isinstance(candidates_raw, list):
+        return []
+    if (
+        not isinstance(selected_ids, list)
+        or not isinstance(excluded_ids, list)
+        or not isinstance(overrides, list)
+        or not isinstance(digest, dict)
+    ):
+        return []
+    if digest.get("short_digest") is not True:
+        return []
+    notes = digest.get("editorial_notes")
+    if not isinstance(notes, list) or not any(
+        isinstance(item, dict)
+        and item.get("type") == "low_news_volume"
+        and str(item.get("message") or "").strip()
+        for item in notes
+    ):
+        return []
+    if not str(editorial.get("selection_summary") or "").strip():
+        return []
+
+    try:
+        target = int(story_counts.get("total_target_minimum", 0) or 0)
+        publisher_cap = int(diversity.get("max_selected_per_publisher_soft", 0) or 0)
+    except (TypeError, ValueError):
+        return []
+    if target <= 0 or publisher_cap <= 0:
+        return []
+    if not (0 < len(selected_ids) < target):
+        return []
+
+    candidates = [item for item in candidates_raw if isinstance(item, dict)]
+    eligible = [
+        item for item in candidates if _base._baseline_selection_eligible(item, policy)
+    ]
+    # The compatibility base owns the true-short-pool case. Do not overlap it.
+    if len(eligible) < target:
+        return []
+
+    candidate_ids = [str(item.get("id") or "").strip() for item in candidates]
+    if any(not item for item in candidate_ids) or len(set(candidate_ids)) != len(candidate_ids):
+        return []
+    selected_keys = [str(item).strip() for item in selected_ids]
+    excluded_keys = [str(item).strip() for item in excluded_ids]
+    if any(not item for item in selected_keys + excluded_keys):
+        return []
+    if len(set(selected_keys)) != len(selected_keys):
+        return []
+    if len(set(excluded_keys)) != len(excluded_keys):
+        return []
+    if set(selected_keys) & set(excluded_keys):
+        return []
+    if set(selected_keys) | set(excluded_keys) != set(candidate_ids):
+        return []
+
+    candidate_map = {str(item.get("id")): item for item in candidates}
+    selected = [candidate_map[item] for item in selected_keys]
+    if any(not _base._baseline_selection_eligible(item, policy) for item in selected):
+        return []
+    selected_set = set(selected_keys)
+    if any(
+        item.get("recommendation") == "include"
+        and str(item.get("id")) not in selected_set
+        for item in eligible
+    ):
+        return []
+
+    counts: Counter[str] = Counter()
+    display_values: dict[str, str] = {}
+    for candidate in selected:
+        candidate_publisher = _publisher(candidate)
+        if candidate_publisher is None:
+            continue
+        key, display = candidate_publisher
+        counts[key] += 1
+        display_values.setdefault(key, display)
+
+    over_cap = [
+        (key, count)
+        for key, count in counts.items()
+        if count > publisher_cap
+    ]
+    if len(over_cap) != 1:
+        return []
+    publisher_key, publisher_count = over_cap[0]
+    if publisher_count != publisher_cap + 1:
+        return []
+
+    existing_reasoned = {
+        str(item.get("value") or "").strip().casefold()
+        for item in overrides
+        if isinstance(item, dict)
+        and item.get("type") == "publisher"
+        and str(item.get("reason") or "").strip()
+    }
+    if publisher_key in existing_reasoned:
+        return []
+
+    publisher_selected = [
+        item for item in selected
+        if (_publisher(item) or (None, None))[0] == publisher_key
+    ]
+    if len(publisher_selected) != publisher_count:
+        return []
+    if any(
+        item.get("recommendation") not in {"include", "consider"}
+        for item in publisher_selected
+    ):
+        return []
+    subjects = [_primary_subject(item) for item in publisher_selected]
+    if any(not subject for subject in subjects) or len(set(subjects)) != len(subjects):
+        return []
+    primary_urls = [_primary_url(item) for item in publisher_selected]
+    if any(not url for url in primary_urls) or len(set(primary_urls)) != len(primary_urls):
+        return []
+
+    publisher_display = display_values[publisher_key]
+    override = {
+        "type": "publisher",
+        "value": publisher_display,
+        "reason": (
+            "Короткий редакционный выпуск: число выбранных сюжетов — "
+            f"{len(selected_ids)}, обычная цель — {target}; selected/excluded IDs "
+            "полностью покрывают текущий пул, все baseline-eligible include-кандидаты "
+            f"сохранены, а {publisher_count} сюжета издателя относятся к разным "
+            "primary subjects и primary URLs. Soft publisher limit не должен сам "
+            "по себе уменьшать уже сформированный short selection."
+        ),
+    }
+    overrides.append(override)
+    notes.append(
+        {
+            "type": "diversity_override",
+            "area": "publisher",
+            "message": f"{publisher_display}: {override['reason']}",
+        }
+    )
+    return [copy.deepcopy(override)]
+
+
 def wrap_editorial_validator(
     original: EditorialValidator,
     normalize_url: UrlNormalizer,
 ) -> EditorialValidator:
-    """Add the full-pool repair before all established runtime normalizers."""
+    """Add active publisher repairs before established runtime normalizers."""
 
     if getattr(original, "_ai_svodki_full_pool_publisher_fixed", False):
         return original
@@ -241,25 +426,41 @@ def wrap_editorial_validator(
         *args: Any,
         **kwargs: Any,
     ) -> Any:
-        changes: list[dict[str, Any]] = []
+        full_pool_changes: list[dict[str, Any]] = []
+        short_selection_changes: list[dict[str, Any]] = []
         if isinstance(editorial, dict) and isinstance(research, dict):
             policy = _base._editorial_policy_from_validate_args(args, kwargs)
             if policy is not None:
-                changes = normalize_full_pool_publisher_overrides(
+                full_pool_changes = normalize_full_pool_publisher_overrides(
+                    editorial,
+                    research,
+                    policy,
+                )
+                short_selection_changes = normalize_short_selection_publisher_overrides(
                     editorial,
                     research,
                     policy,
                 )
         result = established(editorial, research, *args, **kwargs)
-        if not changes or not isinstance(result, tuple) or len(result) != 3:
+        if (
+            not full_pool_changes
+            and not short_selection_changes
+        ) or not isinstance(result, tuple) or len(result) != 3:
             return result
         errors, warnings, stories = result
         updated_warnings = list(warnings) if isinstance(warnings, list) else []
-        publishers = ", ".join(item["value"] for item in changes)
-        updated_warnings.append(
-            "Автоматически сохранён строго ограниченный full-pool publisher "
-            f"diversity override: {publishers}."
-        )
+        if full_pool_changes:
+            publishers = ", ".join(item["value"] for item in full_pool_changes)
+            updated_warnings.append(
+                "Автоматически сохранён строго ограниченный full-pool publisher "
+                f"diversity override: {publishers}."
+            )
+        if short_selection_changes:
+            publishers = ", ".join(item["value"] for item in short_selection_changes)
+            updated_warnings.append(
+                "Автоматически сохранён строго ограниченный short-selection publisher "
+                f"diversity override: {publishers}."
+            )
         return errors, updated_warnings, stories
 
     setattr(corrected, "_ai_svodki_full_pool_publisher_fixed", True)

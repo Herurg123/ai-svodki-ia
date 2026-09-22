@@ -189,6 +189,17 @@ UTC-дата запуска API и календарная дата runner не �
 - каждое событие достаточно значимо для сохранения сверх мягкого лимита;
 - причина сохранена в `selection.diversity_overrides`.
 
+Отдельный deterministic runtime seam допускается, когда baseline-eligible pool
+достигает обычной цели, но editorial осознанно формирует 1–6 story short digest.
+Он может только дописать пропущенный publisher override и не имеет права менять
+selection. Для этого одновременно требуются `short_digest=true`, непустой
+`low_news_volume`, полный непересекающийся selected/excluded partition текущего
+пула, выбор всех baseline-eligible `recommendation=include`, ровно один publisher
+на один сюжет выше soft cap и разные primary subject/URL у over-cap сюжетов.
+Genuinely short eligible pool остаётся отдельным существующим случаем. При
+нарушении любого guard нормализация не выполняется и validator остаётся
+fail-closed.
+
 Без объяснения превышение считается ошибкой валидации.
 
 ## 6. Обязательные направления research

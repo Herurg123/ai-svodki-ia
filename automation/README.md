@@ -50,6 +50,10 @@
 
 - `scripts/run_digest_preview.py` — orchestration fresh/recovery research и
   editorial flow;
+- `scripts/editorial_policy_runtime.py` — zero-paid deterministic normalization
+  уже разрешённых publisher-diversity exceptions без изменения selected IDs:
+  preserved base покрывает genuinely short baseline-eligible pool, active wrapper
+  — строго ограниченный explicit short-selection case из большего eligible pool;
 - `scripts/primary_recall_search.py` — стабильный public Primary Recall
   entrypoint; после fresh Primary запускает zero-paid Source Pulse v1.4 supplement
   до первого editorial; P3a также сохраняет строго квалифицированные product/model
