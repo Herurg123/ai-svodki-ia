@@ -633,7 +633,7 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
             self.artifact / "run-info.json",
             {
                 "publication_date": DATE,
-                "finished_at": "2026-09-22T01:47:24+00:00",
+                "finished_at": f"{DATE}T01:47:24+00:00",
                 "research": {
                     "status": "ok",
                     "temporal_anchor_version": 1,
