@@ -87,6 +87,10 @@ class PublicationMetadataTests(unittest.TestCase):
         self.assertEqual(proof.time_precision, "datetime")
         self.assertEqual(proof.published_at.isoformat(), "2026-08-16T13:57:00-07:00")
 
+    def test_visible_body_date_is_not_publication_evidence(self):
+        html = "<html><body><h1>AI update</h1><p>August 31, 2026</p></body></html>"
+        self.assertIsNone(source_freshness.extract_publication_evidence(html))
+
     def test_extracts_newsarticle_jsonld(self):
         html = '''<script type="application/ld+json">{
           "@context":"https://schema.org",
