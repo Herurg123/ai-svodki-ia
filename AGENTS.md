@@ -115,6 +115,20 @@ already-paid same-day artifact and prove that completed paid stages will not be
 repeated. Merge must use the exact reviewed head SHA (`expected_head_sha` or an
 equivalent race-safe guard). Green CI by itself is never sufficient evidence.
 
+For every production-incident fix, regression coverage must start at the real
+public entrypoint used by the operator or workflow immediately before the failed
+stage and traverse the changed seam end-to-end on a production-shaped saved
+artifact or equivalent fixture. The regression must reproduce the observed failure
+on the pre-fix implementation and pass on the proposed implementation. Private
+helper tests, monkeypatch-only tests, or manually injecting critical durable state
+such as selected bundle identity, recovery journals, request state or publication
+state are not sufficient by themselves. Keep focused unit tests, but pair them
+with this public-entrypoint integration regression and explicit neighboring
+fail-closed controls. If the fix changes a downstream stage that is reachable only
+through recovery or another wrapper stack, the acceptance test must exercise that
+wrapper path too rather than starting after it. This incident-to-entrypoint
+regression gate is mandatory for future GitHub production fixes in this project.
+
 ## CI ownership boundary
 
 `PR Gate` (`.github/workflows/pr-gate.yml`) is the always-on pull-request

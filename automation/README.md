@@ -114,6 +114,9 @@
 - `scripts/recover_digest_artifact.py` — paid-stage recovery entrypoint; текущий
   agency-health contract разрешает повторно оценить только zero-spend saved
   `not_triggered`, но никогда не повторяет started/spent/indeterminate rescue;
+  same-bundle P0 evidence identity переживает layered compatibility wrappers:
+  потерянный transient marker можно восстановить только из exact lower-recovery
+  `selected_source` после containment check, без sibling/date guessing;
 - `scripts/event_freshness.py` — zero-network deterministic event-age gate по
   уже сохранённому origin evidence;
 - `scripts/source_freshness.py` — active Source Freshness v3: Event Freshness,

@@ -414,6 +414,78 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
             )
         self.assertEqual(captured, [selected.parent.resolve()])
 
+    def test_public_recovery_restores_p0_journal_when_wrapper_root_is_transient(self):
+        self.write_json(
+            self.artifact / "run-info.json",
+            {
+                "publication_date": DATE,
+                "finished_at": "2026-09-11T01:30:00+00:00",
+                "research": {
+                    "status": "ok",
+                    "temporal_anchor_version": 1,
+                },
+            },
+        )
+        self.write_json(self.artifact / "research-output-raw.json", self.research)
+        self.write_json(
+            self.artifact / "editorial-output-raw.json",
+            {"selected_candidate_ids": ["candidate-1"]},
+        )
+        self.write_json(
+            self.artifact / "editorial-output.json",
+            {"publication_date": DATE, "selected_candidate_ids": ["candidate-1"]},
+        )
+        context = self.prepare()
+        self.assertEqual(repair.journal_state(self.state, DATE), "required")
+        self.assertEqual(context.publication_date, DATE)
+
+        target = self.root / "current" / DATE
+        report_path = self.root / "current" / "production-daily" / "recovery.json"
+        report = recovery.recover(
+            self.artifact.parent,
+            target,
+            DATE,
+            report_path,
+        )
+
+        self.assertEqual(Path(report["selected_source"]).resolve(), self.artifact.resolve())
+        self.assertEqual(report["recovery_mode"], "partial_editorial")
+        repair_recovery = report["editorial_repair_recovery"]["repair_state"]
+        self.assertEqual(
+            Path(repair_recovery["source_state_dir"]).resolve(),
+            self.state.resolve(),
+        )
+        self.assertEqual(
+            repair_recovery["copied"],
+            [f"editorial-repair-{DATE}.json"],
+        )
+        restored_journal = (
+            report_path.parent / f"editorial-repair-{DATE}.json"
+        )
+        self.assertTrue(restored_journal.is_file())
+        self.assertEqual(
+            repair.journal_state(report_path.parent, DATE),
+            "required",
+        )
+        self.assertEqual(
+            recovery._base._ACTIVE_EVIDENCE_ROOT.resolve(),
+            self.artifact.parent.resolve(),
+        )
+
+    def test_report_selected_source_fallback_cannot_escape_recovery_root(self):
+        outside = self.root / "outside" / DATE
+        outside.mkdir(parents=True)
+        original = recovery._base._ACTIVE_EVIDENCE_ROOT
+        try:
+            recovery._base._ACTIVE_EVIDENCE_ROOT = None
+            with self.assertRaises(recovery.RecoveryError):
+                recovery._base._recover_selected_evidence_root(
+                    {"selected_source": str(outside)},
+                    self.artifact.parent,
+                )
+        finally:
+            recovery._base._ACTIVE_EVIDENCE_ROOT = original
+
     def test_deduped_second_recovery_cannot_erase_pending_obligation(self):
         calls = []
         with patch.object(coverage._pre, "main", return_value=0), patch.object(

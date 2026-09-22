@@ -252,13 +252,49 @@ def _bundle_has_p0_journal(recovery_root: Path, publication_date: str) -> bool:
     return any(path.is_file() for path in recovery_root.rglob(name))
 
 
+def _recover_selected_evidence_root(
+    report: dict[str, Any],
+    recovery_root: Path,
+) -> Path | None:
+    """Recover same-bundle identity from the lower recovery report if needed.
+
+    Compatibility wrappers can temporarily replace the public choose_source
+    hook. The lower recovery engine nevertheless records the exact selected
+    source in the in-memory report it just produced. When the transient module
+    global was not propagated back through those wrappers, derive the evidence
+    root only from that selected source and only after the usual containment
+    check. This never searches sibling bundles or guesses by date.
+    """
+
+    global _ACTIVE_EVIDENCE_ROOT
+    if _ACTIVE_EVIDENCE_ROOT is not None:
+        return Path(_ACTIVE_EVIDENCE_ROOT).resolve()
+
+    selected_value = report.get("selected_source")
+    if not isinstance(selected_value, str) or not selected_value.strip():
+        return None
+    selected = Path(selected_value)
+    selected = (
+        selected.resolve()
+        if selected.is_absolute()
+        else (Path.cwd() / selected).resolve()
+    )
+    if not selected.is_dir():
+        raise RecoveryError(
+            "selected recovery source recorded by lower recovery no longer exists"
+        )
+    evidence_root = _selected_evidence_root(selected, recovery_root)
+    _ACTIVE_EVIDENCE_ROOT = evidence_root
+    return evidence_root
+
+
 def _restore_durable_p0_state(
     report: dict[str, Any],
     publication_date: str,
     report_path: Path,
     recovery_root: Path,
 ) -> dict[str, Any]:
-    evidence_root = _ACTIVE_EVIDENCE_ROOT
+    evidence_root = _recover_selected_evidence_root(report, recovery_root)
     if evidence_root is None:
         # Historical and ordinary recovery artifacts predate the P0 journal. Do
         # not make those fixtures unusable merely because they have nothing P0
