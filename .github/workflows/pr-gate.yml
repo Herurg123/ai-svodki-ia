@@ -148,3 +148,35 @@ jobs:
             echo "- **Head SHA:** \`${GITHUB_SHA}\`"
           } >> "${GITHUB_STEP_SUMMARY}"
           echo "Required PR Gate пройден: main=${MAIN_REQUIRED}/${MAIN_RESULT}, video=${VIDEO_REQUIRED}/${VIDEO_RESULT}."
+
+      - name: Показать ошибку Required PR Gate
+        if: failure()
+        shell: bash
+        env:
+          CLASSIFY_RESULT: ${{ needs.classify.result }}
+          MAIN_REQUIRED: ${{ needs.classify.outputs.main }}
+          MAIN_RESULT: ${{ needs.main-ci.result }}
+          VIDEO_REQUIRED: ${{ needs.classify.outputs.video }}
+          VIDEO_RESULT: ${{ needs.video-ci.result }}
+        run: |
+          ru_status() {
+            case "${1:-}" in
+              success) echo "успешно" ;;
+              failure) echo "ошибка" ;;
+              skipped) echo "пропущено" ;;
+              cancelled) echo "отменено" ;;
+              "") echo "не запускалось" ;;
+              *) echo "${1}" ;;
+            esac
+          }
+          {
+            echo "# ❌ Required PR Gate не пройден"
+            echo
+            echo "- **Классификация путей:** $(ru_status "${CLASSIFY_RESULT}")"
+            echo "- **Main CI:** требуется=${MAIN_REQUIRED:-не определено}, результат=$(ru_status "${MAIN_RESULT}")"
+            echo "- **Video CI:** требуется=${VIDEO_REQUIRED:-не определено}, результат=$(ru_status "${VIDEO_RESULT}")"
+            echo "- **Head SHA:** \`${GITHUB_SHA}\`"
+            echo
+            echo "Открой соответствующий красный job выше. Его repository-controlled Summary и annotations должны содержать русское описание причины."
+          } >> "${GITHUB_STEP_SUMMARY}"
+          echo "::error title=Required PR Gate не пройден::Одна из обязательных проверок или маршрутизация CI завершилась ошибкой. Подробности указаны в русскоязычном Summary."
