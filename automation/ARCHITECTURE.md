@@ -1265,7 +1265,13 @@ Stable public recovery entrypoint: `recover_digest_artifact.py`.
 
 Основной принцип: уже успешно оплаченная стадия не повторяется автоматически из-
 за ошибки более поздней стадии. Recovery выбирает наиболее полный валидный
-same-day artifact и продолжает с первого незавершённого этапа.
+same-day artifact и продолжает с первого незавершённого этапа. Exact same-bundle
+identity обычно фиксируется P0 `choose_source`. Если layered compatibility wrapper
+не вернул transient in-memory marker, P0 разрешено восстановить evidence root
+только из exact `selected_source`, который уже записал нижний recovery engine,
+после проверки существования и containment внутри запрошенного recovery root.
+Поиск sibling bundle по дате, глобальный fallback и смешивание state между run
+запрещены.
 
 Known-bad normalization/validation artifacts не переиспользуются. Modern saved
 Primary повторно проходит current source-health. Legacy saved candidates без
