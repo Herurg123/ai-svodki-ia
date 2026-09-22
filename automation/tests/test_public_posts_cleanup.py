@@ -62,22 +62,6 @@ class PublicPostsCleanupTests(unittest.TestCase):
 
     def write_site(self, posts: Path, values: list[str]) -> None:
         (posts / "images").mkdir(parents=True)
-        dzen = posts / "dzen-test"
-        dzen.mkdir()
-        (dzen / "index.html").write_text(
-            "<!doctype html><title>Retired Dzen shell</title>\n",
-            encoding="utf-8",
-        )
-        (dzen / "rss.xml").write_text(
-            '<?xml version="1.0" encoding="utf-8"?>'
-            '<rss version="2.0"><channel>'
-            '<title>Retired Dzen shell</title>'
-            '<link>https://rybalka.one/posts/dzen-test/</link>'
-            '<description>Retired.</description>'
-            '</channel></rss>\n',
-            encoding="utf-8",
-        )
-
         items = [self.item(value) for value in values]
         items.sort(key=lambda row: row["published_datetime"], reverse=True)
         for item in items:
@@ -154,13 +138,6 @@ class PublicPostsCleanupTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             posts = Path(temp) / "posts"
             self.write_site(posts, ["2026-07-07", "2026-07-06"])
-            shell_before = {
-                path.name: path.read_bytes()
-                for path in (
-                    posts / "dzen-test/index.html",
-                    posts / "dzen-test/rss.xml",
-                )
-            }
             report = self.cleanup(
                 posts, reference_date=date(2026, 8, 8), apply=True
             )
@@ -179,35 +156,8 @@ class PublicPostsCleanupTests(unittest.TestCase):
                 posts / "sitemap.xml",
             ):
                 self.assertNotIn("2026-07-06", path.read_text(encoding="utf-8"))
-            for path in (
-                posts / "dzen-test/index.html",
-                posts / "dzen-test/rss.xml",
-            ):
-                self.assertEqual(path.read_bytes(), shell_before[path.name])
             items = ET.parse(posts / "rss.xml").getroot().findall("./channel/item")
             self.assertEqual(len(items), 1)
-
-    def test_canonical_cleanup_never_rewrites_retired_shell(self) -> None:
-        with tempfile.TemporaryDirectory() as temp:
-            posts = Path(temp) / "posts"
-            self.write_site(posts, ["2026-08-25", "2026-07-23"])
-            before = {
-                path.name: path.read_bytes()
-                for path in (
-                    posts / "dzen-test/index.html",
-                    posts / "dzen-test/rss.xml",
-                )
-            }
-            report = self.cleanup(
-                posts, reference_date=date(2026, 8, 25), apply=True
-            )
-            self.assertNotIn("dzen-test/index.html", report["updated_files"])
-            self.assertNotIn("dzen-test/rss.xml", report["updated_files"])
-            for path in (
-                posts / "dzen-test/index.html",
-                posts / "dzen-test/rss.xml",
-            ):
-                self.assertEqual(path.read_bytes(), before[path.name])
 
     def test_mismatched_rss_date_is_rejected_before_mutation(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -239,27 +189,13 @@ class PublicPostsCleanupTests(unittest.TestCase):
                     posts, reference_date=date(2026, 8, 8), apply=True
                 )
 
-    def test_retired_shell_rejects_dated_legacy_content(self) -> None:
-        with tempfile.TemporaryDirectory() as temp:
-            posts = Path(temp) / "posts"
-            self.write_site(posts, ["2026-07-07"])
-            legacy = posts / "dzen-test/2026-07-06"
-            legacy.mkdir()
-            (legacy / "index.html").write_text("legacy", encoding="utf-8")
-            before = tree_files(posts)
-            with self.assertRaisesRegex(PublicCleanupError, "must stay inert"):
-                self.cleanup(
-                    posts, reference_date=date(2026, 8, 8), apply=True
-                )
-            self.assertEqual(tree_files(posts), before)
-
-    def test_root_rss_rejects_legacy_dated_link(self) -> None:
+    def test_root_rss_rejects_noncanonical_dated_link(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             posts = Path(temp) / "posts"
             self.write_site(posts, ["2026-07-07"])
             rss = posts / "rss.xml"
             canonical = "https://rybalka.one/posts/2026-07-07/"
-            legacy = "https://rybalka.one/posts/dzen-test/2026-07-07/"
+            legacy = "https://rybalka.one/posts/legacy/2026-07-07/"
             rss.write_text(
                 rss.read_text(encoding="utf-8").replace(canonical, legacy),
                 encoding="utf-8",
@@ -310,7 +246,6 @@ class PublicPostsCleanupTests(unittest.TestCase):
             self.assertIn("ручной dry-run", dry)
             self.assertIn("RSS: **2 → 1**", dry)
             self.assertNotIn("Legacy RSS", dry)
-            self.assertNotIn("dzen-test", dry)
             report["mode"] = "apply"
             report["changes_applied"] = True
             published = render_github_summary(

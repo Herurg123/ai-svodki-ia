@@ -37,7 +37,6 @@ STRUCTURED_CONFIG_PATH = ROOT / "automation/config/structured-data.json"
 DATE_NAME = re.compile(r"\d{4}-\d{2}-\d{2}")
 IMAGE_NAME = re.compile(r"ai-svodka-(\d{4}-\d{2}-\d{2})\.png")
 SITEMAP_NS = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
-RETIRED_SHELL = {"index.html", "rss.xml"}
 
 
 class PublicCleanupError(RuntimeError):
@@ -94,24 +93,6 @@ def require_file(path: Path, label: str) -> None:
 def require_dir(path: Path, label: str) -> None:
     if path.is_symlink() or not path.is_dir():
         raise PublicCleanupError(f"{label} must be a regular directory: {path}")
-
-
-def validate_retired_shell(posts_root: Path) -> None:
-    """Permit only the two inert dzen-test shell files during stage 7A."""
-    root = posts_root / "dzen-test"
-    if not root.exists() and not root.is_symlink():
-        return
-    require_dir(root, "Retired dzen-test shell")
-    entries = list(root.iterdir())
-    actual = {entry.name for entry in entries}
-    if actual != RETIRED_SHELL:
-        raise PublicCleanupError(
-            "Retired dzen-test shell must stay inert; "
-            f"unexpected={sorted(actual - RETIRED_SHELL)}, "
-            f"missing={sorted(RETIRED_SHELL - actual)}"
-        )
-    for entry in entries:
-        require_file(entry, "Retired dzen-test shell file")
 
 
 def classify_link(link: str, site_base_url: str) -> tuple[date, str]:
@@ -179,7 +160,7 @@ def validate_index(
 ) -> None:
     actual = [
         link for link in parse_links(path)
-        if re.fullmatch(r"\./(?:dzen-test/)?\d{4}-\d{2}-\d{2}/", link)
+        if re.fullmatch(r"\./\d{4}-\d{2}-\d{2}/", link)
     ]
     base = site_base_url.rstrip("/") + "/"
     expected = ["./" + publication.link.removeprefix(base) for publication in publications]
@@ -214,7 +195,6 @@ def inspect_site(
     timezone_name: str,
 ) -> list[Publication]:
     require_dir(posts_root, "Posts root")
-    validate_retired_shell(posts_root)
     rss_path = posts_root / "rss.xml"
     index_path = posts_root / "index.html"
     sitemap_path = posts_root / "sitemap.xml"

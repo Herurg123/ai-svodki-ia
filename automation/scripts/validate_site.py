@@ -118,8 +118,6 @@ def relative_page_from_link(link: str, site_base_url: str) -> str | None:
     remainder = link[len(base):].strip("/")
     if re.fullmatch(r"\d{4}-\d{2}-\d{2}", remainder):
         return remainder
-    if re.fullmatch(r"dzen-test/\d{4}-\d{2}-\d{2}", remainder):
-        return remainder
     return None
 
 

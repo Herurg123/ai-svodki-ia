@@ -1431,8 +1431,7 @@ retention window.
   `stories.json`;
 - удаляет expired public dated pages/images согласно validation contract;
 - считает `posts/images/` обязательным;
-- допускает отсутствие исторического `posts/dzen-test/images/` после исчезновения
-  последнего legacy image;
+- принимает публичные dated pages только в canonical `posts/YYYY-MM-DD/`;
 - не использует `.gitkeep` как замену корректной validation semantics;
 - после успешной основной cleanup/deploy цепочки независимо чистит FTP `video/`
   от exact-pattern MP4/PNG, дата которых строго раньше общего cutoff.
