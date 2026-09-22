@@ -2603,11 +2603,16 @@ def main() -> int:
             pretty_json(run_info),
         )
 
+        editorial_archive = dict(archive)
+        # generated_at is bootstrap metadata, not editorial/dedupe evidence.
+        # Excluding only this top-level field keeps future repair request bytes
+        # stable across deterministic archive rebuilds.
+        editorial_archive.pop("generated_at", None)
         editorial_prompt = build_prompt(
             editorial_template,
             {
                 "CURRENT_DATE": publication_date_text,
-                "ARCHIVE_CONTEXT": compact_json(archive),
+                "ARCHIVE_CONTEXT": compact_json(editorial_archive),
                 "CANDIDATES_CONTEXT": compact_json(research),
                 "MINIMUM_SELECTED_STORIES": str(args.minimum_selected_stories),
                 "MAXIMUM_SELECTED_STORIES": str(args.maximum_selected_stories),
