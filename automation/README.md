@@ -113,8 +113,7 @@ Evidence-rich source-neutral resolution может завершиться
 сюжет не становится публикационно пригодным.
 
 Короткий выпуск сохраняет публичную пометку «Новостей сегодня меньше, чем обычно».
-Полностью завершённый нулевой candidate pool может быть successful no-publish,
-если обязательные quality/search stages завершены.
+Полностью завершённый нулевой candidate pool является normal successful `no-publish`, а не production failure. Technical partial/error audits remain fail-closed. Нулевая остановка требует актуальный `high_signal_recall_sentinel` версии 8 и завершённые обязательные quality/search стадии.
 
 ### Freshness и supplemental discovery
 
