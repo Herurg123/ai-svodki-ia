@@ -1,0 +1,172 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Google открыла предзаказ Googlebook — ноутбука с Gemini как основным интерфейсным слоем",
+    "organization": "Google; Gemini; Acer; ASUS; Dell; HP; Lenovo",
+    "topic": "Consumer AI hardware; AI laptops; Gemini; agentic desktop interfaces; on-device NPU",
+    "event_type": "product availability",
+    "status": "new",
+    "summary": "Google открыла предзаказ Googlebook стоимостью от $899 — новой линейки ноутбуков, построенных вокруг Gemini. Устройство предлагает AI-курсор для выделения контента и вызова Gemini, диктовку Rambler, агент в Gemini app, контекстные подсказки и поиск файлов по содержимому; вендорами названы Acer, ASUS, Dell, HP и Lenovo.",
+    "published_at": "2026-09-21T14:39:22+00:00",
+    "published_date": "2026-09-21",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google's $899 Googlebook is a bet that you'll buy a new laptop for Gemini",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/21/googles-899-googlebook-is-a-bet-that-youll-buy-a-new-laptop-for-gemini/"
+      },
+      {
+        "title": "Googlebook: A Laptop Designed for Gemini Intelligence",
+        "publisher": "Google",
+        "url": "https://googlebook.google/"
+      }
+    ],
+    "keywords": [
+      "Googlebook",
+      "Google",
+      "Gemini",
+      "AI laptop",
+      "consumer AI",
+      "Magic Cursor",
+      "Rambler",
+      "Android OS",
+      "NPU"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Amazon заблокировала Meta Muse для покупок на Amazon.com",
+    "organization": "Meta; Muse; Amazon",
+    "topic": "Агентная коммерция; доступ AI-агентов к маркетплейсам; платформенные ограничения",
+    "event_type": "platform access restriction",
+    "status": "new",
+    "summary": "Пользователи Meta Muse начали получать сообщение о блокировке при попытке покупать товары на Amazon.com: Amazon указала, что дальнейший доступ неавторизованного AI-агента нарушает условия использования. Это ограничивает один из заметных сценариев агентной коммерции для уже запущенного потребительского агента Meta.",
+    "published_at": "2026-09-21T17:55:18+00:00",
+    "published_date": "2026-09-21",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Meta’s AI agent has been blocked from using Amazon.com",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/21/metas-ai-agent-has-been-blocked-from-using-amazon-com/"
+      }
+    ],
+    "keywords": [
+      "Meta Muse",
+      "Amazon.com",
+      "AI agents",
+      "agentic commerce",
+      "platform terms",
+      "shopping agents"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Обновление: OpenAI создала независимую консультативную группу по математике и ИИ",
+    "organization": "OpenAI; Institute for Advanced Study; Advisory Group on Mathematics and Artificial Intelligence",
+    "topic": "AI for science; mathematics research; независимый внешний advisory oversight; публикация результатов frontier-моделей",
+    "event_type": "announcement",
+    "status": "update",
+    "summary": "OpenAI объявила независимую Advisory Group on Mathematics and Artificial Intelligence, размещённую в Institute for Advanced Study. Группа должна консультировать по оценке значимости, академическим стандартам и коммуникации результатов; компания также заявила, что её внутренний обучаемый с 28 августа модельный проект решил более 100 давних открытых задач в математике.",
+    "published_at": "2026-09-21T20:15:58+00:00",
+    "published_date": "2026-09-21",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI forms math advisory group as its AI resolves more than 100 open problems",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/21/openai-forms-math-advisory-group-as-its-ai-resolves-more-than-100-open-problems/"
+      },
+      {
+        "title": "Advisory Group on Mathematics and Artificial Intelligence",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/advisory-group-on-mathematics-and-ai/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "mathematics",
+      "AI for science",
+      "open problems",
+      "advisory group",
+      "Institute for Advanced Study",
+      "Navier-Stokes"
+    ],
+    "geography": "world",
+    "category": "research"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "NVIDIA запустила DSX Ready для сертификации компонентов питания и охлаждения ИИ-фабрик",
+    "organization": "NVIDIA",
+    "topic": "NVIDIA Launches DSX Ready to Qualify Power and Cooling Products for AI Factories",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "The new qualification program helps AI factory builders identify products that meet applicable NVIDIA DSX requirements, starting with battery energy storage systems and cooling distribution units.",
+    "published_at": "2026-09-21T18:00:07+00:00",
+    "published_date": "2026-09-21",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "NVIDIA Launches DSX Ready to Qualify Power and Cooling Products for AI Factories",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/dsx-ready-ai-factories-power-cooling"
+      }
+    ],
+    "keywords": [
+      "NVIDIA",
+      "DSX",
+      "Ready",
+      "Qualify",
+      "Power",
+      "Cooling",
+      "Products",
+      "Factories"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "russia",
+    "headline": "Яндекс выложил в open source новую ИИ-модель, обученную с нуля",
+    "organization": "Яндекс",
+    "topic": "21 сентября 2026Яндекс выложил в опенсорс свою новую ИИ-модель, обученную с нуля",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+    "published_at": null,
+    "published_date": "2026-09-21",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "21 сентября 2026Яндекс выложил в опенсорс свою новую ИИ-модель, обученную с нуля",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=21-09-2026-03"
+      }
+    ],
+    "keywords": [
+      "21",
+      "сентября",
+      "2026Яндекс",
+      "выложил",
+      "опенсорс",
+      "свою",
+      "новую",
+      "ИИ-модель",
+      "обученную",
+      "нуля"
+    ],
+    "geography": "russia",
+    "category": "investment"
+  }
+]

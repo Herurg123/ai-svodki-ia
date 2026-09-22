@@ -1,0 +1,161 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-09-22",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-09-22.json",
+  "warnings": [
+    "cand-009: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: nvidia (5), openai (4)",
+    "Исследовательский пул перегружен одной организацией: nvidia (5), openai (4)",
+    "Выбрано 5 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Автоматически сохранён строго ограниченный short-selection publisher diversity override: TechCrunch."
+  ],
+  "publication_date": "2026-09-22",
+  "started_at": "2026-09-22T05:50:25+00:00",
+  "finished_at": "2026-09-22T05:50:25+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 66,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "1ffb67dea98e537cae5b39e3acee289f33b70db43e1e0bc52de78f0449a9aec8",
+    "candidates_sha256": "6970fcdf7684444f9d08d46a3bf0b277777d86994936ac900be55cbb3da31004",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-09-20T04:04:31+03:00",
+      "end_at": "2026-09-22T04:36:38+03:00",
+      "latest_archive_at": "2026-09-21T04:04:31+03:00",
+      "start_date": "2026-09-20",
+      "end_date": "2026-09-22",
+      "latest_archive_date": "2026-09-21"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "852dc5d18f41e31704d67951ea6fd3ae3aee7651a4c3303ab813ee8550a2b5e7",
+    "editorial_sha256": "f14378f0ac10380929442b93f86eceb4773ed0e4a29f799a1071ad67afc9c9fb",
+    "digest_sha256": "f793c0d4dadaab2eba50f1926d51ef63affbf0fa3f4b97685d98e101f7517dee",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-09-22-ai-digest-cover.png",
+          "normalized_value": "ai-svodka-2026-09-22.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.meta_marking",
+          "model_value": "inconsistent",
+          "normalized_value": "first Meta*, subsequent Meta"
+        },
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        }
+      ],
+      "changed_count": 2,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 5 сюжетов."
+        },
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-009."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Короткий редакционный выпуск: число выбранных сюжетов — 5, обычная цель — 7; selected/excluded IDs полностью покрывают текущий пул, все baseline-eligible include-кандидаты сохранены, а 3 сюжета издателя относятся к разным primary subjects и primary URLs. Soft publisher limit не должен сам по себе уменьшать уже сформированный short selection."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0675803c5d1bfe01016ab1de03db5087d09d80115c7a74545d",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 137658,
+        "input_tokens_details": {
+          "cache_write_tokens": 15995,
+          "cached_tokens": 121660
+        },
+        "output_tokens": 3166,
+        "output_tokens_details": {
+          "reasoning_tokens": 309
+        },
+        "total_tokens": 140824
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 137658,
+    "output_tokens": 3166,
+    "total_tokens": 140824,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "bc7d39aeef5d85af828611cc04bc477f09f8fed3",
+    "run_id": "35692246143",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-09-22T04:36:38+03:00"
+}
