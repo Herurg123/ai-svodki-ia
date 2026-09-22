@@ -172,6 +172,54 @@ class Sep22ShortSelectionPublisherRuntimeRepairTests(unittest.TestCase):
             [],
         )
 
+    def test_existing_full_pool_repair_still_owns_normal_selection(self) -> None:
+        research = {
+            "candidates": [
+                {
+                    "id": identifier,
+                    "organization": organization,
+                    "recommendation": recommendation,
+                    "verification_status": "verified",
+                    "freshness_status": "new_event",
+                    "category": "models",
+                    "legal_scale": "not_applicable",
+                    "significance_score": score,
+                    "curiosity_eligible": False,
+                    "primary_source": {
+                        "publisher": publisher,
+                        "url": f"https://example.com/{identifier}",
+                    },
+                }
+                for identifier, publisher, organization, recommendation, score in [
+                    ("a", "HuggingNews", "Meta", "include", 4),
+                    ("b", "HuggingNews", "Tencent", "include", 4),
+                    ("c", "HuggingNews", "Perplexity", "include", 3),
+                    ("d", "Publisher D", "Org D", "include", 5),
+                    ("e", "Publisher E", "Org E", "include", 4),
+                    ("f", "Publisher F", "Org F", "include", 3),
+                    ("g", "Publisher G", "Org G", "include", 3),
+                    ("h", "Publisher H", "Org H", "consider", 2),
+                ]
+            ]
+        }
+        editorial = {
+            "selected_candidate_ids": ["a", "b", "c", "d", "e", "f", "g"],
+            "excluded_candidate_ids": ["h"],
+            "selection_summary": "Seven-story normal selection.",
+            "diversity_overrides": [],
+            "digest": {"short_digest": False, "editorial_notes": []},
+        }
+
+        errors, warnings, _stories = run_wrapped(editorial, research)
+
+        self.assertEqual(errors, [])
+        self.assertEqual(editorial["selected_candidate_ids"], ["a", "b", "c", "d", "e", "f", "g"])
+        self.assertEqual(len(editorial["diversity_overrides"]), 1)
+        self.assertEqual(editorial["diversity_overrides"][0]["value"], "HuggingNews")
+        self.assertTrue(
+            any("full-pool publisher diversity override" in item for item in warnings)
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
