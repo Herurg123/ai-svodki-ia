@@ -467,6 +467,20 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
             self.artifact.parent.resolve(),
         )
 
+    def test_report_selected_source_fallback_cannot_escape_recovery_root(self):
+        outside = self.root / "outside" / DATE
+        outside.mkdir(parents=True)
+        original = recovery._base._ACTIVE_EVIDENCE_ROOT
+        try:
+            recovery._base._ACTIVE_EVIDENCE_ROOT = None
+            with self.assertRaises(recovery.RecoveryError):
+                recovery._base._recover_selected_evidence_root(
+                    {"selected_source": str(outside)},
+                    self.artifact.parent,
+                )
+        finally:
+            recovery._base._ACTIVE_EVIDENCE_ROOT = original
+
     def test_deduped_second_recovery_cannot_erase_pending_obligation(self):
         calls = []
         with patch.object(coverage._pre, "main", return_value=0), patch.object(
