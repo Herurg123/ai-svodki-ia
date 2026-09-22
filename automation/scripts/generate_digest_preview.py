@@ -675,6 +675,14 @@ def pretty_json(value: Any) -> str:
     ) + "\n"
 
 
+def editorial_archive_context(archive: dict[str, Any]) -> str:
+    """Serialize archive evidence for editorial without volatile bootstrap time."""
+
+    stable = dict(archive)
+    stable.pop("generated_at", None)
+    return compact_json(stable)
+
+
 def sha256_text(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
@@ -2603,16 +2611,11 @@ def main() -> int:
             pretty_json(run_info),
         )
 
-        editorial_archive = dict(archive)
-        # generated_at is bootstrap metadata, not editorial/dedupe evidence.
-        # Excluding only this top-level field keeps future repair request bytes
-        # stable across deterministic archive rebuilds.
-        editorial_archive.pop("generated_at", None)
         editorial_prompt = build_prompt(
             editorial_template,
             {
                 "CURRENT_DATE": publication_date_text,
-                "ARCHIVE_CONTEXT": compact_json(editorial_archive),
+                "ARCHIVE_CONTEXT": editorial_archive_context(archive),
                 "CANDIDATES_CONTEXT": compact_json(research),
                 "MINIMUM_SELECTED_STORIES": str(args.minimum_selected_stories),
                 "MAXIMUM_SELECTED_STORIES": str(args.maximum_selected_stories),
