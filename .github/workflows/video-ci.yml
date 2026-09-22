@@ -50,11 +50,3 @@ jobs:
         run: |
           set -euo pipefail
           npm test
-
-      - name: Upload worker overlay for local handoff
-        uses: actions/upload-artifact@v4
-        with:
-          name: notebooklm-worker-overlay
-          path: automation/notebooklm-video/worker.js
-          if-no-files-found: error
-          retention-days: 1
