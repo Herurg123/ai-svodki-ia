@@ -8,12 +8,12 @@ on:
   workflow_dispatch:
     inputs:
       apply:
-        description: "Apply cleanup; leave disabled for a dry-run"
+        description: "Применить очистку; оставьте выключенным для проверки без удаления"
         required: true
         default: false
         type: boolean
       retention_days:
-        description: "Keep this many full calendar days (minimum 32)"
+        description: "Сохранять указанное число полных календарных дней (минимум 32)"
         required: true
         default: "32"
         type: string
@@ -61,11 +61,11 @@ jobs:
         run: |
           set -euo pipefail
           if [[ ! "${REQUESTED_RETENTION_DAYS}" =~ ^[0-9]+$ ]]; then
-            echo "retention_days must be an integer." >&2
+            echo "retention_days должен быть целым числом." >&2
             exit 1
           fi
           if (( REQUESTED_RETENTION_DAYS < 32 )); then
-            echo "retention_days must be at least 32." >&2
+            echo "retention_days должен быть не меньше 32." >&2
             exit 1
           fi
           mode="dry-run"
@@ -202,14 +202,14 @@ jobs:
           )
           cutoff = date.fromisoformat(repository_report["cutoff_date"])
           if public_report["cutoff_date"] != repository_report["cutoff_date"]:
-              raise SystemExit("Repository and public cleanup cutoffs differ.")
+              raise SystemExit("Границы repository и public cleanup не совпадают.")
 
           raw = subprocess.check_output(["git", "diff", "--name-status", "-z"])
           fields = raw.decode("utf-8").split("\0")
           if fields and fields[-1] == "":
               fields.pop()
           if not fields or len(fields) % 2:
-              raise SystemExit("Cleanup produced an invalid or empty Git diff.")
+              raise SystemExit("Cleanup сформировал некорректный или пустой Git diff.")
           actual = dict(zip(fields[1::2], fields[0::2]))
 
           content_pattern = re.compile(
@@ -221,22 +221,22 @@ jobs:
               if content_match is not None:
                   if status != "D":
                       raise SystemExit(
-                          f"Repository compaction may only delete files: {status} {path}"
+                          f"Repository compaction может только удалять файлы: {status} {path}"
                       )
                   publication_date = date.fromisoformat(content_match.group(1))
                   if publication_date >= cutoff:
                       raise SystemExit(
-                          f"Repository compaction changed a retained date: {path}"
+                          f"Repository compaction изменил сохраняемую дату: {path}"
                       )
                   if Path(path).name in {"meta.json", "stories.json"}:
                       raise SystemExit(
-                          f"Repository compaction deleted retained metadata: {path}"
+                          f"Repository compaction удалил сохраняемые metadata: {path}"
                       )
                   continue
               if path.startswith("posts/"):
                   actual_public[path] = status
                   continue
-              raise SystemExit(f"Cleanup changed a protected path: {status} {path}")
+              raise SystemExit(f"Cleanup изменил защищённый путь: {status} {path}")
 
           expected_public = {
               f"posts/{row['path']}": row["status"]
@@ -244,7 +244,7 @@ jobs:
           }
           if actual_public != expected_public:
               raise SystemExit(
-                  "Public Git diff differs from the validated cleanup candidate: "
+                  "Public Git diff отличается от проверенного cleanup candidate: "
                   f"expected={expected_public}, actual={actual_public}"
               )
           PY
@@ -260,7 +260,7 @@ jobs:
           set -euo pipefail
           git fetch --no-tags origin main
           if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]]; then
-            echo "main changed while cleanup was running; refusing to push." >&2
+            echo "main изменился во время cleanup; публикация изменений отменена." >&2
             exit 1
           fi
           git add -u -- automation/content posts
@@ -453,19 +453,35 @@ jobs:
           COMMIT_SHA: ${{ needs.cleanup.outputs.commit_sha }}
         run: |
           set -euo pipefail
+          ru_status() {
+            case "${1:-}" in
+              success) echo "успешно" ;;
+              failure) echo "ошибка" ;;
+              skipped) echo "пропущено" ;;
+              cancelled) echo "отменено" ;;
+              "") echo "не запускалось" ;;
+              *) echo "${1}" ;;
+            esac
+          }
           ftp_result="не требовалась"
           if [[ "${PUBLIC_CHANGED}" == "true" ]]; then
-            ftp_result="${DEPLOY_RESULT}"
+            ftp_result="$(ru_status "${DEPLOY_RESULT}")"
+          fi
+          mode_result="не определён"
+          if [[ "${CLEANUP_MODE:-}" == "apply" ]]; then
+            mode_result="очистка"
+          elif [[ "${CLEANUP_MODE:-}" == "dry-run" ]]; then
+            mode_result="проверка без удаления"
           fi
           {
             echo "# Итог ночной очистки"
             echo
             echo "| Этап | Результат |"
             echo "|---|---|"
-            echo "| Проверка и GitHub | ${CLEANUP_RESULT} |"
-            echo "| Режим | ${CLEANUP_MODE:-не определён} |"
+            echo "| Проверка и GitHub | $(ru_status "${CLEANUP_RESULT}") |"
+            echo "| Режим | ${mode_result} |"
             echo "| FTP-синхронизация posts | ${ftp_result} |"
-            echo "| FTP-очистка video | ${VIDEO_FTP_RESULT} |"
+            echo "| FTP-очистка video | $(ru_status "${VIDEO_FTP_RESULT}") |"
             echo "| Commit | ${COMMIT_SHA:-не создавался} |"
           } >> "${GITHUB_STEP_SUMMARY}"
           if [[ "${CLEANUP_RESULT}" == "failure" ]]; then
