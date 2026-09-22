@@ -32,12 +32,22 @@ A failure proven to occur before `request_started` is retryable. `request_starte
 Repair journal identity v2 binds the semantic archive corpus but excludes the
 top-level `generated_at` field written by `bootstrap_archive.py`, because that
 timestamp changes on every deterministic rebuild without changing any prior story,
-source URL or dedupe evidence. Legacy v1 journals remain fail-closed except for a
-cryptographically proven timestamp-only replay: the saved
-`editorial-prompt-input.txt` must contain an exact archive context whose full
-canonical hash equals the v1 journal `archive_sha256`, and that saved archive
+source URL or dedupe evidence. The v2 editorial prompt uses the same semantic
+archive context, so fresh request bytes do not drift merely because bootstrap ran
+again.
+
+Legacy v1 journals remain fail-closed except for a cryptographically proven
+timestamp-only replay. Recovery copies the exact pre-existing editorial prompt
+from the selected bundle into durable `production-daily` state before the mutable
+dated artifact can be rewritten. The saved archive context must have a full
+canonical hash equal to the v1 journal `archive_sha256`; its semantic archive
 must equal the current archive after removing only top-level `generated_at`.
-Any item/source/story drift still blocks replay.
+When the current request hash differs, the guard reconstructs the old request by
+substituting only that durable saved prompt into the current request structure.
+Replay is allowed only if the reconstructed whole request, including model,
+schema, reasoning/limits and Terra cache structure, hashes exactly to the saved
+v1 `request_sha256`. Any item/source/story drift, prompt text drift outside the
+archive context, schema/model change or missing proof still blocks replay.
 
 The only legacy admission exception is the proven 2026-09-11 missing-SDK failure, because that failure occurred before provider construction/admission. The exception is deliberately narrow and does not generalize arbitrary historical errors into safe retries.
 
