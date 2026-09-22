@@ -1267,10 +1267,15 @@ Stable public recovery entrypoint: `recover_digest_artifact.py`.
 за ошибки более поздней стадии. Recovery выбирает наиболее полный валидный
 same-day artifact и продолжает с первого незавершённого этапа. P0 editorial
 repair journal v2 использует semantic archive identity без служебного
-`generated_at`; legacy v1 `response_saved` допускается только при exact hash
-proof исходного archive context из saved editorial prompt и semantic equality
-текущего архива после удаления только этого timestamp. Любой реальный archive
-drift остаётся fail-closed. Exact same-bundle identity обычно фиксируется P0 `choose_source`. Если layered compatibility wrapper
+`generated_at`, и тот же volatile field исключён из нового editorial prompt.
+Legacy v1 `response_saved` допускается только при exact hash proof исходного
+archive context и старого полного request contract. Recovery сначала переносит
+saved editorial prompt из exact selected bundle в immutable для текущего runtime
+`production-daily` proof, чтобы dated prompt не мог уничтожить доказательство при
+повторной генерации. Timestamp-only request drift разрешён лишь когда
+реконструированный request с этим proof даёт exact saved `request_sha256`;
+model/schema/policy/candidates или любой semantic archive drift остаются
+fail-closed. Exact same-bundle identity обычно фиксируется P0 `choose_source`. Если layered compatibility wrapper
 не вернул transient in-memory marker, P0 разрешено восстановить evidence root
 только из exact `selected_source`, который уже записал нижний recovery engine,
 после проверки существования и containment внутри запрошенного recovery root.
