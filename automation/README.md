@@ -117,9 +117,11 @@
   same-bundle P0 evidence identity переживает layered compatibility wrappers:
   потерянный transient marker можно восстановить только из exact lower-recovery
   `selected_source` после containment check, без sibling/date guessing;
-  editorial-repair journal v2 хэширует semantic archive без volatile
-  `generated_at`, а legacy v1 replay принимает timestamp-only drift лишь при
-  exact saved-prompt hash proof;
+  editorial-repair journal v2 и новый editorial prompt используют semantic
+  archive без volatile `generated_at`; для legacy v1 `response_saved` recovery
+  сначала сохраняет exact same-bundle prompt proof в `production-daily`, а
+  timestamp-only request drift принимается лишь когда реконструированный полный
+  request точно совпадает с saved `request_sha256`;
 - `scripts/event_freshness.py` — zero-network deterministic event-age gate по
   уже сохранённому origin evidence;
 - `scripts/source_freshness.py` — active Source Freshness v3: Event Freshness,
