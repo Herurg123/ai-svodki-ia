@@ -430,7 +430,7 @@ class ProductionWorkflowReliabilityTests(unittest.TestCase):
         self.assertEqual(workflow.count('cron: "17 23 * * *"'), 1)
         self.assertIn("best_rank=0", workflow)
         self.assertIn("Check RSS before paid APIs", workflow)
-        self.assertIn("successful no-op", workflow)
+        self.assertIn("**Статус:** действий не требуется", workflow)
         self.assertIn("Redeploy already committed release", workflow)
         self.assertIn("should_deploy", workflow)
         self.assertIn("recovery_run_id", workflow)
