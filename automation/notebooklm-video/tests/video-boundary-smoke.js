@@ -80,6 +80,23 @@ assert.strictEqual(
   "generate-button compatibility pattern must be defined once and used by all three start locators"
 );
 
+assert.ok(
+  worker.includes(
+    "const NOTEBOOK_CREATE_BUTTON_PATTERN = /^\\+?\\s*(?:Новый блокнот|Создать)$/i;"
+  ),
+  "worker must support the current NotebookLM 'Новый блокнот' button and legacy 'Создать'"
+);
+assert.match(
+  worker,
+  /getByText\(\/Недавние блокноты\/i\)/,
+  "current NotebookLM home marker 'Недавние блокноты' must be accepted"
+);
+assert.match(
+  worker,
+  /notebookCreateLocators\(activePage\)/,
+  "new notebook creation must reuse the compatibility locator set"
+);
+
 const ignore = read(".gitignore");
 for (const required of [
   "config.json",
