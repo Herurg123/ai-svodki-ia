@@ -50,7 +50,7 @@ def render_report(report: dict) -> str:
 
     recent = summary.get("recent_merged_prs") or []
     if recent:
-        lines.append("**Защитное окно merged PR:** " + ", ".join(f"#{number}" for number in recent))
+        lines.append("**Защитное окно слитых PR:** " + ", ".join(f"#{number}" for number in recent))
 
     branch_counts = _counts(list(plan.get("branches") or []))
     visible_artifacts = [
@@ -70,12 +70,12 @@ def render_report(report: dict) -> str:
             "| Объект | Защищено | Можно убрать | Требует внимания |",
             "|---|---:|---:|---:|",
             f"| Ветки | {_cell(branch_counts, 'protected')} | {_cell(branch_counts, 'safe_delete')} | {_cell(branch_counts, 'review_only')} |",
-            f"| Actions artifacts | {_cell(artifact_counts, 'protected')} | {_cell(artifact_counts, 'safe_delete')} | {_cell(artifact_counts, 'review_only')} |",
-            f"| Actions workflows | {_cell(workflow_counts, 'protected')} | {_cell(workflow_counts, 'safe_disable')} | {_cell(workflow_counts, 'review_only')} |",
-            f"| Старые workflow runs | {_cell(run_counts, 'protected')} | {_cell(run_counts, 'safe_delete')} | {_cell(run_counts, 'review_only')} |",
+            f"| Артефакты Actions | {_cell(artifact_counts, 'protected')} | {_cell(artifact_counts, 'safe_delete')} | {_cell(artifact_counts, 'review_only')} |",
+            f"| Workflow Actions | {_cell(workflow_counts, 'protected')} | {_cell(workflow_counts, 'safe_disable')} | {_cell(workflow_counts, 'review_only')} |",
+            f"| Старые запуски workflow | {_cell(run_counts, 'protected')} | {_cell(run_counts, 'safe_delete')} | {_cell(run_counts, 'review_only')} |",
             "",
-            f"**Source watchlist:** {int(summary.get('source_watchlist') or 0)}  ",
-            f"**Suspected orphan files:** {int(summary.get('suspected_orphans') or 0)}",
+            f"**Файлов в source watchlist:** {int(summary.get('source_watchlist') or 0)}  ",
+            f"**Предполагаемых orphan-файлов:** {int(summary.get('suspected_orphans') or 0)}",
         ]
     )
 
@@ -88,7 +88,7 @@ def render_report(report: dict) -> str:
                 "",
                 "### Что сделано с ветками",
                 "",
-                f"- Удалено доказанно устаревших merged-веток: **{len(deleted)}**",
+                f"- Удалено доказанно устаревших слитых веток: **{len(deleted)}**",
                 f"- Пропущено после повторной проверки: **{len(skipped)}**",
             ]
         )
@@ -124,32 +124,32 @@ def render_report(report: dict) -> str:
                 "",
                 "### Что сделано в Actions",
                 "",
-                f"- Удалено superseded artifacts: **{len(deleted_ids)}**",
-                f"- Отключено orphaned workflows: **{len(disabled_ids)}**",
-                f"- Удалено просроченных runs доказанных orphan-workflows: **{len(run_deleted_ids)}**",
-                f"- Пропущено artifacts после повторной проверки: **{len(artifact_skipped)}**",
-                f"- Пропущено workflows после повторной проверки: **{len(workflow_skipped)}**",
-                f"- Пропущено workflow runs после повторной проверки: **{len(run_skipped)}**",
+                f"- Удалено заменённых артефактов: **{len(deleted_ids)}**",
+                f"- Отключено orphan-workflow: **{len(disabled_ids)}**",
+                f"- Удалено просроченных запусков доказанных orphan-workflow: **{len(run_deleted_ids)}**",
+                f"- Пропущено артефактов после повторной проверки: **{len(artifact_skipped)}**",
+                f"- Пропущено workflow после повторной проверки: **{len(workflow_skipped)}**",
+                f"- Пропущено запусков workflow после повторной проверки: **{len(run_skipped)}**",
             ]
         )
         if actions_apply.get("skipped"):
             lines.append(f"- Actions-уборка остановлена безопасно: `{actions_apply['skipped']}`")
         lines.extend(
             _details(
-                "Удалённые artifacts",
+                "Удалённые артефакты",
                 [f"`{artifact_names.get(item_id, item_id)}` (id {item_id})" for item_id in deleted_ids],
             )
         )
         lines.extend(
             _details(
-                "Отключённые workflows",
+                "Отключённые workflow",
                 [f"`{workflow_names.get(item_id, item_id)}` (id {item_id})" for item_id in disabled_ids],
             )
         )
         lines.extend(
             _details(
-                "Удалённые orphan workflow runs",
-                [f"run id {item_id}" for item_id in run_deleted_ids],
+                "Удалённые запуски orphan-workflow",
+                [f"ID запуска {item_id}" for item_id in run_deleted_ids],
             )
         )
 
@@ -158,9 +158,9 @@ def render_report(report: dict) -> str:
             "",
             "### Гарантированно не трогается",
             "",
-            "`posts/**`, `automation/content/**`, releases, tags, текущий `main`, открытые PR и tracked source/config/docs.",
+            "`posts/**`, `automation/content/**`, releases, tags, текущий `main`, открытые PR и отслеживаемые source/config/docs.",
             "",
-            "> Полный JSON этого этапа приложен к запуску как краткоживущий Actions artifact (retention: 2 дня).",
+            "> Полный JSON этого этапа приложен к запуску как краткоживущий артефакт Actions (хранение: 2 дня).",
         ]
     )
     return "\n".join(lines).rstrip() + "\n"
