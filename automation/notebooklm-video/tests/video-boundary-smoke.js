@@ -80,6 +80,44 @@ assert.strictEqual(
   "generate-button compatibility pattern must be defined once and used by all three start locators"
 );
 
+assert.ok(
+  worker.includes(
+    "const NOTEBOOK_CREATE_BUTTON_PATTERN = /^\\+?\\s*(?:Новый блокнот|Создать)$/i;"
+  ),
+  "worker must support the current NotebookLM 'Новый блокнот' button and legacy 'Создать'"
+);
+assert.match(
+  worker,
+  /getByText\(\/Недавние блокноты\/i\)/,
+  "current NotebookLM home marker 'Недавние блокноты' must be accepted"
+);
+assert.match(
+  worker,
+  /notebookCreateLocators\(activePage\)/,
+  "new notebook creation must reuse the compatibility locator set"
+);
+
+assert.match(
+  worker,
+  /function sourceImportContentReady\(snapshot, minimumContentChars\)/,
+  "source readiness must have a compatibility oracle for the new NotebookLM center summary UI"
+);
+assert.match(
+  worker,
+  /generatedTitleReady/,
+  "auto-generated notebook title must be accepted as the new-UI content readiness signal"
+);
+assert.match(
+  worker,
+  /Блокнот без названия\|Без названия\|Untitled/,
+  "untitled notebook placeholders must never satisfy source readiness"
+);
+assert.match(
+  worker,
+  /contentReady\.ready/,
+  "source-import wait must use the compatibility content readiness result instead of requiring legacy chat text only"
+);
+
 const ignore = read(".gitignore");
 for (const required of [
   "config.json",

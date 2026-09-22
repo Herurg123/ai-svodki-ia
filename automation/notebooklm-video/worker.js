@@ -12,6 +12,7 @@ const history = require("./history-utils");
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
 const VIDEO_GENERATE_BUTTON_PATTERN = /^Сгенерировать(?: сейчас)?$/i;
+const NOTEBOOK_CREATE_BUTTON_PATTERN = /^\+?\s*(?:Новый блокнот|Создать)$/i;
 
 let stage = "START";
 let browser = null;
@@ -2323,6 +2324,26 @@ async function collectNotebookImportSnapshot(page, publicationUrl) {
   };
 }
 
+function sourceImportContentReady(snapshot, minimumContentChars) {
+  const headerTitle = String(snapshot && snapshot.headerTitle || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const generatedTitleReady = Boolean(
+    headerTitle &&
+      !/^(?:Блокнот без названия|Без названия|Untitled(?: notebook)?)$/i.test(headerTitle)
+  );
+
+  return {
+    ready:
+      Number(snapshot && snapshot.chatContentLength || 0) >= minimumContentChars ||
+      generatedTitleReady,
+    signal:
+      Number(snapshot && snapshot.chatContentLength || 0) >= minimumContentChars
+        ? "chat-content"
+        : (generatedTitleReady ? "generated-title" : "none"),
+  };
+}
+
 async function waitForSourceImportReady(config, page, publication) {
   const timeout = config.sourceTimeoutMs;
   const deadline = Date.now() + timeout;
@@ -2352,13 +2373,17 @@ async function waitForSourceImportReady(config, page, publication) {
       publication.url
     );
 
+    const contentReady = sourceImportContentReady(
+      snapshot,
+      minimumContentChars
+    );
     const readyCandidate = Boolean(
       snapshot.sourceCountVisible &&
         snapshot.sourceLoadingIndicators === 0 &&
         snapshot.busyInPanels === 0 &&
         snapshot.skeletonInChat === 0 &&
         snapshot.videoReady &&
-        snapshot.chatContentLength >= minimumContentChars
+        contentReady.ready
     );
 
     const fingerprint = JSON.stringify({
@@ -2385,7 +2410,8 @@ async function waitForSourceImportReady(config, page, publication) {
         log(
           config,
           `Источник полностью обработан, интерфейс стабилен. ` +
-            `Текст в области чата: ${snapshot.chatContentLength} символов; ` +
+            `сигнал готовности: ${contentReady.signal}; ` +
+            `текст старой области чата: ${snapshot.chatContentLength} символов; ` +
             `видео доступно: да; ` +
             `текущий заголовок: ${snapshot.headerTitle}.`
         );
@@ -2405,6 +2431,7 @@ async function waitForSourceImportReady(config, page, publication) {
       headerTitle: snapshot.headerTitle || "не определён",
       chatContentLength: snapshot.chatContentLength,
       rawUrlVisible: snapshot.rawUrlVisible,
+      contentReadySignal: contentReady.signal,
       stableForMs: stableSince ? Date.now() - stableSince : 0,
       url: snapshot.url,
     };
@@ -2417,7 +2444,8 @@ async function waitForSourceImportReady(config, page, publication) {
           `индикаторы источника=${snapshot.sourceLoadingIndicators}, ` +
           `занятые области=${snapshot.busyInPanels}, ` +
           `заглушки чата=${snapshot.skeletonInChat}, ` +
-          `текст чата=${snapshot.chatContentLength}, ` +
+          `текст старой области чата=${snapshot.chatContentLength}, ` +
+          `контент=${contentReady.signal}, ` +
           `видео активно=${snapshot.videoReady ? "да" : "нет"}, ` +
           `заголовок=${snapshot.headerTitle || "не определён"}, ` +
           `стабильность=${stableSince ? Date.now() - stableSince : 0}/${stableForMs} мс.`
@@ -2610,15 +2638,26 @@ async function submitWebsiteSourceUrl(page, sourceBox, timeout) {
   }
 }
 
+function notebookCreateLocators(page) {
+  return [
+    page.getByRole("button", { name: NOTEBOOK_CREATE_BUTTON_PATTERN }),
+    page
+      .locator('button:visible')
+      .filter({ hasText: /^\s*(?:Новый блокнот|Создать)\s*$/i }),
+    page.getByText(/^Новый блокнот$/i),
+    page.getByText(/^Создать$/i),
+  ];
+}
+
 async function waitNotebookHome(page, config) {
   await waitForAnyVisible(
     [
-      page.getByRole("button", { name: /^\+?\s*Создать$/i }),
-      page.getByText(/^Создать$/i),
+      ...notebookCreateLocators(page),
+      page.getByText(/Недавние блокноты/i),
       page.getByText(/Мои блокноты/i),
     ],
     config.uiTimeoutMs,
-    'главная страница NotebookLM ("Создать" или "Мои блокноты")'
+    'главная страница NotebookLM ("Новый блокнот", "Недавние блокноты" или legacy "Создать/Мои блокноты")'
   );
 }
 
@@ -3023,13 +3062,11 @@ async function createNotebookAndAddSource(config, context, publication, job, sta
   await waitNotebookHome(activePage, config);
 
   await clickAnyVisible(
-    [
-      activePage.getByRole("button", { name: /^\+?\s*Создать$/i }),
-      activePage.getByText(/^Создать$/i),
-    ],
+    notebookCreateLocators(activePage),
     config.uiTimeoutMs,
-    'кнопка "Создать"'
+    'кнопка "Новый блокнот" (или legacy "Создать")'
   );
+  log(config, 'Нажата кнопка создания блокнота: "Новый блокнот"/legacy "Создать".');
 
   const siteSourceLocators = [
     // В актуальном NotebookLM в DOM могут одновременно существовать скрытая
