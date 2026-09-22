@@ -125,6 +125,17 @@ the contract permits it.
 orchestrator. It routes changes to reusable Main CI, Video CI or both and emits
 `Required PR Gate`. A gate change must exercise both domains.
 
+Repository-controlled operator-facing GitHub Actions text must be in Russian.
+Workflow/job/step names, technical identifiers, machine-readable values and raw
+output from GitHub, third-party actions or external tools may remain in English.
+The Russian-language requirement covers `workflow_dispatch` input descriptions,
+`GITHUB_STEP_SUMMARY` prose, repository-authored `::error`/`::warning`/`::notice`
+annotations, explicit workflow error/warning messages, recovery guidance and
+final operator status. Every active workflow must leave a Russian summary for its
+own actionable success/failure boundary; do not hide a failure behind only raw
+English tool output. Preserve this contract with regression tests when workflows
+or their summary renderers change.
+
 `Main CI` owns main production checks and must exclude video-only changes under
 `automation/notebooklm-video/**`. `Video CI` exclusively owns repository-level
 offline checks for the local video subproject. Video-only source/test changes
