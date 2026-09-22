@@ -29,6 +29,16 @@ The state machine is intentionally small:
 
 A failure proven to occur before `request_started` is retryable. `request_started` without a durable response is `unknown-after-request` and is never automatically sent again. `response_saved` is always parsed/validated from the saved bytes on recovery.
 
+Repair journal identity v2 binds the semantic archive corpus but excludes the
+top-level `generated_at` field written by `bootstrap_archive.py`, because that
+timestamp changes on every deterministic rebuild without changing any prior story,
+source URL or dedupe evidence. Legacy v1 journals remain fail-closed except for a
+cryptographically proven timestamp-only replay: the saved
+`editorial-prompt-input.txt` must contain an exact archive context whose full
+canonical hash equals the v1 journal `archive_sha256`, and that saved archive
+must equal the current archive after removing only top-level `generated_at`.
+Any item/source/story drift still blocks replay.
+
 The only legacy admission exception is the proven 2026-09-11 missing-SDK failure, because that failure occurred before provider construction/admission. The exception is deliberately narrow and does not generalize arbitrary historical errors into safe retries.
 
 ## Protected editorial-only transport

@@ -83,6 +83,9 @@ workflow через `workflow_dispatch`, поэтому такой запуск 
 06:00 МСК. Recovery выбирает наиболее полный пригодный artifact той же даты;
 его durable state всегда привязывается к exact selected bundle, включая manual
 recovery через layered compatibility wrappers, без смешивания same-date artifacts.
+Editorial-repair replay не считается изменившимся только из-за нового
+`archive.generated_at`; реальное изменение archive items/sources по-прежнему
+блокирует recovery.
 Editorial publisher diversity имеет отдельный zero-paid deterministic guard:
 selected IDs не переписываются, а пропущенный reasoned override нормализуется
 только для уже разрешённых и строго доказанных full/short-selection случаев;

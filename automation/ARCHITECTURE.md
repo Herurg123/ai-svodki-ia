@@ -1265,8 +1265,12 @@ Stable public recovery entrypoint: `recover_digest_artifact.py`.
 
 Основной принцип: уже успешно оплаченная стадия не повторяется автоматически из-
 за ошибки более поздней стадии. Recovery выбирает наиболее полный валидный
-same-day artifact и продолжает с первого незавершённого этапа. Exact same-bundle
-identity обычно фиксируется P0 `choose_source`. Если layered compatibility wrapper
+same-day artifact и продолжает с первого незавершённого этапа. P0 editorial
+repair journal v2 использует semantic archive identity без служебного
+`generated_at`; legacy v1 `response_saved` допускается только при exact hash
+proof исходного archive context из saved editorial prompt и semantic equality
+текущего архива после удаления только этого timestamp. Любой реальный archive
+drift остаётся fail-closed. Exact same-bundle identity обычно фиксируется P0 `choose_source`. Если layered compatibility wrapper
 не вернул transient in-memory marker, P0 разрешено восстановить evidence root
 только из exact `selected_source`, который уже записал нижний recovery engine,
 после проверки существования и containment внутри запрошенного recovery root.

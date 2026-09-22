@@ -26,7 +26,10 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, Callable
 
-VERSION = 1
+VERSION = 2
+LEGACY_VERSION = 1
+ARCHIVE_CONTEXT_BEGIN = "=== ARCHIVE_CONTEXT_BEGIN ==="
+ARCHIVE_CONTEXT_END = "=== ARCHIVE_CONTEXT_END ==="
 PENDING_STATES = {
     "required",
     "prepared",
@@ -86,6 +89,62 @@ def canonical_sha256(value: Any) -> str:
     ).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
+
+def _archive_semantic_value(value: Any) -> Any:
+    """Return only archive fields that affect dedupe/editorial semantics."""
+
+    if not isinstance(value, dict):
+        return value
+    normalized = dict(value)
+    normalized.pop("generated_at", None)
+    return normalized
+
+
+def _archive_sha256(value: Any, *, version: int) -> str:
+    if version >= 2:
+        return canonical_sha256(_archive_semantic_value(value))
+    return canonical_sha256(value)
+
+
+def _saved_prompt_archive(artifact_dir: Path) -> dict[str, Any] | None:
+    path = artifact_dir / "editorial-prompt-input.txt"
+    if not path.is_file():
+        return None
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError:
+        return None
+    start = text.find(ARCHIVE_CONTEXT_BEGIN)
+    if start < 0:
+        return None
+    start += len(ARCHIVE_CONTEXT_BEGIN)
+    end = text.find(ARCHIVE_CONTEXT_END, start)
+    if end < 0:
+        return None
+    payload = text[start:end].strip()
+    try:
+        value = json.loads(payload)
+    except json.JSONDecodeError:
+        return None
+    return value if isinstance(value, dict) else None
+
+
+def _legacy_archive_equivalent(
+    journal: dict[str, Any],
+    current_archive: Any,
+    artifact_dir: Path,
+) -> bool:
+    """Admit v1 replay only when saved prompt proves timestamp-only drift."""
+
+    saved = _saved_prompt_archive(artifact_dir)
+    if saved is None:
+        return False
+    expected = str(journal.get("archive_sha256") or "")
+    if not expected or canonical_sha256(saved) != expected:
+        return False
+    return canonical_sha256(_archive_semantic_value(saved)) == canonical_sha256(
+        _archive_semantic_value(current_archive)
+    )
 
 def _file_sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -179,6 +238,8 @@ def _read_inputs(
     persisted_research_path: Path,
     archive_path: Path,
     model: str,
+    *,
+    version: int = VERSION,
 ) -> dict[str, str]:
     research = _read_json(persisted_research_path)
     archive = _read_json(archive_path)
@@ -197,7 +258,7 @@ def _read_inputs(
         "model": normalized_model,
         "research_sha256": canonical_sha256(research),
         "candidate_pool_sha256": canonical_sha256(candidates),
-        "archive_sha256": canonical_sha256(archive),
+        "archive_sha256": _archive_sha256(archive, version=version),
         "search_window_sha256": canonical_sha256(search_window),
     }
 
@@ -205,7 +266,7 @@ def _read_inputs(
 def _intent_sha(identity: dict[str, Any]) -> str:
     return canonical_sha256(
         {
-            "version": VERSION,
+            "version": int(identity.get("version", VERSION)),
             "publication_date": identity["publication_date"],
             "research_sha256": identity["research_sha256"],
             "candidate_pool_sha256": identity["candidate_pool_sha256"],
@@ -264,22 +325,38 @@ def _verify_input_identity(
     publication_date: str,
     persisted_research_path: Path,
     archive_path: Path,
+    artifact_dir: Path,
     model: str,
 ) -> None:
+    try:
+        journal_version = int(journal.get("version"))
+    except (TypeError, ValueError) as exc:
+        raise EditorialRepairError("editorial repair version is invalid") from exc
+    if journal_version not in {LEGACY_VERSION, VERSION}:
+        raise EditorialRepairError(
+            f"unsupported editorial repair version: {journal_version}"
+        )
+
     current = _read_inputs(
         publication_date,
         persisted_research_path,
         archive_path,
         model,
+        version=journal_version,
     )
     expected = {
-        "version": VERSION,
+        "version": journal_version,
         "publication_date": publication_date,
         **current,
     }
     for key, value in expected.items():
-        if journal.get(key) != value:
-            raise EditorialRepairError(f"editorial repair input changed: {key}")
+        if journal.get(key) == value:
+            continue
+        if key == "archive_sha256" and journal_version == LEGACY_VERSION:
+            current_archive = _read_json(archive_path)
+            if _legacy_archive_equivalent(journal, current_archive, artifact_dir):
+                continue
+        raise EditorialRepairError(f"editorial repair input changed: {key}")
     if journal.get("intent_sha256") != _intent_sha(journal):
         raise EditorialRepairError("editorial repair intent integrity mismatch")
 
@@ -390,6 +467,7 @@ def load_required(
         publication_date=publication_date,
         persisted_research_path=persisted_research_path,
         archive_path=archive_path,
+        artifact_dir=artifact_dir,
         model=model,
     )
     return _context_from_identity(
