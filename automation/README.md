@@ -85,6 +85,14 @@ bundle identity через compatibility wrappers. Completed paid stages не
 удалось, production останавливается до fresh Research; новый полный paid Research
 в таком случае возможен только через явный `force_fresh_research=true`.
 
+Для защиты от потери уже оплаченной работы production дополнительно сохраняет
+14-дневные stage checkpoints после завершённого fresh Research/editorial,
+завершённого Coverage/editorial completion и готового Image artifact. Automatic
+и manual recovery могут выбрать самый полный checkpoint, если финальный
+`daily-production-<date>` artifact отсутствует; сам recovery по-прежнему
+проверяет содержимое bundle и не считает имя checkpoint доказательством
+корректности.
+
 ### Search budget
 
 - fresh Primary: 12 Web Search operations;
