@@ -1279,7 +1279,30 @@ workflow не превращает `reused=false` в разрешение на �
 завершается до fresh retrieval. Обычный fresh Research разрешён, когда
 recovery-resolver не выбрал artifact, либо при явном ручном
 `force_fresh_research=true`; этот override остаётся отдельным осознанным
-операторским решением. P0 editorial
+операторским решением.
+
+После каждого уже существующего крупного paid-stage boundary workflow создаёт
+отдельный durable GitHub artifact checkpoint: после fresh
+`Run full research and editorial`, после успешно завершённого Coverage/editorial
+completion и после успешно сгенерированного или повторно валидированного Image
+artifact. Checkpoint сохраняет те же `production-daily/` и dated runtime
+каталоги, которые читает public `recover_digest_artifact.py`; retrieval/editorial
+код и search budgets ради checkpointing не дробятся и не меняются. Final
+`daily-production-<date>` artifact с `if: always()` остаётся последним,
+наиболее поздним snapshot для обычных process/validation failures.
+
+Recovery-resolver рассматривает final artifact и stage checkpoints как один
+same-day candidate set. Полнота доказывается не одним именем artifact: выбранный
+run обязан иметь успешный production step соответствующего уровня
+(research=1, Coverage=2, Image=3). При одинаковом ранге выбирается более поздний
+artifact; final snapshot имеет tie-break priority над checkpoint с тем же
+timestamp, потому что может содержать частичное состояние следующего этапа.
+Manual `recovery_run_id` использует тот же ranking внутри указанного run.
+Checkpoint не является разрешением повторить ambiguous/started provider work:
+все существующие `request_started`, `response_saved`, same-bundle и
+fail-closed recovery contracts сохраняются.
+
+P0 editorial
 repair journal v2 использует semantic archive identity без служебного
 `generated_at`, и тот же volatile field исключён из нового editorial prompt.
 Legacy v1 `response_saved` допускается только при exact hash proof исходного
