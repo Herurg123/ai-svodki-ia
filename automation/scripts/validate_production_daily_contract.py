@@ -144,7 +144,23 @@ def main() -> int:
         ),
         (
             "artifact API lookup",
-            "actions/artifacts?name=daily-production-",
+            "/actions/artifacts?per_page=100",
+        ),
+        (
+            "research checkpoint",
+            "daily-production-checkpoint-research-",
+        ),
+        (
+            "coverage checkpoint",
+            "daily-production-checkpoint-coverage-",
+        ),
+        (
+            "image checkpoint",
+            "daily-production-checkpoint-image-",
+        ),
+        (
+            "selected artifact download",
+            "name: ${{ steps.recovery_source.outputs.artifact_name }}",
         ),
         (
             "terminal editorial stop reuse",
@@ -284,6 +300,9 @@ def main() -> int:
         "Verify search window starts at last successful research cutoff",
         "Run full research and editorial",
         "Complete mandatory coverage audit for a short digest",
+        "Save paid research checkpoint",
+        "Save paid coverage checkpoint",
+        "Save paid image checkpoint",
         "Normalize and validate digest artifact",
         "Validate publishable story count and short digest marker",
         "Build runtime Image API request",
