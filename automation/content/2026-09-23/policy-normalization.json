@@ -1,0 +1,23 @@
+{
+  "status": "applied",
+  "changed_fields": [],
+  "changed_count": 0,
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-020."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Выбраны четыре независимых высокозначимых события одного издателя: IPO-раскрытие Nscale, релиз Claude Opus 5.5, релиз GPT-6 Sol и Luna и запуск мобильных чипов Qualcomm. Они относятся к разным сегментам рынка и не имеют сопоставимых по качеству альтернатив в пуле."
+    }
+  ]
+}

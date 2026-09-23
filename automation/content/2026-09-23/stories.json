@@ -1,0 +1,254 @@
+[
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "OpenAI улучшила prompt caching для GPT-6 и добавила диагностику для длительных агентов",
+    "organization": "OpenAI; GPT-6; Codex",
+    "topic": "API-инфраструктура для persistent AI agents; prompt caching; latency и стоимость inference",
+    "event_type": "product update",
+    "status": "new",
+    "summary": "OpenAI объявила об обновлённом механизме prompt caching для семейства GPT-6: более высоких cache hit rates по умолчанию, скидках на повторно используемые shared prefixes, dashboard для мониторинга, диагностике cache misses, явных cache breakpoints и prewarming. Компания позиционирует изменения как способ снизить задержку и стоимость длительных агентных API-сценариев.",
+    "published_at": "2026-09-22T21:00:00+00:00",
+    "published_date": "2026-09-22",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Better prompt caching for GPT-6",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/better-prompt-caching-for-gpt-6/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "GPT-6",
+      "prompt caching",
+      "persistent agents",
+      "API",
+      "cache diagnostics",
+      "explicit cache breakpoints"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "SoftBank привлекает около $11 млрд облигациями для очередного платежа в OpenAI",
+    "organization": "SoftBank Group; OpenAI",
+    "topic": "Финансирование OpenAI; долговое финансирование; стратегическая инвестиция",
+    "event_type": "debt financing / follow-on investment funding",
+    "status": "new",
+    "summary": "SoftBank запустила размещение примерно $11 млрд высокодоходных облигаций, которое, по данным опубликованных term sheets, предназначено в том числе для финансирования очередного $10-миллиардного платежа по ранее объявленной инвестиции в OpenAI и рефинансирования bridge loan.",
+    "published_at": "2026-09-21T08:07:30+00:00",
+    "published_date": "2026-09-21",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "SoftBank is reportedly raising about $11bn in bonds to cover its next OpenAI payment",
+        "publisher": "The Next Web",
+        "url": "https://thenextweb.com/news/softbank-bond-openai-october-instalment"
+      }
+    ],
+    "keywords": [
+      "SoftBank",
+      "OpenAI",
+      "bonds",
+      "high-yield debt",
+      "follow-on investment",
+      "AI financing"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Nscale раскрыла свыше $103 млрд контрактов на ИИ-вычисления перед IPO",
+    "organization": "Nscale; Microsoft; Anthropic; NVIDIA",
+    "topic": "AI-инфраструктура; neocloud; IPO; долгосрочные контракты на вычисления; концентрация клиентов",
+    "event_type": "IPO filing / corporate disclosure",
+    "status": "new",
+    "summary": "Британский AI-neocloud Nscale раскрыла в IPO-документах свыше $103 млрд контрактов: около 85% связано с двумя клиентами — Microsoft и Anthropic. Компания планирует листинг на NYSE; сообщается об ориентире оценки $35 млрд и цели привлечь $3 млрд.",
+    "published_at": "2026-09-22T12:23:05+00:00",
+    "published_date": "2026-09-22",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Nscale’s IPO will test Wall Street’s appetite for concentrated AI bets once again",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/22/nscales-ipo-will-test-wall-streets-appetite-for-concentrated-ai-bets-once-again/"
+      }
+    ],
+    "keywords": [
+      "Nscale",
+      "IPO",
+      "AI compute",
+      "Microsoft",
+      "Anthropic",
+      "neocloud",
+      "data centers"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Anthropic выпустила Claude Opus 5.5 с более низкой ценой output-токенов",
+    "organization": "Anthropic; Claude",
+    "topic": "Frontier models; coding; AI safety; cybersecurity; biosecurity; API pricing",
+    "event_type": "model release",
+    "status": "new",
+    "summary": "Anthropic выпустила Opus 5.5 — новый наиболее мощный уровень Claude. Компания заявила о росте результатов в coding и knowledge work, снижении цены output-токенов с $25 до $20 за миллион и safeguards, сопоставимых с применяемыми к Fable, для чувствительных bio- и cyber-возможностей.",
+    "published_at": "2026-09-22T16:30:07+00:00",
+    "published_date": "2026-09-22",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic releases Opus 5.5 with lower prices and Fable-level performance",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/22/anthropic-releases-opus-5-5-with-lower-prices-and-fable-level-performance/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "Opus 5.5",
+      "Fable",
+      "coding",
+      "biosecurity",
+      "cybersecurity",
+      "model safeguards"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "OpenAI выпустила GPT-6 Sol и GPT-6 Luna",
+    "organization": "OpenAI; ChatGPT; Codex",
+    "topic": "Foundation models; API pricing; coding models; enterprise AI; ChatGPT",
+    "event_type": "model release",
+    "status": "new",
+    "summary": "OpenAI расширила линейку GPT-6 моделями Sol и Luna. По данным компании, Sol рассчитана на сложные задачи, включая coding, а Luna — на массовые задачи с чёткой целью; API-стоимость обеих моделей заявлена вдвое ниже серии 5.6. Модели стали доступны в ChatGPT Work, Codex и API, а Luna также должна появиться в desktop-приложении и у пользователей Free и Go.",
+    "published_at": "2026-09-22T18:00:00+00:00",
+    "published_date": "2026-09-22",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI launches GPT-6 Sol and Luna, boasting lower cost and fewer mistakes",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/22/openai-launches-gpt-6-sol-and-luna/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "GPT-6 Sol",
+      "GPT-6 Luna",
+      "API",
+      "ChatGPT Work",
+      "Codex",
+      "factuality"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Qualcomm представила Snapdragon 8 Elite Gen 6 и Extreme Gen 6 для локальных ИИ-сценариев",
+    "organization": "Qualcomm; Motorola",
+    "topic": "Consumer AI hardware; мобильные SoC; on-device AI; локальные агенты; NPU",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Qualcomm анонсировала два флагманских мобильных процессора Snapdragon 8 Elite Gen 6 и Extreme Gen 6. Компания заявила возможности локального персонального AI-агента, модели до 200 млн параметров на sensing hub и запуск локальной 30B mixture-of-experts модели на версии Extreme.",
+    "published_at": "2026-09-22T20:00:00+00:00",
+    "published_date": "2026-09-22",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Qualcomm launches two new smartphone chips with emphasis on AI",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/22/qualcomm-launches-two-new-smartphone-chips-with-emphasis-on-ai/"
+      }
+    ],
+    "keywords": [
+      "Qualcomm",
+      "Snapdragon 8 Elite Gen 6",
+      "Snapdragon 8 Elite Extreme Gen 6",
+      "on-device AI",
+      "AI agents",
+      "MoE"
+    ],
+    "geography": "world",
+    "category": "chips"
+  },
+  {
+    "candidate_id": "cand-019",
+    "section": "world",
+    "headline": "NVIDIA выпустила Isaac ROS 5.0 для агентной робототехники",
+    "organization": "NVIDIA",
+    "topic": "NVIDIA Isaac ROS 5.0 Advances Agentic, Open Source Robotics Development",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "The latest release brings AI agent capabilities to the ROS developer ecosystem while expanding open source physical AI libraries and deployment across the NVIDIA Jetson platform.",
+    "published_at": "2026-09-22T12:00:41+00:00",
+    "published_date": "2026-09-22",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "NVIDIA Isaac ROS 5.0 Advances Agentic, Open Source Robotics Development",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/isaac-ros-5-0-agentic-open-source-robotics"
+      }
+    ],
+    "keywords": [
+      "NVIDIA",
+      "Isaac",
+      "ROS",
+      "5.0",
+      "Advances",
+      "Agentic",
+      "Open",
+      "Source",
+      "Robotics",
+      "Development"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-020",
+    "section": "russia",
+    "headline": "Yandex B2B Tech интегрировала агентов ИИ в Telegram и MAX",
+    "organization": "Яндекс",
+    "topic": "22 сентября 2026Yandex B2B Tech интегрировала ИИ-агентов в Telegram и MAX",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+    "published_at": null,
+    "published_date": "2026-09-22",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "22 сентября 2026Yandex B2B Tech интегрировала ИИ-агентов в Telegram и MAX",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=22-09-2026-01"
+      }
+    ],
+    "keywords": [
+      "22",
+      "сентября",
+      "2026Yandex",
+      "B2B",
+      "Tech",
+      "интегрировала",
+      "ИИ-агентов",
+      "Telegram",
+      "MAX"
+    ],
+    "geography": "russia",
+    "category": "investment"
+  }
+]

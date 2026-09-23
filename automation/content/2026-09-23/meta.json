@@ -1,0 +1,46 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-23",
+  "slug": "2026-09-23",
+  "title": "ИИ-Сводка на 23 сентября 2026",
+  "description": "OpenAI и Anthropic обновили флагманские модели, Nscale раскрыла контракты на $103 млрд перед IPO, а Qualcomm и NVIDIA расширяют базу для локального и робототехнического ИИ.",
+  "published_at": "2026-09-23T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-23.png",
+  "topics": [
+    "OpenAI",
+    "GPT-6",
+    "Claude Opus 5.5",
+    "prompt caching",
+    "SoftBank",
+    "Nscale",
+    "ИИ-инфраструктура",
+    "Qualcomm",
+    "локальный ИИ",
+    "NVIDIA Isaac ROS",
+    "робототехника",
+    "Яндекс",
+    "агенты ИИ",
+    "Telegram",
+    "MAX"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-020."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Выбраны четыре независимых высокозначимых события одного издателя: IPO-раскрытие Nscale, релиз Claude Opus 5.5, релиз GPT-6 Sol и Luna и запуск мобильных чипов Qualcomm. Они относятся к разным сегментам рынка и не имеют сопоставимых по качеству альтернатив в пуле."
+    }
+  ]
+}

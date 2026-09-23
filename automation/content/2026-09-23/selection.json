@@ -1,0 +1,36 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-003",
+    "cand-004",
+    "cand-005",
+    "cand-006",
+    "cand-007",
+    "cand-008",
+    "cand-019",
+    "cand-020"
+  ],
+  "excluded_candidate_ids": [
+    "cand-001",
+    "cand-002",
+    "cand-009",
+    "cand-010",
+    "cand-011",
+    "cand-012",
+    "cand-013",
+    "cand-014",
+    "cand-015",
+    "cand-016",
+    "cand-017",
+    "cand-018"
+  ],
+  "selection_summary": "Выбрано 8 подтверждённых новых событий: релизы моделей OpenAI и Anthropic, инфраструктурное раскрытие Nscale, долговое финансирование SoftBank для инвестиции в OpenAI, мобильные ИИ-чипы Qualcomm, обновление NVIDIA Isaac ROS и российская интеграция агентов Яндекса. Не выбраны Alibaba и американо-китайская policy-инициатива со статусом exclude, а также менее значимые инвестиционные, корпоративные и обзорные материалы.",
+  "diversity_overrides": [
+    {
+      "type": "publisher",
+      "value": "TechCrunch",
+      "reason": "Выбраны четыре независимых высокозначимых события одного издателя: IPO-раскрытие Nscale, релиз Claude Opus 5.5, релиз GPT-6 Sol и Luna и запуск мобильных чипов Qualcomm. Они относятся к разным сегментам рынка и не имеют сопоставимых по качеству альтернатив в пуле."
+    }
+  ]
+}

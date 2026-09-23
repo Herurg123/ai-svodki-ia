@@ -1,0 +1,1756 @@
+{
+  "status": "ok",
+  "pipeline": "primary_recall_v2_then_editorial",
+  "request_id": "production-digest-2026-09-23",
+  "research_input": "automation/fixtures/research/.runtime/primary-recall-research-2026-09-23.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-002: источник показывает дату без точного времени.",
+    "cand-020: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: nvidia (5), techcrunch (7)",
+    "Исследовательский пул перегружен одной организацией: nvidia (5), openai (3)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-09-23",
+  "started_at": "2026-09-23T01:37:16+00:00",
+  "finished_at": "2026-09-23T01:37:56+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 67,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "48b6c6903528630a87105163b980888fc52122499198d4406c7ea509c33d48c5",
+    "candidates_sha256": "bbd4042bb7b97cd76cf7b5f79ebc90dbf55b6aca9cca4308e22c9200bf989ff4",
+    "settings": {
+      "source": "trusted_runtime_primary_recall",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "completed",
+      "web_search_calls": 12,
+      "web_search_call_items_total": 34,
+      "navigation_items_total": 22,
+      "actual_queries": [
+        "latest major AI news models products business infrastructure",
+        "latest AI models research chips infrastructure financing earnings business deals policy security",
+        "latest major AI model agent product research releases",
+        "latest AI infrastructure chips cloud data centers Nvidia AMD Microsoft hyperscalers",
+        "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+        "latest China AI models releases Tencent Hunyuan Qwen DeepSeek GLM open source",
+        "latest China Asia AI business earnings revenue strategy cloud partnerships deployments",
+        "последние новости ИИ Россия Яндекс Сбер VK МТС продукты регулирование авторское право данные обучение моделей",
+        "latest coding agents developer tools Claude Code Cursor Copilot",
+        "latest AI security safety incidents prompt injection sandbox escape agents",
+        "latest major AI regulation copyright court decisions training data policy",
+        "latest major artificial intelligence news missing events"
+      ],
+      "consulted_sources": [
+        {
+          "type": "url",
+          "url": "https://www.axios.com/2026/09/22/ai-safety-vs-ai-speed"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/2026/09/22/palo-alto-networks-cyber-defense-ai-agents"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/b29908e516faff9f5a82b201ba954aab"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/2026/09/22/microsoft-eviltokens-court-takedown"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/newsletters/axios-am-12828d89-342e-452b-a7e9-a70078c56670"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/newsletters/axios-pro-rata-8b88c78a-23fd-4eb9-91bf-466e46447815"
+        },
+        {
+          "type": "url",
+          "url": "https://www.techradar.com/pro/ai-is-changing-discovery-what-does-that-mean-for-your-business"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/1d9615931af28a83cb97489178e90f2d"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomsguide.com/ai/think-your-ai-chatbot-is-up-to-date-here-is-how-stale-chatgpt-claude-and-gemini-actually-are"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/newsletters/axios-future-of-energy-fb6d5d20-b129-11f1-a7ce-498768bb126c"
+        },
+        {
+          "type": "url",
+          "url": "https://huggingnews.com/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.siliconreport.com/ai"
+        },
+        {
+          "type": "url",
+          "url": "https://siliconangle.com/2026/07/10/ai-model-mania-new-chip-gold-rush/"
+        },
+        {
+          "type": "url",
+          "url": "https://techcrunch.com/category/artificial-intelligence/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.bloomberg.com/latest/the-ai-race"
+        },
+        {
+          "type": "url",
+          "url": "https://techcrunch.com/category/emerging-tech/artificial-intelligence/"
+        },
+        {
+          "type": "url",
+          "url": "https://cloud.google.com/blog/products/ai-machine-learning/innovations-from-google-io-26-on-google-cloud"
+        },
+        {
+          "type": "url",
+          "url": "https://huggingnews.com/?tags=ai-infrastructure%2Cai-modeling%2Cai-products%2Cai-research-evals"
+        },
+        {
+          "type": "url",
+          "url": "https://cloud.google.com/blog/products/compute/cross-cloud-infrastructure-at-next26"
+        },
+        {
+          "type": "url",
+          "url": "https://www.siliconreport.com/"
+        },
+        {
+          "type": "url",
+          "url": "https://lmtimeline.com/"
+        },
+        {
+          "type": "url",
+          "url": "https://huggingnews.com/?tags=ai-compute-chips%2Cai-enterprise-tools%2Cai-infrastructure%2Cai-policy-regulation%2Cai-products%2Cai-sector-impact"
+        },
+        {
+          "type": "url",
+          "url": "https://privatewealth.brookfield.com/sites/default/files/2025-08/brookfield-building-the-backbone-of-ai.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2025/11/competition-in-artificial-intelligence-infrastructure_69319aee/623d1874-en.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://marketingassets.microsoft.com/gdc/gdcBkY6mR/original"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2407.05467"
+        },
+        {
+          "type": "url",
+          "url": "https://d1.awsstatic.com/psc-digital/2025/gc-400/genai-unlk-info/AI-Ready-Infrastructure-Business-Imperative.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/b29908e516faff9f5a82b201ba954aab"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/e560910c897fedb0448eda4cdbfdbaea"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/089e75b95bc935af092da7b79d92706d"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/d08e58524de21511dcaba51f43faad95"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/cd680bd072ec95e5f4b9c99dbee91319"
+        },
+        {
+          "type": "url",
+          "url": "https://bloomberg.com/news/articles/2026-09-16/banks-line-up-22-billion-chip-loan-tied-to-blackstone-alphabet"
+        },
+        {
+          "type": "url",
+          "url": "https://bloomberg.com/news/articles/2026-07-01/meta-is-building-a-cloud-business-to-sell-excess-ai-compute"
+        },
+        {
+          "type": "url",
+          "url": "https://bloomberg.com/news/articles/2026-08-04/nvidia-dell-back-ai-cloud-startup-volta-at-2-4-billion-value"
+        },
+        {
+          "type": "url",
+          "url": "https://www.bloomberg.com/news/articles/2026-04-30/banks-kick-off-3-1-billion-loan-sale-for-coreweave-amid-ai-boom"
+        },
+        {
+          "type": "url",
+          "url": "https://www.bloomberg.com/news/articles/2026-05-08/apollo-blackstone-weigh-35-billion-financing-for-broadcom?srnd=phx-deals"
+        },
+        {
+          "type": "url",
+          "url": "https://www.bloomberg.com/graphics/2026-ai-circular-deals/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.bloomberg.com/news/articles/2026-04-24/meta-inks-multibillion-dollar-deal-to-use-amazon-chips-for-ai"
+        },
+        {
+          "type": "url",
+          "url": "https://www.bloomberg.com/news/articles/2026-03-31/energy-shock-spurs-caution-as-asia-bankers-fund-data-center-boom"
+        },
+        {
+          "type": "url",
+          "url": "https://www.bloomberg.com/news/articles/2026-05-05/ai-firms-agree-to-give-us-early-access-to-evaluate-their-models"
+        },
+        {
+          "type": "url",
+          "url": "https://www.bloomberg.com/news/articles/2026-04-30/us-big-tech-ratchets-up-ai-spending-past-700-billion-this-year"
+        },
+        {
+          "type": "url",
+          "url": "https://www.bloomberg.com/news/articles/2026-04-30/how-amazon-meta-and-google-are-fueling-a-big-tech-borrowing-boom-for-ai?srnd=phx-economics-v2"
+        },
+        {
+          "type": "url",
+          "url": "https://www.bloomberg.com/news/articles/2026-04-30/how-amazon-meta-and-google-are-fueling-a-big-tech-borrowing-boom-for-ai?srnd=phx-technology"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/dc8d556e709b50915cca9217a60b1991"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/10c2c548a392988862d8c7bd3f6fae05"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/1ae6228c4928ddbb43f984e9b38f49dd"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/4c66a2e0f557ce79d3cc2d769c9a6226"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/8a0ff4c95d5cae6f65c6e2ba03047058"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/071e752773dee5713c8b1a10039d08aa"
+        },
+        {
+          "type": "url",
+          "url": "https://gpt.buzz/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.demandsphere.com/research/demandsphere-radar/ai-frontier-model-tracker/releases/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.globenewswire.com/news-release/2026/07/29/3335262/0/en/nimble-launches-expert-web-search-agents-that-improve-the-quality-of-results-and-reduce-token-spend.html"
+        },
+        {
+          "type": "url",
+          "url": "https://agentscout.live/tech/ai-agents/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.launchvault.dev/agentic-ai-news/weekly"
+        },
+        {
+          "type": "url",
+          "url": "https://www.llm-releases.com/latest"
+        },
+        {
+          "type": "url",
+          "url": "https://agentscout.live/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.agentcodex.dev/radar?category=General"
+        },
+        {
+          "type": "url",
+          "url": "https://agentic.ai/news"
+        },
+        {
+          "type": "url",
+          "url": "https://www.stackaheadai.com/releases"
+        },
+        {
+          "type": "url",
+          "url": "https://ai.rockyfu.com/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.agentcodex.dev/radar?category=Research"
+        },
+        {
+          "type": "url",
+          "url": "https://aiagentindex.mit.edu/data/2025-AI-Agent-Index.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://ppc.land/content/files/2025/12/recent-developments-in-artifical-intelligence.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2608.18543"
+        },
+        {
+          "type": "url",
+          "url": "https://tourismanalytics.com/uploads/1/2/0/4/120443739/trends_artificial_intelligence_mary_meeker_june_2025.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://business.columbia.edu/sites/default/files-efs/citation_file_upload/2508.02630v3.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Reasoning_model"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AI_Agents/comments/1pnewxs/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/ChatGPT_Deep_Research"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Kimi_%28chatbot%29"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/aiagents/comments/1pnf0sf/its_been_a_big_week_for_ai_agents_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AI_Agents/comments/1r0aakz/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AI_Agents/comments/1quyeou/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/METR"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Project_Mariner"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Anthropic"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/aiagents/comments/1quyg1e/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/aiagents/comments/1r0adgy/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AgentsOfAI/comments/1r0af4a/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2510.16720"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AI_Agents/comments/1otpe8s/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2508.11957"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2507.01069"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/artificial/comments/1otrrxe"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/artificial/comments/1p5im4n/its_been_a_big_week_for_ai_agents_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AgentsOfAI/comments/1p5ior8/its_been_a_big_week_for_ai_agents_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AI_Agents/comments/1p5ifmp/its_been_a_big_week_for_agentic_ai_here_are_10/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/2026/07/08/spacexai-grok-new-model"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/2026/04/23/openai-releases-spud-gpt-model"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/d2ed33f2521917193616e061674d5f92"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomsguide.com/ai/what-is-kimi-k3-everything-you-need-to-know-about-the-new-chatgpt-rival"
+        },
+        {
+          "type": "url",
+          "url": "https://www.techradar.com/pro/security/microsoft-introduces-its-first-agent-powered-cybersecurity-model-and-project-perception-ai-patching-system-can-it-avoid-making-the-same-mistakes-openai-made"
+        },
+        {
+          "type": "url",
+          "url": "https://www.techradar.com/pro/hix-ai-review"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/2026/09/21/ai-finance-credit-circular"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/2026/09/16/tech-giants-launch-flexible-power-coalition-data-centers"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomshardware.com/tech-industry/data-centers/local-opposition-blocked-usd68-billion-worth-of-data-center-projects-in-the-second-quarter-of-2026-data-center-investments-reportedly-still-on-track-to-hit-usd32-trillion-by-2050"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomshardware.com/news"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomshardware.com/pc-components/cpus/amd-shares-first-official-benchmarks-for-epyc-venice-cpus-targets-nvidia-company-claims-256-core-chip-is-more-than-twice-as-fast-as-nvidia-vera-96-core-model-20-percent-faster-per-core"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomshardware.com/tech-industry/data-centers/house-passes-act-to-make-ai-data-centers-pay-for-grid-upgrades-to-minimize-impact-on-residents-measure-directs-states-to-consider-adoption-of-federal-standard-within-two-years-of-passing"
+        },
+        {
+          "type": "url",
+          "url": "https://blogs.microsoft.com/blog/2026/07/20/microsoft-expands-azure-ai-and-hpc-infrastructure-with-amd/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.trendforce.com/presscenter/news/20260803-13161.html"
+        },
+        {
+          "type": "url",
+          "url": "https://www.trendforce.com/presscenter/news/20260225-12934.html"
+        },
+        {
+          "type": "url",
+          "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Unveils-Vera-the-CPU-for-Agents/default.aspx"
+        },
+        {
+          "type": "url",
+          "url": "https://nvidianews.nvidia.com/news/rubin-platform-ai-supercomputer"
+        },
+        {
+          "type": "url",
+          "url": "https://www.siliconreport.com/hyperscaler-custom-ai-silicon-scorecard-5bd29786"
+        },
+        {
+          "type": "url",
+          "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Kicks-Off-the-Next-Generation-of-AI-With-Rubin--Six-New-Chips-One-Incredible-AI-Supercomputer/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.trendforce.com/research/download/RP251105VO"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomshardware.com/tech-industry/semiconductors/custom-ai-asics-examined-from-broadcom-to-mtia"
+        },
+        {
+          "type": "url",
+          "url": "https://supercyclehq.com/buildout"
+        },
+        {
+          "type": "url",
+          "url": "https://cloud.google.com/blog/products/compute/ai-infrastructure-at-next26"
+        },
+        {
+          "type": "url",
+          "url": "https://newsroom.arm.com/blog/inside-arms-hyperscale-surge"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2606.31408"
+        },
+        {
+          "type": "url",
+          "url": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2025/11/competition-in-artificial-intelligence-infrastructure_69319aee/623d1874-en.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/SKHynix/comments/1vfd8su/trendforce_ai_server_shipments_forecast_raised_to/"
+        },
+        {
+          "type": "url",
+          "url": "https://info.futurumgroup.com/hubfs/Intelligence%20Reports/Q4%202024%20AI%20Processors%20and%20Accelerators%20for%20Data%20Center%20SpotCheck%20Report_Q424SCSEMIRGHGK202503.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/MU_Stock/comments/1vfd7kb/trendforce_ai_server_shipments_forecast_raised_to/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AMD_Stock/comments/1vfdaup/trendforce_ai_server_shipments_forecast_raised_to/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/AI_data_center"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/Kioxia_stock/comments/1vfdg1q/trendforce_ai_server_shipments_forecast_raised_to/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.concorrencia.pt/sites/default/files/processos/epr/Competition%20and%20Generative%20AI%20-%20Access%20to%20AI%20chips%20-%20AdC%20Short%20Papers.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/amd-broadcom-and-nvidia-join-hyperscalers-to-define-optical-scale-up-interconnect-of-the-future-for-ai-clusters-meta-microsoft-and-openai-to-benefit-as-speeds-eventually-scale-to-3-2-tb-s"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/microsoft-will-deploy-amds-helios-rack-scale-ai-accelerator-at-scale-on-azure-radeon-instinct-mi455x-and-epyc-venice-power-will-be-available-through-redmonds-cloud-infrastructure"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomshardware.com/tech-industry/big-tech/big-tech-spends-more-than-usd1-trillion-on-ai-infrastructure-additional-usd745-billion-expected-to-be-added-to-the-figure-in-2026-alone"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/dc8d556e709b50915cca9217a60b1991"
+        },
+        {
+          "type": "url",
+          "url": "https://www.wemakeithere.org/wp-content/uploads/2025/08/AI-Data-Centers-Overview-July-31-2025.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://assets-cms.globalxetfs.com/AI-Hardware-US-Final-Updated.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.techradar.com/pro/security/just-remember-you-have-to-be-ahead-for-all-time-to-come-microsoft-ceo-satya-nadella-reveals-ai-chip-shopping-spree-says-it-will-still-buy-nvidia-amd-chips-despite-recent-launch-of-in-house-maia-200-hardware"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/AMD"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/newsletters/axios-pro-rata-8b88c78a-23fd-4eb9-91bf-466e46447815"
+        },
+        {
+          "type": "url",
+          "url": "https://www.techradar.com/pro/ais-next-phase-isnt-innovation-its-capital-discipline"
+        },
+        {
+          "type": "url",
+          "url": "https://www.techradar.com/pro/microsoft-meta-lost-billions-on-vr-headsets-snap-thinks-its-usd2-195-ar-glasses-will-change-the-game-as-it-teams-up-with-nvidia-salesforce-and-aws-to-crack-the-enterprise-market"
+        },
+        {
+          "type": "url",
+          "url": "https://www.kiplinger.com/investing/stocks/upcoming-ipos"
+        },
+        {
+          "type": "url",
+          "url": "https://www.pwc.com/us/en/industries/tmt/library/technology-deals-outlook.html"
+        },
+        {
+          "type": "url",
+          "url": "https://www.sec.gov/Archives/edgar/data/1810019/000181001926000078/ex991-pressrelease.htm"
+        },
+        {
+          "type": "url",
+          "url": "https://stepmark.ai/2026/09/02/august-2026-ai-financing-report/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.pwc.com/us/en/industries/tmt/library/accounting-financial-reporting-insights.html"
+        },
+        {
+          "type": "url",
+          "url": "https://www.racetoagi.org/research/reports/state-of-ai-deals"
+        },
+        {
+          "type": "url",
+          "url": "https://lumapartners.com/presentations/q2-2026-market-report/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.acquire.fyi/news/2026/07/09/june-dealmaking-hits-record-as-ai-and-space-fuel-215-billion-buying-spree/"
+        },
+        {
+          "type": "url",
+          "url": "https://stepmark.ai/2026/05/01/april-2026-ai-financing-report/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/googexhibit991q22026.htm"
+        },
+        {
+          "type": "url",
+          "url": "https://www.cbinsights.com/research/report/the-future-of-the-enterprise-ai-buildout/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.racetoagi.org/research/deals/type/acquisition"
+        },
+        {
+          "type": "url",
+          "url": "https://www.racetoagi.org/research/deals"
+        },
+        {
+          "type": "url",
+          "url": "https://www.sec.gov/Archives/edgar/data/1454938/000145493826000030/teadars2025.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.avendus.com/uploads/ai-powered-disruption-and-large-deals-are-rewriting-the-it-services-playbook.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Perion_Network"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/OpenAI"
+        },
+        {
+          "type": "url",
+          "url": "https://www.sec.gov/Archives/edgar/data/1345016/000134501623000024/a2022annualreport.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.bondcap.com/report/pdf/Trends_Artificial_Intelligence.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.bondcap.com/report/pdf/Trends_Artificial_Intelligence.pdf?_bhlid=8e41a8ae4034e07b2ed1be8195fe76538169205b"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/CoreWeave"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Meta_Platforms"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2607.28780"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/chinas-open-weight-ai-models-are-now-just-4-months-behind-frontier-us-offerings-mozilla-report-claims-models-still-lag-in-some-benchmarks-but-are-drastically-cheaper-to-use"
+        },
+        {
+          "type": "url",
+          "url": "https://latenteast.com/models"
+        },
+        {
+          "type": "url",
+          "url": "https://github.com/QwenLM/Qwen"
+        },
+        {
+          "type": "url",
+          "url": "https://latenteast.com/insights/every-chinese-model-version-dated"
+        },
+        {
+          "type": "url",
+          "url": "https://www.i6eal.de/en/ki-labor-radar/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.llm-releases.com/families/hunyuan"
+        },
+        {
+          "type": "url",
+          "url": "https://chinaapi.ai/model-updates/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.ssga.com/nl/en_gb/intermediary/insights/beyond-deepseek-chinas-2026-model-wave-and-the-repricing-of-the-ai-stack"
+        },
+        {
+          "type": "url",
+          "url": "https://www.llm-releases.com/"
+        },
+        {
+          "type": "url",
+          "url": "https://github.com/ttokunaga-ja/zenn-content/blob/main/articles/2026-07-10-china-open-weight-self-host-economics.md"
+        },
+        {
+          "type": "url",
+          "url": "https://www.llm-releases.com/reports/release-calendar"
+        },
+        {
+          "type": "url",
+          "url": "https://genailist.net/country/cn"
+        },
+        {
+          "type": "url",
+          "url": "https://llm.okamomedia.tokyo/en/china-ai/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.idc.com/wp-content/uploads/2025/11/IDC-Asia-Pacific-FutureScape-2026_China-AI-Excerpt.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Qwen"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/LocalLLaMA/comments/1ubjnh5/qwen_is_never_going_to_open_source_qwen_37_arent/"
+        },
+        {
+          "type": "url",
+          "url": "https://ccianet.org/wp-content/uploads/2026/03/CCIA_Generative-AI-Assessment-of-Competitive-Dynamics-in-Asia-Pacific-Region_ReportFinal.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.rbbecon.com/download/serve?file=https%3A%2F%2Fwww.datocms-assets.com%2F79198%2F1771870868-genai-apac-rbb-report-feb-2026.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://artificialanalysis.ai/downloads/china-report/2025/Artificial-Analysis-State-of-AI-China-Q1-2025.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/DeepSeek"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Reasoning_model"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Lists_of_open-source_artificial_intelligence_software"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2411.02265"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2507.09955"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/List_of_large_language_models"
+        },
+        {
+          "type": "url",
+          "url": "https://zh.wikipedia.org/wiki/DeepSeek-V4"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/b29908e516faff9f5a82b201ba954aab"
+        },
+        {
+          "type": "url",
+          "url": "https://www.alibabagroup.com/en-US/document-2027233133950140416"
+        },
+        {
+          "type": "url",
+          "url": "https://alihome.alibaba-inc.com/en-US/document-1991364841188622336"
+        },
+        {
+          "type": "url",
+          "url": "https://www.publicnow.com/view/C65A866EDB4DF826123023E5AC476B727DA25947"
+        },
+        {
+          "type": "url",
+          "url": "https://www.alibabagroup.com/en-US/document-1971445322303406080"
+        },
+        {
+          "type": "url",
+          "url": "https://www.hkexnews.hk/listedco/listconews/sehk/2026/0319/2026031900801.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/alibaba-group-announces-june-quarter-093100015.html"
+        },
+        {
+          "type": "url",
+          "url": "https://www1.hkexnews.hk/listedco/listconews/sehk/2025/1125/2025112501051.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.marketbeat.com/earnings/reports/2026-8-14-alibaba-group-holding-limited-stock/"
+        },
+        {
+          "type": "url",
+          "url": "https://vectorshift.ai/research/companies/alibaba-group-holding/earnings/2026-q4"
+        },
+        {
+          "type": "url",
+          "url": "https://www.constellationr.com/insights/news/alibaba-cloud-surges-q1-ai-lab-efforts-losing-money"
+        },
+        {
+          "type": "url",
+          "url": "https://ebs.publicnow.com/view/5625BD0F7EA3FD412F6359100C224BCAF4F55472"
+        },
+        {
+          "type": "url",
+          "url": "https://static.seekingalpha.com/uploads/sa_presentations/596/128596/original.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://financialfilings.com/filings/asiainfo-technologies-limited/earnings-release/2026/55904676/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.asiainfo.com/en_us/content_5095.html"
+        },
+        {
+          "type": "url",
+          "url": "https://earningscalls.dev/transcripts/alibaba-group-holding-limited_baba_earnings_call_transcript_2026-08-20"
+        },
+        {
+          "type": "url",
+          "url": "https://www.hkexnews.hk/listedco/listconews/sehk/2025/0626/2025062601064.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://static2.finnhub.io/file/privatedatany/slides/3ad8a964133292c56a92c92ed1dddfe90bdbbc6379106b4bf064351a622119ca.pdf?Authorization=3_20260417123204_c0ee8ba0afe5fc5effbfc958_5754600800d279c5b3d4feb15996ca6551a33f5d_002_20260418123204_0007_dnld"
+        },
+        {
+          "type": "url",
+          "url": "https://ccianet.org/wp-content/uploads/2026/03/CCIA_Generative-AI-Assessment-of-Competitive-Dynamics-in-Asia-Pacific-Region_ReportFinal.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/baba/comments/1swtbnk/mainland_china_cloud_infrastructure_spending/"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/8a30302d23a96fc7b9aab664b9c1897d"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/3bc6b4b5545a9e51a723805fc31d7691"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/1ae6228c4928ddbb43f984e9b38f49dd"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Artificial_intelligence_industry_in_China"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomshardware.com/tech-industry/qualcomm-plans-china-specific-data-center-chips-built-to-clear-us-export-limits"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/baba/comments/1vwy4gg/is_cloud_revenue_inflated_by_babas_own_ai/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Tencent_Cloud"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomshardware.com/tech-industry/cambricons-q1-revenue-hits-423-million-as-chinas-domestic-ai-chip-market-accelerates"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/nPerf/comments/1sb8dcd/china_telecom_shifts_from_trafficbased_revenues/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.kiplinger.com/investing/live/nvidia-earnings-live-updates-and-commentary-august-2026"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2603.20533"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/StocksTool/comments/1vv5jy0/alibabas_ai_cloud_is_growing_45_but_the_cash_bill/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Pony.ai"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/ChinaStocks/comments/1vu44pj/alibaba_is_spending_big_trying_to_become_chinas/"
+        },
+        {
+          "type": "url",
+          "url": "https://zh.wikipedia.org/wiki/%E4%B8%AD%E5%9B%BD%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E4%BA%A7%E4%B8%9A"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Alibaba_Cloud"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/ValueInvesting/comments/1sbgqe6/alibaba_is_spending_53_billion_on_ai_while/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/ArtificialInteligence/comments/1n663ew"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Alibaba_Group"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/baba/comments/1jlqlem"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/investing/comments/1p6vldh/alibaba_q2_revenue_beats_estimates_as_aidriven/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/MarketFluxHub/comments/1p6s6c8/alibaba_q2_revenue_beats_estimates_as_aidriven/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.vedomosti.ru/technology/articles/2026/08/28/1224303-kak-razrabotchiki-ii-hotyat-reshit-problemu-viplat-za-obuchenie-na-avtorskom-kontente"
+        },
+        {
+          "type": "url",
+          "url": "https://www.vedomosti.ru/media/articles/2026/08/05/1218888-vlasti-i-biznes-dorabativayut-regulirovanie-ii?from=newsline"
+        },
+        {
+          "type": "url",
+          "url": "https://www.fontanka.ru/2026/07/07/76521337/"
+        },
+        {
+          "type": "url",
+          "url": "https://1prime.ru/20260828/gk-872755210.html"
+        },
+        {
+          "type": "url",
+          "url": "https://www.rbc.ru/technology_and_media/22/06/2026/6a37ddb19a7947c93443fdc4"
+        },
+        {
+          "type": "url",
+          "url": "https://meduza.io/en/news/2026/06/22/russia-revises-ai-regulation-bill-sovereign-models-remain-but-can-now-be-trained-on-non-russian-data"
+        },
+        {
+          "type": "url",
+          "url": "https://mfd.ru/news/view/?companyId=2787&id=2783493"
+        },
+        {
+          "type": "url",
+          "url": "https://meduza.io/news/2026/06/22/pravitelstvo-izmenilo-zakonoproekt-o-regulirovanii-ii-v-rossii-v-nem-po-prezhnemu-est-suverennye-modeli-ii-no-ih-razreshat-obuchat-ne-tolko-na-rossiyskih-dannyh/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.rbc.ru/education/18/06/2026/6a2af0009a79474fa3f58195"
+        },
+        {
+          "type": "url",
+          "url": "https://axioma-ai.ru/ai-russia/abd-pet-technologies-ai-training-bez-soglasiya-20260814"
+        },
+        {
+          "type": "url",
+          "url": "https://letaibe.media/wp-content/uploads/2025/12/ai-list-2025-1.1_1.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.dp.ru/api/v1.0/Issues/pdf/2024/12/09/134_6049_8f44f5bd-f639-4441-891a-1b30ff954141.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://ru.wikipedia.org/wiki/%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81"
+        },
+        {
+          "type": "url",
+          "url": "https://ru.wikipedia.org/wiki/%D0%A1%D0%B1%D0%B5%D1%80%D0%B1%D0%B0%D0%BD%D0%BA_%D0%A0%D0%BE%D1%81%D1%81%D0%B8%D0%B8"
+        },
+        {
+          "type": "url",
+          "url": "https://ru.wikipedia.org/wiki/%D0%98%D1%81%D0%BA%D1%83%D1%81%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9_%D0%B8%D0%BD%D1%82%D0%B5%D0%BB%D0%BB%D0%B5%D0%BA%D1%82_%D0%B8_%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D1%81%D0%BA%D0%BE%D0%B5_%D0%BF%D1%80%D0%B0%D0%B2%D0%BE"
+        },
+        {
+          "type": "url",
+          "url": "https://iy.kommersant.ru/ISSUES.PDF/TEMA/2025/2291112/KOM_229_111225.PDF"
+        },
+        {
+          "type": "url",
+          "url": "https://xn--80aj3aega.xn--p1ai/files/issue/private/kommersant/2023/45-2023/raw_issue/kommersant-2023-45-2023.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://ru.wikipedia.org/wiki/%D0%AF%D0%BD%D0%B4%D0%B5%D0%BA%D1%81_%D0%9E%D0%B1%D1%80%D0%B0%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5"
+        },
+        {
+          "type": "url",
+          "url": "https://iy.kommersant.ru/ISSUES.PDF/TEMA/2025/0970306/KOM_097_030625.PDF"
+        },
+        {
+          "type": "url",
+          "url": "https://ru.wikipedia.org/wiki/%D0%98%D1%81%D0%BA%D1%83%D1%81%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9_%D0%B8%D0%BD%D1%82%D0%B5%D0%BB%D0%BB%D0%B5%D0%BA%D1%82"
+        },
+        {
+          "type": "url",
+          "url": "https://ru.wikipedia.org/wiki/%D0%9C%D0%A2%D0%A1_%28%D0%BA%D0%BE%D0%BC%D0%BF%D0%B0%D0%BD%D0%B8%D1%8F%29"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/KafkaFPS/comments/1rxdl8i/%D0%BA%D0%BE%D0%BD%D0%B5%D1%86_%D0%B8%D0%B8_%D0%B2_%D1%80%D0%BE%D1%81%D1%81%D0%B8%D0%B8/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/RuProgrammers/comments/1vk2ta8/%D0%B8%D0%B8_%D0%BA%D0%BE%D0%BC%D0%BF%D0%B0%D0%BD%D0%B8%D0%B8_%D0%B4%D0%BE%D0%BB%D0%B1%D0%B0%D0%B5%D0%B1%D1%8B/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/KafkaFPS/comments/1r955c8/%D0%BF%D0%B5%D1%80%D0%B2%D1%8B%D0%B5_%D1%88%D0%BA%D0%BE%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5_%D1%83%D1%87%D0%B5%D0%B1%D0%BD%D0%B8%D0%BA%D0%B8_%D0%BF%D0%BE_%D0%B8%D0%B8/"
+        },
+        {
+          "type": "url",
+          "url": "https://omidsaffari.com/blog/best-ai-coding-agents"
+        },
+        {
+          "type": "url",
+          "url": "https://codersera.com/blog/ai-coding-agents-complete-guide-2026/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.kyenai.com/guides/ai-coding-agents-comparison"
+        },
+        {
+          "type": "url",
+          "url": "https://cheatsheets.davidveksler.com/ai-coding-agents-compared.html"
+        },
+        {
+          "type": "url",
+          "url": "https://startdebugging.net/2026/06/claude-code-vs-cursor-vs-copilot-agent-mode-where-each-wins/"
+        },
+        {
+          "type": "url",
+          "url": "https://builtin.com/articles/claude-code-codex-cursor-github-copilot-comparison"
+        },
+        {
+          "type": "url",
+          "url": "https://www.faros.ai/blog/best-ai-coding-agents-2026"
+        },
+        {
+          "type": "url",
+          "url": "https://deepyard.dev/learn/ai-coding-agents-compared"
+        },
+        {
+          "type": "url",
+          "url": "https://trendscan.org/best-ai-coding-agents"
+        },
+        {
+          "type": "url",
+          "url": "https://artificialanalysis.ai/agents/coding"
+        },
+        {
+          "type": "url",
+          "url": "https://continuumcode.ai/guides/best-coding-agents/"
+        },
+        {
+          "type": "url",
+          "url": "https://vibecoding.app/blog/best-ai-coding-agents"
+        },
+        {
+          "type": "url",
+          "url": "https://www.williamblair.com/-/media/downloads/eqr/2026/williamblair_cracking-the-code-how-ai-is-transforming-software-development.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2602.08915"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2607.01418"
+        },
+        {
+          "type": "url",
+          "url": "https://www.youtube.com/watch?v=inxpTP5ytfQ"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2602.14690"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/aiagents/comments/1v96nht/i_run_4_ai_coding_agents_at_once_claude_code/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/ClaudeAI/comments/1v96mg8/i_run_4_ai_coding_agents_at_once_claude_code/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.youtube.com/watch?v=l2wCOnlOZWE"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2601.18341"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/ClaudeCode/comments/1v968v0/i_run_4_ai_coding_agents_at_once_claude_code/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Cursor_%28code_editor%29"
+        },
+        {
+          "type": "url",
+          "url": "https://openreview.net/pdf/ae0f92b7a4b3e8628d1c622654b9fe46d69f03bb.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/aiToolForBusiness/comments/1udfvbw/which_ai_coding_tools_are_you_actually_using_in/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.kleinloog.ch/articles/the-5-ai-coding-agents-worth-embedding-in-your-saas/the-complete-landscape-of-cli-based-ai-coding-agents.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://openreview.net/pdf?id=cqmx1MLZCq"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/ArtificialInteligence/comments/1un99kr/coding_agents_are_quietly_shifting_from_pick_our/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/cursor/comments/1udf5jc/best_pricetoperformance_ai_coding_agents_right/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/CodingAgents/comments/1r6oaq2/which_coding_agent_do_you_actually_enjoy_working/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AI_Agents/comments/1uselz0/which_coding_ai_tool_are_you_actually_using_in/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/QualityAssurance/comments/1u93b9o/where_are_you_folks_today_with_using_ai_coding/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/cursor/comments/1wjo04y/codex_vs_claude_code_vs_cursor_in_september_2026/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Claude_%28language_model%29"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AI_Agents/comments/1wjttri/best_ai_coding_agent_that_understands_tasks_well/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/cursor/comments/1vyldlv/why_cursor_is_not_being_mentioned_enough_compared/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Ollama"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Codex_%28AI_agent%29"
+        },
+        {
+          "type": "url",
+          "url": "https://www.techradar.com/pro/microsoft-may-discontinue-claude-code-internally-as-it-looks-to-push-users-towards-github-copilot"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomsguide.com/ai/i-test-ai-coding-tools-all-day-here-are-9-hidden-claude-code-features-youre-probably-missing"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/GitHub_Copilot"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/2026/04/21/cursor-chainguard-ai-code-security"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomsguide.com/ai/claude-code-vs-chatgpt-codex-which-ai-coding-agent-is-actually-better"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/2026/09/16/openai-testing-safety-incidents-disclosure"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/2026/09/19/google-safety-incidents-testing-hacks"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/2026/09/17/ai-cyber-doomsday-hacking-threats"
+        },
+        {
+          "type": "url",
+          "url": "https://www.techradar.com/pro/agentic-ai-is-increasing-the-pressure-on-organizations-to-reduce-cyber-risk-exposure"
+        },
+        {
+          "type": "url",
+          "url": "https://www.techradar.com/pro/security/googles-gemini-hacked-three-companies-during-irregular-ai-capture-the-flag-testing-agents-broke-containment-and-guessed-passwords-to-hack-computer-systems"
+        },
+        {
+          "type": "url",
+          "url": "https://www.techradar.com/pro/security/irregular-ai-lab-spots-agents-switching-models-without-humans-instruction-in-agentic-self-modification-phenomenon"
+        },
+        {
+          "type": "url",
+          "url": "https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals"
+        },
+        {
+          "type": "url",
+          "url": "https://arstechnica.com/ai/2026/07/how-an-openai-benchmark-test-turned-into-a-real-world-cyberattack/"
+        },
+        {
+          "type": "url",
+          "url": "https://arstechnica.com/security/2026/09/openai-agents-discussed-ways-to-escape-their-sandbox-on-public-wiki/"
+        },
+        {
+          "type": "url",
+          "url": "https://openai.com/index/hugging-face-incident-and-the-road-ahead/"
+        },
+        {
+          "type": "url",
+          "url": "https://labs.cloudsecurityalliance.org/research/csa-research-note-ai-coding-agent-sandbox-escapes-20260722-c/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.microsoft.com/en-us/security/blog/2026/05/07/prompts-become-shells-rce-vulnerabilities-ai-agent-frameworks/"
+        },
+        {
+          "type": "url",
+          "url": "https://runtimeai.io/blog/2026-07-25-ai-security-incidents.html"
+        },
+        {
+          "type": "url",
+          "url": "https://www.kpath.ai/learn/incidents"
+        },
+        {
+          "type": "url",
+          "url": "https://agentfieldbook.org/security/incidents/"
+        },
+        {
+          "type": "url",
+          "url": "https://labs.cloudsecurityalliance.org/research/csa-research-note-agentic-ai-evaluation-containment-risk-202/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.getreadyforagents.com/agentfailures/"
+        },
+        {
+          "type": "url",
+          "url": "https://metr.org/agent-incidents/"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2604.23425"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/devsecops/comments/1vocvfg/our_ai_pentesting_engine_talked_a_production_ai/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AIsafety/comments/1v3n7y9/an_ai_escaped_its_sandbox_yesterday_hacked_a_real/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AIDangers/comments/1v3n30m/gpt56_escaped_its_sandbox_exploited_a_zeroday_and/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/cybersecurity/comments/1u6dtlr/i_catalogued_33_realworld_aillm_security/"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2606.09935"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/LLMDevs/comments/1u6rua3/i_catalogued_33_realworld_aillm_security/"
+        },
+        {
+          "type": "url",
+          "url": "https://aiagentindex.mit.edu/data/2025-AI-Agent-Index.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://labs.cloudsecurityalliance.org/wp-content/uploads/2026/04/CSA_research_note_agentic-ide-prompt-injection-sandbox-escape_20260422-csa-styled-1.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2607.05120"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2605.17634"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/SecOpsDaily/comments/1v5e810/openais_agent_escaped_its_sandbox_during_a/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/ObscurePatentDangers/comments/1v9t7u2/openai_agent_escaped_sandbox_used_exposed/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AIsafety/comments/1ukxjym/built_a_free_tool_that_fires_190_attack_prompts/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/SecOpsDaily/comments/1ukpxo1/critical_cursor_flaws_could_let_prompt_injection/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/ClaudeAI/comments/1s9qb0s/we_tested_prompt_injection_against_claude_code/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/ArtificialInteligence/comments/1wkzd9w/what_is_actually_going_on_with_all_the_recent_ai/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/AI_Agents/comments/1w6zy6u/when_an_agent_escapes_its_sandbox_where_did_the/"
+        },
+        {
+          "type": "url",
+          "url": "https://oktsec.com/ai-agent-security/ai-agent-security-guide-2026.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Moltbook"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/67b151f1ca59851a9234bee110699f05"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/b0a2c284b981de79c55e2a33712f4bec"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomshardware.com/tech-industry/cyber-security/hades-malware-campaign-now-tricks-ai-bots-by-injecting-text-about-biological-and-nuclear-weapons-failsafe-mechanisms-triggered-by-prompts-for-weapon-creation-stop-scans-before-payload-is-seen"
+        },
+        {
+          "type": "url",
+          "url": "https://www.copyright.gov/ai/"
+        },
+        {
+          "type": "url",
+          "url": "https://law.justia.com/cases/federal/appellate-courts/ca9/24-7700/24-7700-2026-09-16.html"
+        },
+        {
+          "type": "url",
+          "url": "https://www.law.berkeley.edu/research/bclt/bclt-legal-analysis/internet-computer-law-s1/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.washingtonpost.com/business/2026/07/21/ai-anthropic-copyright-settlement-claude-books-bartz/72331b14-8512-11f1-9cec-0fb26676f07e_story.html"
+        },
+        {
+          "type": "url",
+          "url": "https://indiankanoon.org/doc/93327052/"
+        },
+        {
+          "type": "url",
+          "url": "https://ailawsusa.com/topic/copyright/"
+        },
+        {
+          "type": "url",
+          "url": "https://legalclarity.org/training-data-lawsuit-news-ai-copyright-cases-and-rulings/"
+        },
+        {
+          "type": "url",
+          "url": "https://legalclarity.org/ai-copyright-lawsuit-news-latest-cases-and-rulings/"
+        },
+        {
+          "type": "url",
+          "url": "https://copyright.gov/policy/artificial-intelligence/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.sidley.com/en/insights/newsupdates/2026/07/legal-implications-in-ai-development-and-deployment-training-data-and-grounding-data"
+        },
+        {
+          "type": "url",
+          "url": "https://cornelia.in/app/judgments/131280"
+        },
+        {
+          "type": "url",
+          "url": "https://thetechtrends.tech/copyright-and-training-data/"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2607.23888"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2512.02047"
+        },
+        {
+          "type": "url",
+          "url": "https://www.copyright.gov/ai/docs/Federal-Register-Document-Artificial-Intelligence-and-Copyright-NOI.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.copyright.gov/ai/Copyright-and-Artificial-Intelligence-Part-3-Generative-AI-Training-Report-Pre-Publication-Version.pdf?stream=top"
+        },
+        {
+          "type": "url",
+          "url": "https://www.debevoise.com/-/media/files/insights/publications/2025/12/ai-intellectual-property-disputes-the-year-in.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://www.oecd.org/content/dam/oecd/en/publications/reports/2023/09/initial-policy-considerations-for-generative-artificial-intelligence_1a9ab450/fae2d1e6-en.pdf"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Artificial_intelligence_and_copyright"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/supremecourt/comments/1witcmg/ca9_no_valid_dmca_claim_when_ai_reproduces/"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2502.15858"
+        },
+        {
+          "type": "url",
+          "url": "https://arxiv.org/abs/2507.12713"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Anthropic"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Fair_use"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Generative_AI_Copyright_Disclosure_Act"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Large_language_model"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Artificial_Intelligence_Act"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/DefendingAIArt/comments/1lu6toc/court_cases_where_ai_copyright_claims_were/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/GoogleGeminiAI/comments/1ukhkn7/google_says_ai_training_is_fair_use_and_copyright/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/DefendingAIArt/comments/1vp7ati/court_cases_update/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/GeminiAI/comments/1ukhj6d/google_says_ai_training_is_fair_use_and_copyright/"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/74b140444023898aeba8579b6e9f0d63"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/dbb22e8e02c660ee5a8644915dec39a4"
+        },
+        {
+          "type": "url",
+          "url": "https://www.axios.com/2026/09/08/nyt-openai-microsoft-copyright-lawsuit"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/Bard/comments/1ukhl1v/google_says_ai_training_is_fair_use_and_copyright/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/Suno/comments/1wboj23/the_doj_just_weighed_in_on_ai_training_copyright/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.tomshardware.com/tech-industry/annas-archive-fined-322-million"
+        },
+        {
+          "type": "url",
+          "url": "https://www.theatlantic.com/technology/archive/2025/07/anthropic-meta-ai-rulings/683526/?utm_source=apple_news"
+        },
+        {
+          "type": "url",
+          "url": "https://www.lemonde.fr/pixels/article/2025/06/25/droit-d-auteur-un-tribunal-americain-accorde-une-victoire-partielle-a-la-societe-d-ia-anthropic_6615902_4408996.html"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/supremecourt/comments/1vyyu3i/ca7_possession_of_aigenerated_csam_depicting_no/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.reddit.com/r/COPYRIGHT/comments/1wcjbxa/us_government_argues_that_fair_use_applies_to/"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/089e75b95bc935af092da7b79d92706d"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/1d9615931af28a83cb97489178e90f2d"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/2026_in_artificial_intelligence"
+        },
+        {
+          "type": "url",
+          "url": "https://www.archynetys.com/topic/artificial-intelligence"
+        },
+        {
+          "type": "url",
+          "url": "https://readepoch.co/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.bleepingcomputer.com/news/artificial-intelligence/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.readepoch.co/"
+        },
+        {
+          "type": "url",
+          "url": "https://abcnews.com/alerts/artificialintelligence/"
+        },
+        {
+          "type": "url",
+          "url": "https://techcrunch.com/category/artificial-intelligence/"
+        },
+        {
+          "type": "url",
+          "url": "https://www.latimes.com/business/story/2026-06-13/anthropic-shuts-down-mythos-access-after-sweeping-u-s-order"
+        },
+        {
+          "type": "url",
+          "url": "https://currentwire.us/ai"
+        },
+        {
+          "type": "url",
+          "url": "https://www.newsnow.com/us/AI"
+        },
+        {
+          "type": "url",
+          "url": "https://abcnews.com/alerts/artificial---------intelligence"
+        },
+        {
+          "type": "url",
+          "url": "https://www.washingtonpost.com/technology/2026/06/13/anthropic-shuts-down-newest-ai-model-after-us-bans-foreign-use/"
+        },
+        {
+          "type": "url",
+          "url": "https://techcrunch.com/category/emerging-tech/artificial-intelligence/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/2025_in_artificial_intelligence"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Timeline_of_artificial_intelligence"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/d9cc7df5c02e93837d0f0bfb24d5cfd2"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/3e8762c0527c4d8ed657cbe48c84a718"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/ee318f35acc8a2c43e47f3ebf26cb459"
+        },
+        {
+          "type": "url",
+          "url": "https://apnews.com/article/cb081633bb4fca6ac97dcdaea0354de7"
+        },
+        {
+          "type": "url",
+          "url": "https://time.com/7346091/ai-harm-risk/"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Artificial_intelligence_controversies"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/AI_slop"
+        },
+        {
+          "type": "url",
+          "url": "https://en.wikipedia.org/wiki/Anthropic%E2%80%93United_States_Department_of_Defense_dispute"
+        },
+        {
+          "type": "url",
+          "url": "https://www.gcedclearinghouse.org/sites/default/files/resources/240281eng.pdf"
+        }
+      ]
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-09-21T04:36:38+03:00",
+      "end_at": "2026-09-23T04:30:29+03:00",
+      "latest_archive_at": "2026-09-22T04:36:38+03:00",
+      "start_date": "2026-09-21",
+      "end_date": "2026-09-23",
+      "latest_archive_date": "2026-09-22"
+    },
+    "mode": "primary_recall_v2",
+    "primary_recall_version": 2
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "1e700873109135da529475b55074285b9f3c630a87e23937a01c8a1b086da954",
+    "editorial_sha256": "705b805566ef5836dadc54e88b37d84a41f4e3bb0feb9bdd621876a4a90cf328",
+    "digest_sha256": "66323d4dff3b76045537112f4c4fc2fa3c094231b289b9c436d672596242ed04",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-09-23.jpg",
+          "normalized_value": "ai-svodka-2026-09-23.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-020."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Выбраны четыре независимых высокозначимых события одного издателя: IPO-раскрытие Nscale, релиз Claude Opus 5.5, релиз GPT-6 Sol и Luna и запуск мобильных чипов Qualcomm. Они относятся к разным сегментам рынка и не имеют сопоставимых по качеству альтернатив в пуле."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_09a35915c95bb169016ab32d4c40e487d296c23a0a1b72768e",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 145541,
+        "input_tokens_details": {
+          "cache_write_tokens": 145538,
+          "cached_tokens": 0
+        },
+        "output_tokens": 4212,
+        "output_tokens_details": {
+          "reasoning_tokens": 398
+        },
+        "total_tokens": 149753
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 145541,
+    "output_tokens": 4212,
+    "total_tokens": 149753,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "ced6c04ccb8584d8114ef08413cfc80bcdf7783f",
+    "run_id": "35806535233",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-09-23T04:30:29+03:00"
+}
