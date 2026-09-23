@@ -71,7 +71,7 @@ class PaidStageCheckpointWorkflowTests(unittest.TestCase):
             self.assertIn("if-no-files-found: error", block)
 
     def test_selected_checkpoint_name_is_downloaded_exactly(self) -> None:
-        self.assertIn('echo "artifact_name=${best_artifact_name}" >> "${GITHUB_OUTPUT}"', self.text)
+        self.assertIn('echo "artifact_name=${artifact_name}" >> "${GITHUB_OUTPUT}"', self.text)
         self.assertIn(
             "name: ${{ steps.recovery_source.outputs.artifact_name }}",
             self.text,
