@@ -310,6 +310,9 @@ jobs:
           }
 
           if [[ "${EVENT_NAME}" == "workflow_dispatch" && "${FORCE_FRESH_RESEARCH}" == "true" ]]; then
+            run_id=""
+            source="none"
+            artifact_name=""
             echo "Запрошен ручной свежий research; автоматическое восстановление для этого запуска отключено."
           else
             if [[ -n "${MANUAL_RECOVERY_RUN_ID}" ]]; then
