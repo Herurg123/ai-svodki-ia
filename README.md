@@ -82,8 +82,8 @@ diff. Техническая возможность direct push в `main` сам
   событие не омолаживается свежей перепечаткой;
 - Source Pulse и deterministic viability/health diagnostics не добавляют
   OpenAI/Web Search вызовы и не отменяют обязательный Search-derived recovery;
-- recovery переиспользует наиболее полный пригодный same-day artifact и не
-  повторяет уже завершённые paid stages;
+- recovery переиспользует наиболее полный пригодный same-day final artifact
+  или durable stage checkpoint и не повторяет уже завершённые paid stages;
 - `posts/rss.xml` остаётся article/image surface и не используется для доставки
   локального видео;
 - production/API spend не используется для обычных refactor/regression работ без

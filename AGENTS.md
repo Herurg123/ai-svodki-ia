@@ -272,6 +272,11 @@ but must not silently repoll mutable sources.
 - Saved research boundaries, freshness proof, archive dedupe, mandatory
   fail-closed search stages and at-most-once recovery must not be weakened as
   incidental cleanup.
+- `daily-production.yml` must preserve durable same-day stage checkpoints after
+  completed paid Research/editorial, Coverage/editorial-completion and Image
+  boundaries. Recovery may reuse those checkpoints when the final always-run
+  artifact is unavailable, but a checkpoint name alone never authorizes a retry
+  or bypasses saved-state validation.
 - Production API spend is not authorized by a generic code-fix request; any new
   paid retrieval beyond the documented architecture needs separate approval.
 

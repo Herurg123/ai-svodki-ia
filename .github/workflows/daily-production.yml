@@ -233,56 +233,140 @@ jobs:
             echo "force_fresh_research=true несовместим с recovery_run_id: выберите либо свежий research, либо явное восстановление из artifact." >&2
             exit 1
           fi
-          run_id="${MANUAL_RECOVERY_RUN_ID}"
-          source="manual"
+
+          run_id=""
+          source="none"
+          artifact_name=""
+          best_rank=0
+          best_created_at=""
+          best_run_id=""
+          best_artifact_name=""
+          best_kind_priority=0
+          declare -A run_rank_cache=()
+          RUN_RANK_RESULT=0
+
+          get_run_rank() {
+            local candidate_run_id="$1"
+            if [[ -n "${run_rank_cache[${candidate_run_id}]+x}" ]]; then
+              RUN_RANK_RESULT="${run_rank_cache[${candidate_run_id}]}"
+              return
+            fi
+            RUN_RANK_RESULT="$(
+              gh api \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                "/repos/${GITHUB_REPOSITORY}/actions/runs/${candidate_run_id}/jobs?per_page=100" \
+                --jq '
+                  [.jobs[] | select(.name == "production") | .steps[]?] as $steps
+                  | if any($steps[]; ((.name == "Generate one production cover" or .name == "Revalidate recovered production cover") and .conclusion == "success")) then 3
+                    elif any($steps[]; ((.name == "Complete mandatory coverage audit for a short digest" or .name == "Validate publishable story count and short digest marker") and .conclusion == "success")) then 2
+                    elif any($steps[]; (((.name | startswith("Run full research")) or (.name | startswith("Restore saved paid artifact"))) and .conclusion == "success")) then 1
+                    else 0
+                    end
+                '
+            )"
+            run_rank_cache["${candidate_run_id}"]="${RUN_RANK_RESULT}"
+          }
+
+          consider_artifact() {
+            local created_at="$1"
+            local candidate_run_id="$2"
+            local candidate_name="$3"
+            local rank kind_priority
+            get_run_rank "${candidate_run_id}"
+            rank="${RUN_RANK_RESULT}"
+            kind_priority=0
+
+            case "${candidate_name}" in
+              "daily-production-${PUBLICATION_DATE}")
+                kind_priority=1
+                ;;
+              "daily-production-checkpoint-image-${PUBLICATION_DATE}-attempt-"*)
+                [[ "${rank}" -ge 3 ]] || return 0
+                rank=3
+                ;;
+              "daily-production-checkpoint-coverage-${PUBLICATION_DATE}-attempt-"*)
+                [[ "${rank}" -ge 2 ]] || return 0
+                rank=2
+                ;;
+              "daily-production-checkpoint-research-${PUBLICATION_DATE}-attempt-"*)
+                [[ "${rank}" -ge 1 ]] || return 0
+                rank=1
+                ;;
+              *)
+                return 0
+                ;;
+            esac
+
+            [[ "${rank}" -gt 0 ]] || return 0
+            if [[ "${rank}" -gt "${best_rank}" ]] \
+              || [[ "${rank}" -eq "${best_rank}" && "${created_at}" > "${best_created_at}" ]] \
+              || [[ "${rank}" -eq "${best_rank}" && "${created_at}" == "${best_created_at}" && "${kind_priority}" -gt "${best_kind_priority}" ]]; then
+              best_rank="${rank}"
+              best_created_at="${created_at}"
+              best_run_id="${candidate_run_id}"
+              best_artifact_name="${candidate_name}"
+              best_kind_priority="${kind_priority}"
+            fi
+          }
+
           if [[ "${EVENT_NAME}" == "workflow_dispatch" && "${FORCE_FRESH_RESEARCH}" == "true" ]]; then
             run_id=""
             source="none"
+            artifact_name=""
             echo "Запрошен ручной свежий research; автоматическое восстановление для этого запуска отключено."
-          elif [[ -z "${run_id}" ]]; then
-            source="automatic"
-            candidates="$(
-              gh api --paginate \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                "/repos/${GITHUB_REPOSITORY}/actions/artifacts?name=daily-production-${PUBLICATION_DATE}&per_page=100" \
-                --jq '.artifacts[] | select(.expired == false and .workflow_run.id != null) | [.created_at, (.workflow_run.id | tostring)] | @tsv' \
-              | awk -v current="${GITHUB_RUN_ID}" '$2 != current { print }' \
-              | sort -r
-            )"
-            best_rank=0
-            best_run_id=""
-            while IFS=$'\t' read -r _created_at candidate_run_id; do
-              [[ -n "${candidate_run_id}" ]] || continue
-              rank="$(
+          else
+            if [[ -n "${MANUAL_RECOVERY_RUN_ID}" ]]; then
+              source="manual"
+              candidates="$(
                 gh api \
                   -H "X-GitHub-Api-Version: 2022-11-28" \
-                  "/repos/${GITHUB_REPOSITORY}/actions/runs/${candidate_run_id}/jobs?per_page=100" \
-                  --jq '
-                    [.jobs[] | select(.name == "production") | .steps[]?] as $steps
-                    | if any($steps[]; ((.name == "Generate one production cover" or .name == "Revalidate recovered production cover") and .conclusion == "success")) then 3
-                      elif any($steps[]; (.name == "Validate publishable story count and short digest marker" and .conclusion == "success")) then 2
-                      elif any($steps[]; (((.name | startswith("Run full research")) or (.name | startswith("Restore saved paid artifact"))) and .conclusion == "success")) then 1
-                      else 0
-                      end
-                  '
+                  "/repos/${GITHUB_REPOSITORY}/actions/runs/${MANUAL_RECOVERY_RUN_ID}/artifacts?per_page=100" \
+                  --jq '.artifacts[] | select(.expired == false and .workflow_run.id != null) | [.created_at, (.workflow_run.id | tostring), .name] | @tsv'
               )"
-              if [[ "${rank}" -gt "${best_rank}" ]]; then
-                best_rank="${rank}"
-                best_run_id="${candidate_run_id}"
+            else
+              source="automatic"
+              candidates="$(
+                gh api --paginate \
+                  -H "X-GitHub-Api-Version: 2022-11-28" \
+                  "/repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" \
+                  --jq '.artifacts[] | select(.expired == false and .workflow_run.id != null) | [.created_at, (.workflow_run.id | tostring), .name] | @tsv'
+              )"
+            fi
+
+            while IFS=$'\t' read -r created_at candidate_run_id candidate_name; do
+              [[ -n "${candidate_run_id}" && -n "${candidate_name}" ]] || continue
+              if [[ "${source}" == "automatic" && "${candidate_run_id}" == "${GITHUB_RUN_ID}" ]]; then
+                continue
               fi
+              consider_artifact "${created_at}" "${candidate_run_id}" "${candidate_name}"
             done <<< "${candidates}"
+
+            if [[ -n "${MANUAL_RECOVERY_RUN_ID}" && -z "${best_run_id}" ]]; then
+              echo "В указанном recovery run ${MANUAL_RECOVERY_RUN_ID} нет пригодного same-day final/checkpoint artifact для ${PUBLICATION_DATE}." >&2
+              exit 1
+            fi
             if [[ "${best_rank}" -gt 0 ]]; then
               run_id="${best_run_id}"
-              echo "Автоматическое восстановление выбрало run ${run_id} с рангом полноты ${best_rank}."
+              artifact_name="${best_artifact_name}"
+              if [[ "${source}" == "automatic" ]]; then
+                echo "Автоматическое восстановление выбрало run ${run_id}, artifact ${artifact_name}, ранг полноты ${best_rank}."
+              else
+                echo "Ручное восстановление выбрало artifact ${artifact_name} из run ${run_id}, ранг полноты ${best_rank}."
+              fi
             fi
           fi
+
           if [[ -n "${run_id}" ]]; then
             echo "run_id=${run_id}" >> "${GITHUB_OUTPUT}"
             echo "source=${source}" >> "${GITHUB_OUTPUT}"
-            echo "Для восстановления выбран переиспользуемый artifact из run ${run_id} (${source})."
+            echo "artifact_name=${artifact_name}" >> "${GITHUB_OUTPUT}"
+            echo "rank=${best_rank}" >> "${GITHUB_OUTPUT}"
+            echo "Для восстановления выбран переиспользуемый artifact ${artifact_name} из run ${run_id} (${source})."
           else
             echo "run_id=" >> "${GITHUB_OUTPUT}"
             echo "source=none" >> "${GITHUB_OUTPUT}"
+            echo "artifact_name=" >> "${GITHUB_OUTPUT}"
+            echo "rank=0" >> "${GITHUB_OUTPUT}"
             echo "Для ${PUBLICATION_DATE} подходящий переиспользуемый artifact не выбран."
           fi
       - name: Download saved editorial artifact for recovery
@@ -290,7 +374,7 @@ jobs:
         continue-on-error: ${{ steps.recovery_source.outputs.source == 'automatic' }}
         uses: actions/download-artifact@v8
         with:
-          name: daily-production-${{ steps.runtime.outputs.publication_date }}
+          name: ${{ steps.recovery_source.outputs.artifact_name }}
           path: automation/recovery/${{ steps.recovery_source.outputs.run_id }}
           run-id: ${{ steps.recovery_source.outputs.run_id }}
           github-token: ${{ github.token }}
@@ -381,6 +465,7 @@ jobs:
           PUBLICATION_DATE: ${{ steps.runtime.outputs.publication_date }}
           RECOVERY_RUN_ID: ${{ steps.recovery_source.outputs.run_id }}
           RECOVERY_SOURCE: ${{ steps.recovery_source.outputs.source }}
+          RECOVERY_ARTIFACT_NAME: ${{ steps.recovery_source.outputs.artifact_name }}
         run: |
           set +e
           python automation/scripts/recover_digest_artifact.py \
@@ -402,7 +487,7 @@ jobs:
             rm -rf \
               "automation/preview/${PUBLICATION_DATE}" \
               "automation/preview/production-daily/image/${PUBLICATION_DATE}"
-            echo "::error title=Автоматическое восстановление заблокировано::Artifact run ${RECOVERY_RUN_ID} выбран для восстановления за ту же дату, но безопасно восстановить его не удалось. Свежий paid research автоматически не запускается; исправьте recovery или явно запустите workflow_dispatch с force_fresh_research=true."
+            echo "::error title=Автоматическое восстановление заблокировано::Artifact ${RECOVERY_ARTIFACT_NAME} из run ${RECOVERY_RUN_ID} выбран для восстановления за ту же дату, но безопасно восстановить его не удалось. Свежий paid research автоматически не запускается; исправьте recovery или явно запустите workflow_dispatch с force_fresh_research=true."
             exit "${recovery_status}"
           fi
           python - <<'PY'
@@ -545,6 +630,16 @@ jobs:
             --minimum-selected-stories "${MINIMUM_SELECTED_STORIES}" \
             --maximum-selected-stories "${MAXIMUM_SELECTED_STORIES}" \
             --maximum-research-web-search-calls 12
+      - name: Save paid research checkpoint
+        if: steps.recovery_source.outputs.run_id == '' && steps.terminal_reuse.outputs.stop != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: daily-production-checkpoint-research-${{ steps.runtime.outputs.publication_date }}-attempt-${{ github.run_attempt }}
+          path: |
+            automation/preview/production-daily/
+            automation/preview/${{ steps.runtime.outputs.publication_date }}/
+          if-no-files-found: error
+          retention-days: 14
       - name: Complete mandatory coverage audit for a short digest
         id: coverage
         if: steps.terminal_reuse.outputs.stop != 'true'
@@ -609,6 +704,16 @@ jobs:
           if editorial_stop:
               print("Completed zero-pool editorial stop: publication stages will be skipped.")
           PY
+      - name: Save paid coverage checkpoint
+        if: steps.terminal_reuse.outputs.stop != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: daily-production-checkpoint-coverage-${{ steps.runtime.outputs.publication_date }}-attempt-${{ github.run_attempt }}
+          path: |
+            automation/preview/production-daily/
+            automation/preview/${{ steps.runtime.outputs.publication_date }}/
+          if-no-files-found: error
+          retention-days: 14
       - name: Normalize and validate digest artifact
         if: steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true'
         shell: bash
@@ -672,6 +777,16 @@ jobs:
           python automation/scripts/validate_cover_contract.py \
             --artifact-dir "${image_dir}" \
             --report "${image_dir}/cover-validation.json"
+      - name: Save paid image checkpoint
+        if: success() && steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: daily-production-checkpoint-image-${{ steps.runtime.outputs.publication_date }}-attempt-${{ github.run_attempt }}
+          path: |
+            automation/preview/production-daily/
+            automation/preview/${{ steps.runtime.outputs.publication_date }}/
+          if-no-files-found: error
+          retention-days: 14
       - name: Build and validate candidate site
         if: steps.terminal_reuse.outputs.stop != 'true' && steps.coverage.outputs.editorial_stop != 'true'
         shell: bash

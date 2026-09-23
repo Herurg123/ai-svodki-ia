@@ -99,6 +99,16 @@ class ProductionContractSyncTests(unittest.TestCase):
             "Свежий paid research автоматически не запускается",
             workflow,
         )
+        for checkpoint in (
+            "daily-production-checkpoint-research-",
+            "daily-production-checkpoint-coverage-",
+            "daily-production-checkpoint-image-",
+        ):
+            self.assertIn(checkpoint, workflow)
+        self.assertIn(
+            "name: ${{ steps.recovery_source.outputs.artifact_name }}",
+            workflow,
+        )
         self.assertIn("/actions/runs/${candidate_run_id}/jobs?per_page=100", workflow)
         self.assertIn('echo "reused=false" >> "${GITHUB_OUTPUT}"', workflow)
         self.assertIn(r'stream.write("reused=true\n")', workflow)
@@ -150,6 +160,7 @@ class ProductionContractSyncTests(unittest.TestCase):
             "Новостей сегодня меньше, чем обычно",
             "`publish=false` по умолчанию",
             "`recovery_run_id`",
+            "stage checkpoints",
             "`gpt-5.6-terra`",
             "`gpt-image-2`",
         ):
