@@ -19,9 +19,10 @@ class ImageStageRecoveryContractTests(unittest.TestCase):
     def test_late_cover_failure_keeps_a_reusable_rank_two_artifact(self) -> None:
         text = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn(
-            'elif any($steps[]; (.name == "Validate publishable story count and short digest marker" and .conclusion == "success")) then 2',
+            '.name == "Complete mandatory coverage audit for a short digest" or .name == "Validate publishable story count and short digest marker"',
             text,
         )
+        self.assertIn("and .conclusion == \"success\")) then 2", text)
         self.assertIn(
             "      - uses: actions/upload-artifact@v7\n"
             "        if: always()\n",
