@@ -62,10 +62,10 @@ class ForceFreshResearchWorkflowTests(unittest.TestCase):
             self.text,
         )
 
-    def test_fresh_research_path_and_publish_dry_run_contract_are_unchanged(self):
+    def test_fresh_research_requires_no_selected_recovery_artifact(self):
         self.assertIn(
             "- name: Run full research and editorial\n"
-            "        if: steps.recovery.outputs.reused != 'true' && steps.terminal_reuse.outputs.stop != 'true'",
+            "        if: steps.recovery_source.outputs.run_id == '' && steps.terminal_reuse.outputs.stop != 'true'",
             self.text,
         )
         self.assertIn('MANUAL_PUBLISH: ${{ inputs.publish || \'false\' }}', self.text)

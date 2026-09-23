@@ -94,7 +94,11 @@ class ProductionContractSyncTests(unittest.TestCase):
             "steps.terminal_reuse.outputs.stop != 'true'", workflow
         )
         self.assertIn("needs.production.outputs.commit_sha != ''", workflow)
-        self.assertIn("if: steps.recovery.outputs.reused != 'true'", workflow)
+        self.assertIn("if: steps.recovery_source.outputs.run_id == ''", workflow)
+        self.assertIn(
+            "Свежий paid research автоматически не запускается",
+            workflow,
+        )
         self.assertIn("/actions/runs/${candidate_run_id}/jobs?per_page=100", workflow)
         self.assertIn('echo "reused=false" >> "${GITHUB_OUTPUT}"', workflow)
         self.assertIn(r'stream.write("reused=true\n")', workflow)

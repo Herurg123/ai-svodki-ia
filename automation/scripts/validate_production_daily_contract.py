@@ -176,8 +176,16 @@ def main() -> int:
         ("bounded primary research", "--maximum-research-web-search-calls 12"),
         ("bounded audit searches", "--maximum-audit-web-search-calls 7"),
         (
-            "fresh research after unusable automatic recovery",
-            "if: steps.recovery.outputs.reused != 'true'",
+            "fresh research only without selected recovery artifact",
+            "if: steps.recovery_source.outputs.run_id == ''",
+        ),
+        (
+            "automatic recovery failure blocks fresh paid research",
+            "Свежий paid research автоматически не запускается",
+        ),
+        (
+            "automatic recovery failure preserves non-zero status",
+            'exit "${recovery_status}"',
         ),
         (
             "automatic artifact eligibility check",

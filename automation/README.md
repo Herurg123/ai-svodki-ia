@@ -80,7 +80,10 @@ Publication time нормализуется к 06:00 МСК. Continuity anchor �
 
 Recovery выбирает наиболее полный пригодный exact same-day artifact и сохраняет
 bundle identity через compatibility wrappers. Completed paid stages не
-повторяются только ради восстановления или regression.
+повторяются только ради восстановления или regression. Если automatic recovery
+уже выбрал same-day artifact, но скачать или безопасно восстановить его не
+удалось, production останавливается до fresh Research; новый полный paid Research
+в таком случае возможен только через явный `force_fresh_research=true`.
 
 ### Search budget
 
