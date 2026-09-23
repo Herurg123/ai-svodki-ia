@@ -112,7 +112,7 @@ class Sep22AutomaticRecoverySpendGuardTests(unittest.TestCase):
             '"${FORCE_FRESH_RESEARCH}" == "true" ]]; then'
         )
         start = workflow.index(marker)
-        end = workflow.index('elif [[ -z "${run_id}" ]]; then', start)
+        end = workflow.index('source="automatic"', start)
         forced_block = workflow[start:end]
         self.assertIn('run_id=""', forced_block)
         self.assertIn('source="none"', forced_block)
