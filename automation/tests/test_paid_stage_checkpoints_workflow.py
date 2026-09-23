@@ -36,12 +36,12 @@ class PaidStageCheckpointWorkflowTests(unittest.TestCase):
             self.assertIn(
                 "daily-production-checkpoint-"
                 + stage
-                + "-\${{ steps.runtime.outputs.publication_date }}-attempt-\${{ github.run_attempt }}",
+                + "-${{ steps.runtime.outputs.publication_date }}-attempt-${{ github.run_attempt }}",
                 self.text,
             )
-        self.assertIn("daily-production-checkpoint-research-\${PUBLICATION_DATE}-attempt-", self.text)
-        self.assertIn("daily-production-checkpoint-coverage-\${PUBLICATION_DATE}-attempt-", self.text)
-        self.assertIn("daily-production-checkpoint-image-\${PUBLICATION_DATE}-attempt-", self.text)
+        self.assertIn("daily-production-checkpoint-research-${PUBLICATION_DATE}-attempt-", self.text)
+        self.assertIn("daily-production-checkpoint-coverage-${PUBLICATION_DATE}-attempt-", self.text)
+        self.assertIn("daily-production-checkpoint-image-${PUBLICATION_DATE}-attempt-", self.text)
 
     def test_checkpoint_uploads_preserve_the_recovery_bundle_shape(self) -> None:
         self.assertGreaterEqual(self.text.count("uses: actions/upload-artifact@v7"), 4)
@@ -59,20 +59,20 @@ class PaidStageCheckpointWorkflowTests(unittest.TestCase):
         for block in blocks:
             self.assertIn("automation/preview/production-daily/", block)
             self.assertIn(
-                "automation/preview/\${{ steps.runtime.outputs.publication_date }}/",
+                "automation/preview/${{ steps.runtime.outputs.publication_date }}/",
                 block,
             )
             self.assertIn("retention-days: 14", block)
             self.assertIn("if-no-files-found: error", block)
 
     def test_selected_checkpoint_name_is_downloaded_exactly(self) -> None:
-        self.assertIn('echo "artifact_name=\${best_artifact_name}" >> "\${GITHUB_OUTPUT}"', self.text)
+        self.assertIn('echo "artifact_name=${best_artifact_name}" >> "${GITHUB_OUTPUT}"', self.text)
         self.assertIn(
-            "name: \${{ steps.recovery_source.outputs.artifact_name }}",
+            "name: ${{ steps.recovery_source.outputs.artifact_name }}",
             self.text,
         )
         self.assertIn(
-            'RECOVERY_ARTIFACT_NAME: \${{ steps.recovery_source.outputs.artifact_name }}',
+            'RECOVERY_ARTIFACT_NAME: ${{ steps.recovery_source.outputs.artifact_name }}',
             self.text,
         )
 
@@ -81,7 +81,7 @@ class PaidStageCheckpointWorkflowTests(unittest.TestCase):
             "- uses: actions/upload-artifact@v7\\n"
             "        if: always()\\n"
             "        with:\\n"
-            "          name: daily-production-\${{ steps.runtime.outputs.publication_date || github.run_id }}",
+            "          name: daily-production-${{ steps.runtime.outputs.publication_date || github.run_id }}",
             self.text,
         )
 
