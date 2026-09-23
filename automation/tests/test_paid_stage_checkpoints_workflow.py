@@ -1,5 +1,10 @@
 from __future__ import annotations
 
+import json
+import os
+import subprocess
+import tempfile
+import textwrap
 import unittest
 from pathlib import Path
 
@@ -84,6 +89,136 @@ class PaidStageCheckpointWorkflowTests(unittest.TestCase):
             "          name: daily-production-${{ steps.runtime.outputs.publication_date || github.run_id }}",
             self.text,
         )
+
+    def _resolver_shell(self) -> str:
+        start = self.text.index("- name: Resolve reusable artifact")
+        run_marker = "        run: |\n"
+        run_start = self.text.index(run_marker, start) + len(run_marker)
+        run_end = self.text.index("\n      - name:", run_start)
+        return textwrap.dedent(self.text[run_start:run_end])
+
+    def _run_resolver(self, scenario: dict[str, object], **env_overrides: str) -> dict[str, str]:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            fake_gh = root / "gh"
+            fake_gh.write_text(
+                """#!/usr/bin/env python3
+import json
+import os
+import sys
+
+scenario = json.loads(os.environ["FAKE_GH_SCENARIO"])
+url = next((arg for arg in sys.argv[1:] if arg.startswith("/repos/")), "")
+if "/actions/artifacts?" in url and "/actions/runs/" not in url:
+    print("\\n".join(scenario.get("automatic_artifacts", [])))
+elif "/actions/runs/" in url and "/artifacts?" in url:
+    run_id = url.split("/actions/runs/", 1)[1].split("/", 1)[0]
+    print("\\n".join(scenario.get("manual_artifacts", {}).get(run_id, [])))
+elif "/actions/runs/" in url and "/jobs?" in url:
+    run_id = url.split("/actions/runs/", 1)[1].split("/", 1)[0]
+    print(scenario.get("run_ranks", {}).get(run_id, 0))
+else:
+    raise SystemExit("unexpected gh call: " + " ".join(sys.argv))
+""",
+                encoding="utf-8",
+            )
+            fake_gh.chmod(0o755)
+            output = root / "github-output.txt"
+            env = os.environ.copy()
+            env.update(
+                {
+                    "PATH": str(root) + os.pathsep + env.get("PATH", ""),
+                    "FAKE_GH_SCENARIO": json.dumps(scenario),
+                    "GITHUB_OUTPUT": str(output),
+                    "GITHUB_REPOSITORY": "Herurg123/ai-svodki-ia",
+                    "GITHUB_RUN_ID": "999",
+                    "PUBLICATION_DATE": "2026-09-22",
+                    "EVENT_NAME": "schedule",
+                    "MANUAL_RECOVERY_RUN_ID": "",
+                    "FORCE_FRESH_RESEARCH": "false",
+                }
+            )
+            env.update(env_overrides)
+            completed = subprocess.run(
+                ["bash", "-c", self._resolver_shell()],
+                cwd=ROOT,
+                env=env,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                check=False,
+            )
+            self.assertEqual(completed.returncode, 0, completed.stdout)
+            values: dict[str, str] = {}
+            for line in output.read_text(encoding="utf-8").splitlines():
+                key, value = line.split("=", 1)
+                values[key] = value
+            return values
+
+    def test_resolver_prefers_most_complete_surviving_checkpoint(self) -> None:
+        values = self._run_resolver(
+            {
+                "automatic_artifacts": [
+                    "2026-09-22T01:44:43Z\\t101\\tdaily-production-checkpoint-research-2026-09-22-attempt-1",
+                    "2026-09-22T01:46:00Z\\t102\\tdaily-production-checkpoint-coverage-2026-09-22-attempt-1",
+                    "2026-09-22T01:47:00Z\\t103\\tdaily-production-checkpoint-image-2026-09-22-attempt-1",
+                ],
+                "run_ranks": {"101": 1, "102": 2, "103": 3},
+            }
+        )
+        self.assertEqual(values["run_id"], "103")
+        self.assertEqual(values["rank"], "3")
+        self.assertEqual(
+            values["artifact_name"],
+            "daily-production-checkpoint-image-2026-09-22-attempt-1",
+        )
+
+    def test_final_failure_snapshot_beats_same_rank_research_checkpoint(self) -> None:
+        values = self._run_resolver(
+            {
+                "automatic_artifacts": [
+                    "2026-09-22T01:44:43Z\\t101\\tdaily-production-checkpoint-research-2026-09-22-attempt-1",
+                    "2026-09-22T01:47:27Z\\t101\\tdaily-production-2026-09-22",
+                ],
+                "run_ranks": {"101": 1},
+            }
+        )
+        self.assertEqual(values["artifact_name"], "daily-production-2026-09-22")
+        self.assertEqual(values["rank"], "1")
+
+    def test_checkpoint_name_cannot_claim_more_than_completed_run_steps(self) -> None:
+        values = self._run_resolver(
+            {
+                "automatic_artifacts": [
+                    "2026-09-22T01:47:00Z\\t101\\tdaily-production-checkpoint-image-2026-09-22-attempt-1",
+                    "2026-09-22T01:46:00Z\\t101\\tdaily-production-checkpoint-coverage-2026-09-22-attempt-1",
+                    "2026-09-22T01:44:43Z\\t101\\tdaily-production-checkpoint-research-2026-09-22-attempt-1",
+                ],
+                "run_ranks": {"101": 1},
+            }
+        )
+        self.assertEqual(
+            values["artifact_name"],
+            "daily-production-checkpoint-research-2026-09-22-attempt-1",
+        )
+        self.assertEqual(values["rank"], "1")
+
+    def test_manual_recovery_can_select_checkpoint_when_final_artifact_is_missing(self) -> None:
+        values = self._run_resolver(
+            {
+                "manual_artifacts": {
+                    "555": [
+                        "2026-09-22T01:46:00Z\\t555\\tdaily-production-checkpoint-coverage-2026-09-22-attempt-2"
+                    ]
+                },
+                "run_ranks": {"555": 2},
+            },
+            EVENT_NAME="workflow_dispatch",
+            MANUAL_RECOVERY_RUN_ID="555",
+        )
+        self.assertEqual(values["source"], "manual")
+        self.assertEqual(values["run_id"], "555")
+        self.assertEqual(values["rank"], "2")
 
     def test_search_and_coverage_budgets_are_not_changed_by_checkpointing(self) -> None:
         self.assertIn("--maximum-research-web-search-calls 12", self.text)
