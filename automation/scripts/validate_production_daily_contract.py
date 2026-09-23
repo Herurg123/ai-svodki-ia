@@ -383,7 +383,7 @@ def main() -> int:
     )
     research_position = workflow.find("Run full research and editorial")
     summary_position = workflow.find("Publish Russian pipeline status")
-    artifact_position = workflow.find("actions/upload-artifact@v7")
+    artifact_position = workflow.rfind("actions/upload-artifact@v7")
     if (
         runtime_position < 0
         or previous_release_position < 0
@@ -412,7 +412,7 @@ def main() -> int:
         or summary_position > artifact_position
     ):
         errors.append(
-            "Russian pipeline status must be written before artifact upload"
+            "Russian pipeline status must be written before final artifact upload"
         )
     if "if: always()" not in workflow[
         max(0, summary_position - 120):
