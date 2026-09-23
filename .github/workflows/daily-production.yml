@@ -281,23 +281,23 @@ jobs:
                 kind_priority=1
                 ;;
               "daily-production-checkpoint-image-${PUBLICATION_DATE}-attempt-"*)
-                [[ "${rank}" -ge 3 ]] || return
+                [[ "${rank}" -ge 3 ]] || return 0
                 rank=3
                 ;;
               "daily-production-checkpoint-coverage-${PUBLICATION_DATE}-attempt-"*)
-                [[ "${rank}" -ge 2 ]] || return
+                [[ "${rank}" -ge 2 ]] || return 0
                 rank=2
                 ;;
               "daily-production-checkpoint-research-${PUBLICATION_DATE}-attempt-"*)
-                [[ "${rank}" -ge 1 ]] || return
+                [[ "${rank}" -ge 1 ]] || return 0
                 rank=1
                 ;;
               *)
-                return
+                return 0
                 ;;
             esac
 
-            [[ "${rank}" -gt 0 ]] || return
+            [[ "${rank}" -gt 0 ]] || return 0
             if [[ "${rank}" -gt "${best_rank}" ]] \
               || [[ "${rank}" -eq "${best_rank}" && "${created_at}" > "${best_created_at}" ]] \
               || [[ "${rank}" -eq "${best_rank}" && "${created_at}" == "${best_created_at}" && "${kind_priority}" -gt "${best_kind_priority}" ]]; then
