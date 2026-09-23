@@ -402,8 +402,8 @@ jobs:
             rm -rf \
               "automation/preview/${PUBLICATION_DATE}" \
               "automation/preview/production-daily/image/${PUBLICATION_DATE}"
-            echo "::warning title=Непригодный автоматический artifact::Artifact run ${RECOVERY_RUN_ID} не содержит завершённого платного research/editorial. Будет выполнен свежий research."
-            exit 0
+            echo "::error title=Автоматическое восстановление заблокировано::Artifact run ${RECOVERY_RUN_ID} выбран для восстановления за ту же дату, но безопасно восстановить его не удалось. Свежий paid research автоматически не запускается; исправьте recovery или явно запустите workflow_dispatch с force_fresh_research=true."
+            exit "${recovery_status}"
           fi
           python - <<'PY'
           import json
@@ -524,7 +524,7 @@ jobs:
             --publication-hour 6 \
             --output automation/preview/production-daily/search-window-continuity.json
       - name: Run full research and editorial
-        if: steps.recovery.outputs.reused != 'true' && steps.terminal_reuse.outputs.stop != 'true'
+        if: steps.recovery_source.outputs.run_id == '' && steps.terminal_reuse.outputs.stop != 'true'
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
