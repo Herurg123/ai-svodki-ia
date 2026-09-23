@@ -52,7 +52,7 @@ class ForceFreshResearchWorkflowTests(unittest.TestCase):
         forced_block = self.text[self.text.rfind('if [[ "${EVENT_NAME}"', 0, forced):automatic]
         self.assertIn('run_id=""', forced_block)
         self.assertIn('source="none"', forced_block)
-        self.assertIn('elif [[ -z "${run_id}" ]]; then', forced_block)
+        self.assertIn('else\n            if [[ -n "${MANUAL_RECOVERY_RUN_ID}" ]]; then', forced_block)
 
     def test_terminal_reuse_still_requires_selected_artifact(self):
         self.assertIn(
