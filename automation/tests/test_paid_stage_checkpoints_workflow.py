@@ -83,9 +83,9 @@ class PaidStageCheckpointWorkflowTests(unittest.TestCase):
 
     def test_final_always_artifact_remains_as_last_resort_snapshot(self) -> None:
         self.assertIn(
-            "- uses: actions/upload-artifact@v7\\n"
-            "        if: always()\\n"
-            "        with:\\n"
+            "- uses: actions/upload-artifact@v7\n"
+            "        if: always()\n"
+            "        with:\n"
             "          name: daily-production-${{ steps.runtime.outputs.publication_date || github.run_id }}",
             self.text,
         )
@@ -159,9 +159,9 @@ else:
         values = self._run_resolver(
             {
                 "automatic_artifacts": [
-                    "2026-09-22T01:44:43Z\\t101\\tdaily-production-checkpoint-research-2026-09-22-attempt-1",
-                    "2026-09-22T01:46:00Z\\t102\\tdaily-production-checkpoint-coverage-2026-09-22-attempt-1",
-                    "2026-09-22T01:47:00Z\\t103\\tdaily-production-checkpoint-image-2026-09-22-attempt-1",
+                    "2026-09-22T01:44:43Z\t101\tdaily-production-checkpoint-research-2026-09-22-attempt-1",
+                    "2026-09-22T01:46:00Z\t102\tdaily-production-checkpoint-coverage-2026-09-22-attempt-1",
+                    "2026-09-22T01:47:00Z\t103\tdaily-production-checkpoint-image-2026-09-22-attempt-1",
                 ],
                 "run_ranks": {"101": 1, "102": 2, "103": 3},
             }
@@ -177,8 +177,8 @@ else:
         values = self._run_resolver(
             {
                 "automatic_artifacts": [
-                    "2026-09-22T01:44:43Z\\t101\\tdaily-production-checkpoint-research-2026-09-22-attempt-1",
-                    "2026-09-22T01:47:27Z\\t101\\tdaily-production-2026-09-22",
+                    "2026-09-22T01:44:43Z\t101\tdaily-production-checkpoint-research-2026-09-22-attempt-1",
+                    "2026-09-22T01:47:27Z\t101\tdaily-production-2026-09-22",
                 ],
                 "run_ranks": {"101": 1},
             }
@@ -190,9 +190,9 @@ else:
         values = self._run_resolver(
             {
                 "automatic_artifacts": [
-                    "2026-09-22T01:47:00Z\\t101\\tdaily-production-checkpoint-image-2026-09-22-attempt-1",
-                    "2026-09-22T01:46:00Z\\t101\\tdaily-production-checkpoint-coverage-2026-09-22-attempt-1",
-                    "2026-09-22T01:44:43Z\\t101\\tdaily-production-checkpoint-research-2026-09-22-attempt-1",
+                    "2026-09-22T01:47:00Z\t101\tdaily-production-checkpoint-image-2026-09-22-attempt-1",
+                    "2026-09-22T01:46:00Z\t101\tdaily-production-checkpoint-coverage-2026-09-22-attempt-1",
+                    "2026-09-22T01:44:43Z\t101\tdaily-production-checkpoint-research-2026-09-22-attempt-1",
                 ],
                 "run_ranks": {"101": 1},
             }
@@ -208,7 +208,7 @@ else:
             {
                 "manual_artifacts": {
                     "555": [
-                        "2026-09-22T01:46:00Z\\t555\\tdaily-production-checkpoint-coverage-2026-09-22-attempt-2"
+                        "2026-09-22T01:46:00Z\t555\tdaily-production-checkpoint-coverage-2026-09-22-attempt-2"
                     ]
                 },
                 "run_ranks": {"555": 2},
