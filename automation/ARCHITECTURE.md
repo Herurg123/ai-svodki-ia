@@ -1272,7 +1272,14 @@ Stable public recovery entrypoint: `recover_digest_artifact.py`.
 
 Основной принцип: уже успешно оплаченная стадия не повторяется автоматически из-
 за ошибки более поздней стадии. Recovery выбирает наиболее полный валидный
-same-day artifact и продолжает с первого незавершённого этапа. P0 editorial
+same-day artifact и продолжает с первого незавершённого этапа. Если
+`daily-production.yml` уже выбрал same-day artifact для automatic recovery, то
+ошибка его скачивания или `recover_digest_artifact.py` является fail-closed:
+workflow не превращает `reused=false` в разрешение на новый paid Research и
+завершается до fresh retrieval. Обычный fresh Research разрешён, когда
+recovery-resolver не выбрал artifact, либо при явном ручном
+`force_fresh_research=true`; этот override остаётся отдельным осознанным
+операторским решением. P0 editorial
 repair journal v2 использует semantic archive identity без служебного
 `generated_at`, и тот же volatile field исключён из нового editorial prompt.
 Legacy v1 `response_saved` допускается только при exact hash proof исходного
