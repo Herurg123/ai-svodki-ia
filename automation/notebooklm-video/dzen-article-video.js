@@ -265,12 +265,7 @@ async function readClipboardText() {
 function buildClipboardWriteCommand(value) {
   const text = String(value ?? "");
   if (!text.length) {
-    return [
-      "$ErrorActionPreference = 'Stop'",
-      "Add-Type -AssemblyName System.Windows.Forms",
-      "[System.Windows.Forms.Clipboard]::Clear()",
-      "Write-Output 'OK'",
-    ].join("\r\n");
+    throw new Error("Пустое значение нельзя записывать в Windows clipboard.");
   }
 
   const encoded = Buffer.from(text, "utf8").toString("base64");
@@ -286,40 +281,6 @@ function buildClipboardWriteCommand(value) {
 
 async function writeClipboardText(value) {
   await runPowerShell(buildClipboardWriteCommand(value));
-}
-
-async function restoreOriginalClipboardBestEffort(logger, label = "clipboard restore") {
-  const original = global.__AI_AV_ORIGINAL_CLIPBOARD__;
-  if (typeof original !== "string") return false;
-
-  let lastError = null;
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
-    try {
-      await writeClipboardText(original);
-      if (logger) {
-        logger.log(
-          original.length
-            ? `Исходный текст Windows clipboard восстановлен (${label}).`
-            : `Исходный пустой Windows clipboard восстановлен через Clipboard.Clear() (${label}).`
-        );
-      }
-      return true;
-    } catch (error) {
-      lastError = error;
-      if (attempt < 3) {
-        await new Promise((resolve) => setTimeout(resolve, 150 * attempt));
-      }
-    }
-  }
-
-  if (logger) {
-    logger.warn(
-      `Не удалось восстановить исходный Windows clipboard после 3 попыток (${label}): ` +
-      `${lastError && lastError.message ? lastError.message : String(lastError)}. ` +
-      "Article-video flow продолжается: восстановление clipboard не является mutation/publish gate."
-    );
-  }
-  return false;
 }
 
 function expectedPublicationUrlPattern(kind) {
@@ -2816,10 +2777,9 @@ async function runApply(page, config, state, job, dateKey, logger) {
       lastErrorAt: null,
     });
 
-    // Clipboard preservation is secondary. A failure here must never turn a
-    // successfully created embed into a terminal article mutation incident.
-    await restoreOriginalClipboardBestEffort(logger, "после подтверждения video preview");
-
+    // Clipboard now intentionally contains the video URL. The runtime does not
+    // preserve or restore the operator clipboard; only the strict pre-mutation
+    // video paste check below owns the OS clipboard.
     const anchor = await exactDraftBlock(editorPage, ANCHOR_TEXT, "oracle-anchor");
     oracle = await blockStyleSnapshot(anchor);
   }
@@ -2916,12 +2876,14 @@ function runSelfTest() {
     throw new Error("self-test: manual second URL must be preserved");
   }
   if (!TERMINAL_STATUSES.has("ERROR")) throw new Error("self-test: ERROR must remain terminal");
-  const emptyClipboardCommand = buildClipboardWriteCommand("");
-  if (!emptyClipboardCommand.includes("[System.Windows.Forms.Clipboard]::Clear()")) {
-    throw new Error("self-test: empty clipboard restore must use Clipboard.Clear()");
+  let emptyClipboardRejected = false;
+  try {
+    buildClipboardWriteCommand("");
+  } catch {
+    emptyClipboardRejected = true;
   }
-  if (emptyClipboardCommand.includes("Set-Clipboard -Value")) {
-    throw new Error("self-test: empty clipboard restore must not call Set-Clipboard -Value");
+  if (!emptyClipboardRejected) {
+    throw new Error("self-test: empty clipboard write must be rejected; clipboard preservation is disabled");
   }
   const textClipboardCommand = buildClipboardWriteCommand("abc");
   if (!textClipboardCommand.includes("Set-Clipboard -Value $v")) {
@@ -3018,7 +2980,6 @@ async function main() {
   let job = null;
   let session = null;
   let browserSession = null;
-  let originalClipboard = null;
   let dateKey = args.date;
 
   try {
@@ -3072,9 +3033,6 @@ async function main() {
       logger.log(`DRY-RUN разрешён при terminal state=${av.status}: state не изменяется.`);
     }
 
-    originalClipboard = await readClipboardText();
-    global.__AI_AV_ORIGINAL_CLIPBOARD__ = originalClipboard;
-
     browserSession = require("./browser-session");
     session = await browserSession.launchRobotBrowser(config, {
       log: (message) => logger.log(message),
@@ -3116,11 +3074,6 @@ async function main() {
     }
     process.exitCode = 1;
   } finally {
-    if (originalClipboard !== null) {
-      await restoreOriginalClipboardBestEffort(logger, "финальный cleanup");
-    }
-    delete global.__AI_AV_ORIGINAL_CLIPBOARD__;
-
     if (session) {
       await browserSession.closeRobotBrowser(session, config).catch((error) => {
         if (logger) logger.fatal(`Не удалось закрыть браузер: ${error.message}`, error);
