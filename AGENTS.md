@@ -168,7 +168,10 @@ by its `AGENTS.md`, `README.md`, `DEPLOYMENT.md` and DZEN subsystem docs.
 
 The local downstream may publish native Dzen video, manage its two exact
 collections and edit only the already-published same-day article under its
-at-most-once/verification-only state machines. It must not mutate nightly RSS,
+at-most-once/verification-only state machines. The article-video runtime must not
+preserve or restore the operator Windows clipboard; it may overwrite the
+clipboard with the exact video URL required for the real Ctrl+V paste, and must
+verify that URL before the first editor mutation. It must not mutate nightly RSS,
 public site generation or GitHub publication state.
 
 The 32-day FTP-video retention job is a separate narrow maintenance exception. It
