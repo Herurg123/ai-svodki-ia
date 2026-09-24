@@ -51,14 +51,6 @@ jobs:
           set -euo pipefail
           npm test
 
-      - name: Upload article-video overlay for local handoff
-        uses: actions/upload-artifact@v4
-        with:
-          name: article-video-no-clipboard-preservation
-          path: automation/notebooklm-video/dzen-article-video.js
-          if-no-files-found: error
-          retention-days: 1
-
       - name: Показать итог Video CI
         if: always()
         shell: bash
