@@ -1,0 +1,223 @@
+[
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Cognex купит RealSense примерно за $600 млн для расширения в робототехническое восприятие",
+    "organization": "Cognex; RealSense; Intel",
+    "topic": "M&A в Physical AI и компьютерном зрении для робототехники",
+    "event_type": "acquisition",
+    "status": "new",
+    "summary": "Cognex договорилась приобрести RealSense — бывшее подразделение Intel, разрабатывающее depth-камеры и компьютерное зрение для роботов и автономных систем. Сообщаемая стоимость сделки составляет около $600 млн с учётом cash-компонента, retention-программы и RSU; это крупная ставка Cognex на рынок робототехнического восприятия.",
+    "published_at": "2026-09-22T11:00:00+00:00",
+    "published_date": "2026-09-22",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Intel let RealSense go. Now Cognex is paying $600 million to buy it",
+        "publisher": "CTech / Calcalist",
+        "url": "https://www.calcalistech.com/ctechnews/article/s1tqir19fl"
+      }
+    ],
+    "keywords": [
+      "Cognex",
+      "RealSense",
+      "M&A",
+      "robotics",
+      "physical AI",
+      "computer vision",
+      "depth sensing"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "OpenAI перенесла голосовые агентные функции ChatGPT Work на мобильные приложения",
+    "organization": "OpenAI; ChatGPT",
+    "topic": "Потребительские AI-агенты и мобильные голосовые интерфейсы для документов, e-mail, Slack, cloud browser и подключённых приложений",
+    "event_type": "product_launch",
+    "status": "new",
+    "summary": "OpenAI добавляет в мобильный ChatGPT голосовые агентные функции: подписчики Plus и Pro смогут голосом запускать рабочие сценарии в Work, включая подготовку документов и писем, сводки Slack, создание сайтов и презентаций, а также работу с cloud browser. Для Free и Go заявлены plugins и connected apps.",
+    "published_at": "2026-09-23T17:00:00+00:00",
+    "published_date": "2026-09-23",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "ChatGPT mobile app gets voice-based agentic features",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/23/chatgpt-mobile-app-gets-voice-based-agentic-features/"
+      }
+    ],
+    "keywords": [
+      "ChatGPT",
+      "OpenAI",
+      "mobile",
+      "voice",
+      "agents",
+      "Work tab",
+      "plugins",
+      "connected apps"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Verda привлекла $189 млн на расширение европейского ИИ-облака",
+    "organization": "Verda; Emergence Capital; Supermicro; MUFG Innovation Partners",
+    "topic": "Финансирование европейского AI-neocloud и расширение compute-инфраструктуры",
+    "event_type": "financing",
+    "status": "new",
+    "summary": "Финская Verda привлекла $189 млн, включая oversubscribed Series B под лидерством Emergence Capital, чтобы масштабировать full-stack AI cloud, наращивать compute и развиваться в Европе, США и Азии. Компания заявляет, что раунд довёл общий объём привлечённого капитала выше $450 млн и дал оценку свыше $1 млрд.",
+    "published_at": "2026-09-22T08:03:36+00:00",
+    "published_date": "2026-09-22",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Verda raises $189M to advance its AI cloud and expand compute capacity",
+        "publisher": "Tech.eu",
+        "url": "https://tech.eu/2026/09/22/verda-raises-189m-to-advance-its-ai-cloud-and-expand-compute-capacity/"
+      }
+    ],
+    "keywords": [
+      "Verda",
+      "AI cloud",
+      "neocloud",
+      "Series B",
+      "compute",
+      "infrastructure",
+      "Europe"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Firecrawl привлекла $75 млн и запустила Alexandria для лицензируемого доступа агентов к данным",
+    "organization": "Firecrawl; Smash Capital; Altos Ventures; Nexus Venture Partners; Y Combinator",
+    "topic": "Financing и data-access platform для AI agents; оплата поставщикам данных",
+    "event_type": "financing_and_product_launch",
+    "status": "new",
+    "summary": "Firecrawl объявила о Series B на $75 млн под лидерством Smash Capital и запуске Alexandria — библиотеки и API-слоя, через который AI-агенты могут обращаться к официальным data providers, специализированным индексам и вебу. Компания заявляет, что собирается направить капитал на расширение покрытия и выплаты поставщикам данных.",
+    "published_at": "2026-09-22T09:35:00-04:00",
+    "published_date": "2026-09-22",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Firecrawl Raises $75M Series B; Launches Alexandria",
+        "publisher": "Firecrawl / PR.com",
+        "url": "https://www.pr.com/press-release/979737"
+      }
+    ],
+    "keywords": [
+      "Firecrawl",
+      "Alexandria",
+      "Series B",
+      "AI agents",
+      "MCP",
+      "data licensing",
+      "retrieval"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "Snorkel AI привлекла $350 млн на данные и RL-среды для обучения моделей",
+    "organization": "Snorkel AI; Insight Partners; S32",
+    "topic": "Финансирование поставщика training data, синтетических данных и reinforcement-learning environments для AI-лабораторий и корпораций",
+    "event_type": "funding",
+    "status": "new",
+    "summary": "Snorkel AI привлекла $350 млн в Series E под руководством Insight Partners и S32 при оценке $3,5 млрд. Компания поставляет AI-лабораториям и корпоративным заказчикам готовые датасеты, синтетические данные и RL-окружения; по её данным, annualized revenue run rate достиг $375 млн.",
+    "published_at": "2026-09-22T21:56:43+00:00",
+    "published_date": "2026-09-22",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Snorkel AI triples valuation to $3.5B as demand for AI training data booms",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/22/snorkel-ai-triples-valuation-to-3-5b-as-demand-for-ai-training-data-booms/"
+      }
+    ],
+    "keywords": [
+      "Snorkel AI",
+      "Series E",
+      "training data",
+      "synthetic data",
+      "RL environments",
+      "data-as-a-service"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-010",
+    "section": "world",
+    "headline": "YouTube добавил в Studio генеративные инструменты для анализа роликов и работы с превью",
+    "organization": "YouTube; Google",
+    "topic": "Массовые creator-инструменты: генеративный ИИ для видеочерновиков, thumbnail/title generation, A/B-тестирования и аналитики",
+    "event_type": "product_launch",
+    "status": "new",
+    "summary": "На ежегодном мероприятии Made on YouTube компания представила обновления YouTube Studio: мобильное расширение Ask Studio, AI-оценку черновых видео, генерацию заголовков и превью по содержанию ролика, а также dynamic thumbnails с разными вариантами для сегментов аудитории.",
+    "published_at": "2026-09-23T14:30:00+00:00",
+    "published_date": "2026-09-23",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "YouTube releases new AI features for creators within its Studio app",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/23/youtube-releases-new-ai-features-for-creators-within-its-studio-app/"
+      }
+    ],
+    "keywords": [
+      "YouTube Studio",
+      "Ask Studio",
+      "generative AI",
+      "dynamic thumbnails",
+      "creator tools",
+      "video editing"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  },
+  {
+    "candidate_id": "cand-012",
+    "section": "russia",
+    "headline": "Yandex B2B Tech представила решение класса AI-SPM для защиты ИИ-систем",
+    "organization": "Яндекс",
+    "topic": "22 сентября 2026Yandex B2B Tech представила решение класса AI‑SPM для защиты ИИ‑систем",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+    "published_at": null,
+    "published_date": "2026-09-22",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "22 сентября 2026Yandex B2B Tech представила решение класса AI‑SPM для защиты ИИ‑систем",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=22-09-2026-02"
+      }
+    ],
+    "keywords": [
+      "22",
+      "сентября",
+      "2026Yandex",
+      "B2B",
+      "Tech",
+      "представила",
+      "решение",
+      "класса",
+      "SPM",
+      "для",
+      "защиты",
+      "ИИ"
+    ],
+    "geography": "russia",
+    "category": "investment"
+  }
+]

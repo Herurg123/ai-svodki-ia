@@ -1,0 +1,44 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-24",
+  "slug": "2026-09-24",
+  "title": "ИИ-Сводка на 24 сентября 2026",
+  "description": "Alibaba усиливает гонку за собственный ИИ-кремний, OpenAI переносит агентные функции в мобильный голосовой интерфейс, а рынки данных, облаков и робототехники получают новые сделки и инвестиции.",
+  "published_at": "2026-09-24T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-24.png",
+  "topics": [
+    "робототехника",
+    "компьютерное зрение",
+    "ChatGPT Work",
+    "голосовые агенты",
+    "ИИ-облака",
+    "обучающие данные",
+    "RL-среды",
+    "лицензирование данных",
+    "MCP",
+    "YouTube Studio",
+    "creator-инструменты",
+    "AI-SPM",
+    "защита ИИ-систем"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-012."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: В коротком, но достаточном для обычного выпуска пуле три независимых события TechCrunch относятся к разным рынкам: мобильные агентные функции OpenAI, финансирование data/RL-инфраструктуры Snorkel AI и массовые инструменты YouTube для создателей. Сопоставимых подтверждённых альтернатив по этим сюжетам в пуле нет."
+    }
+  ]
+}

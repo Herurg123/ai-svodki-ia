@@ -1,0 +1,150 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-09-24",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-09-24.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-003: источник показывает дату без точного времени.",
+    "cand-008: источник показывает дату без точного времени.",
+    "cand-012: источник показывает дату без точного времени.",
+    "cand-020: источник показывает дату без точного времени.",
+    "Одинаковые источники используются несколькими кандидатами: 1; это допустимо и будет проверено на редакторском этапе.",
+    "URL используется в нескольких кандидатах: https://www.axios.com/newsletters/axios-pro-rata-8b88c78a-23fd-4eb9-91bf-466e46447815 (cand-002, cand-005, cand-007, cand-008, cand-020)",
+    "Исследовательский пул перегружен одним издателем: openai (7), techcrunch (4)",
+    "Исследовательский пул перегружен одной организацией: openai (7)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-09-24",
+  "started_at": "2026-09-24T01:32:49+00:00",
+  "finished_at": "2026-09-24T01:33:30+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 68,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "f09a88e5e1db84eebe78414fd11a3ad36eab234a8349571449aa67ed31bf4e6e",
+    "candidates_sha256": "e54f8fd1a3ee93e800ac409a5e1816f77dae710a0b2b95ff0b31d07757cb09a6",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-09-22T04:30:29+03:00",
+      "end_at": "2026-09-24T04:24:33+03:00",
+      "latest_archive_at": "2026-09-23T04:30:29+03:00",
+      "start_date": "2026-09-22",
+      "end_date": "2026-09-24",
+      "latest_archive_date": "2026-09-23"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "c2ec0bd7631126c9bc0a3043c92ddfd76bdb53794ef7901d3238612ad68ad502",
+    "editorial_sha256": "304888cca205fe06f314a61d762675e33aeb861ffdca2bf25a2e884d44c4cb36",
+    "digest_sha256": "ae4a25f07c056bdd480b0776288f7a5456524cb4beeb5a5fb5c936061ea6ddf5",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-09-24.png",
+          "normalized_value": "ai-svodka-2026-09-24.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-012."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: В коротком, но достаточном для обычного выпуска пуле три независимых события TechCrunch относятся к разным рынкам: мобильные агентные функции OpenAI, финансирование data/RL-инфраструктуры Snorkel AI и массовые инструменты YouTube для создателей. Сопоставимых подтверждённых альтернатив по этим сюжетам в пуле нет."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0fe77aa9a05beb9c016ab47dc25fa087d0801ea57bdd7ec2a3",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 149201,
+        "input_tokens_details": {
+          "cache_write_tokens": 23112,
+          "cached_tokens": 126086
+        },
+        "output_tokens": 4028,
+        "output_tokens_details": {
+          "reasoning_tokens": 650
+        },
+        "total_tokens": 153229
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 149201,
+    "output_tokens": 4028,
+    "total_tokens": 153229,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "4c8fce5a408b50fc90fca2505a9f63a500ac093c",
+    "run_id": "35942716075",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-09-24T04:24:33+03:00"
+}

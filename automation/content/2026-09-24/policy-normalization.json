@@ -1,0 +1,23 @@
+{
+  "status": "applied",
+  "changed_fields": [],
+  "changed_count": 0,
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-012."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: В коротком, но достаточном для обычного выпуска пуле три независимых события TechCrunch относятся к разным рынкам: мобильные агентные функции OpenAI, финансирование data/RL-инфраструктуры Snorkel AI и массовые инструменты YouTube для создателей. Сопоставимых подтверждённых альтернатив по этим сюжетам в пуле нет."
+    }
+  ]
+}
