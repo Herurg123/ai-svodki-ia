@@ -8,6 +8,11 @@ const { execFileSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "..");
 const scriptPath = path.join(ROOT, "dzen-article-video.js");
 const source = fs.readFileSync(scriptPath, "utf8");
+assert.doesNotMatch(
+  source,
+  /__AI_AV_ORIGINAL_CLIPBOARD__|restoreOriginalClipboardBestEffort|originalClipboard\s*=\s*await\s+readClipboardText/,
+  "article-video must not preserve or restore the operator clipboard"
+);
 const setupSource = fs.readFileSync(path.join(ROOT, "setup-local.ps1"), "utf8");
 const fullWorkerSource = fs.readFileSync(path.join(ROOT, "full-worker.js"), "utf8");
 const articleVideo = require(scriptPath);
@@ -76,9 +81,11 @@ assert.strictEqual(
   false
 );
 
-const emptyClipboardCommand = articleVideo.buildClipboardWriteCommand("");
-assert.match(emptyClipboardCommand, /Clipboard\]::Clear\(\)/);
-assert.doesNotMatch(emptyClipboardCommand, /Set-Clipboard -Value/);
+assert.throws(
+  () => articleVideo.buildClipboardWriteCommand(""),
+  /Пустое значение нельзя записывать в Windows clipboard/,
+  "article-video no longer preserves/restores an empty operator clipboard"
+);
 
 const nonEmptyClipboardCommand = articleVideo.buildClipboardWriteCommand("abc");
 assert.match(nonEmptyClipboardCommand, /Set-Clipboard -Value \$v/);
