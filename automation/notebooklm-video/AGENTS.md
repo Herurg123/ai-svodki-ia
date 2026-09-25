@@ -174,11 +174,11 @@ the file as operator-edited and do not rewrite it. If present, the first link mu
 still match the selected job's publication URL or the stage fails closed.
 
 Insertion must create exactly one `Видеосводка` H2 and one confirmed Dzen video
-embed immediately before exact H2 `Мировые лидеры ИИ`. In the browser-side
-paste experiment, video insertion must not depend on the Windows desktop clipboard:
-dispatch the paste inside the editor page and require the existing real-preview oracle
-before any publish action. Windows clipboard remains only a last-resort Studio URL
-fallback and is never preserved/restored.
+embed immediately before exact H2 `Мировые лидеры ИИ`. Production video
+insertion must not depend on the Windows desktop clipboard: dispatch the paste
+inside the editor page and require the existing real-preview oracle before any
+publish action. Windows clipboard remains only a last-resort Studio URL fallback
+and is never preserved/restored.
 
 Publishing is at-most-once. Persist armed states before the corresponding
 publish/save actions. `PUBLISH_ARMED`, `CONFIRMATION_ARMED` and
