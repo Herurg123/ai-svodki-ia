@@ -214,19 +214,20 @@ The fourth stage runs only after native video is `PUBLISHED` and collections are
 through Studio and inserts the video before H2 `Мировые лидеры ИИ` under a new
 H2 `Видеосводка`.
 
-It uses real clipboard interaction only when required for URL fallback or the
-actual video paste. The operator's Windows clipboard is intentionally not saved
-or restored; before the first editor mutation the exact video URL is still
-written/read back fail-closed. Then the runtime waits for a real Dzen video
-preview and stable autosave and performs a two-stage at-most-once publish/save flow.
+The experimental video paste is dispatched inside the browser page with
+`ClipboardEvent` + `DataTransfer(text/plain=<videoUrl>)`, so it does not depend
+on the Windows desktop clipboard and can be tested with the workstation locked.
+Windows clipboard remains only a last-resort Studio URL fallback. Publish still
+requires a real Dzen video preview, stable autosave and the existing two-stage
+at-most-once publish/save flow.
 
 Safety states `PUBLISH_ARMED`, `CONFIRMATION_ARMED` and
 `CLICKED_UNVERIFIED` are verification-only on later runs. They must never cause
 a second editor mutation or publish/save click. Exact pre-existing H2
 `Видеосводка` ends as `SKIPPED_EXISTING`.
 
-`ERROR` is terminal by default. Only two narrow one-shot scheduled recovery
-classes are allowed:
+`ERROR` is terminal by default. Two production one-shot scheduled recovery
+classes remain, plus one isolated one-shot browser-paste migration recovery for testing:
 
 1. proven pre-edit link-resolution failure with no resolved links/editor/publish
    markers;
