@@ -270,7 +270,7 @@ async function main() {
       } else if (avStatus === "ERROR" && canAutoRecoverBrowserPasteMigration(refreshedJob)) {
         log(
           config,
-          `Фаза 4/4: старый clipboard-related ERROR разрешён для ОДНОГО test recovery через browser-side paste за ${job.date}. ` +
+          `Фаза 4/4: старый clipboard-related ERROR разрешён для ОДНОГО migration recovery через browser-side paste за ${job.date}. ` +
           `Windows clipboard для video paste не используется; live editor проверяется до новой mutation.`
         );
         try {
