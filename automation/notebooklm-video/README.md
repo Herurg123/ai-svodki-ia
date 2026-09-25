@@ -232,10 +232,13 @@ classes remain, plus one isolated one-shot browser-paste migration recovery for 
 1. proven pre-edit link-resolution failure with no resolved links/editor/publish
    markers;
 2. pre-publish clipboard-related failure with resolved links but no publish
-   markers, after mandatory live-draft inspection.
+   markers, after mandatory live-draft inspection;
+3. one isolated `--recover-browser-paste-migration` attempt for an old
+   clipboard-related ERROR. This new attempt is independent of old clipboard
+   recovery history, but its own migration marker is at-most-once.
 
-The second case may resume an already confirmed plain heading + video embed only
-from H2 formatting, never by inserting another embed.
+The second and third cases may resume an already confirmed plain heading + video
+embed only from H2 formatting, never by inserting another embed.
 
 Manual entrypoints:
 
