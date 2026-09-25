@@ -2724,6 +2724,73 @@ function authorizePrePublishClipboardRecovery(config, state, job, logger) {
   return ensureArticleVideoState(job);
 }
 
+function isSafeBrowserPasteMigrationError(av) {
+  if (!av || av.status !== "ERROR" || av.phase !== "ERROR") return false;
+  if (hasPublishOrTerminalMarkers(av)) return false;
+
+  const errorText = String(av.lastError || "");
+  const oldClipboardFailure =
+    /Set-Clipboard|Get-Clipboard|Windows clipboard|ExternalException|clipboard operation/i.test(errorText);
+  if (!oldClipboardFailure) return false;
+
+  const articleUrl = String(av.articleUrl || "");
+  const videoUrl = String(av.videoUrl || "");
+  if (!expectedPublicationUrlPattern("article").test(articleUrl)) return false;
+  if (!expectedPublicationUrlPattern("video").test(videoUrl)) return false;
+
+  if (av.failedFromPhase && !["LINKS_RESOLVED", "EDITING"].includes(String(av.failedFromPhase))) {
+    return false;
+  }
+  return true;
+}
+
+function authorizeBrowserPasteMigrationRecovery(config, state, job, logger) {
+  const av = ensureArticleVideoState(job);
+  if (!isSafeBrowserPasteMigrationError(av)) {
+    throw new Error(
+      "--recover-browser-paste-migration разрешён только для старого pre-publish clipboard ERROR " +
+      "с resolved article/video URL и без publish/terminal markers. State не изменён."
+    );
+  }
+
+  const recoveredAt = new Date().toISOString();
+  const recoveryHistory = Array.isArray(av.recoveryHistory) ? av.recoveryHistory.slice() : [];
+  if (recoveryHistory.some((entry) =>
+    /browser-side paste migration recovery/i.test(String(entry && entry.reason || ""))
+  )) {
+    throw new Error(
+      "--recover-browser-paste-migration уже использовался для этого job. Повторная test-mutation запрещена."
+    );
+  }
+
+  recoveryHistory.push({
+    recoveredAt,
+    fromStatus: av.status,
+    fromPhase: av.phase,
+    failedFromPhase: av.failedFromPhase || null,
+    lastError: av.lastError || null,
+    lastErrorAt: av.lastErrorAt || null,
+    reason: "browser-side paste migration recovery; no Windows clipboard",
+  });
+
+  updateArticleVideo(config, state, job, {
+    status: "PENDING",
+    phase: "PENDING",
+    recoveryHistory,
+    retryAuthorizedAt: recoveredAt,
+    retryReason: "browser-side paste migration recovery",
+    lastError: null,
+    lastErrorAt: null,
+  });
+
+  if (logger) {
+    logger.warn(
+      "TEST-RECOVERY: старый pre-publish clipboard ERROR разблокирован ОДИН раз для browser-side paste. " +
+      "Editor сначала инспектируется; existing partial embed не вставляется повторно."
+    );
+  }
+  return ensureArticleVideoState(job);
+}
 async function runApply(page, config, state, job, dateKey, logger) {
   const av = ensureArticleVideoState(job);
 
@@ -2985,6 +3052,26 @@ function runSelfTest() {
   })) {
     throw new Error("self-test: publish marker must block pre-publish clipboard recovery");
   }
+  if (!isSafeBrowserPasteMigrationError({
+    status: "ERROR",
+    phase: "ERROR",
+    articleUrl: "https://dzen.ru/a/article-test",
+    videoUrl: "https://dzen.ru/video/watch/video-test",
+    failedFromPhase: "EDITING",
+    lastError: "Set-Clipboard : OpenClipboard Failed (ExternalException)",
+  })) {
+    throw new Error("self-test: browser-side paste migration recovery classification failed");
+  }
+  if (isSafeBrowserPasteMigrationError({
+    status: "ERROR",
+    phase: "ERROR",
+    articleUrl: "https://dzen.ru/a/article-test",
+    videoUrl: "https://dzen.ru/video/watch/video-test",
+    lastError: "Set-Clipboard : OpenClipboard Failed (ExternalException)",
+    publishArmedAt: "2026-01-01T00:00:00.000Z",
+  })) {
+    throw new Error("self-test: publish marker must block browser-side paste migration");
+  }
   if (!/^(?:H\s*2|Heading\s*2|Заголовок\s*2)$/i.test("Heading 2")) {
     throw new Error("self-test: live Dzen aria Heading 2 recognition failed");
   }
@@ -3054,8 +3141,13 @@ async function main() {
         "--visible: роботизированный Яндекс.Браузер будет запущен несвёрнутым для incident diagnostics/recovery."
       );
     }
-    if (args.recoverPreEditLinkError && args.recoverPrePublishClipboardError) {
-      throw new Error("Нельзя одновременно указывать два recovery-флага.");
+    const recoveryFlags = [
+      args.recoverPreEditLinkError,
+      args.recoverPrePublishClipboardError,
+      args.recoverBrowserPasteMigration,
+    ].filter(Boolean).length;
+    if (recoveryFlags > 1) {
+      throw new Error("Нельзя одновременно указывать несколько recovery-флагов.");
     }
     if (args.recoverPreEditLinkError) {
       if (!args.apply) {
@@ -3072,6 +3164,14 @@ async function main() {
         );
       }
       authorizePrePublishClipboardRecovery(config, state, job, logger);
+    }
+    if (args.recoverBrowserPasteMigration) {
+      if (!args.apply) {
+        throw new Error(
+          "--recover-browser-paste-migration требует --apply: recovery является изменением state."
+        );
+      }
+      authorizeBrowserPasteMigrationRecovery(config, state, job, logger);
     }
 
     const av = ensureArticleVideoState(job);
@@ -3148,6 +3248,7 @@ module.exports = {
   expectedPublicationUrlFromCandidates,
   isSafePreEditLinkResolutionError,
   isSafePrePublishClipboardError,
+  isSafeBrowserPasteMigrationError,
   main,
   parseDateKey,
   planDescriptionArticleUrlUpdate,
