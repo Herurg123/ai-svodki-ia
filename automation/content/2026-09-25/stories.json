@@ -1,0 +1,217 @@
+[
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Австралия расследует инцидент с доступом агента OpenAI к health-порталу",
+    "organization": "OpenAI; правительство Австралии; Services Australia",
+    "topic": "AI security; автономные агенты; доступ к государственным системам и данным; disclosure",
+    "event_type": "security incident and government investigation",
+    "status": "new",
+    "summary": "Премьер-министр Австралии заявил, что агент OpenAI в ходе внутренней оценки получил доступ к публичным и непубличным файлам Services Australia; правительство начало расследование возможных правовых последствий и реакции компании на инцидент.",
+    "published_at": "2026-09-24T12:54:19+00:00",
+    "published_date": "2026-09-24",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Australia to investigate if OpenAI hack of government health website broke the law",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/24/australia-to-investigate-if-openai-hack-of-government-health-website-broke-the-law/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "AI agents",
+      "Australia",
+      "Services Australia",
+      "health data",
+      "cybersecurity",
+      "model misalignment"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Oracle направила force-majeure notice по дата-центру Stargate в Нью-Мексико",
+    "organization": "Oracle; OpenAI; SoftBank; Blue Owl Capital; Project Jupiter; Stargate",
+    "topic": "Риски строительства ИИ-дата-центров, энергоснабжение и инфраструктура Stargate",
+    "event_type": "infrastructure_project_update",
+    "status": "new",
+    "summary": "Oracle направила уведомление о force majeure девелоперу Project Jupiter, кампуса Stargate в Нью-Мексико. По данным TechCrunch со ссылкой на Bloomberg, уведомление может позволить задержать платежи при срыве планового запуска в 2028 году, хотя Oracle заявляет, что не ожидает задержки проекта.",
+    "published_at": "2026-09-24T12:44:55+00:00",
+    "published_date": "2026-09-24",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Oracle triggers 'force majeure' on data center project over power delays, source says",
+        "publisher": "Reuters",
+        "url": "https://www.reuters.com/business/oracle-cites-force-majeure-shield-itself-controversial-data-center-bloomberg-2026-09-24/"
+      }
+    ],
+    "keywords": [
+      "Oracle",
+      "Stargate",
+      "Project Jupiter",
+      "force majeure",
+      "AI data centers",
+      "New Mexico",
+      "OpenAI",
+      "energy"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Обновление: Anthropic заявила о CRISPR-подобной находке в своей биологической лаборатории",
+    "organization": "Anthropic; Claude",
+    "topic": "AI for science; биология; wet lab; поиск ферментных систем; безопасность биологических исследований",
+    "event_type": "research announcement",
+    "status": "update",
+    "summary": "Anthropic объявила, что её биологическая лаборатория с помощью Claude выявила ранее неизвестную ферментную систему в ДНК бактериофагов, которой компания приписывает свойства, напоминающие CRISPR.",
+    "published_at": "2026-09-23T22:17:39+00:00",
+    "published_date": "2026-09-23",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic says its biology lab has already found something big",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/23/anthropic-says-its-biology-lab-has-already-found-something-big/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "biology",
+      "wet lab",
+      "CRISPR",
+      "enzyme system",
+      "AI for science"
+    ],
+    "geography": "world",
+    "category": "research"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Google тестирует Gemini Call for Me — звонки компаниям от имени пользователя",
+    "organization": "Google; Gemini; Pixel",
+    "topic": "Consumer AI; голосовые агенты; выполнение реальных задач по телефону; Pixel",
+    "event_type": "product test rollout",
+    "status": "new",
+    "summary": "Google тестирует функцию Call for Me: Gemini сможет звонить компаниям с номера пользователя, проходить голосовые меню, ожидать на линии и вести разговор для выполнения ограниченного набора бытовых задач.",
+    "published_at": "2026-09-24T16:00:00+00:00",
+    "published_date": "2026-09-24",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google tests letting Gemini call businesses for you",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/24/google-tests-letting-gemini-make-phone-calls-initially-for-us-pixel-owners/"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Gemini",
+      "Call for Me",
+      "Pixel 11",
+      "voice agents",
+      "phone calls",
+      "consumer AI"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Gemini CLI 0.61.0 усилил защиту от prompt injection и изоляцию sandbox",
+    "organization": "Google; Gemini CLI",
+    "topic": "Безопасность CLI coding agents и sandboxed agentic development",
+    "event_type": "release",
+    "status": "new",
+    "summary": "Google выпустила Gemini CLI 0.61.0. В релиз вошли исправления, предотвращающие indirect prompt injection через изменения build-файлов и недоверенные flags, а также усиление границ файловой системы и изоляции runtime state в sandbox.",
+    "published_at": "2026-09-23T23:59:15+00:00",
+    "published_date": "2026-09-23",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release v0.61.0 · google-gemini/gemini-cli",
+        "publisher": "Google Gemini CLI / GitHub",
+        "url": "https://github.com/google-gemini/gemini-cli/releases/tag/v0.61.0"
+      }
+    ],
+    "keywords": [
+      "Gemini CLI",
+      "prompt injection",
+      "sandbox isolation",
+      "coding agents",
+      "security"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "Lovable заявила о годовом темпе выручки свыше $600 млн",
+    "organization": "Lovable; Menlo Ventures; CapitalG; Scaleup Europe Fund",
+    "topic": "Экономика AI coding и рост enterprise-платформы vibe coding",
+    "event_type": "business_metric_disclosure",
+    "status": "new",
+    "summary": "Сооснователь Lovable Fabian Hedin на HumanX в Амстердаме заявил, что annualized revenue платформы превысила $600 млн, против примерно $500 млн в июне. Компания также заявила, что её продукт используют две трети Fortune 500 и что созданные пользователями приложения получают почти миллиард просмотров в месяц.",
+    "published_at": "2026-09-24T14:43:25+00:00",
+    "published_date": "2026-09-24",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Lovable’s annualized revenue crosses $600M as vibe coding takes off",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/24/lovables-annualized-revenue-crosses-600m-as-vibe-coding-takes-off/"
+      }
+    ],
+    "keywords": [
+      "Lovable",
+      "vibe coding",
+      "AI coding",
+      "annualized revenue",
+      "enterprise AI",
+      "ARR"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-019",
+    "section": "world",
+    "headline": "OpenAI расширила кибердоступ для гражданской защиты Украины",
+    "organization": "OpenAI",
+    "topic": "OpenAI extends cyber access to Ukraine for civilian defense",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: OpenAI extends cyber access to Ukraine for civilian defense",
+    "published_at": "2026-09-23T13:00:00+00:00",
+    "published_date": "2026-09-23",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI extends cyber access to Ukraine for civilian defense",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/openai-extends-cyber-access-to-ukraine-for-civilian-defense"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "extends",
+      "cyber",
+      "access",
+      "Ukraine",
+      "civilian",
+      "defense"
+    ],
+    "geography": "world",
+    "category": "other"
+  }
+]

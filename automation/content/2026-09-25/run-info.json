@@ -1,0 +1,139 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-09-25",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-09-25.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: openai (8), techcrunch (5)",
+    "Исследовательский пул перегружен одной организацией: openai (8)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-09-25",
+  "started_at": "2026-09-25T01:43:48+00:00",
+  "finished_at": "2026-09-25T01:44:56+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 69,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "a54e8d9b33cc304c67d846e9cb34542b16d7ea1a4462af4eabdb7b18c260dff0",
+    "candidates_sha256": "a1a479577bcf7e4e9152dc9fd241c0c7e28b7ab1a93cb24f99d389736db97e28",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-09-23T04:24:33+03:00",
+      "end_at": "2026-09-25T04:30:19+03:00",
+      "latest_archive_at": "2026-09-24T04:24:33+03:00",
+      "start_date": "2026-09-23",
+      "end_date": "2026-09-25",
+      "latest_archive_date": "2026-09-24"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "e3623adecf89209c342106a058b8031d7524300f09711f962a6f4bd385831233",
+    "editorial_sha256": "44fb0ee0bbe848527a76c8741ae93b4a6ad95f2120f110df51d739cbc76a7908",
+    "digest_sha256": "42df61e0b3e6e7ee83f64dd766074ce9deba06128f95b640d017b13e5a8d9245",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-09-25.png",
+          "normalized_value": "ai-svodka-2026-09-25.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_integrations, russia, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Выбраны четыре независимых события от одного издателя: расследование Австралии, заявление Anthropic о биологической находке, запуск голосового агента Gemini и новая выручечная метрика Lovable. Это разные компании и рынки; исключение любого из них сократило бы подтверждённый выпуск ниже обычной цели в семь сюжетов."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_03a50ea84d07f9e4016ab5d1d54cf487d09d654293f9cb7f4f",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 152954,
+        "input_tokens_details": {
+          "cache_write_tokens": 24476,
+          "cached_tokens": 128475
+        },
+        "output_tokens": 4440,
+        "output_tokens_details": {
+          "reasoning_tokens": 897
+        },
+        "total_tokens": 157394
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 152954,
+    "output_tokens": 4440,
+    "total_tokens": 157394,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "e3ef72dedd91bafdacad6760388364ed7b02fc41",
+    "run_id": "36082227405",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-09-25T04:30:19+03:00"
+}
