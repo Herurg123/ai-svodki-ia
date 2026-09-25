@@ -503,8 +503,8 @@ Windows/Dzen среде. Для production promotion факт назначени
 
 - основной штатный путь: `run-worker.cmd` -> `full-worker.js` ->
   `scheduled-worker.js` -> `worker.js` -> Dzen duplicate guard -> optional fresh
-  upload -> verification -> `dzen-collections.js`;
-- `full-worker.lock` покрывает весь трёхфазный scheduled flow; внутренний
+  upload -> verification -> `dzen-collections.js` -> `dzen-article-video.js`;
+- `full-worker.lock` покрывает весь четырёхфазный scheduled flow; внутренний
   `scheduled-worker.lock` остаётся защитой NotebookLM/FTP + Dzen publish;
 - `run-worker-hidden.vbs` и Windows Task Scheduler используют тот же единый
   entrypoint, отдельные scheduled tasks для Dzen и подборок не нужны;
@@ -526,11 +526,15 @@ Windows/Dzen среде. Для production promotion факт назначени
   `video/digest` statuses, пропускает `ADDED` цель и не открывает browser после
   `COMPLETE`;
 - already-added collection tile с title alpha `<=0.70` не кликается повторно;
+- article-video после `dzenCollections=COMPLETE` вставляет video browser-side
+  без Windows desktop clipboard и публикует изменения только после real-preview
+  oracle, stable autosave и at-most-once publish gates;
 - защищённый профиль Яндекс.Браузера не удаляется и не пересоздаётся.
 
 Подробный native-upload контракт: [`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md).
 Подробности collections stage и ручной диагностики:
 [`DZEN_COLLECTIONS_DEBUG_README.txt`](DZEN_COLLECTIONS_DEBUG_README.txt).
+
 ## Эксперимент 14: browser-side paste при заблокированной Windows
 
 Дата подтверждения: **25 сентября 2026**. Контрольный выпуск: **2026-09-25**.
