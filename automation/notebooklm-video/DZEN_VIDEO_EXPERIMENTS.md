@@ -503,8 +503,8 @@ Windows/Dzen среде. Для production promotion факт назначени
 
 - основной штатный путь: `run-worker.cmd` -> `full-worker.js` ->
   `scheduled-worker.js` -> `worker.js` -> Dzen duplicate guard -> optional fresh
-  upload -> verification -> `dzen-collections.js`;
-- `full-worker.lock` покрывает весь трёхфазный scheduled flow; внутренний
+  upload -> verification -> `dzen-collections.js` -> `dzen-article-video.js`;
+- `full-worker.lock` покрывает весь четырёхфазный scheduled flow; внутренний
   `scheduled-worker.lock` остаётся защитой NotebookLM/FTP + Dzen publish;
 - `run-worker-hidden.vbs` и Windows Task Scheduler используют тот же единый
   entrypoint, отдельные scheduled tasks для Dzen и подборок не нужны;
@@ -526,8 +526,69 @@ Windows/Dzen среде. Для production promotion факт назначени
   `video/digest` statuses, пропускает `ADDED` цель и не открывает browser после
   `COMPLETE`;
 - already-added collection tile с title alpha `<=0.70` не кликается повторно;
+- article-video после `dzenCollections=COMPLETE` вставляет video browser-side
+  без Windows desktop clipboard и публикует изменения только после real-preview
+  oracle, stable autosave и at-most-once publish gates;
 - защищённый профиль Яндекс.Браузера не удаляется и не пересоздаётся.
 
 Подробный native-upload контракт: [`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md).
 Подробности collections stage и ручной диагностики:
 [`DZEN_COLLECTIONS_DEBUG_README.txt`](DZEN_COLLECTIONS_DEBUG_README.txt).
+
+## Эксперимент 14: browser-side paste при заблокированной Windows
+
+Дата подтверждения: **25 сентября 2026**. Контрольный выпуск: **2026-09-25**.
+
+Предыдущий production path вставлял Dzen video URL через Windows
+`Set-Clipboard` + реальный `Ctrl+V`. При заблокированной пользовательской
+сессии Windows этот шаг стабильно падал с clipboard `ExternalException`, хотя
+Playwright/CDP, Studio, поиск same-day публикаций и открытие editor продолжали
+работать.
+
+Для проверки гипотезы video paste был перенесён внутрь browser page:
+
+```text
+videoUrl
+ -> DraftJS blank block
+ -> ClipboardEvent("paste")
+ -> DataTransfer("text/plain" = videoUrl)
+ -> Dzen real video preview oracle
+ -> H2/autosave/publish
+```
+
+Тест выполнялся штатным `full-worker.js` при **заблокированной Windows-сессии**.
+Старый pre-publish clipboard ERROR был разблокирован отдельным one-shot
+migration recovery; старая clipboard recovery-history не считалась новой
+browser-paste попыткой.
+
+Live log подтвердил:
+
+```text
+Browser-side paste dispatch:
+constructor=ClipboardEvent
+isTrusted=false
+defaultPrevented=true
+textMatches=true
+Windows clipboard не используется
+```
+
+Сразу после этого existing preview oracle увидел реальный Dzen
+`typeYandexZenVideo` embed размером 639×359.4375. Затем штатно прошли floating
+toolbar H2, stable autosave 8 секунд, один click `Опубликовать`, один native
+`BUTTON Сохранить изменения`, post-confirm navigation и отдельная public
+verification.
+
+Финал:
+
+```text
+STATE: dzenArticleVideo.status=COMPLETE; phase=VERIFIED
+FULL-WORKER: === END full scheduled flow SUCCESS ===
+```
+
+**Результат:** гипотеза подтверждена. Windows desktop clipboard был единственной
+проблемной зависимостью для locked-session video insertion. Browser-side
+`ClipboardEvent + DataTransfer` принят как штатный production механизм.
+Windows clipboard остаётся только последним fallback при извлечении URL из
+Studio; вставка video больше от него не зависит. Existing preview oracle и
+at-most-once publish state остаются обязательными fail-closed границами.
+

@@ -8,6 +8,11 @@ const { execFileSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "..");
 const scriptPath = path.join(ROOT, "dzen-article-video.js");
 const source = fs.readFileSync(scriptPath, "utf8");
+assert.doesNotMatch(
+  source,
+  /__AI_AV_ORIGINAL_CLIPBOARD__|restoreOriginalClipboardBestEffort|originalClipboard\s*=\s*await\s+readClipboardText/,
+  "article-video must not preserve or restore the operator clipboard"
+);
 const setupSource = fs.readFileSync(path.join(ROOT, "setup-local.ps1"), "utf8");
 const fullWorkerSource = fs.readFileSync(path.join(ROOT, "full-worker.js"), "utf8");
 const articleVideo = require(scriptPath);
@@ -76,9 +81,11 @@ assert.strictEqual(
   false
 );
 
-const emptyClipboardCommand = articleVideo.buildClipboardWriteCommand("");
-assert.match(emptyClipboardCommand, /Clipboard\]::Clear\(\)/);
-assert.doesNotMatch(emptyClipboardCommand, /Set-Clipboard -Value/);
+assert.throws(
+  () => articleVideo.buildClipboardWriteCommand(""),
+  /Пустое значение нельзя записывать в Windows clipboard/,
+  "article-video no longer preserves/restores an empty operator clipboard"
+);
 
 const nonEmptyClipboardCommand = articleVideo.buildClipboardWriteCommand("abc");
 assert.match(nonEmptyClipboardCommand, /Set-Clipboard -Value \$v/);
@@ -101,6 +108,29 @@ assert.strictEqual(
     videoUrl: "https://dzen.ru/video/watch/video-test",
     lastError: "Set-Clipboard : Value cannot be null. ArgumentNullException",
     publishArmedAt: "2026-09-21T00:00:00.000Z",
+  }),
+  false
+);
+
+assert.strictEqual(
+  articleVideo.isSafeBrowserPasteMigrationError({
+    status: "ERROR",
+    phase: "ERROR",
+    articleUrl: "https://dzen.ru/a/article-test",
+    videoUrl: "https://dzen.ru/video/watch/video-test",
+    failedFromPhase: "EDITING",
+    lastError: "Set-Clipboard : OpenClipboard Failed (ExternalException)",
+  }),
+  true
+);
+assert.strictEqual(
+  articleVideo.isSafeBrowserPasteMigrationError({
+    status: "ERROR",
+    phase: "ERROR",
+    articleUrl: "https://dzen.ru/a/article-test",
+    videoUrl: "https://dzen.ru/video/watch/video-test",
+    lastError: "Set-Clipboard : OpenClipboard Failed (ExternalException)",
+    saveChangesClickedAt: "2026-09-21T00:00:00.000Z",
   }),
   false
 );
@@ -178,6 +208,8 @@ for (const forbidden of [
   "--recover-modal-candidate-failure",
   "--reset-clean-experiment",
   "--resume-save-changes",
+  "__AI_AV_ORIGINAL_CLIPBOARD__",
+  "restoreOriginalClipboardBestEffort",
 ]) {
   assert(!source.includes(forbidden), `production source must not retain incident-only marker: ${forbidden}`);
 }
@@ -197,8 +229,9 @@ for (const required of [
   "Public ${kind} URL получен напрямую из same-day Studio row",
   "--recover-pre-edit-link-error",
   "--recover-prepublish-clipboard-error",
-  "Windows clipboard заранее подтверждён для video paste",
-  "Clipboard]::Clear()",
+  "--recover-browser-paste-migration",
+  "Browser-side paste dispatch:",
+  "Windows clipboard не используется",
   "videoEmbedConfirmedAt",
 ]) {
   assert(source.includes(required), `missing article-video contract marker: ${required}`);

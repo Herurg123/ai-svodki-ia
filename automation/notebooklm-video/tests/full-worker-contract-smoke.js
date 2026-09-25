@@ -61,6 +61,8 @@ assert(source.includes('"--recover-pre-edit-link-error"'),
   "safe scheduled recovery must invoke the guarded article-video link recovery flag");
 assert(source.includes('"--recover-prepublish-clipboard-error"'),
   "safe scheduled recovery must invoke the guarded pre-publish clipboard recovery flag");
+assert(source.includes('"--recover-browser-paste-migration"'),
+  "migration recovery must unlock one browser-side paste attempt for legacy clipboard errors");
 assert(source.includes('} else if (avStatus === "ERROR")'),
   "all other terminal article-video ERROR states must still block automatic retry");
 assert(source.includes("Фаза 4/4 НЕ запускается: она разрешена только после полного успеха всех предыдущих фаз."),
@@ -139,6 +141,32 @@ assert.strictEqual(
   }),
   false,
   "final publish markers must block clipboard recovery"
+);
+
+assert.strictEqual(
+  full.canAutoRecoverBrowserPasteMigration(safeClipboardError),
+  true,
+  "old clipboard ERROR must be eligible for one browser-side paste migration even if legacy recovery policy existed"
+);
+assert.strictEqual(
+  full.canAutoRecoverBrowserPasteMigration({
+    dzenArticleVideo: {
+      ...safeClipboardError.dzenArticleVideo,
+      recoveryHistory: [{ reason: "pre-publish clipboard recovery" }],
+    },
+  }),
+  true,
+  "legacy clipboard recovery history must not consume the new browser-paste migration attempt"
+);
+assert.strictEqual(
+  full.canAutoRecoverBrowserPasteMigration({
+    dzenArticleVideo: {
+      ...safeClipboardError.dzenArticleVideo,
+      recoveryHistory: [{ reason: "browser-side paste migration recovery; no Windows clipboard" }],
+    },
+  }),
+  false,
+  "browser-side paste migration itself must be at-most-once"
 );
 
 console.log("Full worker four-stage contract smoke: OK");

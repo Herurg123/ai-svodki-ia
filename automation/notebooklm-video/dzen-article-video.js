@@ -118,6 +118,7 @@ function parseArgs(argv) {
     selfTest: false,
     recoverPreEditLinkError: false,
     recoverPrePublishClipboardError: false,
+    recoverBrowserPasteMigration: false,
   };
   for (const arg of argv) {
     if (arg === "--apply") args.apply = true;
@@ -125,6 +126,7 @@ function parseArgs(argv) {
     else if (arg === "--self-test") args.selfTest = true;
     else if (arg === "--recover-pre-edit-link-error") args.recoverPreEditLinkError = true;
     else if (arg === "--recover-prepublish-clipboard-error") args.recoverPrePublishClipboardError = true;
+    else if (arg === "--recover-browser-paste-migration") args.recoverBrowserPasteMigration = true;
     else if (arg.startsWith("--date=")) {
       args.date = arg.slice("--date=".length).trim();
       parseDateKey(args.date);
@@ -265,12 +267,7 @@ async function readClipboardText() {
 function buildClipboardWriteCommand(value) {
   const text = String(value ?? "");
   if (!text.length) {
-    return [
-      "$ErrorActionPreference = 'Stop'",
-      "Add-Type -AssemblyName System.Windows.Forms",
-      "[System.Windows.Forms.Clipboard]::Clear()",
-      "Write-Output 'OK'",
-    ].join("\r\n");
+    throw new Error("Пустое значение нельзя записывать в Windows clipboard.");
   }
 
   const encoded = Buffer.from(text, "utf8").toString("base64");
@@ -286,40 +283,6 @@ function buildClipboardWriteCommand(value) {
 
 async function writeClipboardText(value) {
   await runPowerShell(buildClipboardWriteCommand(value));
-}
-
-async function restoreOriginalClipboardBestEffort(logger, label = "clipboard restore") {
-  const original = global.__AI_AV_ORIGINAL_CLIPBOARD__;
-  if (typeof original !== "string") return false;
-
-  let lastError = null;
-  for (let attempt = 1; attempt <= 3; attempt += 1) {
-    try {
-      await writeClipboardText(original);
-      if (logger) {
-        logger.log(
-          original.length
-            ? `Исходный текст Windows clipboard восстановлен (${label}).`
-            : `Исходный пустой Windows clipboard восстановлен через Clipboard.Clear() (${label}).`
-        );
-      }
-      return true;
-    } catch (error) {
-      lastError = error;
-      if (attempt < 3) {
-        await new Promise((resolve) => setTimeout(resolve, 150 * attempt));
-      }
-    }
-  }
-
-  if (logger) {
-    logger.warn(
-      `Не удалось восстановить исходный Windows clipboard после 3 попыток (${label}): ` +
-      `${lastError && lastError.message ? lastError.message : String(lastError)}. ` +
-      "Article-video flow продолжается: восстановление clipboard не является mutation/publish gate."
-    );
-  }
-  return false;
 }
 
 function expectedPublicationUrlPattern(kind) {
@@ -1297,38 +1260,96 @@ async function detectVideoPreviewBetween(page, videoUrl) {
   }, { headingText: HEADING_TEXT, anchorText: ANCHOR_TEXT, videoUrl });
 }
 
-async function prepareVideoClipboard(videoUrl, logger) {
-  await writeClipboardText(videoUrl);
-  const readBack = (await readClipboardText()).trim();
-  if (readBack !== videoUrl) {
-    throw new Error(
-      `Windows clipboard не подтвердил video URL до изменения статьи. ` +
-      `expected=${JSON.stringify(videoUrl)}; actual=${JSON.stringify(readBack.slice(0, 160))}`
-    );
-  }
-  logger.log("Windows clipboard заранее подтверждён для video paste; editor ещё не изменён.");
+async function dispatchBrowserPaste(page, videoUrl) {
+  return page.evaluate(({ videoUrl }) => {
+    const selection = window.getSelection();
+    const selectionNode = selection && selection.rangeCount ? selection.anchorNode : null;
+    const selectionElement = selectionNode
+      ? (selectionNode.nodeType === Node.ELEMENT_NODE ? selectionNode : selectionNode.parentElement)
+      : null;
+    const active = document.activeElement;
+
+    const editorRoot =
+      (selectionElement && selectionElement.closest && selectionElement.closest('div[contenteditable="true"].public-DraftEditor-content')) ||
+      (active && active.closest && active.closest('div[contenteditable="true"].public-DraftEditor-content')) ||
+      null;
+
+    if (!editorRoot) {
+      return { ok: false, reason: "draft-editor-focus-missing" };
+    }
+
+    let target = selectionElement;
+    if (!target || !editorRoot.contains(target)) target = active;
+    if (!target || !editorRoot.contains(target)) target = editorRoot;
+
+    const transfer = new DataTransfer();
+    transfer.setData("text/plain", videoUrl);
+    transfer.setData("text", videoUrl);
+
+    let event;
+    let constructor = "ClipboardEvent";
+    try {
+      event = new ClipboardEvent("paste", {
+        bubbles: true,
+        cancelable: true,
+        clipboardData: transfer,
+      });
+      if (!event.clipboardData) {
+        Object.defineProperty(event, "clipboardData", {
+          configurable: true,
+          value: transfer,
+        });
+      }
+    } catch (error) {
+      constructor = "Event+clipboardData";
+      event = new Event("paste", { bubbles: true, cancelable: true });
+      Object.defineProperty(event, "clipboardData", {
+        configurable: true,
+        value: transfer,
+      });
+    }
+
+    const dispatched = target.dispatchEvent(event);
+    return {
+      ok: true,
+      dispatched,
+      defaultPrevented: event.defaultPrevented,
+      constructor,
+      isTrusted: event.isTrusted,
+      targetTag: target.tagName || "",
+      targetClass: String(target.className || "").slice(0, 180),
+      editorClass: String(editorRoot.className || "").slice(0, 180),
+      types: Array.from(transfer.types || []),
+      textMatches: transfer.getData("text/plain") === videoUrl,
+    };
+  }, { videoUrl });
 }
 
-async function pasteVideoAndWaitForPreview(page, videoUrl, logger, options = {}) {
-  if (!options.clipboardPrepared) {
-    await prepareVideoClipboard(videoUrl, logger);
+async function pasteVideoAndWaitForPreview(page, videoUrl, logger) {
+  const paste = await dispatchBrowserPaste(page, videoUrl);
+  if (!paste.ok) {
+    throw new Error(`Browser-side paste не запущен: ${paste.reason || "unknown"}.`);
   }
-  logger.log("Выполняю реальный Ctrl+V подтверждённого video URL.");
-  await page.keyboard.press("Control+V");
+
+  logger.log(
+    `Browser-side paste dispatch: constructor=${paste.constructor}; ` +
+    `isTrusted=${paste.isTrusted}; defaultPrevented=${paste.defaultPrevented}; ` +
+    `target=${paste.targetTag}; textMatches=${paste.textMatches}. Windows clipboard не используется.`
+  );
 
   const deadline = Date.now() + PREVIEW_TIMEOUT_MS;
   let last = null;
   while (Date.now() < deadline) {
     last = await detectVideoPreviewBetween(page, videoUrl);
     if (last.ok) {
-      logger.log(`Dzen video preview/embed подтверждён между heading и anchor: ${JSON.stringify(last.signals.slice(0, 3))}.`);
+      logger.log(`Dzen video preview/embed подтверждён после browser-side paste: ${JSON.stringify(last.signals.slice(0, 3))}.`);
       return last;
     }
     await page.waitForTimeout(500);
   }
   throw new Error(
-    `URL не превратился в подтверждённый Dzen video preview/embed за ${PREVIEW_TIMEOUT_MS} мс ` +
-    `(last=${JSON.stringify(last)}).`
+    `Browser-side paste не превратился в подтверждённый Dzen video preview/embed за ${PREVIEW_TIMEOUT_MS} мс ` +
+    `(last=${JSON.stringify(last)}). Publish запрещён.`
   );
 }
 
@@ -2703,6 +2724,73 @@ function authorizePrePublishClipboardRecovery(config, state, job, logger) {
   return ensureArticleVideoState(job);
 }
 
+function isSafeBrowserPasteMigrationError(av) {
+  if (!av || av.status !== "ERROR" || av.phase !== "ERROR") return false;
+  if (hasPublishOrTerminalMarkers(av)) return false;
+
+  const errorText = String(av.lastError || "");
+  const oldClipboardFailure =
+    /Set-Clipboard|Get-Clipboard|Windows clipboard|ExternalException|clipboard operation/i.test(errorText);
+  if (!oldClipboardFailure) return false;
+
+  const articleUrl = String(av.articleUrl || "");
+  const videoUrl = String(av.videoUrl || "");
+  if (!expectedPublicationUrlPattern("article").test(articleUrl)) return false;
+  if (!expectedPublicationUrlPattern("video").test(videoUrl)) return false;
+
+  if (av.failedFromPhase && !["LINKS_RESOLVED", "EDITING"].includes(String(av.failedFromPhase))) {
+    return false;
+  }
+  return true;
+}
+
+function authorizeBrowserPasteMigrationRecovery(config, state, job, logger) {
+  const av = ensureArticleVideoState(job);
+  if (!isSafeBrowserPasteMigrationError(av)) {
+    throw new Error(
+      "--recover-browser-paste-migration разрешён только для старого pre-publish clipboard ERROR " +
+      "с resolved article/video URL и без publish/terminal markers. State не изменён."
+    );
+  }
+
+  const recoveredAt = new Date().toISOString();
+  const recoveryHistory = Array.isArray(av.recoveryHistory) ? av.recoveryHistory.slice() : [];
+  if (recoveryHistory.some((entry) =>
+    /browser-side paste migration recovery/i.test(String(entry && entry.reason || ""))
+  )) {
+    throw new Error(
+      "--recover-browser-paste-migration уже использовался для этого job. Повторная migration-mutation запрещена."
+    );
+  }
+
+  recoveryHistory.push({
+    recoveredAt,
+    fromStatus: av.status,
+    fromPhase: av.phase,
+    failedFromPhase: av.failedFromPhase || null,
+    lastError: av.lastError || null,
+    lastErrorAt: av.lastErrorAt || null,
+    reason: "browser-side paste migration recovery; no Windows clipboard",
+  });
+
+  updateArticleVideo(config, state, job, {
+    status: "PENDING",
+    phase: "PENDING",
+    recoveryHistory,
+    retryAuthorizedAt: recoveredAt,
+    retryReason: "browser-side paste migration recovery",
+    lastError: null,
+    lastErrorAt: null,
+  });
+
+  if (logger) {
+    logger.warn(
+      "MIGRATION-RECOVERY: старый pre-publish clipboard ERROR разблокирован ОДИН раз для browser-side paste. " +
+      "Editor сначала инспектируется; existing partial embed не вставляется повторно."
+    );
+  }
+  return ensureArticleVideoState(job);
+}
 async function runApply(page, config, state, job, dateKey, logger) {
   const av = ensureArticleVideoState(job);
 
@@ -2797,17 +2885,9 @@ async function runApply(page, config, state, job, dateKey, logger) {
       "Новый heading, Enter, clipboard paste и второй embed НЕ выполняются."
     );
   } else {
-    // Fail before the first editor mutation if Windows clipboard cannot support
-    // the real Ctrl+V required for Dzen to create a video embed.
-    await prepareVideoClipboard(links.videoUrl, logger);
     const created = await createPlainHeadingBeforeAnchor(editorPage, logger);
     beforeStyle = created.beforeStyle;
-    await pasteVideoAndWaitForPreview(
-      editorPage,
-      links.videoUrl,
-      logger,
-      { clipboardPrepared: true }
-    );
+    await pasteVideoAndWaitForPreview(editorPage, links.videoUrl, logger);
     updateArticleVideo(config, state, job, {
       status: "PENDING",
       phase: "EDITING",
@@ -2816,10 +2896,8 @@ async function runApply(page, config, state, job, dateKey, logger) {
       lastErrorAt: null,
     });
 
-    // Clipboard preservation is secondary. A failure here must never turn a
-    // successfully created embed into a terminal article mutation incident.
-    await restoreOriginalClipboardBestEffort(logger, "после подтверждения video preview");
-
+    // Video paste is browser-side and does not depend on the Windows desktop
+    // clipboard. The preview oracle below remains the publish gate.
     const anchor = await exactDraftBlock(editorPage, ANCHOR_TEXT, "oracle-anchor");
     oracle = await blockStyleSnapshot(anchor);
   }
@@ -2916,12 +2994,14 @@ function runSelfTest() {
     throw new Error("self-test: manual second URL must be preserved");
   }
   if (!TERMINAL_STATUSES.has("ERROR")) throw new Error("self-test: ERROR must remain terminal");
-  const emptyClipboardCommand = buildClipboardWriteCommand("");
-  if (!emptyClipboardCommand.includes("[System.Windows.Forms.Clipboard]::Clear()")) {
-    throw new Error("self-test: empty clipboard restore must use Clipboard.Clear()");
+  let emptyClipboardRejected = false;
+  try {
+    buildClipboardWriteCommand("");
+  } catch {
+    emptyClipboardRejected = true;
   }
-  if (emptyClipboardCommand.includes("Set-Clipboard -Value")) {
-    throw new Error("self-test: empty clipboard restore must not call Set-Clipboard -Value");
+  if (!emptyClipboardRejected) {
+    throw new Error("self-test: empty clipboard write must be rejected; clipboard preservation is disabled");
   }
   const textClipboardCommand = buildClipboardWriteCommand("abc");
   if (!textClipboardCommand.includes("Set-Clipboard -Value $v")) {
@@ -2971,6 +3051,26 @@ function runSelfTest() {
   })) {
     throw new Error("self-test: publish marker must block pre-publish clipboard recovery");
   }
+  if (!isSafeBrowserPasteMigrationError({
+    status: "ERROR",
+    phase: "ERROR",
+    articleUrl: "https://dzen.ru/a/article-test",
+    videoUrl: "https://dzen.ru/video/watch/video-test",
+    failedFromPhase: "EDITING",
+    lastError: "Set-Clipboard : OpenClipboard Failed (ExternalException)",
+  })) {
+    throw new Error("self-test: browser-side paste migration recovery classification failed");
+  }
+  if (isSafeBrowserPasteMigrationError({
+    status: "ERROR",
+    phase: "ERROR",
+    articleUrl: "https://dzen.ru/a/article-test",
+    videoUrl: "https://dzen.ru/video/watch/video-test",
+    lastError: "Set-Clipboard : OpenClipboard Failed (ExternalException)",
+    publishArmedAt: "2026-01-01T00:00:00.000Z",
+  })) {
+    throw new Error("self-test: publish marker must block browser-side paste migration");
+  }
   if (!/^(?:H\s*2|Heading\s*2|Заголовок\s*2)$/i.test("Heading 2")) {
     throw new Error("self-test: live Dzen aria Heading 2 recognition failed");
   }
@@ -3018,7 +3118,6 @@ async function main() {
   let job = null;
   let session = null;
   let browserSession = null;
-  let originalClipboard = null;
   let dateKey = args.date;
 
   try {
@@ -3041,8 +3140,13 @@ async function main() {
         "--visible: роботизированный Яндекс.Браузер будет запущен несвёрнутым для incident diagnostics/recovery."
       );
     }
-    if (args.recoverPreEditLinkError && args.recoverPrePublishClipboardError) {
-      throw new Error("Нельзя одновременно указывать два recovery-флага.");
+    const recoveryFlags = [
+      args.recoverPreEditLinkError,
+      args.recoverPrePublishClipboardError,
+      args.recoverBrowserPasteMigration,
+    ].filter(Boolean).length;
+    if (recoveryFlags > 1) {
+      throw new Error("Нельзя одновременно указывать несколько recovery-флагов.");
     }
     if (args.recoverPreEditLinkError) {
       if (!args.apply) {
@@ -3060,6 +3164,14 @@ async function main() {
       }
       authorizePrePublishClipboardRecovery(config, state, job, logger);
     }
+    if (args.recoverBrowserPasteMigration) {
+      if (!args.apply) {
+        throw new Error(
+          "--recover-browser-paste-migration требует --apply: recovery является изменением state."
+        );
+      }
+      authorizeBrowserPasteMigrationRecovery(config, state, job, logger);
+    }
 
     const av = ensureArticleVideoState(job);
     const runMode = args.apply ? "apply" : "dry-run";
@@ -3071,9 +3183,6 @@ async function main() {
     if (!args.apply && TERMINAL_STATUSES.has(av.status)) {
       logger.log(`DRY-RUN разрешён при terminal state=${av.status}: state не изменяется.`);
     }
-
-    originalClipboard = await readClipboardText();
-    global.__AI_AV_ORIGINAL_CLIPBOARD__ = originalClipboard;
 
     browserSession = require("./browser-session");
     session = await browserSession.launchRobotBrowser(config, {
@@ -3116,11 +3225,6 @@ async function main() {
     }
     process.exitCode = 1;
   } finally {
-    if (originalClipboard !== null) {
-      await restoreOriginalClipboardBestEffort(logger, "финальный cleanup");
-    }
-    delete global.__AI_AV_ORIGINAL_CLIPBOARD__;
-
     if (session) {
       await browserSession.closeRobotBrowser(session, config).catch((error) => {
         if (logger) logger.fatal(`Не удалось закрыть браузер: ${error.message}`, error);
@@ -3143,6 +3247,7 @@ module.exports = {
   expectedPublicationUrlFromCandidates,
   isSafePreEditLinkResolutionError,
   isSafePrePublishClipboardError,
+  isSafeBrowserPasteMigrationError,
   main,
   parseDateKey,
   planDescriptionArticleUrlUpdate,

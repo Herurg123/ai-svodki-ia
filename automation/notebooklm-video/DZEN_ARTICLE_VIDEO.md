@@ -99,10 +99,29 @@ verification-only. После неопределённого результат�
 Если exact H2 `Видеосводка` уже существует до изменений, runtime ничего не
 меняет и фиксирует `SKIPPED_EXISTING`.
 
-`ERROR` terminal и не разрешает обычный automatic retry. Есть два узких one-shot scheduled recovery-класса: (1) `--recover-pre-edit-link-error` только для pre-edit link-resolution ERROR без resolved URLs/editor/publish markers; (2) `--recover-prepublish-clipboard-error` только для clipboard-related ERROR с уже resolved article/video URL и без publish/terminal markers. Второй путь всегда заново открывает editor и до новой mutation применяет live inspection: CLEAN допускает обычную вставку, RESUMABLE_PARTIAL продолжает только с форматирования H2 без второго embed, неоднозначное состояние fail-closed. Каждый класс может быть использован не более одного раза. Любая неопределённость после publish arm/click остаётся manual-only.
+`ERROR` terminal и не разрешает обычный automatic retry. Есть два production one-shot recovery-класса и один отдельный migration recovery-класс для старых clipboard-related ERROR: (1) `--recover-pre-edit-link-error` только для pre-edit link-resolution ERROR без resolved URLs/editor/publish markers; (2) `--recover-prepublish-clipboard-error` только для clipboard-related ERROR с уже resolved article/video URL и без publish/terminal markers; (3) `--recover-browser-paste-migration` только для legacy pre-publish clipboard ERROR с resolved article/video URL и без publish/terminal markers. Второй и третий пути всегда заново открывают editor и до новой mutation применяют live inspection: CLEAN допускает обычную вставку, RESUMABLE_PARTIAL продолжает только с форматирования H2 без второго embed, неоднозначное состояние fail-closed. Каждый класс может быть использован не более одного раза; legacy clipboard recovery-history не расходует отдельный migration recovery. Любая неопределённость после publish arm/click остаётся manual-only.
 
-Перед первой mutation editor Windows clipboard отдельно preflight-проверяется записью/чтением exact video URL. Если clipboard не работает, статья ещё не изменена и этап падает безопасно. Пустой исходный clipboard восстанавливается через `System.Windows.Forms.Clipboard::Clear()`, а не через `Set-Clipboard -Value ""`, потому что Windows PowerShell отклоняет пустую строку. После подтверждённого embed восстановление пользовательского clipboard является best-effort и не имеет права превращать уже созданный draft в terminal content error.
+Production video-paste путь не использует Windows desktop clipboard: после создания пустого блока внутри DraftJS runtime dispatch'ит browser-side `paste` event с `DataTransfer(text/plain=<videoUrl>)`. Publish по-прежнему запрещён, пока существующий preview oracle не подтвердит реальный Dzen video embed и исчезновение plain URL. Windows clipboard остаётся только последним fallback при получении public URL из Studio. Для старого clipboard-related `ERROR` разрешён отдельный one-shot `--recover-browser-paste-migration`; он не расходуется старой recovery-history и всегда сначала инспектирует live draft.
 
+## Live acceptance 2026-09-25: locked Windows session
+
+Browser-side paste подтверждён реальным scheduled run при заблокированной Windows-сессии.
+
+Наблюдаемый production flow:
+
+- `full-worker.js` разрешил один migration recovery для старого pre-publish clipboard ERROR;
+- article/video URL были получены напрямую из same-day Studio rows без Windows clipboard;
+- editor открыл exact anchor `Мировые лидеры ИИ` и создал plain `Видеосводка`;
+- browser page dispatch выполнил `ClipboardEvent("paste")` с `DataTransfer(text/plain=<videoUrl>)`; наблюдалось `isTrusted=false`, `defaultPrevented=true`, exact payload совпал;
+- Windows clipboard для video paste не использовался;
+- Dzen создал реальный `typeYandexZenVideo` embed, подтверждённый existing preview oracle;
+- H2 был применён через floating toolbar и подтверждён oracle;
+- autosave оставался stable 8 секунд;
+- `Опубликовать` и native `BUTTON Сохранить изменения` были нажаты ровно по одному разу;
+- public verification подтвердила порядок H2 `Видеосводка` -> video preview -> H2 `Мировые лидеры ИИ`;
+- итоговый state: `COMPLETE/VERIFIED`, весь `full-worker` завершился SUCCESS.
+
+**Результат:** browser-side paste принят как штатный production-механизм вставки Dzen video. Блокировка Windows больше не должна ломать video insertion из-за недоступного desktop clipboard. Publish по-прежнему fail-closed до реального Dzen preview и сохраняет прежние at-most-once/verification-only гарантии.
 ## Live acceptance 2026-09-20
 
 Финальный clean retest на реальной статье прошёл полный путь за один запуск:
