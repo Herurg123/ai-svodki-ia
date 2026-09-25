@@ -133,6 +133,15 @@ function canAutoRecoverPrePublishClipboardError(job) {
   );
 }
 
+function canAutoRecoverBrowserPasteMigration(job) {
+  const av = job && job.dzenArticleVideo;
+  if (!articleVideo.isSafeBrowserPasteMigrationError(av)) return false;
+  const history = Array.isArray(av.recoveryHistory) ? av.recoveryHistory : [];
+  return !history.some((entry) =>
+    /browser-side paste migration recovery/i.test(String(entry && entry.reason || ""))
+  );
+}
+
 async function main() {
   let config = null;
   let lockHandle = null;
@@ -258,6 +267,32 @@ async function main() {
             error
           );
         }
+      } else if (avStatus === "ERROR" && canAutoRecoverBrowserPasteMigration(refreshedJob)) {
+        log(
+          config,
+          `Фаза 4/4: старый clipboard-related ERROR разрешён для ОДНОГО test recovery через browser-side paste за ${job.date}. ` +
+          `Windows clipboard для video paste не используется; live editor проверяется до новой mutation.`
+        );
+        try {
+          await runNodeScript(
+            "dzen-article-video.js",
+            ["--apply", `--date=${job.date}`, "--recover-browser-paste-migration"]
+          );
+          const afterRecovery = loadJson(config.stateFile, { jobs: {} });
+          const afterRecoveryJob = collections.findJobForDate(afterRecovery, job.date);
+          log(
+            config,
+            `Фаза 4/4 browser-paste recovery завершена: dzenArticleVideo.status=${articleVideoStatus(afterRecoveryJob)}; ` +
+            `phase=${articleVideoPhase(afterRecoveryJob)}.`
+          );
+        } catch (error) {
+          articleVideoError = error;
+          fatalLog(
+            config,
+            `Фаза 4/4 browser-side paste recovery завершилась ошибкой: ${error.message}`,
+            error
+          );
+        }
       } else if (avStatus === "ERROR" && canAutoRecoverPrePublishClipboardError(refreshedJob)) {
         log(
           config,
@@ -337,6 +372,7 @@ module.exports = {
   articleVideoStatus,
   canAutoRecoverPreEditLinkError,
   canAutoRecoverPrePublishClipboardError,
+  canAutoRecoverBrowserPasteMigration,
   main,
   releaseFullWorkerLock,
   runNodeScript,
