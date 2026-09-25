@@ -51,16 +51,6 @@ jobs:
           set -euo pipefail
           npm test
 
-      - name: Upload browser-paste test overlay
-        uses: actions/upload-artifact@v4
-        with:
-          name: dzen-browser-paste-test-overlay
-          path: |
-            automation/notebooklm-video/dzen-article-video.js
-            automation/notebooklm-video/full-worker.js
-          if-no-files-found: error
-          retention-days: 1
-
       - name: Показать итог Video CI
         if: always()
         shell: bash
