@@ -112,6 +112,29 @@ assert.strictEqual(
   false
 );
 
+assert.strictEqual(
+  articleVideo.isSafeBrowserPasteMigrationError({
+    status: "ERROR",
+    phase: "ERROR",
+    articleUrl: "https://dzen.ru/a/article-test",
+    videoUrl: "https://dzen.ru/video/watch/video-test",
+    failedFromPhase: "EDITING",
+    lastError: "Set-Clipboard : OpenClipboard Failed (ExternalException)",
+  }),
+  true
+);
+assert.strictEqual(
+  articleVideo.isSafeBrowserPasteMigrationError({
+    status: "ERROR",
+    phase: "ERROR",
+    articleUrl: "https://dzen.ru/a/article-test",
+    videoUrl: "https://dzen.ru/video/watch/video-test",
+    lastError: "Set-Clipboard : OpenClipboard Failed (ExternalException)",
+    saveChangesClickedAt: "2026-09-21T00:00:00.000Z",
+  }),
+  false
+);
+
 const baseDescription = [
   "ИИ-Сводка на 3 января 2027 | Подпишись, чтоб получать свежее!",
   "",
@@ -206,7 +229,9 @@ for (const required of [
   "Public ${kind} URL получен напрямую из same-day Studio row",
   "--recover-pre-edit-link-error",
   "--recover-prepublish-clipboard-error",
-  "Windows clipboard заранее подтверждён для video paste",
+  "--recover-browser-paste-migration",
+  "Browser-side paste dispatch:",
+  "Windows clipboard не используется",
   "videoEmbedConfirmedAt",
 ]) {
   assert(source.includes(required), `missing article-video contract marker: ${required}`);
