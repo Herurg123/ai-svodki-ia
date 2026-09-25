@@ -118,6 +118,7 @@ function parseArgs(argv) {
     selfTest: false,
     recoverPreEditLinkError: false,
     recoverPrePublishClipboardError: false,
+    recoverBrowserPasteMigration: false,
   };
   for (const arg of argv) {
     if (arg === "--apply") args.apply = true;
@@ -125,6 +126,7 @@ function parseArgs(argv) {
     else if (arg === "--self-test") args.selfTest = true;
     else if (arg === "--recover-pre-edit-link-error") args.recoverPreEditLinkError = true;
     else if (arg === "--recover-prepublish-clipboard-error") args.recoverPrePublishClipboardError = true;
+    else if (arg === "--recover-browser-paste-migration") args.recoverBrowserPasteMigration = true;
     else if (arg.startsWith("--date=")) {
       args.date = arg.slice("--date=".length).trim();
       parseDateKey(args.date);
@@ -1258,38 +1260,96 @@ async function detectVideoPreviewBetween(page, videoUrl) {
   }, { headingText: HEADING_TEXT, anchorText: ANCHOR_TEXT, videoUrl });
 }
 
-async function prepareVideoClipboard(videoUrl, logger) {
-  await writeClipboardText(videoUrl);
-  const readBack = (await readClipboardText()).trim();
-  if (readBack !== videoUrl) {
-    throw new Error(
-      `Windows clipboard не подтвердил video URL до изменения статьи. ` +
-      `expected=${JSON.stringify(videoUrl)}; actual=${JSON.stringify(readBack.slice(0, 160))}`
-    );
-  }
-  logger.log("Windows clipboard заранее подтверждён для video paste; editor ещё не изменён.");
+async function dispatchBrowserPaste(page, videoUrl) {
+  return page.evaluate(({ videoUrl }) => {
+    const selection = window.getSelection();
+    const selectionNode = selection && selection.rangeCount ? selection.anchorNode : null;
+    const selectionElement = selectionNode
+      ? (selectionNode.nodeType === Node.ELEMENT_NODE ? selectionNode : selectionNode.parentElement)
+      : null;
+    const active = document.activeElement;
+
+    const editorRoot =
+      (selectionElement && selectionElement.closest && selectionElement.closest('div[contenteditable="true"].public-DraftEditor-content')) ||
+      (active && active.closest && active.closest('div[contenteditable="true"].public-DraftEditor-content')) ||
+      null;
+
+    if (!editorRoot) {
+      return { ok: false, reason: "draft-editor-focus-missing" };
+    }
+
+    let target = selectionElement;
+    if (!target || !editorRoot.contains(target)) target = active;
+    if (!target || !editorRoot.contains(target)) target = editorRoot;
+
+    const transfer = new DataTransfer();
+    transfer.setData("text/plain", videoUrl);
+    transfer.setData("text", videoUrl);
+
+    let event;
+    let constructor = "ClipboardEvent";
+    try {
+      event = new ClipboardEvent("paste", {
+        bubbles: true,
+        cancelable: true,
+        clipboardData: transfer,
+      });
+      if (!event.clipboardData) {
+        Object.defineProperty(event, "clipboardData", {
+          configurable: true,
+          value: transfer,
+        });
+      }
+    } catch (error) {
+      constructor = "Event+clipboardData";
+      event = new Event("paste", { bubbles: true, cancelable: true });
+      Object.defineProperty(event, "clipboardData", {
+        configurable: true,
+        value: transfer,
+      });
+    }
+
+    const dispatched = target.dispatchEvent(event);
+    return {
+      ok: true,
+      dispatched,
+      defaultPrevented: event.defaultPrevented,
+      constructor,
+      isTrusted: event.isTrusted,
+      targetTag: target.tagName || "",
+      targetClass: String(target.className || "").slice(0, 180),
+      editorClass: String(editorRoot.className || "").slice(0, 180),
+      types: Array.from(transfer.types || []),
+      textMatches: transfer.getData("text/plain") === videoUrl,
+    };
+  }, { videoUrl });
 }
 
-async function pasteVideoAndWaitForPreview(page, videoUrl, logger, options = {}) {
-  if (!options.clipboardPrepared) {
-    await prepareVideoClipboard(videoUrl, logger);
+async function pasteVideoAndWaitForPreview(page, videoUrl, logger) {
+  const paste = await dispatchBrowserPaste(page, videoUrl);
+  if (!paste.ok) {
+    throw new Error(`Browser-side paste не запущен: ${paste.reason || "unknown"}.`);
   }
-  logger.log("Выполняю реальный Ctrl+V подтверждённого video URL.");
-  await page.keyboard.press("Control+V");
+
+  logger.log(
+    `Browser-side paste dispatch: constructor=${paste.constructor}; ` +
+    `isTrusted=${paste.isTrusted}; defaultPrevented=${paste.defaultPrevented}; ` +
+    `target=${paste.targetTag}; textMatches=${paste.textMatches}. Windows clipboard не используется.`
+  );
 
   const deadline = Date.now() + PREVIEW_TIMEOUT_MS;
   let last = null;
   while (Date.now() < deadline) {
     last = await detectVideoPreviewBetween(page, videoUrl);
     if (last.ok) {
-      logger.log(`Dzen video preview/embed подтверждён между heading и anchor: ${JSON.stringify(last.signals.slice(0, 3))}.`);
+      logger.log(`Dzen video preview/embed подтверждён после browser-side paste: ${JSON.stringify(last.signals.slice(0, 3))}.`);
       return last;
     }
     await page.waitForTimeout(500);
   }
   throw new Error(
-    `URL не превратился в подтверждённый Dzen video preview/embed за ${PREVIEW_TIMEOUT_MS} мс ` +
-    `(last=${JSON.stringify(last)}).`
+    `Browser-side paste не превратился в подтверждённый Dzen video preview/embed за ${PREVIEW_TIMEOUT_MS} мс ` +
+    `(last=${JSON.stringify(last)}). Publish запрещён.`
   );
 }
 
@@ -2758,17 +2818,9 @@ async function runApply(page, config, state, job, dateKey, logger) {
       "Новый heading, Enter, clipboard paste и второй embed НЕ выполняются."
     );
   } else {
-    // Fail before the first editor mutation if Windows clipboard cannot support
-    // the real Ctrl+V required for Dzen to create a video embed.
-    await prepareVideoClipboard(links.videoUrl, logger);
     const created = await createPlainHeadingBeforeAnchor(editorPage, logger);
     beforeStyle = created.beforeStyle;
-    await pasteVideoAndWaitForPreview(
-      editorPage,
-      links.videoUrl,
-      logger,
-      { clipboardPrepared: true }
-    );
+    await pasteVideoAndWaitForPreview(editorPage, links.videoUrl, logger);
     updateArticleVideo(config, state, job, {
       status: "PENDING",
       phase: "EDITING",
