@@ -168,7 +168,7 @@ by its `AGENTS.md`, `README.md`, `DEPLOYMENT.md` and DZEN subsystem docs.
 
 The local downstream may publish native Dzen video, manage its two exact
 collections and edit only the already-published same-day article under its
-at-most-once/verification-only state machines. The article-video runtime must not preserve or restore the operator Windows clipboard. The experimental browser-paste path must not depend on the Windows desktop clipboard for video insertion; it may still use Windows clipboard only as a last-resort Studio URL fallback. A real Dzen video preview remains mandatory before publish. It must not mutate nightly RSS,
+at-most-once/verification-only state machines. The article-video runtime must not preserve or restore the operator Windows clipboard. The production browser-paste path must not depend on the Windows desktop clipboard for video insertion; it may still use Windows clipboard only as a last-resort Studio URL fallback. A real Dzen video preview remains mandatory before publish. It must not mutate nightly RSS,
 public site generation or GitHub publication state.
 
 The 32-day FTP-video retention job is a separate narrow maintenance exception. It
