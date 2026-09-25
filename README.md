@@ -141,9 +141,9 @@ Summary`. Диагностические JSON artifacts имеют `retention: 2
 Подпроект стартует после уже опубликованного выпуска и живёт на Windows-машине
 оператора. Один scheduled entrypoint ведёт NotebookLM/MP4/PNG/optional FTP,
 native Dzen publication, две Dzen collections и insertion опубликованного видео
-в same-day статью. На article-video этапе пользовательский Windows clipboard не
-сохраняется и не восстанавливается: он используется только как рабочий канал для
-проверенного video URL перед Ctrl+V.
+в same-day статью. В экспериментальной article-video ветке video paste выполняется
+внутри browser page через synthetic paste event и не зависит от Windows desktop
+clipboard; publish всё равно разрешён только после подтверждённого Dzen preview.
 
 Его state, browser profile, реальные configs, FTP credentials, logs и downloaded
 media не коммитятся. Точные state machines, manual entrypoints, deployment и
