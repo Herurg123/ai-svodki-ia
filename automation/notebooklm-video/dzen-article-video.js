@@ -2759,7 +2759,7 @@ function authorizeBrowserPasteMigrationRecovery(config, state, job, logger) {
     /browser-side paste migration recovery/i.test(String(entry && entry.reason || ""))
   )) {
     throw new Error(
-      "--recover-browser-paste-migration уже использовался для этого job. Повторная test-mutation запрещена."
+      "--recover-browser-paste-migration уже использовался для этого job. Повторная migration-mutation запрещена."
     );
   }
 
