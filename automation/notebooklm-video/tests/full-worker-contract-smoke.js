@@ -62,7 +62,7 @@ assert(source.includes('"--recover-pre-edit-link-error"'),
 assert(source.includes('"--recover-prepublish-clipboard-error"'),
   "safe scheduled recovery must invoke the guarded pre-publish clipboard recovery flag");
 assert(source.includes('"--recover-browser-paste-migration"'),
-  "experimental scheduled recovery must unlock one browser-side paste migration attempt");
+  "migration recovery must unlock one browser-side paste attempt for legacy clipboard errors");
 assert(source.includes('} else if (avStatus === "ERROR")'),
   "all other terminal article-video ERROR states must still block automatic retry");
 assert(source.includes("Фаза 4/4 НЕ запускается: она разрешена только после полного успеха всех предыдущих фаз."),
