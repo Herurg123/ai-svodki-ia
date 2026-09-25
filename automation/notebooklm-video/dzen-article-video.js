@@ -2785,7 +2785,7 @@ function authorizeBrowserPasteMigrationRecovery(config, state, job, logger) {
 
   if (logger) {
     logger.warn(
-      "TEST-RECOVERY: старый pre-publish clipboard ERROR разблокирован ОДИН раз для browser-side paste. " +
+      "MIGRATION-RECOVERY: старый pre-publish clipboard ERROR разблокирован ОДИН раз для browser-side paste. " +
       "Editor сначала инспектируется; existing partial embed не вставляется повторно."
     );
   }
