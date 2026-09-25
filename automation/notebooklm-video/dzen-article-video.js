@@ -2896,9 +2896,8 @@ async function runApply(page, config, state, job, dateKey, logger) {
       lastErrorAt: null,
     });
 
-    // Clipboard now intentionally contains the video URL. The runtime does not
-    // preserve or restore the operator clipboard; only the strict pre-mutation
-    // video paste check below owns the OS clipboard.
+    // Video paste is browser-side and does not depend on the Windows desktop
+    // clipboard. The preview oracle below remains the publish gate.
     const anchor = await exactDraftBlock(editorPage, ANCHOR_TEXT, "oracle-anchor");
     oracle = await blockStyleSnapshot(anchor);
   }
