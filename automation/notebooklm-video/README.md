@@ -214,7 +214,7 @@ The fourth stage runs only after native video is `PUBLISHED` and collections are
 through Studio and inserts the video before H2 `Мировые лидеры ИИ` under a new
 H2 `Видеосводка`.
 
-The experimental video paste is dispatched inside the browser page with
+The production video paste is dispatched inside the browser page with
 `ClipboardEvent` + `DataTransfer(text/plain=<videoUrl>)`, so it does not depend
 on the Windows desktop clipboard and can be tested with the workstation locked.
 Windows clipboard remains only a last-resort Studio URL fallback. Publish still
@@ -227,7 +227,7 @@ a second editor mutation or publish/save click. Exact pre-existing H2
 `Видеосводка` ends as `SKIPPED_EXISTING`.
 
 `ERROR` is terminal by default. Two production one-shot scheduled recovery
-classes remain, plus one isolated one-shot browser-paste migration recovery for testing:
+classes remain, plus one isolated one-shot browser-paste migration recovery for legacy clipboard-related ERROR:
 
 1. proven pre-edit link-resolution failure with no resolved links/editor/publish
    markers;
