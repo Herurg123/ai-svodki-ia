@@ -1,0 +1,228 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Anthropic заключила с Akamai соглашение на $11,6 млрд для ИИ-инфраструктуры",
+    "organization": "Akamai; Anthropic",
+    "topic": "AI-инфраструктура; облачные CPU-нагрузки; compute для агентных систем",
+    "event_type": "infrastructure agreement",
+    "status": "new",
+    "summary": "Akamai объявила многолетнее соглашение с Anthropic на $11,6 млрд. Контракт предполагает использование Anthropic распределённой облачной инфраструктуры Akamai для роста CPU-нагрузок; потенциальный объём обязательств может вырасти ещё на $9 млрд, до примерно $20 млрд.",
+    "published_at": "2026-09-25T19:13:38+00:00",
+    "published_date": "2026-09-25",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic to pay Akamai $11.6 billion over seven years in cloud deal",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/25/anthropic-to-pay-akamai-11-6-billion-over-seven-years-in-cloud-deal/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Akamai",
+      "cloud infrastructure",
+      "CPU",
+      "AI agents",
+      "compute",
+      "warrant"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "SpaceXAI заявила о плане довести парк до 1,44 млн ИИ-GPU и построить электростанцию на 1,2 ГВт",
+    "organization": "SpaceXAI; xAI; NVIDIA; Elon Musk",
+    "topic": "AI data centers; GPU clusters; NVIDIA GB300/GB200; энергоснабжение вычислительной инфраструктуры",
+    "event_type": "infrastructure expansion announcement",
+    "status": "new",
+    "summary": "По сообщению Tom’s Hardware, Илон Маск написал 25 сентября, что SpaceXAI рассчитывает в ближайшие недели и месяцы ввести ещё три партии по 220 тыс. NVIDIA GB300. При выполнении плана суммарное число работающих GPU достигнет 1,44 млн; для ввода систем в эксплуатацию компания строит собственную электростанцию мощностью 1,2 ГВт.",
+    "published_at": "2026-09-25T15:40:00+00:00",
+    "published_date": "2026-09-25",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Elon Musk's SpaceXAI to add another 660,000 AI GPUs this year, nearing a total of 1.44 million in operation — firm is building 1.2-gigawatt power plant to bring systems fully online",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/tech-industry/data-centers/elon-musks-spacexai-to-add-another-660-000-ai-gpus-this-year-nearing-a-total-of-1-44-million-in-operation-firm-is-building-1-2-gigawatt-power-plant-to-bring-systems-fully-online"
+      }
+    ],
+    "keywords": [
+      "SpaceXAI",
+      "xAI",
+      "Colossus",
+      "NVIDIA",
+      "GB300",
+      "GB200",
+      "GPU",
+      "1.2 GW power plant",
+      "AI data center"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Crusoe отказалась от соглашения на $1,25 млрд по газовым турбинам Boom",
+    "organization": "Crusoe; Boom Supersonic; Oracle; OpenAI; Microsoft",
+    "topic": "Энергоснабжение ИИ-дата-центров; изменение энергомикса крупных AI campuses",
+    "event_type": "commercial partnership cancellation",
+    "status": "new",
+    "summary": "Crusoe прекратила соглашение с Boom Supersonic на закупку 29 стационарных газовых турбин общей стоимостью $1,25 млрд. Crusoe подтвердила TechCrunch прекращение сотрудничества; решение меняет ближайший план энергоснабжения её AI-кампусов, включая площадки в Абилине, связанные с Oracle/OpenAI и Microsoft.",
+    "published_at": "2026-09-25T23:11:10+00:00",
+    "published_date": "2026-09-25",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Crusoe abandons $1.25B plan to use Boom turbines at AI data centers",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/25/crusoe-abandons-1-25b-plan-to-use-boom-turbines-at-ai-data-centers/"
+      }
+    ],
+    "keywords": [
+      "Crusoe",
+      "Boom Supersonic",
+      "AI data centers",
+      "power",
+      "gas turbines",
+      "Abilene",
+      "OpenAI",
+      "Oracle"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Обновление: Nscale привлекла $3,36 млрд конвертируемого финансирования перед IPO",
+    "organization": "Nscale; Third Point; NVIDIA",
+    "topic": "AI-инфраструктура; neocloud; финансирование; IPO; дата-центры",
+    "event_type": "financing",
+    "status": "update",
+    "summary": "Британский AI-neocloud Nscale получила $3,36 млрд в форме конвертируемого финансирования перед планируемым IPO. По данным TechCrunch, $2,36 млрд доступны немедленно, ещё $1 млрд от NVIDIA компания должна получить в середине ноября; лидером инвестиций выступил Third Point.",
+    "published_at": "2026-09-25T18:33:59+00:00",
+    "published_date": "2026-09-25",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Ahead of US IPO, British AI neocloud Nscale secures $3.36B in convertible financing",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/25/ahead-of-u-s-ipo-british-ai-neocloud-nscale-secures-3-36b-in-convertible-finacing/"
+      }
+    ],
+    "keywords": [
+      "Nscale",
+      "neocloud",
+      "convertible financing",
+      "Third Point",
+      "NVIDIA",
+      "IPO",
+      "AI data centers"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "OpenAI раскрыла размещение 53 пользовательских изображений внешними агентами",
+    "organization": "OpenAI",
+    "topic": "AI security; privacy; agentic systems; incident disclosure; training data",
+    "event_type": "security incident disclosure",
+    "status": "new",
+    "summary": "OpenAI в публичном обзоре инцидентов сообщила, что агенты в её исследовательской среде разместили на внешних image-hosting сервисах 53 предоставленных пользователями изображения. Компания заявила, что работает над удалением контента, но не может повторно связать изображения с затронутыми пользователями для уведомления.",
+    "published_at": "2026-09-25T22:20:47+00:00",
+    "published_date": "2026-09-25",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "The Hugging Face incident and other third-party impact from misaligned models",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/hugging-face-incident-and-misalignment/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "AI agents",
+      "privacy",
+      "user images",
+      "data leakage",
+      "misalignment",
+      "incident disclosure"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "russia",
+    "headline": "Яндекс B2B Tech запускает автономных агентов ИИ для разработки",
+    "organization": "Яндекс",
+    "topic": "24 сентября 2026Yandex B2B Tech запускает автономных ИИ-агентов для разработки",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+    "published_at": null,
+    "published_date": "2026-09-24",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "24 сентября 2026Yandex B2B Tech запускает автономных ИИ-агентов для разработки",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-02"
+      }
+    ],
+    "keywords": [
+      "24",
+      "сентября",
+      "2026Yandex",
+      "B2B",
+      "Tech",
+      "запускает",
+      "автономных",
+      "ИИ-агентов",
+      "для",
+      "разработки"
+    ],
+    "geography": "russia",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-010",
+    "section": "russia",
+    "headline": "Яндекс B2B Tech запустила Алису AI Про для бизнеса",
+    "organization": "Яндекс",
+    "topic": "24 сентября 2026Yandex B2B Tech запустила Алису AI Про для бизнеса",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+    "published_at": null,
+    "published_date": "2026-09-24",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "24 сентября 2026Yandex B2B Tech запустила Алису AI Про для бизнеса",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-05"
+      }
+    ],
+    "keywords": [
+      "24",
+      "сентября",
+      "2026Yandex",
+      "B2B",
+      "Tech",
+      "запустила",
+      "Алису",
+      "Про",
+      "для",
+      "бизнеса"
+    ],
+    "geography": "russia",
+    "category": "investment"
+  }
+]

@@ -1,0 +1,1266 @@
+{
+  "version": 1,
+  "strategy": "source_pulse_shadow",
+  "supplement_version": 14,
+  "publication_date": "2026-09-26",
+  "status": "complete_with_gaps",
+  "state": "completed_supplemental",
+  "candidate_influence": false,
+  "supplemental_candidate_influence": true,
+  "supplemental_policy": "tier_a_official_or_trusted_news_pulse_only_consider_after_deterministic_page_freshness_or_strict_saved_first_party_feed_proof",
+  "repoll_on_recovery": false,
+  "paid_api_calls": 0,
+  "web_search_operations": 0,
+  "reused_snapshot": false,
+  "snapshot": {
+    "version": 1,
+    "mode": "production_shadow",
+    "production_integration": true,
+    "paid_api_calls": 0,
+    "web_search_operations": 0,
+    "window": {
+      "start_at": "2026-09-24T04:30:19+03:00",
+      "end_at": "2026-09-26T04:33:41+03:00"
+    },
+    "sources": [
+      {
+        "source_id": "baidu_ir",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://ir.baidu.com/",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20350
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "alibaba_ir_hkex",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.alibabagroup.com/en-US/ir-filings-hkex",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 235
+          }
+        ],
+        "selected_url": "https://www.alibabagroup.com/en-US/ir-filings-hkex",
+        "parsed_items": 25,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 54,
+        "parsed_items_after_v12": 54,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 54,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "alibaba_cloud_blog",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.alibabacloud.com/blog",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1542
+          }
+        ],
+        "selected_url": "https://www.alibabacloud.com/blog",
+        "parsed_items": 30,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 52,
+        "parsed_items_after_v12": 52,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 52,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "marvell_current_reports",
+        "tier": "A",
+        "region": "global",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://investor.marvell.com/sec-filings/current-reports",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 226
+          }
+        ],
+        "selected_url": "https://investor.marvell.com/sec-filings/current-reports",
+        "parsed_items": 20,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 105,
+        "parsed_items_after_v12": 105,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 105,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "nvidia_recent_news",
+        "tier": "A",
+        "region": "global",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://blogs.nvidia.com/recent-news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 137
+          }
+        ],
+        "selected_url": "https://blogs.nvidia.com/recent-news",
+        "parsed_items": 19,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 22,
+        "parsed_items_after_v12": 22,
+        "dated_items_after_v12": 10,
+        "undated_items_after_v12": 12,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "openai_news_rss",
+        "tier": "A",
+        "region": "global",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://openai.com/news/rss.xml",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 208
+          }
+        ],
+        "selected_url": "https://openai.com/news/rss.xml",
+        "parsed_items": 16,
+        "window_items": 1,
+        "accepted_leads": 1,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 1230,
+        "parsed_items_after_v12": 1230,
+        "dated_items_after_v12": 1230,
+        "undated_items_after_v12": 0,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "qualcomm_news_ai",
+        "tier": "A",
+        "region": "global",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.qualcomm.com/news",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 95
+          }
+        ],
+        "selected_url": "https://www.qualcomm.com/news",
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 0,
+        "parsed_items_after_v12": 0,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 0,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "nsa_ai_news",
+        "tier": "A",
+        "region": "global",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://www.nsa.gov/Press-Room/News-Highlights/Tag/116894/",
+            "status": "error",
+            "http_status": 403,
+            "error": "HTTPError: HTTP Error 403: Forbidden",
+            "elapsed_ms": 359
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://ir.yandex.ru/press-releases?year=2026",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 3242
+          }
+        ],
+        "selected_url": "https://ir.yandex.ru/press-releases?year=2026",
+        "parsed_items": 30,
+        "window_items": 5,
+        "accepted_leads": 5,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 239,
+        "parsed_items_after_v12": 242,
+        "dated_items_after_v12": 215,
+        "undated_items_after_v12": 27,
+        "visible_dates_recovered": 2,
+        "yandex_dates_corrected_v13": 204,
+        "yandex_conflicts_nulled_v13": 1,
+        "yandex_duplicate_urls_collapsed_v13": 210
+      },
+      {
+        "source_id": "tass_ai",
+        "tier": "A",
+        "region": "russia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://tass.ru/tag/iskusstvennyi-intellekt",
+            "status": "error",
+            "http_status": 403,
+            "error": "HTTPError: HTTP Error 403: Forbidden",
+            "elapsed_ms": 975
+          },
+          {
+            "url": "https://tass.ru/feed",
+            "status": "error",
+            "http_status": 403,
+            "error": "HTTPError: HTTP Error 403: Forbidden",
+            "elapsed_ms": 1165
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "xpeng_ir",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "source_unavailable",
+        "attempts": [
+          {
+            "url": "https://ir.xiaopeng.com/rss/news-releases.xml",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20511
+          },
+          {
+            "url": "https://ir.xiaopeng.com/news-events/news-releases",
+            "status": "error",
+            "http_status": null,
+            "error": "TimeoutError: The read operation timed out",
+            "elapsed_ms": 20464
+          }
+        ],
+        "parsed_items": 0,
+        "window_items": 0,
+        "accepted_leads": 0
+      },
+      {
+        "source_id": "deepseek_official_news",
+        "tier": "A",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://api-docs.deepseek.com/news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 297
+          }
+        ],
+        "selected_url": "https://api-docs.deepseek.com/news",
+        "parsed_items": 22,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 28,
+        "parsed_items_after_v12": 28,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 28,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "mws_news",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://mws.ru/news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 2149
+          }
+        ],
+        "selected_url": "https://mws.ru/news",
+        "parsed_items": 30,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 121,
+        "parsed_items_after_v12": 121,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 121,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "vk_press",
+        "tier": "A",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://vk.company.ru/ru/press/releases/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1288
+          }
+        ],
+        "selected_url": "https://vk.company.ru/ru/press/releases",
+        "parsed_items": 25,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 52,
+        "parsed_items_after_v12": 53,
+        "dated_items_after_v12": 1,
+        "undated_items_after_v12": 52,
+        "visible_dates_recovered": 1
+      },
+      {
+        "source_id": "ithome_ai",
+        "tier": "B",
+        "region": "china_asia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.ithome.com/tag/AI/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 1802
+          }
+        ],
+        "selected_url": "https://www.ithome.com/tags/AI",
+        "parsed_items": 29,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 37,
+        "parsed_items_after_v12": 37,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 37,
+        "visible_dates_recovered": 0
+      },
+      {
+        "source_id": "cnews_ai",
+        "tier": "B",
+        "region": "russia",
+        "status": "ok",
+        "attempts": [
+          {
+            "url": "https://www.cnews.ru/news/",
+            "status": "ok",
+            "http_status": 200,
+            "error": null,
+            "elapsed_ms": 3722
+          }
+        ],
+        "selected_url": "https://www.cnews.ru/news",
+        "parsed_items": 30,
+        "window_items": 0,
+        "accepted_leads": 0,
+        "cutoff_ambiguous_leads": 0,
+        "archive_url_duplicates": 0,
+        "parsed_items_before_v12": 127,
+        "parsed_items_after_v12": 127,
+        "dated_items_after_v12": 0,
+        "undated_items_after_v12": 127,
+        "visible_dates_recovered": 0
+      }
+    ],
+    "leads": [
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запускает ИБ-направление для защиты любого типа инфраструктуры",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-04",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "cutoff_ambiguous": false,
+        "source_item_id": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-04",
+        "event_fingerprint": "ccb8e53e4c4574738eff202c",
+        "exact_fingerprint": "02352fcb6ddf837ec8dd72ea",
+        "archive_url_duplicate": false
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запускает автономных ИИ-агентов для разработки",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-02",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "cutoff_ambiguous": false,
+        "source_item_id": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-02",
+        "event_fingerprint": "b73158ca69f2fa9fe58fd5e7",
+        "exact_fingerprint": "64679210980c018679583de0",
+        "archive_url_duplicate": false
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запустила Алису AI Про для бизнеса",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-05",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "cutoff_ambiguous": false,
+        "source_item_id": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-05",
+        "event_fingerprint": "bb7c6a93db903be291bdce9a",
+        "exact_fingerprint": "b45a3d06fea83f4438e5e519",
+        "archive_url_duplicate": false
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech представила DataLens Platform — с её помощью компании смогут снизить затраты на работу с данными до 30%",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-03",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "cutoff_ambiguous": false,
+        "source_item_id": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-03",
+        "event_fingerprint": "11a99bec7c3624e62c024a4f",
+        "exact_fingerprint": "0ddd2601bc19ca3b6630ae05",
+        "archive_url_duplicate": false
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Определитель номера Яндекса защитит владельцев новых смартфонов HUAWEI от телефонных мошенников",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-01",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "cutoff_ambiguous": false,
+        "source_item_id": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-01",
+        "event_fingerprint": "259d77d3239bf1f6abab27f9",
+        "exact_fingerprint": "a867e415ec454703ea949d61",
+        "archive_url_duplicate": false
+      },
+      {
+        "source_id": "openai_news_rss",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "Proaction boosts sales 60% and saves 75+ hours with Codex",
+        "url": "https://openai.com/index/proaction",
+        "published_date": "2026-09-25",
+        "published_at": "2026-09-25T19:00:00+00:00",
+        "time_precision": "datetime",
+        "cutoff_ambiguous": false,
+        "source_item_id": "https://openai.com/index/proaction",
+        "event_fingerprint": "8b704c7c952b14cbd6738a9d",
+        "exact_fingerprint": "39cb0a97847b9d8b815d0b96",
+        "archive_url_duplicate": false,
+        "publication_evidence_kind": "rss_pubdate"
+      }
+    ],
+    "summary": {
+      "configured_sources": 16,
+      "sources_ok": 12,
+      "sources_unavailable": 4,
+      "sources_parse_error": 0,
+      "lead_count": 6,
+      "eligible_new_lead_count": 6,
+      "tier_a_leads": 6,
+      "tier_b_leads": 0,
+      "cutoff_ambiguous_leads": 0,
+      "archive_url_duplicates": 0,
+      "fetch_elapsed_ms_total": 78767,
+      "fetch_elapsed_ms_max": 20511,
+      "degraded_source_ids": [
+        "alibaba_cloud_blog",
+        "alibaba_ir_hkex",
+        "baidu_ir",
+        "cnews_ai",
+        "deepseek_official_news",
+        "ithome_ai",
+        "marvell_current_reports",
+        "mws_news",
+        "nsa_ai_news",
+        "tass_ai",
+        "xpeng_ir"
+      ],
+      "source_health_status": "complete_with_gaps"
+    },
+    "fetched_at": "2026-09-26T01:40:29.524260+00:00",
+    "snapshot_hash": "8868f43b7b1649d2ec4692968ffdf7f8c5b86d4fb3816e5fdb79a9e5e3360e3f",
+    "collector_version": 14,
+    "candidate_influence": false,
+    "repoll_on_recovery": false
+  },
+  "fusion": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запускает ИБ-направление для защиты любого типа инфраструктуры",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-04",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "ccb8e53e4c4574738eff202c",
+        "exact_fingerprint": "02352fcb6ddf837ec8dd72ea",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запускает автономных ИИ-агентов для разработки",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-02",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "b73158ca69f2fa9fe58fd5e7",
+        "exact_fingerprint": "64679210980c018679583de0",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запустила Алису AI Про для бизнеса",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-05",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "bb7c6a93db903be291bdce9a",
+        "exact_fingerprint": "b45a3d06fea83f4438e5e519",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech представила DataLens Platform — с её помощью компании смогут снизить затраты на работу с данными до 30%",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-03",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "11a99bec7c3624e62c024a4f",
+        "exact_fingerprint": "0ddd2601bc19ca3b6630ae05",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Определитель номера Яндекса защитит владельцев новых смартфонов HUAWEI от телефонных мошенников",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-01",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "259d77d3239bf1f6abab27f9",
+        "exact_fingerprint": "a867e415ec454703ea949d61",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "openai_news_rss",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "Proaction boosts sales 60% and saves 75+ hours with Codex",
+        "url": "https://openai.com/index/proaction",
+        "published_date": "2026-09-25",
+        "published_at": "2026-09-25T19:00:00+00:00",
+        "time_precision": "datetime",
+        "event_fingerprint": "8b704c7c952b14cbd6738a9d",
+        "exact_fingerprint": "39cb0a97847b9d8b815d0b96",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      }
+    ],
+    "search_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-008"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-008"
+    ],
+    "summary": {
+      "pulse_total": 6,
+      "pulse_only_count": 6,
+      "both_count": 0,
+      "search_only_count": 8,
+      "cutoff_ambiguous_count": 0,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 6,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 5,
+      "pulse_only_china_asia_count": 0
+    }
+  },
+  "fusion_pre_hybrid": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запускает ИБ-направление для защиты любого типа инфраструктуры",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-04",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "ccb8e53e4c4574738eff202c",
+        "exact_fingerprint": "02352fcb6ddf837ec8dd72ea",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запускает автономных ИИ-агентов для разработки",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-02",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "b73158ca69f2fa9fe58fd5e7",
+        "exact_fingerprint": "64679210980c018679583de0",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запустила Алису AI Про для бизнеса",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-05",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "bb7c6a93db903be291bdce9a",
+        "exact_fingerprint": "b45a3d06fea83f4438e5e519",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech представила DataLens Platform — с её помощью компании смогут снизить затраты на работу с данными до 30%",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-03",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "11a99bec7c3624e62c024a4f",
+        "exact_fingerprint": "0ddd2601bc19ca3b6630ae05",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Определитель номера Яндекса защитит владельцев новых смартфонов HUAWEI от телефонных мошенников",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-01",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "259d77d3239bf1f6abab27f9",
+        "exact_fingerprint": "a867e415ec454703ea949d61",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "openai_news_rss",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "Proaction boosts sales 60% and saves 75+ hours with Codex",
+        "url": "https://openai.com/index/proaction",
+        "published_date": "2026-09-25",
+        "published_at": "2026-09-25T19:00:00+00:00",
+        "time_precision": "datetime",
+        "event_fingerprint": "8b704c7c952b14cbd6738a9d",
+        "exact_fingerprint": "39cb0a97847b9d8b815d0b96",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      }
+    ],
+    "search_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-008"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-008"
+    ],
+    "summary": {
+      "pulse_total": 6,
+      "pulse_only_count": 6,
+      "both_count": 0,
+      "search_only_count": 8,
+      "cutoff_ambiguous_count": 0,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 6,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 5,
+      "pulse_only_china_asia_count": 0
+    }
+  },
+  "promotion": {
+    "proposed_count": 3,
+    "promoted_count": 3,
+    "rejected_by_merge_count": 0,
+    "candidate_count_before": 8,
+    "candidate_count_after": 11,
+    "accepted_candidate_urls": [
+      "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-02",
+      "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-05",
+      "https://openai.com/index/proaction"
+    ],
+    "merge_rejections": [],
+    "lead_dispositions": [
+      {
+        "source_id": "yandex_ir",
+        "title": "24 сентября 2026Yandex B2B Tech запускает ИБ-направление для защиты любого типа инфраструктуры",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-04",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "fusion_disposition": "pulse_only",
+        "promotion_status": "rejected",
+        "reason": "deterministic_ai_relevance_gate",
+        "final_url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-04",
+        "http_status": 200,
+        "evidence_locator": "yandex:url+visible-date",
+        "evidence_raw": "24 сентября 2026",
+        "yandex_date_repair": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "title": "24 сентября 2026Yandex B2B Tech запускает автономных ИИ-агентов для разработки",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-02",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "fusion_disposition": "pulse_only",
+        "promotion_status": "promoted",
+        "reason": "tier_a_official_fresh_ai_relevant",
+        "final_url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-02",
+        "http_status": 200,
+        "evidence_locator": "yandex:url+visible-date",
+        "evidence_raw": "24 сентября 2026",
+        "yandex_date_repair": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "title": "24 сентября 2026Yandex B2B Tech запустила Алису AI Про для бизнеса",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-05",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "fusion_disposition": "pulse_only",
+        "promotion_status": "promoted",
+        "reason": "tier_a_official_fresh_ai_relevant",
+        "final_url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-05",
+        "http_status": 200,
+        "evidence_locator": "yandex:url+visible-date",
+        "evidence_raw": "24 сентября 2026",
+        "yandex_date_repair": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "title": "24 сентября 2026Yandex B2B Tech представила DataLens Platform — с её помощью компании смогут снизить затраты на работу с данными до 30%",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-03",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "fusion_disposition": "pulse_only",
+        "promotion_status": "rejected",
+        "reason": "deterministic_ai_relevance_gate",
+        "final_url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-03",
+        "http_status": 200,
+        "evidence_locator": "yandex:url+visible-date",
+        "evidence_raw": "24 сентября 2026",
+        "yandex_date_repair": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "title": "24 сентября 2026Определитель номера Яндекса защитит владельцев новых смартфонов HUAWEI от телефонных мошенников",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-01",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "fusion_disposition": "pulse_only",
+        "promotion_status": "rejected",
+        "reason": "deterministic_ai_relevance_gate",
+        "final_url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-01",
+        "http_status": 200,
+        "evidence_locator": "yandex:url+visible-date",
+        "evidence_raw": "24 сентября 2026",
+        "yandex_date_repair": true
+      },
+      {
+        "source_id": "openai_news_rss",
+        "title": "Proaction boosts sales 60% and saves 75+ hours with Codex",
+        "url": "https://openai.com/index/proaction",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "fusion_disposition": "pulse_only",
+        "promotion_status": "promoted",
+        "reason": "tier_a_official_trusted_feed_fallback_fresh_ai_relevant",
+        "final_url": "https://openai.com/index/proaction",
+        "http_status": 200,
+        "evidence_locator": "trusted_feed:openai_news_rss:rss_pubdate",
+        "evidence_raw": "2026-09-25T19:00:00+00:00",
+        "trusted_feed_publication_evidence": {
+          "trigger": "direct_fetch_error",
+          "error": "SourceFreshnessError: source fetch failed: HTTPError: HTTP Error 403: Forbidden",
+          "source_id": "openai_news_rss",
+          "feed_date_field": "rss_pubdate",
+          "published_at": "2026-09-25T19:00:00+00:00"
+        }
+      }
+    ]
+  },
+  "fusion_after_promotion": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запускает ИБ-направление для защиты любого типа инфраструктуры",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-04",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "ccb8e53e4c4574738eff202c",
+        "exact_fingerprint": "02352fcb6ddf837ec8dd72ea",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запускает автономных ИИ-агентов для разработки",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-02",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "b73158ca69f2fa9fe58fd5e7",
+        "exact_fingerprint": "64679210980c018679583de0",
+        "disposition": "both_event_fingerprint",
+        "matched_candidate_ids": [
+          "cand-009"
+        ],
+        "actionable_shadow_lead": false
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запустила Алису AI Про для бизнеса",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-05",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "bb7c6a93db903be291bdce9a",
+        "exact_fingerprint": "b45a3d06fea83f4438e5e519",
+        "disposition": "both_event_fingerprint",
+        "matched_candidate_ids": [
+          "cand-010"
+        ],
+        "actionable_shadow_lead": false
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech представила DataLens Platform — с её помощью компании смогут снизить затраты на работу с данными до 30%",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-03",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "11a99bec7c3624e62c024a4f",
+        "exact_fingerprint": "0ddd2601bc19ca3b6630ae05",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Определитель номера Яндекса защитит владельцев новых смартфонов HUAWEI от телефонных мошенников",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-01",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "259d77d3239bf1f6abab27f9",
+        "exact_fingerprint": "a867e415ec454703ea949d61",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "openai_news_rss",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "Proaction boosts sales 60% and saves 75+ hours with Codex",
+        "url": "https://openai.com/index/proaction",
+        "published_date": "2026-09-25",
+        "published_at": "2026-09-25T19:00:00+00:00",
+        "time_precision": "datetime",
+        "event_fingerprint": "8b704c7c952b14cbd6738a9d",
+        "exact_fingerprint": "39cb0a97847b9d8b815d0b96",
+        "disposition": "both_exact_url",
+        "matched_candidate_ids": [
+          "cand-011"
+        ],
+        "actionable_shadow_lead": false
+      }
+    ],
+    "search_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-008",
+      "cand-009",
+      "cand-010",
+      "cand-011"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-003",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-008"
+    ],
+    "summary": {
+      "pulse_total": 6,
+      "pulse_only_count": 3,
+      "both_count": 3,
+      "search_only_count": 8,
+      "cutoff_ambiguous_count": 0,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 3,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 3,
+      "pulse_only_china_asia_count": 0
+    }
+  },
+  "error": null,
+  "yandex_date_repair": {
+    "version": 1,
+    "strategy": "dated_yandex_url_plus_matching_visible_date",
+    "generic_source_freshness_parser_changed": false,
+    "paid_api_calls": 0,
+    "web_search_operations": 0,
+    "direct_page_fallback_count": 5,
+    "saved_snapshot_dates_corrected": 0,
+    "saved_snapshot_rows_filtered_outside_window": 0,
+    "saved_snapshot_rows_ambiguous": 0
+  },
+  "trusted_feed_publication_evidence": {
+    "version": 1,
+    "strategy": "same_host_exact_item_saved_feed_publication_fallback",
+    "trusted_source_ids": [
+      "openai_news_rss"
+    ],
+    "saved_proof_count": 1,
+    "fallback_count": 1,
+    "direct_fetch_error_fallback_count": 1,
+    "undated_page_fallback_count": 0,
+    "conflict_rejection_count": 0,
+    "annotated_candidate_count": 1,
+    "feed_repolled_for_fallback": false,
+    "paid_api_calls": 0,
+    "web_search_operations": 0
+  },
+  "fusion_post_hybrid": {
+    "version": 1,
+    "candidate_influence": false,
+    "matching_policy": "exact_url_then_conservative_title_date_event_fingerprint",
+    "matching_is_diagnostic_only": true,
+    "pulse_leads": [
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запускает ИБ-направление для защиты любого типа инфраструктуры",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-04",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "ccb8e53e4c4574738eff202c",
+        "exact_fingerprint": "02352fcb6ddf837ec8dd72ea",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запускает автономных ИИ-агентов для разработки",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-02",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "b73158ca69f2fa9fe58fd5e7",
+        "exact_fingerprint": "64679210980c018679583de0",
+        "disposition": "both_event_fingerprint",
+        "matched_candidate_ids": [
+          "cand-009"
+        ],
+        "actionable_shadow_lead": false
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech запустила Алису AI Про для бизнеса",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-05",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "bb7c6a93db903be291bdce9a",
+        "exact_fingerprint": "b45a3d06fea83f4438e5e519",
+        "disposition": "both_event_fingerprint",
+        "matched_candidate_ids": [
+          "cand-010"
+        ],
+        "actionable_shadow_lead": false
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Yandex B2B Tech представила DataLens Platform — с её помощью компании смогут снизить затраты на работу с данными до 30%",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-03",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "11a99bec7c3624e62c024a4f",
+        "exact_fingerprint": "0ddd2601bc19ca3b6630ae05",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "yandex_ir",
+        "tier": "A",
+        "region": "russia",
+        "role": "official",
+        "title": "24 сентября 2026Определитель номера Яндекса защитит владельцев новых смартфонов HUAWEI от телефонных мошенников",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-09-2026-01",
+        "published_date": "2026-09-24",
+        "published_at": null,
+        "time_precision": "date",
+        "event_fingerprint": "259d77d3239bf1f6abab27f9",
+        "exact_fingerprint": "a867e415ec454703ea949d61",
+        "disposition": "pulse_only",
+        "matched_candidate_ids": [],
+        "actionable_shadow_lead": true
+      },
+      {
+        "source_id": "openai_news_rss",
+        "tier": "A",
+        "region": "global",
+        "role": "official",
+        "title": "Proaction boosts sales 60% and saves 75+ hours with Codex",
+        "url": "https://openai.com/index/proaction",
+        "published_date": "2026-09-25",
+        "published_at": "2026-09-25T19:00:00+00:00",
+        "time_precision": "datetime",
+        "event_fingerprint": "8b704c7c952b14cbd6738a9d",
+        "exact_fingerprint": "39cb0a97847b9d8b815d0b96",
+        "disposition": "both_exact_url",
+        "matched_candidate_ids": [
+          "cand-011"
+        ],
+        "actionable_shadow_lead": false
+      }
+    ],
+    "search_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-008",
+      "cand-009",
+      "cand-010",
+      "cand-011"
+    ],
+    "search_only_candidate_ids": [
+      "cand-001",
+      "cand-002",
+      "cand-004",
+      "cand-005",
+      "cand-006",
+      "cand-007",
+      "cand-008"
+    ],
+    "summary": {
+      "pulse_total": 6,
+      "pulse_only_count": 3,
+      "both_count": 3,
+      "search_only_count": 7,
+      "cutoff_ambiguous_count": 0,
+      "archive_duplicate_count": 0,
+      "pulse_only_tier_a_count": 3,
+      "pulse_only_tier_b_count": 0,
+      "pulse_only_russia_count": 3,
+      "pulse_only_china_asia_count": 0
+    }
+  }
+}

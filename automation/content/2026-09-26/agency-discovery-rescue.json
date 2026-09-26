@@ -1,0 +1,231 @@
+{
+  "version": 6,
+  "search_strategy": "agency_discovery_rescue",
+  "publication_date": "2026-09-26",
+  "triggered": true,
+  "trigger_reason": "major_agencies_raw_zero",
+  "major_agencies_status": "complete_with_gaps",
+  "major_agencies_raw_count": 0,
+  "major_agencies_accepted_count": 0,
+  "agency_health_trigger_version": 2,
+  "major_agencies_primary_final_count": 0,
+  "major_agencies_post_filter_matched_count": 0,
+  "major_agencies_post_filter_unmatched_count": 0,
+  "major_agencies_post_filter_viable_count": 0,
+  "candidate_pool_count_at_trigger": 11,
+  "candidate_count_independent_trigger": true,
+  "executed": true,
+  "state": "completed_no_addition",
+  "status": "complete",
+  "query": "latest AI models research chips infrastructure financing earnings business deals policy security",
+  "allowed_domains": [
+    "reuters.com"
+  ],
+  "required_direct_source_hosts": [
+    "reuters.com"
+  ],
+  "search_context_size": "high",
+  "search_operation_limit": 1,
+  "search_operation_reserved": 1,
+  "search_operation_count_contribution": 1,
+  "search_retry_allowed": false,
+  "raw_count": 0,
+  "validated_count": 0,
+  "accepted_count": 0,
+  "added_count": 0,
+  "duplicate_count": 0,
+  "archive_duplicate_count": 0,
+  "rejections": [],
+  "model_rejections": [],
+  "api": {
+    "response_id": "resp_063b888ca338946b016ab722f3a45887d1b32e050fe50183cf",
+    "status": "completed",
+    "model": "gpt-5.6-terra",
+    "configured_max_tool_calls": 1,
+    "configured_web_search_limit": 1,
+    "observed_web_search_calls": 1,
+    "budget_overrun": false,
+    "web_search_calls": 1,
+    "web_search_calls_completed": 1,
+    "web_search_search_operations_total": 1,
+    "web_search_search_operations_performed": 1,
+    "web_search_search_operations_incomplete": 0,
+    "web_search_navigation_items_total": 0,
+    "web_search_call_items_total": 1,
+    "web_search_call_statuses": {
+      "completed": 1
+    },
+    "web_search_search_statuses": {
+      "completed": 1
+    },
+    "web_search_action_type_counts": {
+      "search": 1
+    },
+    "web_search_call_items": [
+      {
+        "id": "ws_063b888ca338946b016ab722f5257c87d1814ff5bd93d6d472",
+        "status": "completed",
+        "action_type": "search",
+        "action": {
+          "type": "search",
+          "queries": [
+            "latest AI models research chips infrastructure financing earnings business deals policy security"
+          ],
+          "query": "latest AI models research chips infrastructure financing earnings business deals policy security",
+          "sources": null
+        }
+      }
+    ],
+    "actual_queries": [
+      "latest AI models research chips infrastructure financing earnings business deals policy security"
+    ],
+    "consulted_sources": [],
+    "completed_call_limit_exceeded": false,
+    "output_item_limit_exceeded": false,
+    "usage": {
+      "input_tokens": 20007,
+      "input_tokens_details": {
+        "cache_write_tokens": 19726,
+        "cached_tokens": 0
+      },
+      "output_tokens": 227,
+      "output_tokens_details": {
+        "reasoning_tokens": 90
+      },
+      "total_tokens": 20234
+    },
+    "error": null,
+    "incomplete_details": null,
+    "configured_search_operations": 1,
+    "configured_total_tool_calls": 4,
+    "navigation_tool_allowance": 3,
+    "allowed_domains": [
+      "reuters.com"
+    ],
+    "search_context_size": "high"
+  },
+  "resumed": false,
+  "recovered_from_artifact": false,
+  "pipeline_search_budget": {
+    "primary_maximum": 12,
+    "agency_discovery_rescue_maximum": 1,
+    "hybrid_maximum": 4,
+    "coverage_maximum": 7,
+    "maximum_total": 24
+  },
+  "raw_candidates": [],
+  "notes": "Единственная разрешённая Web Search операция выполнена с точным query и Reuters-only маршрутизацией. Прямых Reuters-материалов, пригодных для обнаружения самостоятельного свежего AI-события в effective window 2026-09-24T04:30:19+03:00 → 2026-09-26T04:33:41+03:00, не найдено.",
+  "accepted_candidates": [],
+  "query_policy": "global_reuters_one_slot",
+  "regional_gaps_at_trigger": [
+    "asia",
+    "russia"
+  ],
+  "regional_gaps_affect_query": false,
+  "agency_health": {
+    "version": 2,
+    "stage": "post_freshness_editorial_pre_hybrid",
+    "status": "early_gap",
+    "triggered": true,
+    "trigger_reason": "major_agencies_raw_zero",
+    "paid_api_calls": 0,
+    "web_search_operations": 0,
+    "policy": "Only Search-derived Primary major-agency candidates may prove lane health. Ambiguous identity preserves the prior state and never spends the Reuters slot.",
+    "major_agencies_status": "complete_with_gaps",
+    "raw_count": 0,
+    "accepted_count": 0
+  },
+  "prior_not_triggered_rechecked": false,
+  "source_metadata_available": false,
+  "source_metadata_diagnostics": {
+    "source_metadata_available": false,
+    "search_actions_with_source_metadata": 0,
+    "search_actions_missing_source_metadata": 1
+  },
+  "pre_merge_eligible_count": 0,
+  "observability": {
+    "version": 1,
+    "request_contract": {
+      "model": "gpt-5.6-terra",
+      "query": "latest AI models research chips infrastructure financing earnings business deals policy security",
+      "prompt_sha256": "b9f8c76c4f94f99a473dd8fb634261b41c77b13fe0c9312462b695bc6c25926b",
+      "prompt_chars": 54731,
+      "tools": [
+        {
+          "type": "web_search",
+          "search_context_size": "high",
+          "return_token_budget": "default",
+          "filters": {
+            "allowed_domains": [
+              "reuters.com"
+            ]
+          }
+        }
+      ],
+      "tool_choice": "required",
+      "max_tool_calls": 4,
+      "include": [
+        "web_search_call.action.sources"
+      ],
+      "reasoning": {
+        "effort": "medium"
+      },
+      "max_output_tokens": 5000,
+      "response_schema_name": "daily_ai_agency_discovery_rescue",
+      "response_schema_sha256": "1d3914e62fb4bac24f1e17963a08cce48795be829f9361313f065da3624e8c3c",
+      "store": false,
+      "sdk_max_retries": 2
+    },
+    "transport": {
+      "state": "response_saved",
+      "capture_available": true,
+      "raw_response_saved_before_parse": true,
+      "response_capture_truncated": false
+    },
+    "response_parse": {
+      "state": "parsed_valid"
+    },
+    "source_metadata": {
+      "state": "null",
+      "search_actions": 1,
+      "counts": {
+        "missing": 0,
+        "null": 1,
+        "empty": 0,
+        "nonempty": 0,
+        "malformed": 0
+      },
+      "available": false
+    },
+    "model": {
+      "candidate_count": 0,
+      "rejection_count": 0
+    },
+    "post_model_route": {
+      "pre_merge_eligible_count": 0,
+      "host_rejection_count": 0,
+      "archive_duplicate_count": 0,
+      "existing_event_duplicate_count": 0
+    },
+    "merge_validation": {
+      "post_validation_count": 0,
+      "window_rejection_count": 0,
+      "schema_rejection_count": 0,
+      "cap_rejection_count": 0,
+      "other_rejection_count": 0
+    },
+    "result": {
+      "accepted_count": 0,
+      "added_count": 0,
+      "state": "completed_no_addition"
+    },
+    "zero_search_budget_change": true
+  },
+  "post_validation_count": 0,
+  "source_metadata_state": "null",
+  "transport_capture_available": true,
+  "transport_capture_paths": {
+    "artifact": "/home/runner/work/ai-svodki-ia/ai-svodki-ia/automation/preview/2026-09-26/agency-discovery-rescue-transport.json",
+    "diagnostic": "/home/runner/work/ai-svodki-ia/ai-svodki-ia/automation/preview/production-daily/agency-discovery-rescue-transport-2026-09-26.json"
+  }
+}

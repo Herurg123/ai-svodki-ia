@@ -1,0 +1,42 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-26",
+  "slug": "2026-09-26",
+  "title": "ИИ-Сводка на 26 сентября 2026",
+  "description": "Anthropic заключает крупный инфраструктурный контракт, Nscale усиливает капитал перед IPO, SpaceXAI наращивает GPU, а OpenAI раскрывает новый риск приватности агентных систем. В России Яндекс запускает продукты для бизнеса и разработки.",
+  "published_at": "2026-09-26T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-26.png",
+  "topics": [
+    "ИИ-инфраструктура",
+    "Anthropic",
+    "Akamai",
+    "GPU-кластеры",
+    "энергоснабжение дата-центров",
+    "Nscale",
+    "OpenAI",
+    "приватность агентов ИИ",
+    "Яндекс B2B Tech",
+    "автономные агенты",
+    "корпоративный ИИ"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-009, cand-010."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Четыре независимых события TechCrunch относятся к разным компаниям и типам новостей: контракт Anthropic—Akamai, отмена энергосоглашения Crusoe, финансирование Nscale и disclosure OpenAI о пользовательских изображениях. В коротком подтверждённом пуле они существенно важнее сопоставимых исключённых материалов."
+    }
+  ]
+}
