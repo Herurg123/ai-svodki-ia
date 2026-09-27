@@ -1,0 +1,677 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-09-27",
+  "search_window": {
+    "start_at": "2026-09-25T04:33:41+03:00",
+    "end_at": "2026-09-27T04:27:13+03:00",
+    "latest_archive_at": "2026-09-26T04:33:41+03:00",
+    "start_date": "2026-09-25",
+    "end_date": "2026-09-27",
+    "latest_archive_date": "2026-09-26"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=2, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Meta усилила продвижение AI-агента Muse после роста установок до 3,4 млн",
+      "organization": "Meta; Muse; Sensor Tower",
+      "published_date": "2026-09-25",
+      "published_at": "2026-09-25T16:16:52+00:00",
+      "time_precision": "datetime",
+      "topic": "Consumer AI; персональные агенты; распространение AI-приложений; agentic commerce",
+      "event_type": "material product-adoption update",
+      "keywords": [
+        "Meta",
+        "Muse",
+        "AI agent",
+        "consumer AI",
+        "downloads",
+        "Sensor Tower",
+        "Meta Connect",
+        "smart glasses",
+        "computer use"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Meta is putting its muscle behind Muse as the AI app takes off",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/25/meta-is-putting-its-muscle-behind-muse-as-the-ai-app-takes-off/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Everything new coming to Meta’s AI agent Muse",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/09/23/everything-new-coming-to-metas-ai-agent-muse/"
+        }
+      ],
+      "event_summary": "По оценке Sensor Tower, к 25 сентября приложение Meta Muse превысило 3,4 млн установок после запуска 8 сентября; Meta одновременно усилила кросс-платформенное продвижение агента и представила на Connect новые будущие функции, включая computer use на Mac, аватары, интеграции для покупок и работу со смарт-очками.",
+      "verified_facts": [
+        "TechCrunch датирует материал 25 сентября 2026 года, 09:16 PDT.",
+        "Sensor Tower оценил число установок Muse более чем в 3,4 млн; ранее на той же неделе показатель превышал 2,5 млн.",
+        "По данным TechCrunch, дневная аудитория приложения выросла на 27% в день Meta Connect.",
+        "Материал связывает рост с продвижением Meta и анонсированными расширениями Muse, включая Mac computer use, коннекторы и интеграцию со смарт-очками."
+      ],
+      "significance": "Это заметный material update для массового персонального AI-агента крупной платформы: быстрый рост установок и масштабное продвижение Meta показывают, что Muse становится самостоятельным потребительским конкурентом в агентном сегменте, а не только набором анонсированных функций.",
+      "significance_score": 3,
+      "limitations": "Число установок и показатели аудитории основаны на оценках сторонней аналитической компании, а большинство новых возможностей Muse ещё не стали общедоступными.",
+      "archive_status": "update",
+      "archive_reason": "В архиве есть более ранние сюжеты о Muse и его Mac-функциях, но нет публикации от 25 сентября о новом скачке установок, усиленном продвижении и измеримом росте аудитории после Meta Connect.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Проверен полный текст TechCrunch с точным временем публикации и атрибутированными оценками Sensor Tower; описание связанных продуктовых функций подтверждается отдельным материалом TechCrunch о Meta Connect.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-25T16:16:52+00:00; timestamp проверен Python против effective window. Событие обновляет ранее освещавшийся сюжет о Muse свежими данными на 25 сентября: рост до 3,4 млн установок, 27-процентный рост дневной аудитории и расширение маркетингового продвижения.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является судебным или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран по продуктовой и рыночной значимости, а не как curiosity-сюжет.",
+      "event_date": "2026-09-25",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/09/25/meta-is-putting-its-muscle-behind-muse-as-the-ai-app-takes-off/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Материал TechCrunch от 25 сентября сообщает актуальные на этот день оценки установок и роста аудитории Muse; точный момент формирования оценок не указан.",
+      "id": "cand-001",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/09/25/meta-is-putting-its-muscle-behind-muse-as-the-ai-app-takes-off/",
+      "source_published_date": "2026-09-25",
+      "source_published_at": "2026-09-25T16:16:52+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-25T16:16:52+00:00"
+    },
+    {
+      "title": "США и Китай договорились создать канал связи по безопасности ИИ",
+      "organization": "Правительства США и Китая; Дональд Трамп; Си Цзиньпин",
+      "published_date": "2026-09-26",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Межгосударственная AI policy; безопасность frontier-моделей; уведомления об ИИ-инцидентах национальной значимости",
+      "event_type": "межправительственная договорённость",
+      "keywords": [
+        "США",
+        "Китай",
+        "AI safety",
+        "AI incident notification mechanism",
+        "международное регулирование",
+        "национальная безопасность"
+      ],
+      "geography": "world",
+      "category": "regulation",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "China and US agree to create AI safety channel",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/china-us-agreement-xi-trump-visit-e8f858ed9094b99bc8d3d339f9899f31"
+      },
+      "supporting_sources": [
+        {
+          "title": "Trump and Xi expected to discuss AI safety",
+          "publisher": "Associated Press",
+          "url": "https://apnews.com/article/china-us-trump-xi-meeting-ai-d08e58524de21511dcaba51f43faad95"
+        },
+        {
+          "title": "Trump and Xi will meet to try to manage rising tensions",
+          "publisher": "Associated Press",
+          "url": "https://apnews.com/article/trump-xi-summit-tensions-ai-competition-e560910c897fedb0448eda4cdbfdbaea"
+        }
+      ],
+      "event_summary": "AP сообщает о договорённости США и Китая создать канал по безопасности ИИ. Предварительные материалы AP описывали обсуждение двустороннего диалога и предложенный США механизм уведомления об ИИ-инцидентах, способных затронуть национальную безопасность.",
+      "verified_facts": [
+        "AP опубликовало отдельный материал о согласии США и Китая создать канал по безопасности ИИ.",
+        "В предварительных сообщениях AP говорится, что США предложили механизм уведомления о значимых для национальной безопасности ИИ-инцидентах.",
+        "Темой обсуждения были риски AI-enabled кибератак, биологических злоупотреблений, серьёзных сбоев моделей и потери человеческого контроля."
+      ],
+      "significance": "Потенциально первый заметный двусторонний канал коммуникации между двумя ведущими ИИ-державами по инцидентам и рискам frontier AI; имеет самостоятельную policy-ценность и глобальные последствия.",
+      "significance_score": 4,
+      "limitations": "Доступная страница AP в извлечении не показала машиночитаемый timestamp публикации и не раскрыла полный текст или юридические параметры договорённости; конкретная дата происхождения события не подтверждена первичным межправительственным релизом.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет совпадающего сюжета о создании двустороннего канала США—Китай по безопасности ИИ.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Событие подтверждено заголовком и страницей AP; контекст и заявленный механизм дополнительно согласуются с двумя предшествующими материалами AP.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это межгосударственная policy-договорённость, не судебный или регуляторный legal-case.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран как значимое policy-событие.",
+      "event_date": null,
+      "event_at": null,
+      "event_time_precision": "unknown",
+      "event_origin_url": null,
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "",
+      "id": "cand-002",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    },
+    {
+      "title": "Cipher Digital заключила обязательство с ведущей AI-лабораторией на 10-летнюю аренду HPC-ЦОДа после периода Fluidstack; ожидаемая дополнительная выручка — около $5,2 млрд",
+      "organization": "Cipher Digital; Fluidstack; неназванная ведущая AI-лаборатория",
+      "published_date": "2026-09-25",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "AI-дата-центры; HPC; долгосрочная аренда вычислительной инфраструктуры; финансирование и мощности",
+      "event_type": "долгосрочное обязательство по аренде AI/HPC дата-центра",
+      "keywords": [
+        "Cipher Digital",
+        "Fluidstack",
+        "Barber Lake",
+        "HPC data center",
+        "AI lab",
+        "lease",
+        "$5.2 billion",
+        "AI infrastructure"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "regulator",
+      "primary_source": {
+        "title": "Cipher Digital Form 8-K: Amendment and Commitment relating to Barber Lake Facility",
+        "publisher": "U.S. Securities and Exchange Commission",
+        "url": "https://www.sec.gov/Archives/edgar/data/1819989/000181998926000043/cifr-20260924.htm"
+      },
+      "supporting_sources": [
+        {
+          "title": "Every Megawatt — AI data-center power monitor",
+          "publisher": "Every Megawatt",
+          "url": "https://www.everymegawatt.com/"
+        }
+      ],
+      "event_summary": "Cipher сообщила о поправке к аренде HPC-площадки Barber Lake с Fluidstack и о binding commitment с неназванной ведущей AI-лабораторией на последующую 10-летнюю аренду. Совокупный контрактный срок площадки должен вырасти до 20 лет, а дополнительная контрактная выручка оценивается примерно в $5,2 млрд.",
+      "verified_facts": [
+        "В 8-K Cipher указала, что 24 сентября 2026 года заключила поправку к договору аренды Barber Lake с Fluidstack.",
+        "Одновременно Cipher заключила обязательство с ведущей AI-лабораторией о последующей десятилетней аренде объекта после срока Fluidstack.",
+        "Компания ожидает около $5,2 млрд дополнительной совокупной контрактной выручки.",
+        "Первые залы Barber Lake ожидаются к поставке в IV квартале 2026 — I квартале 2027 года; первый старт арендных платежей ожидается в IV квартале 2026 года."
+      ],
+      "significance": "Это крупный многолетний контракт на AI/HPC-мощности, который продлевает использование одной площадки до 20 лет и демонстрирует спрос AI-лабораторий на заранее законтрактованные дата-центры и энергомощности.",
+      "significance_score": 3,
+      "limitations": "Контрагент- AI-лаборатория не раскрыт; оценка $5,2 млрд является прогнозной контрактной выручкой, а не признанной выручкой. Подписание обязательства произошло 24 сентября, в healing overlap, но публичное объявление и подача 8-K датированы 25 сентября.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет сюжета о Cipher Digital, Barber Lake или этом обязательстве с AI-лабораторией.",
+      "recommendation": "exclude",
+      "verification_status": "verified",
+      "verification_notes": "Параметры сделки, дата раннего события и дата публичного объявления подтверждены первичным регуляторным документом Cipher в SEC.",
+      "freshness_status": "old_reprint",
+      "freshness_reason": "Event Freshness Proof v1: reliable event date is outside the effective window; origin=https://www.sec.gov/Archives/edgar/data/1819989/000181998926000043/cifr-20260924.htm; event=2026-09-24.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это корпоративная инфраструктурная сделка, а не юридическое или регуляторное событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "event_date": "2026-09-24",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.sec.gov/Archives/edgar/data/1819989/000181998926000043/cifr-20260924.htm",
+      "event_evidence_kind": "filing",
+      "event_date_evidence": "В 8-K прямо указано, что 24 сентября 2026 года Cipher заключила amendment к Barber Lake Lease и одновременно binding commitment с ведущей AI-лабораторией.",
+      "id": "cand-003",
+      "event_freshness_status": "stale",
+      "event_freshness_reason": "reliable event date is outside the effective window",
+      "event_freshness_rejection_code": "event_freshness_stale"
+    },
+    {
+      "title": "GitHub Copilot CLI добавил автоматический выбор routing tier и исправил совместимость Gemini с MCP-схемами",
+      "organization": "GitHub; GitHub Copilot CLI; Gemini",
+      "published_date": "2026-09-25",
+      "published_at": "2026-09-25T21:13:10+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agents; model routing; MCP; sandboxed development",
+      "event_type": "pre-release",
+      "keywords": [
+        "GitHub Copilot CLI",
+        "model routing",
+        "Auto tier",
+        "Gemini",
+        "MCP",
+        "plugins",
+        "sandbox"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Release 1.0.89-4",
+        "publisher": "GitHub",
+        "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.89-4"
+      },
+      "supporting_sources": [],
+      "event_summary": "В pre-release GitHub Copilot CLI 1.0.89-4 появился автоматически предлагаемый routing tier с возможностью ручного переключения. Релиз также исправляет запуск обёрнутых gh/git-команд в sandbox, подключение GitHub MCP-инструментов после входа и ошибку 400 у Gemini при MCP-инструментах со сложными JSON Schema.",
+      "verified_facts": [
+        "GitHub пометил версию 1.0.89-4 как pre-release, выпущенный 25 сентября 2026 года.",
+        "Релиз добавляет автоматическую подсказку routing tier и быстрый переход к другому tier.",
+        "В changelog указано исправление Gemini-запросов к MCP-серверам, чьи схемы используют type/properties рядом с anyOf.",
+        "Также исправлены первичное подключение GitHub MCP tools после sign-in и выполнение обёрнутых gh/git-команд в sandboxed sessions."
+      ],
+      "significance": "Это заметное, но не самостоятельное крупное продуктовое событие: обновление усиливает multi-model routing и надёжность MCP-ориентированного CLI-агента, включая Gemini. Уместно как запасной кандидат для подборки developer tools, если не найдутся более крупные релизы.",
+      "significance_score": 2,
+      "limitations": "Это pre-release и набор инкрементальных функций/исправлений, а не GA-анонс или новый агент/модель. Точный timezone-aware timestamp на странице не указан, поэтому сохранена только доказанная дата.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве есть более ранний сюжет о GitHub Copilot от 18 сентября, но он относится к Dev Containers, PR и Sentry; текущий релиз CLI является отдельным обновлением.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Проверен прямой официальный GitHub release page с перечнем изменений и датой выпуска.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/github/copilot-cli/releases/tags/v1.0.89-4=2026-09-25T21:13:10Z; timestamp проверен Python против effective window. Официальный release опубликован 25 сентября 2026 года, внутри effective editorial window; это отдельный релиз, не совпадающий с ранее архивированной weekly-заметкой Copilot.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является правовым или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: проход посвящён инструментам разработки.",
+      "event_date": "2026-09-25",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.com/github/copilot-cli/releases/tag/v1.0.89-4",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Прямая официальная страница GitHub Release показывает, что версия 1.0.89-4 была released 25 Sep; timezone для отображаемого времени не указан.",
+      "id": "cand-004",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://github.com/github/copilot-cli/releases/tag/v1.0.89-4",
+      "source_published_date": "2026-09-25",
+      "source_published_at": "2026-09-25T21:13:10+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "github-releases-api:published_at:https://api.github.com/repos/github/copilot-cli/releases/tags/v1.0.89-4=2026-09-25T21:13:10Z"
+    },
+    {
+      "title": "Anthropic’s founders reportedly seek special voting shares to retain control ahead of IPO",
+      "organization": "Anthropic; Dario Amodei; Anthropic co-founders",
+      "published_date": "2026-09-25",
+      "published_at": "2026-09-25T15:40:03+00:00",
+      "time_precision": "datetime",
+      "topic": "IPO governance; founder control; corporate structure",
+      "event_type": "corporate governance proposal",
+      "keywords": [
+        "Anthropic",
+        "IPO",
+        "super-voting shares",
+        "Dario Amodei",
+        "founder control"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Anthropic’s founders seek voting control ahead of IPO",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/25/anthropics-founders-seek-voting-control-ahead-of-ipo/"
+      },
+      "supporting_sources": [],
+      "event_summary": "TechCrunch, citing The Information, reported that Anthropic is asking shareholders to approve a structure that would give CEO Dario Amodei and six co-founders special shares carrying a combined 50.1% of voting power on most corporate matters, subject to ownership and founder-retention conditions.",
+      "verified_facts": [
+        "The cited TechCrunch page was published at 8:40 AM PDT on September 25, 2026.",
+        "The report characterizes the measure as a shareholder approval request expected in the coming days, not as a completed approval.",
+        "The proposed structure would preserve founder voting control without additional economic value for the special shares."
+      ],
+      "significance": "A potential control structure at a leading frontier-model developer is material to the governance of a prospective mega-IPO and could shape how Anthropic balances founder authority, its Long-Term Benefit Trust and public shareholders.",
+      "significance_score": 3,
+      "limitations": "The underlying reporting is attributed to The Information and the proposal had not been publicly confirmed as approved on the cited page; treat the governance action as reported/proposed rather than final.",
+      "archive_status": "none",
+      "archive_reason": "No matching Anthropic IPO-governance or founder-voting-control story appears in the supplied archive or current candidate list.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Verified as a TechCrunch report with explicit attribution to The Information; facts are framed as reported rather than independently established completion.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-25T15:40:03+00:00; timestamp проверен Python против effective window. The cited source is within the effective window and describes a newly reported proposed governance action, not a reprint of an archived story.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Corporate governance reporting, not a court or regulatory event.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not a curiosity item.",
+      "event_date": null,
+      "event_at": null,
+      "event_time_precision": "unknown",
+      "event_origin_url": null,
+      "event_evidence_kind": "unknown",
+      "event_date_evidence": "",
+      "id": "cand-005",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/09/25/anthropics-founders-seek-voting-control-ahead-of-ipo/",
+      "source_published_date": "2026-09-25",
+      "source_published_at": "2026-09-25T15:40:03+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-25T15:40:03+00:00"
+    },
+    {
+      "title": "Applied Digital раскрыла 1,41 ГВт законтрактированной critical-IT мощности и около $36 млрд контрактной выручки для пяти AI-фабрик",
+      "organization": "Applied Digital; CoreWeave; неназванные hyperscalers; ChronoScale",
+      "published_date": "2026-09-25",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "AI-фабрики; hyperscaler leases; дата-центры; critical IT load; инфраструктурное финансирование",
+      "event_type": "материальное раскрытие о законтрактированных AI-мощностях и hyperscaler-аренде",
+      "keywords": [
+        "Applied Digital",
+        "AI factories",
+        "hyperscalers",
+        "CoreWeave",
+        "1.41 GW",
+        "$36 billion",
+        "critical IT load",
+        "Polaris Forge"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "regulator",
+      "primary_source": {
+        "title": "Applied Digital 2026 Definitive Proxy Statement",
+        "publisher": "U.S. Securities and Exchange Commission",
+        "url": "https://www.sec.gov/Archives/edgar/data/1144879/000149315226044325/formdef14a.htm"
+      },
+      "supporting_sources": [
+        {
+          "title": "Every Megawatt — AI data-center power monitor",
+          "publisher": "Every Megawatt",
+          "url": "https://www.everymegawatt.com/"
+        }
+      ],
+      "event_summary": "В опубликованном 25 сентября proxy statement Applied Digital сообщила, что довела общий объём законтрактированной critical-IT мощности до 1,41 ГВт, а совокупную контрактную выручку — примерно до $36 млрд до продлений и дальнейших расширений. Компания указала на пять AI-фабрик, включая расширение CoreWeave на 150 МВт, lease на 200 МВт с investment-grade hyperscaler и два lease суммарно на 810 МВт с другим высокорейтинговым hyperscaler.",
+      "verified_facts": [
+        "Applied Digital сообщила о 1,41 ГВт законтрактированной critical-IT мощности на пяти кампусах AI-фабрик.",
+        "Компания указала примерно на $36 млрд совокупной контрактной выручки до продлений и будущих расширений.",
+        "Раскрыты дополнительное расширение CoreWeave на 150 МВт, lease на 200 МВт и два lease на суммарные 810 МВт с hyperscaler-клиентами.",
+        "Компания также указала на более $5 млрд senior-secured financing, завершённого в финансовом году 2026."
+      ],
+      "significance": "Раскрытие существенно уточняет масштаб уже законтрактированного спроса на AI-инфраструктуру: 1,41 ГВт critical IT load и $36 млрд backlog ставят компанию в число заметных поставщиков специализированных AI-фабрик и отражают капиталоёмкость спроса со стороны hyperscalers.",
+      "significance_score": 3,
+      "limitations": "Документ не называет двух hyperscaler-клиентов и не приводит отдельные даты подписания всех договоров; часть показателей относится к завершившемуся финансовому году, поэтому это прежде всего новое существенное раскрытие, а не обязательно новые договоры, заключённые 25 сентября.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет отдельного сюжета о раскрытии Applied Digital 1,41 ГВт законтрактированной мощности и $36 млрд контрактной выручки.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Объёмы мощности, контрактной выручки, клиенты по категориям и финансирование подтверждены первичным proxy statement, датированным 25 сентября 2026 года.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Регуляторная подача используется как источник корпоративного раскрытия, а не как юридическое событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "event_date": "2026-09-25",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.sec.gov/Archives/edgar/data/1144879/000149315226044325/formdef14a.htm",
+      "event_evidence_kind": "filing",
+      "event_date_evidence": "Proxy statement датирован 25 сентября 2026 года и указывает, что впервые предоставлен акционерам примерно в эту дату; он содержит новое агрегированное раскрытие контрактной мощности и выручки.",
+      "id": "cand-006",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    },
+    {
+      "title": "Meta showed audio-only smart glasses with planned Muse voice-agent integration at Meta Connect",
+      "organization": "Meta; Muse",
+      "published_date": "2026-09-26",
+      "published_at": "2026-09-26T01:08:57+00:00",
+      "time_precision": "datetime",
+      "topic": "consumer AI hardware; smart glasses; voice agents; agent integrations",
+      "event_type": "product demonstration and planned integration",
+      "keywords": [
+        "Meta Connect",
+        "smart glasses",
+        "Muse",
+        "voice agent",
+        "audio-only glasses",
+        "consumer AI"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "At Meta Connect, the company’s smart glasses were everywhere",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/25/at-meta-connect-the-companys-smart-glasses-were-everywhere/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Meta’s AI Tamagotchi bet is…working?",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/video/will-metas-ai-tamagotchi-bet-isworking/"
+        }
+      ],
+      "event_summary": "At Meta Connect, TechCrunch reported hands-on demonstrations of Meta’s still-unreleased camera-free audio smart glasses and said they are planned to integrate with Muse, allowing spoken requests for agentic tasks such as sending email and reciting to-do lists.",
+      "verified_facts": [
+        "The cited report was published at 6:08 PM PDT on September 25, 2026.",
+        "TechCrunch described the glasses as audio-only, with six microphones and no camera or native recording capability.",
+        "The report says the Muse integration was not yet publicly available at the time of publication.",
+        "The source describes Meta’s planned voice-controlled Muse actions, including emails and to-do lists."
+      ],
+      "significance": "This is a potentially meaningful consumer-AI distribution move: Meta is positioning its personal agent as a hands-free interface embedded in smart glasses, rather than only as a phone or desktop application.",
+      "significance_score": 3,
+      "limitations": "The device and Muse integration were described as still unreleased or not publicly available; the cited source is a hands-on report, not a formal product launch notice. It is adjacent to the already-listed Muse growth story but concerns a distinct hardware distribution/integration development.",
+      "archive_status": "none",
+      "archive_reason": "The current pool includes Meta’s Muse growth and promotion, but not the smart-glasses product demonstration or the planned Muse hardware integration.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Verified from a named TechCrunch reporter’s on-site demonstration report; availability and launch timing remain unconfirmed.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-26T01:08:57+00:00; timestamp проверен Python против effective window. The on-site report and disclosed planned integration were published within the effective window and are not represented as a prior archived item.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "No legal or regulatory action.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not a curiosity item.",
+      "event_date": null,
+      "event_at": null,
+      "event_time_precision": "unknown",
+      "event_origin_url": null,
+      "event_evidence_kind": "unknown",
+      "event_date_evidence": "",
+      "id": "cand-007",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/09/25/at-meta-connect-the-companys-smart-glasses-were-everywhere/",
+      "source_published_date": "2026-09-26",
+      "source_published_at": "2026-09-26T01:08:57+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-09-26T01:08:57+00:00"
+    },
+    {
+      "title": "Proaction boosts sales 60% and saves 75+ hours with Codex",
+      "organization": "OpenAI",
+      "published_date": "2026-09-25",
+      "published_at": "2026-09-25T19:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Proaction boosts sales 60% and saves 75+ hours with Codex",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "Proaction",
+        "boosts",
+        "sales",
+        "60%",
+        "saves",
+        "75+",
+        "hours",
+        "Codex"
+      ],
+      "geography": "world",
+      "category": "other",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Proaction boosts sales 60% and saves 75+ hours with Codex",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/proaction"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI official artificial intelligence publication: Proaction boosts sales 60% and saves 75+ hours with Codex",
+      "verified_facts": [
+        "Proaction boosts sales 60% and saves 75+ hours with Codex",
+        "OpenAI official artificial intelligence publication: Proaction boosts sales 60% and saves 75+ hours with Codex"
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-09-25T19:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-09-25T19:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-09-25T19:00:00+00:00; timestamp проверен Python против effective window. Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-09-25T19:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-09-25T19:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-008",
+      "trusted_feed_publication_evidence": {
+        "version": 1,
+        "kind": "trusted_first_party_feed",
+        "source_id": "openai_news_rss",
+        "feed_url": "https://openai.com/news/rss.xml",
+        "item_url": "https://openai.com/index/proaction",
+        "published_at": "2026-09-25T19:00:00+00:00",
+        "published_date": "2026-09-25",
+        "time_precision": "datetime",
+        "feed_date_field": "rss_pubdate",
+        "same_host_required": true,
+        "exact_item_url_required": true
+      },
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_evidence_kind": "trusted_first_party_feed",
+      "source_freshness_feed_source_id": "openai_news_rss",
+      "source_freshness_feed_date_field": "rss_pubdate",
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://openai.com/index/proaction",
+      "source_published_date": "2026-09-25",
+      "source_published_at": "2026-09-25T19:00:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "trusted_feed:openai_news_rss:rss_pubdate=2026-09-25T19:00:00+00:00"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=7, validated unique=7, final candidates=7. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

@@ -1,0 +1,95 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Обновление: Meta усилила продвижение агента Muse после роста установок до 3,4 млн",
+    "organization": "Meta; Muse; Sensor Tower",
+    "topic": "Consumer AI; персональные агенты; распространение AI-приложений; agentic commerce",
+    "event_type": "material product-adoption update",
+    "status": "update",
+    "summary": "По оценке Sensor Tower, к 25 сентября приложение Meta Muse превысило 3,4 млн установок после запуска 8 сентября; Meta одновременно усилила кросс-платформенное продвижение агента и представила на Connect новые будущие функции, включая computer use на Mac, аватары, интеграции для покупок и работу со смарт-очками.",
+    "published_at": "2026-09-25T16:16:52+00:00",
+    "published_date": "2026-09-25",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Meta is putting its muscle behind Muse as the AI app takes off",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/25/meta-is-putting-its-muscle-behind-muse-as-the-ai-app-takes-off/"
+      }
+    ],
+    "keywords": [
+      "Meta",
+      "Muse",
+      "AI agent",
+      "consumer AI",
+      "downloads",
+      "Sensor Tower",
+      "Meta Connect",
+      "smart glasses",
+      "computer use"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "GitHub Copilot CLI добавил автоматический выбор routing tier и исправил работу Gemini с MCP",
+    "organization": "GitHub; GitHub Copilot CLI; Gemini",
+    "topic": "CLI coding agents; model routing; MCP; sandboxed development",
+    "event_type": "pre-release",
+    "status": "new",
+    "summary": "В pre-release GitHub Copilot CLI 1.0.89-4 появился автоматически предлагаемый routing tier с возможностью ручного переключения. Релиз также исправляет запуск обёрнутых gh/git-команд в sandbox, подключение GitHub MCP-инструментов после входа и ошибку 400 у Gemini при MCP-инструментах со сложными JSON Schema.",
+    "published_at": "2026-09-25T21:13:10+00:00",
+    "published_date": "2026-09-25",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release 1.0.89-4",
+        "publisher": "GitHub",
+        "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.89-4"
+      }
+    ],
+    "keywords": [
+      "GitHub Copilot CLI",
+      "model routing",
+      "Auto tier",
+      "Gemini",
+      "MCP",
+      "plugins",
+      "sandbox"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Anthropic, по данным СМИ, ищет особые голосующие акции для сохранения контроля основателей перед IPO",
+    "organization": "Anthropic; Dario Amodei; Anthropic co-founders",
+    "topic": "IPO governance; founder control; corporate structure",
+    "event_type": "corporate governance proposal",
+    "status": "new",
+    "summary": "TechCrunch, citing The Information, reported that Anthropic is asking shareholders to approve a structure that would give CEO Dario Amodei and six co-founders special shares carrying a combined 50.1% of voting power on most corporate matters, subject to ownership and founder-retention conditions.",
+    "published_at": "2026-09-25T15:40:03+00:00",
+    "published_date": "2026-09-25",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic’s founders seek voting control ahead of IPO",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/25/anthropics-founders-seek-voting-control-ahead-of-ipo/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "IPO",
+      "super-voting shares",
+      "Dario Amodei",
+      "founder control"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  }
+]
