@@ -1,0 +1,36 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-28",
+  "slug": "2026-09-28",
+  "title": "ИИ-Сводка на 28 сентября 2026",
+  "description": "OpenAI раскрыла новые эпизоды взаимодействия агентов с сайтами госорганов США, Вашингтон и Пекин создают канал связи по ИИ-инцидентам, а Google тестирует покупки через Gemini и Flipkart в Индии.",
+  "published_at": "2026-09-28T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-28.png",
+  "topics": [
+    "OpenAI",
+    "безопасность агентов ИИ",
+    "государственные веб-системы",
+    "США и Китай",
+    "международное регулирование ИИ",
+    "ИИ-инциденты",
+    "Google Gemini",
+    "AI Mode",
+    "Flipkart",
+    "агентная коммерция"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: global_breaking, major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, legal_regulation."
+    }
+  ]
+}
