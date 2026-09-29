@@ -1,0 +1,156 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Meta запустила Meta Enterprise Platform для корпоративного ИИ",
+    "organization": "Meta; Meta Enterprise Platform; Muse; Chirantan “CJ” Desai",
+    "topic": "Enterprise AI; агенты; корпоративная платформа; API; бизнес-стратегия",
+    "event_type": "product and business launch",
+    "status": "new",
+    "summary": "Meta объявила Meta Enterprise Platform — новое корпоративное направление, которое должно превратить её AI-стек в продукты и сервисы для бизнеса. В первоначальный набор входят Muse, Meta Business Agent, Muse API и Muse Code; руководителем направления назначен бывший CEO MongoDB Chirantan “CJ” Desai.",
+    "published_at": "2026-09-28T12:36:14+00:00",
+    "published_date": "2026-09-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Launching Meta Enterprise Platform",
+        "publisher": "Meta",
+        "url": "https://about.fb.com/news/2026/09/launching-meta-enterprise-platform/"
+      }
+    ],
+    "keywords": [
+      "Meta Enterprise Platform",
+      "Muse",
+      "Meta Business Agent",
+      "Muse API",
+      "Muse Code",
+      "enterprise AI"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "AMD купит World Labs Фэй-Фэй Ли за $8,2 млрд",
+    "organization": "AMD; World Labs; Fei-Fei Li",
+    "topic": "M&A в AI; world models; physical AI; робототехника; AI-чипы",
+    "event_type": "acquisition announcement",
+    "status": "new",
+    "summary": "AMD объявила о покупке разработчика world models World Labs за $8,2 млрд. Основательница компании Фэй-Фэй Ли должна стать исполнительным вице-президентом и chief scientist AMD; сделка ожидает регуляторных согласований и должна закрыться до конца года.",
+    "published_at": "2026-09-28T20:39:33+00:00",
+    "published_date": "2026-09-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "AMD will acquire Fei-Fei Li’s World Labs for $8.2 billion",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/28/amd-will-acquire-fei-fei-lis-world-labs-for-8-2-billion/"
+      }
+    ],
+    "keywords": [
+      "AMD",
+      "World Labs",
+      "Fei-Fei Li",
+      "world models",
+      "physical AI",
+      "robotics",
+      "M&A"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Instinct привлекла $1 млрд при оценке $10 млрд",
+    "organization": "Instinct; Sequoia Capital; Benchmark Capital; Coatue; Noah Shinn",
+    "topic": "Consumer AI agents; персональные агенты; венчурное финансирование; agentic commerce",
+    "event_type": "funding round",
+    "status": "new",
+    "summary": "Стартап персонального AI-агента Instinct подтвердил раунд Series C на $1 млрд при оценке $10 млрд. Среди инвесторов названы Sequoia Capital, Benchmark Capital и Coatue; сервис, запущенный в инвайт-режиме в августе, выполняет пользовательские задачи, включая звонки и покупки.",
+    "published_at": "2026-09-28T13:38:48+00:00",
+    "published_date": "2026-09-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Viral AI agent Instinct raises $1B Series C at a $10B valuation",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/28/viral-ai-agent-instinct-raises-1b-series-c-at-a-10b-valuation/"
+      }
+    ],
+    "keywords": [
+      "Instinct",
+      "Series C",
+      "$1 billion",
+      "consumer AI agents",
+      "Noah Shinn",
+      "Sequoia",
+      "Benchmark",
+      "Coatue"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Shopify открыла checkout и Shop Pay для браузерных агентов ИИ",
+    "organization": "Shopify; Shop Pay; WebMCP; Universal Commerce Protocol; Instinct",
+    "topic": "Agentic commerce; AI agents; checkout; WebMCP; MCP; ecommerce",
+    "event_type": "product integration",
+    "status": "new",
+    "summary": "Shopify включила поддержку WebMCP для checkout, включая Shop Pay: браузерные ИИ-агенты смогут читать и изменять checkout, а затем завершать покупку после авторизации пользователя. Для этого представлены инструменты get_checkout, update_checkout и complete_checkout.",
+    "published_at": "2026-09-28T19:33:57+00:00",
+    "published_date": "2026-09-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Shopify opens checkout to browser-based AI agents",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/28/shopify-opens-checkout-to-browser-based-ai-agents/"
+      }
+    ],
+    "keywords": [
+      "Shopify",
+      "Shop Pay",
+      "WebMCP",
+      "UCP",
+      "AI agents",
+      "agentic commerce",
+      "checkout"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Google заменит Gemini Gems на Skills",
+    "organization": "Google; Gemini; Gems; Skills",
+    "topic": "Consumer AI; Gemini; пользовательские AI assistants; product migration",
+    "event_type": "product change",
+    "status": "new",
+    "summary": "Google сообщила о сворачивании Gemini Gems — функции создания пользовательских ассистентов — и их автоматической миграции в новый формат Skills. Переход должен начаться 17 ноября 2026 года, а Gems останутся доступными до этой даты.",
+    "published_at": "2026-09-28T17:29:50+00:00",
+    "published_date": "2026-09-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google is killing off Gemini’s Gems in favor of ‘skills’",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/28/google-is-killing-off-geminis-gems-in-favor-of-skills/"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Gemini",
+      "Gems",
+      "Skills",
+      "consumer AI",
+      "custom assistants"
+    ],
+    "geography": "world",
+    "category": "models"
+  }
+]

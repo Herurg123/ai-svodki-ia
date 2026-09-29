@@ -1,0 +1,152 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-09-29",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-09-29.json",
+  "warnings": [
+    "cand-002: источник показывает дату без точного времени.",
+    "cand-005: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: techcrunch (4)",
+    "Исследовательский пул перегружен одной организацией: openai (3)",
+    "Выбрано 5 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-09-29",
+  "started_at": "2026-09-29T02:15:33+00:00",
+  "finished_at": "2026-09-29T02:16:10+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 73,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "b4965ad005212a0d7ca279424e70a627293a9f46108366be6941f341b8ce3f6b",
+    "candidates_sha256": "19d386deb21d8a04497749f35331d6fc7acf6364e5f56e085e5258b1c83039bb",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-09-27T04:39:57+03:00",
+      "end_at": "2026-09-29T05:06:01+03:00",
+      "latest_archive_at": "2026-09-28T04:39:57+03:00",
+      "start_date": "2026-09-27",
+      "end_date": "2026-09-29",
+      "latest_archive_date": "2026-09-28"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "1183bbab69faf3e5ee10f224cc146bc87b3b8a1b4ddba17c845390d344630a04",
+    "editorial_sha256": "30b514c245ab35fff1e6596c1a257d04314ecb913f20487c3b642c721834cfc1",
+    "digest_sha256": "db4ea1579e53628077d1916eb529da75066bdb211574deaa8fab6f7f22de4cf8",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-09-29-ai-digest.png",
+          "normalized_value": "ai-svodka-2026-09-29.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        }
+      ],
+      "changed_count": 1,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 5 сюжетов."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Три независимых события высокой рыночной значимости — приобретение World Labs компанией AMD, раунд Instinct и открытие checkout Shopify для браузерных агентов — подтверждены одним издателем; сопоставимых по качеству альтернатив в пуле нет."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_024d306f4cacb130016abb1f46a03c87d285b83e5db4eb1ff8",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 149490,
+        "input_tokens_details": {
+          "cache_write_tokens": 13919,
+          "cached_tokens": 135568
+        },
+        "output_tokens": 3062,
+        "output_tokens_details": {
+          "reasoning_tokens": 516
+        },
+        "total_tokens": 152552
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 149490,
+    "output_tokens": 3062,
+    "total_tokens": 152552,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "4fd6698106df1875064a99e31bdb1a4693041153",
+    "run_id": "36510931911",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-09-29T05:06:01+03:00"
+}

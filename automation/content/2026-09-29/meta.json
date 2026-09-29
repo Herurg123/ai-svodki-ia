@@ -1,0 +1,44 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-29",
+  "slug": "2026-09-29",
+  "title": "ИИ-Сводка на 29 сентября 2026",
+  "description": "Meta выходит в корпоративный ИИ, AMD покупает World Labs, Instinct привлекает $1 млрд, а Shopify открывает агентам путь к checkout. Google готовит миграцию Gems в Skills.",
+  "published_at": "2026-09-29T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-29.png",
+  "topics": [
+    "Meta",
+    "корпоративный ИИ",
+    "Muse",
+    "AMD",
+    "World Labs",
+    "physical AI",
+    "Instinct",
+    "потребительские агенты ИИ",
+    "Shopify",
+    "агентная коммерция",
+    "WebMCP",
+    "Google Gemini",
+    "Skills"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Три независимых события высокой рыночной значимости — приобретение World Labs компанией AMD, раунд Instinct и открытие checkout Shopify для браузерных агентов — подтверждены одним издателем; сопоставимых по качеству альтернатив в пуле нет."
+    }
+  ]
+}
