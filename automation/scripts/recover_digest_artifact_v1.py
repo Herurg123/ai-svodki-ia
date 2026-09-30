@@ -4,10 +4,11 @@
 The established implementation remains byte-for-byte in
 ``recover_digest_artifact_v1_base.py``. This compatibility layer changes only
 saved-stage decisions for validator errors made obsolete by current deterministic
-contracts: the pre-#145 ``ambiguous_story_mapping`` error and the Sep-9
+contracts: the pre-#145 ``ambiguous_story_mapping`` error, the Sep-9
 ``story_headline_order`` false positive caused solely by the required public
-``Meta*`` display marker. These artifacts may be restored so current validators
-can re-check them. Every non-revalidatable saved normalization/validation error
+``Meta*`` display marker, and the Sep-30 ``meta_star_service_field`` error
+now repaired deterministically by service-field normalization. These artifacts
+may be restored so current validators can re-check them. Every non-revalidatable saved normalization/validation error
 remains fail-closed.
 
 Consolidate this layer on the next material recovery refactor or after
@@ -40,7 +41,7 @@ def __getattr__(name: str) -> Any:
 
 
 REVALIDATABLE_ARTIFACT_VALIDATION_CODES = frozenset(
-    {"ambiguous_story_mapping", "story_headline_order"}
+    {"ambiguous_story_mapping", "story_headline_order", "meta_star_service_field"}
 )
 
 
