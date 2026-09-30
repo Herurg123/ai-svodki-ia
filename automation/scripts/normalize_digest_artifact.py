@@ -41,7 +41,7 @@ META_SERVICE_JSON_FILES = (
     "editorial-output.json",
 )
 META_VISIBLE_FIELDS = {"article_html", "image_prompt", "html"}
-META_DISPLAY_MARKER_RE = re.compile(r"(?<!\\w)Meta\\*(?![\\w*])")
+META_DISPLAY_MARKER_RE = re.compile(r"(?<!\w)Meta\*(?![\w*])")
 LOW_SIGNAL_DISCOVERY_DOMAINS = (
     "wikipedia.org",
     "reddit.com",
