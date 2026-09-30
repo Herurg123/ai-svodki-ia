@@ -67,6 +67,21 @@ The exact selected bundle identity is normally recorded by the P0 `choose_source
 
 Historical artifacts without a P0 journal remain recoverable. If P0 state is present, its source identity and integrity are mandatory and recovery fails closed on ambiguity.
 
+Workflow-level same-run checkpoint fallback does not weaken this exact-bundle rule.
+When a later final snapshot is rejected, the workflow may discard that extracted
+bundle and download one earlier checkpoint from the same run and the same proven
+paid-stage rank, only if job-step evidence proves that the next paid provider
+stage never started. The checkpoint is then treated as a new exact selected
+bundle and passes the public recovery entrypoint from scratch; files from the
+rejected final snapshot are never mixed into it.
+
+A saved validator failure remains fail-closed unless current deterministic code
+can repair and revalidate that exact class offline. The Sep-30
+`meta_star_service_field` class is such a bounded exception: current
+normalization removes only the exact public `Meta*` display marker from service
+JSON fields while preserving public HTML/image-prompt fields, after which the
+ordinary artifact validator runs again.
+
 ## Publication guard
 
 `validate_digest_artifact.py` and the Coverage entrypoint consult the same durable repair state. Any unresolved repair obligation blocks publication even if an older digest is otherwise structurally valid. A seven-story pre-repair digest therefore cannot silently erase a later Coverage completion obligation.
