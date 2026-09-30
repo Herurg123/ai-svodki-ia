@@ -1,0 +1,50 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-09-30",
+  "slug": "2026-09-30",
+  "title": "ИИ-Сводка на 30 сентября 2026",
+  "description": "Meta расширяет Muse для малого бизнеса, Anthropic обновляет Claude Code, а OpenAI одновременно развивает постоянных агентов, новую модель GPT-6.1 Sol и подходы к безопасности frontier-обучения.",
+  "published_at": "2026-09-30T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-09-30.png",
+  "topics": [
+    "Meta",
+    "Muse",
+    "малый бизнес",
+    "агенты ИИ",
+    "Claude Code",
+    "Sonnet 5.5",
+    "MCP",
+    "голосовые агенты",
+    "deepfake-голос",
+    "Modulate",
+    "OpenAI",
+    "safety cases",
+    "Dots",
+    "GPT-6.1 Sol"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "OpenAI: В коротком пуле выбраны три самостоятельных официальных анонса OpenAI: подход к safety cases для обучения frontier-моделей, запуск Dots и выпуск GPT-6.1 Sol. Это разные продуктовые и safety-события, а не дубли."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "OpenAI: Три сюжета OpenAI отражают независимые события одного дня: методологию safety cases, постоянных агентов Dots и обновление флагманской модели. Исключение одного из них оставило бы короткий выпуск менее содержательным без улучшения качества."
+    }
+  ]
+}

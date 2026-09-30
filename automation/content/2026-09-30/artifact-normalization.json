@@ -1,0 +1,64 @@
+{
+  "status": "ok",
+  "artifact_dir": "automation/preview/2026-09-30",
+  "changed_files": [
+    "meta.json",
+    "selection.json",
+    "digest.json",
+    "editorial-output-raw.json",
+    "editorial-output.json"
+  ],
+  "changes": [
+    {
+      "file": "meta.json",
+      "field": "$.description",
+      "normalization": "meta_service_marker",
+      "from": "Meta* расширяет Muse для малого бизнеса, Anthropic обновляет Claude Code, а OpenAI одновременно развивает постоянных агентов, новую модель GPT-6.1 Sol и подходы к безопасности frontier-обучения.",
+      "to": "Meta расширяет Muse для малого бизнеса, Anthropic обновляет Claude Code, а OpenAI одновременно развивает постоянных агентов, новую модель GPT-6.1 Sol и подходы к безопасности frontier-обучения."
+    },
+    {
+      "file": "selection.json",
+      "field": "$.selection_summary",
+      "normalization": "meta_service_marker",
+      "from": "Выбраны шесть подтверждённых и свежих сюжетов: расширение Meta* в малый бизнес, обновление Claude Code, финансирование voice-security платформы, а также три самостоятельных официальных анонса OpenAI о safety cases, Dots и GPT-6.1 Sol. Пул не позволяет уверенно собрать обычные семь сюжетов без включения материалов с рекомендацией exclude, неполной верификацией или слабой редакционной значимостью.",
+      "to": "Выбраны шесть подтверждённых и свежих сюжетов: расширение Meta в малый бизнес, обновление Claude Code, финансирование voice-security платформы, а также три самостоятельных официальных анонса OpenAI о safety cases, Dots и GPT-6.1 Sol. Пул не позволяет уверенно собрать обычные семь сюжетов без включения материалов с рекомендацией exclude, неполной верификацией или слабой редакционной значимостью."
+    },
+    {
+      "file": "digest.json",
+      "field": "$.description",
+      "normalization": "meta_service_marker",
+      "from": "Meta* расширяет Muse для малого бизнеса, Anthropic обновляет Claude Code, а OpenAI одновременно развивает постоянных агентов, новую модель GPT-6.1 Sol и подходы к безопасности frontier-обучения.",
+      "to": "Meta расширяет Muse для малого бизнеса, Anthropic обновляет Claude Code, а OpenAI одновременно развивает постоянных агентов, новую модель GPT-6.1 Sol и подходы к безопасности frontier-обучения."
+    },
+    {
+      "file": "editorial-output-raw.json",
+      "field": "$.selection_summary",
+      "normalization": "meta_service_marker",
+      "from": "Выбраны шесть подтверждённых и свежих сюжетов: расширение Meta* в малый бизнес, обновление Claude Code, финансирование voice-security платформы, а также три самостоятельных официальных анонса OpenAI о safety cases, Dots и GPT-6.1 Sol. Пул не позволяет уверенно собрать обычные семь сюжетов без включения материалов с рекомендацией exclude, неполной верификацией или слабой редакционной значимостью.",
+      "to": "Выбраны шесть подтверждённых и свежих сюжетов: расширение Meta в малый бизнес, обновление Claude Code, финансирование voice-security платформы, а также три самостоятельных официальных анонса OpenAI о safety cases, Dots и GPT-6.1 Sol. Пул не позволяет уверенно собрать обычные семь сюжетов без включения материалов с рекомендацией exclude, неполной верификацией или слабой редакционной значимостью."
+    },
+    {
+      "file": "editorial-output-raw.json",
+      "field": "$.digest.description",
+      "normalization": "meta_service_marker",
+      "from": "Meta* расширяет Muse для малого бизнеса, Anthropic обновляет Claude Code, а OpenAI одновременно развивает постоянных агентов, новую модель GPT-6.1 Sol и подходы к безопасности frontier-обучения.",
+      "to": "Meta расширяет Muse для малого бизнеса, Anthropic обновляет Claude Code, а OpenAI одновременно развивает постоянных агентов, новую модель GPT-6.1 Sol и подходы к безопасности frontier-обучения."
+    },
+    {
+      "file": "editorial-output.json",
+      "field": "$.selection_summary",
+      "normalization": "meta_service_marker",
+      "from": "Выбраны шесть подтверждённых и свежих сюжетов: расширение Meta* в малый бизнес, обновление Claude Code, финансирование voice-security платформы, а также три самостоятельных официальных анонса OpenAI о safety cases, Dots и GPT-6.1 Sol. Пул не позволяет уверенно собрать обычные семь сюжетов без включения материалов с рекомендацией exclude, неполной верификацией или слабой редакционной значимостью.",
+      "to": "Выбраны шесть подтверждённых и свежих сюжетов: расширение Meta в малый бизнес, обновление Claude Code, финансирование voice-security платформы, а также три самостоятельных официальных анонса OpenAI о safety cases, Dots и GPT-6.1 Sol. Пул не позволяет уверенно собрать обычные семь сюжетов без включения материалов с рекомендацией exclude, неполной верификацией или слабой редакционной значимостью."
+    },
+    {
+      "file": "editorial-output.json",
+      "field": "$.digest.description",
+      "normalization": "meta_service_marker",
+      "from": "Meta* расширяет Muse для малого бизнеса, Anthropic обновляет Claude Code, а OpenAI одновременно развивает постоянных агентов, новую модель GPT-6.1 Sol и подходы к безопасности frontier-обучения.",
+      "to": "Meta расширяет Muse для малого бизнеса, Anthropic обновляет Claude Code, а OpenAI одновременно развивает постоянных агентов, новую модель GPT-6.1 Sol и подходы к безопасности frontier-обучения."
+    }
+  ],
+  "warnings": [],
+  "removed_stale_validation": false
+}

@@ -1,0 +1,34 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "article_html.short_digest_notice",
+      "model_value": null,
+      "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+    }
+  ],
+  "changed_count": 1,
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После проверки свежести и значимости выбрано 6 сюжетов."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "OpenAI: В коротком пуле выбраны три самостоятельных официальных анонса OpenAI: подход к safety cases для обучения frontier-моделей, запуск Dots и выпуск GPT-6.1 Sol. Это разные продуктовые и safety-события, а не дубли."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "OpenAI: Три сюжета OpenAI отражают независимые события одного дня: методологию safety cases, постоянных агентов Dots и обновление флагманской модели. Исключение одного из них оставило бы короткий выпуск менее содержательным без улучшения качества."
+    }
+  ]
+}

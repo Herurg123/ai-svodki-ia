@@ -1,0 +1,161 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-09-30",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-09-30.json",
+  "warnings": [
+    "cand-002: источник показывает дату без точного времени.",
+    "cand-003: источник показывает дату без точного времени.",
+    "cand-004: источник показывает дату без точного времени.",
+    "cand-006: источник показывает дату без точного времени.",
+    "cand-007: источник показывает дату без точного времени.",
+    "Отфильтровано кандидатов вне временного окна: 1.",
+    "Исследовательский пул перегружен одним издателем: associated press (5), openai (6)",
+    "Исследовательский пул перегружен одной организацией: openai (6)",
+    "Выбрано 6 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-09-30",
+  "started_at": "2026-09-30T02:14:16+00:00",
+  "finished_at": "2026-09-30T02:14:53+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 74,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "8b09ed7a43406ea8723468a0db67f164c2f02e7efb1d6b1a68a6991c966f6799",
+    "candidates_sha256": "ef405cbcb41959b67c6a40317976f12e65df56834aa03f0e0f387d5b15a10d3b",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-09-28T05:06:01+03:00",
+      "end_at": "2026-09-30T05:05:59+03:00",
+      "latest_archive_at": "2026-09-29T05:06:01+03:00",
+      "start_date": "2026-09-28",
+      "end_date": "2026-09-30",
+      "latest_archive_date": "2026-09-29"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "7dbbb0397579ada34c87a899247acd81cb878e0c6ae29d26e1bcb8daa0c46caf",
+    "editorial_sha256": "18cb979636e0122d7ae7c71e44f171f5ce2da8b53ebfe065a628116c1475197e",
+    "digest_sha256": "2e674958213339820b1ef0b369f01fab69047ac2e45ac2748f8b3b0d7a72b4cd",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-09-30.jpg",
+          "normalized_value": "ai-svodka-2026-09-30.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        }
+      ],
+      "changed_count": 1,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 6 сюжетов."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "OpenAI: В коротком пуле выбраны три самостоятельных официальных анонса OpenAI: подход к safety cases для обучения frontier-моделей, запуск Dots и выпуск GPT-6.1 Sol. Это разные продуктовые и safety-события, а не дубли."
+        },
+        {
+          "type": "diversity_override",
+          "area": "organization",
+          "message": "OpenAI: Три сюжета OpenAI отражают независимые события одного дня: методологию safety cases, постоянных агентов Dots и обновление флагманской модели. Исключение одного из них оставило бы короткий выпуск менее содержательным без улучшения качества."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_050584d75b449934016abc70794a7c87d2b18923dc605b7aa0",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 156145,
+        "input_tokens_details": {
+          "cache_write_tokens": 18989,
+          "cached_tokens": 137153
+        },
+        "output_tokens": 3699,
+        "output_tokens_details": {
+          "reasoning_tokens": 604
+        },
+        "total_tokens": 159844
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 156145,
+    "output_tokens": 3699,
+    "total_tokens": 159844,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "532e9efa3dc8104d64e55771fa2cfda30e2a3b4e",
+    "run_id": "36658174880",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-09-30T05:05:59+03:00"
+}

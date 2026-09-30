@@ -1,0 +1,179 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Обновление: Meta расширила Muse на малый бизнес с коннекторами к рабочим сервисам",
+    "organization": "Meta; Muse",
+    "topic": "AI agents; SMB; enterprise AI; agentic operations; business integrations",
+    "event_type": "product_launch",
+    "status": "update",
+    "summary": "Meta 29 сентября представила Muse for Small Business — расширение своего агентного продукта Muse для задач малого бизнеса. Сервис получил коннекторы к бизнес-инструментам, включая Shopify, Stripe, QuickBooks, Slack, Canva, Notion и другие, а также функции анализа продаж, рекламных кампаний, финансов и подготовки коммуникаций с обязательным одобрением действий пользователем.",
+    "published_at": "2026-09-29T09:30:04+00:00",
+    "published_date": "2026-09-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "The Future Is for Everyone: Muse for Small Business",
+        "publisher": "Meta",
+        "url": "https://about.fb.com/news/2026/09/introducing-muse-small-business/"
+      }
+    ],
+    "keywords": [
+      "Meta",
+      "Muse",
+      "small business",
+      "AI agent",
+      "connectors",
+      "Shopify",
+      "Stripe",
+      "QuickBooks",
+      "Slack"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Claude Code получила Sonnet 5.5 по умолчанию и новые корпоративные ограничения",
+    "organization": "Anthropic; Claude Code; Claude Sonnet 5.5",
+    "topic": "CLI coding agents; coding models; long-context development; MCP plugins; enterprise governance",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "Anthropic в Claude Code 2.1.284 добавила Claude Sonnet 5.5 как Sonnet-модель по умолчанию, заявив контекст до 1 млн токенов, а также улучшила работу MCP. В 2.1.285 добавлены управление конфигурацией plugin/MCP при установке и managed setting allowedProviders для ограничения разрешённых API-провайдеров на машине.",
+    "published_at": "2026-09-28T18:02:03+00:00",
+    "published_date": "2026-09-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "anthropics/claude-code releases — v2.1.284",
+        "publisher": "Anthropic GitHub",
+        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.284"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "Claude Sonnet 5.5",
+      "1M context",
+      "MCP",
+      "plugins",
+      "allowedProviders",
+      "enterprise policy"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "Modulate привлекла $25 млн на безопасность голосовых агентов и защиту от deepfake-голоса",
+    "organization": "Modulate; Future Ventures; Hyperplane; Lakestar",
+    "topic": "Voice AI; AI security; deepfake detection; voice agents; funding",
+    "event_type": "funding",
+    "status": "new",
+    "summary": "Boston-based Modulate привлекла $25 млн нового финансирования на платформу голосовой аналитики, использующую набор малых моделей для транскрибации, анализа эмоций и намерений, обнаружения deepfake-голоса и AI-музыки, а также контроля соблюдения политик голосовыми агентами в регулируемых отраслях.",
+    "published_at": "2026-09-28T14:05:00+00:00",
+    "published_date": "2026-09-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Modulate raises $25M for its voice models and analysis suite",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/28/modulate-raises-25m-for-its-voice-models-and-analysis-suite/"
+      }
+    ],
+    "keywords": [
+      "Modulate",
+      "voice AI",
+      "deepfake detection",
+      "voice agents",
+      "Future Ventures",
+      "funding",
+      "AI music detection"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-012",
+    "section": "world",
+    "headline": "OpenAI предложила safety cases для обучения frontier-моделей",
+    "organization": "OpenAI",
+    "topic": "Towards safety cases for frontier AI training",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Towards safety cases for frontier AI training",
+    "published_at": "2026-09-28T19:00:00+00:00",
+    "published_date": "2026-09-28",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Towards safety cases for frontier AI training",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/towards-safety-cases-for-frontier-ai-training"
+      }
+    ],
+    "keywords": [
+      "Towards",
+      "safety",
+      "cases",
+      "frontier",
+      "training"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-013",
+    "section": "world",
+    "headline": "OpenAI представила Dots — постоянных агентов для пользовательских задач",
+    "organization": "OpenAI",
+    "topic": "Introducing dots",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Introducing dots",
+    "published_at": "2026-09-29T00:00:00+00:00",
+    "published_date": "2026-09-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Introducing dots",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/introducing-dots"
+      }
+    ],
+    "keywords": [
+      "Introducing",
+      "dots"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-015",
+    "section": "world",
+    "headline": "OpenAI выпустила GPT-6.1 Sol",
+    "organization": "OpenAI",
+    "topic": "Introducing GPT-6.1 Sol",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Introducing GPT-6.1 Sol",
+    "published_at": "2026-09-29T10:00:00+00:00",
+    "published_date": "2026-09-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Introducing GPT-6.1 Sol",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/introducing-gpt-6-1-sol"
+      }
+    ],
+    "keywords": [
+      "Introducing",
+      "GPT-6.1",
+      "Sol"
+    ],
+    "geography": "world",
+    "category": "other"
+  }
+]
