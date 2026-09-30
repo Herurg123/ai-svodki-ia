@@ -466,6 +466,8 @@ jobs:
           RECOVERY_RUN_ID: ${{ steps.recovery_source.outputs.run_id }}
           RECOVERY_SOURCE: ${{ steps.recovery_source.outputs.source }}
           RECOVERY_ARTIFACT_NAME: ${{ steps.recovery_source.outputs.artifact_name }}
+          RECOVERY_RANK: ${{ steps.recovery_source.outputs.rank }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set +e
           python automation/scripts/recover_digest_artifact.py \
@@ -477,6 +479,92 @@ jobs:
             --report automation/preview/production-daily/recovery.json
           recovery_status=$?
           set -e
+
+          if [[ "${recovery_status}" -ne 0 && "${RECOVERY_SOURCE}" == "automatic" ]]; then
+            fallback_safe="false"
+            checkpoint_prefix=""
+            case "${RECOVERY_RANK}" in
+              1)
+                checkpoint_prefix="daily-production-checkpoint-research-${PUBLICATION_DATE}-attempt-"
+                fallback_safe="$(
+                  gh api \
+                    -H "X-GitHub-Api-Version: 2022-11-28" \
+                    "/repos/${GITHUB_REPOSITORY}/actions/runs/${RECOVERY_RUN_ID}/jobs?per_page=100" \
+                    --jq '
+                      [.jobs[] | select(.name == "production") | .steps[]?] as $steps
+                      | all($steps[];
+                          if .name == "Complete mandatory coverage audit for a short digest"
+                          then .conclusion == "skipped"
+                          else true
+                          end)
+                    '
+                )"
+                ;;
+              2)
+                checkpoint_prefix="daily-production-checkpoint-coverage-${PUBLICATION_DATE}-attempt-"
+                fallback_safe="$(
+                  gh api \
+                    -H "X-GitHub-Api-Version: 2022-11-28" \
+                    "/repos/${GITHUB_REPOSITORY}/actions/runs/${RECOVERY_RUN_ID}/jobs?per_page=100" \
+                    --jq '
+                      [.jobs[] | select(.name == "production") | .steps[]?] as $steps
+                      | all($steps[];
+                          if (.name == "Generate one production cover" or .name == "Revalidate recovered production cover")
+                          then .conclusion == "skipped"
+                          else true
+                          end)
+                    '
+                )"
+                ;;
+              3)
+                checkpoint_prefix="daily-production-checkpoint-image-${PUBLICATION_DATE}-attempt-"
+                fallback_safe="true"
+                ;;
+            esac
+
+            fallback_artifact_name=""
+            if [[ "${fallback_safe}" == "true" && -n "${checkpoint_prefix}" ]]; then
+              fallback_artifact_name="$(
+                gh api \
+                  -H "X-GitHub-Api-Version: 2022-11-28" \
+                  "/repos/${GITHUB_REPOSITORY}/actions/runs/${RECOVERY_RUN_ID}/artifacts?per_page=100" \
+                  --jq ".artifacts | map(select(.expired == false and (.name | startswith(\"${checkpoint_prefix}\")))) | sort_by(.created_at) | last | .name // \"\""
+              )"
+            fi
+
+            if [[ -n "${fallback_artifact_name}" ]]; then
+              echo "::warning title=Безопасный checkpoint fallback::Artifact ${RECOVERY_ARTIFACT_NAME} непригоден; пробуем ${fallback_artifact_name} из того же run и той же завершённой paid-stage boundary."
+              rm -rf \
+                "automation/recovery/${RECOVERY_RUN_ID}" \
+                "automation/preview/${PUBLICATION_DATE}" \
+                "automation/preview/production-daily/image/${PUBLICATION_DATE}"
+              mkdir -p "automation/recovery/${RECOVERY_RUN_ID}"
+              set +e
+              gh run download "${RECOVERY_RUN_ID}" \
+                --repo "${GITHUB_REPOSITORY}" \
+                --name "${fallback_artifact_name}" \
+                --dir "automation/recovery/${RECOVERY_RUN_ID}"
+              fallback_download_status=$?
+              if [[ "${fallback_download_status}" -eq 0 ]]; then
+                python automation/scripts/recover_digest_artifact.py \
+                  --recovery-root "automation/recovery/${RECOVERY_RUN_ID}" \
+                  --target-dir "automation/preview/${PUBLICATION_DATE}" \
+                  --publication-date "${PUBLICATION_DATE}" \
+                  --timezone Europe/Moscow \
+                  --image-target-dir "automation/preview/production-daily/image/${PUBLICATION_DATE}" \
+                  --report automation/preview/production-daily/recovery.json
+                recovery_status=$?
+                if [[ "${recovery_status}" -eq 0 ]]; then
+                  RECOVERY_ARTIFACT_NAME="${fallback_artifact_name}"
+                  echo "::notice title=Checkpoint recovery::Восстановление продолжено из ${fallback_artifact_name}; новый paid Research не запускался."
+                fi
+              else
+                recovery_status="${fallback_download_status}"
+              fi
+              set -e
+            fi
+          fi
+
           if [[ "${recovery_status}" -ne 0 ]]; then
             echo "reused=false" >> "${GITHUB_OUTPUT}"
             echo "image_recovered=false" >> "${GITHUB_OUTPUT}"

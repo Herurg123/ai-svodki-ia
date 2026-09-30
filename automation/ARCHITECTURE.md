@@ -1298,9 +1298,17 @@ run обязан иметь успешный production step соответст�
 artifact; final snapshot имеет tie-break priority над checkpoint с тем же
 timestamp, потому что может содержать частичное состояние следующего этапа.
 Manual `recovery_run_id` использует тот же ranking внутри указанного run.
-Checkpoint не является разрешением повторить ambiguous/started provider work:
-все существующие `request_started`, `response_saved`, same-bundle и
-fail-closed recovery contracts сохраняются.
+Если automatic resolver сначала выбирает более поздний final snapshot, но public
+recovery отвергает его, workflow может один раз отступить к checkpoint **того же
+run и того же завершённого paid-stage rank**. Fallback разрешён только когда
+GitHub step history доказывает, что следующий paid stage не был начат
+(Research→Coverage и Coverage→Image), либо когда Image уже является последней
+paid boundary. Fallback никогда не смешивает bundles: первый download удаляется,
+checkpoint скачивается в чистый recovery root и заново проходит public
+`recover_digest_artifact.py`. Любой ambiguous/failed next-provider attempt
+запрещает такой откат. Checkpoint не является разрешением повторить
+ambiguous/started provider work: все существующие `request_started`,
+`response_saved`, same-bundle и fail-closed recovery contracts сохраняются.
 
 P0 editorial
 repair journal v2 использует semantic archive identity без служебного
@@ -1319,8 +1327,13 @@ fail-closed. Exact same-bundle identity обычно фиксируется P0 `
 Поиск sibling bundle по дате, глобальный fallback и смешивание state между run
 запрещены.
 
-Known-bad normalization/validation artifacts не переиспользуются. Modern saved
-Primary повторно проходит current source-health. Legacy saved candidates без
+Known-bad normalization/validation artifacts не переиспользуются, кроме узких
+детерминированно revalidatable validator-классов. Для public display marker
+`Meta*` normalizer удаляет только точный маркер из служебных JSON-строк,
+сохраняя `article_html`, `html` и `image_prompt`; поэтому исторический
+`meta_star_service_field` может быть восстановлен и заново проверен текущим
+validator без нового provider call. Modern saved Primary повторно проходит current
+source-health. Legacy saved candidates без
 `event_*` fields считаются `event_freshness_status=unknown`: они не отклоняются
 только из-за отсутствия нового metadata и не заставляют повторять уже оплаченный
 research. Existing source freshness/reuse checks сохраняются.

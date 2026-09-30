@@ -29,6 +29,19 @@ JSON_FILES = (
     "editorial-output-raw.json",
 )
 TEXT_FILES = ("image-prompt.txt", "image_prompt.txt")
+META_SERVICE_JSON_FILES = (
+    "stories.json",
+    "sources.json",
+    "meta.json",
+    "candidates.json",
+    "selection.json",
+    "metadata-normalization.json",
+    "digest.json",
+    "editorial-output-raw.json",
+    "editorial-output.json",
+)
+META_VISIBLE_FIELDS = {"article_html", "image_prompt", "html"}
+META_DISPLAY_MARKER_RE = re.compile(r"(?<!\w)Meta\*(?![\w*])")
 LOW_SIGNAL_DISCOVERY_DOMAINS = (
     "wikipedia.org",
     "reddit.com",
@@ -102,6 +115,53 @@ def normalize_json_prompts(payload: Any, *, path: str = "$") -> tuple[Any, list[
         for index, value in enumerate(payload):
             _, nested_changes = normalize_json_prompts(value, path=f"{path}[{index}]")
             changes.extend(nested_changes)
+    return payload, changes
+
+
+def normalize_meta_service_markers(
+    payload: Any,
+    *,
+    path: str = "$",
+    parent_key: str | None = None,
+) -> tuple[Any, list[dict[str, Any]]]:
+    """Strip only the public Meta* display marker from service-field strings."""
+
+    changes: list[dict[str, Any]] = []
+    if isinstance(payload, dict):
+        for key, value in list(payload.items()):
+            child_path = f"{path}.{key}"
+            if key in META_VISIBLE_FIELDS:
+                continue
+            normalized, nested = normalize_meta_service_markers(
+                value,
+                path=child_path,
+                parent_key=key,
+            )
+            payload[key] = normalized
+            changes.extend(nested)
+        return payload, changes
+    if isinstance(payload, list):
+        for index, value in enumerate(list(payload)):
+            normalized, nested = normalize_meta_service_markers(
+                value,
+                path=f"{path}[{index}]",
+                parent_key=parent_key,
+            )
+            payload[index] = normalized
+            changes.extend(nested)
+        return payload, changes
+    if isinstance(payload, str):
+        normalized = META_DISPLAY_MARKER_RE.sub("Meta", payload)
+        if normalized != payload:
+            changes.append(
+                {
+                    "field": path,
+                    "normalization": "meta_service_marker",
+                    "from": payload,
+                    "to": normalized,
+                }
+            )
+        return normalized, changes
     return payload, changes
 
 
@@ -401,6 +461,21 @@ def normalize_artifact(artifact_dir: Path, report_path: Path) -> dict[str, Any]:
         "warnings": [],
     }
     prompt_locations = 0
+
+    for name in META_SERVICE_JSON_FILES:
+        path = artifact_dir / name
+        if not path.is_file():
+            continue
+        payload = read_json(path)
+        normalized, changes = normalize_meta_service_markers(payload)
+        if changes:
+            write_json(path, normalized)
+            if name not in report["changed_files"]:
+                report["changed_files"].append(name)
+            report["changes"].extend(
+                {"file": name, **change}
+                for change in changes
+            )
 
     for name in JSON_FILES:
         path = artifact_dir / name
