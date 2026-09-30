@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "automation" / "scripts"
 NORMALIZER = SCRIPTS / "normalize_digest_artifact.py"
+RECOVERY = SCRIPTS / "recover_digest_artifact.py"
 WORKFLOW = ROOT / ".github" / "workflows" / "daily-production.yml"
 
 SAFE_PROMPT = (
@@ -107,6 +108,78 @@ class Sep30MetaServiceRecoveryTests(unittest.TestCase):
             }
             self.assertIn(("meta.json", "$.description"), changed)
             self.assertIn(("selection.json", "$.selection_summary"), changed)
+
+    def test_public_recovery_accepts_meta_service_error_for_revalidation(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            recovery_root = root / "recovery"
+            source = recovery_root / "2026-09-30"
+            source.mkdir(parents=True)
+            write_json(
+                source / "run-info.json",
+                {
+                    "publication_date": "2026-09-30",
+                    "finished_at": "2026-09-30T01:00:00+00:00",
+                    "research": {
+                        "status": "ok",
+                        "temporal_anchor_version": 1,
+                        "response": {
+                            "response_status": "completed",
+                            "web_search_calls": 12,
+                        },
+                    },
+                },
+            )
+            research = {
+                "status": "ok",
+                "publication_date": "2026-09-30",
+                "search_window": {
+                    "start_at": "2026-09-28T06:00:00+03:00",
+                    "end_at": "2026-09-30T06:00:00+03:00",
+                },
+                "coverage": [],
+                "candidates": [{"id": "cand-001"}],
+            }
+            write_json(source / "candidates.json", research)
+            write_json(source / "research-output-raw.json", research)
+            write_json(
+                source / "artifact-validation.json",
+                {
+                    "status": "error",
+                    "errors": [
+                        {
+                            "code": "meta_star_service_field",
+                            "message": "Meta* найдено вне article_html",
+                        }
+                    ],
+                },
+            )
+            report = root / "recovery-report.json"
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(RECOVERY),
+                    "--recovery-root",
+                    str(recovery_root),
+                    "--target-dir",
+                    str(root / "target"),
+                    "--publication-date",
+                    "2026-09-30",
+                    "--timezone",
+                    "Europe/Moscow",
+                    "--report",
+                    str(report),
+                ],
+                cwd=ROOT,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                check=False,
+            )
+            self.assertEqual(completed.returncode, 0, completed.stdout)
+            payload = json.loads(report.read_text(encoding="utf-8"))
+            self.assertEqual(payload["status"], "ok")
+            self.assertEqual(payload["recovery_mode"], "research_only")
 
     def test_recovery_workflow_has_same_run_checkpoint_fallback(self) -> None:
         workflow = WORKFLOW.read_text(encoding="utf-8")
