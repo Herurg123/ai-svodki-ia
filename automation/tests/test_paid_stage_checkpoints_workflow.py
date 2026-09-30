@@ -116,7 +116,10 @@ elif "/actions/runs/" in url and "/artifacts?" in url:
     print("\\n".join(scenario.get("manual_artifacts", {}).get(run_id, [])))
 elif "/actions/runs/" in url and "/jobs?" in url:
     run_id = url.split("/actions/runs/", 1)[1].split("/", 1)[0]
-    print(scenario.get("run_ranks", {}).get(run_id, 0))
+    if "--argjson" in sys.argv:
+        print(str(bool(scenario.get("fallback_safe", {}).get(run_id, False))).lower())
+    else:
+        print(scenario.get("run_ranks", {}).get(run_id, 0))
 else:
     raise SystemExit("unexpected gh call: " + " ".join(sys.argv))
 """,
@@ -202,6 +205,39 @@ else:
             "daily-production-checkpoint-research-2026-09-22-attempt-1",
         )
         self.assertEqual(values["rank"], "1")
+
+    def test_final_artifact_exposes_safe_same_run_coverage_fallback(self) -> None:
+        values = self._run_resolver(
+            {
+                "automatic_artifacts": [
+                    "2026-09-30T02:10:00Z\t777\tdaily-production-checkpoint-coverage-2026-09-30-attempt-1",
+                    "2026-09-30T02:11:00Z\t777\tdaily-production-2026-09-30",
+                ],
+                "run_ranks": {"777": 2},
+                "fallback_safe": {"777": True},
+            },
+            PUBLICATION_DATE="2026-09-30",
+        )
+        self.assertEqual(values["artifact_name"], "daily-production-2026-09-30")
+        self.assertEqual(
+            values["fallback_artifact_name"],
+            "daily-production-checkpoint-coverage-2026-09-30-attempt-1",
+        )
+
+    def test_coverage_fallback_is_suppressed_after_ambiguous_image_attempt(self) -> None:
+        values = self._run_resolver(
+            {
+                "automatic_artifacts": [
+                    "2026-09-30T02:10:00Z\t777\tdaily-production-checkpoint-coverage-2026-09-30-attempt-1",
+                    "2026-09-30T02:11:00Z\t777\tdaily-production-2026-09-30",
+                ],
+                "run_ranks": {"777": 2},
+                "fallback_safe": {"777": False},
+            },
+            PUBLICATION_DATE="2026-09-30",
+        )
+        self.assertEqual(values["artifact_name"], "daily-production-2026-09-30")
+        self.assertEqual(values["fallback_artifact_name"], "")
 
     def test_manual_recovery_can_select_checkpoint_when_final_artifact_is_missing(self) -> None:
         values = self._run_resolver(
