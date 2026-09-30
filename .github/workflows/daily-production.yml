@@ -380,7 +380,30 @@ jobs:
                 fallback_safe="$(fallback_safe_for_rank "${run_id}" "${best_rank}")"
                 if [[ "${fallback_safe}" == "true" ]]; then
                   fallback_created_at=""
-                  while IFS=
+                  tab="$(printf '\t')"
+                  while IFS="${tab}" read -r created_at candidate_run_id candidate_name; do
+                    [[ "${candidate_run_id}" == "${run_id}" ]] || continue
+                    case "${best_rank}:${candidate_name}" in
+                      "1:daily-production-checkpoint-research-${PUBLICATION_DATE}-attempt-"*|"2:daily-production-checkpoint-coverage-${PUBLICATION_DATE}-attempt-"*|"3:daily-production-checkpoint-image-${PUBLICATION_DATE}-attempt-"*)
+                        if [[ -z "${fallback_artifact_name}" || "${created_at}" > "${fallback_created_at}" ]]; then
+                          fallback_artifact_name="${candidate_name}"
+                          fallback_created_at="${created_at}"
+                        fi
+                        ;;
+                    esac
+                  done <<< "${candidates}"
+                fi
+              fi
+
+              if [[ "${source}" == "automatic" ]]; then
+                echo "Автоматическое восстановление выбрало run ${run_id}, artifact ${artifact_name}, ранг полноты ${best_rank}."
+                if [[ -n "${fallback_artifact_name}" ]]; then
+                  echo "Безопасный checkpoint fallback: ${fallback_artifact_name}."
+                fi
+              else
+                echo "Ручное восстановление выбрало artifact ${artifact_name} из run ${run_id}, ранг полноты ${best_rank}."
+              fi
+            fi
           fi
 
           if [[ -n "${run_id}" ]]; then
