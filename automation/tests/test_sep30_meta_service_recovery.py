@@ -183,16 +183,17 @@ class Sep30MetaServiceRecoveryTests(unittest.TestCase):
 
     def test_recovery_workflow_has_same_run_checkpoint_fallback(self) -> None:
         workflow = WORKFLOW.read_text(encoding="utf-8")
-        self.assertIn(
-            'echo "fallback_artifact_name=${fallback_artifact_name}" >> "${GITHUB_OUTPUT}"',
-            workflow,
-        )
         restore_start = workflow.index("- name: Restore saved paid artifact")
         restore_end = workflow.index("- name: Install pinned OpenAI SDK", restore_start)
         restore = workflow[restore_start:restore_end]
-        self.assertIn("RECOVERY_FALLBACK_ARTIFACT_NAME", restore)
+        self.assertIn("RECOVERY_RANK", restore)
+        self.assertIn("checkpoint_prefix=", restore)
         self.assertIn("gh run download", restore)
         self.assertIn("Безопасный checkpoint fallback", restore)
+        self.assertIn(
+            '.name == "Generate one production cover" or .name == "Revalidate recovered production cover"',
+            restore,
+        )
         self.assertIn(
             "Свежий paid research автоматически не запускается",
             restore,
