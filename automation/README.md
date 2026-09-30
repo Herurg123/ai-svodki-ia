@@ -89,9 +89,15 @@ bundle identity через compatibility wrappers. Completed paid stages не
 14-дневные stage checkpoints после завершённого fresh Research/editorial,
 завершённого Coverage/editorial completion и готового Image artifact. Automatic
 и manual recovery могут выбрать самый полный checkpoint, если финальный
-`daily-production-<date>` artifact отсутствует; сам recovery по-прежнему
-проверяет содержимое bundle и не считает имя checkpoint доказательством
-корректности.
+`daily-production-<date>` artifact отсутствует. Если automatic recovery выбрал
+более поздний final snapshot, а public recovery отверг его, разрешён один
+same-run/same-rank fallback к checkpoint только при доказанном отсутствии
+следующего paid-stage attempt. Сам recovery по-прежнему проверяет содержимое
+каждого bundle и не считает имя checkpoint доказательством корректности.
+
+Перед artifact validation exact public marker `Meta*` детерминированно
+нормализуется до `Meta` только в служебных JSON-полях; public `article_html`
+и image prompt не переписываются.
 
 ### Search budget
 
