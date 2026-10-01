@@ -1,0 +1,213 @@
+[
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "GitHub Copilot CLI 1.0.90 добавил GPT-6.1 Sol и ограничения авторизации для MCP",
+    "organization": "GitHub; GitHub Copilot CLI; OpenAI; GPT-6.1 Sol",
+    "topic": "CLI coding agents; model selection; MCP; OAuth; permissions; agentic development environments",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "GitHub выпустил Copilot CLI 1.0.90: в выбор моделей добавлен GPT-6.1 Sol, появился флаг --mcp-github-auth для ограничения GitHub-авторизации одобренными origin MCP-серверов, а также approvals только-на-чтение для каталогов в рамках сессии. В релизе также улучшены восстановление MCP-discovery и поведение permission prompts после возобновления сессии.",
+    "published_at": "2026-09-30T21:38:30+00:00",
+    "published_date": "2026-09-30",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release 1.0.90 · github/copilot-cli",
+        "publisher": "GitHub",
+        "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.90"
+      }
+    ],
+    "keywords": [
+      "GitHub Copilot CLI",
+      "GPT-6.1 Sol",
+      "MCP",
+      "OAuth",
+      "read-only directory approvals",
+      "agent permissions"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Kiro CLI 2.26.0 добавил многошаговые Workflows и усилил approvals",
+    "organization": "Amazon Web Services; Kiro; Kiro CLI",
+    "topic": "CLI coding agents; reusable workflows; developer automation; MCP; sandboxing; workspace security",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "Kiro CLI 2.26.0 добавил opt-in Workflows для повторно используемых многошаговых задач в V3. Одновременно релиз вводит более строгие проверки одобрений для file writes через Hooks и LSP, а также для MCP-инструментов и shell-команд в недоверенных workspace; Classic sessions получают guidance по миграции в terminal UI.",
+    "published_at": "2026-09-30T00:00:00+00:00",
+    "published_date": "2026-09-30",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Workflows, Classic Migration Guidance, and V3 Approval Safeguards",
+        "publisher": "Kiro",
+        "url": "https://kiro.dev/changelog/cli/2-26/"
+      }
+    ],
+    "keywords": [
+      "Kiro CLI",
+      "Workflows",
+      "multi-step tasks",
+      "MCP",
+      "untrusted workspaces",
+      "LSP",
+      "approvals"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "DoorDash открыла лист ожидания для агента ИИ заказа еды через Apple Messages",
+    "organization": "DoorDash; Apple Messages",
+    "topic": "Consumer AI agents; agentic commerce; food delivery; messaging",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "DoorDash открыла лист ожидания в США для текстового AI-агента в Apple Messages: пользователь может попросить заказать привычную еду, найти блюдо или учесть разные диетические предпочтения в групповом заказе.",
+    "published_at": "2026-09-30T16:00:24+00:00",
+    "published_date": "2026-09-30",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "DoorDash launches an AI agent you can text to order food",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/30/doordash-launches-an-ai-agent-you-can-text-to-order-food/"
+      }
+    ],
+    "keywords": [
+      "DoorDash",
+      "AI agent",
+      "Apple Messages",
+      "text-to-order",
+      "agentic commerce"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "ElevenLabs провела тендер для сотрудников при оценке $22 млрд",
+    "organization": "ElevenLabs; Wellington; T. Rowe Price",
+    "topic": "Voice AI; secondary transaction; valuation; startup financing",
+    "event_type": "business transaction",
+    "status": "new",
+    "summary": "ElevenLabs разрешила сотрудникам продать часть vested equity в рамках тендерного предложения на $300 млн; сделка оценивает voice-AI компанию в $22 млрд, вдвое выше оценки её февральского раунда.",
+    "published_at": "2026-09-30T18:23:57+00:00",
+    "published_date": "2026-09-30",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "AI voice startup ElevenLabs doubles valuation to $22B",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/30/ai-voice-startup-elevenlabs-doubles-valuation-to-22b/"
+      }
+    ],
+    "keywords": [
+      "ElevenLabs",
+      "voice AI",
+      "tender offer",
+      "employee liquidity",
+      "valuation"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Flow Engineering привлекла $50 млн на агентов ИИ для проектирования аппаратных продуктов",
+    "organization": "Flow Engineering; Valar Equity Partners; Atreides Management; Sequoia Capital",
+    "topic": "AI agents; hardware design; CAD; industrial AI; startup financing",
+    "event_type": "funding",
+    "status": "new",
+    "summary": "Flow Engineering, разрабатывающая AI-инструменты для проектирования аппаратных продуктов, привлекла $50 млн Series B при оценке $750 млн; её агенты сопоставляют CAD-чертежи с требованиями, симуляциями и результатами тестов.",
+    "published_at": "2026-09-30T21:07:40+00:00",
+    "published_date": "2026-09-30",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Valor, Atreides, and Sequoia back AI startup Flow Engineering at $750M valuation",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/09/30/valor-atreides-and-sequoia-back-ai-startup-flow-engineering-at-750m-valuation/"
+      }
+    ],
+    "keywords": [
+      "Flow Engineering",
+      "Series B",
+      "hardware design",
+      "CAD",
+      "AI agents",
+      "Sequoia"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Gemini CLI 0.62.0 исправил OAuth и улучшил представление MCP-вызовов",
+    "organization": "Google; Google Gemini; Gemini CLI",
+    "topic": "CLI coding agents; Gemini; MCP; OAuth; ACP; terminal runtime",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "Google выпустила Gemini CLI 0.62.0. В нём исправлены сохранение OAuth refresh token и lifecycle credential deletion, структурировано отображение MCP tool calls в ACP mode, улучшены управление PTY/ConPTY и terminal buffer memory, а также добавлены изменения, связанные с Gemini 3.8 Flash и 3.5 Flash Lite.",
+    "published_at": "2026-09-29T21:17:07+00:00",
+    "published_date": "2026-09-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release v0.62.0 · google-gemini/gemini-cli",
+        "publisher": "GitHub",
+        "url": "https://github.com/google-gemini/gemini-cli/releases/tag/v0.62.0"
+      }
+    ],
+    "keywords": [
+      "Gemini CLI",
+      "OAuth refresh",
+      "MCP tool calls",
+      "ACP",
+      "PTY",
+      "ConPTY",
+      "Gemini Flash"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-010",
+    "section": "world",
+    "headline": "NVIDIA и CoreWeave показали инфраструктурный контур для агентного ИИ",
+    "organization": "NVIDIA",
+    "topic": "From Training to Production, NVIDIA and CoreWeave Close the Loop on Agentic AI",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "NVIDIA Vera Rubin NVL72 and Vera CPU on CoreWeave accelerate agentic AI for companies including Cognition, extending a nearly decade-long run on NVIDIA infrastructure that stays productive, durable and fungible across generations.",
+    "published_at": "2026-09-30T15:00:00+00:00",
+    "published_date": "2026-09-30",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "From Training to Production, NVIDIA and CoreWeave Close the Loop on Agentic AI",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/coreweave-agentic-ai-vera-rubin"
+      }
+    ],
+    "keywords": [
+      "Training",
+      "Production",
+      "NVIDIA",
+      "CoreWeave",
+      "Close",
+      "Loop",
+      "Agentic"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  }
+]

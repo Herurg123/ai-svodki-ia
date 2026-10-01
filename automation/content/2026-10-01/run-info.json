@@ -1,0 +1,140 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-10-01",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-10-01.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-006: источник показывает дату без точного времени.",
+    "cand-013: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одной организацией: openai (3)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-10-01",
+  "started_at": "2026-10-01T02:16:41+00:00",
+  "finished_at": "2026-10-01T02:17:38+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 75,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "1cb5795229cbae3877b865d3e78d964e60b3f3abc6efef2347a06b10225fd78f",
+    "candidates_sha256": "9322856826b989de0ceac19d2c8561e8711f45ae506375690720fa263a8500ac",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-09-29T05:05:59+03:00",
+      "end_at": "2026-10-01T05:06:38+03:00",
+      "latest_archive_at": "2026-09-30T05:05:59+03:00",
+      "start_date": "2026-09-29",
+      "end_date": "2026-10-01",
+      "latest_archive_date": "2026-09-30"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "751750ca50aa68905d288deda3a9b995a0528c2e4830a573f97116a9d230b02d",
+    "editorial_sha256": "dc864a846df9eea8d75177cbb0ae0cd22a3ed9e197d895b0f3497648d9501de7",
+    "digest_sha256": "ad65a517858da379cad807fb00bc827cc0842a3f649f2d239e65fbe13302d69b",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-10-01-ai-digest-cover.png",
+          "normalized_value": "ai-svodka-2026-10-01.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: В коротком пуле три независимых подтверждённых события TechCrunch относятся к разным рынкам — потребительским агентам, voice AI и инженерному ПО; исключение одного из них ухудшило бы полноту выпуска."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_01372b4d55f57e66016abdc28a32f887d2891350a4b7713bfa",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 155246,
+        "input_tokens_details": {
+          "cache_write_tokens": 16427,
+          "cached_tokens": 138816
+        },
+        "output_tokens": 3935,
+        "output_tokens_details": {
+          "reasoning_tokens": 792
+        },
+        "total_tokens": 159181
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 155246,
+    "output_tokens": 3935,
+    "total_tokens": 159181,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "6be8a2ff5dcb7bc72404c23bae4cb23eb4205b24",
+    "run_id": "36804147954",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-10-01T05:06:38+03:00"
+}
