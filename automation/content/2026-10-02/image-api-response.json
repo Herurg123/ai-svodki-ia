@@ -1,0 +1,68 @@
+{
+  "status": "ok",
+  "usage_attempt_id": "7f07493c51e94afe9a66f1af64ccf85a",
+  "request_id": "production-image-2026-10-02",
+  "model": "gpt-image-2",
+  "endpoint": "/v1/images/generations",
+  "http_status": 200,
+  "openai_request_id": "req_f900456517344ab4a4af449ce193b1b5",
+  "source_editorial_request_id": "production-digest-2026-10-02",
+  "request": {
+    "size": "1536x864",
+    "quality": "high",
+    "output_format": "png",
+    "background": "opaque",
+    "n": 1,
+    "prompt_sha256": "9a9c629d2ba7c685c0b720016d8acf0c63e8f4b8b62547446c48fbc16ce3edb7"
+  },
+  "response": {
+    "created": 1790907733,
+    "background": "opaque",
+    "output_format": "png",
+    "quality": "high",
+    "size": "1536x864",
+    "usage": {
+      "input_tokens": 360,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 360
+      },
+      "output_tokens": 4312,
+      "output_tokens_details": {
+        "image_tokens": 4312,
+        "text_tokens": 0
+      },
+      "total_tokens": 4672
+    },
+    "data_count": 1,
+    "revised_prompt": null
+  },
+  "cover_sha256": "b464ba7fcc3ea5230cd380047b5213f7dff8a1bf9ebf3801a5597e3d96d9aafb",
+  "cover_bytes": 2415281,
+  "base64_stored": false,
+  "copied_source_files": [
+    "agency-discovery-rescue.json",
+    "article.html",
+    "artifact-normalization.json",
+    "artifact-validation.json",
+    "candidates.json",
+    "digest.json",
+    "editorial-output-raw.json",
+    "editorial-output.json",
+    "editorial-prompt-input.txt",
+    "image-prompt.txt",
+    "meta.json",
+    "metadata-normalization.json",
+    "policy-normalization.json",
+    "research-filtered-out.json",
+    "research-input-info.json",
+    "research-output-raw.json",
+    "research-prompt-input.txt",
+    "run-info.json",
+    "selection.json",
+    "sources.json",
+    "stories.json"
+  ],
+  "started_at": "2026-10-02T02:20:58+00:00",
+  "finished_at": "2026-10-02T02:22:13+00:00"
+}

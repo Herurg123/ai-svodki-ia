@@ -1,0 +1,219 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Google представила Gemini 4 Argon для длинных задач и defensive cybersecurity",
+    "organization": "Google; Google DeepMind; Gemini",
+    "topic": "Frontier models; coding; enterprise knowledge work; multimodal reasoning; defensive cybersecurity; model safety",
+    "event_type": "model release",
+    "status": "new",
+    "summary": "Google объявила Gemini 4 Argon — новую frontier-модель для сложных многошаговых задач в разработке ПО, корпоративной аналитике и киберзащите. На первом этапе Argon предоставляется доверенным защитникам через Fairwind Program; Google заявляет, что модель способна автономно находить, валидировать и исправлять критические уязвимости.",
+    "published_at": null,
+    "published_date": "2026-09-30",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Gemini 4 Argon: our next era of frontier intelligence",
+        "publisher": "Google",
+        "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/"
+      }
+    ],
+    "keywords": [
+      "Gemini 4 Argon",
+      "Google DeepMind",
+      "cybersecurity",
+      "coding",
+      "1M tokens",
+      "Fairwind Program",
+      "prompt injection"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Обновление: Claude Code получила Claude Mods и наблюдающего side-agent",
+    "organization": "Anthropic; Claude Code",
+    "topic": "CLI coding agents; plugins; agentic development environments; MCP; code review; developer observability",
+    "event_type": "product release",
+    "status": "update",
+    "summary": "Anthropic выпустила Claude Code v2.1.287: релиз вводит Claude Mods, позволяющие плагинам глубже изменять поведение инструмента, и встроенный opt-in модуль «You should know», в котором side-agent отслеживает работу и отмечает потенциально упущенные пользователем или агентом моменты. Также добавлены URL-prompts от MCP-серверов, встроенный REST-доступ через gh api для self-hosted runner и ряд исправлений безопасности, permissions, Remote Control и SDK/MCP-сценариев.",
+    "published_at": "2026-10-01T18:00:22+00:00",
+    "published_date": "2026-10-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Claude Code v2.1.287",
+        "publisher": "Anthropic / GitHub",
+        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.287"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "Claude Mods",
+      "You should know",
+      "plugins",
+      "side agent",
+      "MCP",
+      "self-hosted runner"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "ChatGPT добавила виртуальную примерку и избранное для покупок",
+    "organization": "OpenAI; ChatGPT",
+    "topic": "Consumer AI; AI shopping; virtual try-on; multimodal commerce",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "OpenAI объявила о глобальном запуске в ChatGPT виртуальной примерки одежды и аксессуаров по фотографии пользователя, а также функции Favorites для сохранения товаров. По данным компании, функции используют ChatGPT Images 2.5.",
+    "published_at": "2026-10-01T19:21:53+00:00",
+    "published_date": "2026-10-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "ChatGPT can now virtually try on clothes for you",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/01/chatgpt-can-now-virtually-try-on-clothes-for-you/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ChatGPT",
+      "virtual try-on",
+      "shopping",
+      "Favorites",
+      "ChatGPT Images 2.5"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Shopify представила Canvas для создания магазинов через диалог с Sidekick",
+    "organization": "Shopify; Sidekick; Canvas",
+    "topic": "AI site building; agentic commerce; e-commerce; no-code development",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Shopify представила Canvas — новый интерфейс, в котором продавец создаёт и меняет магазин, общаясь с агентом Sidekick. Сервис работает с реальными файлами темы, отображает результат в реальном времени и позволяет агенту анализировать скриншоты создаваемой витрины.",
+    "published_at": "2026-10-01T16:44:35+00:00",
+    "published_date": "2026-10-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Shopify debuts Canvas, a way to build online stores by chatting with AI",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/01/shopify-debuts-canvas-a-way-to-build-online-stores-by-chatting-with-ai/"
+      }
+    ],
+    "keywords": [
+      "Shopify",
+      "Canvas",
+      "Sidekick",
+      "AI agent",
+      "online stores",
+      "agentic commerce"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "OpenAI рассталась с тремя сотрудниками safety-команды",
+    "organization": "OpenAI",
+    "topic": "AI safety; governance; internal security; frontier lab personnel",
+    "event_type": "organizational change",
+    "status": "new",
+    "summary": "По данным Wall Street Journal, пересказанным TechCrunch, OpenAI рассталась с тремя сотрудниками safety-команды, которые, как утверждается, передали конфиденциальную информацию сторонней AI-safety организации. Представитель OpenAI подтвердил WSJ факт увольнений и нарушение правил работы с чувствительной информацией, но не раскрыл личности и детали.",
+    "published_at": "2026-10-01T18:14:42+00:00",
+    "published_date": "2026-10-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI cuts ties with 3 safety researchers, WSJ reports",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/01/openai-cuts-ties-with-three-safety-researchers-wsj-reports/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "AI safety",
+      "researchers",
+      "confidential information",
+      "internal security",
+      "governance"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "AWS выпустила компактную open-source модель Strands Decider 2B",
+    "organization": "Amazon Web Services; Strands Labs; Strands Decider 2B",
+    "topic": "Open source AI; decision models; agentic workflows; local inference",
+    "event_type": "model release",
+    "status": "new",
+    "summary": "AWS выпустила open-source Strands Decider 2B — компактную decision-модель для выбора между заранее определёнными вариантами в агентных workflow. Модель построена на Qwen3.5-2B, доступна для локального запуска и выдаёт оценку уверенности.",
+    "published_at": "2026-10-01T16:49:22+00:00",
+    "published_date": "2026-10-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Amazon releases its own Jev clone as decision models flood the web",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/01/amazon-releases-its-own-jev-clone-as-decision-models-flood-the-web/"
+      }
+    ],
+    "keywords": [
+      "AWS",
+      "Amazon",
+      "Strands Decider 2B",
+      "open source",
+      "decision model",
+      "agents",
+      "Qwen3.5-2B"
+    ],
+    "geography": "world",
+    "category": "open_source"
+  },
+  {
+    "candidate_id": "cand-012",
+    "section": "russia",
+    "headline": "Яндекс представил рекомендательную ИИ-модель Sona",
+    "organization": "Яндекс",
+    "topic": "1 октября 2026Яндекс представил Sona — ИИ-модель, способную заменить десятки алгоритмов рекомендаций",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+    "published_at": null,
+    "published_date": "2026-10-01",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "1 октября 2026Яндекс представил Sona — ИИ-модель, способную заменить десятки алгоритмов рекомендаций",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=01-10-2026-01"
+      }
+    ],
+    "keywords": [
+      "октября",
+      "2026Яндекс",
+      "представил",
+      "Sona",
+      "ИИ-модель",
+      "способную",
+      "заменить",
+      "десятки",
+      "алгоритмов",
+      "рекомендаций"
+    ],
+    "geography": "russia",
+    "category": "investment"
+  }
+]
