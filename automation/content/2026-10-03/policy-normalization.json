@@ -1,0 +1,29 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "article_html.short_digest_notice",
+      "model_value": null,
+      "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+    }
+  ],
+  "changed_count": 1,
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После проверки свежести и значимости выбрано 4 сюжетов."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, infrastructure_chips_cloud, business_investment_partnerships, china_asia_integrations, russia, developer_tools, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "HuggingNews: Три независимых свежих продуктовых релиза — Perplexity, Microsoft и Black Forest Labs — подтверждены этим издателем. При коротком пуле исключение одного из самостоятельных релизов только ради мягкого лимита снизило бы полноту выпуска."
+    }
+  ]
+}

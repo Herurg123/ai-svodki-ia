@@ -1,0 +1,43 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-03",
+  "slug": "2026-10-03",
+  "title": "ИИ-Сводка на 3 октября 2026",
+  "description": "Google проверяет TPU на орбите, Perplexity открывает decision-модель, Microsoft выводит голосовые модели, а Black Forest Labs развивает точное редактирование изображений.",
+  "published_at": "2026-10-03T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-03.png",
+  "topics": [
+    "орбитальные вычисления",
+    "Google TPU",
+    "ИИ-инфраструктура",
+    "Perplexity",
+    "decision models",
+    "open-weight модели",
+    "голосовые агенты",
+    "Microsoft AI",
+    "распознавание речи",
+    "генерация изображений",
+    "FLUX 3 Image",
+    "редактирование изображений"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, infrastructure_chips_cloud, business_investment_partnerships, china_asia_integrations, russia, developer_tools, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "HuggingNews: Три независимых свежих продуктовых релиза — Perplexity, Microsoft и Black Forest Labs — подтверждены этим издателем. При коротком пуле исключение одного из самостоятельных релизов только ради мягкого лимита снизило бы полноту выпуска."
+    }
+  ]
+}

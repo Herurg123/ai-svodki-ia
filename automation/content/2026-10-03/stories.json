@@ -1,0 +1,126 @@
+[
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Google запустила спутниковый прототип с TPU для проверки орбитальных ИИ-вычислений",
+    "organization": "Google; Planet Labs; SpaceX",
+    "topic": "Орбитальные дата-центры; AI-инфраструктура; TPU; спутниковые вычисления; космические AI-нагрузки",
+    "event_type": "Запуск инфраструктурного прототипа и публикация исследования",
+    "status": "new",
+    "summary": "Google отправила на ракете SpaceX прототип орбитального вычислительного спутника, построенный Planet Labs, чтобы проверить работу своего TPU в космосе. В день запуска компания также выпустила peer-reviewed версию исследования Project Suncatcher об архитектуре орбитальных дата-центров.",
+    "published_at": "2026-10-01T19:18:03+00:00",
+    "published_date": "2026-10-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google thinks SpaceX’s Starship has to launch 1,800 times before space data centers get off the ground",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/01/google-thinks-spacexs-starship-has-to-launch-1600-times-before-space-data-centers-get-off-the-ground/"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "TPU",
+      "Project Suncatcher",
+      "orbital compute",
+      "space data centers",
+      "Planet Labs",
+      "SpaceX",
+      "AI infrastructure"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Perplexity открыла веса мультимодальной decision-модели pplx-decider-v1 и запустила Decisions API",
+    "organization": "Perplexity",
+    "topic": "Open-weight decision models; multimodal AI; calibrated probability outputs; developer APIs",
+    "event_type": "model release and API launch",
+    "status": "new",
+    "summary": "Perplexity сообщила об open-source выпуске 27B мультимодальной decision-модели pplx-decider-v1 и о доступе к ней через новый Decisions API. Вместо генерации текста модель возвращает распределения вероятностей по фиксированному набору ответов; в сообщении также заявлены цена $0,04 за миллион входных токенов и агрегированный результат 85,71% на бенчмарках.",
+    "published_at": "2026-10-01T18:39:10+00:00",
+    "published_date": "2026-10-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Perplexity Open-Sources Decision Model That Beats Jev on Cost and Performance",
+        "publisher": "HuggingNews, citing Perplexity developer and CEO announcements",
+        "url": "https://huggingnews.com/ai/perplexity-open-sources-decision-model-that-beats-jev-on-cost-and-perfor-d9ee89fb"
+      }
+    ],
+    "keywords": [
+      "Perplexity",
+      "pplx-decider-v1",
+      "Decisions API",
+      "open source",
+      "open weights",
+      "decision model",
+      "multimodal"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Microsoft AI открыла доступ к голосовым моделям MAI-Voice-2.1 и MAI-Transcribe-2-Streaming",
+    "organization": "Microsoft AI; Microsoft",
+    "topic": "Voice AI; speech-to-text; text-to-speech; voice agents; AI APIs",
+    "event_type": "product_release",
+    "status": "new",
+    "summary": "Microsoft AI, по данным доступного материала, выпустила через API и MAI Playground три аудиомодели для голосовых агентов: MAI-Voice-2.1, более быстрый MAI-Voice-2.1-Flash и потоковую модель распознавания MAI-Transcribe-2-Streaming.",
+    "published_at": "2026-10-01T18:26:26+00:00",
+    "published_date": "2026-10-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Microsoft Launches AI Voice Suite With Top Ranked Transcription",
+        "publisher": "HuggingNews",
+        "url": "https://huggingnews.com/ai/microsoft-launches-ai-voice-suite-with-top-ranked-transcription-fda69b0f"
+      }
+    ],
+    "keywords": [
+      "Microsoft AI",
+      "MAI-Voice-2.1",
+      "MAI-Voice-2.1-Flash",
+      "MAI-Transcribe-2-Streaming",
+      "voice agents",
+      "transcription",
+      "MAI Playground"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  },
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Black Forest Labs выпустила FLUX 3 Image для точечного редактирования изображений",
+    "organization": "Black Forest Labs",
+    "topic": "Image generation; multimodal models; image editing; commercial generative-AI tooling",
+    "event_type": "product_release",
+    "status": "new",
+    "summary": "Black Forest Labs представила FLUX 3 Image: генератор и редактор изображений с локальными многопроходными правками, поддержкой до десяти референсных изображений и коммерческими весами для масштабного использования; в сообщении также заявлены 2K/4K-вывод через fal.",
+    "published_at": "2026-10-01T19:55:49+00:00",
+    "published_date": "2026-10-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Black Forest Labs Ships FLUX 3 Image for High Precision Editing",
+        "publisher": "HuggingNews",
+        "url": "https://huggingnews.com/ai/black-forest-labs-ships-flux-3-image-for-high-precision-editing-e7580d29"
+      }
+    ],
+    "keywords": [
+      "Black Forest Labs",
+      "FLUX 3 Image",
+      "image generation",
+      "image editing",
+      "4K",
+      "reference images"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  }
+]

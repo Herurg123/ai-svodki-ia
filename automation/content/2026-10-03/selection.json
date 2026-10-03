@@ -1,0 +1,27 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-005",
+    "cand-002",
+    "cand-006",
+    "cand-001"
+  ],
+  "excluded_candidate_ids": [
+    "cand-003",
+    "cand-004",
+    "cand-007",
+    "cand-008",
+    "cand-009",
+    "cand-010",
+    "cand-011"
+  ],
+  "selection_summary": "В подтверждённом свежем пуле отобраны четыре самостоятельных сюжета: реальный инфраструктурный тест Google с TPU на орбите, open-weight decision-модель Perplexity, голосовой набор Microsoft и контролируемое редактирование изображений FLUX 3 Image. Старые перепечатки о DeepSeek/Huawei и задержке GPT-6.1 Astra исключены по правилу свежести; source-pulse материалы без достаточной предметной детализации не включены.",
+  "diversity_overrides": [
+    {
+      "type": "publisher",
+      "value": "HuggingNews",
+      "reason": "Три независимых свежих продуктовых релиза — Perplexity, Microsoft и Black Forest Labs — подтверждены этим издателем. При коротком пуле исключение одного из самостоятельных релизов только ради мягкого лимита снизило бы полноту выпуска."
+    }
+  ]
+}

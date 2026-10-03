@@ -1,0 +1,129 @@
+{
+  "validator": "digest-artifact-contract",
+  "artifact_dir": "/home/runner/work/ai-svodki-ia/ai-svodki-ia/automation/preview/2026-10-03",
+  "status": "ok",
+  "errors": [],
+  "warnings": [],
+  "manifest": [
+    {
+      "path": "agency-discovery-rescue-transport.json",
+      "size_bytes": 22905,
+      "sha256": "aeca4af0709be6134317534881722a3204691a2f595b42dd9bc5da5e6a97ce54"
+    },
+    {
+      "path": "agency-discovery-rescue.json",
+      "size_bytes": 7484,
+      "sha256": "952fe544614be2dc8ef7dc9e9ae9a8053d4f5c4136e593ae516969f9f602ccdc"
+    },
+    {
+      "path": "article.html",
+      "size_bytes": 7895,
+      "sha256": "c8762a69362180ac1b3ec01af3d47cbc2a2a43be70541e0bd3abecbacc6bbff1"
+    },
+    {
+      "path": "artifact-normalization.json",
+      "size_bytes": 524,
+      "sha256": "700963a541eb3d5a7fbef29a54c8a4ce7b1fb4e688b7a9a8fe6748105aca4aca"
+    },
+    {
+      "path": "candidates.json",
+      "size_bytes": 62471,
+      "sha256": "86681db5d53aa76ed7c91021e6f341b66baa20f807fecdc6de140a551aae4111"
+    },
+    {
+      "path": "digest.json",
+      "size_bytes": 13440,
+      "sha256": "d9bcc2209ec169265918f923506cd2e7fa03a45421cb85c7f9d5cb1c09d50beb"
+    },
+    {
+      "path": "editorial-output-raw.json",
+      "size_bytes": 14766,
+      "sha256": "5a47e57fb0f4e3fd13e5650a225982d522b93f19678ea2a1f091a879cdc6d4ea"
+    },
+    {
+      "path": "editorial-output.json",
+      "size_bytes": 15103,
+      "sha256": "cde54c34d14da0f2dcc8b863f5da3bec456c305a87c92ac2c2b7687bfde53bec"
+    },
+    {
+      "path": "editorial-prompt-input.txt",
+      "size_bytes": 764920,
+      "sha256": "c85c941cd83ba6fa87da3f47b14060a332e26a92d9f71f00cde76ed77a1f6240"
+    },
+    {
+      "path": "hybrid-completeness.json",
+      "size_bytes": 422819,
+      "sha256": "e178d5b3964278753e0ea48773ff4b4b086fa860f77af3cbfbf9eefae05a6a7e"
+    },
+    {
+      "path": "image-prompt.txt",
+      "size_bytes": 2281,
+      "sha256": "3b390389409ff875c64f5837d18a05044fc843cd7723fec5615cb57f07da55d7"
+    },
+    {
+      "path": "meta.json",
+      "size_bytes": 2059,
+      "sha256": "065785331c682b2115abad8883372f19815c83eb31a6e03c9ce9d7e6026068ba"
+    },
+    {
+      "path": "metadata-normalization.json",
+      "size_bytes": 339,
+      "sha256": "2a0884589e99e96ad287ece227f9926f31cb5540e5503d8dc71fa47fede1cb72"
+    },
+    {
+      "path": "policy-normalization.json",
+      "size_bytes": 1301,
+      "sha256": "8e455dd29e3a7870645632528d9d3a8454901045c105c9fff8ca2e943f5c846c"
+    },
+    {
+      "path": "primary-recall.json",
+      "size_bytes": 280781,
+      "sha256": "0cdad83a54afc6917cc5958eaf80209b23ac40e0b1c56173ae6c0ee40b274131"
+    },
+    {
+      "path": "research-filtered-out.json",
+      "size_bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "research-input-info.json",
+      "size_bytes": 315,
+      "sha256": "42ddd90c536b177a26c73c263d0124351bc3c34b10a450083975d343c2cf1c9d"
+    },
+    {
+      "path": "research-output-raw.json",
+      "size_bytes": 61737,
+      "sha256": "077b6ecb9034967ee0dea5c028eb8d61c27eafe31e55e5e0aed0e0aec5562cd8"
+    },
+    {
+      "path": "research-prompt-input.txt",
+      "size_bytes": 899426,
+      "sha256": "9b880bcb3afa250d19682ed35bbd3fe6ed8bbce80e091f574358d1cfc8b22f85"
+    },
+    {
+      "path": "run-info.json",
+      "size_bytes": 65388,
+      "sha256": "4bd1313394707d10853c5bae7672f6f849354bfab7dd226b6df311d6b3dfa032"
+    },
+    {
+      "path": "selection.json",
+      "size_bytes": 1518,
+      "sha256": "0ab7d9b665283b9c38631596002a7dda8d97e72197b365fc680918ff5cd65952"
+    },
+    {
+      "path": "source-pulse.json",
+      "size_bytes": 69457,
+      "sha256": "fe043945ae2c815d187e8410e3088c7a063753110cd1208430ce3fdb8f09269c"
+    },
+    {
+      "path": "sources.json",
+      "size_bytes": 1089,
+      "sha256": "ed137d7fa6d65ee5f704f9543b02078db75e906f9be421bf68ff406b306c1497"
+    },
+    {
+      "path": "stories.json",
+      "size_bytes": 6515,
+      "sha256": "32c4a797f27ea8965c2b412432e84bcba78d988b382386f282746a20dc4cf88f"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "mode": "primary_recall_v2",
+  "source_file": "automation/fixtures/research/.runtime/primary-recall-research-2026-10-03.json",
+  "source_sha256": "077b6ecb9034967ee0dea5c028eb8d61c27eafe31e55e5e0aed0e0aec5562cd8",
+  "primary_recall_version": 2,
+  "completed_search_calls": 12,
+  "trusted_runtime_input": true
+}
