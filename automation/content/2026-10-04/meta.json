@@ -1,0 +1,47 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-04",
+  "slug": "2026-10-04",
+  "title": "ИИ-Сводка на 4 октября 2026",
+  "description": "AWS обещает больше прозрачности вокруг дата-центров, OpenAI развивает мультиагентные сценарии и раскрывает конфигурацию Jalapeño, а Apple и Anthropic усиливают контроль над действиями агентов.",
+  "published_at": "2026-10-04T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-04.png",
+  "topics": [
+    "AWS",
+    "ИИ-дата-центры",
+    "OpenAI",
+    "GPT-6.1 Sol",
+    "мультиагентные workflow",
+    "Jalapeño",
+    "AMD EPYC Turin",
+    "Claude Code",
+    "безопасность coding-агентов",
+    "Meta Muse",
+    "домашние устройства",
+    "Apple",
+    "macOS",
+    "разрешения приложений",
+    "AI safety",
+    "governance"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Четыре материала TechCrunch описывают самостоятельные события высокой редакционной значимости в разных темах: политика дата-центров AWS, запуск аппаратной экосистемы Meta Muse, системные разрешения macOS и кадрово-governance событие в OpenAI. Исключение любого из них оставило бы выпуск ниже обычной цели при отсутствии сопоставимых альтернатив в пуле."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "OpenAI: Три сюжета об OpenAI являются разными независимыми событиями: официальный developer update GPT-6.1 Sol, новое раскрытие о серверной конфигурации Jalapeño и отдельный публичный уход сотрудника safety-направления."
+    }
+  ]
+}

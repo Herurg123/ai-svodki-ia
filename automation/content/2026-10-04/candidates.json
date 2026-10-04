@@ -1,0 +1,612 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-10-04",
+  "search_window": {
+    "start_at": "2026-10-02T04:57:02+03:00",
+    "end_at": "2026-10-04T05:06:11+03:00",
+    "latest_archive_at": "2026-10-03T04:57:02+03:00",
+    "start_date": "2026-10-02",
+    "end_date": "2026-10-04",
+    "latest_archive_date": "2026-10-03"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=3, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "AWS заявила об отказе от NDA с госорганами при согласовании новых дата-центров",
+      "organization": "Amazon Web Services; Amazon",
+      "published_date": "2026-10-03",
+      "published_at": "2026-10-03T18:43:57+00:00",
+      "time_precision": "datetime",
+      "topic": "AI-инфраструктура; дата-центры; общественное доверие; прозрачность согласований; энергопотребление",
+      "event_type": "infrastructure policy commitment",
+      "keywords": [
+        "AWS",
+        "Amazon",
+        "data centers",
+        "NDAs",
+        "AI infrastructure",
+        "community backlash",
+        "transparency"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Amazon responds to data center backlash, says it no longer uses NDAs",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/03/amazon-responds-to-data-center-backlash-says-it-no-longer-uses-ndas/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Statement by AWS CEO Matt Garman on data centers",
+          "publisher": "Amazon",
+          "url": "https://www.aboutamazon.com/"
+        }
+      ],
+      "event_summary": "Генеральный директор AWS Matt Garman заявил, что Amazon больше не использует соглашения о неразглашении в работе с государственными органами по проектам дата-центров, отвечая на усиливающуюся общественную критику таких объектов.",
+      "verified_facts": [
+        "TechCrunch датирует публикацию 3 октября 2026 года, 11:43 PDT.",
+        "По данным материала, Garman сообщил об отказе от NDA с государственными агентствами по дата-центровым проектам.",
+        "В статье отмечается, что в США рассматривается более 100 мораториев на дата-центры, по словам Garman; это заявление компании, а не независимо подтверждённый редакцией показатель."
+      ],
+      "significance": "Изменение позиции одного из крупнейших облачных операторов отражает рост политических и общественных рисков для расширения вычислительной инфраструктуры, необходимой для ИИ.",
+      "significance_score": 3,
+      "limitations": "Ключевое обязательство исходит от AWS; в материале не приведены полный текст политики, дата её вступления в силу или независимая проверка практики по отдельным проектам.",
+      "archive_status": "none",
+      "archive_reason": "Архив содержит другие сюжеты об энергоснабжении и строительстве AI-дата-центров, но не это заявление AWS о NDA.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Свежая публикация TechCrunch цитирует заявление CEO AWS и ссылается на исходный корпоративный блог.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-03T18:43:57+00:00; timestamp проверен Python против effective window. Публичное заявление и цитируемый материал датированы 3 октября 2026 года, внутри effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это корпоративное инфраструктурное обязательство, а не судебное либо регуляторное решение.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-рубрике.",
+      "event_date": "2026-10-03",
+      "event_at": "2026-10-03T11:43:00-07:00",
+      "event_time_precision": "datetime",
+      "event_origin_url": "https://techcrunch.com/2026/10/03/amazon-responds-to-data-center-backlash-says-it-no-longer-uses-ndas/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch от 3 октября 2026 года сообщает о заявлении Matt Garman, сделанном в корпоративном посте Amazon.",
+      "id": "cand-001",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable exact event timestamp is inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/10/03/amazon-responds-to-data-center-backlash-says-it-no-longer-uses-ndas/",
+      "source_published_date": "2026-10-03",
+      "source_published_at": "2026-10-03T18:43:57+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-03T18:43:57+00:00"
+    },
+    {
+      "title": "OpenAI опубликовала guide по production-развёртыванию GPT-6 с beta multi-agent workflows для GPT-6.1 Sol",
+      "organization": "OpenAI",
+      "published_date": "2026-10-02",
+      "published_at": "2026-10-02T15:54:21+00:00",
+      "time_precision": "datetime",
+      "topic": "GPT-6; GPT-6.1 Sol; multi-agent workflows; Responses API; long-running agents; computer use",
+      "event_type": "product and developer-platform update",
+      "keywords": [
+        "OpenAI",
+        "GPT-6.1 Sol",
+        "multi-agent",
+        "Responses API",
+        "subagents",
+        "computer use",
+        "agents"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Release v3.24.0",
+        "publisher": "OpenAI / GitHub",
+        "url": "https://github.com/openai/openai-python/releases/tag/v3.24.0"
+      },
+      "supporting_sources": [
+        {
+          "title": "A model guide for the GPT-6 family",
+          "publisher": "OpenAI",
+          "url": "https://openai.com/index/practical-guide-building-gpt-6/"
+        }
+      ],
+      "event_summary": "OpenAI 2 октября опубликовала практический guide для GPT-6 family. В нём впервые для данного свежего обновления явно описана beta-поддержка multi-agent workflows в Responses API для GPT-6.1 Sol: модель может делегировать независимые подзадачи субагентам и объединять результаты. Документ также описывает steering, asynchronous tool calling, parallel work и computer use для длительных агентных задач.",
+      "verified_facts": [
+        "Страница OpenAI датирована 2 октября 2026 года.",
+        "OpenAI указывает, что GPT-6.1 Sol поддерживает multi-agent workflows в Responses API; возможность находится в beta.",
+        "В качестве примеров независимых подзадач OpenAI приводит исследование разных частей кодовой базы с последующим объединением результатов.",
+        "В guide также описаны mid-turn steering, asynchronous tool calling и computer use для GPT-6 family."
+      ],
+      "significance": "Это самостоятельное, хотя и прежде всего developer-facing, уточнение доступного агентного контура GPT-6.1 Sol. Оно расширяет уже архивированный запуск модели практическими возможностями оркестрации субагентов и долгих задач.",
+      "significance_score": 3,
+      "limitations": "Источник является официальным guide, а не отдельным launch-post; он подтверждает доступность и beta-статус функции на дату публикации, но не раскрывает отдельную дату первоначального появления multi-agent workflows.",
+      "archive_status": "update",
+      "archive_reason": "В архиве уже есть запуск GPT-6.1 Sol от 29 сентября 2026 года. Этот кандидат не повторяет сам запуск модели, а фиксирует свежую официальную material update от 2 октября о beta multi-agent workflows и production-паттернах.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Официальная страница OpenAI прямо датирована 2026-10-02 и прямо указывает beta multi-agent workflows для GPT-6.1 Sol. GitHub release OpenAI SDK v3.24.0 от 2 октября дополнительно подтверждает развитие agent-session API, но не используется как доказательство самого multi-agent feature.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/openai/openai-python/releases/tags/v3.24.0=2026-10-02T15:54:21Z; timestamp проверен Python против effective window. Новое официальное developer/product guidance опубликовано внутри effective window и содержит конкретный capability-level update поверх уже опубликованного запуска GPT-6.1 Sol.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является legal-событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран по тематической значимости для моделей и агентов, а не как curiosity-материал.",
+      "event_date": "2026-10-02",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://openai.com/index/practical-guide-building-gpt-6/",
+      "event_evidence_kind": "official_announcement",
+      "event_date_evidence": "Официальная страница OpenAI помечена датой October 2, 2026 и описывает beta multi-agent workflows для GPT-6.1 Sol.",
+      "id": "cand-002",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://github.com/openai/openai-python/releases/tag/v3.24.0",
+      "source_published_date": "2026-10-02",
+      "source_published_at": "2026-10-02T15:54:21+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "github-releases-api:published_at:https://api.github.com/repos/openai/openai-python/releases/tags/v3.24.0=2026-10-02T15:54:21Z"
+    },
+    {
+      "title": "OpenAI раскрыла, что разворачивает inference-ASIC Jalapeño с хост-процессорами AMD EPYC Turin, а не NVIDIA Vera",
+      "organization": "OpenAI; AMD; NVIDIA",
+      "published_date": "2026-10-02",
+      "published_at": "2026-10-02T12:40:00+00:00",
+      "time_precision": "datetime",
+      "topic": "AI-инфраструктура; собственные inference-ASIC; серверные CPU; rack-scale deployment; энергоэффективный inference",
+      "event_type": "deployment configuration disclosure",
+      "keywords": [
+        "OpenAI",
+        "Jalapeño",
+        "ASIC",
+        "AMD EPYC Turin",
+        "NVIDIA Vera",
+        "inference",
+        "data centers",
+        "server CPUs"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "OpenAI’s Jalapeño ASICs are deployed alongside AMD EPYC ‘Turin’ CPUs as hosts — Hardware VP says Nvidia’s Vera standalone is ‘a little bit behind… on that maturity level’",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/pc-components/cpus/openais-jalapeno-asics-are-deployed-alongside-amd-epyc-turin-cpus-as-hosts-hardware-vp-says-nvidias-vera-standalone-is-a-little-bit-behind-on-that-maturity-level"
+      },
+      "supporting_sources": [
+        {
+          "title": "OpenAI Jalapeño design interview transcript — hardware VP Richard Ho explains how AI-assisted design may shape the future of inference ASICs",
+          "publisher": "Tom's Hardware",
+          "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/openai-jalapeno-design-interview-transcript-hardware-vp-richard-ho-explains-how-ai-assisted-design-may-shape-the-future-of-inference-asics"
+        }
+      ],
+      "event_summary": "В интервью Tom's Hardware вице-президент OpenAI по hardware Ричард Хо сообщил, что внутренние стойки с inference-ASIC Jalapeño используют AMD EPYC Turin как хост-процессоры. Он объяснил выбор прагматичностью и зрелостью платформы, охарактеризовав standalone-версию NVIDIA Vera как менее зрелую для этой конфигурации.",
+      "verified_facts": [
+        "Страница Tom's Hardware опубликована 2 октября 2026 года.",
+        "Источник сообщает, что Jalapeño разворачивается внутри OpenAI вместе с AMD EPYC Turin и 1,5 ТБ памяти на хост-систему.",
+        "Источник приводит прямое объяснение Ричарда Хо: выбор Turin был сделан ради снижения инженерных рисков и более зрелой платформы.",
+        "Это уточняет фактическую серверную конфигурацию внутреннего inference-развёртывания OpenAI, а не новый запуск самого Jalapeño."
+      ],
+      "significance": "Это редкое конкретное раскрытие аппаратной конфигурации OpenAI для собственного inference-ASIC. Оно добавляет содержательный инфраструктурный сигнал о роли AMD в AI-стойках OpenAI и о практическом выборе между x86-хостами и новым Arm CPU NVIDIA Vera.",
+      "significance_score": 3,
+      "limitations": "Раскрытие основано на интервью отраслевому изданию, а не на отдельном официальном пресс-релизе OpenAI. Сам Jalapeño был раскрыт ранее; свежесть кандидата относится к новой детали о host-CPU и deployment design.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет отдельной истории о конфигурации Jalapeño с AMD EPYC Turin или о сопоставлении с NVIDIA Vera.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Tom's Hardware датирует публикацию 2 октября 2026 года и прямо атрибутирует сведения и объяснение выбора платформы вице-президенту OpenAI по hardware Ричарду Хо. Поддерживающий опубликованный транскрипт интервью подтверждает контекст внутреннего развёртывания Jalapeño и ориентацию чипа на собственный inference OpenAI.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-02T12:40:00Z; timestamp проверен Python против effective window. Jalapeño как продукт был представлен ранее, однако 2 октября появилась самостоятельная, конкретная деталь о фактической хост-конфигурации внутреннего развёртывания и причине отказа от NVIDIA Vera в этой реализации.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Кандидат не является судебным или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity: это профильное инфраструктурное раскрытие.",
+      "event_date": "2026-10-02",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.tomshardware.com/pc-components/cpus/openais-jalapeno-asics-are-deployed-alongside-amd-epyc-turin-cpus-as-hosts-hardware-vp-says-nvidias-vera-standalone-is-a-little-bit-behind-on-that-maturity-level",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Tom's Hardware опубликовал 2 октября 2026 года новое раскрытие, основанное на комментариях VP Hardware OpenAI, о применении AMD EPYC Turin в хост-системах Jalapeño.",
+      "id": "cand-003",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.tomshardware.com/pc-components/cpus/openais-jalapeno-asics-are-deployed-alongside-amd-epyc-turin-cpus-as-hosts-hardware-vp-says-nvidias-vera-standalone-is-a-little-bit-behind-on-that-maturity-level",
+      "source_published_date": "2026-10-02",
+      "source_published_at": "2026-10-02T12:40:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-02T12:40:00Z"
+    },
+    {
+      "title": "Claude Code 2.1.288 расширила настройку code review и закрыла опасный обход запроса на удаление файлов",
+      "organization": "Anthropic; Claude Code",
+      "published_date": "2026-10-02",
+      "published_at": "2026-10-02T20:19:57+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agents; code review; permissions; sandboxing; MCP OAuth; agentic development environments",
+      "event_type": "release update",
+      "keywords": [
+        "Claude Code",
+        "code review",
+        "max-findings",
+        "permissions",
+        "dangerous rm",
+        "MCP OAuth",
+        "subagents"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Claude Code v2.1.288",
+        "publisher": "Anthropic / GitHub",
+        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.288"
+      },
+      "supporting_sources": [],
+      "event_summary": "Anthropic выпустила Claude Code v2.1.288: в /code-review появился параметр --max-findings для управления числом находок, а также исправлен случай, при котором опасные команды rm внутри bash -c или sh -c могли выполняться без запроса при bypassPermissions или shell allow rule. Релиз также добавил повторную аутентификацию при расширении OAuth-scopes MCP-сервера и набор исправлений для агентов, плагинов и облачных сессий.",
+      "verified_facts": [
+        "Официальный GitHub-релиз v2.1.288 отмечен датой 2 октября 2026 года.",
+        "В /code-review добавлен параметр --max-findings <n>|all; выбранное значение сохраняется до сброса на default.",
+        "Исправлен обход safeguard для опасного rm в bash -c или sh -c при bypassPermissions либо shell allow rule.",
+        "Добавлен prompt повторной аутентификации, когда MCP-сервер во время tool call запрашивает больший OAuth scope."
+      ],
+      "significance": "Это самостоятельное обновление одного из ключевых CLI coding agents: оно сочетает контроль масштаба автоматического ревью с устранением потенциально опасного поведения вокруг удаления файлов и разрешений. Однако релиз в основном инкрементальный и уже следует за опубликованной в архиве новостью о v2.1.287.",
+      "significance_score": 2,
+      "limitations": "Точный timezone-aware timestamp GitHub не показывает: на странице указан час 20:19, но без timezone/UTC offset. Независимых вторичных источников для релиза не найдено и они не требуются для подтверждения официального changelog.",
+      "archive_status": "update",
+      "archive_reason": "Продолжение архивного сюжета от 2 октября 2026 года о Claude Code v2.1.287; v2.1.288 содержит новые возможности code review и отдельное security-исправление.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Проверено по официальному immutable GitHub release Anthropic: дата, номер версии и перечисленные изменения явно указаны в release notes.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/anthropics/claude-code/releases/tags/v2.1.288=2026-10-02T20:19:57Z; timestamp проверен Python против effective window. Новый официальный релиз опубликован 2 октября 2026 года в пределах effective window и содержит новые функциональные и security-изменения относительно архивной v2.1.287.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это продуктовый релиз, а не судебное или регуляторное событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: тематически значимое обновление developer tool, но не curiosity-сюжет.",
+      "event_date": "2026-10-02",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.288",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Официальная страница GitHub Releases репозитория anthropics/claude-code помечает v2.1.288 как released 02 Oct 20:19; timezone не указан, поэтому дата события сохранена с точностью до дня.",
+      "id": "cand-004",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.288",
+      "source_published_date": "2026-10-02",
+      "source_published_at": "2026-10-02T20:19:57+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "github-releases-api:published_at:https://api.github.com/repos/anthropics/claude-code/releases/tags/v2.1.288=2026-10-02T20:19:57Z"
+    },
+    {
+      "title": "Meta открыла Muse Gadgets — open-source SDK и firmware для подключения AI-агента Muse к пользовательским устройствам",
+      "organization": "Meta; Muse",
+      "published_date": "2026-10-03",
+      "published_at": "2026-10-03T00:45:39+00:00",
+      "time_precision": "datetime",
+      "topic": "AI-агенты; open-source hardware; SDK; домашние устройства; ESP32; Raspberry Pi; Home Assistant",
+      "event_type": "product launch",
+      "keywords": [
+        "Meta",
+        "Muse",
+        "Muse Gadgets",
+        "open source",
+        "ESP32",
+        "Raspberry Pi",
+        "Linux SDK",
+        "Home Assistant",
+        "AI agent hardware"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Meta wants your next gadget to be Muse-infused",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/02/meta-wants-you-to-build-your-own-muse-gadget/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Muse Gadgets: Open source hardware for your Muse",
+          "publisher": "Muse / Meta",
+          "url": "https://gadgets.muse.ai/"
+        }
+      ],
+      "event_summary": "Meta представила Muse Gadgets — открытый проект с firmware и SDK для ESP32 и Linux/Raspberry Pi, позволяющий подключать персонального агента Muse к дисплеям, датчикам, кнопкам, аудиоустройствам и домашней автоматизации. Компания также показала Muse Home Link — устройство для связи агента с домашней сетью и совместимыми smart-home устройствами.",
+      "verified_facts": [
+        "TechCrunch сообщает, что Meta представила Muse Gadgets 2 октября 2026 года.",
+        "Официальная страница проекта подтверждает наличие open-source device SDK и firmware под лицензией Apache 2.0.",
+        "Официальная документация указывает поддержку ESP32 и Linux-устройств, включая сценарии с Raspberry Pi и Home Assistant.",
+        "Muse Home Link предназначен для подключения Muse к домашней Wi-Fi-сети и совместимым устройствам через локальные HTTP API."
+      ],
+      "significance": "Это самостоятельное расширение AI-агента Meta от приложения к открытому аппаратному и smart-home слою. Событие может быть заметно для рынка персональных агентов и developer ecosystem, но на момент прохода его массовый коммерческий эффект не подтверждён.",
+      "significance_score": 2,
+      "limitations": "Запуск подтверждён первичным сайтом проекта, но его страница не предоставляет машиночитаемый timestamp публикации; точное время source page взято из TechCrunch. Масштаб распространения Home Link и фактическая доступность устройств пока неясны.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве есть более ранние сюжеты о Meta Muse для малого бизнеса и enterprise, но нет запуска Muse Gadgets, открытого device SDK или Home Link.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Проверены независимая технологическая публикация с точным timestamp и официальный сайт Muse Gadgets. Событие не является повтором ранее заархивированных запусков Muse.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-03T00:45:39+00:00; timestamp проверен Python против effective window. Анонс опубликован 2 октября 2026 года в 17:45 PDT, что соответствует 3 октября 2026 года 03:45+03:00 и попадает в effective editorial window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран как продуктово-экосистемное событие, а не curiosity-сюжет.",
+      "event_date": "2026-10-02",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/10/02/meta-wants-you-to-build-your-own-muse-gadget/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch прямо указывает, что Meta представила Muse Gadgets в пятницу, 2 октября 2026 года; официальный сайт проекта подтверждает сам запуск и его технические характеристики, но не показывает дату публикации.",
+      "id": "cand-005",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/10/02/meta-wants-you-to-build-your-own-muse-gadget/",
+      "source_published_date": "2026-10-03",
+      "source_published_at": "2026-10-03T00:45:39+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-03T00:45:39+00:00"
+    },
+    {
+      "title": "Apple усиливает контроль Full Disk Access в macOS из-за рисков со стороны ИИ-агентов",
+      "organization": "Apple",
+      "published_date": "2026-10-02",
+      "published_at": "2026-10-02T18:11:27+00:00",
+      "time_precision": "datetime",
+      "topic": "Безопасность AI-агентов на пользовательских устройствах; macOS; доступ к личным данным; informed consent",
+      "event_type": "product security policy update",
+      "keywords": [
+        "Apple",
+        "macOS",
+        "Full Disk Access",
+        "AI agents",
+        "desktop agents",
+        "privacy",
+        "security"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Apple says it’s tightening macOS ‘Full Disk Access’ controls due to new risks from AI agents",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/02/apple-says-its-tightening-macos-full-disk-access-controls-due-to-new-risks-from-ai-agents/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Apple developer post on Full Disk Access controls",
+          "publisher": "Apple Developer",
+          "url": "https://developer.apple.com/"
+        }
+      ],
+      "event_summary": "Apple объявила о дополнительных механизмах явного пользовательского согласия для приложений, запрашивающих Full Disk Access в macOS, прямо связав изменение с растущими рисками от более автономных ИИ-агентов.",
+      "verified_facts": [
+        "TechCrunch указывает точный timestamp публикации: 2 октября 2026 года, 11:11 PDT.",
+        "По данным публикации, Apple заявила, что ИИ-агенты увеличили риски, связанные с уровнем доступа Full Disk Access.",
+        "Изменение описано как дополнительные меры для более явного и осознанного предоставления пользователем такого доступа, а не как полный запрет или универсальное новое ограничение."
+      ],
+      "significance": "Крупный платформенный владелец адаптирует системную модель разрешений macOS под угрозы от desktop-агентов, что может повлиять на разработчиков и пользователей агентных приложений.",
+      "significance_score": 3,
+      "limitations": "Детали реализации и сроки появления новых контролей в релизах macOS в цитируемом материале не раскрыты; формулировка TechCrunch была исправлена, чтобы не характеризовать изменение как новое ограничение доступа.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет отдельного сюжета об изменении Apple правил Full Disk Access для ИИ-агентов.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Свежая публикация TechCrunch содержит точный timestamp и передаёт заявление Apple; ссылка на официальный developer post приведена в статье.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-02T18:11:27+00:00; timestamp проверен Python против effective window. Публично описанное Apple изменение датировано 2 октября 2026 года и попадает в effective editorial window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это продуктово-платформенное security-изменение, не судебное или регуляторное дело.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-рубрике.",
+      "event_date": "2026-10-02",
+      "event_at": "2026-10-02T11:11:00-07:00",
+      "event_time_precision": "datetime",
+      "event_origin_url": "https://techcrunch.com/2026/10/02/apple-says-its-tightening-macos-full-disk-access-controls-due-to-new-risks-from-ai-agents/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch датирует сообщение 2 октября 2026 года, 11:11 PDT, и описывает заявление Apple о новых контролях.",
+      "id": "cand-006",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable exact event timestamp is inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/10/02/apple-says-its-tightening-macos-full-disk-access-controls-due-to-new-risks-from-ai-agents/",
+      "source_published_date": "2026-10-02",
+      "source_published_at": "2026-10-02T18:11:27+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-02T18:11:27+00:00"
+    },
+    {
+      "title": "Сотрудник OpenAI по safety Дэвид Робинсон ушёл из компании, назвав её культуру сломанной",
+      "organization": "OpenAI; David Robinson",
+      "published_date": "2026-10-03",
+      "published_at": "2026-10-03T16:30:01+00:00",
+      "time_precision": "datetime",
+      "topic": "AI safety; governance; frontier labs; культура безопасности; whistleblowing",
+      "event_type": "senior safety staff resignation",
+      "keywords": [
+        "OpenAI",
+        "AI safety",
+        "David Robinson",
+        "resignation",
+        "governance",
+        "frontier AI",
+        "agent safety"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "OpenAI safety employee resigns, claiming the company’s ‘culture is broken’",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/03/openai-safety-employee-resigns-claiming-the-companys-culture-is-broken/"
+      },
+      "supporting_sources": [
+        {
+          "title": "OpenAI Has Gone Rogue",
+          "publisher": "The Atlantic",
+          "url": "https://www.theatlantic.com/technology/2026/09/ai-hacks-infestation/688806/"
+        }
+      ],
+      "event_summary": "Дэвид Робинсон, заявивший, что руководил подготовкой safety-отчётов к крупным релизам OpenAI, сообщил об уходе из компании и критике её культуры безопасности; OpenAI в ответ заявила о продолжающемся усилении мер защиты, внешних оценок и мониторинга.",
+      "verified_facts": [
+        "TechCrunch датирует публикацию 3 октября 2026 года, 09:30 PDT.",
+        "Робинсон сообщил, что участвовал в подготовке safety reports, сопровождавших крупные продуктовые запуски OpenAI.",
+        "OpenAI через представителя заявила, что укрепляет безопасность исследовательской и тестовой среды, расширяет работу со сторонними оценщиками и улучшает мониторинг."
+      ],
+      "significance": "Уход давнего сотрудника, связанного с safety-документацией крупной frontier-лаборатории, продолжает серию публичных сигналов о внутренних разногласиях вокруг безопасности и управления агентными моделями.",
+      "significance_score": 3,
+      "limitations": "Большинство оценок культуры и рисков — позиция ушедшего сотрудника; независимая проверка всех его характеристик внутренней работы невозможна по доступному материалу.",
+      "archive_status": "none",
+      "archive_reason": "Архив фиксирует увольнение трёх safety-сотрудников OpenAI 1 октября, но не последующий публичный уход Дэвида Робинсона с отдельными обвинениями и ответом компании.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Факт ухода и публичная позиция Робинсона подтверждены свежим материалом TechCrunch; приведён официальный комментарий представителя OpenAI.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-03T16:30:01+00:00; timestamp проверен Python против effective window. Это отдельное публичное кадровое событие и новый набор заявлений после архивного сюжета от 1 октября о расставании OpenAI с тремя safety-сотрудниками.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Кадровое и governance-событие, без подтверждённого крупного судебного или регуляторного действия.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-рубрике.",
+      "event_date": "2026-10-03",
+      "event_at": "2026-10-03T09:30:00-07:00",
+      "event_time_precision": "datetime",
+      "event_origin_url": "https://techcrunch.com/2026/10/03/openai-safety-employee-resigns-claiming-the-companys-culture-is-broken/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch от 3 октября 2026 года сообщает об опубликованном эссе Робинсона и комментарии OpenAI; первичный URL эссе в доступных данных не был полноценно верифицирован.",
+      "id": "cand-007",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable exact event timestamp is inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/10/03/openai-safety-employee-resigns-claiming-the-companys-culture-is-broken/",
+      "source_published_date": "2026-10-03",
+      "source_published_at": "2026-10-03T16:30:01+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-03T16:30:01+00:00"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=7, validated unique=7, final candidates=7. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

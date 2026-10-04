@@ -1,0 +1,222 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "AWS заявила об отказе от NDA с госорганами при согласовании новых дата-центров",
+    "organization": "Amazon Web Services; Amazon",
+    "topic": "AI-инфраструктура; дата-центры; общественное доверие; прозрачность согласований; энергопотребление",
+    "event_type": "infrastructure policy commitment",
+    "status": "new",
+    "summary": "Генеральный директор AWS Matt Garman заявил, что Amazon больше не использует соглашения о неразглашении в работе с государственными органами по проектам дата-центров, отвечая на усиливающуюся общественную критику таких объектов.",
+    "published_at": "2026-10-03T18:43:57+00:00",
+    "published_date": "2026-10-03",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Amazon responds to data center backlash, says it no longer uses NDAs",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/03/amazon-responds-to-data-center-backlash-says-it-no-longer-uses-ndas/"
+      }
+    ],
+    "keywords": [
+      "AWS",
+      "Amazon",
+      "data centers",
+      "NDAs",
+      "AI infrastructure",
+      "community backlash",
+      "transparency"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Обновление: OpenAI описала beta multi-agent workflows для GPT-6.1 Sol",
+    "organization": "OpenAI",
+    "topic": "GPT-6; GPT-6.1 Sol; multi-agent workflows; Responses API; long-running agents; computer use",
+    "event_type": "product and developer-platform update",
+    "status": "update",
+    "summary": "OpenAI 2 октября опубликовала практический guide для GPT-6 family. В нём впервые для данного свежего обновления явно описана beta-поддержка multi-agent workflows в Responses API для GPT-6.1 Sol: модель может делегировать независимые подзадачи субагентам и объединять результаты. Документ также описывает steering, asynchronous tool calling, parallel work и computer use для длительных агентных задач.",
+    "published_at": "2026-10-02T15:54:21+00:00",
+    "published_date": "2026-10-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release v3.24.0",
+        "publisher": "OpenAI / GitHub",
+        "url": "https://github.com/openai/openai-python/releases/tag/v3.24.0"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "GPT-6.1 Sol",
+      "multi-agent",
+      "Responses API",
+      "subagents",
+      "computer use",
+      "agents"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "OpenAI раскрыла конфигурацию Jalapeño с хост-процессорами AMD EPYC Turin",
+    "organization": "OpenAI; AMD; NVIDIA",
+    "topic": "AI-инфраструктура; собственные inference-ASIC; серверные CPU; rack-scale deployment; энергоэффективный inference",
+    "event_type": "deployment configuration disclosure",
+    "status": "new",
+    "summary": "В интервью Tom's Hardware вице-президент OpenAI по hardware Ричард Хо сообщил, что внутренние стойки с inference-ASIC Jalapeño используют AMD EPYC Turin как хост-процессоры. Он объяснил выбор прагматичностью и зрелостью платформы, охарактеризовав standalone-версию NVIDIA Vera как менее зрелую для этой конфигурации.",
+    "published_at": "2026-10-02T12:40:00+00:00",
+    "published_date": "2026-10-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI’s Jalapeño ASICs are deployed alongside AMD EPYC ‘Turin’ CPUs as hosts — Hardware VP says Nvidia’s Vera standalone is ‘a little bit behind… on that maturity level’",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/pc-components/cpus/openais-jalapeno-asics-are-deployed-alongside-amd-epyc-turin-cpus-as-hosts-hardware-vp-says-nvidias-vera-standalone-is-a-little-bit-behind-on-that-maturity-level"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "Jalapeño",
+      "ASIC",
+      "AMD EPYC Turin",
+      "NVIDIA Vera",
+      "inference",
+      "data centers",
+      "server CPUs"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Обновление: Claude Code 2.1.288 добавила контроль code review и исправила обход защиты удаления файлов",
+    "organization": "Anthropic; Claude Code",
+    "topic": "CLI coding agents; code review; permissions; sandboxing; MCP OAuth; agentic development environments",
+    "event_type": "release update",
+    "status": "update",
+    "summary": "Anthropic выпустила Claude Code v2.1.288: в /code-review появился параметр --max-findings для управления числом находок, а также исправлен случай, при котором опасные команды rm внутри bash -c или sh -c могли выполняться без запроса при bypassPermissions или shell allow rule. Релиз также добавил повторную аутентификацию при расширении OAuth-scopes MCP-сервера и набор исправлений для агентов, плагинов и облачных сессий.",
+    "published_at": "2026-10-02T20:19:57+00:00",
+    "published_date": "2026-10-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Claude Code v2.1.288",
+        "publisher": "Anthropic / GitHub",
+        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.288"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "code review",
+      "max-findings",
+      "permissions",
+      "dangerous rm",
+      "MCP OAuth",
+      "subagents"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Meta открыла Muse Gadgets — SDK и firmware для устройств с агентом Muse",
+    "organization": "Meta; Muse",
+    "topic": "AI-агенты; open-source hardware; SDK; домашние устройства; ESP32; Raspberry Pi; Home Assistant",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Meta представила Muse Gadgets — открытый проект с firmware и SDK для ESP32 и Linux/Raspberry Pi, позволяющий подключать персонального агента Muse к дисплеям, датчикам, кнопкам, аудиоустройствам и домашней автоматизации. Компания также показала Muse Home Link — устройство для связи агента с домашней сетью и совместимыми smart-home устройствами.",
+    "published_at": "2026-10-03T00:45:39+00:00",
+    "published_date": "2026-10-03",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Meta wants your next gadget to be Muse-infused",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/02/meta-wants-you-to-build-your-own-muse-gadget/"
+      }
+    ],
+    "keywords": [
+      "Meta",
+      "Muse",
+      "Muse Gadgets",
+      "open source",
+      "ESP32",
+      "Raspberry Pi",
+      "Linux SDK",
+      "Home Assistant",
+      "AI agent hardware"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Apple усиливает контроль Full Disk Access в macOS из-за рисков агентов ИИ",
+    "organization": "Apple",
+    "topic": "Безопасность AI-агентов на пользовательских устройствах; macOS; доступ к личным данным; informed consent",
+    "event_type": "product security policy update",
+    "status": "new",
+    "summary": "Apple объявила о дополнительных механизмах явного пользовательского согласия для приложений, запрашивающих Full Disk Access в macOS, прямо связав изменение с растущими рисками от более автономных ИИ-агентов.",
+    "published_at": "2026-10-02T18:11:27+00:00",
+    "published_date": "2026-10-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Apple says it’s tightening macOS ‘Full Disk Access’ controls due to new risks from AI agents",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/02/apple-says-its-tightening-macos-full-disk-access-controls-due-to-new-risks-from-ai-agents/"
+      }
+    ],
+    "keywords": [
+      "Apple",
+      "macOS",
+      "Full Disk Access",
+      "AI agents",
+      "desktop agents",
+      "privacy",
+      "security"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Сотрудник OpenAI по safety Дэвид Робинсон ушёл из компании, раскритиковав её культуру",
+    "organization": "OpenAI; David Robinson",
+    "topic": "AI safety; governance; frontier labs; культура безопасности; whistleblowing",
+    "event_type": "senior safety staff resignation",
+    "status": "new",
+    "summary": "Дэвид Робинсон, заявивший, что руководил подготовкой safety-отчётов к крупным релизам OpenAI, сообщил об уходе из компании и критике её культуры безопасности; OpenAI в ответ заявила о продолжающемся усилении мер защиты, внешних оценок и мониторинга.",
+    "published_at": "2026-10-03T16:30:01+00:00",
+    "published_date": "2026-10-03",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI safety employee resigns, claiming the company’s ‘culture is broken’",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/03/openai-safety-employee-resigns-claiming-the-companys-culture-is-broken/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "AI safety",
+      "David Robinson",
+      "resignation",
+      "governance",
+      "frontier AI",
+      "agent safety"
+    ],
+    "geography": "world",
+    "category": "security"
+  }
+]

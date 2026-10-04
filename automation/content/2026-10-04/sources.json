@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Amazon responds to data center backlash, says it no longer uses NDAs",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/10/03/amazon-responds-to-data-center-backlash-says-it-no-longer-uses-ndas/"
+  },
+  {
+    "title": "Release v3.24.0",
+    "publisher": "OpenAI / GitHub",
+    "url": "https://github.com/openai/openai-python/releases/tag/v3.24.0"
+  },
+  {
+    "title": "OpenAI’s Jalapeño ASICs are deployed alongside AMD EPYC ‘Turin’ CPUs as hosts — Hardware VP says Nvidia’s Vera standalone is ‘a little bit behind… on that maturity level’",
+    "publisher": "Tom's Hardware",
+    "url": "https://www.tomshardware.com/pc-components/cpus/openais-jalapeno-asics-are-deployed-alongside-amd-epyc-turin-cpus-as-hosts-hardware-vp-says-nvidias-vera-standalone-is-a-little-bit-behind-on-that-maturity-level"
+  },
+  {
+    "title": "Claude Code v2.1.288",
+    "publisher": "Anthropic / GitHub",
+    "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.288"
+  },
+  {
+    "title": "Meta wants your next gadget to be Muse-infused",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/10/02/meta-wants-you-to-build-your-own-muse-gadget/"
+  },
+  {
+    "title": "Apple says it’s tightening macOS ‘Full Disk Access’ controls due to new risks from AI agents",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/10/02/apple-says-its-tightening-macos-full-disk-access-controls-due-to-new-risks-from-ai-agents/"
+  },
+  {
+    "title": "OpenAI safety employee resigns, claiming the company’s ‘culture is broken’",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/10/03/openai-safety-employee-resigns-claiming-the-companys-culture-is-broken/"
+  }
+]

@@ -1,0 +1,29 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "article_html.meta_marking",
+      "model_value": "inconsistent",
+      "normalized_value": "first Meta*, subsequent Meta"
+    }
+  ],
+  "changed_count": 1,
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Четыре материала TechCrunch описывают самостоятельные события высокой редакционной значимости в разных темах: политика дата-центров AWS, запуск аппаратной экосистемы Meta Muse, системные разрешения macOS и кадрово-governance событие в OpenAI. Исключение любого из них оставило бы выпуск ниже обычной цели при отсутствии сопоставимых альтернатив в пуле."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "OpenAI: Три сюжета об OpenAI являются разными независимыми событиями: официальный developer update GPT-6.1 Sol, новое раскрытие о серверной конфигурации Jalapeño и отдельный публичный уход сотрудника safety-направления."
+    }
+  ]
+}
