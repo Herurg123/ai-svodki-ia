@@ -1,0 +1,347 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-10-05",
+  "search_window": {
+    "start_at": "2026-10-03T05:06:11+03:00",
+    "end_at": "2026-10-05T05:01:10+03:00",
+    "latest_archive_at": "2026-10-04T05:06:11+03:00",
+    "start_date": "2026-10-03",
+    "end_date": "2026-10-05",
+    "latest_archive_date": "2026-10-04"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=1, rejected=1."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=0, rejected=1."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=0, rejected=1."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Google приостановила программу вознаграждений за уязвимости в open-source из-за всплеска AI-генерируемых заявок",
+      "organization": "Google",
+      "published_date": "2026-10-04",
+      "published_at": "2026-10-04T13:31:00-07:00",
+      "time_precision": "datetime",
+      "topic": "AI security; bug bounty; hallucinations; безопасность open-source",
+      "event_type": "security program suspension",
+      "keywords": [
+        "Google",
+        "bug bounty",
+        "open source",
+        "AI submissions",
+        "hallucinations",
+        "vulnerability reports"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Google froze its open source bug bounty program due to a ‘significant rise’ in AI submissions",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/04/google-froze-its-open-source-bug-bounty-program-due-to-a-significant-rise-in-ai-submissions/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Google Open Source Software Vulnerability Reward Program Rules",
+          "publisher": "Google Bug Hunters",
+          "url": "https://bughunters.google.com/about/rules/open-source/google-open-source-software-vulnerability-reward-program-rules"
+        }
+      ],
+      "event_summary": "Google приостановила Open Source Software Vulnerability Rewards Program с 1 октября до следующего года. Компания объяснила решение резким ростом автоматизированных заявок, большинство которых невалидны; TechCrunch сообщает, что речь шла в том числе о сообщениях с галлюцинациями, перегрузивших инженеров и maintainers open-source.",
+      "verified_facts": [
+        "TechCrunch опубликовал материал 4 октября 2026 года в 13:31 PDT.",
+        "Google, по данным TechCrunch со ссылкой на страницу программы и публикацию компании, приостановила программу с 1 октября.",
+        "Причина, приведённая Google: значительный рост автоматизированных заявок, подавляющее большинство которых невалидны.",
+        "Google обещала дать обновление в первом квартале 2027 года."
+      ],
+      "significance": "Приостановка программы крупного поставщика ПО показывает практический security-эффект массового применения генеративного ИИ: поток низкокачественных и галлюцинированных сообщений способен нарушать процессы disclosure и triage у open-source-проектов.",
+      "significance_score": 2,
+      "limitations": "Доступная страница Google Bug Hunters не отдала текст в просмотре; точная операционная статистика по числу AI-заявок и их доле не раскрыта. Событие относится к security-операциям одной программы, а не к изменению глобальной политики Google.",
+      "archive_status": "none",
+      "archive_reason": "В недавнем архиве нет сюжета о приостановке Google Open Source Software Vulnerability Rewards Program.",
+      "recommendation": "exclude",
+      "verification_status": "verified",
+      "verification_notes": "TechCrunch приводит конкретную дату, заявление Google и ссылку на официальную страницу программы; официальный URL сохранён как supporting source.",
+      "freshness_status": "old_reprint",
+      "freshness_reason": "Event Freshness Proof v1: reliable event date is outside the effective window; origin=https://techcrunch.com/2026/10/04/google-froze-its-open-source-bug-bounty-program-due-to-a-significant-rise-in-ai-submissions/; event=2026-10-01.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это операционное решение компании по security-программе, не судебное и не регуляторное действие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат релевантен как security-сигнал, а не как curiosity-материал.",
+      "event_date": "2026-10-01",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/10/04/google-froze-its-open-source-bug-bounty-program-due-to-a-significant-rise-in-ai-submissions/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch сообщает со ссылкой на публикации Google и страницу программы, что программа была поставлена на паузу с 1 октября 2026 года.",
+      "id": "cand-001",
+      "event_freshness_status": "stale",
+      "event_freshness_reason": "reliable event date is outside the effective window",
+      "event_freshness_rejection_code": "event_freshness_stale"
+    },
+    {
+      "title": "Claude Code 2.1.289 закрыла обходы deny/ask-правил и добавила API управления teammates для плагинов",
+      "organization": "Anthropic; Claude Code",
+      "published_date": "2026-10-03",
+      "published_at": "2026-10-03T23:07:17+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agents; agentic development environments; permissions; sandbox auto-allow; plugins; MCP",
+      "event_type": "release update",
+      "keywords": [
+        "Claude Code",
+        "v2.1.289",
+        "permission rules",
+        "sandbox auto-allow",
+        "Bash",
+        "plugins",
+        "agent.spawn",
+        "teammates"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Claude Code v2.1.289",
+        "publisher": "Anthropic / GitHub",
+        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.289"
+      },
+      "supporting_sources": [],
+      "event_summary": "Anthropic выпустила Claude Code 2.1.289. Релиз исправляет несколько случаев обхода или неполного применения deny/ask-правил для составных Bash-команд, переменных окружения и симлинков при sandbox auto-allow; также исправляет возможность пользовательского плагина менять описания sign-in tools у управляемого организацией MCP-сервера. Для plugin-based multi-agent сценариев добавлен agent.spawn для teammates и состояния idle/waiting в API $.agent.list().",
+      "verified_facts": [
+        "GitHub помечает v2.1.289 как latest release и указывает публикацию 3 октября в 23:07 без отображённого timezone.",
+        "В release notes заявлены исправления для deny/ask-правил: в частности, правила могли пропускать команду за префиксом переменной окружения или bare assignment при sandbox auto-allow.",
+        "Релиз исправляет неприменение Read deny rules к файлам, выбранным или упомянутым через симлинк.",
+        "Добавлен agent.spawn для teammates, а в $.agent.list() — состояния idle и waiting.",
+        "В архиве уже опубликован предыдущий v2.1.288; v2.1.289 является самостоятельным последующим обновлением с иным набором security и plugin-agent изменений."
+      ],
+      "significance": "Это не крупный продуктовый запуск, но заметное обновление безопасности и управляемости Claude Code: исправления затрагивают границы разрешений в автономном CLI-агенте, а новый plugin API расширяет оркестрацию командных агентов.",
+      "significance_score": 2,
+      "limitations": "Релизные заметки являются first-party источником и не содержат независимой оценки масштаба эксплуатации исправленных проблем. GitHub отображает время публикации без timezone, поэтому точный timezone-aware source timestamp не зафиксирован.",
+      "archive_status": "none",
+      "archive_reason": "В архиве присутствует Claude Code 2.1.288 от 2 октября 2026 года, но 2.1.289 — отдельный последующий релиз от 3 октября с новыми permission/security fixes и plugin-agent API.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Проверено по официальной странице GitHub Releases Anthropic; номер версии, дата и перечисленные изменения указаны непосредственно в release notes.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/anthropics/claude-code/releases/tags/v2.1.289=2026-10-03T23:07:17Z; timestamp проверен Python против effective window. Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/anthropics/claude-code/releases/tags/v2.1.289=2026-10-03T23:07:17Z; timestamp проверен Python против effective window. Первичный релиз опубликован 3 октября 2026 года и попадает в effective window; это не перепечатка и не архивный v2.1.288.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это продуктовый release note, а не судебное или регуляторное событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "event_date": "2026-10-03",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.289",
+      "event_evidence_kind": "release_note",
+      "event_date_evidence": "Официальная страница GitHub Releases для v2.1.289 показывает публикацию «03 Oct 23:07»; timezone не указан, поэтому сохранена дата без event_at.",
+      "id": "cand-002",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.289",
+      "source_published_date": "2026-10-03",
+      "source_published_at": "2026-10-03T23:07:17+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "github-releases-api:published_at:https://api.github.com/repos/anthropics/claude-code/releases/tags/v2.1.289=2026-10-03T23:07:17Z"
+    },
+    {
+      "title": "Трамп объявил о создании федеральной Super Intelligence Force во главе с директором национальной разведки Джеем Клейтоном",
+      "organization": "Администрация США; Office of the Director of National Intelligence; Federal Trade Commission",
+      "published_date": "2026-10-04",
+      "published_at": "2026-10-04T15:15:10+00:00",
+      "time_precision": "datetime",
+      "topic": "Федеральная политика США в сфере ИИ; AI governance; межведомственная координация; риски и возможности frontier AI",
+      "event_type": "government task force announcement",
+      "keywords": [
+        "Super Intelligence Force",
+        "Donald Trump",
+        "Jay Clayton",
+        "AI policy",
+        "federal task force",
+        "FTC",
+        "AI governance"
+      ],
+      "geography": "world",
+      "category": "regulation",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Trump unveils his new Super Intelligence Force",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/04/trump-unveils-his-new-super-intelligence-force/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Top tech firms sign an accord to ‘self-police’ AI development, Trump says",
+          "publisher": "Associated Press",
+          "url": "https://apnews.com/article/trump-ai-anthropic-musk-595796511f110fc006cca0d01329733e"
+        }
+      ],
+      "event_summary": "Президент США Дональд Трамп объявил о создании межведомственной Super Intelligence Force. По данным TechCrunch, её возглавит директор национальной разведки Джей Клейтон; вице-председателями должны стать глава FTC Эндрю Фергюсон, заместитель министра войны по исследованиям и инженерии Эмил Майкл и директор OPM Скотт Купор. Группе отводится 120 дней на доклад о рисках и возможностях ИИ и на подготовку планов реагирования на угрозы, связанные с «super intelligence».",
+      "verified_facts": [
+        "TechCrunch опубликовал сообщение 4 октября 2026 года в 08:15 PDT, что попадает в effective window, заканчивающееся 5 октября 2026 года в 05:01:10 +03:00.",
+        "Издание приводит заявление Трампа о создании Super Intelligence Force и сообщает, что группу возглавит директор национальной разведки Джей Клейтон.",
+        "По сообщению TechCrunch со ссылкой на The Wall Street Journal, у группы будет 120 дней на подготовку доклада о рисках и возможностях ИИ.",
+        "Это последующее конкретное организационное действие после более раннего заявления о намерении создать AI Force, уже отражённого в архиве от 20 сентября 2026 года."
+      ],
+      "significance": "Это существенный материализовавшийся шаг в федеральном управлении ИИ США: вместо ранее заявленного намерения названы межведомственная структура, предполагаемые руководители и срок подготовки политики. Состав с участием ODNI, FTC, оборонного R&E и OPM связывает AI governance одновременно с национальной безопасностью, конкуренцией, технологическим развитием и государственным кадровым контуром.",
+      "significance_score": 3,
+      "limitations": "Доступный материал TechCrunch опирается на пост Трампа и на сообщение The Wall Street Journal; официальный президентский документ, устав группы и юридические полномочия в разрешённых первичных источниках не были доступны. Поэтому не следует трактовать сообщение как доказательство уже опубликованного формального межведомственного мандата.",
+      "archive_status": "update",
+      "archive_reason": "В выпуске за 20 сентября 2026 года уже фиксировалось заявление Трампа о планах создать AI Force и назначить AI-«царя». Объявление 4 октября содержит новое материальное развитие: фактическое создание Super Intelligence Force, предполагаемый руководящий состав и 120-дневный срок.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверено по опубликованному TechCrunch материалу с точным timestamp и описанием объявления; AP независимо подтверждает, что на встрече в Белом доме 29 сентября Трамп говорил о создании надзорного комитета и последующей координации AI-обязательств. Детали состава и 120-дневного мандата пока подтверждены только доступным авторитетным вторичным источником.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-04T15:15:10+00:00; timestamp проверен Python против effective window. Event Freshness Proof v1: событие-источник — публичное объявление о создании группы 4 октября 2026 года; TechCrunch опубликован 2026-10-04T08:15:00-07:00 (2026-10-04T15:15:00Z), то есть до верхней границы окна 2026-10-05T02:01:10Z. Это не повтор прежнего обещания от 20 сентября, а конкретизация структуры, руководства и срока работы.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это исполнительное и координационное политическое объявление, а не судебное или регуляторное производство.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо.",
+      "event_date": "2026-10-04",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/10/04/trump-unveils-his-new-super-intelligence-force/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch сообщает, что Трамп объявил о создании Super Intelligence Force в воскресном утреннем посте 4 октября 2026 года; точное время первичного поста в доступном источнике не приведено.",
+      "audit_direction": "general_coverage_gaps",
+      "id": "cand-003",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/10/04/trump-unveils-his-new-super-intelligence-force/",
+      "source_published_date": "2026-10-04",
+      "source_published_at": "2026-10-04T15:15:10+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-04T15:15:10+00:00"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=5, validated unique=2, final candidates=2. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-global_breaking-02",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Reflection готовит открытую модель при поддержке NVIDIA",
+      "origin_direction": "global_breaking",
+      "reason_code": "unverified",
+      "evidence_reason": "В доступном результате Axios речь идёт о подготовке к возможному будущему запуску; не найдено подтверждённого релиза, спецификаций или даты доступности.",
+      "likely_significance_score": 1,
+      "entities": [
+        "Reflection",
+        "NVIDIA"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

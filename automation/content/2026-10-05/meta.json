@@ -1,0 +1,35 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-05",
+  "slug": "2026-10-05",
+  "title": "ИИ-Сводка на 5 октября 2026",
+  "description": "США конкретизируют межведомственное управление рисками ИИ, а Anthropic усиливает контроль разрешений в Claude Code и расширяет инструменты координации агентных команд.",
+  "published_at": "2026-10-05T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-05.png",
+  "topics": [
+    "Super Intelligence Force",
+    "политика ИИ США",
+    "AI governance",
+    "Claude Code",
+    "агенты ИИ",
+    "безопасность coding-агентов",
+    "управление разрешениями",
+    "MCP",
+    "мультиагентная разработка"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+    }
+  ]
+}

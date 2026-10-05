@@ -1,0 +1,65 @@
+[
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Обновление: Трамп объявил о создании федеральной Super Intelligence Force",
+    "organization": "Администрация США; Office of the Director of National Intelligence; Federal Trade Commission",
+    "topic": "Федеральная политика США в сфере ИИ; AI governance; межведомственная координация; риски и возможности frontier AI",
+    "event_type": "government task force announcement",
+    "status": "update",
+    "summary": "Президент США Дональд Трамп объявил о создании межведомственной Super Intelligence Force. По данным TechCrunch, её возглавит директор национальной разведки Джей Клейтон; вице-председателями должны стать глава FTC Эндрю Фергюсон, заместитель министра войны по исследованиям и инженерии Эмил Майкл и директор OPM Скотт Купор. Группе отводится 120 дней на доклад о рисках и возможностях ИИ и на подготовку планов реагирования на угрозы, связанные с «super intelligence».",
+    "published_at": "2026-10-04T15:15:10+00:00",
+    "published_date": "2026-10-04",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Trump unveils his new Super Intelligence Force",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/04/trump-unveils-his-new-super-intelligence-force/"
+      }
+    ],
+    "keywords": [
+      "Super Intelligence Force",
+      "Donald Trump",
+      "Jay Clayton",
+      "AI policy",
+      "federal task force",
+      "FTC",
+      "AI governance"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Claude Code 2.1.289 закрыла обходы deny/ask-правил и добавила API управления teammates для плагинов",
+    "organization": "Anthropic; Claude Code",
+    "topic": "CLI coding agents; agentic development environments; permissions; sandbox auto-allow; plugins; MCP",
+    "event_type": "release update",
+    "status": "new",
+    "summary": "Anthropic выпустила Claude Code 2.1.289. Релиз исправляет несколько случаев обхода или неполного применения deny/ask-правил для составных Bash-команд, переменных окружения и симлинков при sandbox auto-allow; также исправляет возможность пользовательского плагина менять описания sign-in tools у управляемого организацией MCP-сервера. Для plugin-based multi-agent сценариев добавлен agent.spawn для teammates и состояния idle/waiting в API $.agent.list().",
+    "published_at": "2026-10-03T23:07:17+00:00",
+    "published_date": "2026-10-03",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Claude Code v2.1.289",
+        "publisher": "Anthropic / GitHub",
+        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.289"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "v2.1.289",
+      "permission rules",
+      "sandbox auto-allow",
+      "Bash",
+      "plugins",
+      "agent.spawn",
+      "teammates"
+    ],
+    "geography": "world",
+    "category": "coding"
+  }
+]
