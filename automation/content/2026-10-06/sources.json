@@ -1,0 +1,37 @@
+[
+  {
+    "title": "OpenAI will start watermarking ChatGPT’s text in the EU",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/10/05/openai-will-start-watermarking-chatgpts-text-in-the-eu/"
+  },
+  {
+    "title": "OpenAI launches visual ads that appear alongside image generation results",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/10/05/openai-launches-visual-ads-that-appear-alongside-image-generation-results/"
+  },
+  {
+    "title": "Reflection debuts Beam, an open-weight AI model to rival Chinese models at lower compute cost",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/10/05/reflection-debuts-beam-a-open-weight-ai-model-to-rival-chinese-models-at-lower-compute-cost/"
+  },
+  {
+    "title": "TikTok rolls out an AI shopping assistant and one-click checkout",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/10/05/tiktok-rolls-out-an-ai-shopping-assistant-and-one-click-checkout/"
+  },
+  {
+    "title": "Instinct brings its AI agent to group chats, even for friends without an account",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/10/05/instinct-brings-its-ai-agent-to-group-chats-even-for-friends-without-an-account/"
+  },
+  {
+    "title": "MCP for agent-to-agent comms may be the riskiest protocol you've never heard of",
+    "publisher": "Ars Technica",
+    "url": "https://arstechnica.com/security/2026/10/vulnerability-in-agents-from-google-and-others-exposes-structural-flaw-in-mcp/"
+  },
+  {
+    "title": "CVE-2026-97228: Improper Neutralization of Special Elements in Data Query Logic",
+    "publisher": "Rapid7",
+    "url": "https://www.rapid7.com/db/vulnerabilities/cve-2026-97228/"
+  }
+]

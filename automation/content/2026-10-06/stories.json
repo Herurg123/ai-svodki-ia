@@ -1,0 +1,196 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "OpenAI начнёт маркировать тексты ChatGPT и Codex для пользователей в ЕС",
+    "organization": "OpenAI; ChatGPT; Codex",
+    "topic": "Маркировка AI-generated text; EU AI Act; прозрачность генеративного ИИ; ChatGPT; Codex",
+    "event_type": "product and compliance rollout",
+    "status": "new",
+    "summary": "OpenAI объявила о развёртывании невидимой текстовой маркировки для результатов ChatGPT и Codex у пользователей в Европейском союзе; API-разработчики смогут включать её для отдельных моделей. Компания связывает запуск с требованиями прозрачности EU AI Act.",
+    "published_at": "2026-10-05T20:36:48+00:00",
+    "published_date": "2026-10-05",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI will start watermarking ChatGPT’s text in the EU",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/05/openai-will-start-watermarking-chatgpts-text-in-the-eu/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ChatGPT",
+      "Codex",
+      "text watermarking",
+      "textGrain",
+      "EU AI Act",
+      "EU"
+    ],
+    "geography": "world",
+    "category": "regulation"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "OpenAI добавляет визуальную рекламу рядом с генерацией изображений в ChatGPT",
+    "organization": "OpenAI; ChatGPT",
+    "topic": "AI-native advertising; монетизация ChatGPT; рекламные измерения; consumer AI",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "OpenAI расширила рекламный продукт ChatGPT: визуальные display-объявления будут показываться рядом с результатами генерации изображений. Старт запланирован позднее в октябре в США; компания также расширяет измерение эффективности рекламы и партнёрскую экосистему.",
+    "published_at": "2026-10-05T15:14:24+00:00",
+    "published_date": "2026-10-05",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI launches visual ads that appear alongside image generation results",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/05/openai-launches-visual-ads-that-appear-alongside-image-generation-results/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ChatGPT",
+      "visual ads",
+      "image generation",
+      "advertising",
+      "ad measurement"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Reflection AI представила Beam — open-weight MoE-модель на 501 млрд параметров",
+    "organization": "Reflection AI; Beam",
+    "topic": "Open-weight foundation models; mixture-of-experts; reasoning; coding; agentic tasks; inference efficiency",
+    "event_type": "model announcement",
+    "status": "new",
+    "summary": "Reflection AI представила Beam, свою первую frontier open-weight текстовую MoE-модель. Компания заявляет 501 млрд общих и 23 млрд активных параметров, контекст в 1 млн токенов и ориентирует модель на reasoning, coding и агентные задачи; выпуск весов и технических деталей обещан в течение месяца.",
+    "published_at": "2026-10-05T19:33:53+00:00",
+    "published_date": "2026-10-05",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Reflection debuts Beam, an open-weight AI model to rival Chinese models at lower compute cost",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/05/reflection-debuts-beam-a-open-weight-ai-model-to-rival-chinese-models-at-lower-compute-cost/"
+      }
+    ],
+    "keywords": [
+      "Reflection AI",
+      "Beam",
+      "open-weight",
+      "Mixture of Experts",
+      "501B parameters",
+      "reasoning",
+      "coding",
+      "agentic AI"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "TikTok запустила Shopping Assistant и покупку в один клик из ленты For You",
+    "organization": "TikTok; Salesforce; Shopify; Shoplazza; Stripe",
+    "topic": "Consumer AI; agentic commerce; AI shopping assistant; social commerce; payments",
+    "event_type": "consumer product rollout",
+    "status": "new",
+    "summary": "TikTok объявила о запуске разговорного AI Shopping Assistant и checkout в один клик прямо из ленты For You. Ассистент помогает с выбором, наличием, размером, доставкой и завершением покупки; решение интегрируется с партнёрами в commerce и payments.",
+    "published_at": "2026-10-05T18:29:00+00:00",
+    "published_date": "2026-10-05",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "TikTok rolls out an AI shopping assistant and one-click checkout",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/05/tiktok-rolls-out-an-ai-shopping-assistant-and-one-click-checkout/"
+      }
+    ],
+    "keywords": [
+      "TikTok",
+      "AI Shopping Assistant",
+      "agentic commerce",
+      "one-click checkout",
+      "TikTok Shop",
+      "Stripe",
+      "Shopify",
+      "Salesforce"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Instinct добавила агента ИИ в групповые чаты",
+    "organization": "Instinct",
+    "topic": "Consumer AI agents; групповые чаты; совместное планирование; agentic commerce",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Стартап Instinct объявил возможность добавлять своего ИИ-агента в групповые чаты; пользоваться взаимодействием смогут и приглашённые собеседники без аккаунта Instinct. Компания позиционирует сценарий для совместного планирования поездок, покупки билетов, организации встреч и других задач.",
+    "published_at": "2026-10-05T18:54:30+00:00",
+    "published_date": "2026-10-05",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Instinct brings its AI agent to group chats, even for friends without an account",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/05/instinct-brings-its-ai-agent-to-group-chats-even-for-friends-without-an-account/"
+      }
+    ],
+    "keywords": [
+      "Instinct",
+      "AI agent",
+      "group chats",
+      "consumer AI",
+      "travel planning",
+      "tickets"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Исследователи связали ряд MCP-уязвимостей с ошибками доверия между агентом и инструментами",
+    "organization": "Google; JPMorgan Chase; Weaviate; DINUM; Tangerang City government; Rapid7",
+    "topic": "Безопасность AI-агентов; Model Context Protocol; SSRF; indirect prompt injection; межагентное доверие; MCP tool servers",
+    "event_type": "security research update",
+    "status": "new",
+    "summary": "Новая исследовательская сводка связала ряд независимо подтверждённых и исправленных проблем в MCP-серверах с общей ошибкой доверия к аргументам, передаваемым агентами или upstream-сервисами. В описанных случаях невалидированные URL, пути или идентификаторы могли дать SSRF либо инъекцию в downstream-запросах; исследователь также описывает риск переноса вредоносных инструкций между агентами через цепочки MCP и других протоколов.",
+    "published_at": "2026-10-05T22:26:35+00:00",
+    "published_date": "2026-10-05",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "MCP for agent-to-agent comms may be the riskiest protocol you've never heard of",
+        "publisher": "Ars Technica",
+        "url": "https://arstechnica.com/security/2026/10/vulnerability-in-agents-from-google-and-others-exposes-structural-flaw-in-mcp/"
+      },
+      {
+        "title": "CVE-2026-97228: Improper Neutralization of Special Elements in Data Query Logic",
+        "publisher": "Rapid7",
+        "url": "https://www.rapid7.com/db/vulnerabilities/cve-2026-97228/"
+      }
+    ],
+    "keywords": [
+      "MCP",
+      "Model Context Protocol",
+      "SSRF",
+      "prompt injection",
+      "agent-to-agent",
+      "protocol pivoting",
+      "Google MCP Toolbox",
+      "JPMorgan",
+      "Weaviate",
+      "Rapid7"
+    ],
+    "geography": "world",
+    "category": "security"
+  }
+]

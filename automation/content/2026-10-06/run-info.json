@@ -1,0 +1,149 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-10-06",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-10-06.json",
+  "warnings": [
+    "Исследовательский пул перегружен одним издателем: techcrunch (5)",
+    "Выбрано 6 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-10-06",
+  "started_at": "2026-10-06T02:15:01+00:00",
+  "finished_at": "2026-10-06T02:15:34+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 80,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "3c742d69c91bd47c39af79b17bb9c03db4a1deec9d798f0419b7c0a47ca2b011",
+    "candidates_sha256": "9c2b1808e7e1bff504643f809d155d7f8e3e4cd2bf7468353da5e4497ce9d064",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-10-04T05:01:10+03:00",
+      "end_at": "2026-10-06T05:06:21+03:00",
+      "latest_archive_at": "2026-10-05T05:01:10+03:00",
+      "start_date": "2026-10-04",
+      "end_date": "2026-10-06",
+      "latest_archive_date": "2026-10-05"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "7f507c55ab0b4aacf204d101e01fcd5d0c9284d45d34991f4112c6a92360bb48",
+    "editorial_sha256": "95804b6cabb27caafab8dfe52d7a343a455664daff7f5325c09f7927b49c392a",
+    "digest_sha256": "aa5e33c09931c1cf882025081e55f2bb9368a254c02d2130ee9471ef7cfeea61",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-10-06.png",
+          "normalized_value": "ai-svodka-2026-10-06.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        }
+      ],
+      "changed_count": 1,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 6 сюжетов."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Пять из шести отобранных свежих подтверждённых независимых продуктовых сюжетов опубликованы TechCrunch. Пул короткий, а исключение значимых самостоятельных событий только ради мягкого лимита издателя снизило бы содержательность выпуска."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_06a3d048daf8d4af016ac459a6a12887d08ea0214f44fffa8e",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 161600,
+        "input_tokens_details": {
+          "cache_write_tokens": 13252,
+          "cached_tokens": 148345
+        },
+        "output_tokens": 3785,
+        "output_tokens_details": {
+          "reasoning_tokens": 407
+        },
+        "total_tokens": 165385
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 161600,
+    "output_tokens": 3785,
+    "total_tokens": 165385,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "c0b9085d792481604d909c17f21d20a6c2dfe34d",
+    "run_id": "37402407536",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-10-06T05:06:21+03:00"
+}
