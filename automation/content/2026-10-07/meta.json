@@ -1,0 +1,42 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-07",
+  "slug": "2026-10-07",
+  "title": "ИИ-Сводка на 7 октября 2026",
+  "description": "Mistral представила триллионную мультимодальную модель, Etched обсуждает новую оценку, Hark вывела персонального агента на широкий рынок, а Азия готовит power-first дата-центры для ИИ.",
+  "published_at": "2026-10-07T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-07.png",
+  "topics": [
+    "Mistral Large 4",
+    "мультимодальные модели",
+    "open weights",
+    "Etched",
+    "inference-чипы",
+    "Hark Pro",
+    "персональные агенты ИИ",
+    "ИИ-дата-центры",
+    "энергоснабжение",
+    "Tencent Cloud",
+    "безопасность агентов ИИ"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: В коротком пуле три независимых и содержательно разных события от TechCrunch: переговоры Etched о финансировании, запуск Hark Pro и расследование наблюдаемой агентной активности. Исключение одного из них только из-за мягкого лимита снизило бы полноту выпуска."
+    }
+  ]
+}

@@ -1,0 +1,159 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Mistral представила Mistral Large 4 — мультимодальную модель на 1 трлн параметров",
+    "organization": "Mistral AI",
+    "topic": "Frontier models; open weights; multimodal AI; agentic coding; cybersecurity; European sovereign AI",
+    "event_type": "model launch",
+    "status": "new",
+    "summary": "Mistral запустила public preview Mistral Large 4 (ML4): нативно мультимодальную модель на 1 трлн параметров с 49 млрд активных параметров. Компания заявила, что веса будут опубликованы до конца октября после red-teaming; пока модель доступна через preview API.",
+    "published_at": "2026-10-06T12:00:27+00:00",
+    "published_date": "2026-10-06",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Introducing Mistral Large 4",
+        "publisher": "Mistral AI",
+        "url": "https://mistral.ai/news/mistral-large-4/"
+      }
+    ],
+    "keywords": [
+      "Mistral Large 4",
+      "ML4",
+      "Le Chonk",
+      "1 trillion parameters",
+      "multimodal",
+      "open weights",
+      "cybersecurity",
+      "agentic workflows"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Etched рассматривает инвестиционные предложения при оценке $40–50 млрд",
+    "organization": "Etched",
+    "topic": "Потенциальное mega-financing; AI inference chips; специализированные ускорители; AI hardware; оценка стартапов",
+    "event_type": "financing talks",
+    "status": "new",
+    "summary": "По данным TechCrunch, разработчик специализированных inference-систем Etched рассматривает поступившие предложения о новом финансировании, предполагающие оценку от $40 млрд до $50 млрд. Соглашение не объявлено и условия могут измениться.",
+    "published_at": "2026-10-05T20:24:09+00:00",
+    "published_date": "2026-10-05",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Etched fields funding offers at $40B+ valuation, sources say",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/05/etched-fields-funding-offers-at-40b-valuation-sources-say/"
+      }
+    ],
+    "keywords": [
+      "Etched",
+      "funding offers",
+      "$40 billion",
+      "$50 billion",
+      "AI chips",
+      "inference",
+      "Jane Street",
+      "TSMC"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Hark выпустила Hark Pro — персонального ИИ-ассистента для действий на компьютере",
+    "organization": "Hark",
+    "topic": "Consumer AI agents; computer use; privacy; personal assistants; AI-native devices",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Стартап Hark, основанный Бреттом Эдкоком, открыл широкий доступ к Hark Pro — персональному ИИ-ассистенту, который подключается к данным пользователя и выполняет действия на компьютере. Компания делает акцент на компьютерном использовании, видимости действий агента и приватности.",
+    "published_at": "2026-10-06T18:22:45+00:00",
+    "published_date": "2026-10-06",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Hark releases an AI personal assistant with a focus on privacy",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/06/hark-releases-an-ai-personal-assistant-with-a-focus-on-privacy/"
+      }
+    ],
+    "keywords": [
+      "Hark Pro",
+      "personal AI assistant",
+      "computer use",
+      "privacy",
+      "consumer agents",
+      "Brett Adcock"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-015",
+    "section": "world",
+    "headline": "Dell, Apollo и JERA объявили план инвестировать до $140 млрд в 3–4 ГВт ИИ-дата-центров в Японии и Азии",
+    "organization": "Dell Technologies; Apollo Global Management; JERA",
+    "topic": "AI data centers; энергоснабжение; газовая генерация; инфраструктурное финансирование; Азия",
+    "event_type": "инфраструктурное партнёрство и инвестиционный план",
+    "status": "new",
+    "summary": "Dell, Apollo и JERA представили пятилетний план развития 3–4 ГВт ИИ-вычислительных площадок вместе с собственной газовой генерацией в Японии и других странах Азии. Первый проект около Токио оценивается в $15 млрд и 400 МВт; запуск ориентировочно намечен на 2028 год.",
+    "published_at": "2026-10-05T22:05:00+00:00",
+    "published_date": "2026-10-05",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Japan launches $140B AI infrastructure plan — but it won't connect to the power grid",
+        "publisher": "TechRadar",
+        "url": "https://www.techradar.com/pro/the-keyword-is-speed-to-power-dell-apollo-and-jera-launch-a-usd140b-plan-to-build-up-to-4gw-of-ai-data-centers-across-japan-and-asia"
+      }
+    ],
+    "keywords": [
+      "AI data centers",
+      "power generation",
+      "Japan",
+      "Asia",
+      "Dell",
+      "Apollo",
+      "JERA",
+      "4GW"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Исследователи сообщили о предположительно связанной с Tencent «флотилии» ИИ-агентов, обходившей правила доступа к картам Amap",
+    "organization": "Tencent Cloud; Amap; независимые исследователи Swarmchasers",
+    "topic": "Безопасность ИИ-агентов; наблюдаемая агентная активность; Tencent Cloud; Amap; обход API-ограничений; Китай",
+    "event_type": "security research disclosure",
+    "status": "new",
+    "summary": "TechCrunch сообщил о предварительном расследовании независимых исследователей: они зафиксировали параллельную активность агентов, которые через urlquery запрашивали данные о входах в объекты на картах Alibaba Amap. Исследователи связали инфраструктурные следы с Tencent Cloud и обозначили атрибуцию как вероятную, а не окончательную.",
+    "published_at": "2026-10-05T14:35:09+00:00",
+    "published_date": "2026-10-05",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Researchers are tracking a Chinese AI ‘agent fleet’",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/05/researchers-are-tracking-a-chinese-ai-agent-fleet/"
+      }
+    ],
+    "keywords": [
+      "AI agents",
+      "Tencent Cloud",
+      "Amap",
+      "urlquery",
+      "agent fleet",
+      "agent security",
+      "API rules"
+    ],
+    "geography": "world",
+    "category": "security"
+  }
+]
