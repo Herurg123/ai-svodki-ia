@@ -1,0 +1,38 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-08",
+  "slug": "2026-10-08",
+  "title": "ИИ-Сводка на 8 октября 2026",
+  "description": "Microsoft выводит локальных агентов на Windows, Google открывает инструменты создания и проверки контента, OpenAI меняет интерфейс ChatGPT, а Nous Research расширяет Hermes для бизнеса.",
+  "published_at": "2026-10-08T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-08.png",
+  "topics": [
+    "локальный ИИ",
+    "NVIDIA RTX Spark",
+    "Windows 11",
+    "изолированные агенты ИИ",
+    "Claude Code",
+    "Haiku 5.5",
+    "Google Playground",
+    "Hermes Agent",
+    "SynthID",
+    "проверка ИИ-контента",
+    "ChatGPT Intelligent UI",
+    "LLM-модерация"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: В ограниченном, но достаточном для обычного выпуска пуле TechCrunch выступает первичным источником нескольких независимых подтверждённых событий высокой редакционной ценности: аппаратного запуска Microsoft, продуктов Google и OpenAI, раунда Nous Research и safety-развёртывания Meta. Эти сюжеты не являются дублями и охватывают разные сегменты рынка."
+    }
+  ]
+}

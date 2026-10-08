@@ -1,0 +1,221 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Microsoft представила Surface Laptop Ultra и Surface RTX Spark Dev Box для локальных агентов ИИ",
+    "organization": "Microsoft; NVIDIA",
+    "topic": "AI PCs; локальный inference; AI agents; Windows 11; NVIDIA RTX Spark",
+    "event_type": "consumer_and_developer_ai_hardware_launch",
+    "status": "new",
+    "summary": "Microsoft раскрыла Surface Laptop Ultra и Surface RTX Spark Dev Box на NVIDIA RTX Spark; продукты нацелены на запуск локальных моделей и агентных workflow. Одновременно компания анонсировала для Windows 11 Execution Containers для изоляции AI-агентов.",
+    "published_at": "2026-10-07T20:22:37+00:00",
+    "published_date": "2026-10-07",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Microsoft releases new Nvidia-chip AI PCs with revamped Windows 11",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/07/microsoft-releases-new-nvidia-chip-ai-pcs-with-revamped-windows-11/"
+      },
+      {
+        "title": "Surface Laptop Ultra: The new high-performance Surface Laptop",
+        "publisher": "Microsoft",
+        "url": "https://www.microsoft.com/en-us/surface/devices/surface-laptop-ultra"
+      }
+    ],
+    "keywords": [
+      "Microsoft Surface",
+      "Surface Laptop Ultra",
+      "Surface RTX Spark Dev Box",
+      "NVIDIA RTX Spark",
+      "local AI",
+      "Windows 11",
+      "agents"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Обновление: Claude Code 2.1.293 сделала Haiku 5.5 моделью по умолчанию",
+    "organization": "Anthropic; Claude Code; Claude Haiku 5.5",
+    "topic": "CLI coding agents; subagents; Claude Haiku 5.5; 1M context; MCP; agentic development environments; plugin hooks",
+    "event_type": "product release",
+    "status": "update",
+    "summary": "Anthropic выпустила Claude Code 2.1.293. В релизе Claude Haiku 5.5 стал моделью Haiku по умолчанию с заявленным контекстом 1 млн токенов; также добавлены различение типов subagent в статусных событиях и опции для plugin/mod tool registration. Релиз исправляет ряд проблем длительных, фоновых и cloud-сессий, включая работу MCP, compaction и передачи сообщений агентам.",
+    "published_at": "2026-10-07T18:10:20+00:00",
+    "published_date": "2026-10-07",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release v2.1.293",
+        "publisher": "Anthropic / GitHub",
+        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.293"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "v2.1.293",
+      "Claude Haiku 5.5",
+      "1M context",
+      "subagents",
+      "MCP",
+      "plugins",
+      "coding agents"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Google запустила Playground для создания браузерных игр по текстовому запросу",
+    "organization": "Google; Google Labs; Playground; Unity",
+    "topic": "Consumer AI; generative game creation; no-code development; Google Labs; Unity Spark",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Google Labs запустила в США экспериментальную платформу Playground: пользователи 18+ могут создавать, тестировать, публиковать и распространять 2D- и 3D-браузерные игры через текстовые запросы без навыков программирования. Google также анонсировала будущую интеграцию с Unity Spark.",
+    "published_at": "2026-10-07T14:36:23+00:00",
+    "published_date": "2026-10-07",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Introducing Playground: Create and play custom games",
+        "publisher": "Google",
+        "url": "https://blog.google/innovation-and-ai/technology/ai/playground-experimental-gaming-platform/"
+      }
+    ],
+    "keywords": [
+      "Google Playground",
+      "AI game creation",
+      "text prompts",
+      "browser games",
+      "Unity Spark",
+      "Google Labs"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Nous Research подтвердила раунд на $90 млн и представила Hermes for Businesses",
+    "organization": "Nous Research",
+    "topic": "Open-source AI agents; enterprise agents; финансирование; Hermes Agent",
+    "event_type": "funding_and_enterprise_product_launch",
+    "status": "new",
+    "summary": "Nous Research подтвердила раунд Series B на $90 млн при оценке $1,5 млрд и объявила Hermes for Businesses — вариант своей агентной платформы для компаний, рассчитанный на кастомные многошаговые workflow с приватным хранением данных.",
+    "published_at": "2026-10-07T20:48:45+00:00",
+    "published_date": "2026-10-07",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Nous Research confirms it hit $1.5B valuation, launches AI agents for business users",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/07/nous-research-confirms-it-hit-1-5b-valuation-launches-ai-agents-for-business-users/"
+      }
+    ],
+    "keywords": [
+      "Nous Research",
+      "Hermes Agent",
+      "Hermes for Businesses",
+      "Series B",
+      "open source",
+      "enterprise agents"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Google открыла публичный SynthID Detector для проверки сгенерированных медиа",
+    "organization": "Google; SynthID",
+    "topic": "AI provenance; watermarking; content authenticity; synthetic-media detection; trust and safety",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Google открыла доступ к веб-инструменту SynthID Detector, который позволяет загружать изображения, видео и аудио для проверки на наличие SynthID-маркировки AI-генерации. Ранее доступ был ограничен отдельными журналистами, медиа-специалистами и исследователями.",
+    "published_at": "2026-10-07T14:00:00+00:00",
+    "published_date": "2026-10-07",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google’s new SynthID website can identify AI-generated media",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/07/googles-new-synthid-website-can-identify-ai-generated-media/"
+      }
+    ],
+    "keywords": [
+      "SynthID",
+      "Google",
+      "AI-generated media",
+      "watermarking",
+      "content provenance",
+      "deepfakes"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "OpenAI начала развёртывать Intelligent UI в ChatGPT",
+    "organization": "OpenAI; ChatGPT",
+    "topic": "Consumer AI; multimodal UI; ChatGPT; interactive interfaces",
+    "event_type": "consumer_ai_product_update",
+    "status": "new",
+    "summary": "OpenAI начала rollout Intelligent UI в ChatGPT: ответы могут включать интерактивные диаграммы, кнопки, карты, графики и специализированные калькуляторы вместо исключительно текстового формата.",
+    "published_at": "2026-10-07T18:00:19+00:00",
+    "published_date": "2026-10-07",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "ChatGPT is getting a lot more visual, with the launch of a new interface",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/07/chatgpt-is-getting-a-lot-more-visual-with-the-launch-of-a-new-interface/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ChatGPT",
+      "Intelligent UI",
+      "interactive charts",
+      "visual interface",
+      "GPT-6"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "Meta внедрила LLM для поиска рекламных «указателей» на материалы сексуальной эксплуатации детей",
+    "organization": "Meta",
+    "topic": "AI safety; trust and safety; content moderation; child safety; LLM systems",
+    "event_type": "ai_safety_product_deployment",
+    "status": "new",
+    "summary": "Meta объявила о развёртывании новой LLM-системы для выявления рекламных объявлений и аккаунтов, которые выглядят безобидно, но могут направлять пользователей на внешние ресурсы с незаконными материалами сексуальной эксплуатации детей.",
+    "published_at": "2026-10-07T16:53:46+00:00",
+    "published_date": "2026-10-07",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Measures We've Put in Place to Fight Child Exploitation",
+        "publisher": "Meta",
+        "url": "https://about.fb.com/news/2026/10/measures-weve-put-in-place-to-fight-child-exploitation/"
+      }
+    ],
+    "keywords": [
+      "Meta",
+      "LLM",
+      "content moderation",
+      "child safety",
+      "CSAM",
+      "signposting",
+      "advertising safety"
+    ],
+    "geography": "world",
+    "category": "security"
+  }
+]

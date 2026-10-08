@@ -1,0 +1,35 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-004",
+    "cand-005",
+    "cand-006",
+    "cand-007",
+    "cand-008",
+    "cand-009"
+  ],
+  "excluded_candidate_ids": [
+    "cand-002",
+    "cand-003",
+    "cand-010",
+    "cand-011",
+    "cand-012",
+    "cand-013",
+    "cand-014",
+    "cand-015",
+    "cand-016",
+    "cand-017",
+    "cand-018",
+    "cand-019"
+  ],
+  "selection_summary": "Выбраны семь подтверждённых и самостоятельных сюжетов: локальные ИИ-вычисления на Windows, обновление Claude Code, два запуска Google, финансирование и корпоративный продукт Nous Research, новый интерфейс ChatGPT и safety-развёртывание Meta. Исключены неподтверждённые сообщения о National Compute Grid и долговом финансировании SpaceX, менее значимое расширение Muse, а также source-pulse материалы без достаточных содержательных деталей для полноценной новости.",
+  "diversity_overrides": [
+    {
+      "type": "publisher",
+      "value": "TechCrunch",
+      "reason": "В ограниченном, но достаточном для обычного выпуска пуле TechCrunch выступает первичным источником нескольких независимых подтверждённых событий высокой редакционной ценности: аппаратного запуска Microsoft, продуктов Google и OpenAI, раунда Nous Research и safety-развёртывания Meta. Эти сюжеты не являются дублями и охватывают разные сегменты рынка."
+    }
+  ]
+}
