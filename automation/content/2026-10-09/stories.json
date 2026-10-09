@@ -1,0 +1,153 @@
+[
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Claude Code 2.1.295 добавила fail-closed блокировку действий при сбое hooks",
+    "organization": "Anthropic; Claude Code",
+    "topic": "CLI coding agents; hooks; permissions; developer security; terminal observability",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "По данным release notes для Claude Code 2.1.295, Anthropic добавила режим onFailure: \"block\" для command- и HTTP-hooks: если hook не запускается, превышает timeout или завершает работу с неожиданным кодом, действие блокируется, а не пропускается. Также добавлены Program Status Protocol для отображения состояния агента в поддерживающих терминалах и улучшения диагностики ожидания в non-interactive запусках.",
+    "published_at": "2026-10-08T18:22:58+00:00",
+    "published_date": "2026-10-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Claude Code v2.1.295",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/claude-code-2.1.295"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "hooks",
+      "onFailure block",
+      "Program Status Protocol",
+      "plugin validation",
+      "agent safety"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "GitHub Copilot CLI 1.0.94 добавил Claude Haiku 5.5 и уточнил управляемые разрешения",
+    "organization": "GitHub; GitHub Copilot CLI; Anthropic",
+    "topic": "CLI coding agents; model selection; Claude Haiku 5.5; MCP; permissions; enterprise policy",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "GitHub Copilot CLI 1.0.94 добавил Claude Haiku 5.5 в model selection и completions, улучшил восстановление после прерванной инициализации MCP-конфигурации и разрешил включать/выключать MCP до discovery серверов. Для управляемых организаций релиз уточняет Assisted Permissions: в policy можно отключить этот режим и сохранить Manual Approval, а при подавлении bypass-permission flags показывается предупреждение.",
+    "published_at": "2026-10-08T20:28:44+00:00",
+    "published_date": "2026-10-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release 1.0.94",
+        "publisher": "GitHub",
+        "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.94"
+      }
+    ],
+    "keywords": [
+      "GitHub Copilot CLI",
+      "Claude Haiku 5.5",
+      "MCP",
+      "assisted permissions",
+      "managed policy",
+      "manual approval"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "OpenAI обновила Codex CLI: управляемые Git worktrees и настройки сторонних провайдеров",
+    "organization": "OpenAI; Codex CLI",
+    "topic": "CLI coding agents; Git worktrees; MCP; custom model providers; sandboxing; tool discovery",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "В Codex CLI rust-v0.162.0 OpenAI добавила создание и просмотр управляемых Git worktrees для доверенных локальных проектов, закрепление задач в Command Center, конфигурацию live web access и remote compaction для кастомных Responses-совместимых провайдеров, а также opt-in ranked tool search в Code Mode. Релиз также исправляет несколько проблем Linux sandbox и Windows-файловой системы.",
+    "published_at": "2026-10-08T18:55:59+00:00",
+    "published_date": "2026-10-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release 0.162.0",
+        "publisher": "OpenAI / GitHub",
+        "url": "https://github.com/openai/codex/releases/tag/rust-v0.162.0"
+      }
+    ],
+    "keywords": [
+      "Codex CLI",
+      "Git worktrees",
+      "MCP",
+      "Responses-compatible providers",
+      "ranked tool search",
+      "sandboxing"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Healthleap привлекла $38 млн на клиническую ИИ-платформу для больниц",
+    "organization": "Healthleap; Sequoia Capital; First Round Capital; Hummingbird Ventures",
+    "topic": "Healthcare AI; clinical language models; hospital workflows; startup financing",
+    "event_type": "funding",
+    "status": "new",
+    "summary": "Healthleap привлекла $38 млн в seed и Series A на платформу, которая анализирует структурированные данные и клинические записи пациентов, чтобы выделять госпитализированных пациентов с рисками невыявленных состояний. Компания заявила о внедрении более чем в 50 больницах.",
+    "published_at": "2026-10-07T15:07:08+00:00",
+    "published_date": "2026-10-07",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Healthleap raises $38M for its AI that flags hospital patients who may need a closer look",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/07/healthleap-raises-38m-for-its-ai-that-flags-hospital-patients-who-may-need-a-closer-look/"
+      }
+    ],
+    "keywords": [
+      "Healthleap",
+      "healthcare AI",
+      "clinical AI",
+      "hospital records",
+      "funding",
+      "Sequoia",
+      "Hummingbird Ventures"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "Обновление: Meta выпустила отдельное приложение агента Muse для iPad",
+    "organization": "Meta; Muse",
+    "topic": "Consumer AI agents; iPad; personal assistants; agentic commerce; connectors",
+    "event_type": "product availability expansion",
+    "status": "update",
+    "summary": "Meta объявила о доступности своего AI-ассистента Muse в отдельном приложении для iPad. Одновременно сервис получил более широкий набор коннекторов, включая инструменты для малого бизнеса и розничных партнёров, через которые агент может выполнять пользовательские задачи.",
+    "published_at": "2026-10-07T18:30:57+00:00",
+    "published_date": "2026-10-07",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Meta’s Muse launches on iPad just a month after its mobile debut",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/07/metas-muse-launches-on-ipad-just-a-month-after-its-mobile-debut/"
+      }
+    ],
+    "keywords": [
+      "Meta",
+      "Muse",
+      "iPad",
+      "AI agent",
+      "connectors",
+      "consumer AI"
+    ],
+    "geography": "world",
+    "category": "agents"
+  }
+]
