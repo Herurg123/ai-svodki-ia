@@ -1,0 +1,41 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-10",
+  "slug": "2026-10-10",
+  "title": "ИИ-Сводка на 10 октября 2026",
+  "description": "Anthropic ограничила доступ агентов к живому интернету, Google запустила корпоративного Gemini-агента, а OpenAI уточнила ориентир годового темпа выручки. В выпуске также — новые раунды, ИИ-инфраструктура и инструменты разработки.",
+  "published_at": "2026-10-10T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-10.png",
+  "topics": [
+    "Anthropic",
+    "Claude",
+    "безопасность агентов ИИ",
+    "Claude Code",
+    "Google Gemini",
+    "корпоративные агенты",
+    "Manus",
+    "TypeSafe AI",
+    "Jev",
+    "SpaceX",
+    "ИИ-инфраструктура",
+    "OpenAI",
+    "выручка OpenAI",
+    "Antigravity CLI",
+    "MCP"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Выбраны четыре независимых существенных события от TechCrunch: запуск корпоративного агента Google, финансирование китайского разработчика Manus, крупный раунд TypeSafe AI и пересмотр ориентиров выручки OpenAI. Исключение этих несопоставимых сюжетов только ради лимита издателя заметно ухудшило бы полноту выпуска."
+    }
+  ]
+}

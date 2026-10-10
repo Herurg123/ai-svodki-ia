@@ -1,0 +1,47 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "selected_candidate_ids",
+      "model_value": [
+        "cand-001",
+        "cand-002",
+        "cand-003",
+        "cand-005",
+        "cand-006",
+        "cand-008",
+        "cand-009",
+        "cand-018"
+      ],
+      "normalized_value": [
+        "cand-001",
+        "cand-002",
+        "cand-003",
+        "cand-005",
+        "cand-008",
+        "cand-009",
+        "cand-018",
+        "cand-006"
+      ]
+    },
+    {
+      "field": "article_html.meta_marking",
+      "model_value": "inconsistent",
+      "normalized_value": "first Meta*, subsequent Meta"
+    }
+  ],
+  "changed_count": 2,
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Выбраны четыре независимых существенных события от TechCrunch: запуск корпоративного агента Google, финансирование китайского разработчика Manus, крупный раунд TypeSafe AI и пересмотр ориентиров выручки OpenAI. Исключение этих несопоставимых сюжетов только ради лимита издателя заметно ухудшило бы полноту выпуска."
+    }
+  ]
+}

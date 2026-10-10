@@ -1,0 +1,169 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-10-10",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-10-10.json",
+  "warnings": [
+    "cand-012: источник показывает дату без точного времени.",
+    "cand-019: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: openai (5), techcrunch (8)",
+    "Исследовательский пул перегружен одной организацией: openai (6)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-10-10",
+  "started_at": "2026-10-10T02:15:57+00:00",
+  "finished_at": "2026-10-10T02:16:36+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 84,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "a8d4d1ff5025a6d1c8675ebfe362b150936fc7388eea4b54b942be446266eb18",
+    "candidates_sha256": "32b1ddc032625555d425ae96e75a8c123bf00b432427dea0f9dbae40eeca8f32",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-10-08T05:06:13+03:00",
+      "end_at": "2026-10-10T05:06:16+03:00",
+      "latest_archive_at": "2026-10-09T05:06:13+03:00",
+      "start_date": "2026-10-08",
+      "end_date": "2026-10-10",
+      "latest_archive_date": "2026-10-09"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "9a64c27e9b89ca8b87d3b5d5707b12c5b3030d145ffc9aded25dce278319a3b6",
+    "editorial_sha256": "f6bcb7dc7cbafc905699af6fedeec2085a065d2b92b26e60909462dbca4d1098",
+    "digest_sha256": "1a80aa627424fdc3baec3f1e8c8a6b3b024b762b9cf1197cfe989019cf15cceb",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-10-10.png",
+          "normalized_value": "ai-svodka-2026-10-10.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "selected_candidate_ids",
+          "model_value": [
+            "cand-001",
+            "cand-002",
+            "cand-003",
+            "cand-005",
+            "cand-006",
+            "cand-008",
+            "cand-009",
+            "cand-018"
+          ],
+          "normalized_value": [
+            "cand-001",
+            "cand-002",
+            "cand-003",
+            "cand-005",
+            "cand-008",
+            "cand-009",
+            "cand-018",
+            "cand-006"
+          ]
+        },
+        {
+          "field": "article_html.meta_marking",
+          "model_value": "inconsistent",
+          "normalized_value": "first Meta*, subsequent Meta"
+        }
+      ],
+      "changed_count": 2,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Выбраны четыре независимых существенных события от TechCrunch: запуск корпоративного агента Google, финансирование китайского разработчика Manus, крупный раунд TypeSafe AI и пересмотр ориентиров выручки OpenAI. Исключение этих несопоставимых сюжетов только ради лимита издателя заметно ухудшило бы полноту выпуска."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0a4ee2a6426b08df016ac99fde55c087d0b6b19865c9465355",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 179359,
+        "input_tokens_details": {
+          "cache_write_tokens": 23031,
+          "cached_tokens": 156325
+        },
+        "output_tokens": 4703,
+        "output_tokens_details": {
+          "reasoning_tokens": 700
+        },
+        "total_tokens": 184062
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 179359,
+    "output_tokens": 4703,
+    "total_tokens": 184062,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "57f4712bac30de60699e66d47a3114ccb8b44b19",
+    "run_id": "38015649782",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-10-10T05:06:16+03:00"
+}

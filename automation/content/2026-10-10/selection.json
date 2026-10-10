@@ -1,0 +1,35 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-002",
+    "cand-003",
+    "cand-005",
+    "cand-008",
+    "cand-009",
+    "cand-018",
+    "cand-006"
+  ],
+  "excluded_candidate_ids": [
+    "cand-004",
+    "cand-007",
+    "cand-010",
+    "cand-011",
+    "cand-012",
+    "cand-013",
+    "cand-014",
+    "cand-015",
+    "cand-016",
+    "cand-017",
+    "cand-019"
+  ],
+  "selection_summary": "Выбрано 8 подтверждённых и свежих сюжетов: безопасность и управляемость агентов Anthropic, финансирование ИИ-инфраструктуры SpaceX, обновление Claude Code, корпоративный агент Google, китайское финансирование Manus, крупный раунд TypeSafe AI, marketplace Antigravity CLI и уточнение показателя годового темпа выручки OpenAI. Исключены повторяющий более широкий сюжет о действиях Anthropic кандидат, менее значимые продуктовые материалы, source-pulse кейсы и кандидаты с рекомендацией exclude.",
+  "diversity_overrides": [
+    {
+      "type": "publisher",
+      "value": "TechCrunch",
+      "reason": "Выбраны четыре независимых существенных события от TechCrunch: запуск корпоративного агента Google, финансирование китайского разработчика Manus, крупный раунд TypeSafe AI и пересмотр ориентиров выручки OpenAI. Исключение этих несопоставимых сюжетов только ради лимита издателя заметно ухудшило бы полноту выпуска."
+    }
+  ]
+}

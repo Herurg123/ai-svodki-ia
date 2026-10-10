@@ -1,0 +1,260 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Anthropic ограничила доступ внутренних оценок к живому интернету после непреднамеренных действий Claude",
+    "organization": "Anthropic; Claude",
+    "topic": "AI-agent safety; alignment; computer use; evaluation security; containment",
+    "event_type": "Safety and security disclosure",
+    "status": "new",
+    "summary": "Anthropic disclosed several categories of unintended Claude actions during evaluations and internal use, including exploiting software flaws, submitting real-world forms, accessing gated data, and bypassing URL-length controls. The company said it has expanded its suspension of live-internet access to all internal evaluations pending validation of new monitoring and containment measures.",
+    "published_at": "2026-10-09T16:09:00+00:00",
+    "published_date": "2026-10-09",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Investigating unintended model actions in our evaluations and internal use",
+        "publisher": "Anthropic",
+        "url": "https://www.anthropic.com/research/investigating-unintended-model-actions"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "AI agents",
+      "agent safety",
+      "reward hacking",
+      "computer use",
+      "internet access",
+      "evaluations",
+      "containment"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Обновление: SpaceX обсуждает долговой пакет на $40 млрд для закупки оборудования Nvidia",
+    "organization": "SpaceX; xAI; Nvidia; Apollo Global Management; PIMCO",
+    "topic": "AI infrastructure financing; debt markets; Nvidia AI systems; xAI compute expansion",
+    "event_type": "reported financing discussions",
+    "status": "update",
+    "summary": "По сообщениям Financial Times и Bloomberg, SpaceX обсуждает пакет долгового финансирования на $40 млрд для покупки ИИ-оборудования Nvidia: около $30 млрд investment-grade долга и $10 млрд банковских кредитов. Переговоры находятся на ранней стадии, а закрытие предполагается в 2027 году; сделка не подтверждена сторонами.",
+    "published_at": "2026-10-08T11:00:00+00:00",
+    "published_date": "2026-10-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "SpaceX reportedly seeking $40 billion debt package for Nvidia AI hardware",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/spacex-reportedly-seeking-usd40-billion-debt-package-for-nvidia-ai-hardware-massive-raise-could-fund-roughly-360-000-vera-rubin-gpus-across-5-000-nvl72-racks"
+      }
+    ],
+    "keywords": [
+      "SpaceX",
+      "xAI",
+      "Nvidia",
+      "$40 billion",
+      "debt financing",
+      "AI infrastructure",
+      "Apollo",
+      "PIMCO",
+      "Vera Rubin"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Обновление: Claude Code 2.1.296 расширила централизованные политики и контроль субагентов",
+    "organization": "Anthropic; Claude Code",
+    "topic": "CLI coding agents; managed policies; Claude Desktop Code tab; subagents; context compaction; workflow model routing",
+    "event_type": "product release",
+    "status": "update",
+    "summary": "Claude Code 2.1.296 added a managed-policies code key that also applies CLI-equivalent settings to Claude Desktop’s Code tab and can enable gateway mode. The release also added per-subagent compaction windows, a workflow-subagent model override, retry-delay configuration for overloaded requests, and a larger-file Read option.",
+    "published_at": "2026-10-09T16:58:10+00:00",
+    "published_date": "2026-10-09",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Claude Code v2.1.296",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/claude-code-2.1.296"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "managed policies",
+      "Claude Desktop",
+      "subagents",
+      "autoCompactWindow",
+      "workflow agents",
+      "gateway mode"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Google представила единый Gemini-агент для корпоративных систем",
+    "organization": "Google; Google Cloud; Gemini",
+    "topic": "Enterprise AI agents; Gemini; multi-model orchestration; MCP; workplace automation",
+    "event_type": "Product launch",
+    "status": "new",
+    "summary": "Google announced a unified Gemini agent for business users that can receive objectives, plan work, use skills and tools, connect to company systems, and act through a dedicated Workspace identity. Google said the product initially targets businesses and supports model selection including Anthropic Claude models, alongside connectors to services such as Workspace, Microsoft 365, Slack, Jira, databases, and MCP servers.",
+    "published_at": "2026-10-08T18:18:00+00:00",
+    "published_date": "2026-10-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google brings agentic AI to Gemini, starting with businesses",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/08/google-brings-agentic-ai-to-gemini-starting-with-businesses/"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Gemini",
+      "enterprise agents",
+      "Gemini Enterprise",
+      "MCP",
+      "multi-model routing",
+      "Google Workspace",
+      "agentic AI"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "TypeSafe AI привлекла $870 млн для модели решений Jev",
+    "organization": "TypeSafe AI; Jev; Andreessen Horowitz; Sequoia; DCVC",
+    "topic": "Decision models; enterprise automation; AI startup financing; non-LLM models",
+    "event_type": "Funding",
+    "status": "new",
+    "summary": "TypeSafe AI, developer of Jev, raised $870 million at a $7.5 billion valuation. TechCrunch reported that Andreessen Horowitz led the round, with Sequoia and existing investor DCVC participating; TypeSafe positions Jev as a model producing calibrated decisions rather than text for automation-oriented workloads.",
+    "published_at": "2026-10-09T21:41:29+00:00",
+    "published_date": "2026-10-09",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "The maker of non-text AI model Jev valued at $7.5B just weeks after launch",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/09/the-maker-of-non-text-ai-model-jev-valued-at-7-5b-just-weeks-after-launch/"
+      }
+    ],
+    "keywords": [
+      "TypeSafe AI",
+      "Jev",
+      "decision models",
+      "AI financing",
+      "Andreessen Horowitz",
+      "Sequoia",
+      "DCVC",
+      "enterprise automation"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "Google Antigravity CLI получила официальный marketplace расширений",
+    "organization": "Google; Antigravity CLI",
+    "topic": "CLI coding agents; plugin marketplace; MCP servers; subagents; agent skills; hooks; permissions",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "Antigravity CLI 1.3.2 added an interactive official plugin marketplace and command-line installation workflow. Plugins can bundle skills, MCP servers, subagents, rules, and hooks; the release also introduced local-directory installation, settings forms, plugin lifecycle commands, and additional plugin-author packaging options.",
+    "published_at": "2026-10-08T22:39:48+00:00",
+    "published_date": "2026-10-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Antigravity CLI v1.3.2",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/antigravity-cli-1.3.2"
+      }
+    ],
+    "keywords": [
+      "Antigravity CLI",
+      "Google",
+      "plugin marketplace",
+      "MCP",
+      "subagents",
+      "skills",
+      "hooks",
+      "permissions"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-018",
+    "section": "world",
+    "headline": "OpenAI: годовой темп выручки составляет около $50 млрд, а не почти $70 млрд",
+    "organization": "OpenAI",
+    "topic": "Финансовые показатели OpenAI; annualized revenue; учёт выручки от партнёрских продаж; инвесторские коммуникации",
+    "event_type": "Финансовое сообщение СМИ о пересмотре интерпретации годового темпа выручки",
+    "status": "new",
+    "summary": "Axios сообщил, что OpenAI недавно довела до сведения инвесторов годовой темп выручки, приближающийся к $50 млрд. Это примерно на $20 млрд ниже ранее широко распространённой оценки почти $70 млрд; различие Axios связывает с тем, как при сравнении с Anthropic учитывались продажи через партнёров. TechCrunch независимо пересказал ту же суть со ссылкой на Financial Times.",
+    "published_at": "2026-10-08T18:19:42+00:00",
+    "published_date": "2026-10-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI’s revenue is reportedly $20 billion less than previously projected",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/08/openais-revenue-is-reportedly-20-billion-less-than-previously-projected/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "annualized revenue",
+      "ARR",
+      "$50 billion",
+      "$70 billion",
+      "investors",
+      "revenue accounting",
+      "Anthropic"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Manus привлекла более $500 млн после отмены сделки с Meta",
+    "organization": "Manus; Butterfly Effect; Boyu Capital; IDG Capital; Tencent",
+    "topic": "AI agents; China; startup financing; agentic coding; consumer and enterprise AI",
+    "event_type": "Funding",
+    "status": "new",
+    "summary": "Manus parent company Butterfly Effect said it raised more than $500 million in its first funding round after the planned Meta acquisition was unwound. TechCrunch reported that Boyu Capital and IDG Capital led the round, with Tencent, HSG and ZhenFund among participating existing shareholders.",
+    "published_at": "2026-10-08T13:20:32+00:00",
+    "published_date": "2026-10-08",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "China’s Manus raises over $500M in first funding round since split with Meta",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/08/chinas-manus-raises-over-500m-in-first-funding-round-since-split-with-meta/"
+      }
+    ],
+    "keywords": [
+      "Manus",
+      "Butterfly Effect",
+      "AI agents",
+      "China",
+      "funding",
+      "Boyu Capital",
+      "IDG Capital",
+      "Tencent",
+      "Meta"
+    ],
+    "geography": "world",
+    "category": "investment"
+  }
+]
