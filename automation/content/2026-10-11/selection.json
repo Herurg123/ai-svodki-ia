@@ -1,0 +1,12 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-002",
+    "cand-003"
+  ],
+  "excluded_candidate_ids": [],
+  "selection_summary": "Выбраны три подтверждённых сюжета: существенное уточнение инцидента Anthropic с внешним подтверждением полиции, а также два свежих официальных кейса OpenAI о применении GPT-6.1 Sol и Daybreak. Пул не позволяет собрать обычный объём без добавления слабых материалов, поэтому выпуск сокращённый.",
+  "diversity_overrides": []
+}

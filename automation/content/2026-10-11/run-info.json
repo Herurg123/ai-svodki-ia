@@ -1,0 +1,144 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-10-11",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-10-11.json",
+  "warnings": [
+    "Целевой пул — 7 кандидатов, но после проверки свежести осталось 3.",
+    "Кандидатов меньше обычной цели выпуска (7); разрешён короткий выпуск.",
+    "Выбрано 3 сюжетов при обычной цели 7; формируется короткий выпуск."
+  ],
+  "publication_date": "2026-10-11",
+  "started_at": "2026-10-11T02:00:10+00:00",
+  "finished_at": "2026-10-11T02:00:33+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 85,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "672bef396f9549ac37bac8ec2036fad07fb778f7c8592002c9c15e358c80ca11",
+    "candidates_sha256": "58af813bcf972c25dc6c76685b599a36901138fadfd65057477a1496e7af8fa2",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-10-09T05:06:16+03:00",
+      "end_at": "2026-10-11T04:53:25+03:00",
+      "latest_archive_at": "2026-10-10T05:06:16+03:00",
+      "start_date": "2026-10-09",
+      "end_date": "2026-10-11",
+      "latest_archive_date": "2026-10-10"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "de5d5bf1e309e37959b2d9c905f40d8a0acd9a84ba784ce299cb387c4a0a5f78",
+    "editorial_sha256": "9d04ad08b04318f91d611173cb4ff352502af5f0873bced5256d79ac7093fdd6",
+    "digest_sha256": "9faaa01f0c87c14448eea9826b5c627def863274904dc14ca68d11721d7f32ff",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-10-11.png",
+          "normalized_value": "ai-svodka-2026-10-11.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        }
+      ],
+      "changed_count": 1,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 3 сюжетов."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: global_breaking, major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0a427fc0140355bb016acaedab179c87d2806bec51566c885b",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 167003,
+        "input_tokens_details": {
+          "cache_write_tokens": 7890,
+          "cached_tokens": 159110
+        },
+        "output_tokens": 2359,
+        "output_tokens_details": {
+          "reasoning_tokens": 344
+        },
+        "total_tokens": 169362
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 167003,
+    "output_tokens": 2359,
+    "total_tokens": 169362,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "b8806cfd6525c58646ae9a8160d02c0d34b89a82",
+    "run_id": "38103291782",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-10-11T04:53:25+03:00"
+}

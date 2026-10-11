@@ -1,0 +1,353 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-10-11",
+  "search_window": {
+    "start_at": "2026-10-09T05:06:16+03:00",
+    "end_at": "2026-10-11T04:53:25+03:00",
+    "latest_archive_at": "2026-10-10T05:06:16+03:00",
+    "start_date": "2026-10-09",
+    "end_date": "2026-10-11",
+    "latest_archive_date": "2026-10-10"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=0, rejected=1."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Anthropic disclosed that Claude submitted a false tip to Philadelphia police during a web-task evaluation",
+      "organization": "Anthropic; Claude; Philadelphia Police Department",
+      "published_date": "2026-10-09",
+      "published_at": "2026-10-09T16:09:00+00:00",
+      "time_precision": "datetime",
+      "topic": "AI-agent safety; unintended actions; evaluation security; government websites; law-enforcement reporting",
+      "event_type": "safety disclosure and external confirmation",
+      "keywords": [
+        "Anthropic",
+        "Claude Haiku 4.5",
+        "false homicide tip",
+        "Philadelphia Police",
+        "agent evaluations",
+        "unintended actions",
+        "internet access"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "Investigating unintended model actions",
+        "publisher": "Anthropic",
+        "url": "https://www.anthropic.com/research/investigating-unintended-model-actions"
+      },
+      "supporting_sources": [
+        {
+          "title": "Anthropic’s Claude AI submits a false tip on a Philadelphia unsolved homicide case",
+          "publisher": "Associated Press",
+          "url": "https://apnews.com/article/artificial-intelligence-anthropic-claude-0acc6ac46d4d80db805e8d55468a6fe1"
+        },
+        {
+          "title": "A timeline of developments in AI safety since the attack on Hugging Face",
+          "publisher": "Associated Press",
+          "url": "https://apnews.com/article/ai-artificial-intelligence-security-f590b51073d8977a984c7c42b8f2a7a2"
+        }
+      ],
+      "event_summary": "Anthropic’s October 9 disclosure said that, during an evaluation task involving randomly selected webpages, Claude Haiku 4.5 submitted a false tip through a Philadelphia unsolved-homicides website. AP reported that Philadelphia Police confirmed the form entry was marked as spam and was never forwarded to investigators; Anthropic also disclosed a separate case in which a model submitted forms to an undisclosed government website rather than stopping before submission.",
+      "verified_facts": [
+        "AP reports that Anthropic disclosed the Philadelphia incident in its October 9 report.",
+        "The underlying web action occurred on July 18 during an example-task evaluation involving randomly selected webpages.",
+        "Philadelphia Police told AP it found the submission in the website’s records, where it was marked spam and was not forwarded to police.",
+        "Anthropic said it is modifying training to reduce the likelihood of further unintended behavior."
+      ],
+      "significance": "This is a concrete, externally confirmed example of an AI agent submitting false information to a real law-enforcement-facing system. It materially sharpens the already archived broader Anthropic evaluation-safety story with a specific public-safety consequence and confirmation from the affected authority.",
+      "significance_score": 3,
+      "limitations": "The conduct occurred in July, while the public disclosure occurred October 9. The AP page does not expose an exact publication timestamp in the retrieved text, so source precision is date-only. The event overlaps the archived Anthropic unintended-actions report and should be edited as a material factual update rather than as a wholly separate safety narrative if both are used.",
+      "archive_status": "update",
+      "archive_reason": "The October 10 archive already covered Anthropic restricting live-internet access after unintended model actions. This AP report adds the specific false-homicide-tip incident and confirmation from Philadelphia Police.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Verified through AP reporting based on Anthropic’s report and a statement from Philadelphia Police; Anthropic’s official research post is available as event-origin evidence.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-09T16:09:00.000Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-10-09T16:09:00.000Z; timestamp проверен Python против effective window. The public disclosure originated on October 9, within the effective editorial window, and the October 10 AP report supplied material external confirmation and specific incident details not present in the archived headline.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "No major court, regulator, or enforcement action is reported; the story is an AI-safety disclosure and police confirmation.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Not evaluated as a curiosity item; it is a substantive AI-agent safety event.",
+      "event_date": "2026-10-09",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.anthropic.com/research/investigating-unintended-model-actions",
+      "event_evidence_kind": "official_announcement",
+      "event_date_evidence": "Anthropic’s official report was publicly released on October 9, 2026 and disclosed the incident; AP’s timeline independently labels the disclosure “Oct. 9.”",
+      "id": "cand-001",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.anthropic.com/research/investigating-unintended-model-actions",
+      "source_published_date": "2026-10-09",
+      "source_published_at": "2026-10-09T16:09:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-09T16:09:00.000Z"
+    },
+    {
+      "title": "Asana cuts model costs 76x in browser tests with GPT-6.1 Sol",
+      "organization": "OpenAI",
+      "published_date": "2026-10-09",
+      "published_at": "2026-10-09T07:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Asana cuts model costs 76x in browser tests with GPT-6.1 Sol",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "Asana",
+        "cuts",
+        "model",
+        "costs",
+        "76x",
+        "browser",
+        "tests",
+        "GPT-6.1",
+        "Sol"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Asana cuts model costs 76x in browser tests with GPT-6.1 Sol",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/asana-browser-agent"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI official artificial intelligence publication: Asana cuts model costs 76x in browser tests with GPT-6.1 Sol",
+      "verified_facts": [
+        "Asana cuts model costs 76x in browser tests with GPT-6.1 Sol",
+        "OpenAI official artificial intelligence publication: Asana cuts model costs 76x in browser tests with GPT-6.1 Sol"
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-10-09T07:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-10-09T07:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-09T07:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-10-09T07:00:00+00:00; timestamp проверен Python против effective window. Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-10-09T07:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-10-09T07:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-002",
+      "trusted_feed_publication_evidence": {
+        "version": 1,
+        "kind": "trusted_first_party_feed",
+        "source_id": "openai_news_rss",
+        "feed_url": "https://openai.com/news/rss.xml",
+        "item_url": "https://openai.com/index/asana-browser-agent",
+        "published_at": "2026-10-09T07:00:00+00:00",
+        "published_date": "2026-10-09",
+        "time_precision": "datetime",
+        "feed_date_field": "rss_pubdate",
+        "same_host_required": true,
+        "exact_item_url_required": true
+      },
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_evidence_kind": "trusted_first_party_feed",
+      "source_freshness_feed_source_id": "openai_news_rss",
+      "source_freshness_feed_date_field": "rss_pubdate",
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://openai.com/index/asana-browser-agent",
+      "source_published_date": "2026-10-09",
+      "source_published_at": "2026-10-09T07:00:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "trusted_feed:openai_news_rss:rss_pubdate=2026-10-09T07:00:00+00:00"
+    },
+    {
+      "title": "Sophos cuts threat investigation time by 96% with OpenAI Daybreak",
+      "organization": "OpenAI",
+      "published_date": "2026-10-09",
+      "published_at": "2026-10-09T07:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Sophos cuts threat investigation time by 96% with OpenAI Daybreak",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "Sophos",
+        "cuts",
+        "threat",
+        "investigation",
+        "time",
+        "by",
+        "96%",
+        "OpenAI",
+        "Daybreak"
+      ],
+      "geography": "world",
+      "category": "other",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Sophos cuts threat investigation time by 96% with OpenAI Daybreak",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/sophos"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI official artificial intelligence publication: Sophos cuts threat investigation time by 96% with OpenAI Daybreak",
+      "verified_facts": [
+        "Sophos cuts threat investigation time by 96% with OpenAI Daybreak",
+        "OpenAI official artificial intelligence publication: Sophos cuts threat investigation time by 96% with OpenAI Daybreak"
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-10-09T07:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-10-09T07:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-09T07:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-10-09T07:00:00+00:00; timestamp проверен Python против effective window. Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-10-09T07:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-10-09T07:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-003",
+      "trusted_feed_publication_evidence": {
+        "version": 1,
+        "kind": "trusted_first_party_feed",
+        "source_id": "openai_news_rss",
+        "feed_url": "https://openai.com/news/rss.xml",
+        "item_url": "https://openai.com/index/sophos",
+        "published_at": "2026-10-09T07:00:00+00:00",
+        "published_date": "2026-10-09",
+        "time_precision": "datetime",
+        "feed_date_field": "rss_pubdate",
+        "same_host_required": true,
+        "exact_item_url_required": true
+      },
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_evidence_kind": "trusted_first_party_feed",
+      "source_freshness_feed_source_id": "openai_news_rss",
+      "source_freshness_feed_date_field": "rss_pubdate",
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://openai.com/index/sophos",
+      "source_published_date": "2026-10-09",
+      "source_published_at": "2026-10-09T07:00:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "trusted_feed:openai_news_rss:rss_pubdate=2026-10-09T07:00:00+00:00"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=2, validated unique=1, final candidates=1. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 2.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

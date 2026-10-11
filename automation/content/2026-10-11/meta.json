@@ -1,0 +1,37 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-11",
+  "slug": "2026-10-11",
+  "title": "ИИ-Сводка на 11 октября 2026",
+  "description": "Anthropic уточнила инцидент с ложным сообщением в полицию, а OpenAI показала кейсы применения GPT-6.1 Sol в браузерных тестах Asana и Daybreak в расследовании киберугроз Sophos.",
+  "published_at": "2026-10-11T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-11.png",
+  "topics": [
+    "Anthropic",
+    "Claude",
+    "безопасность агентов ИИ",
+    "оценки моделей",
+    "OpenAI",
+    "GPT-6.1 Sol",
+    "браузерные агенты",
+    "Asana",
+    "OpenAI Daybreak",
+    "Sophos",
+    "киберзащита"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: global_breaking, major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    }
+  ]
+}
