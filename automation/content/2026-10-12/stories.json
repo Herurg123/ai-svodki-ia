@@ -1,0 +1,33 @@
+[
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Сатья Наделла призвал предусматривать для ИИ «аварийный тормоз»",
+    "organization": "Microsoft; Satya Nadella",
+    "topic": "AI safety; controllability; model governance; human override; auditability",
+    "event_type": "AI-governance policy proposal",
+    "status": "new",
+    "summary": "Сатья Наделла публично предложил архитектуру доверия для ИИ: отделять модель от управляющей ею оболочки, выносить safeguards наружу, вести защищаемые человеком читаемые записи значимых действий и сохранять возможность уполномоченному человеку остановить модель во время выполнения задачи.",
+    "published_at": "2026-10-10T21:47:51+00:00",
+    "published_date": "2026-10-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Microsoft’s Satya Nadella says AI models need an ‘emergency brake’",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/10/microsofts-satya-nadella-says-ai-models-need-an-emergency-brake/"
+      }
+    ],
+    "keywords": [
+      "Microsoft",
+      "Satya Nadella",
+      "AI safety",
+      "emergency brake",
+      "human override",
+      "audit trail",
+      "trust architecture"
+    ],
+    "geography": "world",
+    "category": "security"
+  }
+]

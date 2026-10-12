@@ -1,0 +1,33 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-12",
+  "slug": "2026-10-12",
+  "title": "ИИ-Сводка на 12 октября 2026",
+  "description": "Сатья Наделла предложил строить ИИ-системы с внешними защитными контурами, проверяемым журналом действий и возможностью экстренно остановить модель во время выполнения задачи.",
+  "published_at": "2026-10-12T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-12.png",
+  "topics": [
+    "Microsoft",
+    "Сатья Наделла",
+    "безопасность ИИ",
+    "агенты ИИ",
+    "управляемость моделей",
+    "human override",
+    "аудит действий ИИ"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: global_breaking, major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation, independent_missing_events."
+    }
+  ]
+}

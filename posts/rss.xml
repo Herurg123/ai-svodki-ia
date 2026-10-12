@@ -9,9 +9,34 @@
   <link>https://rybalka.one/posts/</link>
   <description>Десять полнотекстовых аналитических статей об искусственном интеллекте.</description>
   <language>ru</language>
-  <lastBuildDate>Sun, 11 Oct 2026 06:00:00 +0300</lastBuildDate>
+  <lastBuildDate>Mon, 12 Oct 2026 06:00:00 +0300</lastBuildDate>
   <dc:creator>ИИ-сводки</dc:creator>
   <atom:link href="https://rybalka.one/posts/rss.xml" rel="self" type="application/rss+xml" />
+
+  <item>
+    <title>ИИ-Сводка на 12 октября 2026</title>
+    <link>https://rybalka.one/posts/2026-10-12/</link>
+    <guid isPermaLink="true">https://rybalka.one/posts/2026-10-12/</guid>
+    <pubDate>Mon, 12 Oct 2026 06:00:00 +0300</pubDate>
+    <dc:creator>ИИ-сводки</dc:creator>
+    <category>Статья</category>
+    <category>ИИ</category>
+    <category>Технологии</category>
+    <category>native-yes</category>
+    <media:rating scheme="urn:simple">nonadult</media:rating>
+    <enclosure url="https://rybalka.one/posts/images/ai-svodka-2026-10-12.png" type="image/png" length="1773350" />
+    <media:content url="https://rybalka.one/posts/images/ai-svodka-2026-10-12.png" medium="image" type="image/png" />
+    <media:thumbnail url="https://rybalka.one/posts/images/ai-svodka-2026-10-12.png" />
+    <description><![CDATA[<p>Сатья Наделла предложил строить ИИ-системы с внешними защитными контурами, проверяемым журналом действий и возможностью экстренно остановить модель во время выполнения задачи.</p>]]></description>
+    <content:encoded><![CDATA[<figure>
+<img src="https://rybalka.one/posts/images/ai-svodka-2026-10-12.png" alt="ИИ-Сводка на 12 октября 2026">
+<figcaption>Главные новости искусственного интеллекта за 12 октября 2026 года</figcaption>
+</figure>
+<p><em>Новостей сегодня меньше, чем обычно</em></p>
+<p>В сегодняшней повестке выделяется не новый релиз модели, а вопрос о том, как сохранять управляемость систем, способных самостоятельно выполнять длительные задачи. Глава Microsoft Сатья Наделла предложил архитектурный принцип, при котором контроль не остаётся полностью внутри самой модели.</p><p>Практический смысл этого подхода — переносить критические ограничения, аудит и право остановки в отдельный слой, доступный уполномоченному человеку. Это особенно актуально для агентных ИИ-систем, которые получают доступ к инструментам, данным и внешним сервисам.</p><h2>Мировые лидеры ИИ</h2><h3>Сатья Наделла призвал предусматривать для ИИ «аварийный тормоз»</h3><p>Генеральный директор Microsoft Сатья Наделла заявил, что ИИ-системам необходима архитектура доверия с возможностью экстренно приостановить или отключить модель во время выполнения задачи. Как сообщает <a href="https://techcrunch.com/2026/10/10/microsofts-satya-nadella-says-ai-models-need-an-emergency-brake/">TechCrunch</a>, он предложил отделять базовую модель от управляющей оболочки и выносить safeguards во внешний контур.</p><p>Наделла также указал на необходимость защищаемых, читаемых человеком записей значимых действий модели. Это пока не анонс готового стандарта или продукта Microsoft, а публичная позиция о принципах контроля. Но она усиливает запрос рынка на агентные системы, в которых можно не только назначать разрешения заранее, но и наблюдать за действиями, проверять их задним числом и вмешиваться в ходе выполнения задачи.</p><h2>Что это значит</h2><ol><li>Контроль агентных систем всё заметнее рассматривается как задача архитектуры: ограничения и остановка не должны зависеть лишь от инструкций внутри модели.</li><li>Для корпоративных внедрений растёт ценность независимого журнала действий агента: он нужен для расследований, комплаенса и разбора ошибок.</li><li>Возможность остановить задачу в середине выполнения становится базовым требованием там, где ИИ работает с внешними инструментами, кодом, данными или транзакциями.</li><li>Публичная позиция Microsoft показывает, что дискуссия о безопасности смещается от общих принципов к конкретным механизмам управления — внешним safeguards, аудиту и human override.</li></ol>
+<h2>Все ИИ-Сводки</h2><p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>
+<p class="digest-footer" style="text-align:center;margin:32px 0 0;"><a href="https://dzen.ru/rybv" target="_blank" rel="noopener noreferrer"><img src="https://rybalka.one/posts/_footer-scr.png" alt="Подписаться на канал" style="display:block;max-width:50%;width:auto;height:auto;margin:0 auto;"></a></p>]]></content:encoded>
+  </item>
 
   <item>
     <title>ИИ-Сводка на 11 октября 2026</title>

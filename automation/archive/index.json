@@ -1,8 +1,61 @@
 {
   "version": 2,
-  "generated_at": "2026-10-11T02:01:53+00:00",
+  "generated_at": "2026-10-12T02:26:42+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-10-12",
+      "published_at": "2026-10-12T06:00:00+03:00",
+      "search_cutoff_at": "2026-10-12T05:06:10+03:00",
+      "title": "ИИ-Сводка на 12 октября 2026",
+      "link": "https://rybalka.one/posts/2026-10-12/",
+      "summary": "Главные новости искусственного интеллекта за 12 октября 2026 года Новостей сегодня меньше, чем обычно В сегодняшней повестке выделяется не новый релиз модели, а вопрос о том, как сохранять управляемость систем, способных самостоятельно выполнять длительные задачи. Глава Microsoft Сатья Наделла предложил архитектурный принцип, при котором контроль не остаётся полностью внутри самой модели. Практический смысл этого подхода — переносить критические ограничения, аудит и право остановки в отдельный с",
+      "topics": [
+        "Microsoft",
+        "Сатья Наделла",
+        "безопасность ИИ",
+        "агенты ИИ",
+        "управляемость моделей",
+        "human override",
+        "аудит действий ИИ"
+      ],
+      "source_urls": [
+        "https://techcrunch.com/2026/10/10/microsofts-satya-nadella-says-ai-models-need-an-emergency-brake/"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "Сатья Наделла призвал предусматривать для ИИ «аварийный тормоз»",
+          "organization": "Microsoft; Satya Nadella",
+          "topic": "AI safety; controllability; model governance; human override; auditability",
+          "event_type": "AI-governance policy proposal",
+          "status": "new",
+          "summary": "Сатья Наделла публично предложил архитектуру доверия для ИИ: отделять модель от управляющей ею оболочки, выносить safeguards наружу, вести защищаемые человеком читаемые записи значимых действий и сохранять возможность уполномоченному человеку остановить модель во время выполнения задачи.",
+          "published_at": "2026-10-10T21:47:51+00:00",
+          "published_date": "2026-10-10",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Microsoft’s Satya Nadella says AI models need an ‘emergency brake’",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/10/microsofts-satya-nadella-says-ai-models-need-an-emergency-brake/"
+            }
+          ],
+          "keywords": [
+            "Microsoft",
+            "Satya Nadella",
+            "AI safety",
+            "emergency brake",
+            "human override",
+            "audit trail",
+            "trust architecture"
+          ],
+          "geography": "world",
+          "category": "security"
+        }
+      ]
+    },
     {
       "date": "2026-10-11",
       "published_at": "2026-10-11T06:00:00+03:00",
@@ -6714,10 +6767,10 @@
     {
       "date": "2026-09-09",
       "published_at": "2026-09-09T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-09T04:15:13+03:00",
+      "search_cutoff_at": "2026-09-09T06:00:00+03:00",
       "title": "ИИ-Сводка на 9 сентября 2026",
       "link": "https://rybalka.one/posts/2026-09-09/",
-      "summary": "Главные новости искусственного интеллекта за 9 сентября 2026 года День принёс сразу два многомиллиардных раунда в сегментах ИИ-кодинга и европейских frontier-моделей. Одновременно компании ускоряют переход от моделей к автономным продуктам, корпоративному внедрению и защите доступа к ИИ-сервисам. Отдельный сигнал для инфраструктуры — сохраняющееся напряжение на рынке серверной памяти. В исследованиях же на первый план вышел пока не подтверждённый независимой экспертизой, но важный спор вокруг за",
+      "summary": "Cognition и Mistral AI привлекли многомиллиардное финансирование, Meta запустила персонального агента Muse, а Google Cloud усиливает внедрение Gemini Enterprise. Также — дефицит памяти, защита Claude и спор о математическом результате OpenAI.",
       "topics": [
         "Cognition",
         "Devin",
