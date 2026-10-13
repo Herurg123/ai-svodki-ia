@@ -1432,12 +1432,41 @@ async function cdpIsAvailable(config) {
 }
 
 async function waitForCdp(config) {
-  const deadline = Date.now() + (config.browserStartupTimeoutMs || 45_000);
-  while (Date.now() < deadline) {
+  const configuredTimeoutMs = Math.max(
+    1_000,
+    Number(config.browserStartupTimeoutMs) || 45_000
+  );
+  const totalTimeoutMs = Math.max(configuredTimeoutMs, 90_000);
+  const startedAt = Date.now();
+  const configuredDeadline = startedAt + configuredTimeoutMs;
+  const totalDeadline = startedAt + totalTimeoutMs;
+
+  while (Date.now() < configuredDeadline) {
     if (await cdpIsAvailable(config)) return;
     await new Promise((resolve) => setTimeout(resolve, 750));
   }
-  throw new Error("Яндекс.Браузер не открыл CDP-порт за отведённое время.");
+
+  if (totalTimeoutMs > configuredTimeoutMs) {
+    log(
+      config,
+      `CDP-порт не появился за настроенные ${configuredTimeoutMs} мс. ` +
+        `Продолжаю ждать до общего лимита ${totalTimeoutMs} мс, чтобы пережить медленный старт Яндекс.Браузера.`
+    );
+  }
+
+  while (Date.now() < totalDeadline) {
+    if (await cdpIsAvailable(config)) return;
+    await new Promise((resolve) => setTimeout(resolve, 750));
+  }
+
+  // Последняя проверка после дедлайна закрывает узкое окно, когда CDP
+  // становится доступен ровно на границе таймаута между двумя poll-итерациями.
+  if (await cdpIsAvailable(config)) return;
+
+  throw new Error(
+    `Яндекс.Браузер не открыл CDP-порт за ${totalTimeoutMs} мс ` +
+      `(настроено: ${configuredTimeoutMs} мс).`
+  );
 }
 
 function encodePowerShellCommand(command) {
@@ -3493,43 +3522,76 @@ async function openNotebookFromHome(
 
   let cardTitle = null;
   let matchedHint = null;
+  const cardWaitMs = Math.min(config.uiTimeoutMs, 30_000);
+  const cardDeadline = Date.now() + cardWaitMs;
+  let lastCardDiagnostics = [];
 
-  for (const hint of titleHints) {
-    const normalizedHint = String(hint).trim();
-    if (!normalizedHint) continue;
+  // NotebookLM может сначала показать оболочку главной, а карточки дорисовать
+  // позже. Кроме того, в DOM иногда одновременно живут скрытая и видимая
+  // копии одного заголовка. Поэтому не доверяем .first(): ограниченно ждём
+  // карточки и перебираем все совпадения, выбирая реально видимое.
+  while (!cardTitle && Date.now() < cardDeadline) {
+    const diagnostics = [];
 
-    const locator = page.getByText(
-      new RegExp(escapeRegExp(normalizedHint), "i")
-    );
+    for (const hint of titleHints) {
+      const normalizedHint = String(hint).trim();
+      if (!normalizedHint) continue;
 
-    if (
-      (await locator.count().catch(() => 0)) > 0 &&
-      (await locator.first().isVisible().catch(() => false))
-    ) {
-      cardTitle = locator.first();
-      matchedHint = normalizedHint;
-      break;
-    }
-  }
+      const locator = page.getByText(
+        new RegExp(escapeRegExp(normalizedHint), "i")
+      );
+      const count = await locator.count().catch(() => 0);
+      let visibleCount = 0;
 
-  if (!cardTitle && job.notebookTitleHint) {
-    const words = String(job.notebookTitleHint)
-      .split(/\s+/)
-      .map((word) => word.replace(/[^\p{L}\p{N}]+/gu, ""))
-      .filter((word) => word.length >= 5)
-      .slice(0, 3);
-
-    if (words.length) {
-      const loosePattern = words.map(escapeRegExp).join(".*");
-      const locator = page.getByText(new RegExp(loosePattern, "i"));
-
-      if (
-        (await locator.count().catch(() => 0)) > 0 &&
-        (await locator.first().isVisible().catch(() => false))
-      ) {
-        cardTitle = locator.first();
-        matchedHint = words.join(" … ");
+      for (let index = 0; index < count; index += 1) {
+        const candidate = locator.nth(index);
+        if (await candidate.isVisible().catch(() => false)) {
+          visibleCount += 1;
+          cardTitle = candidate;
+          matchedHint = normalizedHint;
+          break;
+        }
       }
+
+      diagnostics.push({ hint: normalizedHint, count, visibleCount });
+      if (cardTitle) break;
+    }
+
+    if (!cardTitle && job.notebookTitleHint) {
+      const words = String(job.notebookTitleHint)
+        .split(/\s+/)
+        .map((word) => word.replace(/[^\p{L}\p{N}]+/gu, ""))
+        .filter((word) => word.length >= 5)
+        .slice(0, 3);
+
+      if (words.length) {
+        const loosePattern = words.map(escapeRegExp).join(".*");
+        const locator = page.getByText(new RegExp(loosePattern, "i"));
+        const count = await locator.count().catch(() => 0);
+        let visibleCount = 0;
+
+        for (let index = 0; index < count; index += 1) {
+          const candidate = locator.nth(index);
+          if (await candidate.isVisible().catch(() => false)) {
+            visibleCount += 1;
+            cardTitle = candidate;
+            matchedHint = words.join(" … ");
+            break;
+          }
+        }
+
+        diagnostics.push({
+          hint: `loose:${words.join(" … ")}`,
+          count,
+          visibleCount,
+        });
+      }
+    }
+
+    lastCardDiagnostics = diagnostics;
+
+    if (!cardTitle) {
+      await page.waitForTimeout(500);
     }
   }
 
@@ -3537,6 +3599,7 @@ async function openNotebookFromHome(
     const reason = [
       "Не удалось найти карточку существующего блокнота на главной странице.",
       `Подсказки заголовка: ${titleHints.join(" | ") || "не заданы"}.`,
+      `Ожидание карточки: до ${cardWaitMs} мс; последнее состояние DOM: ${JSON.stringify(lastCardDiagnostics)}.`,
       directOpenError ? `Ошибка прямого URL: ${directOpenError.message}` : "",
     ]
       .filter(Boolean)
@@ -3611,28 +3674,16 @@ async function openNotebookWithFallback(
   const page = await getRobotPage(config, context);
   activePage = page;
 
-  // Для вручную подготовленного тестового задания URL был переписан
-  // со скриншота и оказался нерабочим. Если есть подсказка заголовка,
-  // сразу используем карточку на главной странице.
-  if (job.notebookTitleHint) {
-    log(
-      config,
-      "Для задания задан notebookTitleHint. Открываю блокнот через карточку на главной странице."
-    );
-
-    return openNotebookFromHome(
-      config,
-      page,
-      publication,
-      job,
-      state
-    );
-  }
-
   let directOpenError = null;
 
+  // После создания production job хранит канонический URL с UUID блокнота.
+  // Это более стабильная идентичность, чем повторный поиск карточки на home UI.
+  // Старый card-first путь был нужен для ручного тестового задания с неверно
+  // переписанным URL; теперь карточка остаётся только recovery fallback.
   if (job.notebookUrl) {
     try {
+      log(config, `Открываю блокнот по сохранённому URL: ${job.notebookUrl}`);
+
       await page.goto(job.notebookUrl, {
         waitUntil: "domcontentloaded",
         timeout: config.uiTimeoutMs,
@@ -3644,7 +3695,11 @@ async function openNotebookWithFallback(
         job.notebookUrl
       );
 
-      log(config, `Блокнот открыт по сохранённому URL: ${page.url()}`);
+      job.notebookUrl = page.url();
+      job.updatedAt = new Date().toISOString();
+      saveState(config, state);
+
+      log(config, `Блокнот открыт по сохранённому URL: ${job.notebookUrl}`);
       return page;
     } catch (error) {
       directOpenError = error;
@@ -3654,6 +3709,11 @@ async function openNotebookWithFallback(
         `Прямое открытие блокнота не удалось: ${error.message}. Ищу карточку на главной странице.`
       );
     }
+  } else if (job.notebookTitleHint) {
+    log(
+      config,
+      "Сохранённый URL блокнота отсутствует. Ищу карточку на главной странице по notebookTitleHint."
+    );
   }
 
   return openNotebookFromHome(
