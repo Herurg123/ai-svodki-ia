@@ -1,8 +1,175 @@
 {
   "version": 2,
-  "generated_at": "2026-10-12T02:26:42+00:00",
+  "generated_at": "2026-10-13T02:16:48+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-10-13",
+      "published_at": "2026-10-13T06:00:00+03:00",
+      "search_cutoff_at": "2026-10-13T05:06:22+03:00",
+      "title": "ИИ-Сводка на 13 октября 2026",
+      "link": "https://rybalka.one/posts/2026-10-13/",
+      "summary": "Главные новости искусственного интеллекта за 13 октября 2026 года Новостей сегодня меньше, чем обычно Сегодняшняя повестка связывает безопасность развёрнутых LLM-сервисов с физической и вычислительной инфраструктурой ИИ. Одновременно появляются новые практические контуры world models: от интерактивной аудиовизуальной среды до автономного сбора атмосферных данных для прогнозирования. Главный вывод дня: конкурентоспособность ИИ всё больше зависит не только от модели, но и от защищённости её сервис",
+      "topics": [
+        "безопасность ИИ-инфраструктуры",
+        "PoeLLM",
+        "LiteLLM",
+        "Ollama",
+        "NVIDIA Vera Rubin",
+        "ИИ-фабрики",
+        "world models",
+        "Helix World",
+        "physical AI",
+        "ИИ-прогнозирование погоды",
+        "автономные метеозонды",
+        "WindBorne",
+        "ВВС США"
+      ],
+      "source_urls": [
+        "https://www.tomshardware.com/tech-industry/cyber-security/cryptomining-malware-used-poetry-to-infect-more-than-3-400-servers-researchers-say-four-words-in-the-poellm-verse-changed-11-times-point-the-botnet-to-new-servers",
+        "https://www.lumen.com/blog/en-us/canto-incognito-tracking-the-poellm-malware",
+        "https://blogs.nvidia.com/blog/ocp-global-summit-vera-rubin-scale-ai-factories",
+        "https://noiz.ai/lp/blog/meet-helix-world",
+        "https://techcrunch.com/2026/10/12/windborne-wins-a-hefty-us-air-force-contract-for-its-balloon-data/"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "Lumen раскрыла кампанию PoeLLM против более чем 3 400 серверов с LLM-сервисами",
+          "organization": "Lumen Technologies; Black Lotus Labs; LiteLLM; Ollama",
+          "topic": "AI infrastructure security; exposed LLM services; cryptomining malware; LiteLLM; Ollama; supply-chain and vulnerability exposure",
+          "event_type": "Threat-intelligence disclosure",
+          "status": "new",
+          "summary": "Black Lotus Labs сообщила о PoeLLM (Canto Incognito) — продолжающейся кампании криптомайнинга и сканирования, нацеленной на публично доступные развёртывания AI/LLM-инфраструктуры, включая LiteLLM и Ollama. По данным исследователей, затронуто более 3 400 серверов; вредонос использует стихотворение в GitHub-репозитории как изменяемый механизм указания C2-серверов и превращает скомпрометированные хосты в средства дальнейшего сканирования и эксплуатации.",
+          "published_at": "2026-10-11T11:45:00+00:00",
+          "published_date": "2026-10-11",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Cryptomining malware used poetry to infect more than 3,400 servers, researchers say",
+              "publisher": "Tom's Hardware",
+              "url": "https://www.tomshardware.com/tech-industry/cyber-security/cryptomining-malware-used-poetry-to-infect-more-than-3-400-servers-researchers-say-four-words-in-the-poellm-verse-changed-11-times-point-the-botnet-to-new-servers"
+            },
+            {
+              "title": "Canto incognito: tracking the PoeLLM malware",
+              "publisher": "Lumen Technologies / Black Lotus Labs",
+              "url": "https://www.lumen.com/blog/en-us/canto-incognito-tracking-the-poellm-malware"
+            }
+          ],
+          "keywords": [
+            "PoeLLM",
+            "Canto Incognito",
+            "LiteLLM",
+            "Ollama",
+            "cryptomining",
+            "CVE-2026-42271",
+            "AI infrastructure",
+            "botnet"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "NVIDIA открывает архитектуру Vera Rubin для расширения экосистемы ИИ-фабрик",
+          "organization": "NVIDIA",
+          "topic": "OCP Global Summit: Amid Ecosystem Adoption, NVIDIA Opens Vera Rubin Architecture to Help Scale AI Factories Worldwide",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "Cisco, Google, Meta, Microsoft and Visionbay are joining many making advances with Vera Rubin.",
+          "published_at": "2026-10-12T15:00:25+00:00",
+          "published_date": "2026-10-12",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "OCP Global Summit: Amid Ecosystem Adoption, NVIDIA Opens Vera Rubin Architecture to Help Scale AI Factories Worldwide",
+              "publisher": "NVIDIA",
+              "url": "https://blogs.nvidia.com/blog/ocp-global-summit-vera-rubin-scale-ai-factories"
+            }
+          ],
+          "keywords": [
+            "OCP",
+            "Global",
+            "Summit",
+            "Amid",
+            "Ecosystem",
+            "Adoption",
+            "NVIDIA",
+            "Opens",
+            "Vera",
+            "Rubin",
+            "Architecture",
+            "Help"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-004",
+          "section": "world",
+          "headline": "Noiz AI и HKUST представили Helix World — интерактивную аудиовизуальную world model",
+          "organization": "Noiz AI; Hong Kong University of Science and Technology (HKUST)",
+          "topic": "World models; physical AI; интерактивная генерация видео; пространственный звук; open weights",
+          "event_type": "model release",
+          "status": "new",
+          "summary": "Noiz AI и HKUST анонсировали Helix World — управляемую клавиатурой интерактивную world model, которая по исходному изображению одновременно генерирует видео и привязанный к движению камеры стереозвук. Авторы открыли demo, код и preview-checkpoint.",
+          "published_at": null,
+          "published_date": "2026-10-12",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Meet Helix World: A Real-Time Audio-Visual World Model",
+              "publisher": "Noiz AI",
+              "url": "https://noiz.ai/lp/blog/meet-helix-world"
+            }
+          ],
+          "keywords": [
+            "world model",
+            "real-time generation",
+            "audio-visual",
+            "physical AI",
+            "HKUST",
+            "open weights",
+            "Hong Kong"
+          ],
+          "geography": "world",
+          "category": "research"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "WindBorne получила контракт ВВС США на данные автономных метеозондов стоимостью до $49 млн",
+          "organization": "WindBorne Systems; U.S. Air Force",
+          "topic": "AI weather forecasting; autonomous balloons; atmospheric data; U.S. government procurement",
+          "event_type": "government contract",
+          "status": "new",
+          "summary": "ВВС США заключили с WindBorne Systems контракт на закупку данных её флота автономных метеозондов стоимостью до $49 млн. Компания сообщает, что уже получила заказы на $1,7 млн; данные с примерно 700 шаров также используются в её собственной AI-модели прогноза погоды.",
+          "published_at": "2026-10-12T17:19:14+00:00",
+          "published_date": "2026-10-12",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "WindBorne wins a hefty US Air Force contract for its balloon data",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/12/windborne-wins-a-hefty-us-air-force-contract-for-its-balloon-data/"
+            }
+          ],
+          "keywords": [
+            "WindBorne Systems",
+            "U.S. Air Force",
+            "weather balloons",
+            "AI weather forecasting",
+            "atmospheric data",
+            "WeatherMesh",
+            "autonomous systems"
+          ],
+          "geography": "world",
+          "category": "enterprise"
+        }
+      ]
+    },
     {
       "date": "2026-10-12",
       "published_at": "2026-10-12T06:00:00+03:00",

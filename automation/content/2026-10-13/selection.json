@@ -1,0 +1,15 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-002",
+    "cand-003",
+    "cand-004",
+    "cand-005"
+  ],
+  "excluded_candidate_ids": [
+    "cand-001"
+  ],
+  "selection_summary": "Выбраны четыре подтверждённых свежих сюжета: раскрытие массовой кампании против открытых LLM-сервисов, инфраструктурное обновление NVIDIA, ранний релиз интерактивной world model и контракт ВВС США на данные автономных метеозондов. Кандидат Meta исключён: имеет рекомендацию exclude и статус unconfirmed.",
+  "diversity_overrides": []
+}

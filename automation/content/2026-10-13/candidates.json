@@ -1,0 +1,465 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-10-13",
+  "search_window": {
+    "start_at": "2026-10-11T05:06:10+03:00",
+    "end_at": "2026-10-13T05:06:22+03:00",
+    "latest_archive_at": "2026-10-12T05:06:10+03:00",
+    "start_date": "2026-10-11",
+    "end_date": "2026-10-13",
+    "latest_archive_date": "2026-10-12"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Meta представила frontier-модели Muse Wonder и Muse Wonder Full",
+      "organization": "Meta; Meta Superintelligence Labs",
+      "published_date": "2026-10-13",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Frontier models; AI agents; memory; coding; personal AI assistants; model APIs",
+      "event_type": "model launch",
+      "keywords": [
+        "Meta",
+        "Muse Wonder",
+        "Muse Wonder Full",
+        "frontier models",
+        "agents",
+        "Active Memory",
+        "Active Focus",
+        "coding",
+        "Meta Model API"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Meta unveils new frontier-class AI models to compete with OpenAI, Anthropic",
+        "publisher": "Axios",
+        "url": "https://www.axios.com/2026/10/12/meta-new-ai-models-anthropic-openai"
+      },
+      "supporting_sources": [],
+      "event_summary": "Meta представила семейство моделей Muse Wonder и Muse Wonder Full. По данным Axios, компания позиционирует их как frontier-модели для персональных и профессиональных агентов, задач с памятью и программированием; Muse Wonder доступна через Meta Model API и Muse Code, а более мощная Wonder Full — подписчикам Muse Code.",
+      "verified_facts": [
+        "Axios сообщает, что Meta в понедельник представила Muse Wonder и Muse Wonder Full.",
+        "По сообщению Axios, Muse Wonder доступна через Meta Model API и Muse Code, а Muse Wonder Full — пользователям с подпиской Muse Code.",
+        "Meta заявила, что модели обучались с использованием её гигавааттного дата-центра Prometheus.",
+        "Компания выделяет функции Active Memory и Active Focus для долговременной агентной работы."
+      ],
+      "significance": "Это крупный новый релиз одной из ведущих мировых AI-лабораторий и потенциально важная попытка Meta войти в frontier-сегмент закрытых агентных моделей, усиливая конкуренцию с OpenAI, Anthropic и Google.",
+      "significance_score": 4,
+      "limitations": "Доступное подтверждение — свежий материал Axios; официальный первичный анонс и независимые бенчмарки в рамках этого discovery-прохода не были найдены. Заявления о превосходстве на тестах исходят от Meta и требуют последующей редакционной проверки.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет сюжета о запуске Muse Wonder или Muse Wonder Full.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Открытый материал Axios прямо описывает запуск, названия моделей, назначение, каналы доступа и заявленные возможности. Событие не совпадает с ранее опубликованными архивными сюжетами о Meta Muse как потребительском агенте.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "event_date": "2026-10-13",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.axios.com/2026/10/12/meta-new-ai-models-anthropic-openai",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Axios указывает, что Meta представила модели «on Monday»; при авторитетной дате задания 13 октября 2026 года это соответствует 2026-10-13. Точный timestamp первоначального анонса не установлен.",
+      "id": "cand-001",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    },
+    {
+      "title": "Lumen раскрыла кампанию PoeLLM, скомпрометировавшую более 3 400 серверов с AI/LLM-сервисами",
+      "organization": "Lumen Technologies; Black Lotus Labs; LiteLLM; Ollama",
+      "published_date": "2026-10-11",
+      "published_at": "2026-10-11T11:45:00+00:00",
+      "time_precision": "datetime",
+      "topic": "AI infrastructure security; exposed LLM services; cryptomining malware; LiteLLM; Ollama; supply-chain and vulnerability exposure",
+      "event_type": "Threat-intelligence disclosure",
+      "keywords": [
+        "PoeLLM",
+        "Canto Incognito",
+        "LiteLLM",
+        "Ollama",
+        "cryptomining",
+        "CVE-2026-42271",
+        "AI infrastructure",
+        "botnet"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "Cryptomining malware used poetry to infect more than 3,400 servers, researchers say",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/tech-industry/cyber-security/cryptomining-malware-used-poetry-to-infect-more-than-3-400-servers-researchers-say-four-words-in-the-poellm-verse-changed-11-times-point-the-botnet-to-new-servers"
+      },
+      "supporting_sources": [
+        {
+          "title": "Canto incognito: tracking the PoeLLM malware",
+          "publisher": "Lumen Technologies / Black Lotus Labs",
+          "url": "https://www.lumen.com/blog/en-us/canto-incognito-tracking-the-poellm-malware"
+        }
+      ],
+      "event_summary": "Black Lotus Labs сообщила о PoeLLM (Canto Incognito) — продолжающейся кампании криптомайнинга и сканирования, нацеленной на публично доступные развёртывания AI/LLM-инфраструктуры, включая LiteLLM и Ollama. По данным исследователей, затронуто более 3 400 серверов; вредонос использует стихотворение в GitHub-репозитории как изменяемый механизм указания C2-серверов и превращает скомпрометированные хосты в средства дальнейшего сканирования и эксплуатации.",
+      "verified_facts": [
+        "Tom's Hardware опубликовал сообщение 11 октября 2026 года, ссылаясь на исследование Black Lotus Labs.",
+        "Исследование Lumen описывает PoeLLM как кампанию против exposed AI/LLM и open-source сервисов, в том числе LiteLLM и Ollama.",
+        "Lumen указывает, что кампания активна как минимум с апреля 2026 года, а число затронутых серверов превысило 3 400.",
+        "Исследователи связывают вероятный путь эксплуатации LiteLLM с endpoint /mcp-rest/test/connection и CVE-2026-42271.",
+        "Lumen заявила, что заблокировала трафик к известным C2 PoeLLM для своих защищаемых клиентов."
+      ],
+      "significance": "Это проверяемый массовый инцидент против развёрнутой AI-инфраструктуры: кампания показывает, что LLM gateways и self-hosted model services становятся целями обычных эксплуатационных и майнинговых операций, а заражённые AI-серверы могут использоваться для расширения ботнета.",
+      "significance_score": 3,
+      "limitations": "Кампания началась ранее окна — в апреле 2026 года. Свежим элементом является публичное раскрытие Black Lotus Labs и новая оценка масштаба; независимого полного списка пострадавших организаций нет. Числа в исследовании различаются между сводной оценкой более 3 400 жертв и описанием отдельных наблюдаемых кластеров.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет совпадающего сюжета о PoeLLM/Canto Incognito, LiteLLM/Ollama-кампании или раскрытии Black Lotus Labs.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Свежая датированная публикация Tom's Hardware подтверждает раскрытие 11 октября; первичное техническое исследование Black Lotus Labs подтверждает цели, механику C2, масштаб и меры блокировки.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-11T11:45:00Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-10-11T11:45:00Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-10-11T11:45:00Z; timestamp проверен Python против effective window. Сама вредоносная кампания началась в апреле, но её существенное публичное раскрытие с конкретными индикаторами, охватом AI/LLM-сервисов и оценкой более 3 400 жертв опубликовано в пределах effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это техническое раскрытие инцидента, а не существенное судебное или регуляторное действие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран по прямой relevance к безопасности AI-инфраструктуры.",
+      "event_date": "2026-10-11",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.tomshardware.com/tech-industry/cyber-security/cryptomining-malware-used-poetry-to-infect-more-than-3-400-servers-researchers-say-four-words-in-the-poellm-verse-changed-11-times-point-the-botnet-to-new-servers",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Tom's Hardware датирует первое найденное публичное сообщение о раскрытии кампании 11 октября 2026 года; первичный отчёт Lumen подтверждает содержание раскрытия, но на доступной странице не указан явный timestamp публикации.",
+      "id": "cand-002",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.tomshardware.com/tech-industry/cyber-security/cryptomining-malware-used-poetry-to-infect-more-than-3-400-servers-researchers-say-four-words-in-the-poellm-verse-changed-11-times-point-the-botnet-to-new-servers",
+      "source_published_date": "2026-10-11",
+      "source_published_at": "2026-10-11T11:45:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-11T11:45:00Z"
+    },
+    {
+      "title": "OCP Global Summit: Amid Ecosystem Adoption, NVIDIA Opens Vera Rubin Architecture to Help Scale AI Factories Worldwide",
+      "organization": "NVIDIA",
+      "published_date": "2026-10-12",
+      "published_at": "2026-10-12T15:00:25+00:00",
+      "time_precision": "datetime",
+      "topic": "OCP Global Summit: Amid Ecosystem Adoption, NVIDIA Opens Vera Rubin Architecture to Help Scale AI Factories Worldwide",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "OCP",
+        "Global",
+        "Summit",
+        "Amid",
+        "Ecosystem",
+        "Adoption",
+        "NVIDIA",
+        "Opens",
+        "Vera",
+        "Rubin",
+        "Architecture",
+        "Help"
+      ],
+      "geography": "world",
+      "category": "other",
+      "source_type": "official",
+      "primary_source": {
+        "title": "OCP Global Summit: Amid Ecosystem Adoption, NVIDIA Opens Vera Rubin Architecture to Help Scale AI Factories Worldwide",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/ocp-global-summit-vera-rubin-scale-ai-factories"
+      },
+      "supporting_sources": [],
+      "event_summary": "Cisco, Google, Meta, Microsoft and Visionbay are joining many making advances with Vera Rubin.",
+      "verified_facts": [
+        "OCP Global Summit: Amid Ecosystem Adoption, NVIDIA Opens Vera Rubin Architecture to Help Scale AI Factories Worldwide",
+        "Cisco, Google, Meta, Microsoft and Visionbay are joining many making advances with Vera Rubin."
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-10-12T15:00:25+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-12T15:00:25+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-10-12T15:00:25+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-10-12T15:00:25+00:00; timestamp проверен Python против effective window. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-10-12T15:00:25+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-003",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://blogs.nvidia.com/blog/ocp-global-summit-vera-rubin-scale-ai-factories",
+      "source_published_date": "2026-10-12",
+      "source_published_at": "2026-10-12T15:00:25+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-12T15:00:25+00:00"
+    },
+    {
+      "title": "Noiz AI и HKUST представили Helix World — интерактивную аудиовизуальную world model реального времени",
+      "organization": "Noiz AI; Hong Kong University of Science and Technology (HKUST)",
+      "published_date": "2026-10-12",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "World models; physical AI; интерактивная генерация видео; пространственный звук; open weights",
+      "event_type": "model release",
+      "keywords": [
+        "world model",
+        "real-time generation",
+        "audio-visual",
+        "physical AI",
+        "HKUST",
+        "open weights",
+        "Hong Kong"
+      ],
+      "geography": "world",
+      "category": "research",
+      "source_type": "official",
+      "primary_source": {
+        "title": "AI Model Release Tracker",
+        "publisher": "Startrise",
+        "url": "https://www.startrise.io/models/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Meet Helix World: A Real-Time Audio-Visual World Model",
+          "publisher": "Noiz AI",
+          "url": "https://noiz.ai/lp/blog/meet-helix-world"
+        }
+      ],
+      "event_summary": "Noiz AI и HKUST анонсировали Helix World — управляемую клавиатурой интерактивную world model, которая по исходному изображению одновременно генерирует видео и привязанный к движению камеры стереозвук. Авторы открыли demo, код и preview-checkpoint.",
+      "verified_facts": [
+        "Официальная публикация Noiz AI датирована 12 октября 2026 года.",
+        "Helix World создана Noiz AI совместно с HKUST.",
+        "Система принимает стартовое изображение и действия пользователя, генерируя последующие фрагменты видео и пространственного стереозвука.",
+        "Авторы заявляют работу в 24 fps на одном NVIDIA H800 при 768×512 и real-time factor 0,77.",
+        "Код, preview-веса, статья и интерактивная демонстрация опубликованы; checkpoint прямо обозначен как preview."
+      ],
+      "significance": "Это самостоятельный свежий релиз из азиатской AI-экосистемы в заметном направлении world models/physical AI: продукт объединяет интерактивное видеомоделирование среды со звуком, синхронизированным с движением камеры, и сопровождается публичными артефактами для проверки. Значимость ограничена ранней стадией preview и отсутствием независимого медийного подтверждения в выдаче.",
+      "significance_score": 1,
+      "limitations": "Источник — собственное сообщение разработчика, а заявленные бенчмарки и скорость не были независимо воспроизведены в найденных материалах. Публичные веса имеют статус preview.",
+      "archive_status": "none",
+      "archive_reason": "В недавнем архиве нет этого релиза, Noiz AI или Helix World.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата, организации, доступность demo/кода/preview-весов и ключевые технические характеристики подтверждены первичным официальным сообщением. Трекер релизов независимо указывает релиз Helix World 12 октября 2026 года.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: jsonld:datePublished:depth=4=2026-10-12; timestamp проверен Python против effective window. Source Freshness Proof v1: jsonld:datePublished:depth=4=2026-10-12; timestamp проверен Python против effective window. Официальный анонс и публикация публичных артефактов состоялись 12 октября 2026 года, внутри effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Это не курьёзная новость: есть самостоятельный релиз модели, открытые артефакты и техническая документация.",
+      "event_date": "2026-10-12",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://noiz.ai/lp/blog/meet-helix-world",
+      "event_evidence_kind": "official_announcement",
+      "event_date_evidence": "На официальной странице Noiz AI указана дата «12 October 2026»; в тексте страницы сказано, что в этот день компания и HKUST представляют Helix World.",
+      "audit_direction": "hybrid_adaptive_gap",
+      "id": "cand-004",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.startrise.io/models/",
+      "source_published_date": "2026-10-12",
+      "source_published_at": null,
+      "source_time_precision": "date",
+      "source_publication_evidence": "jsonld:datePublished:depth=4=2026-10-12"
+    },
+    {
+      "title": "WindBorne получила контракт ВВС США на данные автономных метеозондов стоимостью до $49 млн",
+      "organization": "WindBorne Systems; U.S. Air Force",
+      "published_date": "2026-10-12",
+      "published_at": "2026-10-12T17:19:14+00:00",
+      "time_precision": "datetime",
+      "topic": "AI weather forecasting; autonomous balloons; atmospheric data; U.S. government procurement",
+      "event_type": "government contract",
+      "keywords": [
+        "WindBorne Systems",
+        "U.S. Air Force",
+        "weather balloons",
+        "AI weather forecasting",
+        "atmospheric data",
+        "WeatherMesh",
+        "autonomous systems"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "WindBorne wins a hefty US Air Force contract for its balloon data",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/12/windborne-wins-a-hefty-us-air-force-contract-for-its-balloon-data/"
+      },
+      "supporting_sources": [],
+      "event_summary": "ВВС США заключили с WindBorne Systems контракт на закупку данных её флота автономных метеозондов стоимостью до $49 млн. Компания сообщает, что уже получила заказы на $1,7 млн; данные с примерно 700 шаров также используются в её собственной AI-модели прогноза погоды.",
+      "verified_facts": [
+        "TechCrunch датирует публикацию 12 октября 2026 года, 10:19 PDT.",
+        "По данным TechCrunch, контракт ВВС США с WindBorne может достигать $49 млн, при этом закупки будут делаться по мере потребности.",
+        "Издание сообщает, что на момент публикации ВВС уже заказали данных на $1,7 млн.",
+        "WindBorne эксплуатирует около 700 метеозондов и использует собранные атмосферные измерения в собственной модели прогнозирования погоды на базе глубокого обучения."
+      ],
+      "significance": "Это заметный государственный контракт для компании, совмещающей автономные физические системы сбора данных и AI-прогнозирование: он показывает коммерциализацию AI-weather инфраструктуры для оборонного заказчика. Масштаб ниже крупнейших AI-инфраструктурных сделок, но событие самостоятельно релевантно направлению physical AI и AI for science.",
+      "significance_score": 2,
+      "limitations": "Доступное подтверждение — эксклюзивный материал TechCrunch; первичный контрактный документ или пресс-релиз ВВС в разрешённой выдаче не обнаружен. Точная дата присуждения контракта не раскрыта в доступном источнике.",
+      "archive_status": "none",
+      "archive_reason": "В архиве нет сюжета о контракте WindBorne с ВВС США или о закупке её данных автономных зондов.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Датированная публикация TechCrunch прямо сообщает о контракте, максимальной стоимости, уже размещённых заказах и характере собираемых данных. Сведения о техническом использовании данных ограничены описанием компании, приведённым в материале.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-12T17:19:14+00:00; timestamp проверен Python против effective window. Свежая публикация TechCrunch вышла 2026-10-12T10:19:00-07:00 (2026-10-12T17:19:00Z), то есть до authoritative cutoff 2026-10-13T05:06:22+03:00. Материал описывает ранее не отражённое присуждение контракта, а не перепечатку старой новости.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это закупочный контракт, не судебное или регуляторное действие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: отбор основан на практической значимости AI-weather и автономной инфраструктуры.",
+      "event_date": null,
+      "event_at": null,
+      "event_time_precision": "unknown",
+      "event_origin_url": null,
+      "event_evidence_kind": "unknown",
+      "event_date_evidence": "",
+      "audit_direction": "general_coverage_gaps",
+      "id": "cand-005",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/10/12/windborne-wins-a-hefty-us-air-force-contract-for-its-balloon-data/",
+      "source_published_date": "2026-10-12",
+      "source_published_at": "2026-10-12T17:19:14+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-12T17:19:14+00:00"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=2, validated unique=2, final candidates=2. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.\nTargeted coverage audit добавил кандидатов: 1.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}
