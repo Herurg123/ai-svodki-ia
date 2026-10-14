@@ -1,0 +1,226 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Meta представила frontier-модели Muse Wonder и Muse Wonder Full для агентов",
+    "organization": "Meta; Meta Superintelligence Labs",
+    "topic": "Frontier models; AI agents; long-term memory; coding; safety; Meta Model API",
+    "event_type": "model_release",
+    "status": "new",
+    "summary": "Meta выпустила Muse Wonder и более мощную Muse Wonder Full — новую серию frontier-моделей для персональных и профессиональных агентных задач. Wonder доступна через Meta Model API и Muse Code, тогда как Wonder Full предназначена для подписчиков Muse Code; Meta акцентирует Active Memory, Active Focus, длительные агентные задачи и coding.",
+    "published_at": "2026-10-12T17:56:56+00:00",
+    "published_date": "2026-10-12",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Muse Wonder: A Frontier Model For Personal & Professional AI Agents",
+        "publisher": "Meta AI",
+        "url": "https://research.meta.ai/blog/muse-wonder"
+      }
+    ],
+    "keywords": [
+      "Meta",
+      "Muse Wonder",
+      "Muse Wonder Full",
+      "frontier model",
+      "Active Memory",
+      "Active Focus",
+      "agents",
+      "coding"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "AMD представила Helion — стоечную платформу для агентных ИИ-нагрузок",
+    "organization": "AMD; Open Compute Project",
+    "topic": "AI data-center infrastructure; rack-scale CPU compute; agentic AI; EPYC Venice; OCP",
+    "event_type": "product and infrastructure announcement",
+    "status": "new",
+    "summary": "AMD на OCP Global Summit представила Helion — эталонный 21-дюймовый rack-scale дизайн, который компания намерена передать экосистеме OCP для выпуска OEM/ODM-поставщиками. В CPU-конфигурации он рассчитан максимум на 128 процессоров EPYC 9996 поколения Venice, или до 32 768 ядер; также заявлена гибридная конфигурация с до 16 GPU Instinct MI350P и сетью до 102 Тбит/с.",
+    "published_at": "2026-10-12T13:00:00+00:00",
+    "published_date": "2026-10-12",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "AMD debuts Helion reference design for agentic AI servers with up to 32,768 Zen 6 ‘Venice’ cores",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/pc-components/cpus/amd-debuts-helion-reference-design-for-agentic-ai-servers-with-up-to-32-768-zen-6-venice-cores-rack-design-ships-next-year-in-cpu-only-and-all-in-one-configurations"
+      }
+    ],
+    "keywords": [
+      "AMD Helion",
+      "EPYC Venice",
+      "Zen 6",
+      "OCP",
+      "ORv4",
+      "agentic AI",
+      "rack-scale",
+      "data centers"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Cursor открыла Origin App Marketplace для агентной разработки",
+    "organization": "Cursor; Anysphere",
+    "topic": "AI coding environments; agentic development workflows; developer-tool marketplace; CI/CD; code review; security integrations",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Cursor открыла Origin App Marketplace: платформа Origin получила свыше 20 интеграций для деплоя, CI, code review, security, мониторинга и управления проектами. Компания также открыла публичную подачу приложений: разработчики могут создавать интеграции через Origin API с JWT, installation access tokens, webhooks, check runs, комментариями и review в pull request.",
+    "published_at": "2026-10-13T00:00:00+00:00",
+    "published_date": "2026-10-13",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Origin App Marketplace",
+        "publisher": "Cursor",
+        "url": "https://cursor.com/changelog/origin-app-marketplace"
+      }
+    ],
+    "keywords": [
+      "Cursor",
+      "Origin",
+      "marketplace",
+      "Cloudflare",
+      "Sentry",
+      "Linear",
+      "CI",
+      "code review",
+      "security",
+      "developer tools"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "American Express предложила подтверждать намерение пользователя при покупках агентов ИИ",
+    "organization": "American Express",
+    "topic": "Agentic commerce; платежная безопасность; авторизация ИИ-агентов; предотвращение несанкционированных покупок",
+    "event_type": "product_and_framework_launch",
+    "status": "new",
+    "summary": "American Express представила Intent Intelligence Framework — механизм, который фиксирует и криптографически связывает ограничения покупателя с транзакцией, выполняемой ИИ-агентом. В схеме используются Create Intent API, Intent ID и Proof of Intent Token; они должны позволять сверять действия агента с одобренными пользователем бюджетом, продавцом и параметрами товара до выдачи платёжных реквизитов.",
+    "published_at": "2026-10-13T13:00:00+00:00",
+    "published_date": "2026-10-13",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Amex introduces a framework to prevent AI agents from making unauthorized purchases",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/13/amex-introduces-a-framework-to-prevent-ai-agents-from-making-unauthorized-purchases/"
+      }
+    ],
+    "keywords": [
+      "American Express",
+      "Intent Intelligence Framework",
+      "agentic commerce",
+      "AI agents",
+      "payment authorization",
+      "Proof of Intent Token",
+      "ACE Developer Toolkit"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Character.AI подала заявление о банкротстве по Chapter 11",
+    "organization": "Character.AI; Disney",
+    "topic": "Consumer AI; chatbots; Chapter 11; AI platform economics; child safety; asset sale",
+    "event_type": "bankruptcy_and_asset_sale",
+    "status": "new",
+    "summary": "Character.AI подала заявление о банкротстве по Chapter 11, указав активы и обязательства в диапазоне от $50 млн до $100 млн. Компания также сообщила о сделке с Disney на продажу части активов за $20 млн и выдачу бессрочной неисключительной лицензии на технологию; сервис продолжит работу в ходе процесса продажи.",
+    "published_at": "2026-10-13T12:23:42+00:00",
+    "published_date": "2026-10-13",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Just 5 years in, interactive chatbot platform Character.AI files for bankruptcy",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/13/just-5-years-in-interactive-chatbot-platform-character-ai-files-for-bankruptcy/"
+      }
+    ],
+    "keywords": [
+      "Character.AI",
+      "Chapter 11",
+      "bankruptcy",
+      "Disney",
+      "consumer AI",
+      "chatbots",
+      "asset sale"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "GitHub Copilot CLI 1.0.97 добавил declarative hooks и защиту секретов",
+    "organization": "GitHub; GitHub Copilot",
+    "topic": "CLI coding agents; custom agents; declarative hooks; MCP; plugin marketplace; secret redaction; agent permissions",
+    "event_type": "software release",
+    "status": "new",
+    "summary": "GitHub выпустила Copilot CLI 1.0.97. Релиз вводит agent-scoped declarative hooks для custom agents, улучшает обнаружение агентов в крупных и глубоко вложенных репозиториях, добавляет безопасную redaction секретов в JSON-выводе и корректирует поведение автономного Autopilot при hook-решениях с режимом ask.",
+    "published_at": "2026-10-13T18:37:05+00:00",
+    "published_date": "2026-10-13",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release 1.0.97",
+        "publisher": "GitHub",
+        "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.97"
+      }
+    ],
+    "keywords": [
+      "GitHub Copilot CLI",
+      "custom agents",
+      "declarative hooks",
+      "Autopilot",
+      "MCP",
+      "plugins",
+      "secret redaction",
+      "AI Credits"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-011",
+    "section": "world",
+    "headline": "Pluto Security вышла из stealth с финансированием 42 млн долларов",
+    "organization": "Pluto Security; Jump Capital; TLV Partners",
+    "topic": "AI security; enterprise AI governance; MCP; agent monitoring; vibe-coded applications; startup financing",
+    "event_type": "funding_and_stealth_exit",
+    "status": "new",
+    "summary": "Pluto Security сообщила о выходе из stealth и суммарном привлечении $42 млн: $8,5 млн seed и $34 млн Series A во главе с Jump Capital. Компания предлагает инструменты наблюдения, анализа рисков и policy enforcement для корпоративных ИИ-инструментов, агентов, skills, расширений и MCP-серверов; по её данным, часть системы способна вмешиваться в сессию агента при попытке получить избыточные разрешения.",
+    "published_at": "2026-10-13T17:18:25+00:00",
+    "published_date": "2026-10-13",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Pluto Security raises $42M as AI gives enterprise security teams a new headache",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/13/pluto-security-raises-42m-as-ai-gives-enterprise-security-teams-a-new-headache/"
+      }
+    ],
+    "keywords": [
+      "Pluto Security",
+      "AI security",
+      "AI agents",
+      "MCP",
+      "vibe coding",
+      "Jump Capital",
+      "enterprise security",
+      "Plutonium"
+    ],
+    "geography": "world",
+    "category": "security"
+  }
+]

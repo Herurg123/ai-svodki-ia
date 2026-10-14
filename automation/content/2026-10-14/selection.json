@@ -1,0 +1,28 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-002",
+    "cand-004",
+    "cand-005",
+    "cand-007",
+    "cand-009",
+    "cand-011"
+  ],
+  "excluded_candidate_ids": [
+    "cand-003",
+    "cand-006",
+    "cand-008",
+    "cand-010",
+    "cand-012"
+  ],
+  "selection_summary": "Выбраны семь подтверждённых самостоятельных сюжетов: запуск frontier-моделей Meta, инфраструктурный дизайн AMD, расширение Cursor, платёжная защита агентных покупок Amex, банкротство Character.AI, обновление GitHub Copilot CLI и выход Pluto Security из stealth. Исключены неподтверждённые сообщения и менее значимые инкрементальные обновления.",
+  "diversity_overrides": [
+    {
+      "type": "publisher",
+      "value": "TechCrunch",
+      "reason": "Из семи подтверждённых достойных сюжетов четыре независимых события освещены TechCrunch: запуск платёжного framework Amex, Chapter 11 Character.AI, запуск Meta Muse Wonder и финансирование Pluto Security. Исключение этих самостоятельных новостей ради мягкого лимита оставило бы выпуск ниже обычной редакционной цели."
+    }
+  ]
+}
