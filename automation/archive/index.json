@@ -1,8 +1,235 @@
 {
   "version": 2,
-  "generated_at": "2026-10-14T02:04:46+00:00",
+  "generated_at": "2026-10-15T01:37:19+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-10-15",
+      "published_at": "2026-10-15T06:00:00+03:00",
+      "search_cutoff_at": "2026-10-15T04:28:45+03:00",
+      "title": "ИИ-Сводка на 15 октября 2026",
+      "link": "https://rybalka.one/posts/2026-10-15/",
+      "summary": "Главные новости искусственного интеллекта за 15 октября 2026 года Новостей сегодня меньше, чем обычно Повестка дня связывает внедрение агентов ИИ с двумя базовыми вопросами: кто получает доступ к корпоративным системам и насколько устойчива инфраструктура, на которой работают сервисы. Параллельно массовые платформы снижают порог создания персональных приложений, а разработчики physical AI переносят проверку опасных сценариев в симуляцию. Отдельный сигнал пришёл из практики эксплуатации: Яндекс п",
+      "topics": [
+        "Workday",
+        "C1.ai",
+        "управление идентичностями агентов",
+        "Google Play",
+        "Google AI Studio",
+        "Android",
+        "vibe coding",
+        "physical AI",
+        "безопасность робототехники",
+        "Higgsfield",
+        "генеративное видео",
+        "агенты ИИ",
+        "Яндекс",
+        "дата-центры",
+        "Алиса AI",
+        "устойчивость инфраструктуры"
+      ],
+      "source_urls": [
+        "https://investor.workday.com/news-and-events/press-releases/news-details/2026/Workday-to-Acquire-C1-ai-a-Leading-Agentic-Identity-Platform-for-People-and-Agents/default.aspx",
+        "https://techcrunch.com/2026/10/13/google-play-now-supports-private-vibe-coded-apps-built-just-for-you/",
+        "https://techcrunch.com/2026/10/13/laplace-intelligence-red-teams-robots-and-self-driving-cars-before-they-hit-the-real-world/",
+        "https://openai.com/index/higgsfield-longer-videos-voice",
+        "https://openai.com/index/third-moment-research",
+        "https://www.interfax.ru/digital/1122406"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-001",
+          "section": "world",
+          "headline": "Workday подписала соглашение о покупке платформы агентной идентификации C1.ai",
+          "organization": "Workday; C1.ai",
+          "topic": "Enterprise AI; M&A; identity governance; governance of AI agents; HR and IT systems",
+          "event_type": "definitive acquisition agreement",
+          "status": "new",
+          "summary": "Workday объявила о подписании окончательного соглашения о покупке C1.ai — платформы управления идентичностью и доступом людей и ИИ-агентов к корпоративным системам. Закрытие ожидается в четвёртом квартале 2027 финансового года Workday, который заканчивается 31 января 2027 года, при выполнении обычных условий.",
+          "published_at": "2026-10-13T07:45:00+00:00",
+          "published_date": "2026-10-13",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Workday to Acquire C1.ai, a Leading Agentic Identity Platform for People and Agents",
+              "publisher": "Workday Investor Relations",
+              "url": "https://investor.workday.com/news-and-events/press-releases/news-details/2026/Workday-to-Acquire-C1-ai-a-Leading-Agentic-Identity-Platform-for-People-and-Agents/default.aspx"
+            }
+          ],
+          "keywords": [
+            "Workday",
+            "C1.ai",
+            "acquisition",
+            "agentic identity",
+            "identity governance",
+            "enterprise AI agents",
+            "access control"
+          ],
+          "geography": "world",
+          "category": "enterprise"
+        },
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "Google Play разрешил запускать приватные Android-приложения, созданные через AI Studio",
+          "organization": "Google; Google Play; Google AI Studio; Gemini",
+          "topic": "Consumer AI; vibe coding; Android; personal apps; Google AI Studio; Gemini integration",
+          "event_type": "product launch",
+          "status": "new",
+          "summary": "Google объявила функцию Google Play для личных приватных Android-приложений: пользователь может создать приложение в Google AI Studio и запускать его на собственном устройстве без публичной публикации в магазине. На старте функция доступна совершеннолетним пользователям в США; Google также сообщила о более глубокой интеграции приложений и игр Google Play в диалоги Gemini.",
+          "published_at": "2026-10-13T17:00:00+00:00",
+          "published_date": "2026-10-13",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Google Play now lets anyone build private, vibe-coded apps that run on Android",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/13/google-play-now-supports-private-vibe-coded-apps-built-just-for-you/"
+            }
+          ],
+          "keywords": [
+            "Google Play",
+            "Google AI Studio",
+            "vibe coding",
+            "Android",
+            "private apps",
+            "Gemini",
+            "consumer AI"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-006",
+          "section": "world",
+          "headline": "Laplace Intelligence предложила red-teaming робототехники в симуляции",
+          "organization": "Laplace Intelligence; Nvidia; T-Mobile; Isuzu; Bot Auto",
+          "topic": "Physical AI; robotics safety; autonomous vehicles; automated red teaming; simulation; world models",
+          "event_type": "company launch/profile",
+          "status": "new",
+          "summary": "Laplace Intelligence описала платформу автоматизированного red-teaming для робототехники и physical AI: интерактивная симуляция на постобученной версии Nvidia Cosmos сочетается с ИИ-агентами, которые создают редкие и опасные сценарии для тестирования автономных систем до реального развёртывания. По данным TechCrunch, среди клиентов компании названы Isuzu, Bot Auto и Nvidia; с Nvidia и T-Mobile ведётся пилот умного города в Сан-Хосе.",
+          "published_at": "2026-10-13T17:30:00+00:00",
+          "published_date": "2026-10-13",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Laplace Intelligence red-teams robots and self-driving cars before they hit the real world",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/13/laplace-intelligence-red-teams-robots-and-self-driving-cars-before-they-hit-the-real-world/"
+            }
+          ],
+          "keywords": [
+            "Laplace Intelligence",
+            "physical AI",
+            "robotics",
+            "autonomous vehicles",
+            "red teaming",
+            "Nvidia Cosmos",
+            "simulation",
+            "AI safety"
+          ],
+          "geography": "world",
+          "category": "robotics"
+        },
+        {
+          "candidate_id": "cand-010",
+          "section": "world",
+          "headline": "Higgsfield расширила длительность ИИ-видео с одной минуты до более чем десяти",
+          "organization": "OpenAI",
+          "topic": "Higgsfield takes AI video from 1 minute to over 10",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Higgsfield takes AI video from 1 minute to over 10",
+          "published_at": "2026-10-13T12:00:00+00:00",
+          "published_date": "2026-10-13",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Higgsfield takes AI video from 1 minute to over 10",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/higgsfield-longer-videos-voice"
+            }
+          ],
+          "keywords": [
+            "Higgsfield",
+            "takes",
+            "video",
+            "minute",
+            "over",
+            "10"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-013",
+          "section": "world",
+          "headline": "Third Moment Research сообщила о запуске 10 тысяч агентов ИИ на 36 и более часов",
+          "organization": "OpenAI",
+          "topic": "How Third Moment Research runs 10,000 agents for 36+ hours",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: How Third Moment Research runs 10,000 agents for 36+ hours",
+          "published_at": "2026-10-14T07:00:00+00:00",
+          "published_date": "2026-10-14",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "How Third Moment Research runs 10,000 agents for 36+ hours",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/third-moment-research"
+            }
+          ],
+          "keywords": [
+            "How",
+            "Third",
+            "Moment",
+            "Research",
+            "runs",
+            "10",
+            "000",
+            "agents",
+            "36+",
+            "hours"
+          ],
+          "geography": "world",
+          "category": "agents"
+        },
+        {
+          "candidate_id": "cand-002",
+          "section": "russia",
+          "headline": "Минцифры сообщило о переводе ключевых систем Яндекса на резервные площадки после атак на три ЦОДа",
+          "organization": "Яндекс; Минцифры России",
+          "topic": "Устойчивость ИИ- и облачной инфраструктуры; резервирование дата-центров; киберфизическая безопасность; доступность сервисов Алисы AI и Рунета",
+          "event_type": "infrastructure security incident and recovery",
+          "status": "new",
+          "summary": "Минцифры сообщило, что содействовало Яндексу в предоставлении дополнительных площадок для переноса ключевых систем после атак, затронувших три дата-центра компании в Сасово, Калуге и Владимире. По данным Интерфакса, два ЦОДа были полностью остановлены, а в Калужском были выведены из строя несколько модулей; Яндекс переводил системы на заранее подготовленные резервные и сторонние площадки. К 14 октября компания восстановила большую часть функций Алисы AI, умных колонок, телевизоров YaOS и умного дома, хотя часть возможностей оставалась нестабильной.",
+          "published_at": "2026-10-14T15:57:00+03:00",
+          "published_date": "2026-10-14",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "В Минцифры заявили, что помогли \"Яндексу\" после атаки на ЦОДы",
+              "publisher": "Интерфакс",
+              "url": "https://www.interfax.ru/digital/1122406"
+            }
+          ],
+          "keywords": [
+            "Яндекс",
+            "ЦОД",
+            "дата-центры",
+            "резервные площадки",
+            "Минцифры",
+            "Алиса AI",
+            "устойчивость инфраструктуры",
+            "атаки БПЛА",
+            "Рунет"
+          ],
+          "geography": "russia",
+          "category": "security"
+        }
+      ]
+    },
     {
       "date": "2026-10-14",
       "published_at": "2026-10-14T06:00:00+03:00",
@@ -6384,10 +6611,10 @@
     {
       "date": "2026-09-12",
       "published_at": "2026-09-12T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-12T04:06:48+03:00",
+      "search_cutoff_at": "2026-09-12T06:00:00+03:00",
       "title": "ИИ-Сводка на 12 сентября 2026",
       "link": "https://rybalka.one/posts/2026-09-12/",
-      "summary": "Главные новости искусственного интеллекта за 12 сентября 2026 года Рынок ИИ продолжает смещаться от выпуска отдельных моделей к управлению их стоимостью, интеграциями и средой применения. В сегодняшней повестке сошлись обновления coding-агентов, специализированные открытые модели, безопасность автономных систем и спрос на данные для обучения роботов. Отдельно заметен китайский контур: DeepSeek обновляет модель для более экономичного inference, а Moonshot AI ставит амбициозную коммерческую цель в",
+      "summary": "Новые модели DeepSeek и Cohere, обновление Devin, изменения в Copilot CLI, расследование активности агентов OpenAI и инвестиции в данные для гуманоидных роботов. Также — планы роста Moonshot AI.",
       "topics": [
         "GitHub Copilot CLI",
         "Devin",

@@ -1,0 +1,42 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-15",
+  "slug": "2026-10-15",
+  "title": "ИИ-Сводка на 15 октября 2026",
+  "description": "Workday покупает платформу контроля идентичностей агентов, Google упрощает запуск личных Android-приложений, а Яндекс восстанавливает сервисы после повреждения ЦОДов. Также — безопасность physical AI и масштабные агентные системы.",
+  "published_at": "2026-10-15T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-15.png",
+  "topics": [
+    "Workday",
+    "C1.ai",
+    "управление идентичностями агентов",
+    "Google Play",
+    "Google AI Studio",
+    "Android",
+    "vibe coding",
+    "physical AI",
+    "безопасность робототехники",
+    "Higgsfield",
+    "генеративное видео",
+    "агенты ИИ",
+    "Яндекс",
+    "дата-центры",
+    "Алиса AI",
+    "устойчивость инфраструктуры"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, developer_tools, security_safety, legal_regulation."
+    }
+  ]
+}
