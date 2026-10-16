@@ -2289,6 +2289,62 @@ async function collectNotebookImportSnapshot(page, publicationUrl) {
     const studioPanelText = normalize(studioPanel?.innerText || "");
     const chatContentText = normalize(chatPanelText.replace(/^Чат\b/i, ""));
 
+    // Новый NotebookLM рисует обзор прямо в центральной колонке, без панели
+    // с видимым заголовком «Чат». Считываем только фактический текст обзора,
+    // исключая обе боковые панели, кнопки, навигацию и поле ввода вопроса.
+    // Длинный текстовый фрагмент обязателен: короткие подсказки интерфейса
+    // не должны означать, что источник уже импортирован.
+    const centralOverview = (() => {
+      const sourceRight = sourcePanel
+        ? sourcePanel.getBoundingClientRect().right
+        : window.innerWidth * 0.26;
+      const studioLeft = studioPanel
+        ? studioPanel.getBoundingClientRect().left
+        : window.innerWidth * 0.74;
+      const left = Math.max(sourceRight + 16, window.innerWidth * 0.24);
+      const right = Math.min(studioLeft - 16, window.innerWidth * 0.78);
+      const top = Math.min(280, Math.max(220, window.innerHeight * 0.3));
+      const bottom = window.innerHeight - 95;
+
+      if (right - left < 180 || bottom - top < 100) {
+        return { text: "", longestTextChars: 0 };
+      }
+
+      const parts = [];
+      let longestTextChars = 0;
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      let node;
+      while ((node = walker.nextNode())) {
+        const value = normalize(node.textContent);
+        if (value.length < 8) continue;
+        const element = node.parentElement;
+        if (!element || !isVisible(element)) continue;
+        if (
+          (sourcePanel && sourcePanel.contains(element)) ||
+          (chatPanel && chatPanel.contains(element)) ||
+          (studioPanel && studioPanel.contains(element))
+        ) continue;
+        if (element.closest(
+          'button, [role="button"], [role="textbox"], [role="dialog"], ' +
+          'input, textarea, [contenteditable="true"], nav, header, footer'
+        )) continue;
+
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        const inOverview = Array.from(range.getClientRects()).some((rect) =>
+          rect.width > 1 && rect.height > 1 &&
+          rect.left < right && rect.right > left &&
+          rect.top < bottom && rect.bottom > top
+        );
+        if (!inOverview) continue;
+
+        parts.push(value);
+        longestTextChars = Math.max(longestTextChars, value.length);
+      }
+
+      return { text: normalize(parts.join(" ")), longestTextChars };
+    })();
+
     const dynamicSelector = [
       '[aria-busy="true"]',
       '[role="progressbar"]',
@@ -2326,6 +2382,10 @@ async function collectNotebookImportSnapshot(page, publicationUrl) {
       chatContentLength: chatContentText.length,
       chatContentHead: chatContentText.slice(0, 800),
       chatContentTail: chatContentText.slice(-300),
+      centralOverviewLength: centralOverview.text.length,
+      centralOverviewHead: centralOverview.text.slice(0, 800),
+      centralOverviewTail: centralOverview.text.slice(-300),
+      centralOverviewLongestTextChars: centralOverview.longestTextChars,
       busyInPanels,
       skeletonInChat,
       rawUrlVisible: Boolean(expectedUrl && bodyText.includes(expectedUrl)),
@@ -2362,14 +2422,18 @@ function sourceImportContentReady(snapshot, minimumContentChars) {
       !/^(?:Блокнот без названия|Без названия|Untitled(?: notebook)?)$/i.test(headerTitle)
   );
 
+  const chatReady = Number(snapshot && snapshot.chatContentLength || 0) >= minimumContentChars;
+  const centralOverviewReady =
+    Number(snapshot && snapshot.centralOverviewLength || 0) >= minimumContentChars &&
+    Number(snapshot && snapshot.centralOverviewLongestTextChars || 0) >= 80;
+
   return {
-    ready:
-      Number(snapshot && snapshot.chatContentLength || 0) >= minimumContentChars ||
-      generatedTitleReady,
-    signal:
-      Number(snapshot && snapshot.chatContentLength || 0) >= minimumContentChars
-        ? "chat-content"
-        : (generatedTitleReady ? "generated-title" : "none"),
+    ready: chatReady || centralOverviewReady || generatedTitleReady,
+    signal: chatReady
+      ? "chat-content"
+      : (centralOverviewReady
+        ? "central-overview"
+        : (generatedTitleReady ? "generated-title" : "none")),
   };
 }
 
@@ -2425,6 +2489,10 @@ async function waitForSourceImportReady(config, page, publication) {
       chatContentLength: snapshot.chatContentLength,
       chatContentHead: snapshot.chatContentHead,
       chatContentTail: snapshot.chatContentTail,
+      centralOverviewLength: snapshot.centralOverviewLength,
+      centralOverviewHead: snapshot.centralOverviewHead,
+      centralOverviewTail: snapshot.centralOverviewTail,
+      centralOverviewLongestTextChars: snapshot.centralOverviewLongestTextChars,
       sourceLoadingIndicators: snapshot.sourceLoadingIndicators,
       busyInPanels: snapshot.busyInPanels,
       skeletonInChat: snapshot.skeletonInChat,
@@ -2441,6 +2509,7 @@ async function waitForSourceImportReady(config, page, publication) {
           `Источник полностью обработан, интерфейс стабилен. ` +
             `сигнал готовности: ${contentReady.signal}; ` +
             `текст старой области чата: ${snapshot.chatContentLength} символов; ` +
+            `текст центрального обзора: ${snapshot.centralOverviewLength} символов; ` +
             `видео доступно: да; ` +
             `текущий заголовок: ${snapshot.headerTitle}.`
         );
@@ -2459,6 +2528,8 @@ async function waitForSourceImportReady(config, page, publication) {
       videoReady: snapshot.videoReady,
       headerTitle: snapshot.headerTitle || "не определён",
       chatContentLength: snapshot.chatContentLength,
+      centralOverviewLength: snapshot.centralOverviewLength,
+      centralOverviewLongestTextChars: snapshot.centralOverviewLongestTextChars,
       rawUrlVisible: snapshot.rawUrlVisible,
       contentReadySignal: contentReady.signal,
       stableForMs: stableSince ? Date.now() - stableSince : 0,
@@ -2474,6 +2545,7 @@ async function waitForSourceImportReady(config, page, publication) {
           `занятые области=${snapshot.busyInPanels}, ` +
           `заглушки чата=${snapshot.skeletonInChat}, ` +
           `текст старой области чата=${snapshot.chatContentLength}, ` +
+          `центральный обзор=${snapshot.centralOverviewLength}, ` +
           `контент=${contentReady.signal}, ` +
           `видео активно=${snapshot.videoReady ? "да" : "нет"}, ` +
           `заголовок=${snapshot.headerTitle || "не определён"}, ` +
@@ -3181,6 +3253,19 @@ async function createNotebookAndAddSource(config, context, publication, job, sta
   );
   log(config, "Команда добавления источника отправлена.");
 
+  // Сохраняем настоящий UUID нового блокнота ДО ожидания внешнего импорта.
+  // Если NotebookLM не успел обработать источник, следующий scheduled run
+  // продолжит этот блокнот, а не создаст ещё один дубликат.
+  const pendingNotebookUrl = activePage.url();
+  if (!/^https:\/\/notebook\.google\.com\/notebook\/[^/?#]+(?:[?#]|$)/i.test(pendingNotebookUrl)) {
+    throw new Error(`Невозможно сохранить URL нового NotebookLM: ${pendingNotebookUrl}`);
+  }
+  job.notebookUrl = pendingNotebookUrl;
+  job.status = "CREATING_VIDEO";
+  job.updatedAt = new Date().toISOString();
+  saveState(config, state);
+  log(config, `Блокнот сохранён для безопасного resume импорта: ${pendingNotebookUrl}`);
+
   stage = "WAIT_SOURCE_READY";
   await waitForSourceImportReady(
     config,
@@ -3741,6 +3826,11 @@ async function continueCreatingVideo(config, context, publication, job, state) {
     activePage,
     publication
   );
+
+  // CREATING_VIDEO теперь также означает незавершённый импорт. После resume
+  // заголовок может оставаться «Блокнот без названия». Переименование
+  // идемпотентно, в том числе для прежних уже переименованных jobs.
+  await renameCurrentNotebook(config, activePage, publication, job, state);
 
   await startVideoGeneration(
     config,
