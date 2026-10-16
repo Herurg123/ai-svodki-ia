@@ -69,8 +69,20 @@ not delete/recreate that profile or its Google/NotebookLM/Dzen sessions.
 Current NotebookLM home handling supports the current `+ Новый блокнот` /
 `Недавние блокноты` UI while preserving compatibility with the previous
 `Создать` / `Мои блокноты` surface. Source import waits for a stable
-content-ready state before video generation. Existing notebook cards are opened
-through their href and the selected notebook is renamed to `ИИ-YYYY-MM-DD`.
+content-ready state before video generation: the worker accepts a substantial
+visible central overview, legacy chat text, or a generated notebook title only
+alongside a confirmed source count, no loading indicators, and an enabled
+video control. After the readiness signals agree, the UI must remain stable
+for at least 5 seconds (the source timeout remains configurable, with the
+current 300-second operator setting). An untitled notebook is not sufficient
+evidence on its own.
+
+The newly created notebook's canonical URL is persisted as `CREATING_VIDEO`
+*before* the potentially long source-readiness wait. If that wait times out,
+a later scheduled run resumes the same notebook by URL, verifies readiness,
+renames it to `ИИ-YYYY-MM-DD`, and only then starts generation, rather than
+creating another notebook for the same publication. Existing notebook cards
+remain the fallback when a saved URL cannot be opened.
 
 Downloaded video is registered persistently and is not regenerated/redownloaded
 when the same publication is already known. PNG preview is generated from the
