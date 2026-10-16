@@ -1,0 +1,220 @@
+[
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Anthropic начала давать METR доступ уровня сотрудников для независимой оценки рисков",
+    "organization": "Anthropic; METR",
+    "topic": "Независимая оценка frontier-моделей и практик безопасности",
+    "event_type": "safety governance announcement",
+    "status": "new",
+    "summary": "Anthropic сообщила, что начала предоставлять шести сотрудникам независимой организации METR доступ к оборудованию, офисному пространству и внутренним инструментам, примерно сопоставимый с доступом её команд оценки рисков. METR сможет публиковать собственные оценки рисков, инцидентов и практик компании; Anthropic сохраняет лишь узко определённое право требовать редактирования чувствительных категорий данных.",
+    "published_at": "2026-10-15T17:20:00+00:00",
+    "published_date": "2026-10-15",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "An update on independent evaluators",
+        "publisher": "Anthropic",
+        "url": "https://www.anthropic.com/news/an-update-on-independent-evaluators"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "METR",
+      "independent evaluators",
+      "frontier-model safety",
+      "risk assessment",
+      "external oversight"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Amazon представила носимые ИИ-устройства Bee Frontier и Bee Eclipse",
+    "organization": "Amazon; Bee",
+    "topic": "Потребительские ИИ-устройства и персональная память",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Принадлежащая Amazon компания Bee анонсировала Bee Frontier — носимое устройство, которое можно закрепить на одежде или носить на запястье, — и Bee Eclipse, компактное устройство для смартфона. Устройства используют ИИ для обработки разговоров в реальном времени, создания резюме, задач и напоминаний; платная подписка добавляет интеграции с Amazon.com, Alexa+ и сторонними приложениями.",
+    "published_at": "2026-10-15T12:00:00+00:00",
+    "published_date": "2026-10-15",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Amazon’s Bee launches two new personal AI devices, starting at $75",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/15/amazons-bee-launches-two-new-personal-ai-devices-starting-at-75/"
+      }
+    ],
+    "keywords": [
+      "Amazon",
+      "Bee",
+      "AI wearable",
+      "Bee Frontier",
+      "Bee Eclipse",
+      "Alexa+",
+      "personal AI"
+    ],
+    "geography": "world",
+    "category": "multimodal"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Google запустила Universal Cart для покупок через Search и Gemini в США",
+    "organization": "Google; Gemini",
+    "topic": "Agentic commerce и ИИ-покупки",
+    "event_type": "product rollout",
+    "status": "new",
+    "summary": "Google начала развёртывание Universal Cart для пользователей в США. Инструмент собирает товары, найденные через Search и приложение Gemini, в единый список, отслеживает скидки и наличие, а также учитывает бонусы банковских карт и промокоды. Оформление покупок связано с Universal Commerce Protocol — стандартом Google для взаимодействия ИИ-агентов и ритейлеров.",
+    "published_at": "2026-10-15T14:29:33+00:00",
+    "published_date": "2026-10-15",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google’s Universal Cart shopping tool launches in the US",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/15/googles-universal-cart-shopping-tool-launches-in-the-us/"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Gemini",
+      "Universal Cart",
+      "agentic commerce",
+      "UCP",
+      "AI shopping",
+      "Google Search"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "OpenAI обновила Codex CLI: управление агентом на лету, параллельное чтение контекста и защита сети",
+    "organization": "OpenAI; Codex",
+    "topic": "CLI coding agents; interactive steering; parallel tool execution; sandboxing; network policy; MCP",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "В релизе Codex CLI 0.163.0 появились немедленное направление текущего ответа follow-up сообщением, searchable-панель /config, перезапуск managed background server из /daemon и параллельный запуск независимых read-only инструментов. Одновременно OpenAI усилила сетевую и sandbox-защиту: proxy проверяет разрешение до DNS lookup, отклоняет дублирующиеся Host-заголовки и блокирует обход inspection hooks через credential aliases.",
+    "published_at": "2026-10-15T21:30:38+00:00",
+    "published_date": "2026-10-15",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release 0.163.0 · openai/codex",
+        "publisher": "GitHub / OpenAI",
+        "url": "https://github.com/openai/codex/releases/tag/rust-v0.163.0"
+      }
+    ],
+    "keywords": [
+      "Codex CLI",
+      "rust-v0.163.0",
+      "coding agents",
+      "parallel tools",
+      "sandbox integrity",
+      "network policy",
+      "MCP",
+      "Daybreak"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "GitHub Copilot CLI 1.0.98 добавила Gemini 4 Argon и исправила работу hooks и MCP",
+    "organization": "GitHub; GitHub Copilot; Google",
+    "topic": "CLI coding agents; model selection; Gemini 4 Argon; command hooks; MCP; permissions",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "GitHub Copilot CLI 1.0.98 добавила поддержку Gemini 4 Argon. Релиз также исправляет потерю child-exit signals для command hooks, синхронизацию MCP status и /mcp при переключении split-view sessions, а также обработку незавершённых permission requests после resume.",
+    "published_at": "2026-10-14T19:52:33+00:00",
+    "published_date": "2026-10-14",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release 1.0.98 · github/copilot-cli",
+        "publisher": "GitHub",
+        "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.98"
+      }
+    ],
+    "keywords": [
+      "GitHub Copilot CLI",
+      "v1.0.98",
+      "Gemini 4 Argon",
+      "command hooks",
+      "MCP",
+      "permission requests",
+      "coding agents"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "Claude Code 2.1.301 добавила watchdog для unattended retries и расширила телеметрию решений",
+    "organization": "Anthropic; Claude Code",
+    "topic": "CLI coding agents; unattended retries; observability; OpenTelemetry; permissions; worktrees",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "Claude Code 2.1.301 прекращает unattended retry, когда usage-limit reset слишком далёк, вместо неопределённого ожидания. В telemetry добавлены classifier verdict, permission mode и classifier category для различения решений auto mode и permission rules; также исправлено удаление worktree при выходе, если в нём могут быть незапушенные коммиты.",
+    "published_at": "2026-10-15T14:34:23+00:00",
+    "published_date": "2026-10-15",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Claude Code v2.1.301",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/claude-code-2.1.301"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "v2.1.301",
+      "unattended retry",
+      "usage limit",
+      "OpenTelemetry",
+      "classifier",
+      "permissions",
+      "worktrees"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-019",
+    "section": "world",
+    "headline": "Booz Allen: агенты ИИ прошли OT-сценарии и за 16 минут достигли промышленной сети в лабораторном тесте",
+    "organization": "Booz Allen Hamilton",
+    "topic": "Безопасность ИИ-агентов; operational technology; промышленные системы; автономные кибердействия; physical AI",
+    "event_type": "research findings / security assessment publication",
+    "status": "new",
+    "summary": "SecurityWeek сообщила о результатах исследования Booz Allen в изолированной лаборатории operational technology: ИИ-агенты без предварительных знаний о среде выполнили все поставленные цели в восьми сценариях. В одном тесте они прошли от компрометации периметра до действий в промышленной сети чуть более чем за 16 минут; в другом — обнаружили роботизированную руку, определили её зоны защиты и ограничения движения и переместили её за считанные минуты.",
+    "published_at": "2026-10-14T16:00:00+00:00",
+    "published_date": "2026-10-14",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "AI Agents Navigate Unfamiliar OT Systems and Move Equipment in Minutes, Booz Allen Finds",
+        "publisher": "SecurityWeek",
+        "url": "https://www.securityweek.com/ai-agents-navigate-unfamiliar-ot-systems-and-move-equipment-in-minutes-booz-allen-finds/"
+      }
+    ],
+    "keywords": [
+      "Booz Allen",
+      "AI agents",
+      "OT security",
+      "industrial control systems",
+      "autonomous cyber",
+      "robotic arm",
+      "industrial network"
+    ],
+    "geography": "world",
+    "category": "security"
+  }
+]
