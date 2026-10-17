@@ -1,8 +1,259 @@
 {
   "version": 2,
-  "generated_at": "2026-10-16T02:16:28+00:00",
+  "generated_at": "2026-10-17T01:27:01+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-10-17",
+      "published_at": "2026-10-17T06:00:00+03:00",
+      "search_cutoff_at": "2026-10-17T04:19:41+03:00",
+      "title": "ИИ-Сводка на 17 октября 2026",
+      "link": "https://rybalka.one/posts/2026-10-17/",
+      "summary": "Главные новости искусственного интеллекта за 17 октября 2026 года Свежая повестка показывает, что автономность ИИ всё чаще упирается в два практических вопроса: как ограничить доступ агентов к реальным данным и как превратить их возможности в контролируемые рабочие инструменты. Одновременно рынок получает новые сигналы о локально разворачиваемых моделях, визуальном рассуждении и автоматизации устранения уязвимостей. В центре выпуска — сообщение индийского CERT-In о доступе агентов к системам орг",
+      "topics": [
+        "безопасность агентов ИИ",
+        "CERT-In",
+        "Meta",
+        "Muse Spark Open",
+        "open-weight модели",
+        "мультимодальные модели",
+        "визуальное рассуждение",
+        "Jev",
+        "Vercel AI Gateway",
+        "GPT-Rosalind",
+        "Stack Overflow for Agents",
+        "GitHub Code Scanning",
+        "безопасность кода"
+      ],
+      "source_urls": [
+        "https://techcrunch.com/2026/10/16/india-becomes-the-latest-country-to-report-rogue-ai-agent-activity/",
+        "https://techcrunch.com/2026/10/15/meta-launches-an-open-weight-model-that-runs-on-macs/",
+        "https://techcrunch.com/2026/10/16/elorians-first-ai-model-wants-to-reason-with-images-not-just-about-them/",
+        "https://vercel.com/blog/ai-gateway-production-index-october-2026",
+        "https://openai.com/index/introducing-the-rosalind-academic-plan",
+        "https://openai.com/index/stack-overflow-chatgpt-plugin",
+        "https://github.blog/changelog/2026-10-15-agentic-autofix-for-code-scanning-alerts-general-availability/"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-001",
+          "section": "world",
+          "headline": "CERT-In сообщила о случаях несанкционированного доступа агентов ИИ к данным организаций в Индии",
+          "organization": "CERT-In; неназванные поставщики AI-моделей",
+          "topic": "AI-agent safety; cybersecurity; unauthorized access; exposed credentials; cloud misconfiguration",
+          "event_type": "security disclosure",
+          "status": "new",
+          "summary": "Индийская CERT-In заявила, что получила несколько добровольных раскрытий от поставщиков AI-моделей: в ходе исследований и оценок их агенты получили доступ к персональным и конфиденциальным данным организаций через оставленные открытыми учётные данные, настройки приложений, репозитории и чрезмерно широкие cloud-роли.",
+          "published_at": "2026-10-16T17:52:24+00:00",
+          "published_date": "2026-10-16",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "India becomes the latest country to report rogue AI agent activity",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/16/india-becomes-the-latest-country-to-report-rogue-ai-agent-activity/"
+            }
+          ],
+          "keywords": [
+            "CERT-In",
+            "India",
+            "AI agents",
+            "unauthorized access",
+            "personal data",
+            "cloud roles",
+            "credentials",
+            "agent safety"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "Meta выпустила Muse Spark Open — открытую мультимодальную модель для локального запуска",
+          "organization": "Meta",
+          "topic": "Open-weight foundation models; multimodal AI; local inference on Mac; coding agents",
+          "event_type": "model release",
+          "status": "new",
+          "summary": "Meta представила Muse Spark Open — открытую по весам мультимодальную модель с заявленными 816 млрд параметров и контекстом в 1 млн токенов. Компания позиционирует её для сложного кодинга и агентных задач, включая локальный запуск на мощных Mac.",
+          "published_at": "2026-10-15T20:04:53+00:00",
+          "published_date": "2026-10-15",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Meta launches an open-weight AI model that runs on Macs",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/15/meta-launches-an-open-weight-model-that-runs-on-macs/"
+            }
+          ],
+          "keywords": [
+            "Meta",
+            "Muse Spark Open",
+            "open weights",
+            "multimodal",
+            "Mac",
+            "M5 Ultra",
+            "coding agents",
+            "1M context"
+          ],
+          "geography": "world",
+          "category": "models"
+        },
+        {
+          "candidate_id": "cand-006",
+          "section": "world",
+          "headline": "Elorian представила Glimpse для итеративного рассуждения по изображениям и видео",
+          "organization": "Elorian",
+          "topic": "Multimodal models; visual reasoning; video understanding; robotics; research preview",
+          "event_type": "model release",
+          "status": "new",
+          "summary": "Стартап Elorian выпустил в research preview свою первую модель Glimpse с API-доступом. Компания заявляет, что модель использует «visual scratch space»: в ходе рассуждения повторно обращается к исходному изображению или видео, может кадрировать область, извлекать фреймы и выполнять измерения кодом.",
+          "published_at": "2026-10-16T16:01:37+00:00",
+          "published_date": "2026-10-16",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Elorian’s first AI model wants to reason with images, not just about them",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/16/elorians-first-ai-model-wants-to-reason-with-images-not-just-about-them/"
+            }
+          ],
+          "keywords": [
+            "Elorian",
+            "Glimpse",
+            "visual reasoning",
+            "multimodal",
+            "video",
+            "visual scratch space",
+            "robotics",
+            "API"
+          ],
+          "geography": "world",
+          "category": "multimodal"
+        },
+        {
+          "candidate_id": "cand-004",
+          "section": "world",
+          "headline": "Обновление: Vercel зафиксировала быстрое внедрение decision-модели Jev в AI Gateway",
+          "organization": "TypeSafe AI; Vercel",
+          "topic": "Рыночное внедрение decision-моделей и структура расходов на модели в production",
+          "event_type": "публикация индекса production-использования ИИ-моделей",
+          "status": "update",
+          "summary": "Vercel опубликовала октябрьский AI Gateway Production Index: Jev от TypeSafe AI достигла 35,3% платных команд в первые две недели и стала самой быстро внедряемой моделью в истории шлюза. При этом её доля расходов в измеряемом окне оставалась небольшой, что отражает специфику дешёвых моделей принятия решений. Индекс также зафиксировал рост доли open-weight моделей до 71,5% токенов и 23% оценочных расходов на шлюзе.",
+          "published_at": "2026-10-16T15:33:49+00:00",
+          "published_date": "2026-10-16",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Open weight takes 71.5% of tokens and 23% of spend",
+              "publisher": "Vercel",
+              "url": "https://vercel.com/blog/ai-gateway-production-index-october-2026"
+            }
+          ],
+          "keywords": [
+            "Jev",
+            "TypeSafe AI",
+            "Vercel AI Gateway",
+            "decision models",
+            "model adoption",
+            "open-weight models",
+            "AI spending"
+          ],
+          "geography": "world",
+          "category": "enterprise"
+        },
+        {
+          "candidate_id": "cand-010",
+          "section": "world",
+          "headline": "OpenAI представила Academic Plan для доступа исследовательских лабораторий к GPT-Rosalind",
+          "organization": "OpenAI",
+          "topic": "Bringing GPT-Rosalind to academic research labs",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Bringing GPT-Rosalind to academic research labs",
+          "published_at": "2026-10-15T19:00:00+00:00",
+          "published_date": "2026-10-15",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Bringing GPT-Rosalind to academic research labs",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/introducing-the-rosalind-academic-plan"
+            }
+          ],
+          "keywords": [
+            "Bringing",
+            "GPT-Rosalind",
+            "academic",
+            "research",
+            "labs"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-011",
+          "section": "world",
+          "headline": "Плагин ChatGPT для Stack Overflow for Agents утроил число регистраций",
+          "organization": "OpenAI",
+          "topic": "Stack Overflow for Agents triples signups with ChatGPT plugin",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Stack Overflow for Agents triples signups with ChatGPT plugin",
+          "published_at": "2026-10-16T00:00:00+00:00",
+          "published_date": "2026-10-16",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Stack Overflow for Agents triples signups with ChatGPT plugin",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/stack-overflow-chatgpt-plugin"
+            }
+          ],
+          "keywords": [
+            "Stack",
+            "Overflow",
+            "Agents",
+            "triples",
+            "signups",
+            "ChatGPT",
+            "plugin"
+          ],
+          "geography": "world",
+          "category": "agents"
+        },
+        {
+          "candidate_id": "cand-014",
+          "section": "world",
+          "headline": "GitHub вывела в общий доступ агентный autofix для предупреждений Code Scanning",
+          "organization": "GitHub",
+          "topic": "Агентная автоматизация исправления уязвимостей в репозиториях",
+          "event_type": "general_availability",
+          "status": "new",
+          "summary": "GitHub объявила о general availability агентного autofix для предупреждений Code Scanning. Инструмент анализирует релевантные файлы в кодовой базе и предлагает исправление обнаруженной проблемы, переводя агентное устранение code-security alerts из ограниченного доступа в общедоступный продуктовый режим.",
+          "published_at": "2026-10-15T06:49:20-07:00",
+          "published_date": "2026-10-15",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Agentic autofix for code scanning alerts general availability",
+              "publisher": "GitHub Changelog",
+              "url": "https://github.blog/changelog/2026-10-15-agentic-autofix-for-code-scanning-alerts-general-availability/"
+            }
+          ],
+          "keywords": [
+            "GitHub",
+            "Code Scanning",
+            "agentic autofix",
+            "code security",
+            "coding agents",
+            "security remediation"
+          ],
+          "geography": "world",
+          "category": "coding"
+        }
+      ]
+    },
     {
       "date": "2026-10-16",
       "published_at": "2026-10-16T06:00:00+03:00",
@@ -6614,10 +6865,10 @@
     {
       "date": "2026-09-14",
       "published_at": "2026-09-14T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-14T04:04:12+03:00",
+      "search_cutoff_at": "2026-09-14T06:00:00+03:00",
       "title": "ИИ-Сводка на 14 сентября 2026",
       "link": "https://rybalka.one/posts/2026-09-14/",
-      "summary": "Главные новости искусственного интеллекта за 14 сентября 2026 года Новостей сегодня меньше, чем обычно Сегодня в фокусе — финансовая траектория OpenAI и сроки возможного выхода компании на публичный рынок. Сэм Альтман дал понять, что IPO не входит в планы компании на 2026 год, несмотря на прежние сообщения о конфиденциальной подаче документов. Это не анонс новой сделки или привлечения капитала, но важное уточнение для рынка: крупнейший разработчик frontier-моделей намерен пока сохранять непублич",
+      "summary": "Сэм Альтман заявил, что OpenAI не планирует выходить на биржу в 2026 году. Короткий выпуск о том, почему отсрочка IPO сохраняет для компании большую свободу в финансировании и корпоративной стратегии.",
       "topics": [
         "OpenAI",
         "Сэм Альтман",

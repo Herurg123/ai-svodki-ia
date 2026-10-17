@@ -1,0 +1,147 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-10-17",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-10-17.json",
+  "warnings": [
+    "cand-002: источник показывает дату без точного времени.",
+    "cand-003: источник показывает дату без точного времени.",
+    "cand-013: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: openai (4), techcrunch (4)",
+    "Исследовательский пул перегружен одной организацией: openai (4)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-10-17",
+  "started_at": "2026-10-17T01:25:13+00:00",
+  "finished_at": "2026-10-17T01:25:45+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 91,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "206e4db2e3df75907fbb1b0fed31bdb13aa9b436432fd3a0dbf9683a4adf964f",
+    "candidates_sha256": "e9ffd32dd78fc1a642b4eef79967d5a209ba2f8dfcc54632e119b7fc13eddc62",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-10-15T05:06:10+03:00",
+      "end_at": "2026-10-17T04:19:41+03:00",
+      "latest_archive_at": "2026-10-16T05:06:10+03:00",
+      "start_date": "2026-10-15",
+      "end_date": "2026-10-17",
+      "latest_archive_date": "2026-10-16"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "9da3cc3796599f0e2e5da78248c6c28261a7f0694579f1a227a7ed1739e36ce6",
+    "editorial_sha256": "1392d2f29fac179a88bc871fa5c493e0b958e35ebc7ac12b25fd1994adbb35fc",
+    "digest_sha256": "cb4a8803008cafc91a2f091433f628a8b733cd35c111a98960845a93eb29d222",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-10-17.jpg",
+          "normalized_value": "ai-svodka-2026-10-17.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.meta_marking",
+          "model_value": "inconsistent",
+          "normalized_value": "first Meta*, subsequent Meta"
+        }
+      ],
+      "changed_count": 1,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: В коротком выпуске три независимых подтверждённых события высокой редакционной ценности опубликованы TechCrunch: раскрытие CERT-In, отдельный open-weight релиз Meta и релиз мультимодальной модели Elorian. Они относятся к разным организациям и темам и не являются дублями."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0495756c8808d1c3016ad2ce79af8887d1a4b58642ad5739a6",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 187489,
+        "input_tokens_details": {
+          "cache_write_tokens": 18335,
+          "cached_tokens": 169151
+        },
+        "output_tokens": 4139,
+        "output_tokens_details": {
+          "reasoning_tokens": 773
+        },
+        "total_tokens": 191628
+      }
+    },
+    "error": null
+  },
+  "total_usage": {
+    "input_tokens": 187489,
+    "output_tokens": 4139,
+    "total_tokens": 191628,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "aec14925b7b53d6dee6e9ae80d020831ebc61649",
+    "run_id": "38990290757",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-10-17T04:19:41+03:00"
+}

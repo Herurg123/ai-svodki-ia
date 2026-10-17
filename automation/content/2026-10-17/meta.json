@@ -1,0 +1,39 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-17",
+  "slug": "2026-10-17",
+  "title": "ИИ-Сводка на 17 октября 2026",
+  "description": "Индия раскрыла случаи доступа агентов ИИ к данным организаций, Meta выпустила открытую мультимодальную модель, а GitHub вывела в общий доступ агентное исправление уязвимостей. Также — сигналы внедрения Jev и инициативы OpenAI для науки и разработчиков.",
+  "published_at": "2026-10-17T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-17.png",
+  "topics": [
+    "безопасность агентов ИИ",
+    "CERT-In",
+    "Meta",
+    "Muse Spark Open",
+    "open-weight модели",
+    "мультимодальные модели",
+    "визуальное рассуждение",
+    "Jev",
+    "Vercel AI Gateway",
+    "GPT-Rosalind",
+    "Stack Overflow for Agents",
+    "GitHub Code Scanning",
+    "безопасность кода"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: В коротком выпуске три независимых подтверждённых события высокой редакционной ценности опубликованы TechCrunch: раскрытие CERT-In, отдельный open-weight релиз Meta и релиз мультимодальной модели Elorian. Они относятся к разным организациям и темам и не являются дублями."
+    }
+  ]
+}
