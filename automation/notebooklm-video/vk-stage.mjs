@@ -15,9 +15,7 @@ import { VideoClient, methodRequest, uploadVideoChunks, confirmVideo, listAlbums
 const ROOT=path.dirname(fileURLToPath(import.meta.url));
 const require=createRequire(import.meta.url);
 const history=require("./history-utils.js");
-const browserSession=require("./browser-session.js");
 const logUtils=require("./log-utils.js");
-const ffmpeg=require("ffmpeg-static");
 
 export function validateInput(config,job,date){
   const vk=config.vkPublish||{};
@@ -103,6 +101,7 @@ async function unprotectToken(file){
   });
 }
 async function verticalStoryPng(source){
+  const ffmpeg=require("ffmpeg-static");
   if(!ffmpeg)throw new Error("ffmpeg-static не установлен");
   const output=path.join(os.tmpdir(),"notebooklmbot-vk-story-"+randomUUID()+".png");
   const filters="scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:white";
@@ -237,6 +236,7 @@ export async function main(){
   if(lockedPhases.includes(job.vkPublication?.phase))throw new Error(
     "VK: неопределённая предыдущая мутация "+job.vkPublication.phase+"; автоматическое повторение запрещено"
   );
+  const browserSession=require("./browser-session.js");
   const browser=config.browserDebugHost;
   if(browser!=="127.0.0.1"&&browser!=="localhost")throw new Error("VK CDP должен быть локальным");
   const token=await unprotectToken(args.accessFile);
