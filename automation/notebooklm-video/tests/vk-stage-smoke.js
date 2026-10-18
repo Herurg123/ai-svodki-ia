@@ -104,7 +104,7 @@ const {pathToFileURL}=require("node:url");
     // An uncertain album mutation permits read-only reconciliation, not another mutation.
     job.vkPublication={status:"ERROR",phase:"ALBUM_ADD_REQUESTED",date,
       groupId:args.groupId,playlistId:args.playlistId,articleUrl:args.article,
-      videoFile:args.videoFile,videoId:"9001"};
+      videoFile:args.videoFile,templateHash:args.templateHash,videoId:"9001"};
     const missing={...dependencies,membership:async()=>["-1"]};
     await assert.rejects(runStage(config,job,state,args,missing),/повтор запрещён/);
     assert.equal(albumAdds,1);
