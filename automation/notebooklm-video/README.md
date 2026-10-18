@@ -55,7 +55,7 @@ RSS rybalka.one
   -> vk-stage.mjs (optional, config.vkPublish.automaticEnabled=true)
      -> VK video -> «Сводки по ИИ» playlist
      -> VK wall post with video + article link
-     -> VK community story with post sticker + Dzen link
+     -> VK community story: unchanged preview PNG + post sticker + Dzen link
 ~~~
 
 `full-worker.js` owns the outer lock for the whole scheduled sequence.
