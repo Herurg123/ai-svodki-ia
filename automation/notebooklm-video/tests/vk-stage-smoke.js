@@ -52,7 +52,8 @@ const {pathToFileURL}=require("node:url");
     config.vkPublish.automaticEnabled=automatic;
     const stageSrc=fs.readFileSync(path.join(root,"vk-stage.mjs"),"utf8");
     assert.match(stageSrc,/--confirm=VK-LIVE-/,"manual live needs explicit date-bound confirmation");
-    assert.match(stageSrc,/VK_STORY_CAPTION_B64/,"caption must be drawn onto temporary story PNG");
+    assert.match(stageSrc,/const png=fs\.readFileSync\(args\.cover\)/,"story must use original PNG");
+    assert.doesNotMatch(stageSrc,/verticalStoryPng|VK_STORY_CAPTION_B64|ffmpeg-static/,"story image must not be transformed");
     assert.equal(args.cover,png);
     assert.equal(args.title,"ИИ-Сводка на 17 октября 2026 | Подпишись, чтоб получать свежее!");
     assert.ok(args.description.includes("https://dzen.ru/a/articleABC"));
@@ -75,8 +76,13 @@ const {pathToFileURL}=require("node:url");
       upload:async()=>{uploads++;},publishVideo:async()=>true,
       confirmVideo:async()=>true,listAlbums:async()=>[{id:1,title:"Сводки по ИИ"}],
       membership:async()=>{albumReads++;return albumAdds?["-2","-1","1"]:["-2","-1"];},
-      addToAlbum:async()=>{albumAdds++;return true;},verticalPng:async()=>png,
-      uploadStoryPng:async()=> "fixture-upload-result",
+      addToAlbum:async()=>{albumAdds++;return true;},
+      uploadStoryPng:async(url,uploadedBytes)=>{
+        assert.equal(url,"https://pu.vk.com/upload");
+        assert.ok(Buffer.isBuffer(uploadedBytes));
+        assert.deepEqual(uploadedBytes,fs.readFileSync(png),"story must upload original PNG bytes");
+        return "fixture-upload-result";
+      },
       callVk:async(method)=>{
         if(method==="wall.post"){posts++;return {post_id:204};}
         if(method==="stories.getPhotoUploadServer")return {upload_url:"https://pu.vk.com/upload"};
