@@ -38,6 +38,8 @@ $files = @(
     "dzen-article-video.js",
     "vk-api.mjs",
     "vk-stage.mjs",
+    "vk-text.mjs",
+    "_ИИ-Сводка.txt",
     "configure-vk-access.ps1",
     "package.json",
     "package-lock.json",
@@ -65,6 +67,10 @@ $files = @(
     "ftp-access.example.json"
 )
 foreach ($name in $files) {
+    if ($name -eq "_ИИ-Сводка.txt" -and (Test-Path (Join-Path $TargetDir $name))) {
+        Write-Host "Существующий VK-шаблон не перезаписываю: $name"
+        continue
+    }
     Copy-Item (Join-Path $SourceDir $name) (Join-Path $TargetDir $name) -Force
 }
 
@@ -73,6 +79,7 @@ $template.browserProfile = $BrowserProfile
 $template.workDir = $TargetDir
 $template.downloadDir = Join-Path $TargetDir "downloads"
 $template.vkPublish.accessFile = Join-Path $TargetDir "vk-access.json"
+$template.vkPublish.templateFile = Join-Path $TargetDir "_ИИ-Сводка.txt"
 $template.screenshotsDir = Join-Path $TargetDir "screenshots"
 $template.regularLog = Join-Path $TargetDir "worker.log"
 $template.errorLog = Join-Path $TargetDir "!!! ERROR !!!.log"
