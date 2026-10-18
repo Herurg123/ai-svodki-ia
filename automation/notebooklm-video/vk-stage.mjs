@@ -134,18 +134,63 @@ async function unprotectToken(file){
     child.stdin.end(data.tokenDpapi);
   });
 }
-async function verticalStoryPng(source){
+async function verticalStoryPng(source,caption){
   const ffmpeg=require("ffmpeg-static");
   if(!ffmpeg)throw new Error("ffmpeg-static не установлен");
+  if(process.platform!=="win32")throw new Error("Оформление VK Stories поддержано только на Windows");
+  if(!/^ИИ-Сводка на \d{2} [а-яё]+ \d{4}$/.test(String(caption||"")))
+    throw new Error("Неправильная подпись истории");
   const output=path.join(os.tmpdir(),"notebooklmbot-vk-story-"+randomUUID()+".png");
   const filters="scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:white";
-  await new Promise((resolve,reject)=>{
-    const p=spawn(ffmpeg,["-nostdin","-hide_banner","-loglevel","error","-y","-i",source,
-      "-vf",filters,"-frames:v","1",output],{stdio:"ignore",windowsHide:true});
-    p.once("error",()=>reject(new Error("ffmpeg недоступен")));
-    p.once("close",code=>code===0?resolve():reject(new Error("Нельзя подготовить вертикальный кадр истории")));
-  });
-  return output;
+  try{
+    await new Promise((resolve,reject)=>{
+      const p=spawn(ffmpeg,["-nostdin","-hide_banner","-loglevel","error","-y","-i",source,
+        "-vf",filters,"-frames:v","1",output],{stdio:"ignore",windowsHide:true});
+      p.once("error",()=>reject(new Error("ffmpeg недоступен")));
+      p.once("close",code=>code===0?resolve():reject(new Error("Нельзя подготовить вертикальный кадр истории")));
+    });
+    // The clickable CTA is still VK's native "Читать". This label is visual,
+    // above the post-sticker interaction polygon, and does not alter the source PNG.
+    const draw=[
+      "$ErrorActionPreference='Stop'",
+      "Add-Type -AssemblyName System.Drawing",
+      "$img=[Drawing.Image]::FromFile($env:VK_STORY_PNG)",
+      "$bmp=New-Object Drawing.Bitmap($img)",
+      "$img.Dispose()",
+      "$g=[Drawing.Graphics]::FromImage($bmp)",
+      "$g.SmoothingMode=[Drawing.Drawing2D.SmoothingMode]::AntiAlias",
+      "$g.TextRenderingHint=[Drawing.Text.TextRenderingHint]::AntiAliasGridFit",
+      "$format=New-Object Drawing.StringFormat",
+      "$format.Alignment=[Drawing.StringAlignment]::Center",
+      "$format.LineAlignment=[Drawing.StringAlignment]::Center",
+      "$font=New-Object Drawing.Font('Arial',43,[Drawing.FontStyle]::Bold,[Drawing.GraphicsUnit]::Pixel)",
+      "$brush=New-Object Drawing.SolidBrush([Drawing.Color]::FromArgb(20,30,45))",
+      "$caption=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($env:VK_STORY_CAPTION_B64))",
+      "$rect=New-Object Drawing.RectangleF(30,170,1020,215)",
+      "$g.DrawString($caption,$font,$brush,$rect,$format)",
+      "$g.Dispose()",
+      "$bmp.Save($env:VK_STORY_OUTPUT,[Drawing.Imaging.ImageFormat]::Png)",
+      "$bmp.Dispose()",
+      "Remove-Item -LiteralPath $env:VK_STORY_PNG -Force"
+    ].join(";");
+    const temp=output+".caption.png";
+    await new Promise((resolve,reject)=>{
+      const p=spawn("powershell.exe",["-NoProfile","-NonInteractive","-EncodedCommand",
+        Buffer.from(draw,"utf16le").toString("base64")],{
+          env:{...process.env,VK_STORY_PNG:output,VK_STORY_OUTPUT:temp,
+            VK_STORY_CAPTION_B64:Buffer.from(caption,"utf8").toString("base64")},
+          windowsHide:true,stdio:"ignore"
+        });
+      p.once("error",()=>reject(new Error("PowerShell renderer недоступен")));
+      p.once("close",code=>code===0?resolve():reject(new Error("VK Story: не удалось нарисовать подпись")));
+    });
+    fs.renameSync(temp,output);
+    return output;
+  }catch(error){
+    try{fs.unlinkSync(output);}catch{}
+    try{fs.unlinkSync(output+".caption.png");}catch{}
+    throw error;
+  }
 }
 async function runStage(config,job,state,args,dependencies={}){
   let p=job.vkPublication||{};
@@ -214,7 +259,7 @@ async function runStage(config,job,state,args,dependencies={}){
     // The original NotebookLM preview is unchanged.
     let pngFile;
     try{
-      pngFile=await (dependencies.verticalPng||verticalStoryPng)(args.cover);
+      pngFile=await (dependencies.verticalPng||verticalStoryPng)(args.cover,args.storyLinkCaption);
       const png=fs.readFileSync(pngFile);
       if(!png.length||png.length>10*1024*1024)throw new Error("PNG истории пустой или слишком большой");
       const stickers=makePostSticker(args.groupId,p.postId);
@@ -259,7 +304,30 @@ export async function main(){
   const match=history.findJobForDateIncludingArchive(config,state,date);
   if(!match?.job)throw new Error("VK: задание не найдено");
   const job=match.job;
-  if(!apply){console.log(JSON.stringify(job.vkPublication||{phase:"NOT_STARTED"},null,2));return;}
+  if(!apply){
+    const stateOnly=process.argv.includes("--status");
+    if(stateOnly){
+      console.log(JSON.stringify(job.vkPublication||{phase:"NOT_STARTED"},null,2));return;
+    }
+    const args=validateInput(config,job,date);
+    ensureSameJob(job.vkPublication,args);
+    console.log("=== VK ПРЕДПРОСМОТР БЕЗ СЕТИ ===");
+    console.log("Дата:",date,"Группа:",args.groupId,"Плейлист:",args.playlistTitle);
+    console.log("MP4:",args.videoFile,"байт:",args.videoSize);
+    console.log("PNG:",args.cover);
+    console.log("Статья Дзена:",args.article);
+    console.log("Название видео:\n"+args.title);
+    console.log("Описание видео:\n"+args.description);
+    console.log("Текст поста:\n"+args.postText);
+    console.log("Подпись на изображении истории:",args.storyLinkCaption);
+    console.log("Кнопка ссылки VK: Читать");
+    console.log("Статус:",job.vkPublication?.phase||"NOT_STARTED");
+    console.log("Это чтение локальных данных. Публикаций нет.");
+    return;
+  }
+  if(process.argv.includes("--manual")&&
+    !process.argv.includes("--confirm=VK-LIVE-"+date))
+    throw new Error("Для ручной публикации нужен --confirm=VK-LIVE-"+date);
   const today=new Intl.DateTimeFormat("en-CA",{timeZone:config.timeZone||"Europe/Moscow",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
   if(date!==today)throw new Error("VK: прошедшие выпуски не публикуем автоматически");
   const args=validateInput(config,job,date);
