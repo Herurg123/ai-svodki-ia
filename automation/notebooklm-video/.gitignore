@@ -30,3 +30,8 @@ node_modules/
 *.bak-*
 *.tmp
 *.part
+
+# VK API credentials and experimental checkpoints (never commit)
+.env
+vk-access.json
+.vk-upload-state/
