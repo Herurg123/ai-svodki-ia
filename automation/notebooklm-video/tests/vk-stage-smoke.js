@@ -33,7 +33,7 @@ const {pathToFileURL}=require("node:url");
       timeZone:"Europe/Moscow",historyRetention:{enabled:false},
       vkPublish:{enabled:true,automaticEnabled:true,groupId:240277058,playlistId:1,
         playlistTitle:"Сводки по ИИ",accessFile:path.join(dir,"vk-access.json"),
-        templateFile:path.join(root,"_ИИ-Сводка.txt")}};
+        templateFile:path.join(root,"vk-publication-template.txt")}};
     const date="2026-10-17";
     const job={date,status:"DONE",downloadedFile:video,previewFile:png,
       publicationUrl:"https://rybalka.one/posts/2026-10-17/",
