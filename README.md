@@ -21,7 +21,7 @@ Production-репозиторий ежедневных аналитически�
   active entrypoints, ключевые production-инварианты и команды проверки.
 - [`AGENTS.md`](AGENTS.md) — обязательные правила изменения репозитория.
 - [`automation/notebooklm-video/README.md`](automation/notebooklm-video/README.md)
-  — локальный Windows downstream NotebookLM/Dzen/VK.
+  — локальный Windows downstream NotebookLM/Dzen/VK. С 18.10.2026 реальный ручной цикл VK и повторный story-only тест с неизменённым PNG подтверждены оператором; форматированный пятый этап по умолчанию выключен и требует явного включения после установки.
 
 README намеренно остаётся обзорным. Детальные implementation/recovery contracts
 не дублируются здесь, если для них уже есть канонический architecture/spec
