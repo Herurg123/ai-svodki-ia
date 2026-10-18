@@ -1,0 +1,67 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Anthropic опубликовала исследование о том, как интенсивное применение агентов меняет найм и работу внутри компании",
+    "organization": "Anthropic",
+    "topic": "AI agents; future of work; employment; agentic coding; productivity; workforce transformation",
+    "event_type": "official research publication",
+    "status": "new",
+    "summary": "Anthropic выпустила технический отчёт на основе внутренних данных о занятости, использовании Claude и производительности. Компания сообщает, что к августу часы работы интерактивных ИИ-агентов превысили человеческие в шесть раз, доля junior-сотрудников в технических подразделениях снизилась, а фокус найма сместился в сторону автономности и суждения.",
+    "published_at": "2026-10-16T16:26:00+00:00",
+    "published_date": "2026-10-16",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "How employment is changing at Anthropic",
+        "publisher": "Anthropic",
+        "url": "https://www.anthropic.com/research/employment-at-anthropic"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude",
+      "AI agents",
+      "employment",
+      "junior hiring",
+      "agentic coding",
+      "productivity",
+      "future of work"
+    ],
+    "geography": "world",
+    "category": "research"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Replit сделала OpenAI предпочтительным партнёром и моделью по умолчанию для Replit Agent",
+    "organization": "Replit; OpenAI; Anthropic",
+    "topic": "AI coding agents; model-provider competition; enterprise AI; developer platforms; OpenAI; Anthropic",
+    "event_type": "product and partnership strategy update",
+    "status": "new",
+    "summary": "Генеральный директор Replit Амджад Масад сообщил, что OpenAI стала предпочтительным партнёром для Replit Agent и ChatGPT используется по умолчанию. Пользователи всё ещё могут выбирать модели Anthropic, но смена default потенциально существенно меняет распределение модельных расходов крупной платформы AI-разработки.",
+    "published_at": "2026-10-17T18:48:08+00:00",
+    "published_date": "2026-10-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Replit makes OpenAI its default over Anthropic, CEO says",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/17/replit-is-no-longer-working-with-anthropic-ceo-says/"
+      }
+    ],
+    "keywords": [
+      "Replit",
+      "OpenAI",
+      "Anthropic",
+      "ChatGPT",
+      "Claude",
+      "Replit Agent",
+      "AI coding",
+      "default model",
+      "vibe coding"
+    ],
+    "geography": "world",
+    "category": "coding"
+  }
+]

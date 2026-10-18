@@ -1,8 +1,99 @@
 {
   "version": 2,
-  "generated_at": "2026-10-17T01:27:01+00:00",
+  "generated_at": "2026-10-18T01:11:29+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-10-18",
+      "published_at": "2026-10-18T06:00:00+03:00",
+      "search_cutoff_at": "2026-10-18T04:02:14+03:00",
+      "title": "ИИ-Сводка на 18 октября 2026",
+      "link": "https://rybalka.one/posts/2026-10-18/",
+      "summary": "Главные новости искусственного интеллекта за 18 октября 2026 года Новостей сегодня меньше, чем обычно Сегодняшняя повестка концентрируется на двух практических последствиях агентного ИИ: он уже меняет организацию труда внутри разработчиков моделей и усиливает конкуренцию поставщиков моделей в инструментах для программирования. В обоих случаях важны не только возможности LLM, но и стоимость, управляемость и способность человека проверять результат. Главный вывод дня: массовое внедрение агентов по",
+      "topics": [
+        "Anthropic",
+        "агенты ИИ",
+        "рынок труда",
+        "будущее работы",
+        "Replit",
+        "OpenAI",
+        "Replit Agent",
+        "ИИ-кодинг",
+        "маршрутизация моделей",
+        "разработка ПО"
+      ],
+      "source_urls": [
+        "https://www.anthropic.com/research/employment-at-anthropic",
+        "https://techcrunch.com/2026/10/17/replit-is-no-longer-working-with-anthropic-ceo-says/"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-001",
+          "section": "world",
+          "headline": "Anthropic опубликовала исследование о том, как интенсивное применение агентов меняет найм и работу внутри компании",
+          "organization": "Anthropic",
+          "topic": "AI agents; future of work; employment; agentic coding; productivity; workforce transformation",
+          "event_type": "official research publication",
+          "status": "new",
+          "summary": "Anthropic выпустила технический отчёт на основе внутренних данных о занятости, использовании Claude и производительности. Компания сообщает, что к августу часы работы интерактивных ИИ-агентов превысили человеческие в шесть раз, доля junior-сотрудников в технических подразделениях снизилась, а фокус найма сместился в сторону автономности и суждения.",
+          "published_at": "2026-10-16T16:26:00+00:00",
+          "published_date": "2026-10-16",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "How employment is changing at Anthropic",
+              "publisher": "Anthropic",
+              "url": "https://www.anthropic.com/research/employment-at-anthropic"
+            }
+          ],
+          "keywords": [
+            "Anthropic",
+            "Claude",
+            "AI agents",
+            "employment",
+            "junior hiring",
+            "agentic coding",
+            "productivity",
+            "future of work"
+          ],
+          "geography": "world",
+          "category": "research"
+        },
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "Replit сделала OpenAI предпочтительным партнёром и моделью по умолчанию для Replit Agent",
+          "organization": "Replit; OpenAI; Anthropic",
+          "topic": "AI coding agents; model-provider competition; enterprise AI; developer platforms; OpenAI; Anthropic",
+          "event_type": "product and partnership strategy update",
+          "status": "new",
+          "summary": "Генеральный директор Replit Амджад Масад сообщил, что OpenAI стала предпочтительным партнёром для Replit Agent и ChatGPT используется по умолчанию. Пользователи всё ещё могут выбирать модели Anthropic, но смена default потенциально существенно меняет распределение модельных расходов крупной платформы AI-разработки.",
+          "published_at": "2026-10-17T18:48:08+00:00",
+          "published_date": "2026-10-17",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Replit makes OpenAI its default over Anthropic, CEO says",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/17/replit-is-no-longer-working-with-anthropic-ceo-says/"
+            }
+          ],
+          "keywords": [
+            "Replit",
+            "OpenAI",
+            "Anthropic",
+            "ChatGPT",
+            "Claude",
+            "Replit Agent",
+            "AI coding",
+            "default model",
+            "vibe coding"
+          ],
+          "geography": "world",
+          "category": "coding"
+        }
+      ]
+    },
     {
       "date": "2026-10-17",
       "published_at": "2026-10-17T06:00:00+03:00",
@@ -6646,10 +6737,10 @@
     {
       "date": "2026-09-15",
       "published_at": "2026-09-15T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-15T04:28:04+03:00",
+      "search_cutoff_at": "2026-09-15T06:00:00+03:00",
       "title": "ИИ-Сводка на 15 сентября 2026",
       "link": "https://rybalka.one/posts/2026-09-15/",
-      "summary": "Главные новости искусственного интеллекта за 15 сентября 2026 года Новостей сегодня меньше, чем обычно Сегодняшняя повестка — о практической инфраструктуре внедрения ИИ: от ускорения удалённой разработки до локальных агентных сценариев на персональных компьютерах. Одновременно инвестиции в сетевой слой вычислительных кластеров и расширение robotaxi-сервисов показывают, что конкуренция выходит за пределы самих моделей. Отдельный акцент делают поставщики платформ: OpenAI публикует кейсы корпоратив",
+      "summary": "США спорят о регулировании ИИ, а рынок продолжает развивать практический слой: удалённые coding-сессии, локальные агенты на ПК, корпоративных помощников, сети для кластеров и беспилотный транспорт.",
       "topics": [
         "Claude Code",
         "coding-агенты",

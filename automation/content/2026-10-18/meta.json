@@ -1,0 +1,36 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-18",
+  "slug": "2026-10-18",
+  "title": "ИИ-Сводка на 18 октября 2026",
+  "description": "Anthropic описала, как агенты ИИ меняют найм и распределение работы внутри компании, а Replit сделала OpenAI предпочтительным поставщиком моделей для своего coding-агента.",
+  "published_at": "2026-10-18T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-18.png",
+  "topics": [
+    "Anthropic",
+    "агенты ИИ",
+    "рынок труда",
+    "будущее работы",
+    "Replit",
+    "OpenAI",
+    "Replit Agent",
+    "ИИ-кодинг",
+    "маршрутизация моделей",
+    "разработка ПО"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    }
+  ]
+}
