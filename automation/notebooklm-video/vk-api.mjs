@@ -15,6 +15,7 @@ export class VkApiError extends Error {
   constructor(method, code) {
     super(method + ": VK API error " + code);
     this.code = code;
+    this.processing = false;
   }
 }
 export async function methodRequest({method, token, params = {}, video = false, fetchImpl = fetch}) {
@@ -30,7 +31,11 @@ export async function methodRequest({method, token, params = {}, video = false, 
   });
   let json;
   try { json = await res.json(); } catch { throw new Error(method + ": ответ не JSON, HTTP " + res.status); }
-  if (json?.error) throw new VkApiError(method, Number(json.error.error_code));
+  if (json?.error) {
+    const err=new VkApiError(method,Number(json.error.error_code));
+    err.processing=/process|encod|обработ|конвертац|not ready/i.test(String(json.error.error_msg||""));
+    throw err;
+  }
   if (!res.ok || json?.response == null) throw new Error(method + ": ответ не подтверждён, HTTP " + res.status);
   return json.response;
 }
@@ -222,7 +227,7 @@ export async function publishVideo(client,{videoId,title,description,wait=45000}
     },false);}
     catch(e){
       // Only an explicit processing response can be retried. All ambiguous failures block.
-      if(!(e instanceof VkApiError&&[10,29].includes(e.code))||i===5)throw e;
+      if(!(e instanceof VkApiError&&e.processing)||i===5)throw e;
       await sleep(30000);
     }
   }
@@ -246,4 +251,18 @@ export async function uploadStoryPng(uploadUrl,png,fetchImpl=fetch){
   if(!res.ok||typeof signed!=="string"||signed.length<10||signed.length>65536)
     throw new Error("VK не подтвердил загрузку PNG");
   return signed;
+}
+
+/** Fail-closed exact-title duplicate check before first irreversible video.save. */
+export async function findExistingVideoByTitle(client,title){
+  for(let offset=0;offset<=900;offset+=100){
+    const data=await client.call("video.get",{owner_id:client.ownerId,count:"100",offset:String(offset)});
+    if(!Array.isArray(data?.items)||!Number.isSafeInteger(Number(data.count)))
+      throw new Error("video.get: список сообщества не подтверждён");
+    const match=data.items.find(x=>String(x.owner_id)===client.ownerId&&String(x.title)===title);
+    if(match)return String(match.id??match.video_id);
+    if(offset+data.items.length>=Number(data.count))return null;
+    if(data.items.length!==100)throw new Error("video.get: неполная страница");
+  }
+  throw new Error("video.get: слишком много записей, проверка дублей неполная");
 }
