@@ -3,10 +3,9 @@
  * State transitions are persisted before each external mutation.
  */
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { randomUUID, createHash } from "node:crypto";
+import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
 import { renderVkTemplate } from "./vk-text.mjs";
 import { fileURLToPath } from "node:url";
@@ -134,64 +133,6 @@ async function unprotectToken(file){
     child.stdin.end(data.tokenDpapi);
   });
 }
-async function verticalStoryPng(source,caption){
-  const ffmpeg=require("ffmpeg-static");
-  if(!ffmpeg)throw new Error("ffmpeg-static не установлен");
-  if(process.platform!=="win32")throw new Error("Оформление VK Stories поддержано только на Windows");
-  if(!/^ИИ-Сводка на \d{2} [а-яё]+ \d{4}$/.test(String(caption||"")))
-    throw new Error("Неправильная подпись истории");
-  const output=path.join(os.tmpdir(),"notebooklmbot-vk-story-"+randomUUID()+".png");
-  const filters="scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:white";
-  try{
-    await new Promise((resolve,reject)=>{
-      const p=spawn(ffmpeg,["-nostdin","-hide_banner","-loglevel","error","-y","-i",source,
-        "-vf",filters,"-frames:v","1",output],{stdio:"ignore",windowsHide:true});
-      p.once("error",()=>reject(new Error("ffmpeg недоступен")));
-      p.once("close",code=>code===0?resolve():reject(new Error("Нельзя подготовить вертикальный кадр истории")));
-    });
-    // The clickable CTA is still VK's native "Читать". This label is visual,
-    // above the post-sticker interaction polygon, and does not alter the source PNG.
-    const draw=[
-      "$ErrorActionPreference='Stop'",
-      "Add-Type -AssemblyName System.Drawing",
-      "$img=[Drawing.Image]::FromFile($env:VK_STORY_PNG)",
-      "$bmp=[Drawing.Bitmap]::new($img)",
-      "$img.Dispose()",
-      "$g=[Drawing.Graphics]::FromImage($bmp)",
-      "$g.SmoothingMode=[Drawing.Drawing2D.SmoothingMode]::AntiAlias",
-      "$g.TextRenderingHint=[Drawing.Text.TextRenderingHint]::AntiAliasGridFit",
-      "$format=[Drawing.StringFormat]::new()",
-      "$format.Alignment=[Drawing.StringAlignment]::Center",
-      "$format.LineAlignment=[Drawing.StringAlignment]::Center",
-      "$font=[Drawing.Font]::new('Arial',43,[Drawing.FontStyle]::Bold,[Drawing.GraphicsUnit]::Pixel)",
-      "$brush=[Drawing.SolidBrush]::new([Drawing.Color]::FromArgb(20,30,45))",
-      "$caption=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($env:VK_STORY_CAPTION_B64))",
-      "$rect=[Drawing.RectangleF]::new(30.0,170.0,1020.0,215.0)",
-      "$g.DrawString($caption,$font,$brush,$rect,$format)",
-      "$g.Dispose()",
-      "$bmp.Save($env:VK_STORY_OUTPUT,[Drawing.Imaging.ImageFormat]::Png)",
-      "$bmp.Dispose()",
-      "Remove-Item -LiteralPath $env:VK_STORY_PNG -Force"
-    ].join(";");
-    const temp=output+".caption.png";
-    await new Promise((resolve,reject)=>{
-      const p=spawn("powershell.exe",["-NoProfile","-NonInteractive","-EncodedCommand",
-        Buffer.from(draw,"utf16le").toString("base64")],{
-          env:{...process.env,VK_STORY_PNG:output,VK_STORY_OUTPUT:temp,
-            VK_STORY_CAPTION_B64:Buffer.from(caption,"utf8").toString("base64")},
-          windowsHide:true,stdio:"ignore"
-        });
-      p.once("error",()=>reject(new Error("PowerShell renderer недоступен")));
-      p.once("close",code=>code===0?resolve():reject(new Error("VK Story: не удалось нарисовать подпись")));
-    });
-    fs.renameSync(temp,output);
-    return output;
-  }catch(error){
-    try{fs.unlinkSync(output);}catch{}
-    try{fs.unlinkSync(output+".caption.png");}catch{}
-    throw error;
-  }
-}
 async function runStage(config,job,state,args,dependencies={}){
   let p=job.vkPublication||{};
   ensureSameJob(p,args);
@@ -255,29 +196,25 @@ async function runStage(config,job,state,args,dependencies={}){
     save("POST_ACK",{postId:String(ack.post_id)});
   }
   if(p.phase==="POST_ACK"){
-    // Compose a story-specific vertical canvas from the EXISTING local PNG.
-    // The original NotebookLM preview is unchanged.
-    let pngFile;
-    try{
-      pngFile=await (dependencies.verticalPng||verticalStoryPng)(args.cover,args.storyLinkCaption);
-      const png=fs.readFileSync(pngFile);
-      if(!png.length||png.length>10*1024*1024)throw new Error("PNG истории пустой или слишком большой");
-      const stickers=makePostSticker(args.groupId,p.postId);
-      const reply=await vk("stories.getPhotoUploadServer",{
-        group_id:args.groupId,add_to_news:"1",clickable_stickers:stickers,
-        link_text:"read",link_url:args.article
-      });
-      if(!reply?.upload_url)throw new Error("VK Stories не выдал upload_url");
-      save("STORY_UPLOAD_REQUESTED");
-      const signed=await (dependencies.uploadStoryPng||uploadStoryPng)(reply.upload_url,png);
-      save("STORY_UPLOAD_ACK");
-      save("STORY_SAVE_REQUESTED");
-      const response=await vk("stories.save",{upload_results:signed});
-      const item=response?.items?.find(x=>String(x?.owner_id)==="-"+args.groupId&&
-        Number.isSafeInteger(x.id)&&x.id>0);
-      if(!item)throw new Error("stories.save не подтвердил storyId; повтор запрещён");
-      save("STORY_SAVE_ACK",{storyId:item.id});
-    }finally{if(pngFile&&!dependencies.verticalPng)try{fs.unlinkSync(pngFile);}catch{}}
+    // Use the already-generated NotebookLM PNG verbatim, without resizing, text or compositing.
+    const png=fs.readFileSync(args.cover);
+    if(!png.length||png.length>10*1024*1024)throw new Error("PNG истории пустой или слишком большой");
+    log("5: PNG истории: исходный файл "+args.cover+" ("+png.length+" байт), без преобразования");
+    const stickers=makePostSticker(args.groupId,p.postId);
+    const reply=await vk("stories.getPhotoUploadServer",{
+      group_id:args.groupId,add_to_news:"1",clickable_stickers:stickers,
+      link_text:"read",link_url:args.article
+    });
+    if(!reply?.upload_url)throw new Error("VK Stories не выдал upload_url");
+    save("STORY_UPLOAD_REQUESTED");
+    const signed=await (dependencies.uploadStoryPng||uploadStoryPng)(reply.upload_url,png);
+    save("STORY_UPLOAD_ACK");
+    save("STORY_SAVE_REQUESTED");
+    const response=await vk("stories.save",{upload_results:signed});
+    const item=response?.items?.find(x=>String(x?.owner_id)==="-"+args.groupId&&
+      Number.isSafeInteger(x.id)&&x.id>0);
+    if(!item)throw new Error("stories.save не подтвердил storyId; повтор запрещён");
+    save("STORY_SAVE_ACK",{storyId:item.id});
   }
   if(p.phase==="STORY_SAVE_ACK"){
     const reply=await vk("stories.getById",{stories:"-"+args.groupId+"_"+p.storyId});
@@ -312,13 +249,11 @@ export async function main(){
     const args=validateInput(config,job,date,{manual:process.argv.includes("--manual")||!apply});
     ensureSameJob(job.vkPublication,args);
     await unprotectToken(args.accessFile);
-    const previewImage=await verticalStoryPng(args.cover,args.storyLinkCaption);
-    try {
-      if(fs.statSync(previewImage).size<1000)throw new Error("Временная история не отрисована");
-    } finally { try{fs.unlinkSync(previewImage);}catch{} }
+    const sourcePng=fs.readFileSync(args.cover);
+    if(sourcePng.length>10*1024*1024)throw new Error("PNG истории слишком большой");
     console.log("=== VK ПРЕДПРОСМОТР БЕЗ СЕТИ ===");
     console.log("DPAPI VK-токен: успешно расшифрован; значение не выводится.");
-    console.log("Вертикальная история 1080x1920 с подписью: локально проверена.");
+    console.log("История: исходный PNG будет отправлен без изменений.");
     console.log("Дата:",date,"Группа:",args.groupId,"Плейлист:",args.playlistTitle);
     console.log("MP4:",args.videoFile,"байт:",args.videoSize);
     console.log("PNG:",args.cover);
@@ -326,7 +261,6 @@ export async function main(){
     console.log("Название видео:\n"+args.title);
     console.log("Описание видео:\n"+args.description);
     console.log("Текст поста:\n"+args.postText);
-    console.log("Подпись на изображении истории:",args.storyLinkCaption);
     console.log("Кнопка ссылки VK: Читать");
     console.log("Статус:",job.vkPublication?.phase||"NOT_STARTED");
     console.log("Это чтение локальных данных. Публикаций нет.");
@@ -340,12 +274,6 @@ export async function main(){
   const args=validateInput(config,job,date,{manual:process.argv.includes("--manual")||!apply});
   ensureSameJob(job.vkPublication,args);
   if(terminalStatus(job.vkPublication)){logger(config,"5: VK уже COMPLETE; пропуск");return;}
-  // For manual first-time publishing, fail before video.save if caption rendering is broken.
-  if(process.argv.includes("--manual") && !job.vkPublication?.phase){
-    const previewImage=await verticalStoryPng(args.cover,args.storyLinkCaption);
-    try { if(fs.statSync(previewImage).size<1000)throw new Error("Временная история не отрисована"); }
-    finally { try{fs.unlinkSync(previewImage);}catch{} }
-  }
   const lockedPhases=["VIDEO_SAVE_REQUESTED","VIDEO_CREATED","VIDEO_PUBLISH_REQUESTED",
     "POST_REQUESTED","STORY_UPLOAD_REQUESTED","STORY_UPLOAD_ACK","STORY_SAVE_REQUESTED"];
   if(lockedPhases.includes(job.vkPublication?.phase))throw new Error(
