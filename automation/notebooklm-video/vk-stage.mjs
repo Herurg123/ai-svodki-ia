@@ -6,7 +6,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { randomUUID } from "node:crypto";
+import { randomUUID, createHash } from "node:crypto";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { VideoClient, methodRequest, uploadVideoChunks, confirmVideo, listAlbums,
@@ -35,9 +35,35 @@ export function validateInput(config,job,date){
   const videoFile=job.downloadedFile;
   if(!videoFile||path.extname(videoFile).toLowerCase()!==".mp4"||
     !fs.existsSync(videoFile)||fs.statSync(videoFile).size<=0)throw new Error("Локальный MP4 не найден");
+  if(!path.basename(videoFile).includes(date))throw new Error("MP4 не соответствует дате выпуска");
+  const mp4Stat=fs.statSync(videoFile);
+  if(!mp4Stat.isFile())throw new Error("MP4 не является обычным файлом");
+  if(job.downloadedSizeBytes!=null&&Number(job.downloadedSizeBytes)!==mp4Stat.size)
+    throw new Error("Размер MP4 не совпадает с сохранённым результатом предыдущего этапа");
+  const fd=fs.openSync(videoFile,"r");
+  try {
+    const header=Buffer.alloc(12);const read=fs.readSync(fd,header,0,12,0);
+    if(read!==12||header.toString("ascii",4,8)!=="ftyp")
+      throw new Error("MP4 не прошёл проверку читаемости и контейнера");
+  }finally{fs.closeSync(fd);}
+  if(job.downloadedSha256){
+    const expected=String(job.downloadedSha256).toLowerCase();
+    if(!/^[0-9a-f]{64}$/.test(expected))throw new Error("SHA256 предыдущего этапа некорректен");
+    const h=createHash("sha256");
+    const fd2=fs.openSync(videoFile,"r");const buffer=Buffer.alloc(1024*1024);
+    try {
+      let bytes;while((bytes=fs.readSync(fd2,buffer,0,buffer.length,null))>0)
+        h.update(buffer.subarray(0,bytes));
+    }finally{fs.closeSync(fd2);}
+    if(h.digest("hex")!==expected)
+      throw new Error("MP4 не совпадает с контрольной SHA256 предыдущего этапа");
+  }
   const cover=job.previewFile&&fs.existsSync(job.previewFile)?job.previewFile:
     path.join(path.dirname(videoFile),path.parse(videoFile).name+".png");
-  if(!fs.existsSync(cover)||fs.statSync(cover).size<=24)throw new Error("Локальный PNG не найден");
+  if(!fs.existsSync(cover)||fs.statSync(cover).size<=24||!fs.statSync(cover).isFile())
+    throw new Error("Локальный PNG не найден");
+  if(path.parse(cover).name!==path.parse(videoFile).name)
+    throw new Error("PNG не соответствует текущему MP4");
   const header=fs.readFileSync(cover).subarray(0,24);
   if(!header.subarray(0,8).equals(Buffer.from("89504e470d0a1a0a","hex")))throw new Error("Некорректный PNG");
   const title=String(job.publicationTitle||"ИИ-Сводка "+date).trim();
