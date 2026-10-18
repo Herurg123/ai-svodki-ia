@@ -38,7 +38,7 @@ try {
 }
 $accessFile = Join-Path (Split-Path -Parent $ConfigFile) "vk-access.json"
 $payload = @{protocol=1;tokenDpapi=[Convert]::ToBase64String($encrypted)} | ConvertTo-Json
-$config = Get-Content -Raw -LiteralPath $ConfigFile | ConvertFrom-Json
+$config = [System.IO.File]::ReadAllText($ConfigFile, [System.Text.Encoding]::UTF8) | ConvertFrom-Json
 if (-not $config.vkPublish) {
     $config | Add-Member -NotePropertyName vkPublish -NotePropertyValue ([pscustomobject]@{})
 }
