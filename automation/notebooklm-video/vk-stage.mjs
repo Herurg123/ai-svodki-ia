@@ -8,6 +8,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import { randomUUID, createHash } from "node:crypto";
 import { createRequire } from "node:module";
+import { renderVkTemplate } from "./vk-text.mjs";
 import { fileURLToPath } from "node:url";
 import { VideoClient, methodRequest, uploadVideoChunks, confirmVideo, listAlbums,
   membership, addToAlbum, publishVideo, makePostSticker, uploadStoryPng, findExistingVideoByTitle } from "./vk-api.mjs";
@@ -24,6 +25,12 @@ export function validateInput(config,job,date){
   if(!/^[1-9]\d*$/.test(String(vk.playlistId)))throw new Error("VK playlistId не задан");
   if(typeof vk.playlistTitle!=="string"||!vk.playlistTitle.trim())throw new Error("VK playlistTitle не задан");
   if(!vk.accessFile)throw new Error("VK accessFile не задан");
+  if(!vk.templateFile||!path.isAbsolute(vk.templateFile))throw new Error("VK templateFile не задан или не абсолютный");
+  if(!fs.existsSync(vk.templateFile)||!fs.statSync(vk.templateFile).isFile())
+    throw new Error("VK файл шаблона не найден");
+  if(fs.existsSync(config.descriptionFile||"")&&
+    fs.realpathSync(vk.templateFile)===fs.realpathSync(config.descriptionFile))
+    throw new Error("VK шаблон не должен совпадать с изменяемым файлом описания Дзена");
   if(!job||job.date!==date||job.status!=="DONE")throw new Error("Выбран не DONE job заданной даты");
   if(job.dzenAutomation?.status!=="PUBLISHED"||job.dzenCollections?.status!=="COMPLETE"||
     !["COMPLETE","SKIPPED_EXISTING"].includes(job.dzenArticleVideo?.status))
@@ -66,17 +73,18 @@ export function validateInput(config,job,date){
     throw new Error("PNG не соответствует текущему MP4");
   const header=fs.readFileSync(cover).subarray(0,24);
   if(!header.subarray(0,8).equals(Buffer.from("89504e470d0a1a0a","hex")))throw new Error("Некорректный PNG");
-  const title=String(job.publicationTitle||"ИИ-Сводка "+date).trim();
-  const description="Статья в Дзене: "+article+"\nВидео в Дзене: "+dzenVideo;
-  const postText=title+"\n\nПолная статья в Дзене: "+article;
+  const rendered=renderVkTemplate(fs.readFileSync(vk.templateFile,"utf8"),
+    {date,articleUrl:article,publicationUrl:job.publicationUrl});
+  const {title,description,postText,storyLinkCaption}=rendered;
+  const templateHash=createHash("sha256").update([title,description,postText,storyLinkCaption].join("\n")).digest("hex");
   return {groupId:String(vk.groupId),playlistId:String(vk.playlistId),playlistTitle:vk.playlistTitle,
-    article,dzenVideo,videoFile,cover,title,description,postText,date,
-    videoSize:fs.statSync(videoFile).size,accessFile:vk.accessFile};
+    article,dzenVideo,videoFile,cover,title,description,postText,storyLinkCaption,
+    templateHash,date,videoSize:fs.statSync(videoFile).size,accessFile:vk.accessFile};
 }
 export function ensureSameJob(prior,args){
   if(!prior||!prior.phase)return;
   for(const [key,value] of Object.entries({groupId:args.groupId,playlistId:args.playlistId,
-    articleUrl:args.article,videoFile:args.videoFile,date:args.date})){
+    articleUrl:args.article,videoFile:args.videoFile,date:args.date,templateHash:args.templateHash})){
     if(String(prior[key])!==String(value))throw new Error("VK checkpoint несовместим с данными выпуска: "+key);
   }
 }
@@ -145,7 +153,7 @@ async function runStage(config,job,state,args,dependencies={}){
   if(terminalStatus(p))return {status:"COMPLETE",videoId:p.videoId,postId:p.postId,storyId:p.storyId};
   const save=(phase,extra={})=>{
     p={...p,status:"PARTIAL",date:args.date,groupId:args.groupId,playlistId:args.playlistId,
-      articleUrl:args.article,videoFile:args.videoFile,phase,...extra,updatedAt:new Date().toISOString()};
+      articleUrl:args.article,videoFile:args.videoFile,templateHash:args.templateHash,phase,...extra,updatedAt:new Date().toISOString()};
     job.vkPublication=p;job.updatedAt=p.updatedAt;
     history.saveStateWithRetention(config,state);
     logger(config,"5: phase="+phase+(p.videoId?" videoId="+p.videoId:"")+
