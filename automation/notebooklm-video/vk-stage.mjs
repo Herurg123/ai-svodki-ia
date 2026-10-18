@@ -311,7 +311,14 @@ export async function main(){
     }
     const args=validateInput(config,job,date,{manual:process.argv.includes("--manual")||!apply});
     ensureSameJob(job.vkPublication,args);
+    await unprotectToken(args.accessFile);
+    const previewImage=await verticalStoryPng(args.cover,args.storyLinkCaption);
+    try {
+      if(fs.statSync(previewImage).size<1000)throw new Error("Временная история не отрисована");
+    } finally { try{fs.unlinkSync(previewImage);}catch{} }
     console.log("=== VK ПРЕДПРОСМОТР БЕЗ СЕТИ ===");
+    console.log("DPAPI VK-токен: успешно расшифрован; значение не выводится.");
+    console.log("Вертикальная история 1080x1920 с подписью: локально проверена.");
     console.log("Дата:",date,"Группа:",args.groupId,"Плейлист:",args.playlistTitle);
     console.log("MP4:",args.videoFile,"байт:",args.videoSize);
     console.log("PNG:",args.cover);
@@ -333,6 +340,12 @@ export async function main(){
   const args=validateInput(config,job,date,{manual:process.argv.includes("--manual")||!apply});
   ensureSameJob(job.vkPublication,args);
   if(terminalStatus(job.vkPublication)){logger(config,"5: VK уже COMPLETE; пропуск");return;}
+  // For manual first-time publishing, fail before video.save if caption rendering is broken.
+  if(process.argv.includes("--manual") && !job.vkPublication?.phase){
+    const previewImage=await verticalStoryPng(args.cover,args.storyLinkCaption);
+    try { if(fs.statSync(previewImage).size<1000)throw new Error("Временная история не отрисована"); }
+    finally { try{fs.unlinkSync(previewImage);}catch{} }
+  }
   const lockedPhases=["VIDEO_SAVE_REQUESTED","VIDEO_CREATED","VIDEO_PUBLISH_REQUESTED",
     "POST_REQUESTED","STORY_UPLOAD_REQUESTED","STORY_UPLOAD_ACK","STORY_SAVE_REQUESTED"];
   if(lockedPhases.includes(job.vkPublication?.phase))throw new Error(
