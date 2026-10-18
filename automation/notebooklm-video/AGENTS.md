@@ -65,6 +65,17 @@ Dzen phase.
 Human verification challenges are manual-only. Automation must not click or
 attempt to bypass a Dzen/Google captcha or `Я не робот` challenge.
 
+## Пятый этап VK
+
+VK является **только** дополнительным локальным downstream после четырёх
+проверенных Dzen этапов. Автоматически включать его до отдельного
+разрешения владельца запрещено. Для VK используются общий full-worker.lock,
+state.json, log-utils.js, архивирование и существующий браузерный профиль.
+Файлы downloads/ и Dzen-publication state нельзя изменять ради VK.
+Проверка успешности и восстановление при неоднозначных сетевых мутациях
+описаны в VK_PUBLICATION.md. Токен сообщества и временный .env в Git
+не попадают; штатное хранение токена — локальный Windows DPAPI.
+
 ## Locks, logging and retained state
 
 `full-worker.lock` covers the complete scheduled sequence. The inner

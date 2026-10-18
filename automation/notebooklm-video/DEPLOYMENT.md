@@ -4,6 +4,24 @@
 Windows-машину или в новый рабочий каталог. Она не заменяет основной GitHub
 production ИИ-Сводок и не требует изменения ночных GitHub Actions.
 
+## VK: перенос локального токена из эксперимента
+
+После установки проверенных VK исходников, **до** включения автопубликации,
+из папки NotebookLMBot выполнить:
+
+~~~powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\configure-vk-access.ps1
+~~~
+
+Скрипт читает VK_GROUP_ID и VK_GROUP_TOKEN из локального .env,
+сохраняет ключ через DPAPI CurrentUser в vk-access.json, добавляет
+vkPublish в общий config.json и делает backup конфигурации.
+Отдельный новый браузерный профиль и отдельный Планировщик не нужны.
+Параметр automaticEnabled останется false до отдельного разрешения.
+Отдельный шаблон vk-publication-template.txt устанавливается в корень
+рабочей папки без перезаписи существующего операторского файла.
+Подробности и контракт восстановления: [VK_PUBLICATION.md](VK_PUBLICATION.md).
+
 ## 1. Предварительные требования
 
 Нужны:

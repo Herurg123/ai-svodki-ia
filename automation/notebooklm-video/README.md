@@ -52,6 +52,10 @@ RSS rybalka.one
   -> dzen-article-video.js
      -> same-day article H2 «Видеосводка»
      -> public verification
+  -> vk-stage.mjs (optional, config.vkPublish.automaticEnabled=true)
+     -> VK video -> «Сводки по ИИ» playlist
+     -> VK wall post with video + article link
+     -> VK community story with post sticker + Dzen link
 ~~~
 
 `full-worker.js` owns the outer lock for the whole scheduled sequence.
@@ -60,6 +64,20 @@ publication. Separate Task Scheduler jobs for later Dzen phases are not needed.
 
 The worker selects the newest eligible local `DONE` job whose date is not in the
 future, so delayed/catch-up processing remains possible.
+
+## Пятый этап VK
+
+При включении `vkPublish.enabled` и `vkPublish.automaticEnabled`
+пятый этап использует **только текущий сегодняшний** полностью готовый job.
+MP4/PNG берутся из `downloads`, ссылка Дзена из сохранённого состояния.
+Тексты создаются из отдельного `vk-publication-template.txt`, не из
+изменяемого `downloads/_ИИ-Сводка.txt`.
+Проверенные ранее стадии не перезапускаются при сбоях VK.
+Автопубликация по умолчанию **выключена**.
+
+Настройки, миграция из временного .env в локальный DPAPI файл, статусы,
+безопасный incident recovery и ограничение подписи истории описаны
+в [VK_PUBLICATION.md](VK_PUBLICATION.md).
 
 ## NotebookLM и media
 
