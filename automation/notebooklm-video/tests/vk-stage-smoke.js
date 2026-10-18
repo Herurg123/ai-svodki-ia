@@ -32,9 +32,11 @@ const {pathToFileURL}=require("node:url");
       regularLog:path.join(dir,"worker.log"),errorLog:path.join(dir,"error.log"),
       timeZone:"Europe/Moscow",historyRetention:{enabled:false},
       vkPublish:{enabled:true,automaticEnabled:true,groupId:240277058,playlistId:1,
-        playlistTitle:"Сводки по ИИ",accessFile:path.join(dir,"vk-access.json")}};
+        playlistTitle:"Сводки по ИИ",accessFile:path.join(dir,"vk-access.json"),
+        templateFile:path.join(root,"_ИИ-Сводка.txt")}};
     const date="2026-10-17";
     const job={date,status:"DONE",downloadedFile:video,previewFile:png,
+      publicationUrl:"https://rybalka.one/posts/2026-10-17/",
       publicationTitle:"ИИ-Сводка 17 октября",
       dzenAutomation:{status:"PUBLISHED"},
       dzenCollections:{status:"COMPLETE"},
@@ -43,6 +45,10 @@ const {pathToFileURL}=require("node:url");
     const state={version:1,jobs:{today:job}};
     const args=validateInput(config,job,date);
     assert.equal(args.cover,png);
+    assert.equal(args.title,"ИИ-Сводка на 17 октября 2026 | Подпишись, чтоб получать свежее!");
+    assert.ok(args.description.includes("https://dzen.ru/a/articleABC"));
+    assert.ok(args.postText.startsWith(args.title+"\n\n"));
+    assert.equal(args.storyLinkCaption,"ИИ-Сводка на 17 октября 2026");
     assert.ok(makePostSticker(config.vkPublish.groupId,204).includes('"type":"post"'));
     assert.deepEqual(storyVerdict({id:3,owner_id:-240277058,
       clickable_stickers:{clickable_stickers:[{type:"post",post_owner_id:-240277058,post_id:204}]},
@@ -85,7 +91,7 @@ const {pathToFileURL}=require("node:url");
     // A timeout AFTER wall.post was sent is not permission for a second post.
     job.vkPublication={status:"PARTIAL",phase:"ALBUM_VERIFIED",date,
       groupId:args.groupId,playlistId:args.playlistId,articleUrl:args.article,
-      videoFile:args.videoFile,videoId:"9001"};
+      videoFile:args.videoFile,templateHash:args.templateHash,videoId:"9001"};
     const broken={...dependencies,callVk:async method=>{
       if(method==="wall.post"){posts++;throw Error("network timeout");}
       throw Error("unreachable");
