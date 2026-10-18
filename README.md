@@ -21,7 +21,7 @@ Production-репозиторий ежедневных аналитически�
   active entrypoints, ключевые production-инварианты и команды проверки.
 - [`AGENTS.md`](AGENTS.md) — обязательные правила изменения репозитория.
 - [`automation/notebooklm-video/README.md`](automation/notebooklm-video/README.md)
-  — локальный Windows downstream NotebookLM/Dzen.
+  — локальный Windows downstream NotebookLM/Dzen/VK. С 18.10.2026 реальный ручной цикл VK и повторный story-only тест с неизменённым PNG подтверждены оператором; форматированный пятый этап по умолчанию выключен и требует явного включения после установки.
 
 README намеренно остаётся обзорным. Детальные implementation/recovery contracts
 не дублируются здесь, если для них уже есть канонический architecture/spec
@@ -33,7 +33,7 @@ README намеренно остаётся обзорным. Детальные 
 |---|---|
 | `automation/` | Production-конвейер: retrieval, freshness, editorial, recovery, validators, archive, audits и configuration. |
 | `posts/` | Публичный статический сайт, article/image RSS, sitemap и постоянные assets. |
-| `automation/notebooklm-video/` | Независимый локальный Windows downstream после публикации выпуска: NotebookLM → MP4/PNG → optional FTP → native Dzen → collections → video-in-article. |
+| `automation/notebooklm-video/` | Независимый локальный Windows downstream после публикации выпуска: NotebookLM → MP4/PNG → optional FTP → native Dzen → collections → video-in-article → optional VK (video, playlist, post, story). |
 | `automation/archive/video-rss-enrichment-2026-08/` | Inert reference-only архив закрытого Video → RSS эксперимента. |
 | `.github/workflows/` | PR Gate, Main CI, Video CI, production, deploy и maintenance workflows. |
 

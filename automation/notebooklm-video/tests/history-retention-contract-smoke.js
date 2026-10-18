@@ -111,4 +111,16 @@ function configFor(dir) {
   assert.equal(found.source, "archive");
 })();
 
+(function pendingVkKeepsStateActive() {
+  const dir=tempDir("history-vk-pending");
+  const config=configFor(dir);
+  const state={version:1,jobs:{
+    pending:{date:"2026-08-01",status:"DONE",vkPublication:{status:"ERROR",phase:"POST_REQUESTED"}},
+    finished:{date:"2026-08-01",status:"DONE",vkPublication:{status:"COMPLETE",phase:"COMPLETE"}}
+  }};
+  history.saveStateWithRetention(config,state,new Date("2026-09-20T09:00:00Z"));
+  const active=history.loadActiveState(config);
+  assert.ok(active.jobs.pending,"uncertain VK publication must never be archived");
+  assert.ok(!active.jobs.finished,"completed VK publication is archiveable");
+})();
 console.log("JSON HISTORY CONTRACT OK");

@@ -148,6 +148,7 @@ async function main() {
   let phasesError = null;
   let collectionsError = null;
   let articleVideoError = null;
+  let vkError = null;
 
   try {
     if (!fs.existsSync(CONFIG_PATH)) throw new Error(`Не найден config.json: ${CONFIG_PATH}`);
@@ -346,17 +347,43 @@ async function main() {
       }
     }
 
-    if (phasesError || collectionsError || articleVideoError) {
+    if (config.vkPublish && config.vkPublish.enabled === true &&
+        config.vkPublish.automaticEnabled === true) {
+      const fresh = loadJson(config.stateFile, { jobs: {} });
+      const candidate = job && collections.findJobForDate(fresh, job.date);
+      const canRun = !phasesError && !collectionsError && !articleVideoError &&
+        candidate && candidate.date === currentDateKey && candidate.status === "DONE" &&
+        scheduled.getAutomationStatus(candidate) === "PUBLISHED" &&
+        collections.collectionsStatus(candidate) === "COMPLETE" &&
+        ["COMPLETE", "SKIPPED_EXISTING"].includes(articleVideoStatus(candidate));
+      if (!canRun) {
+        log(config, "Фаза 5/5: VK пропущен, предыдущие этапы не завершены или job не за сегодня.");
+      } else if (candidate.vkPublication && candidate.vkPublication.status === "COMPLETE") {
+        log(config, "Фаза 5/5: VK уже COMPLETE; повторные публикации не выполняю.");
+      } else {
+        log(config, "Фаза 5/5: VK запускаю для " + candidate.date + ".");
+        try {
+          await runNodeScript("vk-stage.mjs", ["--apply", "--date=" + candidate.date]);
+          log(config, "Фаза 5/5: VK выполнен.");
+        } catch (error) {
+          vkError = error;
+          fatalLog(config, "Фаза 5/5 завершилась ошибкой: " + error.message, error);
+        }
+      }
+    }
+
+    if (phasesError || collectionsError || articleVideoError || vkError) {
       const parts = [];
       if (phasesError) parts.push(`фазы 1-2: ${phasesError.message}`);
       if (collectionsError) parts.push(`фаза 3: ${collectionsError.message}`);
       if (articleVideoError) parts.push(`фаза 4: ${articleVideoError.message}`);
+      if (vkError) parts.push(`фаза 5 VK: ${vkError.message}`);
       throw new Error(`Полный scheduled flow завершён с ошибкой (${parts.join("; ")}).`);
     }
 
     log(config, "=== END full scheduled flow SUCCESS ===");
   } catch (error) {
-    if (error !== phasesError && error !== collectionsError && error !== articleVideoError) {
+    if (error !== phasesError && error !== collectionsError && error !== articleVideoError && error !== vkError) {
       fatalLog(config, error.message, error);
     }
     process.exitCode = process.exitCode || 1;

@@ -108,6 +108,9 @@ function jobHasExplicitPendingState(job) {
     if (!["COMPLETE", "SKIPPED_EXISTING"].includes(status)) return true;
   }
 
+  if (job.vkPublication && typeof job.vkPublication === "object" &&
+      job.vkPublication.status !== "COMPLETE") return true;
+
   return false;
 }
 

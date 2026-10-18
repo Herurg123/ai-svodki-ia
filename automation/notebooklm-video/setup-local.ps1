@@ -36,6 +36,11 @@ $files = @(
     "dzen-collections.js",
     "dzen-collections-debug.js",
     "dzen-article-video.js",
+    "vk-api.mjs",
+    "vk-stage.mjs",
+    "vk-text.mjs",
+    "vk-publication-template.txt",
+    "configure-vk-access.ps1",
     "package.json",
     "package-lock.json",
     "run-worker.cmd",
@@ -56,11 +61,16 @@ $files = @(
     "DZEN_VIDEO_EXPERIMENTS.md",
     "DZEN_COLLECTIONS_DEBUG_README.txt",
     "DZEN_ARTICLE_VIDEO.md",
+    "VK_PUBLICATION.md",
     "НАСТРОЙКИ.txt",
     "config.example.json",
     "ftp-access.example.json"
 )
 foreach ($name in $files) {
+    if ($name -eq "vk-publication-template.txt" -and (Test-Path (Join-Path $TargetDir $name))) {
+        Write-Host "Существующий VK-шаблон не перезаписываю: $name"
+        continue
+    }
     Copy-Item (Join-Path $SourceDir $name) (Join-Path $TargetDir $name) -Force
 }
 
@@ -68,6 +78,8 @@ $template = Get-Content -Raw (Join-Path $SourceDir "config.example.json") | Conv
 $template.browserProfile = $BrowserProfile
 $template.workDir = $TargetDir
 $template.downloadDir = Join-Path $TargetDir "downloads"
+$template.vkPublish.accessFile = Join-Path $TargetDir "vk-access.json"
+$template.vkPublish.templateFile = Join-Path $TargetDir "vk-publication-template.txt"
 $template.screenshotsDir = Join-Path $TargetDir "screenshots"
 $template.regularLog = Join-Path $TargetDir "worker.log"
 $template.errorLog = Join-Path $TargetDir "!!! ERROR !!!.log"

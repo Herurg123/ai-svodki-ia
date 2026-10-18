@@ -36,6 +36,15 @@
     "processingTimeoutMs": 600000,
     "verificationTimeoutMs": 90000
   },
+  "vkPublish": {
+    "enabled": false,
+    "automaticEnabled": false,
+    "groupId": "REPLACE_WITH_GROUP_ID",
+    "playlistId": 1,
+    "playlistTitle": "Сводки по ИИ",
+    "accessFile": "C:\\NotebookLMBot\\vk-access.json",
+    "templateFile": "C:\\NotebookLMBot\\vk-publication-template.txt"
+  },
   "screenshotsDir": "C:\\NotebookLMBot\\screenshots",
   "regularLog": "C:\\NotebookLMBot\\worker.log",
   "errorLog": "C:\\NotebookLMBot\\!!! ERROR !!!.log",

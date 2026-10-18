@@ -71,6 +71,19 @@ Both use `automation/scripts/push_protected_main.sh` with the dedicated
 Those two writers share one non-cancelling Actions concurrency group. Never set
 `cancel-in-progress: true` for their shared writer boundary.
 
+## NotebookLM → VK publication
+
+Treat VK as a local optional fifth downstream stage, not a GitHub-side or
+separately scheduled publisher. Any edits to VK publication must preserve the
+four preceding gates, active job/checkpoint and shared full-worker lock.
+Never infer public story artwork from `stories.save` ACK alone: require visual
+verification of the actual image and preserve the source NotebookLM PNG bytes.
+The durable runtime/recovery/configuration contract is
+[`automation/notebooklm-video/VK_PUBLICATION.md`](automation/notebooklm-video/VK_PUBLICATION.md).
+Experimental launchers, `.env` and token-bearing test materials must never
+be copied into production or committed; cleanup of old Windows one-off files
+must use explicit allowlists, retain states/logs and check for active locks.
+
 ## Legacy and compatibility lifecycle
 
 Legacy, compatibility, migration and transitional behavior is temporary technical
