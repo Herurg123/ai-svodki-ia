@@ -169,4 +169,13 @@ assert.strictEqual(
   "browser-side paste migration itself must be at-most-once"
 );
 
-console.log("Full worker four-stage contract smoke: OK");
+assert(source.includes('runNodeScript("vk-stage.mjs"'), "full worker must own VK fifth stage");
+assert(source.indexOf('runNodeScript("vk-stage.mjs"') > articleVideoIndex,
+  "VK must follow the existing Dzen article-video step");
+assert(source.includes('candidate.date === currentDateKey'), "VK cannot process old catch-up jobs");
+assert(source.includes('!phasesError && !collectionsError && !articleVideoError'),
+  "VK must wait for every Dzen gate");
+assert(source.includes('config.vkPublish.automaticEnabled === true'),
+  "VK default-off gate must be explicit");
+assert(source.includes('if (vkError) parts.push'),"VK errors must flow to the shared failure path");
+console.log("Full worker five-stage contract smoke: OK");
