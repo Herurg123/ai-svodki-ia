@@ -49,6 +49,7 @@ $properties = @{
     playlistId = 1
     playlistTitle = "Сводки по ИИ"
     accessFile = $accessFile
+    templateFile = (Join-Path (Split-Path -Parent $ConfigFile) "_ИИ-Сводка.txt")
 }
 foreach ($key in $properties.Keys) {
     if ($config.vkPublish.PSObject.Properties.Name -contains $key) {
