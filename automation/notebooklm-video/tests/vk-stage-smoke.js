@@ -26,7 +26,7 @@ const {pathToFileURL}=require("node:url");
   try{
     const video=path.join(dir,"ИИ-Сводка 2026-10-17.mp4"), png=path.join(dir,"ИИ-Сводка 2026-10-17.png");
     const mp4=Buffer.alloc(32);mp4.writeUInt32BE(24,0);mp4.write("ftyp",4,"ascii");mp4.write("isom",8,"ascii");fs.writeFileSync(video,mp4);
-    const magic=Buffer.alloc(24);Buffer.from("89504e470d0a1a0a","hex").copy(magic);
+    const magic=Buffer.alloc(32);Buffer.from("89504e470d0a1a0a","hex").copy(magic);
     fs.writeFileSync(png,magic);
     const config={workDir:dir,stateFile:path.join(dir,"state.json"),
       regularLog:path.join(dir,"worker.log"),errorLog:path.join(dir,"error.log"),
