@@ -18,9 +18,9 @@ const require=createRequire(import.meta.url);
 const history=require("./history-utils.js");
 const logUtils=require("./log-utils.js");
 
-export function validateInput(config,job,date){
+export function validateInput(config,job,date,{manual=false}={}){
   const vk=config.vkPublish||{};
-  if(vk.automaticEnabled!==true||vk.enabled!==true)throw new Error("VK не включён в config.json");
+  if(vk.enabled!==true||(vk.automaticEnabled!==true&&!manual))throw new Error("VK не включён в config.json для выбранного режима");
   if(!/^[1-9]\d*$/.test(String(vk.groupId)))throw new Error("VK groupId не задан");
   if(!/^[1-9]\d*$/.test(String(vk.playlistId)))throw new Error("VK playlistId не задан");
   if(typeof vk.playlistTitle!=="string"||!vk.playlistTitle.trim())throw new Error("VK playlistTitle не задан");
@@ -309,7 +309,7 @@ export async function main(){
     if(stateOnly){
       console.log(JSON.stringify(job.vkPublication||{phase:"NOT_STARTED"},null,2));return;
     }
-    const args=validateInput(config,job,date);
+    const args=validateInput(config,job,date,{manual:process.argv.includes("--manual")||!apply});
     ensureSameJob(job.vkPublication,args);
     console.log("=== VK ПРЕДПРОСМОТР БЕЗ СЕТИ ===");
     console.log("Дата:",date,"Группа:",args.groupId,"Плейлист:",args.playlistTitle);
@@ -330,7 +330,7 @@ export async function main(){
     throw new Error("Для ручной публикации нужен --confirm=VK-LIVE-"+date);
   const today=new Intl.DateTimeFormat("en-CA",{timeZone:config.timeZone||"Europe/Moscow",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
   if(date!==today)throw new Error("VK: прошедшие выпуски не публикуем автоматически");
-  const args=validateInput(config,job,date);
+  const args=validateInput(config,job,date,{manual:process.argv.includes("--manual")||!apply});
   ensureSameJob(job.vkPublication,args);
   if(terminalStatus(job.vkPublication)){logger(config,"5: VK уже COMPLETE; пропуск");return;}
   const lockedPhases=["VIDEO_SAVE_REQUESTED","VIDEO_CREATED","VIDEO_PUBLISH_REQUESTED",
