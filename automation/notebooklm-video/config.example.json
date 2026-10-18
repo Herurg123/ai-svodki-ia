@@ -42,7 +42,8 @@
     "groupId": "REPLACE_WITH_GROUP_ID",
     "playlistId": 1,
     "playlistTitle": "Сводки по ИИ",
-    "accessFile": "C:\\NotebookLMBot\\vk-access.json"
+    "accessFile": "C:\\NotebookLMBot\\vk-access.json",
+    "templateFile": "C:\\NotebookLMBot\\_ИИ-Сводка.txt"
   },
   "screenshotsDir": "C:\\NotebookLMBot\\screenshots",
   "regularLog": "C:\\NotebookLMBot\\worker.log",
