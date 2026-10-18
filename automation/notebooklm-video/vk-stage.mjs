@@ -10,7 +10,7 @@ import { randomUUID } from "node:crypto";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import { VideoClient, methodRequest, uploadVideoChunks, confirmVideo, listAlbums,
-  membership, addToAlbum, publishVideo, makePostSticker, uploadStoryPng } from "./vk-api.mjs";
+  membership, addToAlbum, publishVideo, makePostSticker, uploadStoryPng, findExistingVideoByTitle } from "./vk-api.mjs";
 
 const ROOT=path.dirname(fileURLToPath(import.meta.url));
 const require=createRequire(import.meta.url);
@@ -132,6 +132,8 @@ async function runStage(config,job,state,args,dependencies={}){
   const vk=dependencies.callVk||((method,params)=>methodRequest({method,params,token:dependencies.token}));
   if(!p.phase)save("PREPARED");
   if(p.phase==="PREPARED"){
+    const duplicate=await (dependencies.findDuplicate||findExistingVideoByTitle)(client,args.title);
+    if(duplicate)throw new Error("VK: такое название уже опубликовано, videoId="+duplicate+"; новый upload запрещён");
     save("VIDEO_SAVE_REQUESTED");
     const created=await client.call("video.save",{
       group_id:args.groupId,file_size:String(args.videoSize),batch_id:"-"+args.groupId+"_"+Date.now(),
@@ -243,7 +245,19 @@ export async function main(){
     if(!(await browserSession.cdpIsAvailable(config))){
       session=await browserSession.launchRobotBrowser(config,{log:x=>logger(config,x)});
     }
-    await runStage(config,job,state,args,{token});
+    try {
+      await runStage(config,job,state,args,{token});
+    } catch (error) {
+      // Keep the exact phase, but make the failure visible through shared state.
+      if (job.vkPublication) {
+        job.vkPublication.status="ERROR";
+        job.vkPublication.lastError=cleanError(error);
+        job.vkPublication.updatedAt=new Date().toISOString();
+        history.saveStateWithRetention(config,state);
+      }
+      logger(config,"5: остановка: "+cleanError(error),true);
+      throw error;
+    }
   }finally{
     if(session)await browserSession.closeRobotBrowser(session,config);
   }
