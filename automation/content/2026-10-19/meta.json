@@ -1,0 +1,35 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-19",
+  "slug": "2026-10-19",
+  "title": "ИИ-Сводка на 19 октября 2026",
+  "description": "Anthropic предложила направить 5% акций в фонд общественного блага, а Disney раскрыла планы нанять большую часть команды Character.AI в рамках предварительной сделки по активам.",
+  "published_at": "2026-10-19T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-19.png",
+  "topics": [
+    "Anthropic",
+    "Public Benefit Fund",
+    "корпоративное управление ИИ",
+    "общественная польза",
+    "Character.AI",
+    "Disney",
+    "банкротство ИИ-стартапов",
+    "M&A",
+    "рынок труда ИИ"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: global_breaking, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation, independent_missing_events."
+    }
+  ]
+}

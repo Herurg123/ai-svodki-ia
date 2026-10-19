@@ -1,0 +1,13 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-002",
+    "cand-003"
+  ],
+  "excluded_candidate_ids": [
+    "cand-001"
+  ],
+  "selection_summary": "В подтверждённом пуле нашлись два достойных сюжета: новая governance-модель Anthropic с передачей части капитала Public Benefit Fund и существенное обновление процедуры продажи активов Character.AI компании Disney. Китайский проект экспортных ограничений исключён согласно рекомендации исследовательского пула.",
+  "diversity_overrides": []
+}

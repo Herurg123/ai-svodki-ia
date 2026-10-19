@@ -1,0 +1,349 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-10-19",
+  "search_window": {
+    "start_at": "2026-10-17T04:02:14+03:00",
+    "end_at": "2026-10-19T04:16:30+03:00",
+    "latest_archive_at": "2026-10-18T04:02:14+03:00",
+    "start_date": "2026-10-17",
+    "end_date": "2026-10-19",
+    "latest_archive_date": "2026-10-18"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=0, rejected=1."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "China proposes export restrictions on advanced AI models, AI agents and chip-design technologies",
+      "organization": "China Ministry of Commerce; China Ministry of Science and Technology",
+      "published_date": "2026-10-17",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "China AI policy; technology export controls; frontier models; AI agents; AI chips",
+      "event_type": "policy proposal",
+      "keywords": [
+        "China",
+        "export controls",
+        "AI models",
+        "AI agents",
+        "2 trillion parameters",
+        "AI chips",
+        "technology policy"
+      ],
+      "geography": "world",
+      "category": "regulation",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "China moves to curb tech exports, including AI, citing national security risks",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/china-export-restrictions-ai-chips-solar-us-5ac381c0c6d6628bbea2e0da7d855a5b"
+      },
+      "supporting_sources": [],
+      "event_summary": "Китайские министерства торговли и науки опубликовали проект обновлённого перечня технологий, экспорт которых предлагается запретить или ограничить. В нём 23 ИИ-технологии, включая отдельные большие модели, чувствительные к данным технологии обучения и агентов для обороны и критической инфраструктуры; также затронуты отдельные технологии проектирования ИИ- и memory-чипов.",
+      "verified_facts": [
+        "AP сообщает, что проект совместно опубликовали Министерство коммерции и Министерство науки и технологий Китая.",
+        "В перечень включены 23 ИИ-технологии, от продвинутых больших моделей до агентов.",
+        "Проект предусматривает запрет экспорта базовых технологий больших моделей, обученных на чувствительных национальных данных, и агентов для особо чувствительных сред, включая оборону и критическую информационную инфраструктуру.",
+        "Экспорт моделей с 2 трлн и более параметров либо определёнными передовыми возможностями может быть ограничен.",
+        "В проекте также фигурируют отдельные технологии дизайна ИИ-процессоров и чипов памяти."
+      ],
+      "significance": "Это потенциально системное ужесточение китайского технологического контроля, способное влиять на трансграничное распространение передовых моделей, агентных систем и полупроводниковых технологий. Событие имеет самостоятельную policy-значимость, хотя документ остаётся проектом, а не вступившим в силу правилом.",
+      "significance_score": 4,
+      "limitations": "Это проект ограничений: AP не указывает дату вступления в силу, окончательный текст и перечень применяемых исключений. Точный внутридневной timestamp публикации AP в доступной странице не отображён.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет совпадающего сюжета о новом китайском проекте экспортных ограничений для ИИ-технологий.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Открыта и проверена публикация AP. Она прямо описывает публикацию проекта китайскими ведомствами и перечисляет релевантные ИИ- и chip-related положения.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это крупное регуляторно-политическое предложение, но не судебное дело, для которого применялся бы strict legal-scale contract.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-маршруту; это самостоятельное policy-событие.",
+      "event_date": "2026-10-17",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://apnews.com/article/china-export-restrictions-ai-chips-solar-us-5ac381c0c6d6628bbea2e0da7d855a5b",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "AP указывает, что Китай опубликовал проект в пятницу; в контексте даты выпуска это 17 октября 2026 года. Официальная первичная страница министерств в этом проходе не была доступна как подтверждающий источник.",
+      "id": "cand-001",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    },
+    {
+      "title": "Anthropic commits 5% of its shares to a Public Benefit Fund",
+      "organization": "Anthropic",
+      "published_date": "2026-10-18",
+      "published_at": "2026-10-18T16:49:35.513000+00:00",
+      "time_precision": "datetime",
+      "topic": "AI-lab governance; public-benefit corporation; AI economic impacts; corporate equity",
+      "event_type": "corporate governance announcement",
+      "keywords": [
+        "Anthropic",
+        "Public Benefit Fund",
+        "equity",
+        "public benefit corporation",
+        "AI labor impacts",
+        "corporate governance"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Investing in the public benefit",
+        "publisher": "Anthropic",
+        "url": "https://www.anthropic.com/news/public-benefit-fund"
+      },
+      "supporting_sources": [
+        {
+          "title": "Anthropic says it’s committing 5% of its shares to a ‘public benefit fund’",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/10/18/anthropic-says-its-committing-5-of-its-shares-to-a-public-benefit-fund/"
+        }
+      ],
+      "event_summary": "Anthropic объявила о создании Anthropic Public Benefit Fund — дочерней структуры, которой, при одобрении акционерами, будут переданы 5% акций компании. Совет директоров сможет добавлять ещё по 2 процентных пункта при каждом росте стоимости Anthropic на 50% выше установленной базы.",
+      "verified_facts": [
+        "Официальная публикация Anthropic датирована 18 октября 2026 года.",
+        "Компания заявила, что 5% её акций будут переданы в фонд при условии одобрения акционерами.",
+        "Фонд оформляется как wholly-owned LLC, а не как традиционная благотворительная организация.",
+        "Anthropic допускает крупные пожертвования НКО либо прямые выплаты отдельным группам населения.",
+        "Компания заявила, что вместе с прежними обязательствами основателей и сотрудников около 20% акций будет ориентировано на общественное благо; дополнительные доли возможны при достижении valuation milestones."
+      ],
+      "significance": "Это заметное изменение в механизме корпоративного управления одной из ведущих frontier-AI-компаний: часть будущего роста стоимости закрепляется за отдельной структурой, ориентированной на общественные эффекты ИИ, включая потенциальные последствия для рынка труда. Конкретная модель управления фондом и критерии распределения средств пока не раскрыты.",
+      "significance_score": 3,
+      "limitations": "Передача 5% акций требует одобрения акционерами. Anthropic не раскрыла базовую оценку, valuation milestones, состав органов управления фондом, получателей или сроки первых распределений.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть материал Anthropic о влиянии агентного использования на найм от 17 октября, но нет сообщения о создании Public Benefit Fund и выделении ему доли капитала.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Событие подтверждено первичной публикацией Anthropic от 18 октября 2026 года; TechCrunch независимо передаёт основные условия объявления.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-18T16:49:35.513Z; timestamp проверен Python против effective window. Официальное объявление Anthropic опубликовано 18 октября 2026 года — полностью внутри effective редакционного окна.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это корпоративное и governance-событие, а не судебное либо регуляторное разбирательство.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-маршруту.",
+      "event_date": "2026-10-18",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.anthropic.com/news/public-benefit-fund",
+      "event_evidence_kind": "official_announcement",
+      "event_date_evidence": "На первичной странице Anthropic явно указана дата «Oct 18, 2026»; в тексте объявления описано создание фонда и условия передачи акций.",
+      "audit_direction": "general_coverage_gaps",
+      "id": "cand-002",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.anthropic.com/news/public-benefit-fund",
+      "source_published_date": "2026-10-18",
+      "source_published_at": "2026-10-18T16:49:35.513000+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-18T16:49:35.513Z"
+    },
+    {
+      "title": "Disney agrees to hire a majority of Character.AI’s workforce in proposed asset transaction",
+      "organization": "Disney; Character.AI",
+      "published_date": "2026-10-18",
+      "published_at": "2026-10-18T16:30:00+00:00",
+      "time_precision": "datetime",
+      "topic": "AI startup bankruptcy; entertainment AI; asset sale; workforce transition",
+      "event_type": "bankruptcy transaction update",
+      "keywords": [
+        "Character.AI",
+        "Disney",
+        "bankruptcy",
+        "stalking horse bid",
+        "workforce",
+        "asset sale"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Disney agrees to hire the majority of Character.AI’s workforce",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/18/disney-agrees-to-hire-the-majority-of-character-ais-workforce/"
+      },
+      "supporting_sources": [],
+      "event_summary": "После ранее отражённой в архиве подачи Character.AI на банкротство стало известно о деталях предложенной сделки с Disney: компания согласилась предложить работу не менее чем 60 сотрудникам Character.AI, а большинство получивших предложения уже согласились. Условия описаны как stalking-horse bid, поэтому возможна более высокая конкурирующая заявка.",
+      "verified_facts": [
+        "TechCrunch сообщает о legal filing, в котором Disney обязуется предложить работу минимум 60 сотрудникам Character.AI.",
+        "По данным материала, речь идёт о большинстве штата Character.AI и оценочных годовых компенсациях на $60 млн.",
+        "В статье сказано, что большинство сотрудников, получивших предложения, приняли их.",
+        "Ранее заявленная покупка части активов Disney оценивалась в $20 млн.",
+        "Сделка описана как stalking-horse bid и потому не является окончательной."
+      ],
+      "significance": "Это существенное развитие уже освещённого банкротства Character.AI: оно уточняет фактическую передачу ключевой команды одному из крупнейших медиаконцернов и показывает, как Disney получает AI-кадры и часть активов через процедуру продажи. Однако сделка остаётся предварительной и может быть перебита.",
+      "significance_score": 3,
+      "limitations": "Первичный court filing не был доступен в разрешённом наборе доменов для самостоятельной проверки. Сведения о параметрах сделки и статусе согласий сотрудников опираются на TechCrunch, пересказывающий filing и Bloomberg; stalking-horse bid может быть заменён альтернативной заявкой.",
+      "archive_status": "update",
+      "archive_reason": "Это материальное развитие сюжета о банкротстве Character.AI, опубликованного в выпуске от 14 октября 2026 года: раскрыты условия трудового перехода большей части команды к Disney и статус предложенной сделки.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата и факты публикации проверены на странице TechCrunch; материал прямо указывает на судебный filing как на происхождение деталей сделки. Из-за недоступности самого docket в разрешённом доменном наборе кандидат помечен consider, а не include.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-18T16:30:00+00:00; timestamp проверен Python против effective window. Событие не повторяет исходную новость о Chapter 11: 18 октября опубликованы новые детали предложенной Disney сделки и перехода персонала.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Хотя сведения происходят из bankruptcy filing, сюжет рекомендован как бизнес-обновление вокруг AI-компании, а не как самостоятельный масштабный legal-кейс.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к curiosity-маршруту.",
+      "event_date": "2026-10-18",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": null,
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "TechCrunch опубликовал материал 18 октября 2026 года и описал новые условия сделки, ссылаясь на legal filing. Отдельная дата самого filing в доступной разрешённой странице не указана.",
+      "audit_direction": "general_coverage_gaps",
+      "id": "cand-003",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/10/18/disney-agrees-to-hire-the-majority-of-character-ais-workforce/",
+      "source_published_date": "2026-10-18",
+      "source_published_at": "2026-10-18T16:30:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-18T16:30:00+00:00"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=2, validated unique=1, final candidates=1. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 2.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-developer_tools-01",
+      "version": 1,
+      "status": "unresolved",
+      "title": "OpenCode сообщает об инциденте безопасности, затронувшем API-ключи 1,4% пользователей Console",
+      "origin_direction": "developer_tools",
+      "reason_code": "unverified",
+      "evidence_reason": "В выдаче обнаружено вторичное кэшированное сообщение с приписываемым OpenCode заявлением о large-scale distillation attack и затронутых ключах. В пределах разрешённых навигационных проверок не удалось открыть и независимо подтвердить первичное incident notice, точную дату/время события, характер раскрытых данных и remediation.",
+      "likely_significance_score": 1,
+      "entities": [
+        "OpenCode",
+        "API-",
+        "Console"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

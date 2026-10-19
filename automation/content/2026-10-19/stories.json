@@ -1,0 +1,62 @@
+[
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Anthropic создаёт Public Benefit Fund и планирует передать ему 5% акций",
+    "organization": "Anthropic",
+    "topic": "AI-lab governance; public-benefit corporation; AI economic impacts; corporate equity",
+    "event_type": "corporate governance announcement",
+    "status": "new",
+    "summary": "Anthropic объявила о создании Anthropic Public Benefit Fund — дочерней структуры, которой, при одобрении акционерами, будут переданы 5% акций компании. Совет директоров сможет добавлять ещё по 2 процентных пункта при каждом росте стоимости Anthropic на 50% выше установленной базы.",
+    "published_at": "2026-10-18T16:49:35+00:00",
+    "published_date": "2026-10-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Investing in the public benefit",
+        "publisher": "Anthropic",
+        "url": "https://www.anthropic.com/news/public-benefit-fund"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Public Benefit Fund",
+      "equity",
+      "public benefit corporation",
+      "AI labor impacts",
+      "corporate governance"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Обновление: Disney намерена нанять большую часть команды Character.AI в рамках продажи активов",
+    "organization": "Disney; Character.AI",
+    "topic": "AI startup bankruptcy; entertainment AI; asset sale; workforce transition",
+    "event_type": "bankruptcy transaction update",
+    "status": "update",
+    "summary": "После ранее отражённой в архиве подачи Character.AI на банкротство стало известно о деталях предложенной сделки с Disney: компания согласилась предложить работу не менее чем 60 сотрудникам Character.AI, а большинство получивших предложения уже согласились. Условия описаны как stalking-horse bid, поэтому возможна более высокая конкурирующая заявка.",
+    "published_at": "2026-10-18T16:30:00+00:00",
+    "published_date": "2026-10-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Disney agrees to hire the majority of Character.AI’s workforce",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/18/disney-agrees-to-hire-the-majority-of-character-ais-workforce/"
+      }
+    ],
+    "keywords": [
+      "Character.AI",
+      "Disney",
+      "bankruptcy",
+      "stalking horse bid",
+      "workforce",
+      "asset sale"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  }
+]
