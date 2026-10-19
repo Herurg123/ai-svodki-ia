@@ -78,6 +78,9 @@ separately scheduled publisher. Any edits to VK publication must preserve the
 four preceding gates, active job/checkpoint and shared full-worker lock.
 Never infer public story artwork from `stories.save` ACK alone: require visual
 verification of the actual image and preserve the source NotebookLM PNG bytes.
+Pre-save PNG staging may replay at most three persisted attempts per job, including
+across scheduled runs; any uncertain stories.save remains at-most-once. Never log
+signed upload_result or upload URL while diagnosing VK HTTP failures.
 The durable runtime/recovery/configuration contract is
 [`automation/notebooklm-video/VK_PUBLICATION.md`](automation/notebooklm-video/VK_PUBLICATION.md).
 Experimental launchers, `.env` and token-bearing test materials must never
