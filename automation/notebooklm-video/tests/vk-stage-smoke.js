@@ -9,7 +9,7 @@ const {pathToFileURL}=require("node:url");
   const root=path.resolve(__dirname,"..");
   const {validateInput,ensureSameJob,terminalStatus,storyVerdict,runStage}=
     await import(pathToFileURL(path.join(root,"vk-stage.mjs")).href);
-  const {makePostSticker,methodRequest,findExistingVideoByTitle}=await import(
+  const {makePostSticker,methodRequest,findExistingVideoByTitle,uploadStoryPng}=await import(
     pathToFileURL(path.join(root,"vk-api.mjs")).href);
   const source=fs.readFileSync(path.join(root,"full-worker.js"),"utf8");
   const configExample=JSON.parse(fs.readFileSync(path.join(root,"config.example.json"),"utf8"));
@@ -102,6 +102,84 @@ const {pathToFileURL}=require("node:url");
     assert.equal(persisted.jobs.today.vkPublication.storyId,456239130);
     await runStage(config,job,state,args,dependencies);
     assert.deepEqual([saves,uploads,albumAdds,posts,stories],[1,1,1,1,1],"complete rerun no-op");
+
+    // 19 Oct 2026 incident: the staging upload returned an invalid/unconfirmed
+    // response, while a separate diagnostic probe received HTTP 200 + upload_result.
+    const pngBytes=fs.readFileSync(png);
+    const mockResponse=(status,type,body)=>({
+      ok:status>=200&&status<300,status,
+      headers:{get:()=>type},text:async()=>body
+    });
+    const signedValue="a".repeat(502);
+    const accepted=await uploadStoryPng("https://pu.vk.com/upload",pngBytes,async()=>mockResponse(
+      200,"application/json",JSON.stringify({response:{upload_result:signedValue}})
+    ));
+    assert.equal(accepted,signedValue);
+    await assert.rejects(uploadStoryPng("https://pu.vk.com/upload",pngBytes,
+      async()=>mockResponse(200,"text/html","<html>intermittent</html>")),
+      /PNG upload: ответ не JSON, HTTP 200, type=text\/html/);
+    await assert.rejects(uploadStoryPng("https://pu.vk.com/upload",pngBytes,
+      async()=>mockResponse(502,"text/html","bad gateway")),
+      /PNG upload: ответ не JSON, HTTP 502/);
+    const invalidSigned="SECRET_SIGNED_VALUE".repeat(4000);
+    const invalidResult=await uploadStoryPng("https://pu.vk.com/upload",pngBytes,
+      async()=>mockResponse(200,"application/json",JSON.stringify({
+        response:{upload_result:invalidSigned}
+      }))).then(()=>null,e=>e);
+    assert.match(invalidResult.message,/signedLength=/);
+    assert.ok(!invalidResult.message.includes("SECRET_SIGNED_VALUE"),
+      "never write signed upload_result into logs");
+    await assert.rejects(uploadStoryPng("https://invalid.example/upload",pngBytes,
+      async()=>mockResponse(200,"application/json",'{}')),/Недопустимый сервер/);
+
+    const checkpoint=phase=>({status:"ERROR",phase,date,groupId:args.groupId,
+      playlistId:args.playlistId,articleUrl:args.article,videoFile:args.videoFile,
+      templateHash:args.templateHash,videoId:"9001",postId:"204"});
+    let stagedUploads=0,storySaves=0,storyServerReads=0;
+    const replayDeps={...dependencies,
+      uploadStoryPng:async(url,bytes)=>{
+        stagedUploads++;
+        assert.equal(url,"https://pu.vk.com/upload");
+        assert.deepEqual(bytes,pngBytes,"recovery must keep exact PNG bytes");
+        if(stagedUploads===1)throw new Error("PNG upload: ответ не JSON, HTTP 200");
+        return "fixture-resumed-upload-result";
+      },
+      callVk:async method=>{
+        if(method==="stories.getPhotoUploadServer"){storyServerReads++;return {upload_url:"https://pu.vk.com/upload"};}
+        if(method==="stories.save"){storySaves++;return {items:[{owner_id:-240277058,id:456239132}]};}
+        if(method==="stories.getById")return {items:[{owner_id:-240277058,id:456239132,
+          clickable_stickers:{clickable_stickers:[{type:"post",post_owner_id:-240277058,post_id:204}]},
+          link:{url:args.article}}]};
+        throw Error("recovery must not call "+method);
+      }};
+    const oldVideoSaves=saves,oldPosts=posts;
+    job.vkPublication={...checkpoint("STORY_UPLOAD_REQUESTED"),storyUploadAttempts:1};
+    await assert.rejects(runStage(config,job,state,args,replayDeps),/PNG upload: ответ не JSON/);
+    assert.equal(job.vkPublication.phase,"STORY_UPLOAD_REQUESTED");
+    assert.equal(job.vkPublication.storyUploadAttempts,2);
+    assert.equal(storySaves,0,"failed staging must never reach stories.save");
+    job.vkPublication.status="ERROR"; // outer main marks a failed stage ERROR
+    const replayed=await runStage(config,job,state,args,replayDeps);
+    assert.equal(replayed.status,"COMPLETE");
+    assert.equal(replayed.storyId,456239132);
+    assert.equal(job.vkPublication.storyUploadAttempts,3);
+    assert.equal(stagedUploads,2);
+    assert.equal(storySaves,1,"stories.save is at most once");
+    assert.equal(storyServerReads,2);
+    assert.equal(saves,oldVideoSaves,"never create another video");
+    assert.equal(posts,oldPosts,"never create another post");
+    await runStage(config,job,state,args,replayDeps);
+    assert.equal(storySaves,1,"COMPLETE replay must not create a story");
+    job.vkPublication={...checkpoint("STORY_UPLOAD_ACK"),storyUploadAttempts:1};
+    await runStage(config,job,state,args,replayDeps);
+    assert.equal(storySaves,2,"ACK without durable signed result requires a fresh staged upload");
+    job.vkPublication={...checkpoint("STORY_UPLOAD_REQUESTED"),storyUploadAttempts:3};
+    const beforeExhausted=storyServerReads;
+    await assert.rejects(runStage(config,job,state,args,replayDeps),/исчерпаны 3 попытки/);
+    assert.equal(storyServerReads,beforeExhausted,"exhausted staging must be fail-closed before API");
+    job.vkPublication={...checkpoint("STORY_SAVE_REQUESTED"),storyUploadAttempts:1};
+    await assert.rejects(runStage(config,job,state,args,replayDeps),/небезопасный retry|остановлен/);
+    assert.equal(storySaves,2,"unknown stories.save result must never be repeated");
 
     // A timeout AFTER wall.post was sent is not permission for a second post.
     job.vkPublication={status:"PARTIAL",phase:"ALBUM_VERIFIED",date,
