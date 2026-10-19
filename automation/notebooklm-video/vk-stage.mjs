@@ -195,7 +195,14 @@ async function runStage(config,job,state,args,dependencies={}){
     if(!/^[1-9]\d*$/.test(String(ack?.post_id)))throw new Error("wall.post не вернул post_id; повтор запрещён");
     save("POST_ACK",{postId:String(ack.post_id)});
   }
-  if(p.phase==="POST_ACK"){
+  if(["POST_ACK","STORY_UPLOAD_REQUESTED","STORY_UPLOAD_ACK"].includes(p.phase)){
+    // Only staged PNG uploads may be retried. stories.save MUST remain at-most-once.
+    // A retry obtains a new signed upload_result; do not persist the signed value.
+    const uploadAttempts=p.storyUploadAttempts===undefined?0:p.storyUploadAttempts;
+    if(!Number.isSafeInteger(uploadAttempts)||uploadAttempts<0||uploadAttempts>3)
+      throw new Error("VK: некорректный счётчик загрузок PNG");
+    if(uploadAttempts===3)
+      throw new Error("VK: исчерпаны 3 попытки загрузки PNG; stories.save не вызывался");
     // Use the already-generated NotebookLM PNG verbatim, without resizing, text or compositing.
     const png=fs.readFileSync(args.cover);
     if(!png.length||png.length>10*1024*1024)throw new Error("PNG истории пустой или слишком большой");
@@ -206,7 +213,7 @@ async function runStage(config,job,state,args,dependencies={}){
       link_text:"read",link_url:args.article
     });
     if(!reply?.upload_url)throw new Error("VK Stories не выдал upload_url");
-    save("STORY_UPLOAD_REQUESTED");
+    save("STORY_UPLOAD_REQUESTED",{storyUploadAttempts:uploadAttempts+1});
     const signed=await (dependencies.uploadStoryPng||uploadStoryPng)(reply.upload_url,png);
     save("STORY_UPLOAD_ACK");
     save("STORY_SAVE_REQUESTED");
@@ -275,7 +282,7 @@ export async function main(){
   ensureSameJob(job.vkPublication,args);
   if(terminalStatus(job.vkPublication)){logger(config,"5: VK уже COMPLETE; пропуск");return;}
   const lockedPhases=["VIDEO_SAVE_REQUESTED","VIDEO_CREATED","VIDEO_PUBLISH_REQUESTED",
-    "POST_REQUESTED","STORY_UPLOAD_REQUESTED","STORY_UPLOAD_ACK","STORY_SAVE_REQUESTED"];
+    "POST_REQUESTED","STORY_SAVE_REQUESTED"];
   if(lockedPhases.includes(job.vkPublication?.phase))throw new Error(
     "VK: неопределённая предыдущая мутация "+job.vkPublication.phase+"; автоматическое повторение запрещено"
   );

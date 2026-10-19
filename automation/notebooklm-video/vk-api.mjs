@@ -243,13 +243,35 @@ export async function uploadStoryPng(uploadUrl,png,fetchImpl=fetch){
   const permitted=["vk.com","vk.ru","vkuser.net","userapi.com","vk-cdn.net","vk-cdn.com","vkvideo.ru"];
   if(u.protocol!=="https:"||!permitted.some(x=>u.hostname===x||u.hostname.endsWith("."+x)))
     throw new Error("Недопустимый сервер VK Stories");
+  // A PNG upload is staging only: stories.save is the first public mutation.
+  // Keep response diagnostics safe: never print the signed URL, body or upload_result.
   const form=new FormData();
   form.append("file",new Blob([png],{type:"image/png"}),"story.png");
-  const res=await fetchImpl(u,{method:"POST",body:form,redirect:"error",signal:AbortSignal.timeout(60000)});
-  let json;try{json=await res.json();}catch{throw new Error("PNG upload: ответ не JSON");}
+  let res;
+  try{
+    res=await fetchImpl(u,{method:"POST",body:form,redirect:"error",signal:AbortSignal.timeout(60000)});
+  }catch{
+    throw new Error("PNG upload: сетевая ошибка или таймаут (до stories.save)");
+  }
+  const type=String(res.headers?.get?.("content-type")||"unknown").split(";")[0]
+    .slice(0,48).replace(/[^a-z0-9+./_-]/gi,"");
+  let body;
+  try{body=await res.text();}catch{
+    throw new Error("PNG upload: тело ответа недоступно, HTTP "+res.status);
+  }
+  let json;
+  try{json=JSON.parse(body);}catch{
+    throw new Error("PNG upload: ответ не JSON, HTTP "+res.status+
+      ", type="+type+", bytes="+Buffer.byteLength(body));
+  }
   const signed=json?.response?.upload_result;
-  if(!res.ok||typeof signed!=="string"||signed.length<10||signed.length>65536)
-    throw new Error("VK не подтвердил загрузку PNG");
+  if(!res.ok||typeof signed!=="string"||signed.length<10||signed.length>65536){
+    const code=Number(json?.error?.error_code);
+    const errorCode=Number.isSafeInteger(code)&&code>0?String(code):"none";
+    throw new Error("PNG upload: VK не подтвердил результат, HTTP "+res.status+
+      ", type="+type+", errorCode="+errorCode+
+      ", signedLength="+(typeof signed==="string"?signed.length:0));
+  }
   return signed;
 }
 
