@@ -83,7 +83,12 @@ VK является **только** дополнительным локальн
 state.json, log-utils.js, архивирование и существующий браузерный профиль.
 Файлы downloads/ и Dzen-publication state нельзя изменять ради VK.
 Проверка успешности и восстановление при неоднозначных сетевых мутациях
-описаны в VK_PUBLICATION.md. Токен сообщества и временный .env в Git
+описаны в VK_PUBLICATION.md. После 19.10.2026 разрешён ограниченный
+повтор только pre-save PNG staging (STORY_UPLOAD_REQUESTED/ACK):
+не более трёх сохранённых попыток на job. После STORY_SAVE_REQUESTED
+запрет любого автоматического stories.save остаётся абсолютным.
+HTTP-диагностика не должна включать upload URL/response body/upload_result.
+Токен сообщества и временный .env в Git
 не попадают; штатное хранение токена — локальный Windows DPAPI.
 
 ## Locks, logging and retained state
