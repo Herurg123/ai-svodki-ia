@@ -78,6 +78,12 @@ separately scheduled publisher. Any edits to VK publication must preserve the
 four preceding gates, active job/checkpoint and shared full-worker lock.
 Never infer public story artwork from `stories.save` ACK alone: require visual
 verification of the actual image and preserve the source NotebookLM PNG bytes.
+As of the 2026-10-20 approved portrait Story rendering, preserve the *source*
+16:9 preview for FTP/Dzen and generate an adjacent YYYY-MM-DD-vk.png
+(1080x1920, blurred fill with sharp uncropped original in the center) solely
+for the VK Story upload. Rendering must occur before any story API mutation,
+must not alter previously persisted VK checkpoints, and must retain the
+pre-stories.save at-most-three staging attempts and at-most-once stories.save.
 Pre-save PNG staging may replay at most three persisted attempts per job, including
 across scheduled runs; any uncertain stories.save remains at-most-once. Never log
 signed upload_result or upload URL while diagnosing VK HTTP failures.
