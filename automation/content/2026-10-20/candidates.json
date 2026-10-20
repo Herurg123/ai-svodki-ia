@@ -1,0 +1,573 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-10-20",
+  "search_window": {
+    "start_at": "2026-10-18T04:16:30+03:00",
+    "end_at": "2026-10-20T04:50:35+03:00",
+    "latest_archive_at": "2026-10-19T04:16:30+03:00",
+    "start_date": "2026-10-18",
+    "end_date": "2026-10-20",
+    "latest_archive_date": "2026-10-19"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=3, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "GitHub Copilot CLI 1.0.100 добавила отключение телеметрии и расширила защищённые агентные workflows",
+      "organization": "GitHub",
+      "published_date": "2026-10-19",
+      "published_at": "2026-10-19T18:43:10+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agents; developer privacy; enterprise policy; sandboxing; MCP; semantic code search",
+      "event_type": "product release",
+      "keywords": [
+        "GitHub Copilot CLI",
+        "v1.0.100",
+        "telemetry",
+        "privacy",
+        "sandbox",
+        "MCP",
+        "semantic code search",
+        "plugins",
+        "Gemini"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Release 1.0.100",
+        "publisher": "GitHub",
+        "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.100"
+      },
+      "supporting_sources": [
+        {
+          "title": "GitHub Copilot CLI v1.0.100",
+          "publisher": "Havoptic",
+          "url": "https://www.havoptic.com/r/github-copilot-v1.0.100"
+        }
+      ],
+      "event_summary": "GitHub выпустила Copilot CLI 1.0.100. Релиз добавляет флаг --disable-client-telemetry, одноразовое доверие папке для prompt-mode запусков, установку проверенных Skills и плагинов по GitHub install links, а также устраняет ряд проблем с MCP, sandbox, managed policy, Gemini tool calls и сессиями. Для online-сессий по умолчанию включён semantic code search.",
+      "verified_facts": [
+        "Официальный GitHub release 1.0.100 создан 19 октября 2026 года.",
+        "CLI получил --disable-client-telemetry для отключения загрузки клиентской телеметрии.",
+        "Добавлены --trust-folder для однократных prompt-mode сессий и установка verified Skills и plugins через GitHub install links.",
+        "Исправлен сценарий, при котором сессии могли зависать при загрузке инструментов MCP-сервера.",
+        "Для online sessions semantic code search включён по умолчанию.",
+        "Релиз уточняет sandboxing, managed plugins, enterprise permissions и поддержку инструментов в custom agents."
+      ],
+      "significance": "Обновление затрагивает важные для массового корпоративного CLI-агента поверхности: приватность телеметрии, доверенные рабочие каталоги, управляемые плагины, MCP-надежность и sandboxing. Это не просто точечный bugfix, а заметное усиление управляемости агентных coding workflows.",
+      "significance_score": 3,
+      "limitations": "Это один из частых релизов CLI, а первоисточник не предоставляет timezone-aware timestamp. Значимость основана на сочетании функций приватности, enterprise controls и надежности, а не на независимой метрике внедрения.",
+      "archive_status": "none",
+      "archive_reason": "",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Официальная страница GitHub release подтверждает дату и полный список изменений.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/github/copilot-cli/releases/tags/v1.0.100=2026-10-19T18:43:10Z; timestamp проверен Python против effective window. Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/github/copilot-cli/releases/tags/v1.0.100=2026-10-19T18:43:10Z; timestamp проверен Python против effective window. Релиз от 19 октября 2026 года новее заархивированной версии Copilot CLI 1.0.98 от 14 октября и содержит самостоятельный набор возможностей.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "event_date": "2026-10-19",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.com/github/copilot-cli/releases/tag/v1.0.100",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Страница официального GitHub-релиза указывает, что версию выпустили 19 Oct; timezone-aware instant не указан.",
+      "id": "cand-001",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://github.com/github/copilot-cli/releases/tag/v1.0.100",
+      "source_published_date": "2026-10-19",
+      "source_published_at": "2026-10-19T18:43:10+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "github-releases-api:published_at:https://api.github.com/repos/github/copilot-cli/releases/tags/v1.0.100=2026-10-19T18:43:10Z"
+    },
+    {
+      "title": "Tenstorrent привлекла $1,5 млрд при оценке $6,2 млрд для масштабирования inference-чипов под open-weight ИИ",
+      "organization": "Tenstorrent",
+      "published_date": "2026-10-19",
+      "published_at": "2026-10-19T18:37:27+00:00",
+      "time_precision": "datetime",
+      "topic": "AI inference chips; open-weight models; infrastructure financing; semiconductor competition",
+      "event_type": "funding",
+      "keywords": [
+        "Tenstorrent",
+        "$1.5 billion",
+        "$6.2 billion valuation",
+        "AI inference chips",
+        "open-weight models",
+        "Jim Keller"
+      ],
+      "geography": "world",
+      "category": "chips",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Tenstorrent hits $6.2B valuation to scale open-weight AI chips",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/19/tenstorrent-hits-6-2b-valuation-to-scale-open-weight-ai-chips/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Tenstorrent, разработчик inference-чипов и серверов для open-weight моделей, привлекла $1,5 млрд при оценке $6,2 млрд. Компания намерена направить средства на масштабирование аппаратуры для serving открытых моделей и генерации видео.",
+      "verified_facts": [
+        "TechCrunch сообщает о раунде $1,5 млрд при оценке Tenstorrent в $6,2 млрд.",
+        "По данным публикации, среди инвесторов — Trace Capital, Innovation X, Cadence Ventures, Eclipse, Fidelity, SanDisk и T. Rowe Price.",
+        "Компания позиционирует капитал для масштабирования чипов, ориентированных на обслуживание open-weight моделей и video generation."
+      ],
+      "significance": "Крупный раунд и оценка заметного независимого конкурента Nvidia в inference-ускорителях; событие релевантно инвестициям и диверсификации инфраструктуры для open-weight AI.",
+      "significance_score": 3,
+      "limitations": "Сведения о составе раунда и планах использования капитала подтверждены авторитетным вторичным источником; отдельный первичный пресс-релиз в данном проходе не установлен.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет сюжета о раунде Tenstorrent; упоминание Etched не является дублем.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Открытая страница TechCrunch содержит точный timestamp и конкретные параметры сделки.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-19T18:37:27+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-10-19T18:37:27+00:00; timestamp проверен Python против effective window. Публикация датирована 19 октября 2026 года и имеет timestamp 11:37 PDT, что соответствует 21:37 19 октября по +03:00 и попадает в effective window.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран как инфраструктурно-инвестиционная новость.",
+      "event_date": "2026-10-19",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://techcrunch.com/2026/10/19/tenstorrent-hits-6-2b-valuation-to-scale-open-weight-ai-chips/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Авторитетный вторичный источник от 19 октября 2026 года сообщает о новом раунде финансирования; точное время публичного анонса сделки не установлено.",
+      "id": "cand-002",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/10/19/tenstorrent-hits-6-2b-valuation-to-scale-open-weight-ai-chips/",
+      "source_published_date": "2026-10-19",
+      "source_published_at": "2026-10-19T18:37:27+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-19T18:37:27+00:00"
+    },
+    {
+      "title": "Mistral выпустила Vibe 3.0.0 с миграцией из других coding agents и управляемым контролем MCP",
+      "organization": "Mistral AI",
+      "published_date": "2026-10-19",
+      "published_at": "2026-10-19T16:01:14+00:00",
+      "time_precision": "datetime",
+      "topic": "AI coding agents; CLI and desktop developer environments; agent interoperability; MCP governance; subagents",
+      "event_type": "major product release",
+      "keywords": [
+        "Mistral Vibe",
+        "Vibe 3.0.0",
+        "coding agent",
+        "MCP",
+        "subagents",
+        "session import",
+        "agent interoperability",
+        "managed configuration"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Release v3.0.0",
+        "publisher": "Mistral AI / GitHub",
+        "url": "https://github.com/mistralai/mistral-vibe/releases/tag/v3.0.0"
+      },
+      "supporting_sources": [
+        {
+          "title": "Mistral Vibe: MCP, Skills, AGENTS.md, subagents and hooks",
+          "publisher": "AgentAtlas",
+          "url": "https://agentatlas.dev/harnesses/mistral-vibe"
+        }
+      ],
+      "event_summary": "Mistral выпустила Vibe 3.0.0 — крупное обновление своего open-source coding-agent окружения. В нём desktop-клиент получил импорт проектов и сессий из другого coding agent при onboarding, CLI — ветвление возобновляемых сессий, режим headless с JSON-экспортом результатов и более развитую работу с фоновыми задачами. Для организаций добавлен управляемый флаг, способный запретить пользовательские операции с MCP-серверами, включая операции, предоставленные плагинами.",
+      "verified_facts": [
+        "GitHub-релиз v3.0.0 опубликован 19 октября 2026 года.",
+        "Desktop Vibe умеет импортировать проекты и сессии из другого coding agent во время первоначальной настройки.",
+        "CLI получил /branch для создания новой возобновляемой сессии от текущего диалога, а headless-режим получил контракт выполнения с лимитами и JSON-экспортом.",
+        "В managed configuration добавлен enable_mcp, который может блокировать пользовательские операции с MCP-серверами, в том числе plugin-provided MCP servers.",
+        "Релиз также добавляет видимость порога compaction контекста и обновляет встроенные инструменты субагентов."
+      ],
+      "significance": "Это самостоятельный major-релиз конкурентного agentic development environment: он одновременно снижает барьер миграции между агентами, развивает управляемость автономных сред и вводит централизованный контроль расширяемого MCP-контура.",
+      "significance_score": 3,
+      "limitations": "Заявления о функциях основаны на release notes поставщика; независимой оценки качества или распространённости обновления нет. GitHub показывает время релиза без явно указанного часового пояса, поэтому точный event_at не фиксируется.",
+      "archive_status": "none",
+      "archive_reason": "",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Первичный GitHub release подтверждает номер версии, дату и перечисленные возможности.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/mistralai/mistral-vibe/releases/tags/v3.0.0=2026-10-19T16:01:14Z; timestamp проверен Python против effective window. Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/mistralai/mistral-vibe/releases/tags/v3.0.0=2026-10-19T16:01:14Z; timestamp проверен Python против effective window. Первичный релиз датирован 19 октября 2026 года и не совпадает с архивными сюжетами о Mistral Large 4 или других инструментах.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "event_date": "2026-10-19",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.com/mistralai/mistral-vibe/releases/tag/v3.0.0",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Страница официального GitHub-релиза помечает v3.0.0 как released 19 Oct; точный timezone-aware timestamp не указан.",
+      "id": "cand-003",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://github.com/mistralai/mistral-vibe/releases/tag/v3.0.0",
+      "source_published_date": "2026-10-19",
+      "source_published_at": "2026-10-19T16:01:14+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "github-releases-api:published_at:https://api.github.com/repos/mistralai/mistral-vibe/releases/tags/v3.0.0=2026-10-19T16:01:14Z"
+    },
+    {
+      "title": "Claude Code 2.1.304 добавила guided setup для auto mode и проверку конфигураций Managed Agents",
+      "organization": "Anthropic",
+      "published_date": "2026-10-19",
+      "published_at": "2026-10-19T19:47:15+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agents; auto mode; plugin hooks; agent security; managed agents; developer observability",
+      "event_type": "product release",
+      "keywords": [
+        "Claude Code",
+        "2.1.304",
+        "auto mode",
+        "Managed Agents",
+        "plugin hooks",
+        "tool permissions",
+        "security verification",
+        "compaction"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "Claude Code v2.1.304",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/claude-code-2.1.304"
+      },
+      "supporting_sources": [
+        {
+          "title": "Claude Code CHANGELOG.md",
+          "publisher": "Anthropic / GitHub",
+          "url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md"
+        }
+      ],
+      "event_summary": "По данным трекера релизов, Anthropic выпустила Claude Code 2.1.304. В версии появился /auto-mode-setup, который анализирует проект и недавние сессии для настройки auto mode; инструмент managed-agents-secure для сверки конфигурации Managed Agents с security guide Anthropic; а также новые события и ограничения одобрения действий для plugin hooks.",
+      "verified_facts": [
+        "Havoptic указывает дату релиза Claude Code 2.1.304 как 19 октября 2026 года.",
+        "В release notes указан /auto-mode-setup: guided setup, читающий проект и recent sessions для настройки auto mode.",
+        "Указана команда /claude-api managed-agents-secure, сверяющая настройки Managed Agents с опубликованным руководством Anthropic по безопасности без внесения изменений.",
+        "Добавлены запись в transcript при пропуске hook плагином, поле read-only для tool.check и режим одобрения person, ограничивающий круг субъектов, которые могут подтвердить действие.",
+        "Изменено summary compaction: в нём отображаются названия ранее вызванных инструментов."
+      ],
+      "significance": "Релиз потенциально важен для практик безопасного развёртывания Claude Code: он сочетает автоматизированную настройку автономного режима с отдельной диагностикой безопасной конфигурации Managed Agents и более наблюдаемыми plugin-permission механизмами.",
+      "significance_score": 2,
+      "limitations": "Это частый incremental-релиз; полные release notes в этой проверке доступны через специализированный трекер, а официальная страница CHANGELOG не отдала структурированный блок версии и timestamp. Поэтому кандидат оставлен как consider, а не как подтверждённый headline высокого приоритета.",
+      "archive_status": "none",
+      "archive_reason": "",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Содержание версии подтверждено релизным трекером, который ссылается на официальный changelog Anthropic; репозиторий Anthropic доступен как первичный supporting source, но не показывает в извлечённом представлении отдельную дату версии.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-19T19:47:15.337Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-10-19T19:47:15.337Z; timestamp проверен Python против effective window. Событие датировано 19 октября 2026 года и является новым относительно архивных материалов о версиях 2.1.293, 2.1.296 и 2.1.301.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "event_date": "2026-10-19",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.havoptic.com/r/claude-code-2.1.304",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Страница Havoptic прямо указывает, что Claude Code 2.1.304 была released on October 19, 2026; официальный changelog доступен, но его извлечение не показывает отдельный timestamp этой версии.",
+      "id": "cand-004",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.havoptic.com/r/claude-code-2.1.304",
+      "source_published_date": "2026-10-19",
+      "source_published_at": "2026-10-19T19:47:15.337000+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-19T19:47:15.337Z"
+    },
+    {
+      "title": "Advancing coding in low‑resource programming languages",
+      "organization": "OpenAI",
+      "published_date": "2026-10-19",
+      "published_at": "2026-10-19T12:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Advancing coding in low‑resource programming languages",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "Advancing",
+        "coding",
+        "low",
+        "resource",
+        "programming",
+        "languages"
+      ],
+      "geography": "world",
+      "category": "other",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Advancing coding in low‑resource programming languages",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/low-resource-programming-languages"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI official artificial intelligence publication: Advancing coding in low‑resource programming languages",
+      "verified_facts": [
+        "Advancing coding in low‑resource programming languages",
+        "OpenAI official artificial intelligence publication: Advancing coding in low‑resource programming languages"
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-10-19T12:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-10-19T12:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-19T12:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-10-19T12:00:00+00:00; timestamp проверен Python против effective window. Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-10-19T12:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-10-19T12:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-005",
+      "trusted_feed_publication_evidence": {
+        "version": 1,
+        "kind": "trusted_first_party_feed",
+        "source_id": "openai_news_rss",
+        "feed_url": "https://openai.com/news/rss.xml",
+        "item_url": "https://openai.com/index/low-resource-programming-languages",
+        "published_at": "2026-10-19T12:00:00+00:00",
+        "published_date": "2026-10-19",
+        "time_precision": "datetime",
+        "feed_date_field": "rss_pubdate",
+        "same_host_required": true,
+        "exact_item_url_required": true
+      },
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_evidence_kind": "trusted_first_party_feed",
+      "source_freshness_feed_source_id": "openai_news_rss",
+      "source_freshness_feed_date_field": "rss_pubdate",
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://openai.com/index/low-resource-programming-languages",
+      "source_published_date": "2026-10-19",
+      "source_published_at": "2026-10-19T12:00:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "trusted_feed:openai_news_rss:rss_pubdate=2026-10-19T12:00:00+00:00"
+    },
+    {
+      "title": "Microsoft представила подход Guardian Agents для контроля ИИ-агентов как «внутренних угроз»",
+      "organization": "Microsoft",
+      "published_date": "2026-10-19",
+      "published_at": "2026-10-19T13:00:02+00:00",
+      "time_precision": "datetime",
+      "topic": "AI-agent security; enterprise governance; runtime monitoring; dynamic permissions; Project Perception",
+      "event_type": "security product and framework announcement",
+      "keywords": [
+        "Microsoft",
+        "Guardian Agents",
+        "Project Perception",
+        "agentic insider",
+        "AI agent security",
+        "enterprise governance",
+        "dynamic permissions",
+        "containment"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Securing the agentic insider",
+        "publisher": "Microsoft",
+        "url": "https://blogs.microsoft.com/blog/2026/10/19/securing-the-agentic-insider/"
+      },
+      "supporting_sources": [
+        {
+          "title": "Microsoft says AI agents are like insider threats as ‘frontier models can’t be trusted’",
+          "publisher": "TechCrunch",
+          "url": "https://techcrunch.com/2026/10/19/microsoft-says-ai-agents-are-like-insider-threats-as-frontier-models-cant-be-trusted/"
+        }
+      ],
+      "event_summary": "Microsoft описала расширение Project Perception для защиты корпоративных ИИ-агентов, рассматривая их как потенциальных «agentic insiders». Компания предлагает Guardian Agents, которые должны непрерывно наблюдать за действиями агентов, оценивать риск по сигналам из identity, data, cloud, endpoint, network и runtime и динамически ограничивать разрешения или действия.",
+      "verified_facts": [
+        "Официальная публикация Microsoft датирована 19 октября 2026 года.",
+        "Microsoft заявляет, что frontier-модели не следует считать доверенными в корпоративном контуре из-за их непредсказуемости и ориентации на достижение результата, а не на организационные нормы.",
+        "Компания предлагает Guardian Agents для постоянного надзора и модерации действий агентов до их выполнения.",
+        "Project Perception должен объединять сигналы из идентификационной, дата-, облачной, endpoint-, сетевой и runtime-плоскостей, чтобы назначать агентам политики, контейнеры и разрешения.",
+        "Microsoft описывает динамическую оценку риска и реагирование Guardian Agents в реальном времени; публикация не устанавливает независимые показатели эффективности этой архитектуры."
+      ],
+      "significance": "Это заметное изменение в риторике и продуктовой стратегии крупного облачного поставщика: Microsoft переносит фокус AI security с внешних злоумышленников на риск от легитимно развёрнутых, но чрезмерно привилегированных агентов. Подход затрагивает корпоративные практики identity, permissions, monitoring и human approval для агентных систем.",
+      "significance_score": 3,
+      "limitations": "Материал является заявлением поставщика и описывает целевую архитектуру; доступное первоисточник-представление не содержит независимой оценки эффективности, перечня общедоступных SKU или точных сроков полного развёртывания Guardian Agents.",
+      "archive_status": "none",
+      "archive_reason": "В архиве есть более ранний сюжет о Microsoft Surface Laptop Ultra и агентной безопасности, но нет материала о Guardian Agents и расширении Project Perception для контроля корпоративных агентов как внутренних угроз.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Первичный блог Microsoft прямо фиксирует дату, концепцию agentic insiders, Guardian Agents, связь с Project Perception и заявленные механизмы наблюдения, риск-оценки и ограничений.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-10-19T13:00:02+00:00; timestamp проверен Python против effective window. Официальное объявление Microsoft от 19 октября 2026 года относится к effective window и описывает новый самостоятельный security-подход для корпоративных агентов, а не перепечатку прежнего события.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "event_date": "2026-10-19",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://blogs.microsoft.com/blog/2026/10/19/securing-the-agentic-insider/",
+      "event_evidence_kind": "official_announcement",
+      "event_date_evidence": "Официальная публикация Microsoft помечена датой Oct 19, 2026; timezone-aware время не указано.",
+      "audit_direction": "general_coverage_gaps",
+      "id": "cand-006",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://blogs.microsoft.com/blog/2026/10/19/securing-the-agentic-insider/",
+      "source_published_date": "2026-10-19",
+      "source_published_at": "2026-10-19T13:00:02+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-10-19T13:00:02+00:00"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=4, validated unique=4, final candidates=4. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-china_asia_models-01",
+      "version": 1,
+      "status": "unresolved",
+      "title": "DeepSeek V4.1 Flash (1017)",
+      "origin_direction": "china_asia_models",
+      "reason_code": "unverified",
+      "evidence_reason": "Независимый бенчмарк-трекер указывает релиз 17 октября 2026 года, но в пределах единственного retrieval-пула не найден официальный анонс, репозиторий или иной пригодный первичный источник, подтверждающий событие и его дату. Страница является ежедневно обновляемым snapshot, а не доказательством origin-анонса.",
+      "likely_significance_score": 1,
+      "entities": [
+        "DeepSeek",
+        "V4.1",
+        "Flash"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

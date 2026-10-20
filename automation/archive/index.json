@@ -1,8 +1,198 @@
 {
   "version": 2,
-  "generated_at": "2026-10-19T01:24:32+00:00",
+  "generated_at": "2026-10-20T02:00:35+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-10-20",
+      "published_at": "2026-10-20T06:00:00+03:00",
+      "search_cutoff_at": "2026-10-20T04:50:35+03:00",
+      "title": "ИИ-Сводка на 20 октября 2026",
+      "link": "https://rybalka.one/posts/2026-10-20/",
+      "summary": "Главные новости искусственного интеллекта за 20 октября 2026 года Новостей сегодня меньше, чем обычно Свежая повестка сосредоточена на двух слоях внедрения ИИ: инфраструктуре для дешёвого inference и управлении агентами, которым дают доступ к корпоративному коду, данным и инструментам. Microsoft предлагает рассматривать таких агентов как потенциальную внутреннюю угрозу, а разработчики coding-сред усиливают контроль MCP, плагинов, телеметрии и автономных режимов. Отдельный рыночный сигнал пришёл ",
+      "topics": [
+        "Tenstorrent",
+        "inference-чипы",
+        "open-weight модели",
+        "Microsoft",
+        "Guardian Agents",
+        "безопасность агентов ИИ",
+        "GitHub Copilot CLI",
+        "Mistral Vibe",
+        "Claude Code",
+        "MCP",
+        "ИИ-кодинг",
+        "корпоративное управление ИИ"
+      ],
+      "source_urls": [
+        "https://techcrunch.com/2026/10/19/tenstorrent-hits-6-2b-valuation-to-scale-open-weight-ai-chips/",
+        "https://blogs.microsoft.com/blog/2026/10/19/securing-the-agentic-insider/",
+        "https://github.com/github/copilot-cli/releases/tag/v1.0.100",
+        "https://github.com/mistralai/mistral-vibe/releases/tag/v3.0.0",
+        "https://www.havoptic.com/r/claude-code-2.1.304"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "Tenstorrent привлекла $1,5 млрд при оценке $6,2 млрд для inference-чипов",
+          "organization": "Tenstorrent",
+          "topic": "AI inference chips; open-weight models; infrastructure financing; semiconductor competition",
+          "event_type": "funding",
+          "status": "new",
+          "summary": "Tenstorrent, разработчик inference-чипов и серверов для open-weight моделей, привлекла $1,5 млрд при оценке $6,2 млрд. Компания намерена направить средства на масштабирование аппаратуры для serving открытых моделей и генерации видео.",
+          "published_at": "2026-10-19T18:37:27+00:00",
+          "published_date": "2026-10-19",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Tenstorrent hits $6.2B valuation to scale open-weight AI chips",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/19/tenstorrent-hits-6-2b-valuation-to-scale-open-weight-ai-chips/"
+            }
+          ],
+          "keywords": [
+            "Tenstorrent",
+            "$1.5 billion",
+            "$6.2 billion valuation",
+            "AI inference chips",
+            "open-weight models",
+            "Jim Keller"
+          ],
+          "geography": "world",
+          "category": "chips"
+        },
+        {
+          "candidate_id": "cand-006",
+          "section": "world",
+          "headline": "Microsoft предложила Guardian Agents для контроля агентных систем",
+          "organization": "Microsoft",
+          "topic": "AI-agent security; enterprise governance; runtime monitoring; dynamic permissions; Project Perception",
+          "event_type": "security product and framework announcement",
+          "status": "new",
+          "summary": "Microsoft описала расширение Project Perception для защиты корпоративных ИИ-агентов, рассматривая их как потенциальных «agentic insiders». Компания предлагает Guardian Agents, которые должны непрерывно наблюдать за действиями агентов, оценивать риск по сигналам из identity, data, cloud, endpoint, network и runtime и динамически ограничивать разрешения или действия.",
+          "published_at": "2026-10-19T13:00:02+00:00",
+          "published_date": "2026-10-19",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Securing the agentic insider",
+              "publisher": "Microsoft",
+              "url": "https://blogs.microsoft.com/blog/2026/10/19/securing-the-agentic-insider/"
+            }
+          ],
+          "keywords": [
+            "Microsoft",
+            "Guardian Agents",
+            "Project Perception",
+            "agentic insider",
+            "AI agent security",
+            "enterprise governance",
+            "dynamic permissions",
+            "containment"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-001",
+          "section": "world",
+          "headline": "GitHub Copilot CLI 1.0.100 добавила отключение телеметрии и доработала защищённые workflows",
+          "organization": "GitHub",
+          "topic": "CLI coding agents; developer privacy; enterprise policy; sandboxing; MCP; semantic code search",
+          "event_type": "product release",
+          "status": "new",
+          "summary": "GitHub выпустила Copilot CLI 1.0.100. Релиз добавляет флаг --disable-client-telemetry, одноразовое доверие папке для prompt-mode запусков, установку проверенных Skills и плагинов по GitHub install links, а также устраняет ряд проблем с MCP, sandbox, managed policy, Gemini tool calls и сессиями. Для online-сессий по умолчанию включён semantic code search.",
+          "published_at": "2026-10-19T18:43:10+00:00",
+          "published_date": "2026-10-19",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Release 1.0.100",
+              "publisher": "GitHub",
+              "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.100"
+            }
+          ],
+          "keywords": [
+            "GitHub Copilot CLI",
+            "v1.0.100",
+            "telemetry",
+            "privacy",
+            "sandbox",
+            "MCP",
+            "semantic code search",
+            "plugins",
+            "Gemini"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "Mistral Vibe 3.0.0 добавила миграцию из других coding agents и контроль MCP",
+          "organization": "Mistral AI",
+          "topic": "AI coding agents; CLI and desktop developer environments; agent interoperability; MCP governance; subagents",
+          "event_type": "major product release",
+          "status": "new",
+          "summary": "Mistral выпустила Vibe 3.0.0 — крупное обновление своего open-source coding-agent окружения. В нём desktop-клиент получил импорт проектов и сессий из другого coding agent при onboarding, CLI — ветвление возобновляемых сессий, режим headless с JSON-экспортом результатов и более развитую работу с фоновыми задачами. Для организаций добавлен управляемый флаг, способный запретить пользовательские операции с MCP-серверами, включая операции, предоставленные плагинами.",
+          "published_at": "2026-10-19T16:01:14+00:00",
+          "published_date": "2026-10-19",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Release v3.0.0",
+              "publisher": "Mistral AI / GitHub",
+              "url": "https://github.com/mistralai/mistral-vibe/releases/tag/v3.0.0"
+            }
+          ],
+          "keywords": [
+            "Mistral Vibe",
+            "Vibe 3.0.0",
+            "coding agent",
+            "MCP",
+            "subagents",
+            "session import",
+            "agent interoperability",
+            "managed configuration"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-004",
+          "section": "world",
+          "headline": "Claude Code 2.1.304 получила настройку auto mode и проверку Managed Agents",
+          "organization": "Anthropic",
+          "topic": "CLI coding agents; auto mode; plugin hooks; agent security; managed agents; developer observability",
+          "event_type": "product release",
+          "status": "new",
+          "summary": "По данным трекера релизов, Anthropic выпустила Claude Code 2.1.304. В версии появился /auto-mode-setup, который анализирует проект и недавние сессии для настройки auto mode; инструмент managed-agents-secure для сверки конфигурации Managed Agents с security guide Anthropic; а также новые события и ограничения одобрения действий для plugin hooks.",
+          "published_at": "2026-10-19T19:47:15+00:00",
+          "published_date": "2026-10-19",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Claude Code v2.1.304",
+              "publisher": "Havoptic",
+              "url": "https://www.havoptic.com/r/claude-code-2.1.304"
+            }
+          ],
+          "keywords": [
+            "Claude Code",
+            "2.1.304",
+            "auto mode",
+            "Managed Agents",
+            "plugin hooks",
+            "tool permissions",
+            "security verification",
+            "compaction"
+          ],
+          "geography": "world",
+          "category": "coding"
+        }
+      ]
+    },
     {
       "date": "2026-10-19",
       "published_at": "2026-10-19T06:00:00+03:00",
@@ -6338,10 +6528,10 @@
     {
       "date": "2026-09-17",
       "published_at": "2026-09-17T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-17T04:24:58+03:00",
+      "search_cutoff_at": "2026-09-17T06:00:00+03:00",
       "title": "ИИ-Сводка на 17 сентября 2026",
       "link": "https://rybalka.one/posts/2026-09-17/",
-      "summary": "Главные новости искусственного интеллекта за 17 сентября 2026 года Повестка дня показывает, что следующий предел масштабирования ИИ проходит не только через модели и GPU, но и через энергосистему. Google, NVIDIA и партнёры продвигают управляемое энергопотребление дата-центров, а Google одновременно закрепляет крупный европейский проект с долгосрочным источником атомной энергии. На продуктовом уровне ассистенты получают больше внешних действий и более устойчивую память: Amazon локализует Alexa+ д",
+      "summary": "Google и NVIDIA объединяют энергетику и ИИ-дата-центры, Google вкладывает $15 млрд в Финляндию, а OpenAI формализует раскрытие misalignment. В фокусе также Alexa+, Google Home MCP, Claude и Grok Build.",
       "topics": [
         "ИИ-дата-центры",
         "энергоснабжение",
