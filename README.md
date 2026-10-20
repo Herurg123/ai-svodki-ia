@@ -21,7 +21,7 @@ Production-репозиторий ежедневных аналитически�
   active entrypoints, ключевые production-инварианты и команды проверки.
 - [`AGENTS.md`](AGENTS.md) — обязательные правила изменения репозитория.
 - [`automation/notebooklm-video/README.md`](automation/notebooklm-video/README.md)
-  — локальный Windows downstream NotebookLM/Dzen/VK. С 18.10.2026 реальный ручной цикл VK и story-only ретест подтверждены оператором; 19.10.2026 первый автоматический VK запустил видео/пост, а история после нестабильного PNG upload восстановлена отдельно. Исправление допускает только ограниченный retry PNG до stories.save; шаблон config.example.json остаётся с выключенным пятым этапом.
+  — локальный Windows downstream NotebookLM/Dzen/VK. С 18.10.2026 реальный ручной цикл VK и story-only ретест подтверждены оператором; 19.10.2026 первый автоматический VK запустил видео/пост, а история после нестабильного PNG upload восстановлена отдельно. Исправление допускает только ограниченный retry PNG до stories.save; с 20.10.2026 VK-история получает отдельный 1080×1920 PNG с размытым фоном (`ИИ-Сводка YYYY-MM-DD-vk.png`), сохраняя исходный 16:9 PNG для остальных этапов. Шаблон config.example.json остаётся с выключенным пятым этапом.
 
 README намеренно остаётся обзорным. Детальные implementation/recovery contracts
 не дублируются здесь, если для них уже есть канонический architecture/spec
