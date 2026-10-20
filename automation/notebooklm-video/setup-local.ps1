@@ -38,6 +38,7 @@ $files = @(
     "dzen-article-video.js",
     "vk-api.mjs",
     "vk-stage.mjs",
+    "vk-story-image.mjs",
     "vk-text.mjs",
     "vk-publication-template.txt",
     "configure-vk-access.ps1",
