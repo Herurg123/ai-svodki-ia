@@ -11,6 +11,8 @@ const {pathToFileURL}=require("node:url");
     await import(pathToFileURL(path.join(root,"vk-stage.mjs")).href);
   const {makePostSticker,methodRequest,findExistingVideoByTitle,uploadStoryPng}=await import(
     pathToFileURL(path.join(root,"vk-api.mjs")).href);
+  const {buildVkStoryImage,pngDimensions,storyImagePath}=await import(
+    pathToFileURL(path.join(root,"vk-story-image.mjs")).href);
   const source=fs.readFileSync(path.join(root,"full-worker.js"),"utf8");
   const configExample=JSON.parse(fs.readFileSync(path.join(root,"config.example.json"),"utf8"));
   const deploy=fs.readFileSync(path.join(root,"setup-local.ps1"),"utf8");
@@ -28,6 +30,10 @@ const {pathToFileURL}=require("node:url");
     const mp4=Buffer.alloc(32);mp4.writeUInt32BE(24,0);mp4.write("ftyp",4,"ascii");mp4.write("isom",8,"ascii");fs.writeFileSync(video,mp4);
     const magic=Buffer.alloc(32);Buffer.from("89504e470d0a1a0a","hex").copy(magic);
     fs.writeFileSync(png,magic);
+    const vkPng=storyImagePath(png),portrait=Buffer.from(magic);
+    portrait.writeUInt32BE(1080,16);portrait.writeUInt32BE(1920,20);
+    fs.writeFileSync(vkPng,portrait);
+    const sourceBefore=fs.readFileSync(png);
     const config={workDir:dir,stateFile:path.join(dir,"state.json"),
       regularLog:path.join(dir,"worker.log"),errorLog:path.join(dir,"error.log"),
       timeZone:"Europe/Moscow",historyRetention:{enabled:false},
@@ -52,8 +58,10 @@ const {pathToFileURL}=require("node:url");
     config.vkPublish.automaticEnabled=automatic;
     const stageSrc=fs.readFileSync(path.join(root,"vk-stage.mjs"),"utf8");
     assert.match(stageSrc,/--confirm=VK-LIVE-/,"manual live needs explicit date-bound confirmation");
-    assert.match(stageSrc,/const png=fs\.readFileSync\(args\.cover\)/,"story must use original PNG");
-    assert.doesNotMatch(stageSrc,/verticalStoryPng|VK_STORY_CAPTION_B64|ffmpeg-static/,"story image must not be transformed");
+    assert.match(stageSrc,/buildVkStoryImage/,"VK Story uses separate portrait renderer");
+    assert.match(stageSrc,/const png=fs\.readFileSync\(storyCover\)/,"only story derivative is uploaded");
+    assert.doesNotMatch(stageSrc,/verticalStoryPng|VK_STORY_CAPTION_B64|ffmpeg-static/,"no legacy renderer or overlays in VK stage");
+    assert.match(deploy,/vk-story-image\.mjs/,"local installer must ship new story helper");
     assert.equal(args.cover,png);
     assert.equal(args.title,"ИИ-Сводка на 17 октября 2026 | Подпишись, чтоб получать свежее!");
     assert.ok(args.description.includes("https://dzen.ru/a/articleABC"));
@@ -77,10 +85,12 @@ const {pathToFileURL}=require("node:url");
       confirmVideo:async()=>true,listAlbums:async()=>[{id:1,title:"Сводки по ИИ"}],
       membership:async()=>{albumReads++;return albumAdds?["-2","-1","1"]:["-2","-1"];},
       addToAlbum:async()=>{albumAdds++;return true;},
+      buildVkStoryImage:async source=>{assert.equal(source,png);return vkPng;},
       uploadStoryPng:async(url,uploadedBytes)=>{
         assert.equal(url,"https://pu.vk.com/upload");
         assert.ok(Buffer.isBuffer(uploadedBytes));
-        assert.deepEqual(uploadedBytes,fs.readFileSync(png),"story must upload original PNG bytes");
+        assert.deepEqual(uploadedBytes,fs.readFileSync(vkPng),"story must upload portrait PNG bytes");
+        assert.deepEqual(fs.readFileSync(png),sourceBefore,"original PNG must not be edited");
         return "fixture-upload-result";
       },
       callVk:async(method)=>{
@@ -140,7 +150,7 @@ const {pathToFileURL}=require("node:url");
       uploadStoryPng:async(url,bytes)=>{
         stagedUploads++;
         assert.equal(url,"https://pu.vk.com/upload");
-        assert.deepEqual(bytes,pngBytes,"recovery must keep exact PNG bytes");
+        assert.deepEqual(bytes,fs.readFileSync(vkPng),"recovery must reuse portrait PNG bytes");
         if(stagedUploads===1)throw new Error("PNG upload: ответ не JSON, HTTP 200");
         return "fixture-resumed-upload-result";
       },
@@ -180,6 +190,18 @@ const {pathToFileURL}=require("node:url");
     job.vkPublication={...checkpoint("STORY_SAVE_REQUESTED"),storyUploadAttempts:1};
     await assert.rejects(runStage(config,job,state,args,replayDeps),/небезопасный retry|остановлен/);
     assert.equal(storySaves,2,"unknown stories.save result must never be repeated");
+
+    // Real offline rendering test using the same 16:9 -> 9:16 ffmpeg-static pipeline.
+    const portraitSource=path.join(dir,"render-smoke.png");
+    const tinyPng="iVBORw0KGgoAAAANSUhEUgAAABAAAAAJCAIAAAC0SDtlAAAANklEQVR4nGP8//8/AymAhYGBgdH4LpGq/59VZiLJeKgNcN141MFdQbINFDiJSK+TbAMjqfEAAL2UDSJ6RPzRAAAAAElFTkSuQmCC";
+    fs.writeFileSync(portraitSource,Buffer.from(tinyPng,"base64"));
+    const beforeReal=fs.readFileSync(portraitSource);
+    const realStory=await buildVkStoryImage(portraitSource);
+    assert.equal(realStory,storyImagePath(portraitSource));
+    assert.deepEqual(pngDimensions(realStory),{width:1080,height:1920});
+    assert.ok(fs.statSync(realStory).size>100);
+    assert.deepEqual(fs.readFileSync(portraitSource),beforeReal,"real rendering must preserve original");
+    assert.equal(await buildVkStoryImage(portraitSource),realStory,"ready derivative must be reusable");
 
     // A timeout AFTER wall.post was sent is not permission for a second post.
     job.vkPublication={status:"PARTIAL",phase:"ALBUM_VERIFIED",date,
