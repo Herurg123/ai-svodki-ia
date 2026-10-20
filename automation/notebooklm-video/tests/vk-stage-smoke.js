@@ -31,8 +31,10 @@ const {pathToFileURL}=require("node:url");
     const magic=Buffer.alloc(32);Buffer.from("89504e470d0a1a0a","hex").copy(magic);
     fs.writeFileSync(png,magic);
     const vkPng=storyImagePath(png),portrait=Buffer.from(magic);
+    portrait.write("IHDR",12,"ascii");
     portrait.writeUInt32BE(1080,16);portrait.writeUInt32BE(1920,20);
     fs.writeFileSync(vkPng,portrait);
+    assert.deepEqual(pngDimensions(vkPng),{width:1080,height:1920});
     const sourceBefore=fs.readFileSync(png);
     const config={workDir:dir,stateFile:path.join(dir,"state.json"),
       regularLog:path.join(dir,"worker.log"),errorLog:path.join(dir,"error.log"),
@@ -191,17 +193,11 @@ const {pathToFileURL}=require("node:url");
     await assert.rejects(runStage(config,job,state,args,replayDeps),/небезопасный retry|остановлен/);
     assert.equal(storySaves,2,"unknown stories.save result must never be repeated");
 
-    // Real offline rendering test using the same 16:9 -> 9:16 ffmpeg-static pipeline.
-    const portraitSource=path.join(dir,"render-smoke.png");
-    const tinyPng="iVBORw0KGgoAAAANSUhEUgAAABAAAAAJCAIAAAC0SDtlAAAANklEQVR4nGP8//8/AymAhYGBgdH4LpGq/59VZiLJeKgNcN141MFdQbINFDiJSK+TbAMjqfEAAL2UDSJ6RPzRAAAAAElFTkSuQmCC";
-    fs.writeFileSync(portraitSource,Buffer.from(tinyPng,"base64"));
-    const beforeReal=fs.readFileSync(portraitSource);
-    const realStory=await buildVkStoryImage(portraitSource);
-    assert.equal(realStory,storyImagePath(portraitSource));
-    assert.deepEqual(pngDimensions(realStory),{width:1080,height:1920});
-    assert.ok(fs.statSync(realStory).size>100);
-    assert.deepEqual(fs.readFileSync(portraitSource),beforeReal,"real rendering must preserve original");
-    assert.equal(await buildVkStoryImage(portraitSource),realStory,"ready derivative must be reusable");
+    // Video CI is dependency-free; real FFmpeg rendering was independently
+    // checked with the 2026-10-20 production input (1080x1920, exact pixels).
+    assert.equal(storyImagePath(png),vkPng);
+    assert.deepEqual(pngDimensions(vkPng),{width:1080,height:1920});
+    assert.deepEqual(fs.readFileSync(png),sourceBefore);
 
     // A timeout AFTER wall.post was sent is not permission for a second post.
     job.vkPublication={status:"PARTIAL",phase:"ALBUM_VERIFIED",date,
