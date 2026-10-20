@@ -8,6 +8,7 @@ import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
 import { renderVkTemplate } from "./vk-text.mjs";
+import { buildVkStoryImage } from "./vk-story-image.mjs";
 import { fileURLToPath } from "node:url";
 import { VideoClient, methodRequest, uploadVideoChunks, confirmVideo, listAlbums,
   membership, addToAlbum, publishVideo, makePostSticker, uploadStoryPng, findExistingVideoByTitle } from "./vk-api.mjs";
@@ -203,10 +204,12 @@ async function runStage(config,job,state,args,dependencies={}){
       throw new Error("VK: некорректный счётчик загрузок PNG");
     if(uploadAttempts===3)
       throw new Error("VK: исчерпаны 3 попытки загрузки PNG; stories.save не вызывался");
-    // Use the already-generated NotebookLM PNG verbatim, without resizing, text or compositing.
-    const png=fs.readFileSync(args.cover);
+    // Derivative ONLY for VK Story: sharp full original over a blurred portrait backdrop.
+    // The source cover stays untouched for NotebookLM, FTP and Dzen.
+    const storyCover=await (dependencies.buildVkStoryImage||buildVkStoryImage)(args.cover);
+    const png=fs.readFileSync(storyCover);
     if(!png.length||png.length>10*1024*1024)throw new Error("PNG истории пустой или слишком большой");
-    log("5: PNG истории: исходный файл "+args.cover+" ("+png.length+" байт), без преобразования");
+    log("5: PNG истории: вертикальный файл "+storyCover+" ("+png.length+" байт), исходный PNG не изменён");
     const stickers=makePostSticker(args.groupId,p.postId);
     const reply=await vk("stories.getPhotoUploadServer",{
       group_id:args.groupId,add_to_news:"1",clickable_stickers:stickers,
