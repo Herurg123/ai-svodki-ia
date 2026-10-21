@@ -99,6 +99,16 @@ jobs:
             exit 1
           fi
 
+      - name: Сохранить временный снимок исходников для offline incident replay
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p automation/preview/ci
+          tar -czf automation/preview/ci/oct21-replay-source.tar.gz \
+            automation/scripts automation/config automation/prompts \
+            automation/archive automation/fixtures automation/specs \
+            automation/tests .github/workflows
       - name: Upload validation reports
         if: always()
         uses: actions/upload-artifact@v7
