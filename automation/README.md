@@ -95,6 +95,24 @@ same-run/same-rank fallback к checkpoint только при доказанно
 следующего paid-stage attempt. Сам recovery по-прежнему проверяет содержимое
 каждого bundle и не считает имя checkpoint доказательством корректности.
 
+Редакционный quality gate не удаляет произвольные схожие новости:
+сопоставление каждого h3 с candidate identity по сохранённым ссылкам
+позволяет обнаружить **одно событие, повторенное разными словами**. Для
+разных candidate IDs проверка высокоуверенного совпадения
+organization/event_type/title/event_summary даёт fail-closed
+с диагностикой, а не автоматическое объединение или deletion.
+Все h3 обязаны находиться под правильным h2, в том числе китайские
+организации с geography=world; проверка продублирована в public artifact
+validator. Исключение для старого выпуска 21.10.2026 ограничено exact
+raw/article/block/journal hashes и только переносит ранее утверждённый
+содержательный блок MiniMax в китайский раздел. Разные по содержанию
+парафразы никогда не обрабатываются общей автоудаляющей эвристикой.
+
+Первичные raw provider outputs каждой Editorial попытки сохраняются до
+парсинга в production-daily/editorial-attempts/<date> и не исчезают
+при пересоздании dated preview. Для saved response не меняются prompt,
+model, request seal, archive hash или replay contract.
+
 Перед artifact validation exact public marker `Meta*` детерминированно
 нормализуется до `Meta` только в служебных JSON-полях; public `article_html`
 и image prompt не переписываются.
