@@ -1,0 +1,149 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-10-21",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-10-21.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-012: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: openai (4), techcrunch (4)",
+    "Исследовательский пул перегружен одной организацией: openai (3)"
+  ],
+  "publication_date": "2026-10-21",
+  "started_at": "2026-10-21T06:13:56+00:00",
+  "finished_at": "2026-10-21T06:13:56+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 95,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "20ab931461c9d79af59e2f7398a49c246b6238c7b0bc4a1eadc833f64e01910d",
+    "candidates_sha256": "dd513aac330282ecd8ab6e489f9366b03e69b8e9f86034975e1c1907b3cdc0d5",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-10-19T04:50:35+03:00",
+      "end_at": "2026-10-21T04:35:44+03:00",
+      "latest_archive_at": "2026-10-20T04:50:35+03:00",
+      "start_date": "2026-10-19",
+      "end_date": "2026-10-21",
+      "latest_archive_date": "2026-10-20"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "60e7465f60ea46a082bed11c045c7dd8ed4a2e7a55c8ac26d71540c5f84f736c",
+    "editorial_sha256": "07d43fbb6cd15304baebd27eed65800a8378472109bb89cd1bb7548ae4d3a491",
+    "digest_sha256": "d65061503e3bea3983d6a4c87387ac485cf0033d0f961d552f8a49e0237a737f",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-10-21.jpg",
+          "normalized_value": "ai-svodka-2026-10-21.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-001."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Три независимых события высокой редакционной значимости — финансовое раскрытие SpaceX, приобретение Orchestra Bio и освещение инцидента OpenCode через Axios не относятся к одному продукту и отражают разные слои рынка: инфраструктуру, life sciences и безопасность."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_092f835c371ea850016ad818c68f3c87d1a68367e136581bba",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 192902,
+        "input_tokens_details": {
+          "cache_write_tokens": 18294,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 18294
+          },
+          "cached_tokens": 174605
+        },
+        "output_tokens": 3980,
+        "output_tokens_details": {
+          "reasoning_tokens": 393
+        },
+        "total_tokens": 196882
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-10-21/resp_092f835c371ea850016ad818c68f3c87d1a68367e136581bba.json"
+  },
+  "total_usage": {
+    "input_tokens": 192902,
+    "output_tokens": 3980,
+    "total_tokens": 196882,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "2b6b725a709cfdd829baf8a618af13cb1768256b",
+    "run_id": "39554056163",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-10-21T04:35:44+03:00"
+}

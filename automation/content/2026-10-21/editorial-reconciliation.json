@@ -1,0 +1,37 @@
+{
+  "status": "applied",
+  "rule": "oct21-minimax-exact-response-v1",
+  "input_html_sha256": "c508c6f5b8d0c71beed991439386a06137d7a7b34e7f6d00828f2d5d27bbfd78",
+  "raw_file_sha256": "abd3462ebd7ff46c8db09a733e0bc2e3b432bc600c3bc151cd3b65daef997478",
+  "output_html_sha256": "afa9c7c31aa01900b5a2b8fe18de3b7b64731029ca04f34befa4f4e3051c52a7",
+  "selected_ids_before": [
+    "cand-001",
+    "cand-002",
+    "cand-003",
+    "cand-004",
+    "cand-005",
+    "cand-006",
+    "cand-013"
+  ],
+  "selected_ids_after": [
+    "cand-001",
+    "cand-003",
+    "cand-004",
+    "cand-005",
+    "cand-006",
+    "cand-013",
+    "cand-002"
+  ],
+  "operations": [
+    {
+      "type": "remove_world_placement",
+      "block_sha256": "b8af33710578bf6b8c3bb16d206d3a029ab5d10bee881582b67cd58eacca2778"
+    },
+    {
+      "type": "replace_china_paraphrase_with_approved_detail",
+      "block_sha256": "3f27b416369e71513b3b1609d0a901c9fe4db07d0b040e8bd08f5f1234bc7978"
+    }
+  ],
+  "unchanged_provider_raw": true,
+  "provider_calls": 0
+}

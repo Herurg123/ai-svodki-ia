@@ -1,0 +1,29 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-003",
+    "cand-004",
+    "cand-005",
+    "cand-006",
+    "cand-013",
+    "cand-002"
+  ],
+  "excluded_candidate_ids": [
+    "cand-007",
+    "cand-008",
+    "cand-009",
+    "cand-010",
+    "cand-011",
+    "cand-012"
+  ],
+  "selection_summary": "Выбраны семь подтверждённых самостоятельных событий: инфраструктурный релиз Google, новая модель MiniMax, обновление GitHub Copilot CLI, инцидент с API-ключами OpenCode, финансовое раскрытие SpaceX, приобретение OpenAI в биотехе и ранний запуск инструмента runtime-оптимизации doubleAI. Исключены менее приоритетные кейсы OpenAI, инвестиции Otter.ai и Eka Robotics, а также неподтверждённый по freshness-regime регуляторный сюжет о DeepSeek.",
+  "diversity_overrides": [
+    {
+      "type": "publisher",
+      "value": "TechCrunch",
+      "reason": "Три независимых события высокой редакционной значимости — финансовое раскрытие SpaceX, приобретение Orchestra Bio и освещение инцидента OpenCode через Axios не относятся к одному продукту и отражают разные слои рынка: инфраструктуру, life sciences и безопасность."
+    }
+  ]
+}

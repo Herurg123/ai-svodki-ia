@@ -1,0 +1,48 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-21",
+  "slug": "2026-10-21",
+  "title": "ИИ-Сводка на 21 октября 2026",
+  "description": "Google упрощает перенос PyTorch на TPU, MiniMax выпускает недорогую агентную модель, а OpenAI расширяет биотехнологическое направление. В центре выпуска также безопасность ключей, ИИ-инфраструктура и оптимизация исполняемого кода.",
+  "published_at": "2026-10-21T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-21.png",
+  "topics": [
+    "Google Cloud",
+    "TorchTPU",
+    "TPU",
+    "PyTorch",
+    "MiniMax M3.1 Flash",
+    "агентные модели",
+    "GitHub Copilot CLI",
+    "OpenCode",
+    "безопасность API-ключей",
+    "SpaceX",
+    "ИИ-инфраструктура",
+    "OpenAI",
+    "Orchestra Bio",
+    "Rosalind",
+    "AI biotech",
+    "doubleAI Maxwell",
+    "оптимизация кода"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-001."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Три независимых события высокой редакционной значимости — финансовое раскрытие SpaceX, приобретение Orchestra Bio и освещение инцидента OpenCode через Axios не относятся к одному продукту и отражают разные слои рынка: инфраструктуру, life sciences и безопасность."
+    }
+  ]
+}

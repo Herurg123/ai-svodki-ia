@@ -1,8 +1,265 @@
 {
   "version": 2,
-  "generated_at": "2026-10-20T02:00:35+00:00",
+  "generated_at": "2026-10-21T06:15:17+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-10-21",
+      "published_at": "2026-10-21T06:00:00+03:00",
+      "search_cutoff_at": "2026-10-21T04:35:44+03:00",
+      "title": "ИИ-Сводка на 21 октября 2026",
+      "link": "https://rybalka.one/posts/2026-10-21/",
+      "summary": "Главные новости искусственного интеллекта за 21 октября 2026 года Повестка дня показывает, что конкуренция в ИИ всё заметнее перемещается из слоя самих моделей в среду их исполнения: ускорители, агентные инструменты, ключи доступа и стоимость вычислений. Одновременно OpenAI расширяет присутствие в биотехнологиях, а новые разработчики пытаются применять ИИ не только для написания, но и для ускорения уже работающего кода. Главный практический вывод: компаниям всё чаще придётся выбирать не одну «лу",
+      "topics": [
+        "Google Cloud",
+        "TorchTPU",
+        "TPU",
+        "PyTorch",
+        "MiniMax M3.1 Flash",
+        "агентные модели",
+        "GitHub Copilot CLI",
+        "OpenCode",
+        "безопасность API-ключей",
+        "SpaceX",
+        "ИИ-инфраструктура",
+        "OpenAI",
+        "Orchestra Bio",
+        "Rosalind",
+        "AI biotech",
+        "doubleAI Maxwell",
+        "оптимизация кода"
+      ],
+      "source_urls": [
+        "https://cloud.google.com/blog/topics/ai-infrastructure/torchtpu-is-now-open-source-run-native-pytorch-on-tpus",
+        "https://github.com/github/copilot-cli/releases/tag/v1.0.101",
+        "https://www.axios.com/2026/10/21/when-ai-models-refuse-to-fight-hackers",
+        "https://techcrunch.com/2026/10/20/spacexs-ai-business-is-beating-expectations/",
+        "https://techcrunch.com/2026/10/20/openai-acquires-startup-orchestra-bio%E2%81%A0-to-beef-up-its-biotech-business/",
+        "https://heymaxwell.ai/",
+        "https://www.minimax.io/blog/minimax-m31f"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-001",
+          "section": "world",
+          "headline": "Google открыла TorchTPU — слой для запуска нативного PyTorch на TPU",
+          "organization": "Google Cloud; Google",
+          "topic": "AI infrastructure; TPUs; PyTorch; open source; accelerator competition; developer tools",
+          "event_type": "open-source infrastructure release",
+          "status": "new",
+          "summary": "Google сделала TorchTPU open source, чтобы разработчики могли переносить PyTorch-нагрузки на TPU и Google Cloud с минимальными изменениями; одновременно представлена TPU agent suite для миграции и исправления ошибок.",
+          "published_at": null,
+          "published_date": "2026-10-20",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "TorchTPU is now open source: Run native PyTorch on TPUs",
+              "publisher": "Google Cloud Blog",
+              "url": "https://cloud.google.com/blog/topics/ai-infrastructure/torchtpu-is-now-open-source-run-native-pytorch-on-tpus"
+            }
+          ],
+          "keywords": [
+            "Google Cloud",
+            "TorchTPU",
+            "PyTorch",
+            "TPU",
+            "Nvidia",
+            "accelerators",
+            "open source"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "GitHub Copilot CLI 1.0.101 добавила structured output для workflow-субагентов",
+          "organization": "GitHub",
+          "topic": "CLI coding agents; dynamic workflow subagents; structured output; assisted permissions; MCP; multi-model workflows",
+          "event_type": "product release",
+          "status": "new",
+          "summary": "GitHub выпустила Copilot CLI 1.0.101. Среди изменений — нативный structured output для динамических workflow-субагентов на поддерживаемых моделях, настройка assistedApprovalInstructions для подсказок при подтверждении действий, улучшения sandbox/MCP-аутентификации и исправления при переключении между GPT- и Gemini-моделями.",
+          "published_at": "2026-10-20T18:49:53+00:00",
+          "published_date": "2026-10-20",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Release 1.0.101",
+              "publisher": "GitHub",
+              "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.101"
+            }
+          ],
+          "keywords": [
+            "GitHub Copilot CLI",
+            "structured output",
+            "dynamic workflow subagents",
+            "MCP",
+            "permissions",
+            "Gemini",
+            "GPT"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-004",
+          "section": "world",
+          "headline": "OpenCode сообщила о компрометации, затронувшей API-ключи клиентов",
+          "organization": "OpenCode; OpenAI; Anthropic; Google",
+          "topic": "AI coding-agent security; compromise; exposed API keys; unauthorized usage; incident response; defender access to frontier models",
+          "event_type": "security incident disclosure",
+          "status": "new",
+          "summary": "Axios сообщила, что open-source coding-агент OpenCode был скомпрометирован в ходе, по заявлению компании, масштабной атаки на distillation-инфраструктуру. По данным издания, злоумышленники получили API-ключи части клиентов, включая ключи к сервисам OpenAI, Anthropic и Google; OpenCode оценила затронутую долю пользователей Console в 1,4%.",
+          "published_at": "2026-10-19T04:12:15+00:00",
+          "published_date": "2026-10-19",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "OpenCode breach exposes AI's cyber defense dilemma",
+              "publisher": "Axios",
+              "url": "https://www.axios.com/2026/10/21/when-ai-models-refuse-to-fight-hackers"
+            }
+          ],
+          "keywords": [
+            "OpenCode",
+            "API keys",
+            "distillation attack",
+            "AI coding agent",
+            "OpenAI",
+            "Anthropic",
+            "Google",
+            "unauthorized usage"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "SpaceX раскрыла $7,5 млрд квартальной выручки ИИ-направления",
+          "organization": "SpaceX; Grok; Cursor",
+          "topic": "Финансовые результаты ИИ-бизнеса; неооблака; дата-центры; AI-инфраструктура",
+          "event_type": "earnings disclosure",
+          "status": "new",
+          "summary": "По данным квартального раскрытия SpaceX, её сегмент Super Intelligence, включающий Grok, Cursor и неооблачный бизнес, получил $7,5 млрд выручки; компания заявила о 1,7 ГВт вычислительных мощностей и планах резко нарастить капзатраты.",
+          "published_at": "2026-10-20T20:40:41+00:00",
+          "published_date": "2026-10-20",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "SpaceX’s AI business is beating expectations",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/20/spacexs-ai-business-is-beating-expectations/"
+            }
+          ],
+          "keywords": [
+            "SpaceX",
+            "Grok",
+            "Cursor",
+            "AI data centers",
+            "neocloud",
+            "Colossus II",
+            "earnings",
+            "infrastructure"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "cand-006",
+          "section": "world",
+          "headline": "OpenAI приобрела Orchestra Bio для развития Rosalind",
+          "organization": "OpenAI; Orchestra Bio",
+          "topic": "AI biotech; life sciences; drug discovery; AI agents; acquisitions",
+          "event_type": "acquisition",
+          "status": "new",
+          "summary": "OpenAI приобрела Orchestra Bio, разработчика агентных инструментов для операций в разработке лекарств, и намерена интегрировать её команду и технологии в life-sciences модель Rosalind и Rosalind Workbench.",
+          "published_at": "2026-10-20T20:35:10+00:00",
+          "published_date": "2026-10-20",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "OpenAI acquires startup Orchestra Bio⁠ to beef up its biotech business",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/20/openai-acquires-startup-orchestra-bio%E2%81%A0-to-beef-up-its-biotech-business/"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "Orchestra Bio",
+            "Rosalind",
+            "biotech",
+            "drug discovery",
+            "AI agents",
+            "M&A"
+          ],
+          "geography": "world",
+          "category": "enterprise"
+        },
+        {
+          "candidate_id": "cand-013",
+          "section": "world",
+          "headline": "doubleAI открыла ранний доступ к Maxwell для runtime-оптимизации кода",
+          "organization": "doubleAI",
+          "topic": "AI coding; code execution models; runtime optimization; formal verification; AI inference efficiency",
+          "event_type": "product launch / controlled early access",
+          "status": "new",
+          "summary": "doubleAI представила Maxwell (Maxwell’s Daemon) и открыла controlled early access. Компания позиционирует продукт как «code execution model»: он наблюдает за работающей программой, генерирует оптимизированный машинный код для конкретных CPU/GPU и заявляет формальную проверку семантической эквивалентности замен. В демонстрациях компания сообщила об ускорении data pipelines более чем в 38 раз, AI inference kernels — в 4,25 раза, а 4K-генерации LTX-2.5 — примерно в 1,87 раза.",
+          "published_at": "2026-10-20T08:59:00+02:00",
+          "published_date": "2026-10-20",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Maxwell: The first Code Execution Model",
+              "publisher": "doubleAI",
+              "url": "https://heymaxwell.ai/"
+            }
+          ],
+          "keywords": [
+            "doubleAI",
+            "Maxwell",
+            "code execution model",
+            "runtime optimization",
+            "formal verification",
+            "GPU kernels",
+            "coding tools"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "MiniMax выпустила агентную модель M3.1 Flash с контекстом до 1 млн токенов",
+          "organization": "MiniMax",
+          "topic": "Агентные модели; coding; computer use; AI cybersecurity; стоимость inference",
+          "event_type": "model release",
+          "status": "new",
+          "summary": "MiniMax 19 октября объявила M3.1 Flash — новую модель для агентных задач, программирования, computer use и кибербезопасности. Компания заявляет о контексте до 1 млн токенов, доступности через API, M Plan и MiniMax Code, а также о цене $0,15 за млн входных и $0,60 за млн выходных токенов; веса обещаны позднее.",
+          "published_at": "2026-10-19T21:57:00+02:00",
+          "published_date": "2026-10-19",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "MiniMax M3.1 Flash: Redefining Agent Performance and Cost",
+              "publisher": "MiniMax",
+              "url": "https://www.minimax.io/blog/minimax-m31f"
+            }
+          ],
+          "keywords": [
+            "MiniMax M3.1 Flash",
+            "agentic AI",
+            "coding",
+            "computer use",
+            "1M context",
+            "inference pricing",
+            "open weights"
+          ],
+          "geography": "world",
+          "category": "models"
+        }
+      ]
+    },
     {
       "date": "2026-10-20",
       "published_at": "2026-10-20T06:00:00+03:00",
@@ -6279,10 +6536,10 @@
     {
       "date": "2026-09-18",
       "published_at": "2026-09-18T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-18T04:17:08+03:00",
+      "search_cutoff_at": "2026-09-18T06:00:00+03:00",
       "title": "ИИ-Сводка на 18 сентября 2026",
       "link": "https://rybalka.one/posts/2026-09-18/",
-      "summary": "Главные новости искусственного интеллекта за 18 сентября 2026 года Повестка дня показывает, что развитие ИИ одновременно требует всё более капиталоёмкой физической инфраструктуры и расширяет возможности агентов действовать за пределами чата. Крупные инвестиции в дата-центры, новые китайские ускорители и агентный доступ к данным ООН соседствуют с внедрением ИИ в управление воздушным движением и потребительские телефонные сценарии. Отдельно заметен тренд на снижение барьера для локального запуска ",
+      "summary": "Crusoe закрыла раунд на $3,9 млрд для ИИ-инфраструктуры, Huawei ускоряет дорожную карту Ascend, ООН открывает данные для агентов, а Meta и Instinct выводят ассистентов к телефонным звонкам.",
       "topics": [
         "ИИ-инфраструктура",
         "дата-центры",

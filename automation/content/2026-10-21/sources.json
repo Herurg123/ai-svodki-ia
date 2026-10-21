@@ -1,0 +1,37 @@
+[
+  {
+    "title": "TorchTPU is now open source: Run native PyTorch on TPUs",
+    "publisher": "Google Cloud Blog",
+    "url": "https://cloud.google.com/blog/topics/ai-infrastructure/torchtpu-is-now-open-source-run-native-pytorch-on-tpus"
+  },
+  {
+    "title": "MiniMax M3.1 Flash: Redefining Agent Performance and Cost",
+    "publisher": "MiniMax",
+    "url": "https://www.minimax.io/blog/minimax-m31f"
+  },
+  {
+    "title": "Release 1.0.101",
+    "publisher": "GitHub",
+    "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.101"
+  },
+  {
+    "title": "OpenCode breach exposes AI's cyber defense dilemma",
+    "publisher": "Axios",
+    "url": "https://www.axios.com/2026/10/21/when-ai-models-refuse-to-fight-hackers"
+  },
+  {
+    "title": "SpaceX’s AI business is beating expectations",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/10/20/spacexs-ai-business-is-beating-expectations/"
+  },
+  {
+    "title": "OpenAI acquires startup Orchestra Bio⁠ to beef up its biotech business",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/10/20/openai-acquires-startup-orchestra-bio%E2%81%A0-to-beef-up-its-biotech-business/"
+  },
+  {
+    "title": "Maxwell: The first Code Execution Model",
+    "publisher": "doubleAI",
+    "url": "https://heymaxwell.ai/"
+  }
+]
