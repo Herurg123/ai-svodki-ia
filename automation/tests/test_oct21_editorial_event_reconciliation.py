@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "automation" / "scripts"))
 
 from editorial_policy import read_policy, validate_article_policy
+import editorial_reconciliation as recon
 from editorial_reconciliation import (
     detect_event_repetitions,
     reconcile_exact_approved_incident,
@@ -53,6 +54,71 @@ class EditorialOct21RegressionTests(unittest.TestCase):
         self.assertEqual(cases[0]["candidate_id"], "cand-002")
         self.assertEqual(cases[0]["positions"], [1, 2])
         self.assertEqual(cases[0]["classification"], "same_candidate_event")
+
+    def test_different_sources_same_event_metadata_is_flagged_without_removal(self):
+        first = candidate("a", "Acme анонсировала новую платформу X", "https://a.org/one",
+                          "Acme", "release")
+        second = candidate("b", "Acme анонсировала новую платформу X", "https://b.org/two",
+                           "Acme", "release")
+        html = (
+            "<h2>Мировые лидеры ИИ</h2>"
+            '<h3>Acme анонсировала новую платформу X</h3><p><a href="https://a.org/one">A</a></p>'
+            '<h3>Acme анонсировала новую платформу X</h3><p><a href="https://b.org/two">B</a></p>'
+        )
+        issues = detect_event_repetitions(html, [first, second])
+        self.assertEqual(issues[0]["classification"], "possible_same_event")
+        self.assertFalse(issues[0]["auto_removed"])
+
+    def test_exact_incident_reconciliation_requires_protected_journal_identity(self):
+        title = "MiniMax выпустила агентную модель M3.1 Flash"
+        story = lambda body: (
+            "<h3>" + title + "</h3><p>" + body
+            + '</p><p><a href="' + MINIMAX + '">анонс</a></p>'
+        )
+        parts = ["<h2>Мировые лидеры ИИ</h2>"]
+        parts.extend("<h3>Другой сюжет</h3><p>x</p><p>y</p>" for _ in range(1))
+        detailed = story("Оригинальная подробная информация про релиз")
+        parts.append(detailed)
+        parts.extend("<h3>Другое событие</h3><p>x</p><p>y</p>" for _ in range(5))
+        parts.append("<h2>Китайские лидеры ИИ</h2>")
+        paraphrase = story("Отдельный более краткий пересказ")
+        parts.append(paraphrase)
+        parts.append("<h2>Что это значит</h2><ol><li>Итог</li></ol>")
+        source = "".join(parts)
+        selected = ["cand-001", "cand-002", "cand-003", "cand-004",
+                    "cand-005", "cand-006", "cand-013"]
+        original = {"selected_candidate_ids": selected,
+                    "digest": {"article_html": source}}
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            raw = root / "editorial-output-raw.json"
+            raw.write_text(json.dumps(original, ensure_ascii=False))
+            journal = root / "journal.json"
+            seal = {"state": "response_saved", **recon.JOURNAL_IDENTITY}
+            journal.write_text(json.dumps(seal))
+            with unittest.mock.patch.object(recon, "RAW_SHA", recon.sha(raw.read_bytes())), \
+                 unittest.mock.patch.object(recon, "ARTICLE_SHA", recon.sha(source)), \
+                 unittest.mock.patch.object(recon, "DETAIL_SHA", recon.sha(detailed)), \
+                 unittest.mock.patch.object(recon, "PARAPHRASE_SHA", recon.sha(paraphrase)):
+                out, audit = reconcile_exact_approved_incident(
+                    original, [candidate("cand-002", title, MINIMAX)],
+                    publication_date="2026-10-21", raw_path=raw, journal_path=journal,
+                )
+                self.assertEqual(audit["status"], "applied")
+                self.assertEqual(out["digest"]["article_html"].count(title), 1)
+                self.assertIn("<h2>Китайские лидеры ИИ</h2>" + detailed,
+                              out["digest"]["article_html"])
+                self.assertEqual(out["selected_candidate_ids"], recon.AFTER)
+                self.assertEqual(original["digest"]["article_html"], source)
+                self.assertEqual(raw.read_text(), json.dumps(original, ensure_ascii=False))
+                journal.write_text(json.dumps({"state": "response_saved",
+                                               **recon.JOURNAL_IDENTITY,
+                                               "archive_sha256": "tampered"}))
+                with self.assertRaisesRegex(ValueError, "archive_sha256"):
+                    reconcile_exact_approved_incident(
+                        original, [candidate("cand-002", title, MINIMAX)],
+                        publication_date="2026-10-21", raw_path=raw, journal_path=journal,
+                    )
 
     def test_one_url_different_event_does_not_auto_delete(self):
         url = "https://example.org/releases"
