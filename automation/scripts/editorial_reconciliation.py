@@ -22,6 +22,7 @@ RAW_SHA = "abd3462ebd7ff46c8db09a733e0bc2e3b432bc600c3bc151cd3b65daef997478"
 ARTICLE_SHA = "c508c6f5b8d0c71beed991439386a06137d7a7b34e7f6d00828f2d5d27bbfd78"
 DETAIL_SHA = "b8af33710578bf6b8c3bb16d206d3a029ab5d10bee881582b67cd58eacca2778"
 PARAPHRASE_SHA = "3f27b416369e71513b3b1609d0a901c9fe4db07d0b040e8bd08f5f1234bc7978"
+APPROVED_OUTPUT_SHA = "afa9c7c31aa01900b5a2b8fe18de3b7b64731029ca04f34befa4f4e3051c52a7"
 JOURNAL_IDENTITY = {
     "response_sha256": "e9ff7b2a69c6345a448ece17d1f0a560474b91909e89e08541434056202ad127",
     "request_sha256": "7a7406864201da05ea07ecec6b18b049d512cc0dd3a8f6fba3b3c3e9c33e7074",
@@ -160,6 +161,16 @@ def detect_event_repetitions(article_html: str, candidates: list[dict[str, Any]]
                 return len(x & y) / max(1, len(x | y))
             heads = [re.sub(r"\s+", " ", x[0]["headline"].casefold())
                      for x in (assigned[left_id], assigned[right_id])]
+            # Different numbers, versions, dates or explicit negation may
+            # distinguish two separate events despite similar wording.
+            def hard_anchors(value: dict[str, Any]) -> tuple[set[str], set[str]]:
+                value_text = (str(value.get("title", "")) + " "
+                              + str(value.get("event_summary", ""))).casefold()
+                numbers = set(re.findall(r"(?<!\\w)\\d+[\\w.,/\\-]*", value_text))
+                negations = set(re.findall(r"(?<!\\w)(?:не|без|not|never)(?!\\w)", value_text))
+                return numbers, negations
+            if hard_anchors(left) != hard_anchors(right):
+                continue
             if (overlap(str(left.get("title", "")), str(right.get("title", ""))) >= .88
                     and overlap(str(left.get("event_summary", "")), str(right.get("event_summary", ""))) >= .83
                     and SequenceMatcher(None, heads[0], heads[1]).ratio() >= .86):
@@ -240,6 +251,8 @@ def reconcile_exact_approved_incident(editorial: dict[str, Any],
         for item in blocks if item is not stories[1]
     )
     repaired["selected_candidate_ids"] = list(AFTER)
+    if sha(repaired["digest"]["article_html"]) != APPROVED_OUTPUT_SHA:
+        raise ValueError("incident approved output fingerprint mismatch")
     audit.update({
         "status": "applied",
         "input_html_sha256": sha(article_html),
