@@ -166,8 +166,8 @@ def detect_event_repetitions(article_html: str, candidates: list[dict[str, Any]]
             def hard_anchors(value: dict[str, Any]) -> tuple[set[str], set[str]]:
                 value_text = (str(value.get("title", "")) + " "
                               + str(value.get("event_summary", ""))).casefold()
-                numbers = set(re.findall(r"(?<!\\w)\\d+[\\w.,/\\-]*", value_text))
-                negations = set(re.findall(r"(?<!\\w)(?:не|без|not|never)(?!\\w)", value_text))
+                numbers = set(re.findall(r"(?<!\w)\d+[\w.,/\-]*", value_text))
+                negations = set(re.findall(r"(?<!\w)(?:не|без|not|never)(?!\w)", value_text))
                 return numbers, negations
             if hard_anchors(left) != hard_anchors(right):
                 continue
