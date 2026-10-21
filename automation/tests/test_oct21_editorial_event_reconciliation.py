@@ -100,7 +100,10 @@ class EditorialOct21RegressionTests(unittest.TestCase):
             with patch.object(recon, "RAW_SHA", recon.sha(raw.read_bytes())), \
                  patch.object(recon, "ARTICLE_SHA", recon.sha(source)), \
                  patch.object(recon, "DETAIL_SHA", recon.sha(detailed)), \
-                 patch.object(recon, "PARAPHRASE_SHA", recon.sha(paraphrase)):
+                 patch.object(recon, "PARAPHRASE_SHA", recon.sha(paraphrase)), \
+                 patch.object(recon, "APPROVED_OUTPUT_SHA",
+                              recon.sha(source.replace("<h3>" + title + "</h3><p>Оригинальная подробная информация про релиз</p><p><a href=\"" + MINIMAX + "\">анонс</a></p>", "", 1)
+                                       .replace("Отдельный более краткий пересказ", "Оригинальная подробная информация про релиз"))):
                 out, audit = reconcile_exact_approved_incident(
                     original, [candidate("cand-002", title, MINIMAX)],
                     publication_date="2026-10-21", raw_path=raw, journal_path=journal,
