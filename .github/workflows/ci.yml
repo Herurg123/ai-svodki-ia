@@ -108,7 +108,7 @@ jobs:
           tar -czf automation/preview/ci/oct21-replay-source.tar.gz \
             automation/scripts automation/config automation/prompts \
             automation/archive automation/fixtures automation/specs \
-            automation/tests .github/workflows
+            automation/tests automation/content posts/rss.xml .github/workflows
       - name: Upload validation reports
         if: always()
         uses: actions/upload-artifact@v7
