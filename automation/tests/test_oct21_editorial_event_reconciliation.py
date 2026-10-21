@@ -7,6 +7,7 @@ import json
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -96,10 +97,10 @@ class EditorialOct21RegressionTests(unittest.TestCase):
             journal = root / "journal.json"
             seal = {"state": "response_saved", **recon.JOURNAL_IDENTITY}
             journal.write_text(json.dumps(seal))
-            with unittest.mock.patch.object(recon, "RAW_SHA", recon.sha(raw.read_bytes())), \
-                 unittest.mock.patch.object(recon, "ARTICLE_SHA", recon.sha(source)), \
-                 unittest.mock.patch.object(recon, "DETAIL_SHA", recon.sha(detailed)), \
-                 unittest.mock.patch.object(recon, "PARAPHRASE_SHA", recon.sha(paraphrase)):
+            with patch.object(recon, "RAW_SHA", recon.sha(raw.read_bytes())), \
+                 patch.object(recon, "ARTICLE_SHA", recon.sha(source)), \
+                 patch.object(recon, "DETAIL_SHA", recon.sha(detailed)), \
+                 patch.object(recon, "PARAPHRASE_SHA", recon.sha(paraphrase)):
                 out, audit = reconcile_exact_approved_incident(
                     original, [candidate("cand-002", title, MINIMAX)],
                     publication_date="2026-10-21", raw_path=raw, journal_path=journal,
