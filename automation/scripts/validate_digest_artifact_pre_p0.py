@@ -27,6 +27,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from editorial_policy import expected_editorial_heading, parse_article, read_policy
+
 _BASE_PATH = Path(__file__).with_name("validate_digest_artifact_base.py")
 _BASE_SPEC = importlib.util.spec_from_file_location(
     "validate_digest_artifact_base", _BASE_PATH
@@ -174,6 +176,38 @@ def validate_story_mapping(
             f"({len(selected_ids)}).",
         )
         return
+
+    # Independent publication-time region validation: don't trust
+    # editor's run-time report or stories[].section (legacy China is "world").
+    region_policy = read_policy(
+        Path(__file__).resolve().parents[1] / "config" / "editorial.json"
+    )
+    region_parser = parse_article(article_html)
+    by_id = {candidate_id(item): item for item in candidates if candidate_id(item)}
+    # Unit consumers also call this mapping hook with isolated <h3> stubs.
+    # Full public artifacts necessarily have the required <h2> sections, which
+    # the independent article validator checks separately.
+    if region_parser.h2_texts:
+        if len(region_parser.story_sections) != len(selected_ids):
+            issue(report, "errors", "story_section_count",
+                  "Фактические разделы h2 не сопоставлены с HTML-сюжетами.")
+        else:
+            for position, (cid, actual_section) in enumerate(
+                zip(selected_ids, region_parser.story_sections), start=1
+            ):
+                original_candidate = by_id.get(cid)
+                if not isinstance(original_candidate, dict):
+                    continue
+                expected_section = expected_editorial_heading(
+                    original_candidate, region_policy
+                )
+                if actual_section != expected_section:
+                    issue(
+                        report, "errors", "story_section_mismatch",
+                        f"HTML-сюжет #{position} ({cid}) расположен под "
+                        f"«{actual_section or 'нет'}», ожидается "
+                        f"«{expected_section}».",
+                    )
 
     for index, block in enumerate(inspector.stories):
         expected_id = selected_ids[index]

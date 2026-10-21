@@ -46,6 +46,53 @@ scheduled/manual trigger
   -> FTP deploy of posts/
 ```
 
+### 1.1.1. Редакционная проверка событий, секций и durable raw (October 2026)
+
+Editorial response сохраняется в исходном `editorial-output-raw.json` без
+изменения provider bytes. Каждый raw `response.output_text` дополнительно
+фиксируется **до JSON parsing** под индивидуальным provider response ID в
+`automation/preview/production-daily/editorial-attempts/<date>/`; этот каталог
+не удаляется при пересоздании dated preview последующей Editorial попытки и
+попадает в обычные stage/final artifacts. Повтор того же ID с иными байтами
+означает integrity error, а не overwrite. Эти копии предназначены для
+диагностики и не разрешают новый платный вызов.
+
+После raw сохранения и до первого `order_candidates_by_article_links`
+работает `editorial_reconciliation.py`. Исторический ответ 21 октября 2026
+может подвергаться **единственному точно разрешённому исправлению**: при
+совпадении raw, article, двух source-bound story fingerprints,
+selected IDs и sealed journal/request/pool/archive переместить полный
+содержательный сюжет MiniMax из world под китайский h2 вместо его парафраза.
+Содержание остальных сюжетов, исходный provider response, durable request/
+journal и source pool неизменны. Никакого общего auto-dedup парафразов нет.
+
+Для будущих ответов модуль независимо распознаёт повторную вставку
+одного candidate/event через подтверждённые source-to-candidate identities:
+один и тот же event может быть написан разными словами. Для двух **разных**
+кандидатов используется только консервативная event-signature диагностика
+(организация, event_type, заголовки и event_summary); подозрение блокирует
+публикацию, но не разрешает слияние или deletion. Общий URL не является
+доказательством идентичности двух событий. Этот bounded deterministic signal
+не является полной универсальной семантической моделью; его recall ограничен
+метаданными исследовательских кандидатов. Обнаруженные совпадения записываются
+в `editorial-event-identity.json`. Search, prompts, модели и paid-call
+расписание не меняются.
+
+`editorial_policy.PolicyHTMLParser` хранит фактический parent h2 каждого h3,
+а `validate_article_policy` проверяет section ownership по действующему
+`tracked_asia_organizations` и `geography=russia`. Независимый public
+`validate_digest_artifact_pre_p0.validate_story_mapping` повторяет такую
+проверку по persisted candidate/selection/story/article без доверия к
+`editorial-reconciliation.json` и legacy `stories[].section`. Отсутствующая
+и пустая региональная секция теперь fail-closed. Региональные квоты не вводятся.
+
+Для восстановления saved `response_saved` прежде всего должен успешно пройти
+обычный guard identity; текущий исторический archive/window нельзя заменять
+прошлым saved prompt ради обхода hash mismatch. Если runtime bootstrap
+не восстанавливает сохранённую semantic archive identity, recovery блокируется
+до отдельного архитектурного решения. Image/Publish только после всех
+действующих validation gates. Это **не** команда запускать оплаченные API.
+
 Source Pulse v1.4 intentionally supplements fresh Primary **before the first
 editorial call**. V1.4 preserves the v1.3 Yandex publication-date repair and adds
 one narrower saved first-party feed publication proof for explicitly approved

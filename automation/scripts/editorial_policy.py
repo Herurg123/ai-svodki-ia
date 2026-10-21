@@ -19,6 +19,7 @@ class PolicyHTMLParser(HTMLParser):
         self.h3_texts: list[str] = []
         self.story_paragraph_counts: list[int] = []
         self.story_links: list[list[str]] = []
+        self.story_sections: list[str | None] = []
         self.what_it_means_items = 0
         self.first_top_level_tag: str | None = None
         self.first_top_level_text = ""
@@ -29,6 +30,7 @@ class PolicyHTMLParser(HTMLParser):
         self._current_h2: str | None = None
         self._current_story_paragraphs: int | None = None
         self._current_story_links: list[str] | None = None
+        self._current_story_section: str | None = None
         self._first_depth: int | None = None
         self._first_parts: list[str] = []
 
@@ -36,8 +38,10 @@ class PolicyHTMLParser(HTMLParser):
         if self._current_story_paragraphs is not None:
             self.story_paragraph_counts.append(self._current_story_paragraphs)
             self.story_links.append(list(self._current_story_links or []))
+            self.story_sections.append(self._current_story_section)
             self._current_story_paragraphs = None
             self._current_story_links = None
+            self._current_story_section = None
 
     def handle_starttag(
         self,
@@ -61,6 +65,7 @@ class PolicyHTMLParser(HTMLParser):
             if tag == "h3":
                 self._current_story_paragraphs = 0
                 self._current_story_links = []
+                self._current_story_section = self._current_h2
 
         if tag == "a" and self._current_story_links is not None:
             href = dict(attrs).get("href")
@@ -544,6 +549,20 @@ def _canonical_dzen_block(policy: dict[str, Any]) -> str:
     return str(policy["dzen"]["html"])
 
 
+def expected_editorial_heading(candidate: dict[str, Any], policy: dict[str, Any]) -> str:
+    """Use the editorial organization policy, not geography=world, for China."""
+
+    article = policy["article"]
+    if candidate.get("geography") == "russia":
+        return str(article["russian_heading"])
+    names = [str(name).casefold() for name in policy.get("tracked_asia_organizations", [])]
+    organization = str(candidate.get("organization", "")).casefold()
+    title = str(candidate.get("title", "")).casefold()
+    if any(name and (name in organization or name in title) for name in names):
+        return str(article.get("china_heading", "Китайские лидеры ИИ"))
+    return str(article["world_heading"])
+
+
 def validate_article_policy(
     article_html: str,
     selected_candidates: list[dict[str, Any]],
@@ -612,6 +631,23 @@ def validate_article_policy(
         errors.append(
             f"Пустой раздел «{china_heading}» не должен присутствовать без "
             "китайских сюжетов."
+        )
+
+    # A heading's mere presence does not prove a Chinese/Russian story
+    # actually appears below it. Keep existing organization classification.
+    if len(parser.story_sections) == len(selected_candidates):
+        for index, (candidate, actual) in enumerate(
+            zip(selected_candidates, parser.story_sections), start=1
+        ):
+            expected = expected_editorial_heading(candidate, policy)
+            if actual != expected:
+                errors.append(
+                    f"Фактическое размещение сюжета h3[{index}] неверно: "
+                    f"ожидается раздел «{expected}», найден «{actual or 'нет'}»."
+                )
+    else:
+        errors.append(
+            "Не удалось сопоставить фактические разделы h2 с сюжетами h3."
         )
 
     intro_html = re.split(r"<h2\b", article_html, maxsplit=1, flags=re.IGNORECASE)[0]

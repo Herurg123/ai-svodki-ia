@@ -23,6 +23,11 @@ from zoneinfo import ZoneInfo
 
 from openai import OpenAI
 
+from editorial_reconciliation import (
+    detect_event_repetitions,
+    reconcile_exact_approved_incident,
+    save_editorial_attempt,
+)
 from editorial_policy import (
     build_editorial_notes,
     build_stories,
@@ -2646,6 +2651,26 @@ def main() -> int:
         )
 
         run_info["editorial"]["response"] = stage_info(editorial_response)
+
+        # Save every paid/editorial provider response before parsing, outside
+        # the dated directory that later iterations may re-create.
+        raw_provider_text = getattr(editorial_response, "output_text", None)
+        if isinstance(raw_provider_text, str) and raw_provider_text:
+            response_identity = str(
+                getattr(editorial_response, "id", None)
+                or "response-sha256-" + sha256_text(raw_provider_text)[:24]
+            )
+            saved_attempt = save_editorial_attempt(
+                PREVIEW_ROOT / "production-daily",
+                publication_date_text,
+                response_identity,
+                raw_provider_text,
+                model,
+            )
+            run_info["editorial"]["raw_attempt_file"] = str(
+                saved_attempt.relative_to(PREVIEW_ROOT)
+            )
+
         editorial = parse_json_response(editorial_response, "editorial")
 
         atomic_write(
@@ -2674,6 +2699,50 @@ def main() -> int:
             for candidate_id in editorial.get("selected_candidate_ids", [])
             if candidate_id in candidate_map
         ]
+
+        # A saved provider response remains byte-for-byte immutable. Only the
+        # one reviewed Oct21 response is eligible for a hash-bound relocation.
+        editorial, reconciliation_audit = reconcile_exact_approved_incident(
+            editorial,
+            [item for item in research.get("candidates", []) if isinstance(item, dict)],
+            publication_date=publication_date_text,
+            raw_path=output_dir / "editorial-output-raw.json",
+            journal_path=(
+                PREVIEW_ROOT
+                / "production-daily"
+                / f"editorial-repair-{publication_date_text}.json"
+            ),
+        )
+        atomic_write(
+            output_dir / "editorial-reconciliation.json",
+            pretty_json(reconciliation_audit),
+        )
+        digest = editorial["digest"]
+        selected_candidates = [
+            candidate_map[cid]
+            for cid in editorial.get("selected_candidate_ids", [])
+            if cid in candidate_map
+        ]
+
+        event_repetitions = detect_event_repetitions(
+            str(digest.get("article_html", "")),
+            [item for item in research.get("candidates", []) if isinstance(item, dict)],
+        )
+        atomic_write(
+            output_dir / "editorial-event-identity.json",
+            pretty_json({
+                "status": "error" if event_repetitions else "ok",
+                "issues": event_repetitions,
+                "automatic_deletions": 0,
+            }),
+        )
+        if event_repetitions:
+            raise RuntimeError(
+                "Редакционный контроль смысловых повторов обнаружил "
+                "повторное или вероятно повторное событие; автоматическое "
+                "удаление запрещено: "
+                + pretty_json(event_repetitions)
+            )
 
         ordered_candidates, order_errors = order_candidates_by_article_links(
             str(digest.get("article_html", "")),
