@@ -136,6 +136,30 @@ class EditorialOct21RegressionTests(unittest.TestCase):
         self.assertFalse(any(item.get("classification") == "confirmed_duplicate" for item in issues))
         self.assertFalse(any(item.get("auto_removed") for item in issues))
 
+    def test_public_artifact_mapping_rejects_a_story_in_wrong_region(self):
+        import validate_digest_artifact as artifact_validator
+
+        selected = [candidate("cand-002", "MiniMax выпустила новую модель", MINIMAX)]
+        html = (
+            '<h2>Мировые лидеры ИИ</h2><h3>MiniMax выпустила новую модель</h3>'
+            '<p><a href="' + MINIMAX + '">источник</a></p>'
+            '<h2>Китайские лидеры ИИ</h2>'
+        )
+        report = {"errors": [], "warnings": []}
+        artifact_validator.validate_story_mapping(
+            html,
+            {"candidates": selected},
+            {"selected_candidate_ids": ["cand-002"]},
+            {"stories": [{
+                "candidate_id": "cand-002",
+                "headline": "MiniMax выпустила новую модель",
+                "sources": [{"url": MINIMAX}],
+            }]},
+            report,
+        )
+        codes = [item["code"] for item in report["errors"]]
+        self.assertIn("story_section_mismatch", codes)
+
     def test_without_exact_manifest_paraphrase_is_never_deleted(self):
         article = "<h2>Мировые лидеры ИИ</h2><h3>Foo</h3><p>A</p>"
         obj = {"selected_candidate_ids": ["a"], "digest": {"article_html": article}}
