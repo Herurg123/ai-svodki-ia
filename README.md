@@ -12,8 +12,6 @@ Production-репозиторий ежедневных аналитически�
 - [RSS](https://rybalka.one/posts/rss.xml)
 - [sitemap](https://rybalka.one/posts/sitemap.xml)
 
-##
-
 **Editorial safety:** одно событие не может появиться дважды в виде разных
 HTML-абзацев без блокировки. Проверяется фактическое положение сюжетов в
 мировом/китайском/российском разделах; каждый raw Editorial ответ сохраняется
