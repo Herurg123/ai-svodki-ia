@@ -124,6 +124,36 @@ class EditorialOct21RegressionTests(unittest.TestCase):
                         publication_date="2026-10-21", raw_path=raw, journal_path=journal,
                     )
 
+    def test_similar_event_different_version_does_not_count_as_same(self):
+        first = candidate("a", "Acme выпустила агентную модель Version 5", "https://a.org/one",
+                          "Acme", "release")
+        second = candidate("b", "Acme выпустила агентную модель Version 6", "https://b.org/two",
+                           "Acme", "release")
+        html = (
+            "<h2>Мировые лидеры ИИ</h2>"
+            '<h3>Acme выпустила агентную модель Version 5</h3><p><a href="https://a.org/one">A</a></p>'
+            '<h3>Acme выпустила агентную модель Version 6</h3><p><a href="https://b.org/two">B</a></p>'
+        )
+        self.assertFalse(
+            any(x["classification"] == "possible_same_event"
+                for x in detect_event_repetitions(html, [first, second]))
+        )
+
+    def test_russian_selected_story_inside_world_section_is_rejected(self):
+        rus = candidate("r", "Российский релиз", "https://example.org/r", "RussianCo", "release")
+        rus["geography"] = "russia"
+        html = (
+            "<p>Первое предложение. Второе предложение.</p>"
+            "<h2>Мировые лидеры ИИ</h2>"
+            '<h3>Российский релиз</h3><p>Первый абзац. <a href="https://example.org/r">Ссылка</a>.</p>'
+            "<p>Второй абзац.</p><h2>Российские лидеры ИИ</h2>"
+            "<h2>Что это значит</h2><ol><li>Первый вывод</li><li>Второй вывод</li>"
+            "<li>Третий вывод</li><li>Четвёртый вывод</li></ol>"
+            '<h2>Все ИИ-Сводки</h2><p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>'
+        )
+        errs, _, _ = validate_article_policy(html, [rus], True, POLICY)
+        self.assertTrue(any("фактическое размещение" in e.lower() for e in errs), errs)
+
     def test_one_url_different_event_does_not_auto_delete(self):
         url = "https://example.org/releases"
         selected = [
