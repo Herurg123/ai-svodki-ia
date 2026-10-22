@@ -1,5 +1,8 @@
 """Офлайн-контроли разового Sol shadow; OpenAI API никогда не вызывается."""
 import importlib.util
+import json
+import tempfile
+import zipfile
 import os
 import subprocess
 import sys
@@ -124,6 +127,68 @@ class SolShadowOfflineRegression(unittest.TestCase):
         self.assertEqual([d["direction_id"] for d in report["directions"]], saved)
         self.assertEqual(report["search_budget"]["completed_calls"], 12)
         self.assertEqual(len(research["candidates"]), 0)
+
+    def test_original_replay_schema_and_tamper_fails_closed(self):
+        ids = shadow.EXPECTED_FROZEN_DIRECTION_IDS
+        rows = [
+            {"direction_id": direction, "status": "complete",
+             "notes": "", "raw_candidates": [], "model_rejections": [],
+             "accepted_count": 0,
+             "api": {
+                 "model": shadow.MODEL, "status": "completed",
+                 "web_search_calls_completed": 1,
+                 "web_search_search_operations_performed": 1,
+                 "usage": {"input_tokens": 100, "output_tokens": 20},
+             }}
+            for direction in ids
+        ]
+        original = {
+            "publication_date": shadow.DATE,
+            "search_window": {
+                "start_at": "2026-10-20T04:35:44+03:00",
+                "end_at": shadow.CUTOFF,
+            },
+            "directions": rows
+        }
+        execution = {
+            "model": shadow.MODEL, "request_count": 8,
+            "frozen_archive_sha256": shadow.EXPECTED_FROZEN_ARCHIVE_SHA
+        }
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "frozen.zip"
+            def create_archive():
+                with zipfile.ZipFile(p, "w") as f:
+                    f.writestr("production-daily/primary-recall-2026-10-22.json",
+                               json.dumps(original))
+                    f.writestr("sol-shadow-2026-10-22/execution.json",
+                               json.dumps(execution))
+            create_archive()
+            recovered, digest = shadow.load_frozen_replay(str(p))
+            self.assertEqual(len(recovered), 7)
+            self.assertEqual([r["direction_id"] for r in recovered], list(ids))
+            self.assertEqual(len(digest), 64)
+            original["directions"][4]["api"]["model"] = "gpt-5.6-terra"
+            create_archive()
+            with self.assertRaises(RuntimeError):
+                shadow.load_frozen_replay(str(p))
+            original["directions"][4]["api"]["model"] = shadow.MODEL
+            original["directions"][3]["api"]["usage"] = {}
+            create_archive()
+            with self.assertRaises(RuntimeError):
+                shadow.load_frozen_replay(str(p))
+
+    @unittest.skipUnless(
+        os.getenv("SOL_SHADOW_REPLAY_ARTIFACT"),
+        "Exact prior paid artifact must be supplied explicitly"
+    )
+    def test_actual_saved_zip_full_primary_offline(self):
+        report = shadow.verify_replay_offline(os.environ["SOL_SHADOW_REPLAY_ARTIFACT"])
+        self.assertEqual(report["status"], "offline_pass")
+        self.assertEqual(report["frozen_passes"], 7)
+        self.assertEqual(report["simulated_future_passes"], 5)
+        self.assertEqual(report["real_api_calls"], 0)
+        self.assertEqual(report["first_seven_raw_candidates"], 6)
+        self.assertEqual(report["first_seven_accepted"], 5)
 
     def test_budget_is_one_dollar_and_retry_is_approval_gated(self):
         self.assertEqual(shadow.MAX_DOLLARS, 1.0)
