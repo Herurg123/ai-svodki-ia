@@ -40,6 +40,91 @@ class SolShadowOfflineRegression(unittest.TestCase):
         with self.assertRaises(ValueError):
             shadow.estimate_standard_usd(100, 4, 80, 30, 1)
 
+    def test_replay_order_and_five_remaining_calls(self):
+        directions = [
+            "global_breaking", "major_agencies", "models_products_agents",
+            "infrastructure_chips_cloud", "business_investment_partnerships",
+            "china_asia_models", "china_asia_integrations",
+        ]
+        rows = [
+            {"direction_id": d, "status": "complete", "notes": "",
+             "raw_candidates": [], "model_rejections": [],
+             "api": {"web_search_calls_completed": 1,
+                     "model": shadow.MODEL, "status": "completed"}}
+            for d in directions
+        ]
+        fresh = []
+        def missing_runner(*, direction_id, **kwargs):
+            fresh.append(direction_id)
+            return ({"direction_id": direction_id, "status": "complete_with_gaps",
+                     "notes": "", "candidates": [], "rejections": []},
+                    {"web_search_calls_completed": 1,
+                     "model": shadow.MODEL, "status": "completed"})
+        runner, progress = shadow.build_replay_runner(rows, missing_runner)
+        for d in directions:
+            payload, api = runner(direction_id=d)
+            self.assertEqual(payload["direction_id"], d)
+            self.assertEqual(api["model"], shadow.MODEL)
+        remaining = ["russia", "developer_tools", "security_safety",
+                     "legal_regulation", "independent_missing_events"]
+        for d in remaining:
+            runner(direction_id=d)
+        self.assertEqual(progress, {"replayed": 7, "new_queries": 5})
+        self.assertEqual(fresh, remaining)
+
+    def test_replay_wrong_direction_fails_closed(self):
+        row = {"direction_id": "global_breaking", "status": "complete",
+               "raw_candidates": [], "model_rejections": [],
+               "api": {"model": shadow.MODEL}}
+        def no_network(**kwargs):
+            self.fail("Should not make paid or network call")
+        runner, _ = shadow.build_replay_runner([row], no_network)
+        with self.assertRaises(RuntimeError):
+            runner(direction_id="major_agencies")
+
+    def test_public_primary_matrix_12_passes_offline(self):
+        # Exercise production Primary wrapper and downstream merge, using
+        # seven synthetic frozen envelopes + five no-op future passes.
+        # Separately execute --offline-verify against ORIGINAL ZIP to prove
+        # actual Sol responses (this unit test does not claim live findings).
+        import json
+        sys.path.insert(0, str(ROOT / "automation" / "scripts"))
+        import primary_recall_search as primary
+        from primary_recall_search import PRIMARY_DIRECTIONS
+        saved = [d["id"] for d in PRIMARY_DIRECTIONS]
+        self.assertEqual(len(saved), 12)
+        rows = [{"direction_id": name, "status": "complete_with_gaps",
+                 "notes": "saved synthetic no-op", "raw_candidates": [],
+                 "model_rejections": [],
+                 "api": {"model": shadow.MODEL, "status": "completed",
+                         "web_search_calls_completed": 1}}
+                for name in saved[:7]]
+        def future_stub(*, direction_id, **kwargs):
+            return ({
+                "direction_id": direction_id, "status": "complete_with_gaps",
+                "notes": "offline future stub", "candidates": [],
+                "rejections": []
+            }, {"model": shadow.MODEL, "status": "completed",
+                "web_search_calls_completed": 1})
+        runner, progress = shadow.build_replay_runner(rows, future_stub)
+        archive = json.loads(
+            (ROOT / "automation" / "archive" / "index.json").read_text(encoding="utf-8"))
+        research, report = primary.run_primary_recall_matrix(
+            publication_date=shadow.DATE,
+            search_window={"start_at": "2026-10-20T04:35:44+03:00",
+                           "end_at": shadow.CUTOFF,
+                           "latest_archive_at": "2026-10-21T04:35:44+03:00",
+                           "start_date": "2026-10-20",
+                           "end_date": shadow.DATE,
+                           "latest_archive_date": "2026-10-21"},
+            archive=archive, api_key="OFFLINE_NEVER_NETWORK", model=shadow.MODEL,
+            maximum_candidates=20, search_runner=runner)
+        self.assertEqual(progress, {"replayed": 7, "new_queries": 5})
+        self.assertEqual(len(report["directions"]), 12)
+        self.assertEqual([d["direction_id"] for d in report["directions"]], saved)
+        self.assertEqual(report["search_budget"]["completed_calls"], 12)
+        self.assertEqual(len(research["candidates"]), 0)
+
     def test_budget_is_one_dollar_and_retry_is_approval_gated(self):
         self.assertEqual(shadow.MAX_DOLLARS, 1.0)
         self.assertLessEqual(shadow.MAX_NEW_REQUEST_RESERVE, shadow.MAX_DOLLARS)
