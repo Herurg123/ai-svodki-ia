@@ -445,11 +445,31 @@ run `39726774610` и запускает
 publication или deploy. Доступ job/caller ограничен `contents:read` и
 `actions:read`. Нет ключей и write-токена.
 
-Этот job — временная проверка сохранённого эксперимента **только в PR**.
-Production Main CI на `main` не менялся. Платного Sol dispatch в
-`ci.yml` нет: invariant `test_main_ci_is_permanent_read_only_validation`
-запрещает превращать Main CI в оплачиваемый runner. Новый платный прогон
-требует отдельно одобренного и безопасного внешнего execution mode.
+Этот read-only proof job — временная проверка сохранённого эксперимента **только в PR**.
+Production Main CI на `main` не менялся.
+
+### 4.2.2. Одноразовый ручной Sol dispatch только в экспериментальной ветке
+
+Для выполнения явного запроса владельца в PR #213 временно добавлен
+`sol-shadow-paid-once` внутри **существующего** `ci.yml`: файл уже
+существует в default branch и поэтому доступен через GitHub **Run workflow**,
+где пользователь выбирает ветку `experiment/sol-api-shadow-2026-10-22`.
+GitHub workflow_dispatch на `main` использует лишь штатный offline Main CI.
+Данный job в branch-версии запускается только с event
+`workflow_dispatch`, строгим `github.ref` и repo guard, после успешного
+`validate`. PR Gate и push никогда не оплачивают Sol API.
+
+Защита: read-only token (`contents:read`, `actions:read`),
+один ручной run и попытка 1; проверка предыдущих dispatched runs,
+отсутствие in-progress cancellation; обязательный SHA/provenance-контроль
+сохранённых семи ответов, офлайн-replay до передачи `OPENAI_API_KEY`,
+SDK retries 0, максимум пять новых вызовов, модель `gpt-6.1-sol/medium`,
+client-side conservative budget $1 (не provider hard-cap).
+После завершения сохраняются `execution.json`, `primary-recall.json`,
+AB evidence как Actions artifact даже при сбое. Ни Editorial, ни Hybrid,
+ни Coverage, ни Image, ни publish/FTP/write-token не выполняются.
+После однократного результата job и документация будут удалены из PR;
+в production `main` этот временный dispatch сливаться не должен.
 
 ### 4.3. Video CI
 

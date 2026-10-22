@@ -96,8 +96,30 @@ recall подтверждённых и значимых уникальных с�
 Sol catch-up вместо полной миграции.
 
 Продолжение оплачиваемых запусков требует отдельного явного согласия на расходы
-и рабочего безопасного dispatch. Подключённый GitHub connector не предоставляет
-метод workflow_dispatch; изменение canonical Main CI ради платного job запрещено
-тестами `test_workflow_hygiene`. Поэтому ни один автоматический платный прогон
-не заложен в этот PR. `workflow.DISABLED.yml` — исторический неактивный
-шаблон, а не запускаемый GitHub Action.
+и рабочего безопасного dispatch. Подключённый GitHub connector не предоставляет метод workflow_dispatch.
+По явному запросу владельца в **экспериментальной PR-ветке** добавлен
+одноразовый, branch-pinned job `sol-shadow-paid-once` в уже существующий
+`.github/workflows/ci.yml`: GitHub требует наличия ручного workflow в default
+branch, а новый временный файл в PR нельзя запустить кнопкой. Main CI на
+`main` **не меняется**. Job выполняется лишь при ручном `workflow_dispatch`
+с ref `experiment/sol-api-shadow-2026-10-22`; PR/push его не запустят.
+Сначала обязательный offline Main CI, затем однократная проверка предыдущих
+dispatches и скачивание оригинального Sol artifact, бесплатный replay, и
+только потом доступ к секрету `OPENAI_API_KEY`. Максимум 5 платных API
+вызовов; консервативная оценка в пределах 1 USD с резервом 0.20 USD.
+Ни image, ни Editorial, ни Coverage, ни публикации. Повторный dispatch
+или rerun блокируется до нового API. После получения ZIP job будет удалён
+отдельным коммитом PR, без merge в production. `workflow.DISABLED.yml`
+остаётся историческим неактивным шаблоном.
+
+**Ручной запуск владельцем:**
+
+1. Открыть `https://github.com/Herurg123/ai-svodki-ia/actions/workflows/ci.yml`.
+2. Нажать **Run workflow**; в поле **Use workflow from** выбрать строго
+   `experiment/sol-api-shadow-2026-10-22`, НЕ `main`.
+3. Нажать зелёную **Run workflow** ровно один раз. Дождаться завершения
+   job **Ручной Sol 2026-10-22: завершить 5 Primary**.
+4. Передать ссылку на run. Artifact
+   `sol-primary-manual-2026-10-22-<run_id>` загружается даже при аварии.
+   Никогда не нажимать **Re-run all jobs** или запускать второй dispatch.
+

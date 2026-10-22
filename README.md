@@ -50,8 +50,9 @@ README намеренно остаётся обзорным. Детальные 
 
 - `pr-gate.yml` — always-on PR Gate и единый `Required PR Gate`;
 - `ci.yml` — Main CI для основного production-кода; в экспериментальной
-  PR-ветке #213 добавлена лишь бесплатная проверка архивного Sol replay,
-  без API-ключа, новых оплачиваемых запросов и публикации;
+  PR-ветке #213 есть бесплатная проверка архивного Sol replay и
+  временный branch-only ручной job для пяти оставшихся Sol Primary;
+  штатный `main` не изменён, никаких автоматических платных PR-проверок;
 - `video-ci.yml` — отдельный Video CI для NotebookLM-video;
 - `daily-production.yml` — ежедневный выпуск;
 - `deploy-posts.yml` — синхронизация выбранного `posts/` commit на FTP;

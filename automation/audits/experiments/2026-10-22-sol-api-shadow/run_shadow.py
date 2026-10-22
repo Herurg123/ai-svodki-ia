@@ -29,10 +29,10 @@ DATE = "2026-10-22"
 CUTOFF = "2026-10-22T04:32:02+03:00"
 PARENT_SHA = "eb3c8840df022eaac4e12038709eaccf898de8c4"
 MAX_DOLLARS = 1.0
-MAX_REQUESTS = 32
-# Worst-case additional single request: 1.05M long-input tokens at $4/M,
-# <=20k long-output tokens at $15/M and one search. Reserve >=$4.5.
-MAX_NEW_REQUEST_RESERVE = 0.35
+MAX_REQUESTS = 5
+# Budget is enforced on a client-side conservative estimate, NOT a hard provider cap.
+# Reserve $0.20 for one next model call; stop if observed estimate approaches $1.
+MAX_NEW_REQUEST_RESERVE = 0.20
 state = {
     "model": MODEL,
     "date": DATE,
@@ -281,7 +281,7 @@ def main() -> int:
         if not isinstance(output_cap, int) or not (1 <= output_cap <= 20000):
             raise RuntimeError("Нет безопасного max_output_tokens <=20000")
         if state["request_count"] >= MAX_REQUESTS:
-            raise RuntimeError("Превышен лимит 32 API-запроса")
+            raise RuntimeError("Превышен лимит 5 новых Primary API-запросов")
         if state["estimate_conservative_usd"] + MAX_NEW_REQUEST_RESERVE > MAX_DOLLARS:
             raise RuntimeError("Бюджетный guard: недостаточно резерва на следующий вызов")
         state["request_count"] += 1

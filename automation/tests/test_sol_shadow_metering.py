@@ -218,6 +218,20 @@ class SolShadowOfflineRegression(unittest.TestCase):
             "https://Example.com/news/?utm_source=a&b=2"
         ), "https://example.com/news?b=2")
 
+    def test_manual_paid_job_is_branch_dispatch_only(self):
+        workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        paid = workflow.split("  sol-shadow-paid-once:", 1)[1]
+        self.assertIn("github.event_name == 'workflow_dispatch'", paid)
+        self.assertIn("github.ref == 'refs/heads/experiment/sol-api-shadow-2026-10-22'", paid)
+        self.assertIn("needs: validate", paid)
+        self.assertIn("cancel-in-progress: false", paid)
+        self.assertIn("SOL_SHADOW_OWNER_APPROVAL_USD: \"1.00\"", paid)
+        self.assertIn("secrets.OPENAI_API_KEY", paid)
+        self.assertIn("github.run_id", paid)
+        self.assertNotIn("contents: write", paid)
+        self.assertEqual(shadow.MAX_REQUESTS, 5)
+        self.assertEqual(shadow.MAX_NEW_REQUEST_RESERVE, 0.20)
+
     def test_budget_is_one_dollar_and_retry_is_approval_gated(self):
         self.assertEqual(shadow.MAX_DOLLARS, 1.0)
         self.assertLessEqual(shadow.MAX_NEW_REQUEST_RESERVE, shadow.MAX_DOLLARS)
