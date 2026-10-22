@@ -17,7 +17,7 @@ import traceback
 from datetime import datetime
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[4]
 SCRIPTS = ROOT / "automation" / "scripts"
 PREVIEW = ROOT / "automation" / "preview"
 OUT = PREVIEW / "sol-shadow-2026-10-22"
