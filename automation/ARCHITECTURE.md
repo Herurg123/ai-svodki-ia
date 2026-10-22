@@ -431,6 +431,35 @@ boundary и FTP-video retention, маршрутизируются PR Gate в Mai
 Main CI выполняет compileall, Python unit regressions и ключевые validators
 editorial/archive/production/RSS/sitemap/structured-data contracts.
 
+### 4.2.1. Однократный shadow API в Main CI (только PR-ветка)
+
+Для сравнения Terra/Sol 22.10.2026 существующий `ci.yml` в экспериментальной
+PR-ветке поддерживает **ручной** `workflow_dispatch` с парой
+`run_sol_shadow_oct22=true` и подтверждением
+`sol_shadow_confirmation=SOL22-PRIMARY-USD1`. Job запускается только на ветке
+`experiment/sol-api-shadow-2026-10-22`, с первого workflow attempt и после
+успешных offline checks. При `workflow_call` из PR Gate, push или обычном
+ручном запуске он пропускается. В production `daily-production.yml` изменений нет.
+
+Before-paid gate автоматически скачивает сохранённый artifact
+`12402559662` run `39726774610`, проверяет оригинальные семь Sol-ответов
+и прогоняет настоящий Primary 12-pass с пятью **строго имитированными**
+направлениями без Web Search/API. Лишь затем отдельный оплачиваемый этап
+воспроизводит первые семь ответов из ZIP и запрашивает остальные пять через
+`gpt-6.1-sol / medium`. Отправка запроса требует API key, явного approval
+`SOL_SHADOW_OWNER_APPROVAL_USD=1.00`, client-side budget guard и 0 automatic
+SDK retries. Usage фиксируется до post-response budget check. Технически это
+не server-side spending limit: возможны неучтённые или более дорогие ответы.
+
+Перенос production-артефактов в новые статьи, image API, FTP, публикация,
+редактор, Hybrid и Coverage **не выполняются**. Сохранённый stage artifact
+используется для offline оценки полноты и достоверности. Граница workflow
+`contents:read`, `actions:read`; write permissions отсутствуют. PR/ветка
+исторические, не подлежат автоматическому merge; после эксперимента ручной
+dispatch-контракт следует удалить отдельным PR. Два будущих сравнительных
+выпуска должны использовать новую зафиксированную базовую точку и отдельное
+явное разрешение на оплачиваемые операции, без автозапуска.
+
 ### 4.3. Video CI
 
 Video CI является reusable workflow для PR Gate и сохраняет manual/push режимы.
