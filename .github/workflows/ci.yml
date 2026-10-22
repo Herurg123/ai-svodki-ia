@@ -132,3 +132,77 @@ jobs:
           elif [[ "${JOB_STATUS}" == "cancelled" ]]; then
             echo "::warning title=Main CI отменён::Запуск Main CI был отменён до завершения всех проверок."
           fi
+
+  sol-shadow-proof:
+    name: "Офлайн-проверка оригинального Sol ZIP (0 USD)"
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.ref == 'experiment/sol-api-shadow-2026-10-22' &&
+      github.event.pull_request.head.repo.full_name == 'Herurg123/ai-svodki-ia'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: "Получить PR-ветку без write-токена"
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: "Python для офлайн-проверки"
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: "Получить исходный артефакт (без API)"
+        uses: actions/download-artifact@v7
+        with:
+          name: sol-api-shadow-2026-10-22-attempt-1
+          run-id: 39726774610
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/sol-saved
+      - name: "Проверить реальные 7+5 через production Primary"
+        env:
+          SOL_SAVED_ROOT: ${{ runner.temp }}/sol-saved
+          SOL_SHADOW_REPLAY_ARTIFACT: ${{ runner.temp }}/sol-original-frozen.zip
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os, zipfile
+          from pathlib import Path
+          src = Path(os.environ["SOL_SAVED_ROOT"])
+          dst = Path(os.environ["SOL_SHADOW_REPLAY_ARTIFACT"])
+          required = {"production-daily/primary-recall-2026-10-22.json",
+                      "sol-shadow-2026-10-22/execution.json"}
+          actual = {p.relative_to(src).as_posix() for p in src.rglob("*") if p.is_file()}
+          assert required <= actual, f"Missing original evidence: {required - actual}"
+          with zipfile.ZipFile(dst, "w", compression=zipfile.ZIP_DEFLATED) as z:
+              for p in src.rglob("*"):
+                  if p.is_file():
+                      z.write(p, p.relative_to(src).as_posix())
+          PY
+          python automation/audits/experiments/2026-10-22-sol-api-shadow/run_shadow.py --offline-verify
+      - name: "Сохранить отчёт реальной офлайн-проверки"
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: sol-shadow-original-replay-proof-${{ github.sha }}
+          path: automation/preview/sol-shadow-2026-10-22/offline-verification.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: "Русский итог бесплатного доказательства"
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Проверка Sol replay"
+            echo
+            echo "- Оригинальный ZIP из Actions run 39726774610"
+            echo "- Семь сохранённых и пять имитированных Primary passes"
+            echo "- Никакие вызовы платного OpenAI API не выполнялись"
+            echo "- Результат проверки — в job и JSON artifact"
+          } >> "$GITHUB_STEP_SUMMARY"
+
