@@ -192,14 +192,12 @@ Usage accounting остаётся diagnostic-only: `usage_observer.py` и
 Actions artifact `12402559662` воспроизводит 7 сохранённых Sol Primary
 на реальной матрице с 5 имитированными направлениями. API cost: 0 USD.
 Скрипт `audits/experiments/2026-10-22-sol-api-shadow/run_shadow.py`
-сохраняет `--offline-verify` и защищённый `--paid`. По явному
-запросу владельца временно добавлен branch-only manual job в существующий
-Main CI на экспериментальной ветке, не на `main`: **Actions → Main CI →
-Run workflow → experiment/sol-api-shadow-2026-10-22**, ровно один раз.
-Семь frozen ответов бесплатно переиспользуются, пять новых Primary запросов
-используют `OPENAI_API_KEY` и client-side limit $1; автоматические
-PR/push/schedule не выполняют платную стадию. По окончании job удаляется.
-См. `ARCHITECTURE.md` §4.2.1–4.2.2.
+сохраняет `--offline-verify` и защищённый `--paid` для отдельно
+одобренного исполнения вне CI. Разовый платный job по явному запросу владельца выполнен в экспериментальной
+ветке: Actions run 39748548566, 7 replay + 5 новых Sol Primary, результат
+в artifact 12412378520. Временный job после успеха удалён из ci.yml.
+Повторное выполнение через CI невозможно. См. экспериментальный RESULT.md
+и ARCHITECTURE.md §4.2.1.
 
 ## Workflows
 
