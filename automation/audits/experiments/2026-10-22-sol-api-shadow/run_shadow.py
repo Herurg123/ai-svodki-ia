@@ -14,6 +14,7 @@ import runpy
 import subprocess
 import sys
 import traceback
+import zipfile
 from datetime import datetime
 from pathlib import Path
 
@@ -81,6 +82,148 @@ def estimate_standard_usd(input_tokens: int, output_tokens: int,
         + written_tokens * 2.5 + cached_tokens * 0.1
         + output_tokens * 10.0
     ) / 1_000_000 + searches * 0.01
+
+
+# The seven previously paid passes are allowed to be replayed offline. Missing
+# evidence, changed order/model/window, or incomplete usage fails before API.
+EXPECTED_FROZEN_DIRECTION_IDS = (
+    "global_breaking", "major_agencies", "models_products_agents",
+    "infrastructure_chips_cloud", "business_investment_partnerships",
+    "china_asia_models", "china_asia_integrations",
+)
+EXPECTED_FROZEN_ARCHIVE_SHA = "ef01085d0ef74dd2f0b80a5c1ba89dd99d8dafc85c25e8ac5fa4c3ea3a4a4568"
+
+
+def load_frozen_replay(artifact_path: str):
+    if not artifact_path or not Path(artifact_path).is_file():
+        raise RuntimeError("Нужен исходный ZIP уже оплаченных семи проходов")
+    raw_zip = Path(artifact_path).read_bytes()
+    try:
+        with zipfile.ZipFile(artifact_path) as data:
+            if data.testzip() is not None:
+                raise RuntimeError("Повреждён ZIP frozen-артефакта")
+            frozen = json.loads(data.read(
+                "production-daily/primary-recall-2026-10-22.json"
+            ))
+            execution = json.loads(data.read(
+                "sol-shadow-2026-10-22/execution.json"
+            ))
+    except (zipfile.BadZipFile, KeyError, ValueError) as exc:
+        raise RuntimeError("Не удалось прочитать исходный frozen-артефакт") from exc
+    if (
+        frozen.get("publication_date") != DATE
+        or frozen.get("search_window", {}).get("start_at") !=
+            "2026-10-20T04:35:44+03:00"
+        or frozen.get("search_window", {}).get("end_at") != CUTOFF
+        or execution.get("model") != MODEL
+        or execution.get("frozen_archive_sha256") != EXPECTED_FROZEN_ARCHIVE_SHA
+        or execution.get("request_count") != 8
+    ):
+        raise RuntimeError("Frozen archive/model/date/cutoff/provenance отличается")
+    rows = frozen.get("directions", [])
+    if (not isinstance(rows, list) or
+            [r.get("direction_id") for r in rows] != list(EXPECTED_FROZEN_DIRECTION_IDS)):
+        raise RuntimeError("Неверный порядок семи сохранённых проходов")
+    for i, row in enumerate(rows):
+        api = row.get("api") or {}
+        usage = api.get("usage") or {}
+        if (api.get("model") != MODEL or
+                api.get("status") != "completed" or
+                api.get("web_search_calls_completed") != 1 or
+                api.get("web_search_search_operations_performed") != 1 or
+                not isinstance(usage.get("input_tokens"), int) or
+                not isinstance(usage.get("output_tokens"), int) or
+                not isinstance(row.get("raw_candidates"), list) or
+                not isinstance(row.get("model_rejections"), list) or
+                row.get("status") not in {"complete", "complete_with_gaps"}):
+            raise RuntimeError(f"Проход {i+1} не имеет полного provenance для replay")
+    return rows, hashlib.sha256(raw_zip).hexdigest()
+
+
+def build_replay_runner(rows, live_runner):
+    progress = {"replayed": 0, "new_queries": 0}
+    def runner(*, direction_id, **kwargs):
+        if progress["replayed"] < len(rows):
+            row = rows[progress["replayed"]]
+            if row["direction_id"] != direction_id:
+                raise RuntimeError(
+                    f"Replay order mismatch {direction_id} vs {row['direction_id']}"
+                )
+            progress["replayed"] += 1
+            return ({
+                "direction_id": direction_id, "status": row["status"],
+                "notes": row.get("notes"),
+                "candidates": row["raw_candidates"],
+                "rejections": row["model_rejections"],
+            }, row["api"])
+        progress["new_queries"] += 1
+        return live_runner(direction_id=direction_id, **kwargs)
+    return runner, progress
+
+
+def verify_replay_offline(artifact_path: str) -> dict:
+    """Zero-API probe over the EXACT archived seven responses and five no-op passes.
+    Exercise the real public Primary matrix, including schema/merge.
+    """
+    rows, archive_zip_sha = load_frozen_replay(artifact_path)
+    import primary_recall_search
+    from primary_recall_search import PRIMARY_DIRECTIONS
+    actual_directions = [d["id"] for d in PRIMARY_DIRECTIONS]
+    if actual_directions[:7] != list(EXPECTED_FROZEN_DIRECTION_IDS):
+        raise RuntimeError("Текущая Primary matrix несовместима с saved order")
+    unexpected_live = []
+    def offline_only(*, direction_id, **kwargs):
+        unexpected_live.append(direction_id)
+        return ({
+            "direction_id": direction_id, "status": "complete_with_gaps",
+            "notes": "Offline no-op for future paid pass",
+            "candidates": [], "rejections": []
+        }, {"model": MODEL, "status": "completed",
+             "web_search_calls_completed": 1,
+             "usage": {"input_tokens": 0, "output_tokens": 0}})
+    replay, progress = build_replay_runner(rows, offline_only)
+    # Source is frozen git parent; do not take current published archive.\n    # Production archive after Oct 22 would include newly published articles;
+    # load the true frozen Oct 21 archive from git without touching production.
+    earlier = subprocess.check_output(
+        ["git", "show", PARENT_SHA + ":automation/archive/index.json"], cwd=ROOT
+    )
+    frozen_archive = json.loads(earlier)
+    if hashlib.sha256(earlier).hexdigest() != EXPECTED_FROZEN_ARCHIVE_SHA:
+        raise RuntimeError("Отличается frozen archive SHA")
+    result, report = primary_recall_search.run_primary_recall_matrix(
+        publication_date=DATE,
+        search_window={
+            "start_at": "2026-10-20T04:35:44+03:00",
+            "end_at": CUTOFF,
+            "latest_archive_at": "2026-10-21T04:35:44+03:00",
+            "start_date": "2026-10-20", "end_date": "2026-10-22",
+            "latest_archive_date": "2026-10-21"
+        },
+        archive=frozen_archive, api_key="OFFLINE_NO_API", model=MODEL,
+        maximum_candidates=20, search_runner=replay,
+    )
+    if (progress["replayed"] != 7 or progress["new_queries"] != 5 or
+            unexpected_live != actual_directions[7:] or
+            len(report.get("directions", [])) != 12):
+        raise RuntimeError("Replay пошёл не по 7 frozen + 5 simulated passes")
+    for i, old in enumerate(rows):
+        now = report["directions"][i]
+        if (now["direction_id"] != old["direction_id"] or
+                now.get("raw_candidates") != old.get("raw_candidates") or
+                now.get("model_rejections") != old.get("model_rejections") or
+                now.get("accepted_count") != old.get("accepted_count")):
+            raise RuntimeError(f"Replay не воспроизвёл сохранённый pass {i+1}")
+    return {
+        "status": "offline_pass", "model": MODEL,
+        "frozen_artifact_sha256": archive_zip_sha,
+        "frozen_passes": 7, "simulated_future_passes": 5,
+        "real_api_calls": 0,
+        "first_seven_raw_candidates": sum(len(x["raw_candidates"]) for x in rows),
+        "first_seven_accepted": sum(x["accepted_count"] for x in rows),
+        "whole_matrix_candidate_count_in_offline_simulation":
+            report.get("final_candidate_count"),
+        "notes": "Last five are mocked no-ops, NOT actual Sol findings"
+    }
 
 def run_stage(label: str, path: Path, args: list[str]) -> int:
     old = list(sys.argv)
@@ -215,54 +358,19 @@ def main() -> int:
     Responses.create = tracked_create
 
     import primary_recall_search
-    # Resume exactly the seven saved paid answers through the real Primary
-    # validation/merge path. The eighth completed response has no saved usage or
-    # output, therefore it cannot safely be replayed or assumed free.
+    # Seven saved paid Primary passes are always replayed, not paid again.
     artifact_raw = os.environ.get("SOL_SHADOW_REPLAY_ARTIFACT", "").strip()
-    if not artifact_raw:
-        raise RuntimeError(
-            "Отсутствует сохранённый artifact для first-7 replay; повторно "
-            "платить за уже завершённые семь направлений запрещено."
-        )
-    import zipfile
-    with zipfile.ZipFile(artifact_raw) as zip_file:
-        frozen = json.loads(zip_file.read(
-            "production-daily/primary-recall-2026-10-22.json"
-        ))
-        execution = json.loads(zip_file.read(
-            "sol-shadow-2026-10-22/execution.json"
-        ))
-    frozen_rows = frozen.get("directions", [])
-    if (len(frozen_rows) != 7 or execution.get("model") != MODEL
-            or frozen.get("search_window", {}).get("end_at") != CUTOFF):
-        raise RuntimeError("Artifact не соответствует точной frozen-заморозке")
-    replay_index = [0]
-    live_runner = primary_recall_search._base.run_search_request
-    def replay_or_live(*, direction_id, **kwargs):
-        if replay_index[0] < len(frozen_rows):
-            row = frozen_rows[replay_index[0]]
-            if row.get("direction_id") != direction_id:
-                raise RuntimeError("Несоответствие порядка frozen Primary pass")
-            replay_index[0] += 1
-            saved_api = row.get("api") or {}
-            if (saved_api.get("web_search_calls_completed") != 1
-                    or saved_api.get("model") != MODEL):
-                raise RuntimeError("Неверные frozen API provenance / поиск")
-            return ({
-                "direction_id": direction_id, "status": row["status"],
-                "notes": row.get("notes"), "candidates": row["raw_candidates"],
-                "rejections": row.get("model_rejections", []),
-            }, saved_api)
-        return live_runner(direction_id=direction_id, **kwargs)
+    frozen_rows, frozen_sha = load_frozen_replay(artifact_raw)
     original_matrix = primary_recall_search._BASE_RUN_MATRIX
+    replay_or_live, replay_state = build_replay_runner(
+        frozen_rows, primary_recall_search._base.run_search_request
+    )
     def replay_matrix(*args, **kwargs):
         kwargs["search_runner"] = replay_or_live
         return original_matrix(*args, **kwargs)
     primary_recall_search._BASE_RUN_MATRIX = replay_matrix
     state["frozen_replayed_directions"] = len(frozen_rows)
-    state["frozen_replay_sha256"] = hashlib.sha256(
-        Path(artifact_raw).read_bytes()
-    ).hexdigest()
+    state["frozen_replay_sha256"] = frozen_sha
     save()
     original_primary = primary_recall_search.run_primary_recall_search
     def frozen_primary(*args, **kwargs):
@@ -270,27 +378,31 @@ def main() -> int:
         return original_primary(*args, **kwargs)
     primary_recall_search.run_primary_recall_search = frozen_primary
 
-    common = [
-        "--publication-date", DATE, "--minimum-candidates", "12",
-        "--maximum-candidates", "20", "--minimum-selected-stories", "7",
-        "--maximum-selected-stories", "12",
-        "--maximum-research-web-search-calls", "12",
-        "--model", MODEL, "--allow-provisional-editorial"
-    ]
-    rc = run_stage("research_editorial_hybrid",
-                   SCRIPTS / "run_digest_preview.py", common)
-    artifact_dir = PREVIEW / DATE
-    if rc == 0 and artifact_dir.exists():
-        coverargs = [
-            "--artifact-dir", str(artifact_dir),
-            "--archive", str(ROOT / "automation/archive/index.json"),
-            "--publication-date", DATE, "--model", MODEL,
-            "--usual-total", "7", "--minimum-publishable", "1",
-            "--maximum-audit-web-search-calls", "7",
-            "--maximum-candidates", "20", "--maximum-selected-stories", "12",
-            "--report", str(PREVIEW / "production-daily" / "coverage-audit.json")
-        ]
-        rc = run_stage("coverage", SCRIPTS / "ensure_story_coverage.py", coverargs)
+    # Only finish the 12 Primary passes. Never trigger Editorial, Hybrid or
+    # Coverage in this experiment: a Research-only A/B is cheaper and cleaner.
+    try:
+        research_path, report = primary_recall_search.run_primary_recall_search(
+            publication_date=DATE, api_key=os.environ["OPENAI_API_KEY"],
+            model=MODEL, maximum_candidates=20
+        )
+        state["stages"]["primary_only"] = {
+            "status": report.get("status"), "final_candidate_count":
+                report.get("final_candidate_count"),
+            "replayed_passes": replay_state["replayed"],
+            "new_passes": replay_state["new_queries"],
+            "report_path": str(research_path),
+        }
+        if replay_state["replayed"] != 7 or replay_state["new_queries"] != 5:
+            raise RuntimeError("Primary не завершил именно 7 frozen + 5 fresh")
+        rc = 0
+    except Exception as exc:
+        state["stages"]["primary_only"] = {
+            "status": "error", "error_type": type(exc).__name__,
+            "error": str(exc), "replayed_passes": replay_state["replayed"],
+            "new_passes": replay_state["new_queries"],
+        }
+        save()
+        raise
     state["status"] = "completed" if rc == 0 else "incomplete"
     state["api_budget_not_invoice"] = True
     state["no_publication_or_image"] = True
@@ -306,6 +418,20 @@ def main() -> int:
 if __name__ == "__main__":
     # The old branch ran paid API on import/CLI invocation and had a $10 limit.
     # Keep this historical runner inert unless separately re-authorized.
+    if "--offline-verify" in sys.argv:
+        at = os.environ.get("SOL_SHADOW_REPLAY_ARTIFACT", "")
+        try:
+            report = verify_replay_offline(at)
+        except Exception as exc:
+            print("OFFLINE REPLAY FAILED:", type(exc).__name__, str(exc))
+            raise SystemExit(1)
+        OUT.mkdir(parents=True, exist_ok=True)
+        (OUT / "offline-verification.json").write_text(
+            json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8"
+        )
+        print(json.dumps(report, ensure_ascii=False))
+        raise SystemExit(0)
     if "--paid" not in sys.argv or os.getenv("SOL_SHADOW_OWNER_APPROVAL_USD") != "1.00":
         print("OFFLINE ONLY: API-запуск заблокирован. Новое разрешение на платный тест отсутствует.")
         raise SystemExit(2)
