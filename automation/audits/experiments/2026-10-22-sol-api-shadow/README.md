@@ -61,6 +61,24 @@
    значимости, достоверности, потере кандидатов на схеме/merge и архивной
    уникальности. Не объявлять победителя по числу сырых ссылок.
 
+## Офлайн-сопоставление Terra/Sol после Primary 12/12
+
+Инструмент `compare_primary.py` принимает два отчёта
+`primary-recall.json` и выдаёт JSON-статус и CSV для ручной
+проверки по событию:
+
+```bash
+python automation/audits/experiments/2026-10-22-sol-api-shadow/compare_primary.py \
+  --terra automation/content/2026-10-22/primary-recall.json \
+  --sol automation/preview/production-daily/primary-recall-2026-10-22.json \
+  --output-prefix automation/preview/sol-shadow-2026-10-22/ab-review
+```
+
+Скрипт **останавливается с ненулевым кодом** до 12/12 по обоим
+направлениям. Совпадение URL отмечает только совпадение *источника*, а не
+события; URL двух разных публикаций одного события требует ручной
+event-identity adjudication. Никаких победителей по сырому числу URL.
+
 ## Два контрольных выпуска после октябрьского replay
 
 Для 23 и 24 октября требуется **новая зафиксированная база**: ровно один
