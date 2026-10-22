@@ -27,11 +27,11 @@ MODEL = "gpt-6.1-sol"
 DATE = "2026-10-22"
 CUTOFF = "2026-10-22T04:32:02+03:00"
 PARENT_SHA = "eb3c8840df022eaac4e12038709eaccf898de8c4"
-MAX_DOLLARS = 10.0
+MAX_DOLLARS = 1.0
 MAX_REQUESTS = 32
 # Worst-case additional single request: 1.05M long-input tokens at $4/M,
 # <=20k long-output tokens at $15/M and one search. Reserve >=$4.5.
-MAX_NEW_REQUEST_RESERVE = 4.5
+MAX_NEW_REQUEST_RESERVE = 0.35
 state = {
     "model": MODEL,
     "date": DATE,
@@ -44,7 +44,7 @@ state = {
     "completed_searches": 0,
     "requests": [],
     "stages": {},
-    "warnings": ["Index and live pages on 22 Oct can differ from the overnight search snapshot.",
+    "warnings": ["Budget cap is a conservative client-side estimate, not a provider hard spend ceiling.", "Index and live pages on 22 Oct can differ from the overnight search snapshot.",
                  "Source Pulse uses live read-only sources, not a saved original feed snapshot.",
                  "Observed usage is not an OpenAI invoice; failed transport without usage is unknown."]
 }
@@ -54,6 +54,33 @@ def save():
     tmp = p.with_suffix(".tmp")
     tmp.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp.replace(p)
+
+
+def count_billable_search_actions(output) -> int:
+    """Only action.type=search incurs a Web Search operation charge.
+    Reasoning-model open_page and find_in_page are navigation, not searches.
+    """
+    return sum(
+        getattr(item, "type", None) == "web_search_call"
+        and getattr(item, "status", None) == "completed"
+        and getattr(getattr(item, "action", None), "type", None) == "search"
+        for item in (output or [])
+    )
+
+
+def estimate_standard_usd(input_tokens: int, output_tokens: int,
+                          written_tokens: int, cached_tokens: int,
+                          searches: int) -> float:
+    """GPT-6.1 Sol Standard, <=272k input; cache writes are not additive."""
+    if min(input_tokens, output_tokens, written_tokens, cached_tokens, searches) < 0:
+        raise ValueError("Negative usage tokens")
+    if written_tokens + cached_tokens > input_tokens:
+        raise ValueError("Invalid cache token partition")
+    return (
+        (input_tokens - written_tokens - cached_tokens) * 2.0
+        + written_tokens * 2.5 + cached_tokens * 0.1
+        + output_tokens * 10.0
+    ) / 1_000_000 + searches * 0.01
 
 def run_stage(label: str, path: Path, args: list[str]) -> int:
     old = list(sys.argv)
@@ -139,34 +166,49 @@ def main() -> int:
             save()
             raise RuntimeError("API response without usage: further paid calls disallowed")
         outputs = getattr(response, "output", []) or []
-        completed = sum(
-            1 for obj in outputs
-            if getattr(obj, "type", None) == "web_search_call"
-            and getattr(obj, "status", None) == "completed"
+        completed = count_billable_search_actions(outputs)
+        navigation = sum(
+            getattr(item, "type", None) == "web_search_call"
+            and getattr(getattr(item, "action", None), "type", None)
+                in {"open_page", "find_in_page"}
+            for item in outputs
         )
-        if state["completed_searches"] + completed > 25:
-            attempt["outcome"] = "search_budget_breached"
-            save()
-            raise RuntimeError("Превышено 25 поисков: остановка")
-        # Conservative upper estimate relative to Standard Sol:
-        # account ALL input tokens as uncached/cache-write at $2.50/M.
-        # Long context >272k: $4/M, output $15/M.
+        details = getattr(usage, "input_tokens_details", None)
+        written = getattr(details, "cache_write_tokens", 0) or 0
+        cached = getattr(details, "cached_tokens", 0) or 0
+        # Capture returned response usage BEFORE enforcement checks. The prior
+        # attempt lost its eighth API response by checking tool items first.
         long_context = inp > 272000
-        est = (inp * (4.0 if long_context else 2.5)
-               + out * (15.0 if long_context else 10.0)) / 1000000 + completed * 0.01
+        estimate = estimate_standard_usd(inp, out, written, cached, completed)
+        conservative = (
+            inp * (4.0 if long_context else 2.5)
+            + out * (15.0 if long_context else 10.0)
+        ) / 1000000 + completed * 0.01
         attempt.update({
-            "outcome": "response_received", "response_id": getattr(response, "id", None),
+            "outcome": "response_received",
+            "response_id": getattr(response, "id", None),
             "input_tokens": inp, "output_tokens": out,
-            "cached_input_tokens": getattr(getattr(usage, "input_tokens_details", None),
-                                           "cached_tokens", None),
-            "completed_searches": completed,
-            "estimate_conservative_usd": round(est, 8)
+            "cache_write_tokens": written, "cached_input_tokens": cached,
+            "completed_searches": completed, "navigation_items": navigation,
+            "estimate_standard_usd": round(estimate, 8),
+            "estimate_conservative_usd": round(conservative, 8)
         })
+        state["estimate_standard_usd"] = round(
+            state.get("estimate_standard_usd", 0.0) + estimate, 8
+        )
         state["estimate_conservative_usd"] = round(
-            state["estimate_conservative_usd"] + est, 8
+            state["estimate_conservative_usd"] + conservative, 8
         )
         state["completed_searches"] += completed
         save()
+        if state["completed_searches"] > 25:
+            attempt["outcome"] = "search_budget_breached_after_response"
+            save()
+            raise RuntimeError("Превышено 25 настоящих поисков; usage сохранён")
+        if state["estimate_conservative_usd"] > MAX_DOLLARS:
+            attempt["outcome"] = "budget_breached_after_response"
+            save()
+            raise RuntimeError("Оценка бюджета превышена; usage сохранён")
         return response
 
     openai.OpenAI.__init__ = disable_retry
@@ -213,6 +255,12 @@ def main() -> int:
     return rc
 
 if __name__ == "__main__":
+    # The old branch ran paid API on import/CLI invocation and had a $10 limit.
+    # Keep this historical runner inert unless separately re-authorized.
+    if "--paid" not in sys.argv or os.getenv("SOL_SHADOW_OWNER_APPROVAL_USD") != "1.00":
+        print("OFFLINE ONLY: API-запуск заблокирован. Новое разрешение на платный тест отсутствует.")
+        raise SystemExit(0)
+    sys.argv.remove("--paid")
     try:
         raise SystemExit(main())
     except Exception as exc:
