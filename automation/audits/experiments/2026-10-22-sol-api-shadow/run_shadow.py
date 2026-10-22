@@ -215,6 +215,55 @@ def main() -> int:
     Responses.create = tracked_create
 
     import primary_recall_search
+    # Resume exactly the seven saved paid answers through the real Primary
+    # validation/merge path. The eighth completed response has no saved usage or
+    # output, therefore it cannot safely be replayed or assumed free.
+    artifact_raw = os.environ.get("SOL_SHADOW_REPLAY_ARTIFACT", "").strip()
+    if not artifact_raw:
+        raise RuntimeError(
+            "Отсутствует сохранённый artifact для first-7 replay; повторно "
+            "платить за уже завершённые семь направлений запрещено."
+        )
+    import zipfile
+    with zipfile.ZipFile(artifact_raw) as zip_file:
+        frozen = json.loads(zip_file.read(
+            "production-daily/primary-recall-2026-10-22.json"
+        ))
+        execution = json.loads(zip_file.read(
+            "sol-shadow-2026-10-22/execution.json"
+        ))
+    frozen_rows = frozen.get("directions", [])
+    if (len(frozen_rows) != 7 or execution.get("model") != MODEL
+            or frozen.get("search_window", {}).get("end_at") != CUTOFF):
+        raise RuntimeError("Artifact не соответствует точной frozen-заморозке")
+    replay_index = [0]
+    live_runner = primary_recall_search._base.run_search_request
+    def replay_or_live(*, direction_id, **kwargs):
+        if replay_index[0] < len(frozen_rows):
+            row = frozen_rows[replay_index[0]]
+            if row.get("direction_id") != direction_id:
+                raise RuntimeError("Несоответствие порядка frozen Primary pass")
+            replay_index[0] += 1
+            saved_api = row.get("api") or {}
+            if (saved_api.get("web_search_calls_completed") != 1
+                    or saved_api.get("model") != MODEL):
+                raise RuntimeError("Неверные frozen API provenance / поиск")
+            return ({
+                "direction_id": direction_id, "status": row["status"],
+                "notes": row.get("notes"), "candidates": row["raw_candidates"],
+                "rejections": row.get("model_rejections", []),
+            }, saved_api)
+        return live_runner(direction_id=direction_id, **kwargs)
+    original_matrix = primary_recall_search._BASE_RUN_MATRIX
+    def replay_matrix(*args, **kwargs):
+        kwargs["search_runner"] = replay_or_live
+        return original_matrix(*args, **kwargs)
+    primary_recall_search._BASE_RUN_MATRIX = replay_matrix
+    state["frozen_replayed_directions"] = len(frozen_rows)
+    state["frozen_replay_sha256"] = hashlib.sha256(
+        Path(artifact_raw).read_bytes()
+    ).hexdigest()
+    save()
     original_primary = primary_recall_search.run_primary_recall_search
     def frozen_primary(*args, **kwargs):
         kwargs["cutoff_at"] = datetime.fromisoformat(CUTOFF)
