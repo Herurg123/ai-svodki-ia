@@ -1,0 +1,78 @@
+name: "Эксперимент Sol API 2026-10-22 (однократный)"
+
+on:
+  pull_request:
+    types: [opened]
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  sol-shadow:
+    name: "Однократный Sol API shadow без публикации"
+    if: >-
+      github.head_ref == 'experiment/sol-api-shadow-2026-10-22' &&
+      github.event.pull_request.head.repo.full_name == 'Herurg123/ai-svodki-ia' &&
+      github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - name: "Выгрузить точную ветку эксперимента без write-токена"
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: "Проверить историю и Python"
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: "Проверить, что это строго отдельный PR"
+        shell: bash
+        env:
+          EXPECTED_PARENT: "eb3c8840df022eaac4e12038709eaccf898de8c4"
+          EXPECTED_ARTICLE: "automation/content/2026-10-22/candidates.json"
+        run: |
+          set -euo pipefail
+          git cat-file -e "${EXPECTED_PARENT}^{commit}"
+          test -f "${EXPECTED_ARTICLE}"
+          test -f automation/audits/experiments/2026-10-22-sol-api-shadow/run_shadow.py
+          python -m py_compile automation/audits/experiments/2026-10-22-sol-api-shadow/run_shadow.py
+      - name: "Установить зафиксированную версию OpenAI SDK"
+        shell: bash
+        run: python -m pip install --disable-pip-version-check "openai==2.45.0"
+      - name: "Выполнить один изолированный Research/Editorial/Coverage на Sol medium"
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_TEXT_MODEL: "gpt-6.1-sol"
+          PYTHONUNBUFFERED: "1"
+        run: |
+          set -euo pipefail
+          python automation/audits/experiments/2026-10-22-sol-api-shadow/run_shadow.py
+      - name: "Сохранить доказательства без публикации"
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: sol-api-shadow-2026-10-22-attempt-1
+          path: |
+            automation/preview/sol-shadow-2026-10-22/
+            automation/preview/2026-10-22/
+            automation/preview/production-daily/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: "Русский итог эксперимента"
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Эксперимент Sol API"
+            echo
+            echo "- Исследуемый выпуск: 2026-10-22"
+            echo "- Модель: gpt-6.1-sol, reasoning=medium"
+            echo "- Тип: одноразовый shadow без Image, commit и FTP"
+            echo "- API-бюджет: не более 10 USD по консервативному usage-guard (не счёт провайдера)"
+            echo "- Повтор запуска запрещён при github.run_attempt != 1"
+            echo "- Фактические ответы, статусы и суммы: артефакт sol-api-shadow-2026-10-22-attempt-1"
+          } >> "$GITHUB_STEP_SUMMARY"
