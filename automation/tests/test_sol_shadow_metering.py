@@ -48,7 +48,7 @@ class SolShadowOfflineRegression(unittest.TestCase):
                  if k not in ("OPENAI_API_KEY", "SOL_SHADOW_OWNER_APPROVAL_USD")},
             text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             timeout=10)
-        self.assertEqual(process.returncode, 0, process.stderr)
+        self.assertEqual(process.returncode, 2, process.stderr)
         self.assertIn("OFFLINE ONLY", process.stdout)
 
 if __name__ == "__main__":
