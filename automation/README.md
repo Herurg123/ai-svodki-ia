@@ -186,18 +186,6 @@ Usage accounting остаётся diagnostic-only: `usage_observer.py` и
 счёта копий; unknown/missing evidence не превращается в нулевую стоимость и не
 меняет retrieval/publication policy.
 
-## Экспериментальная Sol-проверка без публикации
-
-В PR `#213` (не в production main) находится разовый shadow-runner
-`audits/experiments/2026-10-22-sol-api-shadow/run_shadow.py`. Он сохраняет
-7 изначальных Sol Primary responses из GitHub artifact `12402559662`,
-проверяет replay командой `--offline-verify` с переменной
-`SOL_SHADOW_REPLAY_ARTIFACT`, затем при отдельном разрешении может выполнить
-только недостающие пять Primary-проходов. Платный режим разрешён только через
-ручной `ci.yml` workflow_dispatch на строгой PR-ветке с явным подтверждением
-и новым client-side лимитом 1 USD. Ни один push/PR/CI сам по себе не
-расходует API. См. `ARCHITECTURE.md` §4.2.1 и README самого эксперимента.
-
 ## Workflows
 
 `PR Gate` классифицирует changed paths и вызывает reusable Main CI, Video CI
