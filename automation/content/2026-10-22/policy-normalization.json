@@ -1,0 +1,23 @@
+{
+  "status": "applied",
+  "changed_fields": [],
+  "changed_count": 0,
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-005."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Выбраны три независимых значимых события от TechCrunch: проект федерального safety-механизма Anthropic, выпуск открытой coding-модели Flint и запуск Walmart Agent Gateway. Они охватывают регулирование, модели и агентную коммерцию и не являются дублями."
+    }
+  ]
+}

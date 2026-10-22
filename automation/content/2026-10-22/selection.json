@@ -1,0 +1,36 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-003",
+    "cand-005",
+    "cand-006",
+    "cand-009",
+    "cand-010",
+    "cand-004",
+    "cand-018"
+  ],
+  "excluded_candidate_ids": [
+    "cand-001",
+    "cand-002",
+    "cand-007",
+    "cand-008",
+    "cand-011",
+    "cand-012",
+    "cand-013",
+    "cand-014",
+    "cand-015",
+    "cand-016",
+    "cand-017",
+    "cand-019",
+    "cand-020"
+  ],
+  "selection_summary": "Отобраны семь подтверждённых свежих и самостоятельных сюжетов: безопасность агентных систем, предложение Anthropic по федеральному регулированию, industrial AI, открытая локальная coding-модель, агентная коммерция, обновление Claude Code и доступность инфраструктуры Vera Rubin в Google Cloud. Исключены кандидаты с рекомендацией exclude, менее значимые инкрементальные релизы, а также слабее раскрытые source-pulse материалы.",
+  "diversity_overrides": [
+    {
+      "type": "publisher",
+      "value": "TechCrunch",
+      "reason": "Выбраны три независимых значимых события от TechCrunch: проект федерального safety-механизма Anthropic, выпуск открытой coding-модели Flint и запуск Walmart Agent Gateway. Они охватывают регулирование, модели и агентную коммерцию и не являются дублями."
+    }
+  ]
+}
