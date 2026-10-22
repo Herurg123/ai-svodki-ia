@@ -308,7 +308,7 @@ if __name__ == "__main__":
     # Keep this historical runner inert unless separately re-authorized.
     if "--paid" not in sys.argv or os.getenv("SOL_SHADOW_OWNER_APPROVAL_USD") != "1.00":
         print("OFFLINE ONLY: API-запуск заблокирован. Новое разрешение на платный тест отсутствует.")
-        raise SystemExit(0)
+        raise SystemExit(2)
     sys.argv.remove("--paid")
     try:
         raise SystemExit(main())
