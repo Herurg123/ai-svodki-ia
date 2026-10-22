@@ -186,6 +186,16 @@ Usage accounting остаётся diagnostic-only: `usage_observer.py` и
 счёта копий; unknown/missing evidence не превращается в нулевую стоимость и не
 меняет retrieval/publication policy.
 
+## Офлайн-верификация Sol-эксперимента (PR #213)
+
+В экспериментальной PR-ветке есть read-only Main CI job, который из GitHub
+Actions artifact `12402559662` воспроизводит 7 сохранённых Sol Primary
+на реальной матрице с 5 имитированными направлениями. API cost: 0 USD.
+Скрипт `audits/experiments/2026-10-22-sol-api-shadow/run_shadow.py`
+сохраняет `--offline-verify` и защищённый `--paid` для отдельно
+одобренного исполнения вне CI. В штатный CI платный запуск не добавляется;
+см. `ARCHITECTURE.md` §4.2.1.
+
 ## Workflows
 
 `PR Gate` классифицирует changed paths и вызывает reusable Main CI, Video CI
