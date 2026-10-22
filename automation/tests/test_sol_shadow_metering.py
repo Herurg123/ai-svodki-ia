@@ -190,6 +190,34 @@ class SolShadowOfflineRegression(unittest.TestCase):
         self.assertEqual(report["first_seven_raw_candidates"], 6)
         self.assertEqual(report["first_seven_accepted"], 5)
 
+    def test_comparison_never_claims_incomplete_shadow_winner(self):
+        path = ROOT / "automation/audits/experiments/2026-10-22-sol-api-shadow/compare_primary.py"
+        spec = importlib.util.spec_from_file_location("sol_primary_comparator", path)
+        compare = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(compare)
+        directions = [
+            {"direction_id": d, "raw_candidates": [],
+             "web_search_calls_completed": 1}
+            for d in compare.DIRECTIONS
+        ]
+        base = {"publication_date": shadow.DATE,
+                "search_window": {"start_at": "2026-10-20T04:35:44+03:00",
+                                  "end_at": shadow.CUTOFF}}
+        terra = {**base, "directions": directions}
+        sol = {**base, "directions": directions[:7]}
+        result, events = compare.build(terra, sol)
+        self.assertEqual(result["status"], "incomplete_search_matrix")
+        self.assertEqual(result["model_recommendation"],
+                         "insufficient_evidence_until_manual_adjudication")
+        self.assertFalse(events)
+        sol["directions"] = directions
+        result, _ = compare.build(terra, sol)
+        self.assertEqual(result["status"], "ready_for_manual_event_review")
+        self.assertIn("manual", result["model_recommendation"])
+        self.assertEqual(compare.normalize_url(
+            "https://Example.com/news/?utm_source=a&b=2"
+        ), "https://example.com/news?b=2")
+
     def test_budget_is_one_dollar_and_retry_is_approval_gated(self):
         self.assertEqual(shadow.MAX_DOLLARS, 1.0)
         self.assertLessEqual(shadow.MAX_NEW_REQUEST_RESERVE, shadow.MAX_DOLLARS)
