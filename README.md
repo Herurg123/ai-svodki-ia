@@ -49,7 +49,10 @@ README намеренно остаётся обзорным. Детальные 
 В репозитории семь постоянных GitHub Actions workflow:
 
 - `pr-gate.yml` — always-on PR Gate и единый `Required PR Gate`;
-- `ci.yml` — Main CI для основного production-кода;
+- `ci.yml` — Main CI для основного production-кода; в экспериментальной
+  PR-ветка #213 содержит бесплатный replay и архив результатов ручного Sol Primary 12/12.
+  Разовый оплачиваемый GitHub Actions job выполнен 22.10.2026 (run 39748548566)
+  и удалён из PR; публикаций, merge или изменений в production не было;
 - `video-ci.yml` — отдельный Video CI для NotebookLM-video;
 - `daily-production.yml` — ежедневный выпуск;
 - `deploy-posts.yml` — синхронизация выбранного `posts/` commit на FTP;

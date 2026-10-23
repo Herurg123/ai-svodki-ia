@@ -431,6 +431,29 @@ boundary и FTP-video retention, маршрутизируются PR Gate в Mai
 Main CI выполняет compileall, Python unit regressions и ключевые validators
 editorial/archive/production/RSS/sitemap/structured-data contracts.
 
+### 4.2.1. Исторический офлайн-replay Sol в PR Gate
+
+Экспериментальная PR-ветка #213 добавляет в канонический Main CI
+read-only job `sol-shadow-proof`: только для PR с head ref
+`experiment/sol-api-shadow-2026-10-22`, после обязательного `validate`.
+Он скачивает GitHub Actions artifact `12402559662` неудачного Sol API
+run `39726774610` и запускает
+`automation/audits/experiments/2026-10-22-sol-api-shadow/run_shadow.py --offline-verify`.
+Скрипт проверяет provenance семи сохранённых ответов, frozen archive и
+воспроизводит рабочую 12-pass Primary matrix с пятью явно имитированными
+прохождениями. Не вызываются OpenAI API, web search, Editorial, Image,
+publication или deploy. Доступ job/caller ограничен `contents:read` и
+`actions:read`. Нет ключей и write-токена.
+
+Этот job — временная проверка сохранённого эксперимента **только в PR**.
+Production Main CI на main не менялся. По явному запросу владельца 22 октября
+в экспериментальной ветке временно существовал manual-only Sol job, выполненный
+единственный раз в Actions run 39748548566 (7 frozen + 5 новых Sol Primary).
+Результат: artifact 12412378520. После получения и проверки архивных
+результатов временный оплачиваемый job удалён из ci.yml. Он не сливался в main.
+Канонический Main CI снова не содержит платной функциональности.
+См. audits/experiments/2026-10-22-sol-api-shadow/RESULT.md.
+
 ### 4.3. Video CI
 
 Video CI является reusable workflow для PR Gate и сохраняет manual/push режимы.
