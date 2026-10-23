@@ -170,3 +170,7 @@ Retrieval/search изменения дополнительно проходят 
 
 Исторические audits/fixtures сохраняются как evidence и regression assets; их не
 следует переписывать только ради сокращения живой документации.
+
+## Теневое сравнение Sol API за 23 октября 2026
+
+В изолированной PR-ветке `experiment/sol-shadow-2026-10-23` временно подготовлен **однократный ручной** Sol Primary на 12 направлений. Запуск только через Actions → Main CI → Run workflow → эту ветку; в обычном PR CI и production этот job пропускается. Для честного сравнения он использует pre-release архив из `071c1d6c` и точно зафиксированное окно Terra Research. Никаких публикаций, замены модели или запуска Editorial. После исследования job будет удалён из PR, без merge в `main`. См. `automation/audits/experiments/2026-10-23-sol-shadow/README.md`.

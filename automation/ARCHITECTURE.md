@@ -2184,3 +2184,12 @@ Production API пользователя не расходуется без яв�
 архитектуры отдельное разрешение относится только к одному conditional fifth
 Hybrid search на double-gap path; любые иные новые paid calls требуют нового
 решения владельца.
+### Временный manual-only Sol Primary shadow, 23.10.2026 (только PR)
+
+По явному запросу владельца в ветке `experiment/sol-shadow-2026-10-23` временно добавлен job `sol-shadow-23-once` в уже существующий `.github/workflows/ci.yml`. Файл CI существует в default branch, поэтому доступен на странице GitHub Actions → Main CI → Run workflow при выборе экспериментальной ветки. **Никаких изменений в `main` и production runtime.** Job условно исполняется только при `github.event_name=workflow_dispatch`, точном `github.ref` и repository guard, после успешного read-only `validate`. PR Gate/push не имеют пути до платного job. Concurrency не отменяет paid run; повтор ручного dispatch и `run_attempt>1` отклоняются **до** передачи `OPENAI_API_KEY`.
+
+Историческое окно и pre-release archive первичного Terra Research за 23 октября зафиксированы по `071c1d6c2777de461d5e74b33d851e64a1d5f473` и Actions artifact 12471524859 из run 39884328846. Sol берёт **только** этот архив и зафиксированные cutoffs, а исходный Terra Primary JSON применяется лишь к послепоисковой offline сравнительной матрице. Поисковые запросы Terra и её кандидаты не передаются Sol. Sol просматривает независимую live-выдачу позже Terra, разницу времени обязательно отмечать в итоговой оценке.
+
+В рамках одного запроса OpenAI Responses модель `gpt-6.1-sol`, effort medium, `max_tool_calls=4`, один Search, SDK retries=0; запросы не более 12. Промежуточные raw outputs, response ID, tool actions, service tier, usage и JSON кандидатов записываются **после каждого ответа до следующего запроса** и сохраняются Actions artifact даже при неудаче. Ограничитель: клиентская tier-adjusted оценка до $1, резерва $0.16 для следующего запроса. Incentivized-tier оценивается как бесплатные текстовые токены согласно биллингу 19–22 октября; ставка не гарантирована в будущем, жёсткой блокировки расходов провайдера нет. Ни Editorial, ни Image, ни Coverage, ни FTP, ни commit/publish/delete не допускаются.
+
+При ошибке повтор paid job запрещён: требуется анализ usage и saved checkpoint. После выполненного одиночного запуска временный paid job удаляется из ветки. Для решения о миграции event-level сравнение и ручная проверка свежести и значимости важнее сравнения сырых URL. Подробности и координаты Terra checkpoint в `automation/audits/experiments/2026-10-23-sol-shadow/README.md`.

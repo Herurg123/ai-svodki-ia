@@ -252,3 +252,7 @@ budget не используется для таких проверок без �
 доказательная информация остаётся в audits/fixtures/archive, а детальный
 current-state contract — в `ARCHITECTURE.md`; не следует снова размножать один
 и тот же implementation narrative по нескольким README.
+
+## Временная проверка Sol 23 октября
+
+В экспериментальной PR-ветке `experiment/sol-shadow-2026-10-23` на время одного разрешённого владельцем запуска существует manual-only job в **каноническом** Main CI. Он доступен лишь при ручном `workflow_dispatch` именно на этой ветке; PR/push/schedule не вызывают OpenAI API. Используются model `gpt-6.1-sol` / `medium`, 12 поисковых направлений, cutoff `2026-10-23T04:31:19+03:00`, архив до публикации 23-го из commit `071c1d6c`. Terra baseline загружается как сохранённый Research checkpoint 39884328846 **после** независимого Sol поиска (не включается в промпты). Клиентская оценка до $1, без automatic retry; billed cost проверяется отдельно. Результаты сохраняются при любой остановке. Рабочий production и `main` не меняются. После одного прогона job удаляется. См. `ARCHITECTURE.md` и отдельный README в `audits/experiments/2026-10-23-sol-shadow/`.
