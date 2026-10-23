@@ -207,7 +207,9 @@ jobs:
           assert len(j.get("directions",[]))==12, "Terra must have 12 Primary passes"
           assert w.get("start_at")=="2026-10-21T04:32:02+03:00", w
           assert w.get("end_at")=="2026-10-23T04:31:19+03:00", w
-          print("Terra frozen 12/12 sha256:",hashlib.sha256(p.read_bytes()).hexdigest())
+          frozen_sha=hashlib.sha256(p.read_bytes()).hexdigest()
+          assert frozen_sha=="39f689d1858d11df90ab77f8979e88435695148941cc78440e2d27eeb60a80c9", "Terra snapshot differs"
+          print("Terra frozen 12/12 sha256:",frozen_sha)
           PY
       - name: "Установить зафиксированный OpenAI SDK"
         run: python -m pip install --disable-pip-version-check "openai==2.45.0"
@@ -259,3 +261,54 @@ jobs:
           if [[ "${JOB_STATUS}" != "success" ]]; then
             echo "::warning title=Контрольный Sol незавершён::Не запускайте повторно. Исходные ответы сохранены в artifact."
           fi
+
+
+  sol-shadow-23-offline-proof:
+    name: "Бесплатная проверка заморозки Terra/Sol 23 октября"
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.ref == 'experiment/sol-shadow-2026-10-23' &&
+      github.event.pull_request.head.repo.full_name == 'Herurg123/ai-svodki-ia'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: "Получить PR код без write-токена"
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: "Python 3.12"
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: "Проверить исторический архив без OpenAI"
+        run: python automation/audits/experiments/2026-10-23-sol-shadow/run_primary.py --offline
+      - name: "Получить первоначальный Terra Primary"
+        uses: actions/download-artifact@v7
+        with:
+          name: daily-production-checkpoint-research-2026-10-23-attempt-1
+          run-id: 39884328846
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/terra-23-proof
+      - name: "Проверить exact Terra SHA-256 и 12 направлений"
+        env:
+          TERRA_RESEARCH_DIR: ${{ runner.temp }}/terra-23-proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          p=Path(os.environ["TERRA_RESEARCH_DIR"])/"production-daily/primary-recall-2026-10-23.json"
+          raw=p.read_bytes()
+          expected="39f689d1858d11df90ab77f8979e88435695148941cc78440e2d27eeb60a80c9"
+          assert hashlib.sha256(raw).hexdigest()==expected, "Terra SHA mismatch"
+          data=json.loads(raw)
+          assert len(data["directions"])==12 and data["status"]=="complete"
+          print("Terra Primary оригинален, все 12 направлений.")
+          PY
