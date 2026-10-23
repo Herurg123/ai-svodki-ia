@@ -2197,3 +2197,21 @@ Hybrid search на double-gap path; любые иные новые paid calls т
 ### Закрытие первого платного Sol shadow 23.10.2026
 
 Run `39891725068` завершил восемь из двенадцати независимых Primary; сохранены все 8 raw JSON и model usages. Причина прекращения — клиентская оценка `$0.903998` и reserve `$0.16` перед девятым вызовом, не системный сбой и не потеря модели. Исходный Actions artifact `12475775291` хранится с проверенными SHA-256 (см. README эксперимента). После единственного authorized dispatch платный job **удалён** из PR/CI. Четыре направления не исследованы. Новые paid запросы без отдельного разрешения запрещены, offline replay по saved eight не влечёт расходов. На `main` и production изменений нет.
+
+### Разовое продолжение Sol Primary 8+4, 23 октября
+
+По решению владельца 23 октября денежный stop-guard для контрольных
+экспериментов 23 и 24 октября снят, но каждый ответ учитывается:
+response ID, точные usage по token dimensions, service tier, оплачиваемые
+web_search операции, standard/tier-estimated cost. Эта оценка не provider
+invoice. Для 23 октября PR #214 содержит строго manual/branch-only job,
+который начинает с immutable original saved responses из artifact
+12475775291, предварительно SHA-проверенных и сквозным offline 8+4
+mocked verifier проверенных. Платные API-запросы только по направлениям
+9–12, максимум 4, без retries, без повторов прошлых восьми.
+Неизвестные transport outcomes блокируют повтор. Исходная Terra Research
+для сравнения скачивается только после Sol. Запись в production,
+Editorial, Coverage и publication отсутствуют. После запуска job
+снимается отдельным commit. Завтрашний запуск 24 октября должен иметь
+собственный independently frozen pre-release archive/cutoff и одобрение
+пользователя на ручное исполнение.

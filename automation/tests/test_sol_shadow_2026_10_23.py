@@ -38,13 +38,30 @@ class SolOct23Tests(unittest.TestCase):
                          capture_output=True,text=True,timeout=10)
         self.assertEqual(p.returncode,2)
 
-    def test_manual_paid_job_removed_after_partial_budget_stop(self):
+    def test_only_four_new_calls_are_authorized_on_manual_branch(self):
         content=(ROOT/".github/workflows/ci.yml").read_text(encoding="utf-8")
+        paid=content.split("  sol-shadow-23-resume-four:",1)[1]
         self.assertNotIn("sol-shadow-23-once:",content)
         self.assertIn("sol-shadow-23-offline-proof:",content)
-        self.assertNotIn("secrets.OPENAI_API_KEY",content)
-        self.assertNotIn("SOL_SHADOW_OWNER_APPROVAL_USD",content)
-        self.assertIn("cancel-in-progress: true",content)
+        self.assertIn("github.event_name == 'workflow_dispatch'",paid)
+        self.assertIn("github.ref == 'refs/heads/experiment/sol-shadow-2026-10-23'",paid)
+        self.assertIn("FOUR_ONLY",paid)
+        self.assertIn("secrets.OPENAI_API_KEY",paid)
+        self.assertIn("cancel-in-progress: false",paid)
+        self.assertNotIn("contents: write",paid)
+        self.assertNotIn("SOL_SHADOW_OWNER_APPROVAL_USD",paid)
+        self.assertNotIn("sol-shadow-23-once:",paid)
+
+    def test_resume_runner_has_hard_four_call_limit_not_dollar_guard(self):
+        import ast
+        p=ROOT/"automation/audits/experiments/2026-10-23-sol-shadow/resume_four.py"
+        code=p.read_text(encoding="utf-8")
+        ast.parse(code)
+        self.assertIn('S["new_count"]>=4',code)
+        self.assertIn('frozen.EXPECTED_EXEC_SHA',code)
+        self.assertIn("tier_estimate_usd",code)
+        self.assertNotIn("MAX_ESTIMATE_USD",code)
+        self.assertNotIn("NEXT_RESERVE_USD",code)
 
 if __name__=="__main__":
     unittest.main()

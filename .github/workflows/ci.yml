@@ -22,7 +22,7 @@ permissions:
 concurrency:
   group: main-ci-${{ github.ref }}
   # Never cancel a paid Sol run via a second manual dispatch.
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' || github.ref != 'refs/heads/experiment/sol-shadow-2026-10-23' }}
 
 jobs:
   validate:
@@ -209,3 +209,129 @@ jobs:
           path: automation/preview/sol-shadow-2026-10-23/offline-8plus4.json
           if-no-files-found: warn
           retention-days: 14
+
+
+  sol-shadow-23-resume-four:
+    name: "Sol 23 октября: 8 сохранённых + 4 новых API (без денежного stop-guard)"
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/experiment/sol-shadow-2026-10-23' &&
+      github.repository == 'Herurg123/ai-svodki-ia'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      actions: read
+    concurrency:
+      group: sol-shadow-23-final-four-only
+      cancel-in-progress: false
+    steps:
+      - name: "Разрешить только один НОВЫЙ ручной dispatch"
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${GITHUB_RUN_ATTEMPT}" = "1" || { echo "::error::Re-run запрещён"; exit 1; }
+          python - <<'PY'
+          import os,json,urllib.request
+          url=("https://api.github.com/repos/Herurg123/ai-svodki-ia/actions/"
+               "workflows/ci.yml/runs?event=workflow_dispatch&"
+               "branch=experiment%2Fsol-shadow-2026-10-23&per_page=100")
+          req=urllib.request.Request(url,headers={
+              "Authorization":"Bearer "+os.environ["GH_TOKEN"],
+              "Accept":"application/vnd.github+json",
+              "X-GitHub-Api-Version":"2022-11-28"})
+          with urllib.request.urlopen(req,timeout=30) as response:
+              runs=json.load(response).get("workflow_runs",[])
+          allowed={39891725068,int(os.environ["GITHUB_RUN_ID"])}
+          unexpected=[x["id"] for x in runs if x["id"] not in allowed]
+          if unexpected:
+              raise SystemExit("Повторное выполнение запрещено. Уже есть dispatch: "+str(unexpected))
+          original=[x for x in runs if x["id"]==39891725068]
+          if len(original)!=1:
+              raise SystemExit("Не найден строго исходный 8/12 paid run")
+          print("Разовый запуск четырёх недостающих направлений разрешён.")
+          PY
+      - name: "Прочитать экспериментальную ветку без write-токена"
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: "Python 3.12"
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: "OpenAI SDK фиксированной версии"
+        run: python -m pip install --disable-pip-version-check "openai==2.45.0"
+      - name: "Скачать оригинальные восемь Sol из failed run"
+        uses: actions/download-artifact@v7
+        with:
+          name: sol-shadow-primary-2026-10-23-39891725068
+          run-id: 39891725068
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/original-sol-eight
+      - name: "Сквозной офлайн replay оригинальных 8 + 4 mocked"
+        env:
+          SOL_SAVED_ROOT: ${{ runner.temp }}/original-sol-eight
+        run: |
+          set -euo pipefail
+          python automation/audits/experiments/2026-10-23-sol-shadow/verify_saved_primary.py \
+            --root "${SOL_SAVED_ROOT}"
+      - name: "Продолжить четыре оставшихся Sol поиска и учитывать каждый ответ"
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SOL_SHADOW_RESUME_APPROVED: "FOUR_ONLY"
+          SOL_SAVED_ROOT: ${{ runner.temp }}/original-sol-eight
+          PYTHONUNBUFFERED: "1"
+        run: |
+          set -euo pipefail
+          test -n "${OPENAI_API_KEY}" || { echo "::error::Отсутствует OPENAI_API_KEY"; exit 1; }
+          python automation/audits/experiments/2026-10-23-sol-shadow/resume_four.py
+      - name: "Скачать Terra checkpoint ТОЛЬКО для итогового сравнения"
+        uses: actions/download-artifact@v7
+        with:
+          name: daily-production-checkpoint-research-2026-10-23-attempt-1
+          run-id: 39884328846
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/terra-23-for-comparison
+      - name: "Сопоставить Sol и Terra по Primary без API"
+        env:
+          TERRA_DIR: ${{ runner.temp }}/terra-23-for-comparison
+        run: |
+          set -euo pipefail
+          python automation/audits/experiments/2026-10-23-sol-shadow/compare_primary.py \
+            --terra "${TERRA_DIR}/production-daily/primary-recall-2026-10-23.json" \
+            --sol automation/preview/production-daily/primary-recall-2026-10-23.json \
+            --output-prefix automation/preview/sol-shadow-2026-10-23/resume-four/ab-review
+      - name: "Сохранить usage, оригиналы, partial даже при ошибке"
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: sol-shadow-2026-10-23-completed-${{ github.run_id }}
+          path: |
+            automation/preview/sol-shadow-2026-10-23/
+            automation/preview/production-daily/primary-recall-2026-10-23.json
+            automation/preview/production-daily/research-error.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: "Результат ручного завершения Sol"
+        if: always()
+        env:
+          JOB_RESULT: ${{ job.status }}
+        run: |
+          {
+            echo "## Sol Primary 2026-10-23: 8 frozen + 4 new"
+            echo "- Статус: ${JOB_RESULT}"
+            echo "- Новый максимум: 4 Responses; повтор первых 8 запрещён"
+            echo "- Денежный stop-guard снят по разрешению владельца 23 октября"
+            echo "- Реальные usage, API IDs и тарифы в Actions artifact"
+            echo "- Это расчёт стоимости, а не OpenAI invoice"
+            echo "- Без Editorial, Coverage, Image, FTP, публикации, write-токена"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [[ "${JOB_RESULT}" != "success" ]]; then
+            echo "::warning title=Продолжение неполно::Не нажимайте Re-run. Сохраните artifact."
+          fi
