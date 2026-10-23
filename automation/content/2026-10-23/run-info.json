@@ -1,0 +1,152 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-10-23",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-10-23.json",
+  "warnings": [
+    "cand-005: источник показывает дату без точного времени.",
+    "cand-020: источник показывает дату без точного времени.",
+    "Одинаковые источники используются несколькими кандидатами: 1; это допустимо и будет проверено на редакторском этапе.",
+    "URL используется в нескольких кандидатах: https://openai.com/index/coordinated-disclosure-of-critical-vulnerabilities (cand-002, cand-013)",
+    "Исследовательский пул перегружен одним издателем: nvidia (5), openai (9)",
+    "Исследовательский пул перегружен одной организацией: nvidia (5), openai (10)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-10-23",
+  "started_at": "2026-10-23T01:37:38+00:00",
+  "finished_at": "2026-10-23T01:38:13+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 97,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "67333e3718dd0e4f0b97a7520f5449559d53d1b66a74c2120e570291d83a8ff5",
+    "candidates_sha256": "402ab73265043c17f83fff6842eff929a45e74349598e0282a9446b0c88c4919",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-10-21T04:32:02+03:00",
+      "end_at": "2026-10-23T04:31:19+03:00",
+      "latest_archive_at": "2026-10-22T04:32:02+03:00",
+      "start_date": "2026-10-21",
+      "end_date": "2026-10-23",
+      "latest_archive_date": "2026-10-22"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "2f23a99cfe79fd243319d9e2dcbd4e3731997138fb771ddfed8563b974bbfae2",
+    "editorial_sha256": "eb943c6f9f6f5ec8ef5f8449b690e60ed4efc941ff31f1b454b8613eb11644b3",
+    "digest_sha256": "03e3987a35d7764be40a8cfbf991f295744483b252308d56f46d27bc798762b1",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-10-23.jpg",
+          "normalized_value": "ai-svodka-2026-10-23.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-005."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Три материала TechCrunch описывают три независимых значимых события разных классов: общедоступный Decisions API OpenAI, запуск 1Password for Agents и собственную image-модель Canva. Сопоставимых по качеству альтернативных публикаций для всех трёх событий в пуле нет."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_089f6e01e869e022016adaba6333b487d08dd51b3896485a8c",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 202321,
+        "input_tokens_details": {
+          "cache_write_tokens": 23291,
+          "cached_tokens": 179027,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 23291
+          }
+        },
+        "output_tokens": 4044,
+        "output_tokens_details": {
+          "reasoning_tokens": 664
+        },
+        "total_tokens": 206365
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-10-23/resp_089f6e01e869e022016adaba6333b487d08dd51b3896485a8c.json"
+  },
+  "total_usage": {
+    "input_tokens": 202321,
+    "output_tokens": 4044,
+    "total_tokens": 206365,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "071c1d6c2777de461d5e74b33d851e64a1d5f473",
+    "run_id": "39884328846",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-10-23T04:31:19+03:00"
+}

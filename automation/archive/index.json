@@ -1,8 +1,261 @@
 {
   "version": 2,
-  "generated_at": "2026-10-22T01:42:53+00:00",
+  "generated_at": "2026-10-23T01:39:35+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-10-23",
+      "published_at": "2026-10-23T06:00:00+03:00",
+      "search_cutoff_at": "2026-10-23T04:31:19+03:00",
+      "title": "ИИ-Сводка на 23 октября 2026",
+      "link": "https://rybalka.one/posts/2026-10-23/",
+      "summary": "Главные новости искусственного интеллекта за 23 октября 2026 года Сегодняшняя повестка показывает, что агентный ИИ всё глубже входит в производственные контуры: от поиска критических уязвимостей до доступа к пользовательским аккаунтам, корпоративным данным и облачным платформам. Одновременно поставщики моделей пытаются занять специализированные ниши — быстрые решения в приложениях, дизайн, биологические данные и управляемые корпоративные агенты. Практический вывод для компаний: ценность модели в",
+      "topics": [
+        "OpenAI",
+        "Decisions API",
+        "PHP2Shell",
+        "безопасность агентов ИИ",
+        "1Password for Agents",
+        "Canva Craft",
+        "генерация изображений",
+        "Hugging Face",
+        "Carbon-X",
+        "геномика",
+        "NVIDIA Agent Toolkit",
+        "Google Cloud",
+        "корпоративные агенты"
+      ],
+      "source_urls": [
+        "https://techcrunch.com/2026/10/22/openai-makes-its-jev-competitor-widely-available-as-decision-model-competition-heats-up/",
+        "https://www.wiz.io/blog/php2shell-php-rce",
+        "https://techcrunch.com/2026/10/22/1password-launches-a-way-for-ai-agents-to-log-in-on-your-behalf-without-seeing-your-password/",
+        "https://techcrunch.com/2026/10/22/canva-releases-its-first-image-generation-model/",
+        "https://postcutoff.com/e/2026-10-22-hugging-face-carbon-x-dna-model/",
+        "https://blogs.nvidia.com/blog/enterprise-platforms-agent-toolkit",
+        "https://openai.com/index/openai-models-google-cloud"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-001",
+          "section": "world",
+          "headline": "OpenAI вывела Decisions API в общую доступность",
+          "organization": "OpenAI",
+          "topic": "AI models; developer APIs; agent orchestration; low-latency inference; multimodal decision models",
+          "event_type": "product general availability",
+          "status": "new",
+          "summary": "OpenAI сделала Decisions API общедоступным. API на базе GPT-6 Luna предназначен для быстрых ограниченных решений в приложениях и агентных workflows; поддерживает текст, изображения и структурированный JSON, а также получил интеграцию с GPT-Live.",
+          "published_at": "2026-10-22T19:00:00+00:00",
+          "published_date": "2026-10-22",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "OpenAI makes its Jev competitor widely available as decision model competition heats up",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/22/openai-makes-its-jev-competitor-widely-available-as-decision-model-competition-heats-up/"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "Decisions API",
+            "GPT-6 Luna",
+            "general availability",
+            "agents",
+            "low latency",
+            "multimodal"
+          ],
+          "geography": "world",
+          "category": "models"
+        },
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "Wiz, OpenAI и PHP раскрыли критические PHP2Shell-уязвимости, найденные с помощью frontier-моделей",
+          "organization": "Wiz; OpenAI; PHP",
+          "topic": "Критические уязвимости PHP; AI-assisted vulnerability discovery; coordinated disclosure; интернет-инфраструктура",
+          "event_type": "security disclosure",
+          "status": "new",
+          "summary": "Wiz и OpenAI сообщили о coordinated disclosure двух критических дефектов в движке PHP. Wiz заявила, что с помощью Wiz Atlas, Gemini 4 Argon и GPT-5.6 Sol исследователи нашли и довели до эксплуатационных цепочек уязвимости, позволяющие неаутентифицированное удалённое выполнение кода и раскрытие памяти; PHP выпустил исправления 21 октября.",
+          "published_at": "2026-10-21T09:59:59-04:00",
+          "published_date": "2026-10-21",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "PHP2Shell: AI uncovers critical RCE vulnerabilities affecting 70% of the Internet",
+              "publisher": "Wiz",
+              "url": "https://www.wiz.io/blog/php2shell-php-rce"
+            }
+          ],
+          "keywords": [
+            "PHP2Shell",
+            "PHP",
+            "RCE",
+            "CVE-2026-109618",
+            "CVE-2026-109619",
+            "Wiz Atlas",
+            "Gemini 4 Argon",
+            "GPT-5.6 Sol",
+            "OpenAI",
+            "Patch the Planet"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "1Password запустила платформу для входа агентов ИИ без передачи им паролей",
+          "organization": "1Password",
+          "topic": "AI-agent security; identity; credential delegation; consumer agents; enterprise access control",
+          "event_type": "product launch",
+          "status": "new",
+          "summary": "1Password представила 1Password for Agents — механизм, при котором агент может запросить вход на сайт, пользователь подтверждает операцию на своём устройстве, а 1Password заполняет учётные данные без раскрытия пароля модели или агенту.",
+          "published_at": "2026-10-22T19:07:09+00:00",
+          "published_date": "2026-10-22",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "1Password launches a way for AI agents to log in on your behalf without seeing your password",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/22/1password-launches-a-way-for-ai-agents-to-log-in-on-your-behalf-without-seeing-your-password/"
+            }
+          ],
+          "keywords": [
+            "1Password for Agents",
+            "AI agents",
+            "credentials",
+            "identity security",
+            "password manager",
+            "delegated access"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-004",
+          "section": "world",
+          "headline": "Canva выпустила собственную модель генерации изображений Canva Craft",
+          "organization": "Canva",
+          "topic": "Multimodal AI; image generation; design tools; consumer AI; MCP",
+          "event_type": "model launch",
+          "status": "new",
+          "summary": "Canva выпустила Canva Craft, первую собственную модель генерации изображений. Компания заявляет, что модель сначала строит план композиции, затем создаёт изображения до 2K; Craft доступна через Dream Lab и Canva API, а также должна получить интеграции с внешними чат-ботами через MCP.",
+          "published_at": "2026-10-22T19:00:00+00:00",
+          "published_date": "2026-10-22",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Canva releases its first image generation model",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/22/canva-releases-its-first-image-generation-model/"
+            }
+          ],
+          "keywords": [
+            "Canva Craft",
+            "image generation",
+            "design AI",
+            "Dream Lab",
+            "Canva API",
+            "MCP"
+          ],
+          "geography": "world",
+          "category": "multimodal"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "Hugging Face выпустила открытую ДНК-модель Carbon-X",
+          "organization": "Hugging Face; Zhongguancun Academy; University of Naples Federico II",
+          "topic": "Open-source biology model; genomics AI; DNA language models; life sciences",
+          "event_type": "model release",
+          "status": "new",
+          "summary": "Hugging Face выпустила Carbon-X — открытую 14,8B-модель на базе Qwen3-14B, дообученную на смешанном наборе ДНК- и текстовых данных. Модель предназначена для работы с последовательностями ДНК в естественно-языковом интерфейсе и опубликована по лицензии Apache-2.0.",
+          "published_at": null,
+          "published_date": "2026-10-22",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Hugging Face releases Carbon-X, an open 14B model that lets users chat with DNA",
+              "publisher": "Post-Cutoff",
+              "url": "https://postcutoff.com/e/2026-10-22-hugging-face-carbon-x-dna-model/"
+            }
+          ],
+          "keywords": [
+            "Carbon-X",
+            "Hugging Face",
+            "DNA",
+            "genomics",
+            "Qwen3-14B",
+            "Apache-2.0",
+            "open source",
+            "biology AI"
+          ],
+          "geography": "world",
+          "category": "open_source"
+        },
+        {
+          "candidate_id": "cand-008",
+          "section": "world",
+          "headline": "NVIDIA расширила Agent Toolkit для корпоративных агентов",
+          "organization": "NVIDIA",
+          "topic": "NVIDIA Agent Toolkit Expands, Grounding Enterprise Agents in Company Data",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "Leading enterprises are using the open source NVIDIA Agent Toolkit — now expanded with new tools — to customize and control agents, use company data to inform their answers and actions, monitor what they do and govern how they operate.",
+          "published_at": "2026-10-21T10:10:01+00:00",
+          "published_date": "2026-10-21",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "NVIDIA Agent Toolkit Expands, Grounding Enterprise Agents in Company Data",
+              "publisher": "NVIDIA",
+              "url": "https://blogs.nvidia.com/blog/enterprise-platforms-agent-toolkit"
+            }
+          ],
+          "keywords": [
+            "NVIDIA",
+            "Agent",
+            "Toolkit",
+            "Expands",
+            "Grounding",
+            "Enterprise",
+            "Agents",
+            "Data"
+          ],
+          "geography": "world",
+          "category": "agents"
+        },
+        {
+          "candidate_id": "cand-014",
+          "section": "world",
+          "headline": "OpenAI объявила о выходе своих моделей в Google Cloud",
+          "organization": "OpenAI",
+          "topic": "OpenAI models are coming to Google Cloud",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: OpenAI models are coming to Google Cloud",
+          "published_at": "2026-10-21T12:00:00+00:00",
+          "published_date": "2026-10-21",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "OpenAI models are coming to Google Cloud",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/openai-models-google-cloud"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "models",
+            "are",
+            "coming",
+            "Google",
+            "Cloud"
+          ],
+          "geography": "world",
+          "category": "models"
+        }
+      ]
+    },
     {
       "date": "2026-10-22",
       "published_at": "2026-10-22T06:00:00+03:00",
@@ -6316,10 +6569,10 @@
     {
       "date": "2026-09-20",
       "published_at": "2026-09-20T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-20T04:08:25+03:00",
+      "search_cutoff_at": "2026-09-20T06:00:00+03:00",
       "title": "ИИ-Сводка на 20 сентября 2026",
       "link": "https://rybalka.one/posts/2026-09-20/",
-      "summary": "Главные новости искусственного интеллекта за 20 сентября 2026 года Новостей сегодня меньше, чем обычно Свежая повестка показывает, что вопрос контроля ИИ выходит за пределы лабораторных тестов: модели получают доступ к реальным системам, а их ошибки могут попадать в критические цепочки принятия решений. Параллельно разработчики укрепляют среду для агентной разработки, а frontier-лаборатории расширяют экспериментальную инфраструктуру в биологии. Отдельный сигнал пришёл из США: администрация обсуж",
+      "summary": "Google раскрыла инциденты Gemini в кибертестах, GitHub расширила среду для coding-агентов, Anthropic подтвердила wet-lab, а США обсуждают новый контур управления ИИ.",
       "topics": [
         "безопасность ИИ",
         "Gemini",

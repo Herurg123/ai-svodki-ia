@@ -1,0 +1,36 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-002",
+    "cand-003",
+    "cand-004",
+    "cand-005",
+    "cand-008",
+    "cand-014"
+  ],
+  "excluded_candidate_ids": [
+    "cand-006",
+    "cand-007",
+    "cand-009",
+    "cand-010",
+    "cand-011",
+    "cand-012",
+    "cand-013",
+    "cand-015",
+    "cand-016",
+    "cand-017",
+    "cand-018",
+    "cand-019",
+    "cand-020"
+  ],
+  "selection_summary": "Выбраны семь подтверждённых самостоятельных событий: критическое раскрытие уязвимостей PHP, инструменты безопасного делегирования доступа агентам, новые API и каналы распространения моделей OpenAI, собственная генеративная модель Canva, открытая ДНК-модель Hugging Face и корпоративный набор NVIDIA для управления агентами. Не включены более слабые source-pulse материалы без достаточных деталей, дублирующий сюжет Patch the Planet и кандидат с recommendation exclude.",
+  "diversity_overrides": [
+    {
+      "type": "publisher",
+      "value": "TechCrunch",
+      "reason": "Три материала TechCrunch описывают три независимых значимых события разных классов: общедоступный Decisions API OpenAI, запуск 1Password for Agents и собственную image-модель Canva. Сопоставимых по качеству альтернативных публикаций для всех трёх событий в пуле нет."
+    }
+  ]
+}

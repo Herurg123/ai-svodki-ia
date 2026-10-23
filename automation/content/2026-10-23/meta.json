@@ -1,0 +1,44 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-23",
+  "slug": "2026-10-23",
+  "title": "ИИ-Сводка на 23 октября 2026",
+  "description": "Критические PHP-уязвимости, найденные с помощью frontier-моделей, безопасный вход агентов без передачи паролей, Decisions API OpenAI, Canva Craft и новые инструменты для корпоративных агентов.",
+  "published_at": "2026-10-23T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-23.png",
+  "topics": [
+    "OpenAI",
+    "Decisions API",
+    "PHP2Shell",
+    "безопасность агентов ИИ",
+    "1Password for Agents",
+    "Canva Craft",
+    "генерация изображений",
+    "Hugging Face",
+    "Carbon-X",
+    "геномика",
+    "NVIDIA Agent Toolkit",
+    "Google Cloud",
+    "корпоративные агенты"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-005."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Три материала TechCrunch описывают три независимых значимых события разных классов: общедоступный Decisions API OpenAI, запуск 1Password for Agents и собственную image-модель Canva. Сопоставимых по качеству альтернативных публикаций для всех трёх событий в пуле нет."
+    }
+  ]
+}
