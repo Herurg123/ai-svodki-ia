@@ -83,3 +83,18 @@ usage, `service_tier` и расчётный Standard/tier cost до следую
 Денежного stop-guard нет, но **четыре новых запроса максимум**.
 Terra файл загружается **после** Sol для независимости.
 После одного запуска вручную временный job будет удалён; main не меняется.
+
+
+## Итог завершения, 23 октября
+
+[Успешный Actions run 39908841706](https://github.com/Herurg123/ai-svodki-ia/actions/runs/39908841706)
+получил четыре новых Sol medium ответа после SHA-256-проверки восьми
+ранее оплаченных и довёл независимый Primary до **12/12**.
+[Artifact 12482321746](https://github.com/Herurg123/ai-svodki-ia/actions/runs/39908841706/artifacts/12482321746)
+содержит и исходные восемь (byte-for-byte copy), и четыре новых raw
+Responses, `execution.json`, финальный `primary-recall`, `ab-review`,
+`offline-8plus4`. SHA-256 ZIP
+`86e93b98eb134f0cbe35f6ee2bfb3fcdaccee247ca9ce81bcf255b89305f89a3`.
+Расходы `$0.903998+$0.539634=$1.443632` расчётно, все `default`;
+provider invoice не получен. Временный paid job удалён, повтор запрещён.
+Полная таблица результатов и ограничения в [RESULT.md](RESULT.md).

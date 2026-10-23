@@ -2184,34 +2184,29 @@ Production API пользователя не расходуется без яв�
 архитектуры отдельное разрешение относится только к одному conditional fifth
 Hybrid search на double-gap path; любые иные новые paid calls требуют нового
 решения владельца.
-### Временный manual-only Sol Primary shadow, 23.10.2026 (только PR)
+ 
+### Контрольный Sol Primary за 23 октября: завершён, runner удалён
 
-По явному запросу владельца в ветке `experiment/sol-shadow-2026-10-23` временно добавлен job `sol-shadow-23-once` в уже существующий `.github/workflows/ci.yml`. Файл CI существует в default branch, поэтому доступен на странице GitHub Actions → Main CI → Run workflow при выборе экспериментальной ветки. **Никаких изменений в `main` и production runtime.** Job условно исполняется только при `github.event_name=workflow_dispatch`, точном `github.ref` и repository guard, после успешного read-only `validate`. PR Gate/push не имеют пути до платного job. Concurrency не отменяет paid run; повтор ручного dispatch и `run_attempt>1` отклоняются **до** передачи `OPENAI_API_KEY`.
+По явному разрешению владельца в изолированной ветке PR #214
+выполнен поиск `gpt-6.1-sol / medium` с историческим окном
+`2026-10-21T04:32:02+03:00` —
+`2026-10-23T04:31:19+03:00`, исходным prepublication архивом
+commit `071c1d6`, 12 направлениями и одним Web Search на направление.
+Первый run `39891725068` сохранил 8 ответов, остановился на
+денежной клиентской оценке `$0.903998`. После разрешения владельца
+на снятие денежного ограничения отдельный одноразовый run
+`39908841706` проверил первичный ZIP по SHA-256, воспроизвёл
+8 ответов без API и получил только 4 новых (`$0.539634`).
+**Итого $1.443632 как оценка, не подтверждённое списание**.
+Все тарифы `default`. Отдельный снимок Terra: run `39884328846`.
 
-Историческое окно и pre-release archive первичного Terra Research за 23 октября зафиксированы по `071c1d6c2777de461d5e74b33d851e64a1d5f473` и Actions artifact 12471524859 из run 39884328846. Sol берёт **только** этот архив и зафиксированные cutoffs, а исходный Terra Primary JSON применяется лишь к послепоисковой offline сравнительной матрице. Поисковые запросы Terra и её кандидаты не передаются Sol. Sol просматривает независимую live-выдачу позже Terra, разницу времени обязательно отмечать в итоговой оценке.
-
-В рамках одного запроса OpenAI Responses модель `gpt-6.1-sol`, effort medium, `max_tool_calls=4`, один Search, SDK retries=0; запросы не более 12. Промежуточные raw outputs, response ID, tool actions, service tier, usage и JSON кандидатов записываются **после каждого ответа до следующего запроса** и сохраняются Actions artifact даже при неудаче. Ограничитель: клиентская tier-adjusted оценка до $1, резерва $0.16 для следующего запроса. Incentivized-tier оценивается как бесплатные текстовые токены согласно биллингу 19–22 октября; ставка не гарантирована в будущем, жёсткой блокировки расходов провайдера нет. Ни Editorial, ни Image, ни Coverage, ни FTP, ни commit/publish/delete не допускаются.
-
-При ошибке повтор paid job запрещён: требуется анализ usage и saved checkpoint. После выполненного одиночного запуска временный paid job удаляется из ветки. Для решения о миграции event-level сравнение и ручная проверка свежести и значимости важнее сравнения сырых URL. Подробности и координаты Terra checkpoint в `automation/audits/experiments/2026-10-23-sol-shadow/README.md`.
-
-### Закрытие первого платного Sol shadow 23.10.2026
-
-Run `39891725068` завершил восемь из двенадцати независимых Primary; сохранены все 8 raw JSON и model usages. Причина прекращения — клиентская оценка `$0.903998` и reserve `$0.16` перед девятым вызовом, не системный сбой и не потеря модели. Исходный Actions artifact `12475775291` хранится с проверенными SHA-256 (см. README эксперимента). После единственного authorized dispatch платный job **удалён** из PR/CI. Четыре направления не исследованы. Новые paid запросы без отдельного разрешения запрещены, offline replay по saved eight не влечёт расходов. На `main` и production изменений нет.
-
-### Разовое продолжение Sol Primary 8+4, 23 октября
-
-По решению владельца 23 октября денежный stop-guard для контрольных
-экспериментов 23 и 24 октября снят, но каждый ответ учитывается:
-response ID, точные usage по token dimensions, service tier, оплачиваемые
-web_search операции, standard/tier-estimated cost. Эта оценка не provider
-invoice. Для 23 октября PR #214 содержит строго manual/branch-only job,
-который начинает с immutable original saved responses из artifact
-12475775291, предварительно SHA-проверенных и сквозным offline 8+4
-mocked verifier проверенных. Платные API-запросы только по направлениям
-9–12, максимум 4, без retries, без повторов прошлых восьми.
-Неизвестные transport outcomes блокируют повтор. Исходная Terra Research
-для сравнения скачивается только после Sol. Запись в production,
-Editorial, Coverage и publication отсутствуют. После запуска job
-снимается отдельным commit. Завтрашний запуск 24 октября должен иметь
-собственный independently frozen pre-release archive/cutoff и одобрение
-пользователя на ручное исполнение.
+После успешного выполнения временный оплачиваемый job
+`sol-shadow-23-resume-four` **удалён** из `.github/workflows/ci.yml`
+экспериментальной ветки; остаётся read-only offline proof с
+воспроизведением исходных восьми ответов и четырёх mocked.
+Нет новых оплачиваемых запусков, публикации, Editorial,
+Image, Coverage, FTP или права записи в production.
+Никакого слияния с `main`. Исходные неизменённые Responses,
+usage, отклонения и provenance хранятся как GitHub Actions artifacts,
+подробное сравнение и контрольные суммы в
+`automation/audits/experiments/2026-10-23-sol-shadow/RESULT.md`.

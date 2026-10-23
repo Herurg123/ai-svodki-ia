@@ -38,19 +38,13 @@ class SolOct23Tests(unittest.TestCase):
                          capture_output=True,text=True,timeout=10)
         self.assertEqual(p.returncode,2)
 
-    def test_only_four_new_calls_are_authorized_on_manual_branch(self):
+    def test_paid_one_shot_job_removed_after_success(self):
         content=(ROOT/".github/workflows/ci.yml").read_text(encoding="utf-8")
-        paid=content.split("  sol-shadow-23-resume-four:",1)[1]
+        self.assertNotIn("sol-shadow-23-resume-four:",content)
         self.assertNotIn("sol-shadow-23-once:",content)
+        self.assertNotIn("secrets.OPENAI_API_KEY",content)
         self.assertIn("sol-shadow-23-offline-proof:",content)
-        self.assertIn("github.event_name == 'workflow_dispatch'",paid)
-        self.assertIn("github.ref == 'refs/heads/experiment/sol-shadow-2026-10-23'",paid)
-        self.assertIn("FOUR_ONLY",paid)
-        self.assertIn("secrets.OPENAI_API_KEY",paid)
-        self.assertIn("cancel-in-progress: false",paid)
-        self.assertNotIn("contents: write",paid)
-        self.assertNotIn("SOL_SHADOW_OWNER_APPROVAL_USD",paid)
-        self.assertNotIn("sol-shadow-23-once:",paid)
+        self.assertIn("cancel-in-progress: true",content)
 
     def test_resume_runner_has_hard_four_call_limit_not_dollar_guard(self):
         import ast
