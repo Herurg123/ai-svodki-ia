@@ -48,3 +48,20 @@ Sol catch-up. Два последовательных дня не означаю
 Оригинальный Research artifact хранится в Actions до **6 ноября 2026**.
 Новый paid job будет удалён из этой экспериментальной PR-ветки после анализа
 сохранённого запуска. `main` не меняем.
+
+
+## 23.10.2026: выполнен один manual run, остановка по лимиту
+
+- [GitHub run 39891725068](https://github.com/Herurg123/ai-svodki-ia/actions/runs/39891725068) завершён failure **ожидаемо**: клиентский лимит $1 после восьми ответов.
+- Исходный [Actions artifact 12475775291](https://github.com/Herurg123/ai-svodki-ia/actions/runs/39891725068/artifacts/12475775291) содержит 8 raw Responses, `execution.json`, partial Primary и metadata.
+- ZIP SHA-256: `63f6e570a47abac3f2849525f8c45953014c37fde6931f544bcc0a45bb8bcc28`.
+- execution.json SHA-256: `99077a0c76f811ca469ca5d5c2021a08e8a82813c3883af47e1570a9bb26f0b6`.
+- partial primary SHA-256: `3b26650c3f3e039c20b21e2b3c1f9a24a7ebb5a01e7e6396593560cc53261e18`.
+- 8/12 направлений выполнены, 8 настоящих Web Searches. **Оставшиеся 4:** `developer_tools`, `security_safety`, `legal_regulation`, `independent_missing_events`.
+- Все 8 оригинальных ответов имеют tier `default`. Суммарная оценка по Standard и клиентскому guard: **$0.903998**. Это **не OpenAI invoice**, его нужно сверить по биллингу.
+- При попытке следующего вызова guard запретил запрос до обращения к API: `0.903998 + 0.16 > 1.00`.
+- Partial 8-pass validator report status `error` вследствие неполной матрицы, это **не** провал качества модели. Полная 12/12 оценка ещё невозможна.
+- Исполнитель **сохранил каждый** raw response и payload. Никакие оригиналы не корректировались или не пересоздавались.
+- Предыдущий paid manual job удалён из CI экспериментальной ветки; PR остаётся draft и не слит. **НЕ выполнять Re-run**.
+- `verify_saved_primary.py` вместе с offline PR proof проверяет исходные 8 payload/API/SHA через реальную 12-pass матрицу, имитируя только 4 будущих направления.
+- Если владелец отдельно одобрит **дополнительный** бюджет для 4 запросов, создадим отдельный one-shot runner с replay всех 8, не оплачивая их повторно.

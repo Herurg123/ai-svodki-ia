@@ -38,16 +38,13 @@ class SolOct23Tests(unittest.TestCase):
                          capture_output=True,text=True,timeout=10)
         self.assertEqual(p.returncode,2)
 
-    def test_only_manual_branch_has_paid_ci(self):
+    def test_manual_paid_job_removed_after_partial_budget_stop(self):
         content=(ROOT/".github/workflows/ci.yml").read_text(encoding="utf-8")
-        job=content.split("  sol-shadow-23-once:",1)[1]
-        self.assertIn("github.event_name == 'workflow_dispatch'",job)
-        self.assertIn("github.ref == 'refs/heads/experiment/sol-shadow-2026-10-23'",job)
-        self.assertIn("secrets.OPENAI_API_KEY",job)
-        self.assertIn("needs: validate",job)
-        self.assertIn("cancel-in-progress: false",job)
-        self.assertNotIn("contents: write",job)
-        self.assertNotIn("push:",job)
+        self.assertNotIn("sol-shadow-23-once:",content)
+        self.assertIn("sol-shadow-23-offline-proof:",content)
+        self.assertNotIn("secrets.OPENAI_API_KEY",content)
+        self.assertNotIn("SOL_SHADOW_OWNER_APPROVAL_USD",content)
+        self.assertIn("cancel-in-progress: true",content)
 
 if __name__=="__main__":
     unittest.main()
