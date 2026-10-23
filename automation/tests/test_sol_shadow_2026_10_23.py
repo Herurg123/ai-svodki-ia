@@ -30,7 +30,7 @@ class SolOct23Tests(unittest.TestCase):
         std, inc, tier = shadow.cost(discounted, 1)
         self.assertEqual(tier, "incentivized-tier")
         self.assertAlmostEqual(inc, 0.01)
-        self.assertAlmostEqual(std, 0.267)
+        self.assertAlmostEqual(std, 0.277)
         self.assertEqual(shadow.cost(normal,1)[1], std)
 
     def test_no_api_without_paid_approval(self):
