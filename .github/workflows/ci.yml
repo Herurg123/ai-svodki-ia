@@ -314,3 +314,27 @@ jobs:
           assert len(data["directions"])==12 and data["status"]=="complete"
           print("Terra Primary оригинален, все 12 направлений.")
           PY
+      - name: "Скачать восемь реально оплаченных Sol ответов"
+        uses: actions/download-artifact@v7
+        with:
+          name: sol-shadow-primary-2026-10-23-39891725068
+          run-id: 39891725068
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/sol-23-saved
+      - name: "Воспроизвести 8 saved + 4 mocked через реальный Primary validator"
+        env:
+          SOL_SAVED_ROOT: ${{ runner.temp }}/sol-23-saved
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/audits/experiments/2026-10-23-sol-shadow/verify_saved_primary.py \
+            --root "${SOL_SAVED_ROOT}"
+      - name: "Сохранить бесплатное доказательство 8/12"
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: sol-shadow-23-saved-eight-proof-${{ github.sha }}
+          path: automation/preview/sol-shadow-2026-10-23/offline-8plus4.json
+          if-no-files-found: warn
+          retention-days: 14
