@@ -2491,6 +2491,54 @@ function prerequisitesSatisfied(job) {
   );
 }
 
+// Independent same-day article discovery for VK. Publication tabs/filters
+// and copy-link menu are navigational/read-only; no editor or publish action.
+async function resolvePublishedArticleUrl(page, dateKey, logger) {
+  await openPublications(page);
+  const published = page.getByText("Опубликованные", { exact: true });
+  if (await published.count() !== 1) {
+    throw new Error("Не подтверждена единственная вкладка «Опубликованные» в Studio");
+  }
+  await published.click({ timeout: 10_000 });
+  await ensurePublicationFilter(page, "Статьи");
+  const row = await findPublicationRow(page, dateKey, "article", logger);
+  const raw = await copyPublicationUrl(page, row, "article", logger);
+  const articleUrl = new URL(raw);
+  if (!expectedPublicationUrlPattern("article").test(raw) ||
+      articleUrl.origin !== "https://dzen.ru") {
+    throw new Error("Studio вернула недопустимый URL опубликованной статьи");
+  }
+  articleUrl.search = "";
+  articleUrl.hash = "";
+  const url = articleUrl.href;
+  const expected = "ИИ-Сводка на " + formatRussianLongDate(dateKey);
+  const publicPage = await page.context().newPage();
+  try {
+    const response = await publicPage.goto(url, {
+      waitUntil: "domcontentloaded", timeout: 60_000
+    });
+    if (!response || response.status() >= 400 ||
+        !expectedPublicationUrlPattern("article").test(publicPage.url())) {
+      throw new Error("Публичная статья Дзена недоступна или перенаправлена");
+    }
+    const deadline = Date.now() + 15_000;
+    while (Date.now() < deadline) {
+      const text = normalizeText(await publicPage.locator("body").innerText({
+        timeout: 2_000
+      }).catch(() => ""));
+      const title = normalizeText(await publicPage.title().catch(() => ""));
+      if (text.includes(expected) || title.includes(expected)) {
+        logger.log("Публичная статья подтверждена независимо по заголовку и дате");
+        return url;
+      }
+      await publicPage.waitForTimeout(500);
+    }
+    throw new Error("Публичная страница не подтвердила заголовок статьи текущей даты");
+  } finally {
+    await publicPage.close().catch(() => {});
+  }
+}
+
 async function resolveLinks(page, dateKey, logger) {
   await openPublications(page);
   await ensurePublicationFilter(page, "Статьи");
@@ -3252,6 +3300,7 @@ module.exports = {
   parseDateKey,
   planDescriptionArticleUrlUpdate,
   prerequisitesSatisfied,
+  resolvePublishedArticleUrl,
   updateArticleVideo,
 };
 
