@@ -25,6 +25,16 @@ assert(source.includes("hasTodayLocalMp4(candidate,currentDateKey)"),
   "VK must be admitted by today's local MP4 rather than Dzen completion");
 assert(!source.includes("!phasesError && !collectionsError && !articleVideoError"),
   "Dzen failures must not suppress VK");
+assert(source.includes('runNodeScript("dzen-article-link.js"'),
+  "Missing independent read-only article URL discovery before VK");
+assert(source.includes("articleLink.verifiedArticleUrl(verifiedJob)"),
+  "VK requires a persisted verified Dzen article URL");
+assert(source.indexOf('runNodeScript("dzen-article-link.js"') <
+  source.indexOf('runNodeScript("vk-stage.mjs"'),
+  "Resolve article before any VK mutation");
+assert(!source.includes("articleLink.verifiedArticleUrl(candidate) || candidate.publicationUrl"),
+  "Do not fall back from Dzen article to rybalka.one");
+
 assert(source.includes("collections.findJobForDate(fresh,currentDateKey)"),
   "VK may not select yesterday's catch-up job");
 assert(source.includes("FULL_WORKER_LOCK_PATH"),
