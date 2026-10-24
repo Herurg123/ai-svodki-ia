@@ -85,8 +85,7 @@ foreach ($p in $needs) {
     $backups.Add([pscustomobject]@{file=$p.Name;existed=$p.Existed;oldSha256=$p.OldSha;
         newSha256=$p.NewSha})
 }
-$backups | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath
-    (Join-Path $backupDir 'backup-manifest.json') -Encoding UTF8
+$backups | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $backupDir 'backup-manifest.json') -Encoding UTF8
 $attempted = New-Object 'System.Collections.Generic.List[object]'
 try {
     foreach ($p in $needs) {
