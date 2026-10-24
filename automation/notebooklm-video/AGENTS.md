@@ -82,9 +82,11 @@ stories.getPhotoUploadServer; существующие checkpoint/retry и за�
 
 
 
-VK является **только** дополнительным локальным downstream после четырёх
-проверенных Dzen этапов. Автоматически включать его до отдельного
-разрешения владельца запрещено. Для VK используются общий full-worker.lock,
+VK является **только** дополнительным локальным downstream по готовому
+MP4/PNG текущего дня. Статусы Дзена, его подборок и редактирования
+статьи не являются VK-gate; ошибки Дзена не блокируют VK.
+Автоматически включать VK до отдельного разрешения владельца запрещено.
+Для VK используются общий full-worker.lock,
 state.json, log-utils.js, архивирование и существующий браузерный профиль.
 Файлы downloads/ и Dzen-publication state нельзя изменять ради VK.
 Проверка успешности и восстановление при неоднозначных сетевых мутациях
@@ -142,6 +144,11 @@ If the guard cannot prove the Video surface, fail closed before upload.
 If no duplicate exists, the canonical live path is a fresh-upload flow. It may
 start one live child and perform at most one publish action. Metadata/cover/tags
 must not be repeatedly rewritten after the validated values are set.
+
+After the single publish click, hold the Dzen editor for a 45-second
+read-only observation (no navigation/reopen/second click). Save a local
+diagnostic screenshot if unverified. Only the published Video listing can
+confirm success; captcha remains manual-only.
 
 The scheduled orchestrator persists `PUBLISH_ARMED` before the live child and
 uses `CLICKED_UNVERIFIED` / `BLOCKED_AMBIGUOUS` for uncertain outcomes.
