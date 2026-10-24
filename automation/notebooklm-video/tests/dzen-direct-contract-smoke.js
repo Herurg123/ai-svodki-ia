@@ -114,6 +114,13 @@ assert(!observationBlock.includes(".click("),"post-click observation cannot clic
 assert(!observationBlock.includes(".goto("),"post-click observation cannot navigate");
 assert(!observationBlock.includes("setInputFiles("),"post-click observation cannot reupload");
 assert.match(observationBlock,/durationMs=45_000/,"observe for 45 seconds");
+const clickAttempt=source.indexOf("publishClicked = true;");
+const clickCall=source.indexOf("await publish.button.click();",clickAttempt);
+assert(clickAttempt>0&&clickCall>clickAttempt,
+ "Playwright timeout after dispatch must remain CLICKED_UNVERIFIED, never retry");
+assert(source.includes("PUBLISH_CLICK_ATTEMPT_ARMED"),
+ "Attempted publish must be logged as uncertain before browser dispatch");
+
 
 for (const forbidden of [
   "tryOpenUsableDraft",
