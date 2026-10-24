@@ -44,7 +44,11 @@ export function renderVkTemplate(source,{date,articleUrl,publicationUrl}){
     .replaceAll("https://rybalka.one/posts/"+date+"/",publicationUrl)
     .replaceAll("% URL сводки этого дня в Дзен %",articleUrl);
   const title=replace(titleBlock);
-  const description=replace(bodyBlock);
+  // When Dzen is not ready, the template already contains the origin URL.
+  // Do not print that same link twice in the "Этот выпуск" section.
+  const vkBody=articleUrl===publicationUrl?
+    bodyBlock.replace(/^\s*-\s*% URL сводки этого дня в Дзен %\s*\n?/m,""):bodyBlock;
+  const description=replace(vkBody);
   const postText=title+"\n\n"+description;
   if(title.includes("+++")||description.includes("+++")||
     /(?:YYYY-MM-DD|YYYY|MMMM|YY|MM|DD|% URL сводки этого дня в Дзен %)/.test(title+"\n"+description))
