@@ -5,7 +5,7 @@
 const fs = require("fs");
 const path = require("path");
 const articleVideo = require("./dzen-article-video");
-const browserSession = require("./browser-session");
+// Load Playwright only for the live browser path; offline contracts need no browser.
 const history = require("./history-utils");
 const scheduled = require("./scheduled-worker");
 const logUtils = require("./log-utils");
@@ -68,12 +68,13 @@ async function main(argv = process.argv.slice(2)) {
   };
   let session = null;
   try {
+    const browserSession = require("./browser-session");
     session = await browserSession.launchRobotBrowser(config, {log: logger.log});
     const url = await articleVideo.resolvePublishedArticleUrl(session.primaryPage, dateKey, logger);
     persistVerifiedArticle(config, state, job, dateKey, url);
     logger.log("Опубликованная статья текущего дня подтверждена: "+url);
   } finally {
-    if (session) await browserSession.closeRobotBrowser(session, config);
+    if (session) await require("./browser-session").closeRobotBrowser(session, config);
   }
 }
 module.exports = {validArticleUrl, verifiedArticleUrl, persistVerifiedArticle, getDateArg, main};
