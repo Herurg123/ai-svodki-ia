@@ -49,24 +49,37 @@ const {pathToFileURL}=require("node:url");
       publicationTitle:"ИИ-Сводка 17 октября",
       dzenAutomation:{status:"PUBLISHED"},
       dzenCollections:{status:"COMPLETE"},
+      dzenPublishedArticle:{status:"VERIFIED",url:"https://dzen.ru/a/articleABC"},
       dzenArticleVideo:{status:"COMPLETE",articleUrl:"https://dzen.ru/a/articleABC",
         videoUrl:"https://dzen.ru/video/watch/videoABC"}};
     const state={version:1,jobs:{today:job}};
     const args=validateInput(config,job,date);
-    // When Dzen is blocked, same-day downloaded MP4 must still admit VK.
+    // Video, collections and embed are not VK gates, but an independently
+    // verified, published same-day Dzen article is always required.
     const independent={...job,status:"GENERATING",vkPublication:undefined,
       dzenAutomation:{status:"CLICKED_UNVERIFIED"},
       dzenCollections:{status:"PARTIAL"},dzenArticleVideo:{status:"PENDING"}};
-    const fallback=validateInput(config,independent,date);
-    assert.equal(fallback.article,independent.publicationUrl);
-    assert.ok(fallback.postText.includes(independent.publicationUrl));
-    assert.equal(fallback.dzenVideo,null);
-    assert.equal(fallback.cover,png);
-    independent.vkPublication={phase:"PREPARED",articleUrl:fallback.article};
+    const admitted=validateInput(config,independent,date);
+    assert.equal(admitted.article,"https://dzen.ru/a/articleABC");
+    assert.ok(admitted.postText.includes(admitted.article));
+    assert.equal(admitted.dzenVideo,null);
+    assert.equal(admitted.cover,png);
+    assert.throws(()=>validateInput(config,{...independent,dzenPublishedArticle:undefined},date),
+      /проверенный URL опубликованной статьи Дзена/);
+    assert.throws(()=>validateInput(config,{...independent,dzenPublishedArticle:
+      {status:"PENDING",url:"https://dzen.ru/a/articleABC"}},date),
+      /проверенный URL опубликованной статьи Дзена/);
+    independent.vkPublication={phase:"PREPARED",articleUrl:admitted.article};
     independent.dzenArticleVideo={status:"COMPLETE",articleUrl:"https://dzen.ru/a/later"};
     const resumed=validateInput(config,independent,date);
-    assert.equal(resumed.article,fallback.article,"late Dzen must not mutate pinned VK URL");
-    assert.equal(resumed.templateHash,fallback.templateHash,"late Dzen must not mutate VK post");
+    assert.equal(resumed.article,admitted.article,"late video/embed must not change the verified article URL");
+    assert.equal(resumed.templateHash,admitted.templateHash,"late video/embed must not change VK text");
+    assert.throws(()=>validateInput(config,{...independent,vkPublication:
+      {phase:"PREPARED",articleUrl:independent.publicationUrl}},date),
+      /checkpoint закреплён за другой статьёй/);
+    assert.throws(()=>validateInput(config,{...independent,dzenPublishedArticle:
+      {status:"VERIFIED",url:"https://rybalka.one/posts/2026-10-17/"}},date),
+      /проверенный URL опубликованной статьи Дзена/);
     assert.throws(()=>validateInput(config,{...independent,date:"2026-10-16"},date),/нет задания текущей даты/);
     const automatic=config.vkPublish.automaticEnabled;
     config.vkPublish.automaticEnabled=false;
