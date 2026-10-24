@@ -170,3 +170,13 @@ Retrieval/search изменения дополнительно проходят 
 
 Исторические audits/fixtures сохраняются как evidence и regression assets; их не
 следует переписывать только ради сокращения живой документации.
+ 
+## Эксперимент Terra vs Sol за 23 октября 2026
+
+Контрольный Sol Primary завершён **12/12**, через 8 сохранённых и 4 новых API-ответа.
+[Первый run 39891725068](https://github.com/Herurg123/ai-svodki-ia/actions/runs/39891725068)
+остановился на 8/12 по бюджету; [продолжение run 39908841706](https://github.com/Herurg123/ai-svodki-ia/actions/runs/39908841706)
+завершилось успешно. Результат, доказательства, стоимость и event-level оценка находятся
+в [RESULT.md](automation/audits/experiments/2026-10-23-sol-shadow/RESULT.md)
+(ветка PR #214). Временный платный job после выполнения **удалён**,
+основной `main` и production не затронуты. Теневой Sol Research не публиковался.
