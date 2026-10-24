@@ -119,9 +119,10 @@ async function appendFooter({ sourcePath, footerPath, outputPath, rootDir }) {
     }
     if (fs.existsSync(dst)) throw new Error(`Итоговый MP4 появился во время обработки: ${dst}`);
     // Same-directory rename publishes only a validated complete file.
+    const footerSha256 = await sha256(img);
     fs.renameSync(temp, dst);
     return { originalDuration: input.duration, finalDuration: result.duration,
-      width: w, height: h, footerSha256: await sha256(img), durationSeconds: FOOTER_SECONDS };
+      width: w, height: h, footerSha256, durationSeconds: FOOTER_SECONDS };
   } finally {
     try { fs.rmSync(temp, { force: true }); } catch {}
   }
