@@ -32,12 +32,16 @@ export function validateInput(config,job,date,{manual=false}={}){
     fs.realpathSync(vk.templateFile)===fs.realpathSync(config.descriptionFile))
     throw new Error("VK шаблон не должен совпадать с изменяемым файлом описания Дзена");
   if(!job||job.date!==date)throw new Error("VK: нет задания текущей даты");
-  // Freeze the chosen URL across resume. Dzen publishing may finish later and
-  // must never alter the template hash/post body of an in-progress VK job.
-  const canonical="https://rybalka.one/posts/"+date+"/";
-  const dzenArticle=job.dzenArticleVideo?.articleUrl;
-  const article=job.vkPublication?.articleUrl ||
-    (/^https:\/\/dzen\.ru\/a\/[A-Za-z0-9_-]+$/.test(dzenArticle||"")?dzenArticle:canonical);
+  // The only permitted VK URL is the independently verified same-day
+  // published Dzen ARTICLE, not the origin digest or Dzen video. A previous
+  // checkpoint pins exactly that URL and may never be silently rewritten.
+  const verified=job.dzenPublishedArticle;
+  const article=verified?.status==="VERIFIED" ? verified.url : null;
+  if(!/^https:\/\/dzen\.ru\/a\/[A-Za-z0-9_-]+$/.test(article||""))
+    throw new Error("VK ожидает проверенный URL опубликованной статьи Дзена за этот день");
+  const pinned=job.vkPublication?.articleUrl;
+  if(pinned && pinned!==article)
+    throw new Error("VK checkpoint закреплён за другой статьёй: повторный запуск запрещён");
   const dzenVideo=job.dzenArticleVideo?.videoUrl||null;
   const videoFile=job.downloadedFile;
   if(!videoFile||path.extname(videoFile).toLowerCase()!==".mp4"||
