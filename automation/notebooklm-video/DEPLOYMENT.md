@@ -47,6 +47,56 @@ read-only проверки published same-day статьи в Studio и публ
 Временный `.env` удаляется отдельно после DPAPI-проверки; не делать
 массовый `Remove-Item vk-*`. См. `VK_PUBLICATION.md`.
 
+## Безопасное обновление существующего `C:\\TRASH\\NotebookLMBot` после merge
+
+После успешного Video CI на `main` скачать ZIP-артефакт GitHub Actions
+`NotebookLMBot-safe-update-<commit SHA>` из **Video CI**.
+Артефакт содержит `NotebookLMBot-safe-update.zip`. Распаковать внутренний
+ZIP **в отдельный временный каталог**, НЕ в рабочий корень комбайна.
+Внутри находятся `manifest.json`, `payload/` и
+`install-safe-update.ps1`. Содержимое `payload/` ограничено
+штатными исходниками: `dzen-article-link.js`, `dzen-article-video.js`,
+`dzen-publish-direct.js`, `full-worker.js`, `vk-stage.mjs`,
+`vk-text.mjs`, `setup-local.ps1` и `package.json`.
+
+Не менять Планировщик. Дождаться отсутствия работающего комбайна и
+`full-worker.lock`/`scheduled-worker.lock`; не стирать lock вручную ради
+установки. В PowerShell из временной папки выполнить сначала проверку,
+затем отдельную явно разрешённую установку:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install-safe-update.ps1 -TargetDir 'C:\\TRASH\\NotebookLMBot'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install-safe-update.ps1 -TargetDir 'C:\\TRASH\\NotebookLMBot' -Apply
+```
+
+Dry-run сверяет SHA-256 с разрешёнными предыдущими git-версиями
+`44de0939`/`b6eebb2e` и новым merge SHA; чужие либо вручную
+изменённые файлы приводят к остановке **до любых замен**. Все старые
+версии нужных производственных файлов сохраняются за пределами корня
+в соседней папке `NotebookLMBot-update-backups/`. После установки
+повторно проверяются SHA-256 и выполняется откат при сбое копирования.
+`config.json`, `state.json`, токены, `_bak`, скачанные MP4/PNG, истории,
+журналы, исходные шаблоны VK и профиль не копируются и не удаляются.
+Никакого `npm install` или повторной публикации установка не запускает.
+
+Проверить только синтаксис без нового запуска публикаций:
+
+```powershell
+cd C:\\TRASH\\NotebookLMBot
+node --check .\full-worker.js
+node --check .\dzen-article-link.js
+node --check .\dzen-article-video.js
+node --check .\dzen-publish-direct.js
+node --check .\vk-stage.mjs
+node --check .\vk-text.mjs
+```
+
+После подтверждённой проверки можно удалить **только** скачанный внешний
+ZIP-артефакт, внутренний ZIP и временную папку распаковки. Папку с
+резервными копиями и исходные operator-owned данные оставлять до
+проверенного автоматического выпуска. Никакие `_bak`, media, state,
+конфигурацию или логи при уборке не удалять.
+
 ## 1. Предварительные требования
 
 Нужны:
