@@ -28,7 +28,7 @@ HTML-абзацев без блокировки. Проверяется факт
   active entrypoints, ключевые production-инварианты и команды проверки.
 - [`AGENTS.md`](AGENTS.md) — обязательные правила изменения репозитория.
 - [`automation/notebooklm-video/README.md`](automation/notebooklm-video/README.md)
-  — локальный Windows downstream NotebookLM/Dzen/VK. С 18.10.2026 реальный ручной цикл VK и story-only ретест подтверждены оператором; 19.10.2026 первый автоматический VK запустил видео/пост, а история после нестабильного PNG upload восстановлена отдельно. Исправление допускает только ограниченный retry PNG до stories.save; с 20.10.2026 VK-история получает отдельный 1080×1920 PNG с размытым фоном (`ИИ-Сводка YYYY-MM-DD-vk.png`), сохраняя исходный 16:9 PNG для остальных этапов. Шаблон config.example.json остаётся с выключенным пятым этапом.
+  — локальный Windows downstream NotebookLM/Dzen/VK. С 18.10.2026 реальный ручной цикл VK и story-only ретест подтверждены оператором; 19.10.2026 первый автоматический VK запустил видео/пост, а история после нестабильного PNG upload восстановлена отдельно. Исправление допускает только ограниченный retry PNG до stories.save; с 20.10.2026 VK-история получает отдельный 1080×1920 PNG с размытым фоном (`ИИ-Сводка YYYY-MM-DD-vk.png`), сохраняя исходный 16:9 PNG для остальных этапов. С 24.10.2026 после MP4 этап VK не зависит от результатов Дзена: при отсутствии статьи ведёт на каноническую сводку дня, ссылка фиксируется на весь VK job. Для Дзена добавлено 45 секунд read-only наблюдения за финальной публикацией без второго клика. Шаблон config.example.json остаётся с выключенным пятым этапом.
 
 README намеренно остаётся обзорным. Детальные implementation/recovery contracts
 не дублируются здесь, если для них уже есть канонический architecture/spec
@@ -40,7 +40,7 @@ README намеренно остаётся обзорным. Детальные 
 |---|---|
 | `automation/` | Production-конвейер: retrieval, freshness, editorial, recovery, validators, archive, audits и configuration. |
 | `posts/` | Публичный статический сайт, article/image RSS, sitemap и постоянные assets. |
-| `automation/notebooklm-video/` | Независимый локальный Windows downstream после публикации выпуска: NotebookLM → MP4/PNG → optional FTP → native Dzen → collections → video-in-article → optional VK (video, playlist, post, story). |
+| `automation/notebooklm-video/` | Независимый локальный Windows downstream после публикации выпуска: NotebookLM → MP4/PNG → optional FTP → native Dzen → collections → video-in-article; independent optional VK on today's local MP4 (video, playlist, post, story). |
 | `automation/archive/video-rss-enrichment-2026-08/` | Inert reference-only архив закрытого Video → RSS эксперимента. |
 | `.github/workflows/` | PR Gate, Main CI, Video CI, production, deploy и maintenance workflows. |
 

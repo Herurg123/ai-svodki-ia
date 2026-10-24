@@ -31,14 +31,14 @@ export function validateInput(config,job,date,{manual=false}={}){
   if(fs.existsSync(config.descriptionFile||"")&&
     fs.realpathSync(vk.templateFile)===fs.realpathSync(config.descriptionFile))
     throw new Error("VK шаблон не должен совпадать с изменяемым файлом описания Дзена");
-  if(!job||job.date!==date||job.status!=="DONE")throw new Error("Выбран не DONE job заданной даты");
-  if(job.dzenAutomation?.status!=="PUBLISHED"||job.dzenCollections?.status!=="COMPLETE"||
-    !["COMPLETE","SKIPPED_EXISTING"].includes(job.dzenArticleVideo?.status))
-    throw new Error("VK gate: предыдущие четыре этапа не завершены");
-  const article=job.dzenArticleVideo?.articleUrl;
-  const dzenVideo=job.dzenArticleVideo?.videoUrl;
-  if(!/^https:\/\/dzen\.ru\/a\/[A-Za-z0-9_-]+$/.test(article||""))throw new Error("Нет публичной ссылки на статью Дзена");
-  if(!/^https:\/\/dzen\.ru\/video\/watch\/[A-Za-z0-9_-]+$/.test(dzenVideo||""))throw new Error("Нет публичной ссылки на видео Дзена");
+  if(!job||job.date!==date)throw new Error("VK: нет задания текущей даты");
+  // Freeze the chosen URL across resume. Dzen publishing may finish later and
+  // must never alter the template hash/post body of an in-progress VK job.
+  const canonical="https://rybalka.one/posts/"+date+"/";
+  const dzenArticle=job.dzenArticleVideo?.articleUrl;
+  const article=job.vkPublication?.articleUrl ||
+    (/^https:\/\/dzen\.ru\/a\/[A-Za-z0-9_-]+$/.test(dzenArticle||"")?dzenArticle:canonical);
+  const dzenVideo=job.dzenArticleVideo?.videoUrl||null;
   const videoFile=job.downloadedFile;
   if(!videoFile||path.extname(videoFile).toLowerCase()!==".mp4"||
     !fs.existsSync(videoFile)||fs.statSync(videoFile).size<=0)throw new Error("Локальный MP4 не найден");
@@ -263,11 +263,11 @@ export async function main(){
     if(sourcePng.length>10*1024*1024)throw new Error("PNG истории слишком большой");
     console.log("=== VK ПРЕДПРОСМОТР БЕЗ СЕТИ ===");
     console.log("DPAPI VK-токен: успешно расшифрован; значение не выводится.");
-    console.log("История: исходный PNG будет отправлен без изменений.");
+    console.log("История: отдельный портретный -vk.png из исходного PNG.");
     console.log("Дата:",date,"Группа:",args.groupId,"Плейлист:",args.playlistTitle);
     console.log("MP4:",args.videoFile,"байт:",args.videoSize);
     console.log("PNG:",args.cover);
-    console.log("Статья Дзена:",args.article);
+    console.log("Ссылка для VK (заморожена в checkpoint после старта):",args.article);
     console.log("Название видео:\n"+args.title);
     console.log("Описание видео:\n"+args.description);
     console.log("Текст поста:\n"+args.postText);

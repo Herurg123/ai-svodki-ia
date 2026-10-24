@@ -142,6 +142,20 @@ function canAutoRecoverBrowserPasteMigration(job) {
   );
 }
 
+// Only same-day completed local download is an independent VK admission gate.
+// No Dzen/collection/article status is read here. vk-stage validates ftyp,
+// saved file size/SHA, cover and same-date source URL before mutations.
+function hasTodayLocalMp4(job,dateKey,downloadsDir=path.join(ROOT,"downloads")) {
+  if (!job||job.date!==dateKey||typeof job.downloadedFile!=="string")return false;
+  const expected="ИИ-Сводка "+dateKey+".mp4";
+  if(path.basename(job.downloadedFile)!==expected ||
+     path.resolve(path.dirname(job.downloadedFile))!==path.resolve(downloadsDir))return false;
+  try{
+    const stat=fs.statSync(job.downloadedFile);
+    return stat.isFile()&&stat.size>=12;
+  }catch{return false;}
+}
+
 async function main() {
   let config = null;
   let lockHandle = null;
@@ -350,18 +364,16 @@ async function main() {
     if (config.vkPublish && config.vkPublish.enabled === true &&
         config.vkPublish.automaticEnabled === true) {
       const fresh = loadJson(config.stateFile, { jobs: {} });
-      const candidate = job && collections.findJobForDate(fresh, job.date);
-      const canRun = !phasesError && !collectionsError && !articleVideoError &&
-        candidate && candidate.date === currentDateKey && candidate.status === "DONE" &&
-        scheduled.getAutomationStatus(candidate) === "PUBLISHED" &&
-        collections.collectionsStatus(candidate) === "COMPLETE" &&
-        ["COMPLETE", "SKIPPED_EXISTING"].includes(articleVideoStatus(candidate));
+      // Re-read TODAY, not the collections fallback job, even if Dzen failed.
+      // Keep the full-worker lock: concurrent Dzen/VK writes to state.json are unsafe.
+      const candidate = collections.findJobForDate(fresh,currentDateKey);
+      const canRun = hasTodayLocalMp4(candidate,currentDateKey);
       if (!canRun) {
-        log(config, "Фаза 5/5: VK пропущен, предыдущие этапы не завершены или job не за сегодня.");
+        log(config, "Фаза 5/5: VK ожидает локальный ИИ-Сводка "+currentDateKey+".mp4; статусы Дзена не проверяются.");
       } else if (candidate.vkPublication && candidate.vkPublication.status === "COMPLETE") {
         log(config, "Фаза 5/5: VK уже COMPLETE; повторные публикации не выполняю.");
       } else {
-        log(config, "Фаза 5/5: VK запускаю для " + candidate.date + ".");
+        log(config, "Фаза 5/5: VK запускаю по готовому локальному MP4 за " + candidate.date + " независимо от Дзена.");
         try {
           await runNodeScript("vk-stage.mjs", ["--apply", "--date=" + candidate.date]);
           log(config, "Фаза 5/5: VK выполнен.");
@@ -401,6 +413,7 @@ module.exports = {
   canAutoRecoverPrePublishClipboardError,
   canAutoRecoverBrowserPasteMigration,
   main,
+  hasTodayLocalMp4,
   releaseFullWorkerLock,
   runNodeScript,
   selectCollectionsJob,

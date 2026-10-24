@@ -21,6 +21,12 @@ assert(source.includes("collections.collectionsComplete(job)"),
   "full worker must skip collections child when both targets are already persisted");
 assert(source.includes("Браузер для подборок НЕ открываю"),
   "full worker must document no-browser skip for completed collections");
+assert(source.includes("hasTodayLocalMp4(candidate,currentDateKey)"),
+  "VK must be admitted by today's local MP4 rather than Dzen completion");
+assert(!source.includes("!phasesError && !collectionsError && !articleVideoError"),
+  "Dzen failures must not suppress VK");
+assert(source.includes("collections.findJobForDate(fresh,currentDateKey)"),
+  "VK may not select yesterday's catch-up job");
 assert(source.includes("FULL_WORKER_LOCK_PATH"),
   "outer lock must cover scheduled worker plus collection phase");
 assert.match(launcher, /full-worker\.js/i);
@@ -33,6 +39,19 @@ const articleVideoIndex = source.indexOf('runNodeScript("dzen-article-video.js"'
 assert(collectionIndex > scheduledIndex, "collections phase must run after the video/Dzen attempt");
 assert(articleVideoIndex > collectionIndex, "article-video phase must run after collections");
 
+const vkFixtureDir=fs.mkdtempSync(path.join(require("os").tmpdir(),"vk-ready-mp4-"));
+try {
+  const video=path.join(vkFixtureDir,"ИИ-Сводка 2026-10-24.mp4");
+  const bytes=Buffer.alloc(32);bytes.write("ftyp",4);fs.writeFileSync(video,bytes);
+  assert.strictEqual(full.hasTodayLocalMp4({date:"2026-10-24",downloadedFile:video,
+    dzenAutomation:{status:"CLICKED_UNVERIFIED"}},"2026-10-24",vkFixtureDir),true);
+  assert.strictEqual(full.hasTodayLocalMp4({date:"2026-10-23",downloadedFile:video},"2026-10-24",vkFixtureDir),false);
+  assert.strictEqual(full.hasTodayLocalMp4({date:"2026-10-24",downloadedFile:video},"2026-10-25",vkFixtureDir),false);
+  assert.strictEqual(full.hasTodayLocalMp4({date:"2026-10-24",downloadedFile:video},
+    "2026-10-24",path.join(vkFixtureDir,"not-downloads")),false);
+  fs.rmSync(video);
+  assert.strictEqual(full.hasTodayLocalMp4({date:"2026-10-24",downloadedFile:video},"2026-10-24",vkFixtureDir),false);
+}finally{fs.rmSync(vkFixtureDir,{force:true,recursive:true});}
 const state = {
   jobs: {
     yesterday: { date: "2026-08-28", status: "DONE", updatedAt: "2026-08-28T10:00:00Z" },
@@ -172,9 +191,10 @@ assert.strictEqual(
 assert(source.includes('runNodeScript("vk-stage.mjs"'), "full worker must own VK fifth stage");
 assert(source.indexOf('runNodeScript("vk-stage.mjs"') > articleVideoIndex,
   "VK must follow the existing Dzen article-video step");
-assert(source.includes('candidate.date === currentDateKey'), "VK cannot process old catch-up jobs");
-assert(source.includes('!phasesError && !collectionsError && !articleVideoError'),
-  "VK must wait for every Dzen gate");
+assert(source.includes('collections.findJobForDate(fresh,currentDateKey)'),
+  "VK must select only today's job, not an older catch-up job");
+assert(source.includes('hasTodayLocalMp4(candidate,currentDateKey)'),
+  "VK must use same-day local file gate, not Dzen statuses");
 assert(source.includes('config.vkPublish.automaticEnabled === true'),
   "VK default-off gate must be explicit");
 assert(source.includes('if (vkError) parts.push'),"VK errors must flow to the shared failure path");

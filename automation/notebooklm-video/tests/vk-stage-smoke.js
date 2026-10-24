@@ -19,8 +19,9 @@ const {pathToFileURL}=require("node:url");
   assert.equal(configExample.vkPublish.automaticEnabled,false,"safe default MUST disable live posting");
   assert.ok(source.indexOf('runNodeScript("vk-stage.mjs"')>source.indexOf('runNodeScript("dzen-article-video.js"'),
     "VK starts strictly after the fourth stage");
-  assert.match(source,/candidate\.date === currentDateKey/,"no older-date replay");
-  assert.match(source,/!phasesError && !collectionsError && !articleVideoError/,"four stages are the gate");
+  assert.match(source,/collections\.findJobForDate\(fresh,currentDateKey\)/,"VK always selects today's job");
+  assert.match(source,/hasTodayLocalMp4\(candidate,currentDateKey\)/,"VK gate is today's MP4");
+  assert.doesNotMatch(source,/!phasesError && !collectionsError && !articleVideoError/,"no Dzen gate for VK");
   assert.match(deploy,/vk-stage\.mjs/,"local installation must copy VK stage");
   assert.match(deploy,/configure-vk-access\.ps1/,"local setup must ship token migration");
 
@@ -52,6 +53,21 @@ const {pathToFileURL}=require("node:url");
         videoUrl:"https://dzen.ru/video/watch/videoABC"}};
     const state={version:1,jobs:{today:job}};
     const args=validateInput(config,job,date);
+    // When Dzen is blocked, same-day downloaded MP4 must still admit VK.
+    const independent={...job,status:"GENERATING",vkPublication:undefined,
+      dzenAutomation:{status:"CLICKED_UNVERIFIED"},
+      dzenCollections:{status:"PARTIAL"},dzenArticleVideo:{status:"PENDING"}};
+    const fallback=validateInput(config,independent,date);
+    assert.equal(fallback.article,independent.publicationUrl);
+    assert.ok(fallback.postText.includes(independent.publicationUrl));
+    assert.equal(fallback.dzenVideo,null);
+    assert.equal(fallback.cover,png);
+    independent.vkPublication={phase:"PREPARED",articleUrl:fallback.article};
+    independent.dzenArticleVideo={status:"COMPLETE",articleUrl:"https://dzen.ru/a/later"};
+    const resumed=validateInput(config,independent,date);
+    assert.equal(resumed.article,fallback.article,"late Dzen must not mutate pinned VK URL");
+    assert.equal(resumed.templateHash,fallback.templateHash,"late Dzen must not mutate VK post");
+    assert.throws(()=>validateInput(config,{...independent,date:"2026-10-16"},date),/нет задания текущей даты/);
     const automatic=config.vkPublish.automaticEnabled;
     config.vkPublish.automaticEnabled=false;
     assert.throws(()=>validateInput(config,job,date),/не включён/);

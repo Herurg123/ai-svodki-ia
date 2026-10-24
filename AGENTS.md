@@ -74,8 +74,12 @@ Those two writers share one non-cancelling Actions concurrency group. Never set
 ## NotebookLM → VK publication
 
 Treat VK as a local optional fifth downstream stage, not a GitHub-side or
-separately scheduled publisher. Any edits to VK publication must preserve the
-four preceding gates, active job/checkpoint and shared full-worker lock.
+separately scheduled publisher. As of 2026-10-24 the VK publication gate is the
+verified same-day local MP4/PNG and same-day job; Dzen publication, collections,
+and article-video completion are NOT required. Keep the shared full-worker
+lock and persisted checkpoints to avoid competing state.json writers. Freeze
+the chosen VK URL at first checkpoint: prefer already published Dzen article,
+else the canonical same-day rybalka.one digest; never change links on resume.
 Never infer public story artwork from `stories.save` ACK alone: require visual
 verification of the actual image and preserve the source NotebookLM PNG bytes.
 As of the 2026-10-20 approved portrait Story rendering, preserve the *source*
@@ -92,6 +96,11 @@ The durable runtime/recovery/configuration contract is
 Experimental launchers, `.env` and token-bearing test materials must never
 be copied into production or committed; cleanup of old Windows one-off files
 must use explicit allowlists, retain states/logs and check for active locks.
+
+Native Dzen's one allowed publish click must be followed by a 45-second
+read-only editor observation; if unresolved, save a local diagnostic screenshot
+and remain CLICKED_UNVERIFIED. Never navigate early, retry the click, bypass
+a challenge, or treat a Playwright click as publication confirmation.
 
 ## Legacy and compatibility lifecycle
 
