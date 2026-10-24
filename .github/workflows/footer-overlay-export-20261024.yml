@@ -1,0 +1,35 @@
+name: Временная выгрузка файлов заставки
+
+on:
+  push:
+    branches:
+      - artifact/footer-overlay-20261024
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    name: Упаковка двух исходников
+    runs-on: ubuntu-latest
+    steps:
+      - name: Получение кода
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Проверка и упаковка
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p overlay
+          cp automation/notebooklm-video/worker.js overlay/worker.js
+          cp automation/notebooklm-video/video-footer.js overlay/video-footer.js
+          test "$(find overlay -maxdepth 1 -type f | wc -l)" -eq 2
+          sha256sum overlay/*.js
+      - name: Выгрузка ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: NotebookLMBot-footer-two-files-20261024
+          path: overlay/
+          if-no-files-found: error
+          retention-days: 7
