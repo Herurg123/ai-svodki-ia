@@ -15,6 +15,8 @@ const {pathToFileURL}=require("node:url");
  assert.ok(result.description.includes(url));
  const fallback=renderVkTemplate(source,{date:"2026-10-17",articleUrl:origin,publicationUrl:origin});
  assert.ok(fallback.description.includes(origin));
+ assert.equal(fallback.description.split(origin).length-1,1,"fallback cannot duplicate the digest link");
+ assert.ok(!fallback.description.includes("% URL сводки этого дня в Дзен %"));
  assert.equal(fallback.storyLinkCaption,result.storyLinkCaption);
  assert.throws(()=>renderVkTemplate(source,{date:"2026-10-17",articleUrl:"https://example.org/a",
    publicationUrl:origin}),/VK ссылка/);
