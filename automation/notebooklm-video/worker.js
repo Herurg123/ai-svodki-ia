@@ -3872,10 +3872,19 @@ async function finalizeDownloadedVideo(config, publication, job, state) {
   if (job.status !== "DOWNLOADED" || !job.downloadedSourceFile) {
     throw new Error("Нет подтверждённого исходного MP4 для локального этапа.");
   }
-  const finalPath = path.join(config.downloadDir, `ИИ-Сводка ${publication.date}.mp4`);
+  const finalPath = job.downloadedTargetFile;
+  if (!finalPath || path.dirname(path.resolve(finalPath)) !== path.resolve(config.downloadDir)) {
+    throw new Error("Некорректный путь итогового файла в DOWNLOADED checkpoint.");
+  }
+  if (await fileSha256(job.downloadedSourceFile) !== job.downloadedSourceSha256) {
+    throw new Error("Контрольная сумма исходного MP4 изменилась с момента скачивания.");
+  }
   const planned = job.videoFooter && job.videoFooter.status === "PENDING";
   if (planned) {
     const footerPath = path.join(config.downloadDir, videoFooter.FOOTER_FILENAME);
+    if (await fileSha256(footerPath) !== job.videoFooter.footerSha256) {
+      throw new Error("PNG заставки изменился после скачивания; обработка остановлена.");
+    }
     const processed = await videoFooter.appendFooter({
       sourcePath: job.downloadedSourceFile,
       footerPath,
@@ -4049,12 +4058,14 @@ async function checkAndDownload(config, context, publication, job, state) {
   // FTP/Dzen/VK and resumes locally, without NotebookLM re-download.
   job.status = "DOWNLOADED";
   job.downloadedSourceFile = downloadPath;
+  job.downloadedTargetFile = finalPath;
   job.downloadedSourceSha256 = await fileSha256(downloadPath);
   job.downloadedOriginalFilename = suggested;
   job.downloadedAt = new Date().toISOString();
   job.videoFooter = {
     status: needsFooter ? "PENDING" : "SKIPPED_ABSENT",
     plannedAt: new Date().toISOString(),
+    footerSha256: needsFooter ? await fileSha256(footerPath) : null,
   };
   job.updatedAt = new Date().toISOString();
   saveState(config, state);
