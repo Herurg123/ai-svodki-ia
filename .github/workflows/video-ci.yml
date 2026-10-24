@@ -46,6 +46,21 @@ jobs:
             node --check "$test_file"
           done
 
+      - name: Syntax-check safe updater builder
+        run: node --check scripts/build-safe-update.mjs
+
+      - name: Syntax-check Windows patch installer without running it
+        shell: pwsh
+        run: |
+          $tokens = $null
+          $errors = $null
+          $file = Join-Path (Get-Location) 'scripts/install-safe-update.ps1'
+          [System.Management.Automation.Language.Parser]::ParseFile($file, [ref]$tokens, [ref]$errors) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_.ToString() }
+            throw 'Installer PowerShell syntax check failed'
+          }
+
       - name: Run dependency-free video contract tests
         run: |
           set -euo pipefail
@@ -75,3 +90,36 @@ jobs:
           elif [[ "${JOB_STATUS}" == "cancelled" ]]; then
             echo "::warning title=Video CI отменён::Запуск Video CI был отменён до завершения всех проверок."
           fi
+
+  package-safe-update:
+    name: Safe Windows update ZIP (main only)
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact merged commit with historical baselines
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+
+      - name: Build SHA-verified Windows patch from allowlisted code
+        run: |
+          set -euo pipefail
+          node automation/notebooklm-video/scripts/build-safe-update.mjs "$RUNNER_TEMP/NotebookLMBot-safe-update.zip"
+          unzip -t "$RUNNER_TEMP/NotebookLMBot-safe-update.zip"
+          sha256sum "$RUNNER_TEMP/NotebookLMBot-safe-update.zip"
+
+      - name: Upload verified update ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: NotebookLMBot-safe-update-${{ github.sha }}
+          path: ${{ runner.temp }}/NotebookLMBot-safe-update.zip
+          retention-days: 30
+          if-no-files-found: error

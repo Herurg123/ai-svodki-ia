@@ -722,8 +722,12 @@ async function main(argv = process.argv.slice(2)) {
     }
 
     await page.bringToFront();
-    await publish.button.click();
+    // A Playwright click can time out AFTER the browser dispatched the event.
+    // Mark uncertainty BEFORE the attempt so any such exception can never
+    // authorize a fresh upload or another publish click.
     publishClicked = true;
+    log(config, "PUBLISH_CLICK_ATTEMPT_ARMED: outcome may be uncertain; retry prohibited.");
+    await publish.button.click();
 
     log(
       config,

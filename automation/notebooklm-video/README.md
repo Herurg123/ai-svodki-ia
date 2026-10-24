@@ -52,10 +52,12 @@ RSS rybalka.one
   -> dzen-article-video.js
      -> same-day article H2 «Видеосводка»
      -> public verification
-  -> vk-stage.mjs (optional, config.vkPublish.automaticEnabled=true)
+  -> dzen-article-link.js (optional, VK enabled, no verified article URL)
+     -> published same-day Dzen ARTICLE link (Studio + public verification)
+  -> vk-stage.mjs (optional, requires verified MP4/PNG + published article URL)
      -> VK video -> «Сводки по ИИ» playlist
-     -> VK wall post with video + article link
-     -> VK community story: unchanged preview PNG + post sticker + Dzen link
+     -> VK wall post with video + published Dzen article link
+     -> VK story: separate portrait PNG + post sticker + Dzen article link
 ~~~
 
 `full-worker.js` owns the outer lock for the whole scheduled sequence.
@@ -221,11 +223,19 @@ Deep selectors, metadata/tag/readiness rules and live evidence are canonical in
 сохраняется PNG в `screenshots/`, а `CLICKED_UNVERIFIED` запрещает второй
 upload/click. После ручной публикации штатный запуск найдёт готовое видео.
 
-**Независимый VK:** при готовом MP4 текущего дня VK публикуется независимо
-от статусов Дзена. Если статья Дзена ещё недоступна, «Читать» и место URL
-в шаблоне получают `https://rybalka.one/posts/YYYY-MM-DD/`. Ссылка
-закрепляется в checkpoint. Общий `full-worker.lock` и последовательный
-порядок сохраняются, чтобы не потерять записи `state.json`.
+**Независимый VK:** только при готовом проверенном MP4/PNG текущей даты
+и опубликованной статье-сводке Дзена. Если dzenArticleVideo не запускался
+из-за неопубликованного Dzen-видео, отдельный `dzen-article-link.js`
+через Studio «Опубликованные» → «Статьи» находит ровно одну
+same-day публикацию и независимо проверяет её публичную страницу. URL
+сохраняется в `job.dzenPublishedArticle.url` со статусом `VERIFIED`,
+после чего допускается `vk-stage.mjs`. При отсутствии статьи VK не
+публикуется; `rybalka.one` и `/video/watch/` не являются fallback.
+Ссылка статьи фиксируется в `job.vkPublication.articleUrl` и не меняется
+после начала VK-публикации. Статусы Dzen-видео, подборок и вставки видео
+в статью VK не блокируют. Общий `full-worker.lock` и последовательная
+запись `state.json` предотвращают гонки; старые даты не запускаются
+автоматически.
 
 ## Dzen collections
 

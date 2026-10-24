@@ -1841,18 +1841,27 @@ refactor с полным offline regression доказательством. Не
 по точному перечню, без удаления `state.json`, `.vk-upload-state`,
 `downloads` или `vk-access.json`.
 
-### VK fifth stage (локально, только после Дзена)
+### VK fifth stage (локально, независимо от Dzen-видео)
 
 Необязательный пятый этап `vk-stage.mjs` находится в Windows downstream,
 под управлением существующего `full-worker.js` и его общей блокировки.
-Он запускается только после успешных четырёх стадий, при подтверждённых
-ссылках Дзена, готовых локальных MP4 и PNG и **job текущей даты**.
+Он допускается при проверенном локальном MP4/PNG **текущей даты** и
+подтверждённом URL опубликованной same-day **статьи-сводки Дзена**.
+Не требуется dzenAutomation.status=PUBLISHED, COMPLETE подборок или
+dzenArticleVideo.status=COMPLETE. Даже если видео осталось черновиком,
+read-only `dzen-article-link.js` разрешает ссылку в Studio →
+«Опубликованные» → «Статьи», затем проверяет публичную страницу
+по точному заголовку/дате. Ссылка записывается отдельно в
+`job.dzenPublishedArticle.{status:"VERIFIED",url,...}` и требуется
+до любой сетевой VK-мутации. `job.publicationUrl` (rybalka.one) и
+`/video/watch/` никогда не подменяют URL Dzen-статьи.
 Параметр `vkPublish.automaticEnabled` по умолчанию false.
 
 Последовательность: VK Video upload/publish, включение в точный
 плейлист сообщества, отдельный wall.post с вложением видео, история
-сообщества с **неизменённым PNG первого кадра** из `downloads`, post sticker
-и ссылкой на Дзен. Промежуточный рендер истории не выполняется. Состояние каждой мутации
+сообщества с отдельным вертикальным `YYYY-MM-DD-vk.png` (1080×1920:
+размытый фон и чёткая исходная 16:9 PNG по центру), post sticker
+и ссылкой на опубликованную Dzen-статью. Исходный PNG не изменяется. Состояние каждой мутации
 пишется в `job.vkPublication` через существующий state/history/logging
 contract **до** потенциально необратимого сетевого запроса.
 Неоднозначный ответ блокирует автоматическое повторение; успех Дзена
@@ -1863,6 +1872,10 @@ contract **до** потенциально необратимого сетево
 Он не совпадает с прежним операторским `downloads/_ИИ-Сводка.txt`,
 который переписывают NotebookLM и Dzen. Готовый текст и его hash входят
 в checkpoint, даты и публичные URL берутся из авторитетного job.
+Ссылка статьи фиксируется в `job.vkPublication.articleUrl` с первого
+checkpoint, любые последующие расхождения блокируют автоматическое
+продолжение. При отсутствии статьи VK не запускается и второй upload
+или publish click не производится.
 Ключ сообщества сохраняется локально в DPAPI `vk-access.json` с путем
 в общем `config.json`, не коммитится и не дублируется в .env после
 проверенного переноса.
@@ -1902,6 +1915,9 @@ RSS
  -> dzen-article-video.js
  -> same-day article: H2 «Видеосводка» -> Dzen video -> H2 «Мировые лидеры ИИ»
  -> public verification -> COMPLETE/VERIFIED
+ -> independent read-only dzen-article-link.js (if VK enabled and URL absent)
+ -> verified public same-day Dzen article URL -> vk-stage.mjs
+ -> VK video + playlist + wall post + portrait Story (with pinned Dzen article link)
 ```
 
 Runtime state, real config, FTP access, logs, media и browser profile не хранятся

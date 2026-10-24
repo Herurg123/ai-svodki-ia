@@ -13,13 +13,12 @@ const {pathToFileURL}=require("node:url");
  assert.equal(result.title,"ИИ-Сводка на 17 октября 2026 | Подпишись, чтоб получать свежее!");
  assert.ok(result.description.includes(origin));
  assert.ok(result.description.includes(url));
- const fallback=renderVkTemplate(source,{date:"2026-10-17",articleUrl:origin,publicationUrl:origin});
- assert.ok(fallback.description.includes(origin));
- assert.equal(fallback.description.split(origin).length-1,1,"fallback cannot duplicate the digest link");
- assert.ok(!fallback.description.includes("% URL сводки этого дня в Дзен %"));
- assert.equal(fallback.storyLinkCaption,result.storyLinkCaption);
+ assert.throws(()=>renderVkTemplate(source,{date:"2026-10-17",articleUrl:origin,publicationUrl:origin}),
+   /VK требует URL опубликованной статьи Дзена/,"origin digest must never replace published Dzen article");
+ assert.throws(()=>renderVkTemplate(source,{date:"2026-10-17",articleUrl:null,publicationUrl:origin}),
+   /VK требует URL опубликованной статьи Дзена/,"VK must wait when article has not been resolved");
  assert.throws(()=>renderVkTemplate(source,{date:"2026-10-17",articleUrl:"https://example.org/a",
-   publicationUrl:origin}),/VK ссылка/);
+   publicationUrl:origin}),/VK требует URL опубликованной статьи Дзена/);
  assert.ok(result.description.includes("#AI #ИИ #НовостиИИ"));
  assert.equal(result.postText,result.title+"\n\n"+result.description);
  assert.equal(result.storyLinkCaption,"ИИ-Сводка на 17 октября 2026");

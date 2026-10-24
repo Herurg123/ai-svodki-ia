@@ -7,6 +7,7 @@ const { spawn } = require("child_process");
 const scheduled = require("./scheduled-worker");
 const collections = require("./dzen-collections");
 const articleVideo = require("./dzen-article-video");
+const articleLink = require("./dzen-article-link");
 const logUtils = require("./log-utils");
 const history = require("./history-utils");
 
@@ -373,14 +374,28 @@ async function main() {
       } else if (candidate.vkPublication && candidate.vkPublication.status === "COMPLETE") {
         log(config, "Фаза 5/5: VK уже COMPLETE; повторные публикации не выполняю.");
       } else {
-        log(config, "Фаза 5/5: VK запускаю по готовому локальному MP4 за " + candidate.date + " независимо от Дзена.");
         try {
-          await runNodeScript("vk-stage.mjs", ["--apply", "--date=" + candidate.date]);
+          // Independently discover today's published Dzen article even when
+          // native video is CLICKED_UNVERIFIED and the article-video phase
+          // could not run. No VK mutation until this evidence is persisted.
+          if (!articleLink.verifiedArticleUrl(candidate)) {
+            log(config, "Фаза 5/5: проверяю опубликованную статью Дзена за " + currentDateKey +
+              " через отдельный read-only Studio/public-page этап.");
+            await runNodeScript("dzen-article-link.js", ["--date=" + currentDateKey]);
+          }
+          const afterArticleLookup = loadJson(config.stateFile, { jobs: {} });
+          const verifiedJob = collections.findJobForDate(afterArticleLookup, currentDateKey);
+          if (!articleLink.verifiedArticleUrl(verifiedJob)) {
+            throw new Error("Не подтверждена опубликованная статья Дзена за текущую дату");
+          }
+          log(config, "Фаза 5/5: готов MP4 и подтверждена статья Дзена; VK запускаю независимо от видео/подборок Дзена.");
+          await runNodeScript("vk-stage.mjs", ["--apply", "--date=" + currentDateKey]);
           log(config, "Фаза 5/5: VK выполнен.");
         } catch (error) {
           vkError = error;
-          fatalLog(config, "Фаза 5/5 завершилась ошибкой: " + error.message, error);
+          fatalLog(config, "Фаза 5/5 остановлена без обхода проверки статьи: " + error.message, error);
         }
+
       }
     }
 
