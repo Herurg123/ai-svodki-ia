@@ -539,6 +539,9 @@ async function observeAfterPublishClick(page,config,dateKey,draftId,{durationMs=
     lastUrl=page.url();
     const body=await page.locator("body").innerText({timeout:1500}).catch(()=>"");
     sample=summarizePostClickSnapshot(lastUrl,body,draftId);
+    // Delegate a detected human challenge immediately to the runner's
+    // established manual-only 120-second window, without touching checkbox.
+    if(sample.challenge)break;
     const remaining=durationMs-(Date.now()-started);
     if(remaining<=0)break;
     await page.waitForTimeout(Math.min(intervalMs,remaining));
