@@ -93,10 +93,27 @@ for (const marker of [
   "Готово: можно публиковать и смотреть",
   "Кто может комментировать",
   "КЛИК ПУБЛИКАЦИИ ВЫПОЛНЕН ОДИН РАЗ",
-  "post-click verification и повторное открытие draft в этом MVP отсутствуют",
+  "После publish click удерживаю редактор 45 секунд",
+  "POST-CLICK OBSERVE",
 ]) {
   assert(source.includes(marker), `Missing direct MVP contract marker: ${marker}`);
 }
+
+assert.strictEqual(direct.summarizePostClickSnapshot(
+  "https://dzen.ru/profile/editor/create?videoEditorPublicationId=123",
+  "Готово к публикации", "123").editor,true);
+assert.strictEqual(direct.summarizePostClickSnapshot(
+  "https://dzen.ru/profile/editor/create?videoEditorPublicationId=123",
+  "Готово к публикации", "123").readyDraft,true);
+assert.strictEqual(direct.summarizePostClickSnapshot(
+  "https://dzen.ru/profile/editor/rybv/publications",
+  "Видео опубликовано", "123").successHint,true);
+const observationBlock=source.slice(source.indexOf("async function observeAfterPublishClick"),
+  source.indexOf("async function findEnabledPublishButton"));
+assert(!observationBlock.includes(".click("),"post-click observation cannot click");
+assert(!observationBlock.includes(".goto("),"post-click observation cannot navigate");
+assert(!observationBlock.includes("setInputFiles("),"post-click observation cannot reupload");
+assert.match(observationBlock,/durationMs=45_000/,"observe for 45 seconds");
 
 for (const forbidden of [
   "tryOpenUsableDraft",
