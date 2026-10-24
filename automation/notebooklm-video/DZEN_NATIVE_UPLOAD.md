@@ -38,7 +38,9 @@ upload и publish click не выполняются.
  -> ждать «Загрузили и обработали видео»
  -> ждать «Готово: можно публиковать и смотреть»
  -> comments = «Все пользователи»
+ -> перед попыткой клика пометить publishClicked=true (даже если Playwright бросит timeout)
  -> один клик «Опубликовать»/«Отправить»
+ -> 45 секунд read-only наблюдения в редакторе + локальный диагностический PNG при неопределённости
  -> optional post-click anti-bot wait
  -> scheduled post-click verification через Публикации -> Видео
  -> PUBLISHED
