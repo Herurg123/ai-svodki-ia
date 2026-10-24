@@ -216,6 +216,17 @@ Deep selectors, metadata/tag/readiness rules and live evidence are canonical in
 [`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md) and
 [`DZEN_VIDEO_EXPERIMENTS.md`](DZEN_VIDEO_EXPERIMENTS.md).
 
+После единственного клика «Опубликовать» прямой Dzen writer оставляет редактор
+открытым на 45 секунд для read-only наблюдения. При неопределённости
+сохраняется PNG в `screenshots/`, а `CLICKED_UNVERIFIED` запрещает второй
+upload/click. После ручной публикации штатный запуск найдёт готовое видео.
+
+**Независимый VK:** при готовом MP4 текущего дня VK публикуется независимо
+от статусов Дзена. Если статья Дзена ещё недоступна, «Читать» и место URL
+в шаблоне получают `https://rybalka.one/posts/YYYY-MM-DD/`. Ссылка
+закрепляется в checkpoint. Общий `full-worker.lock` и последовательный
+порядок сохраняются, чтобы не потерять записи `state.json`.
+
 ## Dzen collections
 
 After native publication is confirmed, `dzen-collections.js` manages exactly
