@@ -52,10 +52,12 @@ RSS rybalka.one
   -> dzen-article-video.js
      -> same-day article H2 «Видеосводка»
      -> public verification
-  -> vk-stage.mjs (optional, config.vkPublish.automaticEnabled=true)
+  -> dzen-article-link.js (optional, VK enabled, no verified article URL)
+     -> published same-day Dzen ARTICLE link (Studio + public verification)
+  -> vk-stage.mjs (optional, requires verified MP4/PNG + published article URL)
      -> VK video -> «Сводки по ИИ» playlist
-     -> VK wall post with video + article link
-     -> VK community story: unchanged preview PNG + post sticker + Dzen link
+     -> VK wall post with video + published Dzen article link
+     -> VK story: separate portrait PNG + post sticker + Dzen article link
 ~~~
 
 `full-worker.js` owns the outer lock for the whole scheduled sequence.
