@@ -25,18 +25,32 @@ class SolOct24Contract(unittest.TestCase):
         self.assertIn('kwargs["max_retries"] = 0',code)
         self.assertTrue(runner.STATE["owner_removed_dollar_guard"])
         self.assertIn("tier_adjusted_estimate_usd",code)
-    def test_manual_only_exact_ref(self):
+    def test_paid_workflow_is_retired_after_original_run(self):
         ci=(ROOT/".github/workflows/ci.yml").read_text(encoding="utf-8")
-        paid=ci.split("  sol-24-paid-once:",1)[1].split("  sol-24-offline-proof:",1)[0]
-        self.assertIn("github.event_name == 'workflow_dispatch'",paid)
-        self.assertIn("github.ref == 'refs/heads/experiment/sol-shadow-2026-10-24'",paid)
-        self.assertIn("secrets.OPENAI_API_KEY",paid)
-        self.assertIn("UNCAPPED_12_ONLY",paid)
-        self.assertIn("cancel-in-progress: false",paid)
-        self.assertIn("needs: validate",paid)
-        self.assertNotIn("contents: write",paid)
-        self.assertIn("sol-24-offline-proof:",ci)
-        self.assertIn("5240a7a12c9759ce0bd48e260e80faddb17d5e9dff9fb90ec3608729788f56fe",ci)
+        self.assertNotIn("  sol-24-paid-once:",ci)
+        self.assertNotIn("  sol-24-offline-proof:",ci)
+        self.assertNotIn("UNCAPPED_12_ONLY",ci)
+        self.assertNotIn("SOL_SHADOW_OWNER_APPROVAL",ci)
+        # The historic runner stays inert without a separate owner-token gate.
+        code=SCRIPT.read_text(encoding="utf-8")
+        self.assertIn('SOL_SHADOW_OWNER_APPROVAL',code)
+        self.assertIn('GITHUB_RUN_ATTEMPT',code)
+
+    def test_oct24_comparator_accepts_24_and_rejects_23(self):
+        p=ROOT/"automation/audits/experiments/2026-10-24-sol-shadow/compare_primary.py"
+        spec=importlib.util.spec_from_file_location("sol24compare",p)
+        compare=importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(compare)
+        data={"publication_date":"2026-10-24",
+              "search_window":{"start_at":"a","end_at":"b"},
+              "directions":[]}
+        summary, rows=compare.build(data,data)
+        self.assertEqual(summary["publication_date"],"2026-10-24")
+        self.assertEqual(rows,[])
+        stale={**data,"publication_date":"2026-10-23"}
+        with self.assertRaisesRegex(ValueError,"Wrong date"):
+            compare.build(stale,data)
+
     def test_no_run_without_explicit_mode(self):
         p=subprocess.run([sys.executable,str(SCRIPT)],cwd=ROOT,
                          capture_output=True,text=True,timeout=10)
