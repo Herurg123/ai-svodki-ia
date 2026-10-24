@@ -68,8 +68,8 @@ def flat_rows(label: str, report: dict) -> list[dict]:
 
 
 def build(terra: dict, sol: dict) -> tuple[dict, list[dict]]:
-    if (terra.get("publication_date") != "2026-10-23" or
-            sol.get("publication_date") != "2026-10-23"):
+    if (terra.get("publication_date") != "2026-10-24" or
+            sol.get("publication_date") != "2026-10-24"):
         raise ValueError("Wrong date")
     tw, sw = terra.get("search_window", {}), sol.get("search_window", {})
     if tw.get("start_at") != sw.get("start_at") or tw.get("end_at") != sw.get("end_at"):
@@ -85,7 +85,7 @@ def build(terra: dict, sol: dict) -> tuple[dict, list[dict]]:
                           if r["model_side"] == side and r["primary_source_url"]}
     return ({
         "status": "ready_for_manual_event_review" if ready else "incomplete_search_matrix",
-        "publication_date": "2026-10-23",
+        "publication_date": "2026-10-24",
         "search_window": tw,
         "directions_terra": len(tr), "directions_sol": len(sr),
         "raw_candidates_terra": sum(r["model_side"] == "terra" for r in rows),
