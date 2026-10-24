@@ -27,6 +27,8 @@ const files=[
   "dzen-article-video.js",
   "dzen-publish-direct.js",
   "full-worker.js",
+  "worker.js",
+  "video-footer.js",
   "vk-stage.mjs",
   "vk-text.mjs",
   "setup-local.ps1",

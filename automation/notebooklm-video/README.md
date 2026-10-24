@@ -41,7 +41,9 @@ RSS rybalka.one
      -> worker.js
         -> protected Yandex Browser profile / Playwright CDP
         -> NotebookLM
-        -> MP4 + PNG first-frame preview
+        -> download original MP4
+        -> if downloads/_footer-vid.png exists: offline FFmpeg + 5s silent PNG footer
+        -> verified final MP4 (same dated filename) + PNG first-frame preview
         -> optional FTP video/
      -> Dzen duplicate guard
      -> at most one fresh native-video publish child
@@ -122,6 +124,15 @@ a later scheduled run resumes the same notebook by URL, verifies readiness,
 renames it to `ИИ-YYYY-MM-DD`, and only then starts generation, rather than
 creating another notebook for the same publication. Existing notebook cards
 remain the fallback when a saved URL cannot be opened.
+
+For NEW downloads only, local `downloads/_footer-vid.png` enables a 5-second silent
+final card: `worker.js` saves `ИИ-Сводка YYYY-MM-DD-original.mp4`, persists
+`DOWNLOADED`, and `video-footer.js` produces and verifies the canonical
+`ИИ-Сводка YYYY-MM-DD.mp4`. It retains the original and hashes, and only then
+marks the job `DONE`, registers it and starts FTP/Dzen/VK downstream.
+An FFmpeg/PNG error blocks downstream; `DOWNLOADED` resumes locally without
+NotebookLM, while old `DONE` jobs are never retroactively modified.
+Both `ffmpeg.exe` and `ffprobe.exe` must be in local `bin/` (or PATH).
 
 Downloaded video is registered persistently and is not regenerated/redownloaded
 when the same publication is already known. PNG preview is generated from the

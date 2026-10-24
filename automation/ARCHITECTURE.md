@@ -234,7 +234,7 @@ Production работает из GitHub Actions, хранит результат
 - запускается на Windows-машине пользователя, а не в nightly production;
 - читает уже опубликованный выпуск через RSS;
 - автоматизирует NotebookLM через отдельный Яндекс.Браузер/Playwright профиль; current home UI создаёт выпуск через `+ Новый блокнот` / `Недавние блокноты`, при этом runtime сохраняет compatibility fallback для legacy `Создать` / `Мои блокноты`;
-- скачивает MP4;
+- скачивает MP4; при наличии локального `downloads/_footer-vid.png` сохраняет оригинал отдельным `-original.mp4`, записывает checkpoint `DOWNLOADED` и через локальные `ffmpeg.exe`/`ffprobe.exe` формирует подтверждённый финальный MP4 с пятисекундной беззвучной картинкой в конце. `DONE` ставится только после проверки файла, а FTP/Dzen/VK используют тот же dated MP4. Повторы `DOWNLOADED` работают локально, без новой NotebookLM-генерации; старые `DONE` не меняются, ошибка обработки блокирует downstream;
 - создаёт PNG первого кадра;
 - при включённой настройке доставляет media только в FTP-каталог `video`;
 - после успешного локального этапа автоматически выполняет native Dzen browser-upload через тот же защищённый профиль, но в отдельной последовательной browser-сессии;
@@ -1900,7 +1900,8 @@ RSS
  -> Yandex Browser + dedicated profile
  -> Playwright CDP
  -> NotebookLM
- -> local MP4
+ -> original MP4 download
+ -> optional local FFmpeg 5s silent PNG footer, verified dated MP4
  -> PNG preview via ffmpeg-static
  -> optional FTP video/
  -> close NotebookLM browser/CDP

@@ -7,7 +7,7 @@ const script=fs.readFileSync(path.join(root,"scripts/install-safe-update.ps1"),"
 const packer=fs.readFileSync(path.join(root,"scripts/build-safe-update.mjs"),"utf8");
 const workflow=fs.readFileSync(path.join(root,"../../.github/workflows/video-ci.yml"),"utf8");
 for(const n of ["dzen-article-link.js","dzen-article-video.js","dzen-publish-direct.js",
- "full-worker.js","vk-stage.mjs","vk-text.mjs","setup-local.ps1","package.json"]){
+ "full-worker.js","worker.js","video-footer.js","vk-stage.mjs","vk-text.mjs","setup-local.ps1","package.json"]){
  assert(script.includes("'"+n+"'"),"Installer must explicitly allow "+n);
  assert(packer.includes('"'+n+'"'),"Packer must explicitly include "+n);
 }
