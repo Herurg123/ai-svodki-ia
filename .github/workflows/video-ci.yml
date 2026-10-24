@@ -46,6 +46,21 @@ jobs:
             node --check "$test_file"
           done
 
+      - name: Syntax-check safe updater builder
+        run: node --check scripts/build-safe-update.mjs
+
+      - name: Syntax-check Windows patch installer without running it
+        shell: pwsh
+        run: |
+          $tokens = $null
+          $errors = $null
+          $file = Join-Path (Get-Location) 'scripts/install-safe-update.ps1'
+          [System.Management.Automation.Language.Parser]::ParseFile($file, [ref]$tokens, [ref]$errors) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_.ToString() }
+            throw 'Installer PowerShell syntax check failed'
+          }
+
       - name: Run dependency-free video contract tests
         run: |
           set -euo pipefail
