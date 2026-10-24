@@ -52,7 +52,19 @@ access remains protected by Windows DPAPI `CurrentUser`.
 empty `temp/` or `traces/` directories or restore them to fresh config unless
 a real producer/consumer is added with tests and documentation.
 
-## Optional local MP4 final card\n\nFor fresh NotebookLM downloads only, local `downloads/_footer-vid.png`\nactivates the 5-second silent closing card. Preserve the raw original\n`-original.mp4` and write a verified dated MP4 only after FFmpeg succeeds.\nPersist `DOWNLOADED` before processing; retry offline without launching\nNotebookLM. Mark `DONE` and record sha/size only after validation, before\nFTP/Dzen/VK. Never append twice to an existing `DONE` job, silently\nfall back to raw when an enabled footer fails, or overwrite a file on\nambiguous recovery. Source PNG, state, templates and old media are\noperator-owned and never committed.\n\n## Browser/session safety
+## Optional local MP4 final card
+
+For fresh NotebookLM downloads only, local `downloads/_footer-vid.png`
+activates the 5-second silent closing card. Preserve the raw original
+`-original.mp4` and write a verified dated MP4 only after FFmpeg succeeds.
+Persist `DOWNLOADED` before processing; retry offline without launching
+NotebookLM. Mark `DONE` and record sha/size only after validation, before
+FTP/Dzen/VK. Never append twice to an existing `DONE` job, silently
+fall back to raw when an enabled footer fails, or overwrite a file on
+ambiguous recovery. Source PNG, state, templates and old media are
+operator-owned and never committed.
+
+## Browser/session safety
 
 All NotebookLM and Dzen browser automation reuses the protected persistent Yandex
 Browser profile and the project CDP lifecycle. Never delete/recreate the profile,
