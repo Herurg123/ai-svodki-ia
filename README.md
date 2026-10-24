@@ -147,7 +147,7 @@ Summary`. Диагностические JSON artifacts имеют `retention: 2
 ## Локальный NotebookLM-video
 
 Подпроект стартует после уже опубликованного выпуска и живёт на Windows-машине
-оператора. Один scheduled entrypoint ведёт NotebookLM/MP4/PNG/optional FTP,
+оператора. Один scheduled entrypoint ведёт NotebookLM/MP4 (с опциональной локальной пятисекундной PNG-заставкой до отправки на площадки)/PNG/optional FTP,
 native Dzen publication, две Dzen collections и insertion опубликованного видео
 в same-day статью. Production article-video выполняет video paste внутри browser
 page через synthetic paste event и не зависит от Windows desktop clipboard;
