@@ -1,6 +1,6 @@
 # Финальный контрольный Sol API 24 октября 2026 года
 
-**Готовность:** PR draft; до разрешённого ручного запуска **0 Sol API-запросов**.
+**Итог:** ручной Sol завершил **12/12 Responses и 12/12 Web Search** в [run 40062804057](https://github.com/Herurg123/ai-svodki-ia/actions/runs/40062804057). Общий run отмечен failure из-за устаревшей даты 23 октября в бесплатном компараторе; оригинальный [artifact 12548745112](https://github.com/Herurg123/ai-svodki-ia/actions/runs/40062804057/artifacts/12548745112) сохранён. **Повторять платный job или Re-run запрещено.** Полные результаты, контрольные суммы и решение: [RESULT.md](RESULT.md).
 
 ## Исходные свидетельства Terra
 
@@ -20,7 +20,7 @@
   **2026-10-22T04:31:19+03:00 — 2026-10-24T04:35:28+03:00**;
   latest archive: `2026-10-23T04:31:19+03:00`.
 
-## Запуск вручную, только после зелёного PR Gate
+## Исторический протокол уже выполненного ручного запуска (не повторять)
 
 1. Перейти [GitHub Actions → Main CI](https://github.com/Herurg123/ai-svodki-ia/actions/workflows/ci.yml).
 2. **Run workflow** → **Use workflow from** = `experiment/sol-shadow-2026-10-24`.
