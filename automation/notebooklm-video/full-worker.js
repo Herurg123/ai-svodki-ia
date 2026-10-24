@@ -145,10 +145,11 @@ function canAutoRecoverBrowserPasteMigration(job) {
 // Only same-day completed local download is an independent VK admission gate.
 // No Dzen/collection/article status is read here. vk-stage validates ftyp,
 // saved file size/SHA, cover and same-date source URL before mutations.
-function hasTodayLocalMp4(job,dateKey) {
+function hasTodayLocalMp4(job,dateKey,downloadsDir=path.join(ROOT,"downloads")) {
   if (!job||job.date!==dateKey||typeof job.downloadedFile!=="string")return false;
   const expected="ИИ-Сводка "+dateKey+".mp4";
-  if(path.basename(job.downloadedFile)!==expected)return false;
+  if(path.basename(job.downloadedFile)!==expected ||
+     path.resolve(path.dirname(job.downloadedFile))!==path.resolve(downloadsDir))return false;
   try{
     const stat=fs.statSync(job.downloadedFile);
     return stat.isFile()&&stat.size>=12;
