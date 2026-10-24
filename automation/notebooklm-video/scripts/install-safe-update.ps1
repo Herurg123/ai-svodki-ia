@@ -16,16 +16,16 @@ $targetRoot = [IO.Path]::GetFullPath($TargetDir).TrimEnd('\')
 if (-not (Test-Path -LiteralPath $targetRoot -PathType Container)) {
     throw "Рабочая папка не найдена: $targetRoot"
 }
-if ($manifest.schema -ne 1 -or $manifest.files.Count -ne 8 -or
+if ($manifest.schema -ne 1 -or $manifest.files.Count -ne 10 -or
     [string]$manifest.targetSha -notmatch '^[0-9a-f]{40}$') {
     throw 'Неизвестная схема или содержимое manifest.json'
 }
 $allowedNames = @(
     'dzen-article-link.js', 'dzen-article-video.js', 'dzen-publish-direct.js',
-    'full-worker.js', 'vk-stage.mjs', 'vk-text.mjs', 'setup-local.ps1', 'package.json'
+    'full-worker.js', 'worker.js', 'video-footer.js', 'vk-stage.mjs', 'vk-text.mjs', 'setup-local.ps1', 'package.json'
 )
 $names = @($manifest.files | ForEach-Object { [string]$_.file })
-if (@($names | Sort-Object -Unique).Count -ne 8) {
+if (@($names | Sort-Object -Unique).Count -ne 10) {
     throw 'Повторяющиеся файлы в манифесте'
 }
 foreach ($lock in @('full-worker.lock','scheduled-worker.lock')) {
@@ -48,7 +48,7 @@ foreach ($entry in $manifest.files) {
     if ([string]$entry.newSha256 -notmatch '^[a-f0-9]{64}$') {
         throw "Некорректная SHA-256 для $name"
     }
-    if ([bool]$entry.allowAbsent -and $name -ne 'dzen-article-link.js') {
+    if ([bool]$entry.allowAbsent -and $name -notin @('dzen-article-link.js', 'video-footer.js')) {
         throw "Нельзя установить отсутствующий $name без предыдущей версии"
     }
     $sourceSha = (Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -150,4 +150,4 @@ try {
     throw "Установка прервана: $reason. Выполнен откат; копии: $backupDir"
 }
 Write-Host "Установка выполнена и SHA-256 проверены; копии: $backupDir"
-Write-Host 'Безопасная проверка: node --check full-worker.js; node --check dzen-article-link.js; node --check vk-stage.mjs'
+Write-Host 'Безопасная проверка: node --check worker.js; node --check video-footer.js; node --check full-worker.js; node --check dzen-article-link.js; node --check vk-stage.mjs'
