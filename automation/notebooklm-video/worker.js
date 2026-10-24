@@ -8,6 +8,7 @@ const { chromium } = require("playwright");
 const { XMLParser } = require("fast-xml-parser");
 const logUtils = require("./log-utils");
 const history = require("./history-utils");
+const videoFooter = require("./video-footer");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
@@ -3864,6 +3865,57 @@ async function findVideoArtifactContainer(page, config) {
   throw new Error("Не удалось определить контейнер готового видеопересказа.");
 }
 
+// A downloaded original is never published until the local five-second footer
+// has been rendered and verified. The durable DOWNLOADED checkpoint allows
+// retrying the offline operation without opening NotebookLM or downloading again.
+async function finalizeDownloadedVideo(config, publication, job, state) {
+  if (job.status !== "DOWNLOADED" || !job.downloadedSourceFile) {
+    throw new Error("Нет подтверждённого исходного MP4 для локального этапа.");
+  }
+  const finalPath = path.join(config.downloadDir, `ИИ-Сводка ${publication.date}.mp4`);
+  const planned = job.videoFooter && job.videoFooter.status === "PENDING";
+  if (planned) {
+    const footerPath = path.join(config.downloadDir, videoFooter.FOOTER_FILENAME);
+    const processed = await videoFooter.appendFooter({
+      sourcePath: job.downloadedSourceFile,
+      footerPath,
+      outputPath: finalPath,
+      rootDir: ROOT,
+    });
+    job.videoFooter = {
+      status: "COMPLETE",
+      durationSeconds: processed.durationSeconds,
+      footerFilename: videoFooter.FOOTER_FILENAME,
+      footerSha256: processed.footerSha256,
+      originalDuration: processed.originalDuration,
+      finalDuration: processed.finalDuration,
+      completedAt: new Date().toISOString(),
+    };
+    log(config, `Заставка ${videoFooter.FOOTER_SECONDS} сек. добавлена: ${finalPath}`);
+  } else if (job.videoFooter && job.videoFooter.status === "SKIPPED_ABSENT") {
+    if (path.resolve(job.downloadedSourceFile) !== path.resolve(finalPath)) {
+      throw new Error("Неожиданный путь исходного MP4 без заставки.");
+    }
+    log(config, "Заставка отсутствовала при скачивании; локальная обработка пропущена.");
+  } else {
+    throw new Error("Отсутствует однозначный checkpoint videoFooter для DOWNLOADED.");
+  }
+
+  const downloadedStats = fs.statSync(finalPath);
+  const downloadedHash = await fileSha256(finalPath);
+  job.status = "DONE";
+  job.downloadedFile = finalPath;
+  job.downloadedFilename = path.basename(finalPath);
+  job.downloadedSizeBytes = downloadedStats.size;
+  job.downloadedSha256 = downloadedHash;
+  job.updatedAt = new Date().toISOString();
+  saveState(config, state);
+  writeDescription(config, publication);
+  await ensureSuccessRegistryEntry(config, publication, job, state);
+  await ensureFtpDelivery(config, publication, job, state);
+  log(config, `Видео готово для дальнейшей доставки: ${finalPath}`);
+}
+
 async function checkAndDownload(config, context, publication, job, state) {
   stage = "CHECK_VIDEO_STATUS";
   activePage = await openNotebookWithFallback(
@@ -3956,7 +4008,20 @@ async function checkAndDownload(config, context, publication, job, state) {
     `ИИ-Сводка ${publication.date}${extension}`
   );
 
-  await download.saveAs(finalPath);
+  // Only new downloads opt in, by presence of downloads/_footer-vid.png.
+  // Older DONE jobs are intentionally never retroactively changed.
+  const footerPath = path.join(config.downloadDir, videoFooter.FOOTER_FILENAME);
+  const needsFooter = fs.existsSync(footerPath);
+  if (needsFooter && extension.toLowerCase() !== ".mp4") {
+    throw new Error("Локальная заставка поддерживает только загруженный MP4.");
+  }
+  const downloadPath = needsFooter
+    ? path.join(config.downloadDir, `ИИ-Сводка ${publication.date}-original.mp4`)
+    : finalPath;
+  if (fs.existsSync(downloadPath)) {
+    throw new Error(`Файл скачивания уже существует; перезапись запрещена: ${downloadPath}`);
+  }
+  await download.saveAs(downloadPath);
 
   const guardResult = await downloadMinimizeGuard;
   const finalDownloadMinimizeResult =
@@ -3980,30 +4045,20 @@ async function checkAndDownload(config, context, publication, job, state) {
     );
   }
 
-  const downloadedStats = fs.statSync(finalPath);
-  const downloadedHash = await fileSha256(finalPath);
-
-  job.status = "DONE";
-  job.downloadedFile = finalPath;
-  job.downloadedFilename = path.basename(finalPath);
+  // Persist the successful download before FFmpeg. Failure here blocks
+  // FTP/Dzen/VK and resumes locally, without NotebookLM re-download.
+  job.status = "DOWNLOADED";
+  job.downloadedSourceFile = downloadPath;
+  job.downloadedSourceSha256 = await fileSha256(downloadPath);
   job.downloadedOriginalFilename = suggested;
-  job.downloadedSizeBytes = downloadedStats.size;
-  job.downloadedSha256 = downloadedHash;
   job.downloadedAt = new Date().toISOString();
+  job.videoFooter = {
+    status: needsFooter ? "PENDING" : "SKIPPED_ABSENT",
+    plannedAt: new Date().toISOString(),
+  };
   job.updatedAt = new Date().toISOString();
   saveState(config, state);
-  writeDescription(config, publication);
-
-  await ensureSuccessRegistryEntry(
-    config,
-    publication,
-    job,
-    state
-  );
-
-  await ensureFtpDelivery(config, publication, job, state);
-
-  log(config, `Видео скачано: ${finalPath}`);
+  await finalizeDownloadedVideo(config, publication, job, state);
   return "DONE";
 }
 
@@ -4068,6 +4123,12 @@ async function run() {
     config,
     `Статус задания: ${job?.status || "задание ещё не создано"}`
   );
+
+  if (job?.status === "DOWNLOADED") {
+    log(config, "Возобновляю обработку скачанного MP4 локально, без повторного обращения к NotebookLM.");
+    await finalizeDownloadedVideo(config, publication, job, state);
+    return;
+  }
 
   if (job?.status === "DONE") {
     writeDescription(config, publication);
