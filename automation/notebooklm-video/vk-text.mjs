@@ -19,12 +19,14 @@ export function substituteDate(text,dateKey){
 }
 export function renderVkTemplate(source,{date,articleUrl,publicationUrl}){
   if(typeof source!=="string"||source.trim().length<50)throw new Error("Пустой VK шаблон");
-  if(!/^https:\/\/dzen\.ru\/a\/[A-Za-z0-9_-]+$/.test(articleUrl||""))
-    throw new Error("Нет проверенной ссылки на статью Дзена");
   const d=dateTokens(date);
   const canonical="https://rybalka.one/posts/"+date+"/";
   if(!/^https:\/\/rybalka\.one\/posts\/\d{4}-\d{2}-\d{2}\/$/.test(publicationUrl||"")||
     publicationUrl!==canonical)throw new Error("Ссылка исходной сводки не соответствует дате");
+  // Dzen is independent: before its article becomes available, link to the
+  // already-existing canonical digest. Do not allow arbitrary fallback URLs.
+  if(articleUrl!==canonical && !/^https:\/\/dzen\.ru\/a\/[A-Za-z0-9_-]+$/.test(articleUrl||""))
+    throw new Error("VK ссылка должна быть статьёй Дзена или исходной сводкой текущей даты");
   const lines=source.replace(/^\uFEFF/,"").replace(/\r\n?/g,"\n").split("\n");
   const titleMarks=lines.map((s,i)=>s.trim()==="+++ Тема / Название:"?i:-1).filter(x=>x>=0);
   const descriptionMarks=lines.map((s,i)=>s.trim()==="+++ Описание:"?i:-1).filter(x=>x>=0);
