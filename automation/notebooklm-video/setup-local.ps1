@@ -36,6 +36,7 @@ $files = @(
     "dzen-collections.js",
     "dzen-collections-debug.js",
     "dzen-article-video.js",
+    "dzen-article-link.js",
     "vk-api.mjs",
     "vk-stage.mjs",
     "vk-story-image.mjs",
@@ -126,6 +127,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "node --check dzen-collections.js завершился ошибкой." }
     node --check dzen-article-video.js
     if ($LASTEXITCODE -ne 0) { throw "node --check dzen-article-video.js завершился ошибкой." }
+    node --check dzen-article-link.js
+    if ($LASTEXITCODE -ne 0) { throw "node --check dzen-article-link.js завершился ошибкой." }
 }
 finally {
     Pop-Location
