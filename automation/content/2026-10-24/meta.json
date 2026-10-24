@@ -1,0 +1,38 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-24",
+  "slug": "2026-10-24",
+  "title": "ИИ-Сводка на 24 октября 2026",
+  "description": "OpenAI изолирует обучение frontier-моделей от живого интернета, Anthropic запускает Claude Duet, Uber масштабирует ChatGPT Work, а DeepSeek привлекает около $15 млрд.",
+  "published_at": "2026-10-24T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-24.png",
+  "topics": [
+    "OpenAI",
+    "безопасность frontier-моделей",
+    "агенты ИИ",
+    "Replit Agent",
+    "Claude Duet",
+    "ChatGPT Work",
+    "корпоративный ИИ",
+    "NVIDIA Minerva",
+    "ИИ-инфраструктура",
+    "NASK",
+    "DeepSeek",
+    "финансирование ИИ"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Четыре выбранных материала TechCrunch описывают независимые значимые события разных компаний и сегментов: запуск Claude Duet, корпоративное развёртывание ChatGPT Work, новый режим безопасности OpenAI и крупный раунд DeepSeek. В коротком доступном пуле сопоставимых подтверждённых альтернатив недостаточно."
+    }
+  ]
+}

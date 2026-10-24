@@ -1,8 +1,259 @@
 {
   "version": 2,
-  "generated_at": "2026-10-23T01:39:35+00:00",
+  "generated_at": "2026-10-24T01:44:44+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-10-24",
+      "published_at": "2026-10-24T06:00:00+03:00",
+      "search_cutoff_at": "2026-10-24T04:35:28+03:00",
+      "title": "ИИ-Сводка на 24 октября 2026",
+      "link": "https://rybalka.one/posts/2026-10-24/",
+      "summary": "Главные новости искусственного интеллекта за 24 октября 2026 года Повестка дня показывает переход агентных систем от экспериментов к операционному использованию — но вместе с этим растёт цена контроля. OpenAI меняет среду обучения frontier-моделей, Anthropic и Replit расширяют автономные рабочие сценарии, а крупные компании начинают разворачивать ИИ для всего штата. Одновременно инфраструктурный слой становится самостоятельным полем конкуренции: NVIDIA выводит наблюдаемость ИИ-фабрик в отдельную",
+      "topics": [
+        "OpenAI",
+        "безопасность frontier-моделей",
+        "агенты ИИ",
+        "Replit Agent",
+        "Claude Duet",
+        "ChatGPT Work",
+        "корпоративный ИИ",
+        "NVIDIA Minerva",
+        "ИИ-инфраструктура",
+        "NASK",
+        "DeepSeek",
+        "финансирование ИИ"
+      ],
+      "source_urls": [
+        "https://www.havoptic.com/r/replit-agent-2026-10-23",
+        "https://openai.com/index/securing-our-frontier-model-training-environment/",
+        "https://techcrunch.com/2026/10/22/claude-duet-app-is-anthropics-bet-on-agents/",
+        "https://techcrunch.com/2026/10/22/uber-puts-all-30000-employees-on-chatgpt-work/",
+        "https://blogs.nvidia.com/blog/minerva-platform-infrastructure",
+        "https://openai.com/index/openai-nask-ai-safety-security-partnership",
+        "https://techcrunch.com/2026/10/22/deepseek-reportedly-raises-15b-days-after-us-restrictions/"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "Replit Agent получила Monitoring Agent для production-инцидентов",
+          "organization": "Replit",
+          "topic": "AI coding agents; production monitoring; autonomous incident response; automated remediation; developer platforms",
+          "event_type": "product release",
+          "status": "new",
+          "summary": "Replit Agent получила Monitoring Agent: система может в фоне расследовать production-alerts по логам и метрикам, пытаться исправить проблему и валидировать исправление. Для проверенных изменений доступна экспериментальная автоматическая перепубликация, либо пользователь может вручную проверить и опубликовать патч.",
+          "published_at": "2026-10-23T00:00:00+00:00",
+          "published_date": "2026-10-23",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Replit Agent 2026.10.23",
+              "publisher": "Havoptic",
+              "url": "https://www.havoptic.com/r/replit-agent-2026-10-23"
+            }
+          ],
+          "keywords": [
+            "Replit Agent",
+            "Monitoring Agent",
+            "production alerts",
+            "auto-fix",
+            "auto-republish",
+            "logs",
+            "metrics"
+          ],
+          "geography": "world",
+          "category": "agents"
+        },
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "OpenAI перевела обучение frontier-моделей в режим без живого интернета",
+          "organization": "OpenAI",
+          "topic": "Frontier-model safety; containment; offline training environments; AI-agent cybersecurity; red teaming",
+          "event_type": "policy and infrastructure-security announcement",
+          "status": "new",
+          "summary": "OpenAI объявила, что обучение и большинство оценок frontier-моделей будут проводиться без доступа к живому интернету: вместо него используется изолированная «offline world» с индексированным и кэшированным веб-контентом. Компания связала решение с рисками обхода песочниц и несанкционированного доступа агентов к внешним системам.",
+          "published_at": "2026-10-23T23:05:49+00:00",
+          "published_date": "2026-10-23",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Securing our frontier model training environment",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/securing-our-frontier-model-training-environment/"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "frontier models",
+            "live internet",
+            "offline world",
+            "containment",
+            "red teaming",
+            "agent security"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-004",
+          "section": "world",
+          "headline": "Anthropic запустила Claude Duet — проактивного агента для профессионалов и малого бизнеса",
+          "organization": "Anthropic",
+          "topic": "Consumer and business AI agents; proactive assistants; Claude; connectors; agentic commerce; mobile apps",
+          "event_type": "product launch",
+          "status": "new",
+          "summary": "Anthropic вывела в research preview Claude Duet — проактивного агента для iOS, Android и веба, рассчитанного на профессионалов и малый бизнес. Duet работает в фоне, формирует брифинги и dashboards, подключается к тысячам коннекторов и запрашивает одобрение пользователя для чувствительных действий, включая платежи.",
+          "published_at": "2026-10-22T13:53:26+00:00",
+          "published_date": "2026-10-22",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Claude Duet app is Anthropic’s bet on agents",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/22/claude-duet-app-is-anthropics-bet-on-agents/"
+            }
+          ],
+          "keywords": [
+            "Anthropic",
+            "Claude Duet",
+            "AI agents",
+            "Opus 5.5",
+            "connectors",
+            "research preview",
+            "Stripe Link",
+            "Shop Pay"
+          ],
+          "geography": "world",
+          "category": "agents"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "Uber развернёт ChatGPT Work для всех 30 тысяч сотрудников",
+          "organization": "Uber; OpenAI",
+          "topic": "Enterprise AI deployment; ChatGPT Work; workforce adoption; business productivity; OpenAI enterprise",
+          "event_type": "enterprise deployment and partnership expansion",
+          "status": "new",
+          "summary": "Uber и OpenAI расширили партнёрство: Uber намерена предоставить ChatGPT Work всей глобальной команде примерно из 30 000 сотрудников после пилота на 1 000 работников. Компания планирует отслеживать реальные workflow и результаты использования при дальнейшей интеграции ИИ.",
+          "published_at": "2026-10-22T16:00:00+00:00",
+          "published_date": "2026-10-22",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Uber puts all 30,000 employees on ChatGPT Work",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/22/uber-puts-all-30000-employees-on-chatgpt-work/"
+            }
+          ],
+          "keywords": [
+            "Uber",
+            "OpenAI",
+            "ChatGPT Work",
+            "enterprise AI",
+            "30,000 employees",
+            "workforce rollout",
+            "productivity"
+          ],
+          "geography": "world",
+          "category": "enterprise"
+        },
+        {
+          "candidate_id": "cand-009",
+          "section": "world",
+          "headline": "NVIDIA представила Minerva для наблюдаемости ИИ-фабрик",
+          "organization": "NVIDIA",
+          "topic": "NVIDIA Unveils Minerva to Bring End-to-End Observability for AI Factories",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "New AIOps platform connects infrastructure and workload telemetry to help operators increase uptime and maximize AI factory yield.",
+          "published_at": "2026-10-22T15:00:02+00:00",
+          "published_date": "2026-10-22",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "NVIDIA Unveils Minerva to Bring End-to-End Observability for AI Factories",
+              "publisher": "NVIDIA",
+              "url": "https://blogs.nvidia.com/blog/minerva-platform-infrastructure"
+            }
+          ],
+          "keywords": [
+            "NVIDIA",
+            "Unveils",
+            "Minerva",
+            "Bring",
+            "End-to-End",
+            "Observability",
+            "Factories"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "cand-012",
+          "section": "world",
+          "headline": "OpenAI и польская NASK договорились сотрудничать в области безопасности ИИ",
+          "organization": "OpenAI",
+          "topic": "OpenAI and Poland’s NASK partner to advance AI safety and security",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: OpenAI and Poland’s NASK partner to advance AI safety and security",
+          "published_at": "2026-10-23T00:00:00+00:00",
+          "published_date": "2026-10-23",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "OpenAI and Poland’s NASK partner to advance AI safety and security",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/openai-nask-ai-safety-security-partnership"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "Poland",
+            "NASK",
+            "partner",
+            "advance",
+            "safety",
+            "security"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-014",
+          "section": "world",
+          "headline": "DeepSeek, по данным СМИ, закрыла раунд примерно на 15–15,9 млрд долларов",
+          "organization": "DeepSeek",
+          "topic": "Финансирование ИИ-компаний; китайские frontier-модели; вычислительная инфраструктура; конкуренция с американскими AI-лабораториями",
+          "event_type": "funding",
+          "status": "new",
+          "summary": "DeepSeek, согласно независимо опубликованным сообщениям Bloomberg и The Information, закрыла второй раунд финансирования объёмом около 100–106 млрд юаней ($15–15,9 млрд). Компании не опубликовала собственного подтверждения условий, поэтому сумму и состав инвесторов следует атрибутировать источникам.",
+          "published_at": "2026-10-22T13:11:13+00:00",
+          "published_date": "2026-10-22",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "DeepSeek reportedly raises $15B days after US restrictions",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/22/deepseek-reportedly-raises-15b-days-after-us-restrictions/"
+            }
+          ],
+          "keywords": [
+            "DeepSeek",
+            "funding round",
+            "100 billion yuan",
+            "$15 billion",
+            "CATL",
+            "Tencent",
+            "China AI"
+          ],
+          "geography": "world",
+          "category": "investment"
+        }
+      ]
+    },
     {
       "date": "2026-10-23",
       "published_at": "2026-10-23T06:00:00+03:00",
@@ -6509,10 +6760,10 @@
     {
       "date": "2026-09-21",
       "published_at": "2026-09-21T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-21T04:04:31+03:00",
+      "search_cutoff_at": "2026-09-21T06:00:00+03:00",
       "title": "ИИ-Сводка на 21 сентября 2026",
       "link": "https://rybalka.one/posts/2026-09-21/",
-      "summary": "Главные новости искусственного интеллекта за 21 сентября 2026 года Новостей сегодня меньше, чем обычно В центре короткой повестки — новый релиз Alibaba Qwen для генерации и редактирования изображений. Qwen-Image-2.1 добавляет нативную работу с прозрачностью, что приближает генеративную графику к прикладным задачам дизайна, интерфейсов и создания контента. Важно учитывать, что ключевые характеристики модели заявлены разработчиком, а независимые сравнения качества в доступном пуле источников не пр",
+      "summary": "Alibaba Qwen выпустила open-weight модель Qwen-Image-2.1 для генерации и редактирования изображений с нативной прозрачностью. Короткий выпуск о значении RGBA для дизайн- и контентных процессов.",
       "topics": [
         "Alibaba Qwen",
         "Qwen-Image-2.1",
