@@ -44,11 +44,13 @@ try {
   const video=path.join(vkFixtureDir,"ИИ-Сводка 2026-10-24.mp4");
   const bytes=Buffer.alloc(32);bytes.write("ftyp",4);fs.writeFileSync(video,bytes);
   assert.strictEqual(full.hasTodayLocalMp4({date:"2026-10-24",downloadedFile:video,
-    dzenAutomation:{status:"CLICKED_UNVERIFIED"}},"2026-10-24"),true);
-  assert.strictEqual(full.hasTodayLocalMp4({date:"2026-10-23",downloadedFile:video},"2026-10-24"),false);
-  assert.strictEqual(full.hasTodayLocalMp4({date:"2026-10-24",downloadedFile:video},"2026-10-25"),false);
+    dzenAutomation:{status:"CLICKED_UNVERIFIED"}},"2026-10-24",vkFixtureDir),true);
+  assert.strictEqual(full.hasTodayLocalMp4({date:"2026-10-23",downloadedFile:video},"2026-10-24",vkFixtureDir),false);
+  assert.strictEqual(full.hasTodayLocalMp4({date:"2026-10-24",downloadedFile:video},"2026-10-25",vkFixtureDir),false);
+  assert.strictEqual(full.hasTodayLocalMp4({date:"2026-10-24",downloadedFile:video},
+    "2026-10-24",path.join(vkFixtureDir,"not-downloads")),false);
   fs.rmSync(video);
-  assert.strictEqual(full.hasTodayLocalMp4({date:"2026-10-24",downloadedFile:video},"2026-10-24"),false);
+  assert.strictEqual(full.hasTodayLocalMp4({date:"2026-10-24",downloadedFile:video},"2026-10-24",vkFixtureDir),false);
 }finally{fs.rmSync(vkFixtureDir,{force:true,recursive:true});}
 const state = {
   jobs: {
