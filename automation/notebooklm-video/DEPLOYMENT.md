@@ -20,6 +20,15 @@ vkPublish в общий config.json и делает backup конфигурац�
 Параметр automaticEnabled останется false до отдельного разрешения.
 Отдельный шаблон vk-publication-template.txt устанавливается в корень
 рабочей папки без перезаписи существующего операторского файла.
+
+После обновления `dzen-article-link.js` вместе с `dzen-article-video.js`,
+`full-worker.js`, `vk-stage.mjs` и `vk-text.mjs` опубликовывать VK
+разрешено только при `job.dzenPublishedArticle.status=VERIFIED` и URL
+статьи `https://dzen.ru/a/...`. Это поле автоматически появляется после
+read-only проверки published same-day статьи в Studio и публичной странице.
+Его отсутствие не даёт fallback к `rybalka.one`; старые выпуски
+автоматически не запускаются. Не запускать `setup-local.ps1` поверх
+производственной папки вместо безопасного patch-инсталлятора.
 Подробности и контракт восстановления: [VK_PUBLICATION.md](VK_PUBLICATION.md).
 
 ### Проверенные локальные VK-настройки и уборка после тестов
@@ -188,6 +197,7 @@ node --check .\full-worker.js
 node --check .\scheduled-worker.js
 node --check .\dzen-collections.js
 node --check .\dzen-article-video.js
+node --check .\dzen-article-link.js
 npm test
 ```
 
