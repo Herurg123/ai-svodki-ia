@@ -189,9 +189,10 @@ assert.strictEqual(
 assert(source.includes('runNodeScript("vk-stage.mjs"'), "full worker must own VK fifth stage");
 assert(source.indexOf('runNodeScript("vk-stage.mjs"') > articleVideoIndex,
   "VK must follow the existing Dzen article-video step");
-assert(source.includes('candidate.date === currentDateKey'), "VK cannot process old catch-up jobs");
-assert(source.includes('!phasesError && !collectionsError && !articleVideoError'),
-  "VK must wait for every Dzen gate");
+assert(source.includes('collections.findJobForDate(fresh,currentDateKey)'),
+  "VK must select only today's job, not an older catch-up job");
+assert(source.includes('hasTodayLocalMp4(candidate,currentDateKey)'),
+  "VK must use same-day local file gate, not Dzen statuses");
 assert(source.includes('config.vkPublish.automaticEnabled === true'),
   "VK default-off gate must be explicit");
 assert(source.includes('if (vkError) parts.push'),"VK errors must flow to the shared failure path");
