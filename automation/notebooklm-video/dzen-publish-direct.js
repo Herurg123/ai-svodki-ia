@@ -514,6 +514,53 @@ async function ensureFiveTagsOnce(page, config, tags) {
   log(config, `подтверждены все 5 тегов: ${tags.join(", ")}.`);
 }
 
+// Post-click read-only observation: never a second click or draft reopen.
+// Dzen may leave a ready draft after an accepted Playwright click.
+function summarizePostClickSnapshot(url, bodyText, draftId) {
+  const text=String(bodyText||"").normalize("NFKC").toLocaleLowerCase("ru-RU");
+  const current=String(url||"");
+  const editor=current.includes("videoEditorPublicationId=") ||
+    (draftId&&current.includes(String(draftId))&&/edit|create/i.test(current));
+  return {
+    editor:Boolean(editor),
+    readyDraft:/готово к публикации|уже можно публиковать|готово: можно публиковать/i.test(text),
+    challenge:/я не робот|подтвердите, что вы не робот/i.test(text),
+    confirmation:/сохранить изменения|подтвердить публикацию|подтвердить действие/i.test(text),
+    successHint:/видео опубликовано|публикация прошла успешно/i.test(text)
+  };
+}
+async function observeAfterPublishClick(page,config,dateKey,draftId,{durationMs=45_000,intervalMs=1500}={}) {
+  const started=Date.now();
+  let sample={editor:true,readyDraft:false,challenge:false,confirmation:false,successHint:false};
+  let lastUrl="";
+  // Do not leave the editor while its async finalization may still be running.
+  do {
+    if(page.isClosed())break;
+    lastUrl=page.url();
+    const body=await page.locator("body").innerText({timeout:1500}).catch(()=>"");
+    sample=summarizePostClickSnapshot(lastUrl,body,draftId);
+    const remaining=durationMs-(Date.now()-started);
+    if(remaining<=0)break;
+    await page.waitForTimeout(Math.min(intervalMs,remaining));
+  }while(Date.now()-started<durationMs);
+  const status=sample.editor?"editor-remains":sample.successHint?"success-hint":"unverified-navigation";
+  let screenshot="none";
+  if(status!=="success-hint") {
+    const dir=path.join(ROOT,"screenshots");
+    try {
+      fs.mkdirSync(dir,{recursive:true});
+      const file=path.join(dir,"dzen-post-click-"+dateKey+".png");
+      if(!page.isClosed()){await page.screenshot({path:file,timeout:8000});screenshot=file;}
+    }catch(error){screenshot="unavailable"; }
+  }
+  log(config,"POST-CLICK OBSERVE: "+status+
+    "; elapsedMs="+(Date.now()-started)+
+    "; readyDraft="+sample.readyDraft+"; challenge="+sample.challenge+
+    "; confirmation="+sample.confirmation+"; screenshot="+screenshot+
+    ". Без повторных кликов, без изменения draft; итог подтверждает только список опубликованных.");
+  return {status,...sample,screenshot};
+}
+
 async function findEnabledPublishButton(page) {
   for (const label of ["Отправить", "Опубликовать"]) {
     const button = await getVisible(page.getByRole("button", { name: label, exact: true }));
@@ -679,9 +726,9 @@ async function main(argv = process.argv.slice(2)) {
       config,
       `КЛИК ПУБЛИКАЦИИ ВЫПОЛНЕН ОДИН РАЗ: «${publish.label}», draftId=${draftId}.`
     );
-    log(config, "post-click verification и повторное открытие draft в этом MVP отсутствуют.");
-    await page.waitForTimeout(2000);
-    log(config, `=== END DIRECT MVP SUCCESS click=true draftId=${draftId} ===`);
+    log(config, "После publish click удерживаю редактор 45 секунд и наблюдаю без действий; только subsequent verification решает результат.");
+    await observeAfterPublishClick(page,config,dateKey,draftId);
+    log(config, `=== END DIRECT MVP CLICKED_UNVERIFIED click=true draftId=${draftId} ===`);
   } catch (error) {
     warn(
       config,
@@ -701,6 +748,8 @@ module.exports = {
   parseArgs,
   processingStageFromText,
   tagSetComplete,
+  summarizePostClickSnapshot,
+  observeAfterPublishClick,
 };
 
 if (require.main === module) {
