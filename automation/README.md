@@ -252,3 +252,7 @@ budget не используется для таких проверок без �
 доказательная информация остаётся в audits/fixtures/archive, а детальный
 current-state contract — в `ARCHITECTURE.md`; не следует снова размножать один
 и тот же implementation narrative по нескольким README.
+
+## Экспериментальный Sol 24 октября
+
+Временная draft PR-ветка `experiment/sol-shadow-2026-10-24` содержит единственный ручной paid job `sol-24-paid-once` в уже существующем Main CI: строго 12 Sol medium Primary, без денежного лимита по отдельному разрешению, с учётом каждого API usage и не более 12 новых Responses. Исторический архив commit `14a62d3`, cutoff `2026-10-24T04:35:28+03:00`; Terra checkpoint run `40050398793` загружается только после Sol для независимости. PR/push не вызывают платный job, production main не изменён. После запуска job удаляется. См. `audits/experiments/2026-10-24-sol-shadow/README.md`.
