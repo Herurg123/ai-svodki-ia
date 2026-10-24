@@ -74,12 +74,13 @@ Those two writers share one non-cancelling Actions concurrency group. Never set
 ## NotebookLM → VK publication
 
 Treat VK as a local optional fifth downstream stage, not a GitHub-side or
-separately scheduled publisher. As of 2026-10-24 the VK publication gate is the
-verified same-day local MP4/PNG and same-day job; Dzen publication, collections,
-and article-video completion are NOT required. Keep the shared full-worker
-lock and persisted checkpoints to avoid competing state.json writers. Freeze
-the chosen VK URL at first checkpoint: prefer already published Dzen article,
-else the canonical same-day rybalka.one digest; never change links on resume.
+separately scheduled publisher. As of 2026-10-24 VK requires a validated current-day MP4/PNG AND a
+verified published same-day Dzen ARTICLE URL (job.dzenPublishedArticle.url).
+The native Dzen video, collections and video-in-article completion are NOT
+VK gates. Never substitute rybalka.one or a Dzen /video/watch URL for the
+published Dzen article. Resolve missing article URLs via read-only Studio
+published-article lookup and public-page verification, then pin the article
+URL in the existing VK checkpoint; mismatches must fail closed.
 Never infer public story artwork from `stories.save` ACK alone: require visual
 verification of the actual image and preserve the source NotebookLM PNG bytes.
 As of the 2026-10-20 approved portrait Story rendering, preserve the *source*
