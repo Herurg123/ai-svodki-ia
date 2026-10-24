@@ -125,7 +125,16 @@ renames it to `ИИ-YYYY-MM-DD`, and only then starts generation, rather than
 creating another notebook for the same publication. Existing notebook cards
 remain the fallback when a saved URL cannot be opened.
 
-For NEW downloads only, local `downloads/_footer-vid.png` enables a 5-second silent\nfinal card: `worker.js` saves `ИИ-Сводка YYYY-MM-DD-original.mp4`, persists\n`DOWNLOADED`, and `video-footer.js` produces and verifies the canonical\n`ИИ-Сводка YYYY-MM-DD.mp4`. It retains the original and hashes, and only then\nmarks the job `DONE`, registers it and starts FTP/Dzen/VK downstream.\nAn FFmpeg/PNG error blocks downstream; `DOWNLOADED` resumes locally without\nNotebookLM, while old `DONE` jobs are never retroactively modified.\nBoth `ffmpeg.exe` and `ffprobe.exe` must be in local `bin/` (or PATH).\n\nDownloaded video is registered persistently and is not regenerated/redownloaded
+For NEW downloads only, local `downloads/_footer-vid.png` enables a 5-second silent
+final card: `worker.js` saves `ИИ-Сводка YYYY-MM-DD-original.mp4`, persists
+`DOWNLOADED`, and `video-footer.js` produces and verifies the canonical
+`ИИ-Сводка YYYY-MM-DD.mp4`. It retains the original and hashes, and only then
+marks the job `DONE`, registers it and starts FTP/Dzen/VK downstream.
+An FFmpeg/PNG error blocks downstream; `DOWNLOADED` resumes locally without
+NotebookLM, while old `DONE` jobs are never retroactively modified.
+Both `ffmpeg.exe` and `ffprobe.exe` must be in local `bin/` (or PATH).
+
+Downloaded video is registered persistently and is not regenerated/redownloaded
 when the same publication is already known. PNG preview is generated from the
 first frame. FTP delivery is idempotent and does not trigger a second
 NotebookLM-generation pass.
