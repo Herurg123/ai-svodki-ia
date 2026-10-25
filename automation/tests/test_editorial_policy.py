@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT / "automation" / "scripts"))
 from editorial_policy import (  # noqa: E402
     normalize_article_html,
     normalize_candidate_ids,
+    expected_editorial_heading,
     order_candidates_by_article_links,
     read_policy,
     validate_article_policy,
@@ -166,6 +167,108 @@ class EditorialPolicyTests(unittest.TestCase):
         )
         self.assertEqual(errors, [])
 
+
+    def test_incidental_moonshot_tool_does_not_reclassify_cybercrime(self) -> None:
+        incident = candidate("cyber")
+        incident["organization"] = "CyberCartel; Anthropic; xAI; Moonshot AI; Straiker"
+        incident["title"] = (
+            "CyberCartel использовала Claude, Grok и Moonshot для атак в Латинской Америке"
+        )
+        self.assertEqual(
+            expected_editorial_heading(incident, POLICY), "Мировые лидеры ИИ"
+        )
+        normalized, short, changes = normalize_article_html(
+            base_article(["CyberCartel использовала Claude, Grok и Moonshot"]),
+            [incident],
+            POLICY,
+        )
+        self.assertFalse(
+            any(item["field"] == "article_html.story_section" for item in changes)
+        )
+        errors, _, _ = validate_article_policy(normalized, [incident], short, POLICY)
+        self.assertEqual(errors, [])
+
+    def test_strong_chinese_actor_moves_story_and_preserves_exact_links(self) -> None:
+        chinese = candidate("china")
+        chinese["organization"] = "Moonshot AI; Reuters"
+        chinese["title"] = "Moonshot AI выпустила Kimi"
+        western = candidate("west")
+        western["organization"] = "CyberCartel; Moonshot AI"
+        western["title"] = "CyberCartel применила инструменты Moonshot AI"
+        original = (
+            "<p>Первое предложение вступления. Второе предложение.</p>"
+            "<h2>Мировые лидеры ИИ</h2>"
+            '<h3>Релиз Kimi</h3><p>Первый абзац.</p>'
+            '<p>Второй <a href="https://example.com/china">источник Kimi</a>.</p>'
+            '<h3>CyberCartel</h3><p>Первый абзац.</p>'
+            '<p>Второй <a href="https://example.com/west">источник инцидента</a>.</p>'
+            "<h2>Что это значит</h2>"
+            "<ol><li>Раз</li><li>Два</li><li>Три</li><li>Четыре</li></ol>"
+        )
+        html, short, changes = normalize_article_html(
+            original, [chinese, western], POLICY
+        )
+        self.assertEqual(
+            [x["candidate_id"] for x in changes
+             if x["field"] == "article_html.story_section"],
+            ["china"],
+        )
+        self.assertLess(html.index("<h3>CyberCartel"), html.index("<h3>Релиз Kimi"))
+        self.assertLess(
+            html.index("<h2>Китайские лидеры ИИ</h2>"),
+            html.index("<h3>Релиз Kimi"),
+        )
+        self.assertEqual(html.count("https://example.com/china"), 1)
+        self.assertEqual(html.count("https://example.com/west"), 1)
+        order, errors = order_candidates_by_article_links(html, [chinese, western])
+        self.assertEqual(errors, [])
+        self.assertEqual([item["id"] for item in order], ["west", "china"])
+        policy_errors, _, _ = validate_article_policy(html, order, short, POLICY)
+        self.assertEqual(policy_errors, [])
+
+    def test_russian_story_is_relocated_without_publishing_duplicate(self) -> None:
+        russian = candidate("ru", geography="russia")
+        world = candidate("world")
+        original = (
+            "<p>Первое предложение вступления. Второе предложение.</p>"
+            "<h2>Мировые лидеры ИИ</h2>"
+            '<h3>Российское событие</h3><p>Первый абзац.</p>'
+            '<p><a href="https://example.com/ru">Второй абзац</a>.</p>'
+            '<h3>Мировое событие</h3><p>Первый абзац.</p>'
+            '<p><a href="https://example.com/world">Второй абзац</a>.</p>'
+            "<h2>Что это значит</h2>"
+            "<ol><li>Раз</li><li>Два</li><li>Три</li><li>Четыре</li></ol>"
+        )
+        html, short, changes = normalize_article_html(
+            original, [russian, world], POLICY
+        )
+        self.assertEqual(
+            len([c for c in changes if c["field"] == "article_html.story_section"]), 1
+        )
+        self.assertLess(
+            html.index("<h3>Мировое событие"),
+            html.index("<h2>Российские лидеры ИИ</h2>"),
+        )
+        self.assertEqual(html.count("<h3>Российское событие"), 1)
+        self.assertEqual(html.count("<h3>Мировое событие"), 1)
+        order, errors = order_candidates_by_article_links(html, [russian, world])
+        self.assertEqual(errors, [])
+        policy_errors, _, _ = validate_article_policy(html, order, short, POLICY)
+        self.assertEqual(policy_errors, [])
+
+    def test_section_repair_leaves_unbalanced_html_for_strict_validation(self) -> None:
+        chinese = candidate("china")
+        chinese["organization"] = "MiniMax"
+        bad = (
+            "<p>Начало. Продолжение.</p>"
+            "<h2>Мировые лидеры ИИ</h2>"
+            "<h3>MiniMax выпустила модель</h3><p>Незакрытый параграф"
+        )
+        html, _short, changes = normalize_article_html(bad, [chinese], POLICY)
+        self.assertFalse(
+            any(x["field"] == "article_html.story_section" for x in changes)
+        )
+        self.assertIn("Незакрытый параграф", html)
 
 if __name__ == "__main__":
     unittest.main()
