@@ -108,5 +108,14 @@ assert(armed >= 0 && armed < click);
 assert(directSource.includes("if (resumeDraft) {"));
 assert(directSource.includes("await openPinnedDraft(page, config, draftId, title, description)"));
 assert(directSource.includes("return { pending: true, draftId };"));
+const runnerSource = fs.readFileSync(path.join(__dirname,"../dzen-browser-runner.js"),"utf8");
+const manualArm = runnerSource.indexOf('status: "UPLOAD_ARMED"');
+const manualChild = runnerSource.indexOf("await runNodeScript(target, targetArgs");
+assert(manualArm > 0 && manualChild > manualArm,
+  "Explicit manual launcher must persist UPLOAD_ARMED before child");
+assert(runnerSource.includes('childArgs.push(`--resume-draft=${current.draftId}`)'),
+  "Manual launcher must resume the exact pinned ID without fresh upload");
+assert(runnerSource.includes('for (const lockName of ["full-worker.lock", "scheduled-worker.lock"])'),
+  "Manual launcher must not compete with scheduled browser session");
 assert(!directSource.includes("Опубликовать после обработки"));
 console.log("PASS: Dzen same-draft processing, exact ID check, at-most-once publishing.");
