@@ -2777,6 +2777,32 @@ def main() -> int:
                     "normalized_value": ordered_selected_ids,
                 },
             )
+        # Section placement is presentation, not a reason to repeat paid
+        # Editorial. Re-bind reordered story blocks to their exact saved
+        # candidates by source links; identity ambiguity remains fail-closed.
+        section_changes = [
+            change for change in policy_changes
+            if change.get("field") == "article_html.story_section"
+        ]
+        if section_changes:
+            relocated, relocation_errors = order_candidates_by_article_links(
+                normalized_html, selected_candidates
+            )
+            if relocation_errors:
+                raise RuntimeError(
+                    "Section normalization нарушила соответствие источников: "
+                    + "; ".join(relocation_errors)
+                )
+            selected_candidates = relocated
+            relocated_ids = [str(item["id"]) for item in relocated]
+            if editorial["selected_candidate_ids"] != relocated_ids:
+                policy_changes.append({
+                    "field": "selected_candidate_ids.section_order",
+                    "model_value": list(editorial["selected_candidate_ids"]),
+                    "normalized_value": relocated_ids,
+                })
+                editorial["selected_candidate_ids"] = relocated_ids
+
         digest["article_html"] = normalized_html
         digest["short_digest"] = short_digest
         digest["editorial_notes"] = build_editorial_notes(
@@ -2784,6 +2810,15 @@ def main() -> int:
             selected_candidates,
             policy,
         )
+        for change in section_changes:
+            digest["editorial_notes"].append({
+                "type": "section_placement",
+                "area": "editorial",
+                "message": (
+                    f"Раздел для {change['candidate_id']} автоматически исправлен: "
+                    f"{change['model_value']} → {change['normalized_value']}."
+                ),
+            })
 
         for override in editorial.get("diversity_overrides", []):
             if not isinstance(override, dict):

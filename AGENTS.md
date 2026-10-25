@@ -304,6 +304,11 @@ but must not silently repoll mutable sources.
 - Saved research boundaries, freshness proof, archive dedupe, mandatory
   fail-closed search stages and at-most-once recovery must not be weakened as
   incidental cleanup.
+- Editorial story-section placement is a recoverable presentation concern when
+  source-linked candidate identity and HTML structure are unambiguous. Repair
+  it deterministically by principal event actor before strict validation;
+  never retry paid Editorial for a heading mistake or waive source, event,
+  freshness, selection, duplicate, or publication-integrity checks.
 - `daily-production.yml` must preserve durable same-day stage checkpoints after
   completed paid Research/editorial, Coverage/editorial-completion and Image
   boundaries. Recovery may reuse those checkpoints when the final always-run

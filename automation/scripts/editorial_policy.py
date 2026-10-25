@@ -8,6 +8,8 @@ from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
 
+from editorial_reconciliation import article_parts
+
 
 class PolicyHTMLParser(HTMLParser):
     """Collect editorial structure without changing the HTML."""
@@ -386,6 +388,11 @@ def normalize_article_html(
     cleaned, has_meta, meta_changes = _mark_first_visible_meta(cleaned)
     changes.extend(meta_changes)
 
+    cleaned, section_changes = _relocate_article_story_sections(
+        cleaned, selected_candidates, policy
+    )
+    changes.extend(section_changes)
+
     if short_digest:
         canonical_notice = short_notice_html
         cleaned = canonical_notice + "\n" + cleaned
@@ -550,17 +557,124 @@ def _canonical_dzen_block(policy: dict[str, Any]) -> str:
 
 
 def expected_editorial_heading(candidate: dict[str, Any], policy: dict[str, Any]) -> str:
-    """Use the editorial organization policy, not geography=world, for China."""
+    """Classify the principal event actor, not every mentioned tool/vendor.
 
+    Research sometimes lists the attacker, victims and tool vendors in one
+    semicolon-delimited organization field. The leading actor and leading
+    headline are stronger evidence than incidental later mentions. Russia
+    remains governed by the candidate's explicit geography.
+    """
     article = policy["article"]
     if candidate.get("geography") == "russia":
         return str(article["russian_heading"])
-    names = [str(name).casefold() for name in policy.get("tracked_asia_organizations", [])]
-    organization = str(candidate.get("organization", "")).casefold()
-    title = str(candidate.get("title", "")).casefold()
-    if any(name and (name in organization or name in title) for name in names):
+    tracked = [
+        str(name).strip().casefold()
+        for name in policy.get("tracked_asia_organizations", [])
+        if str(name).strip()
+    ]
+    organization = str(candidate.get("organization") or "").split(";")[0].strip().casefold()
+    title = str(candidate.get("title") or "").strip().casefold()
+
+    def leading_match(text: str, name: str) -> bool:
+        return bool(re.match(r"^" + re.escape(name) + r"(?=\W|$)", text))
+
+    if any(leading_match(organization, name) or leading_match(title, name)
+           for name in tracked):
         return str(article.get("china_heading", "Китайские лидеры ИИ"))
     return str(article["world_heading"])
+
+
+def _relocate_article_story_sections(
+    article_html: str,
+    selected_candidates: list[dict[str, Any]],
+    policy: dict[str, Any],
+) -> tuple[str, list[dict[str, Any]]]:
+    """Repair only section placement, without changing story prose or sources.
+
+    All story/candidate identities have already been checked from source links
+    before normalization. HTML without an unambiguous top-level structure is
+    deliberately left to the existing strict validator.
+    """
+    if not selected_candidates:
+        return article_html, []
+    article = policy["article"]
+    headings = [
+        str(article["world_heading"]),
+        str(article.get("china_heading", "Китайские лидеры ИИ")),
+        str(article["russian_heading"]),
+    ]
+    try:
+        prefix, parts = article_parts(article_html)
+    except ValueError:
+        return article_html, []
+    tail = next(
+        (idx for idx, part in enumerate(parts)
+         if part["kind"] == "h2" and part["headline"] not in headings),
+        len(parts),
+    )
+    story_parts = parts[:tail]
+    trailing = parts[tail:]
+    if (not story_parts or story_parts[0]["kind"] != "h2"
+            or story_parts[0]["headline"] != headings[0]
+            or any(part["kind"] == "h3" for part in trailing)
+            or any(part["kind"] == "h2" and part["headline"] not in headings
+                   for part in story_parts)):
+        return article_html, []
+
+    sections = {name: [] for name in headings}
+    headers: dict[str, str] = {}
+    stories: list[dict[str, Any]] = []
+    for part in story_parts:
+        if part["kind"] == "h2":
+            name = part["headline"]
+            if name in headers:
+                return article_html, []
+            headers[name] = part["html"]
+        else:
+            if part["section"] not in sections:
+                return article_html, []
+            stories.append(part)
+    if len(stories) != len(selected_candidates):
+        return article_html, []
+    changes: list[dict[str, Any]] = []
+    for story, candidate in zip(stories, selected_candidates):
+        wanted = expected_editorial_heading(candidate, policy)
+        if wanted not in sections:
+            return article_html, []
+        sections[wanted].append(story["html"])
+        if story["section"] != wanted:
+            changes.append({
+                "field": "article_html.story_section",
+                "candidate_id": str(candidate.get("id", "")),
+                "model_value": story["section"],
+                "normalized_value": wanted,
+            })
+    # Also normalize empty optional China/Russia headings. These are harmless
+    # layout mistakes, not a reason to cancel an otherwise safe digest.
+    for name, block in headers.items():
+        if not sections[name]:
+            if not re.fullmatch(
+                r"\s*<h2>" + re.escape(name) + r"</h2>\s*", block,
+                flags=re.IGNORECASE,
+            ):
+                return article_html, []
+            if name != headings[0]:
+                changes.append({
+                    "field": "article_html.empty_section",
+                    "model_value": name,
+                    "normalized_value": None,
+                })
+    if not changes:
+        return article_html, []
+
+    result = [prefix]
+    for name in headings:
+        if name != headings[0] and not sections[name]:
+            continue
+        result.append(headers.get(name, "<h2>" + html.escape(name) + "</h2>"))
+        result.extend(sections[name])
+    result.extend(part["html"] for part in trailing)
+    return "".join(result), changes
 
 
 def validate_article_policy(
@@ -614,13 +728,10 @@ def validate_article_policy(
         )
 
     china_heading = str(policy["article"].get("china_heading", "Китайские лидеры ИИ"))
-    tracked_asia = [str(item).casefold() for item in policy.get("tracked_asia_organizations", [])]
-    selected_china = 0
-    for item in selected_candidates:
-        organization = str(item.get("organization", "")).casefold()
-        title = str(item.get("title", "")).casefold()
-        if any(name and (name in organization or name in title) for name in tracked_asia):
-            selected_china += 1
+    selected_china = sum(
+        expected_editorial_heading(item, policy) == china_heading
+        for item in selected_candidates
+    )
     china_heading_count = parser.h2_texts.count(china_heading)
     if selected_china > 0 and china_heading_count != 1:
         errors.append(
