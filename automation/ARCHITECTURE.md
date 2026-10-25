@@ -881,9 +881,13 @@ canonical world, China/Asia and Russia `<h2>` sections. It uses the main event
 actor (the first semicolon-separated organization, or headline-leading company)
 and explicit Russia geography, not incidental mentions of vendors in lists.
 A story citing Moonshot as an attacker tool does not become a China-company
-story when CyberCartel is the principal actor. Relocation preserves the whole
-story HTML and source links; candidate selection order is re-bound from source
-links after movement, without another provider request.
+story when CyberCartel is the principal actor. If leading China/world identity
+conflicts, or the China name is only incidental, World is the safe fallback,
+with an explicit nonblocking warning in validation, policy-normalization and
+editorial_notes. A missing World h2 may be reconstructed when all story blocks
+remain structurally sound and unambiguously source-mapped. Relocation preserves
+the whole story HTML and source links; candidate selection order is re-bound from
+source links after movement, without another provider request.
 
 Normalizing a heading is not permission to alter factual prose, invent sources,
 remove stories, ignore semantic event repeats, or bypass source/age/archive
