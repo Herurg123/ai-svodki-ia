@@ -25,29 +25,35 @@ Studio -> Публикации -> Видео
 Если ожидаемый prefix найден, лог содержит `ВИДЕО УЖЕ ЕСТЬ`, а новый draft, MP4
 upload и publish click не выполняются.
 
-Если видео отсутствует, разрешён один fresh-upload child:
+Если опубликованное видео отсутствует и job действительно имеет статус PENDING
+**без закреплённого draftId**, допускается один fresh upload. Во всех иных
+случаях никакого нового MP4 upload:
 
 ```text
-новый video upload
- -> MP4
- -> videoEditorPublicationId только для диагностики
+PENDING -> UPLOAD_ARMED (записать ДО upload)
+ -> MP4 upload
+ -> remote videoEditorPublicationId -> DRAFT_CREATED (сохранить ID немедленно)
  -> title/description один раз
  -> PNG cover один раз
  -> ровно 5 tag-chip
- -> metadata/cover/tags больше не трогать
- -> ждать «Загрузили и обработали видео»
- -> ждать «Готово: можно публиковать и смотреть»
+ -> metadata/cover/tags подтверждены -> DRAFT_PROCESSING
+ -> ждать «Загрузили и обработали видео» + «Готово: можно публиковать и смотреть»
+ -> если обработка дольше окна: завершить child без click; следующий scheduled запуск
+    открывает ТОЛЬКО сохранённый draftId, проверяет URL/title/description и продолжает ждать
  -> comments = «Все пользователи»
- -> перед попыткой клика пометить publishClicked=true (даже если Playwright бросит timeout)
- -> один клик «Опубликовать»/«Отправить»
- -> 45 секунд read-only наблюдения в редакторе + локальный диагностический PNG при неопределённости
+ -> CLICKED_UNVERIFIED (сохранить ДО браузерной попытки клика)
+ -> один клик обычной кнопки «Опубликовать»/«Отправить»
+ -> 45 секунд read-only наблюдения + локальный диагностический PNG
  -> optional post-click anti-bot wait
- -> scheduled post-click verification через Публикации -> Видео
- -> PUBLISHED
+ -> read-only проверка опубликованного списка И существования конкретного draftId
+ -> PUBLISHED только после подтверждения
 ```
 
-Inter-run resume старых drafts, повторное заполнение metadata, повторный live child
-и второй publish click запрещены.
+Кнопка «Опубликовать после обработки» намеренно не используется. При сомнениях
+в принадлежности открытого редактора, неполной metadata, исчезновении draftId,
+или неопределённости исхода клика автоматизация прекращает мутирующие действия.
+Inter-run resume разрешён только для DRAFT_PROCESSING с сохранённым ID.
+Ранее созданные черновики без checkpoint автоматически не подхватываются.
 
 ## At-most-once state machine
 
@@ -55,22 +61,21 @@ Scheduled orchestration сохраняет `UPLOAD_ARMED` **до** запуск�
 Дальнейшая схема:
 
 ```text
-PENDING / RETRYABLE_PRE_CLICK
- -> PUBLISH_ARMED
- -> один live child
- -> CLICKED_UNVERIFIED
- -> verification
- -> PUBLISHED
+PENDING -> UPLOAD_ARMED -> DRAFT_CREATED -> DRAFT_PROCESSING
+ DRAFT_PROCESSING -> при необходимости продолжить ТОЛЬКО pinned draftId
+ DRAFT_PROCESSING -> CLICKED_UNVERIFIED (до клика)
+ CLICKED_UNVERIFIED -> read-only verification -> PUBLISHED
 
-PUBLISH_ARMED / CLICKED_UNVERIFIED / BLOCKED_AMBIGUOUS
- -> только verification
- -> новый upload запрещён
- -> второй publish click запрещён
+UPLOAD_ARMED / DRAFT_CREATED / legacy RETRYABLE_PRE_CLICK /
+legacy PUBLISH_ARMED / CLICKED_UNVERIFIED / BLOCKED_AMBIGUOUS
+ -> только read-only verification или ручная диагностика
+ -> ни нового MP4 upload, ни повторного publish click
 ```
 
-Fresh retry допустим только если предыдущий child явно доказал
-`publishClicked=false`. Любой неоднозначный исход после клика остаётся
-verification-only.
+Сообщение `publishClicked=false` **само по себе не подтверждает отсутствие
+удалённого черновика**, поэтому больше не разрешает fresh retry. Отдельное
+состояние DRAFT_PROCESSING отличает успешно подготовленный, но пока ещё
+обрабатываемый черновик от любого неопределённого результата upload.
 
 ## Редкая post-click антибот-проверка
 
