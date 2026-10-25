@@ -256,6 +256,23 @@ class EditorialPolicyTests(unittest.TestCase):
         policy_errors, _, _ = validate_article_policy(html, order, short, POLICY)
         self.assertEqual(policy_errors, [])
 
+    def test_empty_optional_china_heading_is_removed_without_new_story(self) -> None:
+        world = candidate("world")
+        article = (
+            base_article(["Мировой сюжет"]).replace(
+                "<h2>Что это значит</h2>",
+                "<h2>Китайские лидеры ИИ</h2><h2>Что это значит</h2>",
+            )
+        )
+        html, short, changes = normalize_article_html(article, [world], POLICY)
+        self.assertNotIn("<h2>Китайские лидеры ИИ</h2>", html)
+        self.assertTrue(
+            any(change["field"] == "article_html.empty_section" for change in changes)
+        )
+        self.assertEqual(
+            validate_article_policy(html, [world], short, POLICY)[0], []
+        )
+
     def test_section_repair_leaves_unbalanced_html_for_strict_validation(self) -> None:
         chinese = candidate("china")
         chinese["organization"] = "MiniMax"
