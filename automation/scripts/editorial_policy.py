@@ -649,18 +649,23 @@ def _relocate_article_story_sections(
                 "model_value": story["section"],
                 "normalized_value": wanted,
             })
+    # Also normalize empty optional China/Russia headings. These are harmless
+    # layout mistakes, not a reason to cancel an otherwise safe digest.
+    for name, block in headers.items():
+        if not sections[name]:
+            if not re.fullmatch(
+                r"\s*<h2>" + re.escape(name) + r"</h2>\s*", block,
+                flags=re.IGNORECASE,
+            ):
+                return article_html, []
+            if name != headings[0]:
+                changes.append({
+                    "field": "article_html.empty_section",
+                    "model_value": name,
+                    "normalized_value": None,
+                })
     if not changes:
         return article_html, []
-
-    # Do not discard otherwise meaningful section-introductory content.
-    # A heading with no assigned stories is removable only when it consists
-    # of the heading itself (and whitespace).
-    for name, block in headers.items():
-        if not sections[name] and not re.fullmatch(
-            r"\s*<h2>" + re.escape(name) + r"</h2>\s*", block,
-            flags=re.IGNORECASE,
-        ):
-            return article_html, []
 
     result = [prefix]
     for name in headings:
