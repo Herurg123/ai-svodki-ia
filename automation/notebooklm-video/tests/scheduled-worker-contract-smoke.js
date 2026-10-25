@@ -27,7 +27,7 @@ for (const status of ["UPLOAD_ARMED", "DRAFT_CREATED", "PUBLISH_ARMED", "RETRYAB
   );
 }
 assert.strictEqual(scheduled.isVerificationOnlyStatus("PENDING"), false);
-assert.strictEqual(scheduled.isVerificationOnlyStatus("RETRYABLE_PRE_CLICK"), false);
+assert.strictEqual(scheduled.isVerificationOnlyStatus("RETRYABLE_PRE_CLICK"), true);
 
 const latestDone = scheduled.findLatestDoneJob(
   {
