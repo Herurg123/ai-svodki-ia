@@ -146,24 +146,35 @@ reliably confirm the Studio Video view and expected same-day title prefix before
 upload. If an existing video is confirmed, stop without child/upload/draft/click.
 If the guard cannot prove the Video surface, fail closed before upload.
 
-If no duplicate exists, the canonical live path is a fresh-upload flow. It may
-start one live child and perform at most one publish action. Metadata/cover/tags
-must not be repeatedly rewritten after the validated values are set.
+If no published duplicate exists, a fresh upload is allowed only for a truly
+new PENDING job without a saved draft ID. Persist UPLOAD_ARMED before upload,
+then save the exact remote draft ID as DRAFT_CREATED immediately after it appears.
+After metadata/cover/tags have all been confirmed, save DRAFT_PROCESSING.
+A long-running Dzen processing operation ends the current pass without click
+and resumes the SAME pinned draft in the next scheduled run. Never infer
+fresh-upload permission merely from publishClicked=false. An incomplete or
+ambiguous draft is manual-only; no automatic re-upload/rewrite.
 
 After the single publish click, hold the Dzen editor for a 45-second
 read-only observation (no navigation/reopen/second click). Save a local
 diagnostic screenshot if unverified. Only the published Video listing can
 confirm success; captcha remains manual-only.
 
-The scheduled orchestrator persists `PUBLISH_ARMED` before the live child and
-uses `CLICKED_UNVERIFIED` / `BLOCKED_AMBIGUOUS` for uncertain outcomes.
-These states are verification-only. A later run must never start a second upload
-or second publish click from them.
+The scheduled orchestrator persists UPLOAD_ARMED before the live upload child.
+The child persists CLICKED_UNVERIFIED BEFORE dispatching the single allowed
+publish click. Legacy PUBLISH_ARMED, CLICKED_UNVERIFIED, BLOCKED_AMBIGUOUS,
+UPLOAD_ARMED, DRAFT_CREATED and legacy RETRYABLE_PRE_CLICK are verification-only
+or manual-only. Only DRAFT_PROCESSING with a pinned exact ID may resume
+readiness checking and perform its one eventual normal publish click.
 
-A fresh retry is allowed only after explicit evidence that
-`publishClicked=false`. Remote drafts are not auto-deleted. A saved
-`videoEditorPublicationId` is diagnostic and must not be treated as a reliable
-inter-run resume permalink.
+Remote drafts are never deleted automatically. The exact
+videoEditorPublicationId is a persistent identity, NOT by itself evidence of
+a ready/valid editor: resume must confirm URL, visible editor and saved exact
+title/description before any action. After a click, read-only verification must
+check the pinned draft identity as well as published title; if the draft still
+exists or its absence cannot be confirmed, never mark PUBLISHED. The observed
+2026-10-25 legacy CLICKED_UNVERIFIED case remains verification-only; no
+automatic migration or third upload.
 
 Readiness is status-driven; do not treat an early partial-ready message as final
 readiness. Dzen tags remain mandatory and must resolve to the configured visible
