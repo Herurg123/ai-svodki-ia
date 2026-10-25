@@ -84,7 +84,7 @@ assert.strictEqual(
 );
 
 for (const marker of [
-  "только новый upload; previous drafts/state resume полностью игнорируются",
+  "режим: новый upload только при отсутствии закреплённого draftId",
   "metadata заполнены один раз",
   "PNG-обложка передана один раз",
   "подтверждены все 5 тегов",
@@ -114,7 +114,9 @@ assert(!observationBlock.includes(".click("),"post-click observation cannot clic
 assert(!observationBlock.includes(".goto("),"post-click observation cannot navigate");
 assert(!observationBlock.includes("setInputFiles("),"post-click observation cannot reupload");
 assert.match(observationBlock,/durationMs=45_000/,"observe for 45 seconds");
+const durableArm=source.indexOf('persistDraftTransition(config, dateKey, draftId, ["DRAFT_PROCESSING"], "CLICKED_UNVERIFIED"');
 const clickAttempt=source.indexOf("publishClicked = true;");
+assert(durableArm>0&&durableArm<clickAttempt,"Durable at-most-once checkpoint must precede click dispatch");
 const clickCall=source.indexOf("await publish.button.click();",clickAttempt);
 assert(clickAttempt>0&&clickCall>clickAttempt,
  "Playwright timeout after dispatch must remain CLICKED_UNVERIFIED, never retry");
