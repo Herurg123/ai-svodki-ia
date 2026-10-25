@@ -160,12 +160,67 @@ async function checkBeforeUpload(page, config, childArgs, log = () => {}) {
   };
 }
 
+
+function summarizeDraftInspection({ url, bodyText, draftId, titleText, expectedTitle, modalVisible }) {
+  const address = String(url || "");
+  const query = new URL(address, PUBLICATIONS_URL).searchParams;
+  const correctId = query.get("videoEditorPublicationId") === draftId;
+  const expected = String(expectedTitle || "").trim();
+  const actual = String(titleText || "").replace(/\s+/g, " ").trim();
+  if (correctId && modalVisible && actual === expected) return "PRESENT";
+  // Absence is NOT inferred from a failed selector or network/partial load.
+  if (!modalVisible && !correctId &&
+      query.get("state") === "draft" && /Черновики/.test(bodyText || "")) {
+    return "ABSENT";
+  }
+  return "UNKNOWN";
+}
+
+async function inspectPinnedDraft(page, draftId, expectedTitle, log = () => {}) {
+  if (!/^[0-9a-f]{24}$/i.test(String(draftId || ""))) {
+    throw new Error("Для проверки черновика необходим подтверждённый 24-символьный draftId.");
+  }
+  const url = `${PUBLICATIONS_URL}?state=draft&videoEditorPublicationId=${draftId}`;
+  log(`Проверяю именно черновик id=${draftId} (read-only).`);
+  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60_000 });
+  if (isLoginUrl(page.url())) throw new Error("Дзен требует авторизацию при проверке черновика.");
+  const modal = page.getByText("Публикация видео", { exact: true }).first();
+  const deadline = Date.now() + 12_000;
+  let observed = "UNKNOWN";
+  while (Date.now() < deadline) {
+    const modalVisible = await modal.isVisible().catch(() => false);
+    let titleText = "";
+    if (modalVisible) {
+      const title = page.locator('textarea[maxlength="140"],input[maxlength="140"]').first();
+      titleText = await title.inputValue().catch(() => "");
+    }
+    const bodyText = await page.locator("body").innerText({ timeout: 1500 }).catch(() => "");
+    observed = summarizeDraftInspection({
+      url: page.url(), bodyText, draftId, titleText, expectedTitle, modalVisible,
+    });
+    if (observed === "PRESENT") break;
+    if (observed === "ABSENT") {
+      // A secondary read after the UI settles avoids treating hydration as absence.
+      await page.waitForTimeout(1200);
+      const repeatedModal = await modal.isVisible().catch(() => false);
+      if (!repeatedModal && page.url().includes("state=draft") &&
+          !page.url().includes(`videoEditorPublicationId=${draftId}`)) break;
+      observed = "UNKNOWN";
+    }
+    await page.waitForTimeout(500);
+  }
+  log(`Черновик id=${draftId}: read-only статус=${observed}.`);
+  return observed;
+}
+
 module.exports = {
   PUBLICATIONS_URL,
   TITLE_SEARCH_TIMEOUT_MS,
   VIDEO_FILTER_SELECTOR,
   VIDEO_FILTER_TIMEOUT_MS,
   checkBeforeUpload,
+  inspectPinnedDraft,
+  summarizeDraftInspection,
   findVisibleTitlePrefix,
   isLoginUrl,
   resolveDateKey,
