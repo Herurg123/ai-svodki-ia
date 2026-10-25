@@ -12,6 +12,7 @@ from editorial_policy import (  # noqa: E402
     normalize_article_html,
     normalize_candidate_ids,
     expected_editorial_heading,
+    editorial_section_decision,
     order_candidates_by_article_links,
     read_policy,
     validate_article_policy,
@@ -272,6 +273,122 @@ class EditorialPolicyTests(unittest.TestCase):
         self.assertEqual(
             validate_article_policy(html, [world], short, POLICY)[0], []
         )
+
+    def test_incidental_asia_vendor_uses_world_with_explicit_warning(self) -> None:
+        mixed = candidate("mix")
+        mixed["organization"] = "CyberCartel; Anthropic; xAI; Moonshot AI"
+        mixed["title"] = "CyberCartel использовала инструменты Moonshot AI"
+        self.assertEqual(
+            editorial_section_decision(mixed, POLICY),
+            ("Мировые лидеры ИИ", "asia_mentioned_without_clear_leading_actor"),
+        )
+        original = base_article(["Инцидент CyberCartel"])
+        html, short, changes = normalize_article_html(original, [mixed], POLICY)
+        fallback = [
+            c for c in changes if c["field"] == "article_html.section_fallback"
+        ]
+        self.assertEqual(len(fallback), 1)
+        self.assertEqual(fallback[0]["candidate_id"], "mix")
+        self.assertEqual(fallback[0]["normalized_value"], "Мировые лидеры ИИ")
+        errors, warnings, _ = validate_article_policy(html, [mixed], short, POLICY)
+        self.assertEqual(errors, [])
+        self.assertTrue(any("Неоднозначная рубрика" in w for w in warnings))
+
+    def test_conflicting_leading_companies_move_story_to_world(self) -> None:
+        ambiguous = candidate("mixed")
+        ambiguous["organization"] = "MiniMax; OpenAI"
+        ambiguous["title"] = "OpenAI и MiniMax объявили партнёрство"
+        self.assertEqual(
+            editorial_section_decision(ambiguous, POLICY),
+            ("Мировые лидеры ИИ", "conflicting_leading_organizations"),
+        )
+        html_source = (
+            "<p>Первое вступление. Второе вступление.</p>"
+            "<h2>Мировые лидеры ИИ</h2>"
+            "<h2>Китайские лидеры ИИ</h2>"
+            '<h3>Совместный анонс</h3><p>Абзац один.</p>'
+            '<p>Абзац два. <a href="https://example.com/mixed">Источник</a>.</p>'
+            "<h2>Что это значит</h2>"
+            "<ol><li>Раз</li><li>Два</li><li>Три</li><li>Четыре</li></ol>"
+        )
+        html, short, changes = normalize_article_html(
+            html_source, [ambiguous], POLICY
+        )
+        self.assertIn("<h2>Мировые лидеры ИИ</h2><h3>Совместный анонс", html)
+        self.assertNotIn("<h2>Китайские лидеры ИИ</h2>", html)
+        self.assertEqual(html.count("https://example.com/mixed"), 1)
+        self.assertEqual(
+            len([x for x in changes if x["field"] == "article_html.story_section"]), 1
+        )
+        self.assertTrue(any(x["field"] == "article_html.section_fallback" for x in changes))
+        ordered, identity_errors = order_candidates_by_article_links(html, [ambiguous])
+        self.assertEqual(identity_errors, [])
+        self.assertEqual(ordered[0]["id"], "mixed")
+        errors, warnings, _ = validate_article_policy(html, ordered, short, POLICY)
+        self.assertEqual(errors, [])
+        self.assertTrue(warnings)
+
+    def test_missing_world_heading_is_repaired_for_ambiguous_story(self) -> None:
+        ambiguous = candidate("none")
+        ambiguous["organization"] = "Startup; Qwen"
+        ambiguous["title"] = "Startup внедрила Qwen"
+        source = (
+            "<p>Первое вступление. Второе вступление.</p>"
+            "<h2>Китайские лидеры ИИ</h2>"
+            '<h3>Интеграция</h3><p>Первый абзац.</p>'
+            '<p>Второй <a href="https://example.com/none">источник</a>.</p>'
+            "<h2>Что это значит</h2>"
+            "<ol><li>Раз</li><li>Два</li><li>Три</li><li>Четыре</li></ol>"
+        )
+        html, short, changes = normalize_article_html(source, [ambiguous], POLICY)
+        self.assertIn("<h2>Мировые лидеры ИИ</h2><h3>Интеграция", html)
+        self.assertNotIn("<h2>Китайские лидеры ИИ</h2>", html)
+        self.assertTrue(
+            any(c["field"] == "article_html.missing_world_heading" for c in changes)
+        )
+        ordered, identity_errors = order_candidates_by_article_links(html, [ambiguous])
+        self.assertEqual(identity_errors, [])
+        self.assertEqual(
+            validate_article_policy(html, ordered, short, POLICY)[0], []
+        )
+
+    def test_clear_china_actor_keeps_china_and_russian_geography_is_authoritative(self) -> None:
+        china = candidate("china")
+        china["organization"] = "MiniMax; Microsoft"
+        china["title"] = "MiniMax выпустила новую модель"
+        russian = candidate("ru", geography="russia")
+        russian["organization"] = "Министерство; Moonshot AI"
+        russian["title"] = "Российский регулятор и Moonshot AI"
+        self.assertEqual(
+            editorial_section_decision(china, POLICY),
+            ("Китайские лидеры ИИ", None),
+        )
+        self.assertEqual(
+            editorial_section_decision(russian, POLICY),
+            ("Российские лидеры ИИ", None),
+        )
+
+    def test_fallback_is_idempotent_and_does_not_modify_story_text(self) -> None:
+        ambiguous = candidate("idem")
+        ambiguous["organization"] = "NeutralOrg; MiniMax"
+        ambiguous["title"] = "NeutralOrg использовала MiniMax"
+        body = (
+            "<p>Первое предложение. Второе предложение.</p>"
+            "<h2>Мировые лидеры ИИ</h2>"
+            "<h3>Original exact headline</h3>"
+            '<p>First exact paragraph. <a href="https://example.com/idem">Citation</a>.</p>'
+            "<p>Second exact paragraph.</p>"
+            "<h2>Что это значит</h2>"
+            "<ol><li>Раз</li><li>Два</li><li>Три</li><li>Четыре</li></ol>"
+        )
+        first, short, changes = normalize_article_html(body, [ambiguous], POLICY)
+        second, short_again, _ = normalize_article_html(first, [ambiguous], POLICY)
+        self.assertEqual(first, second)
+        self.assertEqual(short, short_again)
+        self.assertTrue(any(c["field"] == "article_html.section_fallback" for c in changes))
+        self.assertEqual(first.count("Original exact headline"), 1)
+        self.assertEqual(first.count("First exact paragraph."), 1)
+        self.assertEqual(first.count("https://example.com/idem"), 1)
 
     def test_section_repair_leaves_unbalanced_html_for_strict_validation(self) -> None:
         chinese = candidate("china")

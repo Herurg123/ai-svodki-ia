@@ -556,32 +556,64 @@ def _canonical_dzen_block(policy: dict[str, Any]) -> str:
     return str(policy["dzen"]["html"])
 
 
-def expected_editorial_heading(candidate: dict[str, Any], policy: dict[str, Any]) -> str:
-    """Classify the principal event actor, not every mentioned tool/vendor.
+def editorial_section_decision(
+    candidate: dict[str, Any], policy: dict[str, Any]
+) -> tuple[str, str | None]:
+    """Choose a safe heading and expose uncertainty rather than blocking release.
 
-    Research sometimes lists the attacker, victims and tool vendors in one
-    semicolon-delimited organization field. The leading actor and leading
-    headline are stronger evidence than incidental later mentions. Russia
-    remains governed by the candidate's explicit geography.
+    Only clear leading-actor evidence sends a world-geography event to China.
+    Weak/mixed organization evidence uses World with an auditable warning.
+    Russia remains authoritative when research marks geography=russia.
     """
     article = policy["article"]
+    world = str(article["world_heading"])
+    china = str(article.get("china_heading", "Китайские лидеры ИИ"))
     if candidate.get("geography") == "russia":
-        return str(article["russian_heading"])
-    tracked = [
-        str(name).strip().casefold()
-        for name in policy.get("tracked_asia_organizations", [])
-        if str(name).strip()
-    ]
-    organization = str(candidate.get("organization") or "").split(";")[0].strip().casefold()
+        return str(article["russian_heading"]), None
+    lead_org = str(candidate.get("organization") or "").split(";", 1)[0].strip().casefold()
     title = str(candidate.get("title") or "").strip().casefold()
+    text = (
+        str(candidate.get("organization") or "") + " "
+        + str(candidate.get("title") or "")
+    ).casefold()
 
-    def leading_match(text: str, name: str) -> bool:
-        return bool(re.match(r"^" + re.escape(name) + r"(?=\W|$)", text))
+    def names(key: str) -> list[str]:
+        return [
+            str(name).strip().casefold()
+            for name in policy.get(key, [])
+            if str(name).strip()
+        ]
 
-    if any(leading_match(organization, name) or leading_match(title, name)
-           for name in tracked):
-        return str(article.get("china_heading", "Китайские лидеры ИИ"))
-    return str(article["world_heading"])
+    def begins_with_name(value: str, name: str) -> bool:
+        return bool(re.match(r"^" + re.escape(name) + r"(?=\W|$)", value))
+
+    asia = names("tracked_asia_organizations")
+    global_names = names("tracked_world_organizations")
+    asia_lead = any(
+        begins_with_name(lead_org, name) or begins_with_name(title, name)
+        for name in asia
+    )
+    world_lead = any(
+        begins_with_name(lead_org, name) or begins_with_name(title, name)
+        for name in global_names
+    )
+    if asia_lead and world_lead:
+        return world, "conflicting_leading_organizations"
+    if asia_lead:
+        return china, None
+
+    # A country-specific supplier's incidental mention is insufficient to
+    # move the main event out of World, even if World actor is unfamiliar.
+    if any(re.search(r"(?<!\w)" + re.escape(name) + r"(?!\w)", text)
+           for name in asia):
+        return world, "asia_mentioned_without_clear_leading_actor"
+    return world, None
+
+
+def expected_editorial_heading(candidate: dict[str, Any], policy: dict[str, Any]) -> str:
+    """The independently validated placement uses the same safe decision."""
+    heading, _uncertainty = editorial_section_decision(candidate, policy)
+    return heading
 
 
 def _relocate_article_story_sections(
@@ -615,7 +647,7 @@ def _relocate_article_story_sections(
     story_parts = parts[:tail]
     trailing = parts[tail:]
     if (not story_parts or story_parts[0]["kind"] != "h2"
-            or story_parts[0]["headline"] != headings[0]
+            or story_parts[0]["headline"] not in headings
             or any(part["kind"] == "h3" for part in trailing)
             or any(part["kind"] == "h2" and part["headline"] not in headings
                    for part in story_parts)):
@@ -637,11 +669,31 @@ def _relocate_article_story_sections(
     if len(stories) != len(selected_candidates):
         return article_html, []
     changes: list[dict[str, Any]] = []
+    if headings[0] not in headers:
+        changes.append({
+            "field": "article_html.missing_world_heading",
+            "model_value": None,
+            "normalized_value": headings[0],
+        })
+    elif list(headers) != [name for name in headings if name in headers]:
+        changes.append({
+            "field": "article_html.section_heading_order",
+            "model_value": list(headers),
+            "normalized_value": [name for name in headings if name in headers],
+        })
     for story, candidate in zip(stories, selected_candidates):
-        wanted = expected_editorial_heading(candidate, policy)
+        wanted, uncertainty = editorial_section_decision(candidate, policy)
         if wanted not in sections:
             return article_html, []
         sections[wanted].append(story["html"])
+        if uncertainty:
+            changes.append({
+                "field": "article_html.section_fallback",
+                "candidate_id": str(candidate.get("id", "")),
+                "model_value": story["section"],
+                "normalized_value": headings[0],
+                "reason": uncertainty,
+            })
         if story["section"] != wanted:
             changes.append({
                 "field": "article_html.story_section",
@@ -686,6 +738,16 @@ def validate_article_policy(
     errors: list[str] = []
     warnings: list[str] = []
     parser = parse_article(article_html)
+
+    # A world fallback is non-blocking but must be visible in validation output.
+    for candidate in selected_candidates:
+        _, uncertainty = editorial_section_decision(candidate, policy)
+        if uncertainty:
+            warnings.append(
+                "Неоднозначная рубрика для "
+                f"{candidate.get('id', 'unknown')}: {uncertainty}; "
+                "применён мировой раздел."
+            )
 
     counts = policy["story_counts"]
     short_notice = str(counts["short_digest_notice"])

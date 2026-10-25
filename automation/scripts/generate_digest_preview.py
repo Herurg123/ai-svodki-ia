@@ -2819,6 +2819,18 @@ def main() -> int:
                     f"{change['model_value']} → {change['normalized_value']}."
                 ),
             })
+        for change in policy_changes:
+            if change.get("field") != "article_html.section_fallback":
+                continue
+            digest["editorial_notes"].append({
+                "type": "section_fallback",
+                "area": "editorial",
+                "message": (
+                    f"Неоднозначная рубрика для {change['candidate_id']}: "
+                    f"{change['reason']}; выбран раздел "
+                    f"{change['normalized_value']} без нового API-вызова."
+                ),
+            })
 
         for override in editorial.get("diversity_overrides", []):
             if not isinstance(override, dict):

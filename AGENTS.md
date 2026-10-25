@@ -309,6 +309,11 @@ but must not silently repoll mutable sources.
   it deterministically by principal event actor before strict validation;
   never retry paid Editorial for a heading mistake or waive source, event,
   freshness, selection, duplicate, or publication-integrity checks.
+- If a story's leading organization/title give conflicting China/world signals
+  or only an incidental China vendor mention, use World as the safe fallback
+  and persist a visible editorial/validation warning. The fallback must never
+  relax source identity, HTML integrity, freshness, semantic-repeat, or
+  publication safeguards, or create any provider retry.
 - `daily-production.yml` must preserve durable same-day stage checkpoints after
   completed paid Research/editorial, Coverage/editorial-completion and Image
   boundaries. Recovery may reuse those checkpoints when the final always-run

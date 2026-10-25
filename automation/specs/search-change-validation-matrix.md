@@ -87,6 +87,9 @@ semantic delta существующими regressions.
 | E1 | Редакционная рубрикация | Мировой security-сюжет о CyberCartel упоминает Moonshot AI как сторонний инструмент | Не переопределять China только по второстепенному названию в `organization` / `title`; saved response должен пройти локальную проверку без повторного provider call. |
 | E2 | Редакционная рубрикация | Китайский/российский кандидат расположен под мировым h2 | При однозначном source mapping перенести целый h3 block и синхронизировать selected_candidate_ids; сохранить URL/текст и strict validation. |
 | E3 | Редакционная безопасность | HTML повреждён или story-to-source mapping неоднозначен | Локальный auto-placement не маскирует ошибки структуры, attribution, semantic duplicate, source freshness и публикационного контракта. |
+| E4 | Неоднозначная рубрика | Организация и заголовок дают конфликт China/World | World fallback и явные warning в валидаторе и итоговой редакционной диагностике, без платного вызова. |
+| E5 | Неоднозначная рубрика | China-вендор упомянут во второстепенных участниках | World fallback с записью причины в audit и сохранением текста и URL. |
+| E6 | Отсутствует World h2 | Story однозначно привязан к источникам, но HTML содержит только China h2 | Вставка World и перенос целого h3; неподтверждённая идентичность/повреждённый HTML по-прежнему fail closed. |
 | R1 | Регион | Russia healthy, China/Asia healthy | Дополнительные regional slots не открываются. |
 | R2 | Регион | Только Russia gap | Сохраняется контракт 3 broad + 1 regional Hybrid. |
 | R3 | Регион | Только China/Asia gap | Сохраняется контракт 3 broad + 1 regional Hybrid. |
