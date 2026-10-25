@@ -153,7 +153,7 @@ Summary`. Диагностические JSON artifacts имеют `retention: 2
 
 Подпроект стартует после уже опубликованного выпуска и живёт на Windows-машине
 оператора. Один scheduled entrypoint ведёт NotebookLM/MP4/PNG/optional FTP,
-native Dzen publication, две Dzen collections и insertion опубликованного видео
+native Dzen publication (с сохранением и восстановлением exact remote draft ID при долгой обработке без дублей), две Dzen collections и insertion опубликованного видео
 в same-day статью. Production article-video выполняет video paste внутри browser
 page через synthetic paste event и не зависит от Windows desktop clipboard;
 publish разрешён только после подтверждённого Dzen preview.
