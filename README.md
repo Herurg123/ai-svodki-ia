@@ -87,6 +87,9 @@ diff. Техническая возможность direct push в `main` сам
 - обычный whole-pipeline потолок — 24 search operations, double-gap потолок — 25;
 - Event Freshness и Source Freshness являются разными gates; доказанно старое
   событие не омолаживается свежей перепечаткой;
+- редакционные ошибки размещения по разделам исправляются локально по главному
+  действующему лицу события, без повторного API-вызова; проверки источников,
+  дубликатов, фактической свежести и структуры статьи остаются обязательными;
 - Source Pulse и deterministic viability/health diagnostics не добавляют
   OpenAI/Web Search вызовы и не отменяют обязательный Search-derived recovery;
 - recovery переиспользует наиболее полный пригодный same-day final artifact
