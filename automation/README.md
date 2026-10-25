@@ -46,6 +46,7 @@
 | Hybrid | `scripts/hybrid_search_completeness.py` | stable Hybrid v3 и conditional double-gap fifth search |
 | Coverage | `scripts/ensure_story_coverage.py` | mandatory directions + bounded optional seventh-slot recovery |
 | Recovery | `scripts/recover_digest_artifact.py` | reuse exact same-day saved bundle без повторения completed paid stages |
+| Editorial section normalization | `scripts/editorial_policy.py` | deterministic principal-actor section relocation of safely source-mapped stories; no new API calls |
 | Discovery health | `scripts/discovery_health.py` | zero-network diagnostics пяти discovery lanes |
 | Production summary | `scripts/summarize_production_status.py` | pipeline status + Discovery Health в Actions Summary |
 | Site | `scripts/build_site.py` + validators | canonical article/image site и RSS |
