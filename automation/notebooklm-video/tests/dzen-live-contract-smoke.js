@@ -32,7 +32,8 @@ assert(runner.includes('require("./browser-session")'), "Browser runner долж
 assert(direct.includes("Загрузили и обработали видео"), "Direct live flow должен ждать финальную обработку видео");
 assert(direct.includes("Готово: можно публиковать и смотреть"), "Direct live flow должен ждать видимый финальный статус Готово");
 assert(direct.includes("КЛИК ПУБЛИКАЦИИ ВЫПОЛНЕН ОДИН РАЗ"), "Direct MVP должен логировать единственный publish click");
-assert(direct.includes("только новый upload; previous drafts/state resume полностью игнорируются"), "Direct MVP должен быть fresh-upload flow без inter-run resume");
+assert(direct.includes("DRAFT_PROCESSING"), "Direct flow должен продолжать сохранённый черновик без нового upload");
+assert(direct.includes("RESUME DRAFT VERIFIED"), "Same-ID draft must be checked before any publish action");
 assert(!direct.includes("PUBLISH_CLICKED_UNVERIFIED"), "Validated fresh-upload MVP intentionally does not keep the old post-click verification state machine");
 
 console.log("Dzen live publish contract smoke: OK");
