@@ -33,7 +33,7 @@ assert(runner.includes('require("./dzen-error-log")'), "runner must use the shar
 assert(runner.includes('"dzen-publish-direct.js"'), "runner must invoke the direct live publisher");
 assert(runner.includes("OPERATOR_WINDOW_MS = 10 * 60 * 1000"), "runner must bound one operator child to ten minutes");
 assert(runner.includes("taskkill.exe"), "Windows child process tree must remain bounded by the operator window");
-assert(runner.includes("inter-run resume отключён"), "live runner must explicitly disable inter-run resume");
+assert(runner.includes("inter-run resume разрешён только для сохранённого DRAFT_PROCESSING"), "manual runner must resume only pinned saved draft");
 assert(runner.includes("Новый child, reopen draft и автоматический retry не выполняются"), "failed live child must stop cleanly");
 
 for (const marker of [
