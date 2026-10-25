@@ -873,6 +873,27 @@ Hybrid report хранит отдельно P4 `regional_health_viability`,
 быть volume-full и одновременно иметь `complete_with_regional_gaps`; это
 диагностическая truthfulness, а не требование добивать регион квотой.
 
+### 6.4a. Editorial section placement is recoverable, not a new paid stage
+
+After exact candidate-to-story source-link matching and event-repeat checks, the
+local editorial normalizer may move intact `<h3>` story blocks between the
+canonical world, China/Asia and Russia `<h2>` sections. It uses the main event
+actor (the first semicolon-separated organization, or headline-leading company)
+and explicit Russia geography, not incidental mentions of vendors in lists.
+A story citing Moonshot as an attacker tool does not become a China-company
+story when CyberCartel is the principal actor. Relocation preserves the whole
+story HTML and source links; candidate selection order is re-bound from source
+links after movement, without another provider request.
+
+Normalizing a heading is not permission to alter factual prose, invent sources,
+remove stories, ignore semantic event repeats, or bypass source/age/archive
+freshness gates. Ambiguous candidate-to-source mapping and malformed structural
+HTML still fail closed. Saved editorial responses are immutable and replayed
+from the same protected recovery bundle; normalization writes only the derived
+editorial artifact and auditable `policy-normalization.json`/editorial notes.
+This is zero-paid presentation repair, not a change to Primary/Hybrid/Coverage
+search budgets or editorial content selection.
+
 ### 6.5. Fallback Coverage
 
 Stable public entrypoint: `ensure_story_coverage.py`. Active public implementation
