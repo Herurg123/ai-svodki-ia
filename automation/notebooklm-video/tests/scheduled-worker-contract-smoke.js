@@ -8,13 +8,18 @@ const ROOT = path.resolve(__dirname, "..");
 const scheduled = require(path.join(ROOT, "scheduled-worker.js"));
 
 assert.strictEqual(scheduled.shouldRunFreshUpload("PENDING"), true);
-assert.strictEqual(scheduled.shouldRunFreshUpload("RETRYABLE_PRE_CLICK"), true);
+assert.strictEqual(scheduled.shouldRunFreshUpload("RETRYABLE_PRE_CLICK"), false);
+assert.strictEqual(scheduled.shouldResumeDraft("DRAFT_PROCESSING","6addadd21796c105c2a4d11a"), true);
+assert.strictEqual(scheduled.shouldResumeDraft("DRAFT_PROCESSING","bad"), false);
+assert.strictEqual(scheduled.shouldResumeDraft("CLICKED_UNVERIFIED","6addadd21796c105c2a4d11a"), false);
 assert.strictEqual(scheduled.shouldRunFreshUpload("PUBLISH_ARMED"), false);
+assert.strictEqual(scheduled.shouldRunFreshUpload("DRAFT_PROCESSING"), false);
+assert.strictEqual(scheduled.shouldRunFreshUpload("UPLOAD_ARMED"), false);
 assert.strictEqual(scheduled.shouldRunFreshUpload("CLICKED_UNVERIFIED"), false);
 assert.strictEqual(scheduled.shouldRunFreshUpload("BLOCKED_AMBIGUOUS"), false);
 assert.strictEqual(scheduled.shouldRunFreshUpload("PUBLISHED"), false);
 
-for (const status of ["PUBLISH_ARMED", "CLICKED_UNVERIFIED", "BLOCKED_AMBIGUOUS"]) {
+for (const status of ["UPLOAD_ARMED", "DRAFT_CREATED", "PUBLISH_ARMED", "RETRYABLE_PRE_CLICK", "CLICKED_UNVERIFIED", "BLOCKED_AMBIGUOUS"]) {
   assert.strictEqual(
     scheduled.isVerificationOnlyStatus(status),
     true,
@@ -95,17 +100,18 @@ assert(workerPhaseIndex >= 0, "NotebookLM worker child call must exist");
 assert(doneGateIndex > workerPhaseIndex, "latest DONE selection must run after NotebookLM worker child");
 assert(dzenPhaseIndex > doneGateIndex, "Dzen phase must run after DONE gate");
 
-const armIndex = source.indexOf('updateDzenAutomation(config, state, job, "PUBLISH_ARMED"');
+const armIndex = source.indexOf('updateDzenAutomation(config, state, job, "UPLOAD_ARMED"');
 const liveChildIndex = source.indexOf('"dzen-publish-direct.js"');
-assert(armIndex >= 0, "PUBLISH_ARMED persistence must exist");
-assert(liveChildIndex > armIndex, "PUBLISH_ARMED must be persisted before live child starts");
+assert(armIndex >= 0, "UPLOAD_ARMED persistence must exist");
+assert(liveChildIndex > armIndex, "UPLOAD_ARMED must be persisted before live child starts");
 
 assert.match(
   source,
   /status=\$\{status\}: разрешена только проверка публикации, новый upload и второй publish click запрещены/
 );
 assert.match(source, /verification-only: попытка/);
-assert.match(source, /publishClicked=false/i);
+assert.match(source, /DRAFT_PROCESSING/);
+assert.match(source, /syncChildDzenState/);
 assert.match(source, /BLOCKED_AMBIGUOUS/);
 
 console.log("scheduled-worker contract smoke: OK");
