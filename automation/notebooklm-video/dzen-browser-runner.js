@@ -5,6 +5,8 @@ const path = require("path");
 const { spawn } = require("child_process");
 const browserSession = require("./browser-session");
 const duplicateGuard = require("./dzen-duplicate-guard");
+const history = require("./history-utils");
+const dzenHelpers = require("./dzen-publish");
 const { classifyBlockingError } = require("./dzen-error-log");
 
 const ROOT = __dirname;
@@ -343,6 +345,13 @@ async function main(argv = process.argv.slice(2)) {
 
     config = loadJson(CONFIG_PATH);
     const { mode, childArgs } = parseArgs(argv);
+    if (mode === "publish") {
+      for (const lockName of ["full-worker.lock", "scheduled-worker.lock"]) {
+        if (fs.existsSync(path.join(ROOT, lockName))) {
+          throw new Error(`Ручной запуск Dzen запрещён, пока существует ${lockName}.`);
+        }
+      }
+    }
     const target = mode === "dry-run" ? "dzen-publish.js" : "dzen-publish-direct.js";
     const targetArgs = mode === "dry-run" ? ["--dry-run", ...childArgs] : childArgs;
 
@@ -377,10 +386,31 @@ async function main(argv = process.argv.slice(2)) {
         return;
       }
 
+      // The explicit manual entrypoint must use the SAME persisted state as the
+      // scheduled runner (which calls runNodeScript() directly).
+      const dateKey = duplicateGuard.resolveDateKey(childArgs, config.timeZone);
+      const state = history.loadActiveState(config);
+      const job = dzenHelpers.findJobForDate(state, dateKey);
+      const current = job.dzenAutomation || {};
+      const status = String(current.status || "PENDING");
+      if (status === "PENDING" && !current.draftId) {
+        const now = new Date().toISOString();
+        job.dzenAutomation = {
+          ...current, status: "UPLOAD_ARMED", uploadArmedAt: now, updatedAt: now,
+        };
+        job.updatedAt = now;
+        history.saveStateWithRetention(config, state);
+        log(config, "Ручной live: UPLOAD_ARMED записан до нового upload.");
+      } else if (status === "DRAFT_PROCESSING" && /^[0-9a-f]{24}$/i.test(String(current.draftId || ""))) {
+        childArgs.push(`--resume-draft=${current.draftId}`);
+        log(config, `Ручной live: возобновляю только закреплённый черновик ${current.draftId}.`);
+      } else {
+        throw new Error(`Ручной live запрещён: dzenAutomation.status=${status}, draftId=${current.draftId || "нет"}; новый upload и второй click невозможны.`);
+      }
       log(
         config,
         "live publish выполняется одним child-проходом без автоматического повторного запуска; " +
-        "inter-run resume отключён."
+        "inter-run resume разрешён только для сохранённого DRAFT_PROCESSING."
       );
     }
 
