@@ -1,0 +1,33 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-25",
+  "slug": "2026-10-25",
+  "title": "ИИ-Сводка на 25 октября 2026",
+  "description": "Киберриски агентных систем и supply-chain атак, отказ Amazon от дата-центров в Вирджинии, локальная голосовая модель Block, а также новые механизмы контроля Claude Code и Codex CLI.",
+  "published_at": "2026-10-25T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-25.png",
+  "topics": [
+    "кибербезопасность ИИ",
+    "LiteLLM",
+    "supply-chain атаки",
+    "агенты ИИ",
+    "Claude Code",
+    "Codex CLI",
+    "MCP",
+    "ИИ-дата-центры",
+    "голосовые модели",
+    "локальный inference",
+    "NVIDIA Nemotron",
+    "суверенный ИИ"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    }
+  ]
+}

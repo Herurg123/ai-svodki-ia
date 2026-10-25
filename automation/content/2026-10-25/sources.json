@@ -1,0 +1,42 @@
+[
+  {
+    "title": "TrendAI targets open weight model gains with Nvidia Nemotron deal",
+    "publisher": "IT Pro",
+    "url": "https://www.itpro.com/technology/artificial-intelligence/trendai-targets-open-weight-model-gains-with-nvidia-nemotron-deal"
+  },
+  {
+    "title": "CyberCartel hacking gang used Claude and Grok AI agents to automate attacks on Latin American institutions",
+    "publisher": "Tom's Hardware",
+    "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/cybercartel-hacking-gang-used-claude-and-grok-ai-agents-to-automate-attacks-on-latin-american-institutions-passwords-and-details-stolen-from-over-400-institutions-including-banks-and-payment-apps"
+  },
+  {
+    "title": "Amazon bows to local backlash over AI data centers, scraps plans to build four new facilities in Northern Virginia",
+    "publisher": "Tom's Hardware",
+    "url": "https://www.tomshardware.com/tech-industry/data-centers/amazon-bows-to-local-backlash-over-ai-data-centers-scraps-plans-to-build-four-new-facilities-in-northern-virginia-site-to-be-repurposed-for-mixed-use-and-residential-development"
+  },
+  {
+    "title": "Claude Code v2.1.310",
+    "publisher": "Havoptic",
+    "url": "https://www.havoptic.com/r/claude-code-2.1.310"
+  },
+  {
+    "title": "Block’s new voice model sounds eerily human",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/10/24/blocks-new-voice-model-sounds-eerily-human/"
+  },
+  {
+    "title": "Dessa — the Conversation Model trained only on speech",
+    "publisher": "Block",
+    "url": "https://block.xyz/dessa"
+  },
+  {
+    "title": "Release 0.164.0",
+    "publisher": "OpenAI / GitHub",
+    "url": "https://github.com/openai/codex/releases/tag/rust-v0.164.0"
+  },
+  {
+    "title": "Inside the LiteLLM 1.107.0 supply chain compromise: Credential theft through Python startup hooks",
+    "publisher": "Microsoft Security Blog",
+    "url": "https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-through-python-startup-hooks/"
+  }
+]

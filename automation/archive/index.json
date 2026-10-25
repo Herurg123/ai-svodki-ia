@@ -1,8 +1,271 @@
 {
   "version": 2,
-  "generated_at": "2026-10-24T01:44:44+00:00",
+  "generated_at": "2026-10-25T06:22:39+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-10-25",
+      "published_at": "2026-10-25T06:00:00+03:00",
+      "search_cutoff_at": "2026-10-25T04:10:05+03:00",
+      "title": "ИИ-Сводка на 25 октября 2026",
+      "link": "https://rybalka.one/posts/2026-10-25/",
+      "summary": "Главные новости искусственного интеллекта за 25 октября 2026 года Повестка дня показывает, что масштабирование ИИ всё сильнее зависит от доверия к инфраструктуре: безопасности цепочек поставки, управляемости агентов и общественного согласия на новые дата-центры. Одновременно разработчики переводят контроль доступа, наблюдаемость и защиту учётных данных из дополнительных функций в базовый слой агентных продуктов. На продуктовом уровне заметен другой сдвиг: голосовые модели и coding-агенты становя",
+      "topics": [
+        "кибербезопасность ИИ",
+        "LiteLLM",
+        "supply-chain атаки",
+        "агенты ИИ",
+        "Claude Code",
+        "Codex CLI",
+        "MCP",
+        "ИИ-дата-центры",
+        "голосовые модели",
+        "локальный inference",
+        "NVIDIA Nemotron",
+        "суверенный ИИ"
+      ],
+      "source_urls": [
+        "https://www.itpro.com/technology/artificial-intelligence/trendai-targets-open-weight-model-gains-with-nvidia-nemotron-deal",
+        "https://www.tomshardware.com/tech-industry/artificial-intelligence/cybercartel-hacking-gang-used-claude-and-grok-ai-agents-to-automate-attacks-on-latin-american-institutions-passwords-and-details-stolen-from-over-400-institutions-including-banks-and-payment-apps",
+        "https://www.tomshardware.com/tech-industry/data-centers/amazon-bows-to-local-backlash-over-ai-data-centers-scraps-plans-to-build-four-new-facilities-in-northern-virginia-site-to-be-repurposed-for-mixed-use-and-residential-development",
+        "https://www.havoptic.com/r/claude-code-2.1.310",
+        "https://techcrunch.com/2026/10/24/blocks-new-voice-model-sounds-eerily-human/",
+        "https://block.xyz/dessa",
+        "https://github.com/openai/codex/releases/tag/rust-v0.164.0",
+        "https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-through-python-startup-hooks/"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-001",
+          "section": "world",
+          "headline": "Trend Micro интегрировала открытые модели NVIDIA Nemotron в суверенную платформу AI-security",
+          "organization": "Trend Micro; NVIDIA",
+          "topic": "AI security; sovereign AI; open-weight models; NVIDIA Nemotron; agentic SIEM; regulated enterprises",
+          "event_type": "product integration",
+          "status": "new",
+          "summary": "Trend Micro сообщила о встраивании открытых моделей NVIDIA Nemotron в Vision One for Sovereign and Private Cloud. Компания позиционирует интеграцию для локально контролируемых AI-операций безопасности, включая анализ угроз, security reasoning и agentic SIEM, прежде всего в регулируемых и государственных средах.",
+          "published_at": "2026-10-23T11:00:02+00:00",
+          "published_date": "2026-10-23",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "TrendAI targets open weight model gains with Nvidia Nemotron deal",
+              "publisher": "IT Pro",
+              "url": "https://www.itpro.com/technology/artificial-intelligence/trendai-targets-open-weight-model-gains-with-nvidia-nemotron-deal"
+            }
+          ],
+          "keywords": [
+            "Trend Micro",
+            "TrendAI",
+            "NVIDIA Nemotron",
+            "sovereign cloud",
+            "private cloud",
+            "AI security operations",
+            "agentic SIEM",
+            "data residency"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "CyberCartel, по данным Straiker, автоматизировала атаки на более чем 400 латиноамериканских организаций с помощью агентов Claude, Grok и Moonshot",
+          "organization": "CyberCartel; Anthropic; xAI; Moonshot AI; Straiker",
+          "topic": "AI agents; misuse of frontier models; automated cyberattacks; financial institutions; agent safety",
+          "event_type": "cybersecurity research disclosure",
+          "status": "new",
+          "summary": "Tom's Hardware сообщило о результатах исследования стартапа Straiker: группировка CyberCartel якобы использовала агентные системы на базе Claude, Grok и агента Moonshot AI для автоматизации атак на латиноамериканские банки, платёжные сервисы и другие организации. В публикации говорится о более чем 400 затронутых учреждениях и о том, что Anthropic уже заблокировала доступ злоумышленников к Claude.",
+          "published_at": "2026-10-23T11:00:00+00:00",
+          "published_date": "2026-10-23",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "CyberCartel hacking gang used Claude and Grok AI agents to automate attacks on Latin American institutions",
+              "publisher": "Tom's Hardware",
+              "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/cybercartel-hacking-gang-used-claude-and-grok-ai-agents-to-automate-attacks-on-latin-american-institutions-passwords-and-details-stolen-from-over-400-institutions-including-banks-and-payment-apps"
+            }
+          ],
+          "keywords": [
+            "Claude",
+            "Grok",
+            "Moonshot AI",
+            "CyberCartel",
+            "Straiker",
+            "AI agents",
+            "automated attacks",
+            "Latin America"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "Amazon отказалась от строительства четырёх новых дата-центров в Северной Вирджинии после сопротивления местного сообщества",
+          "organization": "Amazon; AWS; Loudoun County",
+          "topic": "AI data centers; cloud infrastructure; grid capacity; community opposition; energy constraints",
+          "event_type": "data center project cancellation",
+          "status": "new",
+          "summary": "Amazon заявила, что не будет строить четыре новых дата-центра на бывшей площадке George Washington University площадью 122 акра в Loudoun County, Virginia. Большую часть участка планируют перепрофилировать под mixed-use и жильё; 25 акров передадут округу, а Amazon также направит $5 млн в жилищный фонд округа.",
+          "published_at": "2026-10-23T13:36:50+00:00",
+          "published_date": "2026-10-23",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Amazon bows to local backlash over AI data centers, scraps plans to build four new facilities in Northern Virginia",
+              "publisher": "Tom's Hardware",
+              "url": "https://www.tomshardware.com/tech-industry/data-centers/amazon-bows-to-local-backlash-over-ai-data-centers-scraps-plans-to-build-four-new-facilities-in-northern-virginia-site-to-be-repurposed-for-mixed-use-and-residential-development"
+            }
+          ],
+          "keywords": [
+            "Amazon",
+            "AWS",
+            "Northern Virginia",
+            "Loudoun County",
+            "AI data centers",
+            "power demand",
+            "community opposition"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "cand-004",
+          "section": "world",
+          "headline": "Claude Code 2.1.310 добавила Monitor для Bedrock, Vertex и Foundry и ролевой доступ к cloud sessions",
+          "organization": "Anthropic",
+          "topic": "CLI coding agents; enterprise governance; cross-cloud deployment; observability; MCP; cloud sessions",
+          "event_type": "product release",
+          "status": "new",
+          "summary": "Anthropic выпустила Claude Code 2.1.310: инструмент Monitor и plugin monitors стали доступны при работе через Amazon Bedrock, Google Vertex AI и Microsoft Foundry, включая конфигурации с отключённой телеметрией. Релиз также добавил управление доступом к Claude Code cloud sessions и Remote Control через кастомные enterprise-роли.",
+          "published_at": "2026-10-23T21:20:46+00:00",
+          "published_date": "2026-10-23",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Claude Code v2.1.310",
+              "publisher": "Havoptic",
+              "url": "https://www.havoptic.com/r/claude-code-2.1.310"
+            }
+          ],
+          "keywords": [
+            "Claude Code",
+            "Monitor",
+            "Amazon Bedrock",
+            "Google Vertex AI",
+            "Microsoft Foundry",
+            "cloud sessions",
+            "enterprise roles",
+            "coding agents"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "Block представила Dessa — локальную full-duplex голосовую модель, обученную только на человеческой речи",
+          "organization": "Block; Dessa",
+          "topic": "Голосовые ИИ-модели; speech-to-speech; локальный inference; full-duplex диалог; consumer AI",
+          "event_type": "product_release",
+          "status": "new",
+          "summary": "Block через свою небольшую исследовательскую группу Dessa представила full-duplex speech-to-speech модель, которая одновременно слушает и говорит, обучена с нуля только на человеческой речи и рассчитана на локальный запуск на MacBook Pro M4 Max или более мощном устройстве. Для внешнего тестирования рисков компания открыла набор ограниченной группы AI-safety исследователей.",
+          "published_at": "2026-10-24T16:00:00+00:00",
+          "published_date": "2026-10-24",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Block’s new voice model sounds eerily human",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/24/blocks-new-voice-model-sounds-eerily-human/"
+            },
+            {
+              "title": "Dessa — the Conversation Model trained only on speech",
+              "publisher": "Block",
+              "url": "https://block.xyz/dessa"
+            }
+          ],
+          "keywords": [
+            "Block",
+            "Dessa",
+            "voice AI",
+            "speech-to-speech",
+            "full-duplex",
+            "local inference",
+            "MacBook M4 Max",
+            "NVIDIA GB200 NVL72"
+          ],
+          "geography": "world",
+          "category": "multimodal"
+        },
+        {
+          "candidate_id": "cand-007",
+          "section": "world",
+          "headline": "OpenAI выпустила Codex CLI 0.164.0 с presets, inline-настройкой моделей и защищённым enterprise MCP",
+          "organization": "OpenAI",
+          "topic": "CLI coding agents; MCP; enterprise authentication; credential masking; agent permissions; developer workflow",
+          "event_type": "product release",
+          "status": "new",
+          "summary": "OpenAI выпустила Codex CLI 0.164.0. В нём появились десять слотов /presets для многоразовых промптов и slash-команд, inline-выбор модели, reasoning effort, скорости и профиля разрешений, а также enterprise-аутентификация MCP и маскирование credentials в поддерживаемых удалённых Bash- и Zsh-сессиях.",
+          "published_at": "2026-10-23T04:48:10+00:00",
+          "published_date": "2026-10-23",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Release 0.164.0",
+              "publisher": "OpenAI / GitHub",
+              "url": "https://github.com/openai/codex/releases/tag/rust-v0.164.0"
+            }
+          ],
+          "keywords": [
+            "OpenAI Codex",
+            "Codex CLI",
+            "presets",
+            "MCP",
+            "OAuth",
+            "credential masking",
+            "permissions",
+            "Amazon Bedrock"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-010",
+          "section": "world",
+          "headline": "Microsoft раскрыла механизм supply-chain-компрометации LiteLLM 1.107.0: запуск кражи credentials через Python startup hooks",
+          "organization": "Microsoft; LiteLLM",
+          "topic": "AI gateway security; software supply chain; PyPI; credential theft; Python startup hooks; model-provider API keys; cloud credentials",
+          "event_type": "security research disclosure",
+          "status": "new",
+          "summary": "Microsoft опубликовала технический разбор компрометации LiteLLM 1.107.0, вредоносный релиз которой был размещён в PyPI и официальных container images 21 октября. По данным Microsoft, пакет использовал Python startup hooks: запуск интерпретатора в заражённой среде мог активировать сборщик учётных данных даже без импорта LiteLLM. В зоне потенциального доступа оказались API-ключи провайдеров моделей, облачные и workload-credentials, токены CI/CD и source control, SSH/GPG-материалы, браузерные данные и конфигурация LiteLLM proxy.",
+          "published_at": "2026-10-23T18:12:19+00:00",
+          "published_date": "2026-10-23",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Inside the LiteLLM 1.107.0 supply chain compromise: Credential theft through Python startup hooks",
+              "publisher": "Microsoft Security Blog",
+              "url": "https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-through-python-startup-hooks/"
+            }
+          ],
+          "keywords": [
+            "LiteLLM",
+            "PyPI",
+            "supply chain compromise",
+            "Python startup hooks",
+            "credential theft",
+            "AI gateway",
+            "model-provider API keys",
+            "sitecustomize.py",
+            "cook.pth"
+          ],
+          "geography": "world",
+          "category": "security"
+        }
+      ]
+    },
     {
       "date": "2026-10-24",
       "published_at": "2026-10-24T06:00:00+03:00",
@@ -6556,10 +6819,10 @@
     {
       "date": "2026-09-22",
       "published_at": "2026-09-22T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-22T04:36:38+03:00",
+      "search_cutoff_at": "2026-09-22T06:00:00+03:00",
       "title": "ИИ-Сводка на 22 сентября 2026",
       "link": "https://rybalka.one/posts/2026-09-22/",
-      "summary": "Главные новости искусственного интеллекта за 22 сентября 2026 года Новостей сегодня меньше, чем обычно Свежая повестка показывает, что конкуренция вокруг ИИ всё заметнее смещается в среду применения: в персональные компьютеры, торговые платформы, инженерную инфраструктуру и научную экспертизу. Одновременно крупные разработчики пытаются закрепить правила доступа агентов к внешним сервисам и повысить доверие к результатам моделей в исследованиях. В российской части дня Яндекс сообщил об открытии н",
+      "summary": "Google выводит Gemini в ноутбуки, Amazon ограничивает покупки через Meta Muse, OpenAI создаёт независимую группу по математике, NVIDIA стандартизирует компоненты ИИ-фабрик, а Яндекс открывает новую модель.",
       "topics": [
         "Googlebook",
         "Gemini",

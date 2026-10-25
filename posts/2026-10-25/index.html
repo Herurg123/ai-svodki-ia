@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Киберриски агентных систем и supply-chain атак, отказ Amazon от дата-центров в Вирджинии, локальная голосовая модель Block, а также новые механизмы контроля Claude Code и Codex CLI.">
+  <title>Виталий Рыбалка | Vitaly Rybalka | ИИ-Сводка на 25 октября 2026</title>
+  <link rel="canonical" href="https://rybalka.one/posts/2026-10-25/">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="alternate" type="application/rss+xml" title="ИИ-Сводки" href="https://rybalka.one/posts/rss.xml">
+  <script id="ai-svodki-structured-data" type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://it-expertise.ru/#organization",
+      "name": "ИТ-Экспертиза",
+      "url": "https://it-expertise.ru/"
+    },
+    {
+      "@type": "Person",
+      "@id": "https://rybalka.one/#person",
+      "name": "Виталий Рыбалка",
+      "url": "https://rybalka.one/",
+      "image": "https://rybalka.one/pic/vvr.png",
+      "jobTitle": "Директор по развитию",
+      "description": "Директор по развитию ИТ-Экспертизы. Продвижение бренда в сфере ИТ, информационной безопасности и искусственного интеллекта. Ранее 19 лет в компании 1С.",
+      "worksFor": {
+        "@id": "https://it-expertise.ru/#organization"
+      },
+      "sameAs": [
+        "https://vk.com/rybalkavv",
+        "https://dzen.ru/rybv",
+        "https://www.linkedin.com/in/rybalkavv/"
+      ],
+      "knowsAbout": [
+        "Информационные технологии",
+        "Информационная безопасность",
+        "Искусственный интеллект",
+        "1С",
+        "1С:Предприятие 8",
+        "WorldSkills",
+        "Маркетинг",
+        "Бизнес-развитие"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://rybalka.one/#website",
+      "url": "https://rybalka.one/",
+      "name": "Виталий Рыбалка",
+      "inLanguage": "ru-RU",
+      "publisher": {
+        "@id": "https://rybalka.one/#person"
+      }
+    },
+    {
+      "@type": "Blog",
+      "@id": "https://rybalka.one/posts/#blog",
+      "url": "https://rybalka.one/posts/",
+      "name": "ИИ-Сводки",
+      "description": "Ежедневные аналитические сводки о событиях в сфере искусственного интеллекта.",
+      "inLanguage": "ru-RU",
+      "isPartOf": {
+        "@id": "https://rybalka.one/#website"
+      },
+      "author": {
+        "@id": "https://rybalka.one/#person"
+      },
+      "publisher": {
+        "@id": "https://rybalka.one/#person"
+      },
+      "sameAs": "https://rybalka.one/posts/rss.xml"
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://rybalka.one/posts/images/ai-svodka-2026-10-25.png#image",
+      "url": "https://rybalka.one/posts/images/ai-svodka-2026-10-25.png",
+      "contentUrl": "https://rybalka.one/posts/images/ai-svodka-2026-10-25.png",
+      "width": 1536,
+      "height": 864,
+      "caption": "ИИ-Сводка на 25 октября 2026",
+      "inLanguage": "ru-RU",
+      "representativeOfPage": true
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://rybalka.one/posts/2026-10-25/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Виталий Рыбалка",
+          "item": "https://rybalka.one/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "ИИ-Сводки",
+          "item": "https://rybalka.one/posts/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "ИИ-Сводка на 25 октября 2026",
+          "item": "https://rybalka.one/posts/2026-10-25/"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://rybalka.one/posts/2026-10-25/#webpage",
+      "url": "https://rybalka.one/posts/2026-10-25/",
+      "name": "ИИ-Сводка на 25 октября 2026",
+      "description": "Киберриски агентных систем и supply-chain атак, отказ Amazon от дата-центров в Вирджинии, локальная голосовая модель Block, а также новые механизмы контроля Claude Code и Codex CLI.",
+      "isPartOf": {
+        "@id": "https://rybalka.one/#website"
+      },
+      "breadcrumb": {
+        "@id": "https://rybalka.one/posts/2026-10-25/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@id": "https://rybalka.one/posts/images/ai-svodka-2026-10-25.png#image"
+      },
+      "mainEntity": {
+        "@id": "https://rybalka.one/posts/2026-10-25/#blogposting"
+      },
+      "inLanguage": "ru-RU",
+      "datePublished": "2026-10-25T06:00:00+03:00",
+      "dateModified": "2026-10-25T06:00:00+03:00"
+    },
+    {
+      "@type": "BlogPosting",
+      "@id": "https://rybalka.one/posts/2026-10-25/#blogposting",
+      "url": "https://rybalka.one/posts/2026-10-25/",
+      "mainEntityOfPage": {
+        "@id": "https://rybalka.one/posts/2026-10-25/#webpage"
+      },
+      "headline": "ИИ-Сводка на 25 октября 2026",
+      "description": "Киберриски агентных систем и supply-chain атак, отказ Amazon от дата-центров в Вирджинии, локальная голосовая модель Block, а также новые механизмы контроля Claude Code и Codex CLI.",
+      "abstract": "Киберриски агентных систем и supply-chain атак, отказ Amazon от дата-центров в Вирджинии, локальная голосовая модель Block, а также новые механизмы контроля Claude Code и Codex CLI.",
+      "datePublished": "2026-10-25T06:00:00+03:00",
+      "dateModified": "2026-10-25T06:00:00+03:00",
+      "author": {
+        "@id": "https://rybalka.one/#person"
+      },
+      "publisher": {
+        "@id": "https://rybalka.one/#person"
+      },
+      "copyrightHolder": {
+        "@id": "https://rybalka.one/#person"
+      },
+      "copyrightYear": 2026,
+      "image": {
+        "@id": "https://rybalka.one/posts/images/ai-svodka-2026-10-25.png#image"
+      },
+      "thumbnailUrl": "https://rybalka.one/posts/images/ai-svodka-2026-10-25.png",
+      "isPartOf": {
+        "@id": "https://rybalka.one/posts/#blog"
+      },
+      "articleSection": "Искусственный интеллект",
+      "genre": "Ежедневная аналитическая сводка",
+      "keywords": [
+        "кибербезопасность ИИ",
+        "LiteLLM",
+        "supply-chain атаки",
+        "агенты ИИ",
+        "Claude Code",
+        "Codex CLI",
+        "MCP",
+        "ИИ-дата-центры",
+        "голосовые модели",
+        "локальный inference",
+        "NVIDIA Nemotron",
+        "суверенный ИИ",
+        "Trend Micro",
+        "TrendAI",
+        "sovereign cloud",
+        "private cloud",
+        "AI security operations",
+        "agentic SIEM",
+        "data residency",
+        "Claude",
+        "Grok",
+        "Moonshot AI",
+        "CyberCartel",
+        "Straiker",
+        "AI agents",
+        "automated attacks",
+        "Latin America",
+        "Amazon",
+        "AWS",
+        "Northern Virginia",
+        "Loudoun County",
+        "AI data centers",
+        "power demand",
+        "community opposition",
+        "Monitor",
+        "Amazon Bedrock",
+        "Google Vertex AI",
+        "Microsoft Foundry",
+        "cloud sessions",
+        "enterprise roles",
+        "coding agents",
+        "Block",
+        "Dessa",
+        "voice AI",
+        "speech-to-speech",
+        "full-duplex",
+        "local inference",
+        "MacBook M4 Max",
+        "NVIDIA GB200 NVL72",
+        "OpenAI Codex",
+        "presets",
+        "OAuth",
+        "credential masking",
+        "permissions",
+        "PyPI",
+        "supply chain compromise",
+        "Python startup hooks",
+        "credential theft",
+        "AI gateway",
+        "model-provider API keys",
+        "sitecustomize.py",
+        "cook.pth"
+      ],
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "кибербезопасность ИИ"
+        },
+        {
+          "@type": "Thing",
+          "name": "LiteLLM"
+        },
+        {
+          "@type": "Thing",
+          "name": "supply-chain атаки"
+        },
+        {
+          "@type": "Thing",
+          "name": "агенты ИИ"
+        },
+        {
+          "@type": "Thing",
+          "name": "Claude Code"
+        },
+        {
+          "@type": "Thing",
+          "name": "Codex CLI"
+        },
+        {
+          "@type": "Thing",
+          "name": "MCP"
+        },
+        {
+          "@type": "Thing",
+          "name": "ИИ-дата-центры"
+        },
+        {
+          "@type": "Thing",
+          "name": "голосовые модели"
+        },
+        {
+          "@type": "Thing",
+          "name": "локальный inference"
+        },
+        {
+          "@type": "Thing",
+          "name": "NVIDIA Nemotron"
+        },
+        {
+          "@type": "Thing",
+          "name": "суверенный ИИ"
+        }
+      ],
+      "wordCount": 874,
+      "inLanguage": "ru-RU",
+      "isAccessibleForFree": true,
+      "conditionsOfAccess": "Бесплатно",
+      "creativeWorkStatus": "Published",
+      "encodingFormat": "text/html",
+      "articleBody": "Повестка дня показывает, что масштабирование ИИ всё сильнее зависит от доверия к инфраструктуре: безопасности цепочек поставки, управляемости агентов и общественного согласия на новые дата-центры. Одновременно разработчики переводят контроль доступа, наблюдаемость и защиту учётных данных из дополнительных функций в базовый слой агентных продуктов. На продуктовом уровне заметен другой сдвиг: голосовые модели и coding-агенты становятся более локальными и управляемыми, а не просто более разговорчивыми или автономными. Мировые лидеры ИИ Trend Micro интегрировала открытые модели NVIDIA Nemotron в суверенную платформу AI-security Trend Micro сообщила о встраивании NVIDIA Nemotron в Vision One for Sovereign and Private Cloud. По данным IT Pro , модели предполагается использовать для анализа угроз, сопровождения расследований и agentic SIEM в инфраструктуре, которую контролирует сам заказчик. Практическое значение — возможность применять модели в контурах с требованиями к резидентности данных и приватному облаку. Однако независимых метрик качества, перечня клиентов и сроков широкой доступности в опубликованном материале нет: заявленные преимущества следует считать позицией поставщиков. CyberCartel, по данным Straiker, автоматизировала атаки на более чем 400 латиноамериканских организаций с помощью агентов Claude, Grok и Moonshot Исследование, пересказанное Tom's Hardware , связывает группировку CyberCartel с использованием агентных систем на базе Claude, Grok и решения Moonshot AI при атаках на банки, платёжные приложения и другие организации Латинской Америки. В публикации говорится о более чем 400 затронутых учреждениях и о блокировке доступа злоумышленников к Claude со стороны Anthropic. Это важный сигнал не столько о конкретной модели, сколько о переносимости агентных сценариев между поставщиками: блокировка одного инструмента не останавливает операцию, если процесс легко переносится на другой. При этом ключевые оценки масштаба и атрибуция исходят из исследования Straiker, а не из публично доступного независимого расследования. Amazon отказалась от строительства четырёх новых дата-центров в Северной Вирджинии после сопротивления местного сообщества Amazon решила не строить четыре запланированных дата-центра на бывшем участке George Washington University площадью 122 акра в Loudoun County. Как сообщает Tom's Hardware , большую часть территории планируют отдать под смешанную и жилую застройку, а 25 акров — передать округу. Решение показывает, что доступность земли и капитала не гарантирует ввода новых мощностей: шум, энергопотребление и интересы местных сообществ становятся прямыми ограничителями для AI-cloud инфраструктуры. Материал связывает разворот с переговорами с властями и сопротивлением жителей, но не содержит отдельного первичного заявления Amazon с полным набором условий проекта. Claude Code 2.1.310 добавила Monitor для Bedrock, Vertex и Foundry и ролевой доступ к cloud sessions Anthropic выпустила Claude Code 2.1.310. Согласно release notes , Monitor и plugin monitors теперь работают при поставке модели через Amazon Bedrock, Google Vertex AI и Microsoft Foundry — в том числе в конфигурациях с отключённой телеметрией. В релиз также вошёл ролевой доступ к cloud sessions и Remote Control через кастомные enterprise-роли. Для компаний это означает, что наблюдаемость агента и права удалённого управления можно распределять отдельно от выбора облачного провайдера; однако речь идёт о развитии существующей среды разработки, а не о независимой оценке эффективности этих механизмов. Block представила Dessa — локальную full-duplex голосовую модель, обученную только на человеческой речи Block через исследовательскую группу Dessa представила speech-to-speech модель, способную одновременно слушать и отвечать. По данным TechCrunch и Block , модель обучали на человеческих разговорах без текстового корпуса и предобученных моделей, а inference заявлен как возможный на MacBook Pro M4 Max или более мощном устройстве. Локальный запуск и full-duplex взаимодействие потенциально важны для голосовых интерфейсов, где задержка и передача разговоров в облако критичны. Но доступ к модели пока ограничен группой исследователей безопасности, а заявления о качестве, скорости и уникальности исходят от самой компании: открытых весов и независимых бенчмарков нет. OpenAI выпустила Codex CLI 0.164.0 с presets, inline-настройкой моделей и защищённым enterprise MCP В Codex CLI 0.164.0 OpenAI добавила десять слотов /presets для повторно используемых промптов и команд. Настройки модели, reasoning effort, скорости и профиля разрешений теперь можно задавать прямо через /model и /permissions. Релиз также расширяет enterprise-аутентификацию MCP, включая OAuth-клиенты с секретами, и маскирует credentials в поддерживаемых удалённых Bash- и Zsh-сессиях. Это снижает трение при внедрении агента в корпоративные среды, но не отменяет необходимость отдельно проверять права MCP-серверов и защищать секреты в CI/CD. Microsoft раскрыла механизм supply-chain-компрометации LiteLLM 1.107.0: запуск кражи credentials через Python startup hooks Microsoft опубликовала технический разбор компрометации LiteLLM 1.107.0, вредоносная версия которого была опубликована 21 октября в PyPI и официальных container images. Вредонос использовал .pth-файл и sitecustomize.py: payload мог запускаться при старте Python даже без явного импорта LiteLLM. Это особенно опасно для ИИ-шлюзов: сборщик был рассчитан на ключи провайдеров моделей, облачные и workload credentials, токены CI/CD, SSH-материалы, браузерные данные и конфигурации LiteLLM proxy. Microsoft не устанавливает исходную точку компрометации и подчёркивает, что наличие версии 1.107.0 ещё не доказывает успешную эксфильтрацию на конкретной машине, но рекомендует расследование и ротацию затронутых секретов. Что это значит Безопасность ИИ-инфраструктуры теперь зависит не только от модели: зависимость в Python-пакете способна открыть доступ одновременно к ключам LLM-провайдеров, облаку и CI/CD. Агентные кибероперации становятся переносимыми между моделями. Организациям нужен контроль действий, инструментов и идентичностей, а не ставка на ограничения одного поставщика. Облачные coding-агенты переходят к корпоративной модели эксплуатации: роли, мониторинг, MCP-аутентификация и маскирование секретов становятся обязательными компонентами продукта. Локальные голосовые модели могут уменьшить задержку и объём передаваемых разговорных данных, но для оценки их реальной готовности нужны независимые тесты и более широкий доступ. Строительство AI-дата-центров упирается в социальную лицензию на работу: энергопотребление, шум и городское планирование способны остановить проект даже на ключевом рынке облачной инфраструктуры. Все ИИ-Сводки Архив ИИ-Сводок",
+      "citation": [
+        "https://www.itpro.com/technology/artificial-intelligence/trendai-targets-open-weight-model-gains-with-nvidia-nemotron-deal",
+        "https://www.tomshardware.com/tech-industry/artificial-intelligence/cybercartel-hacking-gang-used-claude-and-grok-ai-agents-to-automate-attacks-on-latin-american-institutions-passwords-and-details-stolen-from-over-400-institutions-including-banks-and-payment-apps",
+        "https://www.tomshardware.com/tech-industry/data-centers/amazon-bows-to-local-backlash-over-ai-data-centers-scraps-plans-to-build-four-new-facilities-in-northern-virginia-site-to-be-repurposed-for-mixed-use-and-residential-development",
+        "https://www.havoptic.com/r/claude-code-2.1.310",
+        "https://techcrunch.com/2026/10/24/blocks-new-voice-model-sounds-eerily-human/",
+        "https://block.xyz/dessa",
+        "https://github.com/openai/codex/releases/tag/rust-v0.164.0",
+        "https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-through-python-startup-hooks/"
+      ],
+      "mentions": [
+        {
+          "@type": "Organization",
+          "name": "Trend Micro; NVIDIA"
+        },
+        {
+          "@type": "Organization",
+          "name": "CyberCartel; Anthropic; xAI; Moonshot AI; Straiker"
+        },
+        {
+          "@type": "Organization",
+          "name": "Amazon; AWS; Loudoun County"
+        },
+        {
+          "@type": "Organization",
+          "name": "Anthropic"
+        },
+        {
+          "@type": "Organization",
+          "name": "Block; Dessa"
+        },
+        {
+          "@type": "Organization",
+          "name": "OpenAI"
+        },
+        {
+          "@type": "Organization",
+          "name": "Microsoft; LiteLLM"
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<h1>ИИ-Сводка на 25 октября 2026</h1>
+<img src="../images/ai-svodka-2026-10-25.png" alt="ИИ-Сводка на 25 октября 2026">
+<p>Повестка дня показывает, что масштабирование ИИ всё сильнее зависит от доверия к инфраструктуре: безопасности цепочек поставки, управляемости агентов и общественного согласия на новые дата-центры. Одновременно разработчики переводят контроль доступа, наблюдаемость и защиту учётных данных из дополнительных функций в базовый слой агентных продуктов.</p><p>На продуктовом уровне заметен другой сдвиг: голосовые модели и coding-агенты становятся более локальными и управляемыми, а не просто более разговорчивыми или автономными.</p><h2>Мировые лидеры ИИ</h2><h3>Trend Micro интегрировала открытые модели NVIDIA Nemotron в суверенную платформу AI-security</h3><p>Trend Micro сообщила о встраивании NVIDIA Nemotron в Vision One for Sovereign and Private Cloud. По данным <a href="https://www.itpro.com/technology/artificial-intelligence/trendai-targets-open-weight-model-gains-with-nvidia-nemotron-deal">IT Pro</a>, модели предполагается использовать для анализа угроз, сопровождения расследований и agentic SIEM в инфраструктуре, которую контролирует сам заказчик.</p><p>Практическое значение — возможность применять модели в контурах с требованиями к резидентности данных и приватному облаку. Однако независимых метрик качества, перечня клиентов и сроков широкой доступности в опубликованном материале нет: заявленные преимущества следует считать позицией поставщиков.</p><h3>CyberCartel, по данным Straiker, автоматизировала атаки на более чем 400 латиноамериканских организаций с помощью агентов Claude, Grok и Moonshot</h3><p>Исследование, пересказанное <a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/cybercartel-hacking-gang-used-claude-and-grok-ai-agents-to-automate-attacks-on-latin-american-institutions-passwords-and-details-stolen-from-over-400-institutions-including-banks-and-payment-apps">Tom's Hardware</a>, связывает группировку CyberCartel с использованием агентных систем на базе Claude, Grok и решения Moonshot AI при атаках на банки, платёжные приложения и другие организации Латинской Америки. В публикации говорится о более чем 400 затронутых учреждениях и о блокировке доступа злоумышленников к Claude со стороны Anthropic.</p><p>Это важный сигнал не столько о конкретной модели, сколько о переносимости агентных сценариев между поставщиками: блокировка одного инструмента не останавливает операцию, если процесс легко переносится на другой. При этом ключевые оценки масштаба и атрибуция исходят из исследования Straiker, а не из публично доступного независимого расследования.</p><h3>Amazon отказалась от строительства четырёх новых дата-центров в Северной Вирджинии после сопротивления местного сообщества</h3><p>Amazon решила не строить четыре запланированных дата-центра на бывшем участке George Washington University площадью 122 акра в Loudoun County. Как сообщает <a href="https://www.tomshardware.com/tech-industry/data-centers/amazon-bows-to-local-backlash-over-ai-data-centers-scraps-plans-to-build-four-new-facilities-in-northern-virginia-site-to-be-repurposed-for-mixed-use-and-residential-development">Tom's Hardware</a>, большую часть территории планируют отдать под смешанную и жилую застройку, а 25 акров — передать округу.</p><p>Решение показывает, что доступность земли и капитала не гарантирует ввода новых мощностей: шум, энергопотребление и интересы местных сообществ становятся прямыми ограничителями для AI-cloud инфраструктуры. Материал связывает разворот с переговорами с властями и сопротивлением жителей, но не содержит отдельного первичного заявления Amazon с полным набором условий проекта.</p><h3>Claude Code 2.1.310 добавила Monitor для Bedrock, Vertex и Foundry и ролевой доступ к cloud sessions</h3><p>Anthropic выпустила Claude Code 2.1.310. Согласно <a href="https://www.havoptic.com/r/claude-code-2.1.310">release notes</a>, Monitor и plugin monitors теперь работают при поставке модели через Amazon Bedrock, Google Vertex AI и Microsoft Foundry — в том числе в конфигурациях с отключённой телеметрией.</p><p>В релиз также вошёл ролевой доступ к cloud sessions и Remote Control через кастомные enterprise-роли. Для компаний это означает, что наблюдаемость агента и права удалённого управления можно распределять отдельно от выбора облачного провайдера; однако речь идёт о развитии существующей среды разработки, а не о независимой оценке эффективности этих механизмов.</p><h3>Block представила Dessa — локальную full-duplex голосовую модель, обученную только на человеческой речи</h3><p>Block через исследовательскую группу Dessa представила speech-to-speech модель, способную одновременно слушать и отвечать. По данным <a href="https://techcrunch.com/2026/10/24/blocks-new-voice-model-sounds-eerily-human/">TechCrunch</a> и <a href="https://block.xyz/dessa">Block</a>, модель обучали на человеческих разговорах без текстового корпуса и предобученных моделей, а inference заявлен как возможный на MacBook Pro M4 Max или более мощном устройстве.</p><p>Локальный запуск и full-duplex взаимодействие потенциально важны для голосовых интерфейсов, где задержка и передача разговоров в облако критичны. Но доступ к модели пока ограничен группой исследователей безопасности, а заявления о качестве, скорости и уникальности исходят от самой компании: открытых весов и независимых бенчмарков нет.</p><h3>OpenAI выпустила Codex CLI 0.164.0 с presets, inline-настройкой моделей и защищённым enterprise MCP</h3><p>В <a href="https://github.com/openai/codex/releases/tag/rust-v0.164.0">Codex CLI 0.164.0</a> OpenAI добавила десять слотов /presets для повторно используемых промптов и команд. Настройки модели, reasoning effort, скорости и профиля разрешений теперь можно задавать прямо через /model и /permissions.</p><p>Релиз также расширяет enterprise-аутентификацию MCP, включая OAuth-клиенты с секретами, и маскирует credentials в поддерживаемых удалённых Bash- и Zsh-сессиях. Это снижает трение при внедрении агента в корпоративные среды, но не отменяет необходимость отдельно проверять права MCP-серверов и защищать секреты в CI/CD.</p><h3>Microsoft раскрыла механизм supply-chain-компрометации LiteLLM 1.107.0: запуск кражи credentials через Python startup hooks</h3><p>Microsoft опубликовала <a href="https://www.microsoft.com/en-us/security/blog/2026/10/23/inside-the-litellm-1-107-0-supply-chain-compromise-credential-theft-through-python-startup-hooks/">технический разбор</a> компрометации LiteLLM 1.107.0, вредоносная версия которого была опубликована 21 октября в PyPI и официальных container images. Вредонос использовал .pth-файл и sitecustomize.py: payload мог запускаться при старте Python даже без явного импорта LiteLLM.</p><p>Это особенно опасно для ИИ-шлюзов: сборщик был рассчитан на ключи провайдеров моделей, облачные и workload credentials, токены CI/CD, SSH-материалы, браузерные данные и конфигурации LiteLLM proxy. Microsoft не устанавливает исходную точку компрометации и подчёркивает, что наличие версии 1.107.0 ещё не доказывает успешную эксфильтрацию на конкретной машине, но рекомендует расследование и ротацию затронутых секретов.</p><h2>Что это значит</h2><ol><li>Безопасность ИИ-инфраструктуры теперь зависит не только от модели: зависимость в Python-пакете способна открыть доступ одновременно к ключам LLM-провайдеров, облаку и CI/CD.</li><li>Агентные кибероперации становятся переносимыми между моделями. Организациям нужен контроль действий, инструментов и идентичностей, а не ставка на ограничения одного поставщика.</li><li>Облачные coding-агенты переходят к корпоративной модели эксплуатации: роли, мониторинг, MCP-аутентификация и маскирование секретов становятся обязательными компонентами продукта.</li><li>Локальные голосовые модели могут уменьшить задержку и объём передаваемых разговорных данных, но для оценки их реальной готовности нужны независимые тесты и более широкий доступ.</li><li>Строительство AI-дата-центров упирается в социальную лицензию на работу: энергопотребление, шум и городское планирование способны остановить проект даже на ключевом рынке облачной инфраструктуры.</li></ol>
+<h2>Все ИИ-Сводки</h2><p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>
+<p class="digest-footer" style="text-align:center;margin:32px 0 0;"><a href="https://dzen.ru/rybv" target="_blank" rel="noopener noreferrer"><img src="https://rybalka.one/posts/_footer-scr.png" alt="Подписаться на канал" style="display:block;max-width:50%;width:auto;height:auto;margin:0 auto;"></a></p>
+</body>
+</html>
