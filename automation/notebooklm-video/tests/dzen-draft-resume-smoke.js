@@ -32,10 +32,12 @@ assert.equal(scheduled.shouldResumeDraft("DRAFT_PROCESSING",""), false);
 
 const dir = fs.mkdtempSync(path.join(os.tmpdir(),"dzen-draft-resume-"));
 try {
+  const mp4Path = path.join(dir,"ИИ-Сводка 2026-10-25.mp4");
+  fs.writeFileSync(mp4Path, "offline fixture: only existence is needed for the durable state boundary");
   const config = {stateFile:path.join(dir,"state.json"),workDir:dir,
     timeZone:"Europe/Moscow",history:{enabled:false}};
   const initial = {version:1,jobs:{[pub]:{
-    date:"2026-10-25",publicationUrl:pub,status:"DONE",
+    date:"2026-10-25",publicationUrl:pub,status:"DONE",downloadedFile:mp4Path,
     dzenAutomation:{status:"UPLOAD_ARMED"},
   }}};
   fs.writeFileSync(config.stateFile,JSON.stringify(initial));
