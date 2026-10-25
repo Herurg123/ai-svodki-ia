@@ -227,7 +227,7 @@ function syncChildDzenState(config, job) {
   return job.dzenAutomation;
 }
 
-async function verifyPublished(session, config, dateArg, logFn) {
+async function verifyPublished(session, config, dateArg, logFn, draftId = null, fullTitle = null) {
   const deadline = Date.now() + config.dzenUpload.verificationTimeoutMs;
   let last = null;
   let attempt = 0;
@@ -241,7 +241,14 @@ async function verifyPublished(session, config, dateArg, logFn) {
       logFn
     );
 
-    if (last.existing) return last;
+    if (last.existing) {
+      if (!draftId) return last;
+      const observation = await duplicateGuard.inspectPinnedDraft(
+        session.primaryPage, draftId, fullTitle, logFn
+      );
+      if (observation === "ABSENT") return last;
+      logFn(`Опубликован заголовок, но draftId=${draftId} имеет статус ${observation}: публикация этого черновика НЕ подтверждена.`);
+    }
 
     logFn(
       `verification-only: попытка ${attempt} не нашла опубликованное Видео; ` +
@@ -294,7 +301,19 @@ async function runAutomaticDzen(config, state, job, dateKey) {
       (message) => log(config, `DZEN: ${message}`)
     );
 
-    if (precheck.existing) {
+    let publishedConfirmed = precheck.existing;
+    if (publishedConfirmed && job.dzenAutomation?.draftId) {
+      const byId = await duplicateGuard.inspectPinnedDraft(
+        session.primaryPage, job.dzenAutomation.draftId,
+        dzenHelpers.buildDzenTitle(dateKey),
+        (message) => log(config, `DZEN: ${message}`)
+      );
+      if (byId !== "ABSENT") {
+        publishedConfirmed = false;
+        log(config, `Список опубликованных содержит совпадающий заголовок, но pinned draftId=${job.dzenAutomation.draftId} ещё существует или не проверен (${byId}). НЕ отмечаю как PUBLISHED.`);
+      }
+    }
+    if (publishedConfirmed) {
       updateDzenAutomation(config, state, job, "PUBLISHED", {
         confirmedAt: new Date().toISOString(),
         confirmedBy: "duplicate-guard",
@@ -317,7 +336,9 @@ async function runAutomaticDzen(config, state, job, dateKey) {
         session,
         config,
         dateArg,
-        (message) => log(config, `DZEN: ${message}`)
+        (message) => log(config, `DZEN: ${message}`),
+        job.dzenAutomation?.draftId,
+        dzenHelpers.buildDzenTitle(dateKey)
       );
 
       if (verified) {
@@ -417,7 +438,9 @@ async function runAutomaticDzen(config, state, job, dateKey) {
       session,
       config,
       dateArg,
-      (message) => log(config, `DZEN: ${message}`)
+      (message) => log(config, `DZEN: ${message}`),
+      job.dzenAutomation?.draftId,
+      dzenHelpers.buildDzenTitle(dateKey)
     );
 
     if (!verified) {
