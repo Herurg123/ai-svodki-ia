@@ -51,7 +51,7 @@ Inter-run resume старых drafts, повторное заполнение me
 
 ## At-most-once state machine
 
-Scheduled orchestration сохраняет `PUBLISH_ARMED` **до** запуска live child.
+Scheduled orchestration сохраняет `UPLOAD_ARMED` **до** запуска live child; `DRAFT_CREATED` с точным ID сохраняется сразу после создания удалённого черновика, а `DRAFT_PROCESSING` только после подтверждения metadata/cover/tags.
 Дальнейшая схема:
 
 ```text
