@@ -158,6 +158,18 @@ precreated.
 
 ## Native Dzen video publication
 
+Since the 2026-10-25 incident, new native uploads persist the exact Dzen
+draft ID as soon as remote creation is observed. After setting metadata/cover/
+tags, DRAFT_PROCESSING allows a later scheduled run to reopen that exact
+draft, check the unchanged metadata and continue waiting for server-side
+processing. The normal "Опубликовать" action is attempted only after final
+ready status and active button, once per draft. No "publish after processing"
+button or automatic second upload is used. The child reserves the click in
+state.json before dispatch. Dzen's processing may take longer than the
+single-run wait window; that is NOT permission for a new upload.
+Existing CLICKED_UNVERIFIED jobs (including both 2026-10-25 drafts) are not
+automatically migrated or re-published.
+
 Normal scheduled publication begins with a fail-closed duplicate guard in Studio
 `Публикации → Видео`. It must confirm the real Video filter and match the
 expected title prefix before any upload.
@@ -173,17 +185,19 @@ child performs at most one publish action.
 Scheduled safety state:
 
 ~~~text
-PENDING / RETRYABLE_PRE_CLICK
-  -> duplicate guard
-  -> PUBLISH_ARMED
-  -> one fresh-upload child
-  -> CLICKED_UNVERIFIED
-  -> verification through Studio Video list
-  -> PUBLISHED
+PENDING (without draft ID)
+  -> published duplicate guard
+  -> UPLOAD_ARMED
+  -> one fresh upload -> DRAFT_CREATED (draft ID pinned immediately)
+  -> metadata/cover/tags confirmed -> DRAFT_PROCESSING
+  -> if still processing: stop this pass, resume exact draft on next run
+  -> final ready status -> durable CLICKED_UNVERIFIED -> one normal publish click
+  -> read-only draft-ID + published-list verification -> PUBLISHED
 
+Legacy RETRYABLE_PRE_CLICK / UPLOAD_ARMED / DRAFT_CREATED /
 PUBLISH_ARMED / CLICKED_UNVERIFIED / BLOCKED_AMBIGUOUS
-  -> verification only
-  -> never a new upload
+  -> verification or manual intervention only
+  -> never a fresh upload
   -> never a second publish click
 ~~~
 
