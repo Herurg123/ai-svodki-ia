@@ -5,6 +5,7 @@
 // Never click robot/consent challenges, generic checkboxes, or unknown dialogs.
 const SPEED_MESSAGE = /Видео\s+загружено\s+за\s+\d+\s+сек(?:унд[ыу]?)?/iu;
 const PREFERENCE_LABEL = "Больше не показывать такие сообщения";
+// Fail closed if a verification prompt shares the visible surface.
 const HUMAN_CHALLENGE = /подтвердите\s*,?\s*что\s*вы\s*не\s*(?:робот|против)|я\s+не\s+робот|я\s+не\s+против/iu;
 
 function mayAcknowledgeSpeedNotice(text) {
@@ -13,7 +14,11 @@ function mayAcknowledgeSpeedNotice(text) {
     !HUMAN_CHALLENGE.test(body);
 }
 
+// One attempt per browser session, even if the server does not acknowledge it.
+const attemptedSpeedPreference = new WeakSet();
+
 async function dismissUploadSpeedNotice(browser, logger = () => {}) {
+  if (browser && attemptedSpeedPreference.has(browser)) return { status: "previously-attempted" };
   if (!browser || typeof browser.contexts !== "function") return { status: "unavailable" };
   for (const context of browser.contexts()) {
     for (const page of context.pages()) {
@@ -35,6 +40,7 @@ async function dismissUploadSpeedNotice(browser, logger = () => {}) {
         const control = (await namedCheckbox.count().catch(() => 0)) > 0
           ? namedCheckbox
           : ((await localCheckbox.count().catch(() => 0)) > 0 ? localCheckbox : null);
+        attemptedSpeedPreference.add(browser);
         logger("Безопасное уведомление Дзен о скорости загрузки: найден точный флажок «Больше не показывать такие сообщения».");
         if (control) {
           if (await control.isChecked().catch(() => false)) {
@@ -60,9 +66,23 @@ async function dismissUploadSpeedNotice(browser, logger = () => {}) {
   return { status: "absent" };
 }
 
+// Extend only this allowlist to support additional known, non-security Dzen
+// notices. The orchestrator does not know selector/text details or wait for
+// any specific popup. Returns immediately when nothing supported is visible.
+const KNOWN_NOTICE_HANDLERS = Object.freeze([dismissUploadSpeedNotice]);
+
+async function processKnownDzenNotices(browser, logger = () => {}) {
+  for (const handler of KNOWN_NOTICE_HANDLERS) {
+    const result = await handler(browser, logger);
+    if (result && !["absent", "unavailable"].includes(result.status)) return result;
+  }
+  return { status: "absent" };
+}
+
 module.exports = {
   SPEED_MESSAGE,
   PREFERENCE_LABEL,
   mayAcknowledgeSpeedNotice,
   dismissUploadSpeedNotice,
+  processKnownDzenNotices,
 };
