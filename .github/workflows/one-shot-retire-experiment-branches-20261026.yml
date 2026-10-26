@@ -1,4 +1,5 @@
 name: One-shot cleanup of completed experiment branches
+# Verified allowlist: Sol 22-24, merged archive, and two completed export branches
 on:
   push:
     branches:
