@@ -7,6 +7,7 @@ const browserSession = require("./browser-session");
 const duplicateGuard = require("./dzen-duplicate-guard");
 const history = require("./history-utils");
 const dzenHelpers = require("./dzen-publish");
+const safeNotices = require("./dzen-safe-notices");
 const { classifyBlockingError } = require("./dzen-error-log");
 
 const ROOT = __dirname;
@@ -197,6 +198,10 @@ async function waitForOptionalPostClickChallenge() {
     );
     return { seen: false, resolved: false, reason: "cdp-unavailable" };
   }
+
+  // Harmless upload-speed preference, never an anti-bot checkbox.
+  await safeNotices.dismissUploadSpeedNotice(browser, (message) => log(config, message))
+    .catch((error) => warn(config, `Speed-notice: ${error.message}`));
 
   const probeDeadline = Date.now() + POST_CLICK_CHALLENGE_PROBE_MS;
   let challengePage = null;
