@@ -80,7 +80,7 @@ assert.equal(duplicate.pinnedPublishedIdentity({existing:false,publishedVideoUrl
     "Any unknown ID must fail closed, not authorize fresh upload");
 
   const direct = fs.readFileSync(path.join(__dirname,"../dzen-publish-direct.js"),"utf8");
-  assert(direct.includes("dismissUploadSpeedNotice(connection.browser"));
+  assert(direct.includes("processKnownDzenNotices(connection.browser"));
   const runner = fs.readFileSync(path.join(__dirname,"../dzen-browser-runner.js"),"utf8");
   assert(!runner.includes("dismissUploadSpeedNotice(browser"));
   assert(!runner.includes("findAntiBotChallengePage"));
