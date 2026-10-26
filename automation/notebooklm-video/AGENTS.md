@@ -298,3 +298,15 @@ rules. A video-local task does not override root `AGENTS.md`.
   `Больше не показывать такие сообщения` selected once, verifying the result.
   Do NOT click verification challenges (`Я не робот`, `Я не против`), broadly
   accept unknown consents, or use forced/coordinate clicks for the preference.
+
+## Boundaries for popup handling (2026-10-26 refactor)
+
+- Keep `dzen-browser-runner.js` generic: it supervises child process,
+  session and logs only. Do not add CAPTCHA/challenge names, selectors,
+  timeouts, manual-wait loops or Windows focus restoration to it.
+- Only `dzen-safe-notices.js` owns allowlisted informational popup selectors.
+  `dzen-publish-direct.js` calls its dispatcher once per post-click observation
+  tick (45 seconds total), even when the original editor page has closed.
+- Unknown dialogs are user-managed: no automatic interaction or
+  dedicated waiting in the automation. Missing publication confirmation
+  must remain fail-closed, at most one upload and one publish click.
