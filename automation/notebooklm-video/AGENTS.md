@@ -52,6 +52,14 @@ access remains protected by Windows DPAPI `CurrentUser`.
 empty `temp/` or `traces/` directories or restore them to fresh config unless
 a real producer/consumer is added with tests and documentation.
 
+## Local closing card (verified on Windows, 2026-10-26)
+
+For a fresh NotebookLM download, local `downloads/_footer-vid.png` enables
+a five-second silent closing card. Preserve the original `-original.mp4`,
+save `DOWNLOADED` before rendering, verify the final dated MP4 and only
+then set `DONE` and deliver it to FTP/Dzen/VK. Existing DONE jobs are immutable;
+failed footer rendering blocks downstream. Never commit source media/state.
+
 ## Browser/session safety
 
 All NotebookLM and Dzen browser automation reuses the protected persistent Yandex
@@ -155,10 +163,11 @@ and resumes the SAME pinned draft in the next scheduled run. Never infer
 fresh-upload permission merely from publishClicked=false. An incomplete or
 ambiguous draft is manual-only; no automatic re-upload/rewrite.
 
-After the single publish click, hold the Dzen editor for a 45-second
-read-only observation (no navigation/reopen/second click). Save a local
-diagnostic screenshot if unverified. Only the published Video listing can
-confirm success; captcha remains manual-only.
+After the single publish click, run bounded 45-second observation without
+re-navigation, duplicate upload or second publish click. The only permitted
+UI interaction is a precisely allowlisted informational notification handled
+by `dzen-safe-notices.js`. Unknown verification dialogs remain operator-owned;
+only the exact public video ID in a published Studio row confirms success.
 
 The scheduled orchestrator persists UPLOAD_ARMED before the live upload child.
 The child persists CLICKED_UNVERIFIED BEFORE dispatching the single allowed
@@ -170,9 +179,10 @@ readiness checking and perform its one eventual normal publish click.
 Remote drafts are never deleted automatically. The exact
 videoEditorPublicationId is a persistent identity, NOT by itself evidence of
 a ready/valid editor: resume must confirm URL, visible editor and saved exact
-title/description before any action. After a click, read-only verification must
-check the pinned draft identity as well as published title; if the draft still
-exists or its absence cannot be confirmed, never mark PUBLISHED. The observed
+title/description before any action. After a click, verify that the exact saved draft ID matches the public
+`/video/watch/<ID>` URL in its published Studio row. Never reopen the
+old editor to infer whether the draft disappeared. Missing or different
+IDs remain verification-only and do not authorize another upload/click. The observed
 2026-10-25 legacy CLICKED_UNVERIFIED case remains verification-only; no
 automatic migration or third upload.
 
