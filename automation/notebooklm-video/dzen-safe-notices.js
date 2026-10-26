@@ -1,11 +1,11 @@
 "use strict";
 
-// Whitelist a NON-security informational notification from Dzen:
-// "Видео загружено за 4 сек" + "Больше не показывать такие сообщения".
-// Never click robot/consent challenges, generic checkboxes, or unknown dialogs.
+// Разрешаем только информационное уведомление Дзена, не связанное с проверкой безопасности:
+// «Видео загружено за 4 сек» + «Больше не показывать такие сообщения».
+// Не нажимаем проверки человека, флажки согласия, произвольные флажки и неизвестные окна.
 const SPEED_MESSAGE = /Видео\s+загружено\s+за\s+\d+\s+сек(?:унд[ыу]?)?/iu;
 const PREFERENCE_LABEL = "Больше не показывать такие сообщения";
-// Fail closed if a verification prompt shares the visible surface.
+// Если на той же видимой странице есть проверка человека, ничего не нажимаем.
 const HUMAN_CHALLENGE = /подтвердите\s*,?\s*что\s*вы\s*не\s*(?:робот|против)|я\s+не\s+робот|я\s+не\s+против/iu;
 
 function mayAcknowledgeSpeedNotice(text) {
@@ -14,7 +14,7 @@ function mayAcknowledgeSpeedNotice(text) {
     !HUMAN_CHALLENGE.test(body);
 }
 
-// One attempt per browser session, even if the server does not acknowledge it.
+// Только одна попытка на объект браузера, даже если сервер не подтвердил действие.
 const attemptedSpeedPreference = new WeakSet();
 
 async function dismissUploadSpeedNotice(browser, logger = () => {}) {
@@ -31,9 +31,9 @@ async function dismissUploadSpeedNotice(browser, logger = () => {}) {
         if (!(await title.isVisible().catch(() => false)) ||
             !(await label.isVisible().catch(() => false))) continue;
 
-        // Only a control associated with the EXACT allowlisted label qualifies.
-        // If the UI lacks an accessible checkbox, clicking the visible label
-        // is permitted once, but lack of a verified result does not retry.
+        // Подходит только флажок, связанный с ТОЧНЫМ текстом разрешённой подписи.
+        // Если отдельный доступный флажок не найден, можно один раз нажать
+        // видимую подпись. Если результат не подтвердился, повторной попытки нет.
         const namedCheckbox = frame.getByRole("checkbox", { name: PREFERENCE_LABEL, exact: true }).first();
         const localCheckbox = label.locator("xpath=..")
           .locator('input[type="checkbox"],[role="checkbox"]').first();
@@ -66,9 +66,10 @@ async function dismissUploadSpeedNotice(browser, logger = () => {}) {
   return { status: "absent" };
 }
 
-// Extend only this allowlist to support additional known, non-security Dzen
-// notices. The orchestrator does not know selector/text details or wait for
-// any specific popup. Returns immediately when nothing supported is visible.
+// Добавлять поддержку новых известных безопасных уведомлений Дзена нужно только
+// в этот список разрешённых обработчиков. Оркестратор не знает подробностей
+// текстов и селекторов и не ожидает конкретные окна. Если подходящего окна нет,
+// функция сразу возвращает результат без дополнительных ожиданий.
 const KNOWN_NOTICE_HANDLERS = Object.freeze([dismissUploadSpeedNotice]);
 
 async function processKnownDzenNotices(browser, logger = () => {}) {
