@@ -73,7 +73,7 @@ async function findVisiblePublishedVideo(page, titlePrefix) {
       await candidate.innerText().catch(async () => candidate.textContent().catch(() => ""))
     ).replace(/\s+/g, " ").trim();
     if (!text.includes(titlePrefix)) continue;
-    const publicVideoUrl = await candidate.evaluate((element, expectedPrefix) => {
+    const publicVideoUrl = await (typeof candidate.evaluate === "function" ? candidate.evaluate((element, expectedPrefix) => {
       for (let row = element, depth = 0; row && depth < 16; row = row.parentElement, depth += 1) {
         const bounds = row.getBoundingClientRect();
         const rowText = String(row.innerText || row.textContent || "").replace(/\s+/g, " ").trim();
@@ -94,7 +94,7 @@ async function findVisiblePublishedVideo(page, titlePrefix) {
         if (ids.size === 1 && links.size > 0) return [...links][0];
       }
       return null;
-    }, titlePrefix).catch(() => null);
+    }, titlePrefix) : Promise.resolve(null)).catch(() => null);
     return { foundText: text, publishedVideoUrl: publicVideoUrl,
       publishedVideoId: extractPublishedVideoId(publicVideoUrl) };
   }
