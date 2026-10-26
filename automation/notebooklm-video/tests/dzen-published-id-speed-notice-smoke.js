@@ -58,7 +58,7 @@ assert.equal(duplicate.pinnedPublishedIdentity({existing:false,publishedVideoUrl
   assert.equal((await notices.dismissUploadSpeedNotice(makeBrowser(info))).status,"acknowledged");
   assert.equal(checked,true);
   assert.equal(clicks,1);
-  assert.equal((await notices.dismissUploadSpeedNotice(makeBrowser(info))).status,"already-checked");
+  assert.equal((await notices.dismissUploadSpeedNotice(makeBrowser(info))).status,"acknowledged");
   assert.equal(clicks,1);
   assert.equal((await notices.dismissUploadSpeedNotice(makeBrowser(robot))).status,"absent");
   assert.equal(clicks,1);
@@ -76,9 +76,11 @@ assert.equal(duplicate.pinnedPublishedIdentity({existing:false,publishedVideoUrl
   const direct = fs.readFileSync(path.join(__dirname,"../dzen-publish-direct.js"),"utf8");
   assert(direct.includes("dismissUploadSpeedNotice(connection.browser"));
   const runner = fs.readFileSync(path.join(__dirname,"../dzen-browser-runner.js"),"utf8");
-  assert(runner.includes("dismissUploadSpeedNotice(browser"));
-  assert(runner.includes("findAntiBotChallengePage(browser)"),
-    "Manual human verification must not be removed");
+  assert(!runner.includes("dismissUploadSpeedNotice(browser"));
+  assert(!runner.includes("findAntiBotChallengePage"));
+  assert(!runner.includes("waitForOptionalPostClickChallenge"));
+  assert(direct.includes("processKnownDzenNotices(noticeBrowser"),
+    "Prompt handling must execute during post-click observation, not after child exit");
 
   console.log("PASS: 2026-10-26 exact published-video ID and narrow upload-speed preference.");
 })().catch((err)=>{console.error(err);process.exitCode=1;});
