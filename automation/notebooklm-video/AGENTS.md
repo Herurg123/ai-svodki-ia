@@ -52,6 +52,14 @@ access remains protected by Windows DPAPI `CurrentUser`.
 empty `temp/` or `traces/` directories or restore them to fresh config unless
 a real producer/consumer is added with tests and documentation.
 
+## Local closing card (verified on Windows, 2026-10-26)
+
+For a fresh NotebookLM download, local `downloads/_footer-vid.png` enables
+a five-second silent closing card. Preserve the original `-original.mp4`,
+save `DOWNLOADED` before rendering, verify the final dated MP4 and only
+then set `DONE` and deliver it to FTP/Dzen/VK. Existing DONE jobs are immutable;
+failed footer rendering blocks downstream. Never commit source media/state.
+
 ## Browser/session safety
 
 All NotebookLM and Dzen browser automation reuses the protected persistent Yandex
@@ -146,24 +154,37 @@ reliably confirm the Studio Video view and expected same-day title prefix before
 upload. If an existing video is confirmed, stop without child/upload/draft/click.
 If the guard cannot prove the Video surface, fail closed before upload.
 
-If no duplicate exists, the canonical live path is a fresh-upload flow. It may
-start one live child and perform at most one publish action. Metadata/cover/tags
-must not be repeatedly rewritten after the validated values are set.
+If no published duplicate exists, a fresh upload is allowed only for a truly
+new PENDING job without a saved draft ID. Persist UPLOAD_ARMED before upload,
+then save the exact remote draft ID as DRAFT_CREATED immediately after it appears.
+After metadata/cover/tags have all been confirmed, save DRAFT_PROCESSING.
+A long-running Dzen processing operation ends the current pass without click
+and resumes the SAME pinned draft in the next scheduled run. Never infer
+fresh-upload permission merely from publishClicked=false. An incomplete or
+ambiguous draft is manual-only; no automatic re-upload/rewrite.
 
-After the single publish click, hold the Dzen editor for a 45-second
-read-only observation (no navigation/reopen/second click). Save a local
-diagnostic screenshot if unverified. Only the published Video listing can
-confirm success; captcha remains manual-only.
+After the single publish click, run bounded 45-second observation without
+re-navigation, duplicate upload or second publish click. The only permitted
+UI interaction is a precisely allowlisted informational notification handled
+by `dzen-safe-notices.js`. Unknown verification dialogs remain operator-owned;
+only the exact public video ID in a published Studio row confirms success.
 
-The scheduled orchestrator persists `PUBLISH_ARMED` before the live child and
-uses `CLICKED_UNVERIFIED` / `BLOCKED_AMBIGUOUS` for uncertain outcomes.
-These states are verification-only. A later run must never start a second upload
-or second publish click from them.
+The scheduled orchestrator persists UPLOAD_ARMED before the live upload child.
+The child persists CLICKED_UNVERIFIED BEFORE dispatching the single allowed
+publish click. Legacy PUBLISH_ARMED, CLICKED_UNVERIFIED, BLOCKED_AMBIGUOUS,
+UPLOAD_ARMED, DRAFT_CREATED and legacy RETRYABLE_PRE_CLICK are verification-only
+or manual-only. Only DRAFT_PROCESSING with a pinned exact ID may resume
+readiness checking and perform its one eventual normal publish click.
 
-A fresh retry is allowed only after explicit evidence that
-`publishClicked=false`. Remote drafts are not auto-deleted. A saved
-`videoEditorPublicationId` is diagnostic and must not be treated as a reliable
-inter-run resume permalink.
+Remote drafts are never deleted automatically. The exact
+videoEditorPublicationId is a persistent identity, NOT by itself evidence of
+a ready/valid editor: resume must confirm URL, visible editor and saved exact
+title/description before any action. After a click, verify that the exact saved draft ID matches the public
+`/video/watch/<ID>` URL in its published Studio row. Never reopen the
+old editor to infer whether the draft disappeared. Missing or different
+IDs remain verification-only and do not authorize another upload/click. The observed
+2026-10-25 legacy CLICKED_UNVERIFIED case remains verification-only; no
+automatic migration or third upload.
 
 Readiness is status-driven; do not treat an early partial-ready message as final
 readiness. Dzen tags remain mandatory and must resolve to the configured visible
@@ -272,3 +293,30 @@ production assets.
 
 All repository changes still follow the root repository workflow and safety
 rules. A video-local task does not override root `AGENTS.md`.
+
+## Published-video identity and non-security notifications (2026-10-26)
+
+- If a publish click has been attempted and the exact saved draft ID exists,
+  confirm success by a matching public `/video/watch/<ID>` URL extracted from the
+  **same visible published-video Studio row**. A title match is not sufficient.
+  Never reopen the old editor URL to prove disappearance: it may remain
+  addressable after publication and produce an ambiguous `UNKNOWN`.
+- If a published row lacks an exact public identity or contains a different ID,
+  fail closed. No repeat upload, publish click or publication confirmation.
+- An *informational* notification specifically reporting
+  `Видео загружено за N сек` may have its exact preference checkbox
+  `Больше не показывать такие сообщения` selected once, verifying the result.
+  Do NOT click verification challenges (`Я не робот`, `Я не против`), broadly
+  accept unknown consents, or use forced/coordinate clicks for the preference.
+
+## Boundaries for popup handling (2026-10-26 refactor)
+
+- Keep `dzen-browser-runner.js` generic: it supervises child process,
+  session and logs only. Do not add CAPTCHA/challenge names, selectors,
+  timeouts, manual-wait loops or Windows focus restoration to it.
+- Only `dzen-safe-notices.js` owns allowlisted informational popup selectors.
+  `dzen-publish-direct.js` calls its dispatcher once per post-click observation
+  tick (45 seconds total), even when the original editor page has closed.
+- Unknown dialogs are user-managed: no automatic interaction or
+  dedicated waiting in the automation. Missing publication confirmation
+  must remain fail-closed, at most one upload and one publish click.

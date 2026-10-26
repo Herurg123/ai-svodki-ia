@@ -6,6 +6,7 @@ const { spawn } = require("child_process");
 const helpers = require("./dzen-publish.js");
 const logUtils = require("./log-utils");
 const history = require("./history-utils");
+const safeNotices = require("./dzen-safe-notices");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
@@ -62,8 +63,12 @@ function fatalLog(config, message, error = null) {
 }
 
 function parseArgs(argv) {
-  const args = { date: null };
+  const args = { date: null, resumeDraft: null };
   for (const arg of argv) {
+    if (arg.startsWith("--resume-draft=")) {
+      args.resumeDraft = arg.slice("--resume-draft=".length).trim();
+      continue;
+    }
     if (arg.startsWith("--date=")) {
       args.date = arg.slice("--date=".length).trim();
       continue;
@@ -71,6 +76,9 @@ function parseArgs(argv) {
     throw new Error(`Неизвестный параметр: ${arg}`);
   }
   if (args.date) helpers.formatRussianNumericDate(args.date);
+  if (args.resumeDraft && !/^[a-f0-9]{24}$/i.test(args.resumeDraft)) {
+    throw new Error("Некорректный ID черновика в --resume-draft");
+  }
   return args;
 }
 
@@ -251,7 +259,10 @@ async function uploadVideoFile(page, config, videoPath) {
 
   const draftUrl = page.url();
   const draftId = new URL(draftUrl).searchParams.get("videoEditorPublicationId");
-  log(config, `создан video draft id=${draftId}. Этот URL не используется для resume.`);
+  if (!/^[a-f0-9]{24}$/i.test(String(draftId || ""))) {
+    throw new Error("Дзен вернул неожиданный формат videoEditorPublicationId; дальнейшие действия запрещены.");
+  }
+  log(config, `создан video draft id=${draftId}; сохраняю checkpoint до metadata.`);
   return { draftId, draftUrl };
 }
 
@@ -514,6 +525,66 @@ async function ensureFiveTagsOnce(page, config, tags) {
   log(config, `подтверждены все 5 тегов: ${tags.join(", ")}.`);
 }
 
+
+/*
+ * Only the scheduled worker owns entry into an upload. The child writes its
+ * own durable checkpoint immediately upon discovering a remotely created
+ * draft. Without this, a timeout after upload could authorize another upload.
+ * All writes reuse the same atomic state writer and outer full-worker lock.
+ */
+function persistDraftTransition(config, dateKey, draftId, expectedStatuses, nextStatus, fields = {}) {
+  if (!/^[a-f0-9]{24}$/i.test(String(draftId || ""))) {
+    throw new Error("Запрещено сохранять черновик без подтверждённого 24-символьного ID.");
+  }
+  const liveState = history.loadActiveState(config);
+  const job = helpers.findJobForDate(liveState, dateKey);
+  if (!job || job.status !== "DONE") throw new Error("Нет локального DONE job для сохранения Dzen checkpoint.");
+  const previous = job.dzenAutomation || {};
+  if (!expectedStatuses.includes(String(previous.status || "PENDING"))) {
+    throw new Error(`Небезопасный переход Dzen: ${previous.status} -> ${nextStatus}`);
+  }
+  if (previous.draftId && previous.draftId !== draftId) {
+    throw new Error("Попытка заменить закреплённый ID черновика запрещена.");
+  }
+  const now = new Date().toISOString();
+  job.dzenAutomation = {
+    ...previous, ...fields, status: nextStatus, draftId,
+    updatedAt: now,
+  };
+  job.updatedAt = now;
+  history.saveStateWithRetention(config, liveState);
+  return job.dzenAutomation;
+}
+
+// Resume only the EXACT pinned draft, not a same-title row or a new upload.
+// URL is a locator; matching URL + visible editor + full saved metadata are
+// separate independent checks before any mutation.
+function draftEditorUrl(draftId) {
+  if (!/^[a-f0-9]{24}$/i.test(String(draftId || ""))) throw new Error("Неверный ID черновика.");
+  return `https://dzen.ru/profile/editor/rybv/publications?state=draft&videoEditorPublicationId=${draftId}`;
+}
+
+async function openPinnedDraft(page, config, draftId, title, description) {
+  const url = draftEditorUrl(draftId);
+  log(config, `RESUME DRAFT: открываю сохранённый черновик id=${draftId}, без загрузки MP4.`);
+  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60_000 });
+  if (isLoginUrl(page.url())) throw new Error("Дзен требует вход; resume остановлен.");
+  await page.getByText("Публикация видео", { exact: true }).first()
+    .waitFor({ state: "visible", timeout: 20_000 });
+  const observedId = new URL(page.url()).searchParams.get("videoEditorPublicationId");
+  if (observedId !== draftId) {
+    throw new Error(`Открыт чужой/неподтверждённый черновик: ожидается ${draftId}, фактически ${observedId}`);
+  }
+  const inputs = await waitForMetadataInputs(page);
+  const actualTitle = await readEditableText(inputs.titleInput);
+  const actualDescription = await readEditableText(inputs.descriptionInput);
+  if (normalizeComparableText(actualTitle) !== normalizeComparableText(title) ||
+      !descriptionMatchesIgnoringWhitespace(actualDescription, description)) {
+    throw new Error(`Metadata черновика ${draftId} не совпадают с ожидаемым выпуском. Без публикации.`);
+  }
+  log(config, `RESUME DRAFT VERIFIED: id=${draftId}, заголовок/описание проверены; повторного upload/metadata нет.`);
+}
+
 // Post-click read-only observation: never a second click or draft reopen.
 // Dzen may leave a ready draft after an accepted Playwright click.
 function summarizePostClickSnapshot(url, bodyText, draftId) {
@@ -524,24 +595,28 @@ function summarizePostClickSnapshot(url, bodyText, draftId) {
   return {
     editor:Boolean(editor),
     readyDraft:/готово к публикации|уже можно публиковать|готово: можно публиковать/i.test(text),
-    challenge:/я не робот|подтвердите, что вы не робот/i.test(text),
     confirmation:/сохранить изменения|подтвердить публикацию|подтвердить действие/i.test(text),
     successHint:/видео опубликовано|публикация прошла успешно/i.test(text)
   };
 }
-async function observeAfterPublishClick(page,config,dateKey,draftId,{durationMs=45_000,intervalMs=1500}={}) {
+async function observeAfterPublishClick(page,config,dateKey,draftId,{durationMs=45_000,intervalMs=1500,noticeBrowser=null}={}) {
   const started=Date.now();
-  let sample={editor:true,readyDraft:false,challenge:false,confirmation:false,successHint:false};
+  let sample={editor:true,readyDraft:false,confirmation:false,successHint:false};
   let lastUrl="";
   // Do not leave the editor while its async finalization may still be running.
   do {
-    if(page.isClosed())break;
-    lastUrl=page.url();
-    const body=await page.locator("body").innerText({timeout:1500}).catch(()=>"");
-    sample=summarizePostClickSnapshot(lastUrl,body,draftId);
-    // Delegate a detected human challenge immediately to the runner's
-    // established manual-only 120-second window, without touching checkbox.
-    if(sample.challenge)break;
+    // Notice polling continues even if Dzen closes the original editor page:
+    // the informational popup may remain in another page/frame of the CDP
+    // browser context. No special-case modal waits or UI retries.
+    if(noticeBrowser) {
+      await safeNotices.processKnownDzenNotices(noticeBrowser, (message)=>log(config,message))
+        .catch((error)=>warn(config,`Dzen notices: ${error.message}`));
+    }
+    if(!page.isClosed()) {
+      lastUrl=page.url();
+      const body=await page.locator("body").innerText({timeout:1500}).catch(()=>"");
+      sample=summarizePostClickSnapshot(lastUrl,body,draftId);
+    }
     const remaining=durationMs-(Date.now()-started);
     if(remaining<=0)break;
     await page.waitForTimeout(Math.min(intervalMs,remaining));
@@ -558,7 +633,7 @@ async function observeAfterPublishClick(page,config,dateKey,draftId,{durationMs=
   }
   log(config,"POST-CLICK OBSERVE: "+status+
     "; elapsedMs="+(Date.now()-started)+
-    "; readyDraft="+sample.readyDraft+"; challenge="+sample.challenge+
+    "; readyDraft="+sample.readyDraft+
     "; confirmation="+sample.confirmation+"; screenshot="+screenshot+
     ". Без повторных кликов, без изменения draft; итог подтверждает только список опубликованных.");
   return {status,...sample,screenshot};
@@ -605,10 +680,7 @@ async function waitUntilVideoReady(page, config, timeoutMs) {
     await page.waitForTimeout(POLL_MS);
   }
 
-  throw new Error(
-    `За ${Math.round(timeoutMs / 1000)} секунд не подтверждён финальный статус обработки ` +
-    `с активной кнопкой публикации.`
-  );
+  return null; // Still processing; checkpoint remains DRAFT_PROCESSING for next scheduled run.
 }
 
 async function setCommentsToEveryone(page, config) {
@@ -653,7 +725,7 @@ async function setCommentsToEveryone(page, config) {
 }
 
 async function main(argv = process.argv.slice(2)) {
-  const { date } = parseArgs(argv);
+  const { date, resumeDraft } = parseArgs(argv);
   if (!fs.existsSync(CONFIG_PATH)) throw new Error(`Не найден config.json: ${CONFIG_PATH}`);
 
   const config = helpers.applyDzenConfigDefaults(loadJson(CONFIG_PATH));
@@ -680,7 +752,9 @@ async function main(argv = process.argv.slice(2)) {
   if (tags.length !== 5) throw new Error(`Требуется ровно 5 тегов, сейчас ${tags.length}.`);
 
   log(config, `=== START DIRECT MVP date=${dateKey} ===`);
-  log(config, "режим: только новый upload; previous drafts/state resume полностью игнорируются.");
+  log(config, resumeDraft
+    ? `режим: проверка готовности сохранённого черновика ${resumeDraft}, новый upload запрещён.`
+    : "режим: новый upload только при отсутствии закреплённого draftId.");
   log(config, `MP4: ${job.downloadedFile}`);
 
   const previewPath = await ensurePreview(config, job);
@@ -696,23 +770,50 @@ async function main(argv = process.argv.slice(2)) {
   let draftId = null;
 
   try {
-    await openStudio(page, config);
-    await openVideoUpload(page, config);
+    if (resumeDraft) {
+      const latest = history.loadActiveState(config);
+      const saved = helpers.findJobForDate(latest, dateKey)?.dzenAutomation || {};
+      if (saved.status !== "DRAFT_PROCESSING" || saved.draftId !== resumeDraft) {
+        throw new Error("Resume не разрешён: checkpoint черновика не совпадает с запросом.");
+      }
+      draftId = resumeDraft;
+      await openPinnedDraft(page, config, draftId, title, description);
+    } else {
+      const latest = history.loadActiveState(config);
+      const saved = helpers.findJobForDate(latest, dateKey)?.dzenAutomation || {};
+      if (saved.status !== "UPLOAD_ARMED" || saved.draftId) {
+        throw new Error("Новый upload не разрешён без чистого UPLOAD_ARMED checkpoint.");
+      }
+      await openStudio(page, config);
+      await openVideoUpload(page, config);
 
-    const draft = await uploadVideoFile(page, config, job.downloadedFile);
-    draftId = draft.draftId;
+      const draft = await uploadVideoFile(page, config, job.downloadedFile);
+      draftId = draft.draftId;
+      persistDraftTransition(config, dateKey, draftId, ["UPLOAD_ARMED"], "DRAFT_CREATED", {
+        draftCreatedAt: new Date().toISOString(),
+      });
+      log(config, `DRAFT_CREATED сохранён немедленно: id=${draftId}; повторный upload запрещён.`);
 
-    await fillMetadataOnce(page, config, title, description);
-    await uploadCoverOnce(page, config, previewPath);
-    await ensureFiveTagsOnce(page, config, tags);
+      await fillMetadataOnce(page, config, title, description);
+      await uploadCoverOnce(page, config, previewPath);
+      await ensureFiveTagsOnce(page, config, tags);
+      log(config, "форма подготовлена. Metadata/cover/tags больше не трогаю.");
+      persistDraftTransition(config, dateKey, draftId, ["DRAFT_CREATED"], "DRAFT_PROCESSING", {
+        metadataReadyAt: new Date().toISOString(),
+      });
+    }
 
-    log(config, "форма подготовлена. Metadata/cover/tags больше не трогаю.");
+    // Run within the 10-minute child window. Processing may last much longer,
+    // but the next scheduled run must reopen this draft, never upload again.
+    const ready = await waitUntilVideoReady(page, config, 6 * 60_000);
+    if (!ready) {
+      log(config, `DRAFT_PROCESSING: id=${draftId} ещё обрабатывается; завершаю текущий проход без клика. Следующий запуск продолжит его.`);
+      return { pending: true, draftId };
+    }
 
-    await waitUntilVideoReady(
-      page,
-      config,
-      config.dzenUpload.processingTimeoutMs || 600_000
-    );
+    // Only the verified informational toast; no robot/consent interactions.
+    await safeNotices.processKnownDzenNotices(connection.browser, (message) => log(config, message))
+      .catch((error) => warn(config, `Speed-notice: ${error.message}`));
 
     await setCommentsToEveryone(page, config);
 
@@ -725,6 +826,11 @@ async function main(argv = process.argv.slice(2)) {
     // A Playwright click can time out AFTER the browser dispatched the event.
     // Mark uncertainty BEFORE the attempt so any such exception can never
     // authorize a fresh upload or another publish click.
+    // Persist click uncertainty BEFORE dispatch, even when Playwright later
+    // times out or the scheduler kills this process.
+    persistDraftTransition(config, dateKey, draftId, ["DRAFT_PROCESSING"], "CLICKED_UNVERIFIED", {
+      clickAttemptedAt: new Date().toISOString(),
+    });
     publishClicked = true;
     log(config, "PUBLISH_CLICK_ATTEMPT_ARMED: outcome may be uncertain; retry prohibited.");
     await publish.button.click();
@@ -733,8 +839,8 @@ async function main(argv = process.argv.slice(2)) {
       config,
       `КЛИК ПУБЛИКАЦИИ ВЫПОЛНЕН ОДИН РАЗ: «${publish.label}», draftId=${draftId}.`
     );
-    log(config, "После publish click удерживаю редактор 45 секунд и наблюдаю без действий; только subsequent verification решает результат.");
-    await observeAfterPublishClick(page,config,dateKey,draftId);
+    log(config, "После publish click наблюдаю 45 секунд; разрешённые уведомления проверяются через dzen-safe-notices, результат публикации подтверждается отдельно.");
+    await observeAfterPublishClick(page,config,dateKey,draftId,{noticeBrowser:connection.browser});
     log(config, `=== END DIRECT MVP CLICKED_UNVERIFIED click=true draftId=${draftId} ===`);
   } catch (error) {
     warn(
@@ -757,6 +863,9 @@ module.exports = {
   tagSetComplete,
   summarizePostClickSnapshot,
   observeAfterPublishClick,
+  draftEditorUrl,
+  persistDraftTransition,
+  openPinnedDraft,
 };
 
 if (require.main === module) {

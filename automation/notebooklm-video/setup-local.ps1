@@ -22,6 +22,7 @@ New-Item -ItemType Directory -Path $TargetDir -Force | Out-Null
 
 $files = @(
     "worker.js",
+    "video-footer.js",
     "log-utils.js",
     "history-utils.js",
     "full-worker.js",
@@ -29,6 +30,7 @@ $files = @(
     "browser-session.js",
     "dzen-error-log.js",
     "dzen-duplicate-guard.js",
+    "dzen-safe-notices.js",
     "dzen-browser-runner.js",
     "dzen-publish.js",
     "dzen-publish-live.js",

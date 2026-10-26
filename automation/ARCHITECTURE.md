@@ -234,10 +234,10 @@ Production работает из GitHub Actions, хранит результат
 - запускается на Windows-машине пользователя, а не в nightly production;
 - читает уже опубликованный выпуск через RSS;
 - автоматизирует NotebookLM через отдельный Яндекс.Браузер/Playwright профиль; current home UI создаёт выпуск через `+ Новый блокнот` / `Недавние блокноты`, при этом runtime сохраняет compatibility fallback для legacy `Создать` / `Мои блокноты`;
-- скачивает MP4;
+- скачивает MP4; если найден локальный `downloads/_footer-vid.png`, сохраняет `-original.mp4`, checkpoint `DOWNLOADED`, рендерит 5-секундную беззвучную заставку через FFmpeg/ffprobe, проверяет финальный MP4 и только после этого ставит `DONE`, допускает FTP/Дзен/VK. `DOWNLOADED` возобновляется без скачивания, существующие `DONE` не меняются;
 - создаёт PNG первого кадра;
 - при включённой настройке доставляет media только в FTP-каталог `video`;
-- после успешного локального этапа автоматически выполняет native Dzen browser-upload через тот же защищённый профиль, но в отдельной последовательной browser-сессии;
+- после успешного локального этапа автоматически выполняет native Dzen browser-upload через тот же защищённый профиль, но в отдельной последовательной browser-сессии; до upload сохраняет UPLOAD_ARMED, после remote draft creation закрепляет draftId в DRAFT_CREATED, после однократного подтверждения metadata/cover/tags переводит в DRAFT_PROCESSING. Длительная обработка продолжится в следующих 10-минутных циклах на том же проверенном черновике без повторной загрузки. Один обычный publish click разрешён только после финальной готовности; CLICKED_UNVERIFIED сохраняется ДО клика. Проверка результата учитывает exact draft ID и опубликованный список; неясный результат не означает успех и не разрешает повтор;
 - после подтверждённого `PUBLISHED` выполняет отдельную post-publication фазу Дзен-подборок: same-day видео назначается в `Видеосводки по ИИ`, а same-day ежедневная сводка — в `Сводки по ИИ`; подтверждение хранится раздельно по обеим целям в локальном `state.json`;
 - после `dzenCollections.status=COMPLETE` выполняет четвёртую post-publication фазу `dzen-article-video.js`: получает public URL same-day статьи/видео через Studio DOM/page-side capture с Windows clipboard только fallback, при наличии exact placeholder записывает article URL в локальный `downloads/_ИИ-Сводка.txt`, вставляет video preview перед H2 `Мировые лидеры ИИ` под новым H2 `Видеосводка`, выполняет двухэтапное `Опубликовать` -> `Сохранить изменения` с at-most-once state и завершает только после public verification. Runtime не читает clipboard ради сохранения пользовательского содержимого и не восстанавливает его после работы; Windows clipboard используется только как operational fallback для получения public URL из Studio; video paste в production выполняется browser-side через synthetic paste event с `DataTransfer`, а publish разрешён только после существующего real-preview oracle. Terminal `ERROR` не ретраится, кроме двух production one-shot fail-closed классов и отдельного one-shot browser-paste migration recovery: доказанный pre-edit link-resolution сбой без resolved links/editor/publish markers и pre-publish clipboard-related сбой с resolved links, но без publish markers. Для clipboard recovery live editor инспектируется до новой mutation; сохранённая partial связка heading+embed продолжает только H2 formatting без повторного embed. Повтор каждого recovery-класса запрещён;
 - общий локальный text-log path ротируется shared writers через `log-utils.js` до append: day-boundary определяется по timestamp уже записанных log entries, а не по mtime/sidecar; повторный запуск в тот же день не имеет права ротировать предыдущие same-day строки. `worker.log` хранится 7 дней, error-log 30 дней, размерный порог 25 МБ. Rotated logs складываются в тот же локальный `archive/`, что JSON-history; cleanup text logs ограничен `worker-*.log`/`error-*.log` и не затрагивает JSON. Legacy sibling `logs/` автоматически мигрирует только известные rotated logs и obsolete sidecar. `dzen-browser-runner.js` намеренно остаётся прямым writer; если он первым запишет строку нового дня в старый active log, shared logger архивирует только старый префикс и сохраняет current-day suffix активным;
@@ -1925,7 +1925,7 @@ RSS
  -> Yandex Browser + dedicated profile
  -> Playwright CDP
  -> NotebookLM
- -> local MP4
+ -> original MP4 -> optional validated five-second FFmpeg footer -> final MP4
  -> PNG preview via ffmpeg-static
  -> optional FTP video/
  -> close NotebookLM browser/CDP
@@ -2225,3 +2225,14 @@ Production API пользователя не расходуется без яв�
 архитектуры отдельное разрешение относится только к одному conditional fifth
 Hybrid search на double-gap path; любые иные новые paid calls требуют нового
 решения владельца.
+### Browser-runner / Dzen-notice subsystem boundary (2026-10-26)
+
+The local Windows `dzen-browser-runner.js` manages child process lifetime,
+single-run timeouts, browser-profile locking and diagnostics, but does **not**
+detect, wait on, or interact with person-verification windows. Generic
+`dzen-safe-notices.js` owns the allowlist of non-security notification
+handlers. `dzen-publish-direct.js` polls it from the existing bounded
+45-second post-publish-click observation loop, including when the
+editor page has closed; it does not prolong the run for unknown prompts.
+The verified public video ID and saved draft ID still govern transition
+to `PUBLISHED`; an uncertain click cannot authorize another upload/click.

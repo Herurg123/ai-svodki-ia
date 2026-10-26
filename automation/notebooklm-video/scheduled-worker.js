@@ -178,15 +178,22 @@ function getAutomationStatus(job) {
 }
 
 function shouldRunFreshUpload(status) {
-  return ["PENDING", "RETRYABLE_PRE_CLICK"].includes(String(status || "PENDING"));
+  return String(status || "PENDING") === "PENDING"; // legacy RETRYABLE_PRE_CLICK may already have a remote draft
 }
 
 function isVerificationOnlyStatus(status) {
   return [
+    "UPLOAD_ARMED",
+    "DRAFT_CREATED",
+    "RETRYABLE_PRE_CLICK",
     "PUBLISH_ARMED",
     "CLICKED_UNVERIFIED",
     "BLOCKED_AMBIGUOUS",
   ].includes(String(status || ""));
+}
+
+function shouldResumeDraft(status, draftId) {
+  return status === "DRAFT_PROCESSING" && /^[a-f0-9]{24}$/i.test(String(draftId || ""));
 }
 
 function classifyDzenFailureOutput(output) {
@@ -210,7 +217,17 @@ function updateDzenAutomation(config, state, job, status, fields = {}) {
   history.saveStateWithRetention(config, state);
 }
 
-async function verifyPublished(session, config, dateArg, logFn) {
+function syncChildDzenState(config, job) {
+  const fresh = history.loadActiveState(config);
+  const remoteJob = fresh.jobs && fresh.jobs[job.publicationUrl];
+  if (!remoteJob || remoteJob.date !== job.date) {
+    throw new Error("После дочернего Dzen-процесса не найден исходный job: state не перезаписываю.");
+  }
+  job.dzenAutomation = remoteJob.dzenAutomation || {};
+  return job.dzenAutomation;
+}
+
+async function verifyPublished(session, config, dateArg, logFn, draftId = null, fullTitle = null) {
   const deadline = Date.now() + config.dzenUpload.verificationTimeoutMs;
   let last = null;
   let attempt = 0;
@@ -224,7 +241,17 @@ async function verifyPublished(session, config, dateArg, logFn) {
       logFn
     );
 
-    if (last.existing) return last;
+    if (last.existing) {
+      if (!draftId) return last;
+      const identity = duplicateGuard.pinnedPublishedIdentity(last, draftId);
+      if (identity === "MATCH") {
+        logFn(`Опубликованное Видео подтверждено точным public ID=${draftId}; черновик повторно НЕ открываю.`);
+        return last;
+      }
+      logFn(`Найден опубликованный заголовок, но public ID не подтверждает draftId=${draftId} (identity=${identity}).` +
+        " Прекращаю этот проход без повторного upload/click и без открытия редактора.");
+      return null;
+    }
 
     logFn(
       `verification-only: попытка ${attempt} не нашла опубликованное Видео; ` +
@@ -277,10 +304,28 @@ async function runAutomaticDzen(config, state, job, dateKey) {
       (message) => log(config, `DZEN: ${message}`)
     );
 
-    if (precheck.existing) {
+    const pinnedId = job.dzenAutomation?.draftId || null;
+    const identity = pinnedId
+      ? duplicateGuard.pinnedPublishedIdentity(precheck, pinnedId)
+      : null;
+    const publishedConfirmed = precheck.existing && (!pinnedId || identity === "MATCH");
+    if (precheck.existing && pinnedId && !publishedConfirmed) {
+      const error = new Error(
+        `Опубликованный заголовок найден, но exact public ID не подтверждает сохранённый draftId=${pinnedId} ` +
+        `(identity=${identity || "UNKNOWN"}). Не открываю редактор и не запускаю второй upload/click.`
+      );
+      updateDzenAutomation(config, state, job, status, {
+        lastVerifiedAt: new Date().toISOString(),
+        lastError: error.message,
+        lastErrorAt: new Date().toISOString(),
+      });
+      throw error;
+    }
+    if (publishedConfirmed) {
       updateDzenAutomation(config, state, job, "PUBLISHED", {
         confirmedAt: new Date().toISOString(),
-        confirmedBy: "duplicate-guard",
+        confirmedBy: pinnedId ? "published-row-exact-video-id" : "duplicate-guard",
+        publishedVideoUrl: precheck.publishedVideoUrl || null,
         foundTitle: precheck.foundText,
         titlePrefix: precheck.titlePrefix,
         lastError: null,
@@ -300,13 +345,16 @@ async function runAutomaticDzen(config, state, job, dateKey) {
         session,
         config,
         dateArg,
-        (message) => log(config, `DZEN: ${message}`)
+        (message) => log(config, `DZEN: ${message}`),
+        job.dzenAutomation?.draftId,
+        dzenHelpers.buildDzenTitle(dateKey)
       );
 
       if (verified) {
         updateDzenAutomation(config, state, job, "PUBLISHED", {
           confirmedAt: new Date().toISOString(),
-          confirmedBy: "verification-only",
+          confirmedBy: job.dzenAutomation?.draftId ? "published-row-exact-video-id" : "verification-only",
+          publishedVideoUrl: verified.publishedVideoUrl || null,
           foundTitle: verified.foundText,
           titlePrefix: verified.titlePrefix,
           lastError: null,
@@ -327,75 +375,82 @@ async function runAutomaticDzen(config, state, job, dateKey) {
       throw error;
     }
 
-    if (!shouldRunFreshUpload(status)) {
-      throw new Error(`Неизвестный dzenAutomation.status: ${status}`);
+    const resume = shouldResumeDraft(status, job.dzenAutomation?.draftId);
+    if (!resume && !shouldRunFreshUpload(status)) {
+      throw new Error(`Dzen status=${status}: новый upload и повторный клик запрещены.`);
+    }
+    if (status === "DRAFT_PROCESSING" && !resume) {
+      throw new Error("DRAFT_PROCESSING без подтверждённого draftId; fail-closed, новый upload запрещён.");
+    }
+    if (resume) {
+      log(config, `Возобновляю ТОЛЬКО черновик id=${job.dzenAutomation.draftId}; повторная загрузка MP4 запрещена.`);
+    } else {
+      if (job.dzenAutomation?.draftId) {
+        throw new Error("У job уже есть закреплённый draftId; новый upload запрещён.");
+      }
+      updateDzenAutomation(config, state, job, "UPLOAD_ARMED", {
+        uploadArmedAt: new Date().toISOString(),
+        lastError: null,
+        lastErrorAt: null,
+      });
+      log(config, "Перед новой загрузкой сохранён UPLOAD_ARMED: неизвестный результат upload не даёт права создать второй черновик.");
     }
 
-    updateDzenAutomation(config, state, job, "PUBLISH_ARMED", {
-      armedAt: new Date().toISOString(),
-      lastError: null,
-      lastErrorAt: null,
-    });
-
-    log(
-      config,
-      "Duplicate guard чист. Перед запуском live child сохранён PUBLISH_ARMED; " +
-        "при неоднозначном падении следующий scheduled run не сможет сделать второй click."
-    );
-
-    const childTimeoutMs = Math.max(
-      dzenRunner.OPERATOR_WINDOW_MS,
-      Number(config.dzenUpload.processingTimeoutMs || 600_000) + 120_000
-    );
+    // The inner runner keeps its 10-minute safety window. Each pass observes
+    // at most six minutes of processing, then persists DRAFT_PROCESSING and exits.
+    const childArgs = resume
+      ? [dateArg, `--resume-draft=${job.dzenAutomation.draftId}`]
+      : [dateArg];
 
     try {
-      await dzenRunner.runNodeScript(
-        "dzen-publish-direct.js",
-        [dateArg],
-        childTimeoutMs
-      );
+      await dzenRunner.runNodeScript("dzen-publish-direct.js", childArgs, dzenRunner.OPERATOR_WINDOW_MS);
     } catch (error) {
-      const classification = classifyDzenFailureOutput(error.childOutput);
-
-      if (classification === "PRE_CLICK_RETRYABLE") {
-        updateDzenAutomation(config, state, job, "RETRYABLE_PRE_CLICK", {
-          lastError: error.message,
-          lastErrorAt: new Date().toISOString(),
+      const saved = syncChildDzenState(config, job);
+      if (saved.status === "DRAFT_PROCESSING" && saved.draftId) {
+        updateDzenAutomation(config, state, job, "DRAFT_PROCESSING", {
+          lastError: error.message, lastErrorAt: new Date().toISOString(),
         });
-        log(
-          config,
-          "Live child явно сообщил publishClicked=false. Следующий scheduled run сможет начать новый fresh upload после duplicate guard."
-        );
+        log(config, `Черновик ${saved.draftId} сохранён; ошибка не разрешает повторный upload. Следующий запуск сможет проверить его готовность.`);
+      } else if (saved.status === "CLICKED_UNVERIFIED" || saved.status === "PUBLISH_ARMED") {
+        updateDzenAutomation(config, state, job, saved.status, {
+          lastError: error.message, lastErrorAt: new Date().toISOString(),
+        });
+        log(config, "Попытка публикации уже вооружена/выполнена; следующий запуск проверяет только опубликованные видео.");
+      } else if (saved.status === "DRAFT_CREATED") {
+        updateDzenAutomation(config, state, job, "DRAFT_CREATED", {
+          lastError: error.message, lastErrorAt: new Date().toISOString(),
+        });
+        log(config, `Черновик ${saved.draftId} создан, но metadata не были полностью подтверждены. Автоматическое возобновление запрещено.`);
       } else {
         updateDzenAutomation(config, state, job, "BLOCKED_AMBIGUOUS", {
-          lastError: error.message,
-          lastErrorAt: new Date().toISOString(),
+          lastError: error.message, lastErrorAt: new Date().toISOString(),
         });
-        log(
-          config,
-          "Live child завершился неоднозначно после PUBLISH_ARMED. Следующие запуски только проверяют вкладку «Видео»; второй click запрещён."
-        );
+        log(config, "Исход загрузки неизвестен. Повторная загрузка/клик запрещены, нужна диагностика черновиков.");
       }
-
       throw error;
     }
 
-    updateDzenAutomation(config, state, job, "CLICKED_UNVERIFIED", {
-      clickedAt: new Date().toISOString(),
-      lastError: null,
-      lastErrorAt: null,
-    });
-
-    log(
-      config,
-      "Live child завершился успешно. Состояние CLICKED_UNVERIFIED сохранено; начинаю post-click verification без второго click."
-    );
+    const saved = syncChildDzenState(config, job);
+    if (saved.status === "DRAFT_PROCESSING" && saved.draftId) {
+      log(config, `Dzen ещё обрабатывает черновик ${saved.draftId}; текущий запуск завершён без публикации и без повторной загрузки.`);
+      return { pending: true, draftId: saved.draftId };
+    }
+    if (saved.status !== "CLICKED_UNVERIFIED" || !saved.draftId) {
+      updateDzenAutomation(config, state, job, "BLOCKED_AMBIGUOUS", {
+        lastError: "Дочерний процесс завершился без подтверждённого состояния сохранённого черновика.",
+        lastErrorAt: new Date().toISOString(),
+      });
+      throw new Error("Dzen child завершился без ожидаемого DRAFT_PROCESSING/CLICKED_UNVERIFIED; запрещаю дальнейшие мутации.");
+    }
+    log(config, `Черновик ${saved.draftId}: один publish-click уже предпринят и сохранён. Только проверка результата.`);
 
     const verified = await verifyPublished(
       session,
       config,
       dateArg,
-      (message) => log(config, `DZEN: ${message}`)
+      (message) => log(config, `DZEN: ${message}`),
+      job.dzenAutomation?.draftId,
+      dzenHelpers.buildDzenTitle(dateKey)
     );
 
     if (!verified) {
@@ -413,7 +468,8 @@ async function runAutomaticDzen(config, state, job, dateKey) {
 
     updateDzenAutomation(config, state, job, "PUBLISHED", {
       confirmedAt: new Date().toISOString(),
-      confirmedBy: "post-click-verification",
+      confirmedBy: "post-click-exact-video-id",
+      publishedVideoUrl: verified.publishedVideoUrl || null,
       foundTitle: verified.foundText,
       titlePrefix: verified.titlePrefix,
       lastError: null,
@@ -499,6 +555,8 @@ module.exports = {
   ORCHESTRATOR_LOCK_PATH,
   VERIFY_RETRY_DELAY_MS,
   classifyDzenFailureOutput,
+  shouldResumeDraft,
+  syncChildDzenState,
   dzenAutomationEnabled,
   findLatestDoneJob,
   formatDateKey,

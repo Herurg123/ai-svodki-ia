@@ -56,7 +56,9 @@ ZIP **в отдельный временный каталог**, НЕ в раб�
 Внутри находятся `manifest.json`, `payload/` и
 `install-safe-update.ps1`. Содержимое `payload/` ограничено
 штатными исходниками: `dzen-article-link.js`, `dzen-article-video.js`,
-`dzen-publish-direct.js`, `full-worker.js`, `vk-stage.mjs`,
+`dzen-publish-direct.js`, `dzen-duplicate-guard.js`, `dzen-browser-runner.js`,
+`dzen-safe-notices.js`, `scheduled-worker.js`, `full-worker.js`,
+`worker.js`, `video-footer.js`, `vk-stage.mjs`,
 `vk-text.mjs`, `setup-local.ps1` и `package.json`.
 
 Не менять Планировщик. Дождаться отсутствия работающего комбайна и
@@ -70,7 +72,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install-safe-update.ps
 ```
 
 Dry-run сверяет SHA-256 с разрешёнными предыдущими git-версиями
-`44de0939`/`b6eebb2e` и новым merge SHA; чужие либо вручную
+`44de0939`, `b6eebb2e`, `91259a0`, `23dac7b` и новым merge SHA; чужие либо вручную
 изменённые файлы приводят к остановке **до любых замен**. Все старые
 версии нужных производственных файлов сохраняются за пределами корня
 в соседней папке `NotebookLMBot-update-backups/`. После установки
@@ -83,6 +85,10 @@ Dry-run сверяет SHA-256 с разрешёнными предыдущим�
 
 ```powershell
 cd C:\\TRASH\\NotebookLMBot
+node --check .\worker.js
+node --check .\video-footer.js
+node --check .\scheduled-worker.js
+node --check .\dzen-safe-notices.js
 node --check .\full-worker.js
 node --check .\dzen-article-link.js
 node --check .\dzen-article-video.js
@@ -96,6 +102,20 @@ ZIP-артефакт, внутренний ZIP и временную папку 
 резервными копиями и исходные operator-owned данные оставлять до
 проверенного автоматического выпуска. Никакие `_bak`, media, state,
 конфигурацию или логи при уборке не удалять.
+
+## Локальная заставка видео (опционально)
+
+Для будущих новых скачиваний скопировать картинку в
+`C:\\TRASH\\NotebookLMBot\\downloads\\_footer-vid.png` и установить
+`bin\\ffmpeg.exe` плюс `bin\\ffprobe.exe`. Присутствие PNG включает
+обработку только новых загрузок; отсутствие PNG сохраняет прежний путь.
+После скачивания сохраняется `downloads\\ИИ-Сводка YYYY-MM-DD-original.mp4`,
+а обработанный `downloads\\ИИ-Сводка YYYY-MM-DD.mp4` появляется с
+пятисекундным беззвучным финальным кадром. До проверки финального
+MP4 не ставится DONE и не начинается FTP/Дзен/VK. Исходный MP4 и PNG
+не удаляются. При сбое `DOWNLOADED` позволяет продолжить локально;
+при конфликтующем существующем результате требуется ручная проверка,
+перезаписи нет. Старые `DONE` не изменяются. Планировщик не трогать.
 
 ## 1. Предварительные требования
 
@@ -272,17 +292,11 @@ NotebookLM доступны; после готового MP4/PNG и optional FTP
 вставить видео в same-day статью и завершиться `dzenArticleVideo=COMPLETE/VERIFIED`
 либо безопасным `SKIPPED_EXISTING`.
 
-Редко после единственного клика `Опубликовать`/`Отправить` Дзен может показать
-модальное окно `Подтвердите, что вы не робот` с checkbox `Я не робот` в светлой
-или тёмной теме. Это **ручная** антибот-проверка. Worker сам checkbox не нажимает
-и не выполняет других UI-click, пока окно видно. Он восстанавливает свёрнутый
-Яндекс.Браузер, выводит страницу на передний план и ждёт до 120 секунд. Оператору
-нужно вручную поставить только флажок `Я не робот`; после исчезновения окна
-публикация обычно продолжает обычный post-click путь. Если окно не исчезло за
-лимит, worker завершает Dzen-фазу как post-click неопределённость, и следующие
-запуски остаются verification-only без второго upload/click.
-
-После проверки вернуть `minimizeBrowserWindow=true`, если нужен фоновый режим.
+Если при публикации появится проверка человека, оператор обрабатывает её
+самостоятельно. `dzen-browser-runner.js` не распознаёт и не ожидает такие
+окна. `dzen-safe-notices.js` обрабатывает только точно известные безопасные
+информационные уведомления в течение 45 секунд наблюдения после одного
+клика публикации. Неустановленный результат не допускает второго upload/click.
 
 ## 7. Планировщик Windows
 

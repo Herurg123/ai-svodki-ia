@@ -19,6 +19,8 @@ if(expected && current!==expected)throw Error("Checkout does not match GitHub wo
 const baselines=[
   "44de0939c929c9a169be419c6aaf9052a071c8db",
   "b6eebb2e86606c35316a1421b410607297eec355",
+  "91259a0240591a406ae090360fdb58ef61ce3602",
+  "23dac7b3d649e912bcf753cf7566c827c7d581eb",
 ];
 // Explicit allowlist; intentionally excludes _bak, config/state, secrets,
 // browser data, MP4/PNG, logs, Task Scheduler, and operator templates.
@@ -26,7 +28,13 @@ const files=[
   "dzen-article-link.js",
   "dzen-article-video.js",
   "dzen-publish-direct.js",
+  "dzen-duplicate-guard.js",
+  "dzen-browser-runner.js",
+  "dzen-safe-notices.js",
+  "scheduled-worker.js",
   "full-worker.js",
+  "worker.js",
+  "video-footer.js",
   "vk-stage.mjs",
   "vk-text.mjs",
   "setup-local.ps1",

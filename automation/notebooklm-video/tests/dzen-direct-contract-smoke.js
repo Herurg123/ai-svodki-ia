@@ -3,7 +3,6 @@
 const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
-const vm = require("vm");
 
 const ROOT = path.resolve(__dirname, "..");
 const source = fs.readFileSync(path.join(ROOT, "dzen-publish-direct.js"), "utf8");
@@ -48,43 +47,21 @@ assert.strictEqual(
   "ready"
 );
 
-function readNumericRunnerConstant(name) {
-  const match = new RegExp(`const ${name} = ([0-9_]+);`).exec(runner);
-  assert(match, `Missing runner constant: ${name}`);
-  return Number(match[1].replace(/_/g, ""));
-}
-
-assert.strictEqual(readNumericRunnerConstant("POST_CLICK_CHALLENGE_PROBE_MS"), 4_000);
-assert.strictEqual(readNumericRunnerConstant("POST_CLICK_CHALLENGE_WAIT_MS"), 120_000);
-
-const classifierStart = runner.indexOf("function textLooksLikeManualAntiBotChallenge");
-const classifierEnd = runner.indexOf("async function findAntiBotChallengePage", classifierStart);
-assert(classifierStart >= 0 && classifierEnd > classifierStart, "Challenge classifier source must exist");
-const classifierSource = runner.slice(classifierStart, classifierEnd).trim();
-const textLooksLikeManualAntiBotChallenge = vm.runInNewContext(
-  `(${classifierSource.replace(/^function\s+textLooksLikeManualAntiBotChallenge/, "function")})`
-);
-
-assert.strictEqual(
-  textLooksLikeManualAntiBotChallenge(
-    "Подтвердите,\nчто вы не робот\nЯ не робот\nУсловия использования"
-  ),
-  true,
-  "Observed post-click challenge must be detected"
-);
-assert.strictEqual(
-  textLooksLikeManualAntiBotChallenge("Готово: можно публиковать и смотреть"),
-  false,
-  "Normal ready state must not be classified as anti-bot challenge"
-);
-assert.strictEqual(
-  textLooksLikeManualAntiBotChallenge("Я не робот"),
-  false,
-  "A bare phrase without the confirmation prompt is not sufficient"
-);
+// Browser runner owns child lifetime only; modal-specific behavior belongs
+// exclusively to dzen-safe-notices and is polled during publication.
+assert(!runner.includes("waitForOptionalPostClickChallenge"));
+assert(!runner.includes("textLooksLikeManualAntiBotChallenge"));
+assert(!runner.includes("POST_CLICK_CHALLENGE"));
+assert(!runner.includes("restoreRobotBrowserWindow"));
+assert(!runner.includes("findAntiBotChallengePage"));
+assert(!runner.includes("дзен-робот проверка"));
+assert(source.includes("processKnownDzenNotices(noticeBrowser"),
+  "Known notifications must be polled inside the live post-click observation");
+assert(source.includes("observeAfterPublishClick(page,config,dateKey,draftId,{noticeBrowser:connection.browser})"),
+  "Published browser must be observed while the publication page remains open");
 
 for (const marker of [
-  "только новый upload; previous drafts/state resume полностью игнорируются",
+  "режим: новый upload только при отсутствии закреплённого draftId",
   "metadata заполнены один раз",
   "PNG-обложка передана один раз",
   "подтверждены все 5 тегов",
@@ -93,7 +70,7 @@ for (const marker of [
   "Готово: можно публиковать и смотреть",
   "Кто может комментировать",
   "КЛИК ПУБЛИКАЦИИ ВЫПОЛНЕН ОДИН РАЗ",
-  "После publish click удерживаю редактор 45 секунд",
+  "После publish click наблюдаю 45 секунд",
   "POST-CLICK OBSERVE",
 ]) {
   assert(source.includes(marker), `Missing direct MVP contract marker: ${marker}`);
@@ -114,7 +91,9 @@ assert(!observationBlock.includes(".click("),"post-click observation cannot clic
 assert(!observationBlock.includes(".goto("),"post-click observation cannot navigate");
 assert(!observationBlock.includes("setInputFiles("),"post-click observation cannot reupload");
 assert.match(observationBlock,/durationMs=45_000/,"observe for 45 seconds");
+const durableArm=source.indexOf('persistDraftTransition(config, dateKey, draftId, ["DRAFT_PROCESSING"], "CLICKED_UNVERIFIED"');
 const clickAttempt=source.indexOf("publishClicked = true;");
+assert(durableArm>0&&durableArm<clickAttempt,"Durable at-most-once checkpoint must precede click dispatch");
 const clickCall=source.indexOf("await publish.button.click();",clickAttempt);
 assert(clickAttempt>0&&clickCall>clickAttempt,
  "Playwright timeout after dispatch must remain CLICKED_UNVERIFIED, never retry");
@@ -133,33 +112,11 @@ for (const forbidden of [
   assert(!source.includes(forbidden), `Fresh-upload MVP must not contain legacy resume/verify code: ${forbidden}`);
 }
 
-for (const marker of [
-  "ПОСЛЕ PUBLISH ПОЯВИЛАСЬ АНТИБОТ-ПРОВЕРКА",
-  "Автоматизация НЕ нажимает checkbox и НЕ выполняет других кликов",
-  "Окно Яндекс.Браузера восстановлено для ручного подтверждения",
-  "Антибот-проверка исчезла",
-  "verification-only",
-]) {
-  assert(runner.includes(marker), `Missing post-click challenge contract marker: ${marker}`);
-}
-
-const challengeStart = runner.indexOf("async function waitForOptionalPostClickChallenge");
-const challengeEnd = runner.indexOf("function terminateChildTree", challengeStart);
-assert(challengeStart >= 0 && challengeEnd > challengeStart, "Post-click challenge wait helper must exist");
-const challengeSource = runner.slice(challengeStart, challengeEnd);
-assert(
-  !challengeSource.includes(".click("),
-  "Post-click anti-bot handling must never click the challenge or any other UI"
-);
-assert(
-  runner.includes('if (scriptName === "dzen-publish-direct.js")'),
-  "Challenge wait must be limited to the live publish child"
-);
-assert(
-  runner.includes("await waitForOptionalPostClickChallenge();"),
-  "Successful live publish child must enter the optional challenge wait before the runner resolves"
-);
-
+const noticeObserver = source.slice(source.indexOf("async function observeAfterPublishClick"),
+  source.indexOf("async function findEnabledPublishButton"));
+assert(noticeObserver.includes("processKnownDzenNotices(noticeBrowser"),
+  "Prompt handler must run in normal observation rather than after child exit");
+assert(!noticeObserver.includes("if(sample.challenge)"), "No special-case modal wait or stop");
 assert(runner.includes('"dzen-publish-direct.js"'), "Canonical live runner must use dzen-publish-direct.js");
 assert(
   runner.includes("live publish выполняется одним child-проходом без автоматического повторного запуска"),

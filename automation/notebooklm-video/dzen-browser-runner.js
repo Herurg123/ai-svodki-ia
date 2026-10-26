@@ -5,6 +5,8 @@ const path = require("path");
 const { spawn } = require("child_process");
 const browserSession = require("./browser-session");
 const duplicateGuard = require("./dzen-duplicate-guard");
+const history = require("./history-utils");
+const dzenHelpers = require("./dzen-publish");
 const { classifyBlockingError } = require("./dzen-error-log");
 
 const ROOT = __dirname;
@@ -12,9 +14,6 @@ const CONFIG_PATH = path.join(ROOT, "config.json");
 const FALLBACK_ERROR_LOG = path.join(ROOT, "dzen-bootstrap-errors.log");
 const OPERATOR_WINDOW_MS = 10 * 60 * 1000;
 const CHILD_OUTPUT_TAIL_LIMIT = 16_000;
-const POST_CLICK_CHALLENGE_PROBE_MS = 4_000;
-const POST_CLICK_CHALLENGE_WAIT_MS = 120_000;
-const POST_CLICK_CHALLENGE_POLL_MS = 500;
 
 function stripBom(value) {
   return String(value || "").replace(/^\uFEFF/, "");
@@ -78,177 +77,6 @@ function parseArgs(argv) {
   return { mode, childArgs: args };
 }
 
-function textLooksLikeManualAntiBotChallenge(value) {
-  const text = String(value || "")
-    .normalize("NFKC")
-    .replace(/[\u200B-\u200D\u2060\uFEFF]/g, "")
-    .replace(/[\u00A0\u202F]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .toLocaleLowerCase("ru-RU");
-  return text.includes("подтвердите, что вы не робот") ||
-    (text.includes("подтвердите") && text.includes("я не робот"));
-}
-
-async function findAntiBotChallengePage(browser) {
-  for (const context of browser.contexts()) {
-    for (const page of context.pages()) {
-      if (page.isClosed()) continue;
-      const texts = [];
-      for (const frame of page.frames()) {
-        const body = await frame.locator("body").innerText({ timeout: 1000 }).catch(() => "");
-        if (body) texts.push(body);
-      }
-      if (textLooksLikeManualAntiBotChallenge(texts.join("\n"))) return page;
-    }
-  }
-  return null;
-}
-
-function encodePowerShellCommand(command) {
-  return Buffer.from(command, "utf16le").toString("base64");
-}
-
-function quotePowerShellLiteral(value) {
-  return `'${String(value || "").replace(/'/g, "''")}'`;
-}
-
-async function restoreRobotBrowserWindow(config) {
-  if (process.platform !== "win32" || !config.browserExecutable) {
-    return { ok: false, skipped: true };
-  }
-
-  const processName = path.parse(config.browserExecutable).name;
-  const command = [
-    "$ErrorActionPreference = 'Stop'",
-    "Add-Type -TypeDefinition @'",
-    "using System;",
-    "using System.Runtime.InteropServices;",
-    "public static class AiSvodkiWindowApi {",
-    "  [DllImport(\"user32.dll\")] public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);",
-    "  [DllImport(\"user32.dll\")] public static extern bool SetForegroundWindow(IntPtr hWnd);",
-    "}",
-    "'@",
-    `$name = ${quotePowerShellLiteral(processName)}`,
-    "$windows = @(Get-Process -Name $name -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 })",
-    "foreach ($p in $windows) {",
-    "  [AiSvodkiWindowApi]::ShowWindowAsync($p.MainWindowHandle, 9) | Out-Null",
-    "  [AiSvodkiWindowApi]::SetForegroundWindow($p.MainWindowHandle) | Out-Null",
-    "}",
-    "Write-Output $windows.Count",
-  ].join("\r\n");
-
-  return new Promise((resolve) => {
-    let settled = false;
-    let stdout = "";
-    let stderr = "";
-    let timer = null;
-    const finish = (result) => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timer);
-      resolve(result);
-    };
-    const child = spawn(
-      "powershell.exe",
-      [
-        "-NoLogo",
-        "-NoProfile",
-        "-NonInteractive",
-        "-ExecutionPolicy",
-        "Bypass",
-        "-EncodedCommand",
-        encodePowerShellCommand(command),
-      ],
-      { windowsHide: true, stdio: ["ignore", "pipe", "pipe"] }
-    );
-    child.stdout.on("data", (chunk) => { stdout += chunk.toString(); });
-    child.stderr.on("data", (chunk) => { stderr += chunk.toString(); });
-    child.once("error", (error) => finish({ ok: false, error: error.message }));
-    child.once("close", (code) => finish({
-      ok: code === 0,
-      code,
-      stdout: stdout.trim(),
-      error: code === 0 ? null : stderr.trim() || `PowerShell завершился с кодом ${code}`,
-    }));
-    timer = setTimeout(() => {
-      try { child.kill(); } catch {}
-      finish({ ok: false, error: "Не удалось восстановить окно браузера за 10 секунд." });
-    }, 10_000);
-  });
-}
-
-async function waitForOptionalPostClickChallenge() {
-  if (!fs.existsSync(CONFIG_PATH)) return { seen: false, resolved: false, reason: "no-config" };
-  const config = loadJson(CONFIG_PATH);
-  const endpoint = `http://${config.browserDebugHost}:${config.browserDebugPort}`;
-  let browser = null;
-
-  try {
-    const { chromium } = require("playwright");
-    browser = await chromium.connectOverCDP(endpoint, { timeout: 3000 });
-  } catch (error) {
-    warn(
-      config,
-      `post-click антибот-проверку не удалось проверить через ${endpoint}: ${error.message}. ` +
-        "Продолжаю штатную verification-only защиту без дополнительных кликов."
-    );
-    return { seen: false, resolved: false, reason: "cdp-unavailable" };
-  }
-
-  const probeDeadline = Date.now() + POST_CLICK_CHALLENGE_PROBE_MS;
-  let challengePage = null;
-  while (Date.now() < probeDeadline) {
-    challengePage = await findAntiBotChallengePage(browser);
-    if (challengePage) break;
-    await new Promise((resolve) => setTimeout(resolve, 250));
-  }
-
-  if (!challengePage) {
-    log(
-      config,
-      `post-click антибот-проверка не обнаружена за ${POST_CLICK_CHALLENGE_PROBE_MS} мс.`
-    );
-    return { seen: false, resolved: true };
-  }
-
-  warn(
-    config,
-    "ПОСЛЕ PUBLISH ПОЯВИЛАСЬ АНТИБОТ-ПРОВЕРКА «Я НЕ РОБОТ». " +
-      "Автоматизация НЕ нажимает checkbox и НЕ выполняет других кликов. " +
-      `Ожидаю ручного подтверждения до ${POST_CLICK_CHALLENGE_WAIT_MS} мс.`
-  );
-
-  const restored = await restoreRobotBrowserWindow(config);
-  if (restored.ok) {
-    log(config, "Окно Яндекс.Браузера восстановлено для ручного подтверждения антибот-проверки.");
-  } else if (!restored.skipped) {
-    warn(config, `Не удалось восстановить окно Яндекс.Браузера: ${restored.error || "неизвестная ошибка"}.`);
-  }
-  await challengePage.bringToFront().catch(() => {});
-
-  const deadline = Date.now() + POST_CLICK_CHALLENGE_WAIT_MS;
-  while (Date.now() < deadline) {
-    challengePage = await findAntiBotChallengePage(browser);
-    if (!challengePage) {
-      log(
-        config,
-        "Антибот-проверка исчезла. Автоматизация не взаимодействовала с ней; " +
-          "продолжаю обычный post-click путь без дополнительных кликов."
-      );
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      return { seen: true, resolved: true };
-    }
-    await new Promise((resolve) => setTimeout(resolve, POST_CLICK_CHALLENGE_POLL_MS));
-  }
-
-  throw new Error(
-    `После publish click антибот-проверка «Я не робот» не исчезла за ` +
-      `${POST_CLICK_CHALLENGE_WAIT_MS} мс. Publish click уже выполнен; ` +
-      "повторный click запрещён, дальнейшие запуски должны остаться verification-only."
-  );
-}
-
 function terminateChildTree(child) {
   if (!child || !child.pid) return;
 
@@ -305,17 +133,11 @@ function runNodeScript(scriptName, args, timeoutMs) {
     };
 
     child.once("error", (error) => finish(error));
-    child.once("exit", async (code, signal) => {
+    child.once("exit", (code, signal) => {
+      // This runner owns process boundaries only. Any Dzen-specific notices
+      // are handled by dzen-safe-notices during the live publication stage.
       if (code === 0) {
-        clearTimeout(timer);
-        try {
-          if (scriptName === "dzen-publish-direct.js") {
-            await waitForOptionalPostClickChallenge();
-          }
-          finish();
-        } catch (error) {
-          finish(error);
-        }
+        finish();
         return;
       }
       finish(new Error(
@@ -343,6 +165,13 @@ async function main(argv = process.argv.slice(2)) {
 
     config = loadJson(CONFIG_PATH);
     const { mode, childArgs } = parseArgs(argv);
+    if (mode === "publish") {
+      for (const lockName of ["full-worker.lock", "scheduled-worker.lock"]) {
+        if (fs.existsSync(path.join(ROOT, lockName))) {
+          throw new Error(`Ручной запуск Dzen запрещён, пока существует ${lockName}.`);
+        }
+      }
+    }
     const target = mode === "dry-run" ? "dzen-publish.js" : "dzen-publish-direct.js";
     const targetArgs = mode === "dry-run" ? ["--dry-run", ...childArgs] : childArgs;
 
@@ -377,10 +206,31 @@ async function main(argv = process.argv.slice(2)) {
         return;
       }
 
+      // The explicit manual entrypoint must use the SAME persisted state as the
+      // scheduled runner (which calls runNodeScript() directly).
+      const dateKey = duplicateGuard.resolveDateKey(childArgs, config.timeZone);
+      const state = history.loadActiveState(config);
+      const job = dzenHelpers.findJobForDate(state, dateKey);
+      const current = job.dzenAutomation || {};
+      const status = String(current.status || "PENDING");
+      if (status === "PENDING" && !current.draftId) {
+        const now = new Date().toISOString();
+        job.dzenAutomation = {
+          ...current, status: "UPLOAD_ARMED", uploadArmedAt: now, updatedAt: now,
+        };
+        job.updatedAt = now;
+        history.saveStateWithRetention(config, state);
+        log(config, "Ручной live: UPLOAD_ARMED записан до нового upload.");
+      } else if (status === "DRAFT_PROCESSING" && /^[0-9a-f]{24}$/i.test(String(current.draftId || ""))) {
+        childArgs.push(`--resume-draft=${current.draftId}`);
+        log(config, `Ручной live: возобновляю только закреплённый черновик ${current.draftId}.`);
+      } else {
+        throw new Error(`Ручной live запрещён: dzenAutomation.status=${status}, draftId=${current.draftId || "нет"}; новый upload и второй click невозможны.`);
+      }
       log(
         config,
         "live publish выполняется одним child-проходом без автоматического повторного запуска; " +
-        "inter-run resume отключён."
+        "inter-run resume разрешён только для сохранённого DRAFT_PROCESSING."
       );
     }
 
@@ -422,10 +272,7 @@ module.exports = {
   CHILD_OUTPUT_TAIL_LIMIT,
   FALLBACK_ERROR_LOG,
   OPERATOR_WINDOW_MS,
-  POST_CLICK_CHALLENGE_PROBE_MS,
-  POST_CLICK_CHALLENGE_WAIT_MS,
   main,
   parseArgs,
   runNodeScript,
-  textLooksLikeManualAntiBotChallenge,
 };

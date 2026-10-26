@@ -152,8 +152,8 @@ Summary`. Диагностические JSON artifacts имеют `retention: 2
 ## Локальный NotebookLM-video
 
 Подпроект стартует после уже опубликованного выпуска и живёт на Windows-машине
-оператора. Один scheduled entrypoint ведёт NotebookLM/MP4/PNG/optional FTP,
-native Dzen publication, две Dzen collections и insertion опубликованного видео
+оператора. Один scheduled entrypoint ведёт NotebookLM/MP4 (опционально с локальной пятисекундной PNG-заставкой до доставки)/PNG/optional FTP,
+native Dzen publication (с сохранением и восстановлением exact remote draft ID при долгой обработке без дублей), две Dzen collections и insertion опубликованного видео
 в same-day статью. Production article-video выполняет video paste внутри browser
 page через synthetic paste event и не зависит от Windows desktop clipboard;
 publish разрешён только после подтверждённого Dzen preview.
@@ -175,3 +175,10 @@ Retrieval/search изменения дополнительно проходят 
 
 Исторические audits/fixtures сохраняются как evidence и regression assets; их не
 следует переписывать только ради сокращения живой документации.
+
+В Windows-подпроекте NotebookLM/Dzen обработка опубликованного видео теперь
+сверяет точный ID публичной ссылки для ранее сохранённого Dzen draft ID;
+разрешённые информационные окна обрабатываются централизованно через
+`dzen-safe-notices.js` **во время** 45-секундного наблюдения после публикации.
+Runner универсален: не ожидает CAPTCHA и прочих проверок человека, пользователь
+подтверждает их самостоятельно. Защита от второго upload/click сохранена.
