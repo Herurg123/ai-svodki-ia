@@ -1,0 +1,34 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Qwen Code v0.26.1 добавила управляемые агентные сессии, daemon persistence и автоматизацию PR-review",
+    "organization": "Alibaba Qwen",
+    "topic": "CLI coding agents; managed sessions; daemon; subagent delegation; MCP; PR review automation; Qwen",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "Qwen выпустила Qwen Code v0.26.1. Релиз добавляет сохраняемую по opt-in схеме авторизацию daemon, ручное сжатие контекста для Managed Sessions с сохранением audit history, управление MCP-серверами без пересоздания сессии, публичную делегацию субагентам по умолчанию, локальный запуск daemon и Managed-режима одной командой, а также механизмы guarded PR autofix и review/watch workflows.",
+    "published_at": "2026-10-24T15:47:58+00:00",
+    "published_date": "2026-10-24",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release v0.26.1",
+        "publisher": "QwenLM / GitHub",
+        "url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.1"
+      }
+    ],
+    "keywords": [
+      "Qwen Code",
+      "CLI agent",
+      "managed sessions",
+      "daemon token persistence",
+      "subagents",
+      "MCP",
+      "PR review",
+      "WebShell"
+    ],
+    "geography": "world",
+    "category": "coding"
+  }
+]

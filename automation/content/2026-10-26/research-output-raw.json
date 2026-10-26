@@ -1,0 +1,285 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-10-26",
+  "search_window": {
+    "start_at": "2026-10-24T04:10:05+03:00",
+    "end_at": "2026-10-26T04:09:59+03:00",
+    "latest_archive_at": "2026-10-25T04:10:05+03:00",
+    "start_date": "2026-10-24",
+    "end_date": "2026-10-26",
+    "latest_archive_date": "2026-10-25"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Qwen Code v0.26.1 добавила управляемые агентные сессии, daemon persistence и автоматизацию PR-review",
+      "organization": "Alibaba Qwen",
+      "published_date": "2026-10-24",
+      "published_at": "2026-10-24T15:47:58+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agents; managed sessions; daemon; subagent delegation; MCP; PR review automation; Qwen",
+      "event_type": "product release",
+      "keywords": [
+        "Qwen Code",
+        "CLI agent",
+        "managed sessions",
+        "daemon token persistence",
+        "subagents",
+        "MCP",
+        "PR review",
+        "WebShell"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Release v0.26.1",
+        "publisher": "QwenLM / GitHub",
+        "url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.1"
+      },
+      "supporting_sources": [
+        {
+          "title": "Qwen Code Changelog & Latest Version (v0.26.1)",
+          "publisher": "aiticker",
+          "url": "https://aiticker.site/tools/qwen-code/"
+        }
+      ],
+      "event_summary": "Qwen выпустила Qwen Code v0.26.1. Релиз добавляет сохраняемую по opt-in схеме авторизацию daemon, ручное сжатие контекста для Managed Sessions с сохранением audit history, управление MCP-серверами без пересоздания сессии, публичную делегацию субагентам по умолчанию, локальный запуск daemon и Managed-режима одной командой, а также механизмы guarded PR autofix и review/watch workflows.",
+      "verified_facts": [
+        "Официальная страница GitHub помечает v0.26.1 как релиз, опубликованный 24 октября 2026 года.",
+        "В релизе добавлено opt-in сохранение bearer token для daemon в owner-only файле и команды управления токеном.",
+        "Managed Sessions получили idle-only manual context compression с сохранением истории аудита.",
+        "В Managed Agent включена публичная делегация субагентам по умолчанию; MCP-серверы можно менять без пересоздания сессии.",
+        "Релиз включает автоматизацию PR-review и guarded autofix/re-run workflows."
+      ],
+      "significance": "Это не только очередные UI-исправления: Qwen Code расширяет контур долговременных managed-agent workflows — управление сессиями, субагентами, MCP, daemon и PR-автоматизацией. Для заметного открытого coding-agent инструмента экосистемы Qwen это самостоятельное обновление developer workflow.",
+      "significance_score": 3,
+      "limitations": "Релиз очень объёмный и часть изменений относится к внутренним CI, UI и исправлениям. Независимых метрик внедрения или оценки влияния нет; значимость основана на функциональном расширении агентной среды.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет истории про Qwen Code v0.26.1 или эквивалентный набор managed-agent и PR-automation возможностей.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Первичный GitHub release подтверждает версию, дату и заявленные функции. Вторичный tracker использован только как вспомогательная навигация к официальному релизу.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/QwenLM/qwen-code/releases/tags/v0.26.1=2026-10-24T15:47:58Z; timestamp проверен Python против effective window. Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/QwenLM/qwen-code/releases/tags/v0.26.1=2026-10-24T15:47:58Z; timestamp проверен Python против effective window. Официальный release v0.26.1 опубликован 24 октября 2026 года, то есть в пределах effective window; в архиве нет его публикации.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие не является судебным или регуляторным.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: это тематический developer-tools кандидат, а не curiosity-сюжет.",
+      "event_date": "2026-10-24",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.1",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "На официальной странице GitHub указано, что qwen-code-review-bot выпустил релиз 24 Oct в 15:47; timezone страницы не указан, поэтому exact event_at не заполняется.",
+      "id": "cand-001",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.1",
+      "source_published_date": "2026-10-24",
+      "source_published_at": "2026-10-24T15:47:58+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "github-releases-api:published_at:https://api.github.com/repos/QwenLM/qwen-code/releases/tags/v0.26.1=2026-10-24T15:47:58Z"
+    },
+    {
+      "title": "Barclays перенаправляет расходы в ИИ на фоне сокращения штата",
+      "organization": "Barclays",
+      "published_date": "2026-10-24",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Корпоративная стратегия; инвестиции в ИИ; workforce restructuring; enterprise AI",
+      "event_type": "Стратегическое перераспределение расходов и сокращение персонала",
+      "keywords": [
+        "Barclays",
+        "enterprise AI",
+        "AI spending",
+        "workforce",
+        "restructuring",
+        "corporate strategy"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "Barclays is latest to redirect spending toward AI as it trims its workforce",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/ai-layoffs-meta-microsoft-barclays-300bd6c2585b4a6996c2ac553d870055"
+      },
+      "supporting_sources": [],
+      "event_summary": "Associated Press сообщило, что Barclays стала очередной крупной компанией, перенаправляющей расходы в ИИ одновременно с сокращением численности персонала. Это самостоятельное корпоративное решение о распределении ресурсов, а не общий комментарий о рынке ИИ.",
+      "verified_facts": [
+        "AP характеризует Barclays как компанию, перенаправляющую расходы в ИИ на фоне сокращения штата.",
+        "Материал AP посвящён связи корпоративных решений по занятости с наращиванием ИИ-расходов."
+      ],
+      "significance": "Событие отражает переход крупного международного банка от экспериментального внедрения ИИ к финансово и организационно значимой перестройке: ИИ становится прямым направлением перераспределения бюджета и трудовых ресурсов.",
+      "significance_score": 1,
+      "limitations": "В доступной версии материала не раскрыты объём ИИ-бюджета Barclays, точное число сокращаемых сотрудников и отдельный первичный корпоративный релиз; поэтому не следует приписывать банку дополнительные количественные параметры.",
+      "archive_status": "none",
+      "archive_reason": "",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Событие подтверждено авторитетным новостным агентством AP; доступный материал не даёт точного timestamp публикации, поэтому сохранена точность до календарной даты.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "event_date": "2026-10-24",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://apnews.com/article/ai-layoffs-meta-microsoft-barclays-300bd6c2585b4a6996c2ac553d870055",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Результат Web Search помечает материал AP как опубликованный два дня назад относительно авторитетного времени задачи 2026-10-26; дата классифицирована как 2026-10-24 без выдумывания времени.",
+      "audit_direction": "hybrid_infrastructure_business",
+      "id": "cand-002",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=2, validated unique=2, final candidates=2. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-global_breaking-03",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Moonshot AI Launches New Kimi K3.1 Pro Model",
+      "origin_direction": "global_breaking",
+      "reason_code": "unverified",
+      "evidence_reason": "Главная страница The Information показывает заголовок, но не даёт доступного publication timestamp, event-origin даты или достаточно проверяемых деталей релиза для строгого кандидата.",
+      "likely_significance_score": 1,
+      "entities": [
+        "Moonshot",
+        "Launches",
+        "Kimi",
+        "K3.1",
+        "Pro",
+        "Model"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

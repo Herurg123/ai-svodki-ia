@@ -1,8 +1,63 @@
 {
   "version": 2,
-  "generated_at": "2026-10-25T06:22:39+00:00",
+  "generated_at": "2026-10-26T01:18:01+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-10-26",
+      "published_at": "2026-10-26T06:00:00+03:00",
+      "search_cutoff_at": "2026-10-26T04:09:59+03:00",
+      "title": "ИИ-Сводка на 26 октября 2026",
+      "link": "https://rybalka.one/posts/2026-10-26/",
+      "summary": "Главные новости искусственного интеллекта за 26 октября 2026 года Новостей сегодня меньше, чем обычно Сегодня в фокусе — обновление Qwen Code, инструмента для агентной разработки от Alibaba Qwen. Релиз показывает, что конкуренция CLI-агентов всё больше смещается от одиночного диалога с моделью к управляемым долговременным сессиям, делегированию задач и контролируемой автоматизации изменений в коде. Практический вопрос для команд остаётся прежним: чем больше агент получает доступа к MCP-инструмен",
+      "topics": [
+        "Qwen Code",
+        "агенты ИИ",
+        "ИИ-кодинг",
+        "CLI-агенты",
+        "MCP",
+        "управляемые сессии",
+        "PR-review",
+        "автоматизация разработки"
+      ],
+      "source_urls": [
+        "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.1"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-001",
+          "section": "world",
+          "headline": "Qwen Code v0.26.1 добавила управляемые агентные сессии, daemon persistence и автоматизацию PR-review",
+          "organization": "Alibaba Qwen",
+          "topic": "CLI coding agents; managed sessions; daemon; subagent delegation; MCP; PR review automation; Qwen",
+          "event_type": "product release",
+          "status": "new",
+          "summary": "Qwen выпустила Qwen Code v0.26.1. Релиз добавляет сохраняемую по opt-in схеме авторизацию daemon, ручное сжатие контекста для Managed Sessions с сохранением audit history, управление MCP-серверами без пересоздания сессии, публичную делегацию субагентам по умолчанию, локальный запуск daemon и Managed-режима одной командой, а также механизмы guarded PR autofix и review/watch workflows.",
+          "published_at": "2026-10-24T15:47:58+00:00",
+          "published_date": "2026-10-24",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Release v0.26.1",
+              "publisher": "QwenLM / GitHub",
+              "url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.1"
+            }
+          ],
+          "keywords": [
+            "Qwen Code",
+            "CLI agent",
+            "managed sessions",
+            "daemon token persistence",
+            "subagents",
+            "MCP",
+            "PR review",
+            "WebShell"
+          ],
+          "geography": "world",
+          "category": "coding"
+        }
+      ]
+    },
     {
       "date": "2026-10-25",
       "published_at": "2026-10-25T06:00:00+03:00",
@@ -6530,10 +6585,10 @@
     {
       "date": "2026-09-23",
       "published_at": "2026-09-23T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-23T04:30:29+03:00",
+      "search_cutoff_at": "2026-09-23T06:00:00+03:00",
       "title": "ИИ-Сводка на 23 сентября 2026",
       "link": "https://rybalka.one/posts/2026-09-23/",
-      "summary": "Главные новости искусственного интеллекта за 23 сентября 2026 года День принёс сразу два крупных модельных релиза: OpenAI расширила линейку GPT-6, а Anthropic выпустила Claude Opus 5.5. Одновременно инфраструктурный рынок показывает, что масштаб ИИ всё сильнее зависит от долгосрочных контрактов на вычисления, стоимости inference и способности запускать модели вне облака — на смартфонах и робототехнических платформах. В российской части выпуска — интеграция корпоративных агентов Яндекса в популяр",
+      "summary": "OpenAI и Anthropic обновили флагманские модели, Nscale раскрыла контракты на $103 млрд перед IPO, а Qualcomm и NVIDIA расширяют базу для локального и робототехнического ИИ.",
       "topics": [
         "OpenAI",
         "GPT-6",

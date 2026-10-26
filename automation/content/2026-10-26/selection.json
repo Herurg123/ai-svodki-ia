@@ -1,0 +1,12 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001"
+  ],
+  "excluded_candidate_ids": [
+    "cand-002"
+  ],
+  "selection_summary": "В пуле найден один достойный сюжет, прошедший требования по верификации и свежести: официальный релиз Qwen Code v0.26.1. Кандидат Barclays исключён: помечен recommendation: exclude и не имеет статуса verification_status: verified. Выпуск публикуется в коротком формате.",
+  "diversity_overrides": []
+}

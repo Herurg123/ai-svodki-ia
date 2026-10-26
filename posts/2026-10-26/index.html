@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Qwen обновила CLI-агента Qwen Code: появились управляемые сессии, сохранение авторизации daemon, гибкое управление MCP и автоматизация PR-review. Короткий выпуск о развитии долговременных агентных workflows для разработки.">
+  <title>Виталий Рыбалка | Vitaly Rybalka | ИИ-Сводка на 26 октября 2026</title>
+  <link rel="canonical" href="https://rybalka.one/posts/2026-10-26/">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="alternate" type="application/rss+xml" title="ИИ-Сводки" href="https://rybalka.one/posts/rss.xml">
+  <script id="ai-svodki-structured-data" type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://it-expertise.ru/#organization",
+      "name": "ИТ-Экспертиза",
+      "url": "https://it-expertise.ru/"
+    },
+    {
+      "@type": "Person",
+      "@id": "https://rybalka.one/#person",
+      "name": "Виталий Рыбалка",
+      "url": "https://rybalka.one/",
+      "image": "https://rybalka.one/pic/vvr.png",
+      "jobTitle": "Директор по развитию",
+      "description": "Директор по развитию ИТ-Экспертизы. Продвижение бренда в сфере ИТ, информационной безопасности и искусственного интеллекта. Ранее 19 лет в компании 1С.",
+      "worksFor": {
+        "@id": "https://it-expertise.ru/#organization"
+      },
+      "sameAs": [
+        "https://vk.com/rybalkavv",
+        "https://dzen.ru/rybv",
+        "https://www.linkedin.com/in/rybalkavv/"
+      ],
+      "knowsAbout": [
+        "Информационные технологии",
+        "Информационная безопасность",
+        "Искусственный интеллект",
+        "1С",
+        "1С:Предприятие 8",
+        "WorldSkills",
+        "Маркетинг",
+        "Бизнес-развитие"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://rybalka.one/#website",
+      "url": "https://rybalka.one/",
+      "name": "Виталий Рыбалка",
+      "inLanguage": "ru-RU",
+      "publisher": {
+        "@id": "https://rybalka.one/#person"
+      }
+    },
+    {
+      "@type": "Blog",
+      "@id": "https://rybalka.one/posts/#blog",
+      "url": "https://rybalka.one/posts/",
+      "name": "ИИ-Сводки",
+      "description": "Ежедневные аналитические сводки о событиях в сфере искусственного интеллекта.",
+      "inLanguage": "ru-RU",
+      "isPartOf": {
+        "@id": "https://rybalka.one/#website"
+      },
+      "author": {
+        "@id": "https://rybalka.one/#person"
+      },
+      "publisher": {
+        "@id": "https://rybalka.one/#person"
+      },
+      "sameAs": "https://rybalka.one/posts/rss.xml"
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://rybalka.one/posts/images/ai-svodka-2026-10-26.png#image",
+      "url": "https://rybalka.one/posts/images/ai-svodka-2026-10-26.png",
+      "contentUrl": "https://rybalka.one/posts/images/ai-svodka-2026-10-26.png",
+      "width": 1536,
+      "height": 864,
+      "caption": "ИИ-Сводка на 26 октября 2026",
+      "inLanguage": "ru-RU",
+      "representativeOfPage": true
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://rybalka.one/posts/2026-10-26/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Виталий Рыбалка",
+          "item": "https://rybalka.one/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "ИИ-Сводки",
+          "item": "https://rybalka.one/posts/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "ИИ-Сводка на 26 октября 2026",
+          "item": "https://rybalka.one/posts/2026-10-26/"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://rybalka.one/posts/2026-10-26/#webpage",
+      "url": "https://rybalka.one/posts/2026-10-26/",
+      "name": "ИИ-Сводка на 26 октября 2026",
+      "description": "Qwen обновила CLI-агента Qwen Code: появились управляемые сессии, сохранение авторизации daemon, гибкое управление MCP и автоматизация PR-review. Короткий выпуск о развитии долговременных агентных workflows для разработки.",
+      "isPartOf": {
+        "@id": "https://rybalka.one/#website"
+      },
+      "breadcrumb": {
+        "@id": "https://rybalka.one/posts/2026-10-26/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@id": "https://rybalka.one/posts/images/ai-svodka-2026-10-26.png#image"
+      },
+      "mainEntity": {
+        "@id": "https://rybalka.one/posts/2026-10-26/#blogposting"
+      },
+      "inLanguage": "ru-RU",
+      "datePublished": "2026-10-26T06:00:00+03:00",
+      "dateModified": "2026-10-26T06:00:00+03:00"
+    },
+    {
+      "@type": "BlogPosting",
+      "@id": "https://rybalka.one/posts/2026-10-26/#blogposting",
+      "url": "https://rybalka.one/posts/2026-10-26/",
+      "mainEntityOfPage": {
+        "@id": "https://rybalka.one/posts/2026-10-26/#webpage"
+      },
+      "headline": "ИИ-Сводка на 26 октября 2026",
+      "description": "Qwen обновила CLI-агента Qwen Code: появились управляемые сессии, сохранение авторизации daemon, гибкое управление MCP и автоматизация PR-review. Короткий выпуск о развитии долговременных агентных workflows для разработки.",
+      "abstract": "Qwen обновила CLI-агента Qwen Code: появились управляемые сессии, сохранение авторизации daemon, гибкое управление MCP и автоматизация PR-review. Короткий выпуск о развитии долговременных агентных workflows для разработки.",
+      "datePublished": "2026-10-26T06:00:00+03:00",
+      "dateModified": "2026-10-26T06:00:00+03:00",
+      "author": {
+        "@id": "https://rybalka.one/#person"
+      },
+      "publisher": {
+        "@id": "https://rybalka.one/#person"
+      },
+      "copyrightHolder": {
+        "@id": "https://rybalka.one/#person"
+      },
+      "copyrightYear": 2026,
+      "image": {
+        "@id": "https://rybalka.one/posts/images/ai-svodka-2026-10-26.png#image"
+      },
+      "thumbnailUrl": "https://rybalka.one/posts/images/ai-svodka-2026-10-26.png",
+      "isPartOf": {
+        "@id": "https://rybalka.one/posts/#blog"
+      },
+      "articleSection": "Искусственный интеллект",
+      "genre": "Ежедневная аналитическая сводка",
+      "keywords": [
+        "Qwen Code",
+        "агенты ИИ",
+        "ИИ-кодинг",
+        "CLI-агенты",
+        "MCP",
+        "управляемые сессии",
+        "PR-review",
+        "автоматизация разработки",
+        "CLI agent",
+        "managed sessions",
+        "daemon token persistence",
+        "subagents",
+        "PR review",
+        "WebShell"
+      ],
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "Qwen Code"
+        },
+        {
+          "@type": "Thing",
+          "name": "агенты ИИ"
+        },
+        {
+          "@type": "Thing",
+          "name": "ИИ-кодинг"
+        },
+        {
+          "@type": "Thing",
+          "name": "CLI-агенты"
+        },
+        {
+          "@type": "Thing",
+          "name": "MCP"
+        },
+        {
+          "@type": "Thing",
+          "name": "управляемые сессии"
+        },
+        {
+          "@type": "Thing",
+          "name": "PR-review"
+        },
+        {
+          "@type": "Thing",
+          "name": "автоматизация разработки"
+        }
+      ],
+      "wordCount": 268,
+      "inLanguage": "ru-RU",
+      "isAccessibleForFree": true,
+      "conditionsOfAccess": "Бесплатно",
+      "creativeWorkStatus": "Published",
+      "encodingFormat": "text/html",
+      "articleBody": "Новостей сегодня меньше, чем обычно Сегодня в фокусе — обновление Qwen Code, инструмента для агентной разработки от Alibaba Qwen. Релиз показывает, что конкуренция CLI-агентов всё больше смещается от одиночного диалога с моделью к управляемым долговременным сессиям, делегированию задач и контролируемой автоматизации изменений в коде. Практический вопрос для команд остаётся прежним: чем больше агент получает доступа к MCP-инструментам, репозиториям и процессам review, тем важнее прозрачные настройки авторизации, аудит действий и границы автоматического выполнения. Мировые лидеры ИИ Китайские лидеры ИИ Qwen Code v0.26.1 добавила управляемые агентные сессии, daemon persistence и автоматизацию PR-review Alibaba Qwen выпустила Qwen Code v0.26.1. Согласно официальному описанию релиза , инструмент получил opt-in сохранение bearer token для daemon в файле с доступом только владельцу, ручное сжатие контекста для Managed Sessions с сохранением истории аудита и возможность менять MCP-серверы без пересоздания сессии. Также в Managed Agent по умолчанию стала доступна публичная делегация субагентам, а в релиз вошли сценарии PR-review, guarded autofix и повторного запуска проверок. Это расширяет возможности для длительных workflow вокруг pull request, но не является независимым подтверждением качества или безопасности таких автоматизаций: командам по-прежнему нужны проверки прав доступа, review изменений и контроль того, какие инструменты агент может вызывать. Что это значит CLI-агенты всё заметнее превращаются в среду управления длительными задачами, а не только в интерфейс для генерации кода. Сохранение авторизации daemon повышает удобство постоянных сессий, но делает защиту локальных токенов и контроль доступа обязательной частью эксплуатации. Гибкая смена MCP-серверов и делегирование субагентам ускоряют workflow, однако расширяют поверхность управления инструментами и разрешениями. Автоматизация PR-review и autofix полезна как слой ускорения разработки, но не заменяет человеческую проверку изменений перед слиянием и развёртыванием. Все ИИ-Сводки Архив ИИ-Сводок",
+      "citation": [
+        "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.1"
+      ],
+      "mentions": [
+        {
+          "@type": "Organization",
+          "name": "Alibaba Qwen"
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<h1>ИИ-Сводка на 26 октября 2026</h1>
+<img src="../images/ai-svodka-2026-10-26.png" alt="ИИ-Сводка на 26 октября 2026">
+<p><em>Новостей сегодня меньше, чем обычно</em></p>
+<p>Сегодня в фокусе — обновление Qwen Code, инструмента для агентной разработки от Alibaba Qwen. Релиз показывает, что конкуренция CLI-агентов всё больше смещается от одиночного диалога с моделью к управляемым долговременным сессиям, делегированию задач и контролируемой автоматизации изменений в коде.</p><p>Практический вопрос для команд остаётся прежним: чем больше агент получает доступа к MCP-инструментам, репозиториям и процессам review, тем важнее прозрачные настройки авторизации, аудит действий и границы автоматического выполнения.</p><h2>Мировые лидеры ИИ</h2><h2>Китайские лидеры ИИ</h2><h3>Qwen Code v0.26.1 добавила управляемые агентные сессии, daemon persistence и автоматизацию PR-review</h3><p>Alibaba Qwen выпустила Qwen Code v0.26.1. Согласно <a href="https://github.com/QwenLM/qwen-code/releases/tag/v0.26.1">официальному описанию релиза</a>, инструмент получил opt-in сохранение bearer token для daemon в файле с доступом только владельцу, ручное сжатие контекста для Managed Sessions с сохранением истории аудита и возможность менять MCP-серверы без пересоздания сессии.</p><p>Также в Managed Agent по умолчанию стала доступна публичная делегация субагентам, а в релиз вошли сценарии PR-review, guarded autofix и повторного запуска проверок. Это расширяет возможности для длительных workflow вокруг pull request, но не является независимым подтверждением качества или безопасности таких автоматизаций: командам по-прежнему нужны проверки прав доступа, review изменений и контроль того, какие инструменты агент может вызывать.</p><h2>Что это значит</h2><ol><li>CLI-агенты всё заметнее превращаются в среду управления длительными задачами, а не только в интерфейс для генерации кода.</li><li>Сохранение авторизации daemon повышает удобство постоянных сессий, но делает защиту локальных токенов и контроль доступа обязательной частью эксплуатации.</li><li>Гибкая смена MCP-серверов и делегирование субагентам ускоряют workflow, однако расширяют поверхность управления инструментами и разрешениями.</li><li>Автоматизация PR-review и autofix полезна как слой ускорения разработки, но не заменяет человеческую проверку изменений перед слиянием и развёртыванием.</li></ol>
+<h2>Все ИИ-Сводки</h2><p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>
+<p class="digest-footer" style="text-align:center;margin:32px 0 0;"><a href="https://dzen.ru/rybv" target="_blank" rel="noopener noreferrer"><img src="https://rybalka.one/posts/_footer-scr.png" alt="Подписаться на канал" style="display:block;max-width:50%;width:auto;height:auto;margin:0 auto;"></a></p>
+</body>
+</html>
