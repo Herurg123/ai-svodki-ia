@@ -595,24 +595,26 @@ function summarizePostClickSnapshot(url, bodyText, draftId) {
   return {
     editor:Boolean(editor),
     readyDraft:/готово к публикации|уже можно публиковать|готово: можно публиковать/i.test(text),
-    challenge:/я не робот|подтвердите, что вы не робот/i.test(text),
     confirmation:/сохранить изменения|подтвердить публикацию|подтвердить действие/i.test(text),
     successHint:/видео опубликовано|публикация прошла успешно/i.test(text)
   };
 }
-async function observeAfterPublishClick(page,config,dateKey,draftId,{durationMs=45_000,intervalMs=1500}={}) {
+async function observeAfterPublishClick(page,config,dateKey,draftId,{durationMs=45_000,intervalMs=1500,noticeBrowser=null}={}) {
   const started=Date.now();
-  let sample={editor:true,readyDraft:false,challenge:false,confirmation:false,successHint:false};
+  let sample={editor:true,readyDraft:false,confirmation:false,successHint:false};
   let lastUrl="";
   // Do not leave the editor while its async finalization may still be running.
   do {
     if(page.isClosed())break;
     lastUrl=page.url();
+    // Poll the extensible allowlist DURING the 45-second post-click window,
+    // not after it. Unknown popups are untouched; no extra waiting is added.
+    if(noticeBrowser) {
+      await safeNotices.processKnownDzenNotices(noticeBrowser, (message)=>log(config,message))
+        .catch((error)=>warn(config,`Dzen notices: ${error.message}`));
+    }
     const body=await page.locator("body").innerText({timeout:1500}).catch(()=>"");
     sample=summarizePostClickSnapshot(lastUrl,body,draftId);
-    // Delegate a detected human challenge immediately to the runner's
-    // established manual-only 120-second window, without touching checkbox.
-    if(sample.challenge)break;
     const remaining=durationMs-(Date.now()-started);
     if(remaining<=0)break;
     await page.waitForTimeout(Math.min(intervalMs,remaining));
@@ -629,7 +631,7 @@ async function observeAfterPublishClick(page,config,dateKey,draftId,{durationMs=
   }
   log(config,"POST-CLICK OBSERVE: "+status+
     "; elapsedMs="+(Date.now()-started)+
-    "; readyDraft="+sample.readyDraft+"; challenge="+sample.challenge+
+    "; readyDraft="+sample.readyDraft+
     "; confirmation="+sample.confirmation+"; screenshot="+screenshot+
     ". Без повторных кликов, без изменения draft; итог подтверждает только список опубликованных.");
   return {status,...sample,screenshot};
@@ -808,7 +810,7 @@ async function main(argv = process.argv.slice(2)) {
     }
 
     // Only the verified informational toast; no robot/consent interactions.
-    await safeNotices.dismissUploadSpeedNotice(connection.browser, (message) => log(config, message))
+    await safeNotices.processKnownDzenNotices(connection.browser, (message) => log(config, message))
       .catch((error) => warn(config, `Speed-notice: ${error.message}`));
 
     await setCommentsToEveryone(page, config);
@@ -835,8 +837,8 @@ async function main(argv = process.argv.slice(2)) {
       config,
       `КЛИК ПУБЛИКАЦИИ ВЫПОЛНЕН ОДИН РАЗ: «${publish.label}», draftId=${draftId}.`
     );
-    log(config, "После publish click удерживаю редактор 45 секунд и наблюдаю без действий; только subsequent verification решает результат.");
-    await observeAfterPublishClick(page,config,dateKey,draftId);
+    log(config, "После publish click наблюдаю 45 секунд; разрешённые уведомления проверяются через dzen-safe-notices, результат публикации подтверждается отдельно.");
+    await observeAfterPublishClick(page,config,dateKey,draftId,{noticeBrowser:connection.browser});
     log(config, `=== END DIRECT MVP CLICKED_UNVERIFIED click=true draftId=${draftId} ===`);
   } catch (error) {
     warn(
