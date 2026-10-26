@@ -605,16 +605,18 @@ async function observeAfterPublishClick(page,config,dateKey,draftId,{durationMs=
   let lastUrl="";
   // Do not leave the editor while its async finalization may still be running.
   do {
-    if(page.isClosed())break;
-    lastUrl=page.url();
-    // Poll the extensible allowlist DURING the 45-second post-click window,
-    // not after it. Unknown popups are untouched; no extra waiting is added.
+    // Notice polling continues even if Dzen closes the original editor page:
+    // the informational popup may remain in another page/frame of the CDP
+    // browser context. No special-case modal waits or UI retries.
     if(noticeBrowser) {
       await safeNotices.processKnownDzenNotices(noticeBrowser, (message)=>log(config,message))
         .catch((error)=>warn(config,`Dzen notices: ${error.message}`));
     }
-    const body=await page.locator("body").innerText({timeout:1500}).catch(()=>"");
-    sample=summarizePostClickSnapshot(lastUrl,body,draftId);
+    if(!page.isClosed()) {
+      lastUrl=page.url();
+      const body=await page.locator("body").innerText({timeout:1500}).catch(()=>"");
+      sample=summarizePostClickSnapshot(lastUrl,body,draftId);
+    }
     const remaining=durationMs-(Date.now()-started);
     if(remaining<=0)break;
     await page.waitForTimeout(Math.min(intervalMs,remaining));
