@@ -1,0 +1,78 @@
+{
+  "scope": "Terra vs Sol Primary 2026-10-22 to 2026-10-24",
+  "sources": {
+    "terra_sol_experiments": [
+      213,
+      214,
+      215
+    ]
+  },
+  "sha256_reference_kind": "original unmodified GitHub Actions ZIP",
+  "originals": [
+    {
+      "date": "2026-10-22",
+      "stage": "Terra Research",
+      "github_artifact_id": 12395720578,
+      "sha256": "7fb23f7ecf5dbec10de52c1d0fe5ae464573bab554a24eaeb9494d1536de9951",
+      "expires_utc_date": "2026-11-05",
+      "repo_path": "automation/audits/experiments/terra-sol-primary-2026-10-22-24/originals/terra-research-original-2026-10-22.zip"
+    },
+    {
+      "date": "2026-10-22",
+      "stage": "Sol first partial",
+      "github_artifact_id": 12402559662,
+      "sha256": "ada53d88eadb3aac9e2508d1a04a5e8b5eb7ed72d1e9aa391a87e336f92a3cc3",
+      "expires_utc_date": "2026-11-05",
+      "repo_path": "automation/audits/experiments/terra-sol-primary-2026-10-22-24/originals/sol-initial-original-2026-10-22.zip"
+    },
+    {
+      "date": "2026-10-22",
+      "stage": "Sol final 7+5",
+      "github_artifact_id": 12412378520,
+      "sha256": "82585fff3216e5375e8333569e56276204185b0fd73d3af10905ada7fd9a50a6",
+      "expires_utc_date": "2026-11-05",
+      "repo_path": "automation/audits/experiments/terra-sol-primary-2026-10-22-24/originals/sol-final-original-2026-10-22.zip"
+    },
+    {
+      "date": "2026-10-23",
+      "stage": "Terra Research",
+      "github_artifact_id": 12471524859,
+      "sha256": "b1c8ae91284c3444fcd71c1f9d5d2fd08dbf2084803db3127b479d0ea5d33dfb",
+      "expires_utc_date": "2026-11-06",
+      "repo_path": "automation/audits/experiments/terra-sol-primary-2026-10-22-24/originals/terra-research-original-2026-10-23.zip"
+    },
+    {
+      "date": "2026-10-23",
+      "stage": "Sol first partial 8/12",
+      "github_artifact_id": 12475775291,
+      "sha256": "63f6e570a47abac3f2849525f8c45953014c37fde6931f544bcc0a45bb8bcc28",
+      "expires_utc_date": "2026-11-06",
+      "repo_path": "automation/audits/experiments/terra-sol-primary-2026-10-22-24/originals/sol-initial-original-2026-10-23.zip"
+    },
+    {
+      "date": "2026-10-23",
+      "stage": "Sol final 8+4",
+      "github_artifact_id": 12482321746,
+      "sha256": "86e93b98eb134f0cbe35f6ee2bfb3fcdaccee247ca9ce81bcf255b89305f89a3",
+      "expires_utc_date": "2026-11-06",
+      "repo_path": "automation/audits/experiments/terra-sol-primary-2026-10-22-24/originals/sol-final-original-2026-10-23.zip"
+    },
+    {
+      "date": "2026-10-24",
+      "stage": "Terra Research",
+      "github_artifact_id": 12542274622,
+      "sha256": "219151cbb68c6b846dab2d0f789261eb5f52af310af1597d8d6a60679c7a316f",
+      "expires_utc_date": "2026-11-07",
+      "repo_path": "automation/audits/experiments/terra-sol-primary-2026-10-22-24/originals/terra-research-original-2026-10-24.zip"
+    },
+    {
+      "date": "2026-10-24",
+      "stage": "Sol final 12/12",
+      "github_artifact_id": 12548745112,
+      "sha256": "498d13b640a493813657fbcc9472f3447224792597ab9614f0e2e992e91f2b81",
+      "expires_utc_date": "2026-11-07",
+      "repo_path": "automation/audits/experiments/terra-sol-primary-2026-10-22-24/originals/sol-final-original-2026-10-24.zip"
+    }
+  ],
+  "storage": "Eight original ZIP files committed unchanged to the public repository after explicit owner authorization on 2026-10-26."
+}

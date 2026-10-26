@@ -34,6 +34,26 @@ README намеренно остаётся обзорным. Детальные 
 не дублируются здесь, если для них уже есть канонический architecture/spec
 документ.
 
+
+## Исторические сравнения моделей
+
+Исходные протоколы и результаты платного сравнения **Terra vs Sol Primary**
+за **22–24 октября 2026 года** собраны в
+[архиве эксперимента](automation/audits/experiments/terra-sol-primary-2026-10-22-24/README.md).
+Там находятся ссылки на [результат 22 октября](automation/audits/experiments/2026-10-22-sol-api-shadow/RESULT.md),
+[23 октября](automation/audits/experiments/2026-10-23-sol-shadow/RESULT.md) и
+[24 октября](automation/audits/experiments/2026-10-24-sol-shadow/RESULT.md),
+исторические проверочные скрипты, идентификаторы восьми оригинальных
+GitHub Actions ZIP, их SHA-256 и сроки хранения.
+
+Это **исторические материалы**, а не часть действующего production и не
+разрешение на новые платные API-вызовы. По явному разрешению владельца
+в публичном архиве находятся также [все восемь оригинальных ZIP](automation/audits/experiments/terra-sol-primary-2026-10-22-24/originals/)
+с полными ответами и техническими журналами. Для независимой проверки
+использовать [реестр SHA-256](automation/audits/experiments/terra-sol-primary-2026-10-22-24/ORIGINAL_ZIP_MANIFEST.json)
+и [проверочный скрипт](automation/audits/experiments/terra-sol-primary-2026-10-22-24/verify_original_zips.py),
+а не восстановленные из отчётов JSON.
+
 ## Основные части
 
 | Часть | Назначение |
