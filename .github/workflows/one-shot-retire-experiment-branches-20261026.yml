@@ -1,0 +1,110 @@
+name: One-shot cleanup of completed experiment branches
+on:
+  push:
+    branches:
+      - chore/one-shot-archive-branch-cleanup-20261026
+    paths:
+      - .github/workflows/one-shot-retire-experiment-branches-20261026.yml
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: cleanup-experiment-branches-20261026
+  cancel-in-progress: false
+
+jobs:
+  prune-verified:
+    if: "github.event.head_commit.message == 'ops: execute approved experiment branch cleanup'"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Сверить доказательства, статусы PR и SHA всех веток без изменений
+        shell: bash
+        env:
+          API_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          api() {
+            curl --fail-with-body --silent --show-error --max-time 40 \
+              -H "Authorization: Bearer ${API_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" "$1"
+          }
+          repo="https://api.github.com/repos/${GITHUB_REPOSITORY}"
+          main="$(api "$repo/branches/main" | jq -r '.commit.sha')"
+          test "$main" = "7520bcc85e0401827d31ac53a2419da33613eb37"
+          evidence="$(api "$repo/git/trees/$main?recursive=1")"
+          printf '%s' "$evidence" | jq -e \
+            '[.tree[]|select(.path | startswith("automation/audits/experiments/terra-sol-primary-2026-10-22-24/originals/") and endswith(".zip"))] | length == 8' >/dev/null
+          for n in 213 214 215; do
+            api "$repo/pulls/$n" | jq -e '.state == "closed" and .merged_at == null' >/dev/null
+          done
+          api "$repo/pulls/226" | jq -e '.state == "closed" and .merged_at != null' >/dev/null
+          open="$(api "$repo/pulls?state=open&per_page=100")"
+          while read -r name expected; do
+            printf '%s' "$open" | jq -e --arg name "$name" \
+              '[.[]|select(.head.ref == $name)] | length == 0' >/dev/null
+            actual="$(api "$repo/git/ref/heads/$name" | jq -r '.object.sha')"
+            if [[ "$actual" != "$expected" ]]; then
+              echo "::error title=Прервано::Ветка $name сменила SHA; удаление запрещено" >&2
+              exit 1
+            fi
+            echo "Ветка сверена: $name ($actual)"
+          done <<'TARGETS'
+          experiment/sol-api-shadow-2026-10-22 1047adcd7fb5553841df9c024b024589e131516c
+          experiment/sol-shadow-2026-10-23 0d471edf453bb9669007856075524ee6f9defdb3
+          experiment/sol-shadow-2026-10-24 f96fd7d75bf5559dc9932a323dee2ed59b211369
+          archive/terra-sol-primary-evidence-2026-10-22-24 f917505e79f5ed37a274f93bdbe035645212394e
+          artifact/dzen-universal-notices-overlay-20261026 bdc040603867500e2e2cb711a7bf935fa403f67e
+          artifact/integrated-video-packager-check-20261026 db3a7d1548aefa547f1331b261214c20390764c8
+          TARGETS
+          echo "## Предварительная проверка" >> "$GITHUB_STEP_SUMMARY"
+          echo "Архив из 8 ZIP в main, PR #213-215 закрыты, PR #226 merged, все 6 SHA точные, открытых PR нет." >> "$GITHUB_STEP_SUMMARY"
+      - name: Удалить только шесть проверенных временных веток и собственную служебную ветку
+        shell: bash
+        env:
+          API_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          repo="https://api.github.com/repos/${GITHUB_REPOSITORY}"
+          api() {
+            curl --fail-with-body --silent --show-error --max-time 40 \
+              -H "Authorization: Bearer ${API_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" "$1"
+          }
+          delete_exact_ref() {
+            local name="$1" expected="$2" actual
+            actual="$(api "$repo/git/ref/heads/$name" | jq -r '.object.sha')"
+            test "$actual" = "$expected" || {
+              echo "::error title=Изменённая ветка::Ветка $name сменила SHA; остановка" >&2
+              return 1
+            }
+            curl --fail-with-body --silent --show-error --max-time 40 \
+              -X DELETE -H "Authorization: Bearer ${API_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "$repo/git/refs/heads/$name"
+            echo "Удалено: $name"
+            echo "- $name" >> "$GITHUB_STEP_SUMMARY"
+          }
+          echo "## Удалённые временные ветки" >> "$GITHUB_STEP_SUMMARY"
+          while read -r name expected; do
+            delete_exact_ref "$name" "$expected"
+          done <<'TARGETS'
+          experiment/sol-api-shadow-2026-10-22 1047adcd7fb5553841df9c024b024589e131516c
+          experiment/sol-shadow-2026-10-23 0d471edf453bb9669007856075524ee6f9defdb3
+          experiment/sol-shadow-2026-10-24 f96fd7d75bf5559dc9932a323dee2ed59b211369
+          archive/terra-sol-primary-evidence-2026-10-22-24 f917505e79f5ed37a274f93bdbe035645212394e
+          artifact/dzen-universal-notices-overlay-20261026 bdc040603867500e2e2cb711a7bf935fa403f67e
+          artifact/integrated-video-packager-check-20261026 db3a7d1548aefa547f1331b261214c20390764c8
+          TARGETS
+          # An unmerged, one-shot workflow must not survive as a production file.
+          # Its own branch is removed last, after all approved deletions succeed.
+          delete_exact_ref "chore/one-shot-archive-branch-cleanup-20261026" "$GITHUB_SHA"
