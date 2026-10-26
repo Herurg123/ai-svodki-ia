@@ -243,11 +243,14 @@ async function verifyPublished(session, config, dateArg, logFn, draftId = null, 
 
     if (last.existing) {
       if (!draftId) return last;
-      const observation = await duplicateGuard.inspectPinnedDraft(
-        session.primaryPage, draftId, fullTitle, logFn
-      );
-      if (observation === "ABSENT") return last;
-      logFn(`Опубликован заголовок, но draftId=${draftId} имеет статус ${observation}: публикация этого черновика НЕ подтверждена.`);
+      const identity = duplicateGuard.pinnedPublishedIdentity(last, draftId);
+      if (identity === "MATCH") {
+        logFn(`Опубликованное Видео подтверждено точным public ID=${draftId}; черновик повторно НЕ открываю.`);
+        return last;
+      }
+      logFn(`Найден опубликованный заголовок, но public ID не подтверждает draftId=${draftId} (identity=${identity}).` +
+        " Прекращаю этот проход без повторного upload/click и без открытия редактора.");
+      return null;
     }
 
     logFn(
@@ -301,22 +304,28 @@ async function runAutomaticDzen(config, state, job, dateKey) {
       (message) => log(config, `DZEN: ${message}`)
     );
 
-    let publishedConfirmed = precheck.existing;
-    if (publishedConfirmed && job.dzenAutomation?.draftId) {
-      const byId = await duplicateGuard.inspectPinnedDraft(
-        session.primaryPage, job.dzenAutomation.draftId,
-        dzenHelpers.buildDzenTitle(dateKey),
-        (message) => log(config, `DZEN: ${message}`)
+    const pinnedId = job.dzenAutomation?.draftId || null;
+    const identity = pinnedId
+      ? duplicateGuard.pinnedPublishedIdentity(precheck, pinnedId)
+      : null;
+    const publishedConfirmed = precheck.existing && (!pinnedId || identity === "MATCH");
+    if (precheck.existing && pinnedId && !publishedConfirmed) {
+      const error = new Error(
+        `Опубликованный заголовок найден, но exact public ID не подтверждает сохранённый draftId=${pinnedId} ` +
+        `(identity=${identity || "UNKNOWN"}). Не открываю редактор и не запускаю второй upload/click.`
       );
-      if (byId !== "ABSENT") {
-        publishedConfirmed = false;
-        log(config, `Список опубликованных содержит совпадающий заголовок, но pinned draftId=${job.dzenAutomation.draftId} ещё существует или не проверен (${byId}). НЕ отмечаю как PUBLISHED.`);
-      }
+      updateDzenAutomation(config, state, job, status, {
+        lastVerifiedAt: new Date().toISOString(),
+        lastError: error.message,
+        lastErrorAt: new Date().toISOString(),
+      });
+      throw error;
     }
     if (publishedConfirmed) {
       updateDzenAutomation(config, state, job, "PUBLISHED", {
         confirmedAt: new Date().toISOString(),
-        confirmedBy: "duplicate-guard",
+        confirmedBy: pinnedId ? "published-row-exact-video-id" : "duplicate-guard",
+        publishedVideoUrl: precheck.publishedVideoUrl || null,
         foundTitle: precheck.foundText,
         titlePrefix: precheck.titlePrefix,
         lastError: null,
@@ -344,7 +353,8 @@ async function runAutomaticDzen(config, state, job, dateKey) {
       if (verified) {
         updateDzenAutomation(config, state, job, "PUBLISHED", {
           confirmedAt: new Date().toISOString(),
-          confirmedBy: "verification-only",
+          confirmedBy: job.dzenAutomation?.draftId ? "published-row-exact-video-id" : "verification-only",
+          publishedVideoUrl: verified.publishedVideoUrl || null,
           foundTitle: verified.foundText,
           titlePrefix: verified.titlePrefix,
           lastError: null,
@@ -458,7 +468,8 @@ async function runAutomaticDzen(config, state, job, dateKey) {
 
     updateDzenAutomation(config, state, job, "PUBLISHED", {
       confirmedAt: new Date().toISOString(),
-      confirmedBy: "post-click-verification",
+      confirmedBy: "post-click-exact-video-id",
+      publishedVideoUrl: verified.publishedVideoUrl || null,
       foundTitle: verified.foundText,
       titlePrefix: verified.titlePrefix,
       lastError: null,
