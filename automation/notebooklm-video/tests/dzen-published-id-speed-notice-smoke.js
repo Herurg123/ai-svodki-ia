@@ -45,7 +45,7 @@ assert.equal(duplicate.pinnedPublishedIdentity({existing:false,publishedVideoUrl
     check:async()=>{checked=true;clicks++;}};
   const titleLoc = {isVisible:async()=>true};
   const labelLoc = {isVisible:async()=>true,
-    locator:()=>({locator:()=>check}),
+    locator:()=>({locator:()=>({first:()=>check})}),
     click:async()=>{clicks++;checked=true;}};
   function makeBrowser(body){
     const frame={
