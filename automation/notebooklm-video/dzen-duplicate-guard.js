@@ -45,7 +45,25 @@ function titlePrefixForDuplicateCheck(title) {
   return String(title || "").split(" | ")[0].trim();
 }
 
-async function findVisibleTitlePrefix(page, titlePrefix) {
+function extractPublishedVideoId(url) {
+  const match = /^https:\/\/dzen\.ru\/video\/watch\/([a-f0-9]{24})(?:[/?#]|$)/i.exec(String(url || ""));
+  return match ? match[1].toLowerCase() : null;
+}
+
+function pinnedPublishedIdentity(result, expectedId) {
+  if (!result || !result.existing || !/^[a-f0-9]{24}$/i.test(String(expectedId || ""))) {
+    return "UNKNOWN";
+  }
+  const actualId = extractPublishedVideoId(result.publishedVideoUrl);
+  if (!actualId) return "UNKNOWN";
+  return actualId === String(expectedId).toLowerCase() ? "MATCH" : "MISMATCH";
+}
+
+// The published row already contains a public /video/watch/<ID> link in the
+// Studio UI (observed by dzen-article-video.js in the same pipeline).
+// Extract ONLY from the matching title's small, visible row. Never scrape
+// arbitrary links from the page or accept a same-title row without identity.
+async function findVisiblePublishedVideo(page, titlePrefix) {
   const matches = page.getByText(titlePrefix, { exact: false });
   const count = await matches.count().catch(() => 0);
   for (let i = 0; i < count; i += 1) {
@@ -54,9 +72,38 @@ async function findVisibleTitlePrefix(page, titlePrefix) {
     const text = String(
       await candidate.innerText().catch(async () => candidate.textContent().catch(() => ""))
     ).replace(/\s+/g, " ").trim();
-    if (text.includes(titlePrefix)) return text;
+    if (!text.includes(titlePrefix)) continue;
+    const publicVideoUrl = await candidate.evaluate((element, expectedPrefix) => {
+      for (let row = element, depth = 0; row && depth < 16; row = row.parentElement, depth += 1) {
+        const bounds = row.getBoundingClientRect();
+        const rowText = String(row.innerText || row.textContent || "").replace(/\s+/g, " ").trim();
+        if (bounds.width < 300 || bounds.height < 35 || bounds.height > 280 ||
+            !rowText.includes(expectedPrefix) || rowText.length > 650) continue;
+        const links = new Set();
+        for (const node of [row, ...row.querySelectorAll("a[href], [href], [data-href]")]) {
+          for (const raw of [node.href, node.getAttribute?.("href"), node.getAttribute?.("data-href")]) {
+            if (!raw) continue;
+            try {
+              const href = new URL(String(raw), location.href).href;
+              if (/^https:\/\/dzen\.ru\/video\/watch\/[a-f0-9]{24}(?:[/?#]|$)/i.test(href)) links.add(href);
+            } catch {}
+          }
+        }
+        // A row with several different video identities is ambiguous.
+        const ids = new Set([...links].map((href) => href.match(/\/video\/watch\/([a-f0-9]{24})/i)?.[1]?.toLowerCase()));
+        if (ids.size === 1 && links.size > 0) return [...links][0];
+      }
+      return null;
+    }, titlePrefix).catch(() => null);
+    return { foundText: text, publishedVideoUrl: publicVideoUrl,
+      publishedVideoId: extractPublishedVideoId(publicVideoUrl) };
   }
   return null;
+}
+
+async function findVisibleTitlePrefix(page, titlePrefix) {
+  const result = await findVisiblePublishedVideo(page, titlePrefix);
+  return result ? result.foundText : null;
 }
 
 async function checkBeforeUpload(page, config, childArgs, log = () => {}) {
@@ -134,9 +181,12 @@ async function checkBeforeUpload(page, config, childArgs, log = () => {}) {
       );
     }
 
-    const foundText = await findVisibleTitlePrefix(page, titlePrefix);
-    if (foundText) {
+    const found = await findVisiblePublishedVideo(page, titlePrefix);
+    if (found) {
+      const { foundText, publishedVideoUrl, publishedVideoId } = found;
       log(`ВИДЕО УЖЕ ЕСТЬ: найден заголовок «${foundText}».`);
+      if (publishedVideoId) log(`В строке опубликованного видео подтверждён public ID=${publishedVideoId}.`);
+      else log("Публичный video ID в строке не получен; заголовок сам по себе не подтверждает pinned draft.");
       log("новый upload, draft и publish click не выполняю.");
       log(`=== DZEN SKIP existing-video=true date=${dateKey} ===`);
       return {
@@ -145,6 +195,8 @@ async function checkBeforeUpload(page, config, childArgs, log = () => {}) {
         fullTitle,
         titlePrefix,
         foundText,
+        publishedVideoUrl,
+        publishedVideoId,
       };
     }
     await page.waitForTimeout(500);
@@ -157,6 +209,8 @@ async function checkBeforeUpload(page, config, childArgs, log = () => {}) {
     fullTitle,
     titlePrefix,
     foundText: null,
+    publishedVideoUrl: null,
+    publishedVideoId: null,
   };
 }
 
@@ -219,6 +273,9 @@ module.exports = {
   VIDEO_FILTER_SELECTOR,
   VIDEO_FILTER_TIMEOUT_MS,
   checkBeforeUpload,
+  extractPublishedVideoId,
+  pinnedPublishedIdentity,
+  findVisiblePublishedVideo,
   inspectPinnedDraft,
   summarizeDraftInspection,
   findVisibleTitlePrefix,
