@@ -50,8 +50,8 @@ assert.equal(duplicate.pinnedPublishedIdentity({existing:false,publishedVideoUrl
   function makeBrowser(body){
     const frame={
       locator:()=>({innerText:async()=>body}),
-      getByText:(t)=>t instanceof RegExp?titleLoc:labelLoc,
-      getByRole:()=>check,
+      getByText:(t)=>({first:()=>t instanceof RegExp?titleLoc:labelLoc}),
+      getByRole:()=>({first:()=>check}),
     };
     return {contexts:()=>[{pages:()=>[{isClosed:()=>false,frames:()=>[frame]}]}]};
   }
