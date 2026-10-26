@@ -2225,3 +2225,14 @@ Production API пользователя не расходуется без яв�
 архитектуры отдельное разрешение относится только к одному conditional fifth
 Hybrid search на double-gap path; любые иные новые paid calls требуют нового
 решения владельца.
+### Browser-runner / Dzen-notice subsystem boundary (2026-10-26)
+
+The local Windows `dzen-browser-runner.js` manages child process lifetime,
+single-run timeouts, browser-profile locking and diagnostics, but does **not**
+detect, wait on, or interact with person-verification windows. Generic
+`dzen-safe-notices.js` owns the allowlist of non-security notification
+handlers. `dzen-publish-direct.js` polls it from the existing bounded
+45-second post-publish-click observation loop, including when the
+editor page has closed; it does not prolong the run for unknown prompts.
+The verified public video ID and saved draft ID still govern transition
+to `PUBLISHED`; an uncertain click cannot authorize another upload/click.
