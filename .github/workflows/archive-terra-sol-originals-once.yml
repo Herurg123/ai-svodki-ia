@@ -1,0 +1,72 @@
+name: One-shot Terra Sol original ZIP archival
+on:
+  push:
+    branches:
+      - archive/terra-sol-primary-evidence-2026-10-22-24
+    paths:
+      - .github/workflows/archive-terra-sol-originals-once.yml
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: terra-sol-original-evidence-20261026
+  cancel-in-progress: false
+
+jobs:
+  import-evidence:
+    name: Проверить и сохранить восемь исходных ZIP
+    if: github.event.head_commit.message == 'ops: import Terra Sol original ZIPs (one shot)'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout archive branch
+        uses: actions/checkout@v4
+        with:
+          ref: archive/terra-sol-primary-evidence-2026-10-22-24
+          persist-credentials: true
+          fetch-depth: 1
+      - name: Скачать оригиналы напрямую из Actions и проверить SHA-256
+        shell: bash
+        env:
+          ARCHIVE_READ_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          root=automation/audits/experiments/terra-sol-primary-2026-10-22-24
+          mkdir -p "$root/originals"
+          while read -r artifact_id filename expected; do
+            url="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/${artifact_id}/zip"
+            curl --fail --show-error --silent --location --retry 0 --max-time 120 \
+              --header "Authorization: Bearer ${ARCHIVE_READ_TOKEN}" \
+              --header "Accept: application/vnd.github+json" \
+              --header "X-GitHub-Api-Version: 2022-11-28" \
+              "$url" --output "$root/originals/$filename"
+            printf '%s  %s\n' "$expected" "$root/originals/$filename" | sha256sum --check --status
+            echo "Оригинал проверен: $filename"
+          done <<'ORIGINALS'
+          12395720578 terra-research-original-2026-10-22.zip 7fb23f7ecf5dbec10de52c1d0fe5ae464573bab554a24eaeb9494d1536de9951
+          12402559662 sol-initial-original-2026-10-22.zip ada53d88eadb3aac9e2508d1a04a5e8b5eb7ed72d1e9aa391a87e336f92a3cc3
+          12412378520 sol-final-original-2026-10-22.zip 82585fff3216e5375e8333569e56276204185b0fd73d3af10905ada7fd9a50a6
+          12471524859 terra-research-original-2026-10-23.zip b1c8ae91284c3444fcd71c1f9d5d2fd08dbf2084803db3127b479d0ea5d33dfb
+          12475775291 sol-initial-original-2026-10-23.zip 63f6e570a47abac3f2849525f8c45953014c37fde6931f544bcc0a45bb8bcc28
+          12482321746 sol-final-original-2026-10-23.zip 86e93b98eb134f0cbe35f6ee2bfb3fcdaccee247ca9ce81bcf255b89305f89a3
+          12542274622 terra-research-original-2026-10-24.zip 219151cbb68c6b846dab2d0f789261eb5f52af310af1597d8d6a60679c7a316f
+          12548745112 sol-final-original-2026-10-24.zip 498d13b640a493813657fbcc9472f3447224792597ab9614f0e2e992e91f2b81
+          ORIGINALS
+          python3 "$root/verify_original_zips.py"
+      - name: Зафиксировать неизменённые ZIP только в архивной ветке
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- automation/audits/experiments/terra-sol-primary-2026-10-22-24/originals/
+          if git diff --cached --quiet; then
+            echo "Оригинальные ZIP уже в Git: новых файлов нет."
+            exit 1
+          fi
+          git commit -m "archive: preserve eight SHA-256 verified original Terra Sol ZIPs"
+          git push origin HEAD:refs/heads/archive/terra-sol-primary-evidence-2026-10-22-24
+          echo "## Исходные Terra/Sol ZIP" >> "$GITHUB_STEP_SUMMARY"
+          echo "Восемь оригинальных ZIP сохранены в экспериментальной ветке после проверки SHA-256 и CRC." >> "$GITHUB_STEP_SUMMARY"
