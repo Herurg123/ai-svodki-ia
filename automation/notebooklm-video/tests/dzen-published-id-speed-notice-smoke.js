@@ -58,11 +58,17 @@ assert.equal(duplicate.pinnedPublishedIdentity({existing:false,publishedVideoUrl
   assert.equal((await notices.dismissUploadSpeedNotice(makeBrowser(info))).status,"acknowledged");
   assert.equal(checked,true);
   assert.equal(clicks,1);
-  assert.equal((await notices.dismissUploadSpeedNotice(makeBrowser(info))).status,"acknowledged");
+  assert.equal((await notices.dismissUploadSpeedNotice(makeBrowser(info))).status,"already-checked");
   assert.equal(clicks,1);
   assert.equal((await notices.dismissUploadSpeedNotice(makeBrowser(robot))).status,"absent");
   assert.equal(clicks,1);
   assert.equal((await notices.dismissUploadSpeedNotice(makeBrowser(info+"\n"+consent))).status,"absent");
+  assert.equal(clicks,1);
+  const remembered = makeBrowser(info);
+  // A repeated tick with the SAME browser must never click twice,
+  // even if the first attempt was inconclusive.
+  assert.equal((await notices.processKnownDzenNotices(remembered)).status,"already-checked");
+  assert.equal((await notices.processKnownDzenNotices(remembered)).status,"previously-attempted");
   assert.equal(clicks,1);
 
   const scheduled = fs.readFileSync(path.join(__dirname,"../scheduled-worker.js"),"utf8");
