@@ -205,10 +205,12 @@ A fresh retry is allowed only when the previous child explicitly proved
 `publishClicked=false`. Ambiguous post-arm/post-click outcomes remain
 verification-only.
 
-If Dzen shows a post-click human challenge such as `Я не робот`, automation does
-not click or bypass it. The browser is surfaced for manual completion and the
-runner only waits. Timeout remains post-click uncertainty, not permission for a
-second upload/click.
+The runner has no special handling or waiting for human verification popups.
+The user may resolve them manually. The direct publisher polls an extensible
+`dzen-safe-notices` allowlist **during** the existing 45-second observation
+after the single publish click. Unknown prompts remain untouched and do not
+extend the observation window. An unverified click never permits a second
+upload or click.
 
 Emergency switch:
 
@@ -423,3 +425,14 @@ Windows-машине.
 однократная установка флажка `Больше не показывать такие сообщения`.
 Капчи/проверки человека, включая `Я не робот` и `Я не против`, никогда
 не подтверждаются автоматически.
+
+### Универсальное наблюдение уведомлений (26.10.2026)
+
+В `dzen-browser-runner.js` нет специфической логики проверки человека,
+таймера её ожидания или PowerShell-поднятия окна. Обнаружение известных
+информационных уведомлений выполняется через
+`dzen-safe-notices.processKnownDzenNotices()` во время прежних 45 секунд
+наблюдения после клика публикации; обработка продолжается и если редактор
+закрыл вкладку. Поддерживаемые уведомления добавляются только в
+`dzen-safe-notices.js`. Неизвестные окна остаются оператору и не вызывают
+повторных нажатий публикации.
