@@ -17,7 +17,7 @@ concurrency:
 jobs:
   import-evidence:
     name: Проверить и сохранить восемь исходных ZIP
-    if: github.event.head_commit.message == 'ops: import Terra Sol original ZIPs (one shot)'
+    if: "github.event.head_commit.message == 'ops: import Terra Sol original ZIPs (one shot)'"
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
