@@ -41,7 +41,8 @@ RSS rybalka.one
      -> worker.js
         -> protected Yandex Browser profile / Playwright CDP
         -> NotebookLM
-        -> MP4 + PNG first-frame preview
+        -> original MP4 -> optional offline FFmpeg 5s PNG closing card
+        -> validated dated MP4 + PNG first-frame preview
         -> optional FTP video/
      -> Dzen duplicate guard
      -> at most one fresh native-video publish child
@@ -123,6 +124,14 @@ renames it to `ИИ-YYYY-MM-DD`, and only then starts generation, rather than
 creating another notebook for the same publication. Existing notebook cards
 remain the fallback when a saved URL cannot be opened.
 
+For NEW downloads only, local `downloads/_footer-vid.png` enables a
+five-second silent closing card rendered by `video-footer.js` using
+`bin/ffmpeg.exe` and `bin/ffprobe.exe`. The original dated `-original.mp4`
+and `DOWNLOADED` checkpoint survive restart; only verified final MP4 can
+be marked DONE, registered and delivered via FTP/Dzen/VK. Older DONE jobs
+are not modified. A rendering failure blocks downstream rather than
+silently delivering the unmodified source.
+
 Downloaded video is registered persistently and is not regenerated/redownloaded
 when the same publication is already known. PNG preview is generated from the
 first frame. FTP delivery is idempotent and does not trigger a second
@@ -201,9 +210,10 @@ PUBLISH_ARMED / CLICKED_UNVERIFIED / BLOCKED_AMBIGUOUS
   -> never a second publish click
 ~~~
 
-A fresh retry is allowed only when the previous child explicitly proved
-`publishClicked=false`. Ambiguous post-arm/post-click outcomes remain
-verification-only.
+A new upload requires PENDING with no saved remote draft ID. A previous
+`publishClicked=false` does not establish that no draft was uploaded.
+DRAFT_PROCESSING resumes the verified same draft, while all unknown states
+remain verification-only without another upload or click.
 
 The runner has no special handling or waiting for human verification popups.
 The user may resolve them manually. The direct publisher polls an extensible
