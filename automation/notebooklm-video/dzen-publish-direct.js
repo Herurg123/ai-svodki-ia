@@ -6,6 +6,7 @@ const { spawn } = require("child_process");
 const helpers = require("./dzen-publish.js");
 const logUtils = require("./log-utils");
 const history = require("./history-utils");
+const safeNotices = require("./dzen-safe-notices");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
@@ -805,6 +806,10 @@ async function main(argv = process.argv.slice(2)) {
       log(config, `DRAFT_PROCESSING: id=${draftId} ещё обрабатывается; завершаю текущий проход без клика. Следующий запуск продолжит его.`);
       return { pending: true, draftId };
     }
+
+    // Only the verified informational toast; no robot/consent interactions.
+    await safeNotices.dismissUploadSpeedNotice(connection.browser, (message) => log(config, message))
+      .catch((error) => warn(config, `Speed-notice: ${error.message}`));
 
     await setCommentsToEveryone(page, config);
 
