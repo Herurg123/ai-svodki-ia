@@ -53,11 +53,22 @@ assert(block.includes("if(!page.isClosed())"), "Monitor must continue when edito
     waitForTimeout:async(ms)=>new Promise(resolve=>setTimeout(resolve,ms)),
     screenshot:async()=>{},
   };
+  const originalDispatcher = notices.processKnownDzenNotices;
+  let dispatchCalls = 0;
+  notices.processKnownDzenNotices = async (...args) => {
+    dispatchCalls += 1;
+    return originalDispatcher(...args);
+  };
   const start=Date.now();
-  await direct.observeAfterPublishClick(fakePage,{}, "2026-10-26",
-    "6adec50a38340e44edf6119c",{durationMs:35,intervalMs:5,noticeBrowser:browser});
+  try {
+    await direct.observeAfterPublishClick(fakePage,{}, "2026-10-26",
+      "6adec50a38340e44edf6119c",{durationMs:35,intervalMs:5,noticeBrowser:browser});
+  } finally {
+    notices.processKnownDzenNotices = originalDispatcher;
+  }
   assert(Date.now()-start>=30, "Observer must retain bounded observation window");
-  assert(noticeChecks>=2, "Allowlisted notices must be checked more than once during post-click window");
+  assert(dispatchCalls>=2, "Generic dispatcher must run each post-click tick");
+  assert.equal(noticeChecks,1, "Known already-attempted preference must not be repeatedly scanned");
   assert.equal(clicks,1, "Exact informational checkbox must be selected no more than once");
   assert.equal(checked,true);
 
