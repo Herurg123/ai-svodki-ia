@@ -283,3 +283,18 @@ production assets.
 
 All repository changes still follow the root repository workflow and safety
 rules. A video-local task does not override root `AGENTS.md`.
+
+## Published-video identity and non-security notifications (2026-10-26)
+
+- If a publish click has been attempted and the exact saved draft ID exists,
+  confirm success by a matching public `/video/watch/<ID>` URL extracted from the
+  **same visible published-video Studio row**. A title match is not sufficient.
+  Never reopen the old editor URL to prove disappearance: it may remain
+  addressable after publication and produce an ambiguous `UNKNOWN`.
+- If a published row lacks an exact public identity or contains a different ID,
+  fail closed. No repeat upload, publish click or publication confirmation.
+- An *informational* notification specifically reporting
+  `Видео загружено за N сек` may have its exact preference checkbox
+  `Больше не показывать такие сообщения` selected once, verifying the result.
+  Do NOT click verification challenges (`Я не робот`, `Я не против`), broadly
+  accept unknown consents, or use forced/coordinate clicks for the preference.
