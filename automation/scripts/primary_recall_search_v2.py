@@ -14,6 +14,7 @@ from usage_observer import call_with_usage
 
 import copy
 import json
+import os
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
@@ -762,6 +763,16 @@ def run_primary_recall_search(
     if not isinstance(config, dict):
         raise RuntimeError("automation/config/site.json должен содержать объект")
     local_zone = ZoneInfo(str(config["timezone"]))
+    # A single explicitly pinned comparison date can replay the identical
+    # production search boundary. Unset in all ordinary/production requests.
+    if os.getenv("AI_DIGEST_TERRA61_SHADOW") == "2026-10-28":
+        if model != "gpt-6.1-terra" or cutoff_at is not None:
+            raise RuntimeError("Shadow cutoff override requires Terra 6.1 without an existing cutoff")
+        frozen_value = os.environ["AI_DIGEST_TERRA61_PRIMARY_CUTOFF"]
+        frozen = datetime.fromisoformat(frozen_value.replace("Z", "+00:00"))
+        if frozen.tzinfo is None or frozen.utcoffset() is None:
+            raise RuntimeError("Shadow Primary cutoff must be timezone-aware")
+        cutoff_at = frozen
     authoritative_cutoff = cutoff_at or datetime.now(timezone.utc).astimezone(local_zone)
     search_window, overlap = build_search_window(
         publication_date=publication_date,
