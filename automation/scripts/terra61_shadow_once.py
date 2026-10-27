@@ -101,9 +101,9 @@ def prepare(source: Path, evidence: Path, github_env: Path, expected_sha: str, r
     run_info = read(one_under(source, "run-info.json"))
     if run_info.get("model_requested") != PROD_MODEL:
         raise RuntimeError("Saved baseline run-info does not identify Terra 5.6")
-    if primary.get("status") != "complete":
-        # The existing Primary report convention is status=complete for finished
-        # 12/12; accept no silent partial results.
+    if primary.get("status") not in {"complete", "complete_with_gaps"}:
+        # Valid 12/12 Primary passes can return zero candidates and explicitly
+        # report complete_with_gaps before Hybrid/Coverage recovers the digest.
         raise RuntimeError("Terra 5.6 baseline Primary was not complete")
     window = primary.get("search_window") or {}
     start_at = window.get("start_at")
