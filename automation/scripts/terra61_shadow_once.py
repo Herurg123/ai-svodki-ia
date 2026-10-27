@@ -162,6 +162,14 @@ def finish(evidence: Path, manifest: Path) -> None:
             errors.append("Editorial cutoff does not match Terra 5.6")
     else:
         errors.append("Full shadow research files not present")
+    coverage_file = shadow_root / "production-daily" / "coverage-audit.json"
+    if coverage_file.is_file():
+        coverage = read(coverage_file)
+        report["coverage_status"] = coverage.get("status")
+        if coverage.get("status") in {"error", "partial", "technical_partial"}:
+            errors.append("Shadow Coverage was not completed")
+    else:
+        errors.append("Shadow Coverage report not present")
     hashes: dict[str, str] = {}
     for base in (shadow_root / DAY, shadow_root / "production-daily"):
         if base.is_dir():
