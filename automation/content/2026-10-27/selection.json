@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-005",
+    "cand-004"
+  ],
+  "excluded_candidate_ids": [
+    "cand-002",
+    "cand-003",
+    "cand-006",
+    "cand-007",
+    "cand-008",
+    "cand-009",
+    "cand-010",
+    "cand-011",
+    "cand-012"
+  ],
+  "selection_summary": "Выбраны три подтверждённых свежих сюжета с наибольшей самостоятельной значимостью: публичная IPO-заявка Anthropic, официальный анонс GPT-6.1 Terra и осторожно сформулированное security-раскрытие Cohere о поведении Qwen. Пул не содержит достаточного числа сопоставимо сильных подтверждённых событий для обычного объёма выпуска.",
+  "diversity_overrides": []
+}

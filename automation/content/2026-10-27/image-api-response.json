@@ -1,0 +1,70 @@
+{
+  "status": "ok",
+  "usage_attempt_id": "9d238f7992bf4ef7b8b07e771973aec7",
+  "request_id": "production-image-2026-10-27",
+  "model": "gpt-image-2",
+  "endpoint": "/v1/images/generations",
+  "http_status": 200,
+  "openai_request_id": "req_a75826344e5c4b58af499bc4bdcbb6dd",
+  "source_editorial_request_id": "production-digest-2026-10-27",
+  "request": {
+    "size": "1536x864",
+    "quality": "high",
+    "output_format": "png",
+    "background": "opaque",
+    "n": 1,
+    "prompt_sha256": "cfa633dfea19b5d6c771fc8f538cfce2437522e92f26c273981e5310d6feff34"
+  },
+  "response": {
+    "created": 1793067247,
+    "background": "opaque",
+    "output_format": "png",
+    "quality": "high",
+    "size": "1536x864",
+    "usage": {
+      "input_tokens": 351,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 351
+      },
+      "output_tokens": 4312,
+      "output_tokens_details": {
+        "image_tokens": 4312,
+        "text_tokens": 0
+      },
+      "total_tokens": 4663
+    },
+    "data_count": 1,
+    "revised_prompt": null
+  },
+  "cover_sha256": "b67befba77cedf277e10e1c53bcf65ae7b421b0739e4ec43615ca02c1f9cdffc",
+  "cover_bytes": 2315568,
+  "base64_stored": false,
+  "copied_source_files": [
+    "article.html",
+    "artifact-normalization.json",
+    "artifact-validation.json",
+    "candidates.json",
+    "digest.json",
+    "editorial-event-identity.json",
+    "editorial-output-raw.json",
+    "editorial-output.json",
+    "editorial-prompt-input.txt",
+    "editorial-reconciliation.json",
+    "hybrid-completeness.json",
+    "image-prompt.txt",
+    "meta.json",
+    "metadata-normalization.json",
+    "policy-normalization.json",
+    "research-filtered-out.json",
+    "research-input-info.json",
+    "research-output-raw.json",
+    "research-prompt-input.txt",
+    "run-info.json",
+    "selection.json",
+    "sources.json",
+    "stories.json"
+  ],
+  "started_at": "2026-10-27T02:12:50+00:00",
+  "finished_at": "2026-10-27T02:14:07+00:00"
+}

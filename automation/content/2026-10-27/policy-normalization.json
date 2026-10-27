@@ -1,0 +1,52 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "article_html.section_fallback",
+      "candidate_id": "cand-004",
+      "model_value": "Китайские лидеры ИИ",
+      "normalized_value": "Мировые лидеры ИИ",
+      "reason": "asia_mentioned_without_clear_leading_actor"
+    },
+    {
+      "field": "article_html.story_section",
+      "candidate_id": "cand-004",
+      "model_value": "Китайские лидеры ИИ",
+      "normalized_value": "Мировые лидеры ИИ"
+    },
+    {
+      "field": "article_html.empty_section",
+      "model_value": "Китайские лидеры ИИ",
+      "normalized_value": null
+    },
+    {
+      "field": "article_html.short_digest_notice",
+      "model_value": null,
+      "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+    }
+  ],
+  "changed_count": 4,
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После проверки свежести и значимости выбрано 3 сюжетов."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+    },
+    {
+      "type": "section_placement",
+      "area": "editorial",
+      "message": "Раздел для cand-004 автоматически исправлен: Китайские лидеры ИИ → Мировые лидеры ИИ."
+    },
+    {
+      "type": "section_fallback",
+      "area": "editorial",
+      "message": "Неоднозначная рубрика для cand-004: asia_mentioned_without_clear_leading_actor; выбран раздел Мировые лидеры ИИ без нового API-вызова."
+    }
+  ]
+}

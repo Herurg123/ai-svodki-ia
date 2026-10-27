@@ -1,0 +1,180 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-10-27",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-10-27.json",
+  "warnings": [
+    "cand-012: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: openai (7)",
+    "Исследовательский пул перегружен одной организацией: openai (7)",
+    "Выбрано 3 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Неоднозначная рубрика для cand-004: asia_mentioned_without_clear_leading_actor; применён мировой раздел.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-10-27",
+  "started_at": "2026-10-27T02:10:52+00:00",
+  "finished_at": "2026-10-27T02:11:19+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 101,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "fe2ce78894dda4234d87a6728dd7e1a3553a03732e0f666644f2cc953b3a9db8",
+    "candidates_sha256": "6500b100b10d89743d07479f3ee41c4f7344f49b6e46ff3939fe90e7312d3b14",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-10-25T04:09:59+03:00",
+      "end_at": "2026-10-27T05:05:28+03:00",
+      "latest_archive_at": "2026-10-26T04:09:59+03:00",
+      "start_date": "2026-10-25",
+      "end_date": "2026-10-27",
+      "latest_archive_date": "2026-10-26"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "95f3efbf40650bda999412bc88883c8347f759563c0910119ba8c8ee50f8f6fb",
+    "editorial_sha256": "e958d9f655d1cdff3841b29021e360df973a578553bd0b70c036b79b20f5af17",
+    "digest_sha256": "f47d8713c04fa5cf1fc502c0f10dc80ddecf9f24d1636012eacf33f2262afe34",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-10-27.jpg",
+          "normalized_value": "ai-svodka-2026-10-27.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.section_fallback",
+          "candidate_id": "cand-004",
+          "model_value": "Китайские лидеры ИИ",
+          "normalized_value": "Мировые лидеры ИИ",
+          "reason": "asia_mentioned_without_clear_leading_actor"
+        },
+        {
+          "field": "article_html.story_section",
+          "candidate_id": "cand-004",
+          "model_value": "Китайские лидеры ИИ",
+          "normalized_value": "Мировые лидеры ИИ"
+        },
+        {
+          "field": "article_html.empty_section",
+          "model_value": "Китайские лидеры ИИ",
+          "normalized_value": null
+        },
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        }
+      ],
+      "changed_count": 4,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 3 сюжетов."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+        },
+        {
+          "type": "section_placement",
+          "area": "editorial",
+          "message": "Раздел для cand-004 автоматически исправлен: Китайские лидеры ИИ → Мировые лидеры ИИ."
+        },
+        {
+          "type": "section_fallback",
+          "area": "editorial",
+          "message": "Неоднозначная рубрика для cand-004: asia_mentioned_without_clear_leading_actor; выбран раздел Мировые лидеры ИИ без нового API-вызова."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0224b3cf06b06fd0016ae0082d9ee487d2ad03d91df43016bd",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 203195,
+        "input_tokens_details": {
+          "cache_write_tokens": 16708,
+          "cached_tokens": 186484,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 16708
+          }
+        },
+        "output_tokens": 2640,
+        "output_tokens_details": {
+          "reasoning_tokens": 579
+        },
+        "total_tokens": 205835
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-10-27/resp_0224b3cf06b06fd0016ae0082d9ee487d2ad03d91df43016bd.json"
+  },
+  "total_usage": {
+    "input_tokens": 203195,
+    "output_tokens": 2640,
+    "total_tokens": 205835,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "32c307fad5d68e6e8a186f489ed0b076603cd810",
+    "run_id": "40436255165",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-10-27T05:05:28+03:00"
+}

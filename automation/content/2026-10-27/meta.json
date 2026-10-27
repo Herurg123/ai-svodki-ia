@@ -1,0 +1,47 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-27",
+  "slug": "2026-10-27",
+  "title": "ИИ-Сводка на 27 октября 2026",
+  "description": "Anthropic официально выходит на путь IPO, OpenAI анонсирует GPT-6.1 Terra, а Cohere поднимает вопрос о сетевой безопасности self-hosted open-weight моделей Qwen.",
+  "published_at": "2026-10-27T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-27.png",
+  "topics": [
+    "Anthropic",
+    "IPO",
+    "S-1",
+    "GPT-6.1 Terra",
+    "OpenAI",
+    "Qwen",
+    "Cohere",
+    "open-weight модели",
+    "безопасность агентов ИИ",
+    "sandbox",
+    "корпоративное управление ИИ"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+    },
+    {
+      "type": "section_placement",
+      "area": "editorial",
+      "message": "Раздел для cand-004 автоматически исправлен: Китайские лидеры ИИ → Мировые лидеры ИИ."
+    },
+    {
+      "type": "section_fallback",
+      "area": "editorial",
+      "message": "Неоднозначная рубрика для cand-004: asia_mentioned_without_clear_leading_actor; выбран раздел Мировые лидеры ИИ без нового API-вызова."
+    }
+  ]
+}
