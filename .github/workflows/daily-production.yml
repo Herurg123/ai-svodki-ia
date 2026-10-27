@@ -1090,15 +1090,15 @@ jobs:
           d["publication_hour"] = 6
           p.write_text(json.dumps(d, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           PY
+          python automation/scripts/validate_editorial_contract.py
+          python automation/scripts/bootstrap_archive.py
+          python automation/scripts/validate_archive.py
           python automation/scripts/terra61_shadow_once.py prepare \
             --production-dir automation/compare-reference/terra56 \
             --output automation/preview/production-daily/terra61-comparison-reference.json \
             --github-env "${GITHUB_ENV}" \
             --expected-sha "${BASELINE_SHA}" \
             --run-id "${PRODUCTION_RUN_ID}"
-          python automation/scripts/validate_editorial_contract.py
-          python automation/scripts/bootstrap_archive.py
-          python automation/scripts/validate_archive.py
           python automation/scripts/prepare_production_daily.py \
             --config automation/config/production-daily.json \
             --rss posts/rss.xml \
