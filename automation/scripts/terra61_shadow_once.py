@@ -155,7 +155,11 @@ def finish(evidence: Path, manifest: Path) -> None:
         primary = read(primary_path)
         run_info = read(run_info_path)
         if run_info.get("model_requested") != SHADOW_MODEL:
-            errors.append("Shadow provider model mismatch")
+            errors.append("Shadow requested model mismatch")
+        for stage in ("research", "editorial"):
+            returned = ((run_info.get(stage) or {}).get("response") or {}).get("model_returned")
+            if returned and not str(returned).startswith(SHADOW_MODEL):
+                errors.append(f"{stage} provider returned unexpected model {returned}")
         if (primary.get("search_window") or {}) != report.get("frozen_primary_search_window"):
             errors.append("Primary window does not match Terra 5.6")
         if run_info.get("research_cutoff_at") != report.get("frozen_editorial_cutoff"):
@@ -171,7 +175,11 @@ def finish(evidence: Path, manifest: Path) -> None:
     else:
         errors.append("Shadow Coverage report not present")
     hashes: dict[str, str] = {}
-    for base in (shadow_root / DAY, shadow_root / "production-daily"):
+    for base in (
+        shadow_root / DAY,
+        shadow_root / "production-daily",
+        ROOT / "automation" / "fixtures" / "research" / ".runtime",
+    ):
         if base.is_dir():
             for path in sorted(base.rglob("*")):
                 if path.is_file() and path != manifest and not path.is_symlink():
