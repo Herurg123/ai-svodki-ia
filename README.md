@@ -117,6 +117,11 @@ diff. Техническая возможность direct push в `main` сам
 - recovery переиспользует наиболее полный пригодный same-day final artifact
   или durable stage checkpoint, умеет безопасно отступить к same-run checkpoint
   после непригодного final snapshot и не повторяет уже завершённые paid stages;
+- на 28.10.2026 согласован ровно один временный shadow-прогон
+  `gpt-6.1-terra` после успешного штатного выпуска `gpt-5.6-terra`:
+  одинаковый исходный SHA/архив/промпты/окно, без обложки и публикации,
+  сохранение raw ZIP с SHA-256; после сохранения артефакта временные
+  механизмы удаляются отдельным PR;
 - `posts/rss.xml` остаётся article/image surface и не используется для доставки
   локального видео;
 - production/API spend не используется для обычных refactor/regression работ без

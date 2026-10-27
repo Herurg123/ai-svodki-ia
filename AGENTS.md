@@ -321,6 +321,15 @@ but must not silently repoll mutable sources.
   or bypasses saved-state validation.
 - Production API spend is not authorized by a generic code-fix request; any new
   paid retrieval beyond the documented architecture needs separate approval.
+- The user explicitly authorized exactly one additional paid Terra 6.1 shadow
+  on 2026-10-28. It must start only after the original scheduled Terra 5.6
+  release was successfully deployed; no new cron, image, publication, push,
+  RSS/archive edit, paid retry or fallback to Terra 5.6 is authorized.
+  Freeze the source SHA, original pre-publication archive/prompts and both
+  search/editorial cutoffs before the second request. Persist independently
+  identified raw model artifacts and digests on every outcome. Remove the
+  one-day workflow, cutoff seams, helper and tests via a separate cleanup PR
+  after the original shadow ZIP has been preserved for comparison.
 
 ## Independent audits and experiments
 

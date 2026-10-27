@@ -15,7 +15,9 @@ def compact_json(value: Any) -> str:
 
 def editorial_input(prompt: str, model: str) -> dict[str, Any]:
     marker = "=== ARCHIVE_CONTEXT_END ==="
-    if model != "gpt-5.6-terra" or prompt.count(marker) != 1:
+    # Same exact transport shape is required for the one-day controlled A/B.
+    # Ordinary non-Terra callers retain their previous string transport.
+    if model not in {"gpt-5.6-terra", "gpt-6.1-terra"} or prompt.count(marker) != 1:
         return {"input": prompt}
     boundary = prompt.index(marker) + len(marker)
     # One user message and the exact original text order are retained. Only the
