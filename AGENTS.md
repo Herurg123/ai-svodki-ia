@@ -9,6 +9,17 @@ This file is prescriptive. Do not copy detailed current-state implementation
 narratives here when they already belong in `automation/ARCHITECTURE.md`, a
 specification, or a subproject document.
 
+## One-day Sol editorial shadow guard (2026-10-29)
+
+The only authorized Sol 6.1 production-adjacent run is a **read-only**
+editorial comparison after successfully published Terra 5.6 on 29 October.
+It must not gain write permissions, search tools, publish rights, access to
+Terra's editorial choice before its response, retries or further dates.
+Keep original provider output and cost/usage metadata intact. Emergency off
+switch: set GitHub Actions variable `SOL_EDITORIAL_AUDIT_ENABLED=false`.
+Its default implicit on-state applies **only 2026-10-29**; delete the one-shot
+mechanism after preserving the original experiment artifact, via PR.
+
 ## Documentation ownership
 
 Keep each maintained document in one role:

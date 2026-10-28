@@ -1025,6 +1025,101 @@ jobs:
     with:
       ref: ${{ needs.production.outputs.commit_sha }}
     secrets: inherit
+  sol61_editorial_shadow_oct29:
+    name: Sol 6.1 независимый редактор, однократно 29 октября (не влияет на публикацию)
+    needs:
+      - gate
+      - production
+      - deploy
+    if: >-
+      github.run_attempt == 1 &&
+      github.ref == 'refs/heads/main' &&
+      needs.gate.result == 'success' &&
+      needs.gate.outputs.publication_date == '2026-10-29' &&
+      needs.production.result == 'success' &&
+      needs.production.outputs.publish == 'true' &&
+      needs.production.outputs.commit_sha != '' &&
+      needs.deploy.result == 'success' &&
+      vars.SOL_EDITORIAL_AUDIT_ENABLED != 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    # Failure of the optional post-publish audit must not mark Terra's release failed.
+    continue-on-error: true
+    permissions:
+      actions: read
+      contents: read
+    concurrency:
+      group: sol61-independent-editorial-2026-10-29
+      cancel-in-progress: false
+    env:
+      PYTHONUNBUFFERED: "1"
+      AI_DIGEST_PUBLICATION_DATE: "2026-10-29"
+      SOL_BASELINE_SHA: ${{ needs.gate.outputs.main_sha }}
+    steps:
+      - name: Получить исходный main до штатной публикации
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.gate.outputs.main_sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Установить Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Скачать исходный production artifact именно этого запуска
+        uses: actions/download-artifact@v8
+        with:
+          name: daily-production-2026-10-29
+          path: automation/sol61-reference
+          run-id: ${{ github.run_id }}
+          github-token: ${{ github.token }}
+      - name: Восстановить штатный контекст архива до публикации
+        shell: bash
+        run: |
+          set -euo pipefail
+          python automation/scripts/bootstrap_archive.py
+          python automation/scripts/validate_archive.py
+      - name: Установить закреплённый OpenAI SDK
+        run: python -m pip install --disable-pip-version-check "openai==2.45.0"
+      - name: Независимый редактор Sol 6.1, один запрос без Web Search
+        id: sol
+        shell: bash
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          set -euo pipefail
+          python automation/scripts/sol61_editorial_shadow_once.py \
+            --artifact automation/sol61-reference \
+            --archive automation/archive/index.json \
+            --policy automation/config/editorial.json \
+            --output automation/preview/sol61-editorial-2026-10-29
+      - name: Сохранить оригинальное решение и сравнение, включая ошибку
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: sol61-independent-editorial-2026-10-29
+          path: automation/preview/sol61-editorial-2026-10-29/
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Итог Sol в Actions Summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Независимый редактор Sol 6.1: 29 октября"
+            echo
+            echo "- Terra 5.6 выпустила сводку независимо; Sol не меняла сайт, RSS или Git."
+            echo "- Вход Sol: тот же сохранённый финальный candidate pool и архив до выпуска."
+            echo "- Sol не видела selection Terra до своего ответа."
+            echo "- Один запрос gpt-6.1-sol (medium), без инструментов/поиска/обложки, max_output_tokens 4000, max_retries=0."
+            echo "- Артефакт: sol61-independent-editorial-2026-10-29"
+            echo "- Управление: SOL_EDITORIAL_AUDIT_ENABLED=false; эксперимент автоматически не выполняется после 29 октября."
+            if [[ -f automation/preview/sol61-editorial-2026-10-29/terra-vs-sol-editorial-comparison.json ]]; then
+              echo "- **Статус:** сравнение сохранено."
+            else
+              echo "- **Статус:** сравнение не завершено; см. shadow-error.json, production не затронут."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
   final_status:
     name: Итог публикации
     needs:
