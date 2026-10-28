@@ -330,6 +330,14 @@ but must not silently repoll mutable sources.
   identified raw model artifacts and digests on every outcome. Remove the
   one-day workflow, cutoff seams, helper and tests via a separate cleanup PR
   after the original shadow ZIP has been preserved for comparison.
+- Special 2026-10-28 recovery: the fallback workflow_dispatch run 40618839186
+  published first and skipped the one-shot schedule job. One additional manual
+  shadow_terra61=true dispatch is authorized ONLY for 2026-10-28 and ONLY
+  against saved run 40618839186 / source eabe4855b7d604c4947f5c9f47df694a76be7680.
+  Must skip production and deploy, use exactly that historical artifact, verify
+  original 12/12 Primary and both saved temporal cutoffs, keep an explicit
+  retrospective-baseline provenance warning, and refuse duplicate shadow
+  artifacts or any paid 5.6 rerun.
 
 ## Independent audits and experiments
 

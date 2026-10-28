@@ -25,6 +25,11 @@ on:
         required: true
         default: false
         type: boolean
+      shadow_terra61:
+        description: "Однократный независимый Terra 6.1 для 28.10 без публикации и обложки (штатный выпуск уже создан)"
+        required: false
+        default: false
+        type: boolean
 permissions:
   actions: read
   contents: write
@@ -137,14 +142,14 @@ jobs:
   redeploy_existing:
     name: Redeploy already committed release
     needs: gate
-    if: needs.gate.outputs.should_deploy == 'true'
+    if: needs.gate.outputs.should_deploy == 'true' && !(github.event_name == 'workflow_dispatch' && inputs.shadow_terra61 == true)
     uses: ./.github/workflows/deploy-posts.yml
     with:
       ref: ${{ needs.gate.outputs.main_sha }}
     secrets: inherit
   production:
     needs: gate
-    if: github.ref == 'refs/heads/main' && needs.gate.outputs.should_run == 'true'
+    if: github.ref == 'refs/heads/main' && needs.gate.outputs.should_run == 'true' && !(github.event_name == 'workflow_dispatch' && inputs.shadow_terra61 == true)
     runs-on: ubuntu-latest
     outputs:
       publish: ${{ steps.mode.outputs.publish }}
@@ -1039,13 +1044,31 @@ jobs:
       - production
       - deploy
     if: >-
-      github.event_name == 'schedule' &&
+      always() &&
       github.run_attempt == 1 &&
+      needs.gate.result == 'success' &&
       needs.gate.outputs.publication_date == '2026-10-28' &&
-      needs.production.result == 'success' &&
-      needs.production.outputs.publish == 'true' &&
-      needs.production.outputs.commit_sha != '' &&
-      needs.deploy.result == 'success'
+      (
+        (
+          github.event_name == 'schedule' &&
+          needs.production.result == 'success' &&
+          needs.production.outputs.publish == 'true' &&
+          needs.production.outputs.commit_sha != '' &&
+          needs.deploy.result == 'success'
+        ) ||
+        (
+          github.event_name == 'workflow_dispatch' &&
+          github.ref == 'refs/heads/main' &&
+          inputs.shadow_terra61 == true &&
+          inputs.publication_date == '2026-10-28' &&
+          inputs.publish == false &&
+          inputs.force_fresh_research == false &&
+          inputs.recovery_run_id == '' &&
+          needs.gate.outputs.should_run == 'false' &&
+          needs.production.result == 'skipped' &&
+          needs.deploy.result == 'skipped'
+        )
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 125
     permissions:
@@ -1063,7 +1086,7 @@ jobs:
       - name: Получить исходную версию production до публикации
         uses: actions/checkout@v7
         with:
-          ref: ${{ needs.gate.outputs.main_sha }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && 'eabe4855b7d604c4947f5c9f47df694a76be7680' || needs.gate.outputs.main_sha }}
           persist-credentials: false
           fetch-depth: 1
       - name: Установить Python
@@ -1075,13 +1098,27 @@ jobs:
         with:
           name: daily-production-2026-10-28
           path: automation/compare-reference/terra56
+          run-id: ${{ github.event_name == 'workflow_dispatch' && '40618839186' || github.run_id }}
+          github-token: ${{ github.token }}
       - name: Подготовить настройки и сверить контрольный снимок
         shell: bash
         env:
-          BASELINE_SHA: ${{ needs.gate.outputs.main_sha }}
-          PRODUCTION_RUN_ID: ${{ github.run_id }}
+          BASELINE_SHA: ${{ github.event_name == 'workflow_dispatch' && 'eabe4855b7d604c4947f5c9f47df694a76be7680' || needs.gate.outputs.main_sha }}
+          PRODUCTION_RUN_ID: ${{ github.event_name == 'workflow_dispatch' && '40618839186' || github.run_id }}
+          GH_TOKEN: ${{ github.token }}
+          MANUAL_SHADOW: ${{ github.event_name == 'workflow_dispatch' && 'true' || 'false' }}
         run: |
           set -euo pipefail
+          if [[ "${MANUAL_SHADOW}" == 'true' ]]; then
+            # Fixed historical original evidence; no future/other date may spend.
+            original_run="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/40618839186")"
+            echo "${original_run}" | jq -e               '.id == 40618839186 and .event == "workflow_dispatch" and .head_sha == "eabe4855b7d604c4947f5c9f47df694a76be7680" and .conclusion == "success"' >/dev/null
+            original_artifact="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/12786364155")"
+            echo "${original_artifact}" | jq -e               '.id == 12786364155 and .name == "daily-production-2026-10-28" and .expired == false and .workflow_run.id == 40618839186 and .digest == "sha256:33a9c898549a289163bbafd7528e0d4043afc4b2ff72389f59c7649513ef4bd5"' >/dev/null
+            existing_count="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100"               --jq '[.artifacts[] | select(.name == "terra61-shadow-2026-10-28" and .expired == false)] | length')"
+            [[ "${existing_count}" == '0' ]] || { echo "::error title=Повторный платный запуск запрещён::Оригинальный shadow-артефакт уже существует."; exit 1; }
+            echo "::notice title=Ручное сравнение::Исходный запуск 40618839186 проверен; создаётся только Terra 6.1."
+          fi
           python - <<'PY'
           import json
           from pathlib import Path
@@ -1093,8 +1130,49 @@ jobs:
           python automation/scripts/validate_editorial_contract.py
           python automation/scripts/bootstrap_archive.py
           python automation/scripts/validate_archive.py
+          if [[ "${MANUAL_SHADOW}" == 'true' ]]; then
+            # Select the exact two original source files from the untouched
+            # GitHub artifact. It also has image/.../run-info.json, which must
+            # not contaminate the editorial model comparison.
+            original="automation/compare-reference/terra56"
+            control="automation/compare-reference/terra56-control"
+            mkdir -p "${control}"
+            [[ -f "${original}/2026-10-28/run-info.json" ]] || exit 1
+            [[ -f "${original}/production-daily/primary-recall-2026-10-28.json" ]] || exit 1
+            cp "${original}/2026-10-28/run-info.json" "${control}/run-info.json"
+            cp "${original}/production-daily/primary-recall-2026-10-28.json" "${control}/primary-recall-2026-10-28.json"
+            cmp -s "${original}/2026-10-28/run-info.json" "${control}/run-info.json"
+            cmp -s "${original}/production-daily/primary-recall-2026-10-28.json" "${control}/primary-recall-2026-10-28.json"
+          fi
+          if [[ "${MANUAL_SHADOW}" == 'true' ]]; then
+            # The fallback production run did not generate an original baseline manifest.
+            # Recover from immutable pre-publication commit, mark provenance explicitly.
+            python - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, "automation/scripts")
+          import terra61_shadow_once as exp
+          target = Path("automation/compare-reference/terra56-control") / exp.BASELINE_NAME
+          if target.exists():
+              raise SystemExit("Оригинальный baseline неожиданно существует: не перезаписывать.")
+          exp.write(target, {
+              "experiment": "terra61-one-shot",
+              "publication_date": exp.DAY,
+              "production_model": exp.PROD_MODEL,
+              "source_sha": exp.git_head(),
+              "input_sha256": exp.inputs(),
+              "image_shadow_enabled": False,
+              "production_mutation_shadow_enabled": False,
+              "provenance": "reconstructed_after_release_from_verified_unchanged_source_commit",
+              "original_run_id": 40618839186,
+              "warning": "Not an original pre-paid frozen baseline; reconstructed after the original run.",
+          })
+          exp.write(Path("automation/preview/production-daily/terra61-reconstructed-baseline.json"),
+                    exp.read(target))
+          PY
+          fi
           python automation/scripts/terra61_shadow_once.py prepare \
-            --production-dir automation/compare-reference/terra56 \
+            --production-dir ${{ github.event_name == 'workflow_dispatch' && 'automation/compare-reference/terra56-control' || 'automation/compare-reference/terra56' }} \
             --output automation/preview/production-daily/terra61-comparison-reference.json \
             --github-env "${GITHUB_ENV}" \
             --expected-sha "${BASELINE_SHA}" \
@@ -1184,7 +1262,8 @@ jobs:
             echo "## Terra 6.1: отдельный shadow 28 октября 2026"
             echo
             echo "- **Модель:** gpt-6.1-terra, medium"
-            echo "- **Исходный commit:** ${{ needs.gate.outputs.main_sha }}"
+            echo "- **Исходный commit:** ${{ github.event_name == 'workflow_dispatch' && 'eabe4855b7d604c4947f5c9f47df694a76be7680' || needs.gate.outputs.main_sha }}"
+            echo "- **Исходный run:** ${{ github.event_name == 'workflow_dispatch' && '40618839186 (baseline восстановлен из оригинального коммита)' || github.run_id }}"
             echo "- **Результат job:** ${{ job.status }}"
             echo "- **Артефакт:** terra61-shadow-2026-10-28"
             echo "- **Сайт, RSS, архив main и изображение:** не изменяются; cover API не вызывается"
