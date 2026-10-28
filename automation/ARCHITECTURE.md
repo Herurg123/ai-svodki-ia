@@ -555,6 +555,48 @@ Remote safety contract:
   оставшиеся старые assets;
 - скрипт не читает RSS, local worker state или OpenAI API.
 
+### Однодневный независимый Editorial shadow на 29.10.2026
+
+После успешных штатных \`production\` **и** \`deploy\` 29 октября 2026 GitHub
+job \`sol61_editorial_shadow_oct29\` однократно запускает \`gpt-6.1-sol\`.
+Это **не новый поисковый этап**: получает исходный финальный
+\`2026-10-29/candidates.json\` из оригинального \`daily-production-2026-10-29\`
+artifact именно этого run, а допубликационный archive + editorial policy из
+точного \`needs.gate.outputs.main_sha\`. В API-запрос Sol передаются только
+кандидаты (сжаты без потери ID), редакционные правила и сокращённый
+предшествующий архив; **ни один Terra selected_candidate_id, её editorial-output,
+stories.json или опубликованная статья не доступны Sol до ответа**.
+После завершённого ответа детерминистический comparator загружает исходный
+\`editorial-output-raw.json\` Terra и фиксирует пересечение, Terra-only,
+Sol-only и complete original bytes обеих сторон. Не путать эту редакционную
+независимость с независимым исследованием: research pool создан Terra.
+
+Job не изменяет Article/RSS/Archive/Git и не влияет на решение о публикации:
+read-only permission, нет Image или Web Search, только один
+Responses API вызов с \`store=false\`, \`reasoning=medium\`,
+\`max_output_tokens=4000\`, \`max_retries=0\`, timeout 150 с.
+Вход Sol целиком (system + data) ограничен **30 000 UTF-8 байт**;
+при превышении лимита job выдаёт диагностику и **не выполняет API-запрос**.
+Записываются строгая схема решения по каждому кандидату, response raw,
+usage/service_tier, frozen input hashes, неизменённый полный кандидатский JSON,
+оригинальное редакторское решение Terra и manifest SHA-256.
+Artifact \`sol61-independent-editorial-2026-10-29\`, retention 30 дней.
+
+Activation: **только** для \`publication_date=2026-10-29\`, первая attempt,
+при \`needs.production.outputs.publish=true\` и успешном deploy.
+Поддерживаются native schedule и ранняя backup \`workflow_dispatch\` публикация,
+но уже опубликованный выпуск не приводит к новому эксперименту.
+Безусловный переключатель: задать GitHub Actions repository variable
+\`SOL_EDITORIAL_AUDIT_ENABLED=false\` для пропуска job **до начала**.
+При отсутствии переменной допускается только 29 октября; 30 октября и далее
+job не запускается. Не повторять успешный workflow ради повторного Sol:
+из-за \`github.run_attempt==1\` повторный attempt не запускает shadow.
+Сбой Sol допускает единственный warning / evidence, не останавливая production.
+После проверки исходного artifact можно удалить one-shot job/script/tests
+одним cleanup PR. Дальнейшее внедрение Sol в редакторское решение **не
+одобрено** этим временным наблюдательным опытом.
+
+
 ## 5. Nightly production и временная непрерывность
 
 Canonical continuity anchor равен `search_cutoff_at` последнего успешно
