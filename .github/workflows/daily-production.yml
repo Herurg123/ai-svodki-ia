@@ -1043,6 +1043,8 @@ jobs:
       vars.SOL_EDITORIAL_AUDIT_ENABLED != 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 18
+    # Failure of the optional post-publish audit must not mark Terra's release failed.
+    continue-on-error: true
     permissions:
       actions: read
       contents: read
