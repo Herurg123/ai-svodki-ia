@@ -1,0 +1,59 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "article_html.story_section",
+      "candidate_id": "cand-002",
+      "model_value": "Мировые лидеры ИИ",
+      "normalized_value": "Китайские лидеры ИИ"
+    },
+    {
+      "field": "article_html.short_digest_notice",
+      "model_value": null,
+      "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+    },
+    {
+      "field": "selected_candidate_ids.section_order",
+      "model_value": [
+        "cand-004",
+        "cand-005",
+        "cand-003",
+        "cand-002",
+        "cand-006",
+        "cand-014"
+      ],
+      "normalized_value": [
+        "cand-004",
+        "cand-005",
+        "cand-003",
+        "cand-006",
+        "cand-002",
+        "cand-014"
+      ]
+    }
+  ],
+  "changed_count": 3,
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После проверки свежести и значимости выбрано 6 сюжетов."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-014."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, legal_regulation, independent_missing_events."
+    },
+    {
+      "type": "section_placement",
+      "area": "editorial",
+      "message": "Раздел для cand-002 автоматически исправлен: Мировые лидеры ИИ → Китайские лидеры ИИ."
+    }
+  ]
+}

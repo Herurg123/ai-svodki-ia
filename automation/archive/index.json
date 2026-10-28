@@ -1,8 +1,235 @@
 {
   "version": 2,
-  "generated_at": "2026-10-27T02:14:10+00:00",
+  "generated_at": "2026-10-28T02:16:07+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-10-28",
+      "published_at": "2026-10-28T06:00:00+03:00",
+      "search_cutoff_at": "2026-10-28T05:06:35+03:00",
+      "title": "ИИ-Сводка на 28 октября 2026",
+      "link": "https://rybalka.one/posts/2026-10-28/",
+      "summary": "Главные новости искусственного интеллекта за 28 октября 2026 года Новостей сегодня меньше, чем обычно Свежая повестка показывает, что развитие ИИ всё сильнее зависит не только от возможностей моделей, но и от среды их применения: симуляторов для робототехники, прав доступа агентов и устойчивости inference-инфраструктуры. Сегодня в фокусе — новая world model Google DeepMind, практики контроля coding-агентов и российский вклад в оценку качества рассуждений нейросетей. Мировые лидеры ИИ Google Deep",
+      "topics": [
+        "Google DeepMind",
+        "Genie 4",
+        "world models",
+        "GitHub Copilot",
+        "assisted permissions",
+        "безопасность агентов ИИ",
+        "prompt injection",
+        "AGENTS.md",
+        "Qwen Code",
+        "inference-инфраструктура",
+        "альтернативные ускорители",
+        "Яндекс",
+        "ШАД",
+        "бенчмарки рассуждений"
+      ],
+      "source_urls": [
+        "https://techcrunch.com/2026/10/27/googles-genie-4-world-model-adds-audio-more-realistic-worlds-and-real-time-steering/",
+        "https://github.blog/changelog/2026-10-26-github-copilot-assisted-permissions-generally-available/",
+        "https://www.techradar.com/pro/security/ai-agents-tricked-by-a-rogue-downloads-file-into-running-dangerous-malware",
+        "https://techcrunch.com/2026/10/27/general-compute-raises-100-million-series-a-countering-the-neocloud-disaster-narrative/",
+        "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.2",
+        "https://ir.yandex.ru/press-releases?year=2026&id=27-10-2026-01"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-004",
+          "section": "world",
+          "headline": "Google DeepMind представила Genie 4 — world model с аудио и управлением сценой в реальном времени",
+          "organization": "Google DeepMind",
+          "topic": "World models; multimodal AI; interactive simulation; audio generation; robotics simulation; generative media",
+          "event_type": "research preview release",
+          "status": "new",
+          "summary": "Google DeepMind представила Genie 4 в research preview. По данным TechCrunch, модель генерирует интерактивные фотореалистичные миры с синхронным аудио, позволяет менять сцену текстовыми командами во время симуляции и поддерживает более длительное сохранение состояния; сначала доступна trusted testers, затем заявлен rollout в Project Genie и для ранних партнёров Gemini API/AI Studio.",
+          "published_at": "2026-10-27T16:30:57+00:00",
+          "published_date": "2026-10-27",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Google’s Genie 4 world model adds audio, more realistic worlds, and real-time steering",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/27/googles-genie-4-world-model-adds-audio-more-realistic-worlds-and-real-time-steering/"
+            }
+          ],
+          "keywords": [
+            "Google DeepMind",
+            "Genie 4",
+            "world model",
+            "real-time steering",
+            "audio",
+            "robotics",
+            "simulation"
+          ],
+          "geography": "world",
+          "category": "multimodal"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "GitHub вывела assisted permissions для Copilot в общую доступность",
+          "organization": "GitHub; Microsoft",
+          "topic": "AI coding agents; GitHub Copilot; command permissions; enterprise governance; developer security",
+          "event_type": "product availability",
+          "status": "new",
+          "summary": "GitHub сообщила об общей доступности assisted permissions в Copilot CLI, Copilot app и VS Code: механизм предназначен для управляемого подтверждения запросов агента на выполнение команд и доступ к путям файловой системы.",
+          "published_at": "2026-10-26T15:31:30-07:00",
+          "published_date": "2026-10-26",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "GitHub Copilot assisted permissions generally available",
+              "publisher": "GitHub Changelog",
+              "url": "https://github.blog/changelog/2026-10-26-github-copilot-assisted-permissions-generally-available/"
+            }
+          ],
+          "keywords": [
+            "GitHub Copilot",
+            "assisted permissions",
+            "CLI",
+            "VS Code",
+            "Copilot app",
+            "enterprise governance",
+            "agent permissions"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "Исследователи описали prompt injection через AGENTS.md в папке Downloads",
+          "organization": "Forever Security; OpenAI Codex; Anthropic Claude Code",
+          "topic": "AI-agent security; indirect prompt injection; AGENTS.md; malicious downloads; token theft; malware execution",
+          "event_type": "security disclosure / observed attack pattern",
+          "status": "new",
+          "summary": "TechRadar со ссылкой на Forever Security сообщила о найденном на машине клиента вредоносном AGENTS.md в папке Downloads. По описанию исследователей, файл содержал инструкции для агента развернуть malware и вывести session tokens; воспроизведение в тестах удалось для OpenAI Codex и Anthropic Claude Code.",
+          "published_at": "2026-10-26T16:15:00+00:00",
+          "published_date": "2026-10-26",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "AI agents tricked by a rogue downloads file into running dangerous malware",
+              "publisher": "TechRadar",
+              "url": "https://www.techradar.com/pro/security/ai-agents-tricked-by-a-rogue-downloads-file-into-running-dangerous-malware"
+            }
+          ],
+          "keywords": [
+            "prompt injection",
+            "AGENTS.md",
+            "Downloads",
+            "Codex",
+            "Claude Code",
+            "malware",
+            "session tokens",
+            "agent instructions"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-006",
+          "section": "world",
+          "headline": "General Compute привлекла $100 млн на inference-инфраструктуру с альтернативными ускорителями",
+          "organization": "General Compute; Blackbird Ventures; Abstract Ventures; Cerebras; Positron; SambaNova",
+          "topic": "AI inference infrastructure; neoclouds; alternative accelerators; startup funding; bare-metal compute",
+          "event_type": "Series A financing",
+          "status": "new",
+          "summary": "General Compute объявила Series A на $100 млн под руководством Blackbird Ventures и Abstract Ventures. Компания строит bare-metal inference cloud с использованием ускорителей Cerebras, Positron и SambaNova; TechCrunch сообщает о post-money оценке $800 млн, $400-миллионной сделке на покупку чипов SambaNova и контракте с крупным клиентом на $100 млн ARR.",
+          "published_at": "2026-10-27T13:00:00+00:00",
+          "published_date": "2026-10-27",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "General Compute raises $100 million Series A, countering the neocloud disaster narrative",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/27/general-compute-raises-100-million-series-a-countering-the-neocloud-disaster-narrative/"
+            }
+          ],
+          "keywords": [
+            "General Compute",
+            "Series A",
+            "$100 million",
+            "inference",
+            "Cerebras",
+            "Positron",
+            "SambaNova",
+            "neocloud"
+          ],
+          "geography": "world",
+          "category": "investment"
+        },
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "Обновление: Qwen Code v0.26.2 добавила правила разрешений сессии и auto approval для managed agents",
+          "organization": "Alibaba Qwen",
+          "topic": "CLI coding agents; Qwen Code; managed agents; session permissions; auto approval; agent security",
+          "event_type": "software release",
+          "status": "update",
+          "summary": "Alibaba Qwen выпустила Qwen Code v0.26.2. Среди отмеченных изменений — session permission rules и Auto approval для managed agents; релиз также меняет управление Web Shell, упрощая контролы и убирая cwd submissions.",
+          "published_at": "2026-10-27T15:32:11+00:00",
+          "published_date": "2026-10-27",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Qwen Code v0.26.2 Release",
+              "publisher": "QwenLM GitHub",
+              "url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.2"
+            }
+          ],
+          "keywords": [
+            "Qwen Code",
+            "v0.26.2",
+            "managed agents",
+            "session permission rules",
+            "auto approval",
+            "Web Shell",
+            "CLI coding agent"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-014",
+          "section": "russia",
+          "headline": "Яндекс и ШАД открыли бенчмарк для оценки качества рассуждений нейросетей",
+          "organization": "Яндекс",
+          "topic": "27 октября 2026Яндекс и ШАД выложили в опенсорс новый бенчмарк для оценки качества рассуждений нейросетей",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+          "published_at": null,
+          "published_date": "2026-10-27",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "27 октября 2026Яндекс и ШАД выложили в опенсорс новый бенчмарк для оценки качества рассуждений нейросетей",
+              "publisher": "Яндекс",
+              "url": "https://ir.yandex.ru/press-releases?year=2026&id=27-10-2026-01"
+            }
+          ],
+          "keywords": [
+            "27",
+            "октября",
+            "2026Яндекс",
+            "ШАД",
+            "выложили",
+            "опенсорс",
+            "новый",
+            "бенчмарк",
+            "для",
+            "оценки",
+            "качества",
+            "рассуждений"
+          ],
+          "geography": "russia",
+          "category": "investment"
+        }
+      ]
+    },
     {
       "date": "2026-10-27",
       "published_at": "2026-10-27T06:00:00+03:00",
@@ -6196,10 +6423,10 @@
     {
       "date": "2026-09-25",
       "published_at": "2026-09-25T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-25T04:30:19+03:00",
+      "search_cutoff_at": "2026-09-25T06:00:00+03:00",
       "title": "ИИ-Сводка на 25 сентября 2026",
       "link": "https://rybalka.one/posts/2026-09-25/",
-      "summary": "Главные новости искусственного интеллекта за 25 сентября 2026 года Свежая повестка показывает, что агенты ИИ всё чаще переходят от экспериментов к действиям во внешнем мире — и одновременно становятся предметом публичных расследований, новых защитных обновлений и прикладного внедрения. Параллельно инфраструктурная гонка упирается не только в чипы, но и в электричество, стройку и контрактные риски, а разработчики ищут доказательства ценности ИИ в науке и коммерческих продуктах. Главный общий сигн",
+      "summary": "Австралия расследует инцидент с агентом OpenAI, Oracle сигнализирует о рисках энергоснабжения Stargate, Anthropic заявляет о биологической находке Claude, а Google тестирует звонки Gemini компаниям.",
       "topics": [
         "безопасность агентов ИИ",
         "Австралия",

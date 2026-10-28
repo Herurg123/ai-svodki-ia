@@ -1,0 +1,74 @@
+{
+  "status": "ok",
+  "usage_attempt_id": "9097ab546c3444618d0d35a69b9db020",
+  "request_id": "production-image-2026-10-28",
+  "model": "gpt-image-2",
+  "endpoint": "/v1/images/generations",
+  "http_status": 200,
+  "openai_request_id": "req_b9c399a7312e4dbdb4708ab5fcb228f0",
+  "source_editorial_request_id": "production-digest-2026-10-28",
+  "request": {
+    "size": "1536x864",
+    "quality": "high",
+    "output_format": "png",
+    "background": "opaque",
+    "n": 1,
+    "prompt_sha256": "bb55c4a64c3ea531c060f0207275a7ae9b062ed54c0ffacf69cfad4e3f35e8e8"
+  },
+  "response": {
+    "created": 1793153764,
+    "background": "opaque",
+    "output_format": "png",
+    "quality": "high",
+    "size": "1536x864",
+    "usage": {
+      "input_tokens": 396,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 396
+      },
+      "output_tokens": 4312,
+      "output_tokens_details": {
+        "image_tokens": 4312,
+        "text_tokens": 0
+      },
+      "total_tokens": 4708
+    },
+    "data_count": 1,
+    "revised_prompt": null
+  },
+  "cover_sha256": "bb947ed23a73c248021d603c645427db24d87c1b97e44f673f1c05a2bf94f2df",
+  "cover_bytes": 2261002,
+  "base64_stored": false,
+  "copied_source_files": [
+    "agency-discovery-rescue-transport.json",
+    "agency-discovery-rescue.json",
+    "article.html",
+    "artifact-normalization.json",
+    "artifact-validation.json",
+    "candidates.json",
+    "digest.json",
+    "editorial-event-identity.json",
+    "editorial-output-raw.json",
+    "editorial-output.json",
+    "editorial-prompt-input.txt",
+    "editorial-reconciliation.json",
+    "hybrid-completeness.json",
+    "image-prompt.txt",
+    "meta.json",
+    "metadata-normalization.json",
+    "policy-normalization.json",
+    "primary-recall.json",
+    "research-filtered-out.json",
+    "research-input-info.json",
+    "research-output-raw.json",
+    "research-prompt-input.txt",
+    "run-info.json",
+    "selection.json",
+    "source-pulse.json",
+    "sources.json",
+    "stories.json"
+  ],
+  "started_at": "2026-10-28T02:14:47+00:00",
+  "finished_at": "2026-10-28T02:16:04+00:00"
+}

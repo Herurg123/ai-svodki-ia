@@ -1,0 +1,50 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-28",
+  "slug": "2026-10-28",
+  "title": "ИИ-Сводка на 28 октября 2026",
+  "description": "Google DeepMind представила Genie 4, GitHub вывела assisted permissions для Copilot в общий доступ, а исследователи раскрыли риск инъекций через AGENTS.md. Также — Qwen Code, inference-инфраструктура и бенчмарк Яндекса.",
+  "published_at": "2026-10-28T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-28.png",
+  "topics": [
+    "Google DeepMind",
+    "Genie 4",
+    "world models",
+    "GitHub Copilot",
+    "assisted permissions",
+    "безопасность агентов ИИ",
+    "prompt injection",
+    "AGENTS.md",
+    "Qwen Code",
+    "inference-инфраструктура",
+    "альтернативные ускорители",
+    "Яндекс",
+    "ШАД",
+    "бенчмарки рассуждений"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-014."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, legal_regulation, independent_missing_events."
+    },
+    {
+      "type": "section_placement",
+      "area": "editorial",
+      "message": "Раздел для cand-002 автоматически исправлен: Мировые лидеры ИИ → Китайские лидеры ИИ."
+    }
+  ]
+}

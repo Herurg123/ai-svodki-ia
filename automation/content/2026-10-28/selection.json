@@ -1,0 +1,27 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-004",
+    "cand-005",
+    "cand-003",
+    "cand-006",
+    "cand-002",
+    "cand-014"
+  ],
+  "excluded_candidate_ids": [
+    "cand-001",
+    "cand-007",
+    "cand-008",
+    "cand-009",
+    "cand-010",
+    "cand-011",
+    "cand-012",
+    "cand-013",
+    "cand-015",
+    "cand-016",
+    "cand-017"
+  ],
+  "selection_summary": "В выпуск включены шесть подтверждённых и свежих сюжетов: новая world model Google DeepMind, общий доступ к управляемым разрешениям GitHub Copilot, раскрытие вектора prompt injection через AGENTS.md, обновление Qwen Code, инфраструктурный раунд General Compute и российский open-source бенчмарк Яндекса и ШАДа. Пул не позволяет собрать обычные семь сюжетов без слабых source-pulse материалов. Исключены устаревшее финансирование SpaceX и недостаточно детализированные кейсы/публикации OpenAI и NVIDIA.",
+  "diversity_overrides": []
+}
