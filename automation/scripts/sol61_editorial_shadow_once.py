@@ -156,7 +156,7 @@ def build_request(candidates: dict[str, Any], archive: dict[str, Any], policy: d
     }
     # The complete candidate ID set must survive compaction. When required,
     # reduce historical context, not the candidates or their identity.
-    for previous in (6, 3, 0):
+    for previous in (6, 3, 1, 0):
         request = {
             "publication_date": DAY,
             "candidates": rows,
