@@ -62,6 +62,19 @@ refactor/removal заданы в `ARCHITECTURE.md` и root `AGENTS.md`.
 `repository_hygiene_video_rss_runs.py` существуют только внутри
 `archive/video-rss-enrichment-2026-08/` как reference material.
 
+### Разовый независимый редактор Sol 6.1 (29.10.2026)
+
+В штатном `daily-production.yml` после `production` и `deploy` для
+выпуска 29 октября предусмотрен отдельный непубликующий job на одном
+сохранённом candidate pool. Sol не видит выбор Terra до завершения своего
+ответа, не делает Web Search и не влияет на публикацию. Один запрос,
+лимит входа 30 000 UTF-8 байт, выхода 4 000 токенов, без retry.
+Артефакт `sol61-independent-editorial-2026-10-29` хранит оригинальные
+решения и сравнение. Откат: Actions variable
+`SOL_EDITORIAL_AUDIT_ENABLED=false`; после 29.10 проверка автоматически
+неактивна. Подробности: [ARCHITECTURE.md](ARCHITECTURE.md) и
+[PLAN.md](audits/experiments/2026-10-29-sol61-editorial-shadow/PLAN.md).
+
 ## Production contract summary
 
 Этот раздел сохраняет компактные маркеры, которые нужны оператору и
