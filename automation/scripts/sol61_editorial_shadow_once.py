@@ -231,6 +231,8 @@ def run(*, artifact: Path, archive_path: Path, policy_path: Path, output: Path, 
     prompt, ids = build_request(json.loads(raw), json.loads(archive_raw), json.loads(policy_raw))
     output.mkdir(parents=True, exist_ok=True)
     (output / "sol-request.txt").write_text(SYSTEM + "\n\n" + prompt + "\n", encoding="utf-8")
+    # Preserve the exact complete final research pool, not only its compact projection.
+    (output / "terra-frozen-candidates-original.json").write_bytes(raw)
     save(output / "frozen-input.json", {
         "publication_date": DAY, "model": SOL,
         "candidate_sha256": sha256(raw),
@@ -275,8 +277,12 @@ def run(*, artifact: Path, archive_path: Path, policy_path: Path, output: Path, 
     sol_ids = check_result(sol, ids)
     save(output / "sol-independent-selection.json", sol)
     # Only after Sol completed do we inspect Terra's editorial choice.
+    (output / "terra-editorial-original.json").write_bytes(terra_file.read_bytes())
     baseline = load(terra_file)
     compared = comparison(baseline, sol, ids)
+    compared["terra_selection_summary"] = baseline.get("selection_summary")
+    compared["terra_excluded_candidate_ids"] = baseline.get("excluded_candidate_ids")
+    compared["sol_selection_summary"] = sol.get("selection_summary")
     save(output / "terra-vs-sol-editorial-comparison.json", compared)
     save(output / "manifest.json", {
         "status": "complete", "publication_date": DAY, "model": SOL,
