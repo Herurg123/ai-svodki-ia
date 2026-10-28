@@ -1113,6 +1113,8 @@ jobs:
             # Fixed historical original evidence; no future/other date may spend.
             original_run="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/40618839186")"
             echo "${original_run}" | jq -e               '.id == 40618839186 and .event == "workflow_dispatch" and .head_sha == "eabe4855b7d604c4947f5c9f47df694a76be7680" and .conclusion == "success"' >/dev/null
+            original_artifact="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/12786364155")"
+            echo "${original_artifact}" | jq -e               '.id == 12786364155 and .name == "daily-production-2026-10-28" and .expired == false and .workflow_run.id == 40618839186 and .digest == "sha256:33a9c898549a289163bbafd7528e0d4043afc4b2ff72389f59c7649513ef4bd5"' >/dev/null
             existing_count="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100"               --jq '[.artifacts[] | select(.name == "terra61-shadow-2026-10-28" and .expired == false)] | length')"
             [[ "${existing_count}" == '0' ]] || { echo "::error title=Повторный платный запуск запрещён::Оригинальный shadow-артефакт уже существует."; exit 1; }
             echo "::notice title=Ручное сравнение::Исходный запуск 40618839186 проверен; создаётся только Terra 6.1."
