@@ -102,6 +102,44 @@ class Terra61OnceTests(unittest.TestCase):
             shadow.finish(self.evidence, manifest)
         self.assertEqual(shadow.read(manifest)["status"], "partial")
 
+    def test_manual_shadow_is_explicit_and_does_not_repeat_production(self) -> None:
+        wf = (ROOT / ".github/workflows/daily-production.yml").read_text(encoding="utf-8")
+        self.assertIn("shadow_terra61:", wf)
+        self.assertIn("inputs.shadow_terra61 == true", wf)
+        self.assertIn("always() &&", wf)
+        self.assertIn("inputs.publish == false", wf)
+        self.assertIn("inputs.force_fresh_research == false", wf)
+        self.assertIn("inputs.recovery_run_id == ''", wf)
+        self.assertIn("needs.production.result == 'skipped'", wf)
+        self.assertIn("needs.deploy.result == 'skipped'", wf)
+        self.assertIn("needs.gate.outputs.should_run == 'false'", wf)
+        self.assertIn("run-id: " + "$" + "{{ github.event_name == 'workflow_dispatch' && '40618839186'", wf)
+        self.assertIn("eabe4855b7d604c4947f5c9f47df694a76be7680", wf)
+        self.assertIn("gh api", wf)
+        self.assertIn("existing_count", wf)
+        self.assertIn("reconstructed_after_release_from_verified_unchanged_source_commit", wf)
+        self.assertIn("original_run_id", wf)
+        self.assertIn("terra61-reconstructed-baseline.json", wf)
+        self.assertIn("github.run_attempt == 1", wf)
+        production = wf.split("  production:\n", 1)[1].split("  deploy:\n", 1)[0]
+        redeploy = wf.split("  redeploy_existing:\n", 1)[1].split("  production:\n", 1)[0]
+        for block in (production, redeploy):
+            self.assertIn("!(github.event_name == 'workflow_dispatch' && inputs.shadow_terra61 == true)", block)
+        shadow_block = wf.split("  terra61_shadow_once:\n", 1)[1].split("  final_status:\n", 1)[0]
+        for forbidden in ("contents: write", "push_protected_main.sh", "Generate one production cover", "Commit production release"):
+            self.assertNotIn(forbidden, shadow_block)
+
+    def test_manual_reconstructed_provenance_is_not_misrepresented_as_frozen(self) -> None:
+        reconstructed = self.prod / shadow.BASELINE_NAME
+        obj = shadow.read(reconstructed)
+        obj["provenance"] = "reconstructed_after_release_from_verified_unchanged_source_commit"
+        obj["original_run_id"] = 40618839186
+        obj["warning"] = "Not an original pre-paid frozen baseline"
+        shadow.write(reconstructed, obj)
+        shadow.prepare(self.prod.parent, self.evidence, self.env_file, "a" * 40, "40618839186")
+        self.assertEqual(shadow.read(self.evidence)["production_run_id"], "40618839186")
+        self.assertEqual(shadow.read(self.evidence)["shadow_model"], "gpt-6.1-terra")
+
     def test_cannot_create_second_scheduled_baseline(self) -> None:
         with patch.dict(os.environ, {"GITHUB_EVENT_NAME": "schedule", "GITHUB_RUN_ATTEMPT": "2"}):
             with self.assertRaisesRegex(RuntimeError, "original scheduled"):
