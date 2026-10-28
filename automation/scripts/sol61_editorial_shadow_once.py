@@ -238,7 +238,6 @@ def run(*, artifact: Path, archive_path: Path, policy_path: Path, output: Path, 
         "candidate_sha256": sha256(raw),
         "archive_sha256": sha256(archive_raw),
         "editorial_policy_sha256": sha256(policy_raw),
-        "terra_editorial_sha256": sha256(terra_file.read_bytes()),
         "system_and_prompt_sha256": sha256((SYSTEM + prompt).encode("utf-8")),
         "prompt_bytes": len((SYSTEM + prompt).encode("utf-8")),
         "candidate_ids": ids,
@@ -281,6 +280,7 @@ def run(*, artifact: Path, archive_path: Path, policy_path: Path, output: Path, 
     baseline = load(terra_file)
     compared = comparison(baseline, sol, ids)
     compared["terra_selection_summary"] = baseline.get("selection_summary")
+    compared["terra_editorial_sha256"] = sha256(terra_file.read_bytes())
     compared["terra_excluded_candidate_ids"] = baseline.get("excluded_candidate_ids")
     compared["sol_selection_summary"] = sol.get("selection_summary")
     save(output / "terra-vs-sol-editorial-comparison.json", compared)
