@@ -1129,6 +1129,20 @@ jobs:
           python automation/scripts/bootstrap_archive.py
           python automation/scripts/validate_archive.py
           if [[ "${MANUAL_SHADOW}" == 'true' ]]; then
+            # Select the exact two original source files from the untouched
+            # GitHub artifact. It also has image/.../run-info.json, which must
+            # not contaminate the editorial model comparison.
+            original="automation/compare-reference/terra56"
+            control="automation/compare-reference/terra56-control"
+            mkdir -p "${control}"
+            [[ -f "${original}/2026-10-28/run-info.json" ]] || exit 1
+            [[ -f "${original}/production-daily/primary-recall-2026-10-28.json" ]] || exit 1
+            cp "${original}/2026-10-28/run-info.json" "${control}/run-info.json"
+            cp "${original}/production-daily/primary-recall-2026-10-28.json" "${control}/primary-recall-2026-10-28.json"
+            cmp -s "${original}/2026-10-28/run-info.json" "${control}/run-info.json"
+            cmp -s "${original}/production-daily/primary-recall-2026-10-28.json" "${control}/primary-recall-2026-10-28.json"
+          fi
+          if [[ "${MANUAL_SHADOW}" == 'true' ]]; then
             # The fallback production run did not generate an original baseline manifest.
             # Recover from immutable pre-publication commit, mark provenance explicitly.
             python - <<'PY'
@@ -1136,7 +1150,7 @@ jobs:
           from pathlib import Path
           sys.path.insert(0, "automation/scripts")
           import terra61_shadow_once as exp
-          target = Path("automation/compare-reference/terra56/production-daily") / exp.BASELINE_NAME
+          target = Path("automation/compare-reference/terra56-control") / exp.BASELINE_NAME
           if target.exists():
               raise SystemExit("Оригинальный baseline неожиданно существует: не перезаписывать.")
           exp.write(target, {
@@ -1156,7 +1170,7 @@ jobs:
           PY
           fi
           python automation/scripts/terra61_shadow_once.py prepare \
-            --production-dir automation/compare-reference/terra56 \
+            --production-dir ${{ github.event_name == 'workflow_dispatch' && 'automation/compare-reference/terra56-control' || 'automation/compare-reference/terra56' }} \
             --output automation/preview/production-daily/terra61-comparison-reference.json \
             --github-env "${GITHUB_ENV}" \
             --expected-sha "${BASELINE_SHA}" \
