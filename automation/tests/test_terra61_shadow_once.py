@@ -120,6 +120,9 @@ class Terra61OnceTests(unittest.TestCase):
         self.assertIn("reconstructed_after_release_from_verified_unchanged_source_commit", wf)
         self.assertIn("original_run_id", wf)
         self.assertIn("terra61-reconstructed-baseline.json", wf)
+        self.assertIn("terra56-control", wf)
+        self.assertIn('cp "${original}/2026-10-28/run-info.json" "${control}/run-info.json"', wf)
+        self.assertIn('cp "${original}/production-daily/primary-recall-2026-10-28.json"', wf)
         self.assertIn("github.run_attempt == 1", wf)
         production = wf.split("  production:\n", 1)[1].split("  deploy:\n", 1)[0]
         redeploy = wf.split("  redeploy_existing:\n", 1)[1].split("  production:\n", 1)[0]
