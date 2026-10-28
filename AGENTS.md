@@ -321,24 +321,6 @@ but must not silently repoll mutable sources.
   or bypasses saved-state validation.
 - Production API spend is not authorized by a generic code-fix request; any new
   paid retrieval beyond the documented architecture needs separate approval.
-- The user explicitly authorized exactly one additional paid Terra 6.1 shadow
-  on 2026-10-28. It must start only after the original scheduled Terra 5.6
-  release was successfully deployed; no new cron, image, publication, push,
-  RSS/archive edit, paid retry or fallback to Terra 5.6 is authorized.
-  Freeze the source SHA, original pre-publication archive/prompts and both
-  search/editorial cutoffs before the second request. Persist independently
-  identified raw model artifacts and digests on every outcome. Remove the
-  one-day workflow, cutoff seams, helper and tests via a separate cleanup PR
-  after the original shadow ZIP has been preserved for comparison.
-- Special 2026-10-28 recovery: the fallback workflow_dispatch run 40618839186
-  published first and skipped the one-shot schedule job. One additional manual
-  shadow_terra61=true dispatch is authorized ONLY for 2026-10-28 and ONLY
-  against saved run 40618839186 / source eabe4855b7d604c4947f5c9f47df694a76be7680.
-  Must skip production and deploy, use exactly that historical artifact, verify
-  original 12/12 Primary and both saved temporal cutoffs, keep an explicit
-  retrospective-baseline provenance warning, and refuse duplicate shadow
-  artifacts or any paid 5.6 rerun.
-
 ## Independent audits and experiments
 
 The canonical audit journal is
