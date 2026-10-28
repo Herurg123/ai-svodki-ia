@@ -2407,15 +2407,6 @@ def main() -> int:
         research_cutoff_at = datetime.now(timezone.utc).astimezone(
             ZoneInfo(str(config["timezone"]))
         )
-        # Only the one-shot no-publication shadow may freeze this boundary.
-        # The ordinary Terra 5.6 production path remains byte-for-byte in effect.
-        if os.getenv("AI_DIGEST_TERRA61_SHADOW") == "2026-10-28":
-            if model != "gpt-6.1-terra" or publication_date_text != "2026-10-28":
-                raise RuntimeError("Unexpected Terra 6.1 shadow model or publication date")
-            frozen_value = os.environ["AI_DIGEST_TERRA61_EDITORIAL_CUTOFF"]
-            research_cutoff_at = datetime.fromisoformat(frozen_value.replace("Z", "+00:00"))
-            if research_cutoff_at.tzinfo is None or research_cutoff_at.utcoffset() is None:
-                raise RuntimeError("Shadow editorial cutoff must be timezone-aware")
         run_info["research_cutoff_at"] = research_cutoff_at.isoformat(
             timespec="seconds"
         )
