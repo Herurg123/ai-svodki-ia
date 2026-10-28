@@ -46,7 +46,6 @@
 | Hybrid | `scripts/hybrid_search_completeness.py` | stable Hybrid v3 и conditional double-gap fifth search |
 | Coverage | `scripts/ensure_story_coverage.py` | mandatory directions + bounded optional seventh-slot recovery |
 | Recovery | `scripts/recover_digest_artifact.py` | reuse exact same-day saved bundle без повторения completed paid stages |
-| Разовый Terra A/B, 28.10 | `scripts/terra61_shadow_once.py` | shadow after scheduled published Terra 5.6, model 6.1 only, shared SHA/window proof, no cover/publish, separate 30-day ZIP; temporary until cleanup PR |
 | Editorial section normalization | `scripts/editorial_policy.py` | deterministic principal-actor placement; ambiguous world/China signals go to World with warnings; safely source-mapped stories only, no new API calls |
 | Discovery health | `scripts/discovery_health.py` | zero-network diagnostics пяти discovery lanes |
 | Production summary | `scripts/summarize_production_status.py` | pipeline status + Discovery Health в Actions Summary |

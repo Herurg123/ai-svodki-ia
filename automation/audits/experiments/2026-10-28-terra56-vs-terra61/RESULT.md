@@ -62,4 +62,6 @@
 
 ## Очистка
 
-Временные workflow/manual dispatch, скрипт frozen baseline, экспериментальные override и тесты должны быть полностью удалены следующим cleanup PR после фиксации этого архива. Историческая методика [PLAN.md](PLAN.md), этот результат, EVENTS и redacted billing остаются только под `automation/audits/experiments/`, вне исполняемого конвейера. Завтрашний выпуск остаётся на `gpt-5.6-terra`, без второго запуска.
+В том же цикле работ после архивации удалены `shadow_terra61` input, отдельный workflow job, baseline step, разовый `terra61_shadow_once.py`, тесты и обе временные подмены временных границ. Восстановлен оригинальный `prompt_context.py` transport только для `gpt-5.6-terra`, отредактированы действующие AGENTS/README. Остались только исторические [PLAN.md](PLAN.md), этот RESULT, [EVENTS.md](EVENTS.md) и обезличенные CSV под `automation/audits/experiments/`.
+
+Штатный workflow содержит **ровно один cron `17 23 * * *`**, production checks model `gpt-5.6-terra`, штатные Image/Publish/Deploy и recovery остаются без изменений. Новых API-запросов или повторных публикаций на очистке нет.
