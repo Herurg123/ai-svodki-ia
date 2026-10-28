@@ -762,7 +762,7 @@ def run_primary_recall_search(
     if not isinstance(config, dict):
         raise RuntimeError("automation/config/site.json должен содержать объект")
     local_zone = ZoneInfo(str(config["timezone"]))
-   authoritative_cutoff = cutoff_at or datetime.now(timezone.utc).astimezone(local_zone)
+    authoritative_cutoff = cutoff_at or datetime.now(timezone.utc).astimezone(local_zone)
     search_window, overlap = build_search_window(
         publication_date=publication_date,
         archive=archive,
