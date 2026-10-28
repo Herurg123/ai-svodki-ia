@@ -117,7 +117,7 @@ def archive_rows(archive: dict[str, Any], count: int) -> list[dict[str, Any]]:
     if not isinstance(items, list):
         raise ValueError("Archive items missing")
     rows = []
-    for item in items[-count:]:
+    for item in (items[-count:] if count else []):
         if not isinstance(item, dict):
             continue
         stories = item.get("stories") or []
