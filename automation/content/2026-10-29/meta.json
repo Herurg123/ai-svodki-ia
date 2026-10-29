@@ -1,0 +1,42 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-29",
+  "slug": "2026-10-29",
+  "title": "ИИ-Сводка на 29 октября 2026",
+  "description": "Microsoft раскрыла масштаб коммерческих связей с OpenAI, Google монетизирует ИИ-поиск и открывает Gemini для приложений, а Anthropic и инфраструктурные поставщики усиливают контроль, безопасность и вычисления.",
+  "published_at": "2026-10-29T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-29.png",
+  "topics": [
+    "Microsoft",
+    "OpenAI",
+    "Azure",
+    "Anthropic",
+    "безопасность агентов ИИ",
+    "Google AI Mode",
+    "реклама в ИИ-поиске",
+    "Meta",
+    "AMD",
+    "ROI Claude",
+    "MCP",
+    "Gemini",
+    "NVIDIA",
+    "speech AI",
+    "Broadcom",
+    "ИИ-инфраструктура"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Пять выбранных сюжетов TechCrunch описывают независимые события у разных организаций и в разных слоях рынка — финансы Microsoft/OpenAI, инцидент Anthropic, реклама AI Search, enterprise-аналитика Claude, платформенные интеграции Google и speech-модель NVIDIA. В коротком, но содержательном пуле их исключение ради формального лимита сократило бы выпуск ниже полезного охвата ключевых направлений."
+    }
+  ]
+}

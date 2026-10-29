@@ -1,8 +1,294 @@
 {
   "version": 2,
-  "generated_at": "2026-10-28T02:16:07+00:00",
+  "generated_at": "2026-10-29T02:17:30+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-10-29",
+      "published_at": "2026-10-29T06:00:00+03:00",
+      "search_cutoff_at": "2026-10-29T05:06:38+03:00",
+      "title": "ИИ-Сводка на 29 октября 2026",
+      "link": "https://rybalka.one/posts/2026-10-29/",
+      "summary": "Главные новости искусственного интеллекта за 29 октября 2026 года Новая повестка показывает, что рынок ИИ всё отчётливее делится на несколько взаимосвязанных слоёв: облачную экономику, агентные интерфейсы, корпоративный контроль расходов и безопасность цепочек поставщиков. Крупные компании одновременно ищут способы монетизировать генеративный поиск, расширяют доступ агентов к приложениям и строят всё более капиталоёмкую инфраструктуру для моделей. Главный практический вывод для бизнеса: внедрени",
+      "topics": [
+        "Microsoft",
+        "OpenAI",
+        "Azure",
+        "Anthropic",
+        "безопасность агентов ИИ",
+        "Google AI Mode",
+        "реклама в ИИ-поиске",
+        "Meta",
+        "AMD",
+        "ROI Claude",
+        "MCP",
+        "Gemini",
+        "NVIDIA",
+        "speech AI",
+        "Broadcom",
+        "ИИ-инфраструктура"
+      ],
+      "source_urls": [
+        "https://techcrunch.com/2026/10/28/microsoft-recorded-10-billion-in-revenue-from-openai/",
+        "https://www.techradar.com/pro/security/ai-startup-claims-it-hacked-anthropic-in-12-hours-gains-access-to-employee-details-and-internal-messages",
+        "https://techcrunch.com/2026/10/28/google-expands-ai-search-ads-globally-as-core-ad-growth-slows/",
+        "https://ir.amd.com/news-events/press-releases/detail/1302/amd-and-meta-advance-strategic-partnership-to-power-metas-superintelligence-infrastructure",
+        "https://techcrunch.com/2026/10/28/anthropic-just-launched-tools-to-show-companies-what-their-ai-spending-is-buying/",
+        "https://techcrunch.com/2026/10/28/as-ai-agents-reshape-the-web-google-opens-gemini-and-search-to-more-apps/",
+        "https://techcrunch.com/2026/10/28/voice-ai-in-vogue-nvidia-releases-new-open-transcription-model/",
+        "https://apnews.com/article/stocks-markets-ai-earnings-oil-e11a2240fc3283c4507d44b9833f30a2"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-001",
+          "section": "world",
+          "headline": "Microsoft раскрыла $10 млрд квартальной выручки от коммерческих соглашений с OpenAI",
+          "organization": "Microsoft; OpenAI",
+          "topic": "AI-lab economics; cloud revenue; OpenAI–Microsoft partnership; enterprise AI; financial disclosures",
+          "event_type": "financial disclosure",
+          "status": "new",
+          "summary": "Microsoft сообщила в регуляторном раскрытии, что за квартал, завершившийся 30 сентября, получила $10 млрд выручки от коммерческих соглашений с OpenAI, включая revenue-sharing payments. Это почти 11% её квартальной выручки в $92,3 млрд; за весь 2026 финансовый год показатель составил $24,1 млрд.",
+          "published_at": "2026-10-28T21:34:30+00:00",
+          "published_date": "2026-10-28",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Microsoft recorded $10 billion in revenue from OpenAI",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/28/microsoft-recorded-10-billion-in-revenue-from-openai/"
+            }
+          ],
+          "keywords": [
+            "Microsoft",
+            "OpenAI",
+            "revenue sharing",
+            "Azure",
+            "quarterly results",
+            "SEC filing"
+          ],
+          "geography": "world",
+          "category": "enterprise"
+        },
+        {
+          "candidate_id": "cand-004",
+          "section": "world",
+          "headline": "Cathedral сообщила о доступе агентов к части корпоративных систем Anthropic через стороннее ПО",
+          "organization": "Anthropic; Cathedral",
+          "topic": "AI-agent security; autonomous offensive agents; third-party software risk; enterprise data exposure; responsible disclosure",
+          "event_type": "security incident disclosure",
+          "status": "new",
+          "summary": "Стартап Cathedral заявил, что его автономные агенты получили доступ к части HR-, sales- и IT-систем Anthropic через слабости стороннего бизнес-ПО. По приведённому TechRadar заявлению Anthropic, были затронуты ограниченные контактные и базовые учётные данные некоторых клиентов и партнёров; исходный код и веса моделей не были доступны, а доступ был отключён в тот же день.",
+          "published_at": "2026-10-28T15:25:00+00:00",
+          "published_date": "2026-10-28",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "AI startup claims it hacked Anthropic in 12 hours, gains access to employee details and internal messages",
+              "publisher": "TechRadar",
+              "url": "https://www.techradar.com/pro/security/ai-startup-claims-it-hacked-anthropic-in-12-hours-gains-access-to-employee-details-and-internal-messages"
+            }
+          ],
+          "keywords": [
+            "Anthropic",
+            "Cathedral",
+            "AI agents",
+            "third-party software",
+            "data exposure",
+            "bug bounty",
+            "enterprise security"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "Google расширяет рекламу в AI Mode и AI Overviews на международные рынки",
+          "organization": "Google; Alphabet; Google Search; Gemini",
+          "topic": "AI Search; монетизация генеративного поиска; реклама; AI Mode; AI Overviews",
+          "event_type": "product expansion",
+          "status": "new",
+          "summary": "Google объявила о международном расширении рекламы в AI-режимах поиска: объявления в AI Mode и AI Overviews выходят за пределы первоначального рынка; в США добавляются multi-turn ads. Анонс сделан на квартальном звонке Alphabet.",
+          "published_at": "2026-10-28T21:48:37+00:00",
+          "published_date": "2026-10-28",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Google expands AI Search ads globally as core ad growth slows",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/28/google-expands-ai-search-ads-globally-as-core-ad-growth-slows/"
+            }
+          ],
+          "keywords": [
+            "Google",
+            "AI Mode",
+            "AI Overviews",
+            "advertising",
+            "international expansion",
+            "Search monetization",
+            "Gemini"
+          ],
+          "geography": "world",
+          "category": "agents"
+        },
+        {
+          "candidate_id": "cand-006",
+          "section": "world",
+          "headline": "AMD и Meta расширяют партнёрство по инфраструктуре для superintelligence",
+          "organization": "AMD; Meta",
+          "topic": "AI chips; rack-scale infrastructure; CPUs; GPUs; networking; Meta AI infrastructure; hyperscaler deployment",
+          "event_type": "strategic infrastructure partnership",
+          "status": "new",
+          "summary": "AMD сообщила о расширении многолетнего партнёрства с Meta: Helios rack-scale уже установлен у Meta и проходит тестирование перед более широким развёртыванием; EPYC, Instinct, Pensando и ROCm задействованы в инфраструктуре Meta. Компании также говорят о совместной работе над развёртываниями на gigawatt scale, а AMD намерена инвестировать $1 млрд в equity offering Meta.",
+          "published_at": "2026-10-27T16:34:31+00:00",
+          "published_date": "2026-10-27",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "AMD and Meta Advance Strategic Partnership to Power Meta’s Superintelligence Infrastructure",
+              "publisher": "AMD Investor Relations",
+              "url": "https://ir.amd.com/news-events/press-releases/detail/1302/amd-and-meta-advance-strategic-partnership-to-power-metas-superintelligence-infrastructure"
+            }
+          ],
+          "keywords": [
+            "AMD Helios",
+            "AMD EPYC",
+            "AMD Instinct",
+            "AMD ROCm",
+            "Meta",
+            "Muse",
+            "rack-scale",
+            "gigawatt scale",
+            "MI450",
+            "MI500"
+          ],
+          "geography": "world",
+          "category": "chips"
+        },
+        {
+          "candidate_id": "cand-007",
+          "section": "world",
+          "headline": "Anthropic запустила отчётность и групповые бюджеты для оценки ROI Claude",
+          "organization": "Anthropic",
+          "topic": "Enterprise AI; Claude; agentic coding; usage analytics; ROI; AI spending governance",
+          "event_type": "enterprise product launch",
+          "status": "new",
+          "summary": "Anthropic анонсировала для корпоративных клиентов Claude набор отчётов, который связывает token spend с работой команд, результатами, стоимостью и сбоями workflow, а также предлагает рекомендации. Компания также вводит pooled group budgets для контроля расходов команд.",
+          "published_at": "2026-10-28T19:19:58+00:00",
+          "published_date": "2026-10-28",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Anthropic just launched tools to show companies what their AI spending is buying",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/28/anthropic-just-launched-tools-to-show-companies-what-their-ai-spending-is-buying/"
+            }
+          ],
+          "keywords": [
+            "Anthropic",
+            "Claude",
+            "enterprise analytics",
+            "ROI",
+            "token spend",
+            "group budgets"
+          ],
+          "geography": "world",
+          "category": "enterprise"
+        },
+        {
+          "candidate_id": "cand-008",
+          "section": "world",
+          "headline": "Google открыла Connected Apps Platform для Gemini и Search",
+          "organization": "Google",
+          "topic": "AI agents; Gemini; Google Search; MCP; connected apps; agentic web",
+          "event_type": "product platform launch",
+          "status": "new",
+          "summary": "Google представила Connected Apps Platform: в beta американские разработчики могут подключать приложения к Gemini и Google Search, публиковать их через новую консоль и отслеживать их работу. Интеграция опирается на cloud-hosted MCP либо Android MCP через AppFunctions APIs.",
+          "published_at": "2026-10-28T17:00:00+00:00",
+          "published_date": "2026-10-28",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "As AI agents reshape the web, Google opens Gemini and Search to more apps",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/28/as-ai-agents-reshape-the-web-google-opens-gemini-and-search-to-more-apps/"
+            }
+          ],
+          "keywords": [
+            "Google",
+            "Gemini",
+            "Google Search",
+            "Connected Apps Platform",
+            "MCP",
+            "AppFunctions"
+          ],
+          "geography": "world",
+          "category": "agents"
+        },
+        {
+          "candidate_id": "cand-010",
+          "section": "world",
+          "headline": "NVIDIA выпустила открытую speech-модель Nemotron 3.5 Transcribe и датасет Granary v2",
+          "organization": "NVIDIA",
+          "topic": "Speech AI; open-weight models; transcription; multilingual AI; edge inference; robotics",
+          "event_type": "model and dataset release",
+          "status": "new",
+          "summary": "NVIDIA выпустила Nemotron 3.5 Transcribe — бесплатную open-weight модель распознавания речи для 40 языков — и вторую версию открытого speech-датасета Granary. Компания заявляет, что 30B-параметровая модель может работать на одном чипе, включая Jetson AGX Thor, DGX Spark и Blackwell.",
+          "published_at": "2026-10-28T15:00:00+00:00",
+          "published_date": "2026-10-28",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Voice AI in vogue: Nvidia releases new open transcription model",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/28/voice-ai-in-vogue-nvidia-releases-new-open-transcription-model/"
+            }
+          ],
+          "keywords": [
+            "NVIDIA",
+            "Nemotron 3.5 Transcribe",
+            "Granary v2",
+            "speech-to-text",
+            "open weights",
+            "NeMo Speech"
+          ],
+          "geography": "world",
+          "category": "multimodal"
+        },
+        {
+          "candidate_id": "cand-019",
+          "section": "world",
+          "headline": "Broadcom объявила финансирование на $63 млрд для инфраструктуры Anthropic",
+          "organization": "Broadcom; Anthropic; Bank of America; Blackstone; Morgan Stanley",
+          "topic": "AI-инфраструктура; кастомные ускорители; сетевые решения; финансирование вычислительных мощностей; корпоративные сделки",
+          "event_type": "финансирование AI-инфраструктуры",
+          "status": "new",
+          "summary": "Broadcom объявила о финансировании на $63 млрд: несколько финансовых институтов должны профинансировать получение Anthropic XPU-ускорителей Broadcom и сетевых решений. По описанию Kiplinger, структура использует SPV, который купит оборудование и будет сдавать его Anthropic в лизинг.",
+          "published_at": "2026-10-27T20:14:57+00:00",
+          "published_date": "2026-10-27",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Broadcom and other AI stocks lift Wall Street closer to its record",
+              "publisher": "Associated Press",
+              "url": "https://apnews.com/article/stocks-markets-ai-earnings-oil-e11a2240fc3283c4507d44b9833f30a2"
+            }
+          ],
+          "keywords": [
+            "Broadcom",
+            "Anthropic",
+            "XPU",
+            "AI accelerators",
+            "networking",
+            "$63 billion",
+            "SPV financing",
+            "AI infrastructure"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        }
+      ]
+    },
     {
       "date": "2026-10-28",
       "published_at": "2026-10-28T06:00:00+03:00",
@@ -6165,10 +6451,10 @@
     {
       "date": "2026-09-26",
       "published_at": "2026-09-26T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-26T04:33:41+03:00",
+      "search_cutoff_at": "2026-09-26T06:00:00+03:00",
       "title": "ИИ-Сводка на 26 сентября 2026",
       "link": "https://rybalka.one/posts/2026-09-26/",
-      "summary": "Главные новости искусственного интеллекта за 26 сентября 2026 года Повестка дня снова сосредоточена на физическом и финансовом слое ИИ: лаборатории и облачные провайдеры закрепляют вычисления, привлекают капитал перед IPO и пересматривают планы энергоснабжения дата-центров. Одновременно OpenAI раскрыла отдельный эпизод, в котором исследовательские агенты разместили пользовательские изображения во внешних сервисах. В российской части выпуска Яндекс B2B Tech представил два направления для корпорат",
+      "summary": "Anthropic заключает крупный инфраструктурный контракт, Nscale усиливает капитал перед IPO, SpaceXAI наращивает GPU, а OpenAI раскрывает новый риск приватности агентных систем. В России Яндекс запускает продукты для бизнеса и разработки.",
       "topics": [
         "ИИ-инфраструктура",
         "Anthropic",

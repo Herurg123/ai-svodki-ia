@@ -1,0 +1,148 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-10-29",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-10-29.json",
+  "warnings": [
+    "cand-002: источник показывает дату без точного времени.",
+    "cand-011: источник показывает дату без точного времени.",
+    "cand-012: источник показывает дату без точного времени.",
+    "Одинаковые источники используются несколькими кандидатами: 2; это допустимо и будет проверено на редакторском этапе.",
+    "URL используется в нескольких кандидатах: https://www.axios.com/newsletters/axios-future-of-cybersecurity-340330d0-cf00-11f1-a1fd-f1b7e30b8d45 (cand-004, cand-012); https://www.pcgamer.com/software/ai/nvidia-and-amd-invest-billions-into-meta-as-companies-egg-each-other-on-to-bet-even-more-on-ai (cand-006, cand-011)",
+    "Исследовательский пул перегружен одним издателем: openai (5), techcrunch (6)",
+    "Исследовательский пул перегружен одной организацией: openai (6)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-10-29",
+  "started_at": "2026-10-29T02:15:22+00:00",
+  "finished_at": "2026-10-29T02:16:08+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 103,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "eca9c97db78b00789e8d211bad4915ea84645f0bb2267b8a1690f3cda46e35c9",
+    "candidates_sha256": "4cb55189f3e2e32d8bdf251ea5b79defc18b211056e2d97aeb62d6f7c5fe5914",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-10-27T05:06:35+03:00",
+      "end_at": "2026-10-29T05:06:38+03:00",
+      "latest_archive_at": "2026-10-28T05:06:35+03:00",
+      "start_date": "2026-10-27",
+      "end_date": "2026-10-29",
+      "latest_archive_date": "2026-10-28"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "7e49dbd4fd44f1079517aae9cfb33587a4f784a3e08f5354f17e75ccef7f526e",
+    "editorial_sha256": "6a4c2a0b645495f1a5de33966abdc175c285c34fe15d2e6c3b730fc2dde09370",
+    "digest_sha256": "27818d24d87a224ffde559ff287dc4f8639cc4dbff842b060cf6f2205c2503f9",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-10-29.jpg",
+          "normalized_value": "ai-svodka-2026-10-29.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Пять выбранных сюжетов TechCrunch описывают независимые события у разных организаций и в разных слоях рынка — финансы Microsoft/OpenAI, инцидент Anthropic, реклама AI Search, enterprise-аналитика Claude, платформенные интеграции Google и speech-модель NVIDIA. В коротком, но содержательном пуле их исключение ради формального лимита сократило бы выпуск ниже полезного охвата ключевых направлений."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0ea75dca33aff6fa016ae2ac3b9a8087d1a8c859cc09c94b7c",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 213284,
+        "input_tokens_details": {
+          "cache_write_tokens": 23792,
+          "cached_tokens": 189489,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 23792
+          }
+        },
+        "output_tokens": 4689,
+        "output_tokens_details": {
+          "reasoning_tokens": 818
+        },
+        "total_tokens": 217973
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-10-29/resp_0ea75dca33aff6fa016ae2ac3b9a8087d1a8c859cc09c94b7c.json"
+  },
+  "total_usage": {
+    "input_tokens": 213284,
+    "output_tokens": 4689,
+    "total_tokens": 217973,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "ebd9ce05caa02135c89bcb7805e984c7dfe32773",
+    "run_id": "40804252969",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-10-29T05:06:38+03:00"
+}

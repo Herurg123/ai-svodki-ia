@@ -1,0 +1,35 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-004",
+    "cand-005",
+    "cand-006",
+    "cand-007",
+    "cand-008",
+    "cand-010",
+    "cand-019"
+  ],
+  "excluded_candidate_ids": [
+    "cand-002",
+    "cand-003",
+    "cand-009",
+    "cand-011",
+    "cand-012",
+    "cand-013",
+    "cand-014",
+    "cand-015",
+    "cand-016",
+    "cand-017",
+    "cand-018"
+  ],
+  "selection_summary": "Выбраны восемь подтверждённых свежих и самостоятельных сюжетов: экономика партнёрства Microsoft и OpenAI, инцидент безопасности Anthropic, монетизация ИИ-поиска Google, инфраструктурное партнёрство AMD и Meta, контроль ROI Claude, платформа интеграций Google, открытая speech-модель NVIDIA и крупное финансирование инфраструктуры Broadcom для Anthropic. Исключены слабее раскрытые source-pulse-кейсы, инкрементальный релиз Claude Code, дублирующее раскрытие Azure, старый перепечатанный сюжет NVIDIA–Meta и кандидаты с недостаточной проверяемостью либо рекомендацией exclude.",
+  "diversity_overrides": [
+    {
+      "type": "publisher",
+      "value": "TechCrunch",
+      "reason": "Пять выбранных сюжетов TechCrunch описывают независимые события у разных организаций и в разных слоях рынка — финансы Microsoft/OpenAI, инцидент Anthropic, реклама AI Search, enterprise-аналитика Claude, платформенные интеграции Google и speech-модель NVIDIA. В коротком, но содержательном пуле их исключение ради формального лимита сократило бы выпуск ниже полезного охвата ключевых направлений."
+    }
+  ]
+}
