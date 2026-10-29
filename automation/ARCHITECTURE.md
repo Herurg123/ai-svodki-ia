@@ -555,47 +555,63 @@ Remote safety contract:
   оставшиеся старые assets;
 - скрипт не читает RSS, local worker state или OpenAI API.
 
-### Однодневный независимый Editorial shadow на 29.10.2026
+### Ежедневный независимый Editorial shadow Sol 6.1 (с 30.10.2026)
 
-После успешных штатных `production` **и** `deploy` 29 октября 2026 GitHub
-job `sol61_editorial_shadow_oct29` однократно запускает `gpt-6.1-sol`.
-Это **не новый поисковый этап**: получает исходный финальный
-`2026-10-29/candidates.json` из оригинального `daily-production-2026-10-29`
-artifact именно этого run, а допубликационный archive + editorial policy из
-точного `needs.gate.outputs.main_sha`. В API-запрос Sol передаются только
-кандидаты (сжаты без потери ID), редакционные правила и сокращённый
-предшествующий архив; **ни один Terra selected_candidate_id, её editorial-output,
-stories.json или опубликованная статья не доступны Sol до ответа**.
-После завершённого ответа детерминистический comparator загружает исходный
-`editorial-output-raw.json` Terra и фиксирует пересечение, Terra-only,
-Sol-only и complete original bytes обеих сторон. Не путать эту редакционную
-независимость с независимым исследованием: research pool создан Terra.
+Штатный `production` остаётся полностью на `gpt-5.6-terra`: те же
+Primary/Hybrid/Coverage/Editorial, validators, Image API, git commit и FTP.
+После **успешных** `production` и `deploy` отдельный read-only job
+`sol61_editorial_shadow` может вызвать `gpt-6.1-sol` ровно один раз
+за **новую дату выпуска**. Это редакционное сравнение, а не параллельный поиск
+и не дополнительный редактор, влияющий на опубликованную статью.
 
-Job не изменяет Article/RSS/Archive/Git и не влияет на решение о публикации:
-read-only permission, нет Image или Web Search, только один
-Responses API вызов с `store=false`, `reasoning=medium`,
-`max_output_tokens=4000`, `max_retries=0`, timeout 150 с.
-Вход Sol целиком (system + data) ограничен **30 000 UTF-8 байт**;
-при превышении лимита job выдаёт диагностику и **не выполняет API-запрос**.
-Записываются строгая схема решения по каждому кандидату, response raw,
-usage/service_tier, frozen input hashes, неизменённый полный кандидатский JSON,
-оригинальное редакторское решение Terra и manifest SHA-256.
-Artifact `sol61-independent-editorial-2026-10-29`, retention 30 дней.
+Источник истины: оригинальный `daily-production-<date>` artifact именно
+этого GitHub Actions run. Берётся финальный валидированный `candidates.json`
+Terra; редакционные правила и предшествующий архив из immutable SHA
+`needs.gate.outputs.main_sha` (до создания сегодняшнего выпуска).
+В Sol-запрос идут **все candidate IDs** и их компактные подтверждённые
+поля, сокращённая история и правила. Как и в успешном one-shot 29.10,
+это **не полный** текст исходного Editorial prompt Terra.
+`editorial-output-raw.json`, выбранные ID, статьи и `stories.json`
+Terra не читаются и не поступают в запрос **до получения** ответа Sol.
+Это независимый редактор на одном общем исследовательском пуле, но не
+независимый исследователь новостей. Только после ответа Sol локальный
+comparator читает raw Editorial Terra и составляет both, Terra-only,
+Sol-only, excluded-by-both, обоснования и сохранённые bytes источников.
 
-Activation: **только** для `publication_date=2026-10-29`, первая attempt,
-при `needs.production.outputs.publish=true` и успешном deploy.
-Поддерживаются native schedule и ранняя backup `workflow_dispatch` публикация,
-но уже опубликованный выпуск не приводит к новому эксперименту.
-Безусловный переключатель: задать GitHub Actions repository variable
-`SOL_EDITORIAL_AUDIT_ENABLED=false` для пропуска job **до начала**.
-При отсутствии переменной допускается только 29 октября; 30 октября и далее
-job не запускается. Не повторять успешный workflow ради повторного Sol:
-из-за `github.run_attempt==1` повторный attempt не запускает shadow.
-Сбой Sol допускает единственный warning / evidence, не останавливая production.
-После проверки исходного artifact можно удалить one-shot job/script/tests
-одним cleanup PR. Дальнейшее внедрение Sol в редакторское решение **не
-одобрено** этим временным наблюдательным опытом.
+Сохраняются прежние ограничения: read-only permissions, 0 Web Search,
+0 инструментальных вызовов, 0 изменений публикации, ровно один
+`responses.create`, `gpt-6.1-sol`, `reasoning=medium`,
+`max_output_tokens=4000`, `max_retries=0`, `store=false`,
+timeout 150 секунд, до **30 000 UTF-8 байт** system+input.
+При превышении входа, неверной дате, некорректном research или модели,
+отсутствующем API-ключе, ошибке API — no-retry warning/evidence;
+даже сбой job не меняет статус основной публикации.
+Фактические токены и `service_tier` сохраняются; отсутствие текстовой
+платы 29.10 **не гарантирует** льготный учёт в следующие дни.
 
+Job активен только после успешного publish + deploy, на первой
+`github.run_attempt == 1`, для текущего календарного дня по
+`Europe/Moscow`, начиная с 30.10.2026. Manual backup
+`workflow_dispatch` может завершить выпуск раньше нативного schedule;
+после опубликованного RSS основной gate не допускает повторной публикации
+или второй Sol. Старые `publication_date` не запускают Sol API.
+Никаких собственных cron или дополнительных GitHub writer.
+Emergency off (без PR): установить GitHub Actions repository variable
+`SOL_EDITORIAL_AUDIT_ENABLED=false` до начала shadow job.
+
+Каждому дню соответствует отдельный artifact
+`sol61-independent-editorial-<date>` с retention 30 дней:
+оригинальный весь `candidates.json`, оригинальный Editorial Terra,
+исходный текст Sol (и raw провайдерный ответ), независимый JSON-выбор,
+usage/service tier, freeze manifest + SHA-256 файлов и отчёт сравнения.
+Для долгосрочного сравнения оригинальные ZIP нужно скачать до истечения
+retention; не восстанавливать их из вторичных отчётов.
+После достаточного числа ручных оценок пользователь решит, сохранять ли
+эту опциональную стадию. Вмешательство Sol в publish запрещено.
+
+**История:** однодневный опыт 29.10.2026 и его протокол
+`automation/audits/experiments/2026-10-29-sol61-editorial-shadow/PLAN.md`
+остаются неизменёнными; recurring stage — отдельное последующее решение.
 
 ## 5. Nightly production и временная непрерывность
 
