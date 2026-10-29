@@ -10,6 +10,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
+TEST_DAY = "2026-10-30"
 sys.path.insert(0, str(ROOT / "automation" / "scripts"))
 import sol61_editorial_shadow_once as sol
 
@@ -35,7 +36,7 @@ class Sol61EditorialShadowTests(unittest.TestCase):
         self.addCleanup(temp.cleanup)
         self.base = Path(temp.name)
         self.artifact = self.base / "baseline"
-        self.day = self.artifact / sol.DAY
+        self.day = self.artifact / TEST_DAY
         self.day.mkdir(parents=True)
         self.archive = self.base / "archive.json"
         self.policy = self.base / "policy.json"
@@ -54,14 +55,14 @@ class Sol61EditorialShadowTests(unittest.TestCase):
             for i in range(1, 7)
         ]
         sol.save(self.day / "candidates.json", {
-            "publication_date": sol.DAY, "status": "ok", "candidates": self.items,
+            "publication_date": TEST_DAY, "status": "ok", "candidates": self.items,
         })
         sol.save(self.day / "editorial-output-raw.json", {
             "status": "ok", "selected_candidate_ids": ["cand-001", "cand-003"],
             "selection_summary": "SECRET_TERRA_DECISION_NEVER_SEND",
         })
         sol.save(self.day / "run-info.json", {
-            "status": "ok", "publication_date": sol.DAY, "model_requested": sol.TERRA,
+            "status": "ok", "publication_date": TEST_DAY, "model_requested": sol.TERRA,
         })
         sol.save(self.archive, {
             "items": [{"date": "2026-10-28",
@@ -87,8 +88,8 @@ class Sol61EditorialShadowTests(unittest.TestCase):
 
     def perform(self):
         with patch.dict(os.environ, {"GITHUB_RUN_ATTEMPT": "1",
-                                     "AI_DIGEST_PUBLICATION_DATE": sol.DAY}):
-            return sol.run(artifact=self.artifact, archive_path=self.archive,
+                                     "AI_DIGEST_PUBLICATION_DATE": TEST_DAY}), patch.object(sol, "current_moscow_day", return_value=TEST_DAY):
+            return sol.run(publication_date=TEST_DAY, artifact=self.artifact, archive_path=self.archive,
                            policy_path=self.policy, output=self.output, client=self.client)
 
     def test_one_mock_request_independent_of_terra_and_original_files_unchanged(self):
@@ -123,12 +124,12 @@ class Sol61EditorialShadowTests(unittest.TestCase):
 
     def test_no_paid_call_on_wrong_date_or_wrong_baseline(self):
         source = sol.load(self.day / "candidates.json")
-        source["publication_date"] = "2026-10-30"
+        source["publication_date"] = "2026-10-31"
         sol.save(self.day / "candidates.json", source)
-        with self.assertRaisesRegex(ValueError, "one-day"):
+        with self.assertRaisesRegex(ValueError, "current publication date"):
             self.perform()
         self.assertFalse(self.fake.calls)
-        source["publication_date"] = sol.DAY
+        source["publication_date"] = TEST_DAY
         sol.save(self.day / "candidates.json", source)
         baseline = sol.load(self.day / "run-info.json")
         baseline["model_requested"] = sol.SOL
@@ -138,9 +139,9 @@ class Sol61EditorialShadowTests(unittest.TestCase):
         self.assertFalse(self.fake.calls)
 
     def test_rerun_never_spends(self):
-        with patch.dict(os.environ, {"GITHUB_RUN_ATTEMPT": "2"}):
+        with patch.dict(os.environ, {"GITHUB_RUN_ATTEMPT": "2"}), patch.object(sol, "current_moscow_day", return_value=TEST_DAY):
             with self.assertRaisesRegex(ValueError, "rerun"):
-                sol.run(artifact=self.artifact, archive_path=self.archive,
+                sol.run(publication_date=TEST_DAY, artifact=self.artifact, archive_path=self.archive,
                         policy_path=self.policy, output=self.output, client=self.client)
         self.assertEqual(len(self.fake.calls), 0)
 
@@ -157,28 +158,60 @@ class Sol61EditorialShadowTests(unittest.TestCase):
     def test_full_candidate_set_and_prompt_bytes(self):
         ids = [c["id"] for c in self.items]
         prompt, got = sol.build_request(sol.load(self.day / "candidates.json"),
-                                        sol.load(self.archive), sol.load(self.policy))
+                                        sol.load(self.archive), sol.load(self.policy), TEST_DAY)
         self.assertEqual(ids, got)
         self.assertNotIn("selected_candidate_ids", prompt)
         self.assertLessEqual(len((sol.SYSTEM + prompt).encode("utf-8")), sol.MAX_PROMPT_BYTES)
 
-    def test_workflow_one_day_only_and_opt_out(self):
-        wf = (ROOT / ".github/workflows/daily-production.yml").read_text(encoding="utf-8")
-        block = wf.split("  sol61_editorial_shadow_oct29:\n", 1)[1].split("  final_status:\n", 1)[0]
+    def test_workflow_daily_after_terra_publish_and_opt_out(self):
+        wf = (ROOT / ".github" / "workflows" / "daily-production.yml").read_text(encoding="utf-8")
+        block = wf.split("  sol61_editorial_shadow:\n", 1)[1].split("  final_status:\n", 1)[0]
         for marker in (
-            "needs.gate.outputs.publication_date == '2026-10-29'",
             "vars.SOL_EDITORIAL_AUDIT_ENABLED != 'false'",
             "needs.deploy.result == 'success'",
             "needs.production.outputs.publish == 'true'",
-            "github.run_attempt == 1", "needs.gate.outputs.main_sha",
-            "run-id: @@{ github.run_id }}",
+            "github.run_attempt == 1",
+            "needs.gate.outputs.main_sha",
+            "run-id: ${{ github.run_id }}",
+            "name: daily-production-${{ needs.gate.outputs.publication_date }}",
+            "name: sol61-independent-editorial-${{ needs.gate.outputs.publication_date }}",
+            "AI_DIGEST_PUBLICATION_DATE: ${{ needs.gate.outputs.publication_date }}",
+            "--publication-date \"${AI_DIGEST_PUBLICATION_DATE}\"",
+            "continue-on-error: true",
         ):
-            self.assertIn(marker.replace("@@{", "$" + "{{"), block)
+            self.assertIn(marker, block)
         for forbidden in ("contents: write", "push_protected_main.sh",
                           "generate_production_cover.py", "Commit production release",
-                          "force_fresh_research", "2026-10-30"):
+                          "force_fresh_research", "2026-10-29"):
             self.assertNotIn(forbidden, block)
         self.assertEqual(wf.count('cron: "17 23 * * *"'), 1)
+
+    def test_old_day_and_historical_date_rejected_without_request(self):
+        with patch.object(sol, "current_moscow_day", return_value="2026-10-30"):
+            with self.assertRaisesRegex(ValueError, "earlier one-shot"):
+                sol.validate_publication_date("2026-10-29")
+        with patch.object(sol, "current_moscow_day", return_value="2026-10-31"):
+            with self.assertRaisesRegex(ValueError, "Only current Moscow"):
+                sol.validate_publication_date("2026-10-30")
+        self.assertEqual(self.fake.calls, [])
+
+    def test_next_day_saves_separate_original_evidence(self):
+        nextday = "2026-10-31"
+        day = self.artifact / nextday
+        day.mkdir()
+        for name in ("candidates.json", "editorial-output-raw.json", "run-info.json"):
+            item = sol.load(self.day / name)
+            if name != "editorial-output-raw.json":
+                item["publication_date"] = nextday
+            sol.save(day / name, item)
+        with patch.dict(os.environ, {"GITHUB_RUN_ATTEMPT": "1",
+                                     "AI_DIGEST_PUBLICATION_DATE": nextday}), patch.object(sol, "current_moscow_day", return_value=nextday):
+            result = sol.run(publication_date=nextday, artifact=self.artifact,
+                             archive_path=self.archive, policy_path=self.policy,
+                             output=self.output, client=self.client)
+        self.assertEqual(result["publication_date"], nextday)
+        self.assertEqual(sol.load(self.output / "manifest.json")["publication_date"], nextday)
+        self.assertEqual(len(self.fake.calls), 1)
 
 
 if __name__ == "__main__":
