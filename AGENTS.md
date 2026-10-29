@@ -9,16 +9,23 @@ This file is prescriptive. Do not copy detailed current-state implementation
 narratives here when they already belong in `automation/ARCHITECTURE.md`, a
 specification, or a subproject document.
 
-## One-day Sol editorial shadow guard (2026-10-29)
+## Daily read-only Sol editorial shadow guard (since 2026-10-30)
 
-The only authorized Sol 6.1 production-adjacent run is a **read-only**
-editorial comparison after successfully published Terra 5.6 on 29 October.
-It must not gain write permissions, search tools, publish rights, access to
-Terra's editorial choice before its response, retries or further dates.
-Keep original provider output and cost/usage metadata intact. Emergency off
-switch: set GitHub Actions variable `SOL_EDITORIAL_AUDIT_ENABLED=false`.
-Its default implicit on-state applies **only 2026-10-29**; delete the one-shot
-mechanism after preserving the original experiment artifact, via PR.
+The optional daily Sol 6.1 stage is **only** an independent editorial
+selection, after Terra 5.6 has successfully published and deployed a
+new daily digest. Do not give Sol search tools, publication authority,
+write permissions, retries, or access to Terra editorial choices before
+Sol's response. Keep complete original input evidence and provider
+output plus service-tier/usage records in a per-date artifact.
+Require the current Europe/Moscow calendar publication date and the first
+GitHub run attempt; never backfill a past day's paid Sol request.
+A failed Sol audit must never block Terra production or change RSS.
+One call per new released day with bounded input/output; the incentive tier
+is not a guaranteed free price. Owner can immediately disable future Sol
+jobs without a PR by setting GitHub Actions repository variable
+`SOL_EDITORIAL_AUDIT_ENABLED=false`. Historical 2026-10-29 one-shot
+evidence remains immutable; the present daily role may be reassessed
+after manual comparison of several days.
 
 ## Documentation ownership
 
