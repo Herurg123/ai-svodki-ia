@@ -1025,8 +1025,8 @@ jobs:
     with:
       ref: ${{ needs.production.outputs.commit_sha }}
     secrets: inherit
-  sol61_editorial_shadow_oct29:
-    name: Sol 6.1 независимый редактор, однократно 29 октября (не влияет на публикацию)
+  sol61_editorial_shadow:
+    name: Sol 6.1 независимый редактор, ежедневно (не влияет на публикацию)
     needs:
       - gate
       - production
@@ -1035,7 +1035,6 @@ jobs:
       github.run_attempt == 1 &&
       github.ref == 'refs/heads/main' &&
       needs.gate.result == 'success' &&
-      needs.gate.outputs.publication_date == '2026-10-29' &&
       needs.production.result == 'success' &&
       needs.production.outputs.publish == 'true' &&
       needs.production.outputs.commit_sha != '' &&
@@ -1049,11 +1048,11 @@ jobs:
       actions: read
       contents: read
     concurrency:
-      group: sol61-independent-editorial-2026-10-29
+      group: sol61-independent-editorial-${{ needs.gate.outputs.publication_date }}
       cancel-in-progress: false
     env:
       PYTHONUNBUFFERED: "1"
-      AI_DIGEST_PUBLICATION_DATE: "2026-10-29"
+      AI_DIGEST_PUBLICATION_DATE: ${{ needs.gate.outputs.publication_date }}
       SOL_BASELINE_SHA: ${{ needs.gate.outputs.main_sha }}
     steps:
       - name: Получить исходный main до штатной публикации
@@ -1069,7 +1068,7 @@ jobs:
       - name: Скачать исходный production artifact именно этого запуска
         uses: actions/download-artifact@v8
         with:
-          name: daily-production-2026-10-29
+          name: daily-production-${{ needs.gate.outputs.publication_date }}
           path: automation/sol61-reference
           run-id: ${{ github.run_id }}
           github-token: ${{ github.token }}
@@ -1089,16 +1088,17 @@ jobs:
         run: |
           set -euo pipefail
           python automation/scripts/sol61_editorial_shadow_once.py \
+            --publication-date "${AI_DIGEST_PUBLICATION_DATE}" \
             --artifact automation/sol61-reference \
             --archive automation/archive/index.json \
             --policy automation/config/editorial.json \
-            --output automation/preview/sol61-editorial-2026-10-29
+            --output "automation/preview/sol61-editorial-${AI_DIGEST_PUBLICATION_DATE}"
       - name: Сохранить оригинальное решение и сравнение, включая ошибку
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: sol61-independent-editorial-2026-10-29
-          path: automation/preview/sol61-editorial-2026-10-29/
+          name: sol61-independent-editorial-${{ needs.gate.outputs.publication_date }}
+          path: automation/preview/sol61-editorial-${{ needs.gate.outputs.publication_date }}/
           retention-days: 30
           if-no-files-found: warn
       - name: Итог Sol в Actions Summary
@@ -1106,15 +1106,15 @@ jobs:
         shell: bash
         run: |
           {
-            echo "## Независимый редактор Sol 6.1: 29 октября"
+            echo "## Независимый редактор Sol 6.1: ${AI_DIGEST_PUBLICATION_DATE}"
             echo
             echo "- Terra 5.6 выпустила сводку независимо; Sol не меняла сайт, RSS или Git."
             echo "- Вход Sol: тот же сохранённый финальный candidate pool и архив до выпуска."
             echo "- Sol не видела selection Terra до своего ответа."
             echo "- Один запрос gpt-6.1-sol (medium), без инструментов/поиска/обложки, max_output_tokens 4000, max_retries=0."
-            echo "- Артефакт: sol61-independent-editorial-2026-10-29"
-            echo "- Управление: SOL_EDITORIAL_AUDIT_ENABLED=false; эксперимент автоматически не выполняется после 29 октября."
-            if [[ -f automation/preview/sol61-editorial-2026-10-29/terra-vs-sol-editorial-comparison.json ]]; then
+            echo "- Артефакт: sol61-independent-editorial-${AI_DIGEST_PUBLICATION_DATE}"
+            echo "- Управление: SOL_EDITORIAL_AUDIT_ENABLED=false; нет повторов и дополнительных поисков."
+            if [[ -f "automation/preview/sol61-editorial-${AI_DIGEST_PUBLICATION_DATE}/terra-vs-sol-editorial-comparison.json" ]]; then
               echo "- **Статус:** сравнение сохранено."
             else
               echo "- **Статус:** сравнение не завершено; см. shadow-error.json, production не затронут."
