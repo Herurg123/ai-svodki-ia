@@ -54,17 +54,18 @@ GitHub Actions ZIP, их SHA-256 и сроки хранения.
 и [проверочный скрипт](automation/audits/experiments/terra-sol-primary-2026-10-22-24/verify_original_zips.py),
 а не восстановленные из отчётов JSON.
 
-## Однодневный независимый редакторский тест 29 октября
+## Независимое редакторское сравнение Terra и Sol
 
-29 октября 2026 после успешной публикации Terra 5.6 допускается единственный
-**непубликующий** редакторский проход `gpt-6.1-sol` на **том же сохранённом
-пуле новостей**, без Web Search, с независимым выбором и отдельным
-сравнением в GitHub Actions Artifact. Terra 5.6 остаётся единственной
-production-моделью. Для немедленного отключения достаточно установить
-repository Actions variable `SOL_EDITORIAL_AUDIT_ENABLED=false`; после
-29 октября job автоматически отключается по дате. Методика и ограничения:
-[архитектура](automation/ARCHITECTURE.md) и
-[план эксперимента](automation/audits/experiments/2026-10-29-sol61-editorial-shadow/PLAN.md).
+После успешного штатного выпуска Terra 5.6, начиная с 30.10.2026,
+дополнительно запускается **непубликующий** редактор `gpt-6.1-sol`.
+Он получает тот же финальный пул кандидатов в компактном виде, независимо
+выбирает сюжеты без Web Search и сохраняет оба выбора с оригинальными
+файлами, Usage и SHA-256 в отдельном GitHub Actions Artifact. Влияния
+на сайт, FTP, RSS, поисковый алгоритм и редактуру Terra нет.
+Переключатель отключения без PR: Actions variable
+`SOL_EDITORIAL_AUDIT_ENABLED=false`. Стоимость токенов может измениться
+при исчерпании льготы. Полный контракт: [ARCHITECTURE](automation/ARCHITECTURE.md).
+История первого теста 29 октября: [PLAN](automation/audits/experiments/2026-10-29-sol61-editorial-shadow/PLAN.md).
 
 ## Основные части
 

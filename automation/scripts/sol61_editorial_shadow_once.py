@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One-day, read-only independent editorial selection on Terra's final candidate pool.
+"""Daily, read-only independent editorial selection on Terra's final candidate pool.
 
 The Sol request NEVER reads Terra's editorial output, stories or publication.
 Everything after the response is a local deterministic comparison. No search,
@@ -14,8 +14,10 @@ import os
 import sys
 from pathlib import Path
 from typing import Any
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 
-DAY = "2026-10-29"
+FIRST_RECURRING_DAY = date(2026, 10, 30)
 TERRA = "gpt-5.6-terra"
 SOL = "gpt-6.1-sol"
 MAX_PROMPT_BYTES = 30000
@@ -135,9 +137,25 @@ def archive_rows(archive: dict[str, Any], count: int) -> list[dict[str, Any]]:
     return rows
 
 
-def build_request(candidates: dict[str, Any], archive: dict[str, Any], policy: dict[str, Any]) -> tuple[str, list[str]]:
-    if candidates.get("publication_date") != DAY or candidates.get("status") != "ok":
-        raise ValueError("Candidate data do not match the one-day experiment")
+def current_moscow_day() -> str:
+    return datetime.now(ZoneInfo("Europe/Moscow")).date().isoformat()
+
+
+def validate_publication_date(publication_date: str) -> None:
+    try:
+        parsed = date.fromisoformat(publication_date)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Invalid publication date") from exc
+    if parsed < FIRST_RECURRING_DAY:
+        raise ValueError("Recurring Sol audit cannot replay the earlier one-shot experiment")
+    if publication_date != current_moscow_day():
+        raise ValueError("Only current Moscow publication date is eligible for the Sol audit")
+
+
+def build_request(candidates: dict[str, Any], archive: dict[str, Any], policy: dict[str, Any],
+                  publication_date: str) -> tuple[str, list[str]]:
+    if candidates.get("publication_date") != publication_date or candidates.get("status") != "ok":
+        raise ValueError("Candidate data do not match the current publication date")
     source_rows = candidates.get("candidates")
     if not isinstance(source_rows, list) or not (1 <= len(source_rows) <= 20):
         raise ValueError("Invalid complete candidate pool")
@@ -158,7 +176,7 @@ def build_request(candidates: dict[str, Any], archive: dict[str, Any], policy: d
     # reduce historical context, not the candidates or their identity.
     for previous in (6, 3, 1, 0):
         request = {
-            "publication_date": DAY,
+            "publication_date": publication_date,
             "candidates": rows,
             "prior_archive": archive_rows(archive, previous),
             "editorial_rules": rules,
@@ -187,14 +205,14 @@ def check_result(value: Any, ids: list[str]) -> list[str]:
     return selected
 
 
-def comparison(terra: dict[str, Any], sol: dict[str, Any], ids: list[str]) -> dict[str, Any]:
+def comparison(terra: dict[str, Any], sol: dict[str, Any], ids: list[str], publication_date: str) -> dict[str, Any]:
     terra_ids = terra.get("selected_candidate_ids")
     if terra.get("status") != "ok" or not isinstance(terra_ids, list) or not set(terra_ids) <= set(ids):
         raise ValueError("Terra editorial missing or inconsistent with final candidate pool")
     sol_ids = check_result(sol, ids)
     a, b = set(terra_ids), set(sol_ids)
     return {
-        "publication_date": DAY,
+        "publication_date": publication_date,
         "terra_model": TERRA,
         "sol_model": SOL,
         "pool_ids": ids,
@@ -208,33 +226,35 @@ def comparison(terra: dict[str, Any], sol: dict[str, Any], ids: list[str]) -> di
     }
 
 
-def run(*, artifact: Path, archive_path: Path, policy_path: Path, output: Path, client: Any) -> dict[str, Any]:
+def run(*, publication_date: str, artifact: Path, archive_path: Path, policy_path: Path,
+        output: Path, client: Any) -> dict[str, Any]:
+    validate_publication_date(publication_date)
     if os.getenv("GITHUB_RUN_ATTEMPT", "1") != "1":
         raise ValueError("A rerun may not incur a second paid API call")
-    if os.getenv("AI_DIGEST_PUBLICATION_DATE") not in (None, DAY):
+    if os.getenv("AI_DIGEST_PUBLICATION_DATE") not in (None, publication_date):
         raise ValueError("Unexpected publication date")
     if output.exists() and any(output.iterdir()):
         raise ValueError("Sol output directory already contains evidence; refuse duplicate paid run")
-    candidate_file = artifact / DAY / "candidates.json"
-    terra_file = artifact / DAY / "editorial-output-raw.json"
-    info_file = artifact / DAY / "run-info.json"
+    candidate_file = artifact / publication_date / "candidates.json"
+    terra_file = artifact / publication_date / "editorial-output-raw.json"
+    info_file = artifact / publication_date / "run-info.json"
     if not (candidate_file.is_file() and terra_file.is_file() and info_file.is_file()):
         raise ValueError("Saved production files are missing; no paid call")
     info = load(info_file)
-    if info.get("model_requested") != TERRA or info.get("publication_date") != DAY or info.get("status") != "ok":
+    if info.get("model_requested") != TERRA or info.get("publication_date") != publication_date or info.get("status") != "ok":
         raise ValueError("Saved Terra editorial provenance invalid")
     if not archive_path.is_file() or not policy_path.is_file():
         raise ValueError("Historical archive or editorial policy absent")
     raw = candidate_file.read_bytes()
     archive_raw = archive_path.read_bytes()
     policy_raw = policy_path.read_bytes()
-    prompt, ids = build_request(json.loads(raw), json.loads(archive_raw), json.loads(policy_raw))
+    prompt, ids = build_request(json.loads(raw), json.loads(archive_raw), json.loads(policy_raw), publication_date)
     output.mkdir(parents=True, exist_ok=True)
     (output / "sol-request.txt").write_text(SYSTEM + "\n\n" + prompt + "\n", encoding="utf-8")
     # Preserve the exact complete final research pool, not only its compact projection.
     (output / "terra-frozen-candidates-original.json").write_bytes(raw)
     save(output / "frozen-input.json", {
-        "publication_date": DAY, "model": SOL,
+        "publication_date": publication_date, "model": SOL,
         "candidate_sha256": sha256(raw),
         "archive_sha256": sha256(archive_raw),
         "editorial_policy_sha256": sha256(policy_raw),
@@ -278,14 +298,14 @@ def run(*, artifact: Path, archive_path: Path, policy_path: Path, output: Path, 
     # Only after Sol completed do we inspect Terra's editorial choice.
     (output / "terra-editorial-original.json").write_bytes(terra_file.read_bytes())
     baseline = load(terra_file)
-    compared = comparison(baseline, sol, ids)
+    compared = comparison(baseline, sol, ids, publication_date)
     compared["terra_selection_summary"] = baseline.get("selection_summary")
     compared["terra_editorial_sha256"] = sha256(terra_file.read_bytes())
     compared["terra_excluded_candidate_ids"] = baseline.get("excluded_candidate_ids")
     compared["sol_selection_summary"] = sol.get("selection_summary")
     save(output / "terra-vs-sol-editorial-comparison.json", compared)
     save(output / "manifest.json", {
-        "status": "complete", "publication_date": DAY, "model": SOL,
+        "status": "complete", "publication_date": publication_date, "model": SOL,
         "selected_count": len(sol_ids), "terra_selected_count": len(compared["terra_selected_candidate_ids"]),
         "files_sha256": {
             x.name: sha256(x.read_bytes()) for x in sorted(output.iterdir())
@@ -297,6 +317,7 @@ def run(*, artifact: Path, archive_path: Path, policy_path: Path, output: Path, 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--publication-date", required=True)
     parser.add_argument("--artifact", type=Path, required=True)
     parser.add_argument("--archive", type=Path, required=True)
     parser.add_argument("--policy", type=Path, required=True)
@@ -308,7 +329,8 @@ def main() -> int:
         # Strictly one provider attempt, even on rate limit/timeout.
         from openai import OpenAI
         client = OpenAI(api_key=os.environ["OPENAI_API_KEY"], max_retries=0, timeout=150)
-        result = run(artifact=args.artifact, archive_path=args.archive, policy_path=args.policy,
+        result = run(publication_date=args.publication_date, artifact=args.artifact,
+                     archive_path=args.archive, policy_path=args.policy,
                      output=args.output, client=client)
         print("Independent Sol selection saved; both=%d, Terra-only=%d, Sol-only=%d"
               % (len(result["selected_by_both"]), len(result["terra_only"]), len(result["sol_only"])))
@@ -317,7 +339,7 @@ def main() -> int:
         # sensitive request data. Never retry and never block a published digest.
         save(args.output / "shadow-error.json", {
             "status": "shadow_failed_or_skipped", "error_type": type(exc).__name__,
-            "publication_date": DAY, "can_publish": False,
+            "publication_date": args.publication_date, "can_publish": False,
         })
         print("::warning title=Sol editorial shadow::%s. Terra publication unaffected."
               % type(exc).__name__)
