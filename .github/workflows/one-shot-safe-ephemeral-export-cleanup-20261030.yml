@@ -1,0 +1,198 @@
+name: One-shot safe ephemeral export cleanup 2026-10-30
+on:
+  push:
+    branches:
+      - chore/retire-verified-temporary-dzen-exports-20261030
+    paths:
+      - .github/workflows/one-shot-safe-ephemeral-export-cleanup-20261030.yml
+
+permissions:
+  contents: write
+  actions: write
+  pull-requests: read
+
+concurrency:
+  group: one-shot-safe-export-cleanup-20261030
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    if: "github.event.head_commit.message == 'ops: execute approved safe cleanup 2026-10-30'"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Предварительно проверить whitelist и отсутствие активной работы
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request, urllib.parse
+          base = 'https://api.github.com/repos/' + os.environ['GITHUB_REPOSITORY']
+          headers = {'Accept':'application/vnd.github+json',
+                     'Authorization':'Bearer ' + os.environ['GITHUB_TOKEN'],
+                     'X-GitHub-Api-Version':'2022-11-28',
+                     'User-Agent':'svodki-one-shot-safe-cleanup'}
+          def get(url):
+              with urllib.request.urlopen(urllib.request.Request(base+url,headers=headers),timeout=40) as r:
+                  return json.load(r)
+          branches = {
+              'artifact/dzen-20261026-verified-overlay-v3':'525c57ae50960a6497d60449be651db8f00d69d4',
+              'artifact/dzen-draft-resume-final-20261025':'33c223b307826da5759b5be269bacf7eea1a6ebd',
+              'artifact/dzen-draft-resume-overlay-20261025':'1c99994c2b8fe7ce7cb29ebacb6ae1a0efce2b69',
+              'artifact/dzen-draft-resume-verified-20261025':'e18edf28aca948844d5d9158fbbf24d122e339a8',
+              'artifact/dzen-published-id-speed-overlay-20261026':'fe97d9b828e62815d1e54e6b126f26ebf7425d0f',
+              'artifact/dzen-published-id-speed-overlay-v2-20261026':'5493db4fbcab7614661717645af6e67729f0f26a',
+          }
+          workflows = {
+              396616049:'.github/workflows/dzen-verified-export-v3-20261026.yml',
+              395759860:'.github/workflows/dzen-draft-final-overlay-export-20261025.yml',
+              395754005:'.github/workflows/dzen-draft-overlay-export-20261025.yml',
+              395761053:'.github/workflows/dzen-draft-verified-export-20261025.yml',
+              396614363:'.github/workflows/dzen-published-id-export-20261026.yml',
+              396615176:'.github/workflows/dzen-published-id-export-v2-20261026.yml',
+              396626225:'.github/workflows/dzen-universal-notices-overlay-20261026.yml',
+              396641758:'.github/workflows/integrated-video-updater-check-20261026.yml',
+              397374375:'.github/workflows/one-shot-retire-experiment-branches-20261026.yml',
+              392496298:'.github/workflows/sol-api-shadow-2026-10-22.yml',
+          }
+          prs = get('/pulls?state=open&per_page=100')
+          if len(prs)==100:
+              raise RuntimeError('Open PR pagination ambiguous; stop')
+          for name, expected in branches.items():
+              if any((p.get('head') or {}).get('ref')==name for p in prs):
+                  raise RuntimeError('Branch has open PR: '+name)
+              ref=get('/git/ref/heads/'+urllib.parse.quote(name,safe='/'))
+              if (ref.get('object') or {}).get('sha')!=expected:
+                  raise RuntimeError('Unexpected branch SHA: '+name)
+              print('Checked ephemeral branch:',name,expected)
+          main=get('/branches/main')['commit']['sha']
+          tree=get('/git/trees/'+main+'?recursive=1')['tree']
+          prefix='automation/audits/experiments/terra-sol-primary-2026-10-22-24/originals/'
+          original=[x for x in tree if x['path'].startswith(prefix) and x['path'].endswith('.zip') and x.get('type')=='blob']
+          if len(original)!=8:
+              raise RuntimeError('Permanent Terra/Sol originals not complete in main')
+          for ident, path in workflows.items():
+              wf=get('/actions/workflows/'+str(ident))
+              if wf.get('path')!=path:
+                  raise RuntimeError('Workflow ID/path changed: '+str(ident))
+              runs=get('/actions/workflows/'+str(ident)+'/runs?per_page=25')['workflow_runs']
+              if any(x.get('status')!='completed' for x in runs):
+                  raise RuntimeError('Workflow has noncompleted run: '+str(ident))
+              if wf.get('state') not in ('active','disabled_manually'):
+                  raise RuntimeError('Unrecognized workflow state: '+str(ident))
+              print('Checked one-shot workflow:',ident,path,wf['state'])
+          print('PASS: six branch SHA guards, ten workflow identities, no active runs, no open PR, eight original evidence ZIPs preserved')
+          PY
+
+      - name: Отключить десять завершённых одноразовых workflows без удаления результатов
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          repo="https://api.github.com/repos/${GITHUB_REPOSITORY}"
+          api() {
+            curl --fail-with-body --silent --show-error --max-time 45 \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" "$1"
+          }
+          echo "## Отключённые одноразовые workflows" >> "$GITHUB_STEP_SUMMARY"
+          while read -r ident path; do
+            state="$(api "$repo/actions/workflows/$ident" | jq -r --arg path "$path" 'if .path == $path then .state else "path_mismatch" end')"
+            if [[ "$state" == disabled_manually ]]; then
+              echo "Уже отключён: $ident ($path)"
+              continue
+            fi
+            if [[ "$state" != active ]]; then
+              echo "::error title=Прервано::Неожиданный workflow $ident: $state" >&2
+              exit 1
+            fi
+            curl --fail-with-body --silent --show-error --max-time 45 -X PUT \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "$repo/actions/workflows/$ident/disable"
+            echo "- $path (ID $ident)" >> "$GITHUB_STEP_SUMMARY"
+            echo "Отключён: $ident ($path)"
+          done <<'WORKFLOWS'
+          396616049 .github/workflows/dzen-verified-export-v3-20261026.yml
+          395759860 .github/workflows/dzen-draft-final-overlay-export-20261025.yml
+          395754005 .github/workflows/dzen-draft-overlay-export-20261025.yml
+          395761053 .github/workflows/dzen-draft-verified-export-20261025.yml
+          396614363 .github/workflows/dzen-published-id-export-20261026.yml
+          396615176 .github/workflows/dzen-published-id-export-v2-20261026.yml
+          396626225 .github/workflows/dzen-universal-notices-overlay-20261026.yml
+          396641758 .github/workflows/integrated-video-updater-check-20261026.yml
+          397374375 .github/workflows/one-shot-retire-experiment-branches-20261026.yml
+          392496298 .github/workflows/sol-api-shadow-2026-10-22.yml
+          WORKFLOWS
+
+      - name: Удалить только шесть однокоммитных export-веток по точным SHA
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          repo="https://api.github.com/repos/${GITHUB_REPOSITORY}"
+          api() {
+            curl --fail-with-body --silent --show-error --max-time 45 \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" "$1"
+          }
+          echo "## Удалённые временные ветки" >> "$GITHUB_STEP_SUMMARY"
+          while read -r name expected; do
+            actual="$(api "$repo/git/ref/heads/$name" | jq -r '.object.sha')"
+            if [[ "$actual" != "$expected" ]]; then
+              echo "::error title=Остановка::SHA изменился для $name" >&2
+              exit 1
+            fi
+            curl --fail-with-body --silent --show-error --max-time 45 -X DELETE \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "$repo/git/refs/heads/$name"
+            echo "- $name" >> "$GITHUB_STEP_SUMMARY"
+            echo "Удалена: $name"
+          done <<'BRANCHES'
+          artifact/dzen-20261026-verified-overlay-v3 525c57ae50960a6497d60449be651db8f00d69d4
+          artifact/dzen-draft-resume-final-20261025 33c223b307826da5759b5be269bacf7eea1a6ebd
+          artifact/dzen-draft-resume-overlay-20261025 1c99994c2b8fe7ce7cb29ebacb6ae1a0efce2b69
+          artifact/dzen-draft-resume-verified-20261025 e18edf28aca948844d5d9158fbbf24d122e339a8
+          artifact/dzen-published-id-speed-overlay-20261026 fe97d9b828e62815d1e54e6b126f26ebf7425d0f
+          artifact/dzen-published-id-speed-overlay-v2-20261026 5493db4fbcab7614661717645af6e67729f0f26a
+          BRANCHES
+
+      - name: Удалить служебную ветку и отключить собственный одноразовый workflow
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          repo="https://api.github.com/repos/${GITHUB_REPOSITORY}"
+          api() {
+            curl --fail-with-body --silent --show-error --max-time 45 \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" "$1"
+          }
+          name="chore/retire-verified-temporary-dzen-exports-20261030"
+          actual="$(api "$repo/git/ref/heads/$name" | jq -r '.object.sha')"
+          test "$actual" = "$GITHUB_SHA"
+          curl --fail-with-body --silent --show-error --max-time 45 -X DELETE \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "$repo/git/refs/heads/$name"
+          echo "Удалена служебная ветка: $name"
+          own="$(api "$repo/actions/workflows?per_page=100" | jq -r '.workflows[]|select(.path==".github/workflows/one-shot-safe-ephemeral-export-cleanup-20261030.yml")|.id')"
+          test -n "$own"
+          curl --fail-with-body --silent --show-error --max-time 45 -X PUT \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "$repo/actions/workflows/$own/disable"
+          echo "Отключён собственный workflow: $own" 
+          echo "- Служебная ветка и её workflow также удалены/отключены" >> "$GITHUB_STEP_SUMMARY"
