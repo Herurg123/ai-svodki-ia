@@ -1,0 +1,40 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-30",
+  "slug": "2026-10-30",
+  "title": "ИИ-Сводка на 30 октября 2026",
+  "description": "Mistral открыла веса Large 4, AWS готовит рекордные вложения в инфраструктуру, а OpenAI и Anthropic обновляют инструменты для управляемой агентной разработки.",
+  "published_at": "2026-10-30T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-30.png",
+  "topics": [
+    "Mistral Large 4",
+    "open-weight модели",
+    "AWS",
+    "ИИ-инфраструктура",
+    "Codex CLI",
+    "Claude Code",
+    "coding-агенты",
+    "Deepgram",
+    "Pipecat",
+    "voice AI",
+    "Amp",
+    "облачные Mac",
+    "Thrive Holdings",
+    "ADT"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "TechCrunch: Выбраны четыре независимых события высокой редакционной значимости из разных сегментов: open-weight модель Mistral, приобретение Daily компанией Deepgram, прогноз AWS по капзатратам и покупка ADT структурой Thrive Holdings. В коротком доступном пуле сопоставимых подтверждённых альтернатив недостаточно."
+    }
+  ]
+}

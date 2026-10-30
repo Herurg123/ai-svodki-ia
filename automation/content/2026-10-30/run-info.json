@@ -1,0 +1,150 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-10-30",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-10-30.json",
+  "warnings": [
+    "cand-016: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: openai (6), techcrunch (5)",
+    "Исследовательский пул перегружен одной организацией: openai (7)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-10-30",
+  "started_at": "2026-10-30T02:13:24+00:00",
+  "finished_at": "2026-10-30T02:14:00+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 104,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "529fe06874242ead06a38ccd741584a8ebacaa265946372608e10259009da6fd",
+    "candidates_sha256": "e3207f778e7372ff3e026962a18c86eaa13487aa91ba1f00225ffdefb1d8653a",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-10-28T05:06:38+03:00",
+      "end_at": "2026-10-30T05:06:30+03:00",
+      "latest_archive_at": "2026-10-29T05:06:38+03:00",
+      "start_date": "2026-10-28",
+      "end_date": "2026-10-30",
+      "latest_archive_date": "2026-10-29"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "6fc0df4e2d2de3aac3f676fb1d52bb35f37bfae53f6b9deceb7cb374c99192cc",
+    "editorial_sha256": "8802a894e2d1af46ba3aa32946c6b6e8467ea8381d22a0d4aabdea1c40c29fb7",
+    "digest_sha256": "5e543f7f544106da4e5b0c642b2ac597916dc9ed90db687994e990105492e587",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-10-30.png",
+          "normalized_value": "ai-svodka-2026-10-30.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "image_prompt",
+          "model_value": "Изображение 16:9: современная футуристическая редакционная обложка ежедневного аналитического выпуска, крупный и единственный читаемый текст строго: «ИИ-Сводка на 30 октября 2026».\n\nГлавные визуальные темы: семь связанных мотивов — открытая светящаяся нейросеть с расходящимися слоями весов модели, масштабный облачный дата-центр с рядами серверных стоек, голосовая звуковая волна в виде потока данных, coding-агент за терминальным рабочим столом, облачный Mac с абстрактным окном тестирования мобильного приложения, защищённый домашний датчик безопасности и файловая папка внутри чёткой защитной границы.\n\nКомпозиция: в центре — сияющее ядро ИИ-сети, вокруг него по кругу расположены семь визуальных сцен, соединённых тонкими потоками данных; в нижней зоне — панорама серверных стоек и облачной инфраструктуры, без пустых участков кадра; заголовок расположен крупно в верхней части и остаётся единственным читаемым текстом.\n\nСтиль: глубокая тёмно-синяя и графитовая палитра с бирюзовыми, белыми и янтарными акцентами, кинематографичная редакционная 3D-иллюстрация, высокая детализация, чистая геометрия, без логотипов компаний, без дополнительного текста, без водяных знаков, без мелких интерфейсных надписей, без технического имени файла, без стокового корпоративного клипарта и без узнаваемых лиц реальных людей.",
+          "normalized_value": "Изображение 16:9: современная футуристическая редакционная обложка ежедневного аналитического выпуска, крупный и единственный читаемый текст строго: «ИИ-Сводка на 30 октября 2026».\n\nГлавные визуальные темы: семь связанных мотивов — открытая светящаяся нейросеть с расходящимися слоями весов модели, масштабный облачный дата-центр с рядами серверных стоек, голосовая звуковая волна в виде потока данных, coding-агент за терминальным рабочим столом, облачный Mac с абстрактным окном тестирования мобильного приложения, защищённый домашний датчик безопасности и файловая папка внутри чёткой защитной границы.\n\nКомпозиция: в центре — сияющее ядро ИИ-сети, вокруг него по кругу расположены семь визуальных сцен, соединённых тонкими потоками данных; в нижней зоне — панорама серверных стоек и облачной инфраструктуры, без пустых участков кадра; заголовок расположен крупно в верхней части и остаётся единственным читаемым текстом.\n\nСтиль: глубокая тёмно-синяя и графитовая палитра с бирюзовыми, белыми и янтарными акцентами, кинематографичная редакционная 3D-иллюстрация, высокая детализация, чистая геометрия, без логотипов компаний, без дополнительного текста, без водяных знаков, без мелких интерфейсных надписей, без технического имени файла, без стокового корпоративного клипарта и без узнаваемых лиц реальных людей. Обязательные ограничения: без пустой половины кадра."
+        }
+      ],
+      "changed_count": 1,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "TechCrunch: Выбраны четыре независимых события высокой редакционной значимости из разных сегментов: open-weight модель Mistral, приобретение Daily компанией Deepgram, прогноз AWS по капзатратам и покупка ADT структурой Thrive Holdings. В коротком доступном пуле сопоставимых подтверждённых альтернатив недостаточно."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0bc43aef61c178d2016ae3fd453c6087d1877766e123fde9b8",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 212563,
+        "input_tokens_details": {
+          "cache_write_tokens": 20290,
+          "cached_tokens": 192270,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 20290
+          }
+        },
+        "output_tokens": 3583,
+        "output_tokens_details": {
+          "reasoning_tokens": 452
+        },
+        "total_tokens": 216146
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-10-30/resp_0bc43aef61c178d2016ae3fd453c6087d1877766e123fde9b8.json"
+  },
+  "total_usage": {
+    "input_tokens": 212563,
+    "output_tokens": 3583,
+    "total_tokens": 216146,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "6c58f3e676a4af67d16c04bb234ea3b71aa1f040",
+    "run_id": "40989608475",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-10-30T05:06:30+03:00"
+}

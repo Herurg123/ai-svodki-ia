@@ -1,0 +1,220 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Mistral открыла веса trillion-параметрической модели Mistral Large 4",
+    "organization": "Mistral AI",
+    "topic": "Open-weight frontier models; cybersecurity; sovereign AI; agentic coding; enterprise and government deployment",
+    "event_type": "model weights release",
+    "status": "new",
+    "summary": "Mistral выпустила веса Mistral Large 4 — открытой модели примерно с триллионом параметров. Компания позиционирует релиз для самостоятельного развёртывания бизнесом и государственными структурами, в том числе в задачах киберзащиты; веса доступны через Hugging Face и API.",
+    "published_at": "2026-10-29T17:00:00+00:00",
+    "published_date": "2026-10-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Mistral releases weights for its trillion-parameter AI model, targeting cybersecurity",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/29/mistral-releases-weights-for-its-trillion-parameter-ai-model-targeting-cybersecurity/"
+      }
+    ],
+    "keywords": [
+      "Mistral Large 4",
+      "ML4",
+      "Le Chonk",
+      "open weights",
+      "cybersecurity",
+      "sovereign AI",
+      "agentic coding"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "OpenAI добавила GPT-6.1 Terra в Codex CLI и улучшила работу с очередями агентов",
+    "organization": "OpenAI",
+    "topic": "CLI coding agents; Codex; GPT-6.1 Terra; multi-cloud model access; agent queues; developer workflow",
+    "event_type": "software release",
+    "status": "new",
+    "summary": "OpenAI выпустила Codex CLI rust-v0.166.0. Релиз добавляет GPT-6.1 Terra в встроенный, Google Vertex AI и Amazon Bedrock каталоги моделей, команду `codex queue --resume` для возврата к выгруженным тредам, расширенную клавиатурную навигацию и поиск по транскрипту, а также отдельную сетевую диагностику через `codex doctor --network-only`.",
+    "published_at": "2026-10-29T19:47:53+00:00",
+    "published_date": "2026-10-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI Codex repository release notes",
+        "publisher": "GitHub",
+        "url": "https://github.com/openai/codex/releases/tag/rust-v0.166.0"
+      }
+    ],
+    "keywords": [
+      "OpenAI Codex",
+      "Codex CLI",
+      "rust-v0.166.0",
+      "GPT-6.1 Terra",
+      "Vertex AI",
+      "Amazon Bedrock",
+      "queue resume"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Deepgram приобрела разработчика Pipecat Daily",
+    "organization": "Deepgram; Daily; Pipecat",
+    "topic": "Voice AI infrastructure; real-time agents; open source; M&A; speech and video pipelines",
+    "event_type": "acquisition",
+    "status": "new",
+    "summary": "Deepgram объявила о приобретении Daily, разработчика открытого фреймворка Pipecat для real-time голосовых и видео-AI-пайплайнов. Стороны не раскрыли цену сделки; Deepgram заявляет, что Pipecat останется open source, а также запускает разработанный с командой Pipecat открытый Real-Time Context Standard для голосовых агентов.",
+    "published_at": "2026-10-29T13:00:00+00:00",
+    "published_date": "2026-10-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Deepgram acquires Pipecat-maker Daily to bolster its voice AI infrastructure",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/29/deepgram-acquires-pipecat-maker-daily-to-bolster-its-voice-ai-infrastructure/"
+      }
+    ],
+    "keywords": [
+      "Deepgram",
+      "Daily",
+      "Pipecat",
+      "voice AI",
+      "real-time agents",
+      "open source",
+      "acquisition",
+      "RCS"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "AWS ожидает около $220 млрд капитальных затрат в 2026 году",
+    "organization": "Amazon; AWS",
+    "topic": "AI infrastructure; hyperscale cloud; earnings; capital expenditure; enterprise AI demand",
+    "event_type": "earnings disclosure and infrastructure investment forecast",
+    "status": "new",
+    "summary": "На квартальном звонке Amazon Энди Джасси заявил, что компания ожидает около $220 млрд cash capex в 2026 году, преимущественно для AWS, и намерена тратить ещё больше в 2027-м. AWS сообщила о 39% годовом росте выручки; Джасси прогнозирует рост более чем на 40% в 2027 и 2028 годах на фоне спроса на AI- и core-cloud workloads.",
+    "published_at": "2026-10-29T23:42:22+00:00",
+    "published_date": "2026-10-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "AWS will be a $1T business, Jassy says. But first, it will spend big.",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/29/aws-will-be-a-1t-business-jassy-says-but-first-it-will-spend-big/"
+      }
+    ],
+    "keywords": [
+      "AWS",
+      "Amazon",
+      "AI infrastructure",
+      "capex",
+      "cloud",
+      "earnings",
+      "Andy Jassy"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Amp дала coding-агенту облачные Mac для разработки iOS и macOS",
+    "organization": "Sourcegraph; Amp",
+    "topic": "AI coding agents; cloud development environments; macOS; Xcode; iOS testing; autonomous testing",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "Amp объявила beta-функцию macOS Satellites: агентный workflow продолжает работать на Linux-orb, но при необходимости автоматически подключает свежий облачный Mac с Xcode и симуляторами для сборки, запуска, проверки интерфейса и тестирования macOS/iOS-приложений. Экран, логи, сборки и результаты тестов возвращаются в рабочий поток агента.",
+    "published_at": "2026-10-29T05:30:00+00:00",
+    "published_date": "2026-10-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "macOS Satellites",
+        "publisher": "Amp",
+        "url": "https://ampcode.com/news/macos-satellites"
+      }
+    ],
+    "keywords": [
+      "Amp",
+      "macOS Satellites",
+      "cloud Mac",
+      "iOS",
+      "Xcode",
+      "agentic development",
+      "testing"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "OpenAI-backed Thrive Holdings покупает ADT",
+    "organization": "Thrive Holdings; OpenAI; ADT",
+    "topic": "AI business; acquisitions; physical security; forward-deployed AI engineering; smart-home security",
+    "event_type": "acquisition",
+    "status": "new",
+    "summary": "Thrive Holdings, связанная с Thrive Capital и партнёр OpenAI, объявила о покупке компании физической безопасности ADT за $10 за акцию, или примерно $7,6 млрд equity value; заявленная enterprise value сделки — $15,3 млрд. Thrive использует модели OpenAI и forward-deployed engineers для внедрения AI в портфельных компаниях.",
+    "published_at": "2026-10-29T19:56:19+00:00",
+    "published_date": "2026-10-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI-backed Thrive Holdings acquires ADT",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/29/openai-backed-thrive-holdings-acquires-adt/"
+      }
+    ],
+    "keywords": [
+      "Thrive Holdings",
+      "OpenAI",
+      "ADT",
+      "acquisition",
+      "physical security",
+      "smart home",
+      "AI deployment"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Anthropic ограничила запись Claude Code за пределами рабочих директорий",
+    "organization": "Anthropic",
+    "topic": "CLI coding agents; Claude Code; permissions; enterprise governance; gateway routing; Bedrock; VS Code",
+    "event_type": "software release",
+    "status": "new",
+    "summary": "Claude Code 2.1.314 добавляет правило `permissions.blockWritesOutsideWorkingDirectories`, запрещающее операциям Write, Edit и NotebookEdit менять файлы за пределами разрешённых рабочих директорий во всех permission modes. Также релиз добавляет маршрутизацию gateway upstreams по IdP-группам, журналирование срабатываний Bedrock guardrails и idle compaction для длинных неактивных диалогов в VS Code и Code tab Claude Desktop.",
+    "published_at": "2026-10-30T00:12:56+00:00",
+    "published_date": "2026-10-30",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Claude Code v2.1.314",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/claude-code-2.1.314"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "2.1.314",
+      "permissions",
+      "blockWritesOutsideWorkingDirectories",
+      "IdP groups",
+      "gateway",
+      "idle compaction"
+    ],
+    "geography": "world",
+    "category": "coding"
+  }
+]
