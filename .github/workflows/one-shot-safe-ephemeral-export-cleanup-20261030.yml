@@ -1,4 +1,5 @@
 name: One-shot safe ephemeral export cleanup 2026-10-30
+# Authorized one-time cleanup. No research artifacts or production changes.
 on:
   push:
     branches:
