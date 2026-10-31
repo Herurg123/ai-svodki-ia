@@ -9,23 +9,24 @@ This file is prescriptive. Do not copy detailed current-state implementation
 narratives here when they already belong in `automation/ARCHITECTURE.md`, a
 specification, or a subproject document.
 
-## Daily read-only Sol editorial shadow guard (since 2026-10-30)
+## Nonpublishing Sol Editorial shadow V2 (since 2026-11-01)
 
-The optional daily Sol 6.1 stage is **only** an independent editorial
-selection, after Terra 5.6 has successfully published and deployed a
-new daily digest. Do not give Sol search tools, publication authority,
-write permissions, retries, or access to Terra editorial choices before
-Sol's response. Keep complete original input evidence and provider
-output plus service-tier/usage records in a per-date artifact.
-Require the current Europe/Moscow calendar publication date and the first
-GitHub run attempt; never backfill a past day's paid Sol request.
-A failed Sol audit must never block Terra production or change RSS.
-One call per new released day with bounded input/output; the incentive tier
-is not a guaranteed free price. Owner can immediately disable future Sol
-jobs without a PR by setting GitHub Actions repository variable
-`SOL_EDITORIAL_AUDIT_ENABLED=false`. Historical 2026-10-29 one-shot
-evidence remains immutable; the present daily role may be reassessed
-after manual comparison of several days.
+Terra 5.6 remains the sole production editor, research model and
+publisher. Full Sol 6.1 V2 after successful production/deploy may consume
+up to 3 exact pre-response Terra Editorial prompts per day and return
+the same JSON schema; it must never read any Terra editorial output
+before all Sol outputs complete. No Sol tools/search/Images, write rights,
+publication/recovery changes or retries. Audit input capture during
+Terra must be passive and never fail a production request.
+Validate the Sol response using existing editorial validators, but never
+treat isolated validation as a full release simulation.
+Preserve original inputs, responses, usage/service tier and hash
+manifests; mark any missing intermediate prompts, truncated attempt
+sequence or failed calls explicitly. Historical short-form V1
+29–31.10 evidence remains immutable. Warn that full prompt input and
+up to three calls may incur much greater cost than V1.
+`SOL_EDITORIAL_AUDIT_ENABLED=false` is the immediate off switch.
+Never replace Terra with Sol in production without separate approval.
 
 ## Documentation ownership
 
