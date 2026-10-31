@@ -2634,6 +2634,41 @@ def main() -> int:
             editorial_prompt.rstrip() + "\n",
         )
 
+        # Optional audit snapshot only. Failures must NEVER influence Terra:
+        # shadow evidence is not part of editorial/recovery correctness.
+        try:
+            audit_dir = (
+                PREVIEW_ROOT / "production-daily" / "editorial-input-snapshots"
+                / publication_date_text / sha256_text(editorial_prompt)
+            )
+            if audit_dir.exists():
+                if (
+                    (audit_dir / "prompt.txt").read_text(encoding="utf-8") != editorial_prompt
+                    or (audit_dir / "candidates.json").read_text(encoding="utf-8")
+                    != candidates_serialized
+                ):
+                    raise RuntimeError("Editorial prompt snapshot identity mismatch")
+            else:
+                atomic_write(audit_dir / "prompt.txt", editorial_prompt)
+                atomic_write(audit_dir / "candidates.json", candidates_serialized)
+                atomic_write(
+                    audit_dir / "provenance.json",
+                    pretty_json({
+                        "publication_date": publication_date_text,
+                        "prompt_sha256": sha256_text(editorial_prompt),
+                        "candidates_sha256": sha256_text(candidates_serialized),
+                        "model_requested": model,
+                        "captured_at": datetime.now(timezone.utc).isoformat(),
+                        "source": "pre_api_exact_editorial_input",
+                    }),
+                )
+        except Exception as snapshot_error:
+            print(
+                "::warning title=Optional shadow evidence::"
+                + type(snapshot_error).__name__
+                + " while saving editorial input; Terra unaffected."
+            )
+
         editorial_response = call_with_usage("editorial", client.responses.create,
             model=model,
             **editorial_input(editorial_prompt, model),

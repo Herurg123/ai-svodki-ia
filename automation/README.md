@@ -62,24 +62,30 @@ refactor/removal заданы в `ARCHITECTURE.md` и root `AGENTS.md`.
 `repository_hygiene_video_rss_runs.py` существуют только внутри
 `archive/video-rss-enrichment-2026-08/` как reference material.
 
-### Ежедневный независимый редактор Sol 6.1
+### Ежедневный теневой редактор Sol 6.1: полная редактура V2
 
-После успешной публикации и FTP-развёртывания Terra 5.6 выполняется
-необязательный **один** независимый редакторский выбор Sol 6.1 на том же
-финальном пуле кандидатов (с 30 октября 2026 года). Никаких новых поисков,
-изменений публикации или автоматических исправлений. Sol не видит выбор
-Terra до собственного ответа. Обе редакторские версии и usage/Service Tier
-сохраняются в отдельный Actions artifact
-`sol61-independent-editorial-<date>` на 30 дней.
+С 01.11.2026 необязательный post-deploy job
+`sol61_editorial_shadow` выполняет независимый full-Editorial Sol
+на **точных сохранённых редакторских промптах Terra**, включая исходные
+попытки до финальной (максимум три платных Sol calls, финальная
+приоритетна). Формат ответа: штатный `EDITORIAL_SCHEMA`, полный
+`article_html`; выполняются офлайн проверки editorial и policy.
+Результаты не изменяют статью, RSS, поиск, Coverage, image, FTP или
+recovery Terra. Промпты Terra до каждого API-вызова теперь
+**пассивно и неблокирующе** сохраняются с SHA-256 вместе с
+research candidates под `preview/production-daily/editorial-input-snapshots`.
+Запись не влияет на успешность production.
 
-Лимиты: 30 000 UTF-8 байт входа, 4 000 output tokens,
-`max_retries=0`, не более одного вызова на выпуск, только текущая
-дата Europe/Moscow. Токены **могут** стать платными при исчерпании льготы.
-Чтобы отключить без PR: GitHub Actions repository variable
-`SOL_EDITORIAL_AUDIT_ENABLED=false`. Штатная Terra не зависит от Sol.
-Полный контракт и ручная проверка: [ARCHITECTURE.md](ARCHITECTURE.md).
-Первый разовый опыт 29 октября отдельно сохранён в
-[историческом PLAN](audits/experiments/2026-10-29-sol61-editorial-shadow/PLAN.md).
+No Web Search, max_retries=0, среднее reasoning, до 18000
+output tokens на вызов; точный большой input может стоить
+существенно дороже короткого V1, льготный тариф не гарантирован.
+Первая и повторные попытки фиксируются в отдельном artifact
+`sol61-independent-editorial-<date>`, 30 дней, original
+inputs/outputs/usage/tier/hash и статус валидации. Не считать
+`final_only_fallback` или `partial_cap` полной эмуляцией.
+Откат без PR: `SOL_EDITORIAL_AUDIT_ENABLED=false`.
+См. [ARCHITECTURE.md](ARCHITECTURE.md).
+Исторический короткий вариант 29–31.10 остаётся V1.
 
 ## Production contract summary
 

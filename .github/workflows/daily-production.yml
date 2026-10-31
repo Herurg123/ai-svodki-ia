@@ -1026,7 +1026,7 @@ jobs:
       ref: ${{ needs.production.outputs.commit_sha }}
     secrets: inherit
   sol61_editorial_shadow:
-    name: Sol 6.1 независимый редактор, ежедневно (не влияет на публикацию)
+    name: Sol 6.1 полный теневой Editorial V2 (не влияет на публикацию)
     needs:
       - gate
       - production
@@ -1041,7 +1041,7 @@ jobs:
       needs.deploy.result == 'success' &&
       vars.SOL_EDITORIAL_AUDIT_ENABLED != 'false'
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 30
     # Failure of the optional post-publish audit must not mark Terra's release failed.
     continue-on-error: true
     permissions:
@@ -1080,18 +1080,20 @@ jobs:
           python automation/scripts/validate_archive.py
       - name: Установить закреплённый OpenAI SDK
         run: python -m pip install --disable-pip-version-check "openai==2.45.0"
-      - name: Независимый редактор Sol 6.1, один запрос без Web Search
+      - name: Полная независимая редактура Sol 6.1, точные входы Terra без Web Search
         id: sol
         shell: bash
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           set -euo pipefail
-          python automation/scripts/sol61_editorial_shadow_once.py \
+          python automation/scripts/sol61_full_editorial_shadow.py \
             --publication-date "${AI_DIGEST_PUBLICATION_DATE}" \
             --artifact automation/sol61-reference \
             --archive automation/archive/index.json \
             --policy automation/config/editorial.json \
+            --site automation/config/site.json \
+            --image automation/config/image.json \
             --output "automation/preview/sol61-editorial-${AI_DIGEST_PUBLICATION_DATE}"
       - name: Сохранить оригинальное решение и сравнение, включая ошибку
         if: always()
@@ -1109,13 +1111,13 @@ jobs:
             echo "## Независимый редактор Sol 6.1: ${AI_DIGEST_PUBLICATION_DATE}"
             echo
             echo "- Terra 5.6 выпустила сводку независимо; Sol не меняла сайт, RSS или Git."
-            echo "- Вход Sol: тот же сохранённый финальный candidate pool и архив до выпуска."
+            echo "- Вход Sol: точные оригинальные Editorial-промпты Terra для каждой сохранённой попытки (до трёх), включая финальную."
             echo "- Sol не видела selection Terra до своего ответа."
-            echo "- Один запрос gpt-6.1-sol (medium), без инструментов/поиска/обложки, max_output_tokens 4000, max_retries=0."
+            echo "- Полная Editorial JSON-схема Terra, medium, до трёх запросов по числу попыток, no Web Search, max_output_tokens 18000, max_retries=0."
             echo "- Артефакт: sol61-independent-editorial-${AI_DIGEST_PUBLICATION_DATE}"
-            echo "- Управление: SOL_EDITORIAL_AUDIT_ENABLED=false; нет повторов и дополнительных поисков."
+            echo "- Результат Sol проходит read-only editorial/source/policy validation; Terra публикация неизменна."\n            echo "- Управление: SOL_EDITORIAL_AUDIT_ENABLED=false; тест V2, возможность будущего платного биллинга."
             if [[ -f "automation/preview/sol61-editorial-${AI_DIGEST_PUBLICATION_DATE}/terra-vs-sol-editorial-comparison.json" ]]; then
-              echo "- **Статус:** сравнение сохранено."
+              echo "- **Статус:** полная редактура и сравнение сохранены (валидацию см. в editorial-validation.json)."
             else
               echo "- **Статус:** сравнение не завершено; см. shadow-error.json, production не затронут."
             fi
