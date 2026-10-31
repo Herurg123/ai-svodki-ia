@@ -555,63 +555,83 @@ Remote safety contract:
   оставшиеся старые assets;
 - скрипт не читает RSS, local worker state или OpenAI API.
 
-### Ежедневный независимый Editorial shadow Sol 6.1 (с 30.10.2026)
+### Независимый Editorial Sol 6.1: V1 (29–31.10), V2 (с 01.11.2026)
 
-Штатный `production` остаётся полностью на `gpt-5.6-terra`: те же
-Primary/Hybrid/Coverage/Editorial, validators, Image API, git commit и FTP.
-После **успешных** `production` и `deploy` отдельный read-only job
-`sol61_editorial_shadow` может вызвать `gpt-6.1-sol` ровно один раз
-за **новую дату выпуска**. Это редакционное сравнение, а не параллельный поиск
-и не дополнительный редактор, влияющий на опубликованную статью.
+Terra 5.6 остаётся единственной production-моделью: её поиск, Source Pulse,
+Hybrid, Coverage, все проверки, image, публикация, recovery, cron и FTP
+не меняются. Опциональный `sol61_editorial_shadow` запускается только после
+**успешных** production и FTP deploy, при `github.run_attempt == 1` и
+неустановленном `SOL_EDITORIAL_AUDIT_ENABLED=false`. Ошибка/отказ
+Sol не мешает опубликованной Terra статье, нет прав записи и Web Search.
 
-Источник истины: оригинальный `daily-production-<date>` artifact именно
-этого GitHub Actions run. Берётся финальный валидированный `candidates.json`
-Terra; редакционные правила и предшествующий архив из immutable SHA
-`needs.gate.outputs.main_sha` (до создания сегодняшнего выпуска).
-В Sol-запрос идут **все candidate IDs** и их компактные подтверждённые
-поля, сокращённая история и правила. Как и в успешном one-shot 29.10,
-это **не полный** текст исходного Editorial prompt Terra.
-`editorial-output-raw.json`, выбранные ID, статьи и `stories.json`
-Terra не читаются и не поступают в запрос **до получения** ответа Sol.
-Это независимый редактор на одном общем исследовательском пуле, но не
-независимый исследователь новостей. Только после ответа Sol локальный
-comparator читает raw Editorial Terra и составляет both, Terra-only,
-Sol-only, excluded-by-both, обоснования и сохранённые bytes источников.
+**Версия V1 (историческая):** в выпусках 29–31 октября Sol получала компактный
+candidate pool и сокращённый архив, отбирала только candidate IDs и писала
+обоснования, без полноценного текста. Историю и original ZIP сохранить как
+отдельную конфигурацию: её результаты не объединять с V2 в одну статистику
+качества без явной маркировки.
 
-Сохраняются прежние ограничения: read-only permissions, 0 Web Search,
-0 инструментальных вызовов, 0 изменений публикации, ровно один
-`responses.create`, `gpt-6.1-sol`, `reasoning=medium`,
-`max_output_tokens=4000`, `max_retries=0`, `store=false`,
-timeout 150 секунд, до **30 000 UTF-8 байт** system+input.
-При превышении входа, неверной дате, некорректном research или модели,
-отсутствующем API-ключе, ошибке API — no-retry warning/evidence;
-даже сбой job не меняет статус основной публикации.
-Фактические токены и `service_tier` сохраняются; отсутствие текстовой
-платы 29.10 **не гарантирует** льготный учёт в следующие дни.
+**Версия V2:** Sol получает **побайтно идентичный сохранённый текст
+`editorial_prompt`**, который ранее был передан Terra, и оригинальную
+`generate_digest_preview.EDITORIAL_SCHEMA`. Никаких Terra ответов
+(`editorial-output-raw.json`, выбранных IDs, `stories.json`,
+опубликованной статьи) Sol **до завершения своих ответов не видит**.
+Sol генерирует полноценный JSON с `digest.article_html`,
+`selection_summary`, `image_prompt`, выбранными/отклонёнными ID.
+Штатная Terra по-прежнему единственная модель, управляющая публикацией.
 
-Job активен только после успешного publish + deploy, на первой
-`github.run_attempt == 1`, для текущего календарного дня по
-`Europe/Moscow`, начиная с 30.10.2026. Manual backup
-`workflow_dispatch` может завершить выпуск раньше нативного schedule;
-после опубликованного RSS основной gate не допускает повторной публикации
-или второй Sol. Старые `publication_date` не запускают Sol API.
-Никаких собственных cron или дополнительных GitHub writer.
-Emergency off (без PR): установить GitHub Actions repository variable
-`SOL_EDITORIAL_AUDIT_ENABLED=false` до начала shadow job.
+До **каждого** производственного Responses Editorial-запроса
+`generate_digest_preview.py` **пассивно** записывает точные
+`editorial_prompt`, `candidates_serialized` и provenance в
+`automation/preview/production-daily/editorial-input-snapshots/<date>/<sha256>/`.
+Эта запись внутри `try/except` и не имеет права менять успех или
+содержимое запроса Terra. Она нужна потому, что старый
+`<date>/editorial-prompt-input.txt` сохраняет только **последнюю**
+редакторскую попытку, а исходные промежуточные промпты пропадали при
+пересборке dated preview после Hybrid/Coverage. Новые snapshot каталоги
+входят в обычный `daily-production-<date>` Actions artifact.
+Финальный prompt и candidate pool дополнительно должны совпадать с
+`run-info.editorial.prompt_sha256` и файлом final artifact. Hash,
+model, date и порядок `captured_at` проверяются до платного Sol.
 
-Каждому дню соответствует отдельный artifact
-`sol61-independent-editorial-<date>` с retention 30 дней:
-оригинальный весь `candidates.json`, оригинальный Editorial Terra,
-исходный текст Sol (и raw провайдерный ответ), независимый JSON-выбор,
-usage/service tier, freeze manifest + SHA-256 файлов и отчёт сравнения.
-Для долгосрочного сравнения оригинальные ZIP нужно скачать до истечения
-retention; не восстанавливать их из вторичных отчётов.
-После достаточного числа ручных оценок пользователь решит, сохранять ли
-эту опциональную стадию. Вмешательство Sol в publish запрещено.
+После успешного деплоя `sol61_full_editorial_shadow.py` воспроизводит
+до **3** разных сохранённых Editorial attempts по chronological input,
+**включая финальную попытку**. Если попыток больше трёх, выбираются
+первые две и финальная, остальные явно маркируются
+`skipped_prompt_sha256_due_to_cap` и `partial_cap`: неполный replay
+нельзя считать полной эмуляцией. При отсутствии новых snapshots
+допускается исключительно fallback на оригинальный **последний**
+промпт, явно помеченный `final_only_fallback`; intermediate попытки
+не восстанавливать предположениями. При отсутствии последнего точного
+prompt/hash Sol пропускается. Prepublication archive и policy берутся
+только из `needs.gate.outputs.main_sha`.
 
-**История:** однодневный опыт 29.10.2026 и его протокол
-`automation/audits/experiments/2026-10-29-sol61-editorial-shadow/PLAN.md`
-остаются неизменёнными; recurring stage — отдельное последующее решение.
+Каждый Sol API вызов: `gpt-6.1-sol`, `reasoning=medium`,
+полный `EDITORIAL_SCHEMA`, `max_output_tokens=18000`, `store=false`,
+`max_retries=0`, timeout 400 секунд, `max_prompt_bytes=2_000_000`,
+0 tools, 0 Web Search, 0 Image API. Большой full prompt может
+превысить контекст модели или льготный лимит и быть отклонён
+с сохранением частичных доказательств. **Бесплатность не гарантирована**,
+по сравнению с V1 возможен существенный рост токенов и расходов.
+
+Для каждого Sol ответа сохраняются original response text, полный
+JSON `digest`, фактические токены/service tier, SHA-256, original input,
+candidate pool и result `editorial-validation.json`. Последний
+получается из реальных production `validate_editorial`,
+`normalize_article_html`, `normalize_digest_metadata`,
+source/policy runtime patches и `detect_event_repetitions`.
+Это **проверка применимости редакторского ответа**, не эквивалент
+полному прогону production, Site/FTP/Image/Recovery. Сообщения
+валидации не устраняются повторным платным запросом.
+После ВСЕХ завершённых ответов Sol comparator читает ответ Terra
+и сохраняет оба варианта, selected both/only, полный текст и hashes.
+Evidence в `sol61-independent-editorial-<date>` хранится 30 дней.
+Оригинальные ZIP скачать до истечения retention.
+
+**Откат:** Actions repository variable
+`SOL_EDITORIAL_AUDIT_ENABLED=false` останавливает будущие запросы
+Sol без правки main. Удаление пассивного snapshot кода и shadow job
+выполняется отдельным PR. Действовать Sol вместо Terra в production,
+включая Coverage editorial rerun, **не разрешено**.
 
 ## 5. Nightly production и временная непрерывность
 
