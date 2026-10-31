@@ -1,0 +1,213 @@
+[
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "OpenCode добавила Claude Agent и разделила политики доступа к MCP, skills и plugins",
+    "organization": "OpenCode; Anomaly; Anthropic",
+    "topic": "CLI coding agents; model-provider integration; Claude Code; managed policies; MCP; plugins; developer security",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "В OpenCode v2.2.3 появился встроенный провайдер Claude Agent: пользователь может установить Claude Code, выполнить `claude auth login` и подключить его через `/connect`, используя существующую авторизацию и модели. Релиз также меняет managed-policy модель: `integration.use` теперь относится только к integration accounts, а для MCP-серверов, skills и plugins введены отдельные действия `mcp.use`, `skill.use` и `plugin.use`.",
+    "published_at": "2026-10-30T09:55:45+00:00",
+    "published_date": "2026-10-30",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release v2.2.3",
+        "publisher": "OpenCode / GitHub",
+        "url": "https://github.com/anomalyco/opencode/releases/tag/v2.2.3"
+      }
+    ],
+    "keywords": [
+      "OpenCode",
+      "Claude Agent",
+      "Claude Code",
+      "MCP",
+      "managed policies",
+      "plugins",
+      "CLI"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Google сообщила о работе спутникового TPU-прототипа Suncatcher",
+    "organization": "Google; Google DeepMind; Planet Labs",
+    "topic": "Space-based AI infrastructure; TPUs; orbital inference; data centers",
+    "event_type": "infrastructure milestone",
+    "status": "new",
+    "summary": "По данным TechCrunch, спутниковый прототип Google Suncatcher после ввода в эксплуатацию начал обмениваться данными с Землёй и выполнил первые inference-задачи на предзагруженной Gemma 4. Аппарат несёт четыре TPU, хотя одновременно может работать один; испытания должны проверить поведение ускорителей при радиации и тепловых нагрузках в орбите.",
+    "published_at": "2026-10-30T17:00:00+00:00",
+    "published_date": "2026-10-30",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google’s first data center satellite is online and writing poetry",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/30/googles-first-data-center-satellite-is-online-and-writing-poetry/"
+      }
+    ],
+    "keywords": [
+      "Google Suncatcher",
+      "TPU",
+      "space data center",
+      "orbital inference",
+      "Gemma 4",
+      "satellite"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Serval привлекла $150 млн на агентов для внутренних корпоративных процессов",
+    "organization": "Serval; Sequoia Capital; Conviction; Headline; General Catalyst; Redpoint Ventures; First Round; Evantic; Elad Gil",
+    "topic": "Enterprise AI agents; автоматизация IT-, HR-, финансовых, security- и legal-workflows; конкуренция с ServiceNow; финансирование",
+    "event_type": "financing",
+    "status": "new",
+    "summary": "Serval объявила о раунде Series C на $150 млн под руководством Sequoia при оценке $3 млрд. Компания продаёт агентную автоматизацию внутренних корпоративных процессов и позиционирует продукт как замену части workflow-платформ, включая ServiceNow.",
+    "published_at": "2026-10-29T17:45:20+00:00",
+    "published_date": "2026-10-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Serval raises $150m at $3bn valuation to replace ServiceNow with AI agents",
+        "publisher": "The Next Web",
+        "url": "https://thenextweb.com/news/serval-series-c-150m-3bn-valuation-sequoia"
+      }
+    ],
+    "keywords": [
+      "Serval",
+      "Series C",
+      "Sequoia",
+      "enterprise agents",
+      "employee support",
+      "ServiceNow",
+      "AI automation"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-013",
+    "section": "world",
+    "headline": "NVIDIA и Eclypsium развивают защиту ИИ-инфраструктуры",
+    "organization": "NVIDIA",
+    "topic": "Building Trusted AI Infrastructure for Safe and Secure AI",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "NVIDIA and cybersecurity partner Eclypsium are advancing infrastructure security for cloud computing and agentic AI with NVIDIA BlueField and Eclypsium infrastructure assurance.",
+    "published_at": "2026-10-29T13:00:49+00:00",
+    "published_date": "2026-10-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Building Trusted AI Infrastructure for Safe and Secure AI",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/eclypsium-trusted-safe-secure-ai-infrastructure"
+      }
+    ],
+    "keywords": [
+      "Building",
+      "Trusted",
+      "Infrastructure",
+      "Safe",
+      "Secure"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-015",
+    "section": "world",
+    "headline": "OpenAI опубликовала материал о выявлении misalignment frontier-моделей",
+    "organization": "OpenAI",
+    "topic": "How we detect frontier model misalignment",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: How we detect frontier model misalignment",
+    "published_at": "2026-10-29T09:00:00+00:00",
+    "published_date": "2026-10-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "How we detect frontier model misalignment",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/how-we-detect-frontier-model-misalignment"
+      }
+    ],
+    "keywords": [
+      "How",
+      "we",
+      "detect",
+      "frontier",
+      "model",
+      "misalignment"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-020",
+    "section": "world",
+    "headline": "OpenAI сообщила о новых мерах защиты подростков",
+    "organization": "OpenAI",
+    "topic": "Community safety report and new protections for teens",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Community safety report and new protections for teens",
+    "published_at": "2026-10-30T09:00:00+00:00",
+    "published_date": "2026-10-30",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Community safety report and new protections for teens",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/community-safety-report-and-new-protections-for-teens"
+      }
+    ],
+    "keywords": [
+      "Community",
+      "safety",
+      "report",
+      "protections",
+      "teens"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Обновление: Qwen Code v0.26.4 расширила автономный PR-autofix и изоляцию managed-сессий",
+    "organization": "Alibaba Qwen",
+    "topic": "CLI coding agents; Qwen Code; PR review; autofix; verification; managed agents; worktrees",
+    "event_type": "product release",
+    "status": "update",
+    "summary": "Qwen Code v0.26.4 добавила ограничение takeover для CI-autofix по числу раундов, повторный запуск verify-pr после обновлений, независимые worktrees для основных managed sessions и публикацию верификационных отчётов с версиями модели, CLI и skill. Также обновление включает функции, относящиеся к managed agents и PR-автоматизации.",
+    "published_at": "2026-10-29T14:29:11+00:00",
+    "published_date": "2026-10-29",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Qwen Code v0.26.4",
+        "publisher": "Alibaba Qwen / GitHub",
+        "url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.4"
+      }
+    ],
+    "keywords": [
+      "Qwen Code",
+      "PR autofix",
+      "verify-pr",
+      "managed agent",
+      "worktrees",
+      "coding agent",
+      "CLI"
+    ],
+    "geography": "world",
+    "category": "coding"
+  }
+]

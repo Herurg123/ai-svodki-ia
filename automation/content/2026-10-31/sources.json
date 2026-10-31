@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Release v2.2.3",
+    "publisher": "OpenCode / GitHub",
+    "url": "https://github.com/anomalyco/opencode/releases/tag/v2.2.3"
+  },
+  {
+    "title": "Google’s first data center satellite is online and writing poetry",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/10/30/googles-first-data-center-satellite-is-online-and-writing-poetry/"
+  },
+  {
+    "title": "Serval raises $150m at $3bn valuation to replace ServiceNow with AI agents",
+    "publisher": "The Next Web",
+    "url": "https://thenextweb.com/news/serval-series-c-150m-3bn-valuation-sequoia"
+  },
+  {
+    "title": "Building Trusted AI Infrastructure for Safe and Secure AI",
+    "publisher": "NVIDIA",
+    "url": "https://blogs.nvidia.com/blog/eclypsium-trusted-safe-secure-ai-infrastructure"
+  },
+  {
+    "title": "How we detect frontier model misalignment",
+    "publisher": "OpenAI",
+    "url": "https://openai.com/index/how-we-detect-frontier-model-misalignment"
+  },
+  {
+    "title": "Community safety report and new protections for teens",
+    "publisher": "OpenAI",
+    "url": "https://openai.com/index/community-safety-report-and-new-protections-for-teens"
+  },
+  {
+    "title": "Qwen Code v0.26.4",
+    "publisher": "Alibaba Qwen / GitHub",
+    "url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.4"
+  }
+]

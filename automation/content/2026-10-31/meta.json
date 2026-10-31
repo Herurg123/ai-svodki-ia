@@ -1,0 +1,35 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-10-31",
+  "slug": "2026-10-31",
+  "title": "ИИ-Сводка на 31 октября 2026",
+  "description": "В выпуске — орбитальный TPU-прототип Google, раунд Serval для корпоративных агентов, новые контуры защиты ИИ-инфраструктуры, обновления OpenAI и Qwen Code для безопасной автоматизации разработки.",
+  "published_at": "2026-10-31T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-10-31.png",
+  "topics": [
+    "OpenCode",
+    "Claude Agent",
+    "Google Suncatcher",
+    "орбитальные ИИ-вычисления",
+    "Serval",
+    "корпоративные агенты",
+    "NVIDIA BlueField",
+    "безопасность ИИ-инфраструктуры",
+    "OpenAI",
+    "misalignment",
+    "безопасность подростков",
+    "Qwen Code",
+    "PR-autofix",
+    "coding-агенты"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    }
+  ]
+}
