@@ -1,0 +1,4 @@
+db35e2e735a90e20729093c38482c98fcd193c2c8b80b989fb447dc6f15c476f  original-artifacts/sol61-independent-editorial-2026-10-29.zip
+46ed1aa23dcb1bc36f532ae8d611d57b43ec0b53a74baddbef294455789f77c2  original-artifacts/sol61-independent-editorial-2026-10-30.zip
+ff9923f257f4bb19a8d3731c6acd449859792ddd07baa8971e39f756411fd740  original-artifacts/sol61-independent-editorial-2026-10-31.zip
+d15107b791369062d05feddb41a4fbb70536a5249e83a6c943ea2f01ec629660  original-artifacts/sol61-independent-editorial-2026-11-01.zip

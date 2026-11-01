@@ -71,8 +71,11 @@ GitHub Actions ZIP, их SHA-256 и сроки хранения.
 Итоги, замечания к методике, контрольные суммы, API usage и протокол
 восстановления сохранены в
 [закрытом аудите](automation/audits/experiments/2026-10-29-sol61-editorial-shadow/RESULTS_AND_RESTART.md).
-Оригинальные GitHub Actions ZIP имеют ограниченный retention;
-их следует хранить отдельно от метаданных публичного репозитория.
+Четыре оригинальных ZIP (V1: 29–31 октября, V2: 1 ноября)
+сохранены побайтово в [объединённом архиве](automation/audits/experiments/2026-10-29-sol61-editorial-shadow/original-evidence/sol61-editorial-evidence-2026-10-29_2026-11-01.zip)
+в Git. SHA-256 объединённого ZIP: `5a6fb1ce1dd0c01c747c3c851e7cf4384c19dd9a5f3ddfc9a076c1bc60c19c84`.
+Срок хранения исходных GitHub Actions artifacts ограничен, но копия
+в истории Git сохраняется независимо от их retention.
 
 ## Основные части
 

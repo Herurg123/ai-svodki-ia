@@ -14,7 +14,7 @@
   ],
   "active_production_shadow": false,
   "historical_artifacts_only": true,
-  "originals_location_note": "GitHub Actions artifacts retain original ZIP only for retention period; original ZIP bytes are NOT embedded in this public Git repository. Preserve the separate conversation bundle before expiry.",
+  "originals_location_note": "The original ZIPs still have finite GitHub Actions retention. Four original artifact ZIPs are preserved unchanged inside the permanent public-Git bundle at original-evidence/sol61-editorial-evidence-2026-10-29_2026-11-01.zip. The bundle does not participate in production.",
   "evidence": [
     {
       "date": "2026-10-29",
@@ -162,5 +162,15 @@
     "Source Pulse candidates can contain insufficient detail for either model.",
     "V2 full prompt and JSON schema match Terra; its isolated validator checks are not a full production simulation.",
     "V1 and V2 results must not be pooled as one homogeneous experiment."
-  ]
+  ],
+  "originals_git_bundle": {
+    "path": "automation/audits/experiments/2026-10-29-sol61-editorial-shadow/original-evidence/sol61-editorial-evidence-2026-10-29_2026-11-01.zip",
+    "size_bytes": 645940,
+    "sha256": "5a6fb1ce1dd0c01c747c3c851e7cf4384c19dd9a5f3ddfc9a076c1bc60c19c84",
+    "git_blob_sha1": "f8366ed8ded4ddfc7d9a0069a41887f0b1f5e38c",
+    "original_zip_count": 4,
+    "verified_manifest_entries": 42,
+    "preservation_date": "2026-11-01",
+    "requires_original_bytes": true
+  }
 }

@@ -24,8 +24,10 @@ restoring any optional job requires reviewed code changes.
 Preserve and consult the original artifact hashes, sources, caveats,
 measured usage and restoration plan in
 `automation/audits/experiments/2026-10-29-sol61-editorial-shadow/RESULTS_AND_RESTART.md`.
-GitHub Actions original ZIP artifacts have limited retention: never
-claim original files are preserved in Git when only metadata is stored.
+GitHub Actions artifacts have limited retention. The four byte-for-byte
+original Sol Editorial ZIPs are preserved inside the checked combined archive
+`automation/audits/experiments/2026-10-29-sol61-editorial-shadow/original-evidence/sol61-editorial-evidence-2026-10-29_2026-11-01.zip` (SHA-256 `5a6fb1ce1dd0c01c747c3c851e7cf4384c19dd9a5f3ddfc9a076c1bc60c19c84`).
+Never substitute reconstructed JSON/reports for original ZIP bytes.
 The V1 and V2 observations use different inputs and must not be
 combined into a homogeneous model-quality metric.
 

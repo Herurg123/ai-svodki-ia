@@ -80,8 +80,10 @@ V2 (1 ноября) повторил оригинальные полные Edito
 Архив исходных тестов, hashes, имена GitHub Artifacts,
 результаты и инструкция по безопасному восстановлению:
 [RESULTS_AND_RESTART.md](audits/experiments/2026-10-29-sol61-editorial-shadow/RESULTS_AND_RESTART.md).
-Срок хранения оригинальных ZIP GitHub Actions — 30 дней, так что
-для будущей экспертизы необходима отдельно сохранённая копия.
+Оригинальные ZIP имеют ограниченный срок хранения в GitHub Actions,
+но побайтовые копии всех четырёх файлов включены в [объединённый архив](audits/experiments/2026-10-29-sol61-editorial-shadow/original-evidence/sol61-editorial-evidence-2026-10-29_2026-11-01.zip)
+под контролем версий Git; его SHA-256: `5a6fb1ce1dd0c01c747c3c851e7cf4384c19dd9a5f3ddfc9a076c1bc60c19c84`.
+Оригиналы остаются историческими данными и не запускают Sol в production.
 
 ## Production contract summary
 
