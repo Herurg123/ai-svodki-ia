@@ -1,8 +1,164 @@
 {
   "version": 2,
-  "generated_at": "2026-10-31T02:34:13+00:00",
+  "generated_at": "2026-11-01T02:14:39+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-01",
+      "published_at": "2026-11-01T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-01T05:06:28+03:00",
+      "title": "ИИ-Сводка на 1 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-01/",
+      "summary": "Главные новости искусственного интеллекта за 1 ноября 2026 года Новостей сегодня меньше, чем обычно Конец октября принёс важные сигналы не столько о новых моделях, сколько о финансовой и управленческой основе ИИ-рынка. NVIDIA обсуждает более прямое участие в финансировании вычислительной площадки для Anthropic, OpenAI уточняет параметры привлечения капитала и работу с правами сайтов, а Claude Code добавляет новые корпоративные контуры контроля. Общий вывод для компаний: масштабирование ИИ всё си",
+      "topics": [
+        "NVIDIA",
+        "Nscale",
+        "Anthropic",
+        "ИИ-инфраструктура",
+        "финансирование дата-центров",
+        "OpenAI",
+        "финансирование ИИ",
+        "обучающие данные",
+        "Claude Code",
+        "coding-агенты",
+        "корпоративное управление ИИ",
+        "Amazon Bedrock Guardrails"
+      ],
+      "source_urls": [
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.316",
+        "https://techcrunch.com/2026/10/30/nvidia-weighs-playing-the-cosigner-for-nscales-ai-data-center-in-west-virginia/",
+        "https://techcrunch.com/2026/10/31/openai-reportedly-lowers-funding-target-for-new-round/",
+        "https://openai.com/index/helping-websites-express-ai-training-preferences"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "Claude Code 2.1.316 добавила групповые бюджеты и многослойные политики",
+          "organization": "Anthropic",
+          "topic": "CLI coding agents; enterprise governance; Claude apps gateway; Bedrock; permissions; agent budgets; subagent effort",
+          "event_type": "product release",
+          "status": "new",
+          "summary": "Anthropic выпустила Claude Code 2.1.316. В релизе появились pooled group budgets для Claude apps gateway, режим layered для одновременного применения нескольких managed policies, input tagging для фильтра prompt-атак Amazon Bedrock Guardrails и настройка усилия субагентов через CLAUDE_CODE_SUBAGENT_EFFORT.",
+          "published_at": "2026-10-31T01:01:35+00:00",
+          "published_date": "2026-10-31",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Claude Code v2.1.316 release",
+              "publisher": "Anthropic / GitHub",
+              "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.316"
+            }
+          ],
+          "keywords": [
+            "Claude Code",
+            "Claude apps gateway",
+            "pooled budgets",
+            "layered policy",
+            "Amazon Bedrock guardrails",
+            "subagents",
+            "enterprise governance"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "NVIDIA обсуждает гарантию долгового финансирования дата-центра Nscale для Anthropic",
+          "organization": "NVIDIA; Nscale; Anthropic",
+          "topic": "AI-инфраструктура; neocloud financing; debt guarantees; дата-центры; Anthropic compute",
+          "event_type": "financing and infrastructure deal discussions",
+          "status": "new",
+          "summary": "По данным The Information, позднее подтверждённым Bloomberg и пересказанным TechCrunch, NVIDIA ведёт переговоры о гарантии долгового финансирования Nscale для строящегося в Западной Вирджинии кампуса, где Anthropic заказала первый объект мощностью 460 МВт. Рассматриваемая residual-value guarantee должна помочь покрыть строительные и энергетические расходы; контракт Anthropic на первое здание оценивается в $44,6 млрд.",
+          "published_at": "2026-10-31T01:20:05+00:00",
+          "published_date": "2026-10-31",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Nvidia weighs playing the cosigner for Nscale’s AI data center in West Virginia",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/30/nvidia-weighs-playing-the-cosigner-for-nscales-ai-data-center-in-west-virginia/"
+            }
+          ],
+          "keywords": [
+            "NVIDIA",
+            "Nscale",
+            "Anthropic",
+            "debt financing",
+            "residual value guarantee",
+            "West Virginia",
+            "data center",
+            "Vera Rubin"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "cand-004",
+          "section": "world",
+          "headline": "OpenAI, по данным СМИ, сократила цель нового раунда до 20 млрд долларов",
+          "organization": "OpenAI",
+          "topic": "AI-lab financing; private markets; OpenAI valuation; infrastructure investment economics",
+          "event_type": "fundraising update",
+          "status": "new",
+          "summary": "Financial Times сообщила, что OpenAI снизила цель очередного финансирования с ранее обсуждавшихся $30 млрд до $20 млрд. Wall Street Journal дополнительно сообщила, что компания получила около $11 млрд обязательств и оценивается примерно в $1,25 трлн, ниже ранее ожидавшейся оценки $1,4 трлн; TechCrunch свела оба сообщения и запросила комментарий OpenAI.",
+          "published_at": "2026-10-31T16:12:55+00:00",
+          "published_date": "2026-10-31",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "OpenAI reportedly lowers funding target for new round",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/10/31/openai-reportedly-lowers-funding-target-for-new-round/"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "fundraising",
+            "Financial Times",
+            "Wall Street Journal",
+            "$20 billion",
+            "$11 billion",
+            "valuation",
+            "AI financing"
+          ],
+          "geography": "world",
+          "category": "investment"
+        },
+        {
+          "candidate_id": "cand-006",
+          "section": "world",
+          "headline": "OpenAI предложила сайтам удобнее выражать предпочтения по обучению ИИ",
+          "organization": "OpenAI",
+          "topic": "Making it easier for websites to express AI training preferences",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Making it easier for websites to express AI training preferences",
+          "published_at": "2026-10-30T09:30:00+00:00",
+          "published_date": "2026-10-30",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Making it easier for websites to express AI training preferences",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/helping-websites-express-ai-training-preferences"
+            }
+          ],
+          "keywords": [
+            "Making",
+            "it",
+            "easier",
+            "websites",
+            "express",
+            "training",
+            "preferences"
+          ],
+          "geography": "world",
+          "category": "other"
+        }
+      ]
+    },
     {
       "date": "2026-10-31",
       "published_at": "2026-10-31T06:00:00+03:00",
@@ -6520,10 +6676,10 @@
     {
       "date": "2026-09-29",
       "published_at": "2026-09-29T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-29T05:06:01+03:00",
+      "search_cutoff_at": "2026-09-29T06:00:00+03:00",
       "title": "ИИ-Сводка на 29 сентября 2026",
       "link": "https://rybalka.one/posts/2026-09-29/",
-      "summary": "Главные новости искусственного интеллекта за 29 сентября 2026 года Новостей сегодня меньше, чем обычно Повестка дня показывает, что конкуренция вокруг агентов ИИ быстро выходит за пределы чат-интерфейсов. Компании одновременно строят корпоративные платформы, закрепляют технологии physical AI, привлекают крупный капитал и формируют безопасные пути для покупок, выполняемых агентами. Главный практический вопрос теперь не только в качестве модели, но и в том, где она сможет действовать: в корпоратив",
+      "summary": "Meta выходит в корпоративный ИИ, AMD покупает World Labs, Instinct привлекает $1 млрд, а Shopify открывает агентам путь к checkout. Google готовит миграцию Gems в Skills.",
       "topics": [
         "Meta",
         "корпоративный ИИ",
