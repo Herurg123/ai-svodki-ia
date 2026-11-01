@@ -62,30 +62,26 @@ refactor/removal заданы в `ARCHITECTURE.md` и root `AGENTS.md`.
 `repository_hygiene_video_rss_runs.py` существуют только внутри
 `archive/video-rss-enrichment-2026-08/` как reference material.
 
-### Ежедневный теневой редактор Sol 6.1: полная редактура V2
+### Закрытый редакторский эксперимент Sol 6.1 (29.10–01.11.2026)
 
-С 01.11.2026 необязательный post-deploy job
-`sol61_editorial_shadow` выполняет независимый full-Editorial Sol
-на **точных сохранённых редакторских промптах Terra**, включая исходные
-попытки до финальной (максимум три платных Sol calls, финальная
-приоритетна). Формат ответа: штатный `EDITORIAL_SCHEMA`, полный
-`article_html`; выполняются офлайн проверки editorial и policy.
-Результаты не изменяют статью, RSS, поиск, Coverage, image, FTP или
-recovery Terra. Промпты Terra до каждого API-вызова теперь
-**пассивно и неблокирующе** сохраняются с SHA-256 вместе с
-research candidates под `preview/production-daily/editorial-input-snapshots`.
-Запись не влияет на успешность production.
+**Неактивен с выпуска 02.11.2026.** В штатном
+`daily-production.yml` нет `sol61_editorial_shadow` и Sol API;
+в `generate_digest_preview.py` больше нет экспериментальной
+пассивной записи `editorial-input-snapshots`. Работает только
+существующая Terra 5.6 со всеми обычными проверками, Coverage,
+обложкой и публикацией.
 
-No Web Search, max_retries=0, среднее reasoning, до 18000
-output tokens на вызов; точный большой input может стоить
-существенно дороже короткого V1, льготный тариф не гарантирован.
-Первая и повторные попытки фиксируются в отдельном artifact
-`sol61-independent-editorial-<date>`, 30 дней, original
-inputs/outputs/usage/tier/hash и статус валидации. Не считать
-`final_only_fallback` или `partial_cap` полной эмуляцией.
-Откат без PR: `SOL_EDITORIAL_AUDIT_ENABLED=false`.
-См. [ARCHITECTURE.md](ARCHITECTURE.md).
-Исторический короткий вариант 29–31.10 остаётся V1.
+Сценарий V1 (29–31 октября) сравнивал короткий независимый отбор;
+V2 (1 ноября) повторил оригинальные полные Editorial-промпты Terra
+и записал альтернативные статьи, валидацию и расход токенов.
+Скрипты `sol61_editorial_shadow_once.py` и
+`sol61_full_editorial_shadow.py` оставлены **только** для изучения
+и возможного воспроизведения по новым инструкциям.
+Архив исходных тестов, hashes, имена GitHub Artifacts,
+результаты и инструкция по безопасному восстановлению:
+[RESULTS_AND_RESTART.md](audits/experiments/2026-10-29-sol61-editorial-shadow/RESULTS_AND_RESTART.md).
+Срок хранения оригинальных ZIP GitHub Actions — 30 дней, так что
+для будущей экспертизы необходима отдельно сохранённая копия.
 
 ## Production contract summary
 

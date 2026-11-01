@@ -1,0 +1,166 @@
+{
+  "status": "closed",
+  "project": "AI digests independent Sol editorial experiment",
+  "reviewed_at": "2026-11-01",
+  "retirement_reason": "Owner requested Terra-only production and no further Sol experiment calls",
+  "models": {
+    "production": "gpt-5.6-terra",
+    "shadow": "gpt-6.1-sol"
+  },
+  "historical_source_prs": [
+    232,
+    233,
+    235
+  ],
+  "active_production_shadow": false,
+  "historical_artifacts_only": true,
+  "originals_location_note": "GitHub Actions artifacts retain original ZIP only for retention period; original ZIP bytes are NOT embedded in this public Git repository. Preserve the separate conversation bundle before expiry.",
+  "evidence": [
+    {
+      "date": "2026-10-29",
+      "version": "V1-compact-selection",
+      "run_id": 40804252969,
+      "artifact_id": 12868162007,
+      "artifact_name": "sol61-independent-editorial-2026-10-29",
+      "sha256_zip": "db35e2e735a90e20729093c38482c98fcd193c2c8b80b989fb447dc6f15c476f",
+      "sha256_manifest_verified_entries": 8,
+      "manifest_status": "complete",
+      "source_candidate_count": 19,
+      "prompt_bytes": 25365,
+      "sol_requests": 1,
+      "model_reported_service_tier": "default",
+      "usage_csv_service_tier": "incentivized-tier",
+      "sol_input_tokens": 5163,
+      "sol_output_tokens": 1694,
+      "terra_selected": 8,
+      "sol_selected": 8,
+      "both": 7,
+      "terra_only": [
+        "cand-007"
+      ],
+      "sol_only": [
+        "cand-009"
+      ],
+      "source_candidate_sha256": "4cb55189f3e2e32d8bdf251ea5b79defc18b211056e2d97aeb62d6f7c5fe5914"
+    },
+    {
+      "date": "2026-10-30",
+      "version": "V1-compact-selection",
+      "run_id": 40989608475,
+      "artifact_id": 12948938021,
+      "artifact_name": "sol61-independent-editorial-2026-10-30",
+      "sha256_zip": "46ed1aa23dcb1bc36f532ae8d611d57b43ec0b53a74baddbef294455789f77c2",
+      "sha256_manifest_verified_entries": 8,
+      "manifest_status": "complete",
+      "source_candidate_count": 16,
+      "prompt_bytes": 25515,
+      "sol_requests": 1,
+      "model_reported_service_tier": "default",
+      "usage_csv_service_tier": "incentivized-tier",
+      "sol_input_tokens": 5084,
+      "sol_output_tokens": 1389,
+      "terra_selected": 7,
+      "sol_selected": 6,
+      "both": 6,
+      "terra_only": [
+        "cand-006"
+      ],
+      "sol_only": [],
+      "source_candidate_sha256": "e3207f778e7372ff3e026962a18c86eaa13487aa91ba1f00225ffdefb1d8653a"
+    },
+    {
+      "date": "2026-10-31",
+      "version": "V1-compact-selection",
+      "run_id": 41159627400,
+      "artifact_id": 13027225563,
+      "artifact_name": "sol61-independent-editorial-2026-10-31",
+      "sha256_zip": "ff9923f257f4bb19a8d3731c6acd449859792ddd07baa8971e39f756411fd740",
+      "sha256_manifest_verified_entries": 8,
+      "manifest_status": "complete",
+      "source_candidate_count": 20,
+      "prompt_bytes": 25780,
+      "sol_requests": 1,
+      "model_reported_service_tier": "default",
+      "usage_csv_service_tier": "incentivized-tier",
+      "sol_input_tokens": 5291,
+      "sol_output_tokens": 1439,
+      "terra_selected": 7,
+      "sol_selected": 5,
+      "both": 3,
+      "terra_only": [
+        "cand-008",
+        "cand-013",
+        "cand-015",
+        "cand-020"
+      ],
+      "sol_only": [
+        "cand-002",
+        "cand-011"
+      ],
+      "source_candidate_sha256": "4e063d640edda0292ae12b1888a18b89700487dfb2c4a79cbd4c98af207d70ec"
+    },
+    {
+      "date": "2026-11-01",
+      "version": "V2-exact-full-editorial",
+      "run_id": 41263709199,
+      "artifact_id": 13066318415,
+      "artifact_name": "sol61-independent-editorial-2026-11-01",
+      "sha256_zip": "d15107b791369062d05feddb41a4fbb70536a5249e83a6c943ea2f01ec629660",
+      "sha256_manifest_verified_entries": 18,
+      "manifest_status": "complete",
+      "sol_requests": 2,
+      "attempts": [
+        {
+          "type": "intermediate",
+          "prompt_sha256": "2d1e114d6217bf98d02603248c993ee3d5bd52e0ff197a6998463a50ce76a07c",
+          "input_tokens": 207191,
+          "output_tokens": 2948,
+          "usage_csv_service_tier": "incentivized-tier",
+          "model_reported_service_tier": "default",
+          "validation_status": "pass"
+        },
+        {
+          "type": "final",
+          "prompt_sha256": "1cf6c8a1ed1eafaca28d7dd199e954e85c8cd997f295555cbc11c81e73c6bf5a",
+          "input_tokens": 208620,
+          "output_tokens": 3015,
+          "usage_csv_service_tier": "default",
+          "model_reported_service_tier": "default",
+          "validation_status": "pass"
+        }
+      ],
+      "skipped_attempts": 0,
+      "terra_selected": 4,
+      "sol_selected": 4,
+      "both": 3,
+      "terra_only": [
+        "cand-006"
+      ],
+      "sol_only": [
+        "cand-005"
+      ],
+      "full_editorial": true,
+      "production_simulation": false,
+      "source_candidate_count_final": 7,
+      "source_candidate_count_intermediate": 6,
+      "exact_prompt_bytes": [
+        992649,
+        999914
+      ]
+    }
+  ],
+  "aggregate_daily_cost_usd_from_user_csv": {
+    "2026-10-29": 0.311445,
+    "2026-10-30": 0.311215,
+    "2026-10-31": 0.38153,
+    "2026-11-01": 0.9328585
+  },
+  "billing_caveat": "The user-provided Cost CSV is daily aggregate, not a model-specific Sol charge. Do not claim attribution or guaranteed free tier.",
+  "reproducibility_caveats": [
+    "V1 Sol saw compact candidates and separate editorial instructions, not exactly Terra prompt.",
+    "V1 prior_archive selected old July items (tail of reverse-chronological archive), limiting recency comparisons.",
+    "Source Pulse candidates can contain insufficient detail for either model.",
+    "V2 full prompt and JSON schema match Terra; its isolated validator checks are not a full production simulation.",
+    "V1 and V2 results must not be pooled as one homogeneous experiment."
+  ]
+}
