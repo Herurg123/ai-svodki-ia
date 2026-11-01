@@ -140,7 +140,13 @@
         "cand-005"
       ],
       "full_editorial": true,
-      "production_simulation": false
+      "production_simulation": false,
+      "source_candidate_count_final": 7,
+      "source_candidate_count_intermediate": 6,
+      "exact_prompt_bytes": [
+        992649,
+        999914
+      ]
     }
   ],
   "aggregate_daily_cost_usd_from_user_csv": {
