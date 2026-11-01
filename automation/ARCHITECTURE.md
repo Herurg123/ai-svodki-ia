@@ -593,10 +593,10 @@ publication/Coverage/recovery replay.
 и [evidence-index.json](audits/experiments/2026-10-29-sol61-editorial-shadow/evidence-index.json).
 Там сохранены ID GitHub Actions runs, original artifact ZIP SHA-256,
 внутренние manifests, выбранные candidate IDs, usage, методологические
-ограничения, исходные PR и порядок восстановления. Сами ZIP
-**не** хранятся в публичном Git репозитории и сохраняются
-в GitHub Actions только на период retention; для долгого хранения
-их копия должна быть скачана отдельно.
+ограничения, исходные PR и порядок восстановления. Все четыре оригинальных ZIP побайтово помещены в [объединённый архив](audits/experiments/2026-10-29-sol61-editorial-shadow/original-evidence/sol61-editorial-evidence-2026-10-29_2026-11-01.zip)
+в публичной истории Git, SHA-256: `5a6fb1ce1dd0c01c747c3c851e7cf4384c19dd9a5f3ddfc9a076c1bc60c19c84`.
+Срок хранения исходных GitHub Actions artifacts остаётся ограниченным;
+архив Git не является входом production, recovery или Sol workflow.
 
 ## 5. Nightly production и временная непрерывность
 
