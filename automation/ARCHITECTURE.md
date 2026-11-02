@@ -653,6 +653,8 @@ event-origin evidence. `published_date`/`published_at`/`time_precision` отно
 `event_time_precision`, `event_origin_url`, `event_evidence_kind` и
 `event_date_evidence` относятся к событию. Retrieval не обязан выдумывать origin:
 при неоднозначном доказательстве event fields возвращаются как `unknown`/`null`.
+Before the optional seventh Coverage Web Search, `ensure_story_coverage_v8._validated_eligible_pool` performs a **zero-network read-only preflight** using the same `story_coverage.merge_candidates` rules as final admission (window/freshness/verification, URL duplicate and candidate cap). Existing admitted Primary candidates are preserved; rejected raw `include|consider` audit hits do **not** suppress the fallback. Source-health rescue targeting is based on this validated pool too. With 6/6 directions complete, one free Coverage operation and zero validated candidates, recall-sentinel may use **exactly the existing seventh slot**; completed/reused sentinel or exhausted budget still block extra transport. No changes to query wording, 7-call Coverage maximum, 24/25 whole-pipeline ceilings, daily publisher, or journal-bound recovery. Independent replay of frozen 2026-11-02 evidence and offline regression cover both verified Chat/Work (no seventh call) and a controlled unverified negative (one mock seventh call).
+
 Coverage `story_coverage.validate_audit_candidate` ремонтирует только ошибочную
 метку `time_precision=datetime` при `published_at=null`, если
 проверенное событие имеет ту же документированную дату и весь этот день целиком
