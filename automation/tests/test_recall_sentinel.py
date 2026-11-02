@@ -334,7 +334,12 @@ class RecallSentinelTests(unittest.TestCase):
         original, northflank, work = self.nov02_replay_candidates()
         work["verification_status"] = "unconfirmed"
         self.assertEqual(
-            runtime._base._eligible_candidate_count([northflank, work]), 2
+            sum(
+                item.get("recommendation") in {"include", "consider"}
+                for item in (northflank, work)
+            ),
+            2,
+            "historical raw recommendation-only counter",
         )
         count, eligible = runtime._validated_eligible_pool(
             [original], [northflank, work], self.nov02_window()
