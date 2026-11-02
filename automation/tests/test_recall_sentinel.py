@@ -163,7 +163,8 @@ def current_sentinel_attempt() -> dict[str, object]:
 
 
 class RecallSentinelTests(unittest.TestCase):
-    def run_plan(self, plan, fake_request, *, existing_candidates=None):
+    def run_plan(self, plan, fake_request, *, existing_candidates=None,
+                 search_window=None, publication_date="2026-08-08"):
         with (
             mock.patch.object(
                 runtime,
@@ -180,8 +181,8 @@ class RecallSentinelTests(unittest.TestCase):
                 api_key="secret",
                 model="gpt-5.6-terra",
                 template="unused by stub",
-                publication_date="2026-08-08",
-                search_window=SEARCH_WINDOW,
+                publication_date=publication_date,
+                search_window=search_window or SEARCH_WINDOW,
                 missing_total=7,
                 maximum_web_search_calls=7,
                 existing_candidates=existing_candidates or [],
@@ -250,6 +251,149 @@ class RecallSentinelTests(unittest.TestCase):
         self.assertEqual(request.call_count, 0)
         self.assertEqual(len(result["attempts"]), 6)
         self.assertEqual(result["search_budget"]["remaining_calls"], 1)
+
+    @staticmethod
+    def nov02_replay_candidates():
+        """Key metadata transcribed from run 41375795360's frozen 6th pass."""
+        original = candidate()
+        original.update(
+            title="Unconfirmed OpenAI infrastructure campaign",
+            recommendation="exclude",
+        )
+        northflank = candidate()
+        northflank.update(
+            title="Northflank leaked customers' AI API keys",
+            published_date="2026-10-31",
+            published_at=None,
+            time_precision="datetime",
+            event_date="2026-10-30",
+            event_at="2026-10-30T11:43:00+00:00",
+            event_time_precision="datetime",
+            recommendation="consider",
+        )
+        work = candidate()
+        work.update(
+            title="OpenAI prepares a limited ChatGPT Chat and Work test",
+            published_date="2026-11-01",
+            published_at=None,
+            time_precision="datetime",
+            event_date="2026-11-01",
+            event_at=None,
+            event_time_precision="date",
+            event_evidence_kind="authoritative_secondary",
+            event_date_evidence="BleepingComputer covered the OpenAI email on Nov 1.",
+            recommendation="consider",
+            category="agents",
+            source_type="industry_media",
+        )
+        northflank["primary_source"] = {
+            "title": "Northflank security breach",
+            "publisher": "BleepingComputer",
+            "url": "https://www.bleepingcomputer.com/news/security/northflank-security-breach-leads-to-abuse-of-customers-ai-api-keys/",
+        }
+        work["primary_source"] = {
+            "title": "OpenAI bringing Work features to Chat",
+            "publisher": "BleepingComputer",
+            "url": "https://www.bleepingcomputer.com/news/artificial-intelligence/openai-says-its-doubling-pro-usage-limits-and-bringing-work-features-to-chat/",
+        }
+        return original, northflank, work
+
+    @staticmethod
+    def nov02_window():
+        return {
+            "start_at": "2026-10-31T05:06:28+03:00",
+            "end_at": "2026-11-02T05:06:26+03:00",
+            "start_date": "2026-10-31",
+            "end_date": "2026-11-02",
+        }
+
+    def test_nov02_verified_work_keeps_final_slot_unused(self):
+        # PR #238 fixed date-only precision, so 1 actual eligible story remains.
+        original, northflank, work = self.nov02_replay_candidates()
+        frozen = copy.deepcopy([northflank, work])
+        count, eligible = runtime._validated_eligible_pool(
+            [original], frozen, self.nov02_window()
+        )
+        self.assertEqual(count, 1)
+        self.assertEqual(eligible[0]["time_precision"], "date")
+        self.assertEqual(frozen, [northflank, work], "preflight must be read-only")
+        plan = complete_zero_plan()
+        plan["candidates"] = frozen
+        result, request = self.run_plan(
+            plan, lambda **kw: self.fail("no unnecessary paid sentinel"),
+            existing_candidates=[original],
+            search_window=self.nov02_window(),
+            publication_date="2026-11-02",
+        )
+        self.assertEqual(request.call_count, 0)
+        self.assertEqual(result["search_budget"]["remaining_calls"], 1)
+
+    def test_nov02_rejected_consider_candidates_trigger_single_sentinel(self):
+        # Controlled negative of the actual Nov 2 payload: if Work cannot be
+        # verified, both raw consider candidates fail the final merge.
+        original, northflank, work = self.nov02_replay_candidates()
+        work["verification_status"] = "unconfirmed"
+        self.assertEqual(
+            sum(
+                item.get("recommendation") in {"include", "consider"}
+                for item in (northflank, work)
+            ),
+            2,
+            "historical raw recommendation-only counter",
+        )
+        count, eligible = runtime._validated_eligible_pool(
+            [original], [northflank, work], self.nov02_window()
+        )
+        self.assertEqual((count, eligible), (0, []))
+        plan = complete_zero_plan()
+        plan["candidates"] = [northflank, work]
+
+        def sentinel_without_network(**kwargs):
+            self.assertEqual(kwargs["maximum_web_search_calls"], 1)
+            return (
+                {
+                    "status": "complete_with_gaps",
+                    "direction_id": "general_coverage_gaps",
+                    "candidates": [],
+                    "rejections": [],
+                    "notes": "One mocked check; no eligible story.",
+                },
+                api_metadata("latest major artificial intelligence news"),
+            )
+
+        result, request = self.run_plan(
+            plan, sentinel_without_network, existing_candidates=[original],
+            publication_date="2026-11-02",
+            search_window=self.nov02_window(),
+        )
+        self.assertEqual(request.call_count, 1)
+        self.assertEqual(result["search_budget"]["completed_calls"], 7)
+        self.assertEqual(result["search_budget"]["remaining_calls"], 0)
+        self.assertEqual(result["attempts"][-1]["search_strategy"], runtime.RECALL_SENTINEL_STRATEGY)
+
+    def test_rejected_candidates_do_not_override_zero_remaining_budget(self):
+        original, northflank, work = self.nov02_replay_candidates()
+        work["verification_status"] = "unconfirmed"
+        plan = complete_zero_plan()
+        plan["candidates"] = [northflank, work]
+        plan["search_budget"]["remaining_calls"] = 0
+        plan["search_budget"]["completed_calls"] = 7
+        result, request = self.run_plan(
+            plan, lambda **kw: self.fail("exhausted slot must not be spent"),
+            existing_candidates=[original],
+            publication_date="2026-11-02", search_window=self.nov02_window(),
+        )
+        self.assertEqual(request.call_count, 0)
+        self.assertEqual(result["search_budget"]["completed_calls"], 7)
+
+    def test_preflight_duplicate_candidate_is_not_double_counted(self):
+        existing = candidate()
+        duplicate = copy.deepcopy(existing)
+        count, eligible = runtime._validated_eligible_pool(
+            [existing], [duplicate], SEARCH_WINDOW
+        )
+        self.assertEqual(count, 1)
+        self.assertEqual(len(eligible), 1)
 
     def test_sentinel_is_not_used_until_mandatory_audit_is_complete(self) -> None:
         plan = complete_zero_plan()

@@ -267,6 +267,11 @@ create a sixth Hybrid search.
 
 Additional regional Coverage searches and a separate LLM semantic-event matcher
 are not active. They require future audit and explicit approval.
+The existing optional seventh Coverage search must use the same deterministic
+candidate-admission rules as the final merge when testing for a zero eligible
+pool. Raw `include|consider` labels alone cannot suppress the last recall.
+Never exceed 7 Coverage search operations, retry an uncertain paid operation,
+or replace the final freshness/source verification with this preflight.
 
 ## Event/source freshness boundary
 

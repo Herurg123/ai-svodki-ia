@@ -726,6 +726,37 @@ def _normalize_sentinel_candidate(candidate: dict[str, Any]) -> dict[str, Any]:
     return normalized
 
 
+def _validated_eligible_pool(
+    existing_candidates: list[Any],
+    audit_candidates: Any,
+    search_window: dict[str, Any],
+) -> tuple[int, list[dict[str, Any]]]:
+    """Count the candidates the final Coverage merge would actually admit.
+
+    Counting only include/consider overestimates the usable pool: candidates
+    can later fail the strict editorial window, verification, duplicate and
+    other merge checks. Reuse the *same* deterministic merge on copies before
+    committing the optional 7th search. This makes no API calls and never
+    changes the saved research or the paid audit payload.
+    """
+    candidates = (
+        audit_candidates if isinstance(audit_candidates, list) else []
+    )
+    preflight = {
+        "candidates": existing_candidates,
+        "search_window": search_window,
+        "research_notes": "",
+    }
+    merged, _accepted, _rejected = merge_candidates(preflight, candidates)
+    eligible = [
+        item
+        for item in merged["candidates"]
+        if isinstance(item, dict)
+        and item.get("recommendation") in {"include", "consider"}
+    ]
+    return len(eligible), eligible
+
+
 def execute_audit_plan(
     *,
     api_key: str,
@@ -793,11 +824,12 @@ def execute_audit_plan(
         plan.get("audit_status") in {"complete", "complete_with_gaps"}
         and set(plan.get("checked_directions") or ()) == set(AUDIT_DIRECTION_IDS)
     )
-    final_eligible = _base._eligible_candidate_count(
-        existing_candidates
-    ) + _base._eligible_candidate_count(plan.get("candidates"))
+    final_eligible, combined_candidates = _validated_eligible_pool(
+        existing_candidates,
+        plan.get("candidates"),
+        search_window,
+    )
     remaining_calls = int(budget.get("remaining_calls", 0) or 0)
-    combined_candidates = list(existing_candidates) + list(plan.get("candidates") or [])
     source_health_gap_detected = bool(
         final_eligible > 0
         and not _policy._candidates_have_fresh_agency_source(

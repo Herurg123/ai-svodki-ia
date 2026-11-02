@@ -123,7 +123,9 @@ diff. Техническая возможность direct push в `main` сам
 навигации:
 
 - fresh Primary имеет 12 Web Search operations, Coverage — до 7 Coverage search
-  operations;
+  operations; седьмой резервный поиск допустим только после шести обязательных
+  направлений и проверки фактической пригодности кандидатов теми же правилами,
+  что при окончательном объединении, при свободном бюджете;
 - Hybrid обычно ограничен четырьмя search operations; ровно один conditional
   fifth search разрешён только при одновременных Search-derived gaps Russia +
   China/Asia;
