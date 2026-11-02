@@ -3,7 +3,7 @@ from __future__ import annotations
 import copy
 import json
 import re
-from datetime import date, datetime
+from datetime import date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
@@ -195,6 +195,53 @@ def candidate_in_window(candidate: dict[str, Any], search_window: dict[str, Any]
     return candidate.get("time_precision") == "date" and candidate.get("published_at") is None
 
 
+def recover_verified_date_only_precision(
+    candidate: dict[str, Any], search_window: dict[str, Any]
+) -> bool:
+    """Downgrade impossible datetime precision only for an interior verified day.
+
+    A model may output time_precision=datetime with published_at=null even when
+    the cited report supplies a publication *date* but no timestamp. Never
+    invent a timestamp; recover date-only precision only when the entire day
+    lies inside the exact editorial window and the independently described
+    event has the same date. Boundary days and unsupported events fail closed.
+    """
+    if (
+        candidate.get("time_precision") != "datetime"
+        or candidate.get("published_at") is not None
+        or candidate.get("verification_status") != "verified"
+        or candidate.get("event_time_precision") != "date"
+        or candidate.get("event_at") is not None
+        or candidate.get("event_evidence_kind")
+        not in {"official", "authoritative_secondary"}
+        or not str(candidate.get("event_date_evidence") or "").strip()
+    ):
+        return False
+    try:
+        published = date.fromisoformat(str(candidate.get("published_date") or ""))
+        if candidate.get("event_date") != published.isoformat():
+            return False
+    except ValueError:
+        return False
+    start_at = _parse_aware_datetime(str(search_window.get("start_at") or ""))
+    end_at = _parse_aware_datetime(str(search_window.get("end_at") or ""))
+    if start_at is None or end_at is None or start_at >= end_at:
+        return False
+    midnight = datetime.combine(published, time.min, tzinfo=start_at.tzinfo)
+    following_midnight = datetime.combine(
+        published + timedelta(days=1), time.min, tzinfo=start_at.tzinfo
+    )
+    if not (start_at <= midnight and following_midnight <= end_at):
+        return False
+    candidate["time_precision"] = "date"
+    candidate["verification_notes"] = (
+        str(candidate.get("verification_notes") or "").rstrip()
+        + " [Восстановление точности даты: опубликованная дата проверена, "
+        "точный timestamp источником не предоставлен и не придуман.]"
+    ).strip()
+    return True
+
+
 def validate_audit_candidate(
     candidate: dict[str, Any], search_window: dict[str, Any]
 ) -> list[str]:
@@ -202,6 +249,7 @@ def validate_audit_candidate(
     # Paid research artifacts produced before the expanded audit schema remain
     # valid recovery inputs. New API responses always contain these fields via
     # their strict JSON schema.
+    recover_verified_date_only_precision(candidate, search_window)
     candidate.setdefault("verification_status", "verified")
     candidate.setdefault("verification_notes", "Legacy validated candidate.")
     candidate.setdefault(
