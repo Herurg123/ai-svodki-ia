@@ -48,4 +48,4 @@ Existing cases cover six mandatory directions, already-completed/old-version sen
 
 ## Verdict
 
-Independent local decision-oracle replay: **PASS** (8 controls). Production-code status to be filled by CI; this evidence report alone does not claim production API equivalence or a real paid model result.
+Independent local decision-oracle replay: **PASS** (8 controls). Production-code integration: **PASS**, 979 offline tests, including all four new November 2 sentinel regressions, [PR Gate 41460810987](https://github.com/Herurg123/ai-svodki-ia/actions/runs/41460810987) on source head `072384d3a60f64a8a3a7163af2c1f61699de5ca2` (before this evidence-only update). No production API equivalence or real paid model result is claimed. Final head is subject to an additional green PR Gate before merge.
