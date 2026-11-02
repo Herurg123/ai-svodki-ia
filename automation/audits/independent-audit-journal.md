@@ -271,3 +271,21 @@ false causal chain.
 
 Canonical chronology and provenance:
 [Sep11 remediation program closure](experiments/2026-09-20-sep11-remediation-closure/README.md).
+
+## 2026-11-02 — Closed-day seventh Coverage-slot eligibility repair
+
+Original production run `41375795360` had 6/6 mandatory Coverage passes,
+2 raw `consider` candidates and 0 initially admitted after merge; the optional
+seventh recall search was incorrectly skipped by a recommendation-only counter.
+An assistant-owned local zero-network replay of the original frozen ZIP
+(SHA-256 `d16466632b81da6cde68e58ac07867eaa35201fa4b27b31e82f8f17e9bed065c`)
+compared the old raw counter with final-merge-equivalent validation and 8
+budget/recovery/date/dedup controls. After the already merged PR #238 date fix,
+ChatGPT Work is a real verified survivor (sentinel should not spend); in the
+controlled unconfirmed negative the validated pool is zero and one sentinel
+should run. No Terra inference or user-budget API calls were made.
+Change keeps the 6 mandatory directions and optional 7th slot unchanged,
+uses deterministic read-only `merge_candidates` preflight and does not relax
+any publication guard. Full production integration regression and CI remain
+independent of the local oracle. Details:
+`experiments/2026-11-02-coverage-seventh-slot-eligibility/RESULTS.md`.
