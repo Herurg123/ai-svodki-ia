@@ -1,6 +1,12 @@
 name: Deploy posts to rybalka.one
 
 on:
+  # One-time corrective release: deploy only a merged Nov 2 article update.
+  # Remove this push hook after the corrected article has reached FTP.
+  push:
+    branches: [main]
+    paths:
+      - "posts/2026-11-02/index.html"
   workflow_call:
     inputs:
       ref:
