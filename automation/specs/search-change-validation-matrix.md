@@ -339,3 +339,23 @@ compare complete baseline/proposed payloads. Artifacts:
 `publication-proof-2026-09-05.json`, `yandex-date-proof-2026-09-04.html`; replay:
 `replay_publication_proof_2026_09_07.py`. Only previously unproved fresh source
 dates gain eligibility; no query, paid search slot, quota or recovery change.
+
+### Permanent regression: 2026-11-02 sentinel preflight vs final merge
+
+Original run `41375795360` saved six complete Coverage directions, raw two
+`consider` candidates, zero accepted at the time, and one unused seventh slot.
+The before/after matrix uses the frozen exact Nov 2 window and distinguishes
+historical pre-PR238 metadata rejection from **current** verified date-only
+Chat/Work admission. Positive current replay admits Chat/Work and correctly
+skips a paid seventh search. A controlled `verification_status=unconfirmed`
+negative on that same saved story leaves zero eligible despite two raw
+`consider` recommendations and must reserve exactly one sentinel call.
+Budget exhausted, incomplete mandatory audit, current sentinel reuse, duplicate
+candidate and unchanged saved evidence are strict negative controls. Source
+and Event Freshness, 7 Coverage, 24/25 total, P3b optional-slot ownership and
+paid-request journal replay are invariant. Independent no-network original-ZIP
+policy-equivalence stand evidence:
+`automation/audits/experiments/2026-11-02-coverage-seventh-slot-eligibility/RESULTS.md`.
+Production-code tests:
+`automation/tests/test_recall_sentinel.py`. No model/routing/query changes,
+so no Terra search comparison is claimed.
