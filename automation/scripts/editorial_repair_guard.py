@@ -429,7 +429,7 @@ def _legacy_pre_request_reason(report: dict[str, Any]) -> str | None:
             "RuntimeError: После основного и дополнительного поиска "
             "не осталось ни одного достойного сюжета"
         )
-        and report.get("audit_state") == "completed_usable"
+        and report.get("audit_state") in {"completed_usable", "not_started"}
         and after.get("total") == 0
         and accepted == []
         and report.get("editorial_rerun_required") is False
