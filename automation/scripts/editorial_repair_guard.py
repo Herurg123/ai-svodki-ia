@@ -385,74 +385,15 @@ def _legacy_pending(report: Any) -> bool:
 
 
 def _legacy_pre_request_reason(report: dict[str, Any]) -> str | None:
-    """Authorize only exact locally proven pre-admission recovery outcomes.
+    """Admit only the previously proven pre-request missing-SDK legacy failure.
 
-    The November 2 zero-pool Coverage error and a following guard rejection
-    precede any editorial-completion provider request. Their saved artifacts
-    have complete six-pass Coverage evidence but legacy pending flags. Other
-    pending/ambiguous errors remain fail-closed.
+    Incident-specific admission exceptions for the published 2026-11-02
+    digest are retired. All other pending legacy repair outcomes remain
+    fail-closed; ordinary journal-bound recovery is handled separately.
     """
     error = str(report.get("editorial_repair_error") or report.get("error") or "")
     if "ModuleNotFoundError" in error and "No module named 'openai'" in error:
         return "proven_pre_request_missing_openai_sdk"
-
-    required = [
-        "security_world", "security_russia", "security_asia",
-        "legal_copyright_scraping", "curiosity", "general_coverage_gaps",
-    ]
-    if (
-        report.get("status") != "error"
-        or report.get("publication_date") != "2026-11-02"
-        or report.get("initial_artifact_mode") != "partial_editorial"
-        or report.get("audit_status") not in {"complete", "complete_with_gaps"}
-        or report.get("audit_error") is not None
-        or report.get("validation_error") is not None
-        or report.get("editorial_repair_guard") is not None
-        or report.get("editorial_completion_required") is not True
-        or report.get("editorial_completion_performed") is not False
-        or report.get("editorial_rerun_performed") is not False
-        or report.get("web_search_performed") is not True
-        or (report.get("api") or {}).get("status") != "completed"
-        or report.get("required_directions") != required
-        or report.get("checked_directions") != required
-        or (report.get("candidate_pool_before") or {}).get("total") != 0
-    ):
-        return None
-
-    after = report.get("candidate_pool_after")
-    accepted = report.get("accepted_candidates")
-    if not isinstance(after, dict) or not isinstance(accepted, list):
-        return None
-
-    if (
-        error == (
-            "RuntimeError: После основного и дополнительного поиска "
-            "не осталось ни одного достойного сюжета"
-        )
-        and report.get("audit_state") in {"completed_usable", "not_started"}
-        and after.get("total") == 0
-        and accepted == []
-        and report.get("editorial_rerun_required") is False
-    ):
-        return "proven_pre_request_zero_eligible_pool_2026_11_02"
-
-    if (
-        error == (
-            "EditorialRepairError: legacy repair is pending but provider "
-            "admission is ambiguous; automatic retry forbidden"
-        )
-        and report.get("audit_state") == "not_started"
-        and after.get("total") == len(accepted) == 1
-        and report.get("editorial_rerun_required") is True
-        and isinstance(accepted[0], dict)
-        and accepted[0].get("published_date") == "2026-11-01"
-        and accepted[0].get("time_precision") == "date"
-        and "ChatGPT Work" in str(accepted[0].get("title") or "")
-    ):
-        # The named guard rejects prior to journal creation/provider admission.
-        # prepare_required handles any existing journal before inspecting this.
-        return "proven_pre_admission_legacy_guard_2026_11_02"
-
     return None
 
 
