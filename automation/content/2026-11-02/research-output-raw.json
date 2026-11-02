@@ -1,0 +1,295 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-11-02",
+  "search_window": {
+    "start_at": "2026-10-31T05:06:28+03:00",
+    "end_at": "2026-11-02T05:06:26+03:00",
+    "latest_archive_at": "2026-11-01T05:06:28+03:00",
+    "start_date": "2026-10-31",
+    "end_date": "2026-11-02",
+    "latest_archive_date": "2026-11-01"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=0, rejected=1."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=0, rejected=1."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "OpenAI готовит политико-инфраструктурную кампанию после выборов в США",
+      "organization": "OpenAI",
+      "published_date": "2026-11-01",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "AI policy; frontier-model safeguards; data-center policy; community commitments; AI infrastructure; public affairs",
+      "event_type": "reported corporate policy strategy",
+      "keywords": [
+        "OpenAI",
+        "AI compute campuses",
+        "frontier safeguards",
+        "data centers",
+        "community compacts",
+        "AI policy",
+        "Washington"
+      ],
+      "geography": "world",
+      "category": "regulation",
+      "source_type": "business_media",
+      "primary_source": {
+        "title": "Axios AM: Post-election AI blitz",
+        "publisher": "Axios",
+        "url": "https://www.axios.com/newsletters/axios-am-c36b525d-34d3-426e-8b48-156dc3db6173"
+      },
+      "supporting_sources": [],
+      "event_summary": "Axios сообщила, что OpenAI после промежуточных выборов в США планирует кампанию по AI policy и public affairs: новые предложения по обязательным safeguard’ам для наиболее мощных систем, инициативы для согласования строительства дата-центров с местными сообществами и продвижение термина «AI compute campuses».",
+      "verified_facts": [
+        "Страница Axios датирована 1 ноября 2026 года.",
+        "Axios характеризует материал как scoop и сообщает, что планы OpenAI должны стартовать после выборов.",
+        "В статье перечислены предполагаемые направления: safeguards для наиболее мощных AI-систем, community compacts и законодательные предложения по дата-центрам, а также международные стандарты AI.",
+        "Это сообщение о намерениях и готовящейся кампании, а не об уже опубликованном OpenAI пакете политики."
+      ],
+      "significance": "Потенциально значимый сдвиг в публичной стратегии одной из ведущих AI-лабораторий: он напрямую связывает frontier-safety и масштабное строительство AI-инфраструктуры с регулированием и общественным принятием. Однако конкретные меры ещё не были опубликованы первоисточником.",
+      "significance_score": 2,
+      "limitations": "Единственный доступный источник — Axios; описываются будущие намерения, а не состоявшийся официальный анонс. Точный timestamp публикации отсутствует, а детали и обязательность обещанных мер требуют последующего подтверждения OpenAI.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет этого сюжета о готовящейся политико-инфраструктурной кампании OpenAI.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Дата и содержание публикации проверены на странице Axios. Факты ограничены тем, что Axios приписывает OpenAI и её chief global affairs officer; официальный анонс OpenAI в доступных результатах не обнаружен.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это не судебное или регуляторное решение; речь идёт о корпоративных намерениях по policy.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат рассматривается по значимости policy и infrastructure, а не как curiosity.",
+      "event_date": "2026-11-01",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.axios.com/newsletters/axios-am-c36b525d-34d3-426e-8b48-156dc3db6173",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Axios датирует scoop 1 ноября 2026 года; для впервые раскрытого сообщения о готовящейся кампании это наиболее ранняя доступная публичная дата.",
+      "id": "cand-001",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    },
+    {
+      "title": "OpenAI начала тестировать объединение ChatGPT Work с обычным Chat и общий лимит с Codex",
+      "organization": "OpenAI",
+      "published_date": "2026-11-01",
+      "published_at": "2026-11-01T08:53:11-05:00",
+      "time_precision": "datetime",
+      "topic": "ChatGPT; Work; Codex; product integration; AI agents; subscriptions",
+      "event_type": "limited product test and subscription-policy update",
+      "keywords": [
+        "OpenAI",
+        "ChatGPT",
+        "ChatGPT Work",
+        "Codex",
+        "usage allowance",
+        "agentic work",
+        "Pro subscriptions"
+      ],
+      "geography": "world",
+      "category": "agents",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "OpenAI says it's doubling Pro usage limits and bringing Work features to Chat",
+        "publisher": "BleepingComputer",
+        "url": "https://www.bleepingcomputer.com/news/artificial-intelligence/openai-says-its-doubling-pro-usage-limits-and-bringing-work-features-to-chat/"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI, согласно письму подписчикам, начинает ограниченный тест объединённого опыта Chat и Work в ChatGPT: пользователи смогут переходить от диалога к более сложным задачам с файлами, плагинами и web-действиями. Одновременно компания готовит единый расходный лимит для ChatGPT и Codex.",
+      "verified_facts": [
+        "BleepingComputer опубликовал материал 1 ноября 2026 года и привёл письмо OpenAI, полученное подписчиками.",
+        "В письме говорится о тесте объединённого интерфейса Chat и Work для небольшой группы пользователей в ближайшие недели.",
+        "Согласно описанию, ChatGPT и Codex будут использовать общий allowance, а Codex останется отдельным интерфейсом в desktop-приложении ChatGPT.",
+        "Расширение пока является ограниченным тестом, а не общедоступным запуском."
+      ],
+      "significance": "Сюжет показывает, что OpenAI сближает обычный чат, агентное выполнение задач и coding-продукт на уровне интерфейса и биллинговых лимитов. Однако rollout ещё маломасштабный, а сведения основаны на письме, а не на публичном релизе OpenAI.",
+      "significance_score": 2,
+      "limitations": "Нет доступного публичного первоисточника OpenAI с деталями теста, размером когорты, географией и датой широкого запуска. Материал основан на письме, которое видело издание.",
+      "archive_status": "none",
+      "archive_reason": "Архив фиксирует более ранние релизы Codex и ChatGPT Work, но не этот ограниченный тест объединённого Chat/Work-интерфейса и общего usage allowance с Codex.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "BleepingComputer воспроизвёл содержание письма OpenAI и описал ограничения теста. Статус подтверждён в пределах сообщения о rollout, а не как доказательство широкого публичного запуска. [Восстановление точности даты: опубликованная дата проверена, точный timestamp источником не предоставлен и не придуман.]",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: jsonld:datePublished:depth=0=2026-11-01T08:53:11-05:00; timestamp проверен Python против effective window. Источник от 1 ноября 2026 года описывает впервые объявленный ограниченный тест и изменение политики общего usage allowance; это не перепечатка архивного продукта.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это продуктовый тест и изменение подписочной политики, не правовое событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат рассматривается как продуктовая и агентная интеграция.",
+      "event_date": "2026-11-01",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.bleepingcomputer.com/news/artificial-intelligence/openai-says-its-doubling-pro-usage-limits-and-bringing-work-features-to-chat/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "BleepingComputer датирует публикацию 1 ноября 2026 года и описывает полученное изданием письмо OpenAI как источник первого публично доступного подтверждения теста.",
+      "audit_direction": "general_coverage_gaps",
+      "id": "cand-002",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.bleepingcomputer.com/news/artificial-intelligence/openai-says-its-doubling-pro-usage-limits-and-bringing-work-features-to-chat/",
+      "source_published_date": "2026-11-01",
+      "source_published_at": "2026-11-01T08:53:11-05:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "jsonld:datePublished:depth=0=2026-11-01T08:53:11-05:00"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=3, validated unique=1, final candidates=1. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-major_agencies-04",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Anthropic, Microsoft announce new AI data center projects as industry’s construction push continues",
+      "origin_direction": "major_agencies",
+      "reason_code": "unverified",
+      "evidence_reason": "Страница AP подтверждает содержание анонсов Anthropic и Microsoft, но доступный результат не даёт проверяемой даты/времени публикации или event-origin, достаточных для строгого Source Freshness Proof в заданном окне.",
+      "likely_significance_score": 3,
+      "entities": [
+        "Anthropic",
+        "Microsoft"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-business_investment_partnerships-03",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Foxconn reveals OpenAI tie-up talks and Texas robot rollout",
+      "origin_direction": "business_investment_partnerships",
+      "reason_code": "unverified",
+      "evidence_reason": "Reuters-attributed reporting only establishes that a possible additional OpenAI collaboration was being discussed; no finalized terms, transaction, deployment commitment or deal value was announced.",
+      "likely_significance_score": 3,
+      "entities": [
+        "Foxconn",
+        "OpenAI",
+        "Texas"
+      ],
+      "anchors": [],
+      "source_hint": "Reuters",
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

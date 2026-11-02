@@ -1,0 +1,33 @@
+[
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "OpenAI тестирует объединение ChatGPT Work с обычным Chat и общий лимит с Codex",
+    "organization": "OpenAI",
+    "topic": "ChatGPT; Work; Codex; product integration; AI agents; subscriptions",
+    "event_type": "limited product test and subscription-policy update",
+    "status": "new",
+    "summary": "OpenAI, согласно письму подписчикам, начинает ограниченный тест объединённого опыта Chat и Work в ChatGPT: пользователи смогут переходить от диалога к более сложным задачам с файлами, плагинами и web-действиями. Одновременно компания готовит единый расходный лимит для ChatGPT и Codex.",
+    "published_at": "2026-11-01T08:53:11-05:00",
+    "published_date": "2026-11-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI says it's doubling Pro usage limits and bringing Work features to Chat",
+        "publisher": "BleepingComputer",
+        "url": "https://www.bleepingcomputer.com/news/artificial-intelligence/openai-says-its-doubling-pro-usage-limits-and-bringing-work-features-to-chat/"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "ChatGPT",
+      "ChatGPT Work",
+      "Codex",
+      "usage allowance",
+      "agentic work",
+      "Pro subscriptions"
+    ],
+    "geography": "world",
+    "category": "agents"
+  }
+]

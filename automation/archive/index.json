@@ -1,8 +1,61 @@
 {
   "version": 2,
-  "generated_at": "2026-11-01T02:14:39+00:00",
+  "generated_at": "2026-11-02T06:07:44+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-02",
+      "published_at": "2026-11-02T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-02T05:06:26+03:00",
+      "title": "ИИ-Сводка на 2 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-02/",
+      "summary": "Главные новости искусственного интеллекта за 2 ноября 2026 года Новостей сегодня меньше, чем обычно Сегодня в фокусе — изменение продуктовой границы между обычным чатом, рабочими инструментами и агентной разработкой. OpenAI начала ограниченно проверять единый опыт, в котором пользователь может перейти от диалога к задачам с файлами, подключениями и действиями в вебе. Мировые лидеры ИИ OpenAI тестирует объединение ChatGPT Work с обычным Chat и общий лимит с Codex OpenAI, согласно письму подписчик",
+      "topics": [
+        "OpenAI",
+        "ChatGPT",
+        "ChatGPT Work",
+        "Codex",
+        "агенты ИИ",
+        "рабочие ИИ-инструменты",
+        "лимиты использования"
+      ],
+      "source_urls": [
+        "https://www.bleepingcomputer.com/news/artificial-intelligence/openai-says-its-doubling-pro-usage-limits-and-bringing-work-features-to-chat/"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "OpenAI тестирует объединение ChatGPT Work с обычным Chat и общий лимит с Codex",
+          "organization": "OpenAI",
+          "topic": "ChatGPT; Work; Codex; product integration; AI agents; subscriptions",
+          "event_type": "limited product test and subscription-policy update",
+          "status": "new",
+          "summary": "OpenAI, согласно письму подписчикам, начинает ограниченный тест объединённого опыта Chat и Work в ChatGPT: пользователи смогут переходить от диалога к более сложным задачам с файлами, плагинами и web-действиями. Одновременно компания готовит единый расходный лимит для ChatGPT и Codex.",
+          "published_at": "2026-11-01T08:53:11-05:00",
+          "published_date": "2026-11-01",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "OpenAI says it's doubling Pro usage limits and bringing Work features to Chat",
+              "publisher": "BleepingComputer",
+              "url": "https://www.bleepingcomputer.com/news/artificial-intelligence/openai-says-its-doubling-pro-usage-limits-and-bringing-work-features-to-chat/"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "ChatGPT",
+            "ChatGPT Work",
+            "Codex",
+            "usage allowance",
+            "agentic work",
+            "Pro subscriptions"
+          ],
+          "geography": "world",
+          "category": "agents"
+        }
+      ]
+    },
     {
       "date": "2026-11-01",
       "published_at": "2026-11-01T06:00:00+03:00",
@@ -6465,10 +6518,10 @@
     {
       "date": "2026-09-30",
       "published_at": "2026-09-30T06:00:00+03:00",
-      "search_cutoff_at": "2026-09-30T05:05:59+03:00",
+      "search_cutoff_at": "2026-09-30T06:00:00+03:00",
       "title": "ИИ-Сводка на 30 сентября 2026",
       "link": "https://rybalka.one/posts/2026-09-30/",
-      "summary": "Главные новости искусственного интеллекта за 30 сентября 2026 года Новостей сегодня меньше, чем обычно Повестка дня сосредоточена на следующем этапе агентного ИИ: помощники получают доступ к рабочим системам, более длинный контекст для разработки и постоянные задачи для пользователей. Одновременно разработчики усиливают контроль над действиями агентов — от корпоративных политик до формализованных safety cases для обучения frontier-моделей. Выпуск короткий, но показывает важный сдвиг: конкуренция",
+      "summary": "Meta расширяет Muse для малого бизнеса, Anthropic обновляет Claude Code, а OpenAI одновременно развивает постоянных агентов, новую модель GPT-6.1 Sol и подходы к безопасности frontier-обучения.",
       "topics": [
         "Meta",
         "Muse",

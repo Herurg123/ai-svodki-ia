@@ -1,0 +1,12 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-002"
+  ],
+  "excluded_candidate_ids": [
+    "cand-001"
+  ],
+  "selection_summary": "Выбран один подтверждённый свежий сюжет: ограниченный тест OpenAI по объединению ChatGPT Chat и Work и общему лимиту использования с Codex. Кандидат cand-001 исключён: он имеет рекомендацию exclude и не подтверждён официальным источником.",
+  "diversity_overrides": []
+}

@@ -1,0 +1,29 @@
+{
+  "validator": "cover-contract",
+  "status": "ok",
+  "checked_at": "2026-11-02T06:07:40+00:00",
+  "artifact_dir": "/home/runner/work/ai-svodki-ia/ai-svodki-ia/automation/preview/production-daily/image/2026-11-02",
+  "errors": [],
+  "warnings": [],
+  "technical_contract_validated": true,
+  "visual_semantics_validated": false,
+  "rendered_title_validated": false,
+  "png": {
+    "bytes": 1892392,
+    "sha256": "3bcf084e6fe4d52ad8b8e68a8b366cc699097851d3b65a6b037ae43b44ac845a",
+    "width": 1536,
+    "height": 864,
+    "bit_depth": 8,
+    "color_type": 2,
+    "chunks": [
+      "IHDR",
+      "caBX",
+      "IDAT",
+      "IEND"
+    ],
+    "text_chunks": []
+  },
+  "cover": "/home/runner/work/ai-svodki-ia/ai-svodki-ia/automation/preview/production-daily/image/2026-11-02/cover.png",
+  "cover_sha256": "3bcf084e6fe4d52ad8b8e68a8b366cc699097851d3b65a6b037ae43b44ac845a",
+  "prompt_sha256": "1356f1f461a1c81bbcd79ea24260eba84982abd00e5a50dd461a5fff508612b1"
+}

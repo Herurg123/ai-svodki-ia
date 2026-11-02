@@ -9,9 +9,34 @@
   <link>https://rybalka.one/posts/</link>
   <description>Десять полнотекстовых аналитических статей об искусственном интеллекте.</description>
   <language>ru</language>
-  <lastBuildDate>Sun, 01 Nov 2026 06:00:00 +0300</lastBuildDate>
+  <lastBuildDate>Mon, 02 Nov 2026 06:00:00 +0300</lastBuildDate>
   <dc:creator>ИИ-сводки</dc:creator>
   <atom:link href="https://rybalka.one/posts/rss.xml" rel="self" type="application/rss+xml" />
+
+  <item>
+    <title>ИИ-Сводка на 2 ноября 2026</title>
+    <link>https://rybalka.one/posts/2026-11-02/</link>
+    <guid isPermaLink="true">https://rybalka.one/posts/2026-11-02/</guid>
+    <pubDate>Mon, 02 Nov 2026 06:00:00 +0300</pubDate>
+    <dc:creator>ИИ-сводки</dc:creator>
+    <category>Статья</category>
+    <category>ИИ</category>
+    <category>Технологии</category>
+    <category>native-yes</category>
+    <media:rating scheme="urn:simple">nonadult</media:rating>
+    <enclosure url="https://rybalka.one/posts/images/ai-svodka-2026-11-02.png" type="image/png" length="1892392" />
+    <media:content url="https://rybalka.one/posts/images/ai-svodka-2026-11-02.png" medium="image" type="image/png" />
+    <media:thumbnail url="https://rybalka.one/posts/images/ai-svodka-2026-11-02.png" />
+    <description><![CDATA[<p>OpenAI тестирует сближение ChatGPT Chat и Work, а также общий лимит использования с Codex. Короткий выпуск о том, как агентные рабочие функции становятся частью основного интерфейса ChatGPT.</p>]]></description>
+    <content:encoded><![CDATA[<figure>
+<img src="https://rybalka.one/posts/images/ai-svodka-2026-11-02.png" alt="ИИ-Сводка на 2 ноября 2026">
+<figcaption>Главные новости искусственного интеллекта за 2 ноября 2026 года</figcaption>
+</figure>
+<p><em>Новостей сегодня меньше, чем обычно</em></p>
+<p>Сегодня в фокусе — изменение продуктовой границы между обычным чатом, рабочими инструментами и агентной разработкой. OpenAI начала ограниченно проверять единый опыт, в котором пользователь может перейти от диалога к задачам с файлами, подключениями и действиями в вебе.</p><h2>Мировые лидеры ИИ</h2><h3>OpenAI тестирует объединение ChatGPT Work с обычным Chat и общий лимит с Codex</h3><p>OpenAI, согласно письму подписчикам, начала тестировать для небольшой группы пользователей объединённый опыт Chat и Work в ChatGPT. Предполагается, что из обычного диалога можно будет переходить к более сложным рабочим задачам с файлами, плагинами и веб-действиями. Об этом сообщил <a href="https://www.bleepingcomputer.com/news/artificial-intelligence/openai-says-its-doubling-pro-usage-limits-and-bringing-work-features-to-chat/">BleepingComputer</a>, опубликовавший содержание письма.</p><p>Одновременно ChatGPT и Codex должны перейти на общий usage allowance, хотя Codex сохранится как отдельный интерфейс в десктопном приложении ChatGPT. Это пока не общий запуск: OpenAI не раскрыла размер тестовой группы, регионы и сроки широкого развёртывания. Но направление ясно: компания стремится сделать агентное выполнение задач и разработку продолжением основного диалога, а не отдельными продуктами с независимыми лимитами.</p><h2>Что это значит</h2><ol><li>Граница между чат-ботом и рабочим агентом всё сильнее размывается: сложная задача может начинаться в обычном диалоге.</li><li>Общий лимит ChatGPT и Codex делает стоимость агентной работы заметнее для пользователей и команд: расход в одном интерфейсе будет влиять на доступность другого.</li><li>Для OpenAI это шаг к единому продукту, где поиск, работа с документами, веб-действия и программирование связаны одним контекстом пользователя.</li><li>Для корпоративных команд важным останется вопрос контроля: при расширении доступа к файлам, плагинам и веб-инструментам нужны ясные разрешения, аудит действий и бюджетные ограничения.</li></ol>
+<h2>Все ИИ-Сводки</h2><p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>
+<p class="digest-footer" style="text-align:center;margin:32px 0 0;"><a href="https://dzen.ru/rybv" target="_blank" rel="noopener noreferrer"><img src="https://rybalka.one/posts/_footer-scr.png" alt="Подписаться на канал" style="display:block;max-width:50%;width:auto;height:auto;margin:0 auto;"></a></p>]]></content:encoded>
+  </item>
 
   <item>
     <title>ИИ-Сводка на 1 ноября 2026</title>

@@ -1,0 +1,33 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-02",
+  "slug": "2026-11-02",
+  "title": "ИИ-Сводка на 2 ноября 2026",
+  "description": "OpenAI тестирует сближение ChatGPT Chat и Work, а также общий лимит использования с Codex. Короткий выпуск о том, как агентные рабочие функции становятся частью основного интерфейса ChatGPT.",
+  "published_at": "2026-11-02T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-02.png",
+  "topics": [
+    "OpenAI",
+    "ChatGPT",
+    "ChatGPT Work",
+    "Codex",
+    "агенты ИИ",
+    "рабочие ИИ-инструменты",
+    "лимиты использования"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation, independent_missing_events."
+    }
+  ]
+}
