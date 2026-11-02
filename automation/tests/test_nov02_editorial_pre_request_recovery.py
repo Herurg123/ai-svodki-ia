@@ -79,6 +79,22 @@ class November2PreRequestEvidenceTests(unittest.TestCase):
             "proven_pre_request_zero_eligible_pool_2026_11_02",
         )
 
+    def test_recovered_zero_pool_before_finalizer_is_proven_pre_request(self):
+        # Saved run 41381208873: exact same early zero-pool exception, but
+        # audit_state was not_started because the report finalizer was skipped.
+        report = saved_pre_request_report()
+        report["audit_state"] = "not_started"
+        self.assertEqual(
+            guard._legacy_pre_request_reason(report),
+            "proven_pre_request_zero_eligible_pool_2026_11_02",
+        )
+
+    def test_nonzero_pool_never_claims_zero_pool_pre_request(self):
+        report = saved_pre_request_report()
+        report["audit_state"] = "not_started"
+        report["candidate_pool_after"]["total"] = 1
+        self.assertIsNone(guard._legacy_pre_request_reason(report))
+
     def test_exact_second_attempt_guard_is_pre_admission(self):
         report = saved_pre_request_report(guard_block=True)
         self.assertEqual(
