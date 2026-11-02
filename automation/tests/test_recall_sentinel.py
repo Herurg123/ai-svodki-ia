@@ -163,7 +163,8 @@ def current_sentinel_attempt() -> dict[str, object]:
 
 
 class RecallSentinelTests(unittest.TestCase):
-    def run_plan(self, plan, fake_request, *, existing_candidates=None):
+    def run_plan(self, plan, fake_request, *, existing_candidates=None,
+                 search_window=None, publication_date="2026-08-08"):
         with (
             mock.patch.object(
                 runtime,
@@ -180,8 +181,8 @@ class RecallSentinelTests(unittest.TestCase):
                 api_key="secret",
                 model="gpt-5.6-terra",
                 template="unused by stub",
-                publication_date="2026-08-08",
-                search_window=SEARCH_WINDOW,
+                publication_date=publication_date,
+                search_window=search_window or SEARCH_WINDOW,
                 missing_total=7,
                 maximum_web_search_calls=7,
                 existing_candidates=existing_candidates or [],
