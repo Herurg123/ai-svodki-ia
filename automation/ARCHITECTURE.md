@@ -653,6 +653,14 @@ event-origin evidence. `published_date`/`published_at`/`time_precision` отно
 `event_time_precision`, `event_origin_url`, `event_evidence_kind` и
 `event_date_evidence` относятся к событию. Retrieval не обязан выдумывать origin:
 при неоднозначном доказательстве event fields возвращаются как `unknown`/`null`.
+Coverage `story_coverage.validate_audit_candidate` ремонтирует только ошибочную
+метку `time_precision=datetime` при `published_at=null`, если
+проверенное событие имеет ту же документированную дату и весь этот день целиком
+находится внутри точного временного окна. Она понижает точность до `date`,
+фиксирует причину в notes, не придумывает точное время, не допускает пограничные
+дни и не обходит обязательную верификацию. Это исправляет восстановление
+сохранённых Coverage candidates, в частности отклонение сообщения Chat/Work
+от 01.11.2026 в запуске 41375795360, без повторных paid searches.
 
 Retrieval Quality P3a расширяет только сохранение rejection evidence. Для
 `reason_code=weak_source` row должен иметь HTTPS source URL, явный или
