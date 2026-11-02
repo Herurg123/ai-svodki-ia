@@ -662,6 +662,16 @@ Coverage `story_coverage.validate_audit_candidate` ремонтирует тол
 сохранённых Coverage candidates, в частности отклонение сообщения Chat/Work
 от 01.11.2026 в запуске 41375795360, без повторных paid searches.
 
+Для этого же инцидента durable Editorial Repair распознаёт только две
+строго идентифицированные pre-admission остановки 02.11: исходную нулевую
+Coverage-pool (attempt 1) и отказ старого legacy guard (attempt 2).
+Обе требуют точных error signatures, полного 6/6 Coverage, неизменной даты,
+отсутствия post-admission journal, показаний об отсутствии выполненного
+редакторского completion и зафиксированного кандидата ChatGPT Work для
+второго случая. Иные legacy pending случаи остаются fail-closed, включая
+unknown outcome API; восстанавливаются старые поиски, но новый Editorial
+запрос допускается только один раз с новым durable journal.
+
 Retrieval Quality P3a расширяет только сохранение rejection evidence. Для
 `reason_code=weak_source` row должен иметь HTTPS source URL, явный или
 консервативно извлечённый organization prefix, хотя бы один product/model version
