@@ -167,6 +167,11 @@ Source Pulse, Event Freshness, regional/agency viability, Discovery Health и
 - `general_coverage_gaps` — авторитетный last-mile sweep оставшихся gaps.
 
 `partial`, `budget_exhausted` и `error` блокируют Image API, commit и deploy.
+Если Coverage вернул противоречивые `time_precision=datetime` + `published_at=null`,
+допускается только консервативное восстановление `time_precision=date`:
+подтверждённые event-origin и дата страницы должны совпадать, а весь календарный
+день целиком лежать внутри exact search window. Источник времени не выдумывается;
+пограничные даты и неподтверждённые события остаются fail-closed.
 Evidence-rich source-neutral resolution может завершиться
 `complete_with_gaps` только по documented fail-closed contract; недоказанный
 сюжет не становится публикационно пригодным.
