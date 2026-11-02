@@ -177,6 +177,9 @@ Durable Editorial Repair допускает повтор только если �
 поддерживаются две точные сохранённые формы: остановка при нулевом пуле
 и отказ самого legacy guard до запроса; проверяются шесть завершённых Coverage
 проходов, дата, статус, отсутствие journal и точный сигнал ошибки.
+Исходный zero-pool report может иметь `audit_state=completed_usable`, а его
+сохранённая pre-finalizer копия — `audit_state=not_started`; только точный
+zero-pool exception с теми же доказательствами допускает оба варианта.
 Неизвестный outcome отправленного запроса по-прежнему запрещает автоповтор.
 Evidence-rich source-neutral resolution может завершиться
 `complete_with_gaps` только по documented fail-closed contract; недоказанный
