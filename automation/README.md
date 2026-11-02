@@ -185,6 +185,7 @@ Evidence-rich source-neutral resolution может завершиться
 
 Короткий выпуск сохраняет публичную пометку «Новостей сегодня меньше, чем обычно».
 Полностью завершённый нулевой candidate pool является normal successful `no-publish`, а не production failure. Technical partial/error audits remain fail-closed. Нулевая остановка требует актуальный `high_signal_recall_sentinel` версии 8 и завершённые обязательные quality/search стадии.
+Перед решением о седьмом Coverage search используется **тот же** `story_coverage.merge_candidates`, что и в окончательной стадии: проверяются дата, источник, verified/freshness, значимость, dedupe и ограничения пула на копии данных. Голые метки `include/consider` не означают пригодность. Если после полного 6/6 Coverage и этой проверки пул равен нулю, свободен один search slot и нет уже выполненного sentinel, разрешён **только один** fallback; никаких восьмых поисков. При пригодной новости или исчерпанном бюджете fallback не вызывается.
 
 ### Freshness и supplemental discovery
 
