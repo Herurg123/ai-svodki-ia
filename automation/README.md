@@ -172,15 +172,13 @@ Source Pulse, Event Freshness, regional/agency viability, Discovery Health и
 подтверждённые event-origin и дата страницы должны совпадать, а весь календарный
 день целиком лежать внутри exact search window. Источник времени не выдумывается;
 пограничные даты и неподтверждённые события остаются fail-closed.
-Durable Editorial Repair допускает повтор только если прежняя остановка
-достоверно произошла **до** provider admission. Для инцидента 02.11.2026
-поддерживаются две точные сохранённые формы: остановка при нулевом пуле
-и отказ самого legacy guard до запроса; проверяются шесть завершённых Coverage
-проходов, дата, статус, отсутствие journal и точный сигнал ошибки.
-Исходный zero-pool report может иметь `audit_state=completed_usable`, а его
-сохранённая pre-finalizer копия — `audit_state=not_started`; только точный
-zero-pool exception с теми же доказательствами допускает оба варианта.
-Неизвестный outcome отправленного запроса по-прежнему запрещает автоповтор.
+Durable Editorial Repair допускает повтор legacy-операции только при
+доказанной остановке **до** provider admission (сохранился случай
+`ModuleNotFoundError: No module named 'openai'` до вызова провайдера).
+При неизвестном исходе API-вызова автоматический повтор запрещён; нормальное
+восстановление из проверенного durable journal остаётся штатным.
+Разовые исключения pre-admission для выпуска 02.11.2026 удалены
+после успешной публикации и сохранены только в истории PR #239–240.
 Evidence-rich source-neutral resolution может завершиться
 `complete_with_gaps` только по documented fail-closed contract; недоказанный
 сюжет не становится публикационно пригодным.

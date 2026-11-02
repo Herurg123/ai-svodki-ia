@@ -662,15 +662,14 @@ Coverage `story_coverage.validate_audit_candidate` ремонтирует тол
 сохранённых Coverage candidates, в частности отклонение сообщения Chat/Work
 от 01.11.2026 в запуске 41375795360, без повторных paid searches.
 
-Для этого же инцидента durable Editorial Repair распознаёт только две
-строго идентифицированные pre-admission остановки 02.11: исходную нулевую
-Coverage-pool (attempt 1) и отказ старого legacy guard (attempt 2).
-Обе требуют точных error signatures, полного 6/6 Coverage, неизменной даты,
-отсутствия post-admission journal, показаний об отсутствии выполненного
-редакторского completion и зафиксированного кандидата ChatGPT Work для
-второго случая. Иные legacy pending случаи остаются fail-closed, включая
-unknown outcome API; восстанавливаются старые поиски, но новый Editorial
-запрос допускается только один раз с новым durable journal.
+Исторически выпуск 02.11.2026 восстанавливался через два строго
+идентифицированных pre-admission исключения, добавленных PR #239–240.
+После успешной публикации эти **разовые** исключения удалены из
+`editorial_repair_guard.py`: они больше не влияют на production.
+Штатный durable Editorial Repair по-прежнему восстанавливает проверенный
+journal/response без повторной оплаты. Legacy pending с неизвестным
+provider admission остаётся fail-closed; из legacy pre-request evidence
+сохранилось только исходное правило для ошибки отсутствующего SDK OpenAI.
 
 Retrieval Quality P3a расширяет только сохранение rejection evidence. Для
 `reason_code=weak_source` row должен иметь HTTPS source URL, явный или
