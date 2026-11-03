@@ -21,6 +21,7 @@ const baselines=[
   "b6eebb2e86606c35316a1421b410607297eec355",
   "91259a0240591a406ae090360fdb58ef61ce3602",
   "23dac7b3d649e912bcf753cf7566c827c7d581eb",
+  "42068f2042db9cb15f67623036f011ebc96fd16e",
 ];
 // Explicit allowlist; intentionally excludes _bak, config/state, secrets,
 // browser data, MP4/PNG, logs, Task Scheduler, and operator templates.
@@ -33,6 +34,7 @@ const files=[
   "dzen-safe-notices.js",
   "scheduled-worker.js",
   "full-worker.js",
+  "history-utils.js",
   "worker.js",
   "video-footer.js",
   "vk-stage.mjs",

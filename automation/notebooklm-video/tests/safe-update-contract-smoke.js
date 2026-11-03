@@ -8,7 +8,7 @@ const packer=fs.readFileSync(path.join(root,"scripts/build-safe-update.mjs"),"ut
 const workflow=fs.readFileSync(path.join(root,"../../.github/workflows/video-ci.yml"),"utf8");
 for(const n of ["dzen-article-link.js","dzen-article-video.js","dzen-publish-direct.js",
  "dzen-duplicate-guard.js","dzen-browser-runner.js","dzen-safe-notices.js","scheduled-worker.js",
- "full-worker.js","worker.js","video-footer.js","vk-stage.mjs","vk-text.mjs","setup-local.ps1","package.json"]){
+ "full-worker.js","history-utils.js","worker.js","video-footer.js","vk-stage.mjs","vk-text.mjs","setup-local.ps1","package.json"]){
  assert(script.includes("'"+n+"'"),"Installer must explicitly allow "+n);
  assert(packer.includes('"'+n+'"'),"Packer must explicitly include "+n);
 }
@@ -21,6 +21,8 @@ assert.match(script,/if \(-not \$Apply\)/,"Dry-run must be default");
 assert.match(script,/allowedNames/,"Installer must not blindly accept arbitrary filenames from manifest");
 assert.match(script,/Get-FileHash.*SHA256/,"Installer must preflight SHA-256");
 assert.match(script,/allowedOldSha256/,"Installer must require recognized production version");
+assert(packer.includes("42068f2042db9cb15f67623036f011ebc96fd16e"),
+  "Current pre-change main commit must be an eligible old version");
 assert.match(script,/NotebookLMBot-update-backups/,"Backup must be outside installed root");
 assert.match(script,/Rollback|откат/,"Installer must attempt rollback after failure");
 assert.match(script,/full-worker\.lock/);

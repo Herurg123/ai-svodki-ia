@@ -3,6 +3,10 @@
 const fs = require("fs");
 const path = require("path");
 
+// Keep explicitly rehydrated older jobs active for the lifetime of this process
+// so multiple checkpoint writes survive; next normal compaction rearchives them.
+const rehydratedJobsByState = new WeakMap();
+
 function stripBom(value) {
   return String(value || "").replace(/^\uFEFF/, "");
 }
@@ -147,13 +151,14 @@ function saveStateWithRetention(config, state, now = new Date()) {
   }
 
   const cutoff = cutoffDateKey(config, now);
+  const pinnedRehydratedJobs = rehydratedJobsByState.get(state);
   const activeJobs = {};
   const groups = new Map();
 
   for (const [key, job] of Object.entries((state && state.jobs) || {})) {
     const dateKey = job && job.date;
     const parsed = parseDateKey(dateKey);
-    const eligible = parsed && dateKey < cutoff && !jobHasExplicitPendingState(job);
+    const eligible = parsed && dateKey < cutoff && !pinnedRehydratedJobs?.has(key);
     if (!eligible) {
       activeJobs[key] = job;
       continue;
@@ -205,6 +210,12 @@ function findJobForDateIncludingArchive(config, state, dateKey) {
 
   state.jobs ||= {};
   state.jobs[found.key] = found.job;
+  let pinned = rehydratedJobsByState.get(state);
+  if (!pinned) {
+    pinned = new Set();
+    rehydratedJobsByState.set(state, pinned);
+  }
+  pinned.add(found.key);
   return { ...found, source: "archive", archivePath: filePath };
 }
 

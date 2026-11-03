@@ -157,10 +157,13 @@ writes the first current-day line into an older active log, the next shared writ
 archives only the older prefix and preserves the current-day suffix.
 
 `history-utils.js` keeps a 14-calendar-day active window in `state.json` and
-`downloads/_СКАЧАННЫЕ_ВИДЕО.json`. Older safe terminal history moves to monthly
-JSON files under local `archive/`. Unresolved/error/verification-only jobs remain
-active regardless of age. JSON archive is not auto-deleted and stays available for
-duplicate/idempotency lookup and explicit old-date operator actions.
+`downloads/_СКАЧАННЫЕ_ВИДЕО.json`. **Every dated job older than the cutoff**
+(including errors, unfinished work and uncertain publication checkpoints) moves
+with its complete checkpoint to monthly JSON files under local `archive/`.
+Archived records are never auto-deleted and remain accessible for duplicate/
+idempotency lookup and explicit old-date operator recovery. A rehydrated old job
+remains active throughout that operator process to persist every checkpoint;
+the next normal run rearchives it. Automatic flow never retries old jobs.
 
 Empty `temp/` and `traces/` are not active runtime surfaces and are not
 precreated.
