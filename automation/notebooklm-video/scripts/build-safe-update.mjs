@@ -33,6 +33,7 @@ const files=[
   "dzen-safe-notices.js",
   "scheduled-worker.js",
   "full-worker.js",
+  "history-utils.js",
   "worker.js",
   "video-footer.js",
   "vk-stage.mjs",
