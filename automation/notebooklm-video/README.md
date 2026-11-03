@@ -158,9 +158,13 @@ archives only the older prefix and preserves the current-day suffix.
 
 `history-utils.js` keeps a 14-calendar-day active window in `state.json` and
 `downloads/_СКАЧАННЫЕ_ВИДЕО.json`. Older safe terminal history moves to monthly
-JSON files under local `archive/`. Unresolved/error/verification-only jobs remain
-active regardless of age. JSON archive is not auto-deleted and stays available for
-duplicate/idempotency lookup and explicit old-date operator actions.
+JSON files under local `archive/`. Jobs with a safe terminal downstream `ERROR`
+use a shorter **7-calendar-day** active window (`historyRetention.errorActiveDays`,
+default 7): notably Dzen article-video `ERROR/ERROR` and VK pre-save PNG staging
+`ERROR/STORY_UPLOAD_REQUESTED`. Pending jobs and uncertain at-most-once
+publication states stay active regardless of age. Archives are not auto-deleted,
+retain full checkpoints, and remain available for duplicate/idempotency lookup
+and explicit old-date operator rehydration.
 
 Empty `temp/` and `traces/` are not active runtime surfaces and are not
 precreated.
