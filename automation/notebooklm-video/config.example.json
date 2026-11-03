@@ -58,7 +58,6 @@
   "historyRetention": {
     "enabled": true,
     "activeDays": 14,
-    "errorActiveDays": 7,
     "archiveDir": "C:\\NotebookLMBot\\archive"
   },
   "stateFile": "C:\\NotebookLMBot\\state.json",
