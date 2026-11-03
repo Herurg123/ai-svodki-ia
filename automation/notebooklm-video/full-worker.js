@@ -181,7 +181,6 @@ async function main() {
       log(
         config,
         `JSON-history: active window=${historyResult.activeDays} дн.; ` +
-          `terminal errors=${historyResult.errorActiveDays} дн.; ` +
           `архивировано jobs=${historyResult.archivedJobs}; ` +
           `registry=${historyResult.archivedRecords}; archive=${historyResult.archiveDir}.`
       );
