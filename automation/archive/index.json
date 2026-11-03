@@ -1,15 +1,134 @@
 {
   "version": 2,
-  "generated_at": "2026-11-02T06:07:44+00:00",
+  "generated_at": "2026-11-03T02:15:48+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-03",
+      "published_at": "2026-11-03T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-03T05:06:37+03:00",
+      "title": "ИИ-Сводка на 3 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-03/",
+      "summary": "Главные новости искусственного интеллекта за 3 ноября 2026 года Новостей сегодня меньше, чем обычно Сегодняшняя повестка связывает автономность ИИ с контролем на двух уровнях: в инструментах разработки и в критической инфраструктуре. Qwen Code вводит явную границу для автоматических исправлений pull request, а OpenAI расширяет публичную работу на стыке ИИ, национальной безопасности и защиты энергосетей. Практический вывод для команд: агентам всё чаще задают не только цель, но и пределы самостоят",
+      "topics": [
+        "OpenAI",
+        "Qwen Code",
+        "агенты ИИ",
+        "ИИ-кодинг",
+        "автоматизация pull request",
+        "национальная безопасность",
+        "защита энергосетей",
+        "контроль автономности"
+      ],
+      "source_urls": [
+        "https://openai.com/index/dan-driscoll-joins-openai",
+        "https://openai.com/index/grid-protectors-program",
+        "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.5"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "OpenAI назначила Дэна Дрисколла старшим советником по модернизации национальной безопасности",
+          "organization": "OpenAI",
+          "topic": "OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization",
+          "published_at": "2026-11-02T00:00:00+00:00",
+          "published_date": "2026-11-02",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/dan-driscoll-joins-openai"
+            }
+          ],
+          "keywords": [
+            "OpenAI",
+            "appoints",
+            "Dan",
+            "Driscoll",
+            "as",
+            "Senior",
+            "Counselor",
+            "National",
+            "Security",
+            "Modernization"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "OpenAI представила Grid Protectors Program",
+          "organization": "OpenAI",
+          "topic": "Introducing the Grid Protectors Program",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Introducing the Grid Protectors Program",
+          "published_at": "2026-11-02T15:00:00+00:00",
+          "published_date": "2026-11-02",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Introducing the Grid Protectors Program",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/grid-protectors-program"
+            }
+          ],
+          "keywords": [
+            "Introducing",
+            "Grid",
+            "Protectors",
+            "Program"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-001",
+          "section": "world",
+          "headline": "Обновление: Qwen Code v0.26.5 ограничила повторные попытки автономного исправления PR",
+          "organization": "Alibaba Qwen",
+          "topic": "CLI coding agents; Qwen Code; managed agents; PR review; autofix; CI; agentic development environments",
+          "event_type": "product release",
+          "status": "update",
+          "summary": "Qwen Code v0.26.5 добавила изменения для управляемых агентных сессий и автономной работы с pull request: PR watch сначала подтягивает устаревшую базу перед исправлением CI, /autofix-pr получил лимит из трёх fix-push попыток с передачей незавершённой задачи человеку, а code-review skill стал устойчивее к дрейфу head и блокирующим условиям. Релиз также добавил in-place режим для PR-watch и экспериментальное Helm-развёртывание Managed Agent с Hosted Harness.",
+          "published_at": "2026-11-01T03:22:50+00:00",
+          "published_date": "2026-11-01",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Qwen Code v0.26.5",
+              "publisher": "QwenLM / GitHub",
+              "url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.5"
+            }
+          ],
+          "keywords": [
+            "Qwen Code",
+            "v0.26.5",
+            "autofix-pr",
+            "verify-pr",
+            "PR watch",
+            "managed agents",
+            "code review",
+            "retry budget"
+          ],
+          "geography": "world",
+          "category": "coding"
+        }
+      ]
+    },
     {
       "date": "2026-11-02",
       "published_at": "2026-11-02T06:00:00+03:00",
       "search_cutoff_at": "2026-11-02T05:06:26+03:00",
       "title": "ИИ-Сводка на 2 ноября 2026",
       "link": "https://rybalka.one/posts/2026-11-02/",
-      "summary": "Главные новости искусственного интеллекта за 2 ноября 2026 года Новостей сегодня меньше, чем обычно Сегодня в фокусе — изменение продуктовой границы между обычным чатом, рабочими инструментами и агентной разработкой. OpenAI начала ограниченно проверять единый опыт, в котором пользователь может перейти от диалога к задачам с файлами, подключениями и действиями в вебе. Мировые лидеры ИИ OpenAI тестирует объединение ChatGPT Work с обычным Chat и общий лимит с Codex OpenAI, согласно письму подписчик",
+      "summary": "Главные новости искусственного интеллекта за 2 ноября 2026 года Новостей сегодня меньше, чем обычно Сегодня в фокусе — изменение продуктовой границы между обычным чатом, рабочими инструментами и агентной разработкой. OpenAI объявила о планах в ближайшие недели начать ограниченный тест единого опыта, в котором пользователь может перейти от диалога к задачам с файлами, подключениями и действиями в вебе. Мировые лидеры ИИ OpenAI готовит тест объединения ChatGPT Work с обычным Chat и общий лимит с C",
       "topics": [
         "OpenAI",
         "ChatGPT",
@@ -26,12 +145,12 @@
         {
           "candidate_id": "cand-002",
           "section": "world",
-          "headline": "OpenAI тестирует объединение ChatGPT Work с обычным Chat и общий лимит с Codex",
+          "headline": "OpenAI готовит тест объединения ChatGPT Work с обычным Chat и общий лимит с Codex",
           "organization": "OpenAI",
           "topic": "ChatGPT; Work; Codex; product integration; AI agents; subscriptions",
           "event_type": "limited product test and subscription-policy update",
           "status": "new",
-          "summary": "OpenAI, согласно письму подписчикам, начинает ограниченный тест объединённого опыта Chat и Work в ChatGPT: пользователи смогут переходить от диалога к более сложным задачам с файлами, плагинами и web-действиями. Одновременно компания готовит единый расходный лимит для ChatGPT и Codex.",
+          "summary": "Согласно письму подписчикам, OpenAI планирует в ближайшие недели начать ограниченный тест объединённого опыта Chat и Work в ChatGPT: пользователи смогут переходить от диалога к более сложным задачам с файлами, плагинами и web-действиями. Одновременно компания готовит единый расходный лимит для ChatGPT и Codex.",
           "published_at": "2026-11-01T08:53:11-05:00",
           "published_date": "2026-11-01",
           "time_precision": "datetime",

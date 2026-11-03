@@ -1,0 +1,96 @@
+[
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "OpenAI назначила Дэна Дрисколла старшим советником по модернизации национальной безопасности",
+    "organization": "OpenAI",
+    "topic": "OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization",
+    "published_at": "2026-11-02T00:00:00+00:00",
+    "published_date": "2026-11-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/dan-driscoll-joins-openai"
+      }
+    ],
+    "keywords": [
+      "OpenAI",
+      "appoints",
+      "Dan",
+      "Driscoll",
+      "as",
+      "Senior",
+      "Counselor",
+      "National",
+      "Security",
+      "Modernization"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "OpenAI представила Grid Protectors Program",
+    "organization": "OpenAI",
+    "topic": "Introducing the Grid Protectors Program",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Introducing the Grid Protectors Program",
+    "published_at": "2026-11-02T15:00:00+00:00",
+    "published_date": "2026-11-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Introducing the Grid Protectors Program",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/grid-protectors-program"
+      }
+    ],
+    "keywords": [
+      "Introducing",
+      "Grid",
+      "Protectors",
+      "Program"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Обновление: Qwen Code v0.26.5 ограничила повторные попытки автономного исправления PR",
+    "organization": "Alibaba Qwen",
+    "topic": "CLI coding agents; Qwen Code; managed agents; PR review; autofix; CI; agentic development environments",
+    "event_type": "product release",
+    "status": "update",
+    "summary": "Qwen Code v0.26.5 добавила изменения для управляемых агентных сессий и автономной работы с pull request: PR watch сначала подтягивает устаревшую базу перед исправлением CI, /autofix-pr получил лимит из трёх fix-push попыток с передачей незавершённой задачи человеку, а code-review skill стал устойчивее к дрейфу head и блокирующим условиям. Релиз также добавил in-place режим для PR-watch и экспериментальное Helm-развёртывание Managed Agent с Hosted Harness.",
+    "published_at": "2026-11-01T03:22:50+00:00",
+    "published_date": "2026-11-01",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Qwen Code v0.26.5",
+        "publisher": "QwenLM / GitHub",
+        "url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.5"
+      }
+    ],
+    "keywords": [
+      "Qwen Code",
+      "v0.26.5",
+      "autofix-pr",
+      "verify-pr",
+      "PR watch",
+      "managed agents",
+      "code review",
+      "retry budget"
+    ],
+    "geography": "world",
+    "category": "coding"
+  }
+]

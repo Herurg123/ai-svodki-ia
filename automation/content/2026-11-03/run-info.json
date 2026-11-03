@@ -1,0 +1,175 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-11-03",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-11-03.json",
+  "warnings": [
+    "cand-007: источник показывает дату без точного времени.",
+    "Целевой пул — 12 кандидатов, но после проверки свежести осталось 7.",
+    "Исследовательский пул перегружен одним издателем: openai (5)",
+    "Исследовательский пул перегружен одной организацией: openai (5)",
+    "Выбрано 3 сюжетов при обычной цели 7; формируется короткий выпуск."
+  ],
+  "publication_date": "2026-11-03",
+  "started_at": "2026-11-03T02:12:09+00:00",
+  "finished_at": "2026-11-03T02:12:35+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 108,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "a405c8eeadfcd0d35ffb63d7c499f51c0fd6c8d353f1c9c605f001bdb1eb42be",
+    "candidates_sha256": "74b0dda636a357b24667388d17b49eceac8f347cdad07ed8a9850d499de1b59d",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-11-01T05:06:26+03:00",
+      "end_at": "2026-11-03T05:06:37+03:00",
+      "latest_archive_at": "2026-11-02T05:06:26+03:00",
+      "start_date": "2026-11-01",
+      "end_date": "2026-11-03",
+      "latest_archive_date": "2026-11-02"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "e89a7d8f674747d5abe6a121c5ebfb316a44fb13323a6a4ab4b78ea663614b8a",
+    "editorial_sha256": "4155c6f68586cdc890d2e55b5c8f69449fdc6da5ddd4d466931a49cf62bc44e9",
+    "digest_sha256": "c409dd4dca3191e516dcd69290f9a3962781e7060805eb612d2f6255559d550a",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-11-03.webp",
+          "normalized_value": "ai-svodka-2026-11-03.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.story_section",
+          "candidate_id": "cand-001",
+          "model_value": "Мировые лидеры ИИ",
+          "normalized_value": "Китайские лидеры ИИ"
+        },
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        },
+        {
+          "field": "selected_candidate_ids.section_order",
+          "model_value": [
+            "cand-001",
+            "cand-002",
+            "cand-005"
+          ],
+          "normalized_value": [
+            "cand-002",
+            "cand-005",
+            "cand-001"
+          ]
+        }
+      ],
+      "changed_count": 3,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 3 сюжетов."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+        },
+        {
+          "type": "section_placement",
+          "area": "editorial",
+          "message": "Раздел для cand-001 автоматически исправлен: Мировые лидеры ИИ → Китайские лидеры ИИ."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_05e6818d802168af016ae942fa450c87d1aedae738192e86f7",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 210680,
+        "input_tokens_details": {
+          "cache_write_tokens": 12124,
+          "cached_tokens": 198553,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 12124
+          }
+        },
+        "output_tokens": 2733,
+        "output_tokens_details": {
+          "reasoning_tokens": 754
+        },
+        "total_tokens": 213413
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-11-03/resp_05e6818d802168af016ae942fa450c87d1aedae738192e86f7.json"
+  },
+  "total_usage": {
+    "input_tokens": 210680,
+    "output_tokens": 2733,
+    "total_tokens": 213413,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "9acf89d83817f69210bab0154532c91147d6a7a2",
+    "run_id": "41563879079",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-11-03T05:06:37+03:00"
+}

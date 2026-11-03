@@ -1,0 +1,701 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-11-03",
+  "search_window": {
+    "start_at": "2026-11-01T05:06:26+03:00",
+    "end_at": "2026-11-03T05:06:37+03:00",
+    "latest_archive_at": "2026-11-02T05:06:26+03:00",
+    "start_date": "2026-11-01",
+    "end_date": "2026-11-03",
+    "latest_archive_date": "2026-11-02"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Qwen Code v0.26.5 расширила управление агентными PR-workflows и добавила ограничение повторных autofix-попыток",
+      "organization": "Alibaba Qwen",
+      "published_date": "2026-11-01",
+      "published_at": "2026-11-01T03:22:50+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agents; Qwen Code; managed agents; PR review; autofix; CI; agentic development environments",
+      "event_type": "product release",
+      "keywords": [
+        "Qwen Code",
+        "v0.26.5",
+        "autofix-pr",
+        "verify-pr",
+        "PR watch",
+        "managed agents",
+        "code review",
+        "retry budget"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "documentation",
+      "primary_source": {
+        "title": "Qwen Code v0.26.5",
+        "publisher": "QwenLM / GitHub",
+        "url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.5"
+      },
+      "supporting_sources": [
+        {
+          "title": "Qwen Code changelog",
+          "publisher": "AI Ticker",
+          "url": "https://aiticker.site/tools/qwen-code/"
+        }
+      ],
+      "event_summary": "Qwen Code v0.26.5 добавила изменения для управляемых агентных сессий и автономной работы с pull request: PR watch сначала подтягивает устаревшую базу перед исправлением CI, /autofix-pr получил лимит из трёх fix-push попыток с передачей незавершённой задачи человеку, а code-review skill стал устойчивее к дрейфу head и блокирующим условиям. Релиз также добавил in-place режим для PR-watch и экспериментальное Helm-развёртывание Managed Agent с Hosted Harness.",
+      "verified_facts": [
+        "В журнале изменений релиз v0.26.5 указан как выпущенный 1 ноября 2026 года.",
+        "В /autofix-pr появился retry budget: после трёх неудачных fix-push попыток задача передаётся человеку и отражается в статусе.",
+        "PR watch теперь может объединить устаревшую base-ветку до попытки исправления CI, а режим --in-place позволяет вести работу в текущем checkout.",
+        "Обновлённый code-review skill учитывает дрейф PR head, запускает actionlint-проверки и не повторяет заблокированные попытки."
+      ],
+      "significance": "Это не просто исправление интерфейса: релиз продолжает заметную линию Qwen Code по превращению CLI в управляемую среду автономного review/autofix с ограничением бесконечных циклов и явной передачей контроля разработчику. Однако это последовательное обновление уже освещённой 29 октября версии v0.26.4, а не самостоятельный платформенный запуск.",
+      "significance_score": 2,
+      "limitations": "Доступное подтверждение датирует релиз календарным днём без проверенного timezone-aware timestamp; детальная независимая оценка влияния функций отсутствует.",
+      "archive_status": "update",
+      "archive_reason": "В архиве от 31 октября уже опубликовано обновление Qwen Code v0.26.4; v0.26.5 является новым содержательным продолжением того же релизного трека.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Изменения и дата релиза подтверждены журналом, который ссылается на официальный GitHub release QwenLM; конкретные функции PR-watch, autofix и review перечислены в release notes.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/QwenLM/qwen-code/releases/tags/v0.26.5=2026-11-01T03:22:50Z; timestamp проверен Python против effective window. Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/QwenLM/qwen-code/releases/tags/v0.26.5=2026-11-01T03:22:50Z; timestamp проверен Python против effective window. Релиз v0.26.5 произошёл после архивной v0.26.4 и добавляет новые, тематически существенные возможности автономной PR-автоматизации.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим или регуляторным событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат относится к основной теме developer tools.",
+      "event_date": "2026-11-01",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.5",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Официальный GitHub release Qwen Code v0.26.5 указан в changelog как релиз от 1 ноября 2026 года.",
+      "id": "cand-001",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.26.5",
+      "source_published_date": "2026-11-01",
+      "source_published_at": "2026-11-01T03:22:50+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "github-releases-api:published_at:https://api.github.com/repos/QwenLM/qwen-code/releases/tags/v0.26.5=2026-11-01T03:22:50Z"
+    },
+    {
+      "title": "OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization",
+      "organization": "OpenAI",
+      "published_date": "2026-11-02",
+      "published_at": "2026-11-02T00:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "OpenAI",
+        "appoints",
+        "Dan",
+        "Driscoll",
+        "as",
+        "Senior",
+        "Counselor",
+        "National",
+        "Security",
+        "Modernization"
+      ],
+      "geography": "world",
+      "category": "other",
+      "source_type": "official",
+      "primary_source": {
+        "title": "OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/dan-driscoll-joins-openai"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI official artificial intelligence publication: OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization",
+      "verified_facts": [
+        "OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization",
+        "OpenAI official artificial intelligence publication: OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization"
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-11-02T00:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-11-02T00:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-11-02T00:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-11-02T00:00:00+00:00; timestamp проверен Python против effective window. Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-11-02T00:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-11-02T00:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-002",
+      "trusted_feed_publication_evidence": {
+        "version": 1,
+        "kind": "trusted_first_party_feed",
+        "source_id": "openai_news_rss",
+        "feed_url": "https://openai.com/news/rss.xml",
+        "item_url": "https://openai.com/index/dan-driscoll-joins-openai",
+        "published_at": "2026-11-02T00:00:00+00:00",
+        "published_date": "2026-11-02",
+        "time_precision": "datetime",
+        "feed_date_field": "rss_pubdate",
+        "same_host_required": true,
+        "exact_item_url_required": true
+      },
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_evidence_kind": "trusted_first_party_feed",
+      "source_freshness_feed_source_id": "openai_news_rss",
+      "source_freshness_feed_date_field": "rss_pubdate",
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://openai.com/index/dan-driscoll-joins-openai",
+      "source_published_date": "2026-11-02",
+      "source_published_at": "2026-11-02T00:00:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "trusted_feed:openai_news_rss:rss_pubdate=2026-11-02T00:00:00+00:00"
+    },
+    {
+      "title": "Qodo builds context into AI code review with Codex",
+      "organization": "OpenAI",
+      "published_date": "2026-11-02",
+      "published_at": "2026-11-02T00:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Qodo builds context into AI code review with Codex",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "Qodo",
+        "builds",
+        "context",
+        "into",
+        "code",
+        "review",
+        "Codex"
+      ],
+      "geography": "world",
+      "category": "other",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Qodo builds context into AI code review with Codex",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/qodo-codex-plugin"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI official artificial intelligence publication: Qodo builds context into AI code review with Codex",
+      "verified_facts": [
+        "Qodo builds context into AI code review with Codex",
+        "OpenAI official artificial intelligence publication: Qodo builds context into AI code review with Codex"
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-11-02T00:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-11-02T00:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-11-02T00:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-11-02T00:00:00+00:00; timestamp проверен Python против effective window. Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-11-02T00:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-11-02T00:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-003",
+      "trusted_feed_publication_evidence": {
+        "version": 1,
+        "kind": "trusted_first_party_feed",
+        "source_id": "openai_news_rss",
+        "feed_url": "https://openai.com/news/rss.xml",
+        "item_url": "https://openai.com/index/qodo-codex-plugin",
+        "published_at": "2026-11-02T00:00:00+00:00",
+        "published_date": "2026-11-02",
+        "time_precision": "datetime",
+        "feed_date_field": "rss_pubdate",
+        "same_host_required": true,
+        "exact_item_url_required": true
+      },
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_evidence_kind": "trusted_first_party_feed",
+      "source_freshness_feed_source_id": "openai_news_rss",
+      "source_freshness_feed_date_field": "rss_pubdate",
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://openai.com/index/qodo-codex-plugin",
+      "source_published_date": "2026-11-02",
+      "source_published_at": "2026-11-02T00:00:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "trusted_feed:openai_news_rss:rss_pubdate=2026-11-02T00:00:00+00:00"
+    },
+    {
+      "title": "LifeVal",
+      "organization": "OpenAI",
+      "published_date": "2026-11-02",
+      "published_at": "2026-11-02T09:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "LifeVal",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "LifeVal"
+      ],
+      "geography": "world",
+      "category": "other",
+      "source_type": "official",
+      "primary_source": {
+        "title": "LifeVal",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/lifeval"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI official artificial intelligence publication: LifeVal",
+      "verified_facts": [
+        "LifeVal",
+        "OpenAI official artificial intelligence publication: LifeVal"
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-11-02T09:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-11-02T09:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-11-02T09:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-11-02T09:00:00+00:00; timestamp проверен Python против effective window. Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-11-02T09:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-11-02T09:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-004",
+      "trusted_feed_publication_evidence": {
+        "version": 1,
+        "kind": "trusted_first_party_feed",
+        "source_id": "openai_news_rss",
+        "feed_url": "https://openai.com/news/rss.xml",
+        "item_url": "https://openai.com/index/lifeval",
+        "published_at": "2026-11-02T09:00:00+00:00",
+        "published_date": "2026-11-02",
+        "time_precision": "datetime",
+        "feed_date_field": "rss_pubdate",
+        "same_host_required": true,
+        "exact_item_url_required": true
+      },
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_evidence_kind": "trusted_first_party_feed",
+      "source_freshness_feed_source_id": "openai_news_rss",
+      "source_freshness_feed_date_field": "rss_pubdate",
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://openai.com/index/lifeval",
+      "source_published_date": "2026-11-02",
+      "source_published_at": "2026-11-02T09:00:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "trusted_feed:openai_news_rss:rss_pubdate=2026-11-02T09:00:00+00:00"
+    },
+    {
+      "title": "Introducing the Grid Protectors Program",
+      "organization": "OpenAI",
+      "published_date": "2026-11-02",
+      "published_at": "2026-11-02T15:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Introducing the Grid Protectors Program",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "Introducing",
+        "Grid",
+        "Protectors",
+        "Program"
+      ],
+      "geography": "world",
+      "category": "other",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Introducing the Grid Protectors Program",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/grid-protectors-program"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI official artificial intelligence publication: Introducing the Grid Protectors Program",
+      "verified_facts": [
+        "Introducing the Grid Protectors Program",
+        "OpenAI official artificial intelligence publication: Introducing the Grid Protectors Program"
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-11-02T15:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-11-02T15:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-11-02T15:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-11-02T15:00:00+00:00; timestamp проверен Python против effective window. Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-11-02T15:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-11-02T15:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-005",
+      "trusted_feed_publication_evidence": {
+        "version": 1,
+        "kind": "trusted_first_party_feed",
+        "source_id": "openai_news_rss",
+        "feed_url": "https://openai.com/news/rss.xml",
+        "item_url": "https://openai.com/index/grid-protectors-program",
+        "published_at": "2026-11-02T15:00:00+00:00",
+        "published_date": "2026-11-02",
+        "time_precision": "datetime",
+        "feed_date_field": "rss_pubdate",
+        "same_host_required": true,
+        "exact_item_url_required": true
+      },
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_evidence_kind": "trusted_first_party_feed",
+      "source_freshness_feed_source_id": "openai_news_rss",
+      "source_freshness_feed_date_field": "rss_pubdate",
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://openai.com/index/grid-protectors-program",
+      "source_published_date": "2026-11-02",
+      "source_published_at": "2026-11-02T15:00:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "trusted_feed:openai_news_rss:rss_pubdate=2026-11-02T15:00:00+00:00"
+    },
+    {
+      "title": "Scaling Git at OpenAI",
+      "organization": "OpenAI",
+      "published_date": "2026-11-02",
+      "published_at": "2026-11-02T15:30:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Scaling Git at OpenAI",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "Scaling",
+        "Git",
+        "at",
+        "OpenAI"
+      ],
+      "geography": "world",
+      "category": "other",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Scaling Git at OpenAI",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/scaling-git-at-openai"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI official artificial intelligence publication: Scaling Git at OpenAI",
+      "verified_facts": [
+        "Scaling Git at OpenAI",
+        "OpenAI official artificial intelligence publication: Scaling Git at OpenAI"
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-11-02T15:30:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-11-02T15:30:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-11-02T15:30:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-11-02T15:30:00+00:00; timestamp проверен Python против effective window. Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-11-02T15:30:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-11-02T15:30:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-006",
+      "trusted_feed_publication_evidence": {
+        "version": 1,
+        "kind": "trusted_first_party_feed",
+        "source_id": "openai_news_rss",
+        "feed_url": "https://openai.com/news/rss.xml",
+        "item_url": "https://openai.com/index/scaling-git-at-openai",
+        "published_at": "2026-11-02T15:30:00+00:00",
+        "published_date": "2026-11-02",
+        "time_precision": "datetime",
+        "feed_date_field": "rss_pubdate",
+        "same_host_required": true,
+        "exact_item_url_required": true
+      },
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_evidence_kind": "trusted_first_party_feed",
+      "source_freshness_feed_source_id": "openai_news_rss",
+      "source_freshness_feed_date_field": "rss_pubdate",
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://openai.com/index/scaling-git-at-openai",
+      "source_published_date": "2026-11-02",
+      "source_published_at": "2026-11-02T15:30:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "trusted_feed:openai_news_rss:rss_pubdate=2026-11-02T15:30:00+00:00"
+    },
+    {
+      "title": "Microsoft добавила в Agent Lightning open-source recipe Score Centering для RL-обучения reasoning-агентов",
+      "organization": "Microsoft",
+      "published_date": "2026-11-02",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Agent Lightning; reinforcement learning; math reasoning; GRPO; score centering; low-precision inference; Qwen3.5-9B",
+      "event_type": "Open-source research and training-recipe release",
+      "keywords": [
+        "Agent Lightning",
+        "Score Centering",
+        "GRPO",
+        "reinforcement learning",
+        "reasoning agents",
+        "Qwen3.5-9B",
+        "INT8",
+        "INT4 KV cache",
+        "open source"
+      ],
+      "geography": "world",
+      "category": "research",
+      "source_type": "documentation",
+      "primary_source": {
+        "title": "Score Centering — Agent Lightning v1.0",
+        "publisher": "Microsoft",
+        "url": "https://microsoft.github.io/agent-lightning/latest/85-example-score-centering/"
+      },
+      "supporting_sources": [
+        {
+          "title": "microsoft/agent-lightning",
+          "publisher": "GitHub / Microsoft",
+          "url": "https://github.com/microsoft/agent-lightning"
+        }
+      ],
+      "event_summary": "Microsoft опубликовала в Agent Lightning v1.0 новый воспроизводимый пример Score Centering для RL-обучения однократного математического reasoning-агента на Qwen3.5-9B. Рецепт включает пресеты GRPO и score centering, INT8-инференс весов и активаций, INT4 attention KV cache, конфигурации обучения и результаты сравнения с GRPO-baseline.",
+      "verified_facts": [
+        "Официальная документация Agent Lightning датирует страницу 2 ноября 2026 года.",
+        "Рецепт обучает однократного math-reasoning агента на Qwen/Qwen3.5-9B с датасетом PrimeIntellect/INTELLECT-2-only-math.",
+        "В примере доступны пресеты GRPO и score centering, а rollout-инференс использует INT8 weights/activations и INT4 attention KV cache.",
+        "Документация сообщает, что в показанном эксперименте кривая score centering сохраняет reward около 0,6 на поздних шагах, тогда как GRPO-baseline падает к нулю примерно к 45-му шагу."
+      ],
+      "significance": "Это не новая foundation-модель, но свежий открытый и практически воспроизводимый исследовательский артефакт Microsoft для обучения агентов с RL и низкой точностью inference. Он полезен разработчикам agent-training стеков, однако его новостная ценность уже, чем у крупного модельного релиза.",
+      "significance_score": 3,
+      "limitations": "Это пример и документационный релиз в существующем open-source проекте, а не самостоятельная модель, paper или production-продукт. Заявленные результаты относятся к конкретной конфигурации math-reasoning задачи и не являются независимой широкой оценкой агентных систем.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет публикации о Score Centering recipe для Agent Lightning; это отдельное событие от более раннего выпуска Agent Lightning v1.0.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Первичный материал опубликован в официальной документации Microsoft Agent Lightning и содержит дату 2026-11-02, описание конфигурации и результаты эксперимента. Репозиторий Microsoft также фиксирует ноябрьский выпуск этого примера.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: событие отнесено к прикладному исследовательскому обновлению, а не к curiosity-материалам.",
+      "event_date": "2026-11-02",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://microsoft.github.io/agent-lightning/latest/85-example-score-centering/",
+      "event_evidence_kind": "first_party_timestamp",
+      "event_date_evidence": "Официальная страница документации Agent Lightning содержит строку даты «2026-11-02» у материала Score Centering.",
+      "audit_direction": "hybrid_models_products_research",
+      "id": "cand-007",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=2, validated unique=2, final candidates=2. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 5.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-major_agencies-04",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Anthropic, Microsoft announce new AI data center projects as industry’s construction push continues",
+      "origin_direction": "major_agencies",
+      "reason_code": "unverified",
+      "evidence_reason": "AP page confirms the reported $50 billion Anthropic infrastructure investment and Microsoft Fairwater 2 project, but the accessible page did not expose a verifiable publication timestamp/date needed for source-freshness proof against this narrow effective window.",
+      "likely_significance_score": 4,
+      "entities": [
+        "Anthropic",
+        "Microsoft"
+      ],
+      "anchors": [
+        "$50 b"
+      ],
+      "source_hint": null,
+      "resolution_required": true,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-models_products_agents-01",
+      "version": 1,
+      "status": "unresolved",
+      "title": "LongCat-2.5",
+      "origin_direction": "models_products_agents",
+      "reason_code": "unverified",
+      "evidence_reason": "Трекер релизов указывает запуск 2 ноября 2026 года и описывает multimodal MoE для агентного coding, однако открытая первичная страница не отдала читаемых метаданных или даты публикации. Нельзя строго подтвердить Source Freshness Proof в пределах окна.",
+      "likely_significance_score": 0,
+      "entities": [
+        "LongCat-2.5"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-models_products_agents-02",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Hydrogen-1.0",
+      "origin_direction": "models_products_agents",
+      "reason_code": "unverified",
+      "evidence_reason": "Первичная страница подтверждает выпуск open-weight научной модели и её доступность, но не содержит проверяемой даты или timestamp публикации. Дата 2 ноября присутствует только у вторичного трекера, чего недостаточно для строгого Source Freshness Proof.",
+      "likely_significance_score": 0,
+      "entities": [
+        "Hydrogen-1.0"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-developer_tools-03",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Claude Code v2.1.317",
+      "origin_direction": "developer_tools",
+      "reason_code": "unverified",
+      "evidence_reason": "По найденному tracker-результату релиз появился 3 ноября, но доступное доказательство не позволяет надёжно установить, произошёл ли его точный timestamp до authoritative cutoff 2026-11-03T05:06:37+03:00.",
+      "likely_significance_score": 1,
+      "entities": [
+        "Claude",
+        "Code"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}
