@@ -16,18 +16,19 @@ $targetRoot = [IO.Path]::GetFullPath($TargetDir).TrimEnd('\')
 if (-not (Test-Path -LiteralPath $targetRoot -PathType Container)) {
     throw "Рабочая папка не найдена: $targetRoot"
 }
-if ($manifest.schema -ne 1 -or $manifest.files.Count -ne 14 -or
+if ($manifest.schema -ne 1 -or $manifest.files.Count -ne 15 -or
     [string]$manifest.targetSha -notmatch '^[0-9a-f]{40}$') {
     throw 'Неизвестная схема или содержимое manifest.json'
 }
 $allowedNames = @(
     'dzen-article-link.js', 'dzen-article-video.js', 'dzen-publish-direct.js',
     'dzen-duplicate-guard.js', 'dzen-browser-runner.js', 'dzen-safe-notices.js',
-    'scheduled-worker.js', 'full-worker.js', 'worker.js', 'video-footer.js',
+    'scheduled-worker.js', 'full-worker.js', 'history-utils.js',
+    'worker.js', 'video-footer.js',
     'vk-stage.mjs', 'vk-text.mjs', 'setup-local.ps1', 'package.json'
 )
 $names = @($manifest.files | ForEach-Object { [string]$_.file })
-if (@($names | Sort-Object -Unique).Count -ne 14) {
+if (@($names | Sort-Object -Unique).Count -ne 15) {
     throw 'Повторяющиеся файлы в манифесте'
 }
 foreach ($lock in @('full-worker.lock','scheduled-worker.lock')) {
