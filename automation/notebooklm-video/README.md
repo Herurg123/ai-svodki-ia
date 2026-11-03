@@ -157,14 +157,13 @@ writes the first current-day line into an older active log, the next shared writ
 archives only the older prefix and preserves the current-day suffix.
 
 `history-utils.js` keeps a 14-calendar-day active window in `state.json` and
-`downloads/_СКАЧАННЫЕ_ВИДЕО.json`. Older safe terminal history moves to monthly
-JSON files under local `archive/`. Jobs with a safe terminal downstream `ERROR`
-use a shorter **7-calendar-day** active window (`historyRetention.errorActiveDays`,
-default 7): notably Dzen article-video `ERROR/ERROR` and VK pre-save PNG staging
-`ERROR/STORY_UPLOAD_REQUESTED`. Pending jobs and uncertain at-most-once
-publication states stay active regardless of age. Archives are not auto-deleted,
-retain full checkpoints, and remain available for duplicate/idempotency lookup
-and explicit old-date operator rehydration.
+`downloads/_СКАЧАННЫЕ_ВИДЕО.json`. **Every dated job older than the cutoff**
+(including errors, unfinished work and uncertain publication checkpoints) moves
+with its complete checkpoint to monthly JSON files under local `archive/`.
+Archived records are never auto-deleted and remain accessible for duplicate/
+idempotency lookup and explicit old-date operator recovery. A rehydrated old job
+remains active throughout that operator process to persist every checkpoint;
+the next normal run rearchives it. Automatic flow never retries old jobs.
 
 Empty `temp/` and `traces/` are not active runtime surfaces and are not
 precreated.
