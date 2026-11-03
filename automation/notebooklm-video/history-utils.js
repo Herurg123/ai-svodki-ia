@@ -67,6 +67,9 @@ function getHistoryConfig(config = {}) {
     activeDays: Number.isInteger(raw.activeDays) && raw.activeDays >= 1
       ? raw.activeDays
       : 14,
+    errorActiveDays: Number.isInteger(raw.errorActiveDays) && raw.errorActiveDays >= 1
+      ? raw.errorActiveDays
+      : 7,
     archiveDir: raw.archiveDir || path.join(baseDir, "archive"),
   };
 }
@@ -114,6 +117,49 @@ function jobHasExplicitPendingState(job) {
   return false;
 }
 
+
+/**
+ * Only already-finished local jobs with terminal downstream errors can use the
+ * shorter retention. An uncertain live publication, unfinished earlier stage,
+ * or pending recovery must remain in active state, regardless of age.
+ * Archived checkpoints remain available through findJobForDateIncludingArchive.
+ */
+function jobHasArchivableErrorState(job) {
+  if (!job || job.status !== "DONE") return false;
+  if (job.ftpLastError && !job.ftpUploadedAt) return false;
+
+  const stages = [
+    ["dzenAutomation", ["PUBLISHED", "ERROR"]],
+    ["dzenCollections", ["COMPLETE", "ERROR"]],
+    ["dzenArticleVideo", ["COMPLETE", "SKIPPED_EXISTING", "ERROR"]],
+    ["vkPublication", ["COMPLETE", "ERROR"]],
+  ];
+  let hasTerminalError = false;
+
+  for (const [key, terminalStatuses] of stages) {
+    const stage = job[key];
+    if (stage == null) continue;
+    if (typeof stage !== "object" || !terminalStatuses.includes(stage.status)) return false;
+    if (stage.status !== "ERROR") continue;
+
+    // The VK image-upload checkpoint is before stories.save. Other uncertain
+    // VK phases, including POST_REQUESTED and STORY_SAVE_REQUESTED, stay active.
+    if (key === "vkPublication" && stage.phase !== "STORY_UPLOAD_REQUESTED") return false;
+    if (key === "dzenArticleVideo" && stage.phase !== "ERROR") return false;
+    // Native Dzen upload/publish can have a committed draft or uncertain click.
+    if (key === "dzenAutomation" &&
+        (stage.phase !== "ERROR" || stage.draftId || stage.clickAttemptedAt ||
+         stage.publishClickedAt || stage.publishClicked)) return false;
+    // Do not archive collections while an individual target remains unresolved.
+    if (key === "dzenCollections" &&
+        ["video", "digest"].some((target) => stage[target] &&
+          !["ADDED", "ERROR"].includes(stage[target].status))) return false;
+
+    hasTerminalError = true;
+  }
+  return hasTerminalError;
+}
+
 function loadActiveState(config) {
   const state = loadJson(config.stateFile, { version: 1, jobs: {} });
   if (!state || typeof state !== "object" || Array.isArray(state)) {
@@ -147,13 +193,17 @@ function saveStateWithRetention(config, state, now = new Date()) {
   }
 
   const cutoff = cutoffDateKey(config, now);
+  const errorCutoff = subtractDays(formatDateKey(now, config.timeZone || "Europe/Moscow"), history.errorActiveDays - 1);
   const activeJobs = {};
   const groups = new Map();
 
   for (const [key, job] of Object.entries((state && state.jobs) || {})) {
     const dateKey = job && job.date;
     const parsed = parseDateKey(dateKey);
-    const eligible = parsed && dateKey < cutoff && !jobHasExplicitPendingState(job);
+    const eligible = parsed && (
+      (dateKey < cutoff && !jobHasExplicitPendingState(job)) ||
+      (dateKey < errorCutoff && jobHasArchivableErrorState(job))
+    );
     if (!eligible) {
       activeJobs[key] = job;
       continue;
@@ -348,6 +398,7 @@ function compactJsonHistory(config, now = new Date()) {
   return {
     enabled: true,
     activeDays: history.activeDays,
+    errorActiveDays: history.errorActiveDays,
     archiveDir: history.archiveDir,
     archivedJobs: stateResult.archivedJobs,
     archivedRecords: registryResult.archivedRecords,
@@ -365,6 +416,7 @@ module.exports = {
   formatDateKey,
   getHistoryConfig,
   jobHasExplicitPendingState,
+  jobHasArchivableErrorState,
   loadActiveRegistry,
   loadActiveState,
   parseDateKey,
