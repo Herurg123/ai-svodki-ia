@@ -130,10 +130,14 @@ Active JSON history is bounded by `history-utils.js`:
 
 - keep 14 calendar days active in `state.json` and
   `_СКАЧАННЫЕ_ВИДЕО.json`;
+- archive jobs with safe terminal downstream `ERROR` after a shorter 7-calendar-day
+  window (`historyRetention.errorActiveDays`, default 7); this includes article-video
+  `ERROR/ERROR` and VK `ERROR/STORY_UPLOAD_REQUESTED` (strictly pre-`stories.save`);
 - move older safe terminal rows/jobs to monthly JSON files under local
-  `archive/`;
+  `archive/`, preserving the complete checkpoint and error evidence;
 - never auto-delete that JSON archive;
-- keep unresolved/error/verification-only jobs active regardless of age;
+- keep unfinished jobs, uncertain at-most-once publication states and unresolved
+  recoveries active regardless of age; never infer a safe error from a phase alone;
 - keep archived registry rows in duplicate/idempotency lookup;
 - explicit old-date operator commands must safely rehydrate archived state.
 
