@@ -73,7 +73,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install-safe-update.ps
 ```
 
 Dry-run сверяет SHA-256 с разрешёнными предыдущими git-версиями
-`44de0939`, `b6eebb2e`, `91259a0`, `23dac7b` и новым merge SHA; чужие либо вручную
+`44de0939`, `b6eebb2e`, `91259a0`, `23dac7b`, `42068f2` и новым merge SHA; чужие либо вручную
 изменённые файлы приводят к остановке **до любых замен**. Все старые
 версии нужных производственных файлов сохраняются за пределами корня
 в соседней папке `NotebookLMBot-update-backups/`. После установки
