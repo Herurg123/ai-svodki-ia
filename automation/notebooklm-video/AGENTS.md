@@ -128,17 +128,16 @@ preserve the current-day suffix.
 
 Active JSON history is bounded by `history-utils.js`:
 
-- keep 14 calendar days active in `state.json` and
+- keep the most recent 14 calendar days active in `state.json` and
   `_СКАЧАННЫЕ_ВИДЕО.json`;
-- archive jobs with safe terminal downstream `ERROR` after a shorter 7-calendar-day
-  window (`historyRetention.errorActiveDays`, default 7); this includes article-video
-  `ERROR/ERROR` and VK `ERROR/STORY_UPLOAD_REQUESTED` (strictly pre-`stories.save`);
-- move older safe terminal rows/jobs to monthly JSON files under local
-  `archive/`, preserving the complete checkpoint and error evidence;
-- never auto-delete that JSON archive;
-- keep unfinished jobs, uncertain at-most-once publication states and unresolved
-  recoveries active regardless of age; never infer a safe error from a phase alone;
+- archive **every** older dated job or registry record regardless of job status,
+  including errors, incomplete work and uncertain publication checkpoints;
+  archive the complete record unchanged in monthly local `archive/` JSON;
+- never auto-delete the archive, and never interpret archival as permission to
+  repeat an uncertain live API mutation;
 - keep archived registry rows in duplicate/idempotency lookup;
+- when explicitly rehydrating an old job, retain it during that process so all
+  checkpoints are durable; the next normal compaction archives it again;
 - explicit old-date operator commands must safely rehydrate archived state.
 
 Rotated text logs share local `archive/` but have independent 7/30-day
