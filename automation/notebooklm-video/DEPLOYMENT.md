@@ -58,6 +58,7 @@ ZIP **в отдельный временный каталог**, НЕ в раб�
 штатными исходниками: `dzen-article-link.js`, `dzen-article-video.js`,
 `dzen-publish-direct.js`, `dzen-duplicate-guard.js`, `dzen-browser-runner.js`,
 `dzen-safe-notices.js`, `scheduled-worker.js`, `full-worker.js`,
+`history-utils.js`,
 `worker.js`, `video-footer.js`, `vk-stage.mjs`,
 `vk-text.mjs`, `setup-local.ps1` и `package.json`.
 
@@ -335,7 +336,7 @@ trigger не может войти в следующий browser этап, по�
 
 Fresh setup больше не создаёт пустые `temp/` и `traces/`: эти каталоги не используются active runtime. На существующей машине их можно удалить только если они пустые; worker заново их не создаст.
 
-При первом запуске после обновления runtime автоматически создаётся общий `archive/`. В нём JSON-history хранится помесячно и бессрочно, а ротация text logs складывает `worker-*.log`/`error-*.log` с отдельным retention 7/30 дней. Log-cleanup удаляет только эти `.log`-маски и не трогает JSON-history. Если остался прежний sibling-каталог `logs/`, известные архивы `worker-*.log`/`error-*.log` автоматически переносятся в `archive/`, obsolete `.rotation-state.json` удаляется, а пустой `logs/` убирается. В active `state.json` и `_СКАЧАННЫЕ_ВИДЕО.json` остаётся 14-дневное окно; безопасно завершившиеся с ошибкой downstream jobs имеют 7-дневное окно (`historyRetention.errorActiveDays`, по умолчанию 7) с переносом полных checkpoint в помесячный JSON-архив. Незавершённые задания и неопределённые at-most-once фазы остаются активными независимо от возраста. Текстовый `worker.log` проверяется на day/size rotation до append общими writers. Day-boundary определяется по timestamp уже записанных строк; повторные запуски в один день должны накапливаться в одном active log.
+При первом запуске после обновления runtime автоматически создаётся общий `archive/`. В нём JSON-history хранится помесячно и бессрочно, а ротация text logs складывает `worker-*.log`/`error-*.log` с отдельным retention 7/30 дней. Log-cleanup удаляет только эти `.log`-маски и не трогает JSON-history. Если остался прежний sibling-каталог `logs/`, известные архивы `worker-*.log`/`error-*.log` автоматически переносятся в `archive/`, obsolete `.rotation-state.json` удаляется, а пустой `logs/` убирается. В active `state.json` и `_СКАЧАННЫЕ_ВИДЕО.json` остаётся 14-дневное окно независимо от статуса. Все датированные более старые jobs, включая ошибки и неопределённые checkpoint, переносятся целиком в бессрочный помесячный JSON-архив. При явной операторской операции восстановленный из архива старый job временно остаётся в active до записи всех checkpoint; следующий штатный запуск повторно архивирует его. Текстовый `worker.log` проверяется на day/size rotation до append общими writers. Day-boundary определяется по timestamp уже записанных строк; повторные запуски в один день должны накапливаться в одном active log.
 
 ### Состояние подборок и повторные запуски
 
