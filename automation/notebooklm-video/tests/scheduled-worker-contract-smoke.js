@@ -29,7 +29,7 @@ for (const status of ["UPLOAD_ARMED", "DRAFT_CREATED", "PUBLISH_ARMED", "RETRYAB
 assert.strictEqual(scheduled.isVerificationOnlyStatus("PENDING"), false);
 assert.strictEqual(scheduled.isVerificationOnlyStatus("RETRYABLE_PRE_CLICK"), true);
 
-const latestDone = scheduled.findLatestDoneJob(
+const todayDone = scheduled.findTodayDoneJob(
   {
     jobs: {
       old: { date: "2026-08-26", status: "DONE", updatedAt: "2026-08-26T10:00:00Z" },
@@ -41,11 +41,15 @@ const latestDone = scheduled.findLatestDoneJob(
   },
   "2026-08-28"
 );
-assert.strictEqual(latestDone.updatedAt, "2026-08-27T09:00:00Z");
+assert.strictEqual(todayDone, null, "No DONE job for today: yesterday's success must not be selected");
 assert.strictEqual(
-  scheduled.findLatestDoneJob({ jobs: { future: { date: "2026-08-29", status: "DONE" } } }, "2026-08-28"),
+  scheduled.findTodayDoneJob({ jobs: { future: { date: "2026-08-29", status: "DONE" } } }, "2026-08-28"),
   null
 );
+assert.equal(scheduled.findTodayDoneJob({jobs:{
+  older:{date:"2026-11-03",status:"DONE"},
+  today:{date:"2026-11-04",status:"DONE"}
+}}, "2026-11-04").date, "2026-11-04");
 
 assert.strictEqual(
   scheduled.classifyDzenFailureOutput("direct MVP завершился ошибкой; publishClicked=false; draftId=123"),
@@ -94,11 +98,15 @@ assert.doesNotMatch(runWorkerCmd, /node\s+"?%~dp0worker\.js/i);
 
 const source = fs.readFileSync(path.join(ROOT, "scheduled-worker.js"), "utf8");
 const workerPhaseIndex = source.indexOf('await runNodeScript("worker.js")');
-const doneGateIndex = source.indexOf("findLatestDoneJob(state, currentDateKey)");
+const doneGateIndex = source.indexOf("findTodayDoneJob(state, currentDateKey)");
 const dzenPhaseIndex = source.indexOf('await runAutomaticDzen(config, state, job, dateKey)');
 assert(workerPhaseIndex >= 0, "NotebookLM worker child call must exist");
-assert(doneGateIndex > workerPhaseIndex, "latest DONE selection must run after NotebookLM worker child");
+assert(doneGateIndex > workerPhaseIndex, "current-day DONE selection must run after NotebookLM worker child");
 assert(dzenPhaseIndex > doneGateIndex, "Dzen phase must run after DONE gate");
+assert(source.includes("dateKey !== formatDateKey(new Date(), config.timeZone)"),
+  "Scheduled flow must not continue old-date Dzen after a midnight rollover");
+assert(!source.includes("catch-up режим"),
+  "Scheduled flow must never attempt yesterday's publication");
 
 const armIndex = source.indexOf('updateDzenAutomation(config, state, job, "UPLOAD_ARMED"');
 const liveChildIndex = source.indexOf('"dzen-publish-direct.js"');
