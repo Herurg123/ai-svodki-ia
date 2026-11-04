@@ -67,12 +67,17 @@ Scheduled orchestration сохраняет `UPLOAD_ARMED` **до** запуск�
 PENDING -> UPLOAD_ARMED -> DRAFT_CREATED -> DRAFT_PROCESSING
  DRAFT_PROCESSING -> при необходимости продолжить ТОЛЬКО pinned draftId
  DRAFT_PROCESSING -> CLICKED_UNVERIFIED (до клика)
- CLICKED_UNVERIFIED -> read-only verification -> PUBLISHED
+ CLICKED_UNVERIFIED -> read-only published-ID verification -> PUBLISHED
+ CLICKED_UNVERIFIED (только текущая дата, минимум 3 минуты после клика)
+ -> exact pinned draft URL/title/description/readiness
+ -> durable RECOVERY_CLICK_ARMED -> одна дополнительная попытка для того же draftId
+ -> exact public ID verification -> PUBLISHED или ручная диагностика
 
 UPLOAD_ARMED / DRAFT_CREATED / legacy RETRYABLE_PRE_CLICK /
-legacy PUBLISH_ARMED / CLICKED_UNVERIFIED / BLOCKED_AMBIGUOUS
+legacy PUBLISH_ARMED / BLOCKED_AMBIGUOUS / RECOVERY_CLICK_ARMED
  -> только read-only verification или ручная диагностика
- -> ни нового MP4 upload, ни повторного publish click
+ -> ни нового MP4 upload, ни третьего publish click
+Вчерашние незавершённые выпуски -> только ручная диагностика, без catch-up
 ```
 
 Сообщение `publishClicked=false` **само по себе не подтверждает отсутствие
@@ -87,9 +92,9 @@ legacy PUBLISH_ARMED / CLICKED_UNVERIFIED / BLOCKED_AMBIGUOUS
 В нём нет конкретных названий проверочных окон, их обнаружения, ручного
 ожидания, восстановления окна или дополнительных циклов после завершения child.
 
-Сразу после единственного publish-click `dzen-publish-direct.js`
-сохраняет прежнее **45-секундное наблюдение** без повторных кликов
-публикации. В каждом проходе наблюдения вызывается
+Сразу после каждого разрешённого publish-click `dzen-publish-direct.js`
+сохраняет прежнее **45-секундное наблюдение** без кликов внутри
+наблюдения. В каждом проходе наблюдения вызывается
 `dzen-safe-notices.processKnownDzenNotices(browser, logger)`, включая
 ситуацию, когда исходная страница редактора уже закрылась.
 Это расширяемая точка только для заранее известных, безопасных
@@ -100,9 +105,10 @@ legacy PUBLISH_ARMED / CLICKED_UNVERIFIED / BLOCKED_AMBIGUOUS
 
 Все прочие окна, в том числе проверки пользователя, оставляются
 оператору. Специального ожидания таких окон нет: если внешняя платформа
-не завершила публикацию, её исход остаётся `CLICKED_UNVERIFIED`,
-с запретом второго upload и второго publish-click. Итог по-прежнему
-подтверждается точным опубликованным public ID, а не исчезновением черновика.
+не завершила публикацию, исход остаётся `CLICKED_UNVERIFIED`; в тот же
+день допустима только одна дополнительная проверенная попытка для того же
+черновика. `RECOVERY_CLICK_ARMED` запрещает любые дальнейшие клики и upload.
+Итог подтверждается точным опубликованным public ID, а не исчезновением черновика.
 
 ## Browser bootstrap
 
