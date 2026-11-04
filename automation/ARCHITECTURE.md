@@ -2298,3 +2298,11 @@ handlers. `dzen-publish-direct.js` polls it from the existing bounded
 editor page has closed; it does not prolong the run for unknown prompts.
 The verified public video ID and saved draft ID still govern transition
 to `PUBLISHED`; an uncertain click cannot authorize another upload/click.
+An explicit offline-tested operator-only `dzen-manual-draft-recovery.js`
+entrypoint supports `CLICKED_UNVERIFIED`: it acquires both worker locks,
+checks the published list, verifies the pinned draft ID and title in a
+visible editor, lets the human operator complete publication/verification,
+then checks the exact public `/video/watch/<draftId>` identity before any
+state transition to `PUBLISHED`. It never automatically uploads, clicks
+Publish, or handles human verification prompts. The scheduled pipeline is
+unchanged; ambiguous outcomes stay `CLICKED_UNVERIFIED`.
