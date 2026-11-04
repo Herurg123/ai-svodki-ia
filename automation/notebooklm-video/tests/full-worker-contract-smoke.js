@@ -92,6 +92,16 @@ assert.strictEqual(
 );
 
 
+assert.equal(full.stillCurrentDate("2026-11-04","Europe/Moscow",
+  new Date("2026-11-04T20:59:59Z")),true);
+assert.equal(full.stillCurrentDate("2026-11-04","Europe/Moscow",
+  new Date("2026-11-04T21:00:00Z")),false,
+  "A midnight rollover must stop old-date downstream work");
+assert(source.includes("if (!stillCurrentDate(currentDateKey"),
+  "Every downstream stage must check the date at execution");
+assert(source.includes('Фаза 5/5: наступил новый день'),
+  "Old-day VK must never be launched after midnight");
+
 assert(source.includes('dzenStatus !== "PUBLISHED" || collectionStatus !== "COMPLETE"'),
   "article-video gate must require PUBLISHED video and COMPLETE collections");
 assert(source.includes('["COMPLETE", "SKIPPED_EXISTING"].includes(avStatus)'),
