@@ -173,11 +173,14 @@ by `dzen-safe-notices.js`. Unknown verification dialogs remain operator-owned;
 only the exact public video ID in a published Studio row confirms success.
 
 The scheduled orchestrator persists UPLOAD_ARMED before the live upload child.
-The child persists CLICKED_UNVERIFIED BEFORE dispatching the single allowed
-publish click. Legacy PUBLISH_ARMED, CLICKED_UNVERIFIED, BLOCKED_AMBIGUOUS,
-UPLOAD_ARMED, DRAFT_CREATED and legacy RETRYABLE_PRE_CLICK are verification-only
-or manual-only. Only DRAFT_PROCESSING with a pinned exact ID may resume
-readiness checking and perform its one eventual normal publish click.
+The child persists CLICKED_UNVERIFIED BEFORE dispatching the first publish
+click. For a pinned CLICKED_UNVERIFIED draft on the SAME calendar day, at least
+3 minutes after the first attempt, a single additional publish click may be
+armed with RECOVERY_CLICK_ARMED before dispatch, only after exact draft URL,
+title, description, readiness and published-row verification. The armed state
+is verification/manual-only; no third click, second upload or uncertain-ID
+fallback. Old-day jobs are never automatically selected for any phase; no
+backlog or cross-date DRAFT_PROCESSING resume.
 
 Remote drafts are never deleted automatically. The exact
 videoEditorPublicationId is a persistent identity, NOT by itself evidence of
@@ -185,9 +188,9 @@ a ready/valid editor: resume must confirm URL, visible editor and saved exact
 title/description before any action. After a click, verify that the exact saved draft ID matches the public
 `/video/watch/<ID>` URL in its published Studio row. Never reopen the
 old editor to infer whether the draft disappeared. Missing or different
-IDs remain verification-only and do not authorize another upload/click. The observed
-2026-10-25 legacy CLICKED_UNVERIFIED case remains verification-only; no
-automatic migration or third upload.
+IDs remain verification-only and do not authorize another upload/click.
+The 2026-10-25 incident remains manual-only; past-date jobs are not eligible
+for automatic recovery, and old state remains retained.
 
 Readiness is status-driven; do not treat an early partial-ready message as final
 readiness. Dzen tags remain mandatory and must resolve to the configured visible
