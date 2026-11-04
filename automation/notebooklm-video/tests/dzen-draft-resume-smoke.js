@@ -18,12 +18,16 @@ assert.equal(direct.draftEditorUrl(firstId),
   "https://dzen.ru/profile/editor/rybv/publications?state=draft&videoEditorPublicationId=" + firstId);
 assert.throws(() => direct.draftEditorUrl("../bad"), /Неверный ID/);
 assert.deepEqual(direct.parseArgs(["--date=2026-10-25","--resume-draft="+firstId]),
-  {date:"2026-10-25",resumeDraft:firstId});
+  {date:"2026-10-25",resumeDraft:firstId,recoverDraft:null,scheduled:false});
 assert.throws(() => direct.parseArgs(["--resume-draft=bad"]), /Некорректный ID/);
+assert.deepEqual(direct.parseArgs(["--date=2026-10-25","--recover-draft="+firstId,"--scheduled"]),
+  {date:"2026-10-25",resumeDraft:null,recoverDraft:firstId,scheduled:true});
+assert.throws(() => direct.parseArgs(["--recover-draft="+firstId]), /только из scheduled/);
+assert.throws(() => direct.parseArgs(["--resume-draft="+firstId,"--recover-draft="+firstId,"--scheduled"]),/одновременно/);
 
 assert.equal(scheduled.shouldRunFreshUpload("PENDING"), true);
 for (const status of ["UPLOAD_ARMED","DRAFT_CREATED","DRAFT_PROCESSING",
- "RETRYABLE_PRE_CLICK","PUBLISH_ARMED","CLICKED_UNVERIFIED","BLOCKED_AMBIGUOUS"]) {
+ "RETRYABLE_PRE_CLICK","PUBLISH_ARMED","CLICKED_UNVERIFIED","RECOVERY_CLICK_ARMED","BLOCKED_AMBIGUOUS"]) {
   assert.equal(scheduled.shouldRunFreshUpload(status), false, status);
 }
 assert.equal(scheduled.shouldResumeDraft("DRAFT_PROCESSING",firstId), true);
@@ -65,6 +69,19 @@ try {
     ["DRAFT_PROCESSING"],"CLICKED_UNVERIFIED"),/Небезопасный переход/);
   assert.equal(scheduled.shouldResumeDraft(
     history.loadActiveState(config).jobs[pub].dzenAutomation.status,firstId),false);
+  direct.persistDraftTransition(config,"2026-10-25",firstId,
+    ["CLICKED_UNVERIFIED"],"RECOVERY_CLICK_ARMED",{
+      recoveryClickArmedAt:"2026-10-25T10:28:00Z",
+      recoveryClickAttemptedAt:"2026-10-25T10:28:00Z"
+    });
+  const armedRecovery=history.loadActiveState(config).jobs[pub].dzenAutomation;
+  assert.equal(armedRecovery.draftId,firstId);
+  assert.equal(armedRecovery.status,"RECOVERY_CLICK_ARMED");
+  assert.equal(armedRecovery.clickAttemptedAt,"2026-10-25T10:21:07Z",
+    "Keep first click evidence");
+  assert.throws(()=>direct.persistDraftTransition(config,"2026-10-25",firstId,
+    ["CLICKED_UNVERIFIED"],"RECOVERY_CLICK_ARMED"),/Небезопасный переход/,
+    "Durable arm forbids further clicks");
 } finally { fs.rmSync(dir,{recursive:true,force:true}); }
 
 // Identity from user's real Studio draft links. A same title is not identity.
@@ -97,15 +114,20 @@ assert.equal(guard.summarizeDraftInspection({
 const source = fs.readFileSync(path.join(__dirname,"../scheduled-worker.js"),"utf8");
 const directSource = fs.readFileSync(path.join(__dirname,"../dzen-publish-direct.js"),"utf8");
 const firstArm = source.indexOf('updateDzenAutomation(config, state, job, "UPLOAD_ARMED"');
-const freshChild = source.indexOf('dzenRunner.runNodeScript("dzen-publish-direct.js"');
-assert(firstArm > 0 && firstArm < freshChild);
+const ordinaryChild=source.indexOf('dzenRunner.runNodeScript("dzen-publish-direct.js", childArgs');
+assert(firstArm > 0 && ordinaryChild > firstArm,
+  "Fresh upload must be armed before its ordinary child");
 const created = directSource.indexOf('"DRAFT_CREATED"');
 const metadata = directSource.indexOf("await fillMetadataOnce(page");
 assert(created >= 0 && created < metadata);
 const armed = directSource.indexOf('persistDraftTransition(config, dateKey, draftId, ["DRAFT_PROCESSING"], "CLICKED_UNVERIFIED"');
 const click = directSource.indexOf("await publish.button.click()");
 assert(armed >= 0 && armed < click);
-assert(directSource.includes("if (resumeDraft) {"));
+assert(directSource.includes("if (resumeDraft || recoverDraft) {"));
+assert(directSource.includes('["CLICKED_UNVERIFIED"], "RECOVERY_CLICK_ARMED"'),
+  "Recovery must durably arm its only additional click");
+assert(directSource.includes('scheduled && formatDateKey(new Date(), config.timeZone || "Europe/Moscow") !== dateKey'),
+  "Scheduled child must stop before a next-day click");
 assert(directSource.includes("await openPinnedDraft(page, config, draftId, title, description)"));
 assert(directSource.includes("return { pending: true, draftId };"));
 const runnerSource = fs.readFileSync(path.join(__dirname,"../dzen-browser-runner.js"),"utf8");
