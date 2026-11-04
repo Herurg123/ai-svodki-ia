@@ -135,7 +135,7 @@ assert(!source.includes("catch-up режим"),
   "Scheduled flow must never attempt yesterday's publication");
 
 const armIndex = source.indexOf('updateDzenAutomation(config, state, job, "UPLOAD_ARMED"');
-const liveChildIndex = source.indexOf('"dzen-publish-direct.js"');
+const liveChildIndex = source.indexOf('dzenRunner.runNodeScript("dzen-publish-direct.js", childArgs');
 assert(armIndex >= 0, "UPLOAD_ARMED persistence must exist");
 assert(liveChildIndex > armIndex, "UPLOAD_ARMED must be persisted before live child starts");
 
