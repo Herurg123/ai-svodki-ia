@@ -98,14 +98,12 @@ function runNodeScript(scriptName, args = []) {
 }
 
 function selectCollectionsJob(state, currentDateKey, phasesError = null) {
-  // On a failed phases-1/2 attempt, prefer today's job even when it has not
-  // reached DONE. That lets the independent collections stage still process the
-  // same-day digest while the video side remains broken/retryable.
-  if (phasesError) {
-    const sameDayJob = collections.findJobForDate(state, currentDateKey);
-    if (sameDayJob) return sameDayJob;
-  }
-  return scheduled.findLatestDoneJob(state, currentDateKey);
+  // The scheduled flow is strictly current-day. A failed video phase may
+  // still allow TODAY's collections, but never a previous date's job.
+  const sameDayJob = collections.findJobForDate(state, currentDateKey);
+  if (!sameDayJob) return null;
+  if (phasesError) return sameDayJob;
+  return sameDayJob.status === "DONE" ? sameDayJob : null;
 }
 
 function articleVideoStatus(job) {
@@ -203,7 +201,7 @@ async function main() {
     const job = selectCollectionsJob(state, currentDateKey, phasesError);
 
     if (!job) {
-      log(config, `Фаза 3/4: нет подходящего локального job с датой не позже ${currentDateKey}; подборки не запускаю.`);
+      log(config, `Фаза 3/4: нет подходящего локального job за текущий день ${currentDateKey}; старые выпуски не возобновляю.`);
     } else if (collections.collectionsComplete(job)) {
       log(
         config,
