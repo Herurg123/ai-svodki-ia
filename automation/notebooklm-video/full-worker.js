@@ -97,6 +97,10 @@ function runNodeScript(scriptName, args = []) {
   });
 }
 
+function stillCurrentDate(dateKey, timeZone = "Europe/Moscow", now = new Date()) {
+  return scheduled.formatDateKey(now, timeZone) === dateKey;
+}
+
 function selectCollectionsJob(state, currentDateKey, phasesError = null) {
   // The scheduled flow is strictly current-day. A failed video phase may
   // still allow TODAY's collections, but never a previous date's job.
@@ -200,7 +204,9 @@ async function main() {
     const currentDateKey = scheduled.formatDateKey(new Date(), config.timeZone || "Europe/Moscow");
     const job = selectCollectionsJob(state, currentDateKey, phasesError);
 
-    if (!job) {
+    if (!stillCurrentDate(currentDateKey, config.timeZone || "Europe/Moscow")) {
+      log(config, "Фаза 3/4: наступил новый день; старый выпуск не обрабатываю.");
+    } else if (!job) {
       log(config, `Фаза 3/4: нет подходящего локального job за текущий день ${currentDateKey}; старые выпуски не возобновляю.`);
     } else if (collections.collectionsComplete(job)) {
       log(
@@ -229,7 +235,9 @@ async function main() {
       }
     }
 
-    if (!job) {
+    if (!stillCurrentDate(currentDateKey, config.timeZone || "Europe/Moscow")) {
+      log(config, "Фаза 4/4: наступил новый день; вчерашняя статья остаётся для ручного разбора.");
+    } else if (!job) {
       log(config, "Фаза 4/4: нет выбранного job; article-video этап не запускаю.");
     } else if (phasesError || collectionsError) {
       log(
@@ -362,6 +370,9 @@ async function main() {
 
     if (config.vkPublish && config.vkPublish.enabled === true &&
         config.vkPublish.automaticEnabled === true) {
+      if (!stillCurrentDate(currentDateKey, config.timeZone || "Europe/Moscow")) {
+        log(config, "Фаза 5/5: наступил новый день; вчерашний VK этап автоматически не запускается.");
+      } else {
       const fresh = loadJson(config.stateFile, { jobs: {} });
       // Re-read TODAY, not the collections fallback job, even if Dzen failed.
       // Keep the full-worker lock: concurrent Dzen/VK writes to state.json are unsafe.
@@ -394,6 +405,7 @@ async function main() {
           fatalLog(config, "Фаза 5/5 остановлена без обхода проверки статьи: " + error.message, error);
         }
 
+      }
       }
     }
 
@@ -430,6 +442,7 @@ module.exports = {
   releaseFullWorkerLock,
   runNodeScript,
   selectCollectionsJob,
+  stillCurrentDate,
 };
 
 if (require.main === module) main();
