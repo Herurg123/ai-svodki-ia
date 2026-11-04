@@ -124,7 +124,7 @@ assert.doesNotMatch(runWorkerCmd, /node\s+"?%~dp0worker\.js/i);
 
 const source = fs.readFileSync(path.join(ROOT, "scheduled-worker.js"), "utf8");
 const workerPhaseIndex = source.indexOf('await runNodeScript("worker.js")');
-const doneGateIndex = source.indexOf("findTodayDoneJob(state, currentDateKey)");
+const doneGateIndex = source.indexOf("const job = findTodayDoneJob(state, currentDateKey);");
 const dzenPhaseIndex = source.indexOf('await runAutomaticDzen(config, state, job, dateKey)');
 assert(workerPhaseIndex >= 0, "NotebookLM worker child call must exist");
 assert(doneGateIndex > workerPhaseIndex, "current-day DONE selection must run after NotebookLM worker child");
