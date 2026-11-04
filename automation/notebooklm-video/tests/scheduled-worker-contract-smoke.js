@@ -16,10 +16,11 @@ assert.strictEqual(scheduled.shouldRunFreshUpload("PUBLISH_ARMED"), false);
 assert.strictEqual(scheduled.shouldRunFreshUpload("DRAFT_PROCESSING"), false);
 assert.strictEqual(scheduled.shouldRunFreshUpload("UPLOAD_ARMED"), false);
 assert.strictEqual(scheduled.shouldRunFreshUpload("CLICKED_UNVERIFIED"), false);
+assert.strictEqual(scheduled.shouldRunFreshUpload("RECOVERY_CLICK_ARMED"), false);
 assert.strictEqual(scheduled.shouldRunFreshUpload("BLOCKED_AMBIGUOUS"), false);
 assert.strictEqual(scheduled.shouldRunFreshUpload("PUBLISHED"), false);
 
-for (const status of ["UPLOAD_ARMED", "DRAFT_CREATED", "PUBLISH_ARMED", "RETRYABLE_PRE_CLICK", "CLICKED_UNVERIFIED", "BLOCKED_AMBIGUOUS"]) {
+for (const status of ["UPLOAD_ARMED", "DRAFT_CREATED", "PUBLISH_ARMED", "RETRYABLE_PRE_CLICK", "CLICKED_UNVERIFIED", "RECOVERY_CLICK_ARMED", "BLOCKED_AMBIGUOUS"]) {
   assert.strictEqual(
     scheduled.isVerificationOnlyStatus(status),
     true,
@@ -28,6 +29,31 @@ for (const status of ["UPLOAD_ARMED", "DRAFT_CREATED", "PUBLISH_ARMED", "RETRYAB
 }
 assert.strictEqual(scheduled.isVerificationOnlyStatus("PENDING"), false);
 assert.strictEqual(scheduled.isVerificationOnlyStatus("RETRYABLE_PRE_CLICK"), true);
+
+// Strict same-day policy: yesterday's uncertain click never auto-recovers.
+const pinned="6aeaa5486692192b6b893776";
+const attempt=new Date("2026-11-04T06:00:00Z");
+const recoveryFixture={date:"2026-11-04",status:"DONE",
+  dzenAutomation:{status:"CLICKED_UNVERIFIED",draftId:pinned,
+    clickAttemptedAt:"2026-11-04T05:54:00Z"}};
+assert.equal(scheduled.shouldRecoverSameDayDraft(
+  recoveryFixture,"2026-11-04",attempt,"Europe/Moscow"),true);
+assert.equal(scheduled.shouldRecoverSameDayDraft(
+  recoveryFixture,"2026-11-03",attempt,"Europe/Moscow"),false);
+assert.equal(scheduled.shouldRecoverSameDayDraft(
+  recoveryFixture,"2026-11-04",new Date("2026-11-05T05:00:00Z"),"Europe/Moscow"),false);
+assert.equal(scheduled.shouldRecoverSameDayDraft(
+  recoveryFixture,"2026-11-04",new Date("2026-11-04T05:55:00Z"),"Europe/Moscow"),false,
+  "Give the first uncertain click time to settle");
+assert.equal(scheduled.shouldRecoverSameDayDraft({
+  ...recoveryFixture,dzenAutomation:{...recoveryFixture.dzenAutomation,recoveryClickArmedAt:"2026-11-04T05:59:00Z"}
+},"2026-11-04",attempt,"Europe/Moscow"),false,"No third publish click");
+assert.equal(scheduled.shouldRecoverSameDayDraft({
+  ...recoveryFixture,dzenAutomation:{...recoveryFixture.dzenAutomation,draftId:"bad"}
+},"2026-11-04",attempt,"Europe/Moscow"),false);
+assert.equal(scheduled.shouldRecoverSameDayDraft({
+  ...recoveryFixture,status:"GENERATING"
+},"2026-11-04",attempt,"Europe/Moscow"),false);
 
 const todayDone = scheduled.findTodayDoneJob(
   {
