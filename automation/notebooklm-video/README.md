@@ -65,8 +65,9 @@ RSS rybalka.one
 `scheduled-worker.js` keeps its inner guard for NotebookLM/FTP + native Dzen
 publication. Separate Task Scheduler jobs for later Dzen phases are not needed.
 
-The worker selects the newest eligible local `DONE` job whose date is not in the
-future, so delayed/catch-up processing remains possible.
+The worker selects only a `DONE` job for the current local calendar day. No
+catch-up/backlog of yesterday's unfinished releases runs automatically. Older
+checkpoints are preserved in state/archive for manual operator action.
 
 ## Пятый этап VK
 
@@ -179,8 +180,11 @@ ready status and active button, once per draft. No "publish after processing"
 button or automatic second upload is used. The child reserves the click in
 state.json before dispatch. Dzen's processing may take longer than the
 single-run wait window; that is NOT permission for a new upload.
-Existing CLICKED_UNVERIFIED jobs (including both 2026-10-25 drafts) are not
-automatically migrated or re-published.
+A current-day `CLICKED_UNVERIFIED` draft is first verified by exact public ID.
+After a minimum three-minute settling period, one additional same-draft publish
+click can be attempted only after confirming that draft's exact URL, title,
+description and final readiness. `RECOVERY_CLICK_ARMED` is persisted before
+that click and suppresses a third click. Old-day drafts are manual-only.
 
 Normal scheduled publication begins with a fail-closed duplicate guard in Studio
 `Публикации → Видео`. It must confirm the real Video filter and match the
@@ -207,23 +211,26 @@ PENDING (without draft ID)
   -> read-only draft-ID + published-list verification -> PUBLISHED
 
 Legacy RETRYABLE_PRE_CLICK / UPLOAD_ARMED / DRAFT_CREATED /
-PUBLISH_ARMED / CLICKED_UNVERIFIED / BLOCKED_AMBIGUOUS
-  -> verification or manual intervention only
-  -> never a fresh upload
-  -> never a second publish click
+PUBLISH_ARMED / BLOCKED_AMBIGUOUS
+  -> verification or manual intervention only; never a fresh upload
+CLICKED_UNVERIFIED (TODAY ONLY, >=3 minutes)
+  -> one pinned-draft recovery after exact-ID verification
+  -> RECOVERY_CLICK_ARMED -> public-ID verification / manual-only
+Old-day unresolved jobs -> manual-only, no catch-up
 ~~~
 
 A new upload requires PENDING with no saved remote draft ID. A previous
 `publishClicked=false` does not establish that no draft was uploaded.
-DRAFT_PROCESSING resumes the verified same draft, while all unknown states
-remain verification-only without another upload or click.
+DRAFT_PROCESSING resumes the verified same draft only within its release day.
+The single guarded same-day recovery is the only exception to the usual
+no-second-click rule; unknown or old-date jobs remain verification-only.
 
 The runner has no special handling or waiting for human verification popups.
 The user may resolve them manually. The direct publisher polls an extensible
 `dzen-safe-notices` allowlist **during** the existing 45-second observation
 after the single publish click. Unknown prompts remain untouched and do not
-extend the observation window. An unverified click never permits a second
-upload or click.
+extend the observation window. An unverified click never permits another upload; only a single verified
+same-day click on the same pinned draft is allowed.
 
 Emergency switch:
 
@@ -249,8 +256,10 @@ Deep selectors, metadata/tag/readiness rules and live evidence are canonical in
 
 После единственного клика «Опубликовать» прямой Dzen writer оставляет редактор
 открытым на 45 секунд для read-only наблюдения. При неопределённости
-сохраняется PNG в `screenshots/`, а `CLICKED_UNVERIFIED` запрещает второй
-upload/click. После ручной публикации штатный запуск найдёт готовое видео.
+сохраняется PNG в `screenshots/`. В этот же день для точного черновика после
+трёхминутной выдержки допускается одна дополнительная попытка публикации;
+`RECOVERY_CLICK_ARMED` запрещает дальнейшие клики. После смены даты никакого
+автоматического восстановления вчерашнего выпуска нет.
 
 **Независимый VK:** только при готовом проверенном MP4/PNG текущей даты
 и опубликованной статье-сводке Дзена. Если dzenArticleVideo не запускался
