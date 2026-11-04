@@ -435,6 +435,20 @@ Get-Content -Raw C:\TRASH\NotebookLMBot\config.json | ConvertFrom-Json | Out-Nul
 - при `dzenCollections.status=COMPLETE` отсутствие новых запусков browser для
   этапа подборок.
 
+### Операторское восстановление черновика Дзена
+
+При `dzenAutomation.status=CLICKED_UNVERIFIED` и сохранённом `draftId` штатный
+Планировщик выполняет только проверку публикации. Для ручного завершения
+существующего черновика используется отдельная утилита
+`dzen-manual-draft-recovery.js` / `run-dzen-manual-draft-recovery.cmd`.
+Она не входит в расписание. Прежде чем применять `--assist`, остановить
+Планировщик, дождаться снятия обоих lock-файлов и сохранить `state.json`.
+`--status` не открывает браузер; `--assist` удерживает оба lock-файла во время
+работы оператора, показывает существующий черновик и после Enter проверяет
+точный public video ID. Запрещены новый upload, программный повторный publish,
+действия с CAPTCHA и сброс `CLICKED_UNVERIFIED`. Подробности в
+[`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md).
+
 ## 10. Обновление npm-зависимостей
 
 Если меняется любая запись `dependencies` в `package.json`, в том же pull request
