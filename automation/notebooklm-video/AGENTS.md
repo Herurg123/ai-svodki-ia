@@ -197,6 +197,15 @@ Normal scheduled publication is owned by `scheduled-worker.js`.
 `run-dzen-publish.cmd` and `run-dzen-dry-run.cmd` remain explicit
 operator/diagnostic entrypoints.
 
+A separate `run-dzen-manual-draft-recovery.cmd --date=... --assist` is allowed
+for a pinned `CLICKED_UNVERIFIED` draft **only under explicit human control**:
+reserve both worker locks, verify published-list identity first, confirm exact
+remote draft URL + title before presenting the editor, let the operator manually
+publish/resolve any verification, then update `PUBLISHED` only after an exact
+public `/video/watch/<draftId>` match. No automatic retry, upload, metadata
+mutation, CAPTCHA action, or programmatic Publish click; abort without state
+changes on lock contention, missing/unknown draft, or identity mismatch.
+
 Deep selector, tag, readiness and live evidence contracts are in
 [`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md) and
 [`DZEN_VIDEO_EXPERIMENTS.md`](DZEN_VIDEO_EXPERIMENTS.md).
