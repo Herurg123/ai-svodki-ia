@@ -63,10 +63,18 @@ function fatalLog(config, message, error = null) {
 }
 
 function parseArgs(argv) {
-  const args = { date: null, resumeDraft: null };
+  const args = { date: null, resumeDraft: null, recoverDraft: null, scheduled: false };
   for (const arg of argv) {
     if (arg.startsWith("--resume-draft=")) {
       args.resumeDraft = arg.slice("--resume-draft=".length).trim();
+      continue;
+    }
+    if (arg.startsWith("--recover-draft=")) {
+      args.recoverDraft = arg.slice("--recover-draft=".length).trim();
+      continue;
+    }
+    if (arg === "--scheduled") {
+      args.scheduled = true;
       continue;
     }
     if (arg.startsWith("--date=")) {
@@ -79,6 +87,11 @@ function parseArgs(argv) {
   if (args.resumeDraft && !/^[a-f0-9]{24}$/i.test(args.resumeDraft)) {
     throw new Error("Некорректный ID черновика в --resume-draft");
   }
+  if (args.recoverDraft && !/^[a-f0-9]{24}$/i.test(args.recoverDraft)) {
+    throw new Error("Некорректный ID черновика в --recover-draft");
+  }
+  if (args.resumeDraft && args.recoverDraft) throw new Error("Нельзя одновременно resume и recover.");
+  if (args.recoverDraft && !args.scheduled) throw new Error("Recovery-драфт доступен только из scheduled worker.");
   return args;
 }
 
@@ -725,11 +738,14 @@ async function setCommentsToEveryone(page, config) {
 }
 
 async function main(argv = process.argv.slice(2)) {
-  const { date, resumeDraft } = parseArgs(argv);
+  const { date, resumeDraft, recoverDraft, scheduled } = parseArgs(argv);
   if (!fs.existsSync(CONFIG_PATH)) throw new Error(`Не найден config.json: ${CONFIG_PATH}`);
 
   const config = helpers.applyDzenConfigDefaults(loadJson(CONFIG_PATH));
   const dateKey = date || formatDateKey(new Date(), config.timeZone);
+  if (scheduled && formatDateKey(new Date(), config.timeZone || "Europe/Moscow") !== dateKey) {
+    throw new Error("Scheduled Dzen: дата выпуска не совпадает с текущими сутками.");
+  }
   const state = history.loadActiveState(config);
   const resolvedJob = history.findJobForDateIncludingArchive(config, state, dateKey);
   if (!resolvedJob) throw new Error(`В active state или archive не найдено задание выпуска ${dateKey}.`);
@@ -752,9 +768,11 @@ async function main(argv = process.argv.slice(2)) {
   if (tags.length !== 5) throw new Error(`Требуется ровно 5 тегов, сейчас ${tags.length}.`);
 
   log(config, `=== START DIRECT MVP date=${dateKey} ===`);
-  log(config, resumeDraft
-    ? `режим: проверка готовности сохранённого черновика ${resumeDraft}, новый upload запрещён.`
-    : "режим: новый upload только при отсутствии закреплённого draftId.");
+  log(config, recoverDraft
+    ? `режим: одна same-day recovery-попытка для существующего черновика ${recoverDraft}; upload запрещён.`
+    : resumeDraft
+      ? `режим: проверка готовности сохранённого черновика ${resumeDraft}, новый upload запрещён.`
+      : "режим: новый upload только при отсутствии закреплённого draftId.");
   log(config, `MP4: ${job.downloadedFile}`);
 
   const previewPath = await ensurePreview(config, job);
@@ -770,13 +788,21 @@ async function main(argv = process.argv.slice(2)) {
   let draftId = null;
 
   try {
-    if (resumeDraft) {
+    if (resumeDraft || recoverDraft) {
       const latest = history.loadActiveState(config);
       const saved = helpers.findJobForDate(latest, dateKey)?.dzenAutomation || {};
-      if (saved.status !== "DRAFT_PROCESSING" || saved.draftId !== resumeDraft) {
-        throw new Error("Resume не разрешён: checkpoint черновика не совпадает с запросом.");
+      if (recoverDraft) {
+        if (saved.status !== "CLICKED_UNVERIFIED" || saved.draftId !== recoverDraft ||
+            saved.recoveryClickArmedAt || saved.recoveryClickAttemptedAt) {
+          throw new Error("Recovery запрещён: checkpoint черновика изменился или попытка уже использована.");
+        }
+        draftId = recoverDraft;
+      } else {
+        if (saved.status !== "DRAFT_PROCESSING" || saved.draftId !== resumeDraft) {
+          throw new Error("Resume не разрешён: checkpoint черновика не совпадает с запросом.");
+        }
+        draftId = resumeDraft;
       }
-      draftId = resumeDraft;
       await openPinnedDraft(page, config, draftId, title, description);
     } else {
       const latest = history.loadActiveState(config);
@@ -815,24 +841,38 @@ async function main(argv = process.argv.slice(2)) {
     await safeNotices.processKnownDzenNotices(connection.browser, (message) => log(config, message))
       .catch((error) => warn(config, `Speed-notice: ${error.message}`));
 
-    await setCommentsToEveryone(page, config);
+    if (!recoverDraft) await setCommentsToEveryone(page, config);
+    // Existing recovery metadata/comments/tags are not rewritten. All
+    // identity + persisted title/description checks were read-only.
 
     const publish = await findEnabledPublishButton(page);
     if (!publish) {
       throw new Error("После выбора комментариев кнопка публикации перестала быть активной.");
     }
 
+    if (scheduled && formatDateKey(new Date(), config.timeZone || "Europe/Moscow") !== dateKey) {
+      throw new Error("Наступили новые календарные сутки: вчерашний publish-click запрещён.");
+    }
     await page.bringToFront();
     // A Playwright click can time out AFTER the browser dispatched the event.
     // Mark uncertainty BEFORE the attempt so any such exception can never
     // authorize a fresh upload or another publish click.
     // Persist click uncertainty BEFORE dispatch, even when Playwright later
     // times out or the scheduler kills this process.
-    persistDraftTransition(config, dateKey, draftId, ["DRAFT_PROCESSING"], "CLICKED_UNVERIFIED", {
-      clickAttemptedAt: new Date().toISOString(),
-    });
+    if (recoverDraft) {
+      persistDraftTransition(config, dateKey, draftId, ["CLICKED_UNVERIFIED"], "RECOVERY_CLICK_ARMED", {
+        recoveryClickArmedAt: new Date().toISOString(),
+        recoveryClickAttemptedAt: new Date().toISOString(),
+      });
+    } else {
+      persistDraftTransition(config, dateKey, draftId, ["DRAFT_PROCESSING"], "CLICKED_UNVERIFIED", {
+        clickAttemptedAt: new Date().toISOString(),
+      });
+    }
     publishClicked = true;
-    log(config, "PUBLISH_CLICK_ATTEMPT_ARMED: outcome may be uncertain; retry prohibited.");
+    log(config, recoverDraft
+      ? "RECOVERY_CLICK_ARMED: второй клик только для текущего сохранённого черновика; дальнейшие повторы запрещены."
+      : "PUBLISH_CLICK_ATTEMPT_ARMED: outcome may be uncertain; retry prohibited.");
     await publish.button.click();
 
     log(
@@ -841,7 +881,7 @@ async function main(argv = process.argv.slice(2)) {
     );
     log(config, "После publish click наблюдаю 45 секунд; разрешённые уведомления проверяются через dzen-safe-notices, результат публикации подтверждается отдельно.");
     await observeAfterPublishClick(page,config,dateKey,draftId,{noticeBrowser:connection.browser});
-    log(config, `=== END DIRECT MVP CLICKED_UNVERIFIED click=true draftId=${draftId} ===`);
+    log(config, `=== END DIRECT MVP ${recoverDraft ? "RECOVERY_CLICK_ARMED" : "CLICKED_UNVERIFIED"} click=true draftId=${draftId} ===`);
   } catch (error) {
     warn(
       config,
