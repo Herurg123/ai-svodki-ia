@@ -1,0 +1,155 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-11-04",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-11-04.json",
+  "warnings": [
+    "Исследовательский пул перегружен одним издателем: openai (8), techcrunch (5)",
+    "Исследовательский пул перегружен одной организацией: openai (8)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-11-04",
+  "started_at": "2026-11-04T02:15:17+00:00",
+  "finished_at": "2026-11-04T02:15:53+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 109,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "404d60dd1d23e687dd2d47352b62af1e3d3029bec4874a192236b78d3f1c7785",
+    "candidates_sha256": "0a65f0c527f919abbe6348f433c2bb856fee223912276af02f3d944ff907b1b0",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-11-02T05:06:37+03:00",
+      "end_at": "2026-11-04T05:06:44+03:00",
+      "latest_archive_at": "2026-11-03T05:06:37+03:00",
+      "start_date": "2026-11-02",
+      "end_date": "2026-11-04",
+      "latest_archive_date": "2026-11-03"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "74c01db0a57b1b8c75d4e0c61c07edf68e75c407e39074ae6f87e25d1323967a",
+    "editorial_sha256": "6f6e1637ba760ca498d46c749bf034343aef245214376079a74868bc084d45af",
+    "digest_sha256": "3fa754046a63df1b6f039f2a8618d63e1be312d4ec435cc08f2b191b36edd1b6",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-11-04.jpg",
+          "normalized_value": "ai-svodka-2026-11-04.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.story_section",
+          "candidate_id": "cand-005",
+          "model_value": "Китайские лидеры ИИ",
+          "normalized_value": "Мировые лидеры ИИ"
+        },
+        {
+          "field": "article_html.empty_section",
+          "model_value": "Китайские лидеры ИИ",
+          "normalized_value": null
+        }
+      ],
+      "changed_count": 2,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, legal_regulation."
+        },
+        {
+          "type": "section_placement",
+          "area": "editorial",
+          "message": "Раздел для cand-005 автоматически исправлен: Китайские лидеры ИИ → Мировые лидеры ИИ."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0ddc29b36de77cf0016aea9536c35487d0a060f4547b9b440d",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 223701,
+        "input_tokens_details": {
+          "cache_write_tokens": 24205,
+          "cached_tokens": 199493,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 24205
+          }
+        },
+        "output_tokens": 4080,
+        "output_tokens_details": {
+          "reasoning_tokens": 515
+        },
+        "total_tokens": 227781
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-11-04/resp_0ddc29b36de77cf0016aea9536c35487d0a060f4547b9b440d.json"
+  },
+  "total_usage": {
+    "input_tokens": 223701,
+    "output_tokens": 4080,
+    "total_tokens": 227781,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "5df061f7828bb715b8580144a2ca461151258c09",
+    "run_id": "41758393479",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-11-04T05:06:44+03:00"
+}

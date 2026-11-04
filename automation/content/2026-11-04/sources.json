@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Marvell agrees to acquire Lumentum in $115 billion AI-connectivity deal",
+    "publisher": "Signal",
+    "url": "https://signal.yashgarg.me/articles/marvell-lumentum-115b-ai-optics-acquisition/"
+  },
+  {
+    "title": "Nvidia Brev security breach may have exposed SSH keys used to access customer VMs — investigation finds unauthorized activity spanning 16 days, but no evidence of misuse",
+    "publisher": "Tom's Hardware",
+    "url": "https://www.tomshardware.com/tech-industry/cyber-security/nvidia-brev-security-breach-may-have-exposed-ssh-keys-used-to-access-customer-vms-investigation-finds-unauthorized-activity-spanning-16-days-but-no-evidence-of-misuse"
+  },
+  {
+    "title": "Google: LLMjacking attacks rack up $1 million in cloud AI charges",
+    "publisher": "BleepingComputer",
+    "url": "https://www.bleepingcomputer.com/news/security/google-llmjacking-attacks-rack-up-1-million-in-cloud-ai-charges/"
+  },
+  {
+    "title": "Progress on provable inference for large language models",
+    "publisher": "Anthropic",
+    "url": "https://www.anthropic.com/research/provable-inference"
+  },
+  {
+    "title": "New York Times and other outlets sue web browser Brave over alleged content scraping",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/11/02/new-york-times-and-other-outlets-sue-web-browser-brave-over-alleged-content-scraping/"
+  },
+  {
+    "title": "Meituan unveils LongCat-2.5, a multimodal model for long-running AI agents",
+    "publisher": "Signal",
+    "url": "https://signal.yashgarg.me/articles/meituan-longcat-2-5-multimodal-agent-model/"
+  },
+  {
+    "title": "Positive Technologies расследовала кибератаку, проведенную ИИ-агентами",
+    "publisher": "Коммерсантъ",
+    "url": "https://www.kommersant.ru/doc/9079014"
+  }
+]

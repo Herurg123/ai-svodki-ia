@@ -1,0 +1,30 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "article_html.story_section",
+      "candidate_id": "cand-005",
+      "model_value": "Китайские лидеры ИИ",
+      "normalized_value": "Мировые лидеры ИИ"
+    },
+    {
+      "field": "article_html.empty_section",
+      "model_value": "Китайские лидеры ИИ",
+      "normalized_value": null
+    }
+  ],
+  "changed_count": 2,
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, legal_regulation."
+    },
+    {
+      "type": "section_placement",
+      "area": "editorial",
+      "message": "Раздел для cand-005 автоматически исправлен: Китайские лидеры ИИ → Мировые лидеры ИИ."
+    }
+  ]
+}

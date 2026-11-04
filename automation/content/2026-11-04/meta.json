@@ -1,0 +1,41 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-04",
+  "slug": "2026-11-04",
+  "title": "ИИ-Сводка на 4 ноября 2026",
+  "description": "Marvell покупает Lumentum ради оптических связей для ИИ-кластеров, Google предупреждает о краже доступа к LLM, а Anthropic развивает проверяемый вывод моделей. Также — copyright-иск к Brave, LongCat-2.5 и российский киберинцидент.",
+  "published_at": "2026-11-04T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-04.png",
+  "topics": [
+    "ИИ-инфраструктура",
+    "оптические interconnects",
+    "Marvell",
+    "Lumentum",
+    "кибербезопасность ИИ",
+    "LLMjacking",
+    "SSH-ключи",
+    "Anthropic",
+    "проверяемый вывод моделей",
+    "copyright",
+    "Brave",
+    "LongCat-2.5",
+    "Meituan",
+    "Positive Technologies",
+    "агенты ИИ"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: major_agencies, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, legal_regulation."
+    },
+    {
+      "type": "section_placement",
+      "area": "editorial",
+      "message": "Раздел для cand-005 автоматически исправлен: Китайские лидеры ИИ → Мировые лидеры ИИ."
+    }
+  ]
+}

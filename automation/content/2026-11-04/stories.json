@@ -1,0 +1,223 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Marvell договорилась купить Lumentum в сделке с enterprise value около 115 млрд долларов",
+    "organization": "Marvell Technology; Lumentum",
+    "topic": "AI infrastructure; networking silicon; optical interconnects; data-center connectivity; M&A",
+    "event_type": "proposed acquisition",
+    "status": "new",
+    "summary": "Marvell и Lumentum объявили окончательное соглашение об объединении в сделке с оплатой акциями и заявленной enterprise value около $115 млрд. Компании связывают сделку с ростом потребности ИИ-дата-центров в оптических компонентах и сетевых соединениях; закрытие требует голосований акционеров и регуляторных разрешений.",
+    "published_at": "2026-11-02T19:07:51-08:00",
+    "published_date": "2026-11-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Marvell agrees to acquire Lumentum in $115 billion AI-connectivity deal",
+        "publisher": "Signal",
+        "url": "https://signal.yashgarg.me/articles/marvell-lumentum-115b-ai-optics-acquisition/"
+      }
+    ],
+    "keywords": [
+      "Marvell",
+      "Lumentum",
+      "AI networking",
+      "optics",
+      "data centers",
+      "M&A",
+      "interconnects"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "NVIDIA Brev ротировала потенциально раскрытые SSH-ключи клиентов",
+    "organization": "NVIDIA; Brev",
+    "topic": "AI cloud platform security; exposed SSH keys; customer virtual machines; incident response",
+    "event_type": "security incident",
+    "status": "new",
+    "summary": "NVIDIA уведомила затронутых пользователей облачной платформы Brev о несанкционированной активности в период 4–20 октября. По сообщению издания, потенциально могли быть раскрыты SSH-ключи, используемые для доступа к клиентским VM; NVIDIA заменила ключи и обновила инстансы, при этом не заявила о подтверждённом злоупотреблении ключами.",
+    "published_at": "2026-11-02T14:00:00+00:00",
+    "published_date": "2026-11-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Nvidia Brev security breach may have exposed SSH keys used to access customer VMs — investigation finds unauthorized activity spanning 16 days, but no evidence of misuse",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/tech-industry/cyber-security/nvidia-brev-security-breach-may-have-exposed-ssh-keys-used-to-access-customer-vms-investigation-finds-unauthorized-activity-spanning-16-days-but-no-evidence-of-misuse"
+      }
+    ],
+    "keywords": [
+      "NVIDIA Brev",
+      "SSH keys",
+      "customer VMs",
+      "unauthorized activity",
+      "AI cloud",
+      "credential exposure"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Google и Mandiant описали LLMjacking с расходами жертв до 1 млн долларов",
+    "organization": "Google Threat Intelligence Group; Mandiant",
+    "topic": "AI infrastructure security; stolen LLM API keys; cloud credentials; LiteLLM gateways; fraudulent inference spending",
+    "event_type": "security research and threat-intelligence advisory",
+    "status": "new",
+    "summary": "Google Threat Intelligence Group and Mandiant reported two threat clusters monetizing compromised enterprise LLM access. The activity includes exposed endpoints and stolen cloud, session and API credentials; some victims incurred more than $100,000 in a day and roughly $1 million in cumulative token charges.",
+    "published_at": "2026-11-03T13:51:04-05:00",
+    "published_date": "2026-11-03",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google: LLMjacking attacks rack up $1 million in cloud AI charges",
+        "publisher": "BleepingComputer",
+        "url": "https://www.bleepingcomputer.com/news/security/google-llmjacking-attacks-rack-up-1-million-in-cloud-ai-charges/"
+      }
+    ],
+    "keywords": [
+      "LLMjacking",
+      "Google Threat Intelligence",
+      "Mandiant",
+      "LLM API keys",
+      "LiteLLM",
+      "cloud credentials",
+      "AI security"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Anthropic опубликовала FlashProve для проверки происхождения ответов LLM",
+    "organization": "Anthropic",
+    "topic": "AI security; provable inference; cryptographic verification; formal methods; model provenance",
+    "event_type": "research release",
+    "status": "new",
+    "summary": "Anthropic опубликовала исследование и открытые артефакты FlashProve — системы cryptographic/provable inference, предназначенной для проверки того, что ответ действительно был сгенерирован заявленной моделью, без раскрытия её весов. Релиз включает technical report, спецификацию, код, verifier-ы и Lean-доказательства.",
+    "published_at": "2026-11-03T22:41:03+00:00",
+    "published_date": "2026-11-03",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Progress on provable inference for large language models",
+        "publisher": "Anthropic",
+        "url": "https://www.anthropic.com/research/provable-inference"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "FlashProve",
+      "provable inference",
+      "zkSNARK",
+      "cryptography",
+      "model identity",
+      "formal verification"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-020",
+    "section": "world",
+    "headline": "The New York Times и другие издания подали copyright-иски к Brave из-за предполагаемого скрейпинга",
+    "organization": "The New York Times; Brave; Daily News; Chicago Tribune; Orlando Sentinel",
+    "topic": "Copyright; web scraping; AI training and retrieval data; publisher rights; AI content distribution",
+    "event_type": "copyright lawsuits filed",
+    "status": "new",
+    "summary": "The New York Times filed a federal lawsuit in Manhattan alleging that Brave scraped its copyrighted material and unlawfully distributed it to AI-company customers. Separately, the Daily News, Chicago Tribune and Orlando Sentinel filed a similar federal action. The reporting says the Times complaint names Anthropic, Perplexity, Mistral, xAI and Cohere as Brave customers and seeks injunctive relief and damages.",
+    "published_at": "2026-11-02T19:19:17+00:00",
+    "published_date": "2026-11-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "New York Times and other outlets sue web browser Brave over alleged content scraping",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/02/new-york-times-and-other-outlets-sue-web-browser-brave-over-alleged-content-scraping/"
+      }
+    ],
+    "keywords": [
+      "New York Times",
+      "Brave",
+      "copyright",
+      "web scraping",
+      "AI companies",
+      "Anthropic",
+      "Perplexity",
+      "Mistral",
+      "xAI",
+      "Cohere",
+      "publishers"
+    ],
+    "geography": "world",
+    "category": "legal"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Meituan представила мультимодальную агентную модель LongCat-2.5",
+    "organization": "Meituan; LongCat",
+    "topic": "Multimodal agent models; coding agents; Chinese AI infrastructure; mixture-of-experts models",
+    "event_type": "model release",
+    "status": "new",
+    "summary": "Команда LongCat компании Meituan представила LongCat-2.5 — multimodal MoE-модель для длительных агентных задач, включая работу с крупными кодовыми базами. Компания заявляет 1,6 трлн суммарных параметров и около 48 млрд активных на токен, а также обучение на китайских ускорителях.",
+    "published_at": "2026-11-02T19:07:51-08:00",
+    "published_date": "2026-11-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Meituan unveils LongCat-2.5, a multimodal model for long-running AI agents",
+        "publisher": "Signal",
+        "url": "https://signal.yashgarg.me/articles/meituan-longcat-2-5-multimodal-agent-model/"
+      }
+    ],
+    "keywords": [
+      "Meituan",
+      "LongCat-2.5",
+      "multimodal",
+      "agents",
+      "MoE",
+      "coding",
+      "Chinese accelerators"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-019",
+    "section": "russia",
+    "headline": "Positive Technologies расследовала предполагаемую атаку агентов ИИ на российскую компанию",
+    "organization": "Positive Technologies; PT ESC IR",
+    "topic": "AI-agent security; autonomous cyber intrusion; Russian corporate infrastructure; critical systems; incident response",
+    "event_type": "security incident investigation disclosure",
+    "status": "new",
+    "summary": "Positive Technologies сообщила, что её подразделение PT ESC IR расследовало успешную атаку на инфраструктуру неназванной российской компании, которая, по оценке специалистов, предположительно была полностью проведена ИИ-агентами. От проникновения через внешний сервис до утечки конфиденциальной информации из внутренних критически важных систем, по сообщению компании, прошло около трёх часов.",
+    "published_at": "2026-11-02T10:48:34+00:00",
+    "published_date": "2026-11-02",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Positive Technologies расследовала кибератаку, проведенную ИИ-агентами",
+        "publisher": "Коммерсантъ",
+        "url": "https://www.kommersant.ru/doc/9079014"
+      }
+    ],
+    "keywords": [
+      "Positive Technologies",
+      "PT ESC IR",
+      "AI agents",
+      "cyberattack",
+      "Russian company",
+      "critical systems",
+      "intrusion",
+      "data exfiltration"
+    ],
+    "geography": "russia",
+    "category": "security"
+  }
+]
