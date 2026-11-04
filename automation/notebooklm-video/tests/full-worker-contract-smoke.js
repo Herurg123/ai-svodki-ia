@@ -69,14 +69,26 @@ const state = {
   },
 };
 assert.strictEqual(
-  full.selectCollectionsJob(state, "2026-08-29", null).date,
-  "2026-08-28",
-  "normal successful flow must stay aligned with the latest DONE/catch-up job"
+  full.selectCollectionsJob(state, "2026-08-29", null),
+  null,
+  "No DONE job for today: do not resume yesterday's collections"
 );
 assert.strictEqual(
   full.selectCollectionsJob(state, "2026-08-29", new Error("video phase failed")).date,
   "2026-08-29",
-  "failed video flow must prefer today's existing job so a same-day digest can still be collected"
+  "failed video flow may use only today's incomplete job for collections"
+);
+assert.strictEqual(
+  full.selectCollectionsJob({jobs:{older:{date:"2026-08-28",status:"DONE"}}},
+    "2026-08-29",new Error("video phase failed")),
+  null, "Previous day's completed job must never be selected"
+);
+assert.strictEqual(
+  full.selectCollectionsJob({jobs:{
+    older:{date:"2026-08-28",status:"DONE"},
+    current:{date:"2026-08-29",status:"DONE"},
+  }},"2026-08-29",null).date,
+  "2026-08-29", "Current-day successful job must win over yesterday"
 );
 
 
