@@ -119,13 +119,12 @@ function runNodeScript(scriptName, args = []) {
   });
 }
 
-function findLatestDoneJob(state, maxDateKey) {
+function findTodayDoneJob(state, currentDateKey) {
   const jobs = Object.values((state && state.jobs) || {}).filter(
     (job) =>
       job &&
       job.status === "DONE" &&
-      typeof job.date === "string" &&
-      job.date <= maxDateKey
+      job.date === currentDateKey
   );
 
   jobs.sort((a, b) => {
@@ -519,27 +518,24 @@ async function main() {
 
     const state = loadJson(config.stateFile, { jobs: {} });
     const currentDateKey = formatDateKey(new Date(), config.timeZone);
-    const job = findLatestDoneJob(state, currentDateKey);
+    const job = findTodayDoneJob(state, currentDateKey);
 
     if (!job) {
       log(
         config,
-        `Фаза 2/2: нет локального DONE job с датой не позже ${currentDateKey}. ` +
+        `Фаза 2/2: нет локального DONE job за текущий день ${currentDateKey}. ` +
           "Dzen-фаза пока не нужна."
       );
       return;
     }
 
     const dateKey = job.date;
-    if (dateKey !== currentDateKey) {
-      log(
-        config,
-        `Фаза 2/2: catch-up режим, самый свежий DONE job имеет дату ${dateKey}, ` +
-          `текущая локальная дата ${currentDateKey}.`
-      );
+    if (dateKey !== formatDateKey(new Date(), config.timeZone)) {
+      log(config, `Фаза 2/2: наступили новые календарные сутки. Выпуск ${dateKey} остаётся для ручного разбора; автоматический Dzen не запускаю.`);
+      return;
     }
 
-    log(config, `Фаза 2/2: локальный job DONE. Запускаю автоматическую Dzen-фазу за ${dateKey}.`);
+    log(config, `Фаза 2/2: локальный job DONE за текущий день. Запускаю автоматическую Dzen-фазу за ${dateKey}.`);
     await runAutomaticDzen(config, state, job, dateKey);
     log(config, "=== END scheduled full worker SUCCESS ===");
   } catch (error) {
@@ -558,7 +554,7 @@ module.exports = {
   shouldResumeDraft,
   syncChildDzenState,
   dzenAutomationEnabled,
-  findLatestDoneJob,
+  findTodayDoneJob,
   formatDateKey,
   getAutomationStatus,
   isVerificationOnlyStatus,
