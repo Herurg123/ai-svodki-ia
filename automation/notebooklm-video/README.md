@@ -241,7 +241,20 @@ Manual operator entrypoints remain:
 ~~~cmd
 run-dzen-publish.cmd --date=YYYY-MM-DD
 run-dzen-dry-run.cmd
+run-dzen-manual-draft-recovery.cmd --date=YYYY-MM-DD --status
+run-dzen-manual-draft-recovery.cmd --date=YYYY-MM-DD --assist
 ~~~
+
+For a previously attempted `CLICKED_UNVERIFIED` publication with an exact
+pinned `draftId`, use `--status` first; then stop/disable the scheduled worker
+and run `--assist` interactively. This separate recovery tool acquires BOTH
+worker locks, opens the verified existing draft in a visible browser, and lets
+**the human operator** perform any final Publish click and user verification.
+On Enter it rechecks the Studio published Video row and writes `PUBLISHED`
+**only** if the public `/video/watch/<ID>` exactly equals the saved `draftId`.
+It never uploads, edits metadata, clicks Publish or touches a CAPTCHA. An
+unverified result preserves `CLICKED_UNVERIFIED` and blocks automatic retries.
+It is not invoked from the scheduled pipeline.
 
 Deep selectors, metadata/tag/readiness rules and live evidence are canonical in
 [`DZEN_NATIVE_UPLOAD.md`](DZEN_NATIVE_UPLOAD.md) and
