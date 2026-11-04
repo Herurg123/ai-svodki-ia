@@ -120,10 +120,18 @@ Experimental launchers, `.env` and token-bearing test materials must never
 be copied into production or committed; cleanup of old Windows one-off files
 must use explicit allowlists, retain states/logs and check for active locks.
 
-Native Dzen's one allowed publish click must be followed by a 45-second
-read-only editor observation; if unresolved, save a local diagnostic screenshot
-and remain CLICKED_UNVERIFIED. Never navigate early, retry the click, bypass
-a challenge, or treat a Playwright click as publication confirmation.
+Native Dzen's first publish click must be followed by 45-second read-only
+observation; if unresolved, save diagnostics and remain CLICKED_UNVERIFIED.
+For the **same current calendar day only**, one additional publish click may be
+authorized on the exact already-pinned draft after a minimum 3-minute settling
+period, an unsuccessful published-row exact-ID precheck, a verified existing
+draft URL/title/description, final readiness, and a durable
+RECOVERY_CLICK_ARMED checkpoint BEFORE the click. No third click, duplicate
+MP4 upload, unknown-identity fallback, early navigation, CAPTCHA bypass or
+Playwright-click-as-success inference. Once the calendar day changes, **all**
+automatic video/collections/article-video/VK jobs are current-day only, and
+old errors/drafts are operator-owned. Preserve old state/archives for manual
+recovery and idempotency; do not reset them to PENDING.
 
 ## Legacy and compatibility lifecycle
 
