@@ -187,12 +187,29 @@ function isVerificationOnlyStatus(status) {
     "RETRYABLE_PRE_CLICK",
     "PUBLISH_ARMED",
     "CLICKED_UNVERIFIED",
+    "RECOVERY_CLICK_ARMED",
     "BLOCKED_AMBIGUOUS",
   ].includes(String(status || ""));
 }
 
 function shouldResumeDraft(status, draftId) {
   return status === "DRAFT_PROCESSING" && /^[a-f0-9]{24}$/i.test(String(draftId || ""));
+}
+
+// The only automatic second publish-click is allowed within the SAME calendar
+// day, for the SAME pinned draft and only after the first attempt has had time
+// to settle. The attempted retry is durably armed before browser mutation.
+function shouldRecoverSameDayDraft(job, dateKey, now = new Date(), timeZone = "Europe/Moscow") {
+  if (!job || job.date !== dateKey || formatDateKey(now, timeZone) !== dateKey ||
+      job.dzenAutomation?.status !== "CLICKED_UNVERIFIED" || job.status !== "DONE") return false;
+  const saved = job.dzenAutomation;
+  if (!/^[a-f0-9]{24}$/i.test(String(saved.draftId || "")) ||
+      saved.recoveryClickArmedAt || saved.recoveryClickAttemptedAt ||
+      !saved.clickAttemptedAt) return false;
+  const clicked = Date.parse(saved.clickAttemptedAt);
+  if (!Number.isFinite(clicked)) return false;
+  const elapsed = now.getTime() - clicked;
+  return elapsed >= 3 * 60_000 && elapsed < 24 * 60 * 60_000;
 }
 
 function classifyDzenFailureOutput(output) {
@@ -334,6 +351,49 @@ async function runAutomaticDzen(config, state, job, dateKey) {
       return { published: true, existing: true };
     }
 
+    if (shouldRecoverSameDayDraft(job, dateKey, new Date(), config.timeZone || "Europe/Moscow")) {
+      log(config, `Dzen: разрешаю ОДНО повторное нажатие для СЕГОДНЯШНЕГО подтверждённого черновика id=${pinnedId}; без нового MP4/upload.`);
+      // precheck already proved the exact public ID is not in Published.
+      // The child independently proves the exact existing draft URL, complete
+      // metadata and ready state before arming the only recovery click.
+      try {
+        await dzenRunner.runNodeScript("dzen-publish-direct.js",
+          [dateArg, `--recover-draft=${pinnedId}`, "--scheduled"], dzenRunner.OPERATOR_WINDOW_MS);
+      } catch (error) {
+        const saved = syncChildDzenState(config, job);
+        if (saved.status === "RECOVERY_CLICK_ARMED") {
+          updateDzenAutomation(config, state, job, "RECOVERY_CLICK_ARMED", {
+            lastError: error.message, lastErrorAt: new Date().toISOString(),
+          });
+          throw new Error("Одна recovery-попытка уже зарезервирована. Повторный publish-click запрещён: " + error.message);
+        }
+        throw error;
+      }
+      const saved = syncChildDzenState(config, job);
+      if (saved.status !== "RECOVERY_CLICK_ARMED") {
+        // The original first-click ambiguity is preserved if processing wasn't
+        // ready. No second click took place and nothing was reuploaded.
+        throw new Error(`Recovery завершён без клика: статус=${saved.status}; повторный upload запрещён.`);
+      }
+      const verified = await verifyPublished(session, config, dateArg,
+        (message) => log(config, `DZEN: ${message}`), pinnedId);
+      if (!verified) {
+        updateDzenAutomation(config, state, job, "RECOVERY_CLICK_ARMED", {
+          lastVerifiedAt: new Date().toISOString(),
+          lastError: "Recovery click отправлен, но публикация не подтверждена. Только ручной разбор.",
+          lastErrorAt: new Date().toISOString(),
+        });
+        throw new Error("Recovery click не подтверждён; второй recovery запрещён.");
+      }
+      updateDzenAutomation(config, state, job, "PUBLISHED", {
+        confirmedAt: new Date().toISOString(), confirmedBy: "same-day-recovery-exact-video-id",
+        publishedVideoUrl: verified.publishedVideoUrl || null,
+        foundTitle: verified.foundText, titlePrefix: verified.titlePrefix,
+        lastError: null, lastErrorAt: null,
+      });
+      return { published: true, recovered: true };
+    }
+
     if (isVerificationOnlyStatus(status)) {
       log(
         config,
@@ -374,6 +434,9 @@ async function runAutomaticDzen(config, state, job, dateKey) {
       throw error;
     }
 
+    if (formatDateKey(new Date(), config.timeZone || "Europe/Moscow") !== dateKey) {
+      throw new Error("Наступил новый день: вчерашний выпуск не будет автоматически опубликован.");
+    }
     const resume = shouldResumeDraft(status, job.dzenAutomation?.draftId);
     if (!resume && !shouldRunFreshUpload(status)) {
       throw new Error(`Dzen status=${status}: новый upload и повторный клик запрещены.`);
@@ -398,8 +461,8 @@ async function runAutomaticDzen(config, state, job, dateKey) {
     // The inner runner keeps its 10-minute safety window. Each pass observes
     // at most six minutes of processing, then persists DRAFT_PROCESSING and exits.
     const childArgs = resume
-      ? [dateArg, `--resume-draft=${job.dzenAutomation.draftId}`]
-      : [dateArg];
+      ? [dateArg, `--resume-draft=${job.dzenAutomation.draftId}`, "--scheduled"]
+      : [dateArg, "--scheduled"];
 
     try {
       await dzenRunner.runNodeScript("dzen-publish-direct.js", childArgs, dzenRunner.OPERATOR_WINDOW_MS);
@@ -552,6 +615,7 @@ module.exports = {
   VERIFY_RETRY_DELAY_MS,
   classifyDzenFailureOutput,
   shouldResumeDraft,
+  shouldRecoverSameDayDraft,
   syncChildDzenState,
   dzenAutomationEnabled,
   findTodayDoneJob,
