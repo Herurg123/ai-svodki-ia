@@ -775,7 +775,7 @@ async function main(argv = process.argv.slice(2)) {
       : "режим: новый upload только при отсутствии закреплённого draftId.");
   log(config, `MP4: ${job.downloadedFile}`);
 
-  const previewPath = await ensurePreview(config, job);
+  const previewPath = recoverDraft ? null : await ensurePreview(config, job);
   const connection = await connectBrowser(config);
   log(config, `прямой операторский flow подключён через ${connection.endpoint}.`);
 
@@ -833,7 +833,9 @@ async function main(argv = process.argv.slice(2)) {
     // but the next scheduled run must reopen this draft, never upload again.
     const ready = await waitUntilVideoReady(page, config, 6 * 60_000);
     if (!ready) {
-      log(config, `DRAFT_PROCESSING: id=${draftId} ещё обрабатывается; завершаю текущий проход без клика. Следующий запуск продолжит его.`);
+      log(config, recoverDraft
+        ? `RECOVERY: id=${draftId} не подтвердил готовность; сохраняю CLICKED_UNVERIFIED, повторного клика нет.`
+        : `DRAFT_PROCESSING: id=${draftId} ещё обрабатывается; завершаю текущий проход без клика. Следующий запуск продолжит его.`);
       return { pending: true, draftId };
     }
 
