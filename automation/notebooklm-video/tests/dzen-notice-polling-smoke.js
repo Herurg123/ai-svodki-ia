@@ -36,14 +36,18 @@ assert(block.includes("if(!page.isClosed())"), "Monitor must continue when edito
   const checkbox = {
     count:async()=>1,
     isChecked:async()=>checked,
-    check:async()=>{checked=true; clicks++;},
+    check:async()=>{throw Error("generic checkbox must never be clicked");},
   };
   const title = {isVisible:async()=>true};
-  const label = {isVisible:async()=>true,locator:()=>({locator:()=>({first:()=>checkbox})})};
+  const label = {
+    isVisible:async()=>true,
+    locator:()=>({locator:()=>({first:()=>checkbox})}),
+    click:async()=>{checked=true;clicks++;},
+  };
   const frame={
     locator:()=>({innerText:async()=>{noticeChecks++;return notice;}}),
     getByText:(t)=>({first:()=>t instanceof RegExp?title:label}),
-    getByRole:()=>({first:()=>checkbox}),
+    getByRole:()=>{throw Error("generic role checkbox locator must not be used");},
   };
   const browser={contexts:()=>[{pages:()=>[{isClosed:()=>false,frames:()=>[frame]}]}]};
   const fakePage={
@@ -69,7 +73,7 @@ assert(block.includes("if(!page.isClosed())"), "Monitor must continue when edito
   assert(Date.now()-start>=30, "Observer must retain bounded observation window");
   assert(dispatchCalls>=2, "Generic dispatcher must run each post-click tick");
   assert.equal(noticeChecks,1, "Known already-attempted preference must not be repeatedly scanned");
-  assert.equal(clicks,1, "Exact informational checkbox must be selected no more than once");
+  assert.equal(clicks,1, "Only the exact preference label may receive one click");
   assert.equal(checked,true);
 
   // A different, user-operated popup is not a condition for prolonging,
