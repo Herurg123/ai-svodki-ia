@@ -1,17 +1,14 @@
 "use strict";
 
-// Разрешаем только информационное уведомление Дзена, не связанное с проверкой безопасности:
-// «Видео загружено за 4 сек» + «Больше не показывать такие сообщения».
-// Не нажимаем проверки человека, флажки согласия, произвольные флажки и неизвестные окна.
+// Единственное разрешённое действие: клик по точному тексту настройки
+// «Больше не показывать такие сообщения» внутри информационного уведомления
+// «Видео загружено за N сек». Никаких generic checkbox action или force.
 const SPEED_MESSAGE = /Видео\s+загружено\s+за\s+\d+\s+сек(?:унд[ыу]?)?/iu;
 const PREFERENCE_LABEL = "Больше не показывать такие сообщения";
-// Если на той же видимой странице есть проверка человека, ничего не нажимаем.
-const HUMAN_CHALLENGE = /подтвердите\s*,?\s*что\s*вы\s*не\s*(?:робот|против)|я\s+не\s+робот|я\s+не\s+против/iu;
 
 function mayAcknowledgeSpeedNotice(text) {
   const body = String(text || "").replace(/\s+/g, " ").trim();
-  return SPEED_MESSAGE.test(body) && body.includes(PREFERENCE_LABEL) &&
-    !HUMAN_CHALLENGE.test(body);
+  return SPEED_MESSAGE.test(body) && body.includes(PREFERENCE_LABEL);
 }
 
 // Только одна попытка на объект браузера, даже если сервер не подтвердил действие.
@@ -31,29 +28,31 @@ async function dismissUploadSpeedNotice(browser, logger = () => {}) {
         if (!(await title.isVisible().catch(() => false)) ||
             !(await label.isVisible().catch(() => false))) continue;
 
-        // Подходит только флажок, связанный с ТОЧНЫМ текстом разрешённой подписи.
-        // Если отдельный доступный флажок не найден, можно один раз нажать
-        // видимую подпись. Если результат не подтвердился, повторной попытки нет.
-        const namedCheckbox = frame.getByRole("checkbox", { name: PREFERENCE_LABEL, exact: true }).first();
-        const localCheckbox = label.locator("xpath=..")
+        // Никогда не выбираем цель по роли checkbox: динамический DOM Дзена
+        // может переопределить такой локатор на посторонний input.
+        // Контроль рядом с точной подписью используется ТОЛЬКО для чтения.
+        const nearbyControl = label.locator("xpath=..")
           .locator('input[type="checkbox"],[role="checkbox"]').first();
-        const control = (await namedCheckbox.count().catch(() => 0)) > 0
-          ? namedCheckbox
-          : ((await localCheckbox.count().catch(() => 0)) > 0 ? localCheckbox : null);
+        const hasNearbyControl = (await nearbyControl.count().catch(() => 0)) > 0;
         attemptedSpeedPreference.add(browser);
-        logger("Безопасное уведомление Дзен о скорости загрузки: найден точный флажок «Больше не показывать такие сообщения».");
-        if (control) {
-          if (await control.isChecked().catch(() => false)) {
-            logger("Флажок информационных уведомлений уже установлен; повторный клик пропущен.");
-            return { status: "already-checked" };
-          }
-          await control.check({ timeout: 3000 });
-        } else {
-          await label.click({ timeout: 3000 });
+        logger("Уведомление о скорости загрузки: найдена точная подпись разрешённого флажка.");
+        if (hasNearbyControl && await nearbyControl.isChecked().catch(() => false)) {
+          logger("Разрешённый флажок уже установлен; повторный клик пропущен.");
+          return { status: "already-checked" };
+        }
+        try {
+          // Кликаем ТОЛЬКО по видимой точной подписи, без force и обхода
+          // перекрывающих окон. Перекрытие приводит к отказу без иных действий.
+          await label.click({ timeout: 1500 });
+        } catch {
+          logger("Разрешённый флажок недоступен для обычного клика; ничего другого не нажимаю.");
+          return { status: "blocked" };
         }
 
         const hidden = !(await title.isVisible().catch(() => false));
-        const checked = control ? await control.isChecked().catch(() => false) : false;
+        const checked = hasNearbyControl
+          ? await nearbyControl.isChecked().catch(() => false)
+          : false;
         if (!hidden && !checked) {
           logger("Флажок уведомления нажат, но результат не подтверждён. Повторных кликов не будет.");
           return { status: "unverified" };
