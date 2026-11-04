@@ -307,10 +307,13 @@ rules. A video-local task does not override root `AGENTS.md`.
 - If a published row lacks an exact public identity or contains a different ID,
   fail closed. No repeat upload, publish click or publication confirmation.
 - An *informational* notification specifically reporting
-  `Видео загружено за N сек` may have its exact preference checkbox
-  `Больше не показывать такие сообщения` selected once, verifying the result.
-  Do NOT click verification challenges (`Я не робот`, `Я не против`), broadly
-  accept unknown consents, or use forced/coordinate clicks for the preference.
+  `Видео загружено за N сек` may have its exact preference text
+  `Больше не показывать такие сообщения` clicked once, verifying the result.
+  Never target a generic `checkbox` role or call `.check()` on an input: the
+  current Dzen DOM can retarget those locators to unrelated controls. No
+  human-challenge text scans are needed; act only on the exact preference text.
+  If its normal click is intercepted, stop without force, alternate controls
+  or repeated attempts. Unknown dialogs remain operator-owned.
 
 ## Boundaries for popup handling (2026-10-26 refactor)
 
