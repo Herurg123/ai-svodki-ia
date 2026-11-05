@@ -37,12 +37,13 @@ assert.equal(duplicate.pinnedPublishedIdentity({existing:false,publishedVideoUrl
   assert.equal(notices.mayAcknowledgeSpeedNotice(info),true);
   assert.equal(notices.mayAcknowledgeSpeedNotice(robot),false);
   assert.equal(notices.mayAcknowledgeSpeedNotice(consent),false);
-  assert.equal(notices.mayAcknowledgeSpeedNotice(info+"\n"+robot),false);
+  assert.equal(notices.mayAcknowledgeSpeedNotice(info+"\n"+robot),true,
+    "Body containing a separate human check must not suppress identifying speed toast");
   assert.equal(notices.mayAcknowledgeSpeedNotice("Видео загружено за 4 сек"),false);
 
   let checked=false;let clicks=0;
   const check = {count:async()=>1,isChecked:async()=>checked,
-    check:async()=>{checked=true;clicks++;}};
+    check:async()=>{throw Error("never check an unscoped input");}};
   const titleLoc = {isVisible:async()=>true};
   const labelLoc = {isVisible:async()=>true,
     locator:()=>({locator:()=>({first:()=>check})}),
@@ -51,7 +52,7 @@ assert.equal(duplicate.pinnedPublishedIdentity({existing:false,publishedVideoUrl
     const frame={
       locator:()=>({innerText:async()=>body}),
       getByText:(t)=>({first:()=>t instanceof RegExp?titleLoc:labelLoc}),
-      getByRole:()=>({first:()=>check}),
+      getByRole:()=>{throw Error("must not resolve generic checkbox role");},
     };
     return {contexts:()=>[{pages:()=>[{isClosed:()=>false,frames:()=>[frame]}]}]};
   }
@@ -62,7 +63,7 @@ assert.equal(duplicate.pinnedPublishedIdentity({existing:false,publishedVideoUrl
   assert.equal(clicks,1);
   assert.equal((await notices.dismissUploadSpeedNotice(makeBrowser(robot))).status,"absent");
   assert.equal(clicks,1);
-  assert.equal((await notices.dismissUploadSpeedNotice(makeBrowser(info+"\n"+consent))).status,"absent");
+  assert.equal((await notices.dismissUploadSpeedNotice(makeBrowser(info+"\n"+consent))).status,"already-checked");
   assert.equal(clicks,1);
   const remembered = makeBrowser(info);
   // A repeated tick with the SAME browser must never click twice,
@@ -70,6 +71,22 @@ assert.equal(duplicate.pinnedPublishedIdentity({existing:false,publishedVideoUrl
   assert.equal((await notices.processKnownDzenNotices(remembered)).status,"already-checked");
   assert.equal((await notices.processKnownDzenNotices(remembered)).status,"previously-attempted");
   assert.equal(clicks,1);
+
+  // Reproduces the incident: an overlay intercepts the allowed label.
+  // Never fall back to a different checkbox, retry, force, or bypass it.
+  checked=false;
+  const blockedLabel={...labelLoc,click:async()=>{throw Error("pointer intercepted");}};
+  const blockedFrame={
+    locator:()=>({innerText:async()=>info+"\\n"+robot}),
+    getByText:(t)=>({first:()=>t instanceof RegExp?titleLoc:blockedLabel}),
+    getByRole:()=>{throw Error("unsafe checkbox query");},
+  };
+  const blockedBrowser={contexts:()=>[{pages:()=>[{
+    isClosed:()=>false,frames:()=>[blockedFrame],
+  }]}]};
+  assert.equal((await notices.dismissUploadSpeedNotice(blockedBrowser)).status,"blocked");
+  assert.equal((await notices.dismissUploadSpeedNotice(blockedBrowser)).status,"previously-attempted");
+  assert.equal(clicks,1,"blocked label must never click another target");
 
   const scheduled = fs.readFileSync(path.join(__dirname,"../scheduled-worker.js"),"utf8");
   assert(scheduled.includes("pinnedPublishedIdentity(precheck, pinnedId)"));

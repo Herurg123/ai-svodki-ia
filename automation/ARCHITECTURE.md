@@ -2294,8 +2294,13 @@ The local Windows `dzen-browser-runner.js` manages child process lifetime,
 single-run timeouts, browser-profile locking and diagnostics, but does **not**
 detect, wait on, or interact with person-verification windows. Generic
 `dzen-safe-notices.js` owns the allowlist of non-security notification
-handlers. `dzen-publish-direct.js` polls it from the existing bounded
-45-second post-publish-click observation loop, including when the
-editor page has closed; it does not prolong the run for unknown prompts.
+handlers. Its sole interaction is an exact-text click on the preference
+`Больше не показывать такие сообщения` when the upload-speed notification
+`Видео загружено за N сек` is visible. It does not search challenge text,
+target generic checkbox roles/inputs or bypass overlays. If the exact label
+cannot be clicked normally, it stops without fallback. `dzen-publish-direct.js`
+polls the handler from the existing bounded 45-second post-publish-click
+observation loop, including when the editor page has closed; it does not
+prolong the run for unknown prompts.
 The verified public video ID and saved draft ID still govern transition
 to `PUBLISHED`; an uncertain click cannot authorize another upload/click.
