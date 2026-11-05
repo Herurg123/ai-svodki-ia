@@ -1,8 +1,254 @@
 {
   "version": 2,
-  "generated_at": "2026-11-04T02:17:17+00:00",
+  "generated_at": "2026-11-05T02:15:47+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-05",
+      "published_at": "2026-11-05T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-05T05:06:36+03:00",
+      "title": "ИИ-Сводка на 5 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-05/",
+      "summary": "Главные новости искусственного интеллекта за 5 ноября 2026 года Сегодняшняя повестка соединяет три уровня ИИ-рынка: консолидацию инструментов разработки, масштабирование корпоративных внедрений и усиление требований к безопасности. Одновременно государственные структуры уточняют правила доступа к мощным кибервозможностям и пытаются выстроить координацию регулирования. Для компаний главный практический вывод прост: ИИ всё чаще становится частью критичных рабочих процессов — от разработки и продаж",
+      "topics": [
+        "кибербезопасность ИИ",
+        "WorkOS",
+        "ARTEX AI",
+        "Meta",
+        "Conductor",
+        "ИИ-кодинг",
+        "Palantir",
+        "корпоративный ИИ",
+        "Claude Code",
+        "OpenAI Images 2.6",
+        "Daybreak Red",
+        "AWS GovCloud",
+        "Минцифры",
+        "регулирование ИИ в России"
+      ],
+      "source_urls": [
+        "https://www.bleepingcomputer.com/news/security/workos-says-attacker-used-artex-ai-to-breach-internal-sales-app/",
+        "https://techcrunch.com/2026/11/04/meta-acquires-ai-coding-startup-conductor/",
+        "https://techcrunch.com/2026/11/03/hiding-inside-palantirs-skyrocketing-quarter-is-a-foreboding-signal/",
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.318",
+        "https://openai.com/index/introducing-images-2-6",
+        "https://openai.com/index/daybreak-red-aws-govcloud",
+        "https://www.cnews.ru/news/top/2026-11-03_mintsifry_rossii_dadut_polnomochiya"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "WorkOS сообщила о взломе внутреннего приложения с применением ARTEX AI",
+          "organization": "WorkOS; ARTEX AI",
+          "topic": "AI-enabled cyber intrusion; developer identity infrastructure; customer-business data exposure; offensive security automation",
+          "event_type": "security incident disclosure",
+          "status": "new",
+          "summary": "WorkOS disclosed that an attacker accessed an internal sales application and used an AI-powered offensive-security framework to automate reconnaissance and exploitation attempts. The company said production services and application data were not affected, but business contacts, account histories, and summaries or excerpts of customer communications were exposed.",
+          "published_at": "2026-11-03T16:28:44-05:00",
+          "published_date": "2026-11-03",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "WorkOS says attacker used ARTEX AI to breach internal sales app",
+              "publisher": "BleepingComputer",
+              "url": "https://www.bleepingcomputer.com/news/security/workos-says-attacker-used-artex-ai-to-breach-internal-sales-app/"
+            }
+          ],
+          "keywords": [
+            "WorkOS",
+            "ARTEX AI",
+            "data breach",
+            "AI offensive security",
+            "developer infrastructure",
+            "customer data"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-004",
+          "section": "world",
+          "headline": "Meta приобрела стартап Conductor для агентной разработки ПО",
+          "organization": "Meta; Conductor",
+          "topic": "AI coding agents; agentic software development; M&A; multi-agent workspaces",
+          "event_type": "acquisition",
+          "status": "new",
+          "summary": "Meta acquired Conductor, стартап для разработки ПО с параллельными агентами в отдельных рабочих пространствах. Meta подтвердила сделку TechCrunch; Conductor сообщила, что её облачный сервис станет read-only 13 ноября и закроется 20 ноября, тогда как локальный продукт будет получать критические обновления до начала 2027 года.",
+          "published_at": "2026-11-04T21:10:56+00:00",
+          "published_date": "2026-11-04",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Meta acquires AI coding startup Conductor",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/11/04/meta-acquires-ai-coding-startup-conductor/"
+            }
+          ],
+          "keywords": [
+            "Meta",
+            "Conductor",
+            "AI coding",
+            "coding agents",
+            "multi-agent",
+            "acquisition"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "Palantir: коммерческая выручка в США впервые превысила государственную",
+          "organization": "Palantir Technologies",
+          "topic": "Enterprise AI; AI platform adoption; earnings; commercial revenue; government technology",
+          "event_type": "earnings",
+          "status": "new",
+          "summary": "Palantir отчиталась о квартальной выручке $2,31 млрд, росте на 96% год к году, и впервые получила больше выручки от коммерческого сегмента США ($984 млн), чем от госзаказчиков США ($953 млн). Компания также повысила прогнозы на год, хотя объём новых коммерческих контрактов США снизился относительно предыдущего квартала.",
+          "published_at": "2026-11-03T21:05:55+00:00",
+          "published_date": "2026-11-03",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Hiding inside Palantir’s skyrocketing quarter is a foreboding signal",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/11/03/hiding-inside-palantirs-skyrocketing-quarter-is-a-foreboding-signal/"
+            }
+          ],
+          "keywords": [
+            "Palantir",
+            "earnings",
+            "enterprise AI",
+            "U.S. commercial revenue",
+            "AIP",
+            "revenue"
+          ],
+          "geography": "world",
+          "category": "enterprise"
+        },
+        {
+          "candidate_id": "cand-006",
+          "section": "world",
+          "headline": "Claude Code 2.1.318 добавила управление усилием субагентов и контроль истечения учётных данных",
+          "organization": "Anthropic",
+          "topic": "CLI coding agents; subagents; model effort controls; Claude apps gateway; AWS cost attribution; authentication lifecycle",
+          "event_type": "software release",
+          "status": "new",
+          "summary": "Anthropic released Claude Code 2.1.318 with a low-effort setting for model-fork side jobs, cross-account AWS assume-role support on Mantle upstreams for per-developer cost attribution, and credential-expiry fields and warnings for stored claude.ai sign-ins. It also records a user's response when Claude Code asks to enable mods created during a session.",
+          "published_at": "2026-11-04T00:01:03+00:00",
+          "published_date": "2026-11-04",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Claude Code v2.1.318 release notes",
+              "publisher": "Anthropic / GitHub",
+              "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.318"
+            }
+          ],
+          "keywords": [
+            "Claude Code",
+            "subagents",
+            "model fork",
+            "effort control",
+            "AWS assume role",
+            "cost attribution",
+            "credential expiry",
+            "Claude apps gateway"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-013",
+          "section": "world",
+          "headline": "OpenAI представила Images 2.6",
+          "organization": "OpenAI",
+          "topic": "Introducing Images 2.6",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Introducing Images 2.6",
+          "published_at": "2026-11-04T00:00:00+00:00",
+          "published_date": "2026-11-04",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Introducing Images 2.6",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/introducing-images-2-6"
+            }
+          ],
+          "keywords": [
+            "Introducing",
+            "Images",
+            "2.6"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-014",
+          "section": "world",
+          "headline": "Daybreak Red стала доступна в AWS GovCloud US-East",
+          "organization": "OpenAI",
+          "topic": "Daybreak Red is now available in AWS GovCloud (US-East)",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Daybreak Red is now available in AWS GovCloud (US-East)",
+          "published_at": "2026-11-04T07:00:00+00:00",
+          "published_date": "2026-11-04",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Daybreak Red is now available in AWS GovCloud (US-East)",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/daybreak-red-aws-govcloud"
+            }
+          ],
+          "keywords": [
+            "Daybreak",
+            "Red",
+            "is",
+            "now",
+            "available",
+            "AWS",
+            "GovCloud",
+            "US-East"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-018",
+          "section": "russia",
+          "headline": "Минцифры предложило централизовать координацию внедрения ИИ в России",
+          "organization": "Минцифры России; Правительство России",
+          "topic": "Регулирование ИИ; государственное управление; федеральный проект «Искусственный интеллект»",
+          "event_type": "regulatory proposal",
+          "status": "new",
+          "summary": "Минцифры подготовило проект поправок к постановлению Правительства №418, по которому министерство должно координировать связанные с ИИ проекты федеральных законов, акты президента и правительства и другие нормативные документы. Рассмотрение проекта правительством было назначено на 3 ноября.",
+          "published_at": null,
+          "published_date": "2026-11-03",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Минцифры России дадут полномочия по координации внедрения ИИ",
+              "publisher": "CNews",
+              "url": "https://www.cnews.ru/news/top/2026-11-03_mintsifry_rossii_dadut_polnomochiya"
+            }
+          ],
+          "keywords": [
+            "Минцифры",
+            "регулирование ИИ",
+            "Правительство России",
+            "федеральный проект",
+            "координация",
+            "господдержка"
+          ],
+          "geography": "russia",
+          "category": "regulation"
+        }
+      ]
+    },
     {
       "date": "2026-11-04",
       "published_at": "2026-11-04T06:00:00+03:00",
@@ -6393,10 +6639,10 @@
     {
       "date": "2026-10-02",
       "published_at": "2026-10-02T06:00:00+03:00",
-      "search_cutoff_at": "2026-10-02T05:06:43+03:00",
+      "search_cutoff_at": "2026-10-02T06:00:00+03:00",
       "title": "ИИ-Сводка на 2 октября 2026",
       "link": "https://rybalka.one/posts/2026-10-02/",
-      "summary": "Главные новости искусственного интеллекта за 2 октября 2026 года Повестка дня показывает, как конкуренция в ИИ одновременно идёт на трёх уровнях: frontier-модели получают длинный контекст и усиленные защитные режимы, инструменты разработки становятся более наблюдаемыми, а коммерческие платформы переводят создание и покупку товаров в диалог с агентом ИИ. Отдельно заметен сдвиг к специализированным компонентам: наряду с универсальными LLM появляются компактные модели для выбора действий, а рекомен",
+      "summary": "Google представила Gemini 4 Argon, Anthropic расширила Claude Code, а OpenAI и Shopify развивают визуальную коммерцию. В выпуске также — decision-модель AWS и рекомендательная система Яндекса Sona.",
       "topics": [
         "Gemini 4 Argon",
         "Google DeepMind",
