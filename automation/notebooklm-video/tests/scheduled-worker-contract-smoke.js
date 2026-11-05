@@ -16,10 +16,11 @@ assert.strictEqual(scheduled.shouldRunFreshUpload("PUBLISH_ARMED"), false);
 assert.strictEqual(scheduled.shouldRunFreshUpload("DRAFT_PROCESSING"), false);
 assert.strictEqual(scheduled.shouldRunFreshUpload("UPLOAD_ARMED"), false);
 assert.strictEqual(scheduled.shouldRunFreshUpload("CLICKED_UNVERIFIED"), false);
+assert.strictEqual(scheduled.shouldRunFreshUpload("RECOVERY_CLICK_ARMED"), false);
 assert.strictEqual(scheduled.shouldRunFreshUpload("BLOCKED_AMBIGUOUS"), false);
 assert.strictEqual(scheduled.shouldRunFreshUpload("PUBLISHED"), false);
 
-for (const status of ["UPLOAD_ARMED", "DRAFT_CREATED", "PUBLISH_ARMED", "RETRYABLE_PRE_CLICK", "CLICKED_UNVERIFIED", "BLOCKED_AMBIGUOUS"]) {
+for (const status of ["UPLOAD_ARMED", "DRAFT_CREATED", "PUBLISH_ARMED", "RETRYABLE_PRE_CLICK", "CLICKED_UNVERIFIED", "RECOVERY_CLICK_ARMED", "BLOCKED_AMBIGUOUS"]) {
   assert.strictEqual(
     scheduled.isVerificationOnlyStatus(status),
     true,
@@ -29,7 +30,32 @@ for (const status of ["UPLOAD_ARMED", "DRAFT_CREATED", "PUBLISH_ARMED", "RETRYAB
 assert.strictEqual(scheduled.isVerificationOnlyStatus("PENDING"), false);
 assert.strictEqual(scheduled.isVerificationOnlyStatus("RETRYABLE_PRE_CLICK"), true);
 
-const latestDone = scheduled.findLatestDoneJob(
+// Strict same-day policy: yesterday's uncertain click never auto-recovers.
+const pinned="6aeaa5486692192b6b893776";
+const attempt=new Date("2026-11-04T06:00:00Z");
+const recoveryFixture={date:"2026-11-04",status:"DONE",
+  dzenAutomation:{status:"CLICKED_UNVERIFIED",draftId:pinned,
+    clickAttemptedAt:"2026-11-04T05:54:00Z"}};
+assert.equal(scheduled.shouldRecoverSameDayDraft(
+  recoveryFixture,"2026-11-04",attempt,"Europe/Moscow"),true);
+assert.equal(scheduled.shouldRecoverSameDayDraft(
+  recoveryFixture,"2026-11-03",attempt,"Europe/Moscow"),false);
+assert.equal(scheduled.shouldRecoverSameDayDraft(
+  recoveryFixture,"2026-11-04",new Date("2026-11-05T05:00:00Z"),"Europe/Moscow"),false);
+assert.equal(scheduled.shouldRecoverSameDayDraft(
+  recoveryFixture,"2026-11-04",new Date("2026-11-04T05:55:00Z"),"Europe/Moscow"),false,
+  "Give the first uncertain click time to settle");
+assert.equal(scheduled.shouldRecoverSameDayDraft({
+  ...recoveryFixture,dzenAutomation:{...recoveryFixture.dzenAutomation,recoveryClickArmedAt:"2026-11-04T05:59:00Z"}
+},"2026-11-04",attempt,"Europe/Moscow"),false,"No third publish click");
+assert.equal(scheduled.shouldRecoverSameDayDraft({
+  ...recoveryFixture,dzenAutomation:{...recoveryFixture.dzenAutomation,draftId:"bad"}
+},"2026-11-04",attempt,"Europe/Moscow"),false);
+assert.equal(scheduled.shouldRecoverSameDayDraft({
+  ...recoveryFixture,status:"GENERATING"
+},"2026-11-04",attempt,"Europe/Moscow"),false);
+
+const todayDone = scheduled.findTodayDoneJob(
   {
     jobs: {
       old: { date: "2026-08-26", status: "DONE", updatedAt: "2026-08-26T10:00:00Z" },
@@ -41,11 +67,15 @@ const latestDone = scheduled.findLatestDoneJob(
   },
   "2026-08-28"
 );
-assert.strictEqual(latestDone.updatedAt, "2026-08-27T09:00:00Z");
+assert.strictEqual(todayDone, null, "No DONE job for today: yesterday's success must not be selected");
 assert.strictEqual(
-  scheduled.findLatestDoneJob({ jobs: { future: { date: "2026-08-29", status: "DONE" } } }, "2026-08-28"),
+  scheduled.findTodayDoneJob({ jobs: { future: { date: "2026-08-29", status: "DONE" } } }, "2026-08-28"),
   null
 );
+assert.equal(scheduled.findTodayDoneJob({jobs:{
+  older:{date:"2026-11-03",status:"DONE"},
+  today:{date:"2026-11-04",status:"DONE"}
+}}, "2026-11-04").date, "2026-11-04");
 
 assert.strictEqual(
   scheduled.classifyDzenFailureOutput("direct MVP завершился ошибкой; publishClicked=false; draftId=123"),
@@ -94,14 +124,18 @@ assert.doesNotMatch(runWorkerCmd, /node\s+"?%~dp0worker\.js/i);
 
 const source = fs.readFileSync(path.join(ROOT, "scheduled-worker.js"), "utf8");
 const workerPhaseIndex = source.indexOf('await runNodeScript("worker.js")');
-const doneGateIndex = source.indexOf("findLatestDoneJob(state, currentDateKey)");
+const doneGateIndex = source.indexOf("const job = findTodayDoneJob(state, currentDateKey);");
 const dzenPhaseIndex = source.indexOf('await runAutomaticDzen(config, state, job, dateKey)');
 assert(workerPhaseIndex >= 0, "NotebookLM worker child call must exist");
-assert(doneGateIndex > workerPhaseIndex, "latest DONE selection must run after NotebookLM worker child");
+assert(doneGateIndex > workerPhaseIndex, "current-day DONE selection must run after NotebookLM worker child");
 assert(dzenPhaseIndex > doneGateIndex, "Dzen phase must run after DONE gate");
+assert(source.includes("dateKey !== formatDateKey(new Date(), config.timeZone)"),
+  "Scheduled flow must not continue old-date Dzen after a midnight rollover");
+assert(!source.includes("catch-up режим"),
+  "Scheduled flow must never attempt yesterday's publication");
 
 const armIndex = source.indexOf('updateDzenAutomation(config, state, job, "UPLOAD_ARMED"');
-const liveChildIndex = source.indexOf('"dzen-publish-direct.js"');
+const liveChildIndex = source.indexOf('dzenRunner.runNodeScript("dzen-publish-direct.js", childArgs');
 assert(armIndex >= 0, "UPLOAD_ARMED persistence must exist");
 assert(liveChildIndex > armIndex, "UPLOAD_ARMED must be persisted before live child starts");
 

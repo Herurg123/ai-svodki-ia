@@ -97,15 +97,17 @@ function runNodeScript(scriptName, args = []) {
   });
 }
 
+function stillCurrentDate(dateKey, timeZone = "Europe/Moscow", now = new Date()) {
+  return scheduled.formatDateKey(now, timeZone) === dateKey;
+}
+
 function selectCollectionsJob(state, currentDateKey, phasesError = null) {
-  // On a failed phases-1/2 attempt, prefer today's job even when it has not
-  // reached DONE. That lets the independent collections stage still process the
-  // same-day digest while the video side remains broken/retryable.
-  if (phasesError) {
-    const sameDayJob = collections.findJobForDate(state, currentDateKey);
-    if (sameDayJob) return sameDayJob;
-  }
-  return scheduled.findLatestDoneJob(state, currentDateKey);
+  // The scheduled flow is strictly current-day. A failed video phase may
+  // still allow TODAY's collections, but never a previous date's job.
+  const sameDayJob = collections.findJobForDate(state, currentDateKey);
+  if (!sameDayJob) return null;
+  if (phasesError) return sameDayJob;
+  return sameDayJob.status === "DONE" ? sameDayJob : null;
 }
 
 function articleVideoStatus(job) {
@@ -202,8 +204,10 @@ async function main() {
     const currentDateKey = scheduled.formatDateKey(new Date(), config.timeZone || "Europe/Moscow");
     const job = selectCollectionsJob(state, currentDateKey, phasesError);
 
-    if (!job) {
-      log(config, `Фаза 3/4: нет подходящего локального job с датой не позже ${currentDateKey}; подборки не запускаю.`);
+    if (!stillCurrentDate(currentDateKey, config.timeZone || "Europe/Moscow")) {
+      log(config, "Фаза 3/4: наступил новый день; старый выпуск не обрабатываю.");
+    } else if (!job) {
+      log(config, `Фаза 3/4: нет подходящего локального job за текущий день ${currentDateKey}; старые выпуски не возобновляю.`);
     } else if (collections.collectionsComplete(job)) {
       log(
         config,
@@ -231,7 +235,9 @@ async function main() {
       }
     }
 
-    if (!job) {
+    if (!stillCurrentDate(currentDateKey, config.timeZone || "Europe/Moscow")) {
+      log(config, "Фаза 4/4: наступил новый день; вчерашняя статья остаётся для ручного разбора.");
+    } else if (!job) {
       log(config, "Фаза 4/4: нет выбранного job; article-video этап не запускаю.");
     } else if (phasesError || collectionsError) {
       log(
@@ -364,6 +370,9 @@ async function main() {
 
     if (config.vkPublish && config.vkPublish.enabled === true &&
         config.vkPublish.automaticEnabled === true) {
+      if (!stillCurrentDate(currentDateKey, config.timeZone || "Europe/Moscow")) {
+        log(config, "Фаза 5/5: наступил новый день; вчерашний VK этап автоматически не запускается.");
+      } else {
       const fresh = loadJson(config.stateFile, { jobs: {} });
       // Re-read TODAY, not the collections fallback job, even if Dzen failed.
       // Keep the full-worker lock: concurrent Dzen/VK writes to state.json are unsafe.
@@ -396,6 +405,7 @@ async function main() {
           fatalLog(config, "Фаза 5/5 остановлена без обхода проверки статьи: " + error.message, error);
         }
 
+      }
       }
     }
 
@@ -432,6 +442,7 @@ module.exports = {
   releaseFullWorkerLock,
   runNodeScript,
   selectCollectionsJob,
+  stillCurrentDate,
 };
 
 if (require.main === module) main();
