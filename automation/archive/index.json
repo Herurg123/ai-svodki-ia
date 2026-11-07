@@ -1,8 +1,135 @@
 {
   "version": 2,
-  "generated_at": "2026-11-06T02:14:38+00:00",
+  "generated_at": "2026-11-07T02:16:03+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-07",
+      "published_at": "2026-11-07T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-07T05:06:30+03:00",
+      "title": "ИИ-Сводка на 7 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-07/",
+      "summary": "Главные новости искусственного интеллекта за 7 ноября 2026 года Новостей сегодня меньше, чем обычно Свежая повестка соединяет три уровня развития ИИ: массовые мультимодальные продукты, открытую модельную инфраструктуру и защиту внутренних инструментов компаний. Google выводит в общий доступ новый режим генерации видео, Baidu открывает веса крупной MoE-модели, а раскрытие Binance напоминает, что ИИ-системы должны быть встроены в общую модель контроля доступов. Практический вывод для команд: возмо",
+      "topics": [
+        "Gemini Omni 1.2 Flash",
+        "генеративное видео",
+        "Google",
+        "Binance",
+        "кибербезопасность ИИ",
+        "Baidu",
+        "ERNIE-5.5-Flash-Base",
+        "open-weight модели",
+        "MoE-модели"
+      ],
+      "source_urls": [
+        "https://blog.google/innovation-and-ai/technology/developers-tools/introducing-gemini-omni-1-2-flash/",
+        "https://www.itpro.com/security/cyber-crime/fake-interviews-compromised-laptops-and-dodgy-software-packages-how-the-binance-hack-happened",
+        "https://www.fbi.gov/investigate/cyber/alerts/2026/north-korea-responsible-for-6-billion-binance-attack",
+        "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "Google представила Gemini Omni 1.2 Flash с нативной генерацией 15-секундного видео",
+          "organization": "Google DeepMind; Google",
+          "topic": "Multimodal generative video; Gemini; video editing; developer API; enterprise AI",
+          "event_type": "Model and product release",
+          "status": "new",
+          "summary": "Google начала rollout Gemini Omni 1.2 Flash и объявила модель общедоступной через Gemini API и Gemini for business. Обновление добавляет нативное создание и редактирование видео длиной до 15 секунд, многоходовое редактирование в диалоге, более точное следование референсам и заявленное снижение цены на 30% относительно Omni 1.1 — до $0,07 за секунду для 720p.",
+          "published_at": null,
+          "published_date": "2026-11-05",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Gemini Omni 1.2 Flash: Fast and cost-effective with longer clips",
+              "publisher": "Google",
+              "url": "https://blog.google/innovation-and-ai/technology/developers-tools/introducing-gemini-omni-1-2-flash/"
+            }
+          ],
+          "keywords": [
+            "Gemini Omni 1.2 Flash",
+            "video generation",
+            "multimodal",
+            "15-second clips",
+            "conversational editing",
+            "Gemini API",
+            "Google Cloud"
+          ],
+          "geography": "world",
+          "category": "multimodal"
+        },
+        {
+          "candidate_id": "cand-006",
+          "section": "world",
+          "headline": "Binance раскрыла роль внутреннего ИИ-инструмента в цепочке взлома на $6,3 млрд",
+          "organization": "Binance; FBI",
+          "topic": "AI security incident; compromised internal AI tooling; software supply chain; endpoint compromise; cryptocurrency theft",
+          "event_type": "security incident disclosure / material update",
+          "status": "new",
+          "summary": "Binance, согласно свежему раскрытию деталей атаки, сообщила, что злоумышленники после компрометации ноутбука инженера получили доступ к внутреннему AI-инструменту и использовали его в цепочке захвата кошельков. IT Pro сообщает о совокупном ущербе в $6,3 млрд; FBI публично атрибутировало атаку северокорейским актёрам TraderTraitor.",
+          "published_at": "2026-11-05T10:49:35+00:00",
+          "published_date": "2026-11-05",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Fake interviews, compromised laptops, and dodgy software packages: How the Binance hack happened",
+              "publisher": "IT Pro",
+              "url": "https://www.itpro.com/security/cyber-crime/fake-interviews-compromised-laptops-and-dodgy-software-packages-how-the-binance-hack-happened"
+            },
+            {
+              "title": "North Korea Responsible for $6 Billion+ Binance Attack",
+              "publisher": "Federal Bureau of Investigation",
+              "url": "https://www.fbi.gov/investigate/cyber/alerts/2026/north-korea-responsible-for-6-billion-binance-attack"
+            }
+          ],
+          "keywords": [
+            "Binance",
+            "internal AI tool",
+            "North Korea",
+            "TraderTraitor",
+            "fake job interviews",
+            "malicious package",
+            "endpoint compromise",
+            "wallet authorization"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-001",
+          "section": "world",
+          "headline": "Baidu открыла веса базовой MoE-модели ERNIE-5.5-Flash-Base на 280 млрд параметров",
+          "organization": "Baidu",
+          "topic": "Open-weight language models; mixture-of-experts; long-context inference; Chinese AI; developer infrastructure",
+          "event_type": "model release",
+          "status": "new",
+          "summary": "Baidu опубликовала веса ERNIE-5.5-Flash-Base — текстовой базовой sparse-MoE модели с 280 млрд общих и 14 млрд активных параметров. Карточка модели заявляет 33,5 трлн токенов предобучения, контекст до 1 млн токенов для inference и fine-tuning, а также готовность к развёртыванию через SGLang и vLLM.",
+          "published_at": "2026-11-05T14:23:12+00:00",
+          "published_date": "2026-11-05",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "baidu/ERNIE-5.5-Flash-Base",
+              "publisher": "Baidu / Hugging Face",
+              "url": "https://huggingface.co/baidu/ERNIE-5.5-Flash-Base"
+            }
+          ],
+          "keywords": [
+            "Baidu",
+            "ERNIE-5.5-Flash-Base",
+            "open weights",
+            "MoE",
+            "280B parameters",
+            "1M context",
+            "vLLM",
+            "SGLang"
+          ],
+          "geography": "world",
+          "category": "models"
+        }
+      ]
+    },
     {
       "date": "2026-11-06",
       "published_at": "2026-11-06T06:00:00+03:00",
@@ -6349,10 +6476,10 @@
     {
       "date": "2026-10-04",
       "published_at": "2026-10-04T06:00:00+03:00",
-      "search_cutoff_at": "2026-10-04T05:06:11+03:00",
+      "search_cutoff_at": "2026-10-04T06:00:00+03:00",
       "title": "ИИ-Сводка на 4 октября 2026",
       "link": "https://rybalka.one/posts/2026-10-04/",
-      "summary": "Главные новости искусственного интеллекта за 4 октября 2026 года Повестка дня показывает, что масштабирование ИИ всё сильнее зависит не только от моделей и ускорителей, но и от доверия к инфраструктуре, прав доступа на устройствах и управляемости автономных действий. OpenAI раскрывает практические паттерны для субагентов и детали собственных стоек inference, тогда как AWS, Apple, Anthropic и Meta меняют окружающий слой — от общественных согласований до аппаратных интеграций и разрешений. Отдельн",
+      "summary": "AWS обещает больше прозрачности вокруг дата-центров, OpenAI развивает мультиагентные сценарии и раскрывает конфигурацию Jalapeño, а Apple и Anthropic усиливают контроль над действиями агентов.",
       "topics": [
         "AWS",
         "ИИ-дата-центры",

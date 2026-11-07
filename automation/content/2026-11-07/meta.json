@@ -1,0 +1,40 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-07",
+  "slug": "2026-11-07",
+  "title": "ИИ-Сводка на 7 ноября 2026",
+  "description": "Google расширяет генерацию видео в Gemini, Baidu открывает веса крупной MoE-модели, а детали атаки на Binance показывают риски доступа к внутренним ИИ-инструментам.",
+  "published_at": "2026-11-07T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-07.png",
+  "topics": [
+    "Gemini Omni 1.2 Flash",
+    "генеративное видео",
+    "Google",
+    "Binance",
+    "кибербезопасность ИИ",
+    "Baidu",
+    "ERNIE-5.5-Flash-Base",
+    "open-weight модели",
+    "MoE-модели"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-003."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, legal_regulation, independent_missing_events."
+    }
+  ]
+}
