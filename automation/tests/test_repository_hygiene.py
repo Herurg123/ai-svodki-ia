@@ -186,6 +186,29 @@ class RepositoryHygieneTests(unittest.TestCase):
         empty = [{"id": 72, "status": "completed", "head_branch": "", "created_at": "2026-10-25T08:00:00Z"}]
         self.assertEqual(rh.classify_workflow(wf, set(), False, {}, {}, empty)[0], "protected")
 
+    def test_latest_deleted_run_does_not_override_older_retained_branch(self):
+        workflow = {"id": 90, "path": ".github/workflows/temporary.yml", "state": "active"}
+        runs = [
+            {"id": 1, "status": "completed", "head_branch": "feature/retained",
+             "created_at": "2026-10-20T00:00:00Z"},
+            {"id": 2, "status": "completed", "head_branch": "artifact/deleted",
+             "created_at": "2026-10-26T00:00:00Z"},
+        ]
+        self.assertEqual(
+            rh.classify_workflow(workflow, set(), False,
+                                 {"feature/retained": "review_only"}, {}, runs),
+            ("protected", "workflow_tied_to_retained_branch"),
+        )
+        self.assertEqual(
+            rh.classify_workflow(workflow, set(), False,
+                                 {"feature/retained": "protected"}, {}, runs)[0],
+            "protected",
+        )
+        self.assertEqual(
+            rh.classify_workflow(workflow, set(), False, {}, {}, runs),
+            ("safe_disable", "orphan_workflow_from_deleted_untracked_branch"),
+        )
+
     def test_ephemeral_run_deletion_requires_exact_path_and_no_artifacts(self):
         now = rh.dt.datetime(2026, 11, 8, tzinfo=rh.dt.timezone.utc)
         run = {"id": 73, "status": "completed", "created_at": "2026-10-25T00:00:00Z"}
