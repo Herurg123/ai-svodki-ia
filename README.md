@@ -195,6 +195,12 @@ scheduled cleanup применяет validated deletion автоматическ
 
 Операторский результат: `Actions → Repository hygiene → последний запуск →
 Summary`. Диагностические JSON artifacts имеют `retention: 2 дня`.
+Покинувшие `main` одноразовые workflows могут автоматически отключаться
+после удаления их временной ветки; удалить старый run разрешено только
+при наличии его пути в явном списке безопасных технических операций,
+спустя 14 дней и без прикреплённых artifacts. Платные Terra/Sol
+и доказательства экспериментов не входят в этот список.
+Отключение workflow не обязано убрать его строку из GitHub UI.
 
 Классификация, protected objects и retry/delete boundaries описаны в
 [`automation/ARCHITECTURE.md`](automation/ARCHITECTURE.md) и
