@@ -66,7 +66,7 @@ jobs:
 
       - name: Upload audit JSON
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: repository-hygiene-audit-${{ github.run_id }}
           path: automation/preview/repository-hygiene/plan.json
@@ -123,7 +123,7 @@ jobs:
 
       - name: Upload branch-cleanup JSON
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: repository-hygiene-branches-${{ github.run_id }}
           path: automation/preview/repository-hygiene/branches.json
@@ -182,7 +182,7 @@ jobs:
 
       - name: Upload Actions-cleanup JSON
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: repository-hygiene-actions-${{ github.run_id }}
           path: automation/preview/repository-hygiene/actions.json
