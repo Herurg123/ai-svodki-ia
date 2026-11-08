@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "context": "Terra 5.6 vs Terra 6.1 original evidence, 2026-10-28",
+  "source": "Original GitHub Actions artifact ZIPs, downloaded via connected GitHub repository access 2026-11-08",
+  "status": "partially_complete_due_to_missing_terra56_full_zip",
+  "bundle_name": "terra28-original-evidence-bundle-2026-11-08.zip",
+  "bundle_sha256": "a55ea17c0cab6cb013e5c2409cfe3cfab9d6e06dd4ae7b68bf30518c501dcc95",
+  "bundle_bytes": 8605287,
+  "files": [
+    {
+      "filename": "terra56-research-checkpoint-2026-10-28.zip",
+      "model": "Terra 5.6",
+      "role": "checkpoint_research",
+      "run_id": 40618839186,
+      "artifact_id": 12786541993,
+      "artifact_name": "daily-production-checkpoint-research-2026-10-28-attempt-1",
+      "expires_at_utc": "2026-11-11T02:12:46Z",
+      "bytes": 852472,
+      "sha256": "c9d2c32d64167dd4749f062526c7543c0d6de43168c3a66de4cb69bb200e4455",
+      "zip_entries": 58,
+      "source_url": "https://github.com/Herurg123/ai-svodki-ia/actions/runs/40618839186/artifacts/12786541993"
+    },
+    {
+      "filename": "terra56-coverage-checkpoint-2026-10-28.zip",
+      "model": "Terra 5.6",
+      "role": "checkpoint_coverage",
+      "run_id": 40618839186,
+      "artifact_id": 12786477532,
+      "artifact_name": "daily-production-checkpoint-coverage-2026-10-28-attempt-1",
+      "expires_at_utc": "2026-11-11T02:14:45Z",
+      "bytes": 1602578,
+      "sha256": "255985cd18c7f7f66f500b2325c62bf197c5e55b7c08bb5fd2a4848815bcbc6f",
+      "zip_entries": 97,
+      "source_url": "https://github.com/Herurg123/ai-svodki-ia/actions/runs/40618839186/artifacts/12786477532"
+    },
+    {
+      "filename": "terra56-image-checkpoint-2026-10-28.zip",
+      "model": "Terra 5.6",
+      "role": "checkpoint_image",
+      "run_id": 40618839186,
+      "artifact_id": 12786154822,
+      "artifact_name": "daily-production-checkpoint-image-2026-10-28-attempt-1",
+      "expires_at_utc": "2026-11-11T02:16:04Z",
+      "bytes": 4499714,
+      "sha256": "253a5cb44a379c3b46dae588c025ef8c1144a868a5cdb7fa1e4684b57654cc8f",
+      "zip_entries": 134,
+      "source_url": "https://github.com/Herurg123/ai-svodki-ia/actions/runs/40618839186/artifacts/12786154822"
+    },
+    {
+      "filename": "terra61-shadow-original-2026-10-28.zip",
+      "model": "Terra 6.1",
+      "role": "original_shadow",
+      "run_id": 40629579368,
+      "artifact_id": 12791765194,
+      "artifact_name": "terra61-shadow-2026-10-28",
+      "expires_at_utc": "2026-11-27T04:09:58Z",
+      "bytes": 1643175,
+      "sha256": "e7b353ad1ea3d7ee3a2d54833b06c89ca6e90a6324fa122782d23cd894b3e6af",
+      "zip_entries": 97,
+      "source_url": "https://github.com/Herurg123/ai-svodki-ia/actions/runs/40629579368/artifacts/12791765194"
+    }
+  ],
+  "missing": [
+    {
+      "filename": "daily-production-2026-10-28",
+      "role": "full_original_terra56",
+      "run_id": 40618839186,
+      "artifact_id": 12786364155,
+      "expected_bytes": 76530263,
+      "expected_sha256": "33a9c898549a289163bbafd7528e0d4043afc4b2ff72389f59c7649513ef4bd5",
+      "status": "missing_not_reconstructed",
+      "note": "Original GitHub Actions ZIP was absent from its source run when checked on 2026-11-08; owner reports no local copy. Checkpoints are NOT substitutes for that original."
+    }
+  ],
+  "integrity": "Each included ZIP passed zipfile.testzip CRC and SHA-256 calculation. The four original ZIP byte streams were copied unchanged into the outer archive.",
+  "publication_review": "Owner accepted publishing original ZIPs unchanged, including a known third-party finnhub.io Authorization query parameter. Heuristic scan found no PEM/Bearer/GitHub/AWS/Google API keys; cannot guarantee absence of all sensitive data.",
+  "notes": "Original full Terra 5.6 ZIP is missing. Its research/coverage/image checkpoints are partial primary evidence and must never be misrepresented as the original full ZIP."
+}
