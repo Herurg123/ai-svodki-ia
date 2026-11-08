@@ -165,6 +165,9 @@ def build_plan(api: GitHub, root: Path):
         })
 
     stale_runs = []
+    # Even a temporary export job may have an irreplaceable result attached.
+    # Check all currently enumerated artifacts before considering its run.
+    artifact_run_ids = {item["run_id"] for item in artifact_items if item["run_id"]}
     workflow_classes = {item["id"]: item["classification"] for item in workflow_items}
     for workflow in workflows:
         workflow_id = int(workflow["id"])
@@ -184,11 +187,16 @@ def build_plan(api: GitHub, root: Path):
                 continue
             if status != "completed" or workflow_class != "safe_disable":
                 continue
-            cls, reason = classify_orphan_workflow_run(run, workflow_class, now)
+            cls, reason = classify_orphan_workflow_run(
+                run, workflow_class, now,
+                workflow_path=str(workflow.get("path") or ""),
+                has_artifacts=int(run["id"]) in artifact_run_ids,
+            )
             stale_runs.append({
                 "id": int(run["id"]),
                 "workflow_id": workflow_id,
                 "workflow": str(workflow.get("name") or ""),
+                "workflow_path": str(workflow.get("path") or ""),
                 "head_branch": str(run.get("head_branch") or ""),
                 "created_at": run.get("created_at"),
                 "classification": cls,
@@ -309,6 +317,19 @@ def _workflow(api, workflow_id):
     return data if status == 200 else None
 
 
+def _run_has_artifacts(api, run_id):
+    # Fail closed, including expired-but-still-listed artifacts. A single page
+    # is sufficient because total_count reports the complete attachment count.
+    status, data = api.request(
+        "GET",
+        f"/repos/{api.repository}/actions/runs/{run_id}/artifacts?per_page=1",
+        (200, 404),
+    )
+    if status != 200 or not isinstance(data, dict):
+        return True
+    return int(data.get("total_count", 1)) != 0
+
+
 def production_workflow_id(api):
     for workflow in api.workflows():
         if str(workflow.get("path") or "") == ".github/workflows/daily-production.yml":
@@ -417,6 +438,7 @@ def apply_actions(api, root, plan):
     fresh = build_plan(api, root)
     safe_main(api, plan["main_sha"])
     workflow_classes = {int(item["id"]): item["classification"] for item in fresh["workflows"]}
+    workflow_paths = {int(item["id"]): item["path"] for item in fresh["workflows"]}
     for item in fresh["workflow_runs"]:
         if item["classification"] != "safe_delete":
             continue
@@ -435,6 +457,13 @@ def apply_actions(api, root, plan):
         if workflow_classes.get(workflow_id) != "safe_disable":
             run_skipped.append({"id": item["id"], "reason": "workflow_no_longer_safe"})
             continue
+        if workflow_paths.get(workflow_id) != item.get("workflow_path"):
+            run_skipped.append({"id": item["id"], "reason": "workflow_path_changed"})
+            continue
+        existing = _workflow(api, workflow_id)
+        if not existing or existing.get("path") != item["workflow_path"]:
+            run_skipped.append({"id": item["id"], "reason": "workflow_identity_changed"})
+            continue
         current_runs = api.workflow_runs(workflow_id)
         current = next(
             (run for run in current_runs if int(run.get("id") or 0) == int(item["id"])),
@@ -444,7 +473,9 @@ def apply_actions(api, root, plan):
             run_skipped.append({"id": item["id"], "reason": "already_missing"})
             continue
         cls, reason = classify_orphan_workflow_run(
-            current, "safe_disable", dt.datetime.now(dt.timezone.utc)
+            current, "safe_disable", dt.datetime.now(dt.timezone.utc),
+            workflow_path=item["workflow_path"],
+            has_artifacts=_run_has_artifacts(api, item["id"]),
         )
         if cls != "safe_delete":
             run_skipped.append({"id": item["id"], "reason": reason})
