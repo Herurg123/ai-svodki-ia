@@ -214,6 +214,15 @@ def classify_workflow(
             if has_pages
             else ("protected", "github_pages_platform_managed")
         )
+    # A historical workflow can have runs on several branches. Never disable
+    # it merely because its *latest* run came from a deleted temporary branch
+    # while an older run still ties it to a retained branch or recent PR.
+    for run in runs:
+        run_branch = str(run.get("head_branch") or "")
+        if run_branch and run_branch != default_branch:
+            retained_class = branch_classes.get(run_branch, history_classes.get(run_branch))
+            if retained_class in {"protected", "review_only"}:
+                return "protected", "workflow_tied_to_retained_branch"
     if not runs:
         if str(workflow.get("state") or "") == "active":
             return "safe_disable", "orphan_workflow_removed_without_runs"
