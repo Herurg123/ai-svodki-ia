@@ -39,7 +39,7 @@ class RepositoryHygieneWorkflowTests(unittest.TestCase):
         self.assertEqual(workflow.count(' --summary "${GITHUB_STEP_SUMMARY}"'), 3)
         self.assertNotIn("repository_hygiene_video_rss_runs.py", workflow)
         self.assertNotIn("automation/preview/video-rss-hygiene", workflow)
-        self.assertEqual(workflow.count("uses: actions/upload-artifact@v4"), 3)
+        self.assertEqual(workflow.count("uses: actions/upload-artifact@v7"), 3)
         self.assertEqual(workflow.count("retention-days: 2"), 3)
         self.assertEqual(workflow.count("if-no-files-found: ignore"), 3)
         self.assertIn("--mode plan", workflow)
