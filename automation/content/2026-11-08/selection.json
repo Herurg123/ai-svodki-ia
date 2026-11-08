@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-002",
+    "cand-003",
+    "cand-004",
+    "cand-005",
+    "cand-012",
+    "cand-007"
+  ],
+  "excluded_candidate_ids": [
+    "cand-006",
+    "cand-008",
+    "cand-009",
+    "cand-010",
+    "cand-011"
+  ],
+  "selection_summary": "Выбраны семь подтверждённых сюжетов: крупное расширение инфраструктуры Google, новый контроль развёртывания Nvidia GPU в Юго-Восточной Азии, финансирование OpenAI, существенное обновление инцидента WorkOS, два независимых обновления GitHub Copilot и открытый исследовательский релиз Nous Research. Не выбраны менее значимые или недостаточно полно подтверждённые продуктовые анонсы Cursor, Amp и Humans&, а также краткие source-pulse материалы без достаточной фактуры для полноценного сюжета.",
+  "diversity_overrides": []
+}
