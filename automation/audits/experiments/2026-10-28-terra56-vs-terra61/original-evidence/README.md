@@ -1,6 +1,6 @@
 # Terra 5.6 / Terra 6.1, 28 October 2026: original evidence
 
-**Draft archive staging.** This directory contains verifiable metadata. The exact bundle `terra28-original-evidence-bundle-2026-11-08.zip` must be added to this directory **before merging this PR**. Until the ZIP is present and verified, Git preservation is **not complete**.
+**Original archive present and verified.** The exact bundle `terra28-original-evidence-bundle-2026-11-08.zip` was uploaded to this directory and its Git blob SHA-1 (`d48b3ebf224147225c9ce27604cc58e89e2b7fca`) matches the locally CRC- and SHA-256-verified source bundle. The missing full original Terra 5.6 production ZIP remains a separately documented gap.
 
 ## Bundle and provenance
 
