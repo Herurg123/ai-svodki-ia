@@ -31,6 +31,16 @@ Never substitute reconstructed JSON/reports for original ZIP bytes.
 The V1 and V2 observations use different inputs and must not be
 combined into a homogeneous model-quality metric.
 
+For the 2026-10-28 Terra 5.6 vs Terra 6.1 A/B, the full original
+Terra 5.6 production ZIP (artifact `12786364155`) is missing. Do not
+reconstruct or mislabel a checkpoint as that original. Three original
+Terra 5.6 stage checkpoints and the original Terra 6.1 shadow ZIP
+are recorded under
+`automation/audits/experiments/2026-10-28-terra56-vs-terra61/original-evidence/`.
+The combined original-evidence ZIP SHA-256 is
+`a55ea17c0cab6cb013e5c2409cfe3cfab9d6e06dd4ae7b68bf30518c501dcc95`.
+The known missing full baseline remains an explicit experimental limitation.
+
 ## Documentation ownership
 
 Keep each maintained document in one role:

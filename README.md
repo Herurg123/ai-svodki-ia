@@ -54,6 +54,12 @@ GitHub Actions ZIP, их SHA-256 и сроки хранения.
 и [проверочный скрипт](automation/audits/experiments/terra-sol-primary-2026-10-22-24/verify_original_zips.py),
 а не восстановленные из отчётов JSON.
 
+## Исследование Terra 5.6 / Terra 6.1 от 28 октября 2026 года
+
+Историческое [A/B-сравнение](automation/audits/experiments/2026-10-28-terra56-vs-terra61/RESULT.md) сохраняет результаты и ограничения методологии. **Полный оригинальный ZIP** штатной Terra 5.6 утрачен (артефакт `12786364155`); его не восстанавливали. Три побайтово неизменённых ZIP отдельных checkpoints Research, Coverage и Image сохраняют лишь **частичные исходные доказательства**. Оригинальный ZIP Terra 6.1 shadow сохранён полностью.
+
+Четыре доступных оригинальных ZIP упакованы без изменения байтов в [архив доказательств](automation/audits/experiments/2026-10-28-terra56-vs-terra61/original-evidence/terra28-original-evidence-bundle-2026-11-08.zip); [манифест](automation/audits/experiments/2026-10-28-terra56-vs-terra61/original-evidence/MANIFEST.json) содержит исходные SHA-256 и идентификаторы Actions. SHA-256 объединённого ZIP: `a55ea17c0cab6cb013e5c2409cfe3cfab9d6e06dd4ae7b68bf30518c501dcc95`. Этот архив не заменяет отсутствующий полный ZIP 5.6. Публикация оригинальных результатов согласована владельцем; других платных вызовов не выполнялось.
+
 ## Архив закрытого редакторского эксперимента Sol 6.1
 
 **Эксперимент остановлен 1 ноября 2026 года.** Начиная с выпуска
