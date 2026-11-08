@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import http.client
 import json
 import time
 import urllib.error
@@ -61,7 +62,10 @@ class GitHub:
                     raise ApiError(
                         f"{method} {path}: HTTP {exc.code}: {raw[:500]}"
                     ) from exc
-            except urllib.error.URLError as exc:
+            except (urllib.error.URLError, http.client.IncompleteRead,
+                    http.client.RemoteDisconnected, TimeoutError) as exc:
+                # GitHub sometimes closes a large workflow_runs JSON response
+                # mid-transfer. Repeat only idempotent GETs, never DELETE/PUT.
                 if method == "GET" and attempt + 1 < max_attempts:
                     time.sleep(GET_RETRY_DELAYS_SECONDS[attempt])
                     continue

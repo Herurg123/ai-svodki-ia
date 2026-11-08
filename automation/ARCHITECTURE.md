@@ -1638,6 +1638,23 @@ objects/runs.
 реализация сохранена только в reference-only архиве и не вызывается ежедневной
 hygiene.
 
+Осиротевший workflow, удалённый из `main`, после удаления его временной
+ветки **без PR** теперь становится кандидатом на отключение, даже если ранее
+был `review_only` по отсутствию PR. Пока ветка существует, есть активный
+run, свежий неслитый PR либо Pages/canonical path, защита сохраняется.
+Отключение workflow само по себе **не** удаляет историю запусков GitHub.
+
+Удалять runs можно **только** для явно перечисленных одноразовых технических
+экспортов/очисток из `SAFE_EPHEMERAL_RUN_WORKFLOW_PATHS`, спустя минимум
+14 дней после создания завершённого запуска. Наличие любого прикреплённого
+Actions artifact защищает run, включая артефакты с исследовательскими
+материалами; непосредственно перед DELETE повторно проверяются workflow ID/path,
+срок, текущие runs и `/actions/runs/{run_id}/artifacts`. Ошибка чтения
+артефактов означает fail-closed. Платные Sol/Terra эксперименты, архивный
+import-процесс, все неизвестные workflow-пути, permanent branches и
+production/CI не входят в allowlist удаления runs. Добавление нового
+одноразового пути требует явного изменения policy и тестов через PR.
+
 Перед destructive phase заново проверяются SHA `main`, актуальная policy и
 отсутствие активного Daily production run. Retry разрешён только для idempotent
 read-only GET после documented transient transport failures/HTTP

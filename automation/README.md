@@ -253,8 +253,15 @@ FTP-video job, но последний не использует RSS как medi
 32-day content/public/video retention. Он управляет только GitHub objects, которые
 policy классифицирует как safe, с повторной проверкой перед destructive mutation.
 
-Операторская диагностика находится в Actions Summary и JSON artifacts. Специальная
-retention policy закрытого Video → RSS workflow удалена из active hygiene и
+Операторская диагностика находится в Actions Summary и JSON artifacts.
+Завершённые временные workflows, чьи no-PR ветки уже удалены, допускаются
+к отключению. Старые runs удаляются только при совпадении с явным техническим
+allowlist, по истечении 14 дней, без прикреплённых Actions artifacts и после
+повторной проверки GitHub API. Это не очистка платных экспериментов,
+исходного evidence и произвольных CI runs. Отключённые workflows ещё могут
+отображаться в UI GitHub: отключение и удаление истории являются разными операциями.
+
+Специальная retention policy закрытого Video → RSS workflow удалена из active hygiene и
 сохранена только в reference archive.
 
 Подробные classification/retention/mutation boundaries — в

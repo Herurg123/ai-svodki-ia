@@ -146,17 +146,111 @@ class RepositoryHygieneTests(unittest.TestCase):
         old_run = {"id": 100, "status": "completed", "created_at": "2026-08-01T00:00:00Z"}
         fresh_run = {"id": 101, "status": "completed", "created_at": "2026-08-10T00:00:00Z"}
         self.assertEqual(
-            rh.classify_orphan_workflow_run(old_run, "safe_disable", now),
+            rh.classify_orphan_workflow_run(
+                old_run, "safe_disable", now,
+                workflow_path=".github/workflows/dzen-draft-overlay-export-20261025.yml",
+            ),
             ("safe_delete", "expired_orphan_workflow_run"),
         )
         self.assertEqual(
-            rh.classify_orphan_workflow_run(fresh_run, "safe_disable", now),
+            rh.classify_orphan_workflow_run(
+                fresh_run, "safe_disable", now,
+                workflow_path=".github/workflows/dzen-draft-overlay-export-20261025.yml",
+            ),
             ("protected", "recent_orphan_workflow_run"),
         )
         self.assertEqual(
             rh.classify_orphan_workflow_run(old_run, "protected", now),
             ("review_only", "workflow_not_safe_to_disable"),
         )
+
+    def test_deleted_no_pr_branch_can_disable_orphan_workflow(self):
+        wf = {"id": 7, "path": ".github/workflows/dzen-draft-overlay-export-20261025.yml", "state": "disabled_manually"}
+        run = [{"id": 71, "status": "completed", "head_branch": "artifact/old",
+                "created_at": "2026-10-25T08:00:00Z"}]
+        self.assertEqual(
+            rh.classify_workflow(wf, set(), False, {}, {}, run),
+            ("safe_disable", "orphan_workflow_from_deleted_untracked_branch"),
+        )
+        # An existing no-PR branch must never become safe merely by ageing.
+        self.assertEqual(
+            rh.classify_workflow(wf, set(), False, {"artifact/old": "review_only"}, {}, run),
+            ("protected", "workflow_tied_to_retained_branch"),
+        )
+        # A closed but still protected PR also blocks orphan cleanup.
+        self.assertEqual(
+            rh.classify_workflow(wf, set(), False, {}, {"artifact/old": "review_only"}, run),
+            ("protected", "workflow_tied_to_retained_branch"),
+        )
+        # Unknown / missing run branch fails closed.
+        empty = [{"id": 72, "status": "completed", "head_branch": "", "created_at": "2026-10-25T08:00:00Z"}]
+        self.assertEqual(rh.classify_workflow(wf, set(), False, {}, {}, empty)[0], "protected")
+
+    def test_latest_deleted_run_does_not_override_older_retained_branch(self):
+        workflow = {"id": 90, "path": ".github/workflows/temporary.yml", "state": "active"}
+        runs = [
+            {"id": 1, "status": "completed", "head_branch": "feature/retained",
+             "created_at": "2026-10-20T00:00:00Z"},
+            {"id": 2, "status": "completed", "head_branch": "artifact/deleted",
+             "created_at": "2026-10-26T00:00:00Z"},
+        ]
+        self.assertEqual(
+            rh.classify_workflow(workflow, set(), False,
+                                 {"feature/retained": "review_only"}, {}, runs),
+            ("protected", "workflow_tied_to_retained_branch"),
+        )
+        self.assertEqual(
+            rh.classify_workflow(workflow, set(), False,
+                                 {"feature/retained": "protected"}, {}, runs)[0],
+            "protected",
+        )
+        self.assertEqual(
+            rh.classify_workflow(workflow, set(), False, {}, {}, runs),
+            ("safe_disable", "orphan_workflow_from_deleted_untracked_branch"),
+        )
+
+    def test_ephemeral_run_deletion_requires_exact_path_and_no_artifacts(self):
+        now = rh.dt.datetime(2026, 11, 8, tzinfo=rh.dt.timezone.utc)
+        run = {"id": 73, "status": "completed", "created_at": "2026-10-25T00:00:00Z"}
+        safe_path = ".github/workflows/dzen-draft-overlay-export-20261025.yml"
+        self.assertEqual(
+            rh.classify_orphan_workflow_run(run, "safe_disable", now, workflow_path=safe_path),
+            ("safe_delete", "expired_orphan_workflow_run"),
+        )
+        self.assertEqual(
+            rh.classify_orphan_workflow_run(run, "safe_disable", now, workflow_path=safe_path, has_artifacts=True),
+            ("protected", "workflow_run_has_artifacts"),
+        )
+        for unsafe_path in (
+            ".github/workflows/sol-api-shadow-2026-10-22.yml",
+            ".github/workflows/archive-terra-sol-originals-once.yml",
+            ".github/workflows/daily-production.yml",
+            ".github/workflows/pr-gate.yml",
+            ".github/workflows/unreviewed-experiment.yml",
+            "",
+        ):
+            self.assertEqual(
+                rh.classify_orphan_workflow_run(run, "safe_disable", now, workflow_path=unsafe_path),
+                ("review_only", "research_or_unreviewed_workflow_run"),
+            )
+        self.assertEqual(
+            rh.classify_orphan_workflow_run(run, "protected", now, workflow_path=safe_path)[0],
+            "review_only",
+        )
+
+    def test_pre_delete_recheck_requires_zero_artifacts_and_known_workflow(self):
+        class FakeApi:
+            repository = REPO
+            def __init__(self, data):
+                self.data = data
+            def request(self, method, path, expected=(200,)):
+                self.last_path = path
+                return self.data
+        no_artifacts = FakeApi((200, {"total_count": 0, "artifacts": []}))
+        self.assertFalse(rh._run_has_artifacts(no_artifacts, 123))
+        self.assertIn("/actions/runs/123/artifacts?per_page=1", no_artifacts.last_path)
+        for data in ((200, {"total_count": 1}), (404, None), (200, {})):
+            self.assertTrue(rh._run_has_artifacts(FakeApi(data), 123))
 
     def test_production_artifact_windows(self):
         def artifact(i, run):

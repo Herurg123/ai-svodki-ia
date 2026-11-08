@@ -14,6 +14,21 @@ KEEP_FINAL_PRODUCTION_DATES = 5
 ORPHAN_WATCH_MERGES = 5
 ORPHAN_SUSPECT_MERGES = 10
 STALE_QUEUED_AFTER_DAYS = 14
+# Only operational export/cleanup runs may be removed. Model/API experiments,
+# editorial evidence, and import provenance remain outside this allowlist even
+# after their workflow is disabled or the source branch disappears.
+SAFE_EPHEMERAL_RUN_WORKFLOW_PATHS = frozenset({
+    ".github/workflows/dzen-verified-export-v3-20261026.yml",
+    ".github/workflows/dzen-draft-final-overlay-export-20261025.yml",
+    ".github/workflows/dzen-draft-overlay-export-20261025.yml",
+    ".github/workflows/dzen-draft-verified-export-20261025.yml",
+    ".github/workflows/dzen-published-id-export-20261026.yml",
+    ".github/workflows/dzen-published-id-export-v2-20261026.yml",
+    ".github/workflows/dzen-universal-notices-overlay-20261026.yml",
+    ".github/workflows/integrated-video-updater-check-20261026.yml",
+    ".github/workflows/one-shot-retire-experiment-branches-20261026.yml",
+    ".github/workflows/one-shot-safe-ephemeral-export-cleanup-20261030.yml",
+})
 PERMANENT_ARCHIVE_BRANCHES = frozenset({
     "archive/search-baseline-pre-hybrid-2026-08-09",
 })
@@ -199,6 +214,15 @@ def classify_workflow(
             if has_pages
             else ("protected", "github_pages_platform_managed")
         )
+    # A historical workflow can have runs on several branches. Never disable
+    # it merely because its *latest* run came from a deleted temporary branch
+    # while an older run still ties it to a retained branch or recent PR.
+    for run in runs:
+        run_branch = str(run.get("head_branch") or "")
+        if run_branch and run_branch != default_branch:
+            retained_class = branch_classes.get(run_branch, history_classes.get(run_branch))
+            if retained_class in {"protected", "review_only"}:
+                return "protected", "workflow_tied_to_retained_branch"
     if not runs:
         if str(workflow.get("state") or "") == "active":
             return "safe_disable", "orphan_workflow_removed_without_runs"
@@ -207,15 +231,27 @@ def classify_workflow(
     branch = str(latest.get("head_branch") or "")
     if branch == default_branch:
         return "safe_disable", "orphan_workflow_removed_from_default_branch"
+    # Deleted no-PR branches used to fall through to "review_only" forever,
+    # pinning the workflow and its runs long after the branch disappeared.
+    # Do not generalize to an existing branch without PR or a closed-but-fresh PR.
+    if branch and branch not in branch_classes and branch not in history_classes:
+        return "safe_disable", "orphan_workflow_from_deleted_untracked_branch"
     branch_class = branch_classes.get(branch, history_classes.get(branch, "review_only"))
     if branch_class in {"protected", "review_only"}:
         return "protected", "workflow_tied_to_retained_branch"
     return "safe_disable", "orphan_workflow_from_old_branch"
 
 
-def classify_orphan_workflow_run(run, workflow_classification, now=None):
+def classify_orphan_workflow_run(
+    run, workflow_classification, now=None, *,
+    workflow_path="", has_artifacts=False,
+):
     if workflow_classification != "safe_disable":
         return "review_only", "workflow_not_safe_to_disable"
+    if workflow_path not in SAFE_EPHEMERAL_RUN_WORKFLOW_PATHS:
+        return "review_only", "research_or_unreviewed_workflow_run"
+    if has_artifacts:
+        return "protected", "workflow_run_has_artifacts"
     if str(run.get("status") or "") != "completed":
         return "review_only", "workflow_run_not_completed"
     created = iso(run.get("created_at"))
