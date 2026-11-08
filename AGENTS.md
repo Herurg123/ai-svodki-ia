@@ -333,6 +333,13 @@ but must not silently repoll mutable sources.
 - Repository hygiene may mutate only explicitly classified ephemeral GitHub objects
   and must not edit tracked project files, `main`, releases, tags, permanent
   archive branches or published/editorial content.
+- Orphan workflows from deleted no-PR branches may be disabled only after
+  verifying they are absent from main, no related retained branch/PR and no
+  active runs. Only explicitly reviewed operational export/cleanup paths may
+  have completed runs deleted after 14 days with zero attached artifacts,
+  revalidated via the run artifacts API immediately before DELETE. Paid
+  research/evidence, unknown workflows, and artifact-bearing runs remain
+  protected; fail closed on incomplete identity/artifact metadata.
 - 32-day content/public cleanup is separate from repository hygiene.
 - Hygiene retries only idempotent read-only GET operations after documented
   transient failures; do not automatically retry destructive DELETE/PUT.
