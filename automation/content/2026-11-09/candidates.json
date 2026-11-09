@@ -1,0 +1,266 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-11-09",
+  "search_window": {
+    "start_at": "2026-11-07T05:06:22+03:00",
+    "end_at": "2026-11-09T05:06:19+03:00",
+    "latest_archive_at": "2026-11-08T05:06:22+03:00",
+    "start_date": "2026-11-07",
+    "end_date": "2026-11-09",
+    "latest_archive_date": "2026-11-08"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=0, rejected=3."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Firmly привлекла $15 млн в раунде Series A для инфраструктуры покупок через ИИ-агентов",
+      "organization": "Firmly; Squarepoint Capital; J.P. Morgan Payments; Mastercard; Samsung Next",
+      "published_date": "2026-11-07",
+      "published_at": "2026-11-07T18:23:57+00:00",
+      "time_precision": "datetime",
+      "topic": "Agentic commerce; AI shopping agents; retail infrastructure; payments; venture financing",
+      "event_type": "Series A financing",
+      "keywords": [
+        "Firmly",
+        "Series A",
+        "$15 million",
+        "AI shopping agents",
+        "agentic commerce",
+        "J.P. Morgan Payments",
+        "Mastercard",
+        "Squarepoint Capital"
+      ],
+      "geography": "world",
+      "category": "investment",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "JPMorgan and Mastercard back Seattle startup Firmly’s bet on AI shopping agents",
+        "publisher": "GeekWire",
+        "url": "https://www.geekwire.com/2026/jpmorgan-and-mastercard-back-seattle-startup-firmlys-bet-on-ai-shopping-agents/"
+      },
+      "supporting_sources": [],
+      "event_summary": "Seattle-area startup Firmly, создающий инфраструктуру, которая подключает интернет-магазины к ИИ-ассистентам и другим shopping-каналам, привлёк $15 млн в Series A. Раунд возглавил Squarepoint Capital; участвовали J.P. Morgan Payments, Mastercard, Samsung Next и другие.",
+      "verified_facts": [
+        "GeekWire сообщил, что Firmly привлекла $15 млн в Series A, который возглавил Squarepoint Capital.",
+        "В раунде участвовали J.P. Morgan Payments, Mastercard и Samsung Next.",
+        "Firmly помогает ритейлерам подключать каталоги, инвентарь, платежи и checkout к ИИ-ассистентам, маркетплейсам и другим внешним shopping-каналам."
+      ],
+      "significance": "Не мегараунд, но заметный стратегический сигнал: крупные платёжные и финансовые игроки финансируют инфраструктуру транзакций в AI-shopping/agentic-commerce, где ассистенты могут становиться новым каналом продаж для ритейлеров.",
+      "significance_score": 2,
+      "limitations": "Размер раунда умеренный, а доступная проверка основана на авторитетной вторичной публикации; первичный пресс-релиз был указан в статье, но не был дополнительно открыт в рамках лимита навигации.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет истории о Firmly или этом раунде.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "GeekWire опубликовал материал 7 ноября и прямо указал сумму, лид-инвестора и участников раунда; в тексте также приведена ссылка на корпоративное объявление о финансировании.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-11-07T18:23:57+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-11-07T18:23:57+00:00; timestamp проверен Python против effective window. Публикация и сообщение о раунде датированы 7 ноября 2026 года и находятся внутри effective editorial window; события нет в предоставленном архиве.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является legal/regulatory событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран по business/investment relevance.",
+      "event_date": "2026-11-07",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.geekwire.com/2026/jpmorgan-and-mastercard-back-seattle-startup-firmlys-bet-on-ai-shopping-agents/",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "GeekWire от 7 ноября 2026 года сообщил о закрытии Series A Firmly и сослался на объявление компании о раунде.",
+      "id": "cand-001",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.geekwire.com/2026/jpmorgan-and-mastercard-back-seattle-startup-firmlys-bet-on-ai-shopping-agents/",
+      "source_published_date": "2026-11-07",
+      "source_published_at": "2026-11-07T18:23:57+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-11-07T18:23:57+00:00"
+    },
+    {
+      "title": "В России число атак на финансовый сектор выросло на 20%; эксперты связывают удешевление фишинга и масштабирования атак с ИИ",
+      "organization": "Информзащита; ГК «Солар»; RED Security; российские банки",
+      "published_date": "2026-11-08",
+      "published_at": "2026-11-08T23:31:35+00:00",
+      "time_precision": "datetime",
+      "topic": "Кибербезопасность российского финсектора; AI-assisted phishing; автоматизация атак; цепочки поставок",
+      "event_type": "Публикация отраслевой оценки киберугроз",
+      "keywords": [
+        "Россия",
+        "банки",
+        "кибератаки",
+        "ИИ",
+        "фишинг",
+        "социальная инженерия",
+        "вредоносное ПО",
+        "цепочки поставок",
+        "Информзащита",
+        "Солар"
+      ],
+      "geography": "russia",
+      "category": "security",
+      "source_type": "business_media",
+      "primary_source": {
+        "title": "Хакеры потянулись к деньгам",
+        "publisher": "Коммерсантъ",
+        "url": "https://www.kommersant.ru/doc/9092249"
+      },
+      "supporting_sources": [
+        {
+          "title": "Число кибератак участников финрынка выросло на 20% в третьем квартале",
+          "publisher": "Коммерсантъ",
+          "url": "https://www.kommersant.ru/doc/9092311"
+        }
+      ],
+      "event_summary": "«Коммерсантъ» сообщил со ссылкой на «Информзащиту», что в III квартале 2026 года число атак на российский финансовый сектор выросло на 20% год к году, до 4,2 тыс. Материал также приводит оценку «Солара» о росте критичных инцидентов за девять месяцев и комментарии экспертов о том, что ИИ снижает стоимость подготовки фишинга, помогает масштабировать кампании и быстрее адаптировать их под конкретных жертв.",
+      "verified_facts": [
+        "Статья «Коммерсанта» опубликована 9 ноября 2026 года в 02:31 по московскому времени, то есть до установленной границы audit-прохода 05:06:19+03:00.",
+        "По приведенной в публикации оценке «Информзащиты», число атак на финансовый сектор в III квартале 2026 года выросло на 20% год к году и достигло 4,2 тыс.",
+        "По данным, приведенным со ссылкой на «Солар», за девять месяцев 2026 года число критичных инцидентов выросло в 2,4 раза, а подтвержденных — на 38%, до 31,7 тыс.",
+        "Эксперты, опрошенные изданием, связывают удешевление и ускорение фишинга, разведки по жертве и масштабирования атак с использованием ИИ-инструментов."
+      ],
+      "significance": "Это не отдельный подтвержденный взлом, а свежая сводка о риске для одного из наиболее критичных сегментов российской цифровой инфраструктуры. Она фиксирует практическую связку AI-assisted phishing, кражи учетных данных, удаленного доступа и рисков цепочек поставок для банковского периметра.",
+      "significance_score": 2,
+      "limitations": "Все количественные показатели в материале основаны на оценках коммерческих поставщиков кибербезопасности и не сопровождаются доступным первичным полным отчетом или методологией. Публикация описывает агрегированную тенденцию, а не новый единичный инцидент, и не доказывает, что все упомянутые атаки были совершены с применением ИИ.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве есть более ранние общие материалы о киберрисках банков и российских организаций, но нет истории с этой оценкой III квартала 2026 года, публикацией от 9 ноября или указанными показателями.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Открыта основная публикация «Коммерсанта»: она прямо указывает время публикации, источники оценок, показатели по атакам и содержание экспертных комментариев о роли ИИ. Вторая страница того же издания независимо повторяет ключевой показатель роста на 20%.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-11-08T23:31:35Z; timestamp проверен Python против effective window. Новая публикация отраслевой оценки вышла 9 ноября 2026 года в 02:31+03:00, внутри effective editorial window. Это не перепечатка старой заметки: в ней представлены новые агрегированные показатели за III квартал и девять месяцев 2026 года.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Материал не посвящен судебному, регуляторному или copyright-событию.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран как тематически релевантная сводка по киберрискам для российского финансового сектора.",
+      "event_date": null,
+      "event_at": null,
+      "event_time_precision": "unknown",
+      "event_origin_url": null,
+      "event_evidence_kind": "unknown",
+      "event_date_evidence": "",
+      "audit_direction": "security_russia",
+      "id": "cand-002",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.kommersant.ru/doc/9092249",
+      "source_published_date": "2026-11-08",
+      "source_published_at": "2026-11-08T23:31:35+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-11-08T23:31:35Z"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=4, validated unique=1, final candidates=1. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

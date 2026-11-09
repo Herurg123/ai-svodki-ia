@@ -1,8 +1,100 @@
 {
   "version": 2,
-  "generated_at": "2026-11-08T02:14:23+00:00",
+  "generated_at": "2026-11-09T02:14:44+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-09",
+      "published_at": "2026-11-09T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-09T05:06:19+03:00",
+      "title": "ИИ-Сводка на 9 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-09/",
+      "summary": "Главные новости искусственного интеллекта за 9 ноября 2026 года Новостей сегодня меньше, чем обычно Сегодняшняя повестка показывает две стороны развития агентных систем: они становятся новым каналом продаж для ритейла и одновременно снижают стоимость масштабирования киберпреступлений. На стороне бизнеса в этот слой начинают вкладываться платёжные компании, а на стороне защиты финансовым организациям требуется быстрее укреплять контроль учётных данных и коммуникаций. Главный общий вывод: ценность",
+      "topics": [
+        "агентная коммерция",
+        "ИИ-агенты",
+        "Firmly",
+        "Series A",
+        "платежи",
+        "онлайн-ритейл",
+        "кибербезопасность",
+        "финансовый сектор России",
+        "фишинг",
+        "социальная инженерия"
+      ],
+      "source_urls": [
+        "https://www.geekwire.com/2026/jpmorgan-and-mastercard-back-seattle-startup-firmlys-bet-on-ai-shopping-agents/",
+        "https://www.kommersant.ru/doc/9092249"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-001",
+          "section": "world",
+          "headline": "Firmly привлекла $15 млн в раунде Series A для инфраструктуры покупок через ИИ-агентов",
+          "organization": "Firmly; Squarepoint Capital; J.P. Morgan Payments; Mastercard; Samsung Next",
+          "topic": "Agentic commerce; AI shopping agents; retail infrastructure; payments; venture financing",
+          "event_type": "Series A financing",
+          "status": "new",
+          "summary": "Seattle-area startup Firmly, создающий инфраструктуру, которая подключает интернет-магазины к ИИ-ассистентам и другим shopping-каналам, привлёк $15 млн в Series A. Раунд возглавил Squarepoint Capital; участвовали J.P. Morgan Payments, Mastercard, Samsung Next и другие.",
+          "published_at": "2026-11-07T18:23:57+00:00",
+          "published_date": "2026-11-07",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "JPMorgan and Mastercard back Seattle startup Firmly’s bet on AI shopping agents",
+              "publisher": "GeekWire",
+              "url": "https://www.geekwire.com/2026/jpmorgan-and-mastercard-back-seattle-startup-firmlys-bet-on-ai-shopping-agents/"
+            }
+          ],
+          "keywords": [
+            "Firmly",
+            "Series A",
+            "$15 million",
+            "AI shopping agents",
+            "agentic commerce",
+            "J.P. Morgan Payments",
+            "Mastercard",
+            "Squarepoint Capital"
+          ],
+          "geography": "world",
+          "category": "investment"
+        },
+        {
+          "candidate_id": "cand-002",
+          "section": "russia",
+          "headline": "Число атак на финансовый сектор России выросло на 20%; эксперты связывают удешевление фишинга с ИИ",
+          "organization": "Информзащита; ГК «Солар»; RED Security; российские банки",
+          "topic": "Кибербезопасность российского финсектора; AI-assisted phishing; автоматизация атак; цепочки поставок",
+          "event_type": "Публикация отраслевой оценки киберугроз",
+          "status": "new",
+          "summary": "«Коммерсантъ» сообщил со ссылкой на «Информзащиту», что в III квартале 2026 года число атак на российский финансовый сектор выросло на 20% год к году, до 4,2 тыс. Материал также приводит оценку «Солара» о росте критичных инцидентов за девять месяцев и комментарии экспертов о том, что ИИ снижает стоимость подготовки фишинга, помогает масштабировать кампании и быстрее адаптировать их под конкретных жертв.",
+          "published_at": "2026-11-08T23:31:35+00:00",
+          "published_date": "2026-11-08",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Хакеры потянулись к деньгам",
+              "publisher": "Коммерсантъ",
+              "url": "https://www.kommersant.ru/doc/9092249"
+            }
+          ],
+          "keywords": [
+            "Россия",
+            "банки",
+            "кибератаки",
+            "ИИ",
+            "фишинг",
+            "социальная инженерия",
+            "вредоносное ПО",
+            "цепочки поставок",
+            "Информзащита",
+            "Солар"
+          ],
+          "geography": "russia",
+          "category": "security"
+        }
+      ]
+    },
     {
       "date": "2026-11-08",
       "published_at": "2026-11-08T06:00:00+03:00",
@@ -6229,10 +6321,10 @@
     {
       "date": "2026-10-07",
       "published_at": "2026-10-07T06:00:00+03:00",
-      "search_cutoff_at": "2026-10-07T05:06:13+03:00",
+      "search_cutoff_at": "2026-10-07T06:00:00+03:00",
       "title": "ИИ-Сводка на 7 октября 2026",
       "link": "https://rybalka.one/posts/2026-10-07/",
-      "summary": "Главные новости искусственного интеллекта за 7 октября 2026 года Новостей сегодня меньше, чем обычно Сегодняшняя повестка показывает, что гонка ИИ одновременно ускоряется в трёх слоях: моделях, агентных продуктах и физической инфраструктуре. Наиболее важный общий сигнал — вычисления всё чаще планируют вместе с энергоснабжением, а автономные помощники выходят из экспериментальных интерфейсов к работе с личными данными и компьютером. Одновременно рынок не теряет интереса к специализированному infe",
+      "summary": "Mistral представила триллионную мультимодальную модель, Etched обсуждает новую оценку, Hark вывела персонального агента на широкий рынок, а Азия готовит power-first дата-центры для ИИ.",
       "topics": [
         "Mistral Large 4",
         "мультимодальные модели",

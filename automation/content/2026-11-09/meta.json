@@ -1,0 +1,36 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-09",
+  "slug": "2026-11-09",
+  "title": "ИИ-Сводка на 9 ноября 2026",
+  "description": "Firmly привлекла $15 млн на инфраструктуру покупок через агентов ИИ, а российский финансовый сектор фиксирует рост кибератак и удешевление фишинга с помощью ИИ-инструментов.",
+  "published_at": "2026-11-09T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-09.png",
+  "topics": [
+    "агентная коммерция",
+    "ИИ-агенты",
+    "Firmly",
+    "Series A",
+    "платежи",
+    "онлайн-ритейл",
+    "кибербезопасность",
+    "финансовый сектор России",
+    "фишинг",
+    "социальная инженерия"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: global_breaking, major_agencies, models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation, independent_missing_events."
+    }
+  ]
+}
