@@ -3122,17 +3122,45 @@ async function renameCurrentNotebook(
   return desiredTitle;
 }
 
+// A notebook first navigates through /notebook/creating. This is a transient
+// route, NOT the stable notebook ID. Never persist it or use it on a restart.
+function permanentNotebookUrl(value) {
+  try {
+    const parsed = new URL(String(value || ""));
+    if (!["notebook.google.com", "notebooklm.google.com"].includes(parsed.hostname)) return null;
+    const match = /^\/notebook\/([A-Za-z0-9_-]+)\/?$/.exec(parsed.pathname);
+    if (!match) return null;
+    const id = match[1];
+    const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    const opaqueLongId = /^[A-Za-z0-9_-]{20,}$/.test(id);
+    if (!uuid && !opaqueLongId) return null;
+    return `${parsed.origin}/notebook/${id}`;
+  } catch {
+    return null;
+  }
+}
+
 async function waitForNewNotebookIdentity(page, timeout) {
-  const deadline = Date.now() + Math.min(timeout, 30000);
+  const deadline = Date.now() + Math.min(timeout, 45_000);
+  let lastSeen = String(page.url() || "");
   while (Date.now() < deadline) {
-    const notebookUrl = page.url();
-    if (/^https:\/\/notebook\.google\.com\/notebook\/[^/?#]+(?:[?#]|$)/i.test(notebookUrl)) {
-      return notebookUrl;
+    const permanent = permanentNotebookUrl(page.url());
+    if (permanent) {
+      // The real UUID is necessary but not sufficient: do not start searching
+      // for source controls while Gemini still displays "Loading Notebook".
+      await confirmNotebookPage(page, {
+        uiTimeoutMs: Math.min(Math.max(500, deadline - Date.now()), 45_000),
+      }, permanent);
+      if (permanentNotebookUrl(page.url()) === permanent) return permanent;
+      // Navigation changed again during shell initialization.
     }
+    lastSeen = String(page.url() || "");
     await page.waitForTimeout(250);
   }
-  throw new Error("Создание блокнота запрошено, но его точный URL не подтверждён. " +
-    "Повторно нажимать создание запрещено; проверить вручную.");
+  throw new Error(
+    `Создание блокнота запрошено, но его постоянный UUID и готовая оболочка не подтверждены. ` +
+    `Последний URL: ${lastSeen}. Новый блокнот создавать запрещено; требуется ручная проверка.`
+  );
 }
 
 async function createNotebookAndAddSource(config, context, publication, job, state) {
@@ -3140,13 +3168,25 @@ async function createNotebookAndAddSource(config, context, publication, job, sta
   activePage = await getRobotPage(config, context);
 
   if (job.notebookUrl) {
-    // The NEW state can now be resumed safely after an empty notebook was
-    // created. Never make a second one for the same publication date.
-    await activePage.goto(job.notebookUrl, {
+    // A prior buggy version could have saved /notebook/creating as an ID.
+    // Refuse to resume that placeholder or create another notebook: the
+    // actual notebook exists remotely but has no trustworthy local identity.
+    const pinned = permanentNotebookUrl(job.notebookUrl);
+    if (!pinned) {
+      throw new Error(
+        `В state.json сохранён временный/неподтверждённый URL блокнота: ${job.notebookUrl}. ` +
+        "Необходимо вручную выбрать реально созданный блокнот и закрепить его постоянный URL " +
+        "после резервного копирования state.json. Автоматически создавать новый запрещено."
+      );
+    }
+    await activePage.goto(pinned, {
       waitUntil: "domcontentloaded", timeout: config.uiTimeoutMs,
     });
-    await confirmNotebookPage(activePage, config, job.notebookUrl);
-    log(config, `Возобновляю добавление источника в сохранённый блокнот: ${job.notebookUrl}`);
+    await confirmNotebookPage(activePage, config, pinned);
+    if (permanentNotebookUrl(activePage.url()) !== pinned) {
+      throw new Error("Сохранённый блокнот открылся с другим UUID; создание и импорт запрещены.");
+    }
+    log(config, `Возобновляю добавление источника в сохранённый блокнот: ${pinned}`);
   } else {
     if (job.notebookCreateArmedAt) {
       throw new Error("Предыдущая попытка создания блокнота не имеет подтверждённого URL. " +
