@@ -3165,20 +3165,25 @@ async function waitForNewNotebookIdentity(page, timeout) {
 
 async function createNotebookAndAddSource(config, context, publication, job, state) {
   stage = "CREATE_NOTEBOOK";
+  const pinned = job.notebookUrl ? permanentNotebookUrl(job.notebookUrl) : null;
+  // Validate local recovery eligibility BEFORE launching a browser. This
+  // prevents needless flash-open/close loops on a corrupted old checkpoint.
+  if (job.notebookUrl && !pinned) {
+    throw new Error(
+      `В state.json сохранён временный/неподтверждённый URL блокнота: ${job.notebookUrl}. ` +
+      "Необходимо вручную выбрать реально созданный блокнот и закрепить его постоянный URL " +
+      "после резервного копирования state.json. Автоматически создавать новый запрещено."
+    );
+  }
+  if (!job.notebookUrl && job.notebookCreateArmedAt) {
+    throw new Error(
+      "Создание блокнота уже отправлялось, но постоянный UUID не сохранён. " +
+      "Новый пустой блокнот не создаю; необходима ручная привязка существующего."
+    );
+  }
   activePage = await getRobotPage(config, context);
 
-  if (job.notebookUrl) {
-    // A prior buggy version could have saved /notebook/creating as an ID.
-    // Refuse to resume that placeholder or create another notebook: the
-    // actual notebook exists remotely but has no trustworthy local identity.
-    const pinned = permanentNotebookUrl(job.notebookUrl);
-    if (!pinned) {
-      throw new Error(
-        `В state.json сохранён временный/неподтверждённый URL блокнота: ${job.notebookUrl}. ` +
-        "Необходимо вручную выбрать реально созданный блокнот и закрепить его постоянный URL " +
-        "после резервного копирования state.json. Автоматически создавать новый запрещено."
-      );
-    }
+  if (pinned) {
     await activePage.goto(pinned, {
       waitUntil: "domcontentloaded", timeout: config.uiTimeoutMs,
     });
@@ -3188,10 +3193,6 @@ async function createNotebookAndAddSource(config, context, publication, job, sta
     }
     log(config, `Возобновляю добавление источника в сохранённый блокнот: ${pinned}`);
   } else {
-    if (job.notebookCreateArmedAt) {
-      throw new Error("Предыдущая попытка создания блокнота не имеет подтверждённого URL. " +
-        "Чтобы избежать новых пустых блокнотов, требуется ручная проверка.");
-    }
     await activePage.goto(config.notebookUrl, {
       waitUntil: "domcontentloaded", timeout: config.uiTimeoutMs,
     });
