@@ -2566,8 +2566,8 @@ async function waitForSourceImportReady(config, page, publication) {
   );
 }
 
-async function fillWebsiteSourceUrl(page, publicationUrl, timeout) {
-  const sourceBox = await waitForAnyVisible(
+async function fillWebsiteSourceUrl(page, publicationUrl, timeout, verifiedSourceBox = null) {
+  const sourceBox = verifiedSourceBox || await waitForAnyVisible(
     [
       page.locator('[formcontrolname="newUrl"]:visible'),
       page.locator('input[type="url"]:visible'),
@@ -2635,9 +2635,7 @@ async function submitWebsiteSourceUrl(page, sourceBox, timeout) {
         scope.locator("button:visible").filter({ hasText: addPattern }),
       ];
 
-      if (scope !== page) {
-        locators.splice(1, 0, scope.locator('button[type="submit"]:visible'));
-      }
+      // No generic submit buttons: require exact Добавить label for the URL.
 
       for (const locator of locators) {
         const count = await locator.count().catch(() => 0);
@@ -2657,8 +2655,7 @@ async function submitWebsiteSourceUrl(page, sourceBox, timeout) {
           // затемнением не является кнопкой подтверждения введённого URL.
           if (
             !addPattern.test(text) &&
-            !addPattern.test(ariaLabel) &&
-            (await candidate.getAttribute("type").catch(() => null)) !== "submit"
+            !addPattern.test(ariaLabel)
           ) {
             continue;
           }
@@ -2687,58 +2684,29 @@ async function submitWebsiteSourceUrl(page, sourceBox, timeout) {
   }
 
   if (!addButton) {
-    // Безопасный резерв: отправляем форму клавишей Enter из самого поля URL.
-    // Это не может выбрать внешнюю кнопку «Добавить источник» под подложкой.
-    await sourceBox.press("Enter").catch(() => {});
-    await sourceBox.waitFor({ state: "hidden", timeout: 3000 }).catch(() => {});
-
-    if (!(await sourceBox.isVisible().catch(() => false))) {
-      return;
-    }
-
     const actualValue = await readEditableValue(sourceBox);
     const visibleButtons = await page
       .locator("button:visible")
       .evaluateAll((buttons) =>
         buttons.slice(0, 50).map((button) => ({
           text: String(button.innerText || button.textContent || "")
-            .replace(/\s+/g, " ")
-            .trim(),
+            .replace(/\\s+/g, " ").trim(),
           ariaLabel: button.getAttribute("aria-label"),
           disabled: Boolean(button.disabled),
-          ariaDisabled: button.getAttribute("aria-disabled"),
           inOverlay: Boolean(button.closest(".cdk-overlay-pane, [role=dialog], mat-dialog-container")),
         }))
-      )
-      .catch(() => []);
-
+      ).catch(() => []);
+    // Enter in Gemini's multi-line textarea inserts a NEWLINE, not submit.
+    // Do not use this or any other heuristic fallback.
     throw new Error(
-      `После ввода URL не найдена активная кнопка подтверждения внутри диалога источника, ` +
-        `а отправка формы клавишей Enter не закрыла диалог. ` +
-        `Значение поля: ${actualValue || "пусто"}. ` +
-        `Видимые кнопки: ${JSON.stringify(visibleButtons)}`
+      `После ввода URL не найдена активная кнопка «Добавить» внутри диалога сайта. ` +
+      `Поле: ${actualValue || "пусто"}; кнопки: ${JSON.stringify(visibleButtons)}`
     );
   }
 
-  try {
-    await addButton.click({ timeout: Math.min(timeout, 30000) });
-  } catch (clickError) {
-    // Резервный путь для Angular-диалогов: Enter отправляет текущую форму,
-    // не затрагивая кнопку «Добавить источник» под затемняющей подложкой.
-    await sourceBox.press("Enter").catch(() => {});
-    await sourceBox.waitFor({ state: "hidden", timeout: 3000 }).catch(() => {});
-
-    if (await sourceBox.isVisible().catch(() => false)) {
-      const scopeText = selectedScope
-        ? String(await selectedScope.textContent().catch(() => "") || "")
-            .replace(/\s+/g, " ")
-            .trim()
-            .slice(0, 500)
-        : "";
-      clickError.message += `; диалог остался открыт: ${scopeText}`;
-      throw clickError;
-    }
-  }
+  // A timeout might occur AFTER the remote form accepted the click. Do not
+  // retry with Enter or click again: sourceSubmitArmedAt is already persisted.
+  await addButton.click({ timeout: Math.min(timeout, 30000) });
 }
 
 function notebookCreateLocators(page) {
@@ -3207,13 +3175,15 @@ async function createNotebookAndAddSource(config, context, publication, job, sta
 
   if (!job.sourceSubmitArmedAt) {
     stage = "OPEN_ADD_SOURCES";
-    await sourceUi.openWebsiteSourceInput(activePage, config.uiTimeoutMs, {
+    const verifiedSourceBox = await sourceUi.openWebsiteSourceInput(activePage, config.uiTimeoutMs, {
       log: (message) => log(config, message),
       describeVisibleButtons,
     });
 
     stage = "ADD_SOURCE_URL";
-    const sourceBox = await fillWebsiteSourceUrl(activePage, publication.url, config.uiTimeoutMs);
+    const sourceBox = await fillWebsiteSourceUrl(
+      activePage, publication.url, config.uiTimeoutMs, verifiedSourceBox
+    );
     log(config, `URL источника введён и подтверждён в поле: ${publication.url}`);
 
     // The submit may reach Gemini Notebook even if the click times out.
