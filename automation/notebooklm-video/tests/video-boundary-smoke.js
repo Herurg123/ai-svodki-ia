@@ -193,6 +193,7 @@ async function verifyResumeState() {
   async function exerciseCreate(initialUrl, createdUrl) {
     let pageUrl = initialUrl;
     let createClicks = 0;
+    let browserLaunches = 0;
     const snapshots = [];
     const page = {
       goto: async () => {},
@@ -205,7 +206,7 @@ async function verifyResumeState() {
     const context = {
       stage: "",
       activePage: null,
-      getRobotPage: async () => page,
+      getRobotPage: async () => { browserLaunches += 1; return page; },
       waitNotebookHome: async () => {},
       notebookCreateLocators: () => [],
       clickAnyVisible: async () => { createClicks += 1; pageUrl = createdUrl; },
@@ -232,6 +233,7 @@ async function verifyResumeState() {
       job,
       snapshots,
       get createClicks() { return createClicks; },
+      get browserLaunches() { return browserLaunches; },
     };
   }
 
@@ -276,6 +278,8 @@ async function verifyResumeState() {
   await assert.rejects(invalidResumed.invoke(), /временный\/неподтверждённый URL/);
   assert.strictEqual(invalidResumed.createClicks, 0,
     "No new notebook may be created when state holds the temporary /creating URL");
+  assert.strictEqual(invalidResumed.browserLaunches, 0,
+    "Reject the stale placeholder before launching a browser window");
 
   const calls = [];
   const resumeContext = {
