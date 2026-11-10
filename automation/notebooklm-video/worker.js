@@ -9,6 +9,7 @@ const { XMLParser } = require("fast-xml-parser");
 const logUtils = require("./log-utils");
 const history = require("./history-utils");
 const videoFooter = require("./video-footer");
+const sourceUi = require("./notebooklm-source-ui");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
@@ -2565,8 +2566,8 @@ async function waitForSourceImportReady(config, page, publication) {
   );
 }
 
-async function fillWebsiteSourceUrl(page, publicationUrl, timeout) {
-  const sourceBox = await waitForAnyVisible(
+async function fillWebsiteSourceUrl(page, publicationUrl, timeout, verifiedSourceBox = null) {
+  const sourceBox = verifiedSourceBox || await waitForAnyVisible(
     [
       page.locator('[formcontrolname="newUrl"]:visible'),
       page.locator('input[type="url"]:visible'),
@@ -2634,9 +2635,7 @@ async function submitWebsiteSourceUrl(page, sourceBox, timeout) {
         scope.locator("button:visible").filter({ hasText: addPattern }),
       ];
 
-      if (scope !== page) {
-        locators.splice(1, 0, scope.locator('button[type="submit"]:visible'));
-      }
+      // No generic submit buttons: require exact Добавить label for the URL.
 
       for (const locator of locators) {
         const count = await locator.count().catch(() => 0);
@@ -2656,8 +2655,7 @@ async function submitWebsiteSourceUrl(page, sourceBox, timeout) {
           // затемнением не является кнопкой подтверждения введённого URL.
           if (
             !addPattern.test(text) &&
-            !addPattern.test(ariaLabel) &&
-            (await candidate.getAttribute("type").catch(() => null)) !== "submit"
+            !addPattern.test(ariaLabel)
           ) {
             continue;
           }
@@ -2686,58 +2684,29 @@ async function submitWebsiteSourceUrl(page, sourceBox, timeout) {
   }
 
   if (!addButton) {
-    // Безопасный резерв: отправляем форму клавишей Enter из самого поля URL.
-    // Это не может выбрать внешнюю кнопку «Добавить источник» под подложкой.
-    await sourceBox.press("Enter").catch(() => {});
-    await sourceBox.waitFor({ state: "hidden", timeout: 3000 }).catch(() => {});
-
-    if (!(await sourceBox.isVisible().catch(() => false))) {
-      return;
-    }
-
     const actualValue = await readEditableValue(sourceBox);
     const visibleButtons = await page
       .locator("button:visible")
       .evaluateAll((buttons) =>
         buttons.slice(0, 50).map((button) => ({
           text: String(button.innerText || button.textContent || "")
-            .replace(/\s+/g, " ")
-            .trim(),
+            .replace(/\s+/g, " ").trim(),
           ariaLabel: button.getAttribute("aria-label"),
           disabled: Boolean(button.disabled),
-          ariaDisabled: button.getAttribute("aria-disabled"),
           inOverlay: Boolean(button.closest(".cdk-overlay-pane, [role=dialog], mat-dialog-container")),
         }))
-      )
-      .catch(() => []);
-
+      ).catch(() => []);
+    // Enter in Gemini's multi-line textarea inserts a NEWLINE, not submit.
+    // Do not use this or any other heuristic fallback.
     throw new Error(
-      `После ввода URL не найдена активная кнопка подтверждения внутри диалога источника, ` +
-        `а отправка формы клавишей Enter не закрыла диалог. ` +
-        `Значение поля: ${actualValue || "пусто"}. ` +
-        `Видимые кнопки: ${JSON.stringify(visibleButtons)}`
+      `После ввода URL не найдена активная кнопка «Добавить» внутри диалога сайта. ` +
+      `Поле: ${actualValue || "пусто"}; кнопки: ${JSON.stringify(visibleButtons)}`
     );
   }
 
-  try {
-    await addButton.click({ timeout: Math.min(timeout, 30000) });
-  } catch (clickError) {
-    // Резервный путь для Angular-диалогов: Enter отправляет текущую форму,
-    // не затрагивая кнопку «Добавить источник» под затемняющей подложкой.
-    await sourceBox.press("Enter").catch(() => {});
-    await sourceBox.waitFor({ state: "hidden", timeout: 3000 }).catch(() => {});
-
-    if (await sourceBox.isVisible().catch(() => false)) {
-      const scopeText = selectedScope
-        ? String(await selectedScope.textContent().catch(() => "") || "")
-            .replace(/\s+/g, " ")
-            .trim()
-            .slice(0, 500)
-        : "";
-      clickError.message += `; диалог остался открыт: ${scopeText}`;
-      throw clickError;
-    }
-  }
+  // A timeout might occur AFTER the remote form accepted the click. Do not
+  // retry with Enter or click again: sourceSubmitArmedAt is already persisted.
+  await addButton.click({ timeout: Math.min(timeout, 30000) });
 }
 
 function notebookCreateLocators(page) {
@@ -3153,134 +3122,131 @@ async function renameCurrentNotebook(
   return desiredTitle;
 }
 
+// A notebook first navigates through /notebook/creating. This is a transient
+// route, NOT the stable notebook ID. Never persist it or use it on a restart.
+function permanentNotebookUrl(value) {
+  try {
+    const parsed = new URL(String(value || ""));
+    if (!["notebook.google.com", "notebooklm.google.com"].includes(parsed.hostname)) return null;
+    const match = /^\/notebook\/([A-Za-z0-9_-]+)\/?$/.exec(parsed.pathname);
+    if (!match) return null;
+    const id = match[1];
+    const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    const opaqueLongId = /^[A-Za-z0-9_-]{20,}$/.test(id);
+    if (!uuid && !opaqueLongId) return null;
+    return `${parsed.origin}/notebook/${id}`;
+  } catch {
+    return null;
+  }
+}
+
+async function waitForNewNotebookIdentity(page, timeout) {
+  const deadline = Date.now() + Math.min(timeout, 45_000);
+  let lastSeen = String(page.url() || "");
+  while (Date.now() < deadline) {
+    const permanent = permanentNotebookUrl(page.url());
+    if (permanent) {
+      // The real UUID is necessary but not sufficient: do not start searching
+      // for source controls while Gemini still displays "Loading Notebook".
+      await confirmNotebookPage(page, {
+        uiTimeoutMs: Math.min(Math.max(500, deadline - Date.now()), 45_000),
+      }, permanent);
+      if (permanentNotebookUrl(page.url()) === permanent) return permanent;
+      // Navigation changed again during shell initialization.
+    }
+    lastSeen = String(page.url() || "");
+    await page.waitForTimeout(250);
+  }
+  throw new Error(
+    `Создание блокнота запрошено, но его постоянный UUID и готовая оболочка не подтверждены. ` +
+    `Последний URL: ${lastSeen}. Новый блокнот создавать запрещено; требуется ручная проверка.`
+  );
+}
+
 async function createNotebookAndAddSource(config, context, publication, job, state) {
   stage = "CREATE_NOTEBOOK";
+  const pinned = job.notebookUrl ? permanentNotebookUrl(job.notebookUrl) : null;
+  // Validate local recovery eligibility BEFORE launching a browser. This
+  // prevents needless flash-open/close loops on a corrupted old checkpoint.
+  if (job.notebookUrl && !pinned) {
+    throw new Error(
+      `В state.json сохранён временный/неподтверждённый URL блокнота: ${job.notebookUrl}. ` +
+      "Необходимо вручную выбрать реально созданный блокнот и закрепить его постоянный URL " +
+      "после резервного копирования state.json. Автоматически создавать новый запрещено."
+    );
+  }
+  if (!job.notebookUrl && job.notebookCreateArmedAt) {
+    throw new Error(
+      "Создание блокнота уже отправлялось, но постоянный UUID не сохранён. " +
+      "Новый пустой блокнот не создаю; необходима ручная привязка существующего."
+    );
+  }
   activePage = await getRobotPage(config, context);
 
-  await activePage.goto(config.notebookUrl, {
-    waitUntil: "domcontentloaded",
-    timeout: config.uiTimeoutMs,
-  });
-  await waitNotebookHome(activePage, config);
-
-  await clickAnyVisible(
-    notebookCreateLocators(activePage),
-    config.uiTimeoutMs,
-    'кнопка "Новый блокнот" (или legacy "Создать")'
-  );
-  log(config, 'Нажата кнопка создания блокнота: "Новый блокнот"/legacy "Создать".');
-
-  const siteSourceLocators = [
-    // В актуальном NotebookLM в DOM могут одновременно существовать скрытая
-    // и видимая копии одного элемента. Поэтому для этого перехода ищем все
-    // совпадения и выбираем реально видимое/активное, а не только .first().
-    activePage.locator('button:visible').filter({ hasText: /^\s*Сайты\s*$/i }),
-    activePage
-      .locator('[role="button"]:visible')
-      .filter({ hasText: /^\s*Сайты\s*$/i }),
-    activePage.getByRole("button", { name: /^Сайты$/i }),
-    activePage.getByText(/^Сайты$/i),
-  ];
-
-  // В старом интерфейсе NotebookLM окно выбора источника могло открываться
-  // автоматически сразу после создания блокнота. В новом интерфейсе сначала
-  // требуется явно нажать «Добавить источники». Сохраняем совместимость с
-  // обоими вариантами, чтобы не ломать уже работавший сценарий.
-  let siteSourceButton = null;
-
-  try {
-    siteSourceButton = await waitForAnyEnabledVisible(
-      siteSourceLocators,
-      Math.min(config.uiTimeoutMs, 1500),
-      'кнопка "Сайты"'
-    );
-    log(config, "Окно добавления источников уже открыто автоматически.");
-  } catch {
-    stage = "OPEN_ADD_SOURCES";
-
-    const addSourcesLocators = [
-      activePage
-        .locator('button:visible')
-        .filter({ hasText: /Добавить источники/i }),
-      activePage
-        .locator('[role="button"]:visible')
-        .filter({ hasText: /Добавить источники/i }),
-      activePage.getByRole("button", { name: /Добавить источники/i }),
-      activePage.getByText(/Добавить источники/i),
-    ];
-
-    let addSourcesButton = null;
-
-    try {
-      addSourcesButton = await waitForAnyEnabledVisible(
-        addSourcesLocators,
-        config.uiTimeoutMs,
-        'кнопка "Добавить источники"'
-      );
-    } catch (error) {
-      const visibleButtons = await describeVisibleButtons(activePage);
-      throw new Error(
-        `${error.message}. Видимые кнопки: ${JSON.stringify(visibleButtons)}`
-      );
+  if (pinned) {
+    await activePage.goto(pinned, {
+      waitUntil: "domcontentloaded", timeout: config.uiTimeoutMs,
+    });
+    await confirmNotebookPage(activePage, config, pinned);
+    if (permanentNotebookUrl(activePage.url()) !== pinned) {
+      throw new Error("Сохранённый блокнот открылся с другим UUID; создание и импорт запрещены.");
     }
-
-    await addSourcesButton.click();
-    log(config, 'Нажата кнопка "Добавить источники".');
-
-    stage = "OPEN_SITE_SOURCE";
-    siteSourceButton = await waitForAnyEnabledVisible(
-      siteSourceLocators,
+    log(config, `Возобновляю добавление источника в сохранённый блокнот: ${pinned}`);
+  } else {
+    await activePage.goto(config.notebookUrl, {
+      waitUntil: "domcontentloaded", timeout: config.uiTimeoutMs,
+    });
+    await waitNotebookHome(activePage, config);
+    // A crash/click-timeout may happen after the remote request was sent.
+    // Persist intent BEFORE clicking, so the next run cannot create a duplicate.
+    job.notebookCreateArmedAt = new Date().toISOString();
+    job.updatedAt = new Date().toISOString();
+    saveState(config, state);
+    await clickAnyVisible(
+      notebookCreateLocators(activePage),
       config.uiTimeoutMs,
-      'кнопка "Сайты"'
+      'кнопка "Новый блокнот" (или legacy "Создать")'
     );
+    log(config, 'Нажата кнопка создания блокнота: "Новый блокнот"/legacy "Создать".');
+    job.notebookUrl = await waitForNewNotebookIdentity(activePage, config.uiTimeoutMs);
+    job.updatedAt = new Date().toISOString();
+    saveState(config, state);
+    log(config, `UUID нового блокнота сохранён до открытия источников: ${job.notebookUrl}`);
   }
 
-  stage = "OPEN_SITE_SOURCE";
-  await siteSourceButton.click();
+  if (!job.sourceSubmitArmedAt) {
+    stage = "OPEN_ADD_SOURCES";
+    const verifiedSourceBox = await sourceUi.openWebsiteSourceInput(activePage, config.uiTimeoutMs, {
+      log: (message) => log(config, message),
+      describeVisibleButtons,
+    });
 
-  stage = "ADD_SOURCE_URL";
-  const sourceBox = await fillWebsiteSourceUrl(
-    activePage,
-    publication.url,
-    config.uiTimeoutMs
-  );
+    stage = "ADD_SOURCE_URL";
+    const sourceBox = await fillWebsiteSourceUrl(
+      activePage, publication.url, config.uiTimeoutMs, verifiedSourceBox
+    );
+    log(config, `URL источника введён и подтверждён в поле: ${publication.url}`);
 
-  log(config, `URL источника введён и подтверждён в поле: ${publication.url}`);
-
-  await submitWebsiteSourceUrl(
-    activePage,
-    sourceBox,
-    config.uiTimeoutMs
-  );
-  log(config, "Команда добавления источника отправлена.");
-
-  // Сохраняем настоящий UUID нового блокнота ДО ожидания внешнего импорта.
-  // Если NotebookLM не успел обработать источник, следующий scheduled run
-  // продолжит этот блокнот, а не создаст ещё один дубликат.
-  const pendingNotebookUrl = activePage.url();
-  if (!/^https:\/\/notebook\.google\.com\/notebook\/[^/?#]+(?:[?#]|$)/i.test(pendingNotebookUrl)) {
-    throw new Error(`Невозможно сохранить URL нового NotebookLM: ${pendingNotebookUrl}`);
+    // The submit may reach Gemini Notebook even if the click times out.
+    // Do not submit twice across scheduled runs until import is verified.
+    job.sourceSubmitArmedAt = new Date().toISOString();
+    job.updatedAt = new Date().toISOString();
+    saveState(config, state);
+    await submitWebsiteSourceUrl(activePage, sourceBox, config.uiTimeoutMs);
+    log(config, "Команда добавления источника отправлена.");
+  } else {
+    log(config, "Источник уже отправлялся ранее. Проверяю импорт read-only без повторного добавления URL.");
   }
-  job.notebookUrl = pendingNotebookUrl;
+
+  // The input may close but backend processing is asynchronous. Preserve the
+  // same notebook identity, and retry ONLY read-only readiness if interrupted.
   job.status = "CREATING_VIDEO";
   job.updatedAt = new Date().toISOString();
   saveState(config, state);
-  log(config, `Блокнот сохранён для безопасного resume импорта: ${pendingNotebookUrl}`);
 
   stage = "WAIT_SOURCE_READY";
-  await waitForSourceImportReady(
-    config,
-    activePage,
-    publication
-  );
-
-  await renameCurrentNotebook(
-    config,
-    activePage,
-    publication,
-    job,
-    state
-  );
+  await waitForSourceImportReady(config, activePage, publication);
+  await renameCurrentNotebook(config, activePage, publication, job, state);
 
   job.notebookUrl = activePage.url();
   job.status = "CREATING_VIDEO";
@@ -3288,11 +3254,7 @@ async function createNotebookAndAddSource(config, context, publication, job, sta
   job.lastErrorAt = null;
   job.updatedAt = new Date().toISOString();
   saveState(config, state);
-
-  log(
-    config,
-    `Источник добавлен. Блокнот: ${job.notebookTitleHint}; ${job.notebookUrl}`
-  );
+  log(config, `Источник добавлен. Блокнот: ${job.notebookTitleHint}; ${job.notebookUrl}`);
 }
 
 async function fillPromptField(dialog, prompt, timeout) {

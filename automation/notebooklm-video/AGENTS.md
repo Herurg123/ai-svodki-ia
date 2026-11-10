@@ -146,6 +146,36 @@ retention. Text-log cleanup must match only `worker-*.log` /
 may migrate only known rotated log names plus obsolete rotation sidecar state,
 preserving unknown files.
 
+## Gemini Notebook source-import safety
+
+The canonical `worker.js` is a browser automation of Gemini Notebook
+(formerly NotebookLM). It must only enter the exact requested publication URL
+in a confirmed web-URL import form, never in the general Internet/Drive
+research search field. Support `+ Источники`, direct URL input and the old
+`Добавить источники` / `Сайты` dialog by exact visible controls; unrecognized
+source UI must fail closed with diagnostic visible buttons. The November
+2026 dialog `Ссылки на видео YouTube и сайты` uses a multiline textarea:
+find it only inside its named dialog, retain the verified locator, and submit
+only with the exact dialog-local `Добавить` button. Never use Enter as a
+fallback: Enter creates another URL line, and a click timeout may represent
+an already submitted remote mutation.
+
+Persist `notebookCreateArmedAt` before remote notebook creation; persist its
+exact verified `notebookUrl` immediately afterward and before source UI clicks.
+The real November 2026 create route first reports `/notebook/creating`, which
+is NOT a permanent UUID; wait for a persistent notebook identity AND confirmed
+loaded shell. The button may expose a Material icon ligature in its accessible
+name (`add_2 Источники`), not plain `Источники`. Existing `state.json` records
+with `/notebook/creating` must stop and request explicit manual remapping to a
+verified empty notebook URL; never infer a notebook card or make a duplicate.
+A same-day `NEW` retry with a saved URL must reopen **that exact notebook**,
+not create another. If creation is armed and the URL is unknown, require manual
+inspection. Persist `sourceSubmitArmedAt` before a web-source submit and never
+resubmit after an ambiguous outcome; resume with read-only source readiness.
+Never automatically delete accumulated empty notebooks or infer that an
+anonymous untitled card is the current job. Preserve all existing protected
+browser profile, source import readiness, download and publish invariants.
+
 ## Native Dzen publication safety
 
 The historical Video → RSS route is closed. Do not mutate production RSS to

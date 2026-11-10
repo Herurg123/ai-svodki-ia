@@ -16,7 +16,7 @@ $targetRoot = [IO.Path]::GetFullPath($TargetDir).TrimEnd('\')
 if (-not (Test-Path -LiteralPath $targetRoot -PathType Container)) {
     throw "Рабочая папка не найдена: $targetRoot"
 }
-if ($manifest.schema -ne 1 -or $manifest.files.Count -ne 15 -or
+if ($manifest.schema -ne 1 -or $manifest.files.Count -ne 16 -or
     [string]$manifest.targetSha -notmatch '^[0-9a-f]{40}$') {
     throw 'Неизвестная схема или содержимое manifest.json'
 }
@@ -24,11 +24,11 @@ $allowedNames = @(
     'dzen-article-link.js', 'dzen-article-video.js', 'dzen-publish-direct.js',
     'dzen-duplicate-guard.js', 'dzen-browser-runner.js', 'dzen-safe-notices.js',
     'scheduled-worker.js', 'full-worker.js', 'history-utils.js',
-    'worker.js', 'video-footer.js',
+    'worker.js', 'notebooklm-source-ui.js', 'video-footer.js',
     'vk-stage.mjs', 'vk-text.mjs', 'setup-local.ps1', 'package.json'
 )
 $names = @($manifest.files | ForEach-Object { [string]$_.file })
-if (@($names | Sort-Object -Unique).Count -ne 15) {
+if (@($names | Sort-Object -Unique).Count -ne 16) {
     throw 'Повторяющиеся файлы в манифесте'
 }
 foreach ($lock in @('full-worker.lock','scheduled-worker.lock')) {
@@ -153,4 +153,4 @@ try {
     throw "Установка прервана: $reason. Выполнен откат; копии: $backupDir"
 }
 Write-Host "Установка выполнена и SHA-256 проверены; копии: $backupDir"
-Write-Host 'Безопасная проверка: node --check worker.js; node --check video-footer.js; node --check scheduled-worker.js; node --check dzen-safe-notices.js; node --check full-worker.js; node --check dzen-article-link.js; node --check vk-stage.mjs'
+Write-Host 'Безопасная проверка: node --check worker.js; node --check notebooklm-source-ui.js; node --check video-footer.js; node --check scheduled-worker.js; node --check dzen-safe-notices.js; node --check full-worker.js; node --check dzen-article-link.js; node --check vk-stage.mjs'

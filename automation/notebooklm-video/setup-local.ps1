@@ -22,6 +22,7 @@ New-Item -ItemType Directory -Path $TargetDir -Force | Out-Null
 
 $files = @(
     "worker.js",
+    "notebooklm-source-ui.js",
     "video-footer.js",
     "log-utils.js",
     "history-utils.js",
@@ -119,6 +120,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "node --check history-utils.js завершился ошибкой." }
     node --check worker.js
     if ($LASTEXITCODE -ne 0) { throw "node --check worker.js завершился ошибкой." }
+    node --check notebooklm-source-ui.js
+    if ($LASTEXITCODE -ne 0) { throw "node --check notebooklm-source-ui.js завершился ошибкой." }
     node --check full-worker.js
     if ($LASTEXITCODE -ne 0) { throw "node --check full-worker.js завершился ошибкой." }
     node --check scheduled-worker.js

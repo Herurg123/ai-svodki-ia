@@ -107,9 +107,16 @@ config.example.json по-прежнему **выключен**.
 The worker uses a dedicated protected Yandex Browser profile through CDP. It must
 not delete/recreate that profile or its Google/NotebookLM/Dzen sessions.
 
-Current NotebookLM home handling supports the current `+ Новый блокнот` /
-`Недавние блокноты` UI while preserving compatibility with the previous
-`Создать` / `Мои блокноты` surface. Source import waits for a stable
+Current Gemini Notebook (formerly NotebookLM) home handling supports
+`+ Новый блокнот` / `Мои блокноты` and previous `Создать` /
+`Недавние блокноты` surfaces. Source import supports current `+ Источники`
+followed by exact `Сайты` / `Ссылки` / `Website` and the screenshot-verified
+multiline URL textarea inside `Ссылки на видео YouTube и сайты` (then the
+exact `Добавить` button), direct URL input, and
+legacy `Добавить источники` / `Сайты`. It never submits the daily URL to
+Internet/Drive research. When no exact URL-input surface is proven, the flow
+fails with safe button diagnostics rather than clicking unrelated controls.
+Source import waits for a stable
 content-ready state before video generation: the worker accepts a substantial
 visible central overview, legacy chat text, or a generated notebook title only
 alongside a confirmed source count, no loading indicators, and an enabled
@@ -118,12 +125,25 @@ for at least 5 seconds (the source timeout remains configurable, with the
 current 300-second operator setting). An untitled notebook is not sufficient
 evidence on its own.
 
-The newly created notebook's canonical URL is persisted as `CREATING_VIDEO`
-*before* the potentially long source-readiness wait. If that wait times out,
-a later scheduled run resumes the same notebook by URL, verifies readiness,
-renames it to `ИИ-YYYY-MM-DD`, and only then starts generation, rather than
-creating another notebook for the same publication. Existing notebook cards
-remain the fallback when a saved URL cannot be opened.
+Notebook creation is now at-most-once per daily job: `notebookCreateArmedAt`
+is persisted **before** the remote create click. The exact new notebook UUID/URL
+is saved immediately **after** creation, before opening the sources UI. If that
+UI changes or times out, a later same-day run resumes this exact existing
+notebook from `NEW`, never creates another one. Source URL submit is also
+armed before the click; uncertain submits are checked read-only on restart,
+never blindly re-submitted. After confirmed submit the job becomes
+`CREATING_VIDEO` and resumes the readiness check/rename/generation as before.
+If create was armed but the UUID could not be confirmed, stop for operator
+inspection; do not create another blank notebook. The transient URL
+`https://notebook.google.com/notebook/creating` is **not an ID**: only a
+persistent UUID (or long opaque ID) plus the loaded notebook shell may be saved.
+The Gemini source button's actual text may include `add_2 Источники` due to a
+Material icon ligature, so both forms are explicitly supported. Existing local
+`state.json` records containing `/notebook/creating` from the broken earlier
+version must be explicitly linked by the operator to an existing **empty**
+notebook's verified URL after a backup; worker will not create another. Already accumulated empty
+notebooks cannot be reliably matched and must be cleaned manually; no automatic
+delete or anonymous-card inference is allowed.
 
 For NEW downloads only, local `downloads/_footer-vid.png` enables a
 five-second silent closing card rendered by `video-footer.js` using

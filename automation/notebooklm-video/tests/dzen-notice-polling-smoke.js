@@ -66,11 +66,11 @@ assert(block.includes("if(!page.isClosed())"), "Monitor must continue when edito
   const start=Date.now();
   try {
     await direct.observeAfterPublishClick(fakePage,{}, "2026-10-26",
-      "6adec50a38340e44edf6119c",{durationMs:35,intervalMs:5,noticeBrowser:browser});
+      "6adec50a38340e44edf6119c",{durationMs:1200,intervalMs:50,noticeBrowser:browser});
   } finally {
     notices.processKnownDzenNotices = originalDispatcher;
   }
-  assert(Date.now()-start>=30, "Observer must retain bounded observation window");
+  assert(Date.now()-start>=1100, "Observer must retain bounded observation window even if the first notice scan is slow");
   assert(dispatchCalls>=2, "Generic dispatcher must run each post-click tick");
   assert.equal(noticeChecks,1, "Known already-attempted preference must not be repeatedly scanned");
   assert.equal(clicks,1, "Only the exact preference label may receive one click");
@@ -85,8 +85,8 @@ assert(block.includes("if(!page.isClosed())"), "Monitor must continue when edito
   };
   const startOther=Date.now();
   await direct.observeAfterPublishClick(unknownPage,{}, "2026-10-26",
-    "6adec50a38340e44edf6119c",{durationMs:30,intervalMs:5,noticeBrowser:browser});
-  assert(Date.now()-startOther>=24, "Unknown popup must not trigger special wait or early abort");
+    "6adec50a38340e44edf6119c",{durationMs:250,intervalMs:30,noticeBrowser:browser});
+  assert(Date.now()-startOther>=220, "Unknown popup must not trigger special wait or early abort");
   assert.equal(clicks,1);
 
   // Dzen may close the editor after publish; notice polling continues in the
@@ -98,7 +98,7 @@ assert(block.includes("if(!page.isClosed())"), "Monitor must continue when edito
   await direct.observeAfterPublishClick({
     ...fakePage,isClosed:()=>true
   },{}, "2026-10-26","6adec50a38340e44edf6119c",
-  {durationMs:20,intervalMs:5,noticeBrowser:closedBrowser});
+  {durationMs:250,intervalMs:30,noticeBrowser:closedBrowser});
   assert(closedPolls>=2,"Closed editor must not stop observation of browser notices");
 
   assert.equal((await notices.processKnownDzenNotices(null)).status,"absent");

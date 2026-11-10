@@ -187,15 +187,18 @@ assert.strictEqual(
 
 async function verifyResumeState() {
   const createFnSource = worker.slice(
-    worker.indexOf("async function createNotebookAndAddSource("),
+    worker.indexOf("function permanentNotebookUrl("),
     worker.indexOf("async function fillPromptField(")
   );
   async function exerciseCreate(initialUrl, createdUrl) {
     let pageUrl = initialUrl;
+    let createClicks = 0;
+    let browserLaunches = 0;
     const snapshots = [];
     const page = {
       goto: async () => {},
       url: () => pageUrl,
+      waitForTimeout: async () => {},
       locator: () => ({ filter: () => ({}) }),
       getByRole: () => ({}),
       getByText: () => ({}),
@@ -203,11 +206,14 @@ async function verifyResumeState() {
     const context = {
       stage: "",
       activePage: null,
-      getRobotPage: async () => page,
+      getRobotPage: async () => { browserLaunches += 1; return page; },
       waitNotebookHome: async () => {},
       notebookCreateLocators: () => [],
-      clickAnyVisible: async () => { pageUrl = createdUrl; },
-      waitForAnyEnabledVisible: async () => ({ click: async () => {} }),
+      clickAnyVisible: async () => { createClicks += 1; pageUrl = createdUrl; },
+      URL,
+      sourceUi: { openWebsiteSourceInput: async () => {} },
+      describeVisibleButtons: async () => [],
+      confirmNotebookPage: async () => {},
       fillWebsiteSourceUrl: async () => ({}),
       submitWebsiteSourceUrl: async () => {},
       waitForSourceImportReady: async () => { throw Error("source timeout"); },
@@ -223,31 +229,57 @@ async function verifyResumeState() {
     const job = { status: "NEW", notebookUrl: null, notebookTitleHint: "ИИ-2026-10-16" };
     const state = { jobs: { today: job } };
     return {
-      invoke: () => fn({ notebookUrl: "https://notebook.google.com/", uiTimeoutMs: 30000 }, {}, publication, job, state),
+      invoke: () => fn({ notebookUrl: "https://notebook.google.com/", uiTimeoutMs: 60 }, {}, publication, job, state),
       job,
       snapshots,
+      get createClicks() { return createClicks; },
+      get browserLaunches() { return browserLaunches; },
     };
   }
 
   const valid = await exerciseCreate(
     "https://notebook.google.com/",
-    "https://notebook.google.com/notebook/fixture-uuid"
+    "https://notebook.google.com/notebook/11111111-2222-4333-a444-555555555555"
   );
   await assert.rejects(valid.invoke(), /source timeout/);
   assert.strictEqual(valid.job.status, "CREATING_VIDEO");
-  assert.strictEqual(valid.job.notebookUrl, "https://notebook.google.com/notebook/fixture-uuid");
+  assert.strictEqual(valid.job.notebookUrl, "https://notebook.google.com/notebook/11111111-2222-4333-a444-555555555555");
   assert(
     valid.snapshots.some((snapshot) =>
       snapshot.jobs.today.status === "CREATING_VIDEO" &&
-      snapshot.jobs.today.notebookUrl.endsWith("/fixture-uuid")
+      snapshot.jobs.today.notebookUrl.endsWith("/11111111-2222-4333-a444-555555555555")
     ),
     "Pending notebook URL must be saved before source readiness timeout"
   );
 
   const invalid = await exerciseCreate("https://notebook.google.com/", "https://notebook.google.com/");
-  await assert.rejects(invalid.invoke(), /Невозможно сохранить URL/);
+  await assert.rejects(invalid.invoke(), /постоянный UUID и готовая оболочка не подтверждены/);
   assert.strictEqual(invalid.job.status, "NEW");
-  assert.strictEqual(invalid.snapshots.length, 0);
+  assert(invalid.snapshots.length > 0, "Notebook creation is armed BEFORE clicking");
+  assert(invalid.snapshots.some(x => x.jobs.today.notebookCreateArmedAt),
+    "At-most-once notebook creation intent must persist after unknown outcome");
+
+  // Gemini temporarily navigates to /notebook/creating while loading.
+  // It is not an ID, must not be saved, and must never authorize a duplicate.
+  const transient = await exerciseCreate(
+    "https://notebook.google.com/",
+    "https://notebook.google.com/notebook/creating"
+  );
+  await assert.rejects(transient.invoke(), /постоянный UUID/);
+  assert.strictEqual(transient.job.notebookUrl, null);
+  assert.ok(transient.job.notebookCreateArmedAt, "Creation intent survives transient routing");
+  assert.strictEqual(transient.createClicks, 1, "Creation was attempted only once");
+
+  const invalidResumed = await exerciseCreate(
+    "https://notebook.google.com/", "https://notebook.google.com/notebook/creating"
+  );
+  invalidResumed.job.notebookUrl = "https://notebook.google.com/notebook/creating";
+  invalidResumed.job.notebookCreateArmedAt = "2026-11-10T08:22:19.000Z";
+  await assert.rejects(invalidResumed.invoke(), /временный\/неподтверждённый URL/);
+  assert.strictEqual(invalidResumed.createClicks, 0,
+    "No new notebook may be created when state holds the temporary /creating URL");
+  assert.strictEqual(invalidResumed.browserLaunches, 0,
+    "Reject the stale placeholder before launching a browser window");
 
   const calls = [];
   const resumeContext = {
