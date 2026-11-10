@@ -124,6 +124,7 @@ async function openWebsiteSourceInput(page, timeout, { log = () => {}, describeV
 module.exports = {
   WEBSITE_SOURCE_LABEL,
   SOURCE_OPEN_LABEL,
+  WEBSITE_URL_DIALOG_TITLE,
   urlInputLocators,
   websiteOptionLocators,
   sourceOpenLocators,
