@@ -1,0 +1,183 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-11-10",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-11-10.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-002: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: nvidia (5), openai (4)",
+    "Исследовательский пул перегружен одной организацией: nvidia (5), openai (4)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-11-10",
+  "started_at": "2026-11-10T02:14:55+00:00",
+  "finished_at": "2026-11-10T02:15:29+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 115,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "d07fd8b0aa59871a8fef6338478a7da923de8431f8f20fb158fe8af53d9a1d52",
+    "candidates_sha256": "490e68d1faa3415e83c3a92d329cd7376a9dc8bb194dd0a23babd05817600377",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-11-08T05:06:19+03:00",
+      "end_at": "2026-11-10T05:06:29+03:00",
+      "latest_archive_at": "2026-11-09T05:06:19+03:00",
+      "start_date": "2026-11-08",
+      "end_date": "2026-11-10",
+      "latest_archive_date": "2026-11-09"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "a6b3c4421e4fb662d46505a16e84b087241dc6671e05634c657acb872d5a3912",
+    "editorial_sha256": "a7fe6949aab7cd70dabdaabcc5a899c7c5a28a985b6ab82f8b9198a860e31bb1",
+    "digest_sha256": "5cc72f63d40c65e92445b3ca987f8121ff9b86cd867386f941c42806c11e6d18",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-11-10.png",
+          "normalized_value": "ai-svodka-2026-11-10.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.meta_marking",
+          "model_value": "inconsistent",
+          "normalized_value": "first Meta*, subsequent Meta"
+        },
+        {
+          "field": "article_html.story_section",
+          "candidate_id": "cand-004",
+          "model_value": "Мировые лидеры ИИ",
+          "normalized_value": "Китайские лидеры ИИ"
+        },
+        {
+          "field": "selected_candidate_ids.section_order",
+          "model_value": [
+            "cand-003",
+            "cand-004",
+            "cand-005",
+            "cand-007",
+            "cand-012",
+            "cand-015",
+            "cand-017"
+          ],
+          "normalized_value": [
+            "cand-003",
+            "cand-005",
+            "cand-007",
+            "cand-012",
+            "cand-015",
+            "cand-017",
+            "cand-004"
+          ]
+        },
+        {
+          "field": "image_prompt",
+          "model_value": "Изображение 16:9: современная футуристическая редакционная обложка ежедневного аналитического выпуска, крупный и единственный читаемый текст точно: «ИИ-Сводка на 10 ноября 2026».\n\nГлавные визуальные темы: семь взаимосвязанных сцен — светящийся ИИ-дата-центр с высоковольтными DC-шинами и накопителями энергии; газовые турбины рядом с вычислительным кампусом; лёгкая мультимодальная модель как компактное светящееся ядро, направляющее потоки задач; защищённая консоль агента с символическими щитами, ключом OAuth и песочницей; центральная диспетчерская с возможностью остановки потоков вычислений; роботизированная рука, аккуратно тренирующаяся в цифровой симуляции; инженер с нейтральным силуэтом, наблюдающий за оркестрацией агентов.\n\nКомпозиция: в центре — круглая диспетчерская Control Room с яркой кнопкой безопасной остановки и расходящимися линиями управления; вокруг по дуге расположены шесть компактных, но различимых сцен энергии, дата-центра, агентной модели, защищённой разработки, симуляции и робота. В нижней зоне — плотная панорама серверных стоек, кабелей и энергетических модулей без пустых областей.\n\nСтиль: кинематографичная технологическая иллюстрация, глубокие графитовые и синие тона, акценты янтарного электричества и зелёного свечения, высокая детализация, чистая редакционная композиция. Без логотипов компаний, без дополнительного текста, без водяных знаков, без мелких интерфейсных надписей, без технического имени файла, без стокового корпоративного клипарта, без узнаваемых лиц реальных людей.",
+          "normalized_value": "Изображение 16:9: современная футуристическая редакционная обложка ежедневного аналитического выпуска, крупный и единственный читаемый текст точно: «ИИ-Сводка на 10 ноября 2026».\n\nГлавные визуальные темы: семь взаимосвязанных сцен — светящийся ИИ-дата-центр с высоковольтными DC-шинами и накопителями энергии; газовые турбины рядом с вычислительным кампусом; лёгкая мультимодальная модель как компактное светящееся ядро, направляющее потоки задач; защищённая консоль агента с символическими щитами, ключом OAuth и песочницей; центральная диспетчерская с возможностью остановки потоков вычислений; роботизированная рука, аккуратно тренирующаяся в цифровой симуляции; инженер с нейтральным силуэтом, наблюдающий за оркестрацией агентов.\n\nКомпозиция: в центре — круглая диспетчерская Control Room с яркой кнопкой безопасной остановки и расходящимися линиями управления; вокруг по дуге расположены шесть компактных, но различимых сцен энергии, дата-центра, агентной модели, защищённой разработки, симуляции и робота. В нижней зоне — плотная панорама серверных стоек, кабелей и энергетических модулей без пустых областей.\n\nСтиль: кинематографичная технологическая иллюстрация, глубокие графитовые и синие тона, акценты янтарного электричества и зелёного свечения, высокая детализация, чистая редакционная композиция. Без логотипов компаний, без дополнительного текста, без водяных знаков, без мелких интерфейсных надписей, без технического имени файла, без стокового корпоративного клипарта, без узнаваемых лиц реальных людей. Обязательные ограничения: без пустой половины кадра."
+        }
+      ],
+      "changed_count": 4,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: global_breaking, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+        },
+        {
+          "type": "section_placement",
+          "area": "editorial",
+          "message": "Раздел для cand-004 автоматически исправлен: Мировые лидеры ИИ → Китайские лидеры ИИ."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_03b41559599ed58d016af27e203bf087d1a2809ae7c55950cd",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 230817,
+        "input_tokens_details": {
+          "cache_write_tokens": 21023,
+          "cached_tokens": 209791,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 21023
+          }
+        },
+        "output_tokens": 3810,
+        "output_tokens_details": {
+          "reasoning_tokens": 497
+        },
+        "total_tokens": 234627
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-11-10/resp_03b41559599ed58d016af27e203bf087d1a2809ae7c55950cd.json"
+  },
+  "total_usage": {
+    "input_tokens": 230817,
+    "output_tokens": 3810,
+    "total_tokens": 234627,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "2982dd7494dc75dcd7d74adf6d36b9430b1e7bd8",
+    "run_id": "42740274595",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-11-10T05:06:29+03:00"
+}

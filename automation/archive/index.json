@@ -1,8 +1,270 @@
 {
   "version": 2,
-  "generated_at": "2026-11-09T02:14:44+00:00",
+  "generated_at": "2026-11-10T02:16:51+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-10",
+      "published_at": "2026-11-10T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-10T05:06:29+03:00",
+      "title": "ИИ-Сводка на 10 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-10/",
+      "summary": "Главные новости искусственного интеллекта за 10 ноября 2026 года Повестка дня показывает, что конкуренция в ИИ всё сильнее зависит не только от качества моделей, но и от среды их исполнения: энергии, управляемости вычислений, стоимости агентных операций и симуляции для робототехники. Anthropic закрепляет генерацию для дата-центров, OpenAI строит централизованный контур остановки исследовательских нагрузок, а Meta и разработчики инструментов делают агентные сценарии дешевле и более управляемыми. ",
+      "topics": [
+        "ИИ-инфраструктура",
+        "энергоснабжение дата-центров",
+        "Anthropic",
+        "Meta",
+        "Muse Ember",
+        "агенты ИИ",
+        "Claude Code",
+        "Qwen Code",
+        "MCP",
+        "робототехника",
+        "NVIDIA",
+        "Control Room",
+        "безопасность ИИ"
+      ],
+      "source_urls": [
+        "https://www.techradar.com/pro/has-china-cracked-the-ai-data-center-power-problem-new-800-volt-dc-power-system-is-a-world-first-offering-greater-efficiency-and-conversion-than-ever",
+        "https://techcrunch.com/2026/11/09/meta-releases-muse-ember-a-new-lightweight-model-for-agent-execution/",
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.321",
+        "https://blogs.nvidia.com/blog/robotics-simulation-advancements-corl",
+        "https://openai.com/index/control-room",
+        "https://techcrunch.com/2026/11/09/anthropic-joins-ais-natural-gas-frenzy-buys-3-4b-worth-of-turbines/",
+        "https://github.com/QwenLM/qwen-code/releases/tag/v0.27.1"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "Envision ввела в эксплуатацию 800-вольтную DC-архитектуру питания для ИИ-дата-центра",
+          "organization": "Envision Energy; Galaxy AI campus",
+          "topic": "Энергетическая инфраструктура AI-дата-центров; высоковольтное DC-питание; накопители энергии; GPU-нагрузки",
+          "event_type": "commercial infrastructure deployment",
+          "status": "new",
+          "summary": "TechRadar сообщает, что Envision Energy заявила о вводе в коммерческую эксплуатацию интегрированной 800V DC-системы питания на AI-площадке Galaxy в Уланчабе. По описанию источника, система преобразует входящие 10 кВ переменного тока напрямую в 800V DC, сочетает твердотельный трансформатор с накопителями энергии и предназначена для сглаживания быстрых изменений GPU-нагрузки.",
+          "published_at": "2026-11-09T01:40:00+00:00",
+          "published_date": "2026-11-09",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "The world's first 800V DC power grid just went live in an AI data center — did China just solve the industry's biggest bottleneck?",
+              "publisher": "TechRadar",
+              "url": "https://www.techradar.com/pro/has-china-cracked-the-ai-data-center-power-problem-new-800-volt-dc-power-system-is-a-world-first-offering-greater-efficiency-and-conversion-than-ever"
+            }
+          ],
+          "keywords": [
+            "AI data centers",
+            "800V DC",
+            "power architecture",
+            "Envision Energy",
+            "Ulanqab",
+            "energy storage",
+            "GPU power"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "Meta выпустила Muse Ember — лёгкую мультимодальную модель для агентных задач",
+          "organization": "Meta Superintelligence Lab; Meta",
+          "topic": "Лёгкие модели для AI-агентов; tool calling; coding subtasks; маршрутизация; извлечение данных; мультимодальность; стоимость инференса",
+          "event_type": "model release",
+          "status": "new",
+          "summary": "Meta Superintelligence Lab выпустила Muse Ember, которую позиционирует как самую лёгкую и экономичную модель линейки Muse для повторяющихся агентных нагрузок: вызовов инструментов, подзадач программирования, маршрутизации, извлечения данных и работы с длинными документами. По данным Meta, модель также принимает текст, изображения, аудио и видео.",
+          "published_at": "2026-11-09T18:00:00+00:00",
+          "published_date": "2026-11-09",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Meta releases Muse Ember, a new lightweight model for agent execution",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/11/09/meta-releases-muse-ember-a-new-lightweight-model-for-agent-execution/"
+            }
+          ],
+          "keywords": [
+            "Meta",
+            "Muse Ember",
+            "AI agents",
+            "agent execution",
+            "multimodal",
+            "tool calling",
+            "coding",
+            "low-cost inference"
+          ],
+          "geography": "world",
+          "category": "models"
+        },
+        {
+          "candidate_id": "cand-007",
+          "section": "world",
+          "headline": "Claude Code 2.1.321 добавила Claude Fable 5.2 и исправления sandbox/MCP OAuth",
+          "organization": "Anthropic",
+          "topic": "CLI coding agents; Claude Code; Claude Fable 5.2; MCP OAuth; sandbox permissions; developer security",
+          "event_type": "product release",
+          "status": "new",
+          "summary": "Anthropic выпустила Claude Code 2.1.321: CLI-агент получил Claude Fable 5.2 в качестве модели Fable по умолчанию, настройку settings-файла для remote-control и ряд исправлений безопасности, включая защиту от передачи OAuth refresh tokens при редиректах MCP и случаи обхода sandbox/permission prompts для Bash и файловых операций.",
+          "published_at": "2026-11-09T19:22:30+00:00",
+          "published_date": "2026-11-09",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Release v2.1.321 · anthropics/claude-code",
+              "publisher": "GitHub / Anthropic",
+              "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.321"
+            }
+          ],
+          "keywords": [
+            "Claude Code",
+            "Claude Fable 5.2",
+            "CLI agent",
+            "MCP OAuth",
+            "sandbox",
+            "permissions",
+            "security fixes"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-012",
+          "section": "world",
+          "headline": "NVIDIA представила GR00T 2, Isaac Lab 3.0 и новые открытые бенчмарки для робототехники",
+          "organization": "NVIDIA",
+          "topic": "Practice Makes Precise: At CoRL, NVIDIA and Partners Reveal How Robots Rehearse Delicate Work in Simulation",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "At the Conference on Robot Learning, NVIDIA is introducing GR00T 2, Isaac Lab 3.0 and new open benchmarks, built in collaboration with partners, bringing precision and scale to robot training.",
+          "published_at": "2026-11-09T14:00:01+00:00",
+          "published_date": "2026-11-09",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Practice Makes Precise: At CoRL, NVIDIA and Partners Reveal How Robots Rehearse Delicate Work in Simulation",
+              "publisher": "NVIDIA",
+              "url": "https://blogs.nvidia.com/blog/robotics-simulation-advancements-corl"
+            }
+          ],
+          "keywords": [
+            "Practice",
+            "Makes",
+            "Precise",
+            "At",
+            "CoRL",
+            "NVIDIA",
+            "Partners",
+            "Reveal",
+            "How",
+            "Robots",
+            "Rehearse",
+            "Delicate"
+          ],
+          "geography": "world",
+          "category": "robotics"
+        },
+        {
+          "candidate_id": "cand-015",
+          "section": "world",
+          "headline": "OpenAI представила Control Room для отслеживания и остановки модельных нагрузок",
+          "organization": "OpenAI",
+          "topic": "Control Room: A central system to track and stop model workloads across our research infrastructure",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Control Room: A central system to track and stop model workloads across our research infrastructure",
+          "published_at": "2026-11-09T13:00:00+00:00",
+          "published_date": "2026-11-09",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Control Room: A central system to track and stop model workloads across our research infrastructure",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/control-room"
+            }
+          ],
+          "keywords": [
+            "Control",
+            "Room",
+            "central",
+            "system",
+            "track",
+            "stop",
+            "model",
+            "workloads",
+            "across",
+            "our",
+            "research",
+            "infrastructure"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "cand-017",
+          "section": "world",
+          "headline": "Anthropic, по данным СМИ, покупает газовые турбины на $3,4 млрд для ИИ-вычислений",
+          "organization": "Anthropic; Caterpillar; OnePWR",
+          "topic": "Энергоснабжение AI-дата-центров; газовые турбины; энергогенерация на площадке; AI-инфраструктура; дефицит мощности",
+          "event_type": "infrastructure procurement",
+          "status": "new",
+          "summary": "TechCrunch со ссылкой на Financial Times сообщил, что Anthropic покупает газовые генераторы Caterpillar, первоначально заказанные поставщиком оборудования OnePWR, примерно на $3,4 млрд. По данным публикации, совокупная мощность оборудования может достигать 1,7 ГВт; это указывает на переход Anthropic от преимущественной аренды вычислительных мощностей к прямому закреплению энергетического ресурса для AI-инфраструктуры.",
+          "published_at": "2026-11-09T16:56:54+00:00",
+          "published_date": "2026-11-09",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Anthropic joins AI’s natural gas frenzy, buys $3.4B worth of turbines",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/11/09/anthropic-joins-ais-natural-gas-frenzy-buys-3-4b-worth-of-turbines/"
+            }
+          ],
+          "keywords": [
+            "Anthropic",
+            "natural gas turbines",
+            "Caterpillar",
+            "OnePWR",
+            "AI data centers",
+            "power generation",
+            "1.7 GW"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "cand-004",
+          "section": "world",
+          "headline": "Qwen Code 0.27.1 обновила runtime управляемых агентов и developer workflows",
+          "organization": "Alibaba Qwen",
+          "topic": "CLI coding agents; Qwen Code; managed agents; GitHub workflow; shell context; telemetry; agentic development environments",
+          "event_type": "product release",
+          "status": "new",
+          "summary": "Qwen Code выпустила v0.27.1 без известных breaking changes. В официальном release listing отмечены обновления runtime и developer workflows, включая именование активной shell в startup context, исправления общих GitHub runner-ов и изменения telemetry; параллельно опубликован desktop build на той же версии.",
+          "published_at": "2026-11-09T13:30:44+00:00",
+          "published_date": "2026-11-09",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Release v0.27.1 · QwenLM/qwen-code",
+              "publisher": "GitHub / Alibaba Qwen",
+              "url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.27.1"
+            }
+          ],
+          "keywords": [
+            "Qwen Code",
+            "v0.27.1",
+            "CLI agent",
+            "managed agents",
+            "GitHub",
+            "developer tools",
+            "agent runtime"
+          ],
+          "geography": "world",
+          "category": "coding"
+        }
+      ]
+    },
     {
       "date": "2026-11-09",
       "published_at": "2026-11-09T06:00:00+03:00",

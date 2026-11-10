@@ -1,0 +1,39 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-10",
+  "slug": "2026-11-10",
+  "title": "ИИ-Сводка на 10 ноября 2026",
+  "description": "Anthropic закрепляет энергомощности для ИИ-вычислений, Meta выпускает лёгкую модель для агентов, а OpenAI и NVIDIA усиливают контроль модельных нагрузок и обучение роботов.",
+  "published_at": "2026-11-10T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-10.png",
+  "topics": [
+    "ИИ-инфраструктура",
+    "энергоснабжение дата-центров",
+    "Anthropic",
+    "Meta",
+    "Muse Ember",
+    "агенты ИИ",
+    "Claude Code",
+    "Qwen Code",
+    "MCP",
+    "робототехника",
+    "NVIDIA",
+    "Control Room",
+    "безопасность ИИ"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: global_breaking, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation."
+    },
+    {
+      "type": "section_placement",
+      "area": "editorial",
+      "message": "Раздел для cand-004 автоматически исправлен: Мировые лидеры ИИ → Китайские лидеры ИИ."
+    }
+  ]
+}
