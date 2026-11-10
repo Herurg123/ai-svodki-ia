@@ -3245,6 +3245,7 @@ async function createNotebookAndAddSource(config, context, publication, job, sta
   saveState(config, state);
   log(config, `Источник добавлен. Блокнот: ${job.notebookTitleHint}; ${job.notebookUrl}`);
 }
+
 async function fillPromptField(dialog, prompt, timeout) {
   const candidates = [
     dialog.locator("textarea:visible"),
