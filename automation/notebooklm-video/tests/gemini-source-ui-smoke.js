@@ -71,8 +71,10 @@ function surface(mode){
     segment.indexOf("await sourceUi.openWebsiteSourceInput("));
   assert(segment.indexOf("job.sourceSubmitArmedAt =")<
     segment.indexOf("await submitWebsiteSourceUrl("));
-  assert(segment.includes("if (job.notebookUrl)"),
-    "NEW job with notebook URL must resume same notebook, not create another");
+  assert(segment.includes("if (pinned)"),
+    "Only a verified permanent notebook URL may be resumed without duplicate creation");
+  assert(segment.indexOf("if (job.notebookUrl && !pinned)") < segment.indexOf("await getRobotPage("),
+    "Malformed saved notebook URL must be rejected before opening the browser");
   assert(segment.includes("if (!job.sourceSubmitArmedAt)"),
     "Previously attempted source submit must not be retried blindly");
   assert(segment.includes("verifiedSourceBox"),"Exact source textbox from modal must be reused");
