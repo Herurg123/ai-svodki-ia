@@ -49,6 +49,15 @@ read-only проверки published same-day статьи в Studio и публ
 
 ## Безопасное обновление существующего `C:\\TRASH\\NotebookLMBot` после merge
 
+В Gemini Notebook (с ноября 2026) источники добавляются через `+ Источники`
+и точный URL import, не через поиск по Интернету. Пакет содержит **два**
+неразделимых рабочих файла `worker.js` и `notebooklm-source-ui.js`.
+После неизвестного ответа интерфейса создание нового пустого блокнота
+автоматически не повторяется: используется сохранённый UUID или требуется
+ручной осмотр. Уже созданные ранее пустые безымянные блокноты удаляются только
+вручную после сверки, не скриптом.
+
+
 После успешного Video CI на `main` скачать ZIP-артефакт GitHub Actions
 `NotebookLMBot-safe-update-<commit SHA>` из **Video CI**.
 Артефакт содержит `NotebookLMBot-safe-update.zip`. Распаковать внутренний
@@ -59,7 +68,7 @@ ZIP **в отдельный временный каталог**, НЕ в раб�
 `dzen-publish-direct.js`, `dzen-duplicate-guard.js`, `dzen-browser-runner.js`,
 `dzen-safe-notices.js`, `scheduled-worker.js`, `full-worker.js`,
 `history-utils.js`,
-`worker.js`, `video-footer.js`, `vk-stage.mjs`,
+`worker.js`, `notebooklm-source-ui.js`, `video-footer.js`, `vk-stage.mjs`,
 `vk-text.mjs`, `setup-local.ps1` и `package.json`.
 
 Не менять Планировщик. Дождаться отсутствия работающего комбайна и
@@ -87,6 +96,7 @@ Dry-run сверяет SHA-256 с разрешёнными предыдущим�
 ```powershell
 cd C:\\TRASH\\NotebookLMBot
 node --check .\worker.js
+node --check .\notebooklm-source-ui.js
 node --check .\video-footer.js
 node --check .\scheduled-worker.js
 node --check .\dzen-safe-notices.js
