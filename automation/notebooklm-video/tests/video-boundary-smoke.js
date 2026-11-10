@@ -187,7 +187,7 @@ assert.strictEqual(
 
 async function verifyResumeState() {
   const createFnSource = worker.slice(
-    worker.indexOf("async function createNotebookAndAddSource("),
+    worker.indexOf("async function waitForNewNotebookIdentity("),
     worker.indexOf("async function fillPromptField(")
   );
   async function exerciseCreate(initialUrl, createdUrl) {
@@ -196,6 +196,7 @@ async function verifyResumeState() {
     const page = {
       goto: async () => {},
       url: () => pageUrl,
+      waitForTimeout: async () => {},
       locator: () => ({ filter: () => ({}) }),
       getByRole: () => ({}),
       getByText: () => ({}),
@@ -207,7 +208,8 @@ async function verifyResumeState() {
       waitNotebookHome: async () => {},
       notebookCreateLocators: () => [],
       clickAnyVisible: async () => { pageUrl = createdUrl; },
-      waitForAnyEnabledVisible: async () => ({ click: async () => {} }),
+      sourceUi: { openWebsiteSourceInput: async () => {} },
+      confirmNotebookPage: async () => {},
       fillWebsiteSourceUrl: async () => ({}),
       submitWebsiteSourceUrl: async () => {},
       waitForSourceImportReady: async () => { throw Error("source timeout"); },
@@ -223,7 +225,7 @@ async function verifyResumeState() {
     const job = { status: "NEW", notebookUrl: null, notebookTitleHint: "ИИ-2026-10-16" };
     const state = { jobs: { today: job } };
     return {
-      invoke: () => fn({ notebookUrl: "https://notebook.google.com/", uiTimeoutMs: 30000 }, {}, publication, job, state),
+      invoke: () => fn({ notebookUrl: "https://notebook.google.com/", uiTimeoutMs: 60 }, {}, publication, job, state),
       job,
       snapshots,
     };
@@ -245,9 +247,11 @@ async function verifyResumeState() {
   );
 
   const invalid = await exerciseCreate("https://notebook.google.com/", "https://notebook.google.com/");
-  await assert.rejects(invalid.invoke(), /Невозможно сохранить URL/);
+  await assert.rejects(invalid.invoke(), /точный URL не подтверждён/);
   assert.strictEqual(invalid.job.status, "NEW");
-  assert.strictEqual(invalid.snapshots.length, 0);
+  assert(invalid.snapshots.length > 0, "Notebook creation is armed BEFORE clicking");
+  assert(invalid.snapshots.some(x => x.jobs.today.notebookCreateArmedAt),
+    "At-most-once notebook creation intent must persist after unknown outcome");
 
   const calls = [];
   const resumeContext = {
