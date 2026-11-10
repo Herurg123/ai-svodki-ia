@@ -146,6 +146,25 @@ retention. Text-log cleanup must match only `worker-*.log` /
 may migrate only known rotated log names plus obsolete rotation sidecar state,
 preserving unknown files.
 
+## Gemini Notebook source-import safety
+
+The canonical `worker.js` is a browser automation of Gemini Notebook
+(formerly NotebookLM). It must only enter the exact requested publication URL
+in a confirmed web-URL import form, never in the general Internet/Drive
+research search field. Support `+ Источники`, direct URL input and the old
+`Добавить источники` / `Сайты` dialog by exact visible controls; unrecognized
+source UI must fail closed with diagnostic visible buttons.
+
+Persist `notebookCreateArmedAt` before remote notebook creation; persist its
+exact verified `notebookUrl` immediately afterward and before source UI clicks.
+A same-day `NEW` retry with a saved URL must reopen **that exact notebook**,
+not create another. If creation is armed and the URL is unknown, require manual
+inspection. Persist `sourceSubmitArmedAt` before a web-source submit and never
+resubmit after an ambiguous outcome; resume with read-only source readiness.
+Never automatically delete accumulated empty notebooks or infer that an
+anonymous untitled card is the current job. Preserve all existing protected
+browser profile, source import readiness, download and publish invariants.
+
 ## Native Dzen publication safety
 
 The historical Video → RSS route is closed. Do not mutate production RSS to
