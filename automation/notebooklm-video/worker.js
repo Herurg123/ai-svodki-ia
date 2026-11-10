@@ -3150,7 +3150,11 @@ async function renameCurrentNotebook(
   job.updatedAt = new Date().toISOString();
   saveState(config, state);
 
-  log(config, `Блокнот переименован и новое имя подтверasync function waitForNewNotebookIdentity(page, timeout) {
+  log(config, `Блокнот переименован и новое имя подтверждено: ${desiredTitle}`);
+  return desiredTitle;
+}
+
+async function waitForNewNotebookIdentity(page, timeout) {
   const deadline = Date.now() + Math.min(timeout, 30000);
   while (Date.now() < deadline) {
     const notebookUrl = page.url();
@@ -3241,10 +3245,6 @@ async function createNotebookAndAddSource(config, context, publication, job, sta
   saveState(config, state);
   log(config, `Источник добавлен. Блокнот: ${job.notebookTitleHint}; ${job.notebookUrl}`);
 }
-{job.notebookTitleHint}; ${job.notebookUrl}`
-  );
-}
-
 async function fillPromptField(dialog, prompt, timeout) {
   const candidates = [
     dialog.locator("textarea:visible"),
