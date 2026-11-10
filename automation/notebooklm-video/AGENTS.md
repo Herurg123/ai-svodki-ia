@@ -153,7 +153,12 @@ The canonical `worker.js` is a browser automation of Gemini Notebook
 in a confirmed web-URL import form, never in the general Internet/Drive
 research search field. Support `+ Источники`, direct URL input and the old
 `Добавить источники` / `Сайты` dialog by exact visible controls; unrecognized
-source UI must fail closed with diagnostic visible buttons.
+source UI must fail closed with diagnostic visible buttons. The November
+2026 dialog `Ссылки на видео YouTube и сайты` uses a multiline textarea:
+find it only inside its named dialog, retain the verified locator, and submit
+only with the exact dialog-local `Добавить` button. Never use Enter as a
+fallback: Enter creates another URL line, and a click timeout may represent
+an already submitted remote mutation.
 
 Persist `notebookCreateArmedAt` before remote notebook creation; persist its
 exact verified `notebookUrl` immediately afterward and before source UI clicks.
