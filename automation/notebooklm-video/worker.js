@@ -9,6 +9,7 @@ const { XMLParser } = require("fast-xml-parser");
 const logUtils = require("./log-utils");
 const history = require("./history-utils");
 const videoFooter = require("./video-footer");
+const sourceUi = require("./notebooklm-source-ui");
 
 const ROOT = __dirname;
 const CONFIG_PATH = path.join(ROOT, "config.json");
@@ -3149,138 +3150,88 @@ async function renameCurrentNotebook(
   job.updatedAt = new Date().toISOString();
   saveState(config, state);
 
-  log(config, `Блокнот переименован и новое имя подтверждено: ${desiredTitle}`);
-  return desiredTitle;
+  log(config, `Блокнот переименован и новое имя подтверasync function waitForNewNotebookIdentity(page, timeout) {
+  const deadline = Date.now() + Math.min(timeout, 30000);
+  while (Date.now() < deadline) {
+    const notebookUrl = page.url();
+    if (/^https:\/\/notebook\.google\.com\/notebook\/[^/?#]+(?:[?#]|$)/i.test(notebookUrl)) {
+      return notebookUrl;
+    }
+    await page.waitForTimeout(250);
+  }
+  throw new Error("Создание блокнота запрошено, но его точный URL не подтверждён. " +
+    "Повторно нажимать создание запрещено; проверить вручную.");
 }
 
 async function createNotebookAndAddSource(config, context, publication, job, state) {
   stage = "CREATE_NOTEBOOK";
   activePage = await getRobotPage(config, context);
 
-  await activePage.goto(config.notebookUrl, {
-    waitUntil: "domcontentloaded",
-    timeout: config.uiTimeoutMs,
-  });
-  await waitNotebookHome(activePage, config);
-
-  await clickAnyVisible(
-    notebookCreateLocators(activePage),
-    config.uiTimeoutMs,
-    'кнопка "Новый блокнот" (или legacy "Создать")'
-  );
-  log(config, 'Нажата кнопка создания блокнота: "Новый блокнот"/legacy "Создать".');
-
-  const siteSourceLocators = [
-    // В актуальном NotebookLM в DOM могут одновременно существовать скрытая
-    // и видимая копии одного элемента. Поэтому для этого перехода ищем все
-    // совпадения и выбираем реально видимое/активное, а не только .first().
-    activePage.locator('button:visible').filter({ hasText: /^\s*Сайты\s*$/i }),
-    activePage
-      .locator('[role="button"]:visible')
-      .filter({ hasText: /^\s*Сайты\s*$/i }),
-    activePage.getByRole("button", { name: /^Сайты$/i }),
-    activePage.getByText(/^Сайты$/i),
-  ];
-
-  // В старом интерфейсе NotebookLM окно выбора источника могло открываться
-  // автоматически сразу после создания блокнота. В новом интерфейсе сначала
-  // требуется явно нажать «Добавить источники». Сохраняем совместимость с
-  // обоими вариантами, чтобы не ломать уже работавший сценарий.
-  let siteSourceButton = null;
-
-  try {
-    siteSourceButton = await waitForAnyEnabledVisible(
-      siteSourceLocators,
-      Math.min(config.uiTimeoutMs, 1500),
-      'кнопка "Сайты"'
-    );
-    log(config, "Окно добавления источников уже открыто автоматически.");
-  } catch {
-    stage = "OPEN_ADD_SOURCES";
-
-    const addSourcesLocators = [
-      activePage
-        .locator('button:visible')
-        .filter({ hasText: /Добавить источники/i }),
-      activePage
-        .locator('[role="button"]:visible')
-        .filter({ hasText: /Добавить источники/i }),
-      activePage.getByRole("button", { name: /Добавить источники/i }),
-      activePage.getByText(/Добавить источники/i),
-    ];
-
-    let addSourcesButton = null;
-
-    try {
-      addSourcesButton = await waitForAnyEnabledVisible(
-        addSourcesLocators,
-        config.uiTimeoutMs,
-        'кнопка "Добавить источники"'
-      );
-    } catch (error) {
-      const visibleButtons = await describeVisibleButtons(activePage);
-      throw new Error(
-        `${error.message}. Видимые кнопки: ${JSON.stringify(visibleButtons)}`
-      );
+  if (job.notebookUrl) {
+    // The NEW state can now be resumed safely after an empty notebook was
+    // created. Never make a second one for the same publication date.
+    await activePage.goto(job.notebookUrl, {
+      waitUntil: "domcontentloaded", timeout: config.uiTimeoutMs,
+    });
+    await confirmNotebookPage(activePage, config, job.notebookUrl);
+    log(config, `Возобновляю добавление источника в сохранённый блокнот: ${job.notebookUrl}`);
+  } else {
+    if (job.notebookCreateArmedAt) {
+      throw new Error("Предыдущая попытка создания блокнота не имеет подтверждённого URL. " +
+        "Чтобы избежать новых пустых блокнотов, требуется ручная проверка.");
     }
-
-    await addSourcesButton.click();
-    log(config, 'Нажата кнопка "Добавить источники".');
-
-    stage = "OPEN_SITE_SOURCE";
-    siteSourceButton = await waitForAnyEnabledVisible(
-      siteSourceLocators,
+    await activePage.goto(config.notebookUrl, {
+      waitUntil: "domcontentloaded", timeout: config.uiTimeoutMs,
+    });
+    await waitNotebookHome(activePage, config);
+    // A crash/click-timeout may happen after the remote request was sent.
+    // Persist intent BEFORE clicking, so the next run cannot create a duplicate.
+    job.notebookCreateArmedAt = new Date().toISOString();
+    job.updatedAt = new Date().toISOString();
+    saveState(config, state);
+    await clickAnyVisible(
+      notebookCreateLocators(activePage),
       config.uiTimeoutMs,
-      'кнопка "Сайты"'
+      'кнопка "Новый блокнот" (или legacy "Создать")'
     );
+    log(config, 'Нажата кнопка создания блокнота: "Новый блокнот"/legacy "Создать".');
+    job.notebookUrl = await waitForNewNotebookIdentity(activePage, config.uiTimeoutMs);
+    job.updatedAt = new Date().toISOString();
+    saveState(config, state);
+    log(config, `UUID нового блокнота сохранён до открытия источников: ${job.notebookUrl}`);
   }
 
-  stage = "OPEN_SITE_SOURCE";
-  await siteSourceButton.click();
+  if (!job.sourceSubmitArmedAt) {
+    stage = "OPEN_ADD_SOURCES";
+    await sourceUi.openWebsiteSourceInput(activePage, config.uiTimeoutMs, {
+      log: (message) => log(config, message),
+      describeVisibleButtons,
+    });
 
-  stage = "ADD_SOURCE_URL";
-  const sourceBox = await fillWebsiteSourceUrl(
-    activePage,
-    publication.url,
-    config.uiTimeoutMs
-  );
+    stage = "ADD_SOURCE_URL";
+    const sourceBox = await fillWebsiteSourceUrl(activePage, publication.url, config.uiTimeoutMs);
+    log(config, `URL источника введён и подтверждён в поле: ${publication.url}`);
 
-  log(config, `URL источника введён и подтверждён в поле: ${publication.url}`);
-
-  await submitWebsiteSourceUrl(
-    activePage,
-    sourceBox,
-    config.uiTimeoutMs
-  );
-  log(config, "Команда добавления источника отправлена.");
-
-  // Сохраняем настоящий UUID нового блокнота ДО ожидания внешнего импорта.
-  // Если NotebookLM не успел обработать источник, следующий scheduled run
-  // продолжит этот блокнот, а не создаст ещё один дубликат.
-  const pendingNotebookUrl = activePage.url();
-  if (!/^https:\/\/notebook\.google\.com\/notebook\/[^/?#]+(?:[?#]|$)/i.test(pendingNotebookUrl)) {
-    throw new Error(`Невозможно сохранить URL нового NotebookLM: ${pendingNotebookUrl}`);
+    // The submit may reach Gemini Notebook even if the click times out.
+    // Do not submit twice across scheduled runs until import is verified.
+    job.sourceSubmitArmedAt = new Date().toISOString();
+    job.updatedAt = new Date().toISOString();
+    saveState(config, state);
+    await submitWebsiteSourceUrl(activePage, sourceBox, config.uiTimeoutMs);
+    log(config, "Команда добавления источника отправлена.");
+  } else {
+    log(config, "Источник уже отправлялся ранее. Проверяю импорт read-only без повторного добавления URL.");
   }
-  job.notebookUrl = pendingNotebookUrl;
+
+  // The input may close but backend processing is asynchronous. Preserve the
+  // same notebook identity, and retry ONLY read-only readiness if interrupted.
   job.status = "CREATING_VIDEO";
   job.updatedAt = new Date().toISOString();
   saveState(config, state);
-  log(config, `Блокнот сохранён для безопасного resume импорта: ${pendingNotebookUrl}`);
 
   stage = "WAIT_SOURCE_READY";
-  await waitForSourceImportReady(
-    config,
-    activePage,
-    publication
-  );
-
-  await renameCurrentNotebook(
-    config,
-    activePage,
-    publication,
-    job,
-    state
-  );
+  await waitForSourceImportReady(config, activePage, publication);
+  await renameCurrentNotebook(config, activePage, publication, job, state);
 
   job.notebookUrl = activePage.url();
   job.status = "CREATING_VIDEO";
@@ -3288,10 +3239,9 @@ async function createNotebookAndAddSource(config, context, publication, job, sta
   job.lastErrorAt = null;
   job.updatedAt = new Date().toISOString();
   saveState(config, state);
-
-  log(
-    config,
-    `Источник добавлен. Блокнот: ${job.notebookTitleHint}; ${job.notebookUrl}`
+  log(config, `Источник добавлен. Блокнот: ${job.notebookTitleHint}; ${job.notebookUrl}`);
+}
+{job.notebookTitleHint}; ${job.notebookUrl}`
   );
 }
 
