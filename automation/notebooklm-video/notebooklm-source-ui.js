@@ -3,7 +3,7 @@
 // Read-only recognition of source surfaces plus one click on a named source
 // control. Never use the research/search field for direct URL import.
 const WEBSITE_SOURCE_LABEL = /^(?:Сайты|Веб[\s-]?сайты|Веб[\s-]?сайт|Ссылки|Ссылка(?: на (?:сайт|веб[\s-]?страницу))?|Веб[\s-]?страниц(?:а|ы)|Website(?:s)?|Web\s*links?|Links?|URL(?:s)?)$/i;
-const SOURCE_OPEN_LABEL = /^(?:\+\s*)?(?:Источники|Добавить источники|Add sources|Sources)$/i;
+const SOURCE_OPEN_LABEL = /^(?:(?:add_2|add|\+)\s*)?(?:Источники|Добавить источники|Add sources|Sources)$/i;
 const WEBSITE_URL_DIALOG_TITLE = /(?:Ссылки на видео YouTube и сайты|Links to YouTube videos and websites)/i;
 
 function urlInputLocators(page) {
@@ -34,8 +34,10 @@ function websiteOptionLocators(page) {
 function sourceOpenLocators(page) {
   return [
     // Gemini Notebook 2026: + Источники in the left sources panel.
-    page.getByRole("button", { name: /^\+?\s*Источники$/i }),
-    page.locator('button:visible').filter({ hasText: /^\s*\+?\s*Источники\s*$/i }),
+    // Gemini renders a Material icon as literal text "add_2 Источники".
+    // Accessible names may include the icon ligature, not just "Источники".
+    page.getByRole("button", { name: /^(?:(?:add_2|add|\+)\s*)?Источники$/i }),
+    page.locator('button:visible').filter({ hasText: /^\s*(?:(?:add_2|add|\+)\s*)?Источники\s*$/i }),
     page.getByRole("button", { name: /^(?:Добавить источники|Add sources)$/i }),
     page.locator('button:visible').filter({ hasText: /^(?:Добавить источники|Add sources)$/i }),
     page.locator('[role="button"]:visible').filter({ hasText: /^(?:Добавить источники|Add sources)$/i }),
