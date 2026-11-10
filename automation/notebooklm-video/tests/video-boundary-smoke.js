@@ -209,6 +209,7 @@ async function verifyResumeState() {
       notebookCreateLocators: () => [],
       clickAnyVisible: async () => { pageUrl = createdUrl; },
       sourceUi: { openWebsiteSourceInput: async () => {} },
+      describeVisibleButtons: async () => [],
       confirmNotebookPage: async () => {},
       fillWebsiteSourceUrl: async () => ({}),
       submitWebsiteSourceUrl: async () => {},
