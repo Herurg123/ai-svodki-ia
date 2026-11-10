@@ -2690,7 +2690,7 @@ async function submitWebsiteSourceUrl(page, sourceBox, timeout) {
       .evaluateAll((buttons) =>
         buttons.slice(0, 50).map((button) => ({
           text: String(button.innerText || button.textContent || "")
-            .replace(/\\s+/g, " ").trim(),
+            .replace(/\s+/g, " ").trim(),
           ariaLabel: button.getAttribute("aria-label"),
           disabled: Boolean(button.disabled),
           inOverlay: Boolean(button.closest(".cdk-overlay-pane, [role=dialog], mat-dialog-container")),
