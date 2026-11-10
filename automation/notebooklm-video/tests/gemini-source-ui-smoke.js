@@ -9,7 +9,7 @@ function surface(mode){
   const names=()=>{
     if(state.input)return [];
     if(state.chooser)return mode==="legacy"?["Сайты"]:mode==="gemini"?["Сайты"]:["Другое"];
-    return ["+ Источники","Добавить источники"];
+    return mode==="gemini"?["add_2 Источники","add_2 Заметка"]:["+ Источники","Добавить источники"];
   };
   const targets=(type,pattern)=>{
     if(type==="input-scoped")return state.input?["URL textarea in exact dialog"]:[];
@@ -25,7 +25,7 @@ function surface(mode){
       isVisible:async()=>Boolean(name),isEnabled:async()=>Boolean(name),
       getAttribute:async()=>null,click:async()=>{
         state.clicks.push(name);
-        if(["+ Источники","Добавить источники"].includes(name)){
+        if(["+ Источники","add_2 Источники","Добавить источники"].includes(name)){
           state.chooser=true;
           if(mode==="direct")state.input=true;
         }
@@ -44,7 +44,7 @@ function surface(mode){
 (async()=>{
   for(const [mode,expected] of [
     ["legacy",["Сайты"]],
-    ["gemini",["+ Источники","Сайты"]],
+    ["gemini",["add_2 Источники","Сайты"]],
     ["direct",["+ Источники"]]
   ]){
     const x=surface(mode);
@@ -56,6 +56,8 @@ function surface(mode){
   await assert.rejects(ui.openWebsiteSourceInput(invalid.page,50),/нет выбора веб-сайта или URL/);
   assert(!invalid.state.clicks.includes("Другое"),"Unrelated source controls never clicked");
   assert(ui.WEBSITE_URL_DIALOG_TITLE.test("Ссылки на видео YouTube и сайты"));
+  assert(ui.SOURCE_OPEN_LABEL.test("add_2 Источники"));
+  assert(!ui.SOURCE_OPEN_LABEL.test("add_2 Заметка"));
   assert(ui.urlInputLocators(surface("gemini").page).length>=4,
     "Exact modal textarea must be searched before unscoped web-search inputs");
 
