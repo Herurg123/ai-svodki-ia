@@ -251,7 +251,7 @@ async function verifyResumeState() {
   );
 
   const invalid = await exerciseCreate("https://notebook.google.com/", "https://notebook.google.com/");
-  await assert.rejects(invalid.invoke(), /точный URL не подтверждён/);
+  await assert.rejects(invalid.invoke(), /постоянный UUID и готовая оболочка не подтверждены/);
   assert.strictEqual(invalid.job.status, "NEW");
   assert(invalid.snapshots.length > 0, "Notebook creation is armed BEFORE clicking");
   assert(invalid.snapshots.some(x => x.jobs.today.notebookCreateArmedAt),
