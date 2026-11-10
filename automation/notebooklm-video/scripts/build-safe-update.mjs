@@ -22,6 +22,8 @@ const baselines=[
   "91259a0240591a406ae090360fdb58ef61ce3602",
   "23dac7b3d649e912bcf753cf7566c827c7d581eb",
   "42068f2042db9cb15f67623036f011ebc96fd16e",
+  "30fc5771c4d56e9c56461b6b65d0e1840038a8f2",
+  "918b0173449fd39110aeb219b1da5e8b1cd2e95d",
 ];
 // Explicit allowlist; intentionally excludes _bak, config/state, secrets,
 // browser data, MP4/PNG, logs, Task Scheduler, and operator templates.
@@ -36,6 +38,7 @@ const files=[
   "full-worker.js",
   "history-utils.js",
   "worker.js",
+  "notebooklm-source-ui.js",
   "video-footer.js",
   "vk-stage.mjs",
   "vk-text.mjs",
