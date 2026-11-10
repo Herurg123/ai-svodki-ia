@@ -4,9 +4,17 @@
 // control. Never use the research/search field for direct URL import.
 const WEBSITE_SOURCE_LABEL = /^(?:Сайты|Веб[\s-]?сайты|Веб[\s-]?сайт|Ссылки|Ссылка(?: на (?:сайт|веб[\s-]?страницу))?|Веб[\s-]?страниц(?:а|ы)|Website(?:s)?|Web\s*links?|Links?|URL(?:s)?)$/i;
 const SOURCE_OPEN_LABEL = /^(?:\+\s*)?(?:Источники|Добавить источники|Add sources|Sources)$/i;
+const WEBSITE_URL_DIALOG_TITLE = /(?:Ссылки на видео YouTube и сайты|Links to YouTube videos and websites)/i;
 
 function urlInputLocators(page) {
   return [
+    // Screenshot-verified November 2026 Gemini Notebook: a large multiline
+    // textarea inside the exact "Ссылки на видео YouTube и сайты" dialog.
+    // Scope matters: the page also exposes an unrelated internet research box.
+    page.getByRole("dialog").filter({ hasText: WEBSITE_URL_DIALOG_TITLE }).locator("textarea:visible"),
+    page.locator('mat-dialog-container:visible').filter({ hasText: WEBSITE_URL_DIALOG_TITLE }).locator("textarea:visible"),
+    page.locator('.cdk-overlay-pane:visible').filter({ hasText: WEBSITE_URL_DIALOG_TITLE }).locator("textarea:visible"),
+    page.locator('[role="dialog"]:visible').filter({ hasText: WEBSITE_URL_DIALOG_TITLE }).locator("textarea:visible"),
     page.locator('[formcontrolname="newUrl"]:visible'),
     page.locator('input[type="url"]:visible'),
     page.getByRole("textbox", { name: /(?:url|ссылк|адрес|web\s*link)/i }),
