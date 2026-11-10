@@ -134,7 +134,14 @@ armed before the click; uncertain submits are checked read-only on restart,
 never blindly re-submitted. After confirmed submit the job becomes
 `CREATING_VIDEO` and resumes the readiness check/rename/generation as before.
 If create was armed but the UUID could not be confirmed, stop for operator
-inspection; do not create another blank notebook. Already accumulated empty
+inspection; do not create another blank notebook. The transient URL
+`https://notebook.google.com/notebook/creating` is **not an ID**: only a
+persistent UUID (or long opaque ID) plus the loaded notebook shell may be saved.
+The Gemini source button's actual text may include `add_2 Источники` due to a
+Material icon ligature, so both forms are explicitly supported. Existing local
+`state.json` records containing `/notebook/creating` from the broken earlier
+version must be explicitly linked by the operator to an existing **empty**
+notebook's verified URL after a backup; worker will not create another. Already accumulated empty
 notebooks cannot be reliably matched and must be cleaned manually; no automatic
 delete or anonymous-card inference is allowed.
 
