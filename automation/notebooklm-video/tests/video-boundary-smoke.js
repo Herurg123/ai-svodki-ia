@@ -187,7 +187,7 @@ assert.strictEqual(
 
 async function verifyResumeState() {
   const createFnSource = worker.slice(
-    worker.indexOf("async function waitForNewNotebookIdentity("),
+    worker.indexOf("function permanentNotebookUrl("),
     worker.indexOf("async function fillPromptField(")
   );
   async function exerciseCreate(initialUrl, createdUrl) {
