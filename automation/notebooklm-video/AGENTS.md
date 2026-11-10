@@ -162,6 +162,12 @@ an already submitted remote mutation.
 
 Persist `notebookCreateArmedAt` before remote notebook creation; persist its
 exact verified `notebookUrl` immediately afterward and before source UI clicks.
+The real November 2026 create route first reports `/notebook/creating`, which
+is NOT a permanent UUID; wait for a persistent notebook identity AND confirmed
+loaded shell. The button may expose a Material icon ligature in its accessible
+name (`add_2 Источники`), not plain `Источники`. Existing `state.json` records
+with `/notebook/creating` must stop and request explicit manual remapping to a
+verified empty notebook URL; never infer a notebook card or make a duplicate.
 A same-day `NEW` retry with a saved URL must reopen **that exact notebook**,
 not create another. If creation is armed and the URL is unknown, require manual
 inspection. Persist `sourceSubmitArmedAt` before a web-source submit and never
