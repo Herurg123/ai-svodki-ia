@@ -110,7 +110,9 @@ not delete/recreate that profile or its Google/NotebookLM/Dzen sessions.
 Current Gemini Notebook (formerly NotebookLM) home handling supports
 `+ Новый блокнот` / `Мои блокноты` and previous `Создать` /
 `Недавние блокноты` surfaces. Source import supports current `+ Источники`
-followed by exact `Ссылки` / `Сайты` / `Website`, direct URL input, and
+followed by exact `Сайты` / `Ссылки` / `Website` and the screenshot-verified
+multiline URL textarea inside `Ссылки на видео YouTube и сайты` (then the
+exact `Добавить` button), direct URL input, and
 legacy `Добавить источники` / `Сайты`. It never submits the daily URL to
 Internet/Drive research. When no exact URL-input surface is proven, the flow
 fails with safe button diagnostics rather than clicking unrelated controls.
