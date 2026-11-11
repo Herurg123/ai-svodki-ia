@@ -1,0 +1,60 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-11",
+  "slug": "2026-11-11",
+  "title": "ИИ-Сводка на 11 ноября 2026",
+  "description": "Google расширяет линейку TPU, OpenAI выводит корпоративные и бизнес-сценарии ChatGPT в новые каналы, а исследователи фиксируют риски публично доступной агентной киберинфраструктуры. В России — агент для научного и патентного поиска.",
+  "published_at": "2026-11-11T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-11.png",
+  "topics": [
+    "Google Cloud",
+    "TPU",
+    "ИИ-ускорители",
+    "confidential computing",
+    "ChatGPT Enterprise",
+    "AWS Marketplace",
+    "ChatGPT",
+    "рынок труда",
+    "фриланс",
+    "агенты ИИ",
+    "кибербезопасность ИИ",
+    "ARTEX",
+    "Inventorus",
+    "патентный поиск"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-001."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, legal_regulation, independent_missing_events."
+    },
+    {
+      "type": "section_fallback",
+      "area": "editorial",
+      "message": "Неоднозначная рубрика для cand-014: asia_mentioned_without_clear_leading_actor; выбран раздел Мировые лидеры ИИ без нового API-вызова."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "OpenAI: В коротком пуле выбраны три разные по типу и аудитории подтверждённые публикации OpenAI: дистрибуция корпоративного продукта через AWS Marketplace, исследование рынка труда фрилансеров и запуск Businesses in ChatGPT. Исключение любого из них только из-за мягкого лимита снизило бы содержательность выпуска."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "OpenAI: Три сюжета относятся к разным независимым событиям OpenAI — корпоративной дистрибуции, исследованию влияния ИИ на труд и новому продукту для взаимодействия с бизнесами. В условиях короткого выпуска они сохранены как самостоятельные события."
+    }
+  ]
+}

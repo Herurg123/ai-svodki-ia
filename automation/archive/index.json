@@ -1,8 +1,222 @@
 {
   "version": 2,
-  "generated_at": "2026-11-10T02:16:51+00:00",
+  "generated_at": "2026-11-11T02:17:30+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-11",
+      "published_at": "2026-11-11T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-11T05:06:29+03:00",
+      "title": "ИИ-Сводка на 11 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-11/",
+      "summary": "Главные новости искусственного интеллекта за 11 ноября 2026 года Новостей сегодня меньше, чем обычно Повестка дня соединяет инфраструктуру, корпоративную дистрибуцию ИИ и безопасность агентных систем. Google уточняет специализацию собственных ускорителей, OpenAI расширяет присутствие ChatGPT в бизнесовых каналах, а исследователи обращают внимание на доступность offensive-инструментов с агентным слоем. Практический общий вывод: конкуренция смещается от одной только модели к среде её использования",
+      "topics": [
+        "Google Cloud",
+        "TPU",
+        "ИИ-ускорители",
+        "confidential computing",
+        "ChatGPT Enterprise",
+        "AWS Marketplace",
+        "ChatGPT",
+        "рынок труда",
+        "фриланс",
+        "агенты ИИ",
+        "кибербезопасность ИИ",
+        "ARTEX",
+        "Inventorus",
+        "патентный поиск"
+      ],
+      "source_urls": [
+        "https://cloud.google.com/blog/topics/ai-infrastructure/tpu-8tx-and-tpu-8i-max",
+        "https://openai.com/index/chatgpt-enterprise-aws-marketplace",
+        "https://openai.com/index/ai-effect-on-freelance-work",
+        "https://openai.com/index/introducing-businesses-chatgpt",
+        "https://www.techradar.com/pro/security/hundreds-of-copies-of-chinese-made-artex-hacking-tools-leaked-online-for-anyone-to-use-in-further-attacks",
+        "https://ktxt.ru/russia/inventorus-zapustil-ii-agenta-nikola-nauchnykh-issledovaniy"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-001",
+          "section": "world",
+          "headline": "Google Cloud представила TPU 8tx и TPU 8i Max",
+          "organization": "Google Cloud",
+          "topic": "Кастомные ИИ-ускорители; confidential computing; inference; memory-intensive reasoning; облачная инфраструктура",
+          "event_type": "product_launch",
+          "status": "new",
+          "summary": "Google Cloud объявила о двух вариантах TPU восьмого поколения: TPU 8tx для конфиденциальных и регулируемых нагрузок и TPU 8i Max для задач с повышенными требованиями к памяти, включая reasoning, coding и агентные приложения.",
+          "published_at": null,
+          "published_date": "2026-11-09",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Introducing TPU 8tx and TPU 8i Max",
+              "publisher": "Google Cloud Blog",
+              "url": "https://cloud.google.com/blog/topics/ai-infrastructure/tpu-8tx-and-tpu-8i-max"
+            }
+          ],
+          "keywords": [
+            "Google Cloud",
+            "TPU 8tx",
+            "TPU 8i Max",
+            "AI accelerators",
+            "confidential computing",
+            "inference infrastructure"
+          ],
+          "geography": "world",
+          "category": "chips"
+        },
+        {
+          "candidate_id": "cand-007",
+          "section": "world",
+          "headline": "ChatGPT Enterprise стал доступен в AWS Marketplace",
+          "organization": "OpenAI",
+          "topic": "ChatGPT Enterprise now available in AWS Marketplace",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: ChatGPT Enterprise now available in AWS Marketplace",
+          "published_at": "2026-11-09T19:00:00+00:00",
+          "published_date": "2026-11-09",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "ChatGPT Enterprise now available in AWS Marketplace",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/chatgpt-enterprise-aws-marketplace"
+            }
+          ],
+          "keywords": [
+            "ChatGPT",
+            "Enterprise",
+            "now",
+            "available",
+            "AWS",
+            "Marketplace"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-008",
+          "section": "world",
+          "headline": "OpenAI опубликовала исследование о влиянии ИИ на фриланс",
+          "organization": "OpenAI",
+          "topic": "Work at the Frontier: AI’s effect on freelance work",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Work at the Frontier: AI’s effect on freelance work",
+          "published_at": "2026-11-10T07:00:00+00:00",
+          "published_date": "2026-11-10",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Work at the Frontier: AI’s effect on freelance work",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/ai-effect-on-freelance-work"
+            }
+          ],
+          "keywords": [
+            "Work",
+            "at",
+            "Frontier",
+            "effect",
+            "freelance",
+            "work"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-010",
+          "section": "world",
+          "headline": "OpenAI представила Businesses in ChatGPT",
+          "organization": "OpenAI",
+          "topic": "Introducing Businesses in ChatGPT",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Introducing Businesses in ChatGPT",
+          "published_at": "2026-11-10T10:00:00+00:00",
+          "published_date": "2026-11-10",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Introducing Businesses in ChatGPT",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/introducing-businesses-chatgpt"
+            }
+          ],
+          "keywords": [
+            "Introducing",
+            "Businesses",
+            "ChatGPT"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-014",
+          "section": "world",
+          "headline": "Исследователи сообщили о более чем 1 400 публично доступных инстансах ARTEX",
+          "organization": "Censys; ARTEX; Autumn-27; DeepSeek",
+          "topic": "AI-agent security; публично доступная offensive-инфраструктура; автоматизированная разведка; DeepSeek; китайские инструменты кибератак",
+          "event_type": "security research disclosure",
+          "status": "new",
+          "summary": "TechRadar со ссылкой на исследование Censys сообщила о 1 465 хостах с доступными из интернета консолями ARTEX — агентного слоя над инструментом разведки ScopeSentry. На 155 таких хостах одновременно были замечены Cobalt Strike, Vshell или Adaptix C2, а в 32 публичных директориях находились эксплойты, post-exploitation-инструменты и другие чувствительные файлы. ARTEX ранее связывали с атаками на южнокорейские финансовые организации, где основным reasoning-модулем был DeepSeek V4.1-Flash.",
+          "published_at": "2026-11-09T17:15:00+00:00",
+          "published_date": "2026-11-09",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Hundreds of copies of Chinese-made ARTEX hacking tools leaked online for anyone to use in further attacks",
+              "publisher": "TechRadar",
+              "url": "https://www.techradar.com/pro/security/hundreds-of-copies-of-chinese-made-artex-hacking-tools-leaked-online-for-anyone-to-use-in-further-attacks"
+            }
+          ],
+          "keywords": [
+            "ARTEX",
+            "Censys",
+            "DeepSeek V4.1-Flash",
+            "AI agents",
+            "offensive security",
+            "exposed consoles",
+            "China",
+            "cyberattacks"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-013",
+          "section": "russia",
+          "headline": "Inventorus запустила агента «Никола» для научных и патентных исследований",
+          "organization": "Inventorus",
+          "topic": "ИИ-агенты для научной аналитики и патентного поиска",
+          "event_type": "product_launch",
+          "status": "new",
+          "summary": "Российская аналитическая платформа Inventorus объявила о запуске агента «Никола», который по запросу пользователя формирует методику поиска, анализирует научные публикации и патентные документы и выдаёт структурированный отчёт с проверяемыми источниками. Продукт доступен в разделе «Нейроинструменты» платформы.",
+          "published_at": "2026-11-09T17:32:10+00:00",
+          "published_date": "2026-11-09",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Inventorus «Никола»: ИИ-агент для науки и патентов",
+              "publisher": "Контекст",
+              "url": "https://ktxt.ru/russia/inventorus-zapustil-ii-agenta-nikola-nauchnykh-issledovaniy"
+            }
+          ],
+          "keywords": [
+            "Россия",
+            "Inventorus",
+            "ИИ-агент",
+            "научные исследования",
+            "патенты",
+            "research agent",
+            "научная аналитика"
+          ],
+          "geography": "russia",
+          "category": "agents"
+        }
+      ]
+    },
     {
       "date": "2026-11-10",
       "published_at": "2026-11-10T06:00:00+03:00",
@@ -6330,10 +6544,10 @@
     {
       "date": "2026-10-08",
       "published_at": "2026-10-08T06:00:00+03:00",
-      "search_cutoff_at": "2026-10-08T05:06:18+03:00",
+      "search_cutoff_at": "2026-10-08T06:00:00+03:00",
       "title": "ИИ-Сводка на 8 октября 2026",
       "link": "https://rybalka.one/posts/2026-10-08/",
-      "summary": "Главные новости искусственного интеллекта за 8 октября 2026 года Повестка дня показывает, что конкуренция в ИИ всё заметнее перемещается в слой исполнения: локальные устройства получают ресурсы для запуска крупных моделей, а операционные системы — механизмы изоляции агентов. Одновременно Google и OpenAI меняют массовые интерфейсы создания и проверки контента, а разработчики агентных платформ ищут путь в корпоративные процессы. Отдельный общий сигнал — рынок переходит от обещаний универсального п",
+      "summary": "Microsoft выводит локальных агентов на Windows, Google открывает инструменты создания и проверки контента, OpenAI меняет интерфейс ChatGPT, а Nous Research расширяет Hermes для бизнеса.",
       "topics": [
         "локальный ИИ",
         "NVIDIA RTX Spark",

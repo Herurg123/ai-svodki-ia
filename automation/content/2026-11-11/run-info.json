@@ -1,0 +1,206 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-11-11",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-11-11.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-002: источник показывает дату без точного времени.",
+    "cand-003: источник показывает дату без точного времени.",
+    "cand-012: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: openai (7)",
+    "Исследовательский пул перегружен одной организацией: openai (7)",
+    "Выбрано 6 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Неоднозначная рубрика для cand-014: asia_mentioned_without_clear_leading_actor; применён мировой раздел.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-11-11",
+  "started_at": "2026-11-11T02:15:28+00:00",
+  "finished_at": "2026-11-11T02:16:08+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 116,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "f78b3466469529474006780d75a60403e0b98d934e8703955094e044988c176d",
+    "candidates_sha256": "64681b129a1263bbc525f21ce112ed8d9ebde0dbff42e513df1e4b9fd55e40c3",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-11-09T05:06:29+03:00",
+      "end_at": "2026-11-11T05:06:29+03:00",
+      "latest_archive_at": "2026-11-10T05:06:29+03:00",
+      "start_date": "2026-11-09",
+      "end_date": "2026-11-11",
+      "latest_archive_date": "2026-11-10"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "4f63b9af9040b20dd0985d6c71aef4389e733abba47b52acf4df1daa6541f8c8",
+    "editorial_sha256": "a33635224877450b19178f8a48c18c42db7a944d71b66c6ec7ee432f3dfa2a0d",
+    "digest_sha256": "b13bbf1cd9dfdc0edec2d885287278ead51dab9c7ba699871a0fb60087584c5c",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-11-11.png",
+          "normalized_value": "ai-svodka-2026-11-11.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "selected_candidate_ids",
+          "model_value": [
+            "cand-001",
+            "cand-007",
+            "cand-008",
+            "cand-010",
+            "cand-013",
+            "cand-014"
+          ],
+          "normalized_value": [
+            "cand-001",
+            "cand-007",
+            "cand-008",
+            "cand-010",
+            "cand-014",
+            "cand-013"
+          ]
+        },
+        {
+          "field": "article_html.section_fallback",
+          "candidate_id": "cand-014",
+          "model_value": "Мировые лидеры ИИ",
+          "normalized_value": "Мировые лидеры ИИ",
+          "reason": "asia_mentioned_without_clear_leading_actor"
+        },
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        },
+        {
+          "field": "image_prompt",
+          "model_value": "Изображение 16:9: современная футуристическая редакционная обложка ежедневного аналитического выпуска об ИИ. Единственный крупный читаемый текст в верхней части: «ИИ-Сводка на 11 ноября 2026».\n\nГлавные визуальные темы: шесть связанных сцен — защищённый кремниевый ускоритель с сияющим контуром конфиденциальных вычислений; облачный корпоративный шлюз и аккуратный поток данных к облаку; силуэт фрилансера за ноутбуком рядом с абстрактной картой задач; нейтральный чат-интерфейс, соединяющий пользователя и витрины бизнесов без логотипов; научные статьи и патентные чертежи, собираемые агентом в структурированную карту знаний; киберщит, останавливающий сеть открытых консолей и опасных инструментов.\n\nКомпозиция: в центре — светящийся прозрачный узел ИИ-инфраструктуры, от которого расходятся шесть визуальных мотивов в форме радиальной аналитической схемы; вокруг — плотный технологический городской и облачный фон, без пустых зон; внизу оставить спокойную тёмную зону для визуального баланса, но без текста и интерфейсных подписей.\n\nСтиль: глубокая тёмно-синяя и графитовая палитра с акцентами бирюзового, холодного белого и янтарного света, кинематографичная редакционная 3D-иллюстрация, высокая детализация, чистая геометрия. Без логотипов компаний, без дополнительного текста, без водяных знаков, без мелких интерфейсных надписей, без технических имён файлов, без стокового корпоративного клипарта, без узнаваемых лиц реальных людей.",
+          "normalized_value": "Изображение 16:9: современная футуристическая редакционная обложка ежедневного аналитического выпуска об ИИ. Единственный крупный читаемый текст в верхней части: «ИИ-Сводка на 11 ноября 2026».\n\nГлавные визуальные темы: шесть связанных сцен — защищённый кремниевый ускоритель с сияющим контуром конфиденциальных вычислений; облачный корпоративный шлюз и аккуратный поток данных к облаку; силуэт фрилансера за ноутбуком рядом с абстрактной картой задач; нейтральный чат-интерфейс, соединяющий пользователя и витрины бизнесов без логотипов; научные статьи и патентные чертежи, собираемые агентом в структурированную карту знаний; киберщит, останавливающий сеть открытых консолей и опасных инструментов.\n\nКомпозиция: в центре — светящийся прозрачный узел ИИ-инфраструктуры, от которого расходятся шесть визуальных мотивов в форме радиальной аналитической схемы; вокруг — плотный технологический городской и облачный фон, без пустых зон; внизу оставить спокойную тёмную зону для визуального баланса, но без текста и интерфейсных подписей.\n\nСтиль: глубокая тёмно-синяя и графитовая палитра с акцентами бирюзового, холодного белого и янтарного света, кинематографичная редакционная 3D-иллюстрация, высокая детализация, чистая геометрия. Без логотипов компаний, без дополнительного текста, без водяных знаков, без мелких интерфейсных надписей, без технических имён файлов, без стокового корпоративного клипарта, без узнаваемых лиц реальных людей. Обязательные ограничения: без пустой половины кадра."
+        }
+      ],
+      "changed_count": 4,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 6 сюжетов."
+        },
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-001."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, legal_regulation, independent_missing_events."
+        },
+        {
+          "type": "section_fallback",
+          "area": "editorial",
+          "message": "Неоднозначная рубрика для cand-014: asia_mentioned_without_clear_leading_actor; выбран раздел Мировые лидеры ИИ без нового API-вызова."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "OpenAI: В коротком пуле выбраны три разные по типу и аудитории подтверждённые публикации OpenAI: дистрибуция корпоративного продукта через AWS Marketplace, исследование рынка труда фрилансеров и запуск Businesses in ChatGPT. Исключение любого из них только из-за мягкого лимита снизило бы содержательность выпуска."
+        },
+        {
+          "type": "diversity_override",
+          "area": "organization",
+          "message": "OpenAI: Три сюжета относятся к разным независимым событиям OpenAI — корпоративной дистрибуции, исследованию влияния ИИ на труд и новому продукту для взаимодействия с бизнесами. В условиях короткого выпуска они сохранены как самостоятельные события."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0f50abda5d9e9770016af3cfc19c4487d1a3293077c80d1f73",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 230671,
+        "input_tokens_details": {
+          "cache_write_tokens": 18455,
+          "cached_tokens": 212213,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 18455
+          }
+        },
+        "output_tokens": 3919,
+        "output_tokens_details": {
+          "reasoning_tokens": 675
+        },
+        "total_tokens": 234590
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-11-11/resp_0f50abda5d9e9770016af3cfc19c4487d1a3293077c80d1f73.json"
+  },
+  "total_usage": {
+    "input_tokens": 230671,
+    "output_tokens": 3919,
+    "total_tokens": 234590,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "8c97a6c20e7348e786696cd3706e6a2337b5abde",
+    "run_id": "42943522495",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-11-11T05:06:29+03:00"
+}
