@@ -1,0 +1,139 @@
+{
+  "validator": "digest-artifact-contract",
+  "artifact_dir": "/home/runner/work/ai-svodki-ia/ai-svodki-ia/automation/preview/2026-11-12",
+  "status": "ok",
+  "errors": [],
+  "warnings": [],
+  "manifest": [
+    {
+      "path": "agency-discovery-rescue-transport.json",
+      "size_bytes": 24407,
+      "sha256": "21941bd9b78479f2bcf2304030ad76f292b8026befa239f87371e66197dc38a4"
+    },
+    {
+      "path": "agency-discovery-rescue.json",
+      "size_bytes": 7488,
+      "sha256": "5771db39893c0dc0acd5ccc526a72abe320fe91b95d1d2fbae8d43efb9d8382c"
+    },
+    {
+      "path": "article.html",
+      "size_bytes": 15705,
+      "sha256": "6042c4d8a450958849b67fbbd32fa77214491a27c89d0781b731b31d22314dd3"
+    },
+    {
+      "path": "artifact-normalization.json",
+      "size_bytes": 524,
+      "sha256": "e5783584b69b69f694c9a96a6582aa21850253d964cd521d0c3a881300de62e0"
+    },
+    {
+      "path": "candidates.json",
+      "size_bytes": 113651,
+      "sha256": "a95a2b58cdb65b11e9bb4b27546c73ac372a01d4a0ea158f6bb32d129b07d4b2"
+    },
+    {
+      "path": "digest.json",
+      "size_bytes": 22970,
+      "sha256": "5688d057471785609428e79e49f9bfff6617302dea8d776d7296642720c1310c"
+    },
+    {
+      "path": "editorial-event-identity.json",
+      "size_bytes": 65,
+      "sha256": "d7c7f7e72d6ed6792455c2719441d7cfacdea60e0048d12ac6076297f05e6782"
+    },
+    {
+      "path": "editorial-output-raw.json",
+      "size_bytes": 24489,
+      "sha256": "78ff91d10aa43c2026cf2847d4e170c5c5aae621887e67b300a62872c38c880d"
+    },
+    {
+      "path": "editorial-output.json",
+      "size_bytes": 24410,
+      "sha256": "98d49bd9b2bfd90f5b711e7a57a123d23f3367b1c30cc81881fe73e9fd263875"
+    },
+    {
+      "path": "editorial-prompt-input.txt",
+      "size_bytes": 1140438,
+      "sha256": "12bc0bac7cc22eea35090539bc89bea3b10de3abfb94be40d4156ff421eadad9"
+    },
+    {
+      "path": "editorial-reconciliation.json",
+      "size_bytes": 78,
+      "sha256": "09c2dcd3b69826b470f5669a0e3f436651b6a72fcbd93f97f5eec53328ac95cf"
+    },
+    {
+      "path": "hybrid-completeness.json",
+      "size_bytes": 318253,
+      "sha256": "e2042e6452142baea18b8868d2d097b4bb41b765ae0fb1093a14204d5d379c74"
+    },
+    {
+      "path": "image-prompt.txt",
+      "size_bytes": 3460,
+      "sha256": "3d41cb68875ee14db73e313ba22b210a1cd611b6295087ef38ae5653556151eb"
+    },
+    {
+      "path": "meta.json",
+      "size_bytes": 1739,
+      "sha256": "a045fea1f0a6504ce5b9acb47c827bb6b618e2f17bc649657160884df384da13"
+    },
+    {
+      "path": "metadata-normalization.json",
+      "size_bytes": 338,
+      "sha256": "c01493d98694368a98a8c8345a55ebaf8f4e0d9ed8bfcf482227337edf660b9f"
+    },
+    {
+      "path": "policy-normalization.json",
+      "size_bytes": 8434,
+      "sha256": "155a2560f3a6907b8133d505563f69f782d0b153370c302a7c563d90a01f1384"
+    },
+    {
+      "path": "primary-recall.json",
+      "size_bytes": 346026,
+      "sha256": "4bbc470b33f8c9078b88522bd4a006d3394d976a008d58c2c36eef3ab7ba8b31"
+    },
+    {
+      "path": "research-filtered-out.json",
+      "size_bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "path": "research-input-info.json",
+      "size_bytes": 315,
+      "sha256": "da6db2abef14aa8edc297b85c928ba8058485103fc86729153824abdea6b6367"
+    },
+    {
+      "path": "research-output-raw.json",
+      "size_bytes": 112919,
+      "sha256": "51e19001f641fff75396a0ed65a6d9be4553d635c1c0fdb2b3e95a61d4a0486e"
+    },
+    {
+      "path": "research-prompt-input.txt",
+      "size_bytes": 1319801,
+      "sha256": "6f0fcf067b226fe9e65570b3d0b0134a7c6a81294662da2951252a6e5f70e726"
+    },
+    {
+      "path": "run-info.json",
+      "size_bytes": 68099,
+      "sha256": "800c1a97d0459685f5904bfce523c39e7e2bbb12fe78d9b8dde863b3472e975a"
+    },
+    {
+      "path": "selection.json",
+      "size_bytes": 1241,
+      "sha256": "68a5823535166ada605b2135ca7fbba27129b4a70cb764456c351673a8caf780"
+    },
+    {
+      "path": "source-pulse.json",
+      "size_bytes": 66569,
+      "sha256": "08dd0a150bf609c0949a1cea36f3b9c80bb1c6a8a027fe5a3ba3aa2210a7d776"
+    },
+    {
+      "path": "sources.json",
+      "size_bytes": 1891,
+      "sha256": "33370cfaeb597263fb6d91c78b9ddb82766daf23cd3c4f05ec5824d07c395d6e"
+    },
+    {
+      "path": "stories.json",
+      "size_bytes": 13633,
+      "sha256": "103a5786a3610c2f72f11d2d7950c43ddfd61a718f72fbba8d629dfa18a1b98e"
+    }
+  ]
+}

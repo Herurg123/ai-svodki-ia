@@ -1,0 +1,255 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "Anthropic запустила Claude Meetings, Whiteboards и Sheets для рабочих команд",
+    "organization": "Anthropic",
+    "topic": "Enterprise AI; AI-ассистенты для встреч; совместные документы, доски и таблицы; connected work apps",
+    "event_type": "product_launch",
+    "status": "new",
+    "summary": "Anthropic представила набор workplace-функций Claude: Claude Meetings подключается к видеовстречам и выполняет задачи по ходу разговора, Claude Whiteboards превращает обсуждения в совместные визуальные планы, а Claude Sheets создаёт и редактирует таблицы. Meetings на старте работает с Google Meet и доступен в beta для Team и Enterprise; Whiteboards и Sheets доступны в beta на платных тарифах.",
+    "published_at": "2026-11-10T17:30:00+00:00",
+    "published_date": "2026-11-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic launches Claude Meetings to turn workplace discussions into plans and tasks",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/10/anthropic-launches-claude-meetings-to-turn-workplace-discussions-into-plans-and-tasks/"
+      }
+    ],
+    "keywords": [
+      "Anthropic",
+      "Claude Meetings",
+      "Claude Whiteboards",
+      "Claude Sheets",
+      "enterprise AI",
+      "Google Meet",
+      "workplace agents"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-002",
+    "section": "world",
+    "headline": "Google DeepMind представила Gemini Robotics 2.5 для более ловких и безопасных роботов",
+    "organization": "Google DeepMind; Google; Apptronik; Mercedes-Benz",
+    "topic": "Vision-language-action robotics; general dexterity; physical AI safety; humanoid robots; industrial deployment",
+    "event_type": "model_release",
+    "status": "new",
+    "summary": "Google DeepMind анонсировала Gemini Robotics 2.5 — vision-language-action модель для роботов, которую компания называет наиболее способной в своей линейке. Модель развёртывается у robotics-партнёров; в пилоте с Apptronik и Mercedes-Benz гуманоид Apollo 2 выполнял комплектацию автомобильных деталей с заявленной успешностью 96%.",
+    "published_at": "2026-11-10T15:00:00+00:00",
+    "published_date": "2026-11-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Gemini Robotics 2.5 accelerates real-world general dexterity",
+        "publisher": "Google DeepMind",
+        "url": "https://deepmind.google/blog/gemini-robotics-2-5-accelerates-real-world-physical-intelligence/"
+      }
+    ],
+    "keywords": [
+      "Gemini Robotics 2.5",
+      "VLA",
+      "robotics",
+      "physical intelligence",
+      "Apptronik Apollo 2",
+      "Mercedes-Benz",
+      "ASIMOV-Jailbreak"
+    ],
+    "geography": "world",
+    "category": "robotics"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Mercor привлекла $750 млн на инфраструктуру данных и оценок для моделей",
+    "organization": "Mercor",
+    "topic": "Финансирование инфраструктуры human-data, оценок и post-training для frontier-моделей и enterprise-агентов",
+    "event_type": "venture financing",
+    "status": "new",
+    "summary": "Mercor объявила о раунде Series D на $750 млн при оценке $20 млрд. В числе участников названы Benchmark, Felicis, Apollo, General Catalyst, NVIDIA, Salesforce, Sapphire Ventures, StepStone, XTX Ventures и Zoom. Компания направит средства на инфраструктуру для evals, post-training и сред, где AI-агенты осваивают сложные рабочие процессы.",
+    "published_at": "2026-11-10T08:00:00-08:00",
+    "published_date": "2026-11-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Organizing human intelligence for the entire economy",
+        "publisher": "Mercor",
+        "url": "https://www.mercor.com/blog/series-d/"
+      }
+    ],
+    "keywords": [
+      "Mercor",
+      "Series D",
+      "$750 million",
+      "human data",
+      "AI evaluations",
+      "post-training",
+      "enterprise agents"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "Google DeepMind представила AlphaProof Code для формальной проверки реализации Signal",
+    "organization": "Google DeepMind; Signal",
+    "topic": "AI для формальной верификации ПО; Lean; безопасность криптографических протоколов; многоагентные системы",
+    "event_type": "research_release",
+    "status": "new",
+    "summary": "Google DeepMind представила AlphaProof Code — многоагентный фреймворк на базе Gemini Carbon, который формализует свойства реального программного кода в Lean. Демонстрация с Signal включает машинно проверяемые доказательства свойств реализации криптографического протокола, а не только его проектной спецификации.",
+    "published_at": "2026-11-10T12:00:00+00:00",
+    "published_date": "2026-11-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Formal Verification of Signal’s Protocol with Gemini",
+        "publisher": "Google DeepMind",
+        "url": "https://deepmind.google/blog/introducing-alphaproof-code/"
+      }
+    ],
+    "keywords": [
+      "AlphaProof Code",
+      "Signal",
+      "Lean",
+      "formal verification",
+      "Gemini Carbon",
+      "software security"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Google сделала Gemini 4 Carbon общедоступной через API, Gemini app и AI Mode",
+    "organization": "Google; Google DeepMind",
+    "topic": "Frontier-модель Gemini; agentic coding; долгие агентные workflows; API; Gemini app; AI Mode",
+    "event_type": "product_release",
+    "status": "new",
+    "summary": "Google объявила о широком запуске Gemini 4 Carbon: модель стала доступна платным разработчикам и предприятиям через Gemini API/AI Studio, а также пользователям Google AI Ultra в Gemini app, AI Mode и Antigravity. Компания позиционирует Carbon как свою наиболее сильную модель для сложного многошагового программирования, научного рассуждения и агентных задач.",
+    "published_at": null,
+    "published_date": "2026-11-10",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "Gemini 4 Carbon is now available",
+        "publisher": "Google",
+        "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-carbon-now-available/"
+      }
+    ],
+    "keywords": [
+      "Gemini 4 Carbon",
+      "Google AI Studio",
+      "Gemini API",
+      "AI Mode",
+      "Google Antigravity",
+      "agentic coding"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "IFM/MBZUAI открыла веса и код PAN 2 — world model для симулятивного планирования агентов",
+    "organization": "Institute of Foundation Models (IFM); MBZUAI",
+    "topic": "Open-weight world models; physical intelligence; video generation; simulation; agent planning",
+    "event_type": "open_weight_model_release",
+    "status": "new",
+    "summary": "Institute of Foundation Models при MBZUAI выпустил PAN 2 — открытую world model, которая по изображению и текстовому описанию действий моделирует их последствия в видео. Компания опубликовала веса видеомодели, полный training/inference code и документацию по лицензии Apache 2.0; позиционирование — симулятивное рассуждение и планирование действий AI-агентов до выполнения в реальном мире.",
+    "published_at": null,
+    "published_date": "2026-11-10",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "The Institute of Foundation Models Unveils PAN 2, an Open World Model for Physical Intelligence",
+        "publisher": "Institute of Foundation Models",
+        "url": "https://ifm.ai/pan2/press-release/"
+      },
+      {
+        "title": "IFM/PAN2 model card",
+        "publisher": "Hugging Face",
+        "url": "https://huggingface.co/IFM/PAN2"
+      }
+    ],
+    "keywords": [
+      "PAN 2",
+      "IFM",
+      "MBZUAI",
+      "world model",
+      "physical intelligence",
+      "Apache 2.0",
+      "open weights",
+      "video diffusion"
+    ],
+    "geography": "world",
+    "category": "open_source"
+  },
+  {
+    "candidate_id": "cand-010",
+    "section": "world",
+    "headline": "Oura купит AI-native сервис первичной медицины Counsel Health за $625 млн",
+    "organization": "Oura; Counsel Health",
+    "topic": "M&A в AI-health; интеграция чат-медицинского ИИ и врачей с wearable-платформой",
+    "event_type": "acquisition",
+    "status": "new",
+    "summary": "Oura объявила о покупке Counsel Health за $625 млн. Counsel сочетает медицинский AI-чат с возможностью эскалации к лицензированному врачу; её сервис уже был интегрирован в приложение Oura. После сделки Counsel продолжит работать с действующими и новыми enterprise-партнёрами.",
+    "published_at": "2026-11-10T19:23:34+00:00",
+    "published_date": "2026-11-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Oura to acquire AI-native primary care startup Counsel Health for $625M",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/10/oura-to-acquire-ai-native-primary-care-startup-counsel-health-for-625m/"
+      }
+    ],
+    "keywords": [
+      "Oura",
+      "Counsel Health",
+      "acquisition",
+      "$625 million",
+      "AI healthcare",
+      "primary care",
+      "wearables",
+      "enterprise healthcare"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "russia",
+    "headline": "Обновление: Минцифры обсудило механизм резервирования 10% мощностей коммерческих дата-центров",
+    "organization": "Минцифры России; коммерческие операторы ЦОД",
+    "topic": "Регулирование инфраструктуры дата-центров; резервирование мощностей; устойчивость информационных ресурсов; потенциальное влияние на AI-вычисления",
+    "event_type": "regulatory infrastructure update",
+    "status": "update",
+    "summary": "По данным источников РБК, Минцифры обсудило практическую реализацию президентского указа о резервировании 10% площадей и мощностей коммерческих ЦОД. Операторам может потребоваться высвобождать резерв в течение 24 часов; обсуждаются правила расчёта резерва, договорные условия с клиентами и порядок исполнения требований.",
+    "published_at": "2026-11-10T05:16:11+00:00",
+    "published_date": "2026-11-10",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Минцифры обсудило резерв 10% мощностей дата-центров",
+        "publisher": "Контекст",
+        "url": "https://ktxt.ru/russia/mintsifry-obsudilo-rezerv-10-moshchnostey-data-tsentrov"
+      }
+    ],
+    "keywords": [
+      "Минцифры",
+      "ЦОД",
+      "дата-центры",
+      "резервирование мощностей",
+      "10%",
+      "ИИ-инфраструктура",
+      "регулирование"
+    ],
+    "geography": "russia",
+    "category": "infrastructure"
+  }
+]

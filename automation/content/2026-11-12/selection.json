@@ -1,0 +1,30 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-002",
+    "cand-004",
+    "cand-006",
+    "cand-007",
+    "cand-008",
+    "cand-010",
+    "cand-005"
+  ],
+  "excluded_candidate_ids": [
+    "cand-003",
+    "cand-009",
+    "cand-011",
+    "cand-012",
+    "cand-013",
+    "cand-014",
+    "cand-015",
+    "cand-016",
+    "cand-017",
+    "cand-018",
+    "cand-019",
+    "cand-020"
+  ],
+  "selection_summary": "Выбраны восемь подтверждённых самостоятельных событий: корпоративные инструменты Anthropic, две ключевые разработки Google DeepMind, широкий запуск Gemini 4 Carbon, открытая world model PAN 2, крупный раунд Mercor, российское регуляторное уточнение для ЦОД и сделка Oura в AI-health. Исключены кандидаты с рекомендацией exclude, устаревшее раскрытие инцидента Notion/Fireworks, а также менее значимые или недостаточно детализированные source-pulse публикации.",
+  "diversity_overrides": []
+}
