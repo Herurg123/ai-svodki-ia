@@ -1,0 +1,47 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-13",
+  "slug": "2026-11-13",
+  "title": "ИИ-Сводка на 13 ноября 2026",
+  "description": "NVIDIA меняет CEO, AMD и Huawei расширяют инфраструктурную гонку, Google и Baidu выпускают новые модели, а взлом Fireworks AI затрагивает переписки Notion AI. В России Алиса AI получает агентные действия.",
+  "published_at": "2026-11-13T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-13.png",
+  "topics": [
+    "NVIDIA",
+    "смена CEO",
+    "AMD Instinct MI450X",
+    "Helios",
+    "Gemini 4 Hydrogen",
+    "AI-очки",
+    "Fireworks AI",
+    "Notion AI",
+    "Huawei Peerium",
+    "Atlas 950 SuperPoD",
+    "Baidu",
+    "ERNIE 5.5 Flash",
+    "Алиса AI",
+    "агенты ИИ",
+    "ИИ-инфраструктура",
+    "кибербезопасность ИИ"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-001, cand-006, cand-007, cand-011."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_integrations, russia, developer_tools, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "IA Compa: Три независимых события высокой рыночной значимости — смена CEO NVIDIA, выпуск AMD Instinct MI450X и релиз Gemini 4 Hydrogen — подтверждены датированными материалами, ссылающимися на официальные анонсы компаний. Исключение одного из них искусственно сократило бы полноту короткого, но содержательного пула."
+    }
+  ]
+}

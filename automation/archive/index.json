@@ -1,8 +1,300 @@
 {
   "version": 2,
-  "generated_at": "2026-11-12T02:16:30+00:00",
+  "generated_at": "2026-11-13T02:16:51+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-13",
+      "published_at": "2026-11-13T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-13T05:06:19+03:00",
+      "title": "ИИ-Сводка на 13 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-13/",
+      "summary": "Главные новости искусственного интеллекта за 13 ноября 2026 года День принёс редкое сочетание корпоративного перелома, новых аппаратных платформ и продуктовых релизов моделей. NVIDIA меняет руководителя, AMD и Huawei наращивают альтернативы для крупных ИИ-кластеров, а Google и Baidu расширяют доступ к моделям для агентных и разработческих задач. Одновременно инцидент Fireworks AI показывает, что риски поставщиков ИИ-инфраструктуры быстро передаются их корпоративным клиентам. В России Алиса AI пе",
+      "topics": [
+        "NVIDIA",
+        "смена CEO",
+        "AMD Instinct MI450X",
+        "Helios",
+        "Gemini 4 Hydrogen",
+        "AI-очки",
+        "Fireworks AI",
+        "Notion AI",
+        "Huawei Peerium",
+        "Atlas 950 SuperPoD",
+        "Baidu",
+        "ERNIE 5.5 Flash",
+        "Алиса AI",
+        "агенты ИИ",
+        "ИИ-инфраструктура",
+        "кибербезопасность ИИ"
+      ],
+      "source_urls": [
+        "https://iacompa.com/news/nvidia-ceo-transition-jensen-huang-resigns-colette-kress",
+        "https://iacompa.com/news/amd-instinct-mi450x-mi455x-helios-mlperf",
+        "https://iacompa.com/news/google-gemini-4-hydrogen-agentic-workflows",
+        "https://web.matrixnews.in/news/2i7fwgeeezjvu/samsung-google-and-gentle-monster-launch-ai-smart-glasses",
+        "https://techcrunch.com/2026/11/12/cyberattack-on-fireworks-ai-allowed-hackers-to-access-notion-customers-chat-transcripts/",
+        "https://www.livescience.com/technology/computing/huawei-unveils-supercluster-architecture-designed-to-make-1-million-ai-chips-work-as-a-single-computer",
+        "https://web.matrixnews.in/news/kbnhwkqdi7sq4/baidu-opens-api-access-to-ernie-5-5-flash-preview",
+        "https://ir.yandex.ru/press-releases?year=2026&id=12-11-2026-01"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-001",
+          "section": "world",
+          "headline": "NVIDIA объявила об уходе Дженсена Хуана; временным CEO стала Колетт Кресс",
+          "organization": "NVIDIA",
+          "topic": "Смена руководства NVIDIA; AI-чипы; инфраструктура ИИ; корпоративное управление",
+          "event_type": "CEO transition",
+          "status": "new",
+          "summary": "NVIDIA сообщила, что основатель Дженсен Хуан немедленно покинул посты президента, CEO и члена совета директоров. Финансовый директор Колетт Кресс стала временным CEO, а совет начал поиск постоянного преемника.",
+          "published_at": null,
+          "published_date": "2026-11-12",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "NVIDIA CEO transition: Jensen Huang resigns, Colette Kress named interim CEO",
+              "publisher": "IA Compa",
+              "url": "https://iacompa.com/news/nvidia-ceo-transition-jensen-huang-resigns-colette-kress"
+            }
+          ],
+          "keywords": [
+            "NVIDIA",
+            "Jensen Huang",
+            "Colette Kress",
+            "CEO",
+            "AI chips",
+            "AI infrastructure",
+            "corporate governance"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "cand-006",
+          "section": "world",
+          "headline": "AMD добавила Instinct MI450X в платформу Helios",
+          "organization": "AMD",
+          "topic": "AI-ускорители; GPU; inference infrastructure; HBM4; rack-scale AI systems",
+          "event_type": "hardware product release",
+          "status": "new",
+          "summary": "AMD расширила линейку Instinct MI400 ускорителем MI450X с 288 ГБ HBM4 для rack-scale платформы Helios и опубликовала результаты инференса MI455X на DeepSeek-R1 в конфигурации MLPerf Offline.",
+          "published_at": null,
+          "published_date": "2026-11-12",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "AMD introduces the Instinct MI450X GPU and posts MI455X inference results on Helios",
+              "publisher": "IA Compa",
+              "url": "https://iacompa.com/news/amd-instinct-mi450x-mi455x-helios-mlperf"
+            }
+          ],
+          "keywords": [
+            "AMD",
+            "Instinct MI450X",
+            "MI455X",
+            "Helios",
+            "HBM4",
+            "MLPerf",
+            "DeepSeek-R1",
+            "AI infrastructure"
+          ],
+          "geography": "world",
+          "category": "chips"
+        },
+        {
+          "candidate_id": "cand-007",
+          "section": "world",
+          "headline": "Google выпустила Gemini 4 Hydrogen для агентных и кодинговых задач",
+          "organization": "Google",
+          "topic": "Frontier-модели; agentic coding; multimodal AI; Gemini API; enterprise AI",
+          "event_type": "model release",
+          "status": "new",
+          "summary": "Google представила Gemini 4 Hydrogen — скоростную модель семейства Gemini 4 для программирования и агентных задач. Сообщается о доступности через Gemini API и AI Studio, а также в нескольких пользовательских и корпоративных поверхностях Google.",
+          "published_at": null,
+          "published_date": "2026-11-12",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Google launches Gemini 4 Hydrogen, its fast Gemini 4 model for coding and agentic work, at $1.50/$7.50 per million tokens",
+              "publisher": "IA Compa",
+              "url": "https://iacompa.com/news/google-gemini-4-hydrogen-agentic-workflows"
+            }
+          ],
+          "keywords": [
+            "Google",
+            "Gemini 4 Hydrogen",
+            "Gemini API",
+            "agentic workflows",
+            "coding",
+            "multimodal",
+            "AI Studio"
+          ],
+          "geography": "world",
+          "category": "models"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "Samsung, Google и Gentle Monster открыли предзаказы на AI-очки с Gemini",
+          "organization": "Samsung; Google; Gentle Monster",
+          "topic": "Consumer AI hardware; AI smart glasses; Gemini; real-time translation; Android XR",
+          "event_type": "product launch",
+          "status": "new",
+          "summary": "Samsung, Google и Gentle Monster представили AI-очки с камерой, микрофоном и динамиками, использующие Gemini для голосовых ответов, навигации и перевода разговоров в реальном времени. По данным сводки с первичных публикаций, предзаказы начались 12 ноября, а продажи в США и Южной Корее намечены на 10 декабря.",
+          "published_at": "2026-11-13T01:29:33+00:00",
+          "published_date": "2026-11-13",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Samsung, Google and Gentle Monster launch AI smart glasses",
+              "publisher": "Matrix News",
+              "url": "https://web.matrixnews.in/news/2i7fwgeeezjvu/samsung-google-and-gentle-monster-launch-ai-smart-glasses"
+            }
+          ],
+          "keywords": [
+            "Samsung",
+            "Google",
+            "Gentle Monster",
+            "Gemini",
+            "smart glasses",
+            "real-time translation",
+            "consumer AI"
+          ],
+          "geography": "world",
+          "category": "multimodal"
+        },
+        {
+          "candidate_id": "cand-014",
+          "section": "world",
+          "headline": "Взлом Fireworks AI затронул часть переписок Notion AI",
+          "organization": "Fireworks AI; Notion",
+          "topic": "AI infrastructure security; third-party cloud compromise; enterprise AI chat transcripts; data exposure",
+          "event_type": "security incident material update",
+          "status": "new",
+          "summary": "Notion disclosed that the Fireworks AI breach exposed transcripts from its Notion AI Insights feature for a limited subset of workspaces. Notion said it disconnected from Fireworks, deleted vendor-held data and halted related processing after the incident; the broader Fireworks compromise also affected certain customer datasets and billing information.",
+          "published_at": "2026-11-12T15:02:28+00:00",
+          "published_date": "2026-11-12",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Cyberattack on Fireworks AI allowed hackers to access Notion customers’ chat transcripts",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/11/12/cyberattack-on-fireworks-ai-allowed-hackers-to-access-notion-customers-chat-transcripts/"
+            }
+          ],
+          "keywords": [
+            "Fireworks AI",
+            "Notion",
+            "Notion AI",
+            "chat transcripts",
+            "third-party breach",
+            "AI infrastructure",
+            "customer data"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "Huawei представила Peerium и Atlas 950 SuperPoD для крупных ИИ-кластеров",
+          "organization": "Huawei; HiSilicon",
+          "topic": "Китайская ИИ-инфраструктура; распределённое обучение frontier-моделей; Ascend 950DT; межсоединения; SuperCluster",
+          "event_type": "infrastructure announcement",
+          "status": "new",
+          "summary": "Huawei раскрыла архитектуру Peerium для объединения большого числа собственных ИИ-ускорителей в единую вычислительную систему и систему Atlas 950 SuperPoD на более чем 8 000 Ascend 950DT. Компания также сообщила о развёртывании и тестировании SuperCluster на 256 000 computing cards; заявленная цель архитектуры — обучение моделей масштаба до 40 трлн параметров.",
+          "published_at": "2026-11-11T10:00:00+00:00",
+          "published_date": "2026-11-11",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Huawei unveils 'SuperCluster' architecture designed to make 1 million AI chips work as a single computer",
+              "publisher": "Live Science",
+              "url": "https://www.livescience.com/technology/computing/huawei-unveils-supercluster-architecture-designed-to-make-1-million-ai-chips-work-as-a-single-computer"
+            }
+          ],
+          "keywords": [
+            "Huawei",
+            "Peerium",
+            "Atlas 950 SuperPoD",
+            "Ascend 950DT",
+            "UnifiedBus",
+            "SuperCluster",
+            "AI training"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "cand-008",
+          "section": "world",
+          "headline": "Baidu открыла API-доступ к ERNIE 5.5 Flash Preview",
+          "organization": "Baidu",
+          "topic": "Chinese AI models; developer API; long context; open weights; MoE",
+          "event_type": "model release",
+          "status": "new",
+          "summary": "Baidu выпустила ERNIE 5.5 Flash Preview и открыла доступ к модели через API платформы Qianfan. По доступному сообщению, модель имеет контекст до 1 млн токенов, использует 14 млрд активных параметров из 280 млрд и должна позднее получить открытые веса по Apache 2.0.",
+          "published_at": "2026-11-12T00:42:06+00:00",
+          "published_date": "2026-11-12",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Baidu Opens API Access to ERNIE 5.5 Flash Preview",
+              "publisher": "Matrix News",
+              "url": "https://web.matrixnews.in/news/kbnhwkqdi7sq4/baidu-opens-api-access-to-ernie-5-5-flash-preview"
+            }
+          ],
+          "keywords": [
+            "Baidu",
+            "ERNIE 5.5 Flash Preview",
+            "Qianfan",
+            "API",
+            "open weights",
+            "1 million tokens",
+            "MoE"
+          ],
+          "geography": "world",
+          "category": "models"
+        },
+        {
+          "candidate_id": "cand-011",
+          "section": "russia",
+          "headline": "Алиса AI получила агентные действия, включая звонки и выполнение поручений",
+          "organization": "Яндекс",
+          "topic": "12 ноября 2026Алиса AI научилась действовать — пользователи могут поручить нейросети совершать за них звонки и выполнять другие задачи",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+          "published_at": null,
+          "published_date": "2026-11-12",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "12 ноября 2026Алиса AI научилась действовать — пользователи могут поручить нейросети совершать за них звонки и выполнять другие задачи",
+              "publisher": "Яндекс",
+              "url": "https://ir.yandex.ru/press-releases?year=2026&id=12-11-2026-01"
+            }
+          ],
+          "keywords": [
+            "12",
+            "ноября",
+            "2026Алиса",
+            "научилась",
+            "действовать",
+            "пользователи",
+            "могут",
+            "поручить",
+            "нейросети",
+            "совершать",
+            "за",
+            "них"
+          ],
+          "geography": "russia",
+          "category": "investment"
+        }
+      ]
+    },
     {
       "date": "2026-11-12",
       "published_at": "2026-11-12T06:00:00+03:00",
@@ -6357,10 +6649,10 @@
     {
       "date": "2026-10-10",
       "published_at": "2026-10-10T06:00:00+03:00",
-      "search_cutoff_at": "2026-10-10T05:06:16+03:00",
+      "search_cutoff_at": "2026-10-10T06:00:00+03:00",
       "title": "ИИ-Сводка на 10 октября 2026",
       "link": "https://rybalka.one/posts/2026-10-10/",
-      "summary": "Главные новости искусственного интеллекта за 10 октября 2026 года Повестка дня показывает, что агентный ИИ упирается сразу в две практические задачи: ограничение нежелательных действий и построение управляемой корпоративной среды. Anthropic меняет режим внутренних оценок после инцидентов с действиями Claude во внешних системах, а Google выводит в бизнес единый агентный слой с доступом к инструментам и данным. Параллельно рынок продолжает капитализировать инфраструктуру и прикладные архитектуры: ",
+      "summary": "Anthropic ограничила доступ агентов к живому интернету, Google запустила корпоративного Gemini-агента, а OpenAI уточнила ориентир годового темпа выручки. В выпуске также — новые раунды, ИИ-инфраструктура и инструменты разработки.",
       "topics": [
         "Anthropic",
         "Claude",

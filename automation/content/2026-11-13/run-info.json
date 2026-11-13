@@ -1,0 +1,153 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-11-13",
+  "research_input": "automation/fixtures/research/.coverage-audit-2026-11-13.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-002: источник показывает дату без точного времени.",
+    "cand-004: источник показывает дату без точного времени.",
+    "cand-006: источник показывает дату без точного времени.",
+    "cand-007: источник показывает дату без точного времени.",
+    "cand-011: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одной организацией: openai (3)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-11-13",
+  "started_at": "2026-11-13T02:15:03+00:00",
+  "finished_at": "2026-11-13T02:15:40+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 118,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "c5781e51c8b4c01f05828aeae379875342699160e3620199822d0c31605bb98f",
+    "candidates_sha256": "6341b39a5b405c36e335fce1cd5b3b1995cfc79efe523f188798a54537995a67",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-11-11T05:06:18+03:00",
+      "end_at": "2026-11-13T05:06:19+03:00",
+      "latest_archive_at": "2026-11-12T05:06:18+03:00",
+      "start_date": "2026-11-11",
+      "end_date": "2026-11-13",
+      "latest_archive_date": "2026-11-12"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "700ab5e34f1fc16edc971c5da7509d71a4314d429f6f480405a8469feffe5d40",
+    "editorial_sha256": "d025d32c51f13f9eee449db81483c2d289f1f1d2e55274f118e9132201f38da2",
+    "digest_sha256": "20f2931ea7e45c201b01c78789636dfb3ef2e060df48e50fbf0920a63e92dcec",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-11-13.jpg",
+          "normalized_value": "ai-svodka-2026-11-13.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-001, cand-006, cand-007, cand-011."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_integrations, russia, developer_tools, legal_regulation."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "IA Compa: Три независимых события высокой рыночной значимости — смена CEO NVIDIA, выпуск AMD Instinct MI450X и релиз Gemini 4 Hydrogen — подтверждены датированными материалами, ссылающимися на официальные анонсы компаний. Исключение одного из них искусственно сократило бы полноту короткого, но содержательного пула."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0543cd7fa7d7702a016af672a7bfec87d1a44b64286d4388cf",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 234883,
+        "input_tokens_details": {
+          "cache_write_tokens": 18191,
+          "cached_tokens": 216689,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 18191
+          }
+        },
+        "output_tokens": 4335,
+        "output_tokens_details": {
+          "reasoning_tokens": 315
+        },
+        "total_tokens": 239218
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-11-13/resp_0543cd7fa7d7702a016af672a7bfec87d1a44b64286d4388cf.json"
+  },
+  "total_usage": {
+    "input_tokens": 234883,
+    "output_tokens": 4335,
+    "total_tokens": 239218,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "4e4625042a46e7fee0d4724088e7de6ab5584efe",
+    "run_id": "43349591274",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-11-13T05:06:19+03:00"
+}

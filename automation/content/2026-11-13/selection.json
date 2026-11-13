@@ -1,0 +1,30 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-001",
+    "cand-006",
+    "cand-007",
+    "cand-005",
+    "cand-014",
+    "cand-003",
+    "cand-008",
+    "cand-011"
+  ],
+  "excluded_candidate_ids": [
+    "cand-002",
+    "cand-004",
+    "cand-009",
+    "cand-010",
+    "cand-012",
+    "cand-013"
+  ],
+  "selection_summary": "Выбрано 8 подтверждённых свежих сюжетов: смена руководства NVIDIA, новые ускорители AMD, модель Gemini 4 Hydrogen, потребительские AI-очки Samsung и Google, раскрытие последствий взлома Fireworks AI для Notion, инфраструктура Huawei, API-релиз Baidu и агентные функции Алисы AI. Исключены слабые source-pulse публикации без достаточной содержательной детализации, устаревшая перепечатка Railway и юридический кандидат с рекомендацией exclude.",
+  "diversity_overrides": [
+    {
+      "type": "publisher",
+      "value": "IA Compa",
+      "reason": "Три независимых события высокой рыночной значимости — смена CEO NVIDIA, выпуск AMD Instinct MI450X и релиз Gemini 4 Hydrogen — подтверждены датированными материалами, ссылающимися на официальные анонсы компаний. Исключение одного из них искусственно сократило бы полноту короткого, но содержательного пула."
+    }
+  ]
+}
