@@ -432,7 +432,11 @@ def validate_artifact(root: Path, report_path: Path) -> dict[str, Any]:
         payload = payloads.get(name)
         if payload is not None and contains_meta_star(payload):
             issue(report, "errors", "meta_star_service_field", f"Meta* запрещено в служебном файле {name}.", name)
-    for name in ("digest.json", "editorial-output-raw.json", "editorial-output.json"):
+    # editorial-output-raw.json is immutable provider evidence, never a
+    # presentation payload. Service markers in published derived JSON remain
+    # forbidden; a raw provider response must not be rewritten to satisfy
+    # an output-only display constraint.
+    for name in ("digest.json", "editorial-output.json"):
         payload = payloads.get(name)
         if payload is not None and contains_meta_star(sanitize_visible_fields(payload)):
             issue(report, "errors", "meta_star_service_field", f"Meta* найдено вне article_html в {name}.", name)
