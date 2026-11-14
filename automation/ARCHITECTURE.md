@@ -49,7 +49,16 @@ scheduled/manual trigger
 ### 1.1.1. Редакционная проверка событий, секций и durable raw (October 2026)
 
 Editorial response сохраняется в исходном `editorial-output-raw.json` без
-изменения provider bytes. Каждый raw `response.output_text` дополнительно
+изменения provider bytes.
+Начиная с исправления инцидента 14.11.2026 `normalize_digest_artifact.py`
+применяет отображаемые маркеры `Meta*` и обязательные ограничения промпта
+обложки **только к производным JSON (`digest.json`, `editorial-output.json`)
+и `image-prompt.txt`**, никогда к `editorial-output-raw.json`.
+`validate_digest_artifact_base.py` проверяет маркеры на производных
+service-полях; raw остаётся hash-bound свидетельством ответа провайдера.
+`editorial_repair_guard.publication_safe()` по-прежнему сверяет точный
+канонический SHA-256 raw JSON с сохранённым validated response и
+блокирует любую их несогласованность. Каждый raw `response.output_text` дополнительно
 фиксируется **до JSON parsing** под индивидуальным provider response ID в
 `automation/preview/production-daily/editorial-attempts/<date>/`; этот каталог
 не удаляется при пересоздании dated preview последующей Editorial попытки и

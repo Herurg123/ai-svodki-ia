@@ -186,6 +186,12 @@ Before merge:
 Private helper or monkeypatch-only tests are not sufficient by themselves when
 the incident crossed a public entrypoint/recovery seam.
 
+Hash-bound original provider evidence (`editorial-output-raw.json`) is immutable
+through all presentation normalization, including image prompt constraints
+and Meta* service marker corrections. Normalize only derived/publication
+artifacts; never weaken the durable Editorial Repair publication seal to
+fix a presentational mismatch.
+
 Paid production regression work must use assistant-owned or saved artifacts.
 Never spend the owner's production API budget without separate explicit
 permission. Late-stage recovery must reuse already-paid same-day work whenever

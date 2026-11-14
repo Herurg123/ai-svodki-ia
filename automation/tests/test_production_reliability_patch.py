@@ -252,10 +252,19 @@ class DigestArtifactNormalizationTests(unittest.TestCase):
             )
             self.assertEqual(report["status"], "ok")
             self.assertFalse((artifact / "artifact-validation.json").exists())
-            for name in payloads:
+            for name in ("digest.json", "editorial-output.json"):
                 rendered = (artifact / name).read_text(encoding="utf-8").lower()
                 for constraint in normalizer.CONSTRAINTS:
                     self.assertIn(constraint, rendered)
+            # A forensic raw response is not a display/output artifact. It
+            # must preserve the exact original provider payload, even when
+            # its image prompt lacks current output-only constraints.
+            raw_bytes = (artifact / "editorial-output-raw.json").read_bytes()
+            self.assertEqual(
+                raw_bytes,
+                (json.dumps(payloads["editorial-output-raw.json"], ensure_ascii=False) + "\n").encode("utf-8"),
+            )
+            self.assertNotIn("editorial-output-raw.json", report["changed_files"])
             rendered_text = (artifact / "image-prompt.txt").read_text(encoding="utf-8").lower()
             for constraint in normalizer.CONSTRAINTS:
                 self.assertIn(constraint, rendered_text)

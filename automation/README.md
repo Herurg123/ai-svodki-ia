@@ -138,7 +138,7 @@ raw/article/block/journal hashes и только переносит ранее �
 model, request seal, archive hash или replay contract.
 
 Перед artifact validation exact public marker `Meta*` детерминированно
-нормализуется до `Meta` только в служебных JSON-полях; public `article_html`
+нормализуется до `Meta` только в **производных** служебных JSON-полях; public `article_html`
 и image prompt не переписываются.
 
 ### Search budget
