@@ -23,10 +23,11 @@ CONSTRAINTS = (
     "без водяных знаков",
     "без узнаваемых лиц",
 )
+# Only derived artifacts may be normalized. The raw editorial payload is
+# hash-bound to the provider response by the durable Editorial Repair guard.
 JSON_FILES = (
     "digest.json",
     "editorial-output.json",
-    "editorial-output-raw.json",
 )
 TEXT_FILES = ("image-prompt.txt", "image_prompt.txt")
 META_SERVICE_JSON_FILES = (
@@ -37,7 +38,6 @@ META_SERVICE_JSON_FILES = (
     "selection.json",
     "metadata-normalization.json",
     "digest.json",
-    "editorial-output-raw.json",
     "editorial-output.json",
 )
 META_VISIBLE_FIELDS = {"article_html", "image_prompt", "html"}
