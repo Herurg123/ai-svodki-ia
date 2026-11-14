@@ -1,0 +1,70 @@
+{
+  "status": "ok",
+  "usage_attempt_id": "fa4f5bc40cf64d43a408cb104c4a0b6a",
+  "request_id": "production-image-2026-11-14",
+  "model": "gpt-image-2",
+  "endpoint": "/v1/images/generations",
+  "http_status": 200,
+  "openai_request_id": "req_78f24b64fa664a9dbd19896e19844551",
+  "source_editorial_request_id": "production-digest-2026-11-14",
+  "request": {
+    "size": "1536x864",
+    "quality": "high",
+    "output_format": "png",
+    "background": "opaque",
+    "n": 1,
+    "prompt_sha256": "018267166908f2962e5b9e2070d24d40e0a419ab2d071960f54c17e6ab79769e"
+  },
+  "response": {
+    "created": 1794635053,
+    "background": "opaque",
+    "output_format": "png",
+    "quality": "high",
+    "size": "1536x864",
+    "usage": {
+      "input_tokens": 433,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 433
+      },
+      "output_tokens": 4312,
+      "output_tokens_details": {
+        "image_tokens": 4312,
+        "text_tokens": 0
+      },
+      "total_tokens": 4745
+    },
+    "data_count": 1,
+    "revised_prompt": null
+  },
+  "cover_sha256": "64ea4bc348a0ab2ce34f4ee89e4efa1fe6a553578c87ea987ef71a2477eb18eb",
+  "cover_bytes": 2265368,
+  "base64_stored": false,
+  "copied_source_files": [
+    "agency-discovery-rescue.json",
+    "article.html",
+    "artifact-normalization.json",
+    "artifact-validation.json",
+    "candidates.json",
+    "digest.json",
+    "editorial-event-identity.json",
+    "editorial-output-raw.json",
+    "editorial-output.json",
+    "editorial-prompt-input.txt",
+    "editorial-reconciliation.json",
+    "image-prompt.txt",
+    "meta.json",
+    "metadata-normalization.json",
+    "policy-normalization.json",
+    "research-filtered-out.json",
+    "research-input-info.json",
+    "research-output-raw.json",
+    "research-prompt-input.txt",
+    "run-info.json",
+    "selection.json",
+    "sources.json",
+    "stories.json"
+  ],
+  "started_at": "2026-11-14T05:43:10+00:00",
+  "finished_at": "2026-11-14T05:44:13+00:00"
+}

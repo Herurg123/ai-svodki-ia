@@ -1,0 +1,199 @@
+[
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Mirendil привлекла $1 млрд в Series A на развитие frontier-AI R&D и агентной платформы",
+    "organization": "Mirendil; Kleiner Perkins; Clearlake Capital; Google; Battery Ventures; M13; Pear VC; S32",
+    "topic": "Крупное финансирование frontier AI; агентная разработка моделей; AI R&D infrastructure",
+    "event_type": "Series A financing",
+    "status": "new",
+    "summary": "Mirendil объявила о раунде Series A на $1 млрд во главе с Kleiner Perkins и Clearlake Capital. Компания развивает модели и платформу Lor для агентного выполнения длительных исследовательских и инженерных задач; среди участников раунда названы Google, Battery Ventures, M13, Pear VC и S32.",
+    "published_at": "2026-11-12T12:58:03-05:00",
+    "published_date": "2026-11-12",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Mirendil Raises $1B to Democratize Frontier AI R&D",
+        "publisher": "Mirendil",
+        "url": "https://mirendil.com/news/series-a/"
+      }
+    ],
+    "keywords": [
+      "Mirendil",
+      "Series A",
+      "$1 billion",
+      "frontier AI",
+      "AI agents",
+      "agentic R&D",
+      "Kleiner Perkins",
+      "Clearlake Capital"
+    ],
+    "geography": "world",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Microsoft показала, как supply-chain атаки могут внедрять бэкдоры в coding-агентов",
+    "organization": "Microsoft Security Research; Microsoft AI Red Team",
+    "topic": "AI-agent security; supply-chain security; poisoning датасетов; backdoored open-weight models; coding agents; tool execution",
+    "event_type": "research disclosure",
+    "status": "new",
+    "summary": "Microsoft Security Research и Microsoft AI Red Team опубликовали два исследования о том, как отравление данных post-training и компрометированные open-weight checkpoints могут скрытно заставлять coding-агентов выполнять опасные tool calls. В экспериментах бэкдоры активировались от обычных запросов или контекста репозитория и переносились между агентными harnesses.",
+    "published_at": "2026-11-12T17:00:00+00:00",
+    "published_date": "2026-11-12",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Trained to betray: How post-training supply chain attacks hijack coding agents",
+        "publisher": "Microsoft Security Blog",
+        "url": "https://www.microsoft.com/en-us/security/blog/2026/11/12/trained-to-betray-how-post-training-supply-chain-attacks-hijack-coding-agents/"
+      }
+    ],
+    "keywords": [
+      "agent backdoors",
+      "post-training supply chain",
+      "dataset poisoning",
+      "model poisoning",
+      "coding agents",
+      "open weights",
+      "tool calls",
+      "remote code execution"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Mount Thor привлекла $45 млн на дата-центры Apple Silicon для агентов ИИ",
+    "organization": "Mount Thor; CRV; Conviction; Offline Ventures; Apple",
+    "topic": "AI infrastructure financing; облачные Mac-вычисления; среды для AI-агентов; inference на Apple Silicon",
+    "event_type": "Seed and Series A financing",
+    "status": "new",
+    "summary": "Bay Area-стартап Mount Thor сообщил о привлечении $45 млн через seed и Series A для расширения облачной инфраструктуры на Apple Silicon. Компания предлагает выделенные Mac и изолированные macOS VM для обучения computer-use моделей, агентных sandbox-сред и инференса open-weight моделей.",
+    "published_at": "2026-11-12T14:00:00+00:00",
+    "published_date": "2026-11-12",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Mount Thor raises $45 million to build Mac data centers for AI agents",
+        "publisher": "9to5Mac",
+        "url": "https://9to5mac.com/2026/11/12/mount-thor-raises-45-million-to-build-mac-data-centers-for-ai-agents/"
+      }
+    ],
+    "keywords": [
+      "Mount Thor",
+      "$45 million",
+      "Apple Silicon",
+      "Mac data centers",
+      "AI agents",
+      "inference",
+      "CRV",
+      "Conviction"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-012",
+    "section": "world",
+    "headline": "Arctic Wolf описала кражу AWS-учётных данных с применением AI-пентест-платформы AntiFox",
+    "organization": "Arctic Wolf; Amazon Web Services; AntiFox",
+    "topic": "Злоупотребление AI-агентами для пентеста; компрометация веб-серверов; кража секретов и доступ к AWS-окружениям",
+    "event_type": "Раскрытие исследователями кампаний, в которых AI-пентест-инструмент применялся для кражи облачных учётных данных",
+    "status": "new",
+    "summary": "Arctic Wolf обнаружила кампании, в которых атакующие разворачивали open-source AI-пентест-платформу AntiFox на инфраструктуре Alibaba Cloud. После взлома интернет-доступных IIS-серверов они устанавливали web shell, искали в приложениях и конфигурациях пароли и другие секреты, а затем использовали похищенные AWS-учётные данные для разведки и доступа к облачным ресурсам.",
+    "published_at": "2026-11-12T15:35:00+00:00",
+    "published_date": "2026-11-12",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "AntiFox AI agents hijacked by hackers to carry out theft of AWS credentials",
+        "publisher": "TechRadar",
+        "url": "https://www.techradar.com/pro/security/antifox-ai-agents-hijacked-by-hackers-to-carry-out-theft-of-aws-credentials"
+      }
+    ],
+    "keywords": [
+      "AI security",
+      "agentic cybercrime",
+      "AntiFox",
+      "ARTEX",
+      "AWS credentials",
+      "web shells",
+      "cloud compromise",
+      "China"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-013",
+    "section": "world",
+    "headline": "Обновление: Unit 42 раскрыла автономную киберкампанию через Cairn с DeepSeek и GLM",
+    "organization": "Palo Alto Networks Unit 42; DeepSeek; Zhipu AI",
+    "topic": "AI-agent security; автономные кибератаки; DeepSeek; Zhipu GLM; Китай; атаки на полупроводниковый, оборонный и гражданский секторы",
+    "event_type": "threat-intelligence disclosure",
+    "status": "update",
+    "summary": "Unit 42 12 ноября раскрыла расследование кампании CL-STA-1238: китайскоязычные атакующие использовали open-source фреймворк Cairn совместно с Zhipu GLM 5.2 и DeepSeek V4 Flash/Pro для автономных операций против не менее 19 организаций. По данным исследователей, агенты самостоятельно планировали и выполняли многоэтапные действия, а несанкционированный доступ или извлечение данных были подтверждены у 10 целей, включая организации из цепочки поставок полупроводников, оборонного сектора и гражданского общества.",
+    "published_at": "2026-11-12T15:00:31+00:00",
+    "published_date": "2026-11-12",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Attackers Use Autonomous AI to Target Semiconductor, Defense and Civil Society Sectors",
+        "publisher": "Palo Alto Networks Unit 42",
+        "url": "https://origin-unit42.paloaltonetworks.com/cairn-framework-ai-autonomous-attacks/"
+      }
+    ],
+    "keywords": [
+      "DeepSeek",
+      "Zhipu GLM",
+      "Cairn",
+      "autonomous cyberattacks",
+      "China-nexus",
+      "AI agents",
+      "semiconductor security",
+      "defense",
+      "credential theft"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "russia",
+    "headline": "Yandex B2B Tech выпустила новое поколение речевых моделей для голосовых агентов",
+    "organization": "Яндекс",
+    "topic": "13 ноября 2026Yandex B2B Tech выпустила новое поколение речевых моделей для создания голосовых ИИ-агентов",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+    "published_at": null,
+    "published_date": "2026-11-13",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "13 ноября 2026Yandex B2B Tech выпустила новое поколение речевых моделей для создания голосовых ИИ-агентов",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=13-11-2026-01"
+      }
+    ],
+    "keywords": [
+      "13",
+      "ноября",
+      "2026Yandex",
+      "B2B",
+      "Tech",
+      "выпустила",
+      "новое",
+      "поколение",
+      "речевых",
+      "моделей",
+      "для",
+      "создания"
+    ],
+    "geography": "russia",
+    "category": "investment"
+  }
+]

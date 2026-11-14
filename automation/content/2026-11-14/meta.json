@@ -1,0 +1,51 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-14",
+  "slug": "2026-11-14",
+  "title": "ИИ-Сводка на 14 ноября 2026",
+  "description": "Mirendil привлекает $1 млрд на агентную R&D-платформу, Microsoft предупреждает о бэкдорах в coding-агентах, а Unit 42 раскрывает автономную киберкампанию с DeepSeek и GLM. В России Яндекс обновил речевые модели для голосовых агентов.",
+  "published_at": "2026-11-14T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-14.png",
+  "topics": [
+    "Mirendil",
+    "frontier AI",
+    "агенты ИИ",
+    "инвестиции в ИИ",
+    "кибербезопасность ИИ",
+    "supply-chain атаки",
+    "coding-агенты",
+    "DeepSeek",
+    "GLM",
+    "Cairn",
+    "AntiFox",
+    "AWS",
+    "Apple Silicon",
+    "голосовые агенты",
+    "Яндекс"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-009."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, legal_regulation, independent_missing_events."
+    },
+    {
+      "type": "section_fallback",
+      "area": "editorial",
+      "message": "Неоднозначная рубрика для cand-013: asia_mentioned_without_clear_leading_actor; выбран раздел Мировые лидеры ИИ без нового API-вызова."
+    }
+  ]
+}
