@@ -1,8 +1,136 @@
 {
   "version": 2,
-  "generated_at": "2026-11-14T05:44:16+00:00",
+  "generated_at": "2026-11-15T02:16:26+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-15",
+      "published_at": "2026-11-15T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-15T05:06:19+03:00",
+      "title": "ИИ-Сводка на 15 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-15/",
+      "summary": "Главные новости искусственного интеллекта за 15 ноября 2026 года Новостей сегодня меньше, чем обычно Свежая повестка показывает два направления развития ИИ: агенты становятся удобнее для параллельной работы разработчиков и всё глубже встраиваются в голосовые сервисы. Одновременно машинное обучение всё заметнее применяется в инфраструктурных системах, где цена ошибок и вопросы прозрачности особенно высоки. В центре выпуска — обновление Codex CLI, голосовая модель Tencent Hunyuan и сведения о ML-ф",
+      "topics": [
+        "OpenAI Codex",
+        "Codex CLI",
+        "агенты ИИ",
+        "голосовые модели",
+        "Tencent Hunyuan",
+        "Hy Realtime",
+        "tool calling",
+        "Роскомнадзор",
+        "машинное обучение",
+        "VPN",
+        "интернет-фильтрация"
+      ],
+      "source_urls": [
+        "https://github.com/openai/codex/releases/tag/rust-v0.169.0",
+        "https://www.startrise.io/models",
+        "https://www.ithome.com/1/026/825.htm",
+        "https://ru.themoscowtimes.com/2026/11/13/roskomnadzor-potratil-2-milliardov-rublei-na-ii-dlya-blokirovok-vpn-i-kontenta-v-internete-a211244"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "OpenAI выпустила Codex CLI rust-v0.169.0 с многопанельным terminal workspace и настройкой сторонних model providers",
+          "organization": "OpenAI",
+          "topic": "CLI coding agents; OpenAI Codex; terminal workspace; multi-provider agent workflows",
+          "event_type": "product_release",
+          "status": "new",
+          "summary": "OpenAI Codex CLI rust-v0.169.0 добавила opt-in terminal workspace с несколькими side-chat вкладками, поиском прошлых задач из command center и сворачиванием деталей завершённых ходов. Также появились создание и редактирование custom model providers из терминала и расширения cloud-подключения для macOS/Linux.",
+          "published_at": "2026-11-13T08:37:05+00:00",
+          "published_date": "2026-11-13",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "OpenAI Codex CLI rust-v0.169.0 release",
+              "publisher": "GitHub / OpenAI",
+              "url": "https://github.com/openai/codex/releases/tag/rust-v0.169.0"
+            }
+          ],
+          "keywords": [
+            "OpenAI Codex",
+            "Codex CLI",
+            "terminal workspace",
+            "side chats",
+            "model providers",
+            "cloud connection"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-008",
+          "section": "world",
+          "headline": "Tencent представила Hy Realtime — голосовую модель реального времени с tool calling и функцией пения",
+          "organization": "Tencent; Tencent Hunyuan; Yuanbao; Tencent Cloud",
+          "topic": "Голосовые AI-модели; realtime interaction; agentic tool calling; consumer и customer-service AI",
+          "event_type": "product_release",
+          "status": "new",
+          "summary": "Tencent Hunyuan выпустила Hy Realtime — модель для голосового взаимодействия в реальном времени. По данным первичного отраслевого сообщения, она уже работает в голосовых звонках Yuanbao и в Tencent Customer Service; модель получила agentic-вызов инструментов, включая решение о запуске веб-поиска, а также генерацию пения. API Tencent Cloud заявлен как ближайший следующий этап.",
+          "published_at": null,
+          "published_date": "2026-11-13",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "AI Model Release Tracker",
+              "publisher": "Startrise",
+              "url": "https://www.startrise.io/models"
+            },
+            {
+              "title": "腾讯混元发布实时语音模型 Hy Realtime：能说会唱、还能调用工具，已在元宝语音通话、腾讯客服等上线",
+              "publisher": "IT之家",
+              "url": "https://www.ithome.com/1/026/825.htm"
+            }
+          ],
+          "keywords": [
+            "Tencent Hunyuan",
+            "Hy Realtime",
+            "voice AI",
+            "real-time speech",
+            "tool calling",
+            "web search",
+            "Yuanbao",
+            "Tencent Cloud"
+          ],
+          "geography": "world",
+          "category": "models"
+        },
+        {
+          "candidate_id": "cand-007",
+          "section": "russia",
+          "headline": "Роскомнадзор внедрил ML-фильтрацию трафика для выявления VPN и запрещённого контента",
+          "organization": "Роскомнадзор",
+          "topic": "Использование машинного обучения в государственной системе DPI и интернет-фильтрации; блокировка VPN; цифровая цензура и риски для корпоративных сетей",
+          "event_type": "deployment_disclosure",
+          "status": "new",
+          "summary": "Согласно документам программы цифровой трансформации Роскомнадзора на 2026–2028 годы, ведомство потратило 2,27 млрд рублей на создание и внедрение механизмов фильтрации интернет-трафика с алгоритмами машинного обучения. Система дополняет ТСПУ: она анализирует сетевые сигнатуры и поведенческие признаки трафика, чтобы выявлять сервисы обхода блокировок и, потенциально, запрещённый контент.",
+          "published_at": "2026-11-13T09:04:00+03:00",
+          "published_date": "2026-11-13",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Роскомнадзор подключил ИИ к блокировке VPN и контента в рунете",
+              "publisher": "The Moscow Times",
+              "url": "https://ru.themoscowtimes.com/2026/11/13/roskomnadzor-potratil-2-milliardov-rublei-na-ii-dlya-blokirovok-vpn-i-kontenta-v-internete-a211244"
+            }
+          ],
+          "keywords": [
+            "Россия",
+            "Роскомнадзор",
+            "VPN",
+            "машинное обучение",
+            "DPI",
+            "ТСПУ",
+            "интернет-фильтрация",
+            "киберполитика"
+          ],
+          "geography": "russia",
+          "category": "russia"
+        }
+      ]
+    },
     {
       "date": "2026-11-14",
       "published_at": "2026-11-14T06:00:00+03:00",

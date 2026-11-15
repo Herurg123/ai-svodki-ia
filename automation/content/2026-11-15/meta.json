@@ -1,0 +1,42 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-15",
+  "slug": "2026-11-15",
+  "title": "ИИ-Сводка на 15 ноября 2026",
+  "description": "OpenAI развивает многозадачную среду Codex, Tencent выводит голосовую модель с вызовом инструментов в массовые сервисы, а Роскомнадзор раскрывает применение ML для фильтрации интернет-трафика.",
+  "published_at": "2026-11-15T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-15.png",
+  "topics": [
+    "OpenAI Codex",
+    "Codex CLI",
+    "агенты ИИ",
+    "голосовые модели",
+    "Tencent Hunyuan",
+    "Hy Realtime",
+    "tool calling",
+    "Роскомнадзор",
+    "машинное обучение",
+    "VPN",
+    "интернет-фильтрация"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-008."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: global_breaking, models_products_agents, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+    }
+  ]
+}
