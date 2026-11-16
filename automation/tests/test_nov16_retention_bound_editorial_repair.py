@@ -347,5 +347,211 @@ class November16BoundArchiveReplayTests(unittest.TestCase):
         self.assertFalse(any(r["id"] == "cand-006" for r in removed_update))
 
 
+class November16RealRSSRetentionRebuildTests(unittest.TestCase):
+    """Original 2026-10-14 archive row, frozen from run 43790005874.
+
+    Nightly cleanup removes the old release from the RSS feed and removes its
+    run-info, but retains its meta.json and stories.json. The rebuilt archive
+    has 121 entries still, yet its old Oct14 summary and cutoff change. The
+    prior 2026-11-16 PR #252 tested deletion only and incorrectly blocked it.
+    """
+
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+        fixtures = Path(__file__).resolve().parent / "fixtures"
+        self.old_row = json.loads(
+            (fixtures / "nov16_oct14_rss_original_row.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.meta = json.loads(
+            (fixtures / "nov16_oct14_retained_meta.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(self.old_row["date"], "2026-10-14")
+        self.assertEqual(len(self.old_row["stories"]), 7)
+
+        self.state = self.root / "automation/preview/production-daily"
+        self.artifact = self.root / "automation/preview" / DATE
+        self.artifact.mkdir(parents=True)
+        self.archive_path = self.root / "automation/archive/index.json"
+        self.research = self.state / "saved-research.json"
+        self.rss = self.root / "posts/rss.xml"
+        self.rss.parent.mkdir(parents=True)
+        self.rss.write_text(
+            "<rss><channel><item>"
+            "<link>https://rybalka.one/posts/2026-11-15/</link>"
+            "</item></channel></rss>",
+            encoding="utf-8",
+        )
+        self.old_archive = {
+            "version": 2,
+            "source": "automation/content + posts/rss.xml",
+            "items": [
+                {
+                    "date": "2026-11-15",
+                    "published_at": "2026-11-15T06:00:00+03:00",
+                    "title": "Recent already-published digest",
+                    "link": "https://rybalka.one/posts/2026-11-15/",
+                    "summary": "Recent intact summary",
+                    "stories": [],
+                },
+                self.old_row,
+            ],
+        }
+        self.changed_archive = copy.deepcopy(self.old_archive)
+        row = self.changed_archive["items"][-1]
+        row["summary"] = str(self.meta["description"])[:500]
+        row["search_cutoff_at"] = self.meta["published_at"]
+        self.assertNotEqual(row, self.old_row)
+        self.assertEqual(
+            {k: v for k, v in row.items()
+             if k not in {"summary", "search_cutoff_at"}},
+            {k: v for k, v in self.old_row.items()
+             if k not in {"summary", "search_cutoff_at"}},
+        )
+        content = self.root / "automation/content/2026-10-14"
+        write(content / "meta.json", self.meta)
+        write(content / "stories.json", self.old_row["stories"])
+        self.content = content
+
+        write(self.archive_path, self.old_archive)
+        write(self.research, {"publication_date": DATE, "candidates": []})
+        (self.artifact / "editorial-prompt-input.txt").write_text(
+            "editorial\\n=== ARCHIVE_CONTEXT_BEGIN ===\\n"
+            + json.dumps(self.old_archive, ensure_ascii=False)
+            + "\\n=== ARCHIVE_CONTEXT_END ===\\nbody",
+            encoding="utf-8",
+        )
+        self.context = guard.prepare_required(
+            publication_date=DATE,
+            state_dir=self.state,
+            persisted_research_path=self.research,
+            archive_path=self.archive_path,
+            artifact_dir=self.artifact,
+            model=MODEL,
+        )
+        guard.mark_failed_before_request(
+            self.context, "generator_nonzero_before_request"
+        )
+        self.saved_hash = json.loads(
+            self.context.journal_path.read_text(encoding="utf-8")
+        )["archive_sha256"]
+        write(self.archive_path, self.changed_archive)
+
+    def select(self):
+        return guard.select_bound_archive_for_replay(
+            publication_date=DATE,
+            state_dir=self.state,
+            artifact_dir=self.artifact,
+            archive_path=self.archive_path,
+        )
+
+    def test_actual_oct14_rss_to_meta_rebuild_uses_signed_original(self):
+        """The previously untested production failure, no paid transport."""
+        pinned = self.select()
+        self.assertNotEqual(pinned, self.archive_path)
+        self.assertEqual(
+            json.loads(pinned.read_text(encoding="utf-8")), self.old_archive
+        )
+        self.assertEqual(
+            guard._archive_sha256(json.loads(pinned.read_text()), version=2),
+            self.saved_hash,
+        )
+        required = guard.prepare_required(
+            publication_date=DATE,
+            state_dir=self.state,
+            persisted_research_path=self.research,
+            archive_path=pinned,
+            artifact_dir=self.artifact,
+            model=MODEL,
+        )
+        self.assertEqual(required.intent_sha256, self.context.intent_sha256)
+        self.assertEqual(guard.journal_state(self.state, DATE), "failed_before_request")
+        self.assertIsNone(
+            json.loads(self.context.journal_path.read_text())["request_sha256"]
+        )
+
+    def test_retained_fallback_not_accepted_when_rss_still_has_oct14(self):
+        self.rss.write_text(
+            '<rss><channel><item><link>'
+            'https://rybalka.one/posts/2026-10-14/'
+            '</link></item></channel></rss>',
+            encoding="utf-8",
+        )
+        with self.assertRaisesRegex(guard.EditorialRepairError, "retention-only"):
+            self.select()
+
+    def test_retained_fallback_requires_missing_run_info_and_valid_files(self):
+        run_info = self.content / "run-info.json"
+        write(run_info, {"status": "ok"})
+        with self.assertRaisesRegex(guard.EditorialRepairError, "retention-only"):
+            self.select()
+        run_info.unlink()
+        for filename in ("meta.json", "stories.json"):
+            path = self.content / filename
+            original = path.read_bytes()
+            try:
+                path.unlink()
+                with self.assertRaisesRegex(guard.EditorialRepairError, "retention-only"):
+                    self.select()
+            finally:
+                path.write_bytes(original)
+
+    def test_non_fallback_old_record_changes_are_still_blocked(self):
+        attacks = {}
+        for key in ("title", "link", "published_at"):
+            value = copy.deepcopy(self.changed_archive)
+            value["items"][-1][key] = "tampered"
+            attacks[key] = value
+        for key in ("stories", "source_urls", "topics"):
+            value = copy.deepcopy(self.changed_archive)
+            value["items"][-1][key] = []
+            attacks[key] = value
+        for key, text in (
+            ("summary", "fabricated old news"), 
+            ("search_cutoff_at", "2026-10-14T03:00:00+03:00"),
+        ):
+            value = copy.deepcopy(self.changed_archive)
+            value["items"][-1][key] = text
+            attacks[key] = value
+        for case, archive in attacks.items():
+            with self.subTest(case=case):
+                write(self.archive_path, archive)
+                with self.assertRaisesRegex(
+                    guard.EditorialRepairError, "retention-only"
+                ):
+                    self.select()
+
+    def test_unverified_meta_proof_and_new_stories_still_block(self):
+        original_meta = (self.content / "meta.json").read_bytes()
+        try:
+            altered = copy.deepcopy(self.meta)
+            altered["description"] = "FAKE"
+            write(self.content / "meta.json", altered)
+            with self.assertRaisesRegex(guard.EditorialRepairError, "retention-only"):
+                self.select()
+        finally:
+            (self.content / "meta.json").write_bytes(original_meta)
+
+        newly_added = copy.deepcopy(self.changed_archive)
+        newly_added["items"].insert(
+            0, {"date": DATE, "title": "untrusted new entry"}
+        )
+        write(self.archive_path, newly_added)
+        with self.assertRaisesRegex(guard.EditorialRepairError, "retention-only"):
+            self.select()
+
+    def test_recent_rows_never_qualify_for_fallback(self):
+        tampered = copy.deepcopy(self.changed_archive)
+        tampered["items"][0]["summary"] = "Other recent summary"
+        write(self.archive_path, tampered)
+        with self.assertRaisesRegex(guard.EditorialRepairError, "retention-only"):
+            self.select()
+
+
 if __name__ == "__main__":
     unittest.main()
