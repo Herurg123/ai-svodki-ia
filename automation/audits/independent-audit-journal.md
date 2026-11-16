@@ -289,3 +289,9 @@ uses deterministic read-only `merge_candidates` preflight and does not relax
 any publication guard. Full production integration regression and CI remain
 independent of the local oracle. Details:
 `experiments/2026-11-02-coverage-seventh-slot-eligibility/RESULTS.md`.
+
+## 2026-11-16 — Saved-editorial archive pin after old-item retention cleanup
+
+Original [run 43790005874](https://github.com/Herurg123/ai-svodki-ia/actions/runs/43790005874), original failed ZIP SHA-256 `018d36ed353cba592caa7ca86ad404e10dbea23bf94e9e0c6315212c4813a25c`. Candidate `cand-006` had a generic catalog URL already present in archive and `archive_status=none`; strict research validation refused the source before protected Editorial provider admission (`failed_before_request`, no paid request). Later recovery attempts mismatched `archive_sha256` after old-publication retention cleanup.
+
+Independent assistant-owned *zero-network* Python replay extracted the complete 121-entry editorial archive embedded in the original frozen prompt. Its canonical SHA-256 matched the journal exactly (`284c76f09c502962487f1a6328bb483cb85be5ded1207ce5503e2f3565b08a1a`). Fourteen offline safety/recovery checks PASS: prune-only old source, reject modified/recent/new/different/reordered archive, immutable evidence, retain six other candidates and reject duplicate catalog primary without fabricating `update`. This oracle does not claim a Terra run or live integration; the modified production functions have additional PR regression tests. Detailed protocol: `experiments/2026-11-16-safe-editorial-archive-replay/RESULTS.md`.
