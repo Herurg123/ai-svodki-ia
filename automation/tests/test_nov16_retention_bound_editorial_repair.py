@@ -320,7 +320,12 @@ class November16BoundArchiveReplayTests(unittest.TestCase):
             {"timezone": "Europe/Moscow", "publication_hour": 6},
             cutoff_at=datetime.fromisoformat("2026-11-16T05:06:21+03:00"),
         )
-        self.assertEqual([c["id"] for c in cleaned["candidates"]], ["cand-007"])
+        self.assertEqual(
+            [c["title"] for c in cleaned["candidates"]],
+            ["Independent new AI event"],
+        )
+        # Candidate IDs are intentionally renumbered by the existing
+        # sanitizer after removing an invalid row; identity is the story/source.
         self.assertEqual(len(removed), 1)
         self.assertEqual(removed[0]["id"], "cand-006")
         self.assertEqual(removed[0]["reason_code"], "archived_primary_without_update")
@@ -335,7 +340,10 @@ class November16BoundArchiveReplayTests(unittest.TestCase):
             {"timezone": "Europe/Moscow", "publication_hour": 6},
             cutoff_at=datetime.fromisoformat("2026-11-16T05:06:21+03:00"),
         )
-        self.assertIn("cand-006", [c["id"] for c in accepted["candidates"]])
+        self.assertIn(
+            "Huawei Cloud openPangu 2.1 Pro",
+            [c["title"] for c in accepted["candidates"]],
+        )
         self.assertFalse(any(r["id"] == "cand-006" for r in removed_update))
 
 
