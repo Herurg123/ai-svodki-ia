@@ -372,7 +372,7 @@ class PublishChangeValidationTests(unittest.TestCase):
         ignore = (
             (ROOT / ".gitignore").read_text(encoding="utf-8")
             if use_project_gitignore
-            else "__pycache__/\\n"
+            else "__pycache__/\n"
         )
         (root / ".gitignore").write_text(ignore, encoding="utf-8")
         self._git(root, "add", ".")
@@ -423,11 +423,11 @@ class PublishChangeValidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             self._make_repo(root, use_project_gitignore=True)
-            (root / "posts" / "rss.xml").write_text("after\\n", encoding="utf-8")
+            (root / "posts" / "rss.xml").write_text("after\n", encoding="utf-8")
             research = root / "automation" / "fixtures" / "research"
             research.mkdir(parents=True)
             generated = research / ".coverage-audit-2026-11-16.json"
-            generated.write_text('{"candidates": []}\\n', encoding="utf-8")
+            generated.write_text('{"candidates": []}\n', encoding="utf-8")
             unexpected = research / "unrelated-candidate.json"
             old_cwd = Path.cwd()
             try:
@@ -444,7 +444,7 @@ class PublishChangeValidationTests(unittest.TestCase):
                 self.assertTrue(generated.is_file())
 
                 # The ignore rule is date-shaped, not a blanket fixture exclusion.
-                unexpected.write_text("{}\\n", encoding="utf-8")
+                unexpected.write_text("{}\n", encoding="utf-8")
                 self.assertIn(
                     "automation/fixtures/research/unrelated-candidate.json",
                     publish_changes.changed_paths(),
