@@ -70,6 +70,18 @@ class PrimaryRuntimeIngressTests(unittest.TestCase):
         self.assertEqual(start_at.isoformat(), "2026-08-10T02:50:46+03:00")
         self.assertEqual(end_at.isoformat(), "2026-08-12T02:59:49+03:00")
 
+    def test_obsolete_sibling_coverage_file_cannot_gain_runtime_trust(self):
+        # A hidden name outside .runtime is no longer privileged by the wrapper.
+        legacy = self.runtime_root.parent / ".coverage-audit-2026-08-12.json"
+        try:
+            legacy.write_bytes(self.runtime_file.read_bytes())
+            path = str(legacy.relative_to(ROOT))
+            self.assertIsNone(wrapper._trusted_runtime_research_path(path))
+            self.assertFalse(wrapper.patch_trusted_runtime_window(generator, path))
+            self.assertTrue(legacy.exists())  # No mutation of historical fixture.
+        finally:
+            legacy.unlink(missing_ok=True)
+
     def test_wrapper_refuses_to_patch_window_for_normal_fixture_or_preview_path(self):
         self.assertFalse(
             wrapper.patch_trusted_runtime_window(
