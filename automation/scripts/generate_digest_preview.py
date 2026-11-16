@@ -1221,6 +1221,7 @@ def sanitize_research_candidates(
     kept: list[dict[str, Any]] = []
     filtered: list[dict[str, Any]] = []
     warnings: list[str] = []
+    archive_urls = archive_source_urls(archive)
 
     for raw_candidate in candidates:
         if not isinstance(raw_candidate, dict):
@@ -1319,6 +1320,37 @@ def sanitize_research_candidates(
                 }
             )
             continue
+
+        # The strict research validator would reject this URL anyway. Do not
+        # let one stale/misidentified archive primary block *other* publishable
+        # candidates or silently relabel a different event as an "update".
+        # In particular, an archive-reused generic listing page is NOT proof
+        # that the newly mentioned product/event was already published.
+        primary = candidate.get("primary_source")
+        primary_url = primary.get("url") if isinstance(primary, dict) else None
+        if isinstance(primary_url, str) and candidate.get("archive_status") != "update":
+            try:
+                in_archive = normalize_url(primary_url) in archive_urls
+            except RuntimeError:
+                in_archive = False  # Leave malformed URLs for strict validation.
+            if in_archive:
+                filtered.append({
+                    "id": candidate_id,
+                    "title": candidate.get("title"),
+                    "published_date": raw_date,
+                    "primary_source_url": primary_url,
+                    "reason_code": "archived_primary_without_update",
+                    "reason": (
+                        "Основной URL уже использован в архиве без доказанного "
+                        "material update. Кандидат исключён, а не помечен как "
+                        "update и не опубликован на основании общего URL."
+                    ),
+                })
+                warnings.append(
+                    f"{candidate_id}: исключён архивный primary URL без update; "
+                    "остальные проверенные кандидаты сохранены."
+                )
+                continue
 
         kept.append(candidate)
 

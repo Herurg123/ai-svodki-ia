@@ -27,6 +27,7 @@ from editorial_repair_guard import (
     journal_state,
     prepare_required,
     publication_safe,
+    select_bound_archive_for_replay,
     summary as repair_summary,
 )
 
@@ -196,11 +197,17 @@ def rerun_editorial(
             "Coverage wrote runtime research but durable merged research is missing"
         )
     legacy_report = STATE_DIR / "coverage-audit.json"
+    repair_archive = select_bound_archive_for_replay(
+        publication_date=publication_date,
+        state_dir=STATE_DIR,
+        artifact_dir=_artifact_dir(publication_date),
+        archive_path=ARCHIVE_PATH,
+    )
     prepare_required(
         publication_date=publication_date,
         state_dir=STATE_DIR,
         persisted_research_path=persisted,
-        archive_path=ARCHIVE_PATH,
+        archive_path=repair_archive,
         artifact_dir=_artifact_dir(publication_date),
         model=_model(),
         legacy_report_path=legacy_report,
@@ -227,7 +234,7 @@ def rerun_editorial(
         "--repair-state-dir",
         str(STATE_DIR.resolve().relative_to(REPOSITORY_ROOT)),
         "--repair-archive",
-        str(ARCHIVE_PATH.resolve().relative_to(REPOSITORY_ROOT)),
+        str(repair_archive.resolve().relative_to(REPOSITORY_ROOT)),
         "--repair-artifact-dir",
         str(_artifact_dir(publication_date).resolve().relative_to(REPOSITORY_ROOT)),
     ]

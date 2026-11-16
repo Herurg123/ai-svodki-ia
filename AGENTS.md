@@ -192,6 +192,15 @@ and Meta* service marker corrections. Normalize only derived/publication
 artifacts; never weaken the durable Editorial Repair publication seal to
 fix a presentational mismatch.
 
+The 2026-11-16 retention recovery remains narrow: a sealed v2 editorial
+archive snapshot may substitute for a pruned current archive only if the
+snapshot matches the signed journal and the current content differs solely by
+retention deletions of identical records aged at least 32 days. The generator
+and journal must use the SAME archived context. Any newly added, modified,
+reordered or recently removed story fails closed, as do missing evidence and
+ambiguous provider outcomes. Do not auto-label unrelated same-URL events as
+`update`; exclude invalid research rows with recorded evidence instead.
+
 Paid production regression work must use assistant-owned or saved artifacts.
 Never spend the owner's production API budget without separate explicit
 permission. Late-stage recovery must reuse already-paid same-day work whenever

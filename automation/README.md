@@ -172,6 +172,17 @@ Source Pulse, Event Freshness, regional/agency viability, Discovery Health и
 подтверждённые event-origin и дата страницы должны совпадать, а весь календарный
 день целиком лежать внутри exact search window. Источник времени не выдумывается;
 пограничные даты и неподтверждённые события остаются fail-closed.
+Для нового/восстанавливаемого Editorial `sanitize_research_candidates`
+исключает кандидата с архивным primary URL без доказанного `archive_status=update`
+из transient research, заносит `reason_code=archived_primary_without_update`
+в `research-filtered-out.json` и **не** переписывает первичный paid research.
+Существующие строго подтверждённые `update` и другие сюжеты сохраняются.
+При recovery v2 после удаления старых записей retention сохраняется и
+используется **точная исходная версия archive**, извлечённая из сохранённого
+Editorial prompt и сверенная с подписанным SHA; допустимы только удаления
+идентичных записей старше 32 дней без изменений новых. Новые/изменённые
+истории или недоказанная старая версия блокируют восстановление.
+
 Durable Editorial Repair допускает повтор legacy-операции только при
 доказанной остановке **до** provider admission (сохранился случай
 `ModuleNotFoundError: No module named 'openai'` до вызова провайдера).

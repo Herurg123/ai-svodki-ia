@@ -25,7 +25,7 @@ import json
 import os
 import shutil
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, Callable
@@ -192,6 +192,114 @@ def _legacy_archive_equivalent(
     return canonical_sha256(_archive_semantic_value(saved)) == canonical_sha256(
         _archive_semantic_value(current_archive)
     )
+
+
+def _bound_archive_snapshot_path(state_dir: Path, publication_date: str) -> Path:
+    return state_dir / f"editorial-repair-{publication_date}.archive.json"
+
+
+def _retention_only_archive_prune(
+    original: Any, current: Any, publication_date: str
+) -> bool:
+    """Only deletions of identical, old dated entries can change replay context.
+
+    A new story, edited story, missing recent item, changed archive schema, or
+    reordered dates is NOT authorized by a saved prompt. The original archive
+    must still be supplied to the editorial generator for the paid response.
+    """
+    if not isinstance(original, dict) or not isinstance(current, dict):
+        return False
+    if {
+        k: v for k, v in original.items() if k not in {"items", "generated_at"}
+    } != {
+        k: v for k, v in current.items() if k not in {"items", "generated_at"}
+    }:
+        return False
+    old_items, new_items = original.get("items"), current.get("items")
+    if not isinstance(old_items, list) or not isinstance(new_items, list):
+        return False
+    if not all(isinstance(v, dict) and isinstance(v.get("date"), str)
+               for v in old_items + new_items):
+        return False
+    old_dates = [v["date"] for v in old_items]
+    new_dates = [v["date"] for v in new_items]
+    if len(set(old_dates)) != len(old_dates) or len(set(new_dates)) != len(new_dates):
+        return False
+    new_set = set(new_dates)
+    if new_dates != [v for v in old_dates if v in new_set]:
+        return False
+    old_by_date = {v["date"]: v for v in old_items}
+    if any(old_by_date.get(v["date"]) != v for v in new_items):
+        return False
+    missing = [v for v in old_items if v["date"] not in new_set]
+    if not missing:
+        return False
+    try:
+        publish_day = date.fromisoformat(publication_date)
+        return all(
+            (publish_day - date.fromisoformat(v["date"])).days >= 32
+            for v in missing
+        )
+    except (ValueError, TypeError):
+        return False
+
+
+def select_bound_archive_for_replay(
+    *,
+    publication_date: str,
+    state_dir: Path,
+    artifact_dir: Path,
+    archive_path: Path,
+) -> Path:
+    """Restore an exact v2 archive, but ONLY for a proven retention-only prune.
+
+    The journal's sealed archive SHA is the authority; an unverified prompt,
+    extra/changed/recent story or unknown provider outcome remains fail-closed.
+    The caller must use this one path for both journal verification AND the
+    editorial generator (not merely waive the SHA mismatch).
+    """
+    archive_path = archive_path.resolve()
+    journal_path = _journal_path(state_dir, publication_date)
+    if not journal_path.is_file():
+        return archive_path
+    journal = _load_raw_journal(journal_path)
+    try:
+        version = int(journal.get("version"))
+    except (ValueError, TypeError) as exc:
+        raise EditorialRepairError("editorial repair version is invalid") from exc
+    if version != VERSION:
+        return archive_path  # Preserve the strict legacy v1 replay behavior.
+    if journal.get("state") == "unknown_after_request":
+        raise EditorialRepairError("unknown provider outcome forbids automatic retry")
+    current = _read_json(archive_path)
+    if _archive_sha256(current, version=version) == journal.get("archive_sha256"):
+        return archive_path
+
+    snapshot = _bound_archive_snapshot_path(state_dir, publication_date)
+    if snapshot.is_file():
+        saved = _read_json(snapshot)
+    else:
+        saved = _saved_prompt_archive(
+            artifact_dir, state_dir=state_dir, publication_date=publication_date
+        )
+    if not isinstance(saved, dict) or _archive_sha256(saved, version=version) != journal.get(
+        "archive_sha256"
+    ):
+        raise EditorialRepairError(
+            "saved editorial archive does not match sealed archive_sha256"
+        )
+    if not _retention_only_archive_prune(saved, current, publication_date):
+        raise EditorialRepairError(
+            "editorial archive changed beyond provable retention-only cleanup"
+        )
+    if not snapshot.is_file():
+        _atomic_json(snapshot, saved)
+    # Check bytes on disk too; never let an altered snapshot reach the model.
+    if _archive_sha256(_read_json(snapshot), version=version) != journal.get(
+        "archive_sha256"
+    ):
+        raise EditorialRepairError("bound editorial archive snapshot integrity mismatch")
+    return snapshot.resolve()
 
 
 def _request_prompt_text(kwargs: dict[str, Any]) -> str | None:
@@ -623,6 +731,19 @@ def prepare_required(
             "validated_editorial_sha256": None,
         },
     )
+    # Keep an exact optional snapshot when the initial editorial prompt proves
+    # the same archive as the sealed intent. Future retention cleanup can then
+    # safely replay without relying on a mutable dated preview directory.
+    saved_archive = _saved_prompt_archive(
+        artifact_dir, state_dir=state_dir, publication_date=publication_date
+    )
+    if isinstance(saved_archive, dict) and _archive_sha256(
+        saved_archive, version=VERSION
+    ) == identity["archive_sha256"]:
+        _atomic_json(
+            _bound_archive_snapshot_path(state_dir, publication_date),
+            saved_archive,
+        )
     return context
 
 
@@ -931,7 +1052,8 @@ def restore_state_from_bundle(
     copied: list[str] = []
     journal_source = _journal_path(source_state, publication_date)
     response_source = _response_path(source_state, publication_date)
-    for source in (journal_source, response_source):
+    archive_source = _bound_archive_snapshot_path(source_state, publication_date)
+    for source in (journal_source, response_source, archive_source):
         if not source.is_file():
             continue
         target = target_state / source.name

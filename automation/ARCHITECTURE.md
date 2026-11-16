@@ -1454,6 +1454,27 @@ checkpoint скачивается в чистый recovery root и заново 
 ambiguous/started provider work: все существующие `request_started`,
 `response_saved`, same-bundle и fail-closed recovery contracts сохраняются.
 
+16.11.2026: в research sanitizer применяется fail-safe отбор архивных
+primary URL: кандидат без `update` с URL, уже присутствующим в архиве,
+исключается с `archived_primary_without_update` до строгой валидации.
+Это не санкционирует повторное событие: `validate_research` и Editorial
+по-прежнему блокируют архивные URL и unproven update, а raw paid research,
+поисковые запросы и budgets не меняются. Сохраняются другие пригодные
+кандидаты, чтобы один generic listing URL не останавливал весь выпуск.
+
+После retention-only очистки архивного корпуса v2 durable journal теперь
+может выбрать точный сохранённый архив из оригинального Editorial prompt
+(или из `editorial-repair-YYYY-MM-DD.archive.json`), только если совпадает
+его подписанный `archive_sha256`, текущий архив является подмножеством
+идентичных строк в том же порядке и удалены только записи возрастом ≥32 дней.
+Единый pinned path применяется **и в parent guard, и в дочернем Editorial
+генераторе**. Подмена/новые/изменённые или свежие удалённые записи,
+ошибки provider outcome и любые остальные изменения bound inputs — fail-closed.
+Точный snapshot при создании нового journal сохраняется в `production-daily`
+только когда его SHA совпадает с intent; recovery переносит snapshot из
+исходного bundle. Для старых журналов v2 без snapshot допускается доказательство
+из оригинального `editorial-prompt-input.txt`, если его SHA совпадает.
+
 P0 editorial
 repair journal v2 использует semantic archive identity без служебного
 `generated_at`, и тот же volatile field исключён из нового editorial prompt.
