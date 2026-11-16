@@ -419,7 +419,14 @@ class November16RealRSSRetentionRebuildTests(unittest.TestCase):
         self.content = content
 
         write(self.archive_path, self.old_archive)
-        write(self.research, {"publication_date": DATE, "candidates": []})
+        write(self.research, {
+            "publication_date": DATE,
+            "candidates": [],
+            "search_window": {
+                "start_at": "2026-11-14T05:06:19+03:00",
+                "end_at": "2026-11-16T05:06:21+03:00",
+            },
+        })
         (self.artifact / "editorial-prompt-input.txt").write_text(
             "editorial\\n=== ARCHIVE_CONTEXT_BEGIN ===\\n"
             + json.dumps(self.old_archive, ensure_ascii=False)
