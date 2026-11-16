@@ -1414,6 +1414,14 @@ Coverage/Hybrid obligations, selected stories или search ceilings 24/25.
 
 Stable public recovery entrypoint: `recover_digest_artifact.py`.
 
+SDK `openai==2.45.0` устанавливается для любого нетерминального
+`daily-production.yml`, включая `reused=true` и `text_api_needed=false`:
+после восстановления завершённого Coverage может возникнуть отложенный
+Editorial Repair. Флаги ожидания API-вызовов не должны отключать локальную
+SDK-зависимость следующего public entrypoint. Терминальный editorial stop
+по-прежнему пропускает SDK, а наличие библиотеки само по себе не разрешает
+новые платные вызовы, повтор request_started или нарушение recovery journal.
+
 Основной принцип: уже успешно оплаченная стадия не повторяется автоматически из-
 за ошибки более поздней стадии. Recovery выбирает наиболее полный валидный
 same-day artifact и продолжает с первого незавершённого этапа. Если
