@@ -28,7 +28,7 @@ from story_coverage import (
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 PROMPT_PATH = REPOSITORY_ROOT / "automation/prompts/coverage_audit.md"
 GENERATOR_PATH = REPOSITORY_ROOT / "automation/scripts/run_digest_preview.py"
-RUNTIME_RESEARCH_ROOT = REPOSITORY_ROOT / "automation/fixtures/research"
+RUNTIME_RESEARCH_ROOT = REPOSITORY_ROOT / "automation/fixtures/research/.runtime"
 PERSISTED_RESEARCH_ROOT = REPOSITORY_ROOT / "automation/preview/production-daily"
 
 ALLOWED_CATEGORIES = [
@@ -2085,10 +2085,10 @@ def main() -> int:
         print(json.dumps(report, ensure_ascii=False, indent=2), file=sys.stderr)
         return 1
     finally:
-        # The generator intentionally accepts saved research only from the
-        # fixture root. Remove that transient execution copy, while retaining
-        # the persisted copy under automation/preview/production-daily for
-        # artifact recovery after any later failure.
+        # The generator accepts trusted saved research inside the ignored
+        # fixtures/research/.runtime ingress. Remove the ephemeral copy;
+        # the durable merged input remains in preview/production-daily for
+        # replay even if the editorial call fails.
         if runtime_research_path.exists():
             runtime_research_path.unlink()
 
