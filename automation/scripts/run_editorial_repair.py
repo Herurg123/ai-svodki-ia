@@ -118,6 +118,13 @@ def main() -> int:
         )
         return 1
 
+    # Use exactly the archive sealed by the durable journal. The normal
+    # repository archive may have pruned old items since the paid research;
+    # a validated snapshot is already authenticated by load_required above.
+    # Never validate against the saved snapshot and then generate against a
+    # different current archive.
+    generate_digest_preview.ARCHIVE_PATH = archive
+
     original_call = generate_digest_preview.call_with_usage
     editorial_calls = 0
 
