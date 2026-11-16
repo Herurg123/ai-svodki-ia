@@ -1422,7 +1422,7 @@ Coverage создаёт промежуточный `.coverage-audit-YYYY-MM-DD.j
 отдельно в `automation/preview/production-daily/`. Проверка
 `validate_publish_changes.py` продолжает блокировать любые другие
 неразрешённые изменения до Git commit. Изменение ignore не ослабляет
-ат-most-once Editorial Repair и не влияет на retrieval/freshness.
+at-most-once Editorial Repair и не влияет на retrieval/freshness.
 
 SDK `openai==2.45.0` устанавливается для любого нетерминального
 `daily-production.yml`, включая `reused=true` и `text_api_needed=false`:
