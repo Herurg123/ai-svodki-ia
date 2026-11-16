@@ -357,9 +357,24 @@ def main() -> int:
         errors.append("image request and image generation must both skip a recovered cover")
     if workflow.count("steps.recovery.outputs.image_recovered == 'true'") != 1:
         errors.append("workflow must revalidate exactly one recovered cover")
-    if workflow.count("steps.recovery.outputs.openai_needed == 'true'") != 2:
+    sdk_start = workflow.find("- name: Install pinned OpenAI SDK")
+    sdk_end = workflow.find("- name: Validate API configuration", sdk_start)
+    sdk_step = (
+        workflow[sdk_start:sdk_end]
+        if sdk_start >= 0 and sdk_end > sdk_start
+        else ""
+    )
+    if (
+        "if: steps.terminal_reuse.outputs.stop != 'true'" not in sdk_step
+        or "steps.recovery.outputs" in sdk_step
+        or "openai==2.45.0" not in sdk_step
+    ):
         errors.append(
-            "OpenAI SDK install and API validation must both be conditional on paid recovery work"
+            "OpenAI SDK must be pinned and installed before any non-terminal Coverage run, including recovered editorial repair"
+        )
+    if workflow.count("steps.recovery.outputs.openai_needed == 'true'") != 1:
+        errors.append(
+            "OpenAI API configuration validation must remain conditional on expected paid recovery work"
         )
     for cron in EXPECTED_CRONS:
         needle = f'cron: "{cron}"'
