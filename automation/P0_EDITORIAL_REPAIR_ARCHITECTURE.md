@@ -24,6 +24,19 @@ The P0 invariant is therefore:
 4. an ambiguous provider outcome is never automatically retried;
 5. a durable provider response is replayed offline rather than sent again.
 
+## Temporary runtime ingress (2026-11 hardening)
+
+Fresh Coverage and P0 `_resume_pending` use one trusted handoff path:
+`automation/fixtures/research/.runtime/.coverage-audit-YYYY-MM-DD.json`.
+The P0 wrapper reconstructs it byte-for-byte from the durable
+`automation/preview/production-daily/coverage-audit-merged-candidates-YYYY-MM-DD.json`
+and removes it in `finally` even if the guarded rerun fails; the original
+research, journal and saved provider response are never deleted. The old
+fixture-root sibling path is not a trusted runtime override and is not
+ignored by Git. Publication still rejects any unrelated tracked/untracked
+changes via `validate_publish_changes.py`. This change does not admit,
+retry or reorder any Editorial Repair provider request.
+
 ## Durable state and request identity
 
 `editorial_repair_guard.py` owns a same-day journal under `automation/preview/production-daily/`. Before the protected provider boundary it binds the exact persisted Coverage research SHA-256, the post-Freshness candidate-pool identity, archive identity, prompt/schema/model request contract and release date.
