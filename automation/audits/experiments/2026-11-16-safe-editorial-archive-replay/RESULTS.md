@@ -32,3 +32,33 @@ Standalone stand result: **14/14 safety and recovery controls PASS**. It uses an
 - New regression tests in `automation/tests/test_nov16_retention_bound_editorial_repair.py` cover signed snapshot recovery and integrity, dangerous changes, no transport, the public Coverage rerun command and child's actual archive binding, and deterministic source exclusion without fabricated update.
 - Existing broad regression suite: PR Gate required before merge. A green suite establishes local validation, not a successful live paid editorial request.
 - **Recovery instructions (not automatically executed):** choose `daily-production-2026-11-16` from run `43790005874`, `publication_date=2026-11-16`, `recovery_run_id=43790005874`, `publish=true`, `force_fresh_research=false`. The published RSS gate must still allow it. Explicit paid authorization is required for the one outstanding Editorial and one Image API call; no repeated Primary/Coverage.
+
+
+## 2026-11-16 04:19 UTC — failed real recovery after PR #252; corrected root cause
+
+The first live [recovery run 43803313965](https://github.com/Herurg123/ai-svodki-ia/actions/runs/43803313965) on merge commit `d45550e7` failed at the guarded Coverage repair: `editorial archive changed beyond provable retention-only cleanup`. **Zero paid Web Search, zero second Editorial call and zero Image calls** were issued. Failed-run artifact ID `14197492132`; original paid Research and Coverage were reused. This is not evidence of a successful prior end-to-end Editorial recovery.
+
+**Correction to the previous independent stand:** the assumed removal of **2026-10-13** from the active archive was a *simulated safety case*, not what the 16 November cleanup actually did. The cleanup pruned the 2026-10-14 public RSS item and its detailed files but **retained** `automation/content/2026-10-14/meta.json` and `stories.json`. As a result, `bootstrap_archive.py` re-constructed the October 14 record through its *content-only* fallback instead of the RSS branch. It did **not** delete an archive item: original **121**, regenerated **121**.
+
+Using the immutable original run 43790005874 ZIP, the complete sealed archive SHA-256 remains `284c76f09c502962487f1a6328bb483cb85be5ded1207ce5503e2f3565b08a1a`. The 2026-10-14 row exactly matches its original checked-in archive record. The two, and **only** two, changed values are:
+
+| Field | Frozen 16 November Editorial prompt | Deterministic retained-metadata fallback |
+|---|---|---|
+| `summary` | RSS article readable text (500 chars) | retained `meta.description` (original content meta; about 227 chars) |
+| `search_cutoff_at` | `2026-10-14T04:55:02+03:00` | `2026-10-14T06:00:00+03:00` (`meta.published_at`) |
+
+The exact seven story objects, source URLs, topics, headline, publication date/time and archive ordering are unchanged. This is a legitimate *loss of presentation/research-boundary metadata* for an expired article, **not** an authorized semantic story edit.
+
+### Revised fail-closed admission
+
+`editorial_repair_guard._retention_only_archive_prune` keeps its existing strict pure-deletion check and additionally permits retained records **at least 32 days old** when all of these independent proofs exist:
+
+- original snapshot matches the sealed v2 journal SHA;
+- entry is **absent from the current RSS** and `run-info.json` no longer exists;
+- `meta.json` and `stories.json` still exist and match date/title/published_at/topics/full stories;
+- *only* `summary` and `search_cutoff_at` differ, and current values equal exact `meta.description[:500]` and `meta.published_at`;
+- all source URLs, story fields, links, identity and unchanged item order are exact.
+
+Any new/changed/recent story, still-live RSS item, surviving `run-info`, altered source URL, forged meta, missing proof, altered signed original or unknown provider request outcome remains blocked. The signed original archive continues to be passed to both the parent journal and the real child editorial generator. Model, query, paid budget, workflow and deployment are untouched.
+
+Independent assistant-owned offline replay against all **121 frozen original rows** and the exact retained October 14 metadata was **PASS on all controls**: old journal hash, exact two-field drift, unmodified story identity, safe snapshot reuse, invalid source/story/headline/topic/summary/cutoff/fresh-item/RSS/run-info and provider-outcome negatives. The checked-in row fixture `automation/tests/fixtures/nov16_oct14_rss_original_row.json` was compared with the original ZIP's entire row (structural FNV32 `0x41f9ee87`); `nov16_oct14_retained_meta.json` preserves the metadata proof. Full production-code CI and the real recovery behavior must be verified independently. **Do not claim a successful paid editorial request on this offline result.**
