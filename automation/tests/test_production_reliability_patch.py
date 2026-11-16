@@ -500,10 +500,10 @@ class PublishChangeValidationTests(unittest.TestCase):
                 self.assertTrue(coverage_p0._is_coverage_research(actual, date))
                 seen.append(actual)
 
-            with patch.object(coverage_p0, "REPOSITORY_ROOT", root), \\
-                 patch.object(coverage_p0, "STATE_DIR", state), \\
-                 patch.object(coverage_p0, "rerun_editorial", side_effect=inspect_handoff), \\
-                 patch.object(research_wrapper, "REPOSITORY_ROOT", root), \\
+            with patch.object(coverage_p0, "REPOSITORY_ROOT", root), \
+                 patch.object(coverage_p0, "STATE_DIR", state), \
+                 patch.object(coverage_p0, "rerun_editorial", side_effect=inspect_handoff), \
+                 patch.object(research_wrapper, "REPOSITORY_ROOT", root), \
                  patch.object(research_wrapper, "TRUSTED_RUNTIME_RESEARCH_ROOT", runtime.parent):
                 self.assertEqual(coverage_policy.RUNTIME_RESEARCH_ROOT.relative_to(ROOT),
                                  Path("automation/fixtures/research/.runtime"))
@@ -555,8 +555,8 @@ class PublishChangeValidationTests(unittest.TestCase):
             def fail(**kwargs):
                 self.assertTrue(runtime.is_file())
                 raise RuntimeError("simulated interrupted editorial completion")
-            with patch.object(coverage_p0, "REPOSITORY_ROOT", root), \\
-                 patch.object(coverage_p0, "STATE_DIR", state), \\
+            with patch.object(coverage_p0, "REPOSITORY_ROOT", root), \
+                 patch.object(coverage_p0, "STATE_DIR", state), \
                  patch.object(coverage_p0, "rerun_editorial", side_effect=fail):
                 with self.assertRaisesRegex(RuntimeError, "simulated interrupted"):
                     coverage_p0._resume_pending(date)
