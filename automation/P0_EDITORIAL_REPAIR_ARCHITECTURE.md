@@ -37,10 +37,16 @@ archive context, so fresh request bytes do not drift merely because bootstrap ra
 again.
 
 For v2 journals, `select_bound_archive_for_replay` can restore the exact
-historical archive context when a retention job removed only date-stamped
-records aged at least 32 days. Existing items must remain byte-equivalent
-at the JSON-value level and in original order; no added/changed/recently
-removed entries or changed schema are permitted. The sealed journal
+historical archive context after **two verified forms** of old-content cleanup:
+(1) removal of unchanged date-stamped records aged at least 32 days, or
+(2) RSS-to-metadata fallback for an old retained record. In case (2), the
+release is no longer in RSS, its run-info was removed, and frozen `meta.json`
+and `stories.json` independently prove that only `summary` and
+`search_cutoff_at` took the deterministic metadata-fallback values.
+All events, full story objects, source URLs, topic/identity fields, and retained
+order must remain identical. A current or recent edited article, modified
+source/story, unproven metadata fallback, new entry or changed archive schema
+is still forbidden. The sealed journal
 `archive_sha256` must match the snapshot extracted from the frozen Editorial
 prompt (or a previously signed snapshot). The same snapshot is passed to
 `prepare_required`, `run_editorial_repair` and `generate_digest_preview`;

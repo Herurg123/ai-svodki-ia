@@ -27,6 +27,7 @@ import shutil
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from pathlib import Path
+from xml.etree import ElementTree as ET
 from types import SimpleNamespace
 from typing import Any, Callable
 
@@ -199,13 +200,20 @@ def _bound_archive_snapshot_path(state_dir: Path, publication_date: str) -> Path
 
 
 def _retention_only_archive_prune(
-    original: Any, current: Any, publication_date: str
+    original: Any,
+    current: Any,
+    publication_date: str,
+    *,
+    archive_path: Path | None = None,
 ) -> bool:
-    """Only deletions of identical, old dated entries can change replay context.
+    """Permit only proven, expired-content retention changes.
 
-    A new story, edited story, missing recent item, changed archive schema, or
-    reordered dates is NOT authorized by a saved prompt. The original archive
-    must still be supplied to the editorial generator for the paid response.
+    The cleanup job can (1) delete whole old entries or (2) remove an old
+    article from RSS and delete run-info while retaining metadata and stories.
+    In the second case bootstrap_archive switches from RSS-readable summary
+    and original research cutoff to meta.description and meta.published_at.
+    The actual stories, URLs and every other field MUST remain identical.
+    Neither an arbitrary old-item edit nor an ambiguous paid request can pass.
     """
     if not isinstance(original, dict) or not isinstance(current, dict):
         return False
@@ -218,8 +226,10 @@ def _retention_only_archive_prune(
     old_items, new_items = original.get("items"), current.get("items")
     if not isinstance(old_items, list) or not isinstance(new_items, list):
         return False
-    if not all(isinstance(v, dict) and isinstance(v.get("date"), str)
-               for v in old_items + new_items):
+    if not all(
+        isinstance(v, dict) and isinstance(v.get("date"), str)
+        for v in old_items + new_items
+    ):
         return False
     old_dates = [v["date"] for v in old_items]
     new_dates = [v["date"] for v in new_items]
@@ -229,19 +239,92 @@ def _retention_only_archive_prune(
     if new_dates != [v for v in old_dates if v in new_set]:
         return False
     old_by_date = {v["date"]: v for v in old_items}
-    if any(old_by_date.get(v["date"]) != v for v in new_items):
-        return False
     missing = [v for v in old_items if v["date"] not in new_set]
-    if not missing:
+    changed = [
+        (old_by_date[v["date"]], v)
+        for v in new_items
+        if old_by_date[v["date"]] != v
+    ]
+    if not missing and not changed:
         return False
     try:
         publish_day = date.fromisoformat(publication_date)
-        return all(
-            (publish_day - date.fromisoformat(v["date"])).days >= 32
+        if any(
+            (publish_day - date.fromisoformat(v["date"])).days < 32
             for v in missing
-        )
+        ) or any(
+            (publish_day - date.fromisoformat(old["date"])).days < 32
+            for old, _ in changed
+        ):
+            return False
     except (ValueError, TypeError):
         return False
+    if not changed:
+        return True
+
+    # For surviving-but-rebuilt old rows, independent repository evidence is
+    # mandatory. Never rely only on a pair of matching self-described rows.
+    if archive_path is None:
+        return False
+    archive_path = archive_path.resolve()
+    if archive_path.name != "index.json" or archive_path.parent.name != "archive":
+        return False
+    automation_dir = archive_path.parent.parent
+    rss_path = automation_dir.parent / "posts" / "rss.xml"
+    if not rss_path.is_file():
+        return False
+    try:
+        rss_root = ET.parse(rss_path).getroot()
+        rss_links = {
+            str(item.findtext("link") or "").strip()
+            for item in rss_root.findall("./channel/item")
+        }
+    except (ET.ParseError, OSError):
+        return False
+
+    presentation_fields = {"summary", "search_cutoff_at"}
+    for old, rebuilt in changed:
+        day = old["date"]
+        # The old RSS row must no longer be in the feed; otherwise
+        # bootstrap_archive would NOT have chosen metadata-only fallback.
+        if str(old.get("link") or "") in rss_links:
+            return False
+        if set(old) != set(rebuilt) or {
+            k: v for k, v in old.items() if k not in presentation_fields
+        } != {
+            k: v for k, v in rebuilt.items() if k not in presentation_fields
+        }:
+            return False
+        content_dir = automation_dir / "content" / day
+        # Only retention has discarded the runtime cutoff. With run-info still
+        # present, a changed cutoff is not a proven metadata-only rebuild.
+        if (content_dir / "run-info.json").exists():
+            return False
+        meta_path = content_dir / "meta.json"
+        stories_path = content_dir / "stories.json"
+        if not meta_path.is_file() or not stories_path.is_file():
+            return False
+        try:
+            meta = _read_json(meta_path)
+            stories = _read_json(stories_path)
+        except (OSError, ValueError, json.JSONDecodeError):
+            return False
+        if not isinstance(meta, dict) or not isinstance(stories, list):
+            return False
+        if (
+            meta.get("date") != day
+            or meta.get("title") != rebuilt.get("title")
+            or meta.get("published_at") != rebuilt.get("published_at")
+            or meta.get("topics") != rebuilt.get("topics")
+            or stories != rebuilt.get("stories")
+        ):
+            return False
+        if (
+            rebuilt.get("summary") != str(meta.get("description", ""))[:500]
+            or rebuilt.get("search_cutoff_at") != meta.get("published_at")
+        ):
+            return False
+    return True
 
 
 def select_bound_archive_for_replay(
@@ -251,7 +334,7 @@ def select_bound_archive_for_replay(
     artifact_dir: Path,
     archive_path: Path,
 ) -> Path:
-    """Restore an exact v2 archive, but ONLY for a proven retention-only prune.
+    """Restore exact v2 archive for independently proven retention-only drift.
 
     The journal's sealed archive SHA is the authority; an unverified prompt,
     extra/changed/recent story or unknown provider outcome remains fail-closed.
@@ -288,7 +371,9 @@ def select_bound_archive_for_replay(
         raise EditorialRepairError(
             "saved editorial archive does not match sealed archive_sha256"
         )
-    if not _retention_only_archive_prune(saved, current, publication_date):
+    if not _retention_only_archive_prune(
+        saved, current, publication_date, archive_path=archive_path
+    ):
         raise EditorialRepairError(
             "editorial archive changed beyond provable retention-only cleanup"
         )

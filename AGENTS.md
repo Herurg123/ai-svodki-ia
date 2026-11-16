@@ -193,9 +193,13 @@ artifacts; never weaken the durable Editorial Repair publication seal to
 fix a presentational mismatch.
 
 The 2026-11-16 retention recovery remains narrow: a sealed v2 editorial
-archive snapshot may substitute for a pruned current archive only if the
-snapshot matches the signed journal and the current content differs solely by
-retention deletions of identical records aged at least 32 days. The generator
+archive snapshot may substitute for the current archive only if the snapshot
+matches the signed journal and changed rows are exclusively (1) deletions of
+identical records aged at least 32 days or (2) old RSS-to-metadata fallback
+with independently present matching meta/stories, RSS exclusion and removed
+run-info. In case (2), only summary/search_cutoff_at may differ, each
+strictly matching the retained metadata; source URLs, stories and all event
+identity fields remain exact. The generator
 and journal must use the SAME archived context. Any newly added, modified,
 reordered or recently removed story fails closed, as do missing evidence and
 ambiguous provider outcomes. Do not auto-label unrelated same-URL events as
