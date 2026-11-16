@@ -8,6 +8,14 @@ This note documents the narrow P0 repair introduced after the 2026-09-11 recover
 
 The 2026-09-11 paid Research and first Editorial had already completed when Mandatory Coverage added a candidate and required a saved-research editorial rerun. The recovery workflow correctly reused the paid same-day artifact and skipped full Research, but the recovery path did not have the pinned OpenAI text runtime available. The required rerun failed before provider admission with `ModuleNotFoundError: No module named 'openai'`, after which the pre-repair digest could still be published.
 
+The runtime dependency invariant additionally requires the pinned OpenAI SDK
+to be installed before every non-terminal Coverage entrypoint, including a
+recovered `full` artifact with `text_api_needed=false`. Completed prior
+Coverage directions cannot rule out a deferred editorial-repair obligation.
+This bootstrap does not authorize any provider request; durable journal states
+and at-most-once admission checks remain authoritative. The 2026-11-16 run
+43808498660 demonstrated the missing-SDK failure again on this recovery path.
+
 The P0 invariant is therefore:
 
 1. already-paid full Research is never repeated merely to repair Coverage editorial completion;
