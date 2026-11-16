@@ -72,7 +72,7 @@ class EditorialRepairRecoveryTests(unittest.TestCase):
         self.persisted = self.state / f"coverage-audit-merged-candidates-{DATE}.json"
         self.runtime = (
             self.root
-            / "automation/fixtures/research"
+            / "automation/fixtures/research/.runtime"
             / f".coverage-audit-{DATE}.json"
         )
         self.archive = self.root / "automation/archive/index.json"
