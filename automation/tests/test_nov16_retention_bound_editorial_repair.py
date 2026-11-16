@@ -51,7 +51,7 @@ class November16BoundArchiveReplayTests(unittest.TestCase):
             self.state / f"coverage-audit-merged-candidates-{DATE}.json"
         )
         self.runtime = (
-            self.root / "automation/fixtures/research" / f".coverage-audit-{DATE}.json"
+            self.root / "automation/fixtures/research/.runtime" / f".coverage-audit-{DATE}.json"
         )
         self.original_archive = {
             "version": 2,
