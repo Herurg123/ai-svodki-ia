@@ -8,9 +8,11 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "automation" / "scripts"
+sys.path.insert(0, str(SCRIPTS))
 
 
 def load_module(name: str, path: Path):
@@ -38,6 +40,9 @@ publish_changes = load_module(
     "production_reliability_publish_changes",
     SCRIPTS / "validate_publish_changes.py",
 )
+import ensure_story_coverage_policy as coverage_policy
+import ensure_story_coverage_p0 as coverage_p0
+import run_digest_preview as research_wrapper
 
 
 class ProductionImageHandoffTests(unittest.TestCase):
@@ -429,7 +434,7 @@ class PublishChangeValidationTests(unittest.TestCase):
             (content / "digest.json").write_text("{}\n", encoding="utf-8")
             research = root / "automation" / "fixtures" / "research"
             research.mkdir(parents=True)
-            generated = research / ".coverage-audit-2026-11-16.json"
+            generated = research / ".runtime" / ".coverage-audit-2026-11-16.json"
             generated.write_text('{"candidates": []}\n', encoding="utf-8")
             unexpected = research / "unrelated-candidate.json"
             old_cwd = Path.cwd()
@@ -438,7 +443,7 @@ class PublishChangeValidationTests(unittest.TestCase):
 
                 os.chdir(root)
                 self.assertNotIn(
-                    "automation/fixtures/research/.coverage-audit-2026-11-16.json",
+                    "automation/fixtures/research/.runtime/.coverage-audit-2026-11-16.json",
                     publish_changes.changed_paths(),
                 )
                 report = publish_changes.validate_and_stage("2026-11-16")
@@ -449,7 +454,7 @@ class PublishChangeValidationTests(unittest.TestCase):
                 )
                 self.assertTrue(generated.is_file())
 
-                # The ignore rule is date-shaped, not a blanket fixture exclusion.
+                # Only the trusted runtime subtree is ignored, not sibling fixtures.
                 unexpected.write_text("{}\n", encoding="utf-8")
                 self.assertIn(
                     "automation/fixtures/research/unrelated-candidate.json",
@@ -461,6 +466,166 @@ class PublishChangeValidationTests(unittest.TestCase):
                     publish_changes.validate_and_stage("2026-11-16")
             finally:
                 os.chdir(old_cwd)
+
+    def test_coverage_p0_recovery_through_real_git_publish_guard(self) -> None:
+        """Resume saved Coverage through the actual P0 wrapper, then stage publication.
+
+        The provider-facing rerun is replaced with a local callback; no APIs are used.
+        A recovered transient is cleaned on both success and failure while the
+        original durable research and journal remain outside Git publication.
+        """
+        date = "2026-11-17"
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._make_repo(root, use_project_gitignore=True)
+            (root / "posts" / "rss.xml").write_text("published\\n", encoding="utf-8")
+            content = root / "automation/content" / date
+            content.mkdir(parents=True)
+            (content / "digest.json").write_text("{}\\n", encoding="utf-8")
+            state = root / "automation/preview/production-daily"
+            state.mkdir(parents=True)
+            persisted = state / f"coverage-audit-merged-candidates-{date}.json"
+            payload = '{"publication_date": "2026-11-17", "candidates": []}\\n'
+            persisted.write_text(payload, encoding="utf-8")
+            journal = state / f"editorial-repair-{date}.json"
+            journal.write_text('{"state": "validated"}\\n', encoding="utf-8")
+            runtime = root / "automation/fixtures/research/.runtime" / f".coverage-audit-{date}.json"
+            seen = []
+
+            def inspect_handoff(**kwargs):
+                actual = kwargs["merged_research_path"]
+                self.assertEqual(actual, runtime)
+                self.assertTrue(actual.is_file())
+                self.assertEqual(actual.read_bytes(), persisted.read_bytes())
+                self.assertTrue(coverage_p0._is_coverage_research(actual, date))
+                seen.append(actual)
+
+            with patch.object(coverage_p0, "REPOSITORY_ROOT", root), \\
+                 patch.object(coverage_p0, "STATE_DIR", state), \\
+                 patch.object(coverage_p0, "rerun_editorial", side_effect=inspect_handoff), \\
+                 patch.object(research_wrapper, "REPOSITORY_ROOT", root), \\
+                 patch.object(research_wrapper, "TRUSTED_RUNTIME_RESEARCH_ROOT", runtime.parent):
+                self.assertEqual(coverage_policy.RUNTIME_RESEARCH_ROOT.relative_to(ROOT),
+                                 Path("automation/fixtures/research/.runtime"))
+                # This is the same concrete path used by fresh Coverage and P0 replay.
+                self.assertEqual(coverage_p0._coverage_runtime_research(date), runtime)
+                coverage_p0._resume_pending(date)
+                self.assertEqual(seen, [runtime])
+                self.assertFalse(runtime.exists())
+                self.assertTrue(persisted.exists())
+                self.assertTrue(journal.exists())
+                # Inspect trusted ingress without replacing its implementation.
+                runtime.parent.mkdir(parents=True, exist_ok=True)
+                runtime.write_text(payload, encoding="utf-8")
+                self.assertEqual(
+                    research_wrapper._trusted_runtime_research_path(str(runtime.relative_to(root))),
+                    runtime.resolve(),
+                )
+                old = root / "automation/fixtures/research" / f".coverage-audit-{date}.json"
+                old.write_text(payload, encoding="utf-8")
+                self.assertIsNone(
+                    research_wrapper._trusted_runtime_research_path(str(old.relative_to(root)))
+                )
+                old.unlink()
+
+                current = Path.cwd()
+                try:
+                    import os
+                    os.chdir(root)
+                    report = publish_changes.validate_and_stage(date)
+                finally:
+                    os.chdir(current)
+            self.assertEqual(report["status"], "ok")
+            self.assertEqual(
+                report["staged_paths"],
+                [f"automation/content/{date}/digest.json", "posts/rss.xml"],
+            )
+            self.assertTrue(runtime.exists())
+            self.assertEqual(journal.read_text(), '{"state": "validated"}\\n')
+
+    def test_coverage_resume_failure_still_cleans_only_transient_copy(self) -> None:
+        date = "2026-11-17"
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            state = root / "automation/preview/production-daily"
+            state.mkdir(parents=True)
+            source = state / f"coverage-audit-merged-candidates-{date}.json"
+            source.write_text('{"candidates": []}\\n', encoding="utf-8")
+            runtime = root / "automation/fixtures/research/.runtime" / f".coverage-audit-{date}.json"
+            def fail(**kwargs):
+                self.assertTrue(runtime.is_file())
+                raise RuntimeError("simulated interrupted editorial completion")
+            with patch.object(coverage_p0, "REPOSITORY_ROOT", root), \\
+                 patch.object(coverage_p0, "STATE_DIR", state), \\
+                 patch.object(coverage_p0, "rerun_editorial", side_effect=fail):
+                with self.assertRaisesRegex(RuntimeError, "simulated interrupted"):
+                    coverage_p0._resume_pending(date)
+            self.assertFalse(runtime.exists())
+            self.assertEqual(source.read_text(), '{"candidates": []}\\n')
+
+    def test_git_boundary_matrix_no_blanket_ignore(self) -> None:
+        date = "2026-11-17"
+        cases = (
+            ("automation/fixtures/research/.runtime/.coverage-audit-2026-11-17.json", True),
+            ("automation/fixtures/research/.runtime/.coverage-audit-2026-11-17.json.part", True),
+            ("automation/fixtures/research/.runtime/pending-copy.tmp", True),
+            ("automation/preview/production-daily/editorial-repair-2026-11-17.json", True),
+            ("automation/recovery/1234/coverage-audit.json", True),
+            ("automation/fixtures/research/.coverage-audit-2026-11-17.json", False),
+            ("automation/fixtures/research/.coverage-audit-BROKEN.json", False),
+            ("automation/fixtures/research/other-fixture.json", False),
+            ("automation/fixtures/research/.runtime-copy/file.json", False),
+            ("automation/scripts/unsanctioned.tmp", False),
+            ("automation/content/2026-11-11/accidental.json", False),
+            ("README.md", False),
+        )
+        for path, permitted in cases:
+            with self.subTest(path=path), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self._make_repo(root, use_project_gitignore=True)
+                (root / "posts/rss.xml").write_text("after\\n", encoding="utf-8")
+                affected = root / path
+                affected.parent.mkdir(parents=True, exist_ok=True)
+                affected.write_text("changed\\n", encoding="utf-8")
+                previous = Path.cwd()
+                try:
+                    import os
+                    os.chdir(root)
+                    unexpected = publish_changes.classify_paths(
+                        publish_changes.changed_paths(), date
+                    )["unexpected"]
+                    self.assertEqual(bool(unexpected), not permitted)
+                    if permitted:
+                        content = root / "automation/content" / date
+                        content.mkdir(parents=True)
+                        (content / "digest.json").write_text("{}\\n", encoding="utf-8")
+                        self.assertEqual(
+                            publish_changes.validate_and_stage(date)["status"], "ok"
+                        )
+                    else:
+                        with self.assertRaises(publish_changes.PublishChangesError):
+                            publish_changes.validate_and_stage(date)
+                finally:
+                    os.chdir(previous)
+
+    def test_pre_staged_non_publish_path_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._make_repo(root, use_project_gitignore=True)
+            extra = root / "automation/fixtures/research/unexpected.json"
+            extra.parent.mkdir(parents=True)
+            extra.write_text("{}\\n", encoding="utf-8")
+            self._git(root, "add", str(extra.relative_to(root)))
+            previous = Path.cwd()
+            try:
+                import os
+                os.chdir(root)
+                with self.assertRaisesRegex(
+                    publish_changes.PublishChangesError, "Unexpected changed paths"
+                ):
+                    publish_changes.validate_and_stage("2026-11-17")
+            finally:
+                os.chdir(previous)
 
     def test_unexpected_change_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
