@@ -369,7 +369,12 @@ class PublishChangeValidationTests(unittest.TestCase):
         (root / "automation" / "archive" / "index.json").write_text(
             "{}\n", encoding="utf-8"
         )
-        (root / ".gitignore").write_text("__pycache__/\n", encoding="utf-8")
+        ignore = (
+            (ROOT / ".gitignore").read_text(encoding="utf-8")
+            if use_project_gitignore
+            else "__pycache__/\\n"
+        )
+        (root / ".gitignore").write_text(ignore, encoding="utf-8")
         self._git(root, "add", ".")
         self._git(root, "commit", "-m", "base")
 
@@ -411,6 +416,45 @@ class PublishChangeValidationTests(unittest.TestCase):
                     "automation/archive/index.json",
                 },
             )
+
+    def test_coverage_runtime_file_does_not_block_publish_but_other_fixtures_do(self) -> None:
+        # Reproduces the public publish guard failure from run 43810707409.
+        # The real repository ignore rules must apply to the generated input.
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self._make_repo(root, use_project_gitignore=True)
+            (root / "posts" / "rss.xml").write_text("after\\n", encoding="utf-8")
+            research = root / "automation" / "fixtures" / "research"
+            research.mkdir(parents=True)
+            generated = research / ".coverage-audit-2026-11-16.json"
+            generated.write_text('{"candidates": []}\\n', encoding="utf-8")
+            unexpected = research / "unrelated-candidate.json"
+            old_cwd = Path.cwd()
+            try:
+                import os
+
+                os.chdir(root)
+                self.assertNotIn(
+                    "automation/fixtures/research/.coverage-audit-2026-11-16.json",
+                    publish_changes.changed_paths(),
+                )
+                report = publish_changes.validate_and_stage("2026-11-16")
+                self.assertEqual(report["status"], "ok")
+                self.assertEqual(report["staged_paths"], ["posts/rss.xml"])
+                self.assertTrue(generated.is_file())
+
+                # The ignore rule is date-shaped, not a blanket fixture exclusion.
+                unexpected.write_text("{}\\n", encoding="utf-8")
+                self.assertIn(
+                    "automation/fixtures/research/unrelated-candidate.json",
+                    publish_changes.changed_paths(),
+                )
+                with self.assertRaisesRegex(
+                    publish_changes.PublishChangesError, "Unexpected changed paths"
+                ):
+                    publish_changes.validate_and_stage("2026-11-16")
+            finally:
+                os.chdir(old_cwd)
 
     def test_unexpected_change_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
