@@ -139,6 +139,7 @@ def _coverage_runtime_research(publication_date: str) -> Path:
         / "automation"
         / "fixtures"
         / "research"
+        / ".runtime"
         / f".coverage-audit-{publication_date}.json"
     )
 
@@ -156,7 +157,7 @@ def _model() -> str:
 
 
 def _is_coverage_research(path: Path, publication_date: str) -> bool:
-    return path.name == f".coverage-audit-{publication_date}.json"
+    return path.resolve() == _coverage_runtime_research(publication_date).resolve()
 
 
 def _ensure_runtime_copy(publication_date: str) -> Path:
@@ -283,13 +284,18 @@ def _record_guard_error(path: Path | None, error: BaseException) -> None:
 
 def _resume_pending(publication_date: str) -> None:
     runtime = _ensure_runtime_copy(publication_date)
-    rerun_editorial(
-        publication_date=publication_date,
-        merged_research_path=runtime,
-        minimum_total=_int_arg("--usual-total", 7),
-        maximum_candidates=_int_arg("--maximum-candidates", 20),
-        maximum_selected_stories=_int_arg("--maximum-selected-stories", 12),
-    )
+    try:
+        rerun_editorial(
+            publication_date=publication_date,
+            merged_research_path=runtime,
+            minimum_total=_int_arg("--usual-total", 7),
+            maximum_candidates=_int_arg("--maximum-candidates", 20),
+            maximum_selected_stories=_int_arg("--maximum-selected-stories", 12),
+        )
+    finally:
+        # A replay never requires the transient copy after the child exits;
+        # retain the original persisted Coverage input and sealed journal.
+        runtime.unlink(missing_ok=True)
 
 
 def _finalize_report(path: Path | None, publication_date: str) -> None:
