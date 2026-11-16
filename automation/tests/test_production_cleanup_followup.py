@@ -50,10 +50,16 @@ class ProductionCleanupFollowupTests(unittest.TestCase):
         start = workflow.index("- name: Install pinned OpenAI SDK")
         end = workflow.index("- name: Validate API configuration")
         install_block = workflow[start:end]
-        self.assertIn("if: steps.terminal_reuse.outputs.stop != 'true'", install_block)
-        self.assertNotIn("openai_needed", install_block)
-        self.assertNotIn("text_api_needed", install_block)
-        self.assertNotIn("image_api_needed", install_block)
+        condition = next(
+            line.strip() for line in install_block.splitlines()
+            if line.strip().startswith("if:")
+        )
+        self.assertEqual(
+            condition, "if: steps.terminal_reuse.outputs.stop != 'true'"
+        )
+        self.assertNotIn("openai_needed", condition)
+        self.assertNotIn("text_api_needed", condition)
+        self.assertNotIn("image_api_needed", condition)
         self.assertIn("IMAGE_API_NEEDED", workflow)
         self.assertIn("steps.recovery.outputs.openai_needed == 'true'", workflow[end:])
 
