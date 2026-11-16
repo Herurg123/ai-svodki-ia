@@ -359,7 +359,7 @@ class PublishChangeValidationTests(unittest.TestCase):
             text=True,
         )
 
-    def _make_repo(self, root: Path) -> None:
+    def _make_repo(self, root: Path, *, use_project_gitignore: bool = False) -> None:
         self._git(root, "init")
         self._git(root, "config", "user.name", "Test")
         self._git(root, "config", "user.email", "test@example.com")
