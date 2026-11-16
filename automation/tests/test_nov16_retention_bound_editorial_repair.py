@@ -21,6 +21,8 @@ sys.path.insert(0, str(SCRIPTS))
 import editorial_repair_guard as guard
 import ensure_story_coverage_p0 as coverage
 import generate_digest_preview as generator
+import run_editorial_repair as repair_runner
+import run_digest_preview
 
 DATE = "2026-11-16"
 MODEL = "gpt-5.6-terra"
@@ -237,6 +239,46 @@ class November16BoundArchiveReplayTests(unittest.TestCase):
                 self.assertEqual(json.loads(pinned.read_text()), self.original_archive)
         finally:
             coverage._ATTEMPTED_THIS_PROCESS = old
+
+    def test_editorial_child_generator_reads_the_pinned_archive(self):
+        self.prune()
+        pinned = self.select()
+        required = [
+            "run_editorial_repair.py",
+            "--publication-date", DATE,
+            "--model", MODEL,
+            "--repair-persisted-research",
+            str(self.research.relative_to(self.root)),
+            "--repair-state-dir",
+            str(self.state.relative_to(self.root)),
+            "--repair-archive",
+            str(pinned.relative_to(self.root)),
+            "--repair-artifact-dir",
+            str(self.artifact.relative_to(self.root)),
+            "--research-input",
+            str(self.runtime.relative_to(self.root)),
+        ]
+        calls = []
+
+        def no_network_editorial():
+            # Real generator entrypoint's archive is patched to this exact
+            # signed context by the public child, before any model request.
+            calls.append(generator.ARCHIVE_PATH.resolve())
+            self.assertEqual(
+                json.loads(generator.ARCHIVE_PATH.read_text()),
+                self.original_archive,
+            )
+            return 0
+
+        with patch.object(repair_runner, "REPOSITORY_ROOT", self.root), \
+             patch.object(repair_runner, "load_required", return_value=self.context), \
+             patch.object(repair_runner, "mark_validated"), \
+             patch.object(run_digest_preview, "main", side_effect=no_network_editorial), \
+             patch.object(generator, "ARCHIVE_PATH", self.archive_path), \
+             patch.object(generator, "call_with_usage"), \
+             patch.object(sys, "argv", required):
+            self.assertEqual(repair_runner.main(), 0)
+        self.assertEqual(calls, [pinned.resolve()])
 
     def test_source_repair_filters_archive_homepage_without_fake_update(self):
         archive = copy.deepcopy(self.original_archive)
