@@ -424,6 +424,9 @@ class PublishChangeValidationTests(unittest.TestCase):
             root = Path(temp_dir)
             self._make_repo(root, use_project_gitignore=True)
             (root / "posts" / "rss.xml").write_text("after\n", encoding="utf-8")
+            content = root / "automation" / "content" / "2026-11-16"
+            content.mkdir(parents=True)
+            (content / "digest.json").write_text("{}\n", encoding="utf-8")
             research = root / "automation" / "fixtures" / "research"
             research.mkdir(parents=True)
             generated = research / ".coverage-audit-2026-11-16.json"
@@ -440,7 +443,10 @@ class PublishChangeValidationTests(unittest.TestCase):
                 )
                 report = publish_changes.validate_and_stage("2026-11-16")
                 self.assertEqual(report["status"], "ok")
-                self.assertEqual(report["staged_paths"], ["posts/rss.xml"])
+                self.assertEqual(
+                    report["staged_paths"],
+                    ["automation/content/2026-11-16/digest.json", "posts/rss.xml"],
+                )
                 self.assertTrue(generated.is_file())
 
                 # The ignore rule is date-shaped, not a blanket fixture exclusion.
