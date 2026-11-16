@@ -3,3 +3,5 @@ __pycache__/
 automation/preview/
 automation/recovery/
 automation/fixtures/research/.runtime/
+# Coverage saves date-scoped research input here temporarily before Editorial Repair.
+automation/fixtures/research/.coverage-audit-????-??-??.json
