@@ -36,6 +36,20 @@ source URL or dedupe evidence. The v2 editorial prompt uses the same semantic
 archive context, so fresh request bytes do not drift merely because bootstrap ran
 again.
 
+For v2 journals, `select_bound_archive_for_replay` can restore the exact
+historical archive context when a retention job removed only date-stamped
+records aged at least 32 days. Existing items must remain byte-equivalent
+at the JSON-value level and in original order; no added/changed/recently
+removed entries or changed schema are permitted. The sealed journal
+`archive_sha256` must match the snapshot extracted from the frozen Editorial
+prompt (or a previously signed snapshot). The same snapshot is passed to
+`prepare_required`, `run_editorial_repair` and `generate_digest_preview`;
+no signed journal or provider response is mutated. New repair obligations
+store the snapshot in `production-daily` only when verified against their
+sealed archive SHA; same-bundle recovery copies the snapshot. Invalid/missing
+proofs and `unknown_after_request` remain fail-closed. This path consumes no
+extra search call and does not override the exact request-hash replay guard.
+
 Legacy v1 journals remain fail-closed except for a cryptographically proven
 timestamp-only replay. Recovery copies the exact pre-existing editorial prompt
 from the selected bundle into durable `production-daily` state before the mutable
