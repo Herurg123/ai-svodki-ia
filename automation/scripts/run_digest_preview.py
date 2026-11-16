@@ -7,6 +7,7 @@ research is staged below automation/fixtures/research/.runtime so the legacy
 generator's caller-input guard stays intact. Internal runtime research may carry
 a controlled healing overlap; only trusted ignored runtime artifacts can override
 the legacy generator's canonical continuity start for sanitation/validation.
+Coverage's temporary Editorial handoff now uses that same trusted runtime root.
 """
 from __future__ import annotations
 
@@ -96,32 +97,22 @@ def _trusted_runtime_research_path(value: str | None) -> Path | None:
         return None
     candidate = (REPOSITORY_ROOT / value).resolve()
     runtime_root = TRUSTED_RUNTIME_RESEARCH_ROOT.resolve()
-    fixture_root = runtime_root.parent
-    trusted = False
     try:
         candidate.relative_to(runtime_root)
-        trusted = True
     except ValueError:
-        # Coverage historically stages its transient rerun artifact directly
-        # below automation/fixtures/research as a hidden .coverage-audit-*.json
-        # file. It is workflow-generated and removed after the rerun, so accept
-        # only that exact hidden-file shape; arbitrary caller fixtures remain
-        # subject to the canonical archive continuity window.
-        trusted = bool(
-            candidate.parent == fixture_root
-            and candidate.name.startswith(".coverage-audit-")
-            and candidate.suffix == ".json"
-        )
-    return candidate if trusted and candidate.is_file() else None
+        # Hidden files in the neighboring fixtures/research directory are
+        # never trusted runtime research, including obsolete Coverage paths.
+        return None
+    return candidate if candidate.is_file() else None
 
 
 def patch_trusted_runtime_window(generator: Any, research_input: str | None) -> bool:
     """Use the saved effective window only for internally generated inputs.
 
     Caller-supplied fixtures keep the generator's historical strict continuity
-    semantics. Trusted Primary/Hybrid ``.runtime`` inputs and the Coverage
-    ``.coverage-audit-*.json`` handoff preserve both saved window boundaries so
-    a retry cannot silently discard healing-overlap candidates.
+    semantics. All trusted Primary/Hybrid/Coverage inputs are under ``.runtime``
+    and preserve both saved window boundaries so a retry cannot silently
+    discard healing-overlap candidates.
     """
     path = _trusted_runtime_research_path(research_input)
     if path is None:
@@ -258,7 +249,7 @@ def _verify_trusted_source_freshness(
     """Verify source dates before any trusted runtime research reaches editorial.
 
     The same gate therefore covers fresh Primary research, Hybrid merged research
-    and Coverage's hidden merged handoff without adding a paid model call.
+    and Coverage's merged handoff inside .runtime without a paid model call.
     Caller-supplied fixtures remain offline and unchanged.
     """
     research_path = _trusted_runtime_research_path(research_input_from_argv(forwarded))
