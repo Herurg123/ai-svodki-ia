@@ -29,7 +29,12 @@
 - `scripts/` — orchestration, retrieval, freshness, recovery, publication, cleanup и validators;
 - `tests/` — основной offline regression suite;
 - `notebooklm-video/` — отдельный local Windows downstream;
-- `preview/` и `recovery/` — ignored runtime/diagnostic directories.
+- `preview/` и `recovery/` — ignored runtime/diagnostic directories;
+- `fixtures/research/.runtime/` — единый ignored trusted ingress для Primary,
+  Hybrid и временного Coverage `.coverage-audit-YYYY-MM-DD.json` (включая
+  P0 recovery); durable saved research и Editorial Repair journal остаются
+  в `preview/production-daily/`. В соседнем `fixtures/research/` неожиданные
+  файлы не игнорируются и блокируют Git publish.
 
 ## Основные entrypoints
 
