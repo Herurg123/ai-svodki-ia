@@ -108,6 +108,10 @@ bundle identity через compatibility wrappers. Completed paid stages не
 уже выбрал same-day artifact, но скачать или безопасно восстановить его не
 удалось, production останавливается до fresh Research; новый полный paid Research
 в таком случае возможен только через явный `force_fresh_research=true`.
+Для каждого продолжающегося production запуска SDK OpenAI устанавливается
+даже при `reused=true, text_api_needed=false`: восстановленный Coverage
+всё ещё может вызвать отложенный Editorial Repair. Установка SDK не запускает
+платный запрос и не ослабляет durable at-most-once recovery.
 
 Для защиты от потери уже оплаченной работы production дополнительно сохраняет
 14-дневные stage checkpoints после завершённого fresh Research/editorial,

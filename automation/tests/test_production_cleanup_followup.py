@@ -43,17 +43,25 @@ previous_release = load_previous_release_module()
 
 
 class ProductionCleanupFollowupTests(unittest.TestCase):
-    def test_image_only_recovery_skips_text_sdk(self) -> None:
+    def test_image_only_recovery_still_prepares_deferred_editorial_sdk(self) -> None:
         workflow = (
             ROOT / ".github" / "workflows" / "daily-production.yml"
         ).read_text(encoding="utf-8")
         start = workflow.index("- name: Install pinned OpenAI SDK")
         end = workflow.index("- name: Validate API configuration")
         install_block = workflow[start:end]
-        self.assertIn("openai_needed", install_block)
-        self.assertIn("text_api_needed", install_block)
-        self.assertNotIn("image_api_needed", install_block)
+        condition = next(
+            line.strip() for line in install_block.splitlines()
+            if line.strip().startswith("if:")
+        )
+        self.assertEqual(
+            condition, "if: steps.terminal_reuse.outputs.stop != 'true'"
+        )
+        self.assertNotIn("openai_needed", condition)
+        self.assertNotIn("text_api_needed", condition)
+        self.assertNotIn("image_api_needed", condition)
         self.assertIn("IMAGE_API_NEEDED", workflow)
+        self.assertIn("steps.recovery.outputs.openai_needed == 'true'", workflow[end:])
 
     def test_coverage_note_describes_both_seventh_slot_roles(self) -> None:
         workflow = (
