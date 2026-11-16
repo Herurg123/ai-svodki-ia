@@ -113,7 +113,7 @@ class Aug15RetryWindowRegressionTests(unittest.TestCase):
     def test_coverage_handoff_preserves_both_saved_window_boundaries(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             fixture_root = self.configure_temp_repo(temp)
-            handoff = fixture_root / ".coverage-audit-2026-08-15.json"
+            handoff = fixture_root / ".runtime" / ".coverage-audit-2026-08-15.json"
             handoff.write_text(
                 json.dumps({"search_window": SAVED_WINDOW, "candidates": [1, 2, 3, 4, 5]}),
                 encoding="utf-8",
@@ -130,7 +130,7 @@ class Aug15RetryWindowRegressionTests(unittest.TestCase):
     def test_real_aug15_five_candidate_pool_survives_retry_sanitation(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             fixture_root = self.configure_temp_repo(temp)
-            handoff = fixture_root / ".coverage-audit-2026-08-15.json"
+            handoff = fixture_root / ".runtime" / ".coverage-audit-2026-08-15.json"
             research = {
                 "search_window": SAVED_WINDOW,
                 "candidates": AUG15_CANDIDATES,
@@ -181,7 +181,7 @@ class Aug15RetryWindowRegressionTests(unittest.TestCase):
     def test_reversed_coverage_window_fails_closed(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             fixture_root = self.configure_temp_repo(temp)
-            handoff = fixture_root / ".coverage-audit-2026-08-15.json"
+            handoff = fixture_root / ".runtime" / ".coverage-audit-2026-08-15.json"
             handoff.write_text(
                 json.dumps(
                     {
