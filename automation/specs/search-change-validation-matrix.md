@@ -359,3 +359,9 @@ policy-equivalence stand evidence:
 Production-code tests:
 `automation/tests/test_recall_sentinel.py`. No model/routing/query changes,
 so no Terra search comparison is claimed.
+
+### 2026-11-16: strict archived primary URLs and durable archive-replay pin
+
+Original `43790005874` after saved Research/Editorial and 7/7 Coverage operations: `cand-006` used the reused Startrise generic model-catalog primary URL with `archive_status=none`, stopping the protected Editorial *before provider admission*. The deterministic research sanitizer must record `archived_primary_without_update` and exclude only that invalid row, not auto-relabel it `update` or allow its URL into the final article. Other fresh candidates must survive. The saved Research and source/freshness guards stay untouched.
+
+For a sealed v2 pending completion, exactly matching original Editorial prompt archive is reused only if current archive differs through retention-only removal of unchanged entries aged at least 32 days, in preserved order. Signed archive hash, candidate pool, model, request schema, prompt proof, and all nonarchive intents remain strict; a different/new/reordered/recently removed story fails closed. Pending request admission after an ambiguous response is never retried. Same hash-verified snapshot is used by guard **and** actual child generator. Verify real regression via `automation/tests/test_nov16_retention_bound_editorial_repair.py`, offline frozen-ZIP oracle protocol at `automation/audits/experiments/2026-11-16-safe-editorial-archive-replay/RESULTS.md`. No added search operations or provider calls in validation.
