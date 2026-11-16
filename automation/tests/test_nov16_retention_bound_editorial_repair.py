@@ -428,9 +428,9 @@ class November16RealRSSRetentionRebuildTests(unittest.TestCase):
             },
         })
         (self.artifact / "editorial-prompt-input.txt").write_text(
-            "editorial\\n=== ARCHIVE_CONTEXT_BEGIN ===\\n"
+            "editorial\n=== ARCHIVE_CONTEXT_BEGIN ===\n"
             + json.dumps(self.old_archive, ensure_ascii=False)
-            + "\\n=== ARCHIVE_CONTEXT_END ===\\nbody",
+            + "\n=== ARCHIVE_CONTEXT_END ===\nbody",
             encoding="utf-8",
         )
         self.context = guard.prepare_required(
