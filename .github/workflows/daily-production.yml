@@ -640,7 +640,9 @@ jobs:
           PY
           echo "Переиспользуемый платный artifact восстановлен из run ${RECOVERY_RUN_ID}."
       - name: Install pinned OpenAI SDK
-        if: steps.terminal_reuse.outputs.stop != 'true' && (steps.recovery.outputs.reused != 'true' || (steps.recovery.outputs.openai_needed == 'true' && steps.recovery.outputs.text_api_needed == 'true'))
+        # Даже восстановленный полный Coverage может потребовать Editorial Repair.
+        # text_api_needed не является гарантией отсутствия SDK-зависимостей.
+        if: steps.terminal_reuse.outputs.stop != 'true'
         run: |
           set -euo pipefail
           python -m pip install --disable-pip-version-check "openai==2.45.0"
