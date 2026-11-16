@@ -1414,15 +1414,32 @@ Coverage/Hybrid obligations, selected stories или search ceilings 24/25.
 
 Stable public recovery entrypoint: `recover_digest_artifact.py`.
 
-Coverage создаёт промежуточный `.coverage-audit-YYYY-MM-DD.json` в
-`automation/fixtures/research/` при редакторском завершении, включая recovery.
-Это временный вход для `run_editorial_repair.py`, а не publishable fixture:
-`.gitignore` исключает только date-scoped имена этого вида. Durable
-`coverage-audit-merged-candidates-YYYY-MM-DD.json` и journal сохраняются
-отдельно в `automation/preview/production-daily/`. Проверка
-`validate_publish_changes.py` продолжает блокировать любые другие
-неразрешённые изменения до Git commit. Изменение ignore не ослабляет
-at-most-once Editorial Repair и не влияет на retrieval/freshness.
+Coverage создаёт промежуточный `.coverage-audit-YYYY-MM-DD.json` **только**
+в `automation/fixtures/research/.runtime/`. Это тот же ignored trusted ingress,
+который уже используют Primary/Hybrid. Fresh Coverage передаёт этот файл
+`run_digest_preview.py` для Editorial, а P0 recovery пересоздаёт точную
+копию из сохранённого research; P0 удаляет копию после попытки, включая
+ошибку. `run_digest_preview._trusted_runtime_research_path` не доверяет
+бывшему соседнему пути `automation/fixtures/research/.coverage-audit-*.json`:
+скрытое имя файла вне `.runtime/` больше не обходит проверку effective
+search window и Source Freshness. Обычные caller fixtures остаются под
+штатными строгими правилами; `generate_digest_preview.resolve_research_input`
+по-прежнему ограничивает весь вход деревом `fixtures/research/`.
+
+Durable `coverage-audit-merged-candidates-YYYY-MM-DD.json`, raw response,
+`editorial-repair-YYYY-MM-DD.json` journal, signed source/archive evidence и
+API checkpoints сохраняются только в `automation/preview/production-daily/`
+и датированных recovery/artifact корнях. Старое исключение
+`.coverage-audit-????-??-??.json` из `.gitignore` удалено: появление
+неожиданного файла в sibling fixture теперь намеренно fail-closed. Сам
+`.runtime/` игнорируется целиком, включая прерванные `.part`/`.tmp` и
+несколько дат. `validate_publish_changes.py` без изменений разрешает
+только `posts/`, `automation/content/<publication_date>/` и
+`automation/archive/index.json`, отклоняя прочие staged/untracked/tracked
+изменения до commit. Offline регрессия проверяет реальные P0 wrapper
+copy/cleanup + trusted ingress + Git publish gate и матрицу соседних файлов.
+Search budgets 12/7/24(25), URL dedupe, Event/Source Freshness policy,
+at-most-once Editorial Repair и публикационный порядок не меняются.
 
 SDK `openai==2.45.0` устанавливается для любого нетерминального
 `daily-production.yml`, включая `reused=true` и `text_api_needed=false`:
