@@ -435,6 +435,7 @@ class PublishChangeValidationTests(unittest.TestCase):
             research = root / "automation" / "fixtures" / "research"
             research.mkdir(parents=True)
             generated = research / ".runtime" / ".coverage-audit-2026-11-16.json"
+            generated.parent.mkdir(parents=True, exist_ok=True)
             generated.write_text('{"candidates": []}\n', encoding="utf-8")
             unexpected = research / "unrelated-candidate.json"
             old_cwd = Path.cwd()
