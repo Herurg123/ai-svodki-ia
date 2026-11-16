@@ -1,8 +1,64 @@
 {
   "version": 2,
-  "generated_at": "2026-11-15T02:16:26+00:00",
+  "generated_at": "2026-11-16T05:46:16+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-16",
+      "published_at": "2026-11-16T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-16T05:06:21+03:00",
+      "title": "ИИ-Сводка на 16 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-16/",
+      "summary": "Главные новости искусственного интеллекта за 16 ноября 2026 года Новостей сегодня меньше, чем обычно Сегодня в фокусе — обновление среды агентной разработки Google Antigravity CLI. Релиз показывает, что инструменты для программирования движутся от одиночного диалога с моделью к воспроизводимым процессам с несколькими субагентами, централизованными политиками и более строгой защитой интеграций. Для команд это означает, что скорость параллельной работы агентов всё теснее связана с качеством оркест",
+      "topics": [
+        "Google",
+        "Antigravity CLI",
+        "агенты ИИ",
+        "ИИ-кодинг",
+        "субагенты",
+        "оркестрация workflow",
+        "MCP",
+        "безопасность API-ключей",
+        "корпоративное управление плагинами"
+      ],
+      "source_urls": [
+        "https://www.havoptic.com/r/antigravity-cli-1.5.9"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "Google Antigravity CLI 1.5.9 добавила параллельные workflow субагентов и исправила передачу MCP-заголовков",
+          "organization": "Google",
+          "topic": "CLI coding agents; Google Antigravity; parallel subagents; workflow orchestration; enterprise plugin controls; MCP security",
+          "event_type": "release",
+          "status": "new",
+          "summary": "По данным release tracker Havoptic, Google выпустила Antigravity CLI 1.5.9 14 ноября. Версия добавляет runworkflow: агент пишет и исполняет Python-workflow для параллельного или последовательного запуска subagents со структурированными handoff; Python поставляется вместе с CLI. Также добавлены enterprise plugin controls и исправлена проблема, при которой custom headers HTTP MCP server, включая API keys, могли пересылаться на другой host при redirect.",
+          "published_at": "2026-11-14T05:39:50+00:00",
+          "published_date": "2026-11-14",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Antigravity CLI v1.5.9",
+              "publisher": "Havoptic",
+              "url": "https://www.havoptic.com/r/antigravity-cli-1.5.9"
+            }
+          ],
+          "keywords": [
+            "Google Antigravity",
+            "Antigravity CLI",
+            "parallel subagents",
+            "Dynamic Workflows",
+            "plugin controls",
+            "MCP",
+            "redirect headers",
+            "agent orchestration"
+          ],
+          "geography": "world",
+          "category": "coding"
+        }
+      ]
+    },
     {
       "date": "2026-11-15",
       "published_at": "2026-11-15T06:00:00+03:00",
@@ -6407,10 +6463,10 @@
     {
       "date": "2026-10-14",
       "published_at": "2026-10-14T06:00:00+03:00",
-      "search_cutoff_at": "2026-10-14T04:55:02+03:00",
+      "search_cutoff_at": "2026-10-14T06:00:00+03:00",
       "title": "ИИ-Сводка на 14 октября 2026",
       "link": "https://rybalka.one/posts/2026-10-14/",
-      "summary": "Главные новости искусственного интеллекта за 14 октября 2026 года Повестка дня показывает, что конкуренция в ИИ всё сильнее зависит от среды исполнения: моделей с долговременной памятью, стоечной инфраструктуры, агентных интеграций и контроля действий в платежах и корпоративных системах. Одновременно рынок получает менее оптимистичный сигнал из потребительского сегмента: Character.AI начала процедуру Chapter 11. На стороне разработки и безопасности компании продолжают формализовать правила для а",
+      "summary": "Meta выпустила Muse Wonder, AMD представила серверную платформу Helion, Amex предложила защиту агентных платежей, а Character.AI начала процедуру банкротства. Также — обновления Cursor, GitHub Copilot и рынок защиты агентов ИИ.",
       "topics": [
         "Meta",
         "Muse Wonder",
@@ -6664,10 +6720,10 @@
     {
       "date": "2026-10-13",
       "published_at": "2026-10-13T06:00:00+03:00",
-      "search_cutoff_at": "2026-10-13T05:06:22+03:00",
+      "search_cutoff_at": "2026-10-13T06:00:00+03:00",
       "title": "ИИ-Сводка на 13 октября 2026",
       "link": "https://rybalka.one/posts/2026-10-13/",
-      "summary": "Главные новости искусственного интеллекта за 13 октября 2026 года Новостей сегодня меньше, чем обычно Сегодняшняя повестка связывает безопасность развёрнутых LLM-сервисов с физической и вычислительной инфраструктурой ИИ. Одновременно появляются новые практические контуры world models: от интерактивной аудиовизуальной среды до автономного сбора атмосферных данных для прогнозирования. Главный вывод дня: конкурентоспособность ИИ всё больше зависит не только от модели, но и от защищённости её сервис",
+      "summary": "Новые риски для открытых LLM-сервисов, открытие архитектуры NVIDIA Vera Rubin, интерактивная world model Helix World и контракт ВВС США на данные автономных метеозондов.",
       "topics": [
         "безопасность ИИ-инфраструктуры",
         "PoeLLM",

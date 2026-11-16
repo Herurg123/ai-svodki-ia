@@ -1,0 +1,542 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-11-16",
+  "search_window": {
+    "start_at": "2026-11-14T05:06:19+03:00",
+    "end_at": "2026-11-16T05:06:21+03:00",
+    "latest_archive_at": "2026-11-15T05:06:19+03:00",
+    "start_date": "2026-11-14",
+    "end_date": "2026-11-16",
+    "latest_archive_date": "2026-11-15"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=2, accepted=1, rejected=1."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=0, rejected=1."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Megaspeed начала внутреннее расследование из-за обвинений в обходе экспортного контроля США для ИИ-чипов Nvidia",
+      "organization": "Megaspeed International; Nvidia",
+      "published_date": "2026-11-16",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Экспортный контроль ИИ-чипов; предполагаемое перенаправление Nvidia GPU в Китай; compliance и расследование AI-инфраструктуры",
+      "event_type": "corporate investigation / export-control security update",
+      "keywords": [
+        "Megaspeed",
+        "Nvidia",
+        "AI chips",
+        "export controls",
+        "China",
+        "Singapore",
+        "internal investigation",
+        "GPU diversion"
+      ],
+      "geography": "world",
+      "category": "security",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "Megaspeed says Alice Huang left in 2025 as company conducts internal probe over Nvidia fallout",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/singapore-megaspeed-alice-huang-nvidia-probe-e9e2e18169dce0b30a34f39715bf35ed"
+      },
+      "supporting_sources": [],
+      "event_summary": "Сингапурская облачная компания Megaspeed сообщила AP, что привлекла внешних юристов для внутреннего расследования на фоне обвинений в возможной передаче передовых чипов Nvidia китайским компаниям в обход экспортных ограничений США. Компания также заявила, что Алиса Хуан покинула Megaspeed 30 августа 2025 года и больше не занимает в ней должностей.",
+      "verified_facts": [
+        "Megaspeed заявила AP о найме внешних юристов для проведения внутреннего расследования.",
+        "Компания находится под вниманием из-за обвинений в возможном обходе ограничений США на поставки передовых чипов Nvidia в Китай.",
+        "Megaspeed назвала свой бизнес законным и заявила о готовности сотрудничать с компетентными органами.",
+        "Компания сообщила, что Алиса Хуан покинула Megaspeed 30 августа 2025 года."
+      ],
+      "significance": "Это самостоятельное material update к уже известному сюжету вокруг Nvidia: облачный партнёр Nvidia публично запускает внешнее внутреннее расследование на фоне экспортно-контрольных рисков, затрагивающих доступ Китая к передовым ИИ-ускорителям.",
+      "significance_score": 3,
+      "limitations": "AP передаёт заявление самой Megaspeed; источник не подтверждает выводов расследования, факт нарушения экспортного контроля или конкретные действия регуляторов. Точный timestamp публикации на открытой странице AP не отображён.",
+      "archive_status": "update",
+      "archive_reason": "Сюжет связан с уже опубликованной в архиве сменой руководства Nvidia, но добавляет новый самостоятельный факт: внутреннее расследование Megaspeed с участием внешних юристов и публичную позицию компании по экспортно-контрольным обвинениям.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "AP напрямую сообщает о заявлении Megaspeed и приводит содержание заявления компании; новый факт подтверждён авторитетным новостным агентством.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Хотя тема связана с экспортным контролем и возможными расследованиями, данный кандидат описывает корпоративное внутреннее расследование, а не крупное судебное или регуляторное решение.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран по значимости для безопасности ИИ-инфраструктуры и экспортного контроля.",
+      "event_date": "2026-11-16",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://apnews.com/article/singapore-megaspeed-alice-huang-nvidia-probe-e9e2e18169dce0b30a34f39715bf35ed",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "AP описывает заявление компании, сделанное в воскресенье; при дате выпуска 16 ноября 2026 года это подтверждает event date с точностью до календарного дня.",
+      "id": "cand-001",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    },
+    {
+      "title": "Министр финансов США Бессент публично поставил под сомнение связанные с Китаем продажи Nvidia и призвал совет директоров искать внешнего CEO",
+      "organization": "Nvidia; Министерство финансов США; Скотт Бессент",
+      "published_date": "2026-11-15",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "Nvidia; экспортный контроль США; продажи AI-чипов в Китай; корпоративное управление; риски для AI-инфраструктуры",
+      "event_type": "material public intervention by U.S. Treasury secretary",
+      "keywords": [
+        "Nvidia",
+        "AI chips",
+        "export controls",
+        "China",
+        "Scott Bessent",
+        "CEO search",
+        "earnings",
+        "board governance"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "business_media",
+      "primary_source": {
+        "title": "Bessent questions Nvidia's sales and calls for external CEO",
+        "publisher": "Axios",
+        "url": "https://www.axios.com/2026/11/15/bessent-nvidia-earnings-china-chip-sales-ceo"
+      },
+      "supporting_sources": [
+        {
+          "title": "Megaspeed says Alice Huang left in 2025 as company conducts internal probe over Nvidia fallout",
+          "publisher": "Associated Press",
+          "url": "https://apnews.com/article/singapore-megaspeed-alice-huang-nvidia-probe-e9e2e18169dce0b30a34f39715bf35ed"
+        }
+      ],
+      "event_summary": "Скотт Бессент в воскресном телеинтервью заявил, что Nvidia должна объяснить возможные неправомерные продажи в Китай, поставил вопрос о культуре соблюдения экспортного контроля и призвал совет директоров искать внешнего кандидата на пост CEO. Это самостоятельное развитие ранее опубликованного сюжета об уходе Дженсена Хуана: теперь к нему добавилась публичная позиция главы Минфина США, затрагивающая продажи AI-ускорителей, финансовую отчётность и экспортные ограничения.",
+      "verified_facts": [
+        "Axios сообщает, что Бессент в интервью Fox News в воскресенье усомнился, не были ли доходы Nvidia завышены ненадлежащими продажами в Китай.",
+        "По данным Axios, Бессент призвал совет Nvidia назначить внешнего CEO и потребовал ответов от совета и внешних юристов в течение 10 дней.",
+        "Associated Press отдельно подтвердило, что Бессент публично сосредоточил претензии на соблюдении Nvidia экспортных ограничений США и вопросе возможных продаж через структуры, связанные с Китаем."
+      ],
+      "significance": "Публичное вмешательство главы Минфина США усиливает риск экспортно-контрольных, репутационных и управленческих последствий для крупнейшего поставщика AI-ускорителей. Это может иметь значение для цепочек поставок GPU, облачных партнёров Nvidia и доступа китайского рынка к передовым вычислительным системам.",
+      "significance_score": 3,
+      "limitations": "Заявления Бессента являются политической и регуляторной реакцией, а не выводом завершённого расследования. Nvidia, согласно Axios, не дала немедленного комментария; утверждения о неправомерных продажах в статье не установлены как доказанный факт.",
+      "archive_status": "update",
+      "archive_reason": "Архив от 2026-11-13 уже содержит сюжет об уходе Дженсена Хуана и временном назначении Колетт Кресс. Новый кандидат не повторяет саму кадровую новость: он фиксирует последующее публичное требование главы Минфина США о внешнем CEO и объяснениях относительно экспортных продаж.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Axios прямо описывает интервью Бессента и его требования; AP независимо подтверждает его публичные высказывания по теме экспортного контроля Nvidia. Материал относится к AI-чипам и инфраструктурной цепочке поставок.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Хотя контекст затрагивает экспортный контроль и возможные расследования, этот кандидат описывает публичные заявления должностного лица, а не новый судебный акт, иск или регуляторное решение.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не является curiosity-сюжетом; релевантность определяется прямым влиянием на поставки AI-чипов и корпоративное управление Nvidia.",
+      "event_date": "2026-11-15",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.axios.com/2026/11/15/bessent-nvidia-earnings-china-chip-sales-ceo",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Axios датирует материал 15 ноября 2026 года и указывает, что заявления были сделаны Бессентом в воскресном интервью Fox News; точный timestamp интервью в доступном источнике не указан.",
+      "id": "cand-002",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    },
+    {
+      "title": "Google Antigravity CLI 1.5.9 добавила параллельные subagent workflows и исправила передачу MCP-заголовков при redirect",
+      "organization": "Google",
+      "published_date": "2026-11-14",
+      "published_at": "2026-11-14T05:39:50+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agents; Google Antigravity; parallel subagents; workflow orchestration; enterprise plugin controls; MCP security",
+      "event_type": "release",
+      "keywords": [
+        "Google Antigravity",
+        "Antigravity CLI",
+        "parallel subagents",
+        "Dynamic Workflows",
+        "plugin controls",
+        "MCP",
+        "redirect headers",
+        "agent orchestration"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "industry_media",
+      "primary_source": {
+        "title": "Antigravity CLI v1.5.9",
+        "publisher": "Havoptic",
+        "url": "https://www.havoptic.com/r/antigravity-cli-1.5.9"
+      },
+      "supporting_sources": [
+        {
+          "title": "AI Coding Tool Releases and Changelogs, Tracked Daily",
+          "publisher": "Havoptic",
+          "url": "https://www.havoptic.com/"
+        }
+      ],
+      "event_summary": "По данным release tracker Havoptic, Google выпустила Antigravity CLI 1.5.9 14 ноября. Версия добавляет runworkflow: агент пишет и исполняет Python-workflow для параллельного или последовательного запуска subagents со структурированными handoff; Python поставляется вместе с CLI. Также добавлены enterprise plugin controls и исправлена проблема, при которой custom headers HTTP MCP server, включая API keys, могли пересылаться на другой host при redirect.",
+      "verified_facts": [
+        "Tracker датирует Antigravity CLI v1.5.9 14 ноября 2026 года.",
+        "В release notes описан runworkflow для параллельных и последовательных subagent workflows; встроенный Python устраняет внешнюю зависимость Python.",
+        "Описаны managed plugin controls: pluginsDisabled и marketplaceDisabled.",
+        "В release notes заявлено исправление пересылки custom HTTP MCP headers на другой host при redirect."
+      ],
+      "significance": "Кандидат потенциально значим для agentic development environments: он объединяет встроенную оркестрацию параллельных subagents, централизованный enterprise-контроль плагинов и security fix для MCP credentials. Это шире обычного UI-патча и может повлиять на команды, использующие agent-first CLI workflows.",
+      "significance_score": 3,
+      "limitations": "В доступном проходе официальный original-release URL был указан tracker'ом, но не был независимо открыт до лимита навигационных вызовов. Следовательно, факты согласованы с подробными release notes отраслевого tracker'а, однако редакции следует перепроверить их по первичной GitHub/Google release page.",
+      "archive_status": "none",
+      "archive_reason": "В архиве текущего пула нет Antigravity CLI 1.5.9 или эквивалентного сюжета о Dynamic Workflows и MCP redirect-header fix.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Дата и детальные пункты релиза подтверждены отдельной release-страницей Havoptic; в ней имеется ссылка на original release. Для финальной публикации желательна первичная проверка по linked GitHub source.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-11-14T05:39:50.000Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-11-14T05:39:50.000Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-11-14T05:39:50.000Z; timestamp проверен Python против effective window. Release tracker указывает самостоятельный новый релиз от 14 ноября 2026 года; это не обновление ранее опубликованного архивного сюжета.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Продуктовый релиз, не судебное и не регуляторное событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: событие напрямую относится к CLI coding agents и MCP security.",
+      "event_date": "2026-11-14",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://www.havoptic.com/r/antigravity-cli-1.5.9",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "Подробная release-страница Havoptic прямо указывает: «Antigravity CLI v1.5.9 was released on November 14, 2026», и публикует ссылку на original release.",
+      "id": "cand-003",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.havoptic.com/r/antigravity-cli-1.5.9",
+      "source_published_date": "2026-11-14",
+      "source_published_at": "2026-11-14T05:39:50+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-11-14T05:39:50.000Z"
+    },
+    {
+      "title": "Our new blog for science",
+      "organization": "OpenAI",
+      "published_date": "2026-11-15",
+      "published_at": "2026-11-15T22:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Our new blog for science",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "Our",
+        "blog",
+        "science"
+      ],
+      "geography": "world",
+      "category": "other",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Our new blog for science",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/our-new-blog-for-science"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI official artificial intelligence publication: Our new blog for science",
+      "verified_facts": [
+        "Our new blog for science",
+        "OpenAI official artificial intelligence publication: Our new blog for science"
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-11-15T22:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-11-15T22:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-11-15T22:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-11-15T22:00:00+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-11-15T22:00:00+00:00; timestamp проверен Python против effective window. Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-11-15T22:00:00+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-11-15T22:00:00+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-004",
+      "trusted_feed_publication_evidence": {
+        "version": 1,
+        "kind": "trusted_first_party_feed",
+        "source_id": "openai_news_rss",
+        "feed_url": "https://openai.com/news/rss.xml",
+        "item_url": "https://openai.com/index/our-new-blog-for-science",
+        "published_at": "2026-11-15T22:00:00+00:00",
+        "published_date": "2026-11-15",
+        "time_precision": "datetime",
+        "feed_date_field": "rss_pubdate",
+        "same_host_required": true,
+        "exact_item_url_required": true
+      },
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_evidence_kind": "trusted_first_party_feed",
+      "source_freshness_feed_source_id": "openai_news_rss",
+      "source_freshness_feed_date_field": "rss_pubdate",
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://openai.com/index/our-new-blog-for-science",
+      "source_published_date": "2026-11-15",
+      "source_published_at": "2026-11-15T22:00:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "trusted_feed:openai_news_rss:rss_pubdate=2026-11-15T22:00:00+00:00"
+    },
+    {
+      "title": "A step toward defining the Standard Model on a lattice",
+      "organization": "OpenAI",
+      "published_date": "2026-11-15",
+      "published_at": "2026-11-15T22:00:01+00:00",
+      "time_precision": "datetime",
+      "topic": "A step toward defining the Standard Model on a lattice",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "step",
+        "toward",
+        "defining",
+        "Standard",
+        "Model",
+        "lattice"
+      ],
+      "geography": "world",
+      "category": "models",
+      "source_type": "official",
+      "primary_source": {
+        "title": "A step toward defining the Standard Model on a lattice",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/step-toward-defining-the-standard-model"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenAI official artificial intelligence publication: A step toward defining the Standard Model on a lattice",
+      "verified_facts": [
+        "A step toward defining the Standard Model on a lattice",
+        "OpenAI official artificial intelligence publication: A step toward defining the Standard Model on a lattice"
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-11-15T22:00:01+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-11-15T22:00:01+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-11-15T22:00:01+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-11-15T22:00:01+00:00; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-11-15T22:00:01+00:00; timestamp проверен Python против effective window. Trusted first-party feed publication evidence v1: source=openai_news_rss; field=rss_pubdate; published_at=2026-11-15T22:00:01+00:00; exact same-host item URL. Source Pulse v1.2 + Source Freshness Proof: meta:article:published_time=2026-11-15T22:00:01+00:00; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-005",
+      "trusted_feed_publication_evidence": {
+        "version": 1,
+        "kind": "trusted_first_party_feed",
+        "source_id": "openai_news_rss",
+        "feed_url": "https://openai.com/news/rss.xml",
+        "item_url": "https://openai.com/index/step-toward-defining-the-standard-model",
+        "published_at": "2026-11-15T22:00:01+00:00",
+        "published_date": "2026-11-15",
+        "time_precision": "datetime",
+        "feed_date_field": "rss_pubdate",
+        "same_host_required": true,
+        "exact_item_url_required": true
+      },
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_evidence_kind": "trusted_first_party_feed",
+      "source_freshness_feed_source_id": "openai_news_rss",
+      "source_freshness_feed_date_field": "rss_pubdate",
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://openai.com/index/step-toward-defining-the-standard-model",
+      "source_published_date": "2026-11-15",
+      "source_published_at": "2026-11-15T22:00:01+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "trusted_feed:openai_news_rss:rss_pubdate=2026-11-15T22:00:01+00:00"
+    },
+    {
+      "title": "Глобальный сбой Microsoft 365 нарушил работу Copilot, почты и связанных ИИ-сервисов",
+      "organization": "Microsoft; OpenAI; Anthropic",
+      "published_date": "2026-11-14",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "устойчивость облачной инфраструктуры; Microsoft 365; Outlook; Teams; Copilot; зависимость ИИ-сервисов от корпоративных SaaS-платформ",
+      "event_type": "global cloud service outage and recovery update",
+      "keywords": [
+        "Microsoft 365",
+        "Outlook",
+        "Teams",
+        "Copilot",
+        "cloud outage",
+        "AI infrastructure",
+        "OpenAI",
+        "Anthropic",
+        "resilience"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "Global Microsoft outage hits companies and governments",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/microsoft-outage-outlook-email-365-status-down-d92547a821930290db2964388016979a"
+      },
+      "supporting_sources": [],
+      "event_summary": "Associated Press сообщило о глобальном сбое Microsoft 365, который затронул Outlook, Teams и ИИ-ассистента Copilot. На второй день сбоя Microsoft заявила о прогрессе восстановления, но предупредила о возможных эпизодических проблемах доступа и задержках почты. AP также зафиксировало нарушения в работе государственных учреждений и компаний в ряде стран, а OpenAI и Anthropic сообщили о проблемах с подключением к инструментам Microsoft 365.",
+      "verified_facts": [
+        "AP сообщает, что сбой затронул Outlook, Teams и Copilot.",
+        "Microsoft в пятницу заявила о прогрессе восстановления, одновременно предупредив о возможных задержках доставки почты и эпизодических проблемах доступа.",
+        "AP сообщает, что Microsoft не видела признаков злонамеренной активности и отдельно указала, что сбой не был связан с кибератакой или ИИ-агентами.",
+        "AP зафиксировало затронутые операции государственных структур и бизнеса в нескольких странах, а также проблемы OpenAI и Anthropic при подключении к Microsoft 365 tools."
+      ],
+      "significance": "Это заметный infrastructure-сюжет для ИИ-рынка: сбой затронул не только офисные сервисы, но и Copilot, а также интеграции внешних ИИ-платформ с Microsoft 365. Он демонстрирует операционный риск концентрации корпоративных агентных и продуктивных workflows у небольшого числа облачных поставщиков.",
+      "significance_score": 4,
+      "limitations": "AP не раскрывает коренную техническую причину инцидента и не приводит полной оценки числа затронутых организаций. Дата публикации на доступной странице не показана как абсолютный timestamp; search result показывает публикацию за два дня до audit-прохода.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет отдельного сюжета о глобальном сбое Microsoft 365, затронувшем Copilot и подключения других ИИ-платформ к корпоративным инструментам Microsoft.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "Авторитетное агентство AP напрямую описывает инцидент, заявление Microsoft о восстановлении и его влияние на Copilot, OpenAI и Anthropic. Это не утверждение о кибератаке: AP передаёт позицию Microsoft об отсутствии признаков злонамеренной активности.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это эксплуатационный инцидент облачной инфраструктуры, а не судебное или регуляторное событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран по значимости для доступности корпоративной ИИ- и облачной инфраструктуры.",
+      "event_date": "2026-11-14",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://apnews.com/article/microsoft-outage-outlook-email-365-status-down-d92547a821930290db2964388016979a",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "AP описывает состояние инцидента на второй день, в пятницу: Microsoft сообщила о progress восстановления, при этом сохранялись риски задержек и нестабильного доступа. В контексте audit-даты 16 ноября это соответствует 14 ноября 2026 года с точностью до календарного дня.",
+      "audit_direction": "general_coverage_gaps",
+      "id": "cand-006",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=5, validated unique=3, final candidates=3. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 2.\nTargeted coverage audit добавил кандидатов: 1.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

@@ -9,9 +9,34 @@
   <link>https://rybalka.one/posts/</link>
   <description>Десять полнотекстовых аналитических статей об искусственном интеллекте.</description>
   <language>ru</language>
-  <lastBuildDate>Sun, 15 Nov 2026 06:00:00 +0300</lastBuildDate>
+  <lastBuildDate>Mon, 16 Nov 2026 06:00:00 +0300</lastBuildDate>
   <dc:creator>ИИ-сводки</dc:creator>
   <atom:link href="https://rybalka.one/posts/rss.xml" rel="self" type="application/rss+xml" />
+
+  <item>
+    <title>ИИ-Сводка на 16 ноября 2026</title>
+    <link>https://rybalka.one/posts/2026-11-16/</link>
+    <guid isPermaLink="true">https://rybalka.one/posts/2026-11-16/</guid>
+    <pubDate>Mon, 16 Nov 2026 06:00:00 +0300</pubDate>
+    <dc:creator>ИИ-сводки</dc:creator>
+    <category>Статья</category>
+    <category>ИИ</category>
+    <category>Технологии</category>
+    <category>native-yes</category>
+    <media:rating scheme="urn:simple">nonadult</media:rating>
+    <enclosure url="https://rybalka.one/posts/images/ai-svodka-2026-11-16.png" type="image/png" length="2093904" />
+    <media:content url="https://rybalka.one/posts/images/ai-svodka-2026-11-16.png" medium="image" type="image/png" />
+    <media:thumbnail url="https://rybalka.one/posts/images/ai-svodka-2026-11-16.png" />
+    <description><![CDATA[<p>Google обновила Antigravity CLI: инструмент получил встроенные workflow для параллельных субагентов, корпоративные ограничения плагинов и исправление безопасности MCP-перенаправлений.</p>]]></description>
+    <content:encoded><![CDATA[<figure>
+<img src="https://rybalka.one/posts/images/ai-svodka-2026-11-16.png" alt="ИИ-Сводка на 16 ноября 2026">
+<figcaption>Главные новости искусственного интеллекта за 16 ноября 2026 года</figcaption>
+</figure>
+<p><em>Новостей сегодня меньше, чем обычно</em></p>
+<p>Сегодня в фокусе — обновление среды агентной разработки Google Antigravity CLI. Релиз показывает, что инструменты для программирования движутся от одиночного диалога с моделью к воспроизводимым процессам с несколькими субагентами, централизованными политиками и более строгой защитой интеграций.</p><p>Для команд это означает, что скорость параллельной работы агентов всё теснее связана с качеством оркестрации, контролем расширений и безопасностью доступа к внешним инструментам.</p><h2>Мировые лидеры ИИ</h2><h3>Google Antigravity CLI 1.5.9 добавила параллельные workflow субагентов и исправила передачу MCP-заголовков</h3><p>Google выпустила Antigravity CLI 1.5.9. Согласно <a href="https://www.havoptic.com/r/antigravity-cli-1.5.9">описанию релиза Havoptic</a>, в инструменте появился runworkflow: агент может создавать и исполнять Python-workflow для последовательного или параллельного запуска субагентов со структурированной передачей результатов. Python поставляется вместе с CLI, поэтому сценарий не требует отдельной установки среды исполнения.</p><p>Релиз также добавляет управляемые ограничения для плагинов — pluginsDisabled и marketplaceDisabled — и исправляет риск в HTTP MCP-интеграциях: пользовательские заголовки, включая API-ключи, не должны пересылаться на другой хост при перенаправлении. Практический смысл обновления — команды могут формализовать многошаговые агентные процессы, но должны относиться к workflow как к исполняемому коду: задавать границы полномочий субагентов, проверять плагины и изолировать секреты.</p><h2>Что это значит</h2><ol><li>Параллельные субагенты становятся штатной частью CLI-разработки, а не внешней надстройкой для отдельных экспериментов.</li><li>Встроенный runtime упрощает распространение workflow внутри команды, но одновременно делает важными ревью самих сценариев оркестрации.</li><li>Корпоративные ограничения плагинов переходят в базовый контур управления агентной средой.</li><li>MCP остаётся полезным стандартом подключения инструментов, однако обработка redirect и HTTP-заголовков требует отдельного контроля, поскольку затрагивает ключи и другие секреты.</li></ol>
+<h2>Все ИИ-Сводки</h2><p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>
+<p class="digest-footer" style="text-align:center;margin:32px 0 0;"><a href="https://dzen.ru/rybv" target="_blank" rel="noopener noreferrer"><img src="https://rybalka.one/posts/_footer-scr.png" alt="Подписаться на канал" style="display:block;max-width:50%;width:auto;height:auto;margin:0 auto;"></a></p>]]></content:encoded>
+  </item>
 
   <item>
     <title>ИИ-Сводка на 15 ноября 2026</title>

@@ -1,0 +1,16 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-003"
+  ],
+  "excluded_candidate_ids": [
+    "cand-001",
+    "cand-002",
+    "cand-004",
+    "cand-005",
+    "cand-006"
+  ],
+  "selection_summary": "В подтверждённом пуле выбран один содержательно раскрытый новый релиз для разработки: Antigravity CLI 1.5.9. Остальные кандидаты с recommendation exclude не допускаются политикой; два официальных анонса OpenAI не содержат достаточных проверенных деталей для полноценного аналитического сюжета.",
+  "diversity_overrides": []
+}
