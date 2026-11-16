@@ -1414,6 +1414,16 @@ Coverage/Hybrid obligations, selected stories или search ceilings 24/25.
 
 Stable public recovery entrypoint: `recover_digest_artifact.py`.
 
+Coverage создаёт промежуточный `.coverage-audit-YYYY-MM-DD.json` в
+`automation/fixtures/research/` при редакторском завершении, включая recovery.
+Это временный вход для `run_editorial_repair.py`, а не publishable fixture:
+`.gitignore` исключает только date-scoped имена этого вида. Durable
+`coverage-audit-merged-candidates-YYYY-MM-DD.json` и journal сохраняются
+отдельно в `automation/preview/production-daily/`. Проверка
+`validate_publish_changes.py` продолжает блокировать любые другие
+неразрешённые изменения до Git commit. Изменение ignore не ослабляет
+at-most-once Editorial Repair и не влияет на retrieval/freshness.
+
 SDK `openai==2.45.0` устанавливается для любого нетерминального
 `daily-production.yml`, включая `reused=true` и `text_api_needed=false`:
 после восстановления завершённого Coverage может возникнуть отложенный
