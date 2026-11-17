@@ -1,0 +1,38 @@
+{
+  "status": "applied",
+  "changed_fields": [],
+  "changed_count": 0,
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-011."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation, independent_missing_events."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "NVIDIA: Выбраны три самостоятельных инфраструктурных события высокой значимости: новый GPU Rubin HPC, дебют Vera Rubin в MLPerf и применение фотоники NVIDIA у Lambda. В пуле нет сопоставимо подтверждённых альтернатив в инфраструктурной тематике."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "NVIDIA: Три сюжета относятся к разным уровням одного инфраструктурного цикла: продукту, независимому бенчмарку и сетевому развёртыванию у облачного провайдера."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "OpenAI: Выбраны три самостоятельных подтверждённых материала: научная публикация, применение computer-use агентов в здравоохранении и запуск embedded assessments. Это позволяет собрать минимальный обычный объём выпуска без добавления неподтверждённых кандидатов."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "OpenAI: Сюжеты охватывают разные направления: фундаментальную науку, корпоративное применение в здравоохранении и оценку безопасности моделей."
+    }
+  ]
+}

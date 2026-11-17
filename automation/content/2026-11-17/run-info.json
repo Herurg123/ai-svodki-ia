@@ -1,0 +1,168 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-11-17",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-11-17.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-002: источник показывает дату без точного времени.",
+    "cand-003: источник показывает дату без точного времени.",
+    "cand-011: источник показывает дату без точного времени.",
+    "cand-020: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: nvidia (5), openai (10)",
+    "Исследовательский пул перегружен одной организацией: nvidia (5), openai (10)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-11-17",
+  "started_at": "2026-11-17T02:13:59+00:00",
+  "finished_at": "2026-11-17T02:14:42+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 122,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "54a9e8d119ebee027cad117a712f452d1fe3a2033d8589df89105a647aa8c8af",
+    "candidates_sha256": "43325917837466488ab4d4c8af209c0e4c0d5bcbec73e80fa37ba94a4bd280fa",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-11-15T05:06:21+03:00",
+      "end_at": "2026-11-17T05:06:36+03:00",
+      "latest_archive_at": "2026-11-16T05:06:21+03:00",
+      "start_date": "2026-11-15",
+      "end_date": "2026-11-17",
+      "latest_archive_date": "2026-11-16"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "ee734be490b469323f1679340b44d42ebd8a371a7aedda58961e61669097a43a",
+    "editorial_sha256": "e01fe39df36baa405c57f91e66474c8d2fcbce16536990634497400afb826f07",
+    "digest_sha256": "bfec8d1d2da577e8b969836eb068ae90f5876f8e1a014fbd533b49841d4ed819",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "2026-11-17.jpg",
+          "normalized_value": "ai-svodka-2026-11-17.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-011."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation, independent_missing_events."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "NVIDIA: Выбраны три самостоятельных инфраструктурных события высокой значимости: новый GPU Rubin HPC, дебют Vera Rubin в MLPerf и применение фотоники NVIDIA у Lambda. В пуле нет сопоставимо подтверждённых альтернатив в инфраструктурной тематике."
+        },
+        {
+          "type": "diversity_override",
+          "area": "organization",
+          "message": "NVIDIA: Три сюжета относятся к разным уровням одного инфраструктурного цикла: продукту, независимому бенчмарку и сетевому развёртыванию у облачного провайдера."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "OpenAI: Выбраны три самостоятельных подтверждённых материала: научная публикация, применение computer-use агентов в здравоохранении и запуск embedded assessments. Это позволяет собрать минимальный обычный объём выпуска без добавления неподтверждённых кандидатов."
+        },
+        {
+          "type": "diversity_override",
+          "area": "organization",
+          "message": "OpenAI: Сюжеты охватывают разные направления: фундаментальную науку, корпоративное применение в здравоохранении и оценку безопасности моделей."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_00d582c795e16038016afbb867eccc87d0b0c9bba266a79727",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 246127,
+        "input_tokens_details": {
+          "cache_write_tokens": 22690,
+          "cached_tokens": 223434,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 22690
+          }
+        },
+        "output_tokens": 3926,
+        "output_tokens_details": {
+          "reasoning_tokens": 629
+        },
+        "total_tokens": 250053
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-11-17/resp_00d582c795e16038016afbb867eccc87d0b0c9bba266a79727.json"
+  },
+  "total_usage": {
+    "input_tokens": 246127,
+    "output_tokens": 3926,
+    "total_tokens": 250053,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "af4261e3b0364fd9dc37f455c6ea9d1234fe56c7",
+    "run_id": "44000360387",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-11-17T05:06:36+03:00"
+}

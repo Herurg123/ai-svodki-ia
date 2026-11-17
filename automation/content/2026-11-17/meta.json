@@ -1,0 +1,59 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-17",
+  "slug": "2026-11-17",
+  "title": "ИИ-Сводка на 17 ноября 2026",
+  "description": "NVIDIA выводит Rubin HPC и Vera Rubin в бенчмарки, OpenAI расширяет научные, медицинские и safety-направления, а Яндекс открывает каталог плагинов для Алисы AI.",
+  "published_at": "2026-11-17T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-17.png",
+  "topics": [
+    "NVIDIA Rubin HPC",
+    "Vera Rubin",
+    "MLPerf",
+    "ИИ-инфраструктура",
+    "фотоника",
+    "агенты ИИ",
+    "ИИ для науки",
+    "здравоохранение",
+    "computer-use агенты",
+    "оценка безопасности ИИ",
+    "OpenAI",
+    "Алиса AI",
+    "плагины"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-011."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: models_products_agents, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation, independent_missing_events."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "NVIDIA: Выбраны три самостоятельных инфраструктурных события высокой значимости: новый GPU Rubin HPC, дебют Vera Rubin в MLPerf и применение фотоники NVIDIA у Lambda. В пуле нет сопоставимо подтверждённых альтернатив в инфраструктурной тематике."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "NVIDIA: Три сюжета относятся к разным уровням одного инфраструктурного цикла: продукту, независимому бенчмарку и сетевому развёртыванию у облачного провайдера."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "OpenAI: Выбраны три самостоятельных подтверждённых материала: научная публикация, применение computer-use агентов в здравоохранении и запуск embedded assessments. Это позволяет собрать минимальный обычный объём выпуска без добавления неподтверждённых кандидатов."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "OpenAI: Сюжеты охватывают разные направления: фундаментальную науку, корпоративное применение в здравоохранении и оценку безопасности моделей."
+    }
+  ]
+}

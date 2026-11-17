@@ -1,0 +1,220 @@
+[
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "NVIDIA представила Rubin HPC — GPU для научных, инженерных и аналитических агентов",
+    "organization": "NVIDIA",
+    "topic": "NVIDIA Announces Rubin HPC — A New GPU to Accelerate Agents for Science, Engineering and Analytics",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "A record leap in CUDA cores with accelerated data movement shorten time to results for science and engineering workloads.",
+    "published_at": "2026-11-16T16:00:01+00:00",
+    "published_date": "2026-11-16",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "NVIDIA Announces Rubin HPC — A New GPU to Accelerate Agents for Science, Engineering and Analytics",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/rubin-hpc"
+      }
+    ],
+    "keywords": [
+      "NVIDIA",
+      "Rubin",
+      "HPC",
+      "GPU",
+      "Accelerate",
+      "Agents",
+      "Science",
+      "Engineering",
+      "Analytics"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-010",
+    "section": "world",
+    "headline": "NVIDIA показала первые результаты Vera Rubin в MLPerf",
+    "organization": "NVIDIA",
+    "topic": "NVIDIA Sweeps MLPerf Training and Endpoints as Vera Rubin Debuts With Leading Performance",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "In its MLPerf benchmarks debut, with results released today, the NVIDIA Vera Rubin platform delivers leading performance across training, post-training and agentic inference.",
+    "published_at": "2026-11-16T16:00:25+00:00",
+    "published_date": "2026-11-16",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "NVIDIA Sweeps MLPerf Training and Endpoints as Vera Rubin Debuts With Leading Performance",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/mlperf-training-endpoints-vera-rubin"
+      }
+    ],
+    "keywords": [
+      "NVIDIA",
+      "Sweeps",
+      "MLPerf",
+      "Training",
+      "Endpoints",
+      "as",
+      "Vera",
+      "Rubin",
+      "Debuts",
+      "Leading",
+      "Performance"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Lambda внедряет фотонные коммутаторы NVIDIA в ИИ-фабриках",
+    "organization": "NVIDIA",
+    "topic": "Lambda Boosts AI Factory Resiliency and Efficiency With NVIDIA Photonics",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Lambda is tackling the network piece of the puzzle with NVIDIA Photonics co-packaged optics (CPO) switches.",
+    "published_at": "2026-11-16T16:00:51+00:00",
+    "published_date": "2026-11-16",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Lambda Boosts AI Factory Resiliency and Efficiency With NVIDIA Photonics",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/lambda-photonics"
+      }
+    ],
+    "keywords": [
+      "Lambda",
+      "Boosts",
+      "Factory",
+      "Resiliency",
+      "Efficiency",
+      "NVIDIA",
+      "Photonics"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "OpenAI опубликовала исследовательский материал о решётчатой формулировке Стандартной модели",
+    "organization": "OpenAI",
+    "topic": "A step toward defining the Standard Model on a lattice",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: A step toward defining the Standard Model on a lattice",
+    "published_at": "2026-11-15T22:00:01+00:00",
+    "published_date": "2026-11-15",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "A step toward defining the Standard Model on a lattice",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/step-toward-defining-the-standard-model"
+      }
+    ],
+    "keywords": [
+      "step",
+      "toward",
+      "defining",
+      "Standard",
+      "Model",
+      "lattice"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-013",
+    "section": "world",
+    "headline": "OpenAI развивает computer-use агентов для медицинских команд",
+    "organization": "OpenAI",
+    "topic": "Advancing computer-use agents for healthcare teams",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Advancing computer-use agents for healthcare teams",
+    "published_at": "2026-11-16T06:00:00+00:00",
+    "published_date": "2026-11-16",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Advancing computer-use agents for healthcare teams",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/advancing-computer-use-for-healthcare-teams"
+      }
+    ],
+    "keywords": [
+      "Advancing",
+      "computer-use",
+      "agents",
+      "healthcare",
+      "teams"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-015",
+    "section": "world",
+    "headline": "OpenAI начала первый этап embedded assessments",
+    "organization": "OpenAI",
+    "topic": "Our first phase of embedded assessments",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Our first phase of embedded assessments",
+    "published_at": "2026-11-16T08:00:00+00:00",
+    "published_date": "2026-11-16",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Our first phase of embedded assessments",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/our-first-phase-of-embedded-assessments"
+      }
+    ],
+    "keywords": [
+      "Our",
+      "first",
+      "phase",
+      "embedded",
+      "assessments"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-011",
+    "section": "russia",
+    "headline": "У Алисы AI появился каталог плагинов",
+    "organization": "Яндекс",
+    "topic": "16 ноября 2026У Алисы AI появился каталог плагинов",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+    "published_at": null,
+    "published_date": "2026-11-16",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "16 ноября 2026У Алисы AI появился каталог плагинов",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=16-11-2026-02"
+      }
+    ],
+    "keywords": [
+      "16",
+      "ноября",
+      "2026У",
+      "Алисы",
+      "появился",
+      "каталог",
+      "плагинов"
+    ],
+    "geography": "russia",
+    "category": "investment"
+  }
+]
