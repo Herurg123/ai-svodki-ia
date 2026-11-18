@@ -1,8 +1,345 @@
 {
   "version": 2,
-  "generated_at": "2026-11-17T02:15:57+00:00",
+  "generated_at": "2026-11-18T02:16:49+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-18",
+      "published_at": "2026-11-18T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-18T05:06:40+03:00",
+      "title": "ИИ-Сводка на 18 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-18/",
+      "summary": "Главные новости искусственного интеллекта за 18 ноября 2026 года Повестка дня показывает, что конкуренция в ИИ идёт одновременно на уровне моделей, прикладных продуктов и физической инфраструктуры. Microsoft усиливает собственный модельный стек, NVIDIA акцентирует устойчивость производственной цепочки, а OpenAI расширяет специализированные сценарии — от медицины и науки до продаж, права и киберзащиты. Для компаний главный сигнал состоит в том, что универсальная модель всё чаще становится лишь ба",
+      "topics": [
+        "Microsoft MAI",
+        "GitHub Copilot",
+        "NVIDIA",
+        "ИИ-инфраструктура",
+        "ChatGPT for Healthcare",
+        "ИИ для науки",
+        "безопасность детей",
+        "Astra for Law",
+        "киберзащита НАТО",
+        "ChatGPT for Sales",
+        "GPT-6.2 Astra",
+        "GPT-6.2 Sol"
+      ],
+      "source_urls": [
+        "https://www.geekwire.com/2026/microsoft-jabs-at-openai-and-anthropic-touting-cheaper-customizable-ai-models-of-its-own/",
+        "https://blogs.nvidia.com/blog/ai-infrastructure-supply-chain",
+        "https://openai.com/index/more-ways-to-move-care-forward-with-chatgpt-for-healthcare",
+        "https://openai.com/index/lvmh-media-division-partnership",
+        "https://openai.com/index/science-at-the-frontier",
+        "https://openai.com/index/strengthening-online-child-safety",
+        "https://openai.com/index/astra-law-6-2",
+        "https://openai.com/index/strengthening-nato-allied-cyber-defences-ai",
+        "https://openai.com/index/introducing-chatgpt-for-sales",
+        "https://openai.com/index/introducing-gpt-6-2-astra-sol"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "Microsoft представила семь собственных MAI-моделей для enterprise-задач и вывела MAI Code 2 в GitHub Copilot",
+          "organization": "Microsoft; Microsoft AI",
+          "topic": "Microsoft Ignite; собственные модели MAI; coding; cybersecurity; speech; enterprise AI; GitHub Copilot; Azure",
+          "event_type": "product launch",
+          "status": "new",
+          "summary": "На Microsoft Ignite компания представила пакет собственных MAI-моделей для кода, кибербезопасности, редактирования изображений, речи и транскрибации. MAI Code 2 стала доступна в GitHub Copilot; Microsoft также продвигает лицензируемые веса, которые заказчики могут адаптировать на своих данных и запускать в Azure.",
+          "published_at": "2026-11-17T19:57:51+00:00",
+          "published_date": "2026-11-17",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Microsoft jabs at OpenAI and Anthropic, touting cheaper, customizable AI models of its own",
+              "publisher": "GeekWire",
+              "url": "https://www.geekwire.com/2026/microsoft-jabs-at-openai-and-anthropic-touting-cheaper-customizable-ai-models-of-its-own/"
+            }
+          ],
+          "keywords": [
+            "Microsoft Ignite",
+            "MAI Code 2",
+            "MAI Cyber 2 Flash",
+            "GitHub Copilot",
+            "enterprise AI",
+            "Azure",
+            "custom models"
+          ],
+          "geography": "world",
+          "category": "models"
+        },
+        {
+          "candidate_id": "cand-007",
+          "section": "world",
+          "headline": "NVIDIA рассказала о цепочке поставок для ИИ-инфраструктуры",
+          "organization": "NVIDIA",
+          "topic": "How the World’s Most Advanced AI Infrastructure Supply Chain Invents the Future",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "Over two decades running the most complex manufacturing on the planet, NVIDIA operations chief Deb Shoquist has required three things of every supply chain partner: extreme technical skill, unshakeable trust and a willingness to always try something new.",
+          "published_at": "2026-11-16T20:00:37+00:00",
+          "published_date": "2026-11-16",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "How the World’s Most Advanced AI Infrastructure Supply Chain Invents the Future",
+              "publisher": "NVIDIA",
+              "url": "https://blogs.nvidia.com/blog/ai-infrastructure-supply-chain"
+            }
+          ],
+          "keywords": [
+            "How",
+            "World",
+            "Most",
+            "Advanced",
+            "Infrastructure",
+            "Supply",
+            "Chain",
+            "Invents",
+            "Future"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "cand-008",
+          "section": "world",
+          "headline": "OpenAI расширила сценарии ChatGPT for Healthcare",
+          "organization": "OpenAI",
+          "topic": "More ways to move care forward with ChatGPT for Healthcare",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: More ways to move care forward with ChatGPT for Healthcare",
+          "published_at": "2026-11-16T06:00:00+00:00",
+          "published_date": "2026-11-16",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "More ways to move care forward with ChatGPT for Healthcare",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/more-ways-to-move-care-forward-with-chatgpt-for-healthcare"
+            }
+          ],
+          "keywords": [
+            "More",
+            "ways",
+            "move",
+            "care",
+            "forward",
+            "ChatGPT",
+            "Healthcare"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-009",
+          "section": "world",
+          "headline": "Медиа-подразделение LVMH заключило стратегическое партнёрство с OpenAI",
+          "organization": "OpenAI",
+          "topic": "LVMH’s Media Division announces strategic partnership with OpenAI",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: LVMH’s Media Division announces strategic partnership with OpenAI",
+          "published_at": "2026-11-16T09:00:00+00:00",
+          "published_date": "2026-11-16",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "LVMH’s Media Division announces strategic partnership with OpenAI",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/lvmh-media-division-partnership"
+            }
+          ],
+          "keywords": [
+            "LVMH",
+            "Media",
+            "Division",
+            "strategic",
+            "partnership",
+            "OpenAI"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-010",
+          "section": "world",
+          "headline": "OpenAI опубликовала обзор применения ChatGPT учёными",
+          "organization": "OpenAI",
+          "topic": "Science at the Frontier: How scientists use ChatGPT",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Science at the Frontier: How scientists use ChatGPT",
+          "published_at": "2026-11-16T12:00:00+00:00",
+          "published_date": "2026-11-16",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Science at the Frontier: How scientists use ChatGPT",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/science-at-the-frontier"
+            }
+          ],
+          "keywords": [
+            "Science",
+            "at",
+            "Frontier",
+            "How",
+            "scientists",
+            "use",
+            "ChatGPT"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-012",
+          "section": "world",
+          "headline": "OpenAI объявила новые инструменты и поддержку в борьбе с онлайн-эксплуатацией детей",
+          "organization": "OpenAI",
+          "topic": "Strengthening the fight against online child sexual abuse with new tools and support",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Strengthening the fight against online child sexual abuse with new tools and support",
+          "published_at": "2026-11-16T17:00:00+00:00",
+          "published_date": "2026-11-16",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Strengthening the fight against online child sexual abuse with new tools and support",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/strengthening-online-child-safety"
+            }
+          ],
+          "keywords": [
+            "Strengthening",
+            "fight",
+            "against",
+            "online",
+            "child",
+            "sexual",
+            "abuse",
+            "tools",
+            "support"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-013",
+          "section": "world",
+          "headline": "OpenAI представила Astra for Law для юридических задач",
+          "organization": "OpenAI",
+          "topic": "Astra for Law leads in legal intelligence",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Astra for Law leads in legal intelligence",
+          "published_at": "2026-11-17T00:00:00+00:00",
+          "published_date": "2026-11-17",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Astra for Law leads in legal intelligence",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/astra-law-6-2"
+            }
+          ],
+          "keywords": [
+            "Astra",
+            "Law",
+            "leads",
+            "legal"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-015",
+          "section": "world",
+          "headline": "OpenAI заявила об усилении киберзащиты НАТО и союзников с помощью ИИ",
+          "organization": "OpenAI",
+          "topic": "Strengthening NATO and allied cyber defenses with AI",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Strengthening NATO and allied cyber defenses with AI",
+          "published_at": "2026-11-17T00:00:00+00:00",
+          "published_date": "2026-11-17",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Strengthening NATO and allied cyber defenses with AI",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/strengthening-nato-allied-cyber-defences-ai"
+            }
+          ],
+          "keywords": [
+            "Strengthening",
+            "NATO",
+            "allied",
+            "cyber",
+            "defenses"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-016",
+          "section": "world",
+          "headline": "OpenAI представила ChatGPT for Sales",
+          "organization": "OpenAI",
+          "topic": "Introducing ChatGPT for Sales",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Introducing ChatGPT for Sales",
+          "published_at": "2026-11-17T08:00:00+00:00",
+          "published_date": "2026-11-17",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Introducing ChatGPT for Sales",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/introducing-chatgpt-for-sales"
+            }
+          ],
+          "keywords": [
+            "Introducing",
+            "ChatGPT",
+            "Sales"
+          ],
+          "geography": "world",
+          "category": "other"
+        },
+        {
+          "candidate_id": "cand-017",
+          "section": "world",
+          "headline": "OpenAI представила GPT-6.2 Astra и Sol",
+          "organization": "OpenAI",
+          "topic": "Introducing GPT-6.2 Astra and Sol",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "OpenAI official artificial intelligence publication: Introducing GPT-6.2 Astra and Sol",
+          "published_at": "2026-11-17T17:45:00+00:00",
+          "published_date": "2026-11-17",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Introducing GPT-6.2 Astra and Sol",
+              "publisher": "OpenAI",
+              "url": "https://openai.com/index/introducing-gpt-6-2-astra-sol"
+            }
+          ],
+          "keywords": [
+            "Introducing",
+            "GPT-6.2",
+            "Astra",
+            "Sol"
+          ],
+          "geography": "world",
+          "category": "other"
+        }
+      ]
+    },
     {
       "date": "2026-11-17",
       "published_at": "2026-11-17T06:00:00+03:00",
@@ -6488,10 +6825,10 @@
     {
       "date": "2026-10-15",
       "published_at": "2026-10-15T06:00:00+03:00",
-      "search_cutoff_at": "2026-10-15T04:28:45+03:00",
+      "search_cutoff_at": "2026-10-15T06:00:00+03:00",
       "title": "ИИ-Сводка на 15 октября 2026",
       "link": "https://rybalka.one/posts/2026-10-15/",
-      "summary": "Главные новости искусственного интеллекта за 15 октября 2026 года Новостей сегодня меньше, чем обычно Повестка дня связывает внедрение агентов ИИ с двумя базовыми вопросами: кто получает доступ к корпоративным системам и насколько устойчива инфраструктура, на которой работают сервисы. Параллельно массовые платформы снижают порог создания персональных приложений, а разработчики physical AI переносят проверку опасных сценариев в симуляцию. Отдельный сигнал пришёл из практики эксплуатации: Яндекс п",
+      "summary": "Workday покупает платформу контроля идентичностей агентов, Google упрощает запуск личных Android-приложений, а Яндекс восстанавливает сервисы после повреждения ЦОДов. Также — безопасность physical AI и масштабные агентные системы.",
       "topics": [
         "Workday",
         "C1.ai",

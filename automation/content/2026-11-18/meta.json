@@ -1,0 +1,43 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-18",
+  "slug": "2026-11-18",
+  "title": "ИИ-Сводка на 18 ноября 2026",
+  "description": "Microsoft расширяет собственный модельный стек, NVIDIA описывает цепочку поставок ИИ-инфраструктуры, а OpenAI одновременно выводит новые продукты для науки, здравоохранения, продаж, права и киберзащиты.",
+  "published_at": "2026-11-18T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-18.png",
+  "topics": [
+    "Microsoft MAI",
+    "GitHub Copilot",
+    "NVIDIA",
+    "ИИ-инфраструктура",
+    "ChatGPT for Healthcare",
+    "ИИ для науки",
+    "безопасность детей",
+    "Astra for Law",
+    "киберзащита НАТО",
+    "ChatGPT for Sales",
+    "GPT-6.2 Astra",
+    "GPT-6.2 Sol"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: business_investment_partnerships, china_asia_integrations, russia, developer_tools, security_safety, legal_regulation."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "OpenAI: В проверенном пуле восемь независимых свежих официальных анонсов OpenAI, затрагивающих разные продуктовые и прикладные направления: здравоохранение, медиа, науку, безопасность детей, юридические задачи, киберзащиту, продажи и базовые модели."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "OpenAI: Превышение мягкого лимита вызвано серией самостоятельных значимых запусков и программ, опубликованных в пределах одного редакционного окна; исключение этих подтверждённых событий оставило бы выпуск неполным."
+    }
+  ]
+}
