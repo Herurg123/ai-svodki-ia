@@ -1,0 +1,70 @@
+{
+  "status": "ok",
+  "usage_attempt_id": "7331b318c0ae44419a49655090fdcf21",
+  "request_id": "production-image-2026-11-19",
+  "model": "gpt-image-2",
+  "endpoint": "/v1/images/generations",
+  "http_status": 200,
+  "openai_request_id": "req_c2c892b7e84b4cd68ec74677ae4ae805",
+  "source_editorial_request_id": "production-digest-2026-11-19",
+  "request": {
+    "size": "1536x864",
+    "quality": "high",
+    "output_format": "png",
+    "background": "opaque",
+    "n": 1,
+    "prompt_sha256": "f2f7b74f89adc6183d5068647b2d985ff1494fd475813c10b0c08f6f11719064"
+  },
+  "response": {
+    "created": 1795054607,
+    "background": "opaque",
+    "output_format": "png",
+    "quality": "high",
+    "size": "1536x864",
+    "usage": {
+      "input_tokens": 382,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 382
+      },
+      "output_tokens": 4312,
+      "output_tokens_details": {
+        "image_tokens": 4312,
+        "text_tokens": 0
+      },
+      "total_tokens": 4694
+    },
+    "data_count": 1,
+    "revised_prompt": null
+  },
+  "cover_sha256": "c513eb9d2d522117da29f5f2f909998057154b436613d5211faf1957a25c67be",
+  "cover_bytes": 2088213,
+  "base64_stored": false,
+  "copied_source_files": [
+    "article.html",
+    "artifact-normalization.json",
+    "artifact-validation.json",
+    "candidates.json",
+    "digest.json",
+    "editorial-event-identity.json",
+    "editorial-output-raw.json",
+    "editorial-output.json",
+    "editorial-prompt-input.txt",
+    "editorial-reconciliation.json",
+    "hybrid-completeness.json",
+    "image-prompt.txt",
+    "meta.json",
+    "metadata-normalization.json",
+    "policy-normalization.json",
+    "research-filtered-out.json",
+    "research-input-info.json",
+    "research-output-raw.json",
+    "research-prompt-input.txt",
+    "run-info.json",
+    "selection.json",
+    "sources.json",
+    "stories.json"
+  ],
+  "started_at": "2026-11-19T02:15:39+00:00",
+  "finished_at": "2026-11-19T02:16:47+00:00"
+}

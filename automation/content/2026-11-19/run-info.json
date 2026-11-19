@@ -1,0 +1,161 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-11-19",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-11-19.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-002: источник показывает дату без точного времени.",
+    "cand-003: источник показывает дату без точного времени.",
+    "cand-004: источник показывает дату без точного времени.",
+    "cand-006: источник показывает дату без точного времени.",
+    "cand-007: источник показывает дату без точного времени.",
+    "cand-009: источник показывает дату без точного времени.",
+    "cand-016: источник показывает дату без точного времени.",
+    "cand-017: источник показывает дату без точного времени.",
+    "cand-018: источник показывает дату без точного времени.",
+    "cand-019: источник показывает дату без точного времени.",
+    "Одинаковые источники используются несколькими кандидатами: 1; это допустимо и будет проверено на редакторском этапе.",
+    "URL используется в нескольких кандидатах: https://www.axios.com/newsletters/axios-pro-rata-f4fcb2c0-4012-49f5-8d2b-93e19791ce1a (cand-004, cand-006)",
+    "Исследовательский пул перегружен одним издателем: associated press (4), axios (4), openai (6)",
+    "Исследовательский пул перегружен одной организацией: openai (6)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-11-19",
+  "started_at": "2026-11-19T02:14:53+00:00",
+  "finished_at": "2026-11-19T02:15:34+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 124,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "861a1bf9ca26e369bca1cb0f7fdb0dde71f86c6a9ff51462f30c6157cc8128c1",
+    "candidates_sha256": "f889f89e270c9855ec78d6311bfc8589122d201f4851e5736813c56044751b23",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-11-17T05:06:40+03:00",
+      "end_at": "2026-11-19T05:06:46+03:00",
+      "latest_archive_at": "2026-11-18T05:06:40+03:00",
+      "start_date": "2026-11-17",
+      "end_date": "2026-11-19",
+      "latest_archive_date": "2026-11-18"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "16aa8e4dd3c3138ed12d9c66473aa339b2d19373c94c348a55dc4d42862485e9",
+    "editorial_sha256": "d650cf81cdd9c257c24cd8ffbbcbdd20dcdd68bbfc39a9b12aa7ef81233c8861",
+    "digest_sha256": "5f0819cde5f04001b2e63c324f1b7010b0d09d99849ecd4e72afaacdbd1e327d",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-11-19.jpg",
+          "normalized_value": "ai-svodka-2026-11-19.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: models_products_agents, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+        },
+        {
+          "type": "diversity_override",
+          "area": "publisher",
+          "message": "OpenAI: В коротком подтверждённом пуле пять самостоятельных свежих публикаций OpenAI относятся к разным редакционно значимым темам: проектирование чипов, управление рисками frontier-моделей, изоляция Codex, ускорение исследований и дистрибуция журналистского контента. Их исключение только ради лимита издателя заметно ухудшило бы полноту выпуска."
+        },
+        {
+          "type": "diversity_override",
+          "area": "organization",
+          "message": "OpenAI: Пять выбранных материалов OpenAI являются независимыми событиями и техническими публикациями, а не дублями одного анонса. Они формируют основную подтверждённую повестку дня и необходимы для достижения обычного объёма выпуска."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_098ffe2926be4a3d016afe5b9e549887d099707b7389535310",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 249932,
+        "input_tokens_details": {
+          "cache_write_tokens": 22417,
+          "cached_tokens": 227512,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 22417
+          }
+        },
+        "output_tokens": 4095,
+        "output_tokens_details": {
+          "reasoning_tokens": 810
+        },
+        "total_tokens": 254027
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-11-19/resp_098ffe2926be4a3d016afe5b9e549887d099707b7389535310.json"
+  },
+  "total_usage": {
+    "input_tokens": 249932,
+    "output_tokens": 4095,
+    "total_tokens": 254027,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "8a1b1f691b7103b2dc37f0108ba38ba4c8881b39",
+    "run_id": "44441693963",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-11-19T05:06:46+03:00"
+}

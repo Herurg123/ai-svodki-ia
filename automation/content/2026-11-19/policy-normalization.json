@@ -1,0 +1,23 @@
+{
+  "status": "applied",
+  "changed_fields": [],
+  "changed_count": 0,
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: models_products_agents, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+    },
+    {
+      "type": "diversity_override",
+      "area": "publisher",
+      "message": "OpenAI: В коротком подтверждённом пуле пять самостоятельных свежих публикаций OpenAI относятся к разным редакционно значимым темам: проектирование чипов, управление рисками frontier-моделей, изоляция Codex, ускорение исследований и дистрибуция журналистского контента. Их исключение только ради лимита издателя заметно ухудшило бы полноту выпуска."
+    },
+    {
+      "type": "diversity_override",
+      "area": "organization",
+      "message": "OpenAI: Пять выбранных материалов OpenAI являются независимыми событиями и техническими публикациями, а не дублями одного анонса. Они формируют основную подтверждённую повестку дня и необходимы для достижения обычного объёма выпуска."
+    }
+  ]
+}

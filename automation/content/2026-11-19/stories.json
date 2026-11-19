@@ -1,0 +1,211 @@
+[
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Обновление: Google усилила sandbox Antigravity CLI и добавила Orchestrator для Enterprise",
+    "organization": "Google",
+    "topic": "CLI coding agents; Google Antigravity; sandbox security; remote agents; orchestration; Gemini Enterprise",
+    "event_type": "release",
+    "status": "update",
+    "summary": "Google обновила терминального coding-агента Antigravity CLI до 1.5.10. Релиз по умолчанию ограничивает чтение чувствительных конфигурационных путей внутри sandbox, требует подтверждения правок в remote-agent сессиях и добавляет Orchestrator для Enterprise и Application Default Credentials-подключений.",
+    "published_at": "2026-11-17T05:41:11+00:00",
+    "published_date": "2026-11-17",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Antigravity CLI 1.5.10 release",
+        "publisher": "Google / GitHub",
+        "url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.5.10"
+      }
+    ],
+    "keywords": [
+      "Antigravity CLI",
+      "agy",
+      "sandbox",
+      "~/.config",
+      "git credentials",
+      "remote agent",
+      "Orchestrator",
+      "Gemini Enterprise"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "OpenCode 2.3.1 добавила GPT-6.2 и заменила schedules на automations",
+    "organization": "Anomaly; OpenCode",
+    "topic": "CLI coding agents; OpenCode; GPT-6.2; ChatGPT sign-in; agent automations; shell execution; SDK",
+    "event_type": "release",
+    "status": "new",
+    "summary": "OpenCode 2.3.1 добавила модели GPT-6.2 Sol и Astra для пользователей, входящих через ChatGPT, изменила обработку timeout для shell-команд и заменила экспериментальные schedules на automations. Вышедший в тот же день 2.3.2 исправил неэффективное повторное тарифицирование system prompt при использовании GPT-6.2.",
+    "published_at": "2026-11-18T00:00:00+00:00",
+    "published_date": "2026-11-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "OpenCode v2.3.1 release",
+        "publisher": "Anomaly / GitHub",
+        "url": "https://github.com/anomalyco/opencode/releases/tag/v2.3.1"
+      }
+    ],
+    "keywords": [
+      "OpenCode",
+      "GPT-6.2",
+      "ChatGPT",
+      "automations",
+      "schedules",
+      "background shell",
+      "CLAUDE.md",
+      "AGENTS.md"
+    ],
+    "geography": "world",
+    "category": "open_source"
+  },
+  {
+    "candidate_id": "cand-010",
+    "section": "world",
+    "headline": "OpenAI рассказала о применении своих моделей в проектировании чипов",
+    "organization": "OpenAI",
+    "topic": "Advancing chip design with OpenAI models",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Advancing chip design with OpenAI models",
+    "published_at": "2026-11-18T00:00:00+00:00",
+    "published_date": "2026-11-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Advancing chip design with OpenAI models",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/advancing-chip-design-with-our-models"
+      }
+    ],
+    "keywords": [
+      "Advancing",
+      "chip",
+      "design",
+      "OpenAI",
+      "models"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-011",
+    "section": "world",
+    "headline": "Le Groupe Figaro и OpenAI объявили о партнёрстве для интеграции журналистики Le Figaro в ChatGPT",
+    "organization": "OpenAI",
+    "topic": "Le Groupe Figaro and OpenAI partner to bring Le Figaro journalism to ChatGPT",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Le Groupe Figaro and OpenAI partner to bring Le Figaro journalism to ChatGPT",
+    "published_at": "2026-11-18T00:00:00+00:00",
+    "published_date": "2026-11-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Le Groupe Figaro and OpenAI partner to bring Le Figaro journalism to ChatGPT",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/le-groupe-figaro-and-openai-announce-partnership"
+      }
+    ],
+    "keywords": [
+      "Le",
+      "Groupe",
+      "Figaro",
+      "OpenAI",
+      "partner",
+      "bring",
+      "journalism",
+      "ChatGPT"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-012",
+    "section": "world",
+    "headline": "OpenAI опубликовала материал об управлении рисками frontier-ИИ от обучения до развёртывания",
+    "organization": "OpenAI",
+    "topic": "Managing frontier AI risk: From training to deployment",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Managing frontier AI risk: From training to deployment",
+    "published_at": "2026-11-18T06:00:00+00:00",
+    "published_date": "2026-11-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Managing frontier AI risk: From training to deployment",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/managing-frontier-ai-risk"
+      }
+    ],
+    "keywords": [
+      "Managing",
+      "frontier",
+      "risk",
+      "training",
+      "deployment"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-013",
+    "section": "world",
+    "headline": "OpenAI показала устройство sandbox в Codex",
+    "organization": "OpenAI",
+    "topic": "Inside the Codex sandbox",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Inside the Codex sandbox",
+    "published_at": "2026-11-18T08:00:00+00:00",
+    "published_date": "2026-11-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Inside the Codex sandbox",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/inside-the-codex-sandbox"
+      }
+    ],
+    "keywords": [
+      "Inside",
+      "Codex",
+      "sandbox"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-014",
+    "section": "world",
+    "headline": "OpenAI опубликовала исследовательский материал Research acceleration: The jagged frontier",
+    "organization": "OpenAI",
+    "topic": "Research acceleration: The jagged frontier",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Research acceleration: The jagged frontier",
+    "published_at": "2026-11-18T08:00:00+00:00",
+    "published_date": "2026-11-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Research acceleration: The jagged frontier",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/research-acceleration-jagged-frontier"
+      }
+    ],
+    "keywords": [
+      "Research",
+      "acceleration",
+      "jagged",
+      "frontier"
+    ],
+    "geography": "world",
+    "category": "other"
+  }
+]
