@@ -1,0 +1,33 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-20",
+  "slug": "2026-11-20",
+  "title": "ИИ-Сводка на 20 ноября 2026",
+  "description": "Anthropic и OpenAI обновляют инструменты для агентной разработки, GitHub расширяет выбор моделей, а Google выводит Gemini к действиям на Mac. NVIDIA усиливает локальный и гибридный контур ИИ-вычислений.",
+  "published_at": "2026-11-20T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-20.png",
+  "topics": [
+    "Codex CLI",
+    "Claude Code",
+    "GitHub Copilot",
+    "Gemini 4 Neon",
+    "Gemini для macOS",
+    "computer use",
+    "агенты ИИ",
+    "ИИ-кодинг",
+    "локальный ИИ",
+    "NVIDIA RTX Spark",
+    "Azure",
+    "производительность ChatGPT"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: business_investment_partnerships, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+    }
+  ]
+}

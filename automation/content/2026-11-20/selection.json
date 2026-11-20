@@ -1,0 +1,29 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-005",
+    "cand-008",
+    "cand-009",
+    "cand-012",
+    "cand-015",
+    "cand-016",
+    "cand-019"
+  ],
+  "excluded_candidate_ids": [
+    "cand-001",
+    "cand-002",
+    "cand-003",
+    "cand-004",
+    "cand-006",
+    "cand-007",
+    "cand-010",
+    "cand-011",
+    "cand-013",
+    "cand-014",
+    "cand-017",
+    "cand-018"
+  ],
+  "selection_summary": "Выбраны семь подтверждённых свежих сюжетов: три существенных обновления среды разработки с агентами ИИ, два инфраструктурных анонса NVIDIA, материал OpenAI о производительности ChatGPT и запуск Gemini computer use для macOS. Исключены кандидаты с рекомендацией exclude, неполным подтверждением, слабой самостоятельной новостной ценностью либо недостаточной конкретикой для полноценного сюжета.",
+  "diversity_overrides": []
+}

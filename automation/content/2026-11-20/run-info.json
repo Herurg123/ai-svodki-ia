@@ -1,0 +1,147 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-11-20",
+  "research_input": "automation/fixtures/research/.runtime/.coverage-audit-2026-11-20.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-002: источник показывает дату без точного времени.",
+    "cand-003: источник показывает дату без точного времени.",
+    "cand-004: источник показывает дату без точного времени.",
+    "cand-006: источник показывает дату без точного времени.",
+    "cand-007: источник показывает дату без точного времени.",
+    "cand-010: источник показывает дату без точного времени.",
+    "cand-017: источник показывает дату без точного времени.",
+    "cand-018: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: associated press (5), nvidia (4)",
+    "Исследовательский пул перегружен одной организацией: nvidia (5)",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-11-20",
+  "started_at": "2026-11-20T02:17:33+00:00",
+  "finished_at": "2026-11-20T02:18:03+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 125,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "6c8335718e4a70358f0b214977650435e1d8599737eae6991bada1fa75deac95",
+    "candidates_sha256": "c7d9a494d114065afdfc68034226ae20eea8d33a731950e8ac9f6527ec4b8427",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-11-18T05:06:46+03:00",
+      "end_at": "2026-11-20T05:06:29+03:00",
+      "latest_archive_at": "2026-11-19T05:06:46+03:00",
+      "start_date": "2026-11-18",
+      "end_date": "2026-11-20",
+      "latest_archive_date": "2026-11-19"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "612e37fa7b2a24e4246ef2373d6712557573edaebb8ed8a906a87a3ad58c8284",
+    "editorial_sha256": "218fbddd7be567c4d7c70bdfd6ae2452a1ed01d749ff6fe15a8ed127c6449dbd",
+    "digest_sha256": "4f594338aff7ee78af083fc8305411040d52d61edcec152fa2255c918e4b42ab",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-11-20.jpg",
+          "normalized_value": "ai-svodka-2026-11-20.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [],
+      "changed_count": 0,
+      "short_digest": false,
+      "editorial_notes": [
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: business_investment_partnerships, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_04ef1e1ac3bce91c016affadbde5bc87d18581e5c2b9f501b6",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 251107,
+        "input_tokens_details": {
+          "cache_write_tokens": 21800,
+          "cached_tokens": 229304,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 21800
+          }
+        },
+        "output_tokens": 3447,
+        "output_tokens_details": {
+          "reasoning_tokens": 338
+        },
+        "total_tokens": 254554
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-11-20/resp_04ef1e1ac3bce91c016affadbde5bc87d18581e5c2b9f501b6.json"
+  },
+  "total_usage": {
+    "input_tokens": 251107,
+    "output_tokens": 3447,
+    "total_tokens": 254554,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "d29e3682b1681bd6af2eb5948516d2595c2b6e25",
+    "run_id": "44658252080",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-11-20T05:06:29+03:00"
+}

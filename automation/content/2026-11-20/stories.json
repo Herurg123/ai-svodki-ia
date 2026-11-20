@@ -1,0 +1,220 @@
+[
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "OpenAI выпустила Codex CLI 0.171.0 с GPT-6.2 Sol/Astra и удалёнными сессиями",
+    "organization": "OpenAI; Codex",
+    "topic": "CLI coding agents; OpenAI Codex; GPT-6.2 Sol; GPT-6.2 Astra; terminal workspace; subagent transcripts; remote sessions; MCP",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "В Codex CLI 0.171.0 OpenAI добавила GPT-6.2 Sol и Astra в каталог моделей, сделав Sol выбором по умолчанию; включила стабильный TUI-workspace с поисковым просмотром документов, изображений и транскриптов субагентов; добавила запуск и возобновление non-interactive сессий через существующий app server и новые элементы управления remote control.",
+    "published_at": "2026-11-20T00:44:47+00:00",
+    "published_date": "2026-11-20",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release 0.171.0 · openai/codex",
+        "publisher": "GitHub / OpenAI",
+        "url": "https://github.com/openai/codex/releases/tag/rust-v0.171.0"
+      }
+    ],
+    "keywords": [
+      "Codex CLI",
+      "GPT-6.2 Sol",
+      "GPT-6.2 Astra",
+      "TUI workspace",
+      "subagents",
+      "remote app server",
+      "MCP"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Anthropic обновила Claude Code до 2.1.329: доверие к hooks и контроль задач",
+    "organization": "Anthropic; Claude Code",
+    "topic": "CLI coding agents; Claude Code; hooks; MCP; code review; scheduled tasks; OpenTelemetry; agent safety",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "Claude Code 2.1.329 добавляет предупреждения о происхождении hooks и сбоях managed settings, вывод scheduled tasks, wakeups и forks в /tasks, а также исправляет ошибки MCP, code review, IDE diff и работы Code Mode.",
+    "published_at": "2026-11-19T22:14:41+00:00",
+    "published_date": "2026-11-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release v2.1.329 · anthropics/claude-code",
+        "publisher": "GitHub / Anthropic",
+        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.329"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "hooks",
+      "MCP",
+      "code review",
+      "scheduled tasks",
+      "OpenTelemetry",
+      "Code Mode"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-009",
+    "section": "world",
+    "headline": "GitHub Copilot сделала Gemini 4 Neon общедоступной для IDE, CLI и coding agent",
+    "organization": "GitHub; Microsoft; Google",
+    "topic": "GitHub Copilot; Gemini 4 Neon; agentic coding; multistep tool use; model choice; enterprise policy",
+    "event_type": "model availability",
+    "status": "new",
+    "summary": "GitHub объявила general availability Gemini 4 Neon в Copilot для Pro+, Max, Business и Enterprise. Модель доступна в VS Code, Copilot CLI, coding agent, Copilot app, github.com, мобильных приложениях и нескольких IDE; для организаций предусмотрено управление model policy.",
+    "published_at": "2026-11-18T13:49:21-08:00",
+    "published_date": "2026-11-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Gemini 4 Neon in GitHub Copilot",
+        "publisher": "GitHub Changelog",
+        "url": "https://github.blog/changelog/2026-11-18-gemini-4-neon-in-github-copilot/"
+      }
+    ],
+    "keywords": [
+      "GitHub Copilot",
+      "Gemini 4 Neon",
+      "agentic coding",
+      "Copilot CLI",
+      "coding agent",
+      "IDE",
+      "enterprise"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-012",
+    "section": "world",
+    "headline": "NVIDIA начала продажи компактных настольных систем RTX Spark для локального ИИ",
+    "organization": "NVIDIA",
+    "topic": "NVIDIA RTX Spark Compact Desktops Out Now",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Systems from ASUS, Dell and MSI are now available — with more from Acer, GIGABYTE, HP and Microsoft on the way — bringing RTX acceleration and up to 128GB of unified memory to local AI, development and creative workflows.",
+    "published_at": "2026-11-18T14:00:31+00:00",
+    "published_date": "2026-11-18",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "NVIDIA RTX Spark Compact Desktops Out Now",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/rtx-spark-desktop-local-ai-available-now"
+      }
+    ],
+    "keywords": [
+      "NVIDIA",
+      "RTX",
+      "Spark",
+      "Compact",
+      "Desktops",
+      "Out",
+      "Now"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-015",
+    "section": "world",
+    "headline": "NVIDIA и Microsoft расширяют ускоренные вычисления от Azure до Windows ПК",
+    "organization": "NVIDIA",
+    "topic": "NVIDIA and Microsoft Expand Accelerated Computing From Azure to Windows PCs",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "NVIDIA and Microsoft expand tools for enterprises to customize AI models and deploy applications across cloud and local infrastructure.",
+    "published_at": "2026-11-19T20:00:15+00:00",
+    "published_date": "2026-11-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "NVIDIA and Microsoft Expand Accelerated Computing From Azure to Windows PCs",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/microsoft-ignite-accelerated-computing-azure-windows-pcs"
+      }
+    ],
+    "keywords": [
+      "NVIDIA",
+      "Microsoft",
+      "Expand",
+      "Accelerated",
+      "Computing",
+      "Azure",
+      "Windows",
+      "PCs"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-016",
+    "section": "world",
+    "headline": "OpenAI описала Performance Factory для поддержания скорости ChatGPT",
+    "organization": "OpenAI",
+    "topic": "How OpenAI’s Performance Factory keeps ChatGPT fast",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: How OpenAI’s Performance Factory keeps ChatGPT fast",
+    "published_at": "2026-11-19T08:00:00+00:00",
+    "published_date": "2026-11-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "How OpenAI’s Performance Factory keeps ChatGPT fast",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/how-openai-performance-factory-keeps-chatgpt-fast"
+      }
+    ],
+    "keywords": [
+      "How",
+      "OpenAI",
+      "Performance",
+      "Factory",
+      "keeps",
+      "ChatGPT",
+      "fast"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-019",
+    "section": "world",
+    "headline": "Google добавила Gemini для macOS агентный режим computer use",
+    "organization": "Google; Gemini",
+    "topic": "consumer AI; computer-use agents; Gemini for macOS; desktop automation; browser automation",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Google объявила о запуске computer-use режима в приложении Gemini для macOS. Агент может выполнять многошаговые действия в нативных приложениях Mac и на сайтах в фоне, а пользователь видит ход работы, может приостановить его и подтверждать действия.",
+    "published_at": "2026-11-19T18:09:11+00:00",
+    "published_date": "2026-11-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Google gives Gemini the ability to use your Mac for you",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/19/google-gives-gemini-the-ability-to-use-your-mac-for-you/"
+      }
+    ],
+    "keywords": [
+      "Google",
+      "Gemini",
+      "macOS",
+      "computer use",
+      "AI agent",
+      "desktop agent",
+      "browser automation"
+    ],
+    "geography": "world",
+    "category": "agents"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Release 0.171.0 · openai/codex",
+    "publisher": "GitHub / OpenAI",
+    "url": "https://github.com/openai/codex/releases/tag/rust-v0.171.0"
+  },
+  {
+    "title": "Release v2.1.329 · anthropics/claude-code",
+    "publisher": "GitHub / Anthropic",
+    "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.329"
+  },
+  {
+    "title": "Gemini 4 Neon in GitHub Copilot",
+    "publisher": "GitHub Changelog",
+    "url": "https://github.blog/changelog/2026-11-18-gemini-4-neon-in-github-copilot/"
+  },
+  {
+    "title": "NVIDIA RTX Spark Compact Desktops Out Now",
+    "publisher": "NVIDIA",
+    "url": "https://blogs.nvidia.com/blog/rtx-spark-desktop-local-ai-available-now"
+  },
+  {
+    "title": "NVIDIA and Microsoft Expand Accelerated Computing From Azure to Windows PCs",
+    "publisher": "NVIDIA",
+    "url": "https://blogs.nvidia.com/blog/microsoft-ignite-accelerated-computing-azure-windows-pcs"
+  },
+  {
+    "title": "How OpenAI’s Performance Factory keeps ChatGPT fast",
+    "publisher": "OpenAI",
+    "url": "https://openai.com/index/how-openai-performance-factory-keeps-chatgpt-fast"
+  },
+  {
+    "title": "Google gives Gemini the ability to use your Mac for you",
+    "publisher": "TechCrunch",
+    "url": "https://techcrunch.com/2026/11/19/google-gives-gemini-the-ability-to-use-your-mac-for-you/"
+  }
+]
