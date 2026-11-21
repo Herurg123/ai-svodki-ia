@@ -1,0 +1,192 @@
+[
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Palo Alto Networks договорилась купить Applied Compute за $4,5 млрд",
+    "organization": "Palo Alto Networks; Applied Compute; Unit 42",
+    "topic": "M&A; AI security; open-weight models; post-training; enterprise deployment",
+    "event_type": "acquisition announcement",
+    "status": "new",
+    "summary": "Palo Alto Networks объявила о планах приобрести Applied Compute за $4,5 млрд. По сообщению IT Pro, команда исследований Applied Compute должна войти в Palo Alto Networks, а компания намерена использовать платформу для безопасного обучения, адаптации и развёртывания открытых моделей наряду с закрытыми моделями в облачных и sovereign-окружениях.",
+    "published_at": "2026-11-19T12:30:00+00:00",
+    "published_date": "2026-11-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Palo Alto Networks acquires Applied Compute in hybrid AI push",
+        "publisher": "IT Pro",
+        "url": "https://www.itpro.com/business/acquisition/palo-alto-networks-acquires-applied-compute-in-hybrid-ai-push"
+      }
+    ],
+    "keywords": [
+      "Palo Alto Networks",
+      "Applied Compute",
+      "acquisition",
+      "$4.5 billion",
+      "AI security",
+      "open-weight models",
+      "hybrid AI"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-010",
+    "section": "world",
+    "headline": "NVIDIA показала применение агентов ИИ для создания симуляций в Omniverse",
+    "organization": "NVIDIA",
+    "topic": "Into the Omniverse: How Developers Turn Ideas Into Simulations With Frontier AI Agents",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "See how developers are combining AI agents with NVIDIA Omniverse libraries to build simulation applications, test physical behavior and guide improvements.",
+    "published_at": "2026-11-19T17:00:35+00:00",
+    "published_date": "2026-11-19",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Into the Omniverse: How Developers Turn Ideas Into Simulations With Frontier AI Agents",
+        "publisher": "NVIDIA",
+        "url": "https://blogs.nvidia.com/blog/developers-simulation-frontier-ai-agents"
+      }
+    ],
+    "keywords": [
+      "Into",
+      "Omniverse",
+      "How",
+      "Developers",
+      "Turn",
+      "Ideas",
+      "Simulations",
+      "Frontier",
+      "Agents"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-013",
+    "section": "world",
+    "headline": "OpenAI представила MedChemBench для оценки поиска лекарственных кандидатов",
+    "organization": "OpenAI",
+    "topic": "Can AI help scientists identify promising drug candidates?",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Can AI help scientists identify promising drug candidates?",
+    "published_at": "2026-11-20T00:00:00+00:00",
+    "published_date": "2026-11-20",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Can AI help scientists identify promising drug candidates?",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/introducing-medchembench"
+      }
+    ],
+    "keywords": [
+      "Can",
+      "help",
+      "scientists",
+      "identify",
+      "promising",
+      "drug",
+      "candidates"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-014",
+    "section": "world",
+    "headline": "OpenAI рассказала о противодействии враждебной дистилляции моделей",
+    "organization": "OpenAI",
+    "topic": "Combatting adversarial distillation",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: Combatting adversarial distillation",
+    "published_at": "2026-11-20T10:00:00+00:00",
+    "published_date": "2026-11-20",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Combatting adversarial distillation",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/combatting-adversarial-distillation"
+      }
+    ],
+    "keywords": [
+      "Combatting",
+      "adversarial",
+      "distillation"
+    ],
+    "geography": "world",
+    "category": "other"
+  },
+  {
+    "candidate_id": "cand-011",
+    "section": "russia",
+    "headline": "Яндекс покажет в приложении «Яндекс — с Алисой AI» подсказки по интересам пользователей",
+    "organization": "Яндекс",
+    "topic": "20 ноября 2026Пользователям покажут ИИ-подсказки по интересам в приложении «Яндекс — с Алисой AI»",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+    "published_at": null,
+    "published_date": "2026-11-20",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "20 ноября 2026Пользователям покажут ИИ-подсказки по интересам в приложении «Яндекс — с Алисой AI»",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=20-11-2026-01"
+      }
+    ],
+    "keywords": [
+      "20",
+      "ноября",
+      "2026Пользователям",
+      "покажут",
+      "ИИ-подсказки",
+      "по",
+      "интересам",
+      "приложении",
+      "Яндекс",
+      "Алисой"
+    ],
+    "geography": "russia",
+    "category": "investment"
+  },
+  {
+    "candidate_id": "cand-012",
+    "section": "russia",
+    "headline": "Яндекс 360 открыл доступ к сервисам внешним агентам ИИ",
+    "organization": "Яндекс",
+    "topic": "20 ноября 2026Яндекс 360 открыл доступ к своим сервисам внешним ИИ-агентам",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+    "published_at": null,
+    "published_date": "2026-11-20",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "20 ноября 2026Яндекс 360 открыл доступ к своим сервисам внешним ИИ-агентам",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=20-11-2026-02"
+      }
+    ],
+    "keywords": [
+      "20",
+      "ноября",
+      "2026Яндекс",
+      "360",
+      "открыл",
+      "доступ",
+      "своим",
+      "сервисам",
+      "внешним",
+      "ИИ-агентам"
+    ],
+    "geography": "russia",
+    "category": "investment"
+  }
+]

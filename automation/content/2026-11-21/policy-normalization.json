@@ -1,0 +1,48 @@
+{
+  "status": "applied",
+  "changed_fields": [
+    {
+      "field": "selected_candidate_ids",
+      "model_value": [
+        "cand-007",
+        "cand-010",
+        "cand-011",
+        "cand-012",
+        "cand-013",
+        "cand-014"
+      ],
+      "normalized_value": [
+        "cand-007",
+        "cand-010",
+        "cand-013",
+        "cand-014",
+        "cand-011",
+        "cand-012"
+      ]
+    },
+    {
+      "field": "article_html.short_digest_notice",
+      "model_value": null,
+      "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+    }
+  ],
+  "changed_count": 2,
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После проверки свежести и значимости выбрано 6 сюжетов."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-011, cand-012."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, legal_regulation."
+    }
+  ]
+}

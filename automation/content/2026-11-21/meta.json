@@ -1,0 +1,43 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-21",
+  "slug": "2026-11-21",
+  "title": "ИИ-Сводка на 21 ноября 2026",
+  "description": "Palo Alto Networks покупает Applied Compute, Яндекс открывает сервисы внешним агентам, а OpenAI развивает оценку лекарственных кандидатов и защиту от дистилляции моделей.",
+  "published_at": "2026-11-21T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-21.png",
+  "topics": [
+    "Palo Alto Networks",
+    "Applied Compute",
+    "ИИ-безопасность",
+    "агенты ИИ",
+    "NVIDIA Omniverse",
+    "симуляции",
+    "MedChemBench",
+    "разработка лекарств",
+    "дистилляция моделей",
+    "Яндекс",
+    "Алиса AI",
+    "Яндекс 360"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-011, cand-012."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, legal_regulation."
+    }
+  ]
+}

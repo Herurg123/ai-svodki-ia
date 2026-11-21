@@ -1,0 +1,184 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-11-21",
+  "research_input": "automation/fixtures/research/.runtime/.coverage-audit-2026-11-21.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-002: источник показывает дату без точного времени.",
+    "cand-003: источник показывает дату без точного времени.",
+    "cand-004: источник показывает дату без точного времени.",
+    "cand-005: источник показывает дату без точного времени.",
+    "cand-006: источник показывает дату без точного времени.",
+    "cand-008: источник показывает дату без точного времени.",
+    "cand-009: источник показывает дату без точного времени.",
+    "cand-011: источник показывает дату без точного времени.",
+    "cand-012: источник показывает дату без точного времени.",
+    "cand-015: источник показывает дату без точного времени.",
+    "Исследовательский пул перегружен одним издателем: associated press (8)",
+    "Выбрано 6 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-11-21",
+  "started_at": "2026-11-21T02:15:48+00:00",
+  "finished_at": "2026-11-21T02:16:14+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 126,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "603d9d1edd1d0abe69b7d8c2993ab70b31ea88062cac3011b49a8a08be394aff",
+    "candidates_sha256": "8e5abf224b6cc00be26d0cef932419e22fffe4741eaffa8033d21879914ee71b",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-11-19T05:06:29+03:00",
+      "end_at": "2026-11-21T05:06:45+03:00",
+      "latest_archive_at": "2026-11-20T05:06:29+03:00",
+      "start_date": "2026-11-19",
+      "end_date": "2026-11-21",
+      "latest_archive_date": "2026-11-20"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "831b3c907a9edfaf584b64b807d583c0afe43d0c3844eb56d6eeeca3f5e02b03",
+    "editorial_sha256": "5525fbce5b72a2ae043accf39fb0c4b92d34ff3bd09cd1c8f89901ad18493943",
+    "digest_sha256": "113eb25fabfb5171af0d539f4b7e2d06d9bde157a036a29367f6043daf9050f5",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-11-21.jpg",
+          "normalized_value": "ai-svodka-2026-11-21.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "selected_candidate_ids",
+          "model_value": [
+            "cand-007",
+            "cand-010",
+            "cand-011",
+            "cand-012",
+            "cand-013",
+            "cand-014"
+          ],
+          "normalized_value": [
+            "cand-007",
+            "cand-010",
+            "cand-013",
+            "cand-014",
+            "cand-011",
+            "cand-012"
+          ]
+        },
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        }
+      ],
+      "changed_count": 2,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 6 сюжетов."
+        },
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-011, cand-012."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: models_products_agents, infrastructure_chips_cloud, china_asia_models, china_asia_integrations, russia, legal_regulation."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_048bc2e2e6137bf6016b00fed51c4887d0b2cf729733ccb8ac",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 249498,
+        "input_tokens_details": {
+          "cache_write_tokens": 18131,
+          "cached_tokens": 231364,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 18131
+          }
+        },
+        "output_tokens": 2982,
+        "output_tokens_details": {
+          "reasoning_tokens": 214
+        },
+        "total_tokens": 252480
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-11-21/resp_048bc2e2e6137bf6016b00fed51c4887d0b2cf729733ccb8ac.json"
+  },
+  "total_usage": {
+    "input_tokens": 249498,
+    "output_tokens": 2982,
+    "total_tokens": 252480,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "da8eaacac10e5d10e370ad5a699ec03291916785",
+    "run_id": "44853894561",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-11-21T05:06:45+03:00"
+}
