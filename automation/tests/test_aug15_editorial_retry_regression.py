@@ -199,6 +199,51 @@ class Aug15RetryWindowRegressionTests(unittest.TestCase):
                 runner.patch_trusted_runtime_window(FakeGenerator(), str(relative))
 
 
+class November22ExplicitEditorialRefusalTests(unittest.TestCase):
+    def test_real_saved_empty_error_returns_clear_stop_not_html_heading_error(self):
+        # Shape reproduced from response_saved 2026-11-22, no transport.
+        payload = {
+            "status": "error",
+            "error_message": "В проверенном пуле нет кандидатов, допустимых к публикации",
+            "selected_candidate_ids": [],
+            "excluded_candidate_ids": [f"cand-{i:03d}" for i in range(1, 9)],
+            "digest": {
+                "status": "error", "article_html": "", "topics": [],
+                "sources": [], "image_prompt": "",
+            },
+        }
+        frozen = json.dumps(payload, sort_keys=True, ensure_ascii=False)
+        with self.assertRaisesRegex(
+            RuntimeError, "Редакционная остановка без публикации"
+        ) as caught:
+            generator.require_editorial_publication_candidate(payload)
+        self.assertNotIn("balanced top-level story headings", str(caught.exception))
+        self.assertEqual(json.dumps(payload, sort_keys=True, ensure_ascii=False), frozen)
+
+    def test_successful_editorial_does_not_gain_false_stop(self):
+        generator.require_editorial_publication_candidate({
+            "status": "ok",
+            "selected_candidate_ids": ["cand-001"],
+            "digest": {"status": "ok", "article_html": "<h3>First</h3>"},
+        })
+
+    def test_error_status_with_nonempty_html_still_fails_closed(self):
+        with self.assertRaisesRegex(RuntimeError, "status=error"):
+            generator.require_editorial_publication_candidate({
+                "status": "error",
+                "selected_candidate_ids": ["cand-001"],
+                "digest": {"status": "ok", "article_html": "<h3>First</h3>"},
+            })
+
+    def test_error_digest_status_also_stops_when_parent_looks_ok(self):
+        with self.assertRaisesRegex(RuntimeError, "status=error"):
+            generator.require_editorial_publication_candidate({
+                "status": "ok",
+                "selected_candidate_ids": ["cand-001"],
+                "digest": {"status": "error", "article_html": "<h3>First</h3>"},
+            })
+
+
 class Aug15AsiaSubjectRegressionTests(unittest.TestCase):
     policy = {
         "tracked_asia_organizations": ["Z.ai", "DeepSeek", "Pony.ai"],
