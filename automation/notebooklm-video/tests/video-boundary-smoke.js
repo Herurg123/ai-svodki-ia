@@ -226,8 +226,11 @@ async function verifyResumeState() {
       `${createFnSource}\ncreateNotebookAndAddSource`,
       context
     );
-    const publication = { url: "https://rybalka.one/posts/2026-10-16/" };
-    const job = { status: "NEW", notebookUrl: null, notebookTitleHint: "ИИ-2026-10-16" };
+    const fixtureToday = new Intl.DateTimeFormat("sv-SE", {
+      year:"numeric",month:"2-digit",day:"2-digit",timeZone:"Europe/Moscow"
+    }).format(new Date());
+    const publication = {date:fixtureToday,url:"https://rybalka.one/posts/"+fixtureToday+"/"};
+    const job = { date:fixtureToday,status:"NEW",notebookUrl:null,notebookTitleHint:"ИИ-"+fixtureToday };
     const state = { jobs: { today: job } };
     return {
       invoke: () => fn({ notebookUrl: "https://notebook.google.com/", uiTimeoutMs: 60 }, {}, publication, job, state),
