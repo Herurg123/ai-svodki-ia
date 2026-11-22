@@ -67,8 +67,9 @@ function surface(mode){
   assert(segment.includes("job.notebookCreateArmedAt = new Date().toISOString();"),
     "Notebook creation must be armed before clicking");
   assert(segment.indexOf("job.notebookCreateArmedAt =")<segment.indexOf("await clickAnyVisible("));
-  assert(segment.indexOf("job.notebookUrl = await waitForNewNotebookIdentity(")<
-    segment.indexOf("await sourceUi.openWebsiteSourceInput("));
+  assert(segment.indexOf("job.notebookUrl = url;")<
+    segment.indexOf("await sourceUi.openWebsiteSourceInput("),
+    "Capture permanent notebook ID before attempting source import");
   assert(segment.indexOf("job.sourceSubmitArmedAt =")<
     segment.indexOf("await submitWebsiteSourceUrl("));
   assert(segment.includes("if (pinned)"),
