@@ -3273,6 +3273,20 @@ async function recoverCreatedNotebookFromHome(config, page, publication, job, st
   let lastCount = 0;
   let searched = false;
   do {
+    // Search is a safe, local UI filter and helps with virtualized/long grids.
+    // It does NOT create notebooks or submit sources.
+    if (!searched) {
+      searched = true;
+      const box = page.locator(
+        'input[placeholder*="Поиск блокнотов" i], input[aria-label*="Поиск блокнотов" i], ' +
+        'input[placeholder*="Search notebooks" i], input[aria-label*="Search notebooks" i]'
+      ).first();
+      if (await box.isVisible().catch(() => false)) {
+        await box.fill("Блокнот без названия");
+        log(config, "Для восстановления применён поиск блокнотов по точному названию.");
+        await page.waitForTimeout(1500);
+      }
+    }
     const cards = await scanNotebookHomeCards(page);
     lastCount = cards.length;
     const found = chooseUnambiguousNewNotebook(cards, publication.date, used);
@@ -3297,20 +3311,6 @@ async function recoverCreatedNotebookFromHome(config, page, publication, job, st
       saveState(config, state); // UUID durable BEFORE loading source UI
       log(config, "Найден единственный пустой блокнот за сегодня, UUID сохранён: " + pinned);
       return pinned;
-    }
-    // Search is a safe, local UI filter and helps with virtualized/long grids.
-    // It does NOT create notebooks or submit sources.
-    if (!searched) {
-      searched = true;
-      const box = page.locator(
-        'input[placeholder*="Поиск блокнотов" i], input[aria-label*="Поиск блокнотов" i], ' +
-        'input[placeholder*="Search notebooks" i], input[aria-label*="Search notebooks" i]'
-      ).first();
-      if (await box.isVisible().catch(() => false)) {
-        await box.fill("Блокнот без названия");
-        log(config, "Для восстановления применён поиск блокнотов по точному названию.");
-        await page.waitForTimeout(1500);
-      }
     }
     await page.waitForTimeout(800);
   } while (Date.now() < deadline);
