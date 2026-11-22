@@ -197,6 +197,8 @@ class StoryCoverageTests(unittest.TestCase):
             "search_window": {
                 "start_at": "2026-07-23T07:00:00+03:00",
                 "end_at": "2026-07-24T06:00:00+03:00",
+                "start_date": "2026-07-23",
+                "end_date": "2026-07-24",
             },
             "candidates": [first],
             "research_notes": "saved",
