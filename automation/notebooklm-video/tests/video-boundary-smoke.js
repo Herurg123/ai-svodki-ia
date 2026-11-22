@@ -199,6 +199,7 @@ async function verifyResumeState() {
       goto: async () => {},
       url: () => pageUrl,
       waitForTimeout: async () => {},
+      evaluate: async () => { throw Error("no recoverable card in fixture"); },
       locator: () => ({ filter: () => ({}) }),
       getByRole: () => ({}),
       getByText: () => ({}),
@@ -253,7 +254,7 @@ async function verifyResumeState() {
   );
 
   const invalid = await exerciseCreate("https://notebook.google.com/", "https://notebook.google.com/");
-  await assert.rejects(invalid.invoke(), /постоянный UUID и готовая оболочка не подтверждены/);
+  await assert.rejects(invalid.invoke(), /no recoverable card in fixture/);
   assert.strictEqual(invalid.job.status, "NEW");
   assert(invalid.snapshots.length > 0, "Notebook creation is armed BEFORE clicking");
   assert(invalid.snapshots.some(x => x.jobs.today.notebookCreateArmedAt),
@@ -265,7 +266,7 @@ async function verifyResumeState() {
     "https://notebook.google.com/",
     "https://notebook.google.com/notebook/creating"
   );
-  await assert.rejects(transient.invoke(), /постоянный UUID/);
+  await assert.rejects(transient.invoke(), /no recoverable card in fixture/);
   assert.strictEqual(transient.job.notebookUrl, null);
   assert.ok(transient.job.notebookCreateArmedAt, "Creation intent survives transient routing");
   assert.strictEqual(transient.createClicks, 1, "Creation was attempted only once");
