@@ -163,10 +163,15 @@ an already submitted remote mutation.
 Persist `notebookCreateArmedAt` **before** the remote notebook create click.
 When the URL becomes a permanent UUID (never `/notebook/creating`), immediately
 persist `notebookUrl` **before waiting for shell readiness**. If a same-day
-`NEW` job has an armed creation but no URL, attempt read-only reconciliation
-on the Notebook home: use ONLY one unique, unclaimed, permanent-UUID card
-whose **exact** title is the untitled placeholder, whose card metadata carries
-the job's local calendar date and whose source count is explicitly zero.
+`NEW` job has an armed creation but no URL, inspect the Notebook home and
+optionally filter by the notebook search input. Use ONLY one unique unclaimed
+card whose **exact** title is the untitled placeholder, whose card metadata
+carries the job's local calendar date and whose source count is explicitly zero.
+Do not assume the card is an `<a>` or has `aria-labelledby`: it may be a
+clickable DIV. If the card has no href, one **navigation-only** click on its
+verified title is allowed to obtain the permanent UUID; verify that URL is
+not already claimed BEFORE saving to state. Browser search/navigation are not
+permission to create a second notebook or submit sources twice.
 Never auto-select a generic newest/personal notebook or one claimed by another
 job; absent or multiple candidates are fail-closed and remain read-only on
 subsequent same-day runs. No second creation click, no stale-day recovery,
