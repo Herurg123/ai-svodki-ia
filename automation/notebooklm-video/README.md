@@ -138,9 +138,13 @@ card titled `Блокнот без названия` / `Untitled notebook`, date
 that release and showing **zero sources**. If no href is exposed, it opens only
 that uniquely verified card to read its permanent UUID, checks it is unused,
 and saves it before source import. Card scanning and filtering are read-only;
-opening an existing card is navigation, not new notebook creation. If the candidate is absent/ambiguous/already
-claimed, the worker stops and retries only the read-only lookup on the next
-same-day run, with **no second create click**, no guessed card, and no deletion.
+opening an existing card is navigation, not new notebook creation. If
+**zero** matching empty cards are found after the bounded lookup, the worker
+may perform exactly **one** extra create click for the same-day job, armed
+first by the durable `notebookCreateRetryArmedAt` checkpoint. This rule was
+explicitly approved on 2026-11-22 to unblock a job stuck after an uncertain
+first click. Future runs must never perform a third click. If multiple valid
+candidates exist, creation is blocked as ambiguous; no guessed card or deletion.
 This also applies to legacy `NEW` records that have `notebookCreateArmedAt` but
 no URL, including the 2026-11-22 incident. After a confirmed source submission
 the job resumes `CREATING_VIDEO` as before; a potentially completed URL submit
