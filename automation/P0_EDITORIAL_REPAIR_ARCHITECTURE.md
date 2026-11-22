@@ -37,6 +37,23 @@ ignored by Git. Publication still rejects any unrelated tracked/untracked
 changes via `validate_publish_changes.py`. This change does not admit,
 retry or reorder any Editorial Repair provider request.
 
+## Sealed research on zero-admission replay (2026-11-22)
+
+When an already-complete Coverage audit is replayed over its previously
+merged candidates, zero accepted candidates must not append any new
+`research_notes` line. The entire research object is journal-hash-bound,
+not only the candidate array. Before any persisted-input write, Coverage
+checks that a same-day sealed Editorial Repair journal implies an existing,
+exact-equal durable research payload. Drift fails before provider admission;
+no existing persisted bytes or sealed response may be rewritten. A successful
+exact match retains the original file bytes. The P0 guard separately verifies
+its signed journal, archive identity, post-freshness pool and saved response.
+
+A saved `response_saved` Editorial `status:error` with no selected stories
+replays only offline and is an explicit non-publish outcome, not license for a
+fresh model call. The original 2026-11-22 response is immutable; no synthetic
+story or HTML normalization may turn it into a publishable release.
+
 ## Durable state and request identity
 
 `editorial_repair_guard.py` owns a same-day journal under `automation/preview/production-daily/`. Before the protected provider boundary it binds the exact persisted Coverage research SHA-256, the post-Freshness candidate-pool identity, archive identity, prompt/schema/model request contract and release date.

@@ -146,6 +146,75 @@ class StoryCoverageTests(unittest.TestCase):
         self.assertIn("дубликат", rejection_text)
         self.assertIn("вне редакционного окна", rejection_text)
 
+    def test_nov22_zero_admission_replay_is_hash_identical(self) -> None:
+        # 2026-11-22 saved journal: an already merged 8-story research pool
+        # was recovered, and adding "0" to research_notes broke research_sha256.
+        def fingerprint(value: dict) -> str:
+            import hashlib
+            return hashlib.sha256(
+                json.dumps(value, sort_keys=True, ensure_ascii=False,
+                           separators=(",", ":")).encode("utf-8")
+            ).hexdigest()
+
+        base = candidate(geography="world", url="https://example.com/a",
+                         title="First")
+        base["id"] = "cand-001"
+        research = {
+            "status": "ok",
+            "publication_date": "2026-11-22",
+            "search_window": {
+                "start_at": "2026-11-21T06:00:00+03:00",
+                "end_at": "2026-11-22T06:00:00+03:00",
+            },
+            "candidates": [base],
+            "research_notes": (
+                "Primary recall saved.\\n"
+                "Targeted coverage audit добавил кандидатов: 2.\\n"
+                "Targeted coverage audit добавил кандидатов: 1."
+            ),
+        }
+        reference = fingerprint(research)
+        recovered, accepted, rejected = coverage.merge_candidates(
+            research, [base], maximum_candidates=20
+        )
+        self.assertFalse(accepted)
+        self.assertTrue(rejected)
+        self.assertEqual(recovered, research)
+        self.assertEqual(fingerprint(recovered), reference)
+        self.assertNotIn(
+            "добавил кандидатов: 0", recovered["research_notes"]
+        )
+        twice, accepted_again, _ = coverage.merge_candidates(recovered, [base])
+        self.assertFalse(accepted_again)
+        self.assertEqual(fingerprint(twice), reference)
+
+    def test_nov22_real_new_admission_remains_noted_once(self) -> None:
+        first = candidate(geography="world", url="https://example.com/a",
+                          title="First")
+        first["id"] = "cand-001"
+        research = {
+            "publication_date": "2026-07-24",
+            "search_window": {
+                "start_at": "2026-07-23T07:00:00+03:00",
+                "end_at": "2026-07-24T06:00:00+03:00",
+                "start_date": "2026-07-23",
+                "end_date": "2026-07-24",
+            },
+            "candidates": [first],
+            "research_notes": "saved",
+        }
+        fresh = candidate(geography="russia",
+                          url="https://example.ru/new",
+                          title="Fresh new candidate")
+        result, accepted, _ = coverage.merge_candidates(research, [fresh])
+        self.assertEqual(len(accepted), 1)
+        self.assertTrue(result["research_notes"].endswith("добавил кандидатов: 1."))
+        replayed, new_accepted, rejected = coverage.merge_candidates(result, [fresh])
+        self.assertFalse(new_accepted)
+        self.assertTrue(rejected)
+        self.assertEqual(result, replayed)
+        self.assertEqual(len(replayed["candidates"]), 2)
+
     def test_prompt_is_targeted_and_bounded(self) -> None:
         prompt = audit.build_prompt(
             "{{PUBLICATION_DATE}}|{{SEARCH_WINDOW_START_AT}}|{{SEARCH_WINDOW_END_AT}}|"

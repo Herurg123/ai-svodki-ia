@@ -983,6 +983,29 @@ Coverage содержит шесть mandatory directions и максимум с
 завершённый search с пустым publishable pool может завершиться успешным
 `editorial_stop` без искусственного наполнения выпуска.
 
+2026-11-22 replay hardening: при повторном применении завершённого Coverage
+над уже объединённым исследованием ноль вновь принятых кандидатов **не**
+дописывает `Targeted coverage audit добавил кандидатов: 0.` в `research_notes`.
+Пул, ID и диагностические поля остаются hash-identical, что обязательно для
+sealed `Editorial Repair` v2. Если уже существует
+`editorial-repair-YYYY-MM-DD.json`, `ensure_story_coverage_policy.py` до
+перезаписи проверяет **весь** полученный research JSON против сохранённого
+`coverage-audit-merged-candidates-YYYY-MM-DD.json`: несовпадение или
+отсутствующий durable input являются fail-closed, существующие файлы не
+переписываются. Только после точного совпадения P0 journal guard проверяет
+research/candidate/archive/window identity, saved response и разрешение
+на транспорт; `response_saved` может только replay, не новый платный запрос.
+
+Сохранённый Editorial `status:error` с нулём selected и пустым `article_html`
+является явным отказом из-за отсутствия подтверждённых сюжетов: генератор
+фиксирует raw immutable response, сообщает `Редакционная остановка без публикации`
+**до** HTML-нормализации и не выдаёт сбивающую с толку ошибку h2/h3. Он
+по-прежнему возвращает nonzero, не создаёт статью, изображение или publish;
+этот путь не следует автоматически превращать в разрешение повторной
+оплачиваемой Editorial или ослаблять Source Freshness. Существующий green
+`editorial_stop` допускается только по собственной строгой zero-pool
+процедуре (completed 6/6 и сохранённые доказательства).
+
 Coverage normal/resolution candidate schema получает те же nullable event-origin
 fields, что Primary/Hybrid/rescue. Это не создаёт нового search. Надёжный stale
 event будет отсеян deterministic freshness gate до editorial; неизвестный origin
