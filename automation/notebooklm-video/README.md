@@ -131,11 +131,14 @@ is saved immediately when it first appears in the browser URL, **before**
 waiting for the Gemini shell to finish loading. A slow shell therefore cannot
 lose an already established identity. The temporary `/notebook/creating` is
 never a notebook ID. If the first click was armed but UUID was never saved,
-the worker safely reopens the Notebook home and attempts a **read-only, same-day
-reconciliation**: it accepts only a unique unclaimed card titled
-`Блокнот без названия` / `Untitled notebook`, explicitly dated for that release,
-with **zero sources** and a permanent UUID. That ID is saved before any further
-navigation or source submission. If the candidate is absent/ambiguous/already
+the worker safely reopens the Notebook home and inspects cards using either
+legacy links or current clickable DIVs (without requiring `aria-labelledby`).
+It can filter by `Поиск блокнотов`, then accepts only a **unique unclaimed**
+card titled `Блокнот без названия` / `Untitled notebook`, dated exactly for
+that release and showing **zero sources**. If no href is exposed, it opens only
+that uniquely verified card to read its permanent UUID, checks it is unused,
+and saves it before source import. Card scanning and filtering are read-only;
+opening an existing card is navigation, not new notebook creation. If the candidate is absent/ambiguous/already
 claimed, the worker stops and retries only the read-only lookup on the next
 same-day run, with **no second create click**, no guessed card, and no deletion.
 This also applies to legacy `NEW` records that have `notebookCreateArmedAt` but
