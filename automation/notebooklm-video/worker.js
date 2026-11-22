@@ -3271,6 +3271,7 @@ async function recoverCreatedNotebookFromHome(config, page, publication, job, st
   const usedIds = new Set(used.map(permanentNotebookUrl).filter(Boolean));
   const deadline = Date.now() + Math.min(Math.max(config.uiTimeoutMs, 12000), 30000);
   let lastCount = 0;
+  let lastEligibleCount = 0;
   let searched = false;
   do {
     // Search is a safe, local UI filter and helps with virtualized/long grids.
@@ -3289,6 +3290,17 @@ async function recoverCreatedNotebookFromHome(config, page, publication, job, st
     }
     const cards = await scanNotebookHomeCards(page);
     lastCount = cards.length;
+    // Distinguish an empty recovery search from an ambiguous one.  It is
+    // never safe to create another notebook when multiple same-day empty
+    // candidates could already be the notebook from the first click.
+    const eligible = cards.filter((card) =>
+      Boolean(chooseUnambiguousNewNotebook([card], publication.date, used))
+    );
+    lastEligibleCount = eligible.length;
+    if (lastEligibleCount > 1) {
+      throw new Error("Обнаружено несколько подходящих пустых блокнотов за " +
+        publication.date + "; автоматический повтор создания запрещён.");
+    }
     const found = chooseUnambiguousNewNotebook(cards, publication.date, used);
     if (found) {
       let pinned = typeof found === "string" ? found : null;
@@ -3314,9 +3326,13 @@ async function recoverCreatedNotebookFromHome(config, page, publication, job, st
     }
     await page.waitForTimeout(800);
   } while (Date.now() < deadline);
-  throw new Error("Нет однозначно подтверждённого пустого блокнота за " +
-    publication.date + " (распознано карточек: " + lastCount + "). " +
-    "Повторное создание запрещено; следующий запуск повторит только поиск.");
+  // No eligible notebook was found after the bounded search.  The caller
+  // may perform ONE explicitly checkpointed retry of remote creation.
+  const notFound = new Error("Не найден подходящий пустой блокнот за " +
+    publication.date + " (распознано карточек: " + lastCount +
+    "; подходящих: " + lastEligibleCount + ").");
+  notFound.code = "NOTEBOOK_RECOVERY_NO_CANDIDATE";
+  throw notFound;
 }
 
 async function waitForNewNotebookIdentity(page, timeout, persistIdentity = async () => {}) {
@@ -3346,8 +3362,18 @@ async function createNotebookAndAddSource(config, context, publication, job, sta
   activePage = await getRobotPage(config, context);
 
   if (!pinned && job.notebookCreateArmedAt) {
-    // Repairs an existing NEW checkpoint without making another notebook.
-    pinned = await recoverCreatedNotebookFromHome(config, activePage, publication, job, state);
+    // First try to reuse the remotely created notebook. If NONE exists, the
+    // operator approved exactly one controlled retry for this daily job.
+    try {
+      pinned = await recoverCreatedNotebookFromHome(config, activePage, publication, job, state);
+    } catch (error) {
+      if (error.code !== "NOTEBOOK_RECOVERY_NO_CANDIDATE" ||
+          job.notebookCreateRetryArmedAt) {
+        throw error; // ambiguous/invalid or already retried: never create again
+      }
+      log(config, "Подходящий блокнот за сегодня не найден. " +
+        "Разрешена одна дополнительная попытка создания с checkpoint в state.json.");
+    }
   }
 
   if (pinned) {
@@ -3362,7 +3388,19 @@ async function createNotebookAndAddSource(config, context, publication, job, sta
       waitUntil: "domcontentloaded", timeout: config.uiTimeoutMs,
     });
     await waitNotebookHome(activePage, config);
-    job.notebookCreateArmedAt = new Date().toISOString();
+    if (job.notebookCreateArmedAt) {
+      // Never overwrite the initial timestamp or perform a third click.  A
+      // crash after this save is uncertain remote state, not permission to
+      // retry again on the next scheduled cycle.
+      if (job.notebookCreateRetryArmedAt) {
+        throw new Error("Повторная попытка создания уже отправлялась; " +
+          "создавать третий блокнот запрещено.");
+      }
+      job.notebookCreateRetryArmedAt = new Date().toISOString();
+      log(config, "Восстановление: записан checkpoint единственного повторного создания.");
+    } else {
+      job.notebookCreateArmedAt = new Date().toISOString();
+    }
     job.updatedAt = new Date().toISOString();
     saveState(config, state); // creation intent before remote click
     await clickAnyVisible(
