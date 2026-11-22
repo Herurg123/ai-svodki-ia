@@ -22,6 +22,27 @@ class FooterContractTests(unittest.TestCase):
         self.assertIn('src="https://rybalka.one/posts/_footer-scr.png"', footer)
         self.assertIn('max-width:50%', footer)
 
+    def test_footer_navigation_is_plain_html_with_docx_links(self) -> None:
+        footer = render_footer_banner(self.config())
+        navigation, banner = footer.split('<p class="digest-footer"', 1)
+        self.assertTrue(navigation.startswith("<h2>ИИ-Поиск по статьям</h2>"))
+        self.assertEqual(navigation.count("<h2>"), 1)
+        self.assertEqual(navigation.count("<p>"), 2)
+        self.assertIn("🔍", navigation)
+        self.assertIn("📲", navigation)
+        self.assertNotIn("style=", navigation)
+        expected_links = (
+            ('Сайт', 'https://rybalka.one/#faq'),
+            ('Telegram', 'https://t.me/rybv_bot'),
+            ('MAX', 'https://max.ru/u/f9LHodD0cOLtzz--9JGi-9evrUHNQ6AT56LTxxCUsOMgAB0FzqKaItzrhqg'),
+            ('tg', 'https://t.me/rybvvv'),
+            ('max', 'https://max.ru/channel_rybv'),
+            ('vk', 'https://vk.ru/rybvv'),
+        )
+        for label, url in expected_links:
+            self.assertIn(f'<a href="{url}">{label}</a>', navigation)
+        self.assertIn('src="https://rybalka.one/posts/_footer-scr.png"', banner)
+
     def test_footer_is_last_content_on_article_page(self) -> None:
         page = render_article_page(
             self.config(),
