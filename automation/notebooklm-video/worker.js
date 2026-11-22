@@ -3140,78 +3140,192 @@ function permanentNotebookUrl(value) {
   }
 }
 
-async function waitForNewNotebookIdentity(page, timeout) {
-  const deadline = Date.now() + Math.min(timeout, 45_000);
+function normalizeNotebookCardText(value) {
+  return String(value || "").normalize("NFKC").replace(/\s+/g, " ").trim().toLocaleLowerCase("ru-RU");
+}
+
+function notebookRecoveryDateLabels(dateKey) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dateKey || ""))) return [];
+  const date = new Date(dateKey + "T12:00:00Z");
+  if (!Number.isFinite(date.getTime())) return [];
+  return ["ru-RU", "en-US"].flatMap((locale) =>
+    ["short", "long"].map((month) =>
+      normalizeNotebookCardText(new Intl.DateTimeFormat(locale, {
+        day: "numeric", month, year: "numeric", timeZone: "UTC",
+      }).format(date))
+    )
+  );
+}
+
+// Only a UNIQUE empty notebook for the same local release date can be claimed.
+// Do not silently choose newest, match a personal titled card, or create twice.
+function chooseUnambiguousNewNotebook(cards, dateKey, alreadyUsed = []) {
+  const labels = notebookRecoveryDateLabels(dateKey);
+  const used = new Set(alreadyUsed.map(permanentNotebookUrl).filter(Boolean));
+  const possible = new Map();
+  for (const card of Array.isArray(cards) ? cards : []) {
+    const url = permanentNotebookUrl(card.url);
+    if (!url || used.has(url)) continue;
+    const title = normalizeNotebookCardText(card.title);
+    if (!["блокнот без названия", "без названия", "untitled notebook", "untitled"].includes(title)) continue;
+    const detail = normalizeNotebookCardText(card.detail);
+    if (!labels.some((label) => detail.includes(label))) continue;
+    if (!/(?:^|[^\d])0\s*(?:источник(?:ов|а)?|sources?)(?![\p{L}])/iu.test(detail)) continue;
+    possible.set(url, url);
+  }
+  return possible.size === 1 ? [...possible.keys()][0] : null;
+}
+
+async function scanNotebookHomeCards(page) {
+  // Read-only page inspection: Notebook cards have links labelled by title IDs.
+  return page.evaluate(() => {
+    const result = [];
+    for (const link of document.querySelectorAll('a[href*="/notebook/"]')) {
+      const ids = (link.getAttribute("aria-labelledby") || "").split(/\s+/).filter(Boolean);
+      const title = ids.map((id) => document.getElementById(id))
+        .filter(Boolean).map((node) => (node.innerText || node.textContent || "").trim())
+        .join(" ").trim();
+      if (!title) continue;
+      let ancestor = link.parentElement;
+      for (let depth = 0; ancestor && depth < 9; depth += 1, ancestor = ancestor.parentElement) {
+        if (ancestor.querySelectorAll('a[href*="/notebook/"]').length !== 1) break;
+        const detail = (ancestor.innerText || "").replace(/\s+/g, " ").trim();
+        if (/(?:^|[^\d])0\s*(?:источник(?:ов|а)?|sources?)(?![\p{L}])/iu.test(detail) &&
+            detail.includes(title)) {
+          result.push({url: link.href, title, detail});
+          break;
+        }
+      }
+    }
+    return result;
+  });
+}
+
+async function recoverCreatedNotebookFromHome(config, page, publication, job, state) {
+  stage = "RECOVER_CREATED_NOTEBOOK";
+  if (!job.notebookCreateArmedAt || publication.date !== job.date) {
+    throw new Error("Автовосстановление запрещено без checkpoint создания за сегодняшний выпуск.");
+  }
+  const armed = new Date(job.notebookCreateArmedAt);
+  if (!Number.isFinite(armed.getTime())) {
+    throw new Error("Время checkpoint создания повреждено; восстановление запрещено.");
+  }
+  const releaseDate = new Intl.DateTimeFormat("sv-SE", {
+    year: "numeric", month: "2-digit", day: "2-digit",
+    timeZone: config.timeZone || "Europe/Moscow",
+  }).format(armed);
+  if (releaseDate !== job.date) {
+    throw new Error("Checkpoint создания блокнота относится к другой дате; восстановление запрещено.");
+  }
+  await page.goto(config.notebookUrl, {
+    waitUntil: "domcontentloaded", timeout: config.uiTimeoutMs,
+  });
+  await waitNotebookHome(page, config);
+  const used = Object.values(state.jobs || {})
+    .filter((other) => other !== job && other && other.notebookUrl)
+    .map((other) => other.notebookUrl);
+  const deadline = Date.now() + Math.min(Math.max(config.uiTimeoutMs, 12000), 30000);
+  let lastCount = 0;
+  do {
+    const cards = await scanNotebookHomeCards(page);
+    lastCount = cards.length;
+    const found = chooseUnambiguousNewNotebook(cards, publication.date, used);
+    if (found) {
+      job.notebookUrl = found;
+      job.notebookRecoveredFromHomeAt = new Date().toISOString();
+      job.updatedAt = new Date().toISOString();
+      saveState(config, state); // UUID durable BEFORE loading source UI
+      log(config, "Найден единственный пустой блокнот за сегодня, UUID сохранён: " + found);
+      return found;
+    }
+    await page.waitForTimeout(800);
+  } while (Date.now() < deadline);
+  throw new Error("Нет однозначно подтверждённого пустого блокнота за " +
+    publication.date + " (проверено карточек: " + lastCount + "). " +
+    "Повторное создание запрещено; следующий запуск повторит только поиск.");
+}
+
+async function waitForNewNotebookIdentity(page, timeout, persistIdentity = async () => {}) {
+  const deadline = Date.now() + Math.min(timeout, 45000);
   let lastSeen = String(page.url() || "");
   while (Date.now() < deadline) {
     const permanent = permanentNotebookUrl(page.url());
     if (permanent) {
-      // The real UUID is necessary but not sufficient: do not start searching
-      // for source controls while Gemini still displays "Loading Notebook".
-      await confirmNotebookPage(page, {
-        uiTimeoutMs: Math.min(Math.max(500, deadline - Date.now()), 45_000),
-      }, permanent);
-      if (permanentNotebookUrl(page.url()) === permanent) return permanent;
-      // Navigation changed again during shell initialization.
+      // Capture UUID immediately. The shell may load slowly or time out.
+      await persistIdentity(permanent);
+      return permanent;
     }
     lastSeen = String(page.url() || "");
     await page.waitForTimeout(250);
   }
-  throw new Error(
-    `Создание блокнота запрошено, но его постоянный UUID и готовая оболочка не подтверждены. ` +
-    `Последний URL: ${lastSeen}. Новый блокнот создавать запрещено; требуется ручная проверка.`
-  );
+  throw new Error("Создание блокнота запрошено, но постоянный UUID пока не появился. " +
+    "Последний URL: " + lastSeen + ". Повторный create-click запрещён.");
 }
 
 async function createNotebookAndAddSource(config, context, publication, job, state) {
   stage = "CREATE_NOTEBOOK";
-  const pinned = job.notebookUrl ? permanentNotebookUrl(job.notebookUrl) : null;
-  // Validate local recovery eligibility BEFORE launching a browser. This
-  // prevents needless flash-open/close loops on a corrupted old checkpoint.
+  let pinned = job.notebookUrl ? permanentNotebookUrl(job.notebookUrl) : null;
   if (job.notebookUrl && !pinned) {
-    throw new Error(
-      `В state.json сохранён временный/неподтверждённый URL блокнота: ${job.notebookUrl}. ` +
-      "Необходимо вручную выбрать реально созданный блокнот и закрепить его постоянный URL " +
-      "после резервного копирования state.json. Автоматически создавать новый запрещено."
-    );
-  }
-  if (!job.notebookUrl && job.notebookCreateArmedAt) {
-    throw new Error(
-      "Создание блокнота уже отправлялось, но постоянный UUID не сохранён. " +
-      "Новый пустой блокнот не создаю; необходима ручная привязка существующего."
-    );
+    throw new Error("В state.json сохранён временный/неподтверждённый URL блокнота: " +
+      job.notebookUrl + ". Повторное создание запрещено.");
   }
   activePage = await getRobotPage(config, context);
 
+  if (!pinned && job.notebookCreateArmedAt) {
+    // Repairs an existing NEW checkpoint without making another notebook.
+    pinned = await recoverCreatedNotebookFromHome(config, activePage, publication, job, state);
+  }
+
   if (pinned) {
-    await activePage.goto(pinned, {
-      waitUntil: "domcontentloaded", timeout: config.uiTimeoutMs,
-    });
+    await activePage.goto(pinned, {waitUntil: "domcontentloaded", timeout: config.uiTimeoutMs});
     await confirmNotebookPage(activePage, config, pinned);
     if (permanentNotebookUrl(activePage.url()) !== pinned) {
       throw new Error("Сохранённый блокнот открылся с другим UUID; создание и импорт запрещены.");
     }
-    log(config, `Возобновляю добавление источника в сохранённый блокнот: ${pinned}`);
+    log(config, "Продолжаю сегодняшний блокнот без повторного создания: " + pinned);
   } else {
     await activePage.goto(config.notebookUrl, {
       waitUntil: "domcontentloaded", timeout: config.uiTimeoutMs,
     });
     await waitNotebookHome(activePage, config);
-    // A crash/click-timeout may happen after the remote request was sent.
-    // Persist intent BEFORE clicking, so the next run cannot create a duplicate.
     job.notebookCreateArmedAt = new Date().toISOString();
     job.updatedAt = new Date().toISOString();
-    saveState(config, state);
+    saveState(config, state); // creation intent before remote click
     await clickAnyVisible(
       notebookCreateLocators(activePage),
       config.uiTimeoutMs,
       'кнопка "Новый блокнот" (или legacy "Создать")'
     );
     log(config, 'Нажата кнопка создания блокнота: "Новый блокнот"/legacy "Создать".');
-    job.notebookUrl = await waitForNewNotebookIdentity(activePage, config.uiTimeoutMs);
-    job.updatedAt = new Date().toISOString();
-    saveState(config, state);
-    log(config, `UUID нового блокнота сохранён до открытия источников: ${job.notebookUrl}`);
+    try {
+      pinned = await waitForNewNotebookIdentity(
+        activePage, config.uiTimeoutMs, async (url) => {
+          job.notebookUrl = url;
+          job.updatedAt = new Date().toISOString();
+          saveState(config, state);
+        }
+      );
+    } catch (error) {
+      if (!String(error.message || "").startsWith("Создание блокнота запрошено, но постоянный UUID")) {
+        throw error;
+      }
+      log(config, "UUID не появился после create-click: " + error.message +
+        " Проверяю карточки без нового создания.");
+      pinned = await recoverCreatedNotebookFromHome(
+        config, activePage, publication, job, state
+      );
+    }
+    // The UUID is durable before waiting for the possibly slow shell.
+    if (permanentNotebookUrl(activePage.url()) !== pinned) {
+      await activePage.goto(pinned, {
+        waitUntil: "domcontentloaded", timeout: config.uiTimeoutMs,
+      });
+    }
+    await confirmNotebookPage(activePage, config, pinned);
+    if (permanentNotebookUrl(activePage.url()) !== pinned) {
+      throw new Error("После загрузки Gemini Notebook UUID изменился; источник не отправляю.");
+    }
+    log(config, "Постоянный UUID подтверждён до открытия источников: " + pinned);
   }
 
   if (!job.sourceSubmitArmedAt) {
