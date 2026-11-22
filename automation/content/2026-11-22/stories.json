@@ -1,0 +1,101 @@
+[
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "ChatGPT Space стала доступна пользователям Plus",
+    "organization": "OpenAI; ChatGPT",
+    "topic": "consumer and workplace AI; collaborative workspace; self-updating documents; connected apps; slides; agents",
+    "event_type": "product availability expansion",
+    "status": "new",
+    "summary": "OpenAI начала выкатывать ChatGPT Space для подписчиков Plus. Space объединяет страницы, файлы, слайды, сайты и совместную работу в ChatGPT; страницы могут обновляться по данным из подключённых инструментов и по расписанию. Постоянные агенты Dots в Space остаются функцией более дорогих планов Pro, Business Premium и Enterprise.",
+    "published_at": "2026-11-21T05:15:00+00:00",
+    "published_date": "2026-11-21",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "ChatGPT just got a massive upgrade — it can now create documents that update themselves",
+        "publisher": "Tom's Guide",
+        "url": "https://www.tomsguide.com/ai/chatgpt/chatgpt-just-got-a-massive-upgrade-it-can-now-create-documents-that-update-themselves"
+      },
+      {
+        "title": "ChatGPT Space | People creating together",
+        "publisher": "OpenAI",
+        "url": "https://chatgpt.com/features/space/"
+      }
+    ],
+    "keywords": [
+      "ChatGPT Space",
+      "ChatGPT Plus",
+      "Pages",
+      "Slides",
+      "connected apps",
+      "automations",
+      "Dots"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Anthropic выпустила Claude Code 2.1.330 с функциями для корпоративного администрирования",
+    "organization": "Anthropic; Claude Code",
+    "topic": "CLI coding agents; enterprise administration; MCP metrics; self-hosted runner; reliability",
+    "event_type": "software release",
+    "status": "new",
+    "summary": "Anthropic выпустила Claude Code 2.1.330: релиз добавляет вход для организаций под управлением Enterprise Admin Console, встроенный мод easel для диаграмм и визуализации метрик, параметр --start-dir и /metrics для self-hosted runner, а также исправления долгих чатов, WebFetch, worktree и Code Mode.",
+    "published_at": "2026-11-20T22:32:56+00:00",
+    "published_date": "2026-11-20",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release v2.1.330",
+        "publisher": "GitHub / anthropics/claude-code",
+        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.330"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "Anthropic",
+      "Enterprise Admin Console",
+      "easel",
+      "self-hosted runner",
+      "metrics",
+      "coding agent"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-007",
+    "section": "world",
+    "headline": "Alibaba выпустила Qwen Code 0.28.3 с GitHub-каналом и обменом сообщениями между сессиями",
+    "organization": "Alibaba Qwen; Qwen Code",
+    "topic": "CLI coding agents; managed agents; GitHub integration; ACP; accessibility",
+    "event_type": "software release",
+    "status": "new",
+    "summary": "Qwen Code 0.28.3 добавляет GitHub как управляемый channel adapter, Generic Webhook и экспериментальный WeCom adapter, команду /send для связи между Web Shell-сессиями, экспериментальные Mods в ACP-сессиях и библиотеку артефактов в интерфейсе Managed Agent.",
+    "published_at": "2026-11-21T01:45:48+00:00",
+    "published_date": "2026-11-21",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release v0.28.3",
+        "publisher": "GitHub / QwenLM/qwen-code",
+        "url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.28.3"
+      }
+    ],
+    "keywords": [
+      "Qwen Code",
+      "Alibaba",
+      "GitHub",
+      "managed agents",
+      "ACP",
+      "Mods",
+      "Web Shell",
+      "WeCom"
+    ],
+    "geography": "world",
+    "category": "coding"
+  }
+]

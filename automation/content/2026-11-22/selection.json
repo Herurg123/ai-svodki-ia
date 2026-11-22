@@ -1,0 +1,21 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-003",
+    "cand-008",
+    "cand-007"
+  ],
+  "excluded_candidate_ids": [
+    "cand-001",
+    "cand-002",
+    "cand-004",
+    "cand-005",
+    "cand-006",
+    "cand-009",
+    "cand-010",
+    "cand-011"
+  ],
+  "selection_summary": "В подтверждённом свежем пуле выбраны три самостоятельных сюжета: расширение ChatGPT Space на Plus, enterprise-обновление Claude Code и новый релиз Qwen Code. Остальные кандидаты исключены из-за статуса exclude, устаревшего события, недостаточного подтверждения или меньшей редакционной значимости.",
+  "diversity_overrides": []
+}

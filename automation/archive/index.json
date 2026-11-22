@@ -1,8 +1,135 @@
 {
   "version": 2,
-  "generated_at": "2026-11-21T02:17:29+00:00",
+  "generated_at": "2026-11-22T06:05:20+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-22",
+      "published_at": "2026-11-22T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-22T08:55:20+03:00",
+      "title": "ИИ-Сводка на 22 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-22/",
+      "summary": "Главные новости искусственного интеллекта за 22 ноября 2026 года Новостей сегодня меньше, чем обычно Сегодняшняя повестка сосредоточена на среде, в которой ИИ переходит от одиночного диалога к совместной и управляемой работе. ChatGPT расширяет рабочее пространство на массовый платный тариф, а инструменты для разработки усиливают контроль над агентами, сессиями и корпоративной эксплуатацией. Практический сигнал для команд: ценность всё чаще создаёт не только модель, но и слой вокруг неё — докумен",
+      "topics": [
+        "ChatGPT Space",
+        "ChatGPT Plus",
+        "автоматизации",
+        "Claude Code",
+        "Enterprise Admin Console",
+        "Qwen Code",
+        "GitHub",
+        "агенты ИИ",
+        "ИИ-кодинг",
+        "корпоративный ИИ"
+      ],
+      "source_urls": [
+        "https://www.tomsguide.com/ai/chatgpt/chatgpt-just-got-a-massive-upgrade-it-can-now-create-documents-that-update-themselves",
+        "https://chatgpt.com/features/space/",
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.330",
+        "https://github.com/QwenLM/qwen-code/releases/tag/v0.28.3"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-003",
+          "section": "world",
+          "headline": "ChatGPT Space стала доступна пользователям Plus",
+          "organization": "OpenAI; ChatGPT",
+          "topic": "consumer and workplace AI; collaborative workspace; self-updating documents; connected apps; slides; agents",
+          "event_type": "product availability expansion",
+          "status": "new",
+          "summary": "OpenAI начала выкатывать ChatGPT Space для подписчиков Plus. Space объединяет страницы, файлы, слайды, сайты и совместную работу в ChatGPT; страницы могут обновляться по данным из подключённых инструментов и по расписанию. Постоянные агенты Dots в Space остаются функцией более дорогих планов Pro, Business Premium и Enterprise.",
+          "published_at": "2026-11-21T05:15:00+00:00",
+          "published_date": "2026-11-21",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "ChatGPT just got a massive upgrade — it can now create documents that update themselves",
+              "publisher": "Tom's Guide",
+              "url": "https://www.tomsguide.com/ai/chatgpt/chatgpt-just-got-a-massive-upgrade-it-can-now-create-documents-that-update-themselves"
+            },
+            {
+              "title": "ChatGPT Space | People creating together",
+              "publisher": "OpenAI",
+              "url": "https://chatgpt.com/features/space/"
+            }
+          ],
+          "keywords": [
+            "ChatGPT Space",
+            "ChatGPT Plus",
+            "Pages",
+            "Slides",
+            "connected apps",
+            "automations",
+            "Dots"
+          ],
+          "geography": "world",
+          "category": "agents"
+        },
+        {
+          "candidate_id": "cand-008",
+          "section": "world",
+          "headline": "Anthropic выпустила Claude Code 2.1.330 с функциями для корпоративного администрирования",
+          "organization": "Anthropic; Claude Code",
+          "topic": "CLI coding agents; enterprise administration; MCP metrics; self-hosted runner; reliability",
+          "event_type": "software release",
+          "status": "new",
+          "summary": "Anthropic выпустила Claude Code 2.1.330: релиз добавляет вход для организаций под управлением Enterprise Admin Console, встроенный мод easel для диаграмм и визуализации метрик, параметр --start-dir и /metrics для self-hosted runner, а также исправления долгих чатов, WebFetch, worktree и Code Mode.",
+          "published_at": "2026-11-20T22:32:56+00:00",
+          "published_date": "2026-11-20",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Release v2.1.330",
+              "publisher": "GitHub / anthropics/claude-code",
+              "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.330"
+            }
+          ],
+          "keywords": [
+            "Claude Code",
+            "Anthropic",
+            "Enterprise Admin Console",
+            "easel",
+            "self-hosted runner",
+            "metrics",
+            "coding agent"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-007",
+          "section": "world",
+          "headline": "Alibaba выпустила Qwen Code 0.28.3 с GitHub-каналом и обменом сообщениями между сессиями",
+          "organization": "Alibaba Qwen; Qwen Code",
+          "topic": "CLI coding agents; managed agents; GitHub integration; ACP; accessibility",
+          "event_type": "software release",
+          "status": "new",
+          "summary": "Qwen Code 0.28.3 добавляет GitHub как управляемый channel adapter, Generic Webhook и экспериментальный WeCom adapter, команду /send для связи между Web Shell-сессиями, экспериментальные Mods в ACP-сессиях и библиотеку артефактов в интерфейсе Managed Agent.",
+          "published_at": "2026-11-21T01:45:48+00:00",
+          "published_date": "2026-11-21",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Release v0.28.3",
+              "publisher": "GitHub / QwenLM/qwen-code",
+              "url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.28.3"
+            }
+          ],
+          "keywords": [
+            "Qwen Code",
+            "Alibaba",
+            "GitHub",
+            "managed agents",
+            "ACP",
+            "Mods",
+            "Web Shell",
+            "WeCom"
+          ],
+          "geography": "world",
+          "category": "coding"
+        }
+      ]
+    },
     {
       "date": "2026-11-21",
       "published_at": "2026-11-21T06:00:00+03:00",
@@ -6671,10 +6798,10 @@
     {
       "date": "2026-10-20",
       "published_at": "2026-10-20T06:00:00+03:00",
-      "search_cutoff_at": "2026-10-20T04:50:35+03:00",
+      "search_cutoff_at": "2026-10-20T06:00:00+03:00",
       "title": "ИИ-Сводка на 20 октября 2026",
       "link": "https://rybalka.one/posts/2026-10-20/",
-      "summary": "Главные новости искусственного интеллекта за 20 октября 2026 года Новостей сегодня меньше, чем обычно Свежая повестка сосредоточена на двух слоях внедрения ИИ: инфраструктуре для дешёвого inference и управлении агентами, которым дают доступ к корпоративному коду, данным и инструментам. Microsoft предлагает рассматривать таких агентов как потенциальную внутреннюю угрозу, а разработчики coding-сред усиливают контроль MCP, плагинов, телеметрии и автономных режимов. Отдельный рыночный сигнал пришёл ",
+      "summary": "Tenstorrent привлекла $1,5 млрд на inference-чипы, Microsoft предложила Guardian Agents для контроля автономных систем, а GitHub, Mistral и Anthropic обновили инструменты агентной разработки.",
       "topics": [
         "Tenstorrent",
         "inference-чипы",
@@ -6861,10 +6988,10 @@
     {
       "date": "2026-10-19",
       "published_at": "2026-10-19T06:00:00+03:00",
-      "search_cutoff_at": "2026-10-19T04:16:30+03:00",
+      "search_cutoff_at": "2026-10-19T06:00:00+03:00",
       "title": "ИИ-Сводка на 19 октября 2026",
       "link": "https://rybalka.one/posts/2026-10-19/",
-      "summary": "Главные новости искусственного интеллекта за 19 октября 2026 года Новостей сегодня меньше, чем обычно Сегодняшняя повестка сосредоточена не на новых моделях, а на том, как распределяется экономическая ценность ИИ-компаний и их команды. Anthropic предлагает закрепить часть будущего капитала за общественными целями, а процедура продажи Character.AI показывает, как крупные медиакомпании получают ИИ-компетенции через сделки с активами. Оба сюжета важны для рынка: конкуренция идёт не только за модели",
+      "summary": "Anthropic предложила направить 5% акций в фонд общественного блага, а Disney раскрыла планы нанять большую часть команды Character.AI в рамках предварительной сделки по активам.",
       "topics": [
         "Anthropic",
         "Public Benefit Fund",
