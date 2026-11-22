@@ -125,7 +125,8 @@ for at least 5 seconds (the source timeout remains configurable, with the
 current 300-second operator setting). An untitled notebook is not sufficient
 evidence on its own.
 
-Notebook creation is at-most-once per daily job: `notebookCreateArmedAt`
+Notebook creation is bounded to one normal attempt and one checkpointed
+recovery retry per daily job: `notebookCreateArmedAt`
 is persisted **before** the remote create click. The permanent notebook UUID
 is saved immediately when it first appears in the browser URL, **before**
 waiting for the Gemini shell to finish loading. A slow shell therefore cannot
