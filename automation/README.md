@@ -237,6 +237,22 @@ publication influence только bounded Tier-A `official`/`trusted_news`
 `audits/experiments/`. Audit README сохраняются как historical evidence, а не
 копируются сюда целиком.
 
+### Сбои и повторные запуски Coverage
+
+Если Coverage завершился после сохранения `editorial-repair-YYYY-MM-DD.json`,
+повторный запуск обязан использовать неизменённый same-day artifact. При
+завершённом audit ноль новых кандидатов не меняет `research_notes` и SHA-256
+сохранённого research. Наличие sealed Editorial Repair journal запрещает
+перезаписывать различающийся `coverage-audit-merged-candidates-YYYY-MM-DD.json`:
+вместо этого выпуск останавливается до нового обращения к API.
+
+Сохранённый ответ Editorial `status:error` с нулём выбранных проверенных
+сюжетов означает **нет материала для выпуска**. Это не дефект HTML: повторение
+точно того же ответа без новых подтверждённых источников не создаст статью.
+Нельзя включать исключённых/неподтверждённых кандидатов ради публикации и
+нельзя сбрасывать `response_saved`/делать force-fresh без отдельного решения
+о затратах и новых доказательствах. Исходные артефакты и SHA сохраняются.
+
 ### Runtime defaults
 
 Ручной production dispatch имеет `publish=false` по умолчанию и отдельный
