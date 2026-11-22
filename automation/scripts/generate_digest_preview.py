@@ -2330,6 +2330,38 @@ def stage_info(response: Any, web_search_calls: int = 0) -> dict[str, Any]:
     }
 
 
+def require_editorial_publication_candidate(editorial: dict[str, Any]) -> None:
+    """Stop on an explicit model refusal before treating empty HTML as malformed.
+
+    The original response is already preserved as editorial-output-raw.json.
+    This only improves the reason for a fail-closed stop; no model call, story
+    normalization, mutation of the saved response or publisher bypass occurs.
+    """
+    digest = editorial.get("digest")
+    top_status = str(editorial.get("status") or "").strip().lower()
+    digest_status = (
+        str(digest.get("status") or "").strip().lower()
+        if isinstance(digest, dict)
+        else ""
+    )
+    if top_status != "error" and digest_status != "error":
+        return
+    selected = editorial.get("selected_candidate_ids")
+    if isinstance(selected, list) and not selected and isinstance(digest, dict) and not str(
+        digest.get("article_html") or ""
+    ).strip():
+        raise RuntimeError(
+            "Редакционная остановка без публикации: сохранённый ответ "
+            "status=error, подтверждённых выбранных сюжетов нет, HTML пуст. "
+            "Пустой HTML не является ошибкой структуры заголовков; "
+            "публикация без проверенных новостей запрещена."
+        )
+    raise RuntimeError(
+        "Редактор явно вернул status=error: выпуск заблокирован "
+        "до исправления исходных данных; сохранённый ответ не изменён."
+    )
+
+
 def main() -> int:
     args = parse_args()
     validate_limits(args)
@@ -2709,6 +2741,9 @@ def main() -> int:
             output_dir / "editorial-output-raw.json",
             pretty_json(editorial),
         )
+        # A schema-valid editorial status=error is a deliberate refusal, not
+        # malformed HTML. Keep the paid response and stop before presentation.
+        require_editorial_publication_candidate(editorial)
 
         metadata_changes = normalize_digest_metadata(
             editorial,
