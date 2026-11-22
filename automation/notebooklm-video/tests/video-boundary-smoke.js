@@ -199,7 +199,8 @@ async function verifyResumeState() {
       goto: async () => {},
       url: () => pageUrl,
       waitForTimeout: async () => {},
-      locator: () => ({ filter: () => ({}) }),
+      evaluate: async () => { throw Error("no recoverable card in fixture"); },
+      locator: () => ({ filter: () => ({}), first: () => ({ isVisible: async () => false }) }),
       getByRole: () => ({}),
       getByText: () => ({}),
     };
@@ -225,8 +226,11 @@ async function verifyResumeState() {
       `${createFnSource}\ncreateNotebookAndAddSource`,
       context
     );
-    const publication = { url: "https://rybalka.one/posts/2026-10-16/" };
-    const job = { status: "NEW", notebookUrl: null, notebookTitleHint: "ИИ-2026-10-16" };
+    const fixtureToday = new Intl.DateTimeFormat("sv-SE", {
+      year:"numeric",month:"2-digit",day:"2-digit",timeZone:"Europe/Moscow"
+    }).format(new Date());
+    const publication = {date:fixtureToday,url:"https://rybalka.one/posts/"+fixtureToday+"/"};
+    const job = { date:fixtureToday,status:"NEW",notebookUrl:null,notebookTitleHint:"ИИ-"+fixtureToday };
     const state = { jobs: { today: job } };
     return {
       invoke: () => fn({ notebookUrl: "https://notebook.google.com/", uiTimeoutMs: 60 }, {}, publication, job, state),
@@ -253,7 +257,7 @@ async function verifyResumeState() {
   );
 
   const invalid = await exerciseCreate("https://notebook.google.com/", "https://notebook.google.com/");
-  await assert.rejects(invalid.invoke(), /постоянный UUID и готовая оболочка не подтверждены/);
+  await assert.rejects(invalid.invoke(), /no recoverable card in fixture/);
   assert.strictEqual(invalid.job.status, "NEW");
   assert(invalid.snapshots.length > 0, "Notebook creation is armed BEFORE clicking");
   assert(invalid.snapshots.some(x => x.jobs.today.notebookCreateArmedAt),
@@ -265,7 +269,7 @@ async function verifyResumeState() {
     "https://notebook.google.com/",
     "https://notebook.google.com/notebook/creating"
   );
-  await assert.rejects(transient.invoke(), /постоянный UUID/);
+  await assert.rejects(transient.invoke(), /no recoverable card in fixture/);
   assert.strictEqual(transient.job.notebookUrl, null);
   assert.ok(transient.job.notebookCreateArmedAt, "Creation intent survives transient routing");
   assert.strictEqual(transient.createClicks, 1, "Creation was attempted only once");

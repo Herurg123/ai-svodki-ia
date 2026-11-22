@@ -160,21 +160,29 @@ only with the exact dialog-local `Добавить` button. Never use Enter as a
 fallback: Enter creates another URL line, and a click timeout may represent
 an already submitted remote mutation.
 
-Persist `notebookCreateArmedAt` before remote notebook creation; persist its
-exact verified `notebookUrl` immediately afterward and before source UI clicks.
-The real November 2026 create route first reports `/notebook/creating`, which
-is NOT a permanent UUID; wait for a persistent notebook identity AND confirmed
-loaded shell. The button may expose a Material icon ligature in its accessible
-name (`add_2 Источники`), not plain `Источники`. Existing `state.json` records
-with `/notebook/creating` must stop and request explicit manual remapping to a
-verified empty notebook URL; never infer a notebook card or make a duplicate.
-A same-day `NEW` retry with a saved URL must reopen **that exact notebook**,
-not create another. If creation is armed and the URL is unknown, require manual
-inspection. Persist `sourceSubmitArmedAt` before a web-source submit and never
-resubmit after an ambiguous outcome; resume with read-only source readiness.
-Never automatically delete accumulated empty notebooks or infer that an
-anonymous untitled card is the current job. Preserve all existing protected
-browser profile, source import readiness, download and publish invariants.
+Persist `notebookCreateArmedAt` **before** the remote notebook create click.
+When the URL becomes a permanent UUID (never `/notebook/creating`), immediately
+persist `notebookUrl` **before waiting for shell readiness**. If a same-day
+`NEW` job has an armed creation but no URL, inspect the Notebook home and
+optionally filter by the notebook search input. Use ONLY one unique unclaimed
+card whose **exact** title is the untitled placeholder, whose card metadata
+carries the job's local calendar date and whose source count is explicitly zero.
+Do not assume the card is an `<a>` or has `aria-labelledby`: it may be a
+clickable DIV. If the card has no href, one **navigation-only** click on its
+verified title is allowed to obtain the permanent UUID; verify that URL is
+not already claimed BEFORE saving to state. Browser search/navigation must never resubmit a source. If the bounded
+same-day scan returns **zero** eligible notebook candidates, exactly **one**
+additional remote notebook-create attempt is allowed for the current daily
+job. Persist `notebookCreateRetryArmedAt` BEFORE this second click and preserve
+original `notebookCreateArmedAt` for audit. A third click is forbidden, even
+if the retry crashes or its result is uncertain. If multiple eligible cards
+exist, stop instead; never guess, reuse a claimed or personal notebook, reset
+state, recover old days or delete notebooks in bulk.
+The button may expose a Material icon ligature (`add_2 Источники`). A same-day
+`NEW` retry with a pinned URL must reopen that exact notebook. Persist
+`sourceSubmitArmedAt` before website URL submission, never blindly resubmit
+an ambiguous remote mutation. Preserve all protected browser, FTP/Dzen/VK,
+source-readiness, download and publication invariants.
 
 ## Native Dzen publication safety
 

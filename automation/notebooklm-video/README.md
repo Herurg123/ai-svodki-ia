@@ -125,25 +125,33 @@ for at least 5 seconds (the source timeout remains configurable, with the
 current 300-second operator setting). An untitled notebook is not sufficient
 evidence on its own.
 
-Notebook creation is now at-most-once per daily job: `notebookCreateArmedAt`
-is persisted **before** the remote create click. The exact new notebook UUID/URL
-is saved immediately **after** creation, before opening the sources UI. If that
-UI changes or times out, a later same-day run resumes this exact existing
-notebook from `NEW`, never creates another one. Source URL submit is also
-armed before the click; uncertain submits are checked read-only on restart,
-never blindly re-submitted. After confirmed submit the job becomes
-`CREATING_VIDEO` and resumes the readiness check/rename/generation as before.
-If create was armed but the UUID could not be confirmed, stop for operator
-inspection; do not create another blank notebook. The transient URL
-`https://notebook.google.com/notebook/creating` is **not an ID**: only a
-persistent UUID (or long opaque ID) plus the loaded notebook shell may be saved.
-The Gemini source button's actual text may include `add_2 Источники` due to a
-Material icon ligature, so both forms are explicitly supported. Existing local
-`state.json` records containing `/notebook/creating` from the broken earlier
-version must be explicitly linked by the operator to an existing **empty**
-notebook's verified URL after a backup; worker will not create another. Already accumulated empty
-notebooks cannot be reliably matched and must be cleaned manually; no automatic
-delete or anonymous-card inference is allowed.
+Notebook creation is bounded to one normal attempt and one checkpointed
+recovery retry per daily job: `notebookCreateArmedAt`
+is persisted **before** the remote create click. The permanent notebook UUID
+is saved immediately when it first appears in the browser URL, **before**
+waiting for the Gemini shell to finish loading. A slow shell therefore cannot
+lose an already established identity. The temporary `/notebook/creating` is
+never a notebook ID. If the first click was armed but UUID was never saved,
+the worker safely reopens the Notebook home and inspects cards using either
+legacy links or current clickable DIVs (without requiring `aria-labelledby`).
+It can filter by `Поиск блокнотов`, then accepts only a **unique unclaimed**
+card titled `Блокнот без названия` / `Untitled notebook`, dated exactly for
+that release and showing **zero sources**. If no href is exposed, it opens only
+that uniquely verified card to read its permanent UUID, checks it is unused,
+and saves it before source import. Card scanning and filtering are read-only;
+opening an existing card is navigation, not new notebook creation. If
+**zero** matching empty cards are found after the bounded lookup, the worker
+may perform exactly **one** extra create click for the same-day job, armed
+first by the durable `notebookCreateRetryArmedAt` checkpoint. This rule was
+explicitly approved on 2026-11-22 to unblock a job stuck after an uncertain
+first click. Future runs must never perform a third click. If multiple valid
+candidates exist, creation is blocked as ambiguous; no guessed card or deletion.
+This also applies to legacy `NEW` records that have `notebookCreateArmedAt` but
+no URL, including the 2026-11-22 incident. After a confirmed source submission
+the job resumes `CREATING_VIDEO` as before; a potentially completed URL submit
+is never duplicated. Gemini's `add_2 Источники` button remains supported.
+The worker does not reset old dates or manipulate accumulated unrelated empty
+notebooks. Source UI/backend validation is offline-tested, not guaranteed live.
 
 For NEW downloads only, local `downloads/_footer-vid.png` enables a
 five-second silent closing card rendered by `video-footer.js` using
