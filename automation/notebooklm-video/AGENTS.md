@@ -170,12 +170,14 @@ carries the job's local calendar date and whose source count is explicitly zero.
 Do not assume the card is an `<a>` or has `aria-labelledby`: it may be a
 clickable DIV. If the card has no href, one **navigation-only** click on its
 verified title is allowed to obtain the permanent UUID; verify that URL is
-not already claimed BEFORE saving to state. Browser search/navigation are not
-permission to create a second notebook or submit sources twice.
-Never auto-select a generic newest/personal notebook or one claimed by another
-job; absent or multiple candidates are fail-closed and remain read-only on
-subsequent same-day runs. No second creation click, no stale-day recovery,
-no bulk notebook deletion, no state reset or inferred URL by page order.
+not already claimed BEFORE saving to state. Browser search/navigation must never resubmit a source. If the bounded
+same-day scan returns **zero** eligible notebook candidates, exactly **one**
+additional remote notebook-create attempt is allowed for the current daily
+job. Persist `notebookCreateRetryArmedAt` BEFORE this second click and preserve
+original `notebookCreateArmedAt` for audit. A third click is forbidden, even
+if the retry crashes or its result is uncertain. If multiple eligible cards
+exist, stop instead; never guess, reuse a claimed or personal notebook, reset
+state, recover old days or delete notebooks in bulk.
 The button may expose a Material icon ligature (`add_2 Источники`). A same-day
 `NEW` retry with a pinned URL must reopen that exact notebook. Persist
 `sourceSubmitArmedAt` before website URL submission, never blindly resubmit
