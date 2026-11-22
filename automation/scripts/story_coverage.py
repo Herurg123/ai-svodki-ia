@@ -444,10 +444,14 @@ def merge_candidates(
     for index, candidate in enumerate(result, start=1):
         candidate["id"] = f"cand-{index:03d}"
     merged["candidates"] = result
-    merged["research_notes"] = (
-        str(merged.get("research_notes", "")).rstrip()
-        + f"\nTargeted coverage audit добавил кандидатов: {len(accepted)}."
-    ).strip()
+    # Recovery may replay the completed audit over an already-merged research
+    # pool. A zero-admission pass is an identity operation: even harmless
+    # diagnostic text would change the hash-bound Editorial Repair input.
+    if accepted:
+        merged["research_notes"] = (
+            str(merged.get("research_notes", "")).rstrip()
+            + f"\nTargeted coverage audit добавил кандидатов: {len(accepted)}."
+        ).strip()
     return merged, accepted, rejected
 
 
