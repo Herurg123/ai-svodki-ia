@@ -1998,10 +1998,31 @@ def main() -> int:
             print(json.dumps(report, ensure_ascii=False, indent=2))
             return 0
 
+        # Once Editorial Repair has a durable journal, its exact research
+        # input is immutable. Repeated Coverage must not overwrite that file,
+        # even when the candidate list appears unchanged. It must match the
+        # saved payload before the P0 journal/transport checks are reached.
+        repair_journal = (
+            PERSISTED_RESEARCH_ROOT
+            / f"editorial-repair-{args.publication_date}.json"
+        )
+        frozen_research = repair_journal.is_file()
+        if frozen_research:
+            if not persisted_research_path.is_file():
+                raise RuntimeError(
+                    "Coverage recovery: sealed Editorial Repair research is missing; "
+                    "publication blocked before provider admission"
+                )
+            if read_json(persisted_research_path) != merged:
+                raise RuntimeError(
+                    "Coverage recovery: merged research differs from sealed "
+                    "Editorial Repair input; saved research is not overwritten"
+                )
         RUNTIME_RESEARCH_ROOT.mkdir(parents=True, exist_ok=True)
         PERSISTED_RESEARCH_ROOT.mkdir(parents=True, exist_ok=True)
         write_json(runtime_research_path, merged)
-        write_json(persisted_research_path, merged)
+        if not frozen_research:
+            write_json(persisted_research_path, merged)
         report["runtime_research_path"] = str(runtime_research_path)
         report["persisted_research_path"] = str(persisted_research_path)
         # Backward-compatible report key now points to the durable artifact copy.
