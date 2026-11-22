@@ -3159,45 +3159,89 @@ function notebookRecoveryDateLabels(dateKey) {
 
 // Only a UNIQUE empty notebook for the same local release date can be claimed.
 // Do not silently choose newest, match a personal titled card, or create twice.
+// A unique dated empty card is sufficient to choose a NAVIGATION target.
+// If the card has no href (as on some Gemini Notebook home versions), its
+// DOM selector may be used for one navigation-only click, and the permanent
+// UUID must then be verified before touching state.
 function chooseUnambiguousNewNotebook(cards, dateKey, alreadyUsed = []) {
   const labels = notebookRecoveryDateLabels(dateKey);
   const used = new Set(alreadyUsed.map(permanentNotebookUrl).filter(Boolean));
-  const possible = new Map();
+  const matches = new Map();
   for (const card of Array.isArray(cards) ? cards : []) {
-    const url = permanentNotebookUrl(card.url);
-    if (!url || used.has(url)) continue;
     const title = normalizeNotebookCardText(card.title);
     if (!["блокнот без названия", "без названия", "untitled notebook", "untitled"].includes(title)) continue;
     const detail = normalizeNotebookCardText(card.detail);
     if (!labels.some((label) => detail.includes(label))) continue;
     if (!/(?:^|[^\d])0\s*(?:источник(?:ов|а)?|sources?)(?![\p{L}])/iu.test(detail)) continue;
-    possible.set(url, url);
+    const url = permanentNotebookUrl(card.url);
+    if (url && used.has(url)) continue;
+    if (!url && !/^body\s*>\s*[a-z][\w-]*:nth-child\(\d+\)/i.test(String(card.selector || ""))) continue;
+    const key = url || card.selector;
+    matches.set(key, url || { selector: card.selector });
   }
-  return possible.size === 1 ? [...possible.keys()][0] : null;
+  return matches.size === 1 ? [...matches.values()][0] : null;
 }
 
 async function scanNotebookHomeCards(page) {
-  // Read-only page inspection: Notebook cards have links labelled by title IDs.
+  // DOM-shape tolerant: the current Gemini Notebook grid may use clickable
+  // DIVs rather than anchors, and title elements often have no aria-labelledby.
+  // This only INSPECTS the page and collects small card-scoped text snapshots.
   return page.evaluate(() => {
     const result = [];
-    for (const link of document.querySelectorAll('a[href*="/notebook/"]')) {
-      const ids = (link.getAttribute("aria-labelledby") || "").split(/\s+/).filter(Boolean);
-      const title = ids.map((id) => document.getElementById(id))
-        .filter(Boolean).map((node) => (node.innerText || node.textContent || "").trim())
-        .join(" ").trim();
-      if (!title) continue;
-      let ancestor = link.parentElement;
-      for (let depth = 0; ancestor && depth < 9; depth += 1, ancestor = ancestor.parentElement) {
-        if (ancestor.querySelectorAll('a[href*="/notebook/"]').length !== 1) break;
-        const detail = (ancestor.innerText || "").replace(/\s+/g, " ").trim();
-        if (/(?:^|[^\d])0\s*(?:источник(?:ов|а)?|sources?)(?![\p{L}])/iu.test(detail) &&
-            detail.includes(title)) {
-          result.push({url: link.href, title, detail});
-          break;
-        }
+    const titles = new Set(["блокнот без названия", "без названия", "untitled notebook", "untitled"]);
+    const text = (el) => String(el && (el.innerText || el.textContent) || "")
+      .normalize("NFKC").replace(/\s+/g, " ").trim();
+    const untitled = (el) => titles.has(text(el).toLocaleLowerCase("ru-RU"));
+    const empty = (v) => /(?:^|[^\d])0\s*(?:источник(?:ов|а)?|sources?)(?![\p{L}])/iu.test(v);
+    const cssPath = (el) => {
+      const parts = [];
+      for (let node = el; node && node !== document.body; node = node.parentElement) {
+        if (!node.parentElement || !node.localName || parts.length > 22) return null;
+        const position = Array.prototype.indexOf.call(node.parentElement.children, node) + 1;
+        if (position <= 0) return null;
+        parts.unshift(node.localName + ":nth-child(" + position + ")");
+      }
+      return parts.length ? "body > " + parts.join(" > ") : null;
+    };
+    function record(titleEl, sourceLink = null) {
+      if (!titleEl || !untitled(titleEl)) return;
+      let ancestor = titleEl;
+      for (let depth = 0; ancestor && depth < 9; depth++, ancestor = ancestor.parentElement) {
+        const detail = text(ancestor);
+        if (detail.length > 500) break; // never mistake the whole dashboard for a card
+        if (!empty(detail)) continue;
+        const anchor = sourceLink || ancestor.closest?.('a[href*="/notebook/"]') ||
+          ancestor.querySelector?.('a[href*="/notebook/"]');
+        const selector = cssPath(titleEl);
+        if (!selector && !anchor) break;
+        result.push({
+          title: text(titleEl), detail,
+          url: anchor && anchor.href || null,
+          selector,
+        });
+        break;
       }
     }
-    return result;
+    // Retain compatibility with legacy link + aria-labelledby cards.
+    for (const link of document.querySelectorAll('a[href*="/notebook/"]')) {
+      const ids = (link.getAttribute("aria-labelledby") || "").split(/\s+/).filter(Boolean);
+      const labelled = ids.map((id) => document.getElementById(id)).filter(Boolean);
+      if (labelled.length) record(labelled[0], link);
+      else if (untitled(link)) record(link, link);
+    }
+    // Current DOM can be a div/button with a plain title span, no URL in DOM.
+    for (const el of document.querySelectorAll('span,div,h2,h3,h4,p,[role="heading"]')) {
+      if (!untitled(el)) continue;
+      if (Array.from(el.children || []).some(untitled)) continue; // innermost label
+      record(el);
+    }
+    const seen = new Set();
+    return result.filter((card) => {
+      const key = card.selector || card.url;
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   });
 }
 
@@ -3224,24 +3268,54 @@ async function recoverCreatedNotebookFromHome(config, page, publication, job, st
   const used = Object.values(state.jobs || {})
     .filter((other) => other !== job && other && other.notebookUrl)
     .map((other) => other.notebookUrl);
+  const usedIds = new Set(used.map(permanentNotebookUrl).filter(Boolean));
   const deadline = Date.now() + Math.min(Math.max(config.uiTimeoutMs, 12000), 30000);
   let lastCount = 0;
+  let searched = false;
   do {
     const cards = await scanNotebookHomeCards(page);
     lastCount = cards.length;
     const found = chooseUnambiguousNewNotebook(cards, publication.date, used);
     if (found) {
-      job.notebookUrl = found;
+      let pinned = typeof found === "string" ? found : null;
+      if (!pinned) {
+        // A unique card with the verified date+zero-sources has no href.
+        // Clicking its exact DOM title is navigation only, not notebook creation.
+        log(config, "Найдена единственная подходящая карточка без href; открываю её для подтверждения UUID.");
+        await page.locator(found.selector).click({timeout: Math.min(config.uiTimeoutMs, 8000)});
+        const navigationDeadline = Date.now() + Math.min(config.uiTimeoutMs, 15000);
+        while (Date.now() < navigationDeadline && !pinned) {
+          pinned = permanentNotebookUrl(page.url());
+          if (!pinned) await page.waitForTimeout(300);
+        }
+        if (!pinned) throw new Error("Карточка открыта, но постоянный UUID не подтверждён; state не изменён.");
+        if (usedIds.has(pinned)) throw new Error("Этот UUID уже закреплён за другим выпуском; state не изменён.");
+      }
+      job.notebookUrl = pinned;
       job.notebookRecoveredFromHomeAt = new Date().toISOString();
       job.updatedAt = new Date().toISOString();
       saveState(config, state); // UUID durable BEFORE loading source UI
-      log(config, "Найден единственный пустой блокнот за сегодня, UUID сохранён: " + found);
-      return found;
+      log(config, "Найден единственный пустой блокнот за сегодня, UUID сохранён: " + pinned);
+      return pinned;
+    }
+    // Search is a safe, local UI filter and helps with virtualized/long grids.
+    // It does NOT create notebooks or submit sources.
+    if (!searched) {
+      searched = true;
+      const box = page.locator(
+        'input[placeholder*="Поиск блокнотов" i], input[aria-label*="Поиск блокнотов" i], ' +
+        'input[placeholder*="Search notebooks" i], input[aria-label*="Search notebooks" i]'
+      ).first();
+      if (await box.isVisible().catch(() => false)) {
+        await box.fill("Блокнот без названия");
+        log(config, "Для восстановления применён поиск блокнотов по точному названию.");
+        await page.waitForTimeout(1500);
+      }
     }
     await page.waitForTimeout(800);
   } while (Date.now() < deadline);
   throw new Error("Нет однозначно подтверждённого пустого блокнота за " +
-    publication.date + " (проверено карточек: " + lastCount + "). " +
+    publication.date + " (распознано карточек: " + lastCount + "). " +
     "Повторное создание запрещено; следующий запуск повторит только поиск.");
 }
 
