@@ -110,6 +110,9 @@ ctx.document = {
     evaluate: async fn => fn(),
     waitForTimeout: async () => {},
     locator: selector => {
+      if (selector.startsWith("input[")) {
+        return {first:()=>({isVisible:async()=>false})};
+      }
       assert.equal(selector,divCandidate.selector);
       return {click:async()=>{cardClicks++;browserPage=prefix+id1;}};
     },
