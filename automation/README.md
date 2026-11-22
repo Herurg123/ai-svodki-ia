@@ -54,7 +54,7 @@
 | Editorial section normalization | `scripts/editorial_policy.py` | deterministic principal-actor placement; ambiguous world/China signals go to World with warnings; safely source-mapped stories only, no new API calls |
 | Discovery health | `scripts/discovery_health.py` | zero-network diagnostics пяти discovery lanes |
 | Production summary | `scripts/summarize_production_status.py` | pipeline status + Discovery Health в Actions Summary |
-| Site | `scripts/build_site.py` + validators | canonical article/image site и RSS |
+| Site | `scripts/build_site.py` + validators | canonical article/image site и RSS; публикационный подвал с ИИ-поиском, ссылками подписки и баннером только для новых выпусков |
 | Content cleanup | `scripts/cleanup_repository_content.py`, `cleanup_public_posts.py` | 32-day tracked/public retention |
 | FTP video cleanup | `scripts/cleanup_video_ftp.py` | strict remote `video/` exact-pattern retention |
 | GitHub hygiene | `scripts/repository_hygiene.py` | policy-based cleanup только GitHub objects |

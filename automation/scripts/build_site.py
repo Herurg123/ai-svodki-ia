@@ -141,10 +141,25 @@ def normalise_base_url(value: str) -> str:
     return value.rstrip("/")
 
 
+def render_footer_navigation() -> str:
+    """Unstyled search and subscription links appended only at publication."""
+    return (
+        '<h2>ИИ-Поиск по статьям</h2>\n'
+        '<p>🔍 <a href="https://rybalka.one/#faq">Сайт</a> | '
+        '<a href="https://t.me/rybv_bot">Telegram</a> | '
+        '<a href="https://max.ru/u/f9LHodD0cOLtzz--9JGi-9evrUHNQ6AT56LTxxCUsOMgAB0FzqKaItzrhqg">MAX</a></p>\n'
+        '<p>📲 Подписывайтесь: '
+        '<a href="https://t.me/rybvvv">tg</a> 🔹 '
+        '<a href="https://max.ru/channel_rybv">max</a> 🔹 '
+        '<a href="https://vk.ru/rybvv">vk</a></p>\n'
+    )
+
+
 def render_footer_banner(config: dict[str, Any]) -> str:
     image_url = normalise_base_url(str(config["site_base_url"])) + f"/{FOOTER_FILENAME}"
     return (
-        '<p class="digest-footer" style="text-align:center;margin:32px 0 0;">'
+        render_footer_navigation()
+        + '<p class="digest-footer" style="text-align:center;margin:32px 0 0;">'
         f'<a href="{xml_attr(FOOTER_TARGET_URL)}" target="_blank" rel="noopener noreferrer">'
         f'<img src="{xml_attr(image_url)}" alt="Подписаться на канал" '
         'style="display:block;max-width:50%;width:auto;height:auto;margin:0 auto;">'

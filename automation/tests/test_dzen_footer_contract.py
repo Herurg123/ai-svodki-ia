@@ -9,6 +9,8 @@ SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
+from build_site import render_footer_banner
+
 validator = importlib.import_module("validate_dzen_feed")
 
 
@@ -43,6 +45,13 @@ class DzenFooterContractTests(unittest.TestCase):
 
     def test_generated_footer_is_allowed(self) -> None:
         report = self.validate(self.article())
+        self.assertEqual([], report["errors"])
+
+    def test_generated_navigation_before_footer_is_allowed(self) -> None:
+        article = self.article()
+        article = article[: article.index('<p class="digest-footer"')]
+        article += render_footer_banner({"site_base_url": "https://rybalka.one/posts"})
+        report = self.validate(article)
         self.assertEqual([], report["errors"])
 
     def test_arbitrary_inline_image_remains_forbidden(self) -> None:
