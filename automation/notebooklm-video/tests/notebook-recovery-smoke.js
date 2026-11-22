@@ -43,6 +43,7 @@ const cardContainer = {
   querySelectorAll: () => [link],
   parentElement: null,
 };
+titleNode.parentElement = cardContainer;
 const link = {
   href: prefix + id1,
   parentElement: cardContainer,
@@ -57,6 +58,33 @@ ctx.document = {
   const rawCards = await fns.scanNotebookHomeCards({evaluate: async fn => fn()});
   assert.equal(rawCards.length,1);
   assert.equal(fns.chooseUnambiguousNewNotebook(rawCards,date),prefix + id1);
+
+  // Screenshot-verified Gemini home can use a clickable DIV without an <a>
+  // and without aria-labelledby. Its title still has card-local date and
+  // zero-sources text. A navigation click is required to obtain its UUID.
+  const root={localName:"body",nodeType:1,children:[],parentElement:null};
+  const divCard={localName:"div",nodeType:1,parentElement:root,children:[],
+    innerText:"Блокнот без названия 22 нояб. 2026 г. · 0 источников",
+    closest:()=>null,querySelector:()=>null};
+  root.children=[divCard];
+  const plainTitle={localName:"span",nodeType:1,parentElement:divCard,
+    children:[],innerText:title,closest:()=>null,querySelector:()=>null};
+  divCard.children=[plainTitle];
+  const dynamicDoc={
+    body:root,
+    querySelectorAll:q=>q.startsWith("a[")?[]:[plainTitle],
+    getElementById:()=>null,
+  };
+  ctx.document=dynamicDoc;
+  const divCards=await fns.scanNotebookHomeCards({evaluate:async fn=>fn()});
+  assert.equal(divCards.length,1,"Clickable DIV must be recognized without anchors");
+  assert.equal(divCards[0].url,null);
+  const divCandidate=fns.chooseUnambiguousNewNotebook(divCards,date);
+  assert.match(divCandidate.selector,/^body > div:nth-child\(1\) > span:nth-child\(1\)$/);
+  assert.equal(fns.chooseUnambiguousNewNotebook(
+    [...divCards,{...divCards[0],selector:"body > div:nth-child(2) > span:nth-child(1)"}],date),
+    null,"Two same-date empty DIV cards must never be guessed");
+
 
   // A stalled create route may eventually acquire the real UUID. Persist it
   // immediately, independently from notebook shell readiness.
@@ -75,14 +103,19 @@ ctx.document = {
   const state = {jobs:{release:job}};
   const snapshots = [];
   let createClicks = 0, sourceSubmits = 0, browserPage = prefix + "creating";
+  let cardClicks=0;
   const page = {
     goto: async url => {browserPage=url;},
     url: () => browserPage,
     evaluate: async fn => fn(),
     waitForTimeout: async () => {},
+    locator: selector => {
+      assert.equal(selector,divCandidate.selector);
+      return {click:async()=>{cardClicks++;browserPage=prefix+id1;}};
+    },
   };
   const recoverCtx = {
-    URL,Intl,Date,document:ctx.document,stage:"",activePage:null,
+    URL,Intl,Date,document:dynamicDoc,stage:"",activePage:null,
     getRobotPage: async () => page,
     waitNotebookHome: async () => {},
     confirmNotebookPage: async () => {},
@@ -103,6 +136,7 @@ ctx.document = {
     {},{url:"https://rybalka.one/posts/2026-11-22/",date},job,state
   ),/source readiness pending/);
   assert.equal(createClicks,0,"Already armed creation must never be clicked again");
+  assert.equal(cardClicks,1,"Unique candidate without a link is opened once to verify its UUID");
   assert.equal(sourceSubmits,1,"Recovered empty notebook may receive its first source once");
   assert.equal(job.notebookUrl,prefix + id1);
   assert(snapshots.some(x=>x.jobs.release.notebookUrl===prefix+id1),
