@@ -87,6 +87,7 @@ ctx.document = {
     waitNotebookHome: async () => {},
     confirmNotebookPage: async () => {},
     sourceUi:{openWebsiteSourceInput:async()=>({})},
+    describeVisibleButtons:async()=>[],
     fillWebsiteSourceUrl:async()=>({}),
     submitWebsiteSourceUrl:async()=>{sourceSubmits++;},
     waitForSourceImportReady:async()=>{throw Error("source readiness pending");},
