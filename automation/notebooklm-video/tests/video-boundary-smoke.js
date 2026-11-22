@@ -200,7 +200,7 @@ async function verifyResumeState() {
       url: () => pageUrl,
       waitForTimeout: async () => {},
       evaluate: async () => { throw Error("no recoverable card in fixture"); },
-      locator: () => ({ filter: () => ({}) }),
+      locator: () => ({ filter: () => ({}), first: () => ({ isVisible: async () => false }) }),
       getByRole: () => ({}),
       getByText: () => ({}),
     };
