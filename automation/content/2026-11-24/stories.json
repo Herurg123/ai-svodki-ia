@@ -1,0 +1,98 @@
+[
+  {
+    "candidate_id": "cand-001",
+    "section": "world",
+    "headline": "OpenRouter отключила трёх inference-провайдеров после расследования обработки данных",
+    "organization": "OpenRouter; Stripe; inference providers",
+    "topic": "AI infrastructure security; prompt privacy; inference routing; Zero Data Retention; third-party providers",
+    "event_type": "security incident response",
+    "status": "new",
+    "summary": "OpenRouter сообщила о мерах после расследования признаков несоблюдения политик обработки данных у ряда inference-провайдеров: платформа отключила трёх провайдеров, убрала 125 endpoints из режима Zero Data Retention и уведомила потенциально затронутых клиентов. Axios связывает предупреждение с маршрутами запросов к моделям MiniMax и риском доступа третьих лиц к промптам и ответам.",
+    "published_at": "2026-11-22T00:00:00+00:00",
+    "published_date": "2026-11-22",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Data Processing Incidents on Inference Providers",
+        "publisher": "OpenRouter",
+        "url": "https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/"
+      }
+    ],
+    "keywords": [
+      "OpenRouter",
+      "MiniMax",
+      "inference providers",
+      "prompt leakage",
+      "Zero Data Retention",
+      "ZDR",
+      "data processing"
+    ],
+    "geography": "world",
+    "category": "security"
+  },
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Cline расширила контекст чтения файлов и обновила каталог моделей",
+    "organization": "Cline",
+    "topic": "IDE coding agents; model providers; MCP; context management; reasoning models; tool calling",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "Cline выпустила версию 4.1.27. В ней результат инструмента read_files больше не обрезается до 8 тыс. символов и может доходить до лимита в 2 тыс. строк или примерно 48 тыс. символов; каталог получил 94 провайдера из models.dev. Также обновлены дефолтные модели у множества провайдеров и исправлены проблемы с reasoning-настройками и вызовами инструментов для Azure GPT-6, кастомных gpt-5.6/gpt-6 endpoints и нативного OpenAI-провайдера.",
+    "published_at": "2026-11-21T06:05:04+00:00",
+    "published_date": "2026-11-21",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release v4.1.27 · cline/cline",
+        "publisher": "GitHub / Cline",
+        "url": "https://github.com/cline/cline/releases/tag/v4.1.27"
+      }
+    ],
+    "keywords": [
+      "Cline",
+      "v4.1.27",
+      "coding agent",
+      "MCP",
+      "models.dev",
+      "GPT-6",
+      "DeepSeek",
+      "Gemini",
+      "Kimi",
+      "tool calling"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Anthropic представила Claude Ship для ревью, исправления и policy-based одобрения pull request’ов",
+    "organization": "Anthropic; Claude Code; GitHub",
+    "topic": "AI coding agents; pull-request review; automated fixes; policy-based approvals; enterprise software development",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Anthropic представила Claude Ship: продукт объединяет уже доступный Code Review с двумя beta-агентами. PR Steward может устранять сбои проверок, merge conflicts и замечания ревью, а Claude Approvals автоматически одобряет изменения, соответствующие заданной командой политике; остальные изменения направляются человеку.",
+    "published_at": "2026-11-23T22:12:59+00:00",
+    "published_date": "2026-11-23",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Anthropic launches AI agents to review, fix and approve code changes",
+        "publisher": "Matrix News",
+        "url": "https://web.matrixnews.in/news/shqjiy7zkdnh4/anthropic-launches-ai-agents-to-review-fix-and-approve-code-changes"
+      }
+    ],
+    "keywords": [
+      "Claude Ship",
+      "Claude Code",
+      "PR Steward",
+      "Claude Approvals",
+      "Code Review",
+      "GitHub",
+      "coding agents"
+    ],
+    "geography": "world",
+    "category": "coding"
+  }
+]

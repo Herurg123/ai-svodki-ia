@@ -1,0 +1,155 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-11-24",
+  "research_input": "automation/fixtures/research/.runtime/hybrid-completeness-merged-2026-11-24.json",
+  "warnings": [
+    "cand-002: источник показывает дату без точного времени.",
+    "cand-004: источник показывает дату без точного времени.",
+    "cand-006: источник показывает дату без точного времени.",
+    "cand-007: источник показывает дату без точного времени.",
+    "cand-010: источник показывает дату без точного времени.",
+    "Целевой пул — 12 кандидатов, но после проверки свежести осталось 10.",
+    "Исследовательский пул перегружен одним издателем: associated press (5)",
+    "Выбрано 3 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-11-24",
+  "started_at": "2026-11-24T02:12:53+00:00",
+  "finished_at": "2026-11-24T02:13:18+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 128,
+  "limits": {
+    "minimum_candidates": 12,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "a7e2084ebe63cd8b9816515d169d45a465f68df58bf9a28063f614ed99f9e775",
+    "candidates_sha256": "56b99a45ca85b4dede3a05fc5b4a6cefb7fff744c76aa949c98d519e62dc30b4",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-11-21T08:55:20+03:00",
+      "end_at": "2026-11-24T05:06:39+03:00",
+      "latest_archive_at": "2026-11-22T08:55:20+03:00",
+      "start_date": "2026-11-21",
+      "end_date": "2026-11-24",
+      "latest_archive_date": "2026-11-22"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "fdd967ca41983dbdb28bc69dae38910bc7f407d99bcc74c6f3a46b7dd3f29041",
+    "editorial_sha256": "16c43059114002a10ec723c34debfec57892d2fc0848c3c9db730336b6e5a025",
+    "digest_sha256": "96d93539e8384b5d0287b5a599354acdedeb7ba7eac1b3f25bbf274d410913b5",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-11-24.webp",
+          "normalized_value": "ai-svodka-2026-11-24.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        }
+      ],
+      "changed_count": 1,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 3 сюжетов."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, legal_regulation."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0ed5ff19a12f008a016b04f2a691ac87d0ba4c80ea3ed2e07f",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 248521,
+        "input_tokens_details": {
+          "cache_write_tokens": 14401,
+          "cached_tokens": 234117,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 14401
+          }
+        },
+        "output_tokens": 2383,
+        "output_tokens_details": {
+          "reasoning_tokens": 192
+        },
+        "total_tokens": 250904
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-11-24/resp_0ed5ff19a12f008a016b04f2a691ac87d0ba4c80ea3ed2e07f.json"
+  },
+  "total_usage": {
+    "input_tokens": 248521,
+    "output_tokens": 2383,
+    "total_tokens": 250904,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "dc1bf6c69285fe295e788f6a8c5b9e20c4d10e48",
+    "run_id": "45309772644",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-11-24T05:06:39+03:00"
+}

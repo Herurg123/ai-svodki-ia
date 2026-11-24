@@ -1,0 +1,37 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-24",
+  "slug": "2026-11-24",
+  "title": "ИИ-Сводка на 24 ноября 2026",
+  "description": "OpenRouter отключила inference-провайдеров после расследования обработки данных, Cline расширила работу с контекстом, а Anthropic вывела агентов Claude Ship для ревью и одобрения pull request’ов.",
+  "published_at": "2026-11-24T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-24.png",
+  "topics": [
+    "OpenRouter",
+    "конфиденциальность промптов",
+    "inference-провайдеры",
+    "Zero Data Retention",
+    "Cline",
+    "агенты ИИ",
+    "ИИ-кодинг",
+    "Claude Ship",
+    "pull request",
+    "управление изменениями",
+    "безопасность ИИ"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, legal_regulation."
+    }
+  ]
+}

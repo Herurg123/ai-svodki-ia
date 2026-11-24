@@ -9,9 +9,37 @@
   <link>https://rybalka.one/posts/</link>
   <description>Десять полнотекстовых аналитических статей об искусственном интеллекте.</description>
   <language>ru</language>
-  <lastBuildDate>Sun, 22 Nov 2026 06:00:00 +0300</lastBuildDate>
+  <lastBuildDate>Tue, 24 Nov 2026 06:00:00 +0300</lastBuildDate>
   <dc:creator>ИИ-сводки</dc:creator>
   <atom:link href="https://rybalka.one/posts/rss.xml" rel="self" type="application/rss+xml" />
+
+  <item>
+    <title>ИИ-Сводка на 24 ноября 2026</title>
+    <link>https://rybalka.one/posts/2026-11-24/</link>
+    <guid isPermaLink="true">https://rybalka.one/posts/2026-11-24/</guid>
+    <pubDate>Tue, 24 Nov 2026 06:00:00 +0300</pubDate>
+    <dc:creator>ИИ-сводки</dc:creator>
+    <category>Статья</category>
+    <category>ИИ</category>
+    <category>Технологии</category>
+    <category>native-yes</category>
+    <media:rating scheme="urn:simple">nonadult</media:rating>
+    <enclosure url="https://rybalka.one/posts/images/ai-svodka-2026-11-24.png" type="image/png" length="2032550" />
+    <media:content url="https://rybalka.one/posts/images/ai-svodka-2026-11-24.png" medium="image" type="image/png" />
+    <media:thumbnail url="https://rybalka.one/posts/images/ai-svodka-2026-11-24.png" />
+    <description><![CDATA[<p>OpenRouter отключила inference-провайдеров после расследования обработки данных, Cline расширила работу с контекстом, а Anthropic вывела агентов Claude Ship для ревью и одобрения pull request’ов.</p>]]></description>
+    <content:encoded><![CDATA[<figure>
+<img src="https://rybalka.one/posts/images/ai-svodka-2026-11-24.png" alt="ИИ-Сводка на 24 ноября 2026">
+<figcaption>Главные новости искусственного интеллекта за 24 ноября 2026 года</figcaption>
+</figure>
+<p><em>Новостей сегодня меньше, чем обычно</em></p>
+<p>Сегодняшняя повестка — о доверии к агентным системам на двух уровнях: маршрутизации запросов к моделям и автоматизации разработки. OpenRouter пересматривает гарантии обработки данных у сторонних inference-провайдеров, а Cline и Anthropic расширяют возможности агентов, работающих с кодом и pull request’ами.</p><p>Практический вывод для команд: при росте автономности важно контролировать не только действия агента в репозитории, но и путь, которым промпты, ответы и контекст проходят через внешнюю инфраструктуру.</p><h2>Мировые лидеры ИИ</h2><h3>OpenRouter отключила трёх inference-провайдеров после расследования обработки данных</h3><p>OpenRouter сообщила, что по итогам расследований отключила трёх inference-провайдеров, уведомила потенциально затронутых клиентов и начала техническую проверку сетевых путей запросов и ответов. Компания также исключила 125 endpoints из режима Zero Data Retention — как связанные с выявленными рисками, так и дополнительно снятые в качестве меры предосторожности.</p><p>Это заметное событие для компаний, использующих единый шлюз для доступа к разным моделям: обещание не хранить данные не отменяет рисков на уровне фактического провайдера инференса. Публичное сообщение не раскрывает число реально затронутых клиентов и не называет конкретную лабораторию, поэтому говорить о масштабе утечки преждевременно. Но сам набор мер показывает, что проверка маршрутов данных становится обязательной частью корпоративного ИИ-контроля. Подробнее — в сообщении <a href="https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/">Data Processing Incidents on Inference Providers</a>.</p><h3>Cline расширила контекст чтения файлов и обновила каталог моделей</h3><p>Cline выпустила версию 4.1.27. Инструмент read_files теперь передаёт агенту содержимое до собственного лимита — до 2 тыс. строк или примерно 48 тыс. символов — вместо прежнего ограничения в 8 тыс. символов. Каталог моделей также получил 94 провайдера из models.dev.</p><p>Релиз исправляет проблемы с reasoning-настройками и вызовами инструментов для Azure GPT-6, кастомных endpoints gpt-5.6/gpt-6 и нативного OpenAI-провайдера. Для разработчиков это означает меньше потерь контекста при работе с крупными файлами и более предсказуемую совместимость агентных сценариев с разными моделями. Однако больший доступ к исходному коду одновременно повышает требования к настройке разрешений и к проверке действий агента. Детали перечислены в <a href="https://github.com/cline/cline/releases/tag/v4.1.27">Release v4.1.27 · cline/cline</a>.</p><h3>Anthropic представила Claude Ship для ревью, исправления и policy-based одобрения pull request’ов</h3><p>Anthropic представила Claude Ship — набор инструментов для работы с pull request’ами в GitHub. Помимо уже доступного Code Review, в него входят beta-агенты PR Steward и Claude Approvals: первый предназначен для устранения сбоев проверок, merge conflicts и замечаний ревью, второй может автоматически одобрять рутинные изменения в пределах заданной командой политики.</p><p>Продукт переносит агентный ИИ из стадии подготовки кода в контур управления изменениями. Главная граница здесь — политика: изменения вне заранее определённых правил должны уходить человеку, а не получать автоматическое одобрение. По доступному описанию, PR Steward и Claude Approvals доступны в beta для GitHub-репозиториев на планах Claude Team и Enterprise; это продуктовый анонс, а не независимая оценка качества таких одобрений. Состав функций описан в материале <a href="https://web.matrixnews.in/news/shqjiy7zkdnh4/anthropic-launches-ai-agents-to-review-fix-and-approve-code-changes">Anthropic launches AI agents to review, fix and approve code changes</a>.</p><h2>Что это значит</h2><ol><li>Zero Data Retention нужно проверять не только в договоре с ИИ-шлюзом, но и по фактическому маршруту запроса до конкретного inference-провайдера.</li><li>Расширение контекста coding-агентов повышает полезность при работе с большими репозиториями, но увеличивает объём кода и секретов, потенциально доступных модели.</li><li>Автоматизация pull request’ов смещается от подсказок к исправлению и одобрению изменений; поэтому policy-as-code и понятные условия эскалации становятся базовым контролем.</li><li>Для корпоративных команд ценность агентного инструмента всё сильнее определяется не одной моделью, а связкой из маршрутизации, прав доступа, журналов действий и процедур проверки.</li></ol>
+<h2>Все ИИ-Сводки</h2><p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>
+<h2>ИИ-Поиск по статьям</h2>
+<p>🔍 <a href="https://rybalka.one/#faq">Сайт</a> | <a href="https://t.me/rybv_bot">Telegram</a> | <a href="https://max.ru/u/f9LHodD0cOLtzz--9JGi-9evrUHNQ6AT56LTxxCUsOMgAB0FzqKaItzrhqg">MAX</a></p>
+<p>📲 Подписывайтесь: <a href="https://t.me/rybvvv">tg</a> 🔹 <a href="https://max.ru/channel_rybv">max</a> 🔹 <a href="https://vk.ru/rybvv">vk</a></p>
+<p class="digest-footer" style="text-align:center;margin:32px 0 0;"><a href="https://dzen.ru/rybv" target="_blank" rel="noopener noreferrer"><img src="https://rybalka.one/posts/_footer-scr.png" alt="Подписаться на канал" style="display:block;max-width:50%;width:auto;height:auto;margin:0 auto;"></a></p>]]></content:encoded>
+  </item>
 
   <item>
     <title>ИИ-Сводка на 22 ноября 2026</title>
