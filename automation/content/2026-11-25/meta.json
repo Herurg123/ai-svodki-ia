@@ -1,0 +1,45 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-25",
+  "slug": "2026-11-25",
+  "title": "ИИ-Сводка на 25 ноября 2026",
+  "description": "Amazon усиливает собственный ИИ-кремний сделкой с Decart, разработчики получают новые браузерные и облачные функции агентов, а Яндекс выводит Алису AI в формат носимого личного секретаря.",
+  "published_at": "2026-11-25T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-25.png",
+  "topics": [
+    "Amazon",
+    "Decart",
+    "Trainium",
+    "ИИ-инфраструктура",
+    "инференс",
+    "OpenCode",
+    "агенты ИИ",
+    "браузерная автоматизация",
+    "Claude Code",
+    "мультиоблачные среды",
+    "Maxon",
+    "3D-генерация",
+    "Zipher",
+    "инфраструктура данных",
+    "GPT-6",
+    "дизайн белков",
+    "Яндекс",
+    "Алиса AI",
+    "носимые ИИ-устройства"
+  ],
+  "short_digest": false,
+  "editorial_notes": [
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-010."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+    }
+  ]
+}

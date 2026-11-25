@@ -1,0 +1,225 @@
+[
+  {
+    "candidate_id": "cand-003",
+    "section": "world",
+    "headline": "Maxon запустила Maxon Plus и Agentic Licences для Cinema 4D и Autograph",
+    "organization": "Maxon; Cinema 4D; ZBrush; Autograph",
+    "topic": "Генеративный ИИ для 3D-производства; агентные лицензии; MCP; Cinema 4D; ZBrush; фоновое выполнение AI-задач",
+    "event_type": "product launch",
+    "status": "new",
+    "summary": "Maxon представила отдельную подписку Maxon Plus с генеративными инструментами для 3D-активов и ввела Agentic Licences для Cinema 4D и Autograph. Лицензии дают агентам отдельный headless-инстанс приложения, чтобы они могли выполнять задачи в фоне, пока пользователь продолжает работать в основной сессии.",
+    "published_at": "2026-11-23T16:19:34+00:00",
+    "published_date": "2026-11-23",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Every 3D artist should have an AI assistant, Maxon says as it launches new tools and agentic licences",
+        "publisher": "Creative Bloq",
+        "url": "https://www.creativebloq.com/news/every-3d-artist-should-have-an-ai-assistant-maxon-says-as-it-launches-new-tools-and-agentic-licences"
+      }
+    ],
+    "keywords": [
+      "Maxon Plus",
+      "Agentic Licences",
+      "Cinema 4D",
+      "ZBrush",
+      "Autograph",
+      "MCP",
+      "3D generation",
+      "AI agents"
+    ],
+    "geography": "world",
+    "category": "agents"
+  },
+  {
+    "candidate_id": "cand-004",
+    "section": "world",
+    "headline": "Amazon договорилась купить технологию оптимизации ИИ Decart",
+    "organization": "Amazon; AWS; Decart",
+    "topic": "AI infrastructure; custom silicon; Trainium; inference optimization; chip-software co-design; M&A",
+    "event_type": "technology asset purchase and talent acquisition",
+    "status": "new",
+    "summary": "Amazon объявила о соглашении купить проприетарную технологию Decart Optimization Stack (DOS) и нанять сооснователей Decart вместе с командой исследователей и инженеров. Компания заявляет, что технология должна оптимизировать inference и производительность собственного кремния, включая Trainium. TechCrunch со ссылкой на Bloomberg оценивает сделку в $7,5 млрд, но Amazon цену не раскрыла.",
+    "published_at": "2026-11-23T13:46:59+00:00",
+    "published_date": "2026-11-23",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Amazon to purchase Decart's AI optimization technology to advance chip and model innovation for customers",
+        "publisher": "Amazon",
+        "url": "https://www.aboutamazon.com/news/company-news/amazon-decart-ai-optimization"
+      }
+    ],
+    "keywords": [
+      "Amazon",
+      "AWS",
+      "Decart",
+      "Decart Optimization Stack",
+      "DOS",
+      "Trainium",
+      "custom silicon",
+      "AI inference",
+      "chip optimization"
+    ],
+    "geography": "world",
+    "category": "infrastructure"
+  },
+  {
+    "candidate_id": "cand-005",
+    "section": "world",
+    "headline": "Zipher вышла из stealth-режима и привлекла $53 млн на инфраструктуру данных для агентов ИИ",
+    "organization": "Zipher; TLV Partners; Maor Investments; Glilot Capital",
+    "topic": "agentic data infrastructure; enterprise AI; financing; workload orchestration",
+    "event_type": "funding and company launch",
+    "status": "new",
+    "summary": "Zipher объявила о выходе из stealth-режима и о привлечении $53 млн в seed- и Series A-раундах от TLV Partners, Maor Investments и Glilot Capital. Компания предлагает агентную платформу, которая оптимизирует выполнение корпоративных data-workloads между вычислительными движками, облаками и доступными ресурсами.",
+    "published_at": "2026-11-24T09:00:56+00:00",
+    "published_date": "2026-11-24",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Zipher is Out of Stealth: Data Infrastructure for Agents, by Agents",
+        "publisher": "Zipher",
+        "url": "https://zipher.ai/zipher-is-out-of-stealth-data-infrastructure-for-agents-by-agents/"
+      }
+    ],
+    "keywords": [
+      "Zipher",
+      "$53 million",
+      "seed",
+      "Series A",
+      "AI agents",
+      "data infrastructure",
+      "enterprise workloads"
+    ],
+    "geography": "world",
+    "category": "enterprise"
+  },
+  {
+    "candidate_id": "cand-006",
+    "section": "world",
+    "headline": "OpenCode 2.4.0 добавила встроенный браузер и автоматизации",
+    "organization": "Anomaly; OpenCode",
+    "topic": "open-source coding agents; agentic development environments; browser automation; scheduled workflows; MCP",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "Anomaly выпустила OpenCode 2.4.0. В релиз вошли встроенный desktop browser с сохранением профиля и импортом браузерных входов/истории, а также Automations: запуск prompt, скрипта или shell-команды по таймеру, cron-расписанию либо событию MCP-сервера.",
+    "published_at": "2026-11-23T09:22:21+00:00",
+    "published_date": "2026-11-23",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release v2.4.0",
+        "publisher": "Anomaly / GitHub",
+        "url": "https://github.com/anomalyco/opencode/releases/tag/v2.4.0"
+      }
+    ],
+    "keywords": [
+      "OpenCode",
+      "built-in desktop browser",
+      "persistent profile",
+      "automations",
+      "cron",
+      "MCP events",
+      "agent browser"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-008",
+    "section": "world",
+    "headline": "Claude Code 2.1.331 расширила Code Mode на несколько облачных платформ",
+    "organization": "Anthropic; Claude Code; Amazon Bedrock; Google Cloud; Microsoft Foundry; AWS",
+    "topic": "CLI coding agents; enterprise deployment; cloud model platforms; connectivity diagnostics",
+    "event_type": "product release",
+    "status": "new",
+    "summary": "Anthropic выпустила Claude Code 2.1.331. Релиз добавляет Code Mode для терминальных сессий на Amazon Bedrock, Google Cloud Agent Platform, Microsoft Foundry и Claude Platform on AWS, а также секцию проверки доступности API в команде `claude doctor`.",
+    "published_at": "2026-11-23T21:34:41+00:00",
+    "published_date": "2026-11-23",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "Release v2.1.331",
+        "publisher": "Anthropic / GitHub",
+        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.331"
+      }
+    ],
+    "keywords": [
+      "Claude Code",
+      "Code Mode",
+      "Amazon Bedrock",
+      "Google Cloud Agent Platform",
+      "Microsoft Foundry",
+      "Claude Platform on AWS",
+      "claude doctor"
+    ],
+    "geography": "world",
+    "category": "coding"
+  },
+  {
+    "candidate_id": "cand-012",
+    "section": "world",
+    "headline": "OpenAI опубликовала материал о возможностях GPT-6 в дизайне белков",
+    "organization": "OpenAI",
+    "topic": "GPT-6 models demonstrate intrinsic protein-design capabilities",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "OpenAI official artificial intelligence publication: GPT-6 models demonstrate intrinsic protein-design capabilities",
+    "published_at": "2026-11-24T13:00:00+00:00",
+    "published_date": "2026-11-24",
+    "time_precision": "datetime",
+    "sources": [
+      {
+        "title": "GPT-6 models demonstrate intrinsic protein-design capabilities",
+        "publisher": "OpenAI",
+        "url": "https://openai.com/index/gpt-6-models-demonstrate-intrinsic-protein-design-capabilities"
+      }
+    ],
+    "keywords": [
+      "GPT-6",
+      "models",
+      "demonstrate",
+      "intrinsic",
+      "protein-design",
+      "capabilities"
+    ],
+    "geography": "world",
+    "category": "models"
+  },
+  {
+    "candidate_id": "cand-010",
+    "section": "russia",
+    "headline": "Яндекс разработал Пин с Алисой AI — носимого личного секретаря",
+    "organization": "Яндекс",
+    "topic": "24 ноября 2026Яндекс разработал Пин с Алисой AI — личного секретаря в виде носимого ИИ-устройства",
+    "event_type": "source_pulse_official_update",
+    "status": "new",
+    "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+    "published_at": null,
+    "published_date": "2026-11-24",
+    "time_precision": "date",
+    "sources": [
+      {
+        "title": "24 ноября 2026Яндекс разработал Пин с Алисой AI — личного секретаря в виде носимого ИИ-устройства",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=24-11-2026-01"
+      }
+    ],
+    "keywords": [
+      "24",
+      "ноября",
+      "2026Яндекс",
+      "разработал",
+      "Пин",
+      "Алисой",
+      "личного",
+      "секретаря",
+      "виде",
+      "носимого",
+      "ИИ-устройства"
+    ],
+    "geography": "russia",
+    "category": "investment"
+  }
+]

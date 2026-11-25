@@ -1,0 +1,70 @@
+{
+  "status": "ok",
+  "usage_attempt_id": "37698af886104d12bbc371b8ae36f220",
+  "request_id": "production-image-2026-11-25",
+  "model": "gpt-image-2",
+  "endpoint": "/v1/images/generations",
+  "http_status": 200,
+  "openai_request_id": "req_9a63245489434c50a8beaafe88d00bfe",
+  "source_editorial_request_id": "production-digest-2026-11-25",
+  "request": {
+    "size": "1536x864",
+    "quality": "high",
+    "output_format": "png",
+    "background": "opaque",
+    "n": 1,
+    "prompt_sha256": "151bda01c694d765a9d747b03d53b6e51a7ee777ac9d9f383ba197f571950a93"
+  },
+  "response": {
+    "created": 1795572942,
+    "background": "opaque",
+    "output_format": "png",
+    "quality": "high",
+    "size": "1536x864",
+    "usage": {
+      "input_tokens": 399,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 399
+      },
+      "output_tokens": 4312,
+      "output_tokens_details": {
+        "image_tokens": 4312,
+        "text_tokens": 0
+      },
+      "total_tokens": 4711
+    },
+    "data_count": 1,
+    "revised_prompt": null
+  },
+  "cover_sha256": "d1fb75101f360d4ee23ce12f3bb7f1d86456991f5979a6f818a35d4042ebe3bf",
+  "cover_bytes": 2218118,
+  "base64_stored": false,
+  "copied_source_files": [
+    "article.html",
+    "artifact-normalization.json",
+    "artifact-validation.json",
+    "candidates.json",
+    "digest.json",
+    "editorial-event-identity.json",
+    "editorial-output-raw.json",
+    "editorial-output.json",
+    "editorial-prompt-input.txt",
+    "editorial-reconciliation.json",
+    "hybrid-completeness.json",
+    "image-prompt.txt",
+    "meta.json",
+    "metadata-normalization.json",
+    "policy-normalization.json",
+    "research-filtered-out.json",
+    "research-input-info.json",
+    "research-output-raw.json",
+    "research-prompt-input.txt",
+    "run-info.json",
+    "selection.json",
+    "sources.json",
+    "stories.json"
+  ],
+  "started_at": "2026-11-25T02:14:18+00:00",
+  "finished_at": "2026-11-25T02:15:43+00:00"
+}
