@@ -1,0 +1,49 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "date": "2026-11-26",
+  "slug": "2026-11-26",
+  "title": "ИИ-Сводка на 26 ноября 2026",
+  "description": "Anthropic тестирует защиту агентов от выхода из sandbox, Huawei получила обвинительный вердикт в США, а Claude Code и Copilot CLI усиливают контроль над агентными средами разработки.",
+  "published_at": "2026-11-26T06:00:00+03:00",
+  "author": "ИИ-сводки",
+  "cover_filename": "ai-svodka-2026-11-26.png",
+  "topics": [
+    "Anthropic",
+    "Siren",
+    "безопасность агентов ИИ",
+    "sandbox",
+    "Huawei",
+    "кибербезопасность",
+    "Claude Code",
+    "MCP",
+    "GitHub Copilot CLI",
+    "ИИ-кодинг",
+    "Meta",
+    "Muse",
+    "потребительские агенты"
+  ],
+  "short_digest": true,
+  "editorial_notes": [
+    {
+      "type": "low_news_volume",
+      "area": "total",
+      "message": "После основного и дополнительного поиска опубликован сокращённый выпуск."
+    },
+    {
+      "type": "time_precision",
+      "area": "sources",
+      "message": "У части источников доступна только дата без точного времени: cand-002."
+    },
+    {
+      "type": "source_gap",
+      "area": "research",
+      "message": "Пробелы покрытия research: global_breaking, business_investment_partnerships, china_asia_models, russia, legal_regulation, independent_missing_events."
+    },
+    {
+      "type": "section_placement",
+      "area": "editorial",
+      "message": "Раздел для cand-004 автоматически исправлен: Мировые лидеры ИИ → Китайские лидеры ИИ."
+    }
+  ]
+}

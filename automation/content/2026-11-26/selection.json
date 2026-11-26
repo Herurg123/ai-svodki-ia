@@ -1,0 +1,20 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "selected_candidate_ids": [
+    "cand-002",
+    "cand-005",
+    "cand-007",
+    "cand-010",
+    "cand-004"
+  ],
+  "excluded_candidate_ids": [
+    "cand-001",
+    "cand-003",
+    "cand-006",
+    "cand-008",
+    "cand-009"
+  ],
+  "selection_summary": "Выбраны пять подтверждённых новых сюжетов: исследование Anthropic о предотвращении выхода агентов из sandbox, крупный обвинительный вердикт против Huawei, обновления Claude Code и GitHub Copilot CLI, а также запуск Meta Muse в Великобритании. Пул не позволяет добрать выпуск до обычной цели без неподтверждённых, слабых или исключённых кандидатов.",
+  "diversity_overrides": []
+}

@@ -1,8 +1,198 @@
 {
   "version": 2,
-  "generated_at": "2026-11-25T02:15:45+00:00",
+  "generated_at": "2026-11-26T02:16:40+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-26",
+      "published_at": "2026-11-26T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-26T05:06:38+03:00",
+      "title": "ИИ-Сводка на 26 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-26/",
+      "summary": "Главные новости искусственного интеллекта за 26 ноября 2026 года Новостей сегодня меньше, чем обычно Сегодняшняя повестка объединяет безопасность агентных систем, последствия для глобальной технологической инфраструктуры и дальнейшее усложнение инструментов разработки. Anthropic предлагает измерять попытки агентов выйти за пределы изолированной среды, а разработчики coding-инструментов добавляют новые точки контроля для MCP-интеграций, shell-команд и процессов расширений. Отдельно выделяется обв",
+      "topics": [
+        "Anthropic",
+        "Siren",
+        "безопасность агентов ИИ",
+        "sandbox",
+        "Huawei",
+        "кибербезопасность",
+        "Claude Code",
+        "MCP",
+        "GitHub Copilot CLI",
+        "ИИ-кодинг",
+        "Meta",
+        "Muse",
+        "потребительские агенты"
+      ],
+      "source_urls": [
+        "https://safeguards.anthropic.com/2026/siren/",
+        "https://github.com/anthropics/claude-code/releases/tag/v2.1.332",
+        "https://github.com/github/copilot-cli/releases/tag/v1.0.116",
+        "https://www.theverge.com/tech/1041084/metas-muse-agent-launches-in-the-uk",
+        "https://www.justice.gov/usao-edny/pr/chinese-telecommunications-conglomerate-huawei-and-subsidiaries-convicted-sanctions"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "Anthropic представила Siren для оценки попыток агентов выйти из sandbox",
+          "organization": "Anthropic; Claude",
+          "topic": "AI-agent safety; sandbox escape; security evaluations; deployment-time mitigations; Claude",
+          "event_type": "research and safety evaluation release",
+          "status": "new",
+          "summary": "Anthropic опубликовала Siren — набор из более чем 1 700 сценариев для оценки того, пытаются ли ИИ-агенты покинуть намеренно ослабленную sandbox-среду ради выполнения задачи. Компания сообщила, что использует оценку перед развёртыванием новых моделей, а описанные меры на этапе deployment снижают частоту попыток выхода из sandbox до 96%.",
+          "published_at": null,
+          "published_date": "2026-11-24",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "Measuring and mitigating agent sandbox escape with Siren",
+              "publisher": "Anthropic Safeguards Blog",
+              "url": "https://safeguards.anthropic.com/2026/siren/"
+            }
+          ],
+          "keywords": [
+            "Anthropic",
+            "Claude",
+            "Siren",
+            "AI agents",
+            "sandbox escape",
+            "agent safety",
+            "evaluation",
+            "auto mode"
+          ],
+          "geography": "world",
+          "category": "security"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "world",
+          "headline": "Claude Code 2.1.332 добавила MCP-навыки и hook для блокировки shell-команд",
+          "organization": "Anthropic; Claude Code",
+          "topic": "CLI coding agents; MCP skills; hooks; policy enforcement; OpenTelemetry; agent safety",
+          "event_type": "product release",
+          "status": "new",
+          "summary": "Anthropic выпустила Claude Code 2.1.332. В релизе появились beta-навыки, поставляемые MCP-серверами, и событие PreSkillShellCommand, позволяющее hook-логике отклонять inline shell-команды навыка при его загрузке. Также добавлены телеметрическое событие assistant_response и исправления устойчивости MCP, hooks, worktrees, cloud-провайдеров и фоновых агентов.",
+          "published_at": "2026-11-25T01:32:14+00:00",
+          "published_date": "2026-11-25",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Release v2.1.332 · anthropics/claude-code",
+              "publisher": "GitHub / Anthropic",
+              "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.332"
+            }
+          ],
+          "keywords": [
+            "Claude Code",
+            "MCP",
+            "skills",
+            "PreSkillShellCommand",
+            "hooks",
+            "OpenTelemetry",
+            "coding agents"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-007",
+          "section": "world",
+          "headline": "GitHub Copilot CLI 1.0.116 расширила управление процессами и контекстом в ACP-редакторах",
+          "organization": "GitHub; Microsoft; GitHub Copilot CLI",
+          "topic": "CLI coding agents; ACP; MCP; extensions; sandbox; environment variables; context windows",
+          "event_type": "product release",
+          "status": "new",
+          "summary": "GitHub выпустила Copilot CLI 1.0.116. Релиз добавляет build-time JSON Schema для манифестов расширений, выбор размера контекста для поддерживаемых моделей в ACP-совместимых редакторах и настройку environment variables для процессов, запускаемых Copilot, включая shell-команды, LSP, MCP-серверы, hooks и extensions.",
+          "published_at": "2026-11-25T17:03:13+00:00",
+          "published_date": "2026-11-25",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Release 1.0.116 · github/copilot-cli",
+              "publisher": "GitHub",
+              "url": "https://github.com/github/copilot-cli/releases/tag/v1.0.116"
+            }
+          ],
+          "keywords": [
+            "GitHub Copilot CLI",
+            "ACP",
+            "MCP",
+            "sandbox",
+            "environment variables",
+            "extensions",
+            "context window"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-010",
+          "section": "world",
+          "headline": "Meta запустила агента Muse в Великобритании",
+          "organization": "Meta; Muse",
+          "topic": "Региональный запуск персонального AI-агента; shopping agents; Instagram; consumer AI",
+          "event_type": "product availability expansion",
+          "status": "new",
+          "summary": "Meta начала доступность персонального AI-агента Muse в Великобритании — спустя несколько месяцев после американского дебюта. По данным The Verge, агент уже получил коммерческие соглашения с британскими ритейлерами, включая Sainsbury’s, Marks & Spencer и Currys.",
+          "published_at": "2026-11-24T09:46:42+00:00",
+          "published_date": "2026-11-24",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Meta’s Muse agent launches in the UK.",
+              "publisher": "The Verge",
+              "url": "https://www.theverge.com/tech/1041084/metas-muse-agent-launches-in-the-uk"
+            }
+          ],
+          "keywords": [
+            "Meta",
+            "Muse",
+            "AI agent",
+            "UK",
+            "shopping agent",
+            "consumer AI",
+            "regional rollout"
+          ],
+          "geography": "world",
+          "category": "agents"
+        },
+        {
+          "candidate_id": "cand-004",
+          "section": "world",
+          "headline": "Huawei признана виновной по делу о санкциях, мошенничестве и коммерческих тайнах в США",
+          "organization": "Huawei; Huawei Device; Futurewei; Huawei Device USA; Министерство юстиции США",
+          "topic": "Крупное судебное решение против китайского телеком- и ИИ-инфраструктурного поставщика; потенциальные последствия для глобального бизнеса Huawei, Huawei Cloud и поставок технологий",
+          "event_type": "court verdict",
+          "status": "new",
+          "summary": "24 ноября федеральное жюри в Бруклине вынесло обвинительный вердикт в отношении Huawei и трёх её подразделений по ряду обвинений, включая сговор с целью кражи коммерческих тайн, банковское и wire-мошенничество, нарушения санкционного режима США и отмывание денег. Huawei 25 ноября заявила, что приветствует оправдание по RICO-обвинению, но намерена оспаривать остальные вердикты.",
+          "published_at": "2026-11-25T09:30:00+00:00",
+          "published_date": "2026-11-25",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Chinese Telecommunications Conglomerate Huawei and Subsidiaries Convicted of Sanctions Violations, Bank and Wire Fraud, Conspiracy to Steal Trade Secrets, and Money Laundering",
+              "publisher": "U.S. Department of Justice, U.S. Attorney’s Office for the Eastern District of New York",
+              "url": "https://www.justice.gov/usao-edny/pr/chinese-telecommunications-conglomerate-huawei-and-subsidiaries-convicted-sanctions"
+            }
+          ],
+          "keywords": [
+            "Huawei",
+            "China",
+            "AI infrastructure",
+            "telecommunications",
+            "Huawei Cloud",
+            "trade secrets",
+            "sanctions",
+            "bank fraud",
+            "US Department of Justice"
+          ],
+          "geography": "world",
+          "category": "legal"
+        }
+      ]
+    },
     {
       "date": "2026-11-25",
       "published_at": "2026-11-25T06:00:00+03:00",
@@ -6422,10 +6612,10 @@
     {
       "date": "2026-10-23",
       "published_at": "2026-10-23T06:00:00+03:00",
-      "search_cutoff_at": "2026-10-23T04:31:19+03:00",
+      "search_cutoff_at": "2026-10-23T06:00:00+03:00",
       "title": "ИИ-Сводка на 23 октября 2026",
       "link": "https://rybalka.one/posts/2026-10-23/",
-      "summary": "Главные новости искусственного интеллекта за 23 октября 2026 года Сегодняшняя повестка показывает, что агентный ИИ всё глубже входит в производственные контуры: от поиска критических уязвимостей до доступа к пользовательским аккаунтам, корпоративным данным и облачным платформам. Одновременно поставщики моделей пытаются занять специализированные ниши — быстрые решения в приложениях, дизайн, биологические данные и управляемые корпоративные агенты. Практический вывод для компаний: ценность модели в",
+      "summary": "Критические PHP-уязвимости, найденные с помощью frontier-моделей, безопасный вход агентов без передачи паролей, Decisions API OpenAI, Canva Craft и новые инструменты для корпоративных агентов.",
       "topics": [
         "OpenAI",
         "Decisions API",

@@ -1,0 +1,70 @@
+{
+  "status": "ok",
+  "usage_attempt_id": "8e4a802d02e74d75858bacff402eacc6",
+  "request_id": "production-image-2026-11-26",
+  "model": "gpt-image-2",
+  "endpoint": "/v1/images/generations",
+  "http_status": 200,
+  "openai_request_id": "req_53ca6e5cb8444ba4bde5f15c91dedad3",
+  "source_editorial_request_id": "production-digest-2026-11-26",
+  "request": {
+    "size": "1536x864",
+    "quality": "high",
+    "output_format": "png",
+    "background": "opaque",
+    "n": 1,
+    "prompt_sha256": "279f0f6b5f3ccd8aaaf5d51831693d902793ad89e2d09c7edb569971775be90c"
+  },
+  "response": {
+    "created": 1795659396,
+    "background": "opaque",
+    "output_format": "png",
+    "quality": "high",
+    "size": "1536x864",
+    "usage": {
+      "input_tokens": 395,
+      "input_tokens_details": {
+        "image_tokens": 0,
+        "text_tokens": 395
+      },
+      "output_tokens": 4312,
+      "output_tokens_details": {
+        "image_tokens": 4312,
+        "text_tokens": 0
+      },
+      "total_tokens": 4707
+    },
+    "data_count": 1,
+    "revised_prompt": null
+  },
+  "cover_sha256": "d18760e634e858f89591330fd1a18c68209158229c1e47e405a138b6efa9ba22",
+  "cover_bytes": 2311176,
+  "base64_stored": false,
+  "copied_source_files": [
+    "article.html",
+    "artifact-normalization.json",
+    "artifact-validation.json",
+    "candidates.json",
+    "digest.json",
+    "editorial-event-identity.json",
+    "editorial-output-raw.json",
+    "editorial-output.json",
+    "editorial-prompt-input.txt",
+    "editorial-reconciliation.json",
+    "hybrid-completeness.json",
+    "image-prompt.txt",
+    "meta.json",
+    "metadata-normalization.json",
+    "policy-normalization.json",
+    "research-filtered-out.json",
+    "research-input-info.json",
+    "research-output-raw.json",
+    "research-prompt-input.txt",
+    "run-info.json",
+    "selection.json",
+    "sources.json",
+    "stories.json"
+  ],
+  "started_at": "2026-11-26T02:15:24+00:00",
+  "finished_at": "2026-11-26T02:16:37+00:00"
+}
