@@ -1,8 +1,221 @@
 {
   "version": 2,
-  "generated_at": "2026-11-26T02:16:40+00:00",
+  "generated_at": "2026-11-27T02:17:26+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-27",
+      "published_at": "2026-11-27T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-27T05:06:40+03:00",
+      "title": "ИИ-Сводка на 27 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-27/",
+      "summary": "Главные новости искусственного интеллекта за 27 ноября 2026 года Новостей сегодня меньше, чем обычно Повестка дня связывает ИИ-инфраструктуру с двумя разными контурами контроля: экспортными ограничениями на передовые вычисления и регулированием будущих орбитальных дата-центров. Одновременно поставщики инструментов разработки меняют экономику и архитектуру агентных сред, а российский рынок получает новый интерфейс между аналитикой данных и агентами ИИ. Практический вывод для компаний: автономные ",
+      "topics": [
+        "экспортный контроль США",
+        "Entity List",
+        "Megaspeed",
+        "SpaceX Starmind",
+        "орбитальные дата-центры",
+        "FCC",
+        "GitHub Copilot",
+        "AI Credits",
+        "Qwen Code",
+        "Harness kernel",
+        "DataLens",
+        "Яндекс",
+        "агенты ИИ",
+        "ИИ-инфраструктура"
+      ],
+      "source_urls": [
+        "https://www.tomshardware.com/tech-industry/us-blacklists-megaspeed-but-leaves-potential-loophole-for-lower-performance-chips-company-at-center-of-jensen-huang-affair-scandal-added-to-entity-list",
+        "https://public-inspection.federalregister.gov/2026-23999.pdf",
+        "https://techcrunch.com/2026/11/25/fcc-approves-spacex-plan-to-put-ai-data-centers-in-space/",
+        "https://apnews.com/article/b9897fe06f851ffaf92fd304ae69075c",
+        "https://aas.org/press/spacex-data-center-fcc-approval",
+        "https://github.blog/changelog/2026-11-25-copilot-code-review-billing-will-default-to-the-organization/",
+        "https://github.com/QwenLM/qwen-code/releases/tag/v0.28.7",
+        "https://ir.yandex.ru/press-releases?year=2026&id=26-11-2026-01"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-006",
+          "section": "world",
+          "headline": "США внесли связанные с Megaspeed компании в Entity List из-за риска перенаправления передовых вычислительных товаров",
+          "organization": "U.S. Department of Commerce; Bureau of Industry and Security; Megaspeed International; MSFusion; Speedmatrix; Apex Enterprise Solutions; Swiftdata",
+          "topic": "Экспортный контроль США; AI-ускорители; риск реэкспорта передовых вычислительных товаров; Юго-Восточная Азия; Китай",
+          "event_type": "regulatory action",
+          "status": "new",
+          "summary": "BIS добавило в Entity List семь компаний из Малайзии, Сингапура и Таиланда, включая структуры Megaspeed. Регулятор указал на значительный риск их участия в перенаправлении товаров advanced computing к неавторизованным конечным пользователям или для неавторизованного конечного использования.",
+          "published_at": "2026-11-25T12:30:00+00:00",
+          "published_date": "2026-11-25",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "US blacklists Megaspeed, but leaves potential loophole for lower-performance chips",
+              "publisher": "Tom's Hardware",
+              "url": "https://www.tomshardware.com/tech-industry/us-blacklists-megaspeed-but-leaves-potential-loophole-for-lower-performance-chips-company-at-center-of-jensen-huang-affair-scandal-added-to-entity-list"
+            },
+            {
+              "title": "Additions to the Entity List",
+              "publisher": "U.S. Department of Commerce, Bureau of Industry and Security",
+              "url": "https://public-inspection.federalregister.gov/2026-23999.pdf"
+            }
+          ],
+          "keywords": [
+            "BIS",
+            "Entity List",
+            "Megaspeed",
+            "advanced computing",
+            "AI accelerators",
+            "export controls",
+            "Malaysia",
+            "Singapore",
+            "Thailand"
+          ],
+          "geography": "world",
+          "category": "regulation"
+        },
+        {
+          "candidate_id": "cand-007",
+          "section": "world",
+          "headline": "FCC условно одобрила проект SpaceX Starmind с вычислительными модулями на орбите",
+          "organization": "SpaceX; Federal Communications Commission (FCC)",
+          "topic": "Орбитальные AI-дата-центры; спутниковая инфраструктура; вычисления для ИИ; регулирование связи",
+          "event_type": "Регуляторное разрешение",
+          "status": "new",
+          "summary": "FCC 25 ноября 2026 года дала SpaceX условное разрешение на развертывание и эксплуатацию предложенной системы Starmind — группировки до 1 млн «orbital compute modules», предназначенных для обработки данных на орбите и использования результатов на Земле.",
+          "published_at": "2026-11-25T20:56:44+00:00",
+          "published_date": "2026-11-25",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "FCC approves SpaceX plan to put AI data centers in space",
+              "publisher": "TechCrunch",
+              "url": "https://techcrunch.com/2026/11/25/fcc-approves-spacex-plan-to-put-ai-data-centers-in-space/"
+            },
+            {
+              "title": "FCC says SpaceX can deploy 1 million satellites for data centers in space. Scientists are skeptical",
+              "publisher": "Associated Press",
+              "url": "https://apnews.com/article/b9897fe06f851ffaf92fd304ae69075c"
+            },
+            {
+              "title": "AAS Leadership Available to Comment on FCC Approval of SpaceX's Orbital Data Center System",
+              "publisher": "American Astronomical Society",
+              "url": "https://aas.org/press/spacex-data-center-fcc-approval"
+            }
+          ],
+          "keywords": [
+            "SpaceX",
+            "FCC",
+            "Starmind",
+            "orbital data centers",
+            "1 million satellites",
+            "AI infrastructure",
+            "satellite constellation"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        },
+        {
+          "candidate_id": "cand-004",
+          "section": "world",
+          "headline": "GitHub изменит default-биллинг Copilot code review: расходы перейдут на организацию",
+          "organization": "GitHub; Microsoft; GitHub Copilot",
+          "topic": "GitHub Copilot; code review; enterprise administration; AI Credits; billing policy; developer tools",
+          "event_type": "policy and billing change",
+          "status": "new",
+          "summary": "GitHub объявила, что с 30 декабря 2026 года code reviews, созданные лицензированными пользователями Copilot при отсутствии ранее выбранного режима оплаты, будут списываться с организации-владельца репозитория. Изменение касается Copilot Business и Copilot Enterprise и может увеличить расходы организаций при включённом AI Credits paid usage.",
+          "published_at": "2026-11-25T14:18:03-08:00",
+          "published_date": "2026-11-25",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Copilot code review billing will default to the organization",
+              "publisher": "GitHub Changelog",
+              "url": "https://github.blog/changelog/2026-11-25-copilot-code-review-billing-will-default-to-the-organization/"
+            }
+          ],
+          "keywords": [
+            "GitHub Copilot",
+            "code review",
+            "AI Credits",
+            "billing",
+            "Copilot Business",
+            "Copilot Enterprise",
+            "organization policy"
+          ],
+          "geography": "world",
+          "category": "enterprise"
+        },
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "Обновление: Qwen Code 0.28.7 перевела CLI на Harness kernel и добавила совместимость с модами Claude Code",
+          "organization": "Alibaba; Qwen; Qwen Code",
+          "topic": "CLI coding agents; Qwen Code; Harness kernel; совместимость с Claude Code mods; managed sessions; tool calling; privacy",
+          "event_type": "product release",
+          "status": "update",
+          "summary": "Qwen Code 0.28.7 переносит CLI на Harness kernel, по умолчанию отключает сбор usage-статистики и добавляет загрузку модов, написанных для Claude Code 2.1.332. В релиз также вошли улучшения восстановления и takeover управляемых сессий между control-plane-инстансами, хранение Web Terminal tickets в SQL и изменение обработки tool-call loops.",
+          "published_at": "2026-11-26T18:04:26+00:00",
+          "published_date": "2026-11-26",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Release v0.28.7",
+              "publisher": "QwenLM / GitHub",
+              "url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.28.7"
+            }
+          ],
+          "keywords": [
+            "Qwen Code",
+            "Harness kernel",
+            "Claude Code mods",
+            "CLI agent",
+            "managed sessions",
+            "tool calling",
+            "privacy"
+          ],
+          "geography": "world",
+          "category": "coding"
+        },
+        {
+          "candidate_id": "cand-005",
+          "section": "russia",
+          "headline": "Яндекс объявил доступность DataLens для ИИ-агентов на всех этапах работы с данными",
+          "organization": "Яндекс",
+          "topic": "26 ноября 2026Платформа DataLens стала доступна для ИИ-агентов на всех этапах работы с данными",
+          "event_type": "source_pulse_official_update",
+          "status": "new",
+          "summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+          "published_at": null,
+          "published_date": "2026-11-26",
+          "time_precision": "date",
+          "sources": [
+            {
+              "title": "26 ноября 2026Платформа DataLens стала доступна для ИИ-агентов на всех этапах работы с данными",
+              "publisher": "Яндекс",
+              "url": "https://ir.yandex.ru/press-releases?year=2026&id=26-11-2026-01"
+            }
+          ],
+          "keywords": [
+            "26",
+            "ноября",
+            "2026Платформа",
+            "DataLens",
+            "стала",
+            "доступна",
+            "для",
+            "ИИ-агентов",
+            "на",
+            "всех",
+            "этапах",
+            "работы"
+          ],
+          "geography": "russia",
+          "category": "investment"
+        }
+      ]
+    },
     {
       "date": "2026-11-26",
       "published_at": "2026-11-26T06:00:00+03:00",
@@ -6361,10 +6574,10 @@
     {
       "date": "2026-10-24",
       "published_at": "2026-10-24T06:00:00+03:00",
-      "search_cutoff_at": "2026-10-24T04:35:28+03:00",
+      "search_cutoff_at": "2026-10-24T06:00:00+03:00",
       "title": "ИИ-Сводка на 24 октября 2026",
       "link": "https://rybalka.one/posts/2026-10-24/",
-      "summary": "Главные новости искусственного интеллекта за 24 октября 2026 года Повестка дня показывает переход агентных систем от экспериментов к операционному использованию — но вместе с этим растёт цена контроля. OpenAI меняет среду обучения frontier-моделей, Anthropic и Replit расширяют автономные рабочие сценарии, а крупные компании начинают разворачивать ИИ для всего штата. Одновременно инфраструктурный слой становится самостоятельным полем конкуренции: NVIDIA выводит наблюдаемость ИИ-фабрик в отдельную",
+      "summary": "OpenAI изолирует обучение frontier-моделей от живого интернета, Anthropic запускает Claude Duet, Uber масштабирует ChatGPT Work, а DeepSeek привлекает около $15 млрд.",
       "topics": [
         "OpenAI",
         "безопасность frontier-моделей",

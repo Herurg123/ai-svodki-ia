@@ -1,0 +1,671 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-11-27",
+  "search_window": {
+    "start_at": "2026-11-25T05:06:38+03:00",
+    "end_at": "2026-11-27T05:06:40+03:00",
+    "latest_archive_at": "2026-11-26T05:06:38+03:00",
+    "start_date": "2026-11-25",
+    "end_date": "2026-11-27",
+    "latest_archive_date": "2026-11-26"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=0, rejected=1."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=3, accepted=3, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "TSMC начинает пятую фазу расширения производства чипов в Аризоне; Трамп выступит на церемонии закладки",
+      "organization": "Taiwan Semiconductor Manufacturing Co. (TSMC); Белый дом США",
+      "published_date": "2026-11-26",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "AI-инфраструктура; производство полупроводников в США; мощности для Nvidia, AMD, Apple, Broadcom и Qualcomm; CHIPS policy",
+      "event_type": "infrastructure expansion announcement",
+      "keywords": [
+        "TSMC",
+        "Arizona",
+        "semiconductor manufacturing",
+        "AI chips",
+        "foundry",
+        "US manufacturing",
+        "supply chain",
+        "CHIPS Act"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "Trump heads to Arizona next week for a high-stakes expansion of TSMC’s computer chip factories",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/tsmc-computer-chips-arizona-trump-cdc7faa84895ddeb19bd114061e9dd85"
+      },
+      "supporting_sources": [],
+      "event_summary": "Associated Press сообщило, что Дональд Трамп 4 декабря выступит на закладке пятой фазы расширения фабрик TSMC в Аризоне. По данным AP, ранее TSMC заявляла о дополнительных $100 млрд инвестиций в производство в США, доведя общий объём заявленных вложений до $265 млрд; площадка выпускает чипы для крупных поставщиков AI-вычислений и электроники.",
+      "verified_facts": [
+        "AP сообщает о планируемом выступлении президента США на церемонии начала строительства пятой фазы TSMC в Аризоне 4 декабря.",
+        "AP указывает, что TSMC в июле объявляла о ещё $100 млрд инвестиций в расширение производства в США, доведя общий заявленный объём до $265 млрд.",
+        "Аризонские мощности TSMC используются для производства чипов для Nvidia, Apple, AMD, Broadcom и Qualcomm."
+      ],
+      "significance": "Крупное расширение американской foundry-инфраструктуры затрагивает доступность и устойчивость цепочки поставок AI-ускорителей. Однако свежий факт — объявление о церемонии и старте следующей фазы, тогда как основной инвестиционный план был заявлен ранее.",
+      "significance_score": 3,
+      "limitations": "В найденной AP-странице не извлечён точный timestamp публикации и не открыт первичный релиз TSMC или Белого дома; происхождение даты события подтверждено только авторитетным вторичным источником. Значительная часть инвестиционного обязательства была объявлена ранее.",
+      "archive_status": "none",
+      "archive_reason": "В предоставленном архиве нет отдельного сюжета о пятой фазе расширения TSMC в Аризоне или о церемонии её закладки.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "AP прямо связывает новость с пятой фазой расширения TSMC в Аризоне и приводит параметры ранее заявленной программы инвестиций. Сниппет поиска обозначает публикацию как вышедшую «yesterday» относительно 27 ноября 2026 года; страница была открыта для проверки содержания.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие относится к промышленной и инфраструктурной экспансии, а не к судебному или регуляторному решению.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран по инфраструктурной значимости.",
+      "event_date": "2026-11-26",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://apnews.com/article/tsmc-computer-chips-arizona-trump-cdc7faa84895ddeb19bd114061e9dd85",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "AP опубликовало сообщение как материал предыдущего дня относительно 27 ноября 2026 года и описало подтверждённые Белым домом и TSMC планы церемонии; точное время первичного объявления не было доступно.",
+      "id": "cand-001",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    },
+    {
+      "title": "Alibaba Qwen выпустила Qwen Code 0.28.7: CLI переведён на Harness kernel и получил совместимость с модами Claude Code",
+      "organization": "Alibaba; Qwen; Qwen Code",
+      "published_date": "2026-11-26",
+      "published_at": "2026-11-26T18:04:26+00:00",
+      "time_precision": "datetime",
+      "topic": "CLI coding agents; Qwen Code; Harness kernel; совместимость с Claude Code mods; managed sessions; tool calling; privacy",
+      "event_type": "product release",
+      "keywords": [
+        "Qwen Code",
+        "Harness kernel",
+        "Claude Code mods",
+        "CLI agent",
+        "managed sessions",
+        "tool calling",
+        "privacy"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Release v0.28.7",
+        "publisher": "QwenLM / GitHub",
+        "url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.28.7"
+      },
+      "supporting_sources": [],
+      "event_summary": "Qwen Code 0.28.7 переносит CLI на Harness kernel, по умолчанию отключает сбор usage-статистики и добавляет загрузку модов, написанных для Claude Code 2.1.332. В релиз также вошли улучшения восстановления и takeover управляемых сессий между control-plane-инстансами, хранение Web Terminal tickets в SQL и изменение обработки tool-call loops.",
+      "verified_facts": [
+        "Официальная страница GitHub фиксирует релиз v0.28.7 26 ноября 2026 года.",
+        "Qwen Code CLI стал доступен на Harness kernel; usage statistics отключена по умолчанию, пока не включён соответствующий параметр.",
+        "Релиз заявляет совместимость модов Claude Code 2.1.332 с Qwen Code.",
+        "Qwen Code прекращает самостоятельно выявлять model loops и ограничивать число tool calls, передавая результаты и ошибки модели без изменений."
+      ],
+      "significance": "Это заметное архитектурное обновление крупного CLI-агента: оно объединяет runtime-основу, расширяет переносимость экосистемы Claude Code и развивает отказоустойчивые managed-agent сценарии, а не ограничивается обычными исправлениями интерфейса.",
+      "significance_score": 3,
+      "limitations": "Независимой оценки стабильности Harness kernel, совместимости модов и последствий отмены локального ограничения tool calls нет; факты основаны на release notes разработчика.",
+      "archive_status": "update",
+      "archive_reason": "В архиве уже был Qwen Code 0.28.3 от 22 ноября; v0.28.7 является самостоятельным существенным обновлением той же линейки.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверено по официальным release notes репозитория QwenLM. Дата страницы — 26 ноября; показанное GitHub время не сопровождается timezone, поэтому published_at и event_at не заполняются.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/QwenLM/qwen-code/releases/tags/v0.28.7=2026-11-26T18:04:26Z; timestamp проверен Python против effective window. Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/QwenLM/qwen-code/releases/tags/v0.28.7=2026-11-26T18:04:26Z; timestamp проверен Python против effective window. Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/QwenLM/qwen-code/releases/tags/v0.28.7=2026-11-26T18:04:26Z; timestamp проверен Python против effective window. Релиз опубликован 26 ноября в effective window и содержит новую runtime-основу, межинстансное восстановление сессий и совместимость с Claude Code mods.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат отобран по тематической важности для developer tools.",
+      "event_date": "2026-11-26",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.28.7",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Официальная страница GitHub release v0.28.7 указывает, что релиз опубликован 26 ноября 2026 года.",
+      "id": "cand-002",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://github.com/QwenLM/qwen-code/releases/tag/v0.28.7",
+      "source_published_date": "2026-11-26",
+      "source_published_at": "2026-11-26T18:04:26+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "github-releases-api:published_at:https://api.github.com/repos/QwenLM/qwen-code/releases/tags/v0.28.7=2026-11-26T18:04:26Z"
+    },
+    {
+      "title": "OpenCode 2.4.2 добавила оптимизированный системный prompt для GPT-6.2 и уточнила безопасность web-fetch approvals",
+      "organization": "Anomaly; OpenCode",
+      "published_date": "2026-11-26",
+      "published_at": "2026-11-26T00:59:05+00:00",
+      "time_precision": "datetime",
+      "topic": "open-source coding agents; OpenCode; GPT-6.2; agent automations; web fetch permissions; MCP; desktop updates",
+      "event_type": "product release",
+      "keywords": [
+        "OpenCode",
+        "GPT-6.2",
+        "system prompt",
+        "automations",
+        "web fetch approvals",
+        "MCP",
+        "coding agent"
+      ],
+      "geography": "world",
+      "category": "coding",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Release v2.4.2",
+        "publisher": "anomalyco / GitHub",
+        "url": "https://github.com/anomalyco/opencode/releases/tag/v2.4.2"
+      },
+      "supporting_sources": [],
+      "event_summary": "OpenCode 2.4.2 вводит специализированный системный prompt для GPT-6.2 Sol, Astra и aliases gpt-latest. Релиз также меняет семантику «Always allow» для web fetch — разрешение теперь относится к конкретному сайту, — корректирует выполнение автоматизаций после ошибок и исправляет подключение к MCP-серверам с query string в URL.",
+      "verified_facts": [
+        "Официальная GitHub-страница фиксирует релиз v2.4.2 26 ноября 2026 года.",
+        "GPT-6.2 Sol, Astra и gpt-latest aliases используют новый системный prompt, предназначенный для GPT-6.2.",
+        "Новая семантика web-fetch approval ограничивает «Always allow» конкретным сайтом вместо всех URL.",
+        "Релиз исправляет sign-in к MCP-серверам, у которых URL содержит query string, включая указанный в notes пример AWS MCP Server."
+      ],
+      "significance": "Обновление затрагивает поведение популярного open-source агентного окружения с GPT-6.2, безопасность постоянных разрешений на web fetch и надёжность MCP-интеграций. Однако это всё же точечный релиз после уже опубликованного крупного OpenCode 2.4.0.",
+      "significance_score": 2,
+      "limitations": "Нет независимого тестирования эффекта нового prompt GPT-6.2 и изменённой модели разрешений; перечень изменений основан на release notes разработчика.",
+      "archive_status": "update",
+      "archive_reason": "OpenCode 2.4.0 уже освещалась 25 ноября; версия 2.4.2 — последующее обновление с отдельными model-behavior и permission changes.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Проверено по официальной странице GitHub release. Время публикации отображено без timezone, поэтому точный datetime не указывается.",
+      "freshness_status": "material_update",
+      "freshness_reason": "Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/anomalyco/opencode/releases/tags/v2.4.2=2026-11-26T00:59:05Z; timestamp проверен Python против effective window. Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/anomalyco/opencode/releases/tags/v2.4.2=2026-11-26T00:59:05Z; timestamp проверен Python против effective window. Source Freshness Proof v1: github-releases-api:published_at:https://api.github.com/repos/anomalyco/opencode/releases/tags/v2.4.2=2026-11-26T00:59:05Z; timestamp проверен Python против effective window. Релиз от 26 ноября находится в effective window и вносит новые изменения в GPT-6.2 integration, policy web-fetch approvals и MCP connectivity.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Не является юридическим событием.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: это тематический кандидат developer tools.",
+      "event_date": "2026-11-26",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.com/anomalyco/opencode/releases/tag/v2.4.2",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "Официальная страница GitHub release v2.4.2 сообщает о публикации 26 ноября 2026 года.",
+      "id": "cand-003",
+      "event_freshness_status": "fresh",
+      "event_freshness_reason": "reliable event date is unambiguously inside the effective window",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://github.com/anomalyco/opencode/releases/tag/v2.4.2",
+      "source_published_date": "2026-11-26",
+      "source_published_at": "2026-11-26T00:59:05+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "github-releases-api:published_at:https://api.github.com/repos/anomalyco/opencode/releases/tags/v2.4.2=2026-11-26T00:59:05Z"
+    },
+    {
+      "title": "GitHub изменит default-биллинг Copilot code review: расходы по умолчанию перейдут на организацию",
+      "organization": "GitHub; Microsoft; GitHub Copilot",
+      "published_date": "2026-11-25",
+      "published_at": "2026-11-25T14:18:03-08:00",
+      "time_precision": "datetime",
+      "topic": "GitHub Copilot; code review; enterprise administration; AI Credits; billing policy; developer tools",
+      "event_type": "policy and billing change",
+      "keywords": [
+        "GitHub Copilot",
+        "code review",
+        "AI Credits",
+        "billing",
+        "Copilot Business",
+        "Copilot Enterprise",
+        "organization policy"
+      ],
+      "geography": "world",
+      "category": "enterprise",
+      "source_type": "official",
+      "primary_source": {
+        "title": "Copilot code review billing will default to the organization",
+        "publisher": "GitHub Changelog",
+        "url": "https://github.blog/changelog/2026-11-25-copilot-code-review-billing-will-default-to-the-organization/"
+      },
+      "supporting_sources": [],
+      "event_summary": "GitHub объявила, что с 30 декабря 2026 года code reviews, созданные лицензированными пользователями Copilot при отсутствии ранее выбранного режима оплаты, будут списываться с организации-владельца репозитория. Изменение касается Copilot Business и Copilot Enterprise и может увеличить расходы организаций при включённом AI Credits paid usage.",
+      "verified_facts": [
+        "Официальный GitHub Changelog датирован 25 ноября 2026 года.",
+        "С 30 декабря 2026 года default для невыбранной billing setting меняется с использования entitlement участника на оплату организацией-владельцем репозитория.",
+        "Изменение относится к организациям и предприятиям с Copilot Business или Copilot Enterprise.",
+        "GitHub прямо указывает, что organization billing требует AI Credits paid usage и может повысить расходы организации."
+      ],
+      "significance": "Это не новый агентный capability, но масштабное операционное и бюджетное изменение для enterprise-пользователей Copilot code review: оно способно повлиять на настройку политик и потребление AI Credits в организациях.",
+      "significance_score": 2,
+      "limitations": "Это объявление об изменении биллинга с будущей датой вступления в силу, а не свидетельство уже произошедшего изменения расходов; оценка масштаба затронутых клиентов отсутствует.",
+      "archive_status": "none",
+      "archive_reason": "",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Проверено по официальному GitHub Changelog. Страница указывает календарную дату публикации, но не предоставляет timezone-aware timestamp.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: jsonld:datePublished:depth=0=2026-11-25T14:18:03-08:00; timestamp проверен Python против effective window. Source Freshness Proof v1: jsonld:datePublished:depth=0=2026-11-25T14:18:03-08:00; timestamp проверен Python против effective window. Source Freshness Proof v1: jsonld:datePublished:depth=0=2026-11-25T14:18:03-08:00; timestamp проверен Python против effective window. Официальное объявление опубликовано 25 ноября в effective window; в предоставленном архиве точного сюжета о смене default-биллинга Copilot code review нет.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Это коммерческая настройка продукта и биллинга, а не судебное или регуляторное событие.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: кандидат релевантен enterprise-эксплуатации coding agent.",
+      "event_date": "2026-11-25",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://github.blog/changelog/2026-11-25-copilot-code-review-billing-will-default-to-the-organization/",
+      "event_evidence_kind": "official_announcement",
+      "event_date_evidence": "Официальная страница GitHub Changelog явно датирована 25 ноября 2026 года.",
+      "id": "cand-004",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://github.blog/changelog/2026-11-25-copilot-code-review-billing-will-default-to-the-organization/",
+      "source_published_date": "2026-11-25",
+      "source_published_at": "2026-11-25T14:18:03-08:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "jsonld:datePublished:depth=0=2026-11-25T14:18:03-08:00"
+    },
+    {
+      "title": "26 ноября 2026Платформа DataLens стала доступна для ИИ-агентов на всех этапах работы с данными",
+      "organization": "Яндекс",
+      "published_date": "2026-11-26",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "26 ноября 2026Платформа DataLens стала доступна для ИИ-агентов на всех этапах работы с данными",
+      "event_type": "source_pulse_official_update",
+      "keywords": [
+        "26",
+        "ноября",
+        "2026Платформа",
+        "DataLens",
+        "стала",
+        "доступна",
+        "для",
+        "ИИ-агентов",
+        "на",
+        "всех",
+        "этапах",
+        "работы"
+      ],
+      "geography": "russia",
+      "category": "investment",
+      "source_type": "official",
+      "primary_source": {
+        "title": "26 ноября 2026Платформа DataLens стала доступна для ИИ-агентов на всех этапах работы с данными",
+        "publisher": "Яндекс",
+        "url": "https://ir.yandex.ru/press-releases?year=2026&id=26-11-2026-01"
+      },
+      "supporting_sources": [],
+      "event_summary": "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках.",
+      "verified_facts": [
+        "26 ноября 2026Платформа DataLens стала доступна для ИИ-агентов на всех этапах работы с данными",
+        "Сайт для частных инвесторов Яндекса содержит информацию про бизнесы и технологии компании, а также географию присутствия, финансовые результаты, важные новости и многое другое о компании и её рынках."
+      ],
+      "significance": "Source Pulse supplemental lead; значимость не повышалась автоматически и должна быть решена штатным editorial.",
+      "significance_score": 3,
+      "limitations": "Детерминированный source-aware lead без модельного semantic enrichment; при слабой содержательности editorial должен его отклонить.",
+      "archive_status": "none",
+      "archive_reason": "Точный URL не найден в недавнем архиве Source Pulse на этапе discovery.",
+      "recommendation": "consider",
+      "verification_status": "verified",
+      "verification_notes": "Source Pulse v1.2 + Source Freshness Proof: meta:datepublished=2026-11-26; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: yandex:url+visible-date=26 ноября 2026; timestamp проверен Python против effective window. Source Freshness Proof v1: yandex:url+visible-date=26 ноября 2026; timestamp проверен Python против effective window. Source Freshness Proof v1: yandex:url+visible-date=26 ноября 2026; timestamp проверен Python против effective window. Source Pulse v1.2 + Source Freshness Proof: meta:datepublished=2026-11-26; официальный Tier-A URL проверен без OpenAI/Web Search.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "audit_direction": "source_pulse_v12",
+      "id": "cand-005",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://ir.yandex.ru/press-releases?year=2026&id=26-11-2026-01",
+      "source_published_date": "2026-11-26",
+      "source_published_at": null,
+      "source_time_precision": "date",
+      "source_publication_evidence": "yandex:url+visible-date=26 ноября 2026"
+    },
+    {
+      "title": "США внесли семь связанных с Megaspeed компаний в Entity List из-за риска перенаправления передовых вычислительных товаров",
+      "organization": "U.S. Department of Commerce; Bureau of Industry and Security; Megaspeed International; MSFusion; Speedmatrix; Apex Enterprise Solutions; Swiftdata",
+      "published_date": "2026-11-25",
+      "published_at": "2026-11-25T12:30:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Экспортный контроль США; AI-ускорители; риск реэкспорта передовых вычислительных товаров; Юго-Восточная Азия; Китай",
+      "event_type": "regulatory action",
+      "keywords": [
+        "BIS",
+        "Entity List",
+        "Megaspeed",
+        "advanced computing",
+        "AI accelerators",
+        "export controls",
+        "Malaysia",
+        "Singapore",
+        "Thailand"
+      ],
+      "geography": "world",
+      "category": "regulation",
+      "source_type": "government",
+      "primary_source": {
+        "title": "US blacklists Megaspeed, but leaves potential loophole for lower-performance chips",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/tech-industry/us-blacklists-megaspeed-but-leaves-potential-loophole-for-lower-performance-chips-company-at-center-of-jensen-huang-affair-scandal-added-to-entity-list"
+      },
+      "supporting_sources": [
+        {
+          "title": "Additions to the Entity List",
+          "publisher": "U.S. Department of Commerce, Bureau of Industry and Security",
+          "url": "https://public-inspection.federalregister.gov/2026-23999.pdf"
+        }
+      ],
+      "event_summary": "BIS добавило в Entity List семь компаний из Малайзии, Сингапура и Таиланда, включая структуры Megaspeed. Регулятор указал на значительный риск их участия в перенаправлении товаров advanced computing к неавторизованным конечным пользователям или для неавторизованного конечного использования.",
+      "verified_facts": [
+        "Финальное правило BIS опубликовано 25 ноября 2026 года.",
+        "В список внесены семь организаций, среди которых PT Megaspeed International и Megaspeed International Pte. Ltd.",
+        "Для перечисленных компаний установлено лицензионное требование на все товары, подпадающие под EAR, а заявки подлежат рассмотрению с презумпцией отказа.",
+        "Основанием назван риск diversion advanced-computing commodities к неавторизованным end uses или end users."
+      ],
+      "significance": "Это самостоятельное и юридически значимое расширение американских экспортных ограничений вокруг цепочек поставок вычислений для ИИ. Оно затрагивает посредников в ключевых азиатских хабах и усиливает контроль над доступом к передовым вычислительным товарам, используемым в AI-инфраструктуре.",
+      "significance_score": 4,
+      "limitations": "Официальный документ не называет конкретные модели GPU, конечных получателей или объёмы поставок. Связь с поставками AI-ускорителей следует из предмета advanced computing и отраслевого контекста, а не из перечисления конкретных чипов в самом правиле.",
+      "archive_status": "none",
+      "archive_reason": "В недавнем архиве нет этого регуляторного действия BIS или внесения Megaspeed и связанных структур в Entity List.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверено по первичному документу BIS в Federal Register public inspection: документ перечисляет семь организаций, мотивировку, лицензионные требования и policy of denial.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-11-25T12:30:00Z; timestamp проверен Python против effective window. Source Freshness Proof v1: meta:article:published_time=2026-11-25T12:30:00Z; timestamp проверен Python против effective window. Это новое финальное регуляторное действие, опубликованное 25 ноября 2026 года, а не пересказ или последующий комментарий к прежним экспортным ограничениям.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не относится к категории curiosity: это существенное регуляторное событие с непосредственным влиянием на цепочки поставок AI-вычислений.",
+      "event_date": "2026-11-25",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://public-inspection.federalregister.gov/2026-23999.pdf",
+      "event_evidence_kind": "official_release",
+      "event_date_evidence": "В первичном документе указано: «Publication Date: 11/25/2026»; документ был запланирован к публикации в Federal Register 25 ноября 2026 года.",
+      "audit_direction": "hybrid_safety_policy_regions",
+      "id": "cand-006",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.tomshardware.com/tech-industry/us-blacklists-megaspeed-but-leaves-potential-loophole-for-lower-performance-chips-company-at-center-of-jensen-huang-affair-scandal-added-to-entity-list",
+      "source_published_date": "2026-11-25",
+      "source_published_at": "2026-11-25T12:30:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-11-25T12:30:00Z"
+    },
+    {
+      "title": "FCC условно одобрила SpaceX развертывание до 1 млн спутниковых вычислительных модулей для орбитальной сети дата-центров Starmind",
+      "organization": "SpaceX; Federal Communications Commission (FCC)",
+      "published_date": "2026-11-25",
+      "published_at": "2026-11-25T20:56:44+00:00",
+      "time_precision": "datetime",
+      "topic": "Орбитальные AI-дата-центры; спутниковая инфраструктура; вычисления для ИИ; регулирование связи",
+      "event_type": "Регуляторное разрешение",
+      "keywords": [
+        "SpaceX",
+        "FCC",
+        "Starmind",
+        "orbital data centers",
+        "1 million satellites",
+        "AI infrastructure",
+        "satellite constellation"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "government",
+      "primary_source": {
+        "title": "FCC approves SpaceX plan to put AI data centers in space",
+        "publisher": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/25/fcc-approves-spacex-plan-to-put-ai-data-centers-in-space/"
+      },
+      "supporting_sources": [
+        {
+          "title": "FCC says SpaceX can deploy 1 million satellites for data centers in space. Scientists are skeptical",
+          "publisher": "Associated Press",
+          "url": "https://apnews.com/article/b9897fe06f851ffaf92fd304ae69075c"
+        },
+        {
+          "title": "AAS Leadership Available to Comment on FCC Approval of SpaceX's Orbital Data Center System",
+          "publisher": "American Astronomical Society",
+          "url": "https://aas.org/press/spacex-data-center-fcc-approval"
+        }
+      ],
+      "event_summary": "FCC 25 ноября 2026 года дала SpaceX условное разрешение на развертывание и эксплуатацию предложенной системы Starmind — группировки до 1 млн «orbital compute modules», предназначенных для обработки данных на орбите и использования результатов на Земле.",
+      "verified_facts": [
+        "Американское астрономическое общество указывает, что FCC предоставила SpaceX разрешение 25 ноября 2026 года.",
+        "Разрешение охватывает предложенную SpaceX систему Starmind из до 1 млн спутников в низкой околоземной орбите.",
+        "AP и TechCrunch подтверждают, что речь идет о спутниковой инфраструктуре для орбитальных дата-центров/вычислений, а не о немедленном запуске миллиона аппаратов.",
+        "Одобрение является регуляторным разрешением, а не доказательством технической или коммерческой реализуемости всей группировки."
+      ],
+      "significance": "Это беспрецедентное по масштабу разрешение на потенциальную AI-вычислительную инфраструктуру в космосе: оно открывает SpaceX регуляторный путь для проекта до 1 млн аппаратов и способно повлиять на рынок AI-инфраструктуры, использование орбит и вопросы астрономических и экологических рисков.",
+      "significance_score": 5,
+      "limitations": "Публично подтверждено разрешение до указанного предела, но не развертывание, готовность оборудования, график запусков, финансирование или экономическая жизнеспособность всей сети. Точный timestamp решения в доступных материалах не установлен.",
+      "archive_status": "none",
+      "archive_reason": "В архиве за 12–26 ноября 2026 года нет истории о разрешении FCC для Starmind или SpaceX orbital data centers.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Событие независимо подтверждено TechCrunch, Associated Press и American Astronomical Society; AAS прямо датирует выдачу разрешения FCC 25 ноября 2026 года.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-11-25T20:56:44+00:00; timestamp проверен Python против effective window. Регуляторное решение произошло 25 ноября 2026 года, внутри окна 2026-11-25T05:06:38+03:00 → 2026-11-27T05:06:40+03:00.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применяется: это существенное инфраструктурное и регуляторное событие, а не curiosity-материал.",
+      "event_date": "2026-11-25",
+      "event_at": null,
+      "event_time_precision": "date",
+      "event_origin_url": "https://aas.org/press/spacex-data-center-fcc-approval",
+      "event_evidence_kind": "authoritative_secondary",
+      "event_date_evidence": "American Astronomical Society прямо сообщает, что FCC предоставила SpaceX разрешение в среду, 25 ноября 2026 года; дата согласуется с публикацией TechCrunch от 25 ноября.",
+      "audit_direction": "unresolved_resolution",
+      "resolution_signal_ids": [
+        "sig-global_breaking-03"
+      ],
+      "id": "cand-007",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "reliable date-only event evidence falls on a partial boundary day; exact inclusion cannot be proved, so recall is preserved",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://techcrunch.com/2026/11/25/fcc-approves-spacex-plan-to-put-ai-data-centers-in-space/",
+      "source_published_date": "2026-11-25",
+      "source_published_at": "2026-11-25T20:56:44+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-11-25T20:56:44+00:00"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=5, validated unique=4, final candidates=4. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.\nTargeted coverage audit добавил кандидатов: 1.\nTargeted coverage audit добавил кандидатов: 1.\nTargeted coverage audit добавил кандидатов: 1.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-global_breaking-03",
+      "version": 1,
+      "status": "unresolved",
+      "title": "FCC signs off on SpaceX’s plan to put up to 1 million data center satellites into space",
+      "origin_direction": "global_breaking",
+      "reason_code": "unverified",
+      "evidence_reason": "Агрегатор приводит чрезвычайно значимое утверждение, но первичное решение FCC и его дата не были доступны для проверки; агрегированный пересказ недостаточен.",
+      "likely_significance_score": 4,
+      "entities": [
+        "FCC",
+        "SpaceX"
+      ],
+      "anchors": [
+        "1 million"
+      ],
+      "source_hint": null,
+      "resolution_required": true,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-global_breaking-04",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Microsoft details how state-backed hackers use the ARTEX AI framework to automate cyberattacks",
+      "origin_direction": "global_breaking",
+      "reason_code": "unverified",
+      "evidence_reason": "В доступном агрегированном описании отсутствуют первичный отчёт Microsoft и проверяемая дата его публикации; нельзя надёжно установить факты и свежесть.",
+      "likely_significance_score": 1,
+      "entities": [
+        "Microsoft",
+        "ARTEX"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-global_breaking-05",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Amazon and Meta reportedly in talks to lift blockade on AI agent Muse",
+      "origin_direction": "global_breaking",
+      "reason_code": "unverified",
+      "evidence_reason": "Это сообщение о переговорах со ссылкой на вторичные публикации; в доступных данных нет надёжно проверяемой исходной страницы и timestamp в редакционном окне.",
+      "likely_significance_score": 1,
+      "entities": [
+        "Amazon",
+        "Meta",
+        "Muse"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-russia-03",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Минцифры опубликовало проект федерального закона о госрегулировании ИИ в России",
+      "origin_direction": "russia",
+      "reason_code": "unverified",
+      "evidence_reason": "Результат ведёт на Telegram-ленту с пересказом «Коммерсанта» без доказуемой даты исходного анонса или официальной страницы законопроекта в пределах текущего editorial window; подтверждённого нового события для включения не установлено.",
+      "likely_significance_score": 0,
+      "entities": [],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

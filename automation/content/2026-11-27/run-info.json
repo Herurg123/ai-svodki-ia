@@ -1,0 +1,165 @@
+{
+  "status": "ok",
+  "pipeline": "editorial_from_saved_research",
+  "request_id": "production-digest-2026-11-27",
+  "research_input": "automation/fixtures/research/.runtime/.coverage-audit-2026-11-27.json",
+  "warnings": [
+    "cand-001: источник показывает дату без точного времени.",
+    "cand-005: источник показывает дату без точного времени.",
+    "Выбрано 5 сюжетов при обычной цели 7; формируется короткий выпуск.",
+    "Обнаружено отдельное написание AI; проверь, не следует ли заменить его на ИИ."
+  ],
+  "publication_date": "2026-11-27",
+  "started_at": "2026-11-27T02:15:32+00:00",
+  "finished_at": "2026-11-27T02:16:02+00:00",
+  "model_requested": "gpt-5.6-terra",
+  "openai_sdk_version": "2.45.0",
+  "archive_items": 131,
+  "limits": {
+    "minimum_candidates": 7,
+    "maximum_candidates": 20,
+    "minimum_selected_stories": 7,
+    "maximum_selected_stories": 12,
+    "maximum_research_web_search_calls": 12
+  },
+  "research": {
+    "status": "ok",
+    "prompt_sha256": "40f0faaf0ada760245f948d13e5af81a737da3f1951af39f8cbf041b27aeb505",
+    "candidates_sha256": "cfde1c710257c2774c4697e73da6aedcc118097d9d69385af41c5bec4625e76d",
+    "settings": {
+      "source": "saved_fixture",
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "search_context_size": "high",
+      "return_token_budget": "default",
+      "max_tool_calls": 12,
+      "max_output_tokens": 16000,
+      "store": false
+    },
+    "response": {
+      "response_id": null,
+      "response_status": "reused",
+      "model_returned": null,
+      "web_search_calls": 0,
+      "usage": null
+    },
+    "error": null,
+    "temporal_anchor_version": 1,
+    "search_window": {
+      "start_at": "2026-11-25T05:06:38+03:00",
+      "end_at": "2026-11-27T05:06:40+03:00",
+      "latest_archive_at": "2026-11-26T05:06:38+03:00",
+      "start_date": "2026-11-25",
+      "end_date": "2026-11-27",
+      "latest_archive_date": "2026-11-26"
+    }
+  },
+  "editorial": {
+    "status": "ok",
+    "prompt_sha256": "b5010672f020ec4231f8f950a5e8d5b2bbb0b2e1e9a2e250ddb346ff273644f9",
+    "editorial_sha256": "ac683be75b58aac0376deb8e96accb12758811ef939a2ba8b50c2b6833273cdf",
+    "digest_sha256": "d1c2819ba861df1601788db68b059d7f767ac27d194dc2f9e99c97b1fd699b05",
+    "metadata_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "author",
+          "model_value": "ИИ-Сводка",
+          "normalized_value": "ИИ-сводки"
+        },
+        {
+          "field": "cover_filename",
+          "model_value": "ai-digest-2026-11-27.png",
+          "normalized_value": "ai-svodka-2026-11-27.png"
+        }
+      ],
+      "changed_count": 2
+    },
+    "policy_normalization": {
+      "status": "applied",
+      "changed_fields": [
+        {
+          "field": "article_html.h3[3]",
+          "model_value": "Qwen Code 0.28.7 перевела CLI на Harness kernel и добавила совместимость с модами Claude Code",
+          "normalized_value": "Обновление: Qwen Code 0.28.7 перевела CLI на Harness kernel и добавила совместимость с модами Claude Code"
+        },
+        {
+          "field": "article_html.short_digest_notice",
+          "model_value": null,
+          "normalized_value": "<p><em>Новостей сегодня меньше, чем обычно</em></p>"
+        },
+        {
+          "field": "image_prompt",
+          "model_value": "Изображение 16:9: современная футуристическая редакционная обложка ежедневного аналитического выпуска. Единственный крупный и читаемый текст в кадре: «ИИ-Сводка на 27 ноября 2026».\n\nГлавные визуальные темы: светящаяся глобальная карта цепочек поставок полупроводников с абстрактными контейнерными маршрутами и защищёнными вычислительными микросхемами; огромная орбитальная сеть из множества малых спутниковых вычислительных модулей над Землёй; защищённая панель контроля расходов на разработку без читаемых интерфейсных элементов; абстрактный агент ИИ, соединяющий аналитические графы данных и терминальную среду разработки.\n\nКомпозиция: в центре — Земля с тонкими орбитальными дугами и сетью вычислительных спутников; слева — физическая инфраструктура чипов и экспортных маршрутов, справа — светящиеся графы данных, агентный контур и символические панели управления бюджетом. В нижней зоне разместить крупный точный заголовок, без иных надписей; кадр плотный, сбалансированный, без пустой половины.\n\nСтиль: глубокая тёмно-синяя и графитовая палитра с акцентами электрического голубого, янтарного и белого; кинематографичная технологическая иллюстрация, высокая детализация, деловой редакционный характер. Без логотипов компаний, без дополнительного текста, без водяных знаков, без мелких интерфейсных надписей, без стокового корпоративного клипарта, без узнаваемых лиц реальных людей.",
+          "normalized_value": "Изображение 16:9: современная футуристическая редакционная обложка ежедневного аналитического выпуска. Единственный крупный и читаемый текст в кадре: «ИИ-Сводка на 27 ноября 2026».\n\nГлавные визуальные темы: светящаяся глобальная карта цепочек поставок полупроводников с абстрактными контейнерными маршрутами и защищёнными вычислительными микросхемами; огромная орбитальная сеть из множества малых спутниковых вычислительных модулей над Землёй; защищённая панель контроля расходов на разработку без читаемых интерфейсных элементов; абстрактный агент ИИ, соединяющий аналитические графы данных и терминальную среду разработки.\n\nКомпозиция: в центре — Земля с тонкими орбитальными дугами и сетью вычислительных спутников; слева — физическая инфраструктура чипов и экспортных маршрутов, справа — светящиеся графы данных, агентный контур и символические панели управления бюджетом. В нижней зоне разместить крупный точный заголовок, без иных надписей; кадр плотный, сбалансированный, без пустой половины.\n\nСтиль: глубокая тёмно-синяя и графитовая палитра с акцентами электрического голубого, янтарного и белого; кинематографичная технологическая иллюстрация, высокая детализация, деловой редакционный характер. Без логотипов компаний, без дополнительного текста, без водяных знаков, без мелких интерфейсных надписей, без стокового корпоративного клипарта, без узнаваемых лиц реальных людей. Обязательные ограничения: без пустой половины кадра."
+        }
+      ],
+      "changed_count": 3,
+      "short_digest": true,
+      "editorial_notes": [
+        {
+          "type": "low_news_volume",
+          "area": "total",
+          "message": "После проверки свежести и значимости выбрано 5 сюжетов."
+        },
+        {
+          "type": "time_precision",
+          "area": "sources",
+          "message": "У части источников доступна только дата без точного времени: cand-005."
+        },
+        {
+          "type": "source_gap",
+          "area": "research",
+          "message": "Пробелы покрытия research: global_breaking, models_products_agents, infrastructure_chips_cloud, business_investment_partnerships, china_asia_models, china_asia_integrations, russia, security_safety, legal_regulation, independent_missing_events."
+        }
+      ]
+    },
+    "settings": {
+      "max_retries": 2,
+      "reasoning_effort": "medium",
+      "web_search": false,
+      "max_output_tokens": 18000,
+      "store": false
+    },
+    "response": {
+      "response_id": "resp_0f71cbd34c8ce36f016b08e7c5328c87d0a194eda81d0ffbd2",
+      "response_status": "completed",
+      "model_returned": "gpt-5.6-terra",
+      "web_search_calls": 0,
+      "usage": {
+        "input_tokens": 252142,
+        "input_tokens_details": {
+          "cache_write_tokens": 12819,
+          "cached_tokens": 239320,
+          "cache_write_tokens_details": {
+            "ttl_12h_tokens": 0,
+            "ttl_30m_tokens": 12819
+          }
+        },
+        "output_tokens": 3277,
+        "output_tokens_details": {
+          "reasoning_tokens": 218
+        },
+        "total_tokens": 255419
+      }
+    },
+    "error": null,
+    "raw_attempt_file": "production-daily/editorial-attempts/2026-11-27/resp_0f71cbd34c8ce36f016b08e7c5328c87d0a194eda81d0ffbd2.json"
+  },
+  "total_usage": {
+    "input_tokens": 252142,
+    "output_tokens": 3277,
+    "total_tokens": 255419,
+    "web_search_calls": 0
+  },
+  "github": {
+    "repository": "Herurg123/ai-svodki-ia",
+    "ref": "refs/heads/main",
+    "sha": "ed86cbab563f39376d585822b7a072df3012596a",
+    "run_id": "45926249505",
+    "run_attempt": "1",
+    "actor": "Herurg123"
+  },
+  "error": null,
+  "research_cutoff_at": "2026-11-27T05:06:40+03:00"
+}
