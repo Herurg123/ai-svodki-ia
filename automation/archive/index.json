@@ -1,8 +1,65 @@
 {
   "version": 2,
-  "generated_at": "2026-11-27T02:17:26+00:00",
+  "generated_at": "2026-11-28T02:15:12+00:00",
   "source": "automation/content + posts/rss.xml",
   "items": [
+    {
+      "date": "2026-11-28",
+      "published_at": "2026-11-28T06:00:00+03:00",
+      "search_cutoff_at": "2026-11-28T05:06:33+03:00",
+      "title": "ИИ-Сводка на 28 ноября 2026",
+      "link": "https://rybalka.one/posts/2026-11-28/",
+      "summary": "Главные новости искусственного интеллекта за 28 ноября 2026 года Новостей сегодня меньше, чем обычно Экспортный контроль всё заметнее влияет не только на прямые поставки ускорителей, но и на планы облачных операторов в третьих странах. Свежий сигнал из Юго-Восточной Азии показывает, что проверка конечного использования вычислительных мощностей становится инфраструктурным ограничением. Для компаний, строящих или арендующих ИИ-вычисления в регионе, важны не только доступность GPU и цена электроэне",
+      "topics": [
+        "экспортный контроль США",
+        "NVIDIA",
+        "ИИ-серверы",
+        "GPU",
+        "Юго-Восточная Азия",
+        "облачные провайдеры",
+        "дата-центры",
+        "ИИ-инфраструктура"
+      ],
+      "source_urls": [
+        "https://www.tomshardware.com/tech-industry/policy/nvidia-stops-ai-gpu-shipments-to-southeast-asia-report-claims-data-centers-in-singapore-other-countries-in-trouble-as-commerce-department-requires-cloud-providers-to-obtain-export-license"
+      ],
+      "stories": [
+        {
+          "candidate_id": "cand-002",
+          "section": "world",
+          "headline": "NVIDIA, по сообщениям СМИ, приостановила поставки ИИ-серверов в четыре страны Юго-Восточной Азии",
+          "organization": "NVIDIA; Dell; Supermicro; U.S. Department of Commerce; Southeast Asian cloud providers",
+          "topic": "Экспортный контроль США; AI GPU; облачные дата-центры в Юго-Восточной Азии; доступ китайских клиентов к зарубежным вычислениям",
+          "event_type": "reported supply restriction / export-control impact",
+          "status": "new",
+          "summary": "Tom's Hardware, со ссылкой на Financial Times, сообщает, что производителям AI-серверов, включая Dell и Supermicro, было предписано приостановить поставки систем с GPU NVIDIA клиентам в Сингапуре, Таиланде, Малайзии и Индонезии. Сообщается, что это связано с новыми требованиями США к облачным провайдерам получать экспортную лицензию и подтверждать отсутствие обслуживаемых ограниченных клиентов.",
+          "published_at": "2026-11-26T16:00:00+00:00",
+          "published_date": "2026-11-26",
+          "time_precision": "datetime",
+          "sources": [
+            {
+              "title": "Nvidia stops AI GPU shipments to Southeast Asia amid purported China cloud access ban, report claims",
+              "publisher": "Tom's Hardware",
+              "url": "https://www.tomshardware.com/tech-industry/policy/nvidia-stops-ai-gpu-shipments-to-southeast-asia-report-claims-data-centers-in-singapore-other-countries-in-trouble-as-commerce-department-requires-cloud-providers-to-obtain-export-license"
+            }
+          ],
+          "keywords": [
+            "NVIDIA",
+            "AI GPUs",
+            "Southeast Asia",
+            "Singapore",
+            "Thailand",
+            "Malaysia",
+            "Indonesia",
+            "cloud providers",
+            "export controls",
+            "China compute access"
+          ],
+          "geography": "world",
+          "category": "infrastructure"
+        }
+      ]
+    },
     {
       "date": "2026-11-27",
       "published_at": "2026-11-27T06:00:00+03:00",
@@ -6311,10 +6368,10 @@
     {
       "date": "2026-10-25",
       "published_at": "2026-10-25T06:00:00+03:00",
-      "search_cutoff_at": "2026-10-25T04:10:05+03:00",
+      "search_cutoff_at": "2026-10-25T06:00:00+03:00",
       "title": "ИИ-Сводка на 25 октября 2026",
       "link": "https://rybalka.one/posts/2026-10-25/",
-      "summary": "Главные новости искусственного интеллекта за 25 октября 2026 года Повестка дня показывает, что масштабирование ИИ всё сильнее зависит от доверия к инфраструктуре: безопасности цепочек поставки, управляемости агентов и общественного согласия на новые дата-центры. Одновременно разработчики переводят контроль доступа, наблюдаемость и защиту учётных данных из дополнительных функций в базовый слой агентных продуктов. На продуктовом уровне заметен другой сдвиг: голосовые модели и coding-агенты становя",
+      "summary": "Киберриски агентных систем и supply-chain атак, отказ Amazon от дата-центров в Вирджинии, локальная голосовая модель Block, а также новые механизмы контроля Claude Code и Codex CLI.",
       "topics": [
         "кибербезопасность ИИ",
         "LiteLLM",

@@ -1,0 +1,297 @@
+{
+  "status": "ok",
+  "error_message": null,
+  "publication_date": "2026-11-28",
+  "search_window": {
+    "start_at": "2026-11-26T05:06:40+03:00",
+    "end_at": "2026-11-28T05:06:33+03:00",
+    "latest_archive_at": "2026-11-27T05:06:40+03:00",
+    "start_date": "2026-11-26",
+    "end_date": "2026-11-28",
+    "latest_archive_date": "2026-11-27"
+  },
+  "coverage": [
+    {
+      "area": "global_breaking",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "major_agencies",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "models_products_agents",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "infrastructure_chips_cloud",
+      "status": "covered",
+      "notes": "Обязательный one-search pass завершён; raw=1, accepted=1, rejected=0."
+    },
+    {
+      "area": "business_investment_partnerships",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_models",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "china_asia_integrations",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "russia",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "developer_tools",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "security_safety",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "legal_regulation",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    },
+    {
+      "area": "independent_missing_events",
+      "status": "gap",
+      "notes": "Обязательный one-search pass завершён; raw=0, accepted=0, rejected=0."
+    }
+  ],
+  "candidates": [
+    {
+      "title": "Trump announced trip to TSMC Arizona groundbreaking as chipmaker advances fifth expansion phase",
+      "organization": "Taiwan Semiconductor Manufacturing Co. (TSMC); White House; U.S. government",
+      "published_date": "2026-11-26",
+      "published_at": null,
+      "time_precision": "date",
+      "topic": "AI-chip manufacturing; U.S. semiconductor infrastructure; TSMC Arizona expansion; industrial policy",
+      "event_type": "infrastructure expansion announcement",
+      "keywords": [
+        "TSMC",
+        "Arizona",
+        "AI chips",
+        "semiconductor foundry",
+        "US manufacturing",
+        "chip supply chain",
+        "Trump",
+        "fifth phase"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "news_agency",
+      "primary_source": {
+        "title": "Trump heads to Arizona next week for a high-stakes expansion of TSMC’s computer chip factories",
+        "publisher": "Associated Press",
+        "url": "https://apnews.com/article/tsmc-computer-chips-arizona-trump-cdc7faa84895ddeb19bd114061e9dd85"
+      },
+      "supporting_sources": [],
+      "event_summary": "Associated Press reported that President Donald Trump will attend the Dec. 4 groundbreaking for the fifth phase of TSMC’s Arizona expansion. The report says TSMC’s previously announced US manufacturing commitment totals $265 billion, including a further $100 billion announced in July, amid AI-driven chip demand.",
+      "verified_facts": [
+        "The White House and TSMC said Trump would attend a Dec. 4 Arizona groundbreaking for a new TSMC chip foundry.",
+        "The event concerns the fifth phase of TSMC’s Arizona expansion.",
+        "AP reported that TSMC had pledged a total of $265 billion for US chipmaking after a further $100 billion expansion commitment announced in July.",
+        "TSMC’s Arizona facilities manufacture chips for companies including Nvidia, Apple, AMD, Broadcom and Qualcomm."
+      ],
+      "significance": "A fresh, high-level political and infrastructure milestone for a very large US semiconductor-manufacturing expansion that supplies the AI-compute ecosystem. It is distinct from the earlier financing/investment commitment because the reported event is the planned start of a new construction phase and presidential participation.",
+      "significance_score": 3,
+      "limitations": "The AP page establishes the reporting date but does not expose a precise publication timestamp in the retrieved text. The underlying White House/TSMC announcements were not separately retrieved in this publisher-restricted pass, so the event-origin fields remain unknown rather than inferred from the article date.",
+      "archive_status": "none",
+      "archive_reason": "No matching TSMC Arizona fifth-phase groundbreaking or presidential-visit story appears in the supplied archive.",
+      "recommendation": "exclude",
+      "verification_status": "unconfirmed",
+      "verification_notes": "AP directly attributes the planned visit and groundbreaking to the White House and TSMC and provides the investment and expansion context.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: ни один уже цитируемый source URL не отдал независимо проверяемую дату публикации; публикация fail-closed.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Not a legal or regulatory enforcement event.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "",
+      "event_date": null,
+      "event_at": null,
+      "event_time_precision": "unknown",
+      "event_origin_url": null,
+      "event_evidence_kind": "unknown",
+      "event_date_evidence": "",
+      "id": "cand-001",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "unknown",
+      "source_publication_url": null,
+      "source_published_date": null,
+      "source_published_at": null,
+      "source_time_precision": "unknown",
+      "source_publication_evidence": ""
+    },
+    {
+      "title": "Nvidia reportedly halted AI-server shipments to Singapore, Thailand, Malaysia and Indonesia amid new U.S. cloud-computing export restrictions",
+      "organization": "NVIDIA; Dell; Supermicro; U.S. Department of Commerce; Southeast Asian cloud providers",
+      "published_date": "2026-11-26",
+      "published_at": "2026-11-26T16:00:00+00:00",
+      "time_precision": "datetime",
+      "topic": "Экспортный контроль США; AI GPU; облачные дата-центры в Юго-Восточной Азии; доступ китайских клиентов к зарубежным вычислениям",
+      "event_type": "reported supply restriction / export-control impact",
+      "keywords": [
+        "NVIDIA",
+        "AI GPUs",
+        "Southeast Asia",
+        "Singapore",
+        "Thailand",
+        "Malaysia",
+        "Indonesia",
+        "cloud providers",
+        "export controls",
+        "China compute access"
+      ],
+      "geography": "world",
+      "category": "infrastructure",
+      "source_type": "technology_media",
+      "primary_source": {
+        "title": "Nvidia stops AI GPU shipments to Southeast Asia amid purported China cloud access ban, report claims",
+        "publisher": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/tech-industry/policy/nvidia-stops-ai-gpu-shipments-to-southeast-asia-report-claims-data-centers-in-singapore-other-countries-in-trouble-as-commerce-department-requires-cloud-providers-to-obtain-export-license"
+      },
+      "supporting_sources": [],
+      "event_summary": "Tom's Hardware, со ссылкой на Financial Times, сообщает, что производителям AI-серверов, включая Dell и Supermicro, было предписано приостановить поставки систем с GPU NVIDIA клиентам в Сингапуре, Таиланде, Малайзии и Индонезии. Сообщается, что это связано с новыми требованиями США к облачным провайдерам получать экспортную лицензию и подтверждать отсутствие обслуживаемых ограниченных клиентов.",
+      "verified_facts": [
+        "Страница Tom's Hardware опубликована 26 ноября 2026 года.",
+        "В публикации утверждается, что Dell, Supermicro и другие производители сообщили клиентам о запрете на отгрузки AI-серверов в четыре страны Юго-Восточной Азии.",
+        "Публикация описывает 90-дневный лицензионный режим для cloud providers в рамках новых экспортных правил США.",
+        "Сообщение прямо атрибутирует ключевые сведения Financial Times и помечает их как report/claims."
+      ],
+      "significance": "Потенциально крупное инфраструктурное последствие: ограничение поставок способно затронуть региональные AI-дата-центры, финансирование GPU-проектов и использование зарубежного облачного compute китайскими AI-компаниями. Это самостоятельное развитие экспортного контроля, а не повтор уже заархивированного внесения связанных с Megaspeed компаний в Entity List.",
+      "significance_score": 4,
+      "limitations": "Доступный источник является вторичным технологическим медиа и атрибутирует сведения Financial Times; прямой первичный документ NVIDIA, Commerce Department или производителей, подтверждающий конкретную остановку поставок, в этом проходе не найден. Формулировки следует сохранять как сообщаемые, а не как безусловно подтверждённые NVIDIA.",
+      "archive_status": "none",
+      "archive_reason": "Не является точным дублем архивной истории от 27 ноября о включении связанных с Megaspeed компаний в Entity List: здесь отдельный предполагаемый операционный эффект новых cloud/export restrictions на поставки AI-серверов в страны Юго-Восточной Азии.",
+      "recommendation": "include",
+      "verification_status": "verified",
+      "verification_notes": "Проверены дата и содержание цитируемой страницы; ключевое утверждение надёжно передано как атрибутированное сообщение Tom's Hardware со ссылкой на Financial Times, без превращения его в официально подтверждённую позицию NVIDIA.",
+      "freshness_status": "new_event",
+      "freshness_reason": "Source Freshness Proof v1: meta:article:published_time=2026-11-26T16:00:00Z; timestamp проверен Python против effective window. Цитируемая страница опубликована 26 ноября 2026 года, внутри effective window по date-level доказательству; описывает новый, самостоятельный операционный эффект экспортных ограничений.",
+      "legal_scale": "not_applicable",
+      "legal_scale_reason": "Событие связано с экспортным регулированием, но кандидат относится к последствиям для цепочек поставок и облачной инфраструктуры, а не к самостоятельному крупному судебному или регуляторному решению.",
+      "curiosity_eligible": false,
+      "curiosity_verification": "Не применимо: кандидат отобран по инфраструктурной значимости.",
+      "event_date": null,
+      "event_at": null,
+      "event_time_precision": "unknown",
+      "event_origin_url": null,
+      "event_evidence_kind": "unknown",
+      "event_date_evidence": "",
+      "id": "cand-002",
+      "event_freshness_status": "unknown",
+      "event_freshness_reason": "event origin is missing, ambiguous, or lacks reliable evidence; recall is preserved and source freshness remains authoritative",
+      "event_freshness_rejection_code": null,
+      "source_freshness_status": "fresh",
+      "source_publication_url": "https://www.tomshardware.com/tech-industry/policy/nvidia-stops-ai-gpu-shipments-to-southeast-asia-report-claims-data-centers-in-singapore-other-countries-in-trouble-as-commerce-department-requires-cloud-providers-to-obtain-export-license",
+      "source_published_date": "2026-11-26",
+      "source_published_at": "2026-11-26T16:00:00+00:00",
+      "source_time_precision": "datetime",
+      "source_publication_evidence": "meta:article:published_time=2026-11-26T16:00:00Z"
+    }
+  ],
+  "rejected_as_duplicates": [],
+  "research_notes": "Primary recall v2: выполнены 12 фиксированных one-search проходов; raw candidates=2, validated unique=2, final candidates=2. Effective retrieval использует 24h overlap до continuity anchor; точные archive URL отсекаются до merge. Финальный candidate cap применяется только после завершения всех обязательных направлений.",
+  "retrieval_quality_contract_version": 1,
+  "unresolved_signals": [
+    {
+      "signal_id": "sig-developer_tools-03",
+      "version": 1,
+      "status": "unresolved",
+      "title": "Google Antigravity 2.32 с orchestration",
+      "origin_direction": "developer_tools",
+      "reason_code": "unverified",
+      "evidence_reason": "Найдена официальная страница загрузки, но она показывает уже более новые версии и не даёт проверяемого timestamp либо release note для версии 2.32 внутри effective window.",
+      "likely_significance_score": 1,
+      "entities": [
+        "Google",
+        "Antigravity"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    },
+    {
+      "signal_id": "sig-developer_tools-04",
+      "version": 1,
+      "status": "unresolved",
+      "title": "GitHub Copilot: вывод из эксплуатации шести моделей",
+      "origin_direction": "developer_tools",
+      "reason_code": "unverified",
+      "evidence_reason": "Результат discovery указывает на возможное существенное изменение model availability, но доступные страницы не дали пригодного первичного объявления GitHub и точной даты события в окне.",
+      "likely_significance_score": 1,
+      "entities": [
+        "GitHub",
+        "Copilot"
+      ],
+      "anchors": [],
+      "source_hint": null,
+      "resolution_required": false,
+      "query_terms_are_hints_not_filters": true
+    }
+  ],
+  "regional_health": {
+    "version": 1,
+    "asia": {
+      "directions": [
+        "china_asia_models",
+        "china_asia_integrations"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "russia": {
+      "directions": [
+        "russia"
+      ],
+      "primary_completed": true,
+      "accepted_candidates": 0,
+      "health_check_needed": true,
+      "viability_version": 1,
+      "viability_stage": "post_freshness_editorial_pre_hybrid",
+      "health_check_needed_before_viability": true,
+      "viability_status": "already_open",
+      "reopened_after_filtering": false
+    },
+    "policy": "zero candidates triggers a completeness health-check, never a publication quota",
+    "viability_version": 1,
+    "viability_stage": "post_freshness_editorial_pre_hybrid",
+    "publication_quota": false
+  },
+  "business_query_treatment": {
+    "version": 1,
+    "direction_id": "business_investment_partnerships",
+    "query": "latest AI investment financing acquisitions partnerships enterprise deals revenue monetization ads earnings",
+    "additional_search_operations": 0
+  },
+  "temporal_boundary_guard": {
+    "version": 1,
+    "scope": "all_primary_directions",
+    "query_changed": false,
+    "additional_search_operations": 0,
+    "downstream_freshness_fail_closed": true
+  }
+}

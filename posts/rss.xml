@@ -9,9 +9,37 @@
   <link>https://rybalka.one/posts/</link>
   <description>Десять полнотекстовых аналитических статей об искусственном интеллекте.</description>
   <language>ru</language>
-  <lastBuildDate>Fri, 27 Nov 2026 06:00:00 +0300</lastBuildDate>
+  <lastBuildDate>Sat, 28 Nov 2026 06:00:00 +0300</lastBuildDate>
   <dc:creator>ИИ-сводки</dc:creator>
   <atom:link href="https://rybalka.one/posts/rss.xml" rel="self" type="application/rss+xml" />
+
+  <item>
+    <title>ИИ-Сводка на 28 ноября 2026</title>
+    <link>https://rybalka.one/posts/2026-11-28/</link>
+    <guid isPermaLink="true">https://rybalka.one/posts/2026-11-28/</guid>
+    <pubDate>Sat, 28 Nov 2026 06:00:00 +0300</pubDate>
+    <dc:creator>ИИ-сводки</dc:creator>
+    <category>Статья</category>
+    <category>ИИ</category>
+    <category>Технологии</category>
+    <category>native-yes</category>
+    <media:rating scheme="urn:simple">nonadult</media:rating>
+    <enclosure url="https://rybalka.one/posts/images/ai-svodka-2026-11-28.png" type="image/png" length="2133514" />
+    <media:content url="https://rybalka.one/posts/images/ai-svodka-2026-11-28.png" medium="image" type="image/png" />
+    <media:thumbnail url="https://rybalka.one/posts/images/ai-svodka-2026-11-28.png" />
+    <description><![CDATA[<p>США ужесточают контроль над поставками ИИ-серверов в Юго-Восточную Азию. Сообщаемая пауза отгрузок NVIDIA показывает, как экспортные правила начинают напрямую менять планы облачных провайдеров и дата-центров региона.</p>]]></description>
+    <content:encoded><![CDATA[<figure>
+<img src="https://rybalka.one/posts/images/ai-svodka-2026-11-28.png" alt="ИИ-Сводка на 28 ноября 2026">
+<figcaption>Главные новости искусственного интеллекта за 28 ноября 2026 года</figcaption>
+</figure>
+<p><em>Новостей сегодня меньше, чем обычно</em></p>
+<p>Экспортный контроль всё заметнее влияет не только на прямые поставки ускорителей, но и на планы облачных операторов в третьих странах. Свежий сигнал из Юго-Восточной Азии показывает, что проверка конечного использования вычислительных мощностей становится инфраструктурным ограничением.</p><p>Для компаний, строящих или арендующих ИИ-вычисления в регионе, важны не только доступность GPU и цена электроэнергии, но и подтверждаемая цепочка клиентов, доступов и назначения мощностей.</p><h2>Мировые лидеры ИИ</h2><h3>NVIDIA, по сообщениям СМИ, приостановила поставки ИИ-серверов в четыре страны Юго-Восточной Азии</h3><p><a href="https://www.tomshardware.com/tech-industry/policy/nvidia-stops-ai-gpu-shipments-to-southeast-asia-report-claims-data-centers-in-singapore-other-countries-in-trouble-as-commerce-department-requires-cloud-providers-to-obtain-export-license">Tom's Hardware</a> со ссылкой на Financial Times сообщает, что производители серверов, включая Dell и Supermicro, уведомили клиентов о приостановке поставок систем с GPU NVIDIA в Сингапур, Таиланд, Малайзию и Индонезию. По данным публикации, мера связана с новыми требованиями США: облачные провайдеры должны получать экспортные лицензии и подтверждать, что не обслуживают ограниченных клиентов.</p><p>Это пока не официальное подтверждение NVIDIA или Министерства торговли США, поэтому речь идёт о сообщаемом операционном эффекте экспортных правил, а не о публично объявленном запрете компании. Однако возможная пауза важна для рынка: она способна задержать ввод новых ИИ-кластеров, повысить стоимость финансирования региональных дата-центров и заставить облачных операторов жёстче контролировать конечных пользователей вычислений. После внесения связанных с Megaspeed структур в американский Entity List контроль смещается от отдельных посредников к более широкому надзору за облачной инфраструктурой и маршрутами доступа к ней.</p><h2>Что это значит</h2><ol><li>Экспортный контроль всё больше затрагивает не только продажу чипов, но и эксплуатацию облачных мощностей в странах-посредниках.</li><li>Провайдерам ИИ-облаков потребуется усиливать проверку клиентов, происхождения рабочих нагрузок и прав доступа к кластерам.</li><li>Для заказчиков в Юго-Восточной Азии риск задержек поставок становится фактором планирования сроков, стоимости и резервных вычислительных сценариев.</li><li>Региональная инфраструктура ИИ становится частью геополитической системы контроля: физическое размещение серверов уже не гарантирует беспрепятственный доступ к передовым ускорителям.</li></ol>
+<h2>Все ИИ-Сводки</h2><p><a href="https://dzen.ru/suite/7971db4c-2a4e-449f-b8bf-c3907486d6f1">Архив ИИ-Сводок</a></p>
+<h2>ИИ-Поиск по статьям</h2>
+<p>🔍 <a href="https://rybalka.one/#faq">Сайт</a> | <a href="https://t.me/rybv_bot">Telegram</a> | <a href="https://max.ru/u/f9LHodD0cOLtzz--9JGi-9evrUHNQ6AT56LTxxCUsOMgAB0FzqKaItzrhqg">MAX</a></p>
+<p>📲 Подписывайтесь: <a href="https://t.me/rybvvv">tg</a> 🔹 <a href="https://max.ru/channel_rybv">max</a> 🔹 <a href="https://vk.ru/rybvv">vk</a></p>
+<p class="digest-footer" style="text-align:center;margin:32px 0 0;"><a href="https://dzen.ru/rybv" target="_blank" rel="noopener noreferrer"><img src="https://rybalka.one/posts/_footer-scr.png" alt="Подписаться на канал" style="display:block;max-width:50%;width:auto;height:auto;margin:0 auto;"></a></p>]]></content:encoded>
+  </item>
 
   <item>
     <title>ИИ-Сводка на 27 ноября 2026</title>
